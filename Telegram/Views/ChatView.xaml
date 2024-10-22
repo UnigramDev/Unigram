@@ -1342,7 +1342,7 @@
                         <controls:GlyphButton x:Name="btnEdit"
                                               VerticalAlignment="Bottom"
                                               Click="btnSendMessage_Click"
-                                              Glyph="&#xEC61;"
+                                              Glyph="&#xE9F4;"
                                               AllowFocusOnInteraction="False"
                                               Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                               FontSize="24"

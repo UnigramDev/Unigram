@@ -671,7 +671,7 @@ namespace Telegram.Views
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("Reply"))
+            if (e.PropertyName.Equals("Reply") || e.PropertyName.Equals(nameof(ViewModel.CurrentInlineBot)))
             {
                 CheckMessageBoxEmpty();
             }
@@ -1227,14 +1227,21 @@ namespace Telegram.Views
 
         private void CheckButtonsVisibility()
         {
-            var editing = ViewModel.ComposerHeader?.EditingMessage != null;
             var empty = TextField.IsEmpty;
+            var editing = ViewModel.ComposerHeader?.EditingMessage != null || ViewModel.CurrentInlineBot != null;
 
             if (empty != _oldEmpty)
             {
                 ButtonStickers.Source = empty
                     ? SettingsService.Current.Stickers.SelectedTab
                     : Services.Settings.StickersTab.Emoji;
+            }
+
+            if (editing != _oldEditing)
+            {
+                btnEdit.Glyph = ViewModel.CurrentInlineBot != null
+                    ? Icons.DismissCircleFilled24
+                    : Icons.CheckmarkCircleFilled24;
             }
 
             FrameworkElement elementHide = null;
@@ -1558,9 +1565,9 @@ namespace Telegram.Views
             CheckMessageBoxEmpty();
         }
 
-        private async void btnSendMessage_Click(object sender, RoutedEventArgs e)
+        private void btnSendMessage_Click(object sender, RoutedEventArgs e)
         {
-            await TextField.SendAsync();
+            TextField.Send();
         }
 
         private void Profile_Click(object sender, RoutedEventArgs e)
@@ -2180,14 +2187,14 @@ namespace Telegram.Views
                 flyout.CreateFlyoutSeparator();
             }
 
-            flyout.CreateFlyoutItem(async () => await TextField.SendAsync(true), Strings.SendWithoutSound, Icons.AlertOff);
+            flyout.CreateFlyoutItem(() => TextField.Send(true), Strings.SendWithoutSound, Icons.AlertOff);
 
             if (ViewModel.ClientService.TryGetUser(chat, out Td.Api.User user) && user.Type is UserTypeRegular && user.Status is not UserStatusRecently && !self)
             {
-                flyout.CreateFlyoutItem(async () => await TextField.ScheduleAsync(true), Strings.SendWhenOnline, Icons.PersonCircleOnline);
+                flyout.CreateFlyoutItem(() => TextField.Schedule(true), Strings.SendWhenOnline, Icons.PersonCircleOnline);
             }
 
-            flyout.CreateFlyoutItem(async () => await TextField.ScheduleAsync(false), self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
+            flyout.CreateFlyoutItem(() => TextField.Schedule(false), self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
 
             if (chat.Type is ChatTypePrivate)
             {

@@ -284,9 +284,14 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        protected override bool CanAccept()
+        {
+            return ViewModel.CurrentInlineBot == null;
+        }
+
         protected override void OnAccept()
         {
-            _ = SendAsync();
+            Send();
         }
 
         private DateTime _lastKeystroke;
@@ -352,7 +357,7 @@ namespace Telegram.Controls.Chats
 
             // This needs to run before text empty check as it cleans up
             // some stuff it inline bot isn't found
-            if (SearchInlineBotResults(text, out string inlineQuery))
+            if (SearchInlineBotResults(text, true, out string inlineQuery))
             {
                 SetAutocomplete(null);
                 GetInlineBotResults(inlineQuery);
@@ -392,7 +397,7 @@ namespace Telegram.Controls.Chats
                         return;
                     }
 
-                    if (SearchInlineBotResults(text, out query))
+                    if (SearchInlineBotResults(text, true, out query))
                     {
                         SetAutocomplete(null);
                         GetInlineBotResults(query);
@@ -742,11 +747,32 @@ namespace Telegram.Controls.Chats
             public bool InsertOnKeyDown => true;
         }
 
-        public async Task SendAsync(bool disableNotification = false)
+        public async void Send(bool disableNotification = false)
         {
-            if (ViewModel.Type == DialogType.ScheduledMessages && ViewModel.ComposerHeader?.EditingMessage == null)
+            Document.GetText(TextGetOptions.NoHidden, out string plain);
+
+            // This needs to run before text empty check as it cleans up
+            // some stuff it inline bot isn't found
+            if (SearchInlineBotResults(plain, false, out string inlineQuery))
             {
-                await ScheduleAsync(false);
+                if (string.IsNullOrEmpty(inlineQuery))
+                {
+                    SetText(null);
+                }
+                else
+                {
+                    var split = plain.Split(' ');
+                    var username = split[0] + " ";
+
+                    Document.SetText(TextSetOptions.None, username);
+                    Document.Selection.StartPosition = username.Length;
+                }
+
+                return;
+            }
+            else if (ViewModel.Type == DialogType.ScheduledMessages && ViewModel.ComposerHeader?.EditingMessage == null)
+            {
+                Schedule(false);
                 return;
             }
 
@@ -759,7 +785,7 @@ namespace Telegram.Controls.Chats
             await ViewModel.SendMessageAsync(text, options);
         }
 
-        public async Task ScheduleAsync(bool whenOnline)
+        public async void Schedule(bool whenOnline)
         {
             Sending?.Invoke(this, EventArgs.Empty);
 
@@ -861,7 +887,7 @@ namespace Telegram.Controls.Chats
 
         #region Inline bots
 
-        private bool SearchInlineBotResults(string text, out string searchText)
+        private bool SearchInlineBotResults(string text, bool apply, out string searchText)
         {
             var flag = false;
             searchText = string.Empty;
@@ -886,13 +912,24 @@ namespace Telegram.Controls.Chats
                     flag = true;
                 }
 
-                if (!flag)
+                if (apply)
                 {
-                    if (string.Equals(text.TrimStart(), "@" + username, StringComparison.OrdinalIgnoreCase))
+                    if (!flag)
                     {
-                        ClearInlineBotResults();
+                        if (string.Equals(text.TrimStart(), "@" + username, StringComparison.OrdinalIgnoreCase))
+                        {
+                            ClearInlineBotResults();
+                        }
+                        else
+                        {
+                            var user = ViewModel.CurrentInlineBot;
+                            if (user != null && user.Type is UserTypeBot bot)
+                            {
+                                UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
+                            }
+                        }
                     }
-                    else
+                    else if (string.IsNullOrEmpty(searchText))
                     {
                         var user = ViewModel.CurrentInlineBot;
                         if (user != null && user.Type is UserTypeBot bot)
@@ -900,25 +937,18 @@ namespace Telegram.Controls.Chats
                             UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
                         }
                     }
-                }
-                else if (string.IsNullOrEmpty(searchText))
-                {
-                    var user = ViewModel.CurrentInlineBot;
-                    if (user != null && user.Type is UserTypeBot bot)
+                    else
                     {
-                        UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
+                        UpdateInlinePlaceholder(null, null);
                     }
                 }
-                else
-                {
-                    UpdateInlinePlaceholder(null, null);
-                }
             }
-            else
+            else if (apply)
             {
                 ClearInlineBotResults();
             }
 
+            searchText = searchText.TrimEnd('\r', '\n');
             return flag;
         }
 

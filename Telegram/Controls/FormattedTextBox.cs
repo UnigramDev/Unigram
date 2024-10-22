@@ -311,7 +311,7 @@ namespace Telegram.Controls
                 EndUndoGroup();
                 return;
             }
-            else if (e.Key == VirtualKey.Enter)
+            else if (e.Key == VirtualKey.Enter && CanAccept())
             {
                 var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
                 var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
@@ -341,6 +341,10 @@ namespace Telegram.Controls
                     OnAccept();
                 }
             }
+            else if (e.Key == VirtualKey.Enter)
+            {
+                AcceptsReturn = true;
+            }
             else if (e.Key == VirtualKey.Z)
             {
                 var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
@@ -362,6 +366,11 @@ namespace Telegram.Controls
             {
                 base.OnKeyDown(e);
             }
+        }
+
+        protected virtual bool CanAccept()
+        {
+            return true;
         }
 
         protected virtual void OnAccept()

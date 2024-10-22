@@ -103,7 +103,7 @@
                                       Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                       VerticalAlignment="Bottom"
                                       FontSize="24"
-                                      Glyph="&#xEC61;"
+                                      Glyph="&#xE9F4;"
                                       Margin="-8,0,0,0"
                                       Grid.Column="2" />
             </Grid>

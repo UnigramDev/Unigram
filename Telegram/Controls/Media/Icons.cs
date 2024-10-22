@@ -93,6 +93,8 @@ namespace Telegram.Controls.Media
         public const string PauseFilled24 = "\uEA18";
         public const string Checkmark = "\uE10B";
         public const string CheckmarkFilled24 = "\uEA20";
+        public const string CheckmarkCircleFilled24 = "\uE9F4";
+        public const string DismissCircleFilled24 = "\uE9F3";
         public const string TtlFilled24 = "\uEA21";
         public const string Document = "\uE7C3";
         public const string DocumentFilled24 = "\uEA1C";
