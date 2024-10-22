@@ -221,7 +221,7 @@ namespace Telegram.Navigation.Services
         public NavigationService(WindowContext window, Frame frame, int session, string id)
         {
             Window = window;
-            Dispatcher = window.Dispatcher;
+            Dispatcher = window?.Dispatcher;
             SessionId = session;
             FrameFacade = new FrameFacade(this, frame, id);
             FrameFacade.Navigating += OnNavigating;
