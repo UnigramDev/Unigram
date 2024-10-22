@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Controls;
 using Windows.Security.Authorization.AppCapabilityAccess;
@@ -48,7 +50,15 @@ namespace Telegram.Common
                 capabilities = new[] { "webcam" };
             }
 
-            var access = await AppCapability.RequestAccessForCapabilitiesAsync(capabilities);
+            IReadOnlyDictionary<string, AppCapabilityAccessStatus> access;
+            try
+            {
+                access = await AppCapability.RequestAccessForCapabilitiesAsync(capabilities);
+            }
+            catch
+            {
+                access = capabilities.ToDictionary(x => x, y => AppCapabilityAccessStatus.DeniedBySystem);
+            }
 
             access.TryGetValue("microphone", out AppCapabilityAccessStatus audio);
             access.TryGetValue("webcam", out AppCapabilityAccessStatus video);

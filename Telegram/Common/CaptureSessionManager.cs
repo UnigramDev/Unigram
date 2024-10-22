@@ -103,10 +103,17 @@ namespace Telegram.Common
 
                 if (status == AppCapabilityAccessStatus.UserPromptRequired)
                 {
-                    var access = await AppCapability.RequestAccessForCapabilitiesAsync(new[] { "graphicsCaptureProgrammatic" });
-                    if (access.TryGetValue("graphicsCaptureProgrammatic", out status))
+                    try
                     {
-                        return status;
+                        var access = await AppCapability.RequestAccessForCapabilitiesAsync(new[] { "graphicsCaptureProgrammatic" });
+                        if (access.TryGetValue("graphicsCaptureProgrammatic", out status))
+                        {
+                            return status;
+                        }
+                    }
+                    catch
+                    {
+                        return AppCapabilityAccessStatus.DeniedBySystem;
                     }
                 }
                 else if (status != AppCapabilityAccessStatus.Allowed)
