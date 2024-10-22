@@ -362,7 +362,11 @@ namespace Telegram.ViewModels
                 if (Set(ref _selectedFolder, value))
                 {
                     Logger.Info();
-                    Chats.SetFolder(value.ChatList);
+
+                    Chats.SetList(value.ChatList);
+                    Stories.SetList(value.ChatList is ChatListArchive
+                        ? new StoryListArchive()
+                        : new StoryListMain());
                 }
             }
         }

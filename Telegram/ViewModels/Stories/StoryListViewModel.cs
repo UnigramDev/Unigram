@@ -218,6 +218,14 @@ namespace Telegram.ViewModels.Stories
             _ = window.ShowAsync(NavigationService.XamlRoot);
         }
 
+        public void SetList(StoryList storyList)
+        {
+            if (Items is ItemsCollection collection && !collection.StoryList.AreTheSame(storyList))
+            {
+                _ = collection.ReloadAsync(storyList);
+            }
+        }
+
         public partial class ItemsCollection : ObservableCollection<ActiveStoriesViewModel>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
@@ -278,7 +286,7 @@ namespace Telegram.ViewModels.Stories
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
             {
-                Logger.Info();
+                Logger.Info(Count);
 
                 var token = _token;
                 var totalCount = 0u;
@@ -312,6 +320,8 @@ namespace Telegram.ViewModels.Stories
                             _lastOrder = order;
                         }
                     }
+
+                    Logger.Info(string.Format("Received {0} items, added {1}", chats.ChatIds.Count, totalCount));
 
                     IsEmpty = Count == 0;
 

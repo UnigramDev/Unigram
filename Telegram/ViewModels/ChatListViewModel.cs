@@ -574,12 +574,9 @@ namespace Telegram.ViewModels
 
         #endregion
 
-        public async void SetFolder(ChatList chatList)
+        public void SetList(ChatList chatList)
         {
-            await Items.ReloadAsync(chatList);
-            //Aggregator.Unsubscribe(Items);
-            //Items = new ItemsCollection(ClientService, Aggregator, this, chatList);
-            //RaisePropertyChanged(nameof(Items));
+            _ = Items.ReloadAsync(chatList);
         }
 
         public partial class ItemsCollection : ObservableCollection<Chat>, ISupportIncrementalLoading
@@ -647,7 +644,7 @@ namespace Telegram.ViewModels
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
             {
-                Logger.Info();
+                Logger.Info(Count);
 
                 var token = _token;
                 var totalCount = 0u;
@@ -690,6 +687,8 @@ namespace Telegram.ViewModels
                             _lastOrder = order;
                         }
                     }
+
+                    Logger.Info(string.Format("Received {0} items, added {1}", chats.ChatIds.Count, totalCount));
 
                     IsEmpty = Count == 0;
 
