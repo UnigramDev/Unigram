@@ -1163,7 +1163,10 @@ namespace Telegram.Views.Popups
             {
                 foreach (var item in group.Item1)
                 {
-                    Children[i++].Measure(item.ToSize());
+                    if (i < Children.Count)
+                    {
+                        Children[i++].Measure(item.ToSize());
+                    }
                 }
 
                 h += Math.Ceiling(group.Item2.Height + 6);
@@ -1189,7 +1192,10 @@ namespace Telegram.Views.Popups
             {
                 foreach (var item in group.Item1)
                 {
-                    Children[i++].Arrange(new Rect(item.X + 8, item.Y + h, item.Width, item.Height));
+                    if (i < Children.Count)
+                    {
+                        Children[i++].Arrange(new Rect(item.X + 8, item.Y + h, item.Width, item.Height));
+                    }
                 }
 
                 h += Math.Ceiling(group.Item2.Height + 6);
