@@ -351,7 +351,8 @@ namespace Telegram
                 dwLength = (uint)Marshal.SizeOf<MEMORYSTATUSEX>();
             }
         }
-        [DllImport("kernelbase.dll", SetLastError = true)]
+
+        [DllImport("kernelbase.dll", ExactSpelling = true, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
 
@@ -377,8 +378,8 @@ namespace Telegram
                 $"Current language: {language}\n" +
                 $"Current duration: {diff}\n" +
                 $"Memory usage: {memoryUsage}\n" +
-                $"Memory usage available: {memoryUsageAvailable}\n" +
-                $"Memory usage total: {memoryUsageTotal}\n" +
+                $"Memory available: {memoryUsageAvailable}\n" +
+                $"Memory total: {memoryUsageTotal}\n" +
                 $"Update count: {count}\n";
 
             if (WindowContext.Current != null)
