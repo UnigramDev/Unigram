@@ -78,6 +78,8 @@ namespace winrt::Telegram::Native::implementation
             std::wstring trace;
             auto frames = winrt::single_threaded_vector<FatalErrorFrame>();
 
+            bool skipping = false;
+
             for (int i = 0; i < stowed->StackTraceWords; ++i)
             {
                 PVOID pointer;
@@ -103,13 +105,26 @@ namespace winrt::Telegram::Native::implementation
                 if (moduleBase != nullptr)
                 {
                     wchar_t modulePath[MAX_PATH];
-                    const wchar_t* moduleFilename = modulePath;
                     GetModuleFileName((HMODULE)moduleBase, modulePath, MAX_PATH);
 
-                    int moduleFilenamePos = std::wstring(modulePath).find_last_of(L"\\");
+                    auto moduleFilename = std::wstring(modulePath);
+
+                    int moduleFilenamePos = moduleFilename.find_last_of(L"\\");
                     if (moduleFilenamePos >= 0)
                     {
-                        moduleFilename += moduleFilenamePos + 1;
+                        moduleFilename = moduleFilename.substr(moduleFilenamePos + 1);
+                    }
+
+                    if (moduleFilename.rfind(L"Telegram", 0) != 0)
+                    {
+                        skipping = true;
+                        continue;
+                    }
+
+                    if (skipping)
+                    {
+                        skipping = false;
+                        trace += L"    ...\n";
                     }
 
                     trace += wstrprintf(L"   at %s+0x%08lx\n", moduleFilename, (uint32_t)((unsigned char*)pointer - moduleBase));
@@ -157,6 +172,8 @@ namespace winrt::Telegram::Native::implementation
             description += wstrprintf(L"Unhandled exception: %s\n", message);
         }
 
+        bool skipping = false;
+
         for (int i = 0; i < numFrames; ++i)
         {
             PVOID pointer = (unsigned char*)stack[i];
@@ -166,24 +183,33 @@ namespace winrt::Telegram::Native::implementation
 
             auto moduleBase = (const unsigned char*)moduleBaseVoid;
             wchar_t modulePath[MAX_PATH];
-            const wchar_t* moduleFilename = modulePath;
 
             if (moduleBase != nullptr)
             {
                 GetModuleFileName((HMODULE)moduleBase, modulePath, MAX_PATH);
 
-                int moduleFilenamePos = std::wstring(modulePath).find_last_of(L"\\");
+                auto moduleFilename = std::wstring(modulePath);
+
+                int moduleFilenamePos = moduleFilename.find_last_of(L"\\");
                 if (moduleFilenamePos >= 0)
                 {
-                    moduleFilename += moduleFilenamePos + 1;
+                    moduleFilename = moduleFilename.substr(moduleFilenamePos + 1);
                 }
 
-                trace += wstrprintf(L"   at %s+0x%08lx\n", moduleFilename, (uint32_t)((unsigned char*)pointer - moduleBase));
+                if (moduleFilename.rfind(L"Telegram", 0) != 0)
+                {
+                    skipping = true;
+                    continue;
+                }
+
+                if (skipping)
+                {
+                    skipping = false;
+                    trace += L"    ...\n";
+                }
+
+                trace += wstrprintf(L"   at %s+0x%08lx\n", moduleFilename.c_str(), (uint32_t)((unsigned char*)pointer - moduleBase));
                 frames.Append({ (intptr_t)pointer, (intptr_t)moduleBase });
-            }
-            else
-            {
-                trace += wstrprintf(L"   at %s+0x%016llx\n", L"unknown", (uint64_t)pointer);
             }
         }
 
