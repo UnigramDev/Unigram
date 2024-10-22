@@ -347,8 +347,8 @@ namespace Telegram.Common
 
                 var themeParameters = new Dictionary<string, int>
                 {
-                    { "CardBackgroundFillColorDefaultBrush", 0 },
-                    { "CardBackgroundFillColorSecondaryBrush", 0 },
+                    { "ApplicationPageBackgroundThemeBrush", 0 },
+                    { "ContentDialogBackground", 0 },
                     { "TextFillColorPrimaryBrush", 0 },
                     { "AccentButtonBackground", 0 },
                     { "AccentButtonForeground", 0 },
@@ -446,9 +446,9 @@ namespace Telegram.Common
 
                 _parameters[requested == TelegramTheme.Light ? ElementTheme.Light : ElementTheme.Dark] = new ThemeParameters
                 {
-                    BackgroundColor = themeParameters["CardBackgroundFillColorDefaultBrush"],
-                    SecondaryBackgroundColor = themeParameters["CardBackgroundFillColorSecondaryBrush"],
-                    BottomBarBackgroundColor = themeParameters["CardBackgroundFillColorDefaultBrush"],
+                    BackgroundColor = themeParameters["ApplicationPageBackgroundThemeBrush"],
+                    SecondaryBackgroundColor = themeParameters["ContentDialogBackground"],
+                    BottomBarBackgroundColor = themeParameters["ApplicationPageBackgroundThemeBrush"],
                     TextColor = themeParameters["TextFillColorPrimaryBrush"],
                     ButtonColor = themeParameters["AccentButtonBackground"],
                     ButtonTextColor = themeParameters["AccentButtonForeground"],
@@ -456,8 +456,8 @@ namespace Telegram.Common
                     LinkColor = themeParameters["AccentButtonBackground"],
                     AccentTextColor = themeParameters["AccentButtonBackground"],
                     DestructiveTextColor = themeParameters["DangerButtonBackground"],
-                    HeaderBackgroundColor = themeParameters["CardBackgroundFillColorDefaultBrush"],
-                    SectionBackgroundColor = themeParameters["CardBackgroundFillColorDefaultBrush"],
+                    HeaderBackgroundColor = themeParameters["ApplicationPageBackgroundThemeBrush"],
+                    SectionBackgroundColor = themeParameters["ApplicationPageBackgroundThemeBrush"],
                     SectionHeaderTextColor = themeParameters["TextFillColorPrimaryBrush"],
                     SubtitleTextColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
                     SectionSeparatorColor = themeParameters["CardStrokeColorDefaultSolidBrush"],

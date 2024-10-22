@@ -429,10 +429,11 @@ namespace Telegram.Views
 
         private string _headerColorKey;
         private string _backgroundColorKey;
+        private string _bottomBarColorKey;
 
         private void ProcessHeaderColor(JsonObject eventData)
         {
-            ProcessHeaderColor(ProcessColor(eventData, out _backgroundColorKey));
+            ProcessHeaderColor(ProcessColor(eventData, out _headerColorKey));
         }
 
         private void ProcessHeaderColor(Color? color)
@@ -480,7 +481,7 @@ namespace Telegram.Views
 
         private void ProcessBottomBarColor(JsonObject eventData)
         {
-            ProcessBottomBarColor(ProcessColor(eventData, out _backgroundColorKey));
+            ProcessBottomBarColor(ProcessColor(eventData, out _bottomBarColorKey));
         }
 
         private void ProcessBottomBarColor(Color? color)
@@ -1327,7 +1328,18 @@ namespace Telegram.Views
 
             if (_backgroundColorKey != null)
             {
-                ProcessHeaderColor(_backgroundColorKey switch
+                ProcessBackgroundColor(_backgroundColorKey switch
+                {
+                    "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
+                    "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
+                    "bottom_bar_bg_color" => Theme.Current.Parameters.BottomBarBackgroundColor.ToColor(),
+                    _ => new Color?(),
+                });
+            }
+
+            if (_bottomBarColorKey != null)
+            {
+                ProcessBottomBarColor(_bottomBarColorKey switch
                 {
                     "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
                     "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
