@@ -239,6 +239,25 @@
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
+                <controls:HeaderedControl Header="{CustomResource ChatDoubleClickAction}"
+                                          Footer="{x:Bind ConvertQuickAction(ViewModel.DoubleClickToReply), Mode=OneWay}">
+                    <RadioButton IsChecked="{x:Bind ViewModel.DoubleClickToReply, Mode=TwoWay}"
+                                 Content="{CustomResource DoubleClickReply}"
+                                 Style="{StaticResource SettingsRadioButtonStyle}"
+                                 GroupName="DoubleClick" />
+                    <Grid>
+                        <RadioButton IsChecked="{x:Bind ViewModel.DoubleClickToReact, Mode=TwoWay}"
+                                     Content="{CustomResource DoubleClickReact}"
+                                     Style="{StaticResource SettingsRadioButtonStyle}"
+                                     GroupName="DoubleClick" />
+                        <messages:ReactionButton x:Name="Reaction"
+                                                 Click="Reaction_Click"
+                                                 HorizontalAlignment="Right"
+                                                 VerticalAlignment="Center"
+                                                 Margin="0,0,12,0" />
+                    </Grid>
+                </controls:HeaderedControl>
+
                 <controls:HeaderedControl Header="{CustomResource OtherSettings}">
                     <CheckBox IsChecked="{x:Bind ViewModel.FullScreenGallery, Mode=TwoWay}"
                               Content="{CustomResource EnableFullScreenGallery}"

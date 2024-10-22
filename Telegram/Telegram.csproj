@@ -1001,7 +1001,6 @@
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAutoDeleteViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProfileViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsQuickReactionViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsThemeViewModel.cs" />
     <Compile Include="ViewModels\StickersViewModel.cs" />
@@ -1784,9 +1783,6 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsProxyPage.xaml.cs">
       <DependentUpon>SettingsProxyPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsQuickReactionPage.xaml.cs">
-      <DependentUpon>SettingsQuickReactionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsShortcutsPage.xaml.cs">
       <DependentUpon>SettingsShortcutsPage.xaml</DependentUpon>
@@ -3622,10 +3618,6 @@
     <Page Include="Views\Settings\SettingsProxyPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Settings\SettingsQuickReactionPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsShortcutsPage.xaml">
       <SubType>Designer</SubType>

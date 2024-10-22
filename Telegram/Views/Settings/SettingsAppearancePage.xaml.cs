@@ -5,11 +5,16 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
+using Telegram.Controls.Messages;
+using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -55,6 +60,9 @@ namespace Telegram.Views.Settings
             BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
+            ViewModel.Aggregator.Subscribe<UpdateDefaultReactionType>(this, Handle);
+
+            UpdateDefaultReactionType();
 
             if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
             {
@@ -77,6 +85,7 @@ namespace Telegram.Views.Settings
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
+            ViewModel.Aggregator.Unsubscribe(this);
         }
 
         #region Binding
@@ -90,6 +99,13 @@ namespace Telegram.Views.Settings
                 : mode == NightMode.System
                 ? Strings.AutoNightSystemDefault
                 : Strings.AutoNightDisabled;
+        }
+
+        private string ConvertQuickAction(bool reply)
+        {
+            return reply
+                ? Strings.QuickReactionInfo2
+                : Strings.QuickReactionInfo;
         }
 
         #endregion
@@ -235,6 +251,52 @@ namespace Telegram.Views.Settings
 
             Grid.SetRow(BubbleRadiusSlider, compact ? 1 : 0);
             Grid.SetColumn(BubbleRadiusSlider, compact ? 0 : 2);
+        }
+
+        private void Handle(UpdateDefaultReactionType update)
+        {
+            this.BeginOnUIThread(UpdateDefaultReactionType);
+        }
+
+        private void UpdateDefaultReactionType()
+        {
+            var reaction = ViewModel.ClientService.DefaultReaction;
+
+            var clientService = ViewModel.ClientService;
+            var senderId = new MessageSenderUser(clientService.Options.MyId);
+
+            var message = new Message(0, senderId, 0, null, null, false, false, false, false, false, false, false, false, 0, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, null, null);
+
+            var playback = TypeResolver.Current.Playback;
+            var settings = TypeResolver.Current.Resolve<ISettingsService>(clientService.SessionId);
+
+            var delegato = new ChatMessageDelegate(clientService, settings, null);
+            var viewModel = new MessageViewModel(clientService, playback, delegato, null, message, true);
+
+            Reaction.SetReaction(viewModel, new MessageReaction(reaction, 1, false, senderId, new MessageSender[] { }));
+
+            if (Reaction.IsLoaded)
+            {
+                Reaction.SetUnread(new UnreadReaction(reaction, senderId, false));
+            }
+        }
+
+        private void Reaction_Click(object sender, RoutedEventArgs e)
+        {
+            var empty = Array.Empty<AvailableReaction>();
+            var reactions = ViewModel.ClientService.ActiveReactions
+                .Select(x => new AvailableReaction(new ReactionTypeEmoji(x), false))
+                .ToList();
+
+            var viewModel = EmojiDrawerViewModel.Create(ViewModel.ClientService.SessionId, EmojiDrawerMode.Reactions);
+            _ = viewModel.UpdateReactions(new AvailableReactions(reactions, empty, empty, true, false, null));
+
+            var flyout = EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.Reactions, Reaction, EmojiFlyoutAlignment.TopRight, viewModel);
+
+            flyout.EmojiSelected += (s, args) =>
+            {
+                ViewModel.DoubleClickToReact = true;
+            };
         }
     }
 }

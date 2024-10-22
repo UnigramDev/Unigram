@@ -226,11 +226,16 @@ namespace Telegram.Views.Popups
 
         private void Flyout_EmojiSelected(object sender, EmojiSelectedEventArgs e)
         {
-            SelectedCustomEmojiId = e.CustomEmojiId;
+            if (e.Type is not ReactionTypeCustomEmoji customEmoji)
+            {
+                return;
+            }
+
+            SelectedCustomEmojiId = customEmoji.CustomEmojiId;
 
             UpdateProfileAccentColor(null, SelectedAccentColor?.Id ?? -1, SelectedCustomEmojiId);
 
-            if (e.CustomEmojiId != 0)
+            if (customEmoji.CustomEmojiId != 0)
             {
                 Animated.Source = new CustomEmojiFileSource(_clientService, SelectedCustomEmojiId);
                 Badge.Badge = string.Empty;

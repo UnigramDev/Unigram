@@ -29,11 +29,11 @@ namespace Telegram.Controls.Messages
 {
     public partial class EmojiSelectedEventArgs : EventArgs
     {
-        public long CustomEmojiId { get; }
+        public ReactionType Type { get; }
 
-        public EmojiSelectedEventArgs(long customEmojiId)
+        public EmojiSelectedEventArgs(ReactionType type)
         {
-            CustomEmojiId = customEmojiId;
+            Type = type;
         }
     }
 
@@ -92,12 +92,12 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment)
+        public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment, EmojiDrawerViewModel viewModel = null)
         {
-            return new EmojiMenuFlyout(clientService, mode, element, alignment);
+            return new EmojiMenuFlyout(clientService, mode, element, alignment, viewModel);
         }
 
-        private EmojiMenuFlyout(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment)
+        private EmojiMenuFlyout(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment, EmojiDrawerViewModel viewModel = null)
         {
             InitializeComponent();
 
@@ -106,7 +106,7 @@ namespace Telegram.Controls.Messages
 
             _popup = new Popup();
 
-            Initialize(clientService, element, alignment);
+            Initialize(clientService, element, alignment, viewModel);
         }
 
         public static EmojiMenuFlyout ShowAt(FrameworkElement element, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
@@ -529,10 +529,7 @@ namespace Telegram.Controls.Messages
             {
                 _popup.IsOpen = false;
 
-                if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji2)
-                {
-                    EmojiSelected?.Invoke(this, new EmojiSelectedEventArgs(customEmoji2.CustomEmojiId));
-                }
+                EmojiSelected?.Invoke(this, new EmojiSelectedEventArgs(sticker.ToReactionType()));
 
                 if (_story != null)
                 {

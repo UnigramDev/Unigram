@@ -46,7 +46,7 @@ namespace Telegram.ViewModels.Settings
         public SettingsStickersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new DiffObservableCollection<StickerSetInfo>(new StickerSetInfoDiffHandler());
+            //Items = new DiffObservableCollection<StickerSetInfo>(new StickerSetInfoDiffHandler());
 
             //StickerSetShareCommand = new RelayCommand<StickerSetInfo>(StickerSetShareExecute);
             //StickerSetCopyCommand = new RelayCommand<StickerSetInfo>(StickerSetCopyExecute);
@@ -409,11 +409,6 @@ namespace Telegram.ViewModels.Settings
         private void Open(StickersType type)
         {
             NavigationService.Navigate(typeof(SettingsStickersPage), (int)type);
-        }
-
-        public void OpenReaction()
-        {
-            NavigationService.Navigate(typeof(SettingsQuickReactionPage));
         }
 
         public partial class ItemsCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading

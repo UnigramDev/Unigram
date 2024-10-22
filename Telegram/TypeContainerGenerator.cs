@@ -146,7 +146,6 @@ namespace Telegram
                 typeof(SettingsDataAndStorageViewModel),
                 typeof(SettingsDataAutoViewModel),
                 typeof(SettingsProxyViewModel),
-                typeof(SettingsQuickReactionViewModel),
                 typeof(SettingsPrivacyAndSecurityViewModel),
                 typeof(SettingsPrivacyAllowCallsViewModel),
                 typeof(SettingsPrivacyAllowP2PCallsViewModel),

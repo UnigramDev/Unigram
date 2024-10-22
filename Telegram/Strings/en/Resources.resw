@@ -3405,6 +3405,9 @@ Minimum length is 5 characters.</value>
   <data name="ChatDocument" xml:space="preserve">
     <value>File</value>
   </data>
+  <data name="ChatDoubleClickAction" xml:space="preserve">
+    <value>Double Click Action</value>
+  </data>
   <data name="chatFullDate" xml:space="preserve">
     <value>MMMM d, yyyy</value>
   </data>
@@ -4270,6 +4273,12 @@ Anyone from the channel will be able to see messages in this group.</value>
   </data>
   <data name="DoNotTranslateLanguage" xml:space="preserve">
     <value>Don&apos;t translate {0}</value>
+  </data>
+  <data name="DoubleClickReact" xml:space="preserve">
+    <value>Add Reaction</value>
+  </data>
+  <data name="DoubleClickReply" xml:space="preserve">
+    <value>Reply</value>
   </data>
   <data name="DoubledLimits" xml:space="preserve">
     <value>Doubled Limits</value>
@@ -8806,6 +8815,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="QuickReactionInfo" xml:space="preserve">
     <value>Quickly reply to a message by double clicking on it.</value>
+  </data>
+  <data name="QuickReactionInfo2" xml:space="preserve">
+    <value>Quickly react to a message by double clicking on it.</value>
   </data>
   <data name="QuitTelegram" xml:space="preserve">
     <value>Quit Telegram</value>

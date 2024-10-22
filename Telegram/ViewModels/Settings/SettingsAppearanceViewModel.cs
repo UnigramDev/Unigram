@@ -265,6 +265,32 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
+        public bool DoubleClickToReply
+        {
+            get => Settings.Appearance.IsQuickReplySelected;
+            set
+            {
+                if (Settings.Appearance.IsQuickReplySelected != value)
+                {
+                    Settings.Appearance.IsQuickReplySelected = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool DoubleClickToReact
+        {
+            get => !Settings.Appearance.IsQuickReplySelected;
+            set
+            {
+                if (Settings.Appearance.IsQuickReplySelected == value)
+                {
+                    Settings.Appearance.IsQuickReplySelected = !value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
 
 
         public bool FullScreenGallery

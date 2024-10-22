@@ -578,11 +578,6 @@ namespace Telegram.Views
                         _settingsService,
                         _eventAggregator,
                         _networkService);
-                case "Telegram.ViewModels.Settings.SettingsQuickReactionViewModel":
-                    return (T)(object)new Telegram.ViewModels.Settings.SettingsQuickReactionViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
                 case "Telegram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel(
                         _clientService,

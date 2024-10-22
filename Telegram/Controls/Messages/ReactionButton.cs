@@ -221,7 +221,7 @@ namespace Telegram.Controls.Messages
         private void OnClick(object sender, RoutedEventArgs e)
         {
             var chosen = _reaction;
-            if (chosen != null && Icon != null)
+            if (chosen != null && Icon != null && _message?.Id != 0)
             {
                 OnClick(_message, chosen);
             }
