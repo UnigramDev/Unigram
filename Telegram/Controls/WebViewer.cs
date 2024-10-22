@@ -383,8 +383,7 @@ namespace Telegram.Controls
             {
                 View.CoreWebView2.NewWindowRequested += OnNewWindowRequested;
 
-                await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"window.external={invoke:s=>window.chrome.webview.postMessage(s)}");
-                await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
+                await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"window.external={invoke:s=>window.chrome.webview.postMessage(s)};
 window.TelegramWebviewProxy = {
 postEvent: function(eventType, eventData) {
 	if (window.external && window.external.invoke) {
@@ -394,10 +393,18 @@ postEvent: function(eventType, eventData) {
 }");
 
                 View.CoreWebView2.Settings.IsStatusBarEnabled = false;
-                View.CoreWebView2.Settings.IsSwipeNavigationEnabled = false;
-                View.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = false;
                 View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
                 View.CoreWebView2.Settings.AreDevToolsEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
+
+                try
+                {
+                    View.CoreWebView2.Settings.IsSwipeNavigationEnabled = false;
+                    View.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = false;
+                }
+                catch
+                {
+                    // Old versions don't support these
+                }
 
                 Initialize(true);
             }
