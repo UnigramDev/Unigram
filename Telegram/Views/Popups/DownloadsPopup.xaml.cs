@@ -21,34 +21,10 @@ namespace Telegram.Views.Popups
     {
         public DownloadsViewModel ViewModel => DataContext as DownloadsViewModel;
 
-        public DownloadsPopup(int sessionId, INavigationService navigationService)
+        public DownloadsPopup()
         {
             InitializeComponent();
-            DataContext = TypeResolver.Current.Resolve<DownloadsViewModel>(sessionId);
-
-            PrimaryButtonText = Strings.Close;
-
-            ViewModel.Dispatcher = navigationService.Dispatcher;
-            ViewModel.NavigationService = navigationService;
-            ViewModel.Hide = Hide;
-        }
-
-        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
-        {
-            _ = ViewModel.NavigatedToAsync(null, default, null);
-        }
-
-        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
-        {
-            ViewModel.NavigatedFrom(null, false);
-        }
-
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
+            Title = Strings.DownloadsTabs;
         }
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
@@ -70,7 +46,7 @@ namespace Telegram.Views.Popups
                 flyout.CreateFlyoutItem(ViewModel.ToggleAllPaused, Strings.ResumeAll, Icons.Play);
             }
 
-            flyout.CreateFlyoutItem(ViewModel.OpenSettings, Strings.Settings, Icons.Settings);
+            flyout.CreateFlyoutItem(OpenSettings, Strings.Settings, Icons.Settings);
 
             if (viewModel.Items.Count > 0)
             {
@@ -106,6 +82,18 @@ namespace Telegram.Views.Popups
             }
         }
 
+        private void OpenSettings()
+        {
+            Hide();
+            ViewModel.OpenSettings();
+        }
+
+        private void ViewFileDownload(FileDownloadViewModel fileDownload)
+        {
+            Hide();
+            ViewModel.ViewFileDownload(fileDownload);
+        }
+
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
@@ -114,11 +102,11 @@ namespace Telegram.Views.Popups
             if (fileDownload.CompleteDate == 0)
             {
                 flyout.CreateFlyoutItem(ViewModel.RemoveFileDownload, fileDownload, Strings.AccActionCancelDownload, Icons.Dismiss);
-                flyout.CreateFlyoutItem(ViewModel.ViewFileDownload, fileDownload, Strings.ViewInChat, Icons.ChatEmpty);
+                flyout.CreateFlyoutItem(ViewFileDownload, fileDownload, Strings.ViewInChat, Icons.ChatEmpty);
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.ViewFileDownload, fileDownload, Strings.ViewInChat, Icons.ChatEmpty);
+                flyout.CreateFlyoutItem(ViewFileDownload, fileDownload, Strings.ViewInChat, Icons.ChatEmpty);
                 flyout.CreateFlyoutItem(ViewModel.ShowFileDownload, fileDownload, Strings.ShowInFolder, Icons.FolderOpen);
 
                 flyout.CreateFlyoutItem(ViewModel.RemoveFileDownload, fileDownload, Strings.DeleteFromRecent, Icons.Delete);

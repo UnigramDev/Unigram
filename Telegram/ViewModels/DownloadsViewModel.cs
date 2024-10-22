@@ -35,8 +35,6 @@ namespace Telegram.ViewModels
             Items.UpdateQuery(string.Empty);
         }
 
-        public Action Hide { get; set; }
-
         public SearchCollection<FileDownloadViewModel, ItemCollection> Items { get; private set; }
 
         private ItemCollection SetSearch(object sender, string query)
@@ -149,7 +147,6 @@ namespace Telegram.ViewModels
 
         public void OpenSettings()
         {
-            Hide();
             NavigationService.Navigate(typeof(SettingsStoragePage));
         }
 
@@ -160,7 +157,6 @@ namespace Telegram.ViewModels
 
         public void ViewFileDownload(FileDownloadViewModel fileDownload)
         {
-            Hide();
             NavigationService.NavigateToChat(fileDownload.Message.ChatId, message: fileDownload.Message.Id);
         }
 

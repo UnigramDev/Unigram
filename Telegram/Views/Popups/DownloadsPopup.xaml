@@ -1,31 +1,14 @@
 ﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.DownloadsPopup"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Telegram.Views.Popups"
-                       xmlns:cells="using:Telegram.Controls.Cells"
-                       xmlns:controls="using:Telegram.Controls"
-                       xmlns:viewModels="using:Telegram.ViewModels"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:cells="using:Telegram.Controls.Cells"
+                       xmlns:viewModels="using:Telegram.ViewModels"
                        mc:Ignorable="d"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-                       Opened="OnOpened"
-                       Closed="OnClosed">
-
-    <ContentDialog.Title>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{CustomResource DownloadsTabs}"
-                       TextTrimming="CharacterEllipsis" />
-            <controls:MoreButton Click="Menu_ContextRequested"
-                                 Margin="0,-8,12,-24"
-                                 Grid.Column="1" />
-        </Grid>
-    </ContentDialog.Title>
+                       Padding="0,20,0,0"
+                       IsDismissButtonVisible="True">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -36,7 +19,7 @@
                  Text="{x:Bind ViewModel.Items.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  PlaceholderText="{CustomResource Search}"
                  PreventKeyboardDisplayOnProgrammaticFocus="True"
-                 VerticalAlignment="Center" />
+                 Margin="24,0" />
 
         <controls:AnimatedImage x:Name="Placeholder"
                                 x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
@@ -47,7 +30,7 @@
                                 DecodeFrameType="Logical"
                                 Width="140"
                                 Height="140"
-                                Margin="0,24,0,8"
+                                Margin="0,24,0,32"
                                 Grid.Row="1" />
 
 
@@ -57,7 +40,7 @@
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
                   MinHeight="172"
-                  Margin="-24,0"
+                  Padding="0,0,0,18"
                   Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:FileDownloadViewModel">
@@ -66,5 +49,16 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
+                                    Background="{ThemeResource ContentDialogBackground}"
+                                    BottomInset="0"
+                                    Grid.Row="1" />
+
+        <controls:MoreButton Click="Menu_ContextRequested"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Top"
+                             Margin="0,-58,40,0"
+                             CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>
