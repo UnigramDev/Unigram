@@ -48,7 +48,7 @@ namespace Telegram.Views.Premium.Popups
 
         private readonly DiffObservableCollection<Gift> _gifts = new(Constants.DiffOptions);
 
-        public GiftPopup(IClientService clientService, INavigationService navigationService, User user, IList<PremiumPaymentOption> options)
+        public GiftPopup(IClientService clientService, INavigationService navigationService, User user)
         {
             InitializeComponent();
 
@@ -67,20 +67,7 @@ namespace Telegram.Views.Premium.Popups
 
             ScrollingHost.ItemsSource = _gifts;
 
-            if (options.Count > 0)
-            {
-                PremiumOptions.ItemsSource = options
-                    .OrderBy(x => x.MonthCount)
-                    .ToList();
-
-                StarsRoot.Margin = new Thickness(0, 12, 0, 0);
-            }
-            else
-            {
-                PremiumTitle.Visibility = Visibility.Collapsed;
-                PremiumInfo.Visibility = Visibility.Collapsed;
-            }
-
+            InitializeOptions(clientService);
             InitializeGifts(clientService);
         }
 
@@ -111,6 +98,49 @@ namespace Telegram.Views.Premium.Popups
             All,
             Limited,
             StarCount
+        }
+
+        private async void InitializeOptions(IClientService clientService)
+        {
+            PremiumOptions.ItemsSource = new[]
+            {
+                new PremiumGiftCodePaymentOption(string.Empty, 0, 0, 0, string.Empty, 0),
+                new PremiumGiftCodePaymentOption(string.Empty, 0, 0, 0, string.Empty, 0),
+                new PremiumGiftCodePaymentOption(string.Empty, 0, 0, 0, string.Empty, 0),
+            };
+
+            var response = await clientService.SendAsync(new GetPremiumGiftCodePaymentOptions(0));
+            if (response is PremiumGiftCodePaymentOptions options)
+            {
+                // TODO: remove when DiscountPercentage is added to PremiumGiftCodePaymentOption
+                var items = options.Options
+                    .Where(x => x.WinnerCount == 1)
+                    .OrderBy(x => x.MonthCount)
+                    .ToList();
+                if (items.Count > 0)
+                {
+                    var minimum = items[0];
+                    var output = new List<PremiumPaymentOption>();
+
+                    static double PerMonth(PremiumGiftCodePaymentOption option)
+                    {
+                        return (double)option.Amount / option.MonthCount;
+                    }
+
+                    foreach (var item in items)
+                    {
+                        output.Add(new PremiumPaymentOption
+                        {
+                            Amount = item.Amount,
+                            Currency = item.Currency,
+                            MonthCount = item.MonthCount,
+                            DiscountPercentage = (int)((1 - (PerMonth(item) / PerMonth(minimum))) * 100)
+                        });
+                    }
+
+                    PremiumOptions.ItemsSource = output;
+                }
+            }
         }
 
         private async void InitializeGifts(IClientService clientService)
@@ -164,7 +194,7 @@ namespace Telegram.Views.Premium.Popups
             else if (e.ClickedItem is PremiumPaymentOption option)
             {
                 Hide();
-                MessageHelper.OpenTelegramUrl(_clientService, _navigationService, option.PaymentLink);
+                await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, new PremiumGiftCodePaymentOption(option.Currency, option.Amount, 1, option.MonthCount, string.Empty, 0), _userId));
             }
         }
 
@@ -178,9 +208,16 @@ namespace Telegram.Views.Premium.Popups
             {
                 userGiftCell.UpdateGift(_clientService, gift);
             }
-            else if (args.ItemContainer.ContentTemplateRoot is PremiumGiftCell premiumGiftCell && args.Item is PremiumPaymentOption option)
+            else if (args.ItemContainer.ContentTemplateRoot is PremiumGiftCell premiumGiftCell)
             {
-                premiumGiftCell.UpdatePremiumGift(_clientService, option);
+                if (args.Item is PremiumPaymentOption option)
+                {
+                    premiumGiftCell.UpdatePremiumGift(_clientService, option);
+                }
+                else if (args.Item is PremiumGiftCodePaymentOption option2)
+                {
+                    premiumGiftCell.UpdatePremiumGift(_clientService, option2);
+                }
             }
 
             args.Handled = true;

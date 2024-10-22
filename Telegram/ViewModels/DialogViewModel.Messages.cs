@@ -1770,6 +1770,10 @@ namespace Telegram.ViewModels
 
                 await ShowPopupAsync(new Views.Stars.Popups.ReceiptPopup(ClientService, NavigationService, new StarTransaction(giftedStars.TransactionId, giftedStars.StarCount, false, message.Date, partner)));
             }
+            else if (message.Content is MessageGiftedPremium giftedPremium)
+            {
+                await ShowPopupAsync(new Views.Premium.Popups.PromoPopup(ClientService, giftedPremium));
+            }
         }
 
         public async Task EditPhotoAsync(StorageMedia file)

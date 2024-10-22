@@ -670,10 +670,9 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (ClientService.TryGetUser(chat, out User user)
-                && ClientService.TryGetUserFull(chat, out UserFullInfo userFull))
+            if (ClientService.TryGetUser(chat, out User user))
             {
-                await ShowPopupAsync(new GiftPopup(ClientService, NavigationService, user, userFull.PremiumGiftOptions));
+                await ShowPopupAsync(new GiftPopup(ClientService, NavigationService, user));
             }
         }
 

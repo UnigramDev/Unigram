@@ -36,6 +36,8 @@ namespace Telegram.Controls.Messages
             DefaultStyleKey = typeof(MessageService);
         }
 
+        public MessageViewModel Message => _message;
+
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -77,7 +79,6 @@ namespace Telegram.Controls.Messages
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
-            Tag = message;
 
             var content = FindName("Text") as FormattedTextBlock;
             if (content == null)
@@ -198,15 +199,31 @@ namespace Telegram.Controls.Messages
                 var button = FindName("ViewLabel") as TextBlock;
                 var ribbonRoot = FindName("RibbonRoot") as Grid;
 
-                title.Text = Strings.ActionGiftPremiumTitle;
-                subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(string.Format(Strings.ActionGiftPremiumSubtitle, Locale.Declension(Strings.R.Months, giftedPremium.MonthCount))));
+                if (giftedPremium.Text.Text.Length > 0)
+                {
+                    subtitle.SetText(message.ClientService, giftedPremium.Text);
+                }
+                else
+                {
+                    subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(Strings.ActionGiftPremiumText));
+                }
+
+                title.Text = Locale.Declension(Strings.R.ActionGiftPremiumTitle2, giftedPremium.MonthCount);
                 button.Text = Strings.ActionGiftPremiumView;
                 view.Visibility = Visibility.Visible;
 
                 var animation = FindName("Animation") as AnimatedImage;
                 animation.LoopCount = 1;
-                animation.Source = DelayedFileSource.FromSticker(message.ClientService, giftedPremium.Sticker);
                 animation.Margin = new Thickness(0, -20, 0, 12);
+
+                if (Tag == null)
+                {
+                    animation.Source = DelayedFileSource.FromSticker(message.ClientService, giftedPremium.Sticker);
+                }
+                else
+                {
+                    animation.Source = new PremiumInfoFileSource(message.ClientService, giftedPremium.MonthCount);
+                }
 
                 ribbonRoot.Visibility = Visibility.Collapsed;
             }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
+using Telegram.Converters;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Streams;
@@ -23,6 +24,9 @@ namespace Telegram.Views.Stars.Popups
         private readonly INavigationService _navigationService;
 
         private readonly Gift _gift;
+
+        private readonly PremiumGiftCodePaymentOption _option;
+
         private readonly long _userId;
 
         public SendGiftPopup(IClientService clientService, INavigationService navigationService, Gift gift, long userId)
@@ -56,7 +60,7 @@ namespace Telegram.Views.Stars.Popups
             CaptionInput.DataContext = emoji;
             CaptionInput.CustomEmoji = CustomEmoji;
             CaptionInput.MaxLength = (int)clientService.Options.GiftTextLengthMax;
-
+            CaptionInput.PlaceholderText = Strings.Gift2Message;
             CaptionInput.AllowedEntities = FormattedTextEntity.Bold
                 | FormattedTextEntity.Italic
                 | FormattedTextEntity.Underline
@@ -64,24 +68,85 @@ namespace Telegram.Views.Stars.Popups
                 | FormattedTextEntity.Spoiler
                 | FormattedTextEntity.CustomEmoji;
 
+            CaptionInfo.Visibility = Visibility.Collapsed;
+
             if (clientService.TryGetUser(userId, out User user))
             {
                 HideMyNameInfo.Text = string.Format(Strings.Gift2HideInfo, user.FirstName);
             }
 
-            if (clientService.TryGetUser(clientService.Options.MyId, out user))
-            {
+            PurchaseText.Text = Locale.Declension(Strings.R.Gift2Send, gift.StarCount).Replace("\u2B50", Icons.Premium);
+        }
 
+        public SendGiftPopup(IClientService clientService, INavigationService navigationService, PremiumGiftCodePaymentOption option, long userId)
+        {
+            InitializeComponent();
+
+            _clientService = clientService;
+            _navigationService = navigationService;
+
+            _option = option;
+            _userId = userId;
+
+            base.Title = Strings.Gift2Title;
+
+            clientService.TryGetChatFromUser(clientService.Options.MyId, out Chat chat);
+
+            var content = new MessageGiftedPremium(_clientService.Options.MyId, _userId, new FormattedText(string.Empty, Array.Empty<TextEntity>()), _option.Currency, _option.Amount, string.Empty, 0, _option.MonthCount, null);
+            var message = new Message(0, new MessageSenderUser(clientService.Options.MyId), 0, null, null, false, false, false, false, false, false, false, false, 0, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, content, null);
+
+            var playback = TypeResolver.Current.Playback;
+            var settings = TypeResolver.Current.Resolve<ISettingsService>(clientService.SessionId);
+
+            var delegato = new ChatMessageDelegate(clientService, settings, chat);
+            var viewModel = new MessageViewModel(clientService, playback, delegato, chat, message, true);
+
+            BackgroundControl.Update(clientService, null);
+            Message.Tag = new object();
+            Message.UpdateMessage(viewModel);
+
+            var emoji = EmojiDrawerViewModel.Create(clientService.SessionId);
+            EmojiPanel.DataContext = emoji;
+            CaptionInput.DataContext = emoji;
+            CaptionInput.CustomEmoji = CustomEmoji;
+            CaptionInput.MaxLength = (int)clientService.Options.GiftTextLengthMax;
+            CaptionInput.PlaceholderText = Strings.Gift2MessageOptional;
+            CaptionInput.AllowedEntities = FormattedTextEntity.Bold
+                | FormattedTextEntity.Italic
+                | FormattedTextEntity.Underline
+                | FormattedTextEntity.Strikethrough
+                | FormattedTextEntity.Spoiler
+                | FormattedTextEntity.CustomEmoji;
+
+            HideMyNameRoot.Visibility = Visibility.Collapsed;
+
+            if (clientService.TryGetUser(userId, out User user))
+            {
+                CaptionInfo.Text = string.Format(Strings.Gift2MessagePremiumInfo, user.FirstName);
             }
 
-            PurchaseText.Text = Locale.Declension(Strings.R.Gift2Send, gift.StarCount).Replace("\u2B50", Icons.Premium);
+            PurchaseText.Text = string.Format(Strings.Gift2SendPremium, Formatter.FormatAmount(option.Amount, option.Currency));
         }
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
         {
-            _clientService.TryGetChatFromUser(_clientService.Options.MyId, out Chat chat);
+            var text = CaptionInput.GetFormattedText();
 
-            var content = new MessageGift(_gift, CaptionInput.GetFormattedText(), _gift.DefaultSellStarCount, false, false, false);
+            MessageContent content;
+            if (_gift != null)
+            {
+                content = new MessageGift(_gift, text, _gift.DefaultSellStarCount, false, false, false);
+            }
+            else if (_option != null)
+            {
+                content = new MessageGiftedPremium(_clientService.Options.MyId, _userId, text, _option.Currency, _option.Amount, string.Empty, 0, _option.MonthCount, null);
+            }
+            else
+            {
+                return;
+            }
+
+            _clientService.TryGetChatFromUser(_clientService.Options.MyId, out Chat chat);
             var message = new Message(0, new MessageSenderUser(_clientService.Options.MyId), 0, null, null, false, false, false, false, false, false, false, false, 0, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, content, null);
 
             var playback = TypeResolver.Current.Playback;
@@ -180,7 +245,29 @@ namespace Telegram.Views.Stars.Popups
             //ViewModel.Submit();
         }
 
-        public async Task<PayResult> SubmitAsync()
+        private Task<PayResult> SubmitAsync()
+        {
+            if (_gift != null)
+            {
+                return SubmitGiftAsync();
+            }
+            else if (_option != null)
+            {
+                return SubmitGiftCodeAsync();
+            }
+
+            return Task.FromResult(PayResult.Failed);
+        }
+
+        public Task<PayResult> SubmitGiftCodeAsync()
+        {
+            var text = CaptionInput.GetFormattedText();
+
+            _navigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposePremiumGiftCodes(0, _option.Currency, _option.Amount, new[] { _userId }, _option.MonthCount, text)));
+            return Task.FromResult(PayResult.Succeeded);
+        }
+
+        public async Task<PayResult> SubmitGiftAsync()
         {
             if (_clientService.OwnedStarCount < _gift.StarCount)
             {

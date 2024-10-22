@@ -189,12 +189,18 @@
                                   Height="32" />
         </Grid>
 
-        <CheckBox x:Name="HideMyName"
-                  Content="{CustomResource Gift2Hide}"
-                  Margin="24,8,24,0" />
-        <TextBlock x:Name="HideMyNameInfo"
+        <TextBlock x:Name="CaptionInfo"
                    Style="{StaticResource InfoCaptionTextBlockStyle}"
-                   Margin="24,0,24,24"/>
+                   Margin="24,8,24,24" />
+
+        <StackPanel x:Name="HideMyNameRoot">
+            <CheckBox x:Name="HideMyName"
+                      Content="{CustomResource Gift2Hide}"
+                      Margin="24,8,24,0" />
+            <TextBlock x:Name="HideMyNameInfo"
+                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                       Margin="24,0,24,24" />
+        </StackPanel>
 
         <Grid x:Name="PurchasePanel"
               VerticalAlignment="Bottom"

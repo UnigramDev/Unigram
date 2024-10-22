@@ -3879,13 +3879,13 @@ namespace Telegram.Views
 
         private async void ServiceMessage_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as FrameworkElement;
-            var message = button.Tag as MessageViewModel;
+            var button = sender as MessageService;
+            var message = button.Message;
 
             if (message == null)
             {
                 button = button.GetParent<MessageService>();
-                message = button?.Tag as MessageViewModel;
+                message = button?.Message as MessageViewModel;
             }
 
             if (message == null)

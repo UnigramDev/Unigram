@@ -469,8 +469,17 @@
   <data name="ActionGiftPremiumSubtitle" xml:space="preserve">
     <value>for {0}</value>
   </data>
+  <data name="ActionGiftPremiumText" xml:space="preserve">
+    <value>Subscription for exclusive Telegram features.</value>
+  </data>
   <data name="ActionGiftPremiumTitle" xml:space="preserve">
     <value>Telegram Premium</value>
+  </data>
+  <data name="ActionGiftPremiumTitle2_one" xml:space="preserve">
+    <value>{0} Month Premium</value>
+  </data>
+  <data name="ActionGiftPremiumTitle2_other" xml:space="preserve">
+    <value>{0} Months Premium</value>
   </data>
   <data name="ActionGiftPremiumView" xml:space="preserve">
     <value>View</value>
@@ -5715,6 +5724,18 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="Gift2Message" xml:space="preserve">
     <value>Enter Message</value>
   </data>
+  <data name="Gift2MessageOptional" xml:space="preserve">
+    <value>Enter Message (Optional)</value>
+  </data>
+  <data name="Gift2MessagePremiumInfo" xml:space="preserve">
+    <value>Only {0} will see your message.</value>
+  </data>
+  <data name="Gift2Months_one" xml:space="preserve">
+    <value>{0}-month</value>
+  </data>
+  <data name="Gift2Months_other" xml:space="preserve">
+    <value>{0}-months</value>
+  </data>
   <data name="Gift2Premium" xml:space="preserve">
     <value>Gift Premium</value>
   </data>
@@ -5741,6 +5762,9 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   </data>
   <data name="Gift2Send_other" xml:space="preserve">
     <value>Send a Gift for ⭐️ {0}</value>
+  </data>
+  <data name="Gift2SendPremium" xml:space="preserve">
+    <value>Send a Gift for {0}</value>
   </data>
   <data name="Gift2SoldOut" xml:space="preserve">
     <value>sold out</value>
@@ -10585,6 +10609,22 @@ Here’s what is now unlocked.</value>
   </data>
   <data name="TelegramPremiumUserDialogTitle" xml:space="preserve">
     <value>**{0}** is a subscriber of Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogSubtitle" xml:space="preserve">
+    <value>You now have access to additional features.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPlural" xml:space="preserve">
+    <value>**{0}** has gifted you a {1} subscription to Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumDialogTitleWithPluralSomeone" xml:space="preserve">
+    <value>Someone has gifted you a {0} subscription to Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle" xml:space="preserve">
+    <value>**{0}** now has access to additional features.</value>
+  </data>
+  <data name="TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural" xml:space="preserve">
+    <value>You gifted **{0}** a {1} subscription to
+Telegram Premium.</value>
   </data>
   <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
     <value>This is {0}&apos;s current status.</value>

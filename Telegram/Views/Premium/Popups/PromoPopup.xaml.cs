@@ -8,6 +8,7 @@ using System;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -126,6 +127,78 @@ namespace Telegram.Views.Premium.Popups
                 TextBlockHelper.SetMarkdown(ChatSubtitle, Strings.TelegramPremiumUserDialogSubtitle);
             }
 
+            ChatTitle.Visibility = Visibility.Visible;
+            ChatSubtitle.Visibility = Visibility.Visible;
+
+            PremiumTitle.Visibility = Visibility.Collapsed;
+            PremiumSubtitle.Visibility = Visibility.Collapsed;
+        }
+
+        public PromoPopup(IClientService clientService, MessageGiftedPremium giftedPremium)
+        {
+            InitializeComponent();
+
+            var gifter = clientService.GetUser(giftedPremium.GifterUserId);
+            var receiver = clientService.GetUser(giftedPremium.ReceiverUserId);
+            var monthCount = Locale.Declension(Strings.R.Gift2Months, giftedPremium.MonthCount);
+
+            if (giftedPremium.ReceiverUserId == 0)
+            {
+                if (gifter == null)
+                {
+                    var paragraph = new Paragraph();
+                    paragraph.Inlines.Add(string.Format(Strings.TelegramPremiumUserGiftedPremiumDialogTitleWithPluralSomeone, monthCount));
+
+                    ChatTitle.Blocks.Add(paragraph);
+                }
+                else
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Inlines.Add(gifter.FirstName);
+
+                    var plural = string.Format(Strings.TelegramPremiumUserGiftedPremiumDialogTitleWithPlural, "{0}", monthCount);
+
+                    var text = plural.Replace("**", string.Empty);
+                    var index = text.IndexOf("{0}");
+
+                    var prefix = text.Substring(0, index);
+                    var suffix = text.Substring(index + 3);
+
+                    var paragraph = new Paragraph();
+                    paragraph.Inlines.Add(prefix);
+                    paragraph.Inlines.Add(hyperlink);
+                    paragraph.Inlines.Add(suffix);
+
+                    ChatTitle.Blocks.Add(paragraph);
+                }
+
+                TextBlockHelper.SetMarkdown(ChatSubtitle, Strings.TelegramPremiumUserGiftedPremiumDialogSubtitle);
+            }
+            else
+            {
+                var hyperlink = new Hyperlink();
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Inlines.Add(receiver.FirstName);
+
+                var plural = string.Format(Strings.TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural, "{0}", monthCount);
+
+                var text = plural.Replace("**", string.Empty);
+                var index = text.IndexOf("{0}");
+
+                var prefix = text.Substring(0, index);
+                var suffix = text.Substring(index + 3);
+
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(prefix);
+                paragraph.Inlines.Add(hyperlink);
+                paragraph.Inlines.Add(suffix);
+
+                ChatTitle.Blocks.Add(paragraph);
+                TextBlockHelper.SetMarkdown(ChatSubtitle, string.Format(Strings.TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle, receiver.FirstName));
+            }
+
+            ChatTitle.FontSize = 14;
             ChatTitle.Visibility = Visibility.Visible;
             ChatSubtitle.Visibility = Visibility.Visible;
 
