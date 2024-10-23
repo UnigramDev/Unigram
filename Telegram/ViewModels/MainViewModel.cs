@@ -509,14 +509,14 @@ namespace Telegram.ViewModels
         // TODO: unify with DialogViewModel.Messages.cs 
         public void OpenMiniApp(AttachmentMenuBot bot, Action<bool> continuation)
         {
-            var user = ClientService.GetUser(bot.BotUserId);
-            if (user == null)
+            if (ClientService.TryGetUser(bot.BotUserId, out User user))
+            {
+                MessageHelper.OpenMiniApp(ClientService, NavigationService, user, bot, string.Empty, null, continuation);
+            }
+            else
             {
                 continuation(false);
-                return;
             }
-
-            MessageHelper.OpenMiniApp(ClientService, NavigationService, user, bot, string.Empty, null, continuation);
         }
 
         public async void RemoveMiniApp(AttachmentMenuBot bot)
