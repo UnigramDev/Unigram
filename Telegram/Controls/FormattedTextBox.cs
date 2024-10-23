@@ -456,7 +456,7 @@ namespace Telegram.Controls
 
                 if ((entities & FormattedTextEntity.Spoiler) != 0)
                 {
-                    formatting.CreateFlyoutItem(length, ToggleSpoiler, Strings.Spoiler, Icons.TabInPrivate, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+                    formatting.CreateFlyoutItem(length, ToggleSpoiler, Strings.Spoiler, Icons.Spoiler, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
                 }
 
                 formatting.CreateFlyoutSeparator();

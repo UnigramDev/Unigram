@@ -81,8 +81,8 @@
                                 AutomationProperties.Name="{CustomResource Spoiler}"
                                 ToolTipService.ToolTip="{CustomResource Spoiler}"
                                 AllowFocusOnInteraction="False"
-                                Glyph="&#xE97C;"
-                                CheckedGlyph="&#xE97C;"
+                                Glyph="&#xEAA1;"
+                                CheckedGlyph="&#xEAA1;"
                                 CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                                 IsOneWay="False" />
 
