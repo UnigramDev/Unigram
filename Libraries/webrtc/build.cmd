@@ -6,13 +6,21 @@ echo Setting environment variables
 set PATH=c:\depot_tools;%PATH%
 set DEPOT_TOOLS_WIN_TOOLCHAIN=0
 set GYP_MSVS_VERSION=2022
-REM c:
-REM cd c:\webrtc\src
+cd c:\webrtc\src
 if errorlevel 1 goto :error
 
 echo.
 echo Opening the developer command prompt
-call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=amd64
+
+echo Checking the Architecture type
+for /f "skip=1" %%a in ('wmic cpu get architecture') do (
+    set "cpu_arch=%%a"
+)
+if "%cpu_arch%"=="12" (
+    call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=arm64
+) else (
+    call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=amd64
+)
 if errorlevel 1 goto :error
 
 for %%a in (%~1) do (

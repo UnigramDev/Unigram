@@ -1,0 +1,12 @@
+diff --git a/pki/string_util.h b/pki/string_util.h
+index 27be48594..6a0273a85 100644
+--- a/pki/string_util.h
++++ b/pki/string_util.h
+@@ -8,6 +8,7 @@
+ #include <cstdint>
+ #include <string_view>
+ #include <vector>
++#include <string>
+ 
+ #include <openssl/base.h>
+ #include <openssl/span.h>
