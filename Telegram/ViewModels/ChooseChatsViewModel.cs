@@ -295,7 +295,6 @@ namespace Telegram.ViewModels
             {
                 Folders = new ObservableCollection<ChatFolderViewModel>();
             }
-
         }
 
         private async void LoadChats()
