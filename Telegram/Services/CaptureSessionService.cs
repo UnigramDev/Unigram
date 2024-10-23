@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Native.Composition;
 using Telegram.Views.Popups;
 using Windows.Graphics;
@@ -12,7 +13,7 @@ using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Common
+namespace Telegram.Services
 {
     public record CaptureSessionOptions(GraphicsCaptureItem CaptureItem, long ProcessId);
 
@@ -52,13 +53,13 @@ namespace Telegram.Common
         }
     }
 
-    public partial class CaptureSessionManager
+    public partial class CaptureSessionService
     {
         #region Choose
 
         public static async Task<CaptureSessionOptions> ChooseAsync(XamlRoot xamlRoot, bool canShareAudio)
         {
-            var access = await CaptureSessionManager.RequestAccessAsync();
+            var access = await CaptureSessionService.RequestAccessAsync();
             if (access == AppCapabilityAccessStatus.UserPromptRequired)
             {
                 var picker = new GraphicsCapturePicker();

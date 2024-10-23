@@ -1,8 +1,8 @@
 ﻿using Rg.DiffUtils;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Navigation;
+using Telegram.Services;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,7 +18,7 @@ namespace Telegram.Views.Popups
             InitializeComponent();
 
             _items = new DiffObservableCollection<CaptureSessionItem>(new CaptureSessionItemDiffHandler(), new DiffOptions { AllowBatching = false, DetectMoves = false });
-            _items.ReplaceDiff(CaptureSessionManager.FindAll());
+            _items.ReplaceDiff(CaptureSessionService.FindAll());
 
             ScrollingHost.ItemsSource = _items;
             ScrollingHost.SelectedIndex = 0;
@@ -67,7 +67,7 @@ namespace Telegram.Views.Popups
         {
             if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
             {
-                _items.ReplaceDiff(CaptureSessionManager.FindAll());
+                _items.ReplaceDiff(CaptureSessionService.FindAll());
             }
         }
 

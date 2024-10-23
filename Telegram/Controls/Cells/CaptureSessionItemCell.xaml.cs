@@ -1,9 +1,9 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI.Composition;
 using System.Numerics;
-using Telegram.Common;
 using Telegram.Native.Composition;
 using Telegram.Navigation;
+using Telegram.Services;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX;

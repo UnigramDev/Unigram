@@ -9,6 +9,7 @@ using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.Views.Host;
@@ -1063,7 +1064,7 @@ namespace Telegram.Views.Calls
                 }
                 else
                 {
-                    var item = await CaptureSessionManager.ChooseAsync(XamlRoot, false);
+                    var item = await CaptureSessionService.ChooseAsync(XamlRoot, false);
                     if (item == null)
                     {
                         return;

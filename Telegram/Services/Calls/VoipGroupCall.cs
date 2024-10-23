@@ -332,7 +332,7 @@ namespace Telegram.Services.Calls
                 return;
             }
 
-            var item = await CaptureSessionManager.ChooseAsync(xamlRoot, true);
+            var item = await CaptureSessionService.ChooseAsync(xamlRoot, true);
             if (item == null || _manager == null || _screenManager != null)
             {
                 return;
