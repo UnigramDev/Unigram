@@ -863,6 +863,9 @@ Your prize is **{0} Stars**.</value>
   <data name="AddStickers" xml:space="preserve">
     <value>Add Stickers</value>
   </data>
+  <data name="AddStickersNotFound" xml:space="preserve">
+    <value>Stickers not found</value>
+  </data>
   <data name="AddSubscriber" xml:space="preserve">
     <value>Add subscribers</value>
   </data>

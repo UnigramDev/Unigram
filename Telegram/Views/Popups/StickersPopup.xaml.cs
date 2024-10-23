@@ -35,6 +35,10 @@ namespace Telegram.Views.Popups
             InitializeComponent();
             DataContext = TypeResolver.Current.Resolve<StickersViewModel>(navigationService.SessionId);
 
+            ViewModel.NavigationService = navigationService;
+            ViewModel.Dispatcher = navigationService.Dispatcher;
+            ViewModel.PropertyChanged += OnPropertyChanged;
+
             // TODO: this might need to change depending on context
             _handler = new AnimatedListHandler(ScrollingHost, AnimatedListType.Stickers);
 
@@ -49,8 +53,19 @@ namespace Telegram.Views.Popups
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
+
             _handler.UnloadItems();
             _zoomer.Release();
+        }
+
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("STICKERSET_INVALID"))
+            {
+                Hide();
+                ViewModel.NavigationService.ShowToast(Strings.AddStickersNotFound, ToastPopupIcon.Info);
+            }
         }
 
         #region Show

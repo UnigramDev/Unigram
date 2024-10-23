@@ -147,10 +147,9 @@ namespace Telegram.ViewModels
 
                 Items.ReplaceWith(new[] { new Drawers.StickerSetViewModel(ClientService, stickerSet) });
             }
-            else
+            else if (response is Error error)
             {
-                Title = "Sticker pack not found.";
-                Items.Clear();
+                RaisePropertyChanged(error.Message);
             }
         }
 
