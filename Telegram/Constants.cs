@@ -29,9 +29,9 @@ namespace Telegram
         public const int HoldingThrottle = 500;
         public const int AnimatedThrottle = 200;
 
-        public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4" };
+        public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov", ".m4v" };
         public static readonly string[] PhotoTypes = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-        public static readonly string[] VideoTypes = new[] { ".mp4" };
+        public static readonly string[] VideoTypes = new[] { ".mp4", ".mov", ".m4v" };
 
         public const string WallpaperFileName = "wallpaper.jpg";
         public const string WallpaperLocalFileName = "wallpaper.local.jpg";
