@@ -41,6 +41,10 @@ namespace Telegram.Td
             {
                 return new TdBinlogReindexException();
             }
+            else if (IsOutOfMemoryError(message))
+            {
+                return new TdOutOfMemoryException();
+            }
 
             return new TdException(message);
         }
@@ -72,8 +76,14 @@ namespace Telegram.Td
         public static bool IsBinlogError(string message)
         {
             return message.Contains("Failed to rename binlog") ||
+                message.Contains("Can't rename") ||
                 message.Contains("Failed to unlink old binlog") ||
                 message.Contains(": 8 :");
+        }
+
+        private static bool IsOutOfMemoryError(string message)
+        {
+            return message.Contains("zlib deflate init failed");
         }
     }
 
@@ -93,6 +103,11 @@ namespace Telegram.Td
     }
 
     public partial class TdBinlogReindexException : TdException
+    {
+
+    }
+
+    public partial class TdOutOfMemoryException : TdException
     {
 
     }
