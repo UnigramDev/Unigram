@@ -29,7 +29,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
@@ -64,6 +63,8 @@ namespace Telegram.Controls
         public CustomEmojiCanvas CustomEmoji { get; set; }
         private Grid Blocks;
         private ScrollViewer ContentElement;
+
+        protected int _blockPadding = 24;
 
         public FormattedTextBox()
         {
@@ -1746,8 +1747,8 @@ namespace Telegram.Controls
                     else if (Blocks.Children[rects - 1] is FrameworkElement block)
                     {
                         block.Margin = new Thickness(0, rect.Y + 2, 8, 0);
-                        block.Height = rect.Height - 6;
-                        block.Width = ActualWidth - 48;
+                        block.Height = Math.Max(0, rect.Height - 6);
+                        block.Width = Math.Max(0, ActualWidth - _blockPadding);
                     }
                 }
             } while (range.MoveStart(TextRangeUnit.HardParagraph, 1) > 0);
@@ -1760,42 +1761,14 @@ namespace Telegram.Controls
 
         private UIElement CreateBlock(Rect rect)
         {
-            var field = new Grid
-            {
-                CornerRadius = new CornerRadius(4),
-                Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xe5, 0xf1, 0xff)),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(-3, rect.Y + 4, 8, 0),
-                Height = Math.Max(0, rect.Height - 4),
-                Width = Math.Max(0, ActualWidth - 48),
-                IsHitTestVisible = false
-            };
-
-            field.Children.Add(new TextBlock
-            {
-                Text = "\uE9B1",
-                Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x7a, 0xff)),
-                FontFamily = new FontFamily("Segoe Fluent Icons"),
-                FontSize = 24,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Margin = new Thickness(4)
-            });
-
-            field.Children.Add(new Border
-            {
-                BorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x7a, 0xff)),
-                BorderThickness = new Thickness(3, 0, 0, 0)
-            });
-
             return new BlockQuote
             {
                 Glyph = Icons.QuoteBlockFilled16,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(0, rect.Y + 4, 8, 0),
-                Height = rect.Height - 4,
-                Width = ActualWidth - 48,
+                Margin = new Thickness(0, rect.Y + 2, 8, 0),
+                Height = Math.Max(0, rect.Height - 6),
+                Width = Math.Max(0, ActualWidth - _blockPadding),
                 IsHitTestVisible = false
             };
         }

@@ -49,6 +49,8 @@ namespace Telegram.Controls.Chats
         {
             DefaultStyleKey = typeof(ChatTextBox);
             TextChanged += OnTextChanged;
+
+            _blockPadding = 48;
         }
 
         protected override void OnApplyTemplate()
