@@ -294,43 +294,6 @@ namespace Telegram.ViewModels
             return false;
         }
 
-        public ChatPermissions GetPermissions(Chat chat, out bool restricted)
-        {
-            return GetPermissions(ClientService, chat, out restricted);
-        }
-
-        public static ChatPermissions GetPermissions(IClientService clientService, Chat chat, out bool restrict)
-        {
-            restrict = false;
-
-            if (clientService.TryGetSupergroup(chat, out var supergroup))
-            {
-                if (supergroup.Status is ChatMemberStatusRestricted restricted)
-                {
-                    restrict = true;
-                    return restricted.Permissions;
-                }
-                else if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
-                {
-                    return new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
-                }
-            }
-            else if (clientService.TryGetBasicGroup(chat, out var basicGroup))
-            {
-                if (basicGroup.Status is ChatMemberStatusRestricted restricted)
-                {
-                    restrict = true;
-                    return restricted.Permissions;
-                }
-                else if (basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
-                {
-                    return new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
-                }
-            }
-
-            return chat.Permissions;
-        }
-
         public async void SendDocument()
         {
             var restricted = await VerifyRightsAsync(x => x.CanSendDocuments,
@@ -375,7 +338,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var permissions = GetPermissions(chat, out bool restricted);
+            var permissions = ClientService.GetPermissions(chat, out bool restricted);
 
             foreach (var item in items)
             {
@@ -410,25 +373,7 @@ namespace Telegram.ViewModels
 
             var self = ClientService.IsSavedMessages(chat);
 
-            bool mediaAllowed;
-            if (permissions.CanSendPhotos && permissions.CanSendVideos)
-            {
-                mediaAllowed = items.All(x => x is StoragePhoto or StorageVideo);
-            }
-            else if (permissions.CanSendPhotos)
-            {
-                mediaAllowed = items.All(x => x is StoragePhoto);
-            }
-            else if (permissions.CanSendVideos)
-            {
-                mediaAllowed = items.All(x => x is StorageVideo);
-            }
-            else
-            {
-                mediaAllowed = false;
-            }
-
-            var popup = new SendFilesPopup(this, items, media, mediaAllowed, permissions.CanSendDocuments || permissions.CanSendAudios, chat.Type is ChatTypePrivate && !self, CanSchedule, self, false);
+            var popup = new SendFilesPopup(this, items, media, permissions, chat.Type is ChatTypePrivate && !self, CanSchedule, self, false);
             popup.Caption = caption;
 
             if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
@@ -463,7 +408,7 @@ namespace Telegram.ViewModels
             {
                 await Task.Run(() => SendStorageMediaAsync(popup.Items[0], reply, captionz, popup.IsFilesSelected, options, captionAboveMedia, hasSpoiler, popup.StarCount));
             }
-            else if (popup.Items.Count > 1 && popup.IsAlbum && popup.IsAlbumAvailable)
+            else if (popup.Items.Count > 1 && popup.IsAlbum)
             {
                 var group = new List<StorageMedia>(Math.Min(popup.Items.Count, 10));
 

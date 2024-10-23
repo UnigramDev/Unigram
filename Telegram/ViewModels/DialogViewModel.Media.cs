@@ -318,6 +318,12 @@ namespace Telegram.ViewModels
 
         public async Task EditMediaAsync(StorageMedia storage)
         {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             var header = _composerHeader;
             if (header?.EditingMessage == null)
             {
@@ -326,10 +332,11 @@ namespace Telegram.ViewModels
 
             var formattedText = GetFormattedText(true);
 
-            var mediaAllowed = header.EditingMessage.Content is not MessageDocument;
+            var mediaSelected = header.EditingMessage.Content is not MessageDocument;
+            var permissions = ClientService.GetPermissions(chat, out _);
 
             var items = new[] { storage };
-            var popup = new SendFilesPopup(this, items, mediaAllowed, mediaAllowed, true, false, false, false, true);
+            var popup = new SendFilesPopup(this, items, mediaSelected, permissions, false, false, false, true);
             popup.ShowCaptionAboveMedia = header.EditingMessage.ShowCaptionAboveMedia();
             popup.Caption = formattedText
                 .Substring(0, ClientService.Options.MessageCaptionLengthMax);

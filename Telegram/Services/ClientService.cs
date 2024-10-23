@@ -186,6 +186,8 @@ namespace Telegram.Services
 
         IList<User> GetUsers(IEnumerable<long> ids);
 
+        ChatPermissions GetPermissions(Chat chat, out bool restricted);
+
         BasicGroup GetBasicGroup(long id);
         BasicGroup GetBasicGroup(Chat chat);
         bool TryGetBasicGroup(long id, out BasicGroup value);
@@ -1876,6 +1878,38 @@ namespace Telegram.Services
 
             value = null;
             return false;
+        }
+
+        public ChatPermissions GetPermissions(Chat chat, out bool restrict)
+        {
+            restrict = false;
+
+            if (TryGetSupergroup(chat, out var supergroup))
+            {
+                if (supergroup.Status is ChatMemberStatusRestricted restricted)
+                {
+                    restrict = true;
+                    return restricted.Permissions;
+                }
+                else if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
+                {
+                    return new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+                }
+            }
+            else if (TryGetBasicGroup(chat, out var basicGroup))
+            {
+                if (basicGroup.Status is ChatMemberStatusRestricted restricted)
+                {
+                    restrict = true;
+                    return restricted.Permissions;
+                }
+                else if (basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
+                {
+                    return new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+                }
+            }
+
+            return chat?.Permissions;
         }
 
 

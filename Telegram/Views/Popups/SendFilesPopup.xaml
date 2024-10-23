@@ -14,7 +14,7 @@
                        FocusPrimaryButton="False"
                        IsLightDismissEnabled="False"
                        IsDismissButtonVisible="True"
-                       Title="{x:Bind SendWithoutCompression, Mode=OneWay}"
+                       Title="{x:Bind TitleText, Mode=OneWay}"
                        Padding="0,24,0,0">
 
     <ContentControl.Resources>
@@ -400,7 +400,8 @@
                       Drop="ListView_Drop"
                       CanReorderItems="True"
                       CanDragItems="True"
-                      AllowDrop="True">
+                      AllowDrop="True"
+                      Padding="0,0,0,14">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment"
@@ -503,7 +504,8 @@
             </controls:OrientableListView>
         </Grid>
 
-        <controls:MoreButton Click="Menu_Click"
+        <controls:MoreButton x:Name="MoreButton"
+                             Click="More_ContextRequested"
                              HorizontalAlignment="Right"
                              VerticalAlignment="Top"
                              Margin="0,-62,40,0"

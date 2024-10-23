@@ -63,11 +63,30 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private bool _mediaAllowed;
+        private bool _photoAllowed;
+        private bool _videoAllowed;
         private bool _documentAllowed;
 
-        public bool IsMediaOnly => _mediaAllowed && _documentAllowed && Items.All(x => x is StoragePhoto or StorageVideo);
-        public bool IsAlbumAvailable => true;
+        public bool IsMediaAllowed
+        {
+            get
+            {
+                if (_photoAllowed && _videoAllowed)
+                {
+                    return Items.All(x => x is StoragePhoto or StorageVideo);
+                }
+                else if (_photoAllowed)
+                {
+                    return Items.All(x => x is StoragePhoto);
+                }
+                else if (_videoAllowed)
+                {
+                    return Items.All(x => x is StorageVideo);
+                }
+
+                return false;
+            }
+        }
 
         private bool _editing;
 
@@ -108,7 +127,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        public string SendWithoutCompression
+        public string TitleText
         {
             get
             {
@@ -130,21 +149,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private bool _wasAlbum = true;
-
-        private bool _isAlbum = true;
-        public bool IsAlbum
-        {
-            get => _isAlbum && IsAlbumAvailable;
-            set
-            {
-                if (_isAlbum != value)
-                {
-                    _isAlbum = value && IsAlbumAvailable;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAlbum)));
-                }
-            }
-        }
+        public bool IsAlbum { get; private set; } = true;
 
         private bool _showCaptionAboveMedia;
         public bool ShowCaptionAboveMedia
@@ -202,7 +207,7 @@ namespace Telegram.Views.Popups
         public bool? Schedule { get; private set; }
         public bool? Silent { get; private set; }
 
-        public SendFilesPopup(ComposeViewModel viewModel, IEnumerable<StorageMedia> items, bool media, bool mediaAllowed, bool documentAllowed, bool ttlAllowed, bool schedule, bool savedMessages, bool editing)
+        public SendFilesPopup(ComposeViewModel viewModel, IEnumerable<StorageMedia> items, bool media, ChatPermissions permissions, bool ttlAllowed, bool schedule, bool savedMessages, bool editing)
         {
             InitializeComponent();
 
@@ -231,15 +236,16 @@ namespace Telegram.Views.Popups
 
             _editing = editing;
             _ttlAllowed = ttlAllowed;
-            _mediaAllowed = mediaAllowed;
-            _documentAllowed = documentAllowed;
+            _photoAllowed = permissions.CanSendPhotos;
+            _videoAllowed = permissions.CanSendVideos;
+            _documentAllowed = permissions.CanSendDocuments;
 
             DataContext = viewModel;
             ViewModel = viewModel;
 
             Items = new MvxObservableCollection<StorageMedia>(items);
             Items.CollectionChanged += OnCollectionChanged;
-            IsMediaSelected = media && mediaAllowed && Items.All(x => x is StoragePhoto or StorageVideo);
+            IsMediaSelected = media && IsMediaAllowed;
             IsFilesSelected = !IsMediaSelected;
 
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(viewModel.SessionId);
@@ -252,7 +258,7 @@ namespace Telegram.Views.Popups
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SendWithoutCompression)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TitleText)));
 
             if (Items.Count > 0)
             {
@@ -628,8 +634,8 @@ namespace Telegram.Views.Popups
                             Items.Add(photo);
                         }
 
-                        UpdatePanel();
                         UpdateView();
+                        UpdatePanel();
                     }
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
@@ -646,8 +652,8 @@ namespace Telegram.Views.Popups
                         Items.AddRange(results);
                     }
 
-                    UpdatePanel();
                     UpdateView();
+                    UpdatePanel();
                 }
             }
             catch { }
@@ -657,22 +663,23 @@ namespace Telegram.Views.Popups
 
         private void UpdateView()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaOnly)));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAlbumAvailable)));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SendWithoutCompression)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaAllowed)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TitleText)));
 
-            if (IsMediaSelected && !IsMediaOnly && !_mediaAllowed)
+            if (IsMediaSelected && !IsMediaAllowed && _documentAllowed)
             {
                 IsMediaSelected = false;
                 IsFilesSelected = true;
             }
+
+            MoreButton.Visibility = Items.All(x => x is StoragePhoto or StorageVideo)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private void UpdatePanel()
         {
-            IsAlbum = IsAlbumAvailable;
-
-            var state = IsAlbum && IsAlbumAvailable && IsMediaSelected ? 1 : 0;
+            var state = IsMediaSelected ? 1 : 0;
             if (state != _panelState)
             {
                 _panelState = state;
@@ -930,16 +937,30 @@ namespace Telegram.Views.Popups
 
                 var flyout = new MenuFlyout();
 
-                if (IsAlbumAvailable)
-                {
-                    flyout.CreateFlyoutItem(() => { IsAlbum = false; Hide(ContentDialogResult.Primary); }, Strings.SendWithoutGrouping, "\uE90C");
-                }
-
-                flyout.CreateFlyoutItem(() => { Silent = true; Hide(ContentDialogResult.Primary); }, Strings.SendWithoutSound, Icons.AlertOff);
-                flyout.CreateFlyoutItem(() => { Schedule = true; Hide(ContentDialogResult.Primary); }, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
+                flyout.CreateFlyoutItem(SendWithoutGrouping, Strings.SendWithoutGrouping, "\uE90C");
+                flyout.CreateFlyoutItem(SendWithoutSound, Strings.SendWithoutSound, Icons.AlertOff);
+                flyout.CreateFlyoutItem(SendScheduled, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
 
                 flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.TopEdgeAlignedRight);
             }
+        }
+
+        private void SendWithoutGrouping()
+        {
+            IsAlbum = false;
+            Hide(ContentDialogResult.Primary);
+        }
+
+        private void SendWithoutSound()
+        {
+            Silent = true;
+            Hide(ContentDialogResult.Primary);
+        }
+
+        private void SendScheduled()
+        {
+            Schedule = true;
+            Hide(ContentDialogResult.Primary);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -1037,7 +1058,7 @@ namespace Telegram.Views.Popups
             return above ? 0 : 2;
         }
 
-        private void Menu_Click(object sender, RoutedEventArgs e)
+        private void More_ContextRequested(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
 
@@ -1047,14 +1068,17 @@ namespace Telegram.Views.Popups
             }
             else
             {
-                var withCompressionText =
-                    Items.All(x => x is StoragePhoto)
-                    ? Items.Count != 1 ? Strings.SendAsPhotos : Strings.SendAsPhoto
-                    : Items.All(x => x is StorageVideo) ? Items.Count != 1 ? Strings.SendAsVideo : Strings.SendAsVideos
-                    : Strings.SendAsMedia;
+                if (_documentAllowed && IsMediaAllowed && Items.All(x => x is StoragePhoto or StorageVideo))
+                {
+                    var withCompressionText =
+                        Items.All(x => x is StoragePhoto)
+                        ? Items.Count != 1 ? Strings.SendAsPhotos : Strings.SendAsPhoto
+                        : Items.All(x => x is StorageVideo) ? Items.Count != 1 ? Strings.SendAsVideo : Strings.SendAsVideos
+                        : Strings.SendAsMedia;
 
-                flyout.CreateFlyoutItem(ToggleIsFilesSelected, false, withCompressionText, IsFilesSelected ? null : Icons.Checkmark, Windows.System.VirtualKey.P, Windows.System.VirtualKeyModifiers.Control);
-                flyout.CreateFlyoutItem(ToggleIsFilesSelected, true, Items.Count != 1 ? Strings.SendAsFiles : Strings.SendAsFile, IsFilesSelected ? Icons.Checkmark : null, Windows.System.VirtualKey.F, Windows.System.VirtualKeyModifiers.Control);
+                    flyout.CreateFlyoutItem(ToggleIsFilesSelected, false, withCompressionText, IsFilesSelected ? null : Icons.Checkmark, Windows.System.VirtualKey.P, Windows.System.VirtualKeyModifiers.Control);
+                    flyout.CreateFlyoutItem(ToggleIsFilesSelected, true, Items.Count != 1 ? Strings.SendAsFiles : Strings.SendAsFile, IsFilesSelected ? Icons.Checkmark : null, Windows.System.VirtualKey.F, Windows.System.VirtualKeyModifiers.Control);
+                }
 
                 if (IsMediaSelected)
                 {
@@ -1256,31 +1280,32 @@ namespace Telegram.Views.Popups
             var ratio = w / positions.Item2.Width;
             var rects = new Rect[positions.Item1.Length];
 
+            static double SafeRatio(double v, double r)
+            {
+                v = Math.Max(0, v * r);
+                v = double.IsNaN(v) ? 0 : v;
+                return v;
+            }
+
             for (int i = 0; i < rects.Length; i++)
             {
                 var rect = positions.Item1[i].Item1;
 
-                var width = Math.Max(0, rect.Width * ratio);
-                var height = Math.Max(0, rect.Height * ratio);
-
-                width = double.IsNaN(width) ? 0 : width;
-                height = double.IsNaN(height) ? 0 : height;
+                var x = SafeRatio(rect.X, ratio);
+                var y = SafeRatio(rect.Y, ratio);
+                var width = SafeRatio(rect.Width, ratio);
+                var height = SafeRatio(rect.Height, ratio);
 
                 if (rects.Length == 1)
                 {
-                    rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, width, Math.Max(98, height));
+                    height = Math.Max(98, height);
                 }
-                else
-                {
-                    rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, width, height);
-                }
+
+                rects[i] = new Rect(x, y, width, height);
             }
 
-            var finalWidth = Math.Max(0, positions.Item2.Width * ratio);
-            var finalHeight = Math.Max(0, positions.Item2.Height * ratio);
-
-            finalWidth = double.IsNaN(finalWidth) ? 0 : finalWidth;
-            finalHeight = double.IsNaN(finalHeight) ? 0 : finalHeight;
+            var finalWidth = SafeRatio(positions.Item2.Width, ratio);
+            var finalHeight = SafeRatio(positions.Item2.Height, ratio);
 
             if (rects.Length == 1)
             {
