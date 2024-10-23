@@ -3649,6 +3649,33 @@ public static class CoreWebView2HttpRequestHeaders_stub
         }
     }
 }
+public static class CoreWebView2ScriptDialogOpeningEventArgs_stub
+{
+    public static void Accept_stub(this Microsoft.Web.WebView2.Core.CoreWebView2ScriptDialogOpeningEventArgs sender)
+    {
+        try
+        {
+            sender.Accept();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static Windows.Foundation.Deferral GetDeferral_stub(this Microsoft.Web.WebView2.Core.CoreWebView2ScriptDialogOpeningEventArgs sender)
+    {
+        try
+        {
+            return sender.GetDeferral();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
 public static class CoreWebView2WebMessageReceivedEventArgs_stub
 {
     public static string TryGetWebMessageAsString_stub(this Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs sender)
