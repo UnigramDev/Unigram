@@ -4919,21 +4919,37 @@ namespace Telegram.Views
             var none1 = _sideMenuCollapsed == SideButton.None;
             var prev = _sideMenuCollapsed;
 
-            if (next == SideButton.Alias || _sideMenuCollapsed == SideButton.Alias)
+            if (next == SideButton.Alias || (prev == SideButton.Alias && ButtonAlias.ActualWidth > 0))
             {
                 alias1 = true;
                 ButtonAlias.Visibility = Visibility.Visible;
             }
+            else if (prev == SideButton.Alias)
+            {
+                prev = SideButton.None;
+            }
 
-            if (next == SideButton.BotMenu || _sideMenuCollapsed == SideButton.BotMenu)
+            if (next == SideButton.BotMenu || (prev == SideButton.BotMenu && ButtonMore.ActualWidth > 0))
             {
                 menu1 = true;
                 ButtonMore.Visibility = Visibility.Visible;
             }
+            else if (prev == SideButton.BotMenu)
+            {
+                prev = SideButton.None;
+            }
 
             _sideMenuCollapsed = next;
 
-            if (next == SideButton.BotMenu)
+            if (next == SideButton.None && prev == SideButton.None)
+            {
+                TextField.IsMenuExpanded = false;
+                ButtonMore.Visibility = Visibility.Collapsed;
+                ButtonAlias.Visibility = Visibility.Collapsed;
+
+                return;
+            }
+            else if (next == SideButton.BotMenu)
             {
                 await ButtonMore.UpdateLayoutAsync();
             }
