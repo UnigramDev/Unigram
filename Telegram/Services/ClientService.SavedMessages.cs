@@ -53,25 +53,20 @@ namespace Telegram.Services
                 Monitor.Exit(_savedMessages);
 
                 var response = await SendAsync(new LoadSavedMessagesTopics(count - sorted.Count));
-                if (response is Ok or Error)
+                if (response is Error error)
                 {
-                    if (response is Error error)
+                    if (error.Code == 404)
                     {
-                        if (error.Code == 404)
-                        {
-                            _haveFullSavedMessages = true;
-                        }
-                        else
-                        {
-                            return null;
-                        }
+                        _haveFullSavedMessages = true;
                     }
-
-                    // Chats have already been received through updates, let's retry request
-                    return await GetSavedMessagesChatsAsyncImpl(offset, limit, true);
+                    else
+                    {
+                        return Array.Empty<SavedMessagesTopic>();
+                    }
                 }
 
-                return null;
+                // Chats have already been received through updates, let's retry request
+                return await GetSavedMessagesChatsAsyncImpl(offset, limit, true);
             }
 #endif
 

@@ -56,25 +56,20 @@ namespace Telegram.Services
                 Monitor.Exit(_storyList);
 
                 var response = await SendAsync(new LoadActiveStories(storyList));
-                if (response is Ok or Error)
+                if (response is Error error)
                 {
-                    if (response is Error error)
+                    if (error.Code == 404)
                     {
-                        if (error.Code == 404)
-                        {
-                            _haveFullStoryList[storyList] = true;
-                        }
-                        else
-                        {
-                            return null;
-                        }
+                        _haveFullStoryList[storyList] = true;
                     }
-
-                    // Chats have already been received through updates, let's retry request
-                    return await GetStoryListAsyncImpl(storyList, offset, limit, true);
+                    else
+                    {
+                        return new Chats(0, Array.Empty<long>());
+                    }
                 }
 
-                return null;
+                // Chats have already been received through updates, let's retry request
+                return await GetStoryListAsyncImpl(storyList, offset, limit, true);
             }
 #endif
 

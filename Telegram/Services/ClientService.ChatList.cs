@@ -56,30 +56,25 @@ namespace Telegram.Services
 #if MOCKUP
             _haveFullChatList[index] = true;
 #else
-            if (!haveFullList && count > sorted.Count && !reentrancy)
+            if (count > sorted.Count && !haveFullList && !reentrancy)
             {
                 Monitor.Exit(_chatList);
 
                 var response = await SendAsync(new LoadChats(chatList, count - sorted.Count));
-                if (response is Ok or Error)
+                if (response is Error error)
                 {
-                    if (response is Error error)
+                    if (error.Code == 404)
                     {
-                        if (error.Code == 404)
-                        {
-                            _haveFullChatList[chatList] = true;
-                        }
-                        else
-                        {
-                            return null;
-                        }
+                        _haveFullChatList[chatList] = true;
                     }
-
-                    // Chats have already been received through updates, let's retry request
-                    return await GetChatListAsyncImpl(chatList, offset, limit, true);
+                    else
+                    {
+                        return new Chats(0, Array.Empty<long>());
+                    }
                 }
 
-                return null;
+                // Chats have already been received through updates, let's retry request
+                return await GetChatListAsyncImpl(chatList, offset, limit, true);
             }
 #endif
 
