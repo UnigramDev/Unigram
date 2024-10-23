@@ -1767,8 +1767,8 @@ namespace Telegram.Controls
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Top,
                 Margin = new Thickness(-3, rect.Y + 4, 8, 0),
-                Height = rect.Height - 4,
-                Width = ActualWidth - 48,
+                Height = Math.Max(0, rect.Height - 4),
+                Width = Math.Max(0, ActualWidth - 48),
                 IsHitTestVisible = false
             };
 
