@@ -2930,6 +2930,7 @@ namespace Telegram.ViewModels
                     else if (response is Ok)
                     {
                         // TODO: quick reply
+                        ComposerHeader = null;
                     }
                     else if (response is Error error)
                     {
