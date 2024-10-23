@@ -237,7 +237,7 @@ namespace Telegram.ViewModels.Chats
                 var items = previews.Previews
                     .Select((x, i) => new Story
                     {
-                        Id = i,
+                        Id = i + 1,
                         SenderChatId = _chatId,
                         Date = x.Date,
                         Content = x.Content,
