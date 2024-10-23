@@ -218,7 +218,7 @@
         <Style x:Key="BlockTableHeaderStyle"
                TargetType="Border">
             <Setter Property="Background"
-                    Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                    Value="{ThemeResource ControlAltFillColorSecondaryBrush}" />
             <Setter Property="BorderBrush"
                     Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         </Style>
@@ -267,7 +267,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource SettingsPageBackground}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

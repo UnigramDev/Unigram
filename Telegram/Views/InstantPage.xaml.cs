@@ -350,13 +350,13 @@ namespace Telegram.Views
             return panel;
         }
 
-        private FrameworkElement ProcessTable(PageBlockTable table)
+        private FrameworkElement ProcessTable(PageBlockTable table, bool test = true)
         {
             var grid = new Grid();
 
             var thickness = table.IsBordered ? 1 : 0;
 
-            var columns = table.Cells.Max(x => x.Count);
+            var columns = table.Cells.Select(x => x.Sum(x => x.Colspan)).Max();
             var rows = table.Cells.Count;
 
             for (int i = 0; i < columns; i++)
@@ -425,11 +425,11 @@ namespace Telegram.Views
                     Grid.SetColumn(border, column);
                     Grid.SetColumnSpan(border, cell.Colspan);
 
-                    if (cell.Rowspan > 1 && column == 0)
+                    if (cell.Rowspan > 1 && column == adjust)
                     {
                         for (int i = 1; i < cell.Rowspan; i++)
                         {
-                            offset[row + i] = cell.Colspan;
+                            offset[row + i] = column + cell.Colspan;
                         }
                     }
 
@@ -438,7 +438,7 @@ namespace Telegram.Views
                     column += cell.Colspan;
                 }
 
-                grid.RowDefinitions.Add(new RowDefinition());
+                grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
 
                 row++;
             }
@@ -450,6 +450,25 @@ namespace Telegram.Views
             scroll.VerticalScrollMode = ScrollMode.Disabled;
 
             scroll.Content = grid;
+
+            if (test && Constants.DEBUG)
+            {
+                var panel = new StackPanel();
+                //panel.Children.Add(caption);
+                panel.Children.Add(scroll);
+
+                var button = new Button();
+                button.Content = "Rebuild";
+                button.Click += (s, args) =>
+                {
+                    panel.Children.RemoveAt(0);
+                    panel.Children.Insert(0, ProcessTable(table, false));
+                };
+
+                panel.Children.Add(button);
+
+                return panel;
+            }
 
             var caption = ProcessText(table, true);
             if (caption != null)
