@@ -7,6 +7,7 @@ using Telegram.Common;
 using Telegram.Native;
 using Telegram.Services;
 using Windows.Data.Json;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -55,6 +56,39 @@ namespace Telegram.Controls
         }
     }
 
+    public enum WebViewerScriptDialogKind
+    {
+        Alert,
+        Confirm,
+        Prompt
+    }
+
+    public partial class WebViewerScriptDialogOpeningEventArgs : EventArgs
+    {
+        private readonly CoreWebView2ScriptDialogOpeningEventArgs _args;
+
+        public WebViewerScriptDialogOpeningEventArgs(CoreWebView2ScriptDialogOpeningEventArgs args)
+        {
+            _args = args;
+        }
+
+        public string ResultText
+        {
+            get => _args.ResultText;
+            set => _args.ResultText = value;
+        }
+
+        public string DefaultText => _args.DefaultText;
+
+        public WebViewerScriptDialogKind Kind => (WebViewerScriptDialogKind)_args.Kind;
+
+        public string Message => _args.Message;
+
+        public void Accept() => _args.Accept();
+
+        public Deferral GetDeferral() => _args.GetDeferral();
+    }
+
     public partial class WebViewer : ContentControl
     {
         private WebPresenter _presenter;
@@ -78,6 +112,7 @@ namespace Telegram.Controls
             _presenter.Navigated += OnNavigated;
             _presenter.EventReceived += OnEventReceived;
             _presenter.NewWindowRequested += OnNewWindowRequested;
+            _presenter.ScriptDialogOpening += OnScriptDialogOpening;
 
             Content = _presenter;
         }
@@ -100,12 +135,14 @@ namespace Telegram.Controls
             _presenter.Navigated -= OnNavigated;
             _presenter.EventReceived -= OnEventReceived;
             _presenter.NewWindowRequested -= OnNewWindowRequested;
+            _presenter.ScriptDialogOpening -= OnScriptDialogOpening;
 
             _presenter = new EdgeWebPresenter();
             _presenter.Navigating += OnNavigating;
             _presenter.Navigated += OnNavigated;
             _presenter.EventReceived += OnEventReceived;
             _presenter.NewWindowRequested += OnNewWindowRequested;
+            _presenter.ScriptDialogOpening += OnScriptDialogOpening;
 
             Content = _presenter;
 
@@ -140,6 +177,11 @@ namespace Telegram.Controls
             NewWindowRequested?.Invoke(this, e);
         }
 
+        private void OnScriptDialogOpening(object sender, WebViewerScriptDialogOpeningEventArgs e)
+        {
+            ScriptDialogOpening?.Invoke(this, e);
+        }
+
         public event EventHandler<WebViewerNavigatingEventArgs> Navigating;
 
         public event EventHandler<WebViewerNavigatedEventArgs> Navigated;
@@ -147,6 +189,8 @@ namespace Telegram.Controls
         public event EventHandler<WebViewerEventReceivedEventArgs> EventReceived;
 
         public event EventHandler<WebViewerNewWindowRequestedEventArgs> NewWindowRequested;
+
+        public event EventHandler<WebViewerScriptDialogOpeningEventArgs> ScriptDialogOpening;
 
         public async void Navigate(string uri)
         {
@@ -221,6 +265,8 @@ namespace Telegram.Controls
 
         public event EventHandler<WebViewerNewWindowRequestedEventArgs> NewWindowRequested;
 
+        public event EventHandler<WebViewerScriptDialogOpeningEventArgs> ScriptDialogOpening;
+
         public abstract void Navigate(string uri);
 
         public abstract void NavigateToString(string htmlContent);
@@ -253,6 +299,11 @@ namespace Telegram.Controls
             var args = new WebViewerNewWindowRequestedEventArgs(url);
             NewWindowRequested?.Invoke(this, args);
             return args.Cancel;
+        }
+
+        protected void OnScriptDialogOpening(WebViewerScriptDialogOpeningEventArgs args)
+        {
+            ScriptDialogOpening?.Invoke(this, args);
         }
     }
 
@@ -382,6 +433,7 @@ namespace Telegram.Controls
             if (View.CoreWebView2 != null)
             {
                 View.CoreWebView2.NewWindowRequested += OnNewWindowRequested;
+                View.CoreWebView2.ScriptDialogOpening += OnScriptDialogOpening;
 
                 await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"window.external={invoke:s=>window.chrome.webview.postMessage(s)};
 window.TelegramWebviewProxy = {
@@ -393,6 +445,7 @@ postEvent: function(eventType, eventData) {
 }");
 
                 View.CoreWebView2.Settings.IsStatusBarEnabled = false;
+                View.CoreWebView2.Settings.AreDefaultScriptDialogsEnabled = false;
                 View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
                 View.CoreWebView2.Settings.AreDevToolsEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
 
@@ -480,6 +533,11 @@ postEvent: function(eventType, eventData) {
         private void OnNewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
         {
             args.Handled = OnNewWindowRequested(args.Uri);
+        }
+
+        private void OnScriptDialogOpening(CoreWebView2 sender, CoreWebView2ScriptDialogOpeningEventArgs args)
+        {
+            OnScriptDialogOpening(new WebViewerScriptDialogOpeningEventArgs(args));
         }
 
         public override void Navigate(string uri)

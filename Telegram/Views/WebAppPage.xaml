@@ -173,6 +173,7 @@
                             Navigated="View_Navigated"
                             EventReceived="View_EventReceived"
                             NewWindowRequested="View_NewWindowRequested"
+                            ScriptDialogOpening="View_ScriptDialogOpening"
                             SizeChanged="View_SizeChanged"
                             Grid.RowSpan="2"
                             Grid.Row="1" />

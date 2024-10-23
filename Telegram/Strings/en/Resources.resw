@@ -12011,6 +12011,9 @@ in your streaming app.</value>
   <data name="WebAppDisclaimerUrl" xml:space="preserve">
     <value>https://telegram.org/tos/mini-apps</value>
   </data>
+  <data name="WebAppShareStoryNotSupported" xml:space="preserve">
+    <value>Sharing to Stories is not supported on Desktop. Please use one of Telegram&apos;s mobile apps.</value>
+  </data>
   <data name="WebSessionsTitle" xml:space="preserve">
     <value>Logged In with Telegram</value>
   </data>

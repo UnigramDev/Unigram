@@ -240,6 +240,42 @@ namespace Telegram.Views
             e.Cancel = true;
         }
 
+        private async void View_ScriptDialogOpening(object sender, WebViewerScriptDialogOpeningEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+
+            if (args.Kind == WebViewerScriptDialogKind.Prompt)
+            {
+                var popup = new InputPopup(InputPopupType.Text)
+                {
+                    Title = _botUser.FirstName,
+                    Header = args.Message,
+                    Text = args.DefaultText,
+                    PrimaryButtonText = Strings.OK,
+                    PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
+                    SecondaryButtonText = Strings.Cancel,
+                    RequestedTheme = ActualTheme
+                };
+
+                var confirm = await popup.ShowQueuedAsync(XamlRoot);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    args.ResultText = popup.Text;
+                    args.Accept();
+                }
+            }
+            else
+            {
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, args.Message, _botUser.FirstName, Strings.OK, args.Kind == WebViewerScriptDialogKind.Confirm ? Strings.Cancel : string.Empty);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    args.Accept();
+                }
+            }
+
+            deferral.Complete();
+        }
+
         private void View_Navigating(object sender, WebViewerNavigatingEventArgs e)
         {
             if (Uri.TryCreate(e.Url, UriKind.Absolute, out Uri uri))
@@ -364,6 +400,10 @@ namespace Telegram.Views
             {
                 ProcessBottomBarColor(eventData);
             }
+            else if (eventName == "web_app_share_to_story")
+            {
+                ProcessShareToStory(eventData);
+            }
             // Games
             else if (eventName == "share_game")
             {
@@ -378,6 +418,11 @@ namespace Telegram.Views
         private async void ProcessShareGame(bool withMyScore)
         {
             await this.ShowPopupAsync(_clientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessage(_gameChatId, _gameMessageId, withMyScore));
+        }
+
+        private async void ProcessShareToStory(JsonObject eventData)
+        {
+            await MessagePopup.ShowAsync(XamlRoot, Strings.WebAppShareStoryNotSupported, Strings.AppName, Strings.OK);
         }
 
         private async void RequestClipboardText(JsonObject eventData)
@@ -609,6 +654,11 @@ namespace Telegram.Views
                 return;
             }
 
+            if (string.IsNullOrEmpty(title))
+            {
+                title = _botUser.FirstName;
+            }
+
             var label = new TextBlock
             {
                 Text = message,
@@ -619,10 +669,10 @@ namespace Telegram.Views
             var panel = new Grid
             {
                 ColumnSpacing = 8,
-                Margin = new Thickness(0, 8, 0, 0)
+                RowSpacing = 24
             };
 
-            panel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+            panel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
             panel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
             panel.Children.Add(label);
 
@@ -630,10 +680,16 @@ namespace Telegram.Views
             {
                 Title = title,
                 Content = panel,
-                Width = 388,
-                MinWidth = 388,
-                MaxWidth = 388,
+                ContentMaxWidth = 388,
             };
+
+            void unloaded(object sender, RoutedEventArgs e)
+            {
+                PostEvent("popup_closed");
+                popup.Unloaded -= unloaded;
+            }
+
+            popup.Unloaded += unloaded;
 
             void click(object sender, RoutedEventArgs e)
             {
@@ -643,6 +699,7 @@ namespace Telegram.Views
                     button.Click -= click;
                 }
 
+                popup.Unloaded -= unloaded;
                 popup.Hide();
             }
 
