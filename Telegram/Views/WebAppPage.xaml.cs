@@ -82,7 +82,6 @@ namespace Telegram.Views
 
             Window.Current.SetTitleBar(TitleBar);
 
-            ViewLifetimeControl.GetForCurrentView().Released += OnReleased;
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
 
             var coreWindow = (IInternalCoreWindowPhone)(object)Window.Current.CoreWindow;
@@ -115,7 +114,6 @@ namespace Telegram.Views
 
             Window.Current.SetTitleBar(TitleBar);
 
-            ViewLifetimeControl.GetForCurrentView().Released += OnReleased;
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
 
             var coreWindow = (IInternalCoreWindowPhone)(object)Window.Current.CoreWindow;
@@ -173,6 +171,23 @@ namespace Telegram.Views
 
         private async void Close()
         {
+            if (_closeNeedConfirmation)
+            {
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.BotWebViewChangesMayNotBeSaved, _botUser.FirstName, Strings.BotWebViewCloseAnyway, Strings.Cancel, destructive: true);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    _closeNeedConfirmation = false;
+                    CloseImpl();
+                }
+            }
+            else
+            {
+                CloseImpl();
+            }
+        }
+
+        private void CloseImpl()
+        {
             if (_closed)
             {
                 return;
@@ -182,20 +197,22 @@ namespace Telegram.Views
 
             if (WindowContext.Current != null)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                _ = WindowContext.Current.ConsolidateAsync();
             }
             else
             {
-                await ApplicationView.GetForCurrentView().TryConsolidateAsync();
+                _ = ApplicationView.GetForCurrentView().TryConsolidateAsync();
             }
         }
 
-        private void OnReleased(object sender, System.EventArgs e)
+        private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             if (_launchId != 0)
             {
                 _clientService.Send(new CloseWebApp(_launchId));
             }
+
+            View.Close();
         }
 
         private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
@@ -208,7 +225,6 @@ namespace Telegram.Views
                 if (confirm == ContentDialogResult.Primary)
                 {
                     _closeNeedConfirmation = false;
-                    View.Close();
                 }
                 else
                 {
@@ -317,7 +333,7 @@ namespace Telegram.Views
 
             if (eventName == "web_app_close")
             {
-                // TODO: probably need to inform the web view
+                _closeNeedConfirmation = false;
                 Close();
             }
             else if (eventName == "web_app_data_send")
@@ -1252,6 +1268,7 @@ namespace Telegram.Views
                 AllowChannelChats = values.Contains("channels")
             };
 
+            _closeNeedConfirmation = false;
             Close();
 
             if (target.AllowBotChats || target.AllowUserChats || target.AllowGroupChats || target.AllowChannelChats)
