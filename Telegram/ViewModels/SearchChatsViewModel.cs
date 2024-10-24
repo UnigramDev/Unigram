@@ -114,7 +114,7 @@ namespace Telegram.ViewModels
         private bool _isTopChatsVisible;
         public bool IsTopChatsVisible
         {
-            get => _isTopChatsVisible && SelectedTab == 0;
+            get => _isTopChatsVisible && Options.AllowUserChats && SelectedTab == 0;
             set => Set(ref _isTopChatsVisible, value);
         }
 

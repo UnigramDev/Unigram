@@ -283,6 +283,7 @@ namespace Telegram.Views.Popups
             UserIsBot = requestUsers.UserIsBot;
             RestrictUserIsBot = requestUsers.RestrictUserIsBot;
 
+            AllowUserChats = !RestrictUserIsBot || (RestrictUserIsBot && !UserIsBot);
             Mode = ChooseChatsMode.Contacts;
         }
 
@@ -349,6 +350,7 @@ namespace Telegram.Views.Popups
             RestrictChatIsForum = requestChat.RestrictChatIsForum;
             ChatIsChannel = requestChat.ChatIsChannel;
 
+            AllowUserChats = false;
             Mode = ChooseChatsMode.Chats;
         }
 
