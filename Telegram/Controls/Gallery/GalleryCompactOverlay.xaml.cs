@@ -26,7 +26,7 @@ namespace Telegram.Controls.Gallery
         private GalleryViewModelBase _viewModel;
         private VideoPlayerBase _player;
 
-        private static GalleryCompactOverlay _current;
+        private static volatile GalleryCompactOverlay _current;
 
         public GalleryCompactOverlay(AppWindow window, GalleryViewModelBase viewModel, GalleryMedia media, VideoPlayerBase player)
         {
@@ -70,7 +70,11 @@ namespace Telegram.Controls.Gallery
 
             _player = null;
             _window = null;
-            _current = null;
+
+            if (_current == this)
+            {
+                _current = null;
+            }
         }
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
@@ -200,6 +204,7 @@ namespace Telegram.Controls.Gallery
                 Logger.Info("Does not exist, or different thread, create");
 
                 _current?.BeginOnUIThread(_current.Close);
+                _current = null;
 
                 // Reset the state so that hopefully the window gets the right size/position
                 AppWindow.ClearPersistedState("Gallery");
