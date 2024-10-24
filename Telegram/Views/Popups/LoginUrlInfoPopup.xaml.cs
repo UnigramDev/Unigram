@@ -19,7 +19,7 @@ namespace Telegram.Views.Popups
             InitializeComponent();
 
             Title = Strings.OpenUrlTitle;
-            Message = string.Format(Strings.OpenUrlAlert2, requestConfirmation.Url);
+            Message = string.Format(Strings.OpenUrlAlert2, string.Format("[{0}]({0})", requestConfirmation.Url));
             PrimaryButtonText = Strings.Open;
             SecondaryButtonText = Strings.Cancel;
 

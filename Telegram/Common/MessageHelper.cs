@@ -1434,7 +1434,7 @@ namespace Telegram.Common
                 {
                     if (untrust)
                     {
-                        var confirm = await navigationService.ShowPopupAsync(string.Format(Strings.OpenUrlAlert, url), Strings.OpenUrlTitle, Strings.Open, Strings.Cancel);
+                        var confirm = await navigationService.ShowPopupAsync(string.Format(Strings.OpenUrlAlert, string.Format("[{0}]({0})", url)), Strings.OpenUrlTitle, Strings.Open, Strings.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;
