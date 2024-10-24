@@ -56,22 +56,21 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="Subtitle"
-                   Style="{StaticResource InfoBodyTextBlockStyle}"
-                   Margin="24,0,24,0" />
+        <TextBlock Style="{StaticResource InfoBodyTextBlockStyle}"
+                   Margin="24,0,24,0">
+            <Run x:Name="FromLanguage" />
+            <Hyperlink Click="ToLanguage_Click"
+                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}">
+                <Run x:Name="ToLanguage" />
+            </Hyperlink>
+        </TextBlock>
 
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel x:Name="Presenter"
-                        Margin="0,8,0,24">
-                <StackPanel.ChildrenTransitions>
-                    <TransitionCollection>
-                        <RepositionThemeTransition />
-                    </TransitionCollection>
-                </StackPanel.ChildrenTransitions>
-            </StackPanel>
+            <controls:LoadingTextBlock x:Name="Presenter"
+                                       Margin="0,8,0,24" />
         </ScrollViewer>
 
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"

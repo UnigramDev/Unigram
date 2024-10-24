@@ -5,11 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Views.Popups
 {
@@ -20,6 +21,11 @@ namespace Telegram.Views.Popups
 
         private readonly long _chatId;
         private readonly long _messageId;
+
+        private readonly string _text;
+
+        private readonly string _fromLanguage;
+        private readonly bool _contentProtected;
 
         private bool _loadingMore;
 
@@ -39,6 +45,11 @@ namespace Telegram.Views.Popups
             _chatId = chatId;
             _messageId = messageId;
 
+            _text = text;
+
+            _fromLanguage = fromLanguage;
+            _contentProtected = contentProtected;
+
             Title = Strings.AutomaticTranslation;
             PrimaryButtonText = Strings.Close;
             //SecondaryButtonText = Strings.Language;
@@ -48,35 +59,25 @@ namespace Telegram.Views.Popups
 
             if (string.IsNullOrEmpty(fromName))
             {
-                Subtitle.Text = string.Format("Auto \u2192 {0}", toName);
+                FromLanguage.Text = "Auto \u2192";
             }
             else
             {
-                Subtitle.Text = string.Format("{0} \u2192 {1}", fromName, toName);
+                FromLanguage.Text = string.Format("{0} \u2192", fromName);
             }
 
-            var block = new LoadingTextBlock
-            {
-                PlaceholderText = text,
-                IsPlaceholderRightToLeft = rtl,
-                IsTextSelectionEnabled = !contentProtected,
-                Margin = new Thickness(0, Presenter.Children.Count > 0 ? -8 : 0, 0, 0)
-            };
+            ToLanguage.Text = toName;
 
-            Presenter.Children.Add(block);
+            Presenter.PlaceholderText = text;
+            Presenter.IsPlaceholderRightToLeft = rtl;
+            Presenter.IsTextSelectionEnabled = !contentProtected;
+
             Opened += OnOpened;
         }
 
         private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            if (Presenter.Children.Count > 0)
-            {
-                await TranslateTokenAsync(Presenter.Children[0] as LoadingTextBlock);
-            }
-        }
-
-        private async Task TranslateTokenAsync(LoadingTextBlock block)
-        {
+            var block = Presenter;
             if (_loadingMore || block.PlaceholderText == null || block.Tag != null)
             {
                 return;
@@ -124,6 +125,20 @@ namespace Telegram.Views.Popups
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+        }
+
+        private async void ToLanguage_Click(Hyperlink sender, HyperlinkClickEventArgs args)
+        {
+            Hide();
+
+            var popup = new TranslateToPopup();
+
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var translate = new TranslatePopup(_translateService, _chatId, _messageId, _text, _fromLanguage, popup.SelectedItem, _contentProtected);
+                _ = translate.ShowQueuedAsync(XamlRoot);
+            }
         }
     }
 }
