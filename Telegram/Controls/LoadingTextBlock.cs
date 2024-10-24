@@ -164,8 +164,8 @@ namespace Telegram.Controls
 
             visual1.StartAnimation("Opacity", fadeIn);
 
-            var size1 = _presenter.DesiredSize.ToVector2();
-            var size2 = _placeholder.DesiredSize.ToVector2();
+            var size1 = _presenter.ActualSize;
+            var size2 = _placeholder.ActualSize;
 
             var final = new Vector2(MathF.Max(size1.X, size2.X), MathF.Max(size1.Y, size2.Y));
 
