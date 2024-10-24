@@ -226,8 +226,8 @@ namespace Telegram.Controls.Drawers
             if (args.GroupHeaderContainer == null)
             {
                 args.GroupHeaderContainer = new GridViewHeaderItem();
-                args.GroupHeaderContainer.Style = List.GroupStyle[0].HeaderContainerStyle;
-                args.GroupHeaderContainer.ContentTemplate = List.GroupStyle[0].HeaderTemplate;
+                args.GroupHeaderContainer.Style = sender.GroupStyle[0].HeaderContainerStyle;
+                args.GroupHeaderContainer.ContentTemplate = sender.GroupStyle[0].HeaderTemplate;
             }
 
             if (args.Group is StickerSetViewModel group && !group.IsLoaded)

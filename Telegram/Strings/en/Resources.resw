@@ -818,11 +818,35 @@ Your prize is **{0} Stars**.</value>
   <data name="AddEmailTitle" xml:space="preserve">
     <value>Choose a login email</value>
   </data>
+  <data name="AddEmojiInstalled" xml:space="preserve">
+    <value>Emoji added.</value>
+  </data>
+  <data name="AddEmojiInstalledInfo" xml:space="preserve">
+    <value>{0} has been added to your emoji packs.</value>
+  </data>
+  <data name="AddEmojiMultipleInstalledInfo_one" xml:space="preserve">
+    <value>{0} pack has been added to your emoji.</value>
+  </data>
+  <data name="AddEmojiMultipleInstalledInfo_other" xml:space="preserve">
+    <value>{0} packs have been added to your emoji.</value>
+  </data>
   <data name="AddExceptions" xml:space="preserve">
     <value>Add exceptions</value>
   </data>
   <data name="AddFactCheck" xml:space="preserve">
     <value>Add Fact Check</value>
+  </data>
+  <data name="AddManyEmojiCount_one" xml:space="preserve">
+    <value>Add emoji</value>
+  </data>
+  <data name="AddManyEmojiCount_other" xml:space="preserve">
+    <value>Add {0} emoji</value>
+  </data>
+  <data name="AddManyEmojiPacksCount_one" xml:space="preserve">
+    <value>Add emoji pack</value>
+  </data>
+  <data name="AddManyEmojiPacksCount_other" xml:space="preserve">
+    <value>Add {0} emoji packs</value>
   </data>
   <data name="AddManyMembersAlertNamesText_one" xml:space="preserve">
     <value>Are you sure you want to add member to **{1}**?</value>
@@ -835,6 +859,12 @@ Your prize is **{0} Stars**.</value>
   </data>
   <data name="AddManyMembersAlertTitle_other" xml:space="preserve">
     <value>Add {0} members</value>
+  </data>
+  <data name="AddManyStickersCount_one" xml:space="preserve">
+    <value>Add sticker</value>
+  </data>
+  <data name="AddManyStickersCount_other" xml:space="preserve">
+    <value>Add {0} stickers</value>
   </data>
   <data name="AddMasks" xml:space="preserve">
     <value>Add Masks</value>
@@ -862,6 +892,12 @@ Your prize is **{0} Stars**.</value>
   </data>
   <data name="AddStickers" xml:space="preserve">
     <value>Add Stickers</value>
+  </data>
+  <data name="AddStickersInstalled" xml:space="preserve">
+    <value>New stickers added</value>
+  </data>
+  <data name="AddStickersInstalledInfo" xml:space="preserve">
+    <value>{0} has been added to your stickers.</value>
   </data>
   <data name="AddStickersNotFound" xml:space="preserve">
     <value>Stickers not found</value>
@@ -4568,6 +4604,18 @@ If the number above is correct, please wait for the verification code.</value>
   </data>
   <data name="EmojiArchived" xml:space="preserve">
     <value>Emoji archived.</value>
+  </data>
+  <data name="EmojiRemoved" xml:space="preserve">
+    <value>Emoji removed.</value>
+  </data>
+  <data name="EmojiRemovedInfo" xml:space="preserve">
+    <value>{0} is no longer in your emoji.</value>
+  </data>
+  <data name="EmojiRemovedMultipleInfo_one" xml:space="preserve">
+    <value>{0} pack is no longer in your emoji.</value>
+  </data>
+  <data name="EmojiRemovedMultipleInfo_other" xml:space="preserve">
+    <value>{0} packs are no longer in your emoji.</value>
   </data>
   <data name="EmojiSet" xml:space="preserve">
     <value>Emoji Style</value>
@@ -8948,6 +8996,24 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="RemoveEffect" xml:space="preserve">
     <value>Remove Effect</value>
   </data>
+  <data name="RemoveManyEmojiCount_one" xml:space="preserve">
+    <value>Remove emoji</value>
+  </data>
+  <data name="RemoveManyEmojiCount_other" xml:space="preserve">
+    <value>Remove {0} emoji</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_one" xml:space="preserve">
+    <value>Remove emoji pack</value>
+  </data>
+  <data name="RemoveManyEmojiPacksCount_other" xml:space="preserve">
+    <value>Remove {0} emoji packs</value>
+  </data>
+  <data name="RemoveManyStickersCount_one" xml:space="preserve">
+    <value>Remove sticker</value>
+  </data>
+  <data name="RemoveManyStickersCount_other" xml:space="preserve">
+    <value>Remove {0} stickers</value>
+  </data>
   <data name="RemovePhotoForRestDescription" xml:space="preserve">
     <value>Are you sure you want to delete your public photo?</value>
   </data>
@@ -10309,6 +10375,12 @@ and enter your phone number.</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Remove</value>
+  </data>
+  <data name="StickersRemoved" xml:space="preserve">
+    <value>Stickers removed</value>
+  </data>
+  <data name="StickersRemovedInfo" xml:space="preserve">
+    <value>{0} is no longer in your stickers.</value>
   </data>
   <data name="StickersSettings" xml:space="preserve">
     <value>Settings</value>

@@ -8,33 +8,36 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       PrimaryButtonStyle="{x:Bind ConvertIsInstalledStyle(ViewModel.IsInstalled, ViewModel.IsArchived), Mode=OneWay}"
-                       PrimaryButtonText="{x:Bind ConvertIsInstalled(ViewModel.IsInstalled, ViewModel.IsArchived, ViewModel.IsOfficial, ViewModel.StickerType), Mode=OneWay}"
-                       PrimaryButtonClick="{x:Bind ViewModel.Execute}"
                        VerticalContentAlignment="Stretch"
                        ContentMaxHeight="500"
-                       Padding="0,10,0,0"
-                       Closing="OnClosing">
+                       Padding="0,24,0,0"
+                       Closing="OnClosing"
+                       IsDismissButtonVisible="True">
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <TextBlock common:TextBlockHelper.Markdown="{x:Bind ViewModel.Title, Mode=OneWay}"
+                   Style="{StaticResource PopupTextBlockStyle}"
+                   Margin="24,0,12,12" />
+
         <GridView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.ItemsView}"
                   ItemClick="List_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
+                  ChoosingGroupHeaderContainer="OnChoosingGroupHeaderContainer"
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
-                  common:FluidGridView.OrientationOnly="False">
+                  common:FluidGridView.OrientationOnly="False"
+                  Padding="16,0,16,20"
+                  Grid.Row="1">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="{x:Bind ConvertItemsPerRow(ViewModel.StickerType), Mode=OneWay}" />
             </common:FluidGridView.Triggers>
-            <GridView.Footer>
-                <Border Height="24" />
-            </GridView.Footer>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem"
                        BasedOn="{StaticResource DefaultGridViewItemStyle}">
@@ -68,18 +71,16 @@
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate x:DataType="viewModels:StickerSetViewModel">
-                            <Grid Padding="12,4,12,12">
+                            <Grid Padding="8,0,4,4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <TextBlock common:TextBlockHelper.Text="{x:Bind Title}"
                                            VerticalAlignment="Bottom"
-                                           Margin="12,0"
                                            Style="{StaticResource BaseTextBlockStyle}" />
                                 <TextBlock Text="{x:Bind common:Locale.Declension('Stickers', Size)}"
                                            VerticalAlignment="Top"
-                                           Margin="12,0"
                                            Style="{StaticResource InfoBodyTextBlockStyle}"
                                            Grid.Row="1" />
 
@@ -143,13 +144,27 @@
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid Orientation="Horizontal"
-                                   AreStickyGroupHeadersEnabled="True" />
+                                   AreStickyGroupHeadersEnabled="False" />
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
         </GridView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
                                     ScrollingHost="{x:Bind ScrollingHost}"
-                                    Padding="0,54,0,0" />
+                                    Grid.Row="1" />
+
+        <controls:MoreButton x:Name="MoreButton"
+                             Click="More_ContextRequested"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Top"
+                             Margin="0,-24,40,0"
+                             CornerRadius="20" />
+
+        <Button x:Name="Action"
+                Click="Action_Click"
+                Content="{x:Bind ConvertIsInstalled(ViewModel.IsInstalled, ViewModel.IsArchived, ViewModel.StickerType), Mode=OneWay}"
+                HorizontalAlignment="Stretch"
+                Margin="24,0,24,24"
+                Grid.Row="2" />
     </Grid>
 </controls:ContentPopup>
