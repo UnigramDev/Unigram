@@ -632,7 +632,7 @@ namespace Telegram.ViewModels
             CanForwardSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeForwarded);
         }
 
-        public void Unselect(MessageViewModel message)
+        public async void Unselect(MessageViewModel message)
         {
             if (message.MediaAlbumId != 0)
             {
@@ -659,12 +659,15 @@ namespace Telegram.ViewModels
                 message.SelectionChanged();
             }
 
-            RaisePropertyChanged(nameof(CanForwardSelectedMessages));
-            RaisePropertyChanged(nameof(CanDeleteSelectedMessages));
             RaisePropertyChanged(nameof(CanCopySelectedMessage));
             RaisePropertyChanged(nameof(CanReportSelectedMessages));
 
             RaisePropertyChanged(nameof(SelectedCount));
+
+            var properties = await ClientService.GetMessagePropertiesAsync(SelectedItems.Values.Select(x => new MessageId(x)));
+
+            CanDeleteSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
+            CanForwardSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeForwarded);
         }
     }
 }

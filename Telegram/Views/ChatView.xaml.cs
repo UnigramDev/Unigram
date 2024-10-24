@@ -3757,8 +3757,6 @@ namespace Telegram.Views
                     ButtonReport.Visibility = Visibility.Collapsed;
                 }
 
-                ViewModel.RaisePropertyChanged(nameof(ViewModel.SelectedCount));
-
                 ViewModel.SaveDraft(true);
                 ShowHideComposerHeader(false);
             }
