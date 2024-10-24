@@ -134,16 +134,17 @@ namespace Telegram.Controls
                 Visibility = Visibility.Visible;
             }
 
-            var value = newValue.Value;
-
-            var difference = value - DateTime.Now;
+            var difference = newValue.Value - DateTime.Now;
             var seconds = (float)difference.TotalSeconds;
+
+            var value = 1f - (seconds / (Maximum ?? 1));
+            value = Math.Clamp(value, 0, 1);
 
             if (difference.TotalMilliseconds >= 1 && difference.TotalHours < 8)
             {
                 var easing = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
                 var angleAnimation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-                angleAnimation.InsertKeyFrame(0, 1f - (seconds / (Maximum ?? 0)));
+                angleAnimation.InsertKeyFrame(0, value);
                 angleAnimation.InsertKeyFrame(1, 1f, easing);
                 angleAnimation.Duration = difference;
 
@@ -151,7 +152,7 @@ namespace Telegram.Controls
             }
             else
             {
-                _ellipse.TrimStart = 1f - (seconds / (Maximum ?? 0));
+                _ellipse.TrimStart = value;
             }
 
             //double value;
