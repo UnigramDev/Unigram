@@ -745,11 +745,23 @@ namespace Telegram.Views
             return block;
         }
 
+        private void RemoveSelectionHighlighter(RichTextBlock block)
+        {
+            for (int i = block.TextHighlighters.Count - 1; i >= 0; i--)
+            {
+                if (block.TextHighlighters[i].Background == block.SelectionHighlightColor)
+                {
+                    block.TextHighlighters.RemoveAt(i);
+                    return;
+                }
+            }
+        }
+
         private void OnLostFocus(object sender, RoutedEventArgs e)
         {
             foreach (var block in _selection)
             {
-                block.TextHighlighters.Clear();
+                RemoveSelectionHighlighter(block);
             }
 
             if (sender is RichTextBlock anchor)
@@ -783,7 +795,7 @@ namespace Telegram.Views
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             _selectionAnchor = sender as RichTextBlock;
-            _selectionAnchor.TextHighlighters.Clear();
+            RemoveSelectionHighlighter(_selectionAnchor);
 
             var transform = _selectionAnchor.TransformToVisual(XamlRoot.Content);
             var anchorPoint = transform.TransformPoint(new Point());
@@ -815,7 +827,7 @@ namespace Telegram.Views
                 Length = length
             });
 
-            block.TextHighlighters.Clear();
+            RemoveSelectionHighlighter(block);
             block.TextHighlighters.Add(highlighter);
         }
 
@@ -826,92 +838,89 @@ namespace Telegram.Views
                 return;
             }
 
-            //if (_selectionStart == sender)
+            var point = e.GetCurrentPoint(XamlRoot.Content);
+            var y1 = Math.Min(_selectionAnchorPoint.Y, point.Position.Y);
+            var y2 = Math.Max(_selectionAnchorPoint.Y, point.Position.Y);
+
+            var area = new Rect(_stackPoint.X, y1, ScrollingHost.ItemsPanelRoot.ActualWidth, y2 - y1);
+            var elements = VisualTreeHelper.FindElementsInHostCoordinates(area, ScrollingHost.ItemsPanelRoot);
+
+            var direction = Math.Sign(_selectionAnchorPoint.Y - point.Position.Y);
+
+            //Debug.WriteLine(direction < 0 ? "Selecting from top to bottom" : "Selecting from bottom to top");
+            //Debug.WriteLine(direction < 0 ? "Using selection start as anchor" : "Using selection end as anchor");
+
+            var selection = new HashSet<RichTextBlock>();
+
+            foreach (var block in elements.OfType<RichTextBlock>())
             {
-                var point = e.GetCurrentPoint(XamlRoot.Content);
-                var y1 = Math.Min(_selectionAnchorPoint.Y, point.Position.Y);
-                var y2 = Math.Max(_selectionAnchorPoint.Y, point.Position.Y);
-
-                var area = new Rect(_stackPoint.X, y1, ScrollingHost.ItemsPanelRoot.ActualWidth, y2 - y1);
-                var elements = VisualTreeHelper.FindElementsInHostCoordinates(area, ScrollingHost.ItemsPanelRoot);
-
-                var direction = Math.Sign(_selectionAnchorPoint.Y - point.Position.Y);
-
-                //Debug.WriteLine(direction < 0 ? "Selecting from top to bottom" : "Selecting from bottom to top");
-                //Debug.WriteLine(direction < 0 ? "Using selection start as anchor" : "Using selection end as anchor");
-
-                var selection = new HashSet<RichTextBlock>();
-
-                foreach (var block in elements.OfType<RichTextBlock>())
+                if (_selectionAnchor == block)
                 {
-                    if (_selectionAnchor == block)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    var relative = e.GetCurrentPoint(block);
-                    if (relative.Position.Y >= 0 && relative.Position.Y <= Math.Ceiling(block.ActualHeight))
-                    {
-                        // Active block
-                        var position = block.GetPositionFromPoint(relative.Position);
+                var relative = e.GetCurrentPoint(block);
+                if (relative.Position.Y >= 0 && relative.Position.Y <= Math.Ceiling(block.ActualHeight))
+                {
+                    // Active block
+                    var position = block.GetPositionFromPoint(relative.Position);
 
-                        if (direction < 0)
-                        {
-                            CreateHighlighter(block, block.ContentStart, position);
-                        }
-                        else
-                        {
-                            CreateHighlighter(block, position, block.ContentEnd);
-                        }
+                    if (direction < 0)
+                    {
+                        CreateHighlighter(block, block.ContentStart, position);
                     }
                     else
                     {
-                        // Full block
-                        CreateHighlighter(block, 0, int.MaxValue);
+                        CreateHighlighter(block, position, block.ContentEnd);
                     }
-
-                    selection.Add(block);
                 }
-
-                selection.Add(_selectionAnchor);
-
-                //Debug.WriteLine(selection.Count);
-
-                if (_selectionPivot != null)
+                else
                 {
-                    var relative = e.GetCurrentPoint(_selectionAnchor);
-                    //Debug.WriteLine("Anchor {0}: ({1} ~> {2})", _selectionAnchor.Tag, relative.Position, _selectionAnchor.ActualHeight);
-
-                    if (relative.Position.Y < 0)
-                    {
-                        _selectionDirty = true;
-                        _selectionAnchor.Select(_selectionAnchor.ContentStart, _selectionPivot);
-                    }
-                    else if (relative.Position.Y > _selectionAnchor.ActualHeight)
-                    {
-                        _selectionDirty = true;
-                        _selectionAnchor.Select(_selectionPivot, _selectionAnchor.ContentEnd);
-                    }
-                    else if (_selectionDirty)
-                    {
-                        _selectionDirty = false;
-                        _selectionAnchor.Select(_selectionPivot, _selectionPivot);
-                    }
+                    // Full block
+                    CreateHighlighter(block, 0, int.MaxValue);
                 }
 
-                foreach (var block in _selection)
-                {
-                    if (selection.Contains(block))
-                    {
-                        continue;
-                    }
-
-                    block.TextHighlighters.Clear();
-                }
-
-                _selection = selection;
-                _selectionDirection = direction;
+                selection.Add(block);
             }
+
+            selection.Add(_selectionAnchor);
+
+            //Debug.WriteLine(selection.Count);
+
+            if (_selectionPivot != null)
+            {
+                var relative = e.GetCurrentPoint(_selectionAnchor);
+                //Debug.WriteLine("Anchor {0}: ({1} ~> {2})", _selectionAnchor.Tag, relative.Position, _selectionAnchor.ActualHeight);
+
+                if (relative.Position.Y < 0)
+                {
+                    _selectionDirty = true;
+                    _selectionAnchor.Select(_selectionAnchor.ContentStart, _selectionPivot);
+                }
+                else if (relative.Position.Y > _selectionAnchor.ActualHeight)
+                {
+                    _selectionDirty = true;
+                    _selectionAnchor.Select(_selectionPivot, _selectionAnchor.ContentEnd);
+                }
+                else if (_selectionDirty)
+                {
+                    _selectionDirty = false;
+                    _selectionAnchor.Select(_selectionPivot, _selectionPivot);
+                }
+            }
+
+            foreach (var block in _selection)
+            {
+                if (selection.Contains(block))
+                {
+                    continue;
+                }
+
+                RemoveSelectionHighlighter(block);
+            }
+
+            _selection = selection;
+            _selectionDirection = direction;
         }
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
@@ -1435,7 +1444,7 @@ namespace Telegram.Views
             switch (text)
             {
                 case RichTextPlain plainText:
-                    span.Inlines.Add(new Run { Text = plainText.Text });
+                    span.Inlines.Add(plainText.Text);
 
                     if (effects.HasFlag(TextEffects.Marked))
                     {
@@ -1443,7 +1452,16 @@ namespace Telegram.Views
                         highlight.Background = new SolidColorBrush(Colors.PaleGoldenrod);
                         highlight.Ranges.Add(new TextRange { StartIndex = offset, Length = plainText.Text.Length });
 
-                        //textBlock.TextHighlighters.Add(highlight);
+                        textBlock.TextHighlighters.Add(highlight);
+                    }
+                    else if (effects.HasFlag(TextEffects.Link))
+                    {
+                        var highlight = new TextHighlighter();
+                        highlight.Background = new SolidColorBrush(Theme.Accent.WithAlpha(22));
+                        highlight.Foreground = new SolidColorBrush(Theme.Accent);
+                        highlight.Ranges.Add(new TextRange { StartIndex = offset, Length = plainText.Text.Length });
+
+                        textBlock.TextHighlighters.Add(highlight);
                     }
 
                     offset += plainText.Text.Length;
@@ -1499,6 +1517,11 @@ namespace Telegram.Views
                 case RichTextUrl urlText:
                     try
                     {
+                        if (urlText.IsCached)
+                        {
+                            effects |= TextEffects.Link;
+                        }
+
                         var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
                         span.Inlines.Add(hyperlink);
                         hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
@@ -1510,7 +1533,7 @@ namespace Telegram.Views
                     catch
                     {
                         ProcessRichText(urlText.Text, span, textBlock, effects, ref offset);
-                        Debug.WriteLine("InstantPage: Probably nesting textUrl inside textUrl");
+                        Logger.Info("InstantPage: Probably nesting textUrl inside textUrl");
                     }
                     break;
                 case RichTextIcon icon:
