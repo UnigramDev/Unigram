@@ -62,13 +62,28 @@ if errorlevel 1 goto :error
 echo.
 echo Adding forked Telegram+UWP upstream
 call git remote add upstream https://github.com/FrayxRulez/webrtc-uwp.git
+call git remote update
+call git fetch
 call git checkout m123
 pushd build
-call git apply "%PATCH_DIR%/build/fix.patch"
+call git apply --3way --ignore-whitespace "%PATCH_DIR%/build/fix.patch"
+
+echo Checking the Architecture type
+for /f "skip=1" %%a in ('wmic cpu get architecture') do (
+    set "cpu_arch=%%a"
+    goto :woa-patch
+)
+:woa-patch
+if "%cpu_arch%"=="12" (
+    call git apply --3way --ignore-whitespace "%PATCH_DIR%/build/woa_support.patch"
+)
+
 pushd ..\third_party
-call git apply "%PATCH_DIR%/third_party/fix.patch"
-pushd libyuv
-call git apply "%PATCH_DIR%/third_party/libyuv/fix.patch"
+call git apply --3way --ignore-whitespace "%PATCH_DIR%/third_party/fix.patch"
+pushd boringssl\src
+call git apply --3way --ignore-whitespace "%PATCH_DIR%/third_party/string.patch"
+pushd ..\..\libyuv
+call git apply --3way --ignore-whitespace "%PATCH_DIR%/third_party/libyuv/fix.patch"
 goto :exit
 
 :error
