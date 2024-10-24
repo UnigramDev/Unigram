@@ -30,13 +30,19 @@ namespace Telegram.Views.Settings.Privacy
         {
             if (fullInfo != null)
             {
-                UpdatePhoto.Content = fullInfo.PublicPhoto == null
-                    ? Strings.SetPhotoForRest
-                    : Strings.UpdatePhotoForRest;
+                if (fullInfo.PublicPhoto != null)
+                {
+                    RemovePhotoPhoto.SetChatPhoto(ViewModel.ClientService, fullInfo.PublicPhoto, 28);
+                    RemovePhoto.Visibility = Visibility.Visible;
 
-                RemovePhoto.Visibility = fullInfo.PublicPhoto == null
-                    ? Visibility.Collapsed
-                    : Visibility.Visible;
+                    UpdatePhoto.Content = Strings.UpdatePhotoForRest;
+                }
+                else
+                {
+                    RemovePhoto.Visibility = Visibility.Collapsed;
+
+                    UpdatePhoto.Content = Strings.SetPhotoForRest;
+                }
             }
         }
 
