@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -42,11 +42,11 @@ namespace Telegram.Common
             }
         }
 
-        public static void NavigateToWebApp(this INavigationService service, User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
+        public static void NavigateToWebApp(this INavigationService service, User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, WebAppOpenMode openMode = null, Chat sourceChat = null, InternalLinkType sourceLink = null)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToWebApp(botUser, url, launchId, menuBot, sourceChat);
+                serviceEx.NavigateToWebApp(botUser, url, launchId, menuBot, openMode, sourceChat, sourceLink);
             }
         }
 

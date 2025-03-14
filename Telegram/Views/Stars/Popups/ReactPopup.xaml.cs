@@ -1,12 +1,15 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
@@ -15,9 +18,12 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.Views.Host;
 using Windows.Foundation;
 
 namespace Telegram.Views.Stars.Popups
@@ -27,11 +33,15 @@ namespace Telegram.Views.Stars.Popups
         private readonly IClientService _clientService;
         private readonly MessageViewModel _message;
 
+        private MessageSender _selection;
+
         private List<PaidReactor> _reactors;
         private PaidReactor _self;
         private int _count;
 
         private bool _loaded;
+
+        private TeachingTipEx _balance;
 
         public ReactPopup(IClientService clientService, MessageViewModel message)
         {
@@ -39,9 +49,6 @@ namespace Telegram.Views.Stars.Popups
 
             _clientService = clientService;
             _message = message;
-
-            // TODO: of course value won't update
-            OwnedStarCount.Text = clientService.OwnedStarCount.ToString("N0");
 
             if (clientService.TryGetChat(message.ChatId, out Chat chat))
             {
@@ -60,7 +67,75 @@ namespace Telegram.Views.Stars.Popups
                     TopReactorsRoot.Visibility = Visibility.Collapsed;
                 }
 
-                Anonymous.IsChecked = !(_self?.IsAnonymous ?? clientService.Options.IsPaidReactionAnonymous);
+                Anonymous.IsChecked = !(_self?.IsAnonymous ?? (clientService.DefaultPaidReactionType is PaidReactionTypeAnonymous));
+
+                UpdateAlias();
+            }
+
+            Opened += OnOpened;
+            Closed += OnClosed;
+        }
+
+        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            if (XamlRoot.Content is not IToastHost host)
+            {
+                return;
+            }
+
+            var markdown = ClientEx.ParseMarkdown(Strings.Gift2MessageStarsInfoLink);
+
+            var hyperlink = new Hyperlink();
+            hyperlink.Inlines.Add(markdown.Text);
+            hyperlink.UnderlineStyle = UnderlineStyle.None;
+            hyperlink.Click += Buy_Click;
+
+            var content = new TextBlock();
+            content.Inlines.Add(string.Format(Strings.Gift2MessageStarsInfo.Replace("\u2B50", Icons.Premium + "\u200A"), _clientService.OwnedStarCount.ToValue()));
+            content.Inlines.Add(new LineBreak());
+            content.Inlines.Add(hyperlink);
+            content.HorizontalTextAlignment = TextAlignment.Center;
+            content.FontFamily = BootStrapper.Current.Resources["EmojiThemeFontFamilyWithSymbols"] as FontFamily;
+            content.Style = BootStrapper.Current.Resources["CaptionTextBlockStyle"] as Style;
+            content.Margin = new Thickness(0, -8, 0, -6);
+
+            var popup = new TeachingTipEx
+            {
+                Content = content,
+                PreferredPlacement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.Top,
+                MinWidth = 0,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                IsLightDismissEnabled = false,
+                ShouldConstrainToRootBounds = true,
+                RequestedTheme = ElementTheme.Dark,
+                XamlRoot = XamlRoot
+            };
+
+            AutomationProperties.SetName(popup, "title");
+
+            popup.Closed += (s, args) =>
+            {
+                host.ToastClosed(s);
+            };
+
+            host.ToastOpened(popup);
+            popup.IsOpen = true;
+
+            _balance = popup;
+        }
+
+        private void Buy_Click(Hyperlink sender, HyperlinkClickEventArgs args)
+        {
+            Hide();
+            _message.Delegate.NavigationService.ShowPopup(new BuyPopup());
+        }
+
+        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            if (_balance != null)
+            {
+                _balance.IsOpen = false;
             }
         }
 
@@ -92,14 +167,29 @@ namespace Telegram.Views.Stars.Popups
             if (_self == null)
             {
                 _self = _reactors.FirstOrDefault(x => x.IsMe);
-                _self ??= new PaidReactor(_clientService.MyId, 0, false, true, IsAnonymous);
+
+                if (_self == null)
+                {
+                    if (_selection != null)
+                    {
+                        _self = new PaidReactor(_selection, 0, false, true, Anonymous.IsChecked != true);
+                    }
+                    else if (_clientService.DefaultPaidReactionType is PaidReactionTypeChat reactionTypeChat)
+                    {
+                        _self = new PaidReactor(new MessageSenderChat(reactionTypeChat.ChatId), 0, false, true, false);
+                    }
+                    else
+                    {
+                        _self = new PaidReactor(_clientService.MyId, 0, false, true, Anonymous.IsChecked != true);
+                    }
+                }
 
                 _count = _self.StarCount;
             }
             else
             {
                 _self.StarCount = _count + StarCount;
-                _self.IsAnonymous = IsAnonymous;
+                _self.IsAnonymous = Anonymous.IsChecked != true;
             }
 
             _reactors.Remove(_self);
@@ -127,7 +217,22 @@ namespace Telegram.Views.Stars.Popups
         private int _starCount;
         public int StarCount => StarCountSlider.RealValue;
 
-        public bool IsAnonymous => Anonymous.IsChecked != true;
+        public PaidReactionType Type
+        {
+            get
+            {
+                if (Anonymous.IsChecked != true)
+                {
+                    return new PaidReactionTypeAnonymous();
+                }
+                else if (_self?.SenderId is MessageSenderChat messageSenderChat)
+                {
+                    return new PaidReactionTypeChat(messageSenderChat.ChatId);
+                }
+
+                return new PaidReactionTypeRegular();
+            }
+        }
 
         private void Purchase_Click(object sender, RoutedEventArgs e)
         {
@@ -137,6 +242,97 @@ namespace Telegram.Views.Stars.Popups
         private void SettingsFooter_Click(object sender, TextUrlClickEventArgs e)
         {
             MessageHelper.OpenUrl(null, null, Strings.StarsReactionTermsLink);
+        }
+
+        private void UpdateAlias()
+        {
+            var senderId = _self?.SenderId ?? _selection;
+            if (senderId == null)
+            {
+                senderId = _clientService.DefaultPaidReactionType switch
+                {
+                    PaidReactionTypeChat paidReactionTypeChat => new MessageSenderChat(paidReactionTypeChat.ChatId),
+                    _ => _clientService.MyId
+                };
+            }
+
+            if (_clientService.TryGetUser(senderId, out User senderUser))
+            {
+                Photo.SetUser(_clientService, senderUser, 28);
+            }
+            else if (_clientService.TryGetChat(senderId, out Chat senderChat))
+            {
+                Photo.SetChat(_clientService, senderChat, 28);
+            }
+        }
+
+        private async void Alias_Click(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+
+            var response = await _clientService.SendAsync(new GetChatAvailablePaidMessageReactionSenders(_message.ChatId));
+            if (response is MessageSenders senders)
+            {
+                void handler(object sender, RoutedEventArgs _)
+                {
+                    if (sender is MenuFlyoutItem item && item.CommandParameter is MessageSender messageSender)
+                    {
+                        item.Click -= handler;
+
+                        if (_self != null)
+                        {
+                            _self.SenderId = messageSender;
+                        }
+                        else
+                        {
+                            _selection = messageSender;
+                        }
+
+                        Anonymous.IsChecked = true;
+
+                        UpdateAlias();
+                        UpdateOrder();
+                    }
+                }
+
+                foreach (var messageSender in senders.Senders)
+                {
+                    var picture = new ProfilePicture();
+                    picture.Width = 36;
+                    picture.Height = 36;
+                    picture.Margin = new Thickness(-4, -2, 0, -2);
+
+                    var item = new MenuFlyoutProfile();
+                    item.Click += handler;
+                    item.CommandParameter = messageSender;
+                    item.Style = BootStrapper.Current.Resources["SendAsMenuFlyoutItemStyle"] as Style;
+                    item.Icon = new FontIcon();
+                    item.Tag = picture;
+
+                    if (_clientService.TryGetUser(messageSender, out User senderUser))
+                    {
+                        picture.SetUser(_clientService, senderUser, 36);
+
+                        item.Text = senderUser.FullName();
+                        item.Info = Strings.VoipGroupPersonalAccount;
+                    }
+                    else if (_clientService.TryGetChat(messageSender, out Chat senderChat))
+                    {
+                        picture.SetChat(_clientService, senderChat, 36);
+
+                        item.Text = senderChat.Title;
+
+                        if (_clientService.TryGetSupergroup(senderChat, out Supergroup supergroup))
+                        {
+                            item.Info = Locale.Declension(Strings.R.Subscribers, supergroup.MemberCount);
+                        }
+                    }
+
+                    flyout.Items.Add(item);
+                }
+            }
+
+            flyout.ShowAt(Alias, FlyoutPlacementMode.TopEdgeAlignedLeft);
         }
     }
 

@@ -93,6 +93,7 @@
 
                 <controls:GlyphButton Click="Emoji_Click"
                                       Glyph="&#xE76E;"
+                                      AutomationProperties.Name="{CustomResource Emoji}"
                                       AllowFocusOnInteraction="False"
                                       HorizontalAlignment="Right"
                                       VerticalAlignment="Bottom"
@@ -103,7 +104,7 @@
                                       Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                       VerticalAlignment="Bottom"
                                       FontSize="24"
-                                      Glyph="&#xEC61;"
+                                      Glyph="&#xE9F4;"
                                       Margin="-8,0,0,0"
                                       Grid.Column="2" />
             </Grid>

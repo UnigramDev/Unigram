@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -12,12 +12,10 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
-using Windows.Globalization.Fonts;
 using Windows.Storage;
 using Windows.UI;
 using AcrylicBrush = Microsoft.UI.Xaml.Media.AcrylicBrush;
@@ -74,36 +72,38 @@ namespace Telegram.Common
             var xamlAutoFontFamily = new StringBuilder(xamlAutoFontFamilyValue);
             var comma = ", ";
 
-            if (false)
-            {
-                foreach (var language in Formatter.Languages)
-                {
-                    // We copy XAML behavior, only resolve for Japanese and Korean
-                    if (language == "ja" || language == "ko" || language == "ja-JP" || language == "ko-KR")
-                    {
-                        try
-                        {
-                            var recommendedFonts = new LanguageFontGroup(language);
-                            var family = recommendedFonts.UITextFont.FontFamily;
+            //if (false)
+            //{
+            //    foreach (var language in Formatter.Languages)
+            //    {
+            //        // We copy XAML behavior, only resolve for Japanese and Korean
+            //        if (language == "ja" || language == "ko" || language == "ja-JP" || language == "ko-KR")
+            //        {
+            //            try
+            //            {
+            //                var recommendedFonts = new LanguageFontGroup(language);
+            //                var family = recommendedFonts.UITextFont.FontFamily;
 
-                            xamlAutoFontFamily.Prepend(family, comma);
-                        }
-                        catch
-                        {
-                            // All the remote procedure calls must be wrapped in a try-catch block
-                        }
-                    }
-                }
+            //                xamlAutoFontFamily.Prepend(family, comma);
+            //            }
+            //            catch
+            //            {
+            //                // All the remote procedure calls must be wrapped in a try-catch block
+            //            }
+            //        }
+            //    }
 
-                xamlAutoFontFamily.Prepend("Segoe UI", comma);
-            }
+            //    xamlAutoFontFamily.Prepend("Segoe UI", comma);
+            //}
 
             switch (SettingsService.Current.Appearance.EmojiSet)
             {
                 case "microsoft":
+                    this["EmojiOnlyThemeFontFamily"] = "ms-appx:///Assets/Emoji/microsoft.ttf#Segoe UI Emoji";
                     xamlAutoFontFamily.Prepend("ms-appx:///Assets/Emoji/microsoft.ttf#Segoe UI Emoji", comma);
                     break;
                 default:
+                    this["EmojiOnlyThemeFontFamily"] = "ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji";
                     xamlAutoFontFamily.Prepend("ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji", comma);
                     break;
             }
@@ -347,13 +347,13 @@ namespace Telegram.Common
 
                 var themeParameters = new Dictionary<string, int>
                 {
+                    { "ApplicationPageBackgroundThemeBrush", 0 },
                     { "ContentDialogBackground", 0 },
-                    { "ContentDialogForeground", 0 },
+                    { "TextFillColorPrimaryBrush", 0 },
                     { "AccentButtonBackground", 0 },
                     { "AccentButtonForeground", 0 },
                     { "SystemControlDisabledChromeDisabledLowBrush", 0 },
-                    { "SystemControlForegroundBaseLowBrush", 0 },
-                    { "HyperlinkForeground", 0 },
+                    { "CardStrokeColorDefaultSolidBrush", 0 },
                     { "DangerButtonBackground", 0xD13438 }
                 };
 
@@ -446,21 +446,21 @@ namespace Telegram.Common
 
                 _parameters[requested == TelegramTheme.Light ? ElementTheme.Light : ElementTheme.Dark] = new ThemeParameters
                 {
-                    BackgroundColor = themeParameters["ContentDialogBackground"],
+                    BackgroundColor = themeParameters["ApplicationPageBackgroundThemeBrush"],
                     SecondaryBackgroundColor = themeParameters["ContentDialogBackground"],
-                    BottomBarBackgroundColor = themeParameters["ContentDialogBackground"],
-                    TextColor = themeParameters["ContentDialogForeground"],
+                    BottomBarBackgroundColor = themeParameters["ApplicationPageBackgroundThemeBrush"],
+                    TextColor = themeParameters["TextFillColorPrimaryBrush"],
                     ButtonColor = themeParameters["AccentButtonBackground"],
                     ButtonTextColor = themeParameters["AccentButtonForeground"],
                     HintColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
-                    LinkColor = themeParameters["HyperlinkForeground"],
+                    LinkColor = themeParameters["AccentButtonBackground"],
                     AccentTextColor = themeParameters["AccentButtonBackground"],
                     DestructiveTextColor = themeParameters["DangerButtonBackground"],
-                    HeaderBackgroundColor = themeParameters["ContentDialogBackground"],
-                    SectionBackgroundColor = themeParameters["ContentDialogBackground"],
-                    SectionHeaderTextColor = themeParameters["ContentDialogForeground"],
+                    HeaderBackgroundColor = themeParameters["ApplicationPageBackgroundThemeBrush"],
+                    SectionBackgroundColor = themeParameters["ApplicationPageBackgroundThemeBrush"],
+                    SectionHeaderTextColor = themeParameters["TextFillColorPrimaryBrush"],
                     SubtitleTextColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
-                    SectionSeparatorColor = themeParameters["SystemControlForegroundBaseLowBrush"],
+                    SectionSeparatorColor = themeParameters["CardStrokeColorDefaultSolidBrush"],
                 };
             }
             catch (UnauthorizedAccessException)

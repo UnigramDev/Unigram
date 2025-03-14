@@ -139,6 +139,44 @@
                                   Style="{StaticResource SettingsCheckBoxStyle}" />
                     </controls:HeaderedControl>
 
+                    <controls:HeaderedControl x:Name="PaidMessagesPanel"
+                                              Footer="{CustomResource GroupMessagesChargePriceInfo}"
+                                              Visibility="Collapsed">
+                        <CheckBox IsChecked="{x:Bind ViewModel.ChargePerMessage, Mode=TwoWay}"
+                                  Content="{CustomResource GroupMessagesChargePrice}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl x:Name="PaidMessagesPricePanel"
+                                              Visibility="{x:Bind ViewModel.ChargePerMessage, Mode=OneWay}"
+                                              Header="{CustomResource GroupMessagesPriceHeader}"
+                                              Footer="{x:Bind ConvertPriceFee(ViewModel.PaidMessageStarCount), Mode=OneWay}">
+                        <Grid x:Name="PriceTicks"
+                              Background="{ThemeResource SettingsItemBackground}"
+                              BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                              Padding="12,6,12,6">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <controls:AnimatedTextBlock Text="{x:Bind ConvertPriceValue(ViewModel.PaidMessageStarCount), Mode=OneWay}"
+                                                        TextAlignment="Center"
+                                                        HorizontalAlignment="Center"
+                                                        Margin="0,0,0,-4"
+                                                        Grid.ColumnSpan="4" />
+
+                            <Slider x:Name="Price"
+                                    Value="{x:Bind ViewModel.PaidMessageStarCount, Mode=TwoWay}"
+                                    Maximum="9000"
+                                    Minimum="1"
+                                    SmallChange="1"
+                                    LargeChange="1"
+                                    StepFrequency="1"
+                                    IsThumbToolTipEnabled="False"
+                                    Grid.Row="1" />
+                        </Grid>
+                    </controls:HeaderedControl>
+
                     <controls:HeaderedControl x:Name="SlowmodePanel"
                                               Header="{CustomResource Slowmode}"
                                               Footer="{x:Bind ConvertSlowModeFooter(ViewModel.SlowModeDelay), Mode=OneWay}">

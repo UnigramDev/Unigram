@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -15,6 +15,7 @@ using System.Linq;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
+using Windows.UI;
 
 namespace Telegram.Common
 {
@@ -186,7 +187,7 @@ namespace Telegram.Common
 
                     _popupContent = content;
 
-                    if (content is StickerViewModel stickerViewModel)
+                    if (content is StickerViewModel stickerViewModel && stickerViewModel.StickerValue != null)
                     {
                         _popupPanel.SetSticker(stickerViewModel);
                     }
@@ -286,6 +287,11 @@ namespace Telegram.Common
 
             _popupPanel.Width = _listView.XamlRoot.Size.Width;
             _popupPanel.Height = _listView.XamlRoot.Size.Height;
+            _popupPanel.RequestedTheme = _listView.ActualTheme;
+            _popupPanel.Background = new SolidColorBrush(_listView.ActualTheme == ElementTheme.Light
+                ? Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF)
+                : Color.FromArgb(0x99, 0x00, 0x00, 0x00));
+
             _popupContent = item;
             _popupHost.XamlRoot = _listView.XamlRoot;
             _popupHost.IsOpen = true;

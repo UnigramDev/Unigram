@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -24,9 +24,18 @@ using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using static Telegram.Services.GenerationService;
 
 namespace Telegram.ViewModels
 {
+    public enum SchedulingState
+    {
+        None,
+        Auto,
+        Schedule,
+        WhenOnline
+    }
+
     public abstract class ComposeViewModel : ViewModelBase
     {
         protected ComposeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
@@ -50,7 +59,7 @@ namespace Telegram.ViewModels
 
         #region Stickers
 
-        public async void SendSticker(Sticker sticker, bool? schedule, bool? silent, string emoji = null, bool reorder = false)
+        public async void SendSticker(Sticker sticker, SchedulingState schedule, bool? silent, string emoji = null, bool reorder = false)
         {
             HideStickers();
 
@@ -66,7 +75,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var options = await PickMessageSendOptionsAsync(schedule, silent, reorder);
+            var options = await PickMessageSendOptionsAsync(1, schedule, silent, reorder);
             if (options == null)
             {
                 return;
@@ -99,10 +108,10 @@ namespace Telegram.ViewModels
 
         public void SendAnimation(Animation animation)
         {
-            SendAnimation(animation, null, null);
+            SendAnimation(animation, SchedulingState.Auto, null);
         }
 
-        public async void SendAnimation(Animation animation, bool? schedule, bool? silent)
+        public async void SendAnimation(Animation animation, SchedulingState schedule, bool? silent)
         {
             HideStickers();
 
@@ -112,7 +121,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var options = await PickMessageSendOptionsAsync(schedule, silent);
+            var options = await PickMessageSendOptionsAsync(1, schedule, silent);
             if (options == null)
             {
                 return;
@@ -294,43 +303,6 @@ namespace Telegram.ViewModels
             return false;
         }
 
-        public ChatPermissions GetPermissions(Chat chat, out bool restricted)
-        {
-            return GetPermissions(ClientService, chat, out restricted);
-        }
-
-        public static ChatPermissions GetPermissions(IClientService clientService, Chat chat, out bool restrict)
-        {
-            restrict = false;
-
-            if (clientService.TryGetSupergroup(chat, out var supergroup))
-            {
-                if (supergroup.Status is ChatMemberStatusRestricted restricted)
-                {
-                    restrict = true;
-                    return restricted.Permissions;
-                }
-                else if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
-                {
-                    return new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
-                }
-            }
-            else if (clientService.TryGetBasicGroup(chat, out var basicGroup))
-            {
-                if (basicGroup.Status is ChatMemberStatusRestricted restricted)
-                {
-                    restrict = true;
-                    return restricted.Permissions;
-                }
-                else if (basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
-                {
-                    return new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
-                }
-            }
-
-            return chat.Permissions;
-        }
-
         public async void SendDocument()
         {
             var restricted = await VerifyRightsAsync(x => x.CanSendDocuments,
@@ -375,7 +347,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var permissions = GetPermissions(chat, out bool restricted);
+            var permissions = ClientService.GetPermissions(chat, out bool restricted);
 
             foreach (var item in items)
             {
@@ -399,6 +371,11 @@ namespace Telegram.ViewModels
                     await ShowPopupAsync(restricted ? Strings.ErrorSendRestrictedDocuments : Strings.ErrorSendRestrictedDocumentsAll, Strings.AppName, Strings.OK);
                     return;
                 }
+                else if (item.Size > (4000L << 20) || (item.Size > (2000L << 20) && !IsPremium))
+                {
+                    NavigationService.ShowLimitReached(new PremiumLimitTypeFileSize());
+                    return;
+                }
             }
 
             FormattedText formattedText = null;
@@ -410,26 +387,11 @@ namespace Telegram.ViewModels
 
             var self = ClientService.IsSavedMessages(chat);
 
-            bool mediaAllowed;
-            if (permissions.CanSendPhotos && permissions.CanSendVideos)
+            var popup = new SendFilesPopup(this, items, media, permissions, chat.Type is ChatTypePrivate && !self, CanSchedule, self, false);
+            popup.Loaded += (s, args) =>
             {
-                mediaAllowed = items.All(x => x is StoragePhoto or StorageVideo);
-            }
-            else if (permissions.CanSendPhotos)
-            {
-                mediaAllowed = items.All(x => x is StoragePhoto);
-            }
-            else if (permissions.CanSendVideos)
-            {
-                mediaAllowed = items.All(x => x is StorageVideo);
-            }
-            else
-            {
-                mediaAllowed = false;
-            }
-
-            var popup = new SendFilesPopup(this, items, media, mediaAllowed, permissions.CanSendDocuments || permissions.CanSendAudios, chat.Type is ChatTypePrivate && !self, CanSchedule, self);
-            popup.Caption = caption;
+                popup.Caption = caption;
+            };
 
             if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
             {
@@ -447,7 +409,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var options = await PickMessageSendOptionsAsync(popup.Schedule, popup.Silent);
+            var options = await PickMessageSendOptionsAsync(popup.Items.Count, popup.Schedule, popup.Silent);
             if (options == null)
             {
                 return;
@@ -463,20 +425,29 @@ namespace Telegram.ViewModels
             {
                 await Task.Run(() => SendStorageMediaAsync(popup.Items[0], reply, captionz, popup.IsFilesSelected, options, captionAboveMedia, hasSpoiler, popup.StarCount));
             }
-            else if (popup.Items.Count > 1 && popup.IsAlbum && popup.IsAlbumAvailable)
+            else if (popup.Items.Count > 1 && popup.IsAlbum)
             {
                 var group = new List<StorageMedia>(Math.Min(popup.Items.Count, 10));
+                var groupType = 0;
 
                 foreach (var item in popup.Items)
                 {
-                    group.Add(item);
+                    var type = item switch
+                    {
+                        StoragePhoto or StorageVideo => popup.IsFilesSelected ? 0 : 1,
+                        StorageAudio => 2,
+                        _ => 0
+                    };
 
-                    if (group.Count == 10)
+                    if (group.Count > 9 || (groupType != type && group.Count > 0))
                     {
                         await SendGroupedAsync(group, reply, captionz, options, popup.IsFilesSelected, captionAboveMedia, hasSpoiler, popup.StarCount);
                         group = new List<StorageMedia>(Math.Min(popup.Items.Count, 10));
                         reply = null;
                     }
+
+                    group.Add(item);
+                    groupType = type;
                 }
 
                 if (group.Count > 0)
@@ -488,7 +459,7 @@ namespace Telegram.ViewModels
             {
                 if (caption != null)
                 {
-                    await SendMessageAsync(caption, options, reply);
+                    await SendMessageAsync(caption, null, options, reply);
                     reply = null;
                 }
 
@@ -517,7 +488,7 @@ namespace Telegram.ViewModels
             }
             else if (storage is StorageVideo video)
             {
-                await SendVideoAsync(video, reply, caption, video.IsMuted, captionAboveMedia, spoiler, storage.Ttl, video.GetTransform(), options, starCount);
+                await SendVideoAsync(video, reply, caption, video.IsMuted, captionAboveMedia, spoiler, storage.Ttl, video.GetConversion(), options, starCount);
             }
         }
 
@@ -556,9 +527,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async Task SendVideoAsync(StorageVideo video, InputMessageReplyTo reply, FormattedText caption, bool animated, bool captionAboveMedia = false, bool spoiler = false, MessageSelfDestructType ttl = null, VideoTransformEffectDefinition transform = null, MessageSendOptions options = null, long starCount = 0)
+        public async Task SendVideoAsync(StorageVideo video, InputMessageReplyTo reply, FormattedText caption, bool animated, bool captionAboveMedia = false, bool spoiler = false, MessageSelfDestructType ttl = null, VideoConversion conversion = null, MessageSendOptions options = null, long starCount = 0)
         {
-            var factory = await MessageFactory.CreateVideoAsync(video, animated, captionAboveMedia, spoiler, starCount > 0 ? new MessageSelfDestructTypeImmediately() : ttl, transform);
+            var factory = await MessageFactory.CreateVideoAsync(video, animated, captionAboveMedia, spoiler, starCount > 0 ? new MessageSelfDestructTypeImmediately() : ttl, conversion);
             if (factory != null)
             {
                 if (starCount > 0)
@@ -709,7 +680,7 @@ namespace Telegram.ViewModels
         //    return await SendMessageAsync(replyToMessageId, inputMessageContent, options);
         //}
 
-        public abstract Task<MessageSendOptions> PickMessageSendOptionsAsync(bool? schedule = null, bool? silent = null, bool reorder = false);
+        public abstract Task<MessageSendOptions> PickMessageSendOptionsAsync(int messageCount = 1, SchedulingState schedulingState = SchedulingState.None, bool? disableNotification = null, bool reorder = false);
 
         protected async Task<BaseObject> SendMessageAsync(InputMessageReplyTo replyTo, InputMessageContent inputMessageContent, MessageSendOptions options)
         {
@@ -867,7 +838,7 @@ namespace Telegram.ViewModels
                 }
                 else if (item is StorageVideo video)
                 {
-                    var factory = await MessageFactory.CreateVideoAsync(video, video.IsMuted, captionAboveMedia, spoiler, video.Ttl, video.GetTransform());
+                    var factory = await MessageFactory.CreateVideoAsync(video, video.IsMuted, captionAboveMedia, spoiler, video.Ttl, video.GetConversion());
                     if (factory != null)
                     {
                         if (starCount > 0)
@@ -916,12 +887,12 @@ namespace Telegram.ViewModels
             return ClientEx.ParseMarkdown(text.Format());
         }
 
-        public Task<BaseObject> SendMessageAsync(FormattedText formattedText, MessageSendOptions options = null, InputMessageReplyTo reply = null)
+        public Task<BaseObject> SendMessageAsync(FormattedText formattedText, LinkPreviewOptions linkPreview = null, MessageSendOptions options = null, InputMessageReplyTo reply = null)
         {
-            return SendMessageAsync(formattedText?.Text, formattedText?.Entities, options, reply);
+            return SendMessageAsync(formattedText?.Text, formattedText?.Entities, linkPreview, options, reply);
         }
 
-        public async Task<BaseObject> SendMessageAsync(string text, IList<TextEntity> entities = null, MessageSendOptions options = null, InputMessageReplyTo reply = null)
+        public async Task<BaseObject> SendMessageAsync(string text, IList<TextEntity> entities = null, LinkPreviewOptions linkPreview = null, MessageSendOptions options = null, InputMessageReplyTo reply = null)
         {
             text ??= string.Empty;
             text = text.Replace('\v', '\n').Replace('\r', '\n');
@@ -941,7 +912,7 @@ namespace Telegram.ViewModels
                 formattedText = new FormattedText(text, entities);
             }
 
-            var applied = await BeforeSendMessageAsync(formattedText);
+            var applied = await BeforeSendMessageAsync(formattedText, linkPreview);
             if (applied || string.IsNullOrEmpty(formattedText.Text))
             {
                 return null;
@@ -954,7 +925,6 @@ namespace Telegram.ViewModels
                 return null;
             }
 
-            var disablePreview = DisableWebPreview();
             reply ??= GetReply(options.OnlyPreview == false, options.SchedulingState != null);
 
             BaseObject response = null;
@@ -970,13 +940,13 @@ namespace Telegram.ViewModels
                 {
                     foreach (var split in formattedText.Split(ClientService.Options.MessageTextLengthMax))
                     {
-                        var input = new InputMessageText(split, disablePreview, true);
+                        var input = new InputMessageText(split, linkPreview, true);
                         response = await SendMessageAsync(reply, input, options);
                     }
                 }
                 else if (text.Length > 0)
                 {
-                    var input = new InputMessageText(formattedText, disablePreview, true);
+                    var input = new InputMessageText(formattedText, linkPreview, true);
                     response = await SendMessageAsync(reply, input, options);
                 }
                 else
@@ -988,12 +958,12 @@ namespace Telegram.ViewModels
             return response;
         }
 
-        protected virtual LinkPreviewOptions DisableWebPreview()
+        public virtual LinkPreviewOptions GetLinkPreviewOptions()
         {
             return null;
         }
 
-        protected virtual Task<bool> BeforeSendMessageAsync(FormattedText formattedText)
+        protected virtual Task<bool> BeforeSendMessageAsync(FormattedText formattedText, LinkPreviewOptions options)
         {
             return Task.FromResult(false);
         }

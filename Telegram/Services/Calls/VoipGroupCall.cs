@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -23,7 +23,6 @@ using Telegram.Views.Calls.Popups;
 using Windows.ApplicationModel.Calls;
 using Windows.Data.Json;
 using Windows.Foundation;
-using Windows.Graphics.Capture;
 
 namespace Telegram.Services.Calls
 {
@@ -31,7 +30,9 @@ namespace Telegram.Services.Calls
     {
         private readonly IViewService _viewService;
 
-        private Chat _chat;
+        private readonly Chat _chat;
+        private readonly string _inviteHash;
+        private readonly long _keyFingerprint;
 
         private MessageSender _alias;
         private MessageSenders _availableAliases;
@@ -63,7 +64,7 @@ namespace Telegram.Services.Calls
 
         private int _availableStreamsCount = 0;
 
-        public VoipGroupCall(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, XamlRoot xamlRoot, Chat chat, GroupCall groupCall, MessageSender alias)
+        public VoipGroupCall(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, XamlRoot xamlRoot, Chat chat, GroupCall groupCall, MessageSender alias, string inviteHash, bool upgrade)
             : base(clientService, settingsService, aggregator)
         {
             Duration = groupCall.Duration;
@@ -86,6 +87,7 @@ namespace Telegram.Services.Calls
             EnabledStartNotification = groupCall.EnabledStartNotification;
             ScheduledStartDate = groupCall.ScheduledStartDate;
             Title = groupCall.Title;
+            FromCallId = groupCall.FromCallId;
             Id = groupCall.Id;
 
             var unix = ClientService.SendAsync(new GetOption("unix_time")).Result as OptionValueInteger;
@@ -93,6 +95,7 @@ namespace Telegram.Services.Calls
             _timeDifference = DateTime.Now - Formatter.ToLocalTime(unix.Value);
 
             _chat = chat;
+            _inviteHash = inviteHash ?? string.Empty;
 
             _isScheduled = groupCall.ScheduledStartDate > 0;
 
@@ -110,11 +113,12 @@ namespace Telegram.Services.Calls
             _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
             _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
             _manager.BroadcastPartRequested += OnBroadcastPartRequested;
+            _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
 
             _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
 
             InitializeSystemCallAsync(chat).Wait();
-            CreateWindow();
+            CreateWindow(upgrade);
 
             if (groupCall.ScheduledStartDate > 0)
             {
@@ -253,7 +257,7 @@ namespace Telegram.Services.Calls
                     Participants ??= new GroupCallParticipantsCollection(this);
                 }
 
-                var response = await ClientService.SendAsync(new JoinGroupCall(Id, alias, ssrc, payload, _manager.IsMuted, _capturer != null, string.Empty));
+                var response = await ClientService.SendAsync(new JoinGroupCall(Id, alias, ssrc, payload, _manager.IsMuted, _capturer != null, _inviteHash, _keyFingerprint));
                 if (response is Text json && _manager != null)
                 {
                     bool broadcast;
@@ -326,22 +330,20 @@ namespace Telegram.Services.Calls
 
         public bool IsScreenSharing => _screenManager != null && _screenCapturer != null;
 
-        public async void StartScreenSharing()
+        public async void StartScreenSharing(XamlRoot xamlRoot)
         {
             if (_manager == null || _screenManager != null || !VoipScreenCapture.IsSupported())
             {
                 return;
             }
 
-            var picker = new GraphicsCapturePicker();
-            var item = await picker.PickSingleItemAsync();
-
+            var item = await CaptureSessionService.ChooseAsync(xamlRoot, true);
             if (item == null || _manager == null || _screenManager != null)
             {
                 return;
             }
 
-            _screenCapturer = new VoipScreenCapture(item);
+            _screenCapturer = new VoipScreenCapture(item.CaptureItem);
             _screenCapturer.FatalErrorOccurred += OnFatalErrorOccurred;
 
             // TODO: currently Paused is triggered when frames are dropped as well.
@@ -354,7 +356,8 @@ namespace Telegram.Services.Calls
             var descriptor = new VoipGroupDescriptor
             {
                 VideoContentType = VoipVideoContentType.Screencast,
-                VideoCapture = _screenCapturer
+                VideoCapture = _screenCapturer,
+                AudioProcessId = item.ProcessId
             };
 
             _screenManager = new VoipGroupManager(descriptor);
@@ -493,6 +496,11 @@ namespace Telegram.Services.Calls
             args.Deferral(time, stamp, response as FilePart);
         }
 
+        private void OnMediaChannelDescriptionsRequested(VoipGroupManager sender, object args)
+        {
+            Logger.Info();
+        }
+
         private void OnNetworkStateUpdated(VoipGroupManager sender, GroupNetworkStateChangedEventArgs args)
         {
             //if (_isConnected && !connected)
@@ -503,6 +511,8 @@ namespace Telegram.Services.Calls
             //{
             //    _connectingTimer.Change(Timeout.Infinite, Timeout.Infinite);
             //}
+
+            Logger.Info(string.Format("Connected: {0}", args.IsConnected));
 
             _isConnected = args.IsConnected;
             NetworkStateChanged?.Invoke(this, new VoipGroupCallNetworkStateChangedEventArgs(args.IsConnected, args.IsTransitioningFromBroadcastToRtc));
@@ -596,7 +606,7 @@ namespace Telegram.Services.Calls
         {
             if (ScheduledStartDate > 0)
             {
-                ThreadPool.QueueUserWorkItem(state => Aggregator.Publish(new UpdateGroupCall(new GroupCall(Id, Title, ScheduledStartDate, EnabledStartNotification, IsActive, IsRtmpStream, false, false, CanBeManaged, ParticipantCount, HasHiddenListeners, LoadedAllParticipants, RecentSpeakers, IsMyVideoEnabled, IsMyVideoPaused, CanEnableVideo2, MuteNewParticipants, CanToggleMuteNewParticipants, RecordDuration, IsVideoRecorded, Duration))));
+                ThreadPool.QueueUserWorkItem(state => Aggregator.Publish(new UpdateGroupCall(new GroupCall(Id, FromCallId, Title, ScheduledStartDate, EnabledStartNotification, IsActive, IsRtmpStream, false, false, CanBeManaged, ParticipantCount, HasHiddenListeners, LoadedAllParticipants, RecentSpeakers, IsMyVideoEnabled, IsMyVideoPaused, CanEnableVideo2, MuteNewParticipants, CanToggleMuteNewParticipants, RecordDuration, IsVideoRecorded, Duration))));
             }
             else if (end)
             {
@@ -611,7 +621,7 @@ namespace Telegram.Services.Calls
         private void Dispose()
         {
             //_call = null;
-            _chat = null;
+            //_chat = null;
 
             _isScheduled = false;
             _isConnected = false;
@@ -633,6 +643,7 @@ namespace Telegram.Services.Calls
                 _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
                 _manager.BroadcastTimeRequested -= OnBroadcastTimeRequested;
                 _manager.BroadcastPartRequested -= OnBroadcastPartRequested;
+                _manager.MediaChannelDescriptionsRequested -= OnMediaChannelDescriptionsRequested;
 
                 _manager.SetVideoCapture(null);
 
@@ -869,9 +880,9 @@ namespace Telegram.Services.Calls
 
         public string GetTitle()
         {
-            if (string.IsNullOrEmpty(Title) && ClientService.TryGetChat(Chat.Id, out Chat chat))
+            if (string.IsNullOrEmpty(Title))
             {
-                return chat.Title;
+                return _chat.Title;
             }
 
             return Title;
@@ -993,24 +1004,42 @@ namespace Telegram.Services.Calls
         /// </summary>
         public int Id { get; private set; }
 
+        /// <summary>
+        /// Identifier of one-to-one call from which the group call was created; 0 if unknown.
+        /// </summary>
+        public int FromCallId { get; private set; }
+
 
         public int Source => _source;
 
         public bool IsConnected => _isConnected;
 
-        private void CreateWindow()
+        private void CreateWindow(bool upgrade)
         {
-            var service = TypeResolver.Current.Resolve<IViewService>(int.MaxValue);
-            var options = new ViewServiceOptions
+            if (upgrade)
             {
-                Width = 720,
-                Height = 540,
-                PersistedId = IsRtmpStream ? "LiveStream" : "VideoChat",
-                Content = CreatePresentation,
-            };
+                WindowContext.ForEach(window =>
+                {
+                    if (window.Content is VoipPage)
+                    {
+                        window.Content = CreatePresentation(null);
+                    }
+                });
+            }
+            else
+            {
+                var service = TypeResolver.Current.Resolve<IViewService>(int.MaxValue);
+                var options = new ViewServiceOptions
+                {
+                    Width = 720,
+                    Height = 540,
+                    PersistedId = IsRtmpStream ? "LiveStream" : "VideoChat",
+                    Content = CreatePresentation,
+                };
 
-            Logger.Info("Waiting for window creation");
-            _ = service.OpenAsync(options);
+                Logger.Info("Waiting for window creation");
+                _ = service.OpenAsync(options);
+            }
         }
 
         private UIElement CreatePresentation(ViewLifetimeControl control)

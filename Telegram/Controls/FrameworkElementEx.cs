@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -584,6 +584,86 @@ namespace Telegram.Controls
     }
 
     public partial class ListViewItemEx : ListViewItem
+    {
+        private bool _loaded;
+        private bool _unloaded;
+
+        public bool IsConnected => _loaded;
+        public bool IsDisconnected => _unloaded;
+
+        private event RoutedEventHandler _connected;
+        public event RoutedEventHandler Connected
+        {
+            add
+            {
+                if (_connected == null && _disconnected == null)
+                {
+                    Loaded += OnChanged;
+                    Unloaded += OnChanged;
+                }
+
+                _connected += value;
+            }
+            remove
+            {
+                _connected -= value;
+
+                if (_connected == null && _disconnected == null)
+                {
+                    Loaded -= OnChanged;
+                    Unloaded -= OnChanged;
+                }
+            }
+        }
+
+        private event RoutedEventHandler _disconnected;
+        public event RoutedEventHandler Disconnected
+        {
+            add
+            {
+                if (_connected == null && _disconnected == null)
+                {
+                    Loaded += OnChanged;
+                    Unloaded += OnChanged;
+                }
+
+                _disconnected += value;
+            }
+            remove
+            {
+                _disconnected -= value;
+
+                if (_connected == null && _disconnected == null)
+                {
+                    Loaded -= OnChanged;
+                    Unloaded -= OnChanged;
+                }
+            }
+        }
+
+        private void OnChanged(object sender, RoutedEventArgs e)
+        {
+            // TODO: unfortunately FrameworkElement.Parent returns null
+            // whenever the control is a DataTemplate root or similar,
+            // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
+
+            var parent = Parent ?? Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            if (parent != null && !_loaded)
+            {
+                _loaded = true;
+                _unloaded = false;
+                _connected?.Invoke(this, e);
+            }
+            else if (parent == null && _loaded)
+            {
+                _loaded = false;
+                _unloaded = true;
+                _disconnected?.Invoke(sender, e);
+            }
+        }
+    }
+
+    public partial class HyperlinkButtonEx : HyperlinkButton
     {
         private bool _loaded;
         private bool _unloaded;

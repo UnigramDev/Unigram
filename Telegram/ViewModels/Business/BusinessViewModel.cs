@@ -35,19 +35,22 @@ namespace Telegram.ViewModels.Business
                 Set(ref _hasSponsoredMessagesEnabled, fullInfo.HasSponsoredMessagesEnabled, nameof(HasSponsoredMessagesEnabled));
             }
 
-            var response = await ClientService.SendAsync(new GetBusinessFeatures());
-            if (response is BusinessFeatures features)
+            if (Items.Empty())
             {
-                _features = features.Features.ToList();
-
-                foreach (var feature in features.Features)
+                var response = await ClientService.SendAsync(new GetBusinessFeatures());
+                if (response is BusinessFeatures features)
                 {
-                    if (feature is BusinessFeatureEmojiStatus or BusinessFeatureChatFolderTags or BusinessFeatureUpgradedStories)
-                    {
-                        continue;
-                    }
+                    _features = features.Features.ToList();
 
-                    Items.Add(feature);
+                    foreach (var feature in features.Features)
+                    {
+                        if (feature is BusinessFeatureEmojiStatus or BusinessFeatureChatFolderTags or BusinessFeatureUpgradedStories)
+                        {
+                            continue;
+                        }
+
+                        Items.Add(feature);
+                    }
                 }
             }
 

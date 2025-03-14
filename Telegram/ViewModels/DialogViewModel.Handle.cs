@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Messages;
 using Telegram.Controls.Messages.Content;
 using Telegram.Services;
@@ -407,8 +408,21 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id && _type == DialogType.History)
             {
-                BeginOnUIThread(() => Delegate?.UpdateChatActionBar(_chat));
+                BeginOnUIThread(() => UpdateChatActionBar(_chat));
             }
+        }
+
+        private void UpdateChatActionBar(Chat chat)
+        {
+            if (ClientService.TryGetUser(chat, out User user) && chat.ActionBar is ChatActionBarReportAddBlock { AccountInfo: not null })
+            {
+                ClientService.Send(new GetGroupsInCommon(user.Id, 0, 3), result =>
+                {
+                    BeginOnUIThread(() => GroupsInCommon = result as Td.Api.Chats);
+                });
+            }
+
+            Delegate?.UpdateChatActionBar(chat);
         }
 
         public void Handle(UpdateChatIsTranslatable update)
@@ -889,7 +903,8 @@ namespace Telegram.ViewModels
                     message.InteractionInfo = update.InteractionInfo;
                     return true;
                 },
-                (bubble, message) => bubble.UpdateMessageInteractionInfo(message));
+                (bubble, message) => bubble.UpdateMessageInteractionInfo(message),
+                (service, message) => service.UpdateMessageInteractionInfo(message));
             }
         }
 
@@ -944,7 +959,16 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateMessageSendSucceeded update)
         {
-            if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
+            if (update.Message.ChatId == _chat?.Id && _type == DialogType.History && update.Message.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed)
+            {
+                Handle(new UpdateDeleteMessages(update.Message.ChatId, new[] { update.OldMessageId }, true, false));
+                BeginOnUIThread(() =>
+                {
+                    NavigationService.NavigateToChat(_chat, update.Message.Id, scheduled: true);
+                    ShowToast(string.Format("**{0}**\n{1}", Strings.VideoConversionTitle, Strings.VideoConversionText), ToastPopupIcon.VideoConversion);
+                });
+            }
+            else if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
                 Handle(update.OldMessageId, message =>
                 {
@@ -962,7 +986,7 @@ namespace Telegram.ViewModels
                 {
                     bubble.UpdateMessage(message);
                     Delegate?.ViewVisibleMessages();
-                }, update.Message.Id);
+                }, newMessageId: update.Message.Id);
 
                 if (Settings.Notifications.InAppSounds)
                 {
@@ -1034,7 +1058,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private void Handle(long messageId, Func<MessageViewModel, bool> update, Action<MessageBubble, MessageViewModel> action = null, long? newMessageId = null)
+        private void Handle(long messageId, Func<MessageViewModel, bool> update, Action<MessageBubble, MessageViewModel> action1 = null, Action<MessageService, MessageViewModel> action2 = null, long? newMessageId = null)
         {
             BeginOnUIThread(() =>
             {
@@ -1047,18 +1071,20 @@ namespace Telegram.ViewModels
                             update?.Invoke(child);
 
                             // UpdateMessageSendSucceeded changes the message id
-                            if (messageId != child.Id)
+                            if (messageId != child.Id && newMessageId.HasValue)
                             {
                                 album.Messages.Remove(messageId);
                                 album.Messages.Add(child);
+
+                                Items.UpdateMessageSendSucceeded(messageId, child.Id, message);
                             }
 
                             message.UpdateWith(album.Messages[0]);
                             album.Invalidate();
 
-                            if (action != null)
+                            if (action1 != null)
                             {
-                                Delegate?.UpdateBubbleWithMediaAlbumId(message.MediaAlbumId, bubble => action(bubble, albumMessage));
+                                Delegate?.UpdateBubbleWithMediaAlbumId(message.MediaAlbumId, bubble => action1(bubble, albumMessage));
                             }
                         }
                     }
@@ -1075,14 +1101,24 @@ namespace Telegram.ViewModels
                         if (update == null || update(message))
                         {
                             // UpdateMessageSendSucceeded changes the message id
-                            if (action != null)
+                            if (action1 != null)
                             {
-                                Delegate?.UpdateBubbleWithMessageId(messageId, bubble => action(bubble, message));
+                                Delegate?.UpdateContainerWithMessageId(messageId, container =>
+                                {
+                                    if (action1 != null && container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
+                                    {
+                                        action1(bubble, message);
+                                    }
+                                    else if (action2 != null && container.ContentTemplateRoot is MessageService service)
+                                    {
+                                        action2(service, message);
+                                    }
+                                });
                             }
                         }
                     }
 
-                    if (messageId != message.Id)
+                    if (messageId != message.Id && newMessageId.HasValue)
                     {
                         Items.UpdateMessageSendSucceeded(messageId, message);
                         Delegate?.UpdateMessageSendSucceeded(messageId, message);

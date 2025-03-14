@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -36,7 +36,7 @@ namespace Telegram.ViewModels.Stars
         {
         }
 
-        public string OwnedStarCount => ClientService.OwnedStarCount.ToString("N0");
+        public string OwnedStarCount => ClientService.OwnedStarCount.ToValue();
 
         public PaymentForm PaymentForm { get; private set; }
 
@@ -81,10 +81,10 @@ namespace Telegram.ViewModels.Stars
                 return PayResult.Succeeded;
             }
 
-            if (ClientService.OwnedStarCount < stars.StarCount)
+            if (ClientService.OwnedStarCount.StarCount < stars.StarCount)
             {
                 var updated = await ClientService.GetStarTransactionsAsync(ClientService.MyId, string.Empty, null, string.Empty, 1) as StarTransactions;
-                if (updated is null || updated.StarCount < stars.StarCount)
+                if (updated is null || updated.StarAmount.StarCount < stars.StarCount)
                 {
                     return PayResult.StarsNeeded;
                 }

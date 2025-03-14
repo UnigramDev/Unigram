@@ -10,6 +10,10 @@
                        IsDismissButtonVisible="True">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Features}"
                   ItemClick="OnItemClick"
@@ -20,6 +24,7 @@
             <ListView.Header>
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -62,16 +67,36 @@
                                    Grid.Row="1" />
                     <TextBlock x:Name="PremiumSubtitle"
                                common:TextBlockHelper.Markdown="{x:Bind ConvertTitle(ViewModel.IsPremium, x:False), Mode=OneWay}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Style="{StaticResource BodyTextBlockStyle}"
                                TextAlignment="Center"
-                               Margin="12,4,12,20"
+                               Margin="12,8,12,20"
                                Grid.Row="2" />
                     <TextBlock x:Name="ChatSubtitle"
                                Visibility="Collapsed"
-                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Style="{StaticResource BodyTextBlockStyle}"
                                TextAlignment="Center"
-                               Margin="12,4,12,20"
+                               Margin="12,8,12,20"
                                Grid.Row="2" />
+
+                    <Grid x:Name="LinkRoot"
+                          Margin="12,-12,12,20"
+                          Visibility="Collapsed"
+                          Grid.Row="3">
+                        <Button Click="CopyLink_Click"
+                                HorizontalAlignment="Stretch"
+                                Padding="24,5,24,6">
+                            <TextBlock x:Name="Link"
+                                       TextTrimming="CharacterEllipsis" />
+                        </Button>
+                        <TextBlock Text="&#xE8C8;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="20"
+                                   Foreground="{ThemeResource AccentButtonBackground}"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0"
+                                   IsHitTestVisible="False" />
+                    </Grid>
                 </Grid>
             </ListView.Header>
             <ListView.ItemTemplate>
@@ -123,7 +148,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <StackPanel Margin="0,0,0,72">
+                <StackPanel Margin="0,0,0,24">
                     <TextBlock common:TextBlockHelper.FormattedText="{x:Bind ViewModel.State.State, Mode=OneWay}"
                                Visibility="{x:Bind ViewModel.State, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
@@ -151,17 +176,8 @@
               x:Load="{x:Bind ViewModel.CanPurchase, Mode=OneWay}"
               VerticalAlignment="Bottom"
               HorizontalAlignment="Stretch"
-              Margin="24,12,24,24"
+              Margin="24,0,24,24"
               Grid.Row="1">
-            <Rectangle x:Name="PurchaseShadow"
-                       Loaded="PurchaseShadow_Loaded"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
-                       Fill="White"
-                       Margin="0"
-                       RadiusX="4"
-                       RadiusY="4">
-            </Rectangle>
             <Border Background="{StaticResource PremiumLinearGradientBrush}"
                     CornerRadius="4"
                     Height="32" />

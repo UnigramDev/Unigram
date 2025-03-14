@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -53,25 +53,20 @@ namespace Telegram.Services
                 Monitor.Exit(_savedMessages);
 
                 var response = await SendAsync(new LoadSavedMessagesTopics(count - sorted.Count));
-                if (response is Ok or Error)
+                if (response is Error error)
                 {
-                    if (response is Error error)
+                    if (error.Code == 404)
                     {
-                        if (error.Code == 404)
-                        {
-                            _haveFullSavedMessages = true;
-                        }
-                        else
-                        {
-                            return null;
-                        }
+                        _haveFullSavedMessages = true;
                     }
-
-                    // Chats have already been received through updates, let's retry request
-                    return await GetSavedMessagesChatsAsyncImpl(offset, limit, true);
+                    else
+                    {
+                        return Array.Empty<SavedMessagesTopic>();
+                    }
                 }
 
-                return null;
+                // Chats have already been received through updates, let's retry request
+                return await GetSavedMessagesChatsAsyncImpl(offset, limit, true);
             }
 #endif
 

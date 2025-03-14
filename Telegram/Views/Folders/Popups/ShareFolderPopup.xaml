@@ -25,9 +25,15 @@
                 <controls:SettingsPanel IsHeader="True"
                                         IsFooter="True">
                     <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ShareFolder.tgs"
-                                               Text="{x:Bind ConvertHeadline(ViewModel.Title, ViewModel.SelectedCount), Mode=OneWay}"
                                                Margin="-12,0"
                                                Padding="0,0,0,8" />
+                    <RichTextBlock x:Name="NameText"
+                                   Style="{StaticResource InfoBodyRichTextBlockStyle}"
+                                   TextAlignment="Center"
+                                   Margin="12,0"
+                                   MaxWidth="480">
+                        <Paragraph x:Name="NameParagraph" />
+                    </RichTextBlock>
 
                     <controls:HeaderedControl x:Name="InvitePanel"
                                               x:Load="{x:Bind ConvertInviteLinkLoad(ViewModel.InviteLink)}"

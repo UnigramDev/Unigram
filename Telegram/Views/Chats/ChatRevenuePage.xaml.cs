@@ -20,22 +20,27 @@ namespace Telegram.Views.Chats
         public ChatRevenuePage()
         {
             InitializeComponent();
+            Title = Strings.Monetization;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            Withdraw.DataContext = ViewModel.Stars;
-            Withdraw.OnNavigatedTo(e);
+            StarsRoot.DataContext = ViewModel.Stars;
+            StarsRoot.OnNavigatedTo(e);
             ViewModel.PropertyChanged += OnPropertyChanged;
 
             UpdateAmount(ViewModel.AvailableAmount);
+            UpdateAvailability(ViewModel.Availability);
 
             FooterInfo.Text = string.Format(Strings.MonetizationInfo, 50);
+            FooterInfo.Visibility = ViewModel.Chat.Type is ChatTypeSupergroup
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            Withdraw.OnNavigatedFrom(e);
+            StarsRoot.OnNavigatedFrom(e);
             ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 
@@ -45,6 +50,38 @@ namespace Telegram.Views.Chats
             {
                 UpdateAmount(ViewModel.AvailableAmount);
             }
+            else if (e.PropertyName == nameof(ViewModel.Availability))
+            {
+                UpdateAvailability(ViewModel.Availability);
+            }
+        }
+
+        public void UpdateAvailability(ChatRevenueAvailability availability)
+        {
+            var crypto = availability is ChatRevenueAvailability.Crypto or ChatRevenueAvailability.CryptoAndStars
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+            var stars = availability is ChatRevenueAvailability.Stars or ChatRevenueAvailability.CryptoAndStars
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            CryptoRoot.Visibility = crypto;
+            StarsRoot.Visibility = stars;
+
+            AvailableCrypto.Visibility = crypto;
+            AvailableStars.Visibility = stars;
+
+            PreviousCrypto.Visibility = crypto;
+            PreviousStars.Visibility = stars;
+
+            TotalCrypto.Visibility = crypto;
+            TotalStars.Visibility = stars;
+
+            var column = availability == ChatRevenueAvailability.Stars ? 0 : 1;
+
+            Grid.SetColumn(AvailableStars, column);
+            Grid.SetColumn(PreviousStars, column);
+            Grid.SetColumn(TotalStars, column);
         }
 
         public void UpdateAmount(CryptoAmount value)
@@ -88,7 +125,14 @@ namespace Telegram.Views.Chats
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.ShowTransaction(e.ClickedItem as ChatRevenueTransaction);
+            if (e.ClickedItem is ChatRevenueTransaction info1)
+            {
+                ViewModel.ShowTransaction(info1);
+            }
+            else if (e.ClickedItem is StarTransaction info2)
+            {
+                ViewModel.Stars.ShowTransaction(info2);
+            }
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -97,9 +141,14 @@ namespace Telegram.Views.Chats
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is ChatRevenueTransactionCell cell && args.Item is ChatRevenueTransaction info)
+            else if (args.ItemContainer.ContentTemplateRoot is ChatRevenueTransactionCell cell1 && args.Item is ChatRevenueTransaction info1)
             {
-                cell.UpdateInfo(info);
+                cell1.UpdateInfo(info1);
+                args.Handled = true;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is StarTransactionCell cell2 && args.Item is StarTransaction info2)
+            {
+                cell2.UpdateInfo(ViewModel.ClientService, info2);
                 args.Handled = true;
             }
         }
@@ -141,5 +190,22 @@ namespace Telegram.Views.Chats
         }
 
         #endregion
+    }
+
+    public class ChatRevenueTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate ChatRevenueTransactionTemplate { get; set; }
+
+        public DataTemplate StarTransactionTemplate { get; set; }
+
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+        {
+            return item switch
+            {
+                ChatRevenueTransaction => ChatRevenueTransactionTemplate,
+                StarTransaction => StarTransactionTemplate,
+                _ => null
+            };
+        }
     }
 }

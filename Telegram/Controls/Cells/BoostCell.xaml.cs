@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -46,7 +46,7 @@ namespace Telegram.Controls.Cells
             }
             else if (args.Phase == 1)
             {
-                SubtitleLabel.Text = string.Format(Strings.BoostExpireOn, Formatter.ShortDate.Format(Formatter.ToLocalTime(boost.ExpirationDate)));
+                SubtitleLabel.Text = string.Format(Strings.BoostExpireOn, Formatter.Date(boost.ExpirationDate, Strings.formatterBoostExpired));
             }
             else if (args.Phase == 2)
             {

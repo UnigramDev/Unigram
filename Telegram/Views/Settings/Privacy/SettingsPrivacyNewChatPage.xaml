@@ -27,12 +27,12 @@
                       VerticalScrollMode="Auto">
             <controls:SettingsPanel>
                 <controls:HeaderedControl x:Name="Group"
-                                          Header="{CustomResource PrivacyMessagesTitle}">
+                                          Header="{CustomResource PrivacyMessagesTitle}"
+                                          Footer="{x:Bind ConvertFooter(ViewModel.SelectedItem), Mode=OneWay}">
                     <controls:PrivacyRadioButton Content="{CustomResource LastSeenEverybody}"
                                                  Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                                                  Type="AllowAll"
                                                  Style="{StaticResource SettingsRadioButtonStyle}" />
-
 
                     <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                         <controls:PrivacyRadioButton Content="{CustomResource PrivacyMessagesContactsAndPremium}"
@@ -51,6 +51,63 @@
                                    Padding="20,12,0,0"
                                    IsHitTestVisible="False" />
                     </Grid>
+
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <controls:PrivacyRadioButton Content="{CustomResource PrivateMessagesChargePrice}"
+                                                     Click="{x:Bind ViewModel.Enable}"
+                                                     Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                                     IsFaux="{x:Bind ViewModel.CanSetNewChatPrivacySettings, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                                     IsChevronVisible="{x:Bind ViewModel.CanSetNewChatPrivacySettings, Mode=OneWay}"
+                                                     Type="DisallowAll"
+                                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                        <TextBlock x:Name="DisallowAllLock"
+                                   x:Load="{x:Bind ViewModel.CanSetNewChatPrivacySettings, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                   Text="&#xEA25;"
+                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="20"
+                                   Padding="20,12,0,0"
+                                   IsHitTestVisible="False" />
+                    </Grid>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Visibility="{x:Bind ConvertFee(ViewModel.SelectedItem), Mode=OneWay}"
+                                          Header="{CustomResource PrivateMessagesPriceHeader}"
+                                          Footer="{x:Bind ConvertPriceFee(ViewModel.IncomingPaidMessageStarCount), Mode=OneWay}">
+                    <Grid x:Name="PriceTicks"
+                          Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                          Padding="12,6,12,6">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <controls:AnimatedTextBlock Text="{x:Bind ConvertPriceValue(ViewModel.IncomingPaidMessageStarCount), Mode=OneWay}"
+                                                    TextAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Margin="0,0,0,-4"
+                                                    Grid.ColumnSpan="4" />
+
+                        <Slider x:Name="Price"
+                                Value="{x:Bind ViewModel.IncomingPaidMessageStarCount, Mode=TwoWay}"
+                                Maximum="9000"
+                                Minimum="1"
+                                SmallChange="1"
+                                LargeChange="1"
+                                StepFrequency="1"
+                                IsThumbToolTipEnabled="False"
+                                Grid.Row="1" />
+                    </Grid>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Visibility="{x:Bind ConvertFee(ViewModel.SelectedItem), Mode=OneWay}"
+                                          Header="{CustomResource PrivateMessagesExceptionsHeader}"
+                                          Footer="{CustomResource PrivateMessagesExceptionsInfo}">
+                    <controls:BadgeButton Content="{CustomResource PrivateMessagesExceptions}"
+                                          Click="{x:Bind ViewModel.AllowUnpaidRules.Always}"
+                                          Badge="{x:Bind ViewModel.AllowUnpaidRules.AllowedBadge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xF164;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

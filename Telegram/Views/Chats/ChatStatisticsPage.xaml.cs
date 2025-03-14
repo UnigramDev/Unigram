@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -34,10 +34,7 @@ namespace Telegram.Views.Chats
 
         private string ConvertPeriod(int startDate, int endDate)
         {
-            var start = Formatter.ToLocalTime(startDate);
-            var end = Formatter.ToLocalTime(endDate);
-
-            return string.Format("{0} - {1}", Formatter.ShortDate.Format(start), Formatter.ShortDate.Format(end));
+            return string.Format("{0} - {1}", Formatter.Date(startDate), Formatter.Date(endDate));
         }
 
         private string ConvertShowMore(int count)

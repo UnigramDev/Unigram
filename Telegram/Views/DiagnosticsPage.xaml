@@ -65,6 +65,10 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
                               Content="{CustomResource ConnectWithIPv6}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.UseSpeexResampler, Mode=TwoWay}"
+                              Content="Use Speex Resampler"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="Crash Mitigation">

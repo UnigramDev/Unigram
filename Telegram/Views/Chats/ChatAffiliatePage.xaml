@@ -1,0 +1,117 @@
+﻿<local:HostedPage x:Class="Telegram.Views.Chats.ChatAffiliatePage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:cells="using:Telegram.Controls.Cells"
+                  xmlns:local="using:Telegram.Views"
+                  mc:Ignorable="d"
+                  NavigationMode="Root">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.FoundPrograms}"
+                                ItemClick="OnItemClick"
+                                IsItemClickEnabled="True"
+                                SelectionMode="None"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                Padding="0,0,0,72">
+            <ListView.Header>
+                <controls:TableListView x:Name="ProgramsHost"
+                                        ItemsSource="{x:Bind ViewModel.Programs}"
+                                        ItemClick="OnItemClick"
+                                        IsItemClickEnabled="True"
+                                        SelectionMode="None"
+                                        ChoosingItemContainer="OnChoosingItemContainer"
+                                        ContainerContentChanging="OnContainerContentChanging">
+                    <ListView.Header>
+                        <controls:SettingsPanel IsHeader="True">
+                            <controls:SettingsHeadline x:Name="Headline"
+                                                       Source="ms-appx:///Assets/Animations/Affiliate.tgs"
+                                                       LoopCount="1"
+                                                       Text="{CustomResource ChannelAffiliateProgramText}" />
+
+                            <controls:HeaderedControl>
+                                <controls:BadgeButton Content="{CustomResource ChannelAffiliateProgramFeature1Title}"
+                                                      Badge="{CustomResource ChannelAffiliateProgramFeature1}"
+                                                      Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                                      Glyph="&#xE9F9;" />
+                                <controls:BadgeButton Content="{CustomResource ChannelAffiliateProgramFeature2Title}"
+                                                      Badge="{CustomResource ChannelAffiliateProgramFeature2}"
+                                                      Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                                      Glyph="&#xE9A7;" />
+                                <controls:BadgeButton Content="{CustomResource ChannelAffiliateProgramFeature3Title}"
+                                                      Badge="{CustomResource ChannelAffiliateProgramFeature3}"
+                                                      Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                                      Glyph="&#xEAA7;" />
+                            </controls:HeaderedControl>
+
+                            <Border Visibility="{x:Bind ViewModel.Programs.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    MaxWidth="1000"
+                                    Margin="24,30,24,6">
+                                <TextBlock Text="{CustomResource ChannelAffiliateProgramMyPrograms}"
+                                           Style="{StaticResource BaseTextBlockStyle}" />
+                            </Border>
+                        </controls:SettingsPanel>
+
+                    </ListView.Header>
+                    <ListView.Template>
+                        <ControlTemplate TargetType="ListView">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{TemplateBinding CornerRadius}">
+                                <ItemsPresenter Header="{TemplateBinding Header}"
+                                                HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                                HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                                                Footer="{TemplateBinding Footer}"
+                                                FooterTemplate="{TemplateBinding FooterTemplate}"
+                                                FooterTransitions="{TemplateBinding FooterTransitions}"
+                                                Padding="{TemplateBinding Padding}" />
+                            </Border>
+                        </ControlTemplate>
+                    </ListView.Template>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                               BorderBrush="{ThemeResource SettingsItemBorderBrush}" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.Footer>
+                        <Grid Visibility="{x:Bind ViewModel.FoundPrograms.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              MaxWidth="1000"
+                              Margin="24,30,24,6">
+                            <TextBlock Text="{CustomResource ChannelAffiliateProgramPrograms}"
+                                       Style="{StaticResource BaseTextBlockStyle}" />
+
+                            <TextBlock Style="{StaticResource InfoBodyTextBlockStyle}"
+                                       HorizontalAlignment="Right">
+                                <Run Text="{CustomResource ChannelAffiliateProgramProgramsSort}" />
+                                <Hyperlink Click="SortOrder_Click"
+                                           UnderlineStyle="None">
+                                    <Run Text="{x:Bind ConvertSortOrder(ViewModel.SortOrder), Mode=OneWay}" />
+                                </Hyperlink>
+                            </TextBlock>
+                        </Grid>
+                    </ListView.Footer>
+                </controls:TableListView>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                       BorderBrush="{ThemeResource SettingsItemBorderBrush}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </controls:TableListView>
+    </Grid>
+</local:HostedPage>

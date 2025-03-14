@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -37,14 +37,12 @@ namespace Telegram.Services
 
     public partial class SessionService : ViewModelBase, ISessionService
     {
-        private readonly IContactsService _contactsService;
         private readonly ILifetimeService _lifetimeService;
         private readonly int _id;
 
-        public SessionService(int session, bool selected, IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, ILifetimeService lifecycleService)
+        public SessionService(int session, bool selected, IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILifetimeService lifecycleService)
             : base(clientService, settingsService, aggregator)
         {
-            _contactsService = contactsService;
             _lifetimeService = lifecycleService;
             _id = session;
 
@@ -223,8 +221,6 @@ namespace Telegram.Services
 
                     Settings.Clear();
                     Settings.PasscodeLock.Clear();
-
-                    _ = _contactsService.RemoveAsync();
                 }
                 else if (_continueOnLogOut)
                 {

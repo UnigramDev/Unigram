@@ -6,6 +6,8 @@ using System.Globalization;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
+using Telegram.Native;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 
 namespace Telegram.Controls.Cells
@@ -25,7 +27,7 @@ namespace Telegram.Controls.Cells
         {
             ViewModel.PropertyChanged += OnPropertyChanged;
 
-            UpdateAmount(ViewModel.AvailableAmount);
+            UpdateAmount(ViewModel.AvailableAmount, ViewModel.UsdRate);
             UpdateCountdown();
         }
 
@@ -38,7 +40,7 @@ namespace Telegram.Controls.Cells
         {
             if (e.PropertyName == nameof(ViewModel.AvailableAmount))
             {
-                UpdateAmount(ViewModel.AvailableAmount);
+                UpdateAmount(ViewModel.AvailableAmount, ViewModel.UsdRate);
             }
             else if (e.PropertyName == nameof(ViewModel.NextWithdrawalDate))
             {
@@ -46,21 +48,23 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        private void UpdateAmount(CryptoAmount value)
+        private void UpdateAmount(StarAmount amount, double usdRate)
         {
-            if (value == null)
+            if (amount == null)
             {
                 return;
             }
 
-            var doubleAmount = Formatter.Amount(value.CryptocurrencyAmount, value.Cryptocurrency);
-            var stringAmount = doubleAmount.ToString(CultureInfo.InvariantCulture).Split('.');
-            var integerAmount = long.Parse(stringAmount[0]);
-            var decimalAmount = stringAmount.Length > 1 ? stringAmount[1] : "0";
+            var integerAmount = Math.Abs(amount.StarCount);
+            var decimalAmount = Math.Abs(amount.NanostarCount);
+
+            var culture = new CultureInfo(NativeUtils.GetCurrentCulture());
+            var separator = culture.NumberFormat.NumberDecimalSeparator;
 
             CryptocurrencyAmountLabel.Text = integerAmount.ToString("N0");
+            CryptocurrencyDecimalLabel.Text = decimalAmount > 0 ? string.Format("{0}{1}", separator, decimalAmount) : string.Empty;
 
-            AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount((long)(value.CryptocurrencyAmount * value.UsdRate), "USD"));
+            AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount((long)(amount.StarCount * usdRate), "USD"));
         }
 
         private void UpdateCountdown()

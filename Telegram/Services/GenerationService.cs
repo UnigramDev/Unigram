@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Entities;
+using Telegram.Native;
 using Telegram.Native.Opus;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -40,6 +41,7 @@ namespace Telegram.Services
         Transcode,
         TranscodeThumbnail,
         DocumentThumbnail,
+        AlbumCover,
         // TDLib
         Url
     }
@@ -111,6 +113,10 @@ namespace Telegram.Services
                     else if (conversion == ConversionType.DocumentThumbnail)
                     {
                         await ThumbnailDocumentAsync(update, args);
+                    }
+                    else if (conversion == ConversionType.AlbumCover)
+                    {
+                        await AlbumCoverAsync(update, args);
                     }
                 }
             }
@@ -243,7 +249,7 @@ namespace Telegram.Services
                     var editState = JsonConvert.DeserializeObject<BitmapEditState>(args[2]);
                     var rectangle = editState.Rectangle;
 
-                    await ImageHelper.CropAsync(file, temp, rectangle, maxSize, rotation: editState.Rotation, flip: editState.Flip);
+                    await ImageHelper.CropAsync(file, temp, rectangle, maxSize, editState.MinimumSize, rotation: editState.Rotation, flip: editState.Flip);
 
                     var drawing = editState.Strokes;
                     if (drawing != null && drawing.Count > 0)
@@ -465,12 +471,12 @@ namespace Telegram.Services
                     double originalWidth = props.GetWidth();
                     double originalHeight = props.GetHeight();
 
-                    //if (!conversion.CropRectangle.IsEmpty())
-                    //{
-                    //    file = await ImageHelper.CropAsync(file, temp, conversion.CropRectangle);
-                    //    originalWidth = conversion.CropRectangle.Width;
-                    //    originalHeight = conversion.CropRectangle.Height;
-                    //}
+                    if (conversion.Transform && !conversion.CropRectangle.IsEmpty)
+                    {
+                        file = await ImageHelper.CropAsync(file, temp, conversion.CropRectangle, trimStart: conversion.TrimStartTime);
+                        originalWidth = conversion.CropRectangle.Width;
+                        originalHeight = conversion.CropRectangle.Height;
+                    }
 
                     using (var fileStream = await ImageHelper.OpenReadAsync(file))
                     using (var outputStream = await temp.OpenAsync(FileAccessMode.ReadWrite))
@@ -541,6 +547,38 @@ namespace Telegram.Services
                     {
                         _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID No thumbnail found")));
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
+            }
+
+            //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
+        }
+
+        private async Task AlbumCoverAsync(UpdateFileGenerationStart update, string[] args)
+        {
+            try
+            {
+                var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
+                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+
+                using var stream = await file.OpenReadAsync();
+                using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(stream), true, false, true));
+
+                if (animation.HasAlbumCover)
+                {
+                    using (var thumbnail = animation.GetAlbumCover())
+                    {
+                        await ImageHelper.ScaleAsync(BitmapEncoder.JpegEncoderId, thumbnail, temp, 320);
+                    }
+
+                    _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
+                }
+                else
+                {
+                    _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID No thumbnail found")));
                 }
             }
             catch (Exception ex)

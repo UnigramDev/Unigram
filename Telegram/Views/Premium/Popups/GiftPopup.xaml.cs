@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -18,7 +18,6 @@ using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.Views.Stars.Popups;
 using Windows.Foundation;
@@ -44,18 +43,18 @@ namespace Telegram.Views.Premium.Popups
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
 
-        private readonly long _userId;
+        private readonly MessageSender _senderId;
 
         private readonly DiffObservableCollection<Gift> _gifts = new(Constants.DiffOptions);
 
-        public GiftPopup(IClientService clientService, INavigationService navigationService, User user, IList<PremiumPaymentOption> options)
+        public GiftPopup(IClientService clientService, INavigationService navigationService, User user, UserFullInfo fullInfo)
         {
             InitializeComponent();
 
             _clientService = clientService;
             _navigationService = navigationService;
 
-            _userId = user.Id;
+            _senderId = new MessageSenderUser(user.Id);
 
             Photo.SetUser(clientService, user, 96);
 
@@ -67,21 +66,29 @@ namespace Telegram.Views.Premium.Popups
 
             ScrollingHost.ItemsSource = _gifts;
 
-            if (options.Count > 0)
-            {
-                PremiumOptions.ItemsSource = options
-                    .OrderBy(x => x.MonthCount)
-                    .ToList();
+            InitializeOptions(clientService);
+            InitializeGifts(clientService, fullInfo.Birthdate?.Day == DateTime.Today.Day
+                    && fullInfo.Birthdate?.Month == DateTime.Today.Month);
+        }
 
-                StarsRoot.Margin = new Thickness(0, 12, 0, 0);
-            }
-            else
-            {
-                PremiumTitle.Visibility = Visibility.Collapsed;
-                PremiumInfo.Visibility = Visibility.Collapsed;
-            }
+        public GiftPopup(IClientService clientService, INavigationService navigationService, Chat chat)
+        {
+            InitializeComponent();
 
-            InitializeGifts(clientService);
+            _clientService = clientService;
+            _navigationService = navigationService;
+
+            _senderId = chat.ToMessageSender();
+
+            Photo.SetChat(clientService, chat, 96);
+
+            TextBlockHelper.SetMarkdown(StarsInfo, string.Format(Strings.Gift2StarsInfo, chat.Title));
+
+            AddLink(StarsInfo, Strings.Gift2StarsInfoLink, StarsInfoLink_Click);
+
+            ScrollingHost.ItemsSource = _gifts;
+
+            InitializeGifts(clientService, false);
         }
 
         private void AddLink(TextBlock block, string text, TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> handler)
@@ -110,38 +117,73 @@ namespace Telegram.Views.Premium.Popups
         {
             All,
             Limited,
+            InStock,
             StarCount
         }
 
-        private async void InitializeGifts(IClientService clientService)
+        private async void InitializeOptions(IClientService clientService)
+        {
+            PremiumOptions.ItemsSource = new[]
+            {
+                new PremiumGiftPaymentOption(string.Empty, 0, 0, 0, 0, string.Empty, null),
+                new PremiumGiftPaymentOption(string.Empty, 0, 0, 0, 0, string.Empty, null),
+                new PremiumGiftPaymentOption(string.Empty, 0, 0, 0, 0, string.Empty, null),
+            };
+
+            var response = await clientService.SendAsync(new GetPremiumGiftPaymentOptions());
+            if (response is PremiumGiftPaymentOptions options)
+            {
+                PremiumOptions.ItemsSource = options.Options
+                    .OrderBy(x => x.MonthCount)
+                    .ToList();
+            }
+        }
+
+        private async void InitializeGifts(IClientService clientService, bool birthday)
         {
             var response = await clientService.SendAsync(new GetAvailableGifts());
             if (response is Gifts gifts)
             {
-                //ScrollingHost.ItemsSource = gifts.GiftsValue;
+                var all = new List<Gift>();
+                var remaining = new List<Gift>();
 
-                var ciccio = new List<GiftGroup>();
-                ciccio.Add(new GiftGroup(GiftGroupType.All, gifts.GiftsValue));
-
-                //Navigation.Items.Add(new TopNavViewItem { Content = Strings.Gift2TabAll });
-
-                if (gifts.GiftsValue.Any(x => x.TotalCount > 0))
+                foreach (var gift in gifts.GiftsValue)
                 {
-                    ciccio.Add(new GiftGroup(GiftGroupType.Limited, gifts.GiftsValue.Where(x => x.TotalCount > 0)));
-
-                    //Navigation.Items.Add(new TopNavViewItem { Content = Strings.Gift2TabLimited });
+                    if (gift.IsForBirthday && birthday)
+                    {
+                        all.Add(gift);
+                    }
+                    else
+                    {
+                        remaining.Add(gift);
+                    }
                 }
 
-                var groups = gifts.GiftsValue
+                all.AddRange(remaining);
+
+                var navigation = new List<GiftGroup>();
+                navigation.Add(new GiftGroup(GiftGroupType.All, all));
+
+                if (all.Any(x => x.TotalCount > 0))
+                {
+                    navigation.Add(new GiftGroup(GiftGroupType.Limited, all.Where(x => x.TotalCount > 0)));
+                }
+
+                if (all.Any(x => x.RemainingCount > 0 || x.TotalCount == 0))
+                {
+                    navigation.Add(new GiftGroup(GiftGroupType.InStock, all.Where(x => x.RemainingCount > 0 || x.TotalCount == 0)));
+                }
+
+                var groups = all
                     .GroupBy(x => x.StarCount)
                     .OrderBy(x => x.Key);
 
                 foreach (var group in groups)
                 {
-                    ciccio.Add(new GiftGroup(GiftGroupType.StarCount, group));
+                    navigation.Add(new GiftGroup(GiftGroupType.StarCount, group));
                 }
 
-                Navigation.ItemsSource = ciccio;
+                Navigation.ItemsSource = navigation;
                 Navigation.SelectedIndex = 0;
             }
         }
@@ -152,19 +194,21 @@ namespace Telegram.Views.Premium.Popups
             {
                 if (gift.TotalCount > 0 && gift.RemainingCount == 0)
                 {
-                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2SoldOutTitle, Locale.Declension(Strings.R.Gift2SoldOutHint, gift.TotalCount)), new DelayedFileSource(_clientService, gift.Sticker));
+                    Hide();
+                    await _navigationService.ShowPopupAsync(new ReceivedGiftPopup(_clientService, _navigationService, gift));
+                    await this.ShowQueuedAsync(XamlRoot);
                 }
                 else
                 {
                     Hide();
-                    await _clientService.SendAsync(new CreatePrivateChat(_clientService.Options.MyId, true));
-                    await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, gift, _userId));
+                    await _clientService.SendAsync(new CreatePrivateChat(_clientService.Options.MyId, false));
+                    await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, gift, _senderId));
                 }
             }
-            else if (e.ClickedItem is PremiumPaymentOption option)
+            else if (e.ClickedItem is PremiumGiftPaymentOption option && _senderId is MessageSenderUser user)
             {
                 Hide();
-                MessageHelper.OpenTelegramUrl(_clientService, _navigationService, option.PaymentLink);
+                await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, option, user.UserId));
             }
         }
 
@@ -174,11 +218,11 @@ namespace Telegram.Views.Premium.Popups
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is UserGiftCell userGiftCell && args.Item is Gift gift)
+            else if (args.ItemContainer.ContentTemplateRoot is ReceivedGiftCell userGiftCell && args.Item is Gift gift)
             {
                 userGiftCell.UpdateGift(_clientService, gift);
             }
-            else if (args.ItemContainer.ContentTemplateRoot is PremiumGiftCell premiumGiftCell && args.Item is PremiumPaymentOption option)
+            else if (args.ItemContainer.ContentTemplateRoot is PremiumGiftCell premiumGiftCell && args.Item is PremiumGiftPaymentOption option)
             {
                 premiumGiftCell.UpdatePremiumGift(_clientService, option);
             }
@@ -220,6 +264,7 @@ namespace Telegram.Views.Premium.Popups
             {
                 GiftGroupType.All => Strings.Gift2TabAll,
                 GiftGroupType.Limited => Strings.Gift2TabLimited,
+                GiftGroupType.InStock => Strings.Gift2TabInStock,
                 _ => starCount.ToString("N0")
             };
         }

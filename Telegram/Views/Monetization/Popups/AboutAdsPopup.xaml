@@ -1,0 +1,205 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Monetization.Popups.AboutAdsPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:common="using:Telegram.Common"
+                       xmlns:controls="using:Telegram.Controls"
+                       mc:Ignorable="d"
+                       Opened="OnOpened"
+                       Padding="0"
+                       IsDismissButtonVisible="True">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+
+            <StackPanel Padding="16,16,16,24">
+                <!--<Border Background="{ThemeResource AccentButtonBackground}"
+                        CornerRadius="48"
+                        Width="96"
+                        Height="96">
+                    <controls:AnimatedImage x:Name="Icon"
+                                            AutoPlay="False"
+                                            IsCachingEnabled="False"
+                                            LoopCount="1"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FrameSize="72,72"
+                                            DecodeFrameType="Logical"
+                                            Width="72"
+                                            Height="72" />
+                </Border>-->
+
+                <TextBlock Text="{CustomResource AboutRevenueSharingAds}"
+                           Style="{StaticResource PopupTextBlockStyle}"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           VerticalAlignment="Top"
+                           Margin="0,8,0,0" />
+                <TextBlock Text="{CustomResource RevenueSharingAdsAlertSubtitle}"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           VerticalAlignment="Top"
+                           Margin="0,8,0,8" />
+
+                <StackPanel>
+                    <Grid Padding="0,8,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border VerticalAlignment="Top"
+                                Margin="0,0,12,0"
+                                Width="24"
+                                Height="24"
+                                CornerRadius="4"
+                                Grid.RowSpan="2">
+                            <TextBlock Text="&#xEAA3;"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="20" />
+                        </Border>
+
+                        <TextBlock Text="{CustomResource RevenueSharingAdsInfo1Title}"
+                                   VerticalAlignment="Top"
+                                   Margin="0,-2,0,0"
+                                   Grid.Column="1" />
+
+                        <TextBlock common:TextBlockHelper.Markdown="{CustomResource RevenueSharingAdsInfo1Subtitle}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   Grid.Column="1"
+                                   Grid.Row="1" />
+                    </Grid>
+                    <Grid Padding="0,8,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border VerticalAlignment="Top"
+                                Margin="0,0,12,0"
+                                Width="24"
+                                Height="24"
+                                CornerRadius="4"
+                                Grid.RowSpan="2">
+                            <TextBlock Text="&#xEA7F;"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="20" />
+                        </Border>
+
+                        <TextBlock Text="{CustomResource RevenueSharingAdsInfo2Title}"
+                                   VerticalAlignment="Top"
+                                   Margin="0,-2,0,0"
+                                   Grid.Column="1" />
+
+                        <TextBlock common:TextBlockHelper.Markdown="{CustomResource RevenueSharingAdsInfo2Subtitle}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   Grid.Column="1"
+                                   Grid.Row="1" />
+                    </Grid>
+                    <Grid Padding="0,8,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border VerticalAlignment="Top"
+                                Margin="0,0,12,0"
+                                Width="24"
+                                Height="24"
+                                CornerRadius="4"
+                                Grid.RowSpan="2">
+                            <TextBlock Text="&#xEA88;"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="20" />
+                        </Border>
+
+                        <TextBlock Text="{CustomResource RevenueSharingAdsInfo3Title}"
+                                   VerticalAlignment="Top"
+                                   Margin="0,-2,0,0"
+                                   Grid.Column="1" />
+
+                        <TextBlock common:TextBlockHelper.Markdown="{CustomResource RevenueSharingAdsInfo3SubtitleBot}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   Grid.Column="1"
+                                   Grid.Row="1" />
+                    </Grid>
+                </StackPanel>
+
+                <Border BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                        BorderThickness="0,1,0,0"
+                        VerticalAlignment="Center"
+                        Margin="8,0" />
+
+                <TextBlock Text="{CustomResource RevenueSharingAdsInfo4Title}"
+                           Style="{StaticResource PopupTextBlockStyle}"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           VerticalAlignment="Top"
+                           Margin="0,8,0,4" />
+
+                <TextBlock x:Name="LongInfo"
+                           common:TextBlockHelper.IsLink="True"
+                           common:TextBlockHelper.Markdown="{CustomResource RevenueSharingAdsInfo4Subtitle2}"
+                           TextAlignment="Center"
+                           TextTrimming="CharacterEllipsis"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                           Grid.Column="1"
+                           Grid.Row="2" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
+                                    Background="{ThemeResource ContentDialogBackground}" />
+
+        <Grid x:Name="ChangePanel"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Stretch"
+              Margin="24,0,24,24"
+              Grid.Row="1">
+            <controls:BadgeButton x:Name="LearnCommand"
+                                  Content="{CustomResource RevenueSharingAdsAlertButton}"
+                                  Click="Learn_Click"
+                                  Style="{StaticResource AccentButtonStyle}"
+                                  HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Center"
+                                  Typography.NumeralAlignment="Tabular"
+                                  FontWeight="SemiBold"
+                                  Padding="16,3,16,5"
+                                  BorderThickness="0,0,0,1"
+                                  CornerRadius="4"
+                                  Margin="0"
+                                  Height="32" />
+        </Grid>
+
+        <controls:MoreButton x:Name="MoreButton"
+                             Click="More_ContextRequested"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Top"
+                             Margin="0,0,40,0"
+                             CornerRadius="20" />
+    </Grid>
+</controls:ContentPopup>

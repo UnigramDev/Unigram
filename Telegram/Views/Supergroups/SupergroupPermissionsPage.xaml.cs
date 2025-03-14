@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -12,6 +12,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
+using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
@@ -28,6 +29,7 @@ namespace Telegram.Views.Supergroups
             InitializeComponent();
             Title = Strings.ChannelPermissions;
 
+            SliderHelper.InitializeTicks(Price, PriceTicks, 2, ConvertPriceTicks);
             SliderHelper.InitializeTicks(Slowmode, SlowmodeTicks, 7, ConvertSlowModeTick);
             SliderHelper.InitializeTicks(Boosters, BoostersTicks, 5, ConvertBoostersTick);
         }
@@ -81,6 +83,13 @@ namespace Telegram.Views.Supergroups
             Blacklist.Badge = fullInfo.BannedCount;
             ViewModel.SlowModeDelay = fullInfo.SlowModeDelay;
 
+            ViewModel.ChargePerMessage = group.PaidMessageStarCount > 0;
+            ViewModel.PaidMessageStarCount = (int)group.PaidMessageStarCount;
+
+            PaidMessagesPanel.Visibility = fullInfo.CanEnablePaidMessages || group.PaidMessageStarCount > 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
             SlowmodePanel.Footer = fullInfo.SlowModeDelay > 0
                 ? string.Format(Strings.SlowmodeInfoSelected, fullInfo.SlowModeDelay)
                 : Strings.SlowmodeInfoOff;
@@ -90,7 +99,25 @@ namespace Telegram.Views.Supergroups
         public void UpdateChatTitle(Chat chat) { }
         public void UpdateChatPhoto(Chat chat) { }
 
+        private string ConvertPriceValue(int value)
+        {
+            return Locale.Declension(Strings.R.StarsCount, value);
+        }
 
+        private string ConvertPriceTicks(int value)
+        {
+            return (value == 0 ? 1 : 9000).ToString("N0");
+        }
+
+        private string ConvertPriceFee(int value)
+        {
+            var xtr = value / 1000d;
+            var usd = xtr * ViewModel.ClientService.Options.ThousandStarToUsdRate;
+
+            var format = Formatter.FormatAmount((long)usd, "USD");
+
+            return string.Format(Strings.GroupMessagesPriceInfo, 85, format);
+        }
 
         private int ConvertSlowMode(int value)
         {

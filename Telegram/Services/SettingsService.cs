@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -61,7 +61,6 @@ namespace Telegram.Services
         bool IsLaunchMinimized { get; set; }
         bool IsSendByEnterEnabled { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
-        bool IsContactsSyncEnabled { get; set; }
         bool IsContactsSortedByEpoch { get; set; }
         bool IsSecretPreviewsEnabled { get; set; }
         bool AutoPlayAnimations { get; set; }
@@ -509,13 +508,6 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _isReplaceEmojiEnabled, "IsReplaceEmojiEnabled", value);
         }
 
-        private bool? _isContactsSyncEnabled;
-        public bool IsContactsSyncEnabled
-        {
-            get => _isContactsSyncEnabled ??= GetValueOrDefault("IsContactsSyncEnabled", false);
-            set => AddOrUpdateValue(ref _isContactsSyncEnabled, "IsContactsSyncEnabled", value);
-        }
-
         private bool? _isContactsSortedByEpoch;
         public bool IsContactsSortedByEpoch
         {
@@ -801,6 +793,7 @@ namespace Telegram.Services
         Index,
         Pixel,
         ReadInboxMaxId,
-        IsTranslating
+        IsTranslating,
+        PaidMessageStarCount
     }
 }

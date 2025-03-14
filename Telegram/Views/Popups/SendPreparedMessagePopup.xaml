@@ -1,0 +1,54 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.SendPreparedMessagePopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Business.Popups"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:chats="using:Telegram.Controls.Chats"
+                       xmlns:messages="using:Telegram.Controls.Messages"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:drawers="using:Telegram.Controls.Drawers"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                       mc:Ignorable="d"
+                       IsDismissButtonVisible="True"
+                       Padding="0,24,0,0">
+
+    <StackPanel>
+        <Grid>
+            <chats:ChatBackgroundControl x:Name="BackgroundControl" />
+
+            <StackPanel Padding="12,8"
+                        Spacing="8">
+                <messages:MessageService>
+                    <TextBlock Text="{CustomResource BotShareMessagePreview}"
+                               Foreground="#FFFFFF"
+                               FontSize="12" />
+                </messages:MessageService>
+
+                <messages:MessageBubble x:Name="Message"
+                                        HorizontalAlignment="Left" />
+            </StackPanel>
+        </Grid>
+
+        <TextBlock x:Name="CaptionInfo"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   Margin="24,8,24,24" />
+
+        <Grid x:Name="PurchasePanel"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Stretch"
+              Margin="24,0,24,24"
+              Grid.Row="1">
+            <controls:BadgeButton x:Name="PurchaseCommand"
+                                  Click="Purchase_Click"
+                                  Content="{CustomResource BotShareMessageShare}"
+                                  Style="{StaticResource AccentButtonStyle}"
+                                  FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                  HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Center"
+                                  FontWeight="SemiBold"
+                                  BorderThickness="1"
+                                  Height="32" />
+        </Grid>
+    </StackPanel>
+</controls:ContentPopup>

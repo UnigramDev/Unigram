@@ -292,7 +292,6 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition />
-                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <!-- TODO: Migrate to RecentUserHeads -->
                                     <StackPanel x:Name="RecentRepliers"
@@ -310,9 +309,10 @@
                                                Grid.Column="1" />
                                     <TextBlock Text="&#xE0E3;"
                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                               HorizontalAlignment="Right"
                                                VerticalAlignment="Center"
                                                FontSize="20"
-                                               Grid.Column="2" />
+                                               Grid.Column="1" />
                                 </Grid>
                             </HyperlinkButton>
                         </Grid>
@@ -341,11 +341,11 @@
                                 Grid.Column="2">
                             <controls:GlyphButton x:Name="ActionButton"
                                                   Foreground="{ThemeResource MessageServiceForegroundBrush}"
-                                                  Style="{StaticResource RoundGlyphButtonStyle}"
                                                   FontSize="{StaticResource GlyphSmallFontSize}"
                                                   Width="30"
                                                   Height="30"
-                                                  CornerRadius="15" />
+                                                  CornerRadius="15"
+                                                  Padding="0" />
                         </Border>
 
                     </Grid>

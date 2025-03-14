@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -87,7 +87,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            LayoutRoot.Constraint = isSecret ? Constants.SecretSize : ((object)_paidMedia ?? message);
+            LayoutRoot.Constraint = isSecret ? Constants.SecretSize : ((object)_paidMedia ?? video);
             Texture.Source = null;
 
             UpdateThumbnail(message, video, video.Thumbnail?.File, true, isSecret, hasSpoiler);
@@ -188,6 +188,17 @@ namespace Telegram.Controls.Messages.Content
                         Subtitle.Text = Icons.ArrowClockwiseFilled12 + "\u2004\u200A1";
                     }
                 }
+            }
+            else if (message.Content is MessageVideo messageVideo && messageVideo.IsHls())
+            {
+                UpdateSource(null, null);
+
+                Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Play);
+                Button.Progress = 0;
+                Overlay.Progress = 1;
+                Overlay.ProgressVisibility = Visibility.Collapsed;
+
+                Subtitle.Text = video.GetDuration();
             }
             else
             {

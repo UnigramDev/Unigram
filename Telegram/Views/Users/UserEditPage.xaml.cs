@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -38,6 +38,7 @@ namespace Telegram.Views.Users
 
                 FindName(nameof(UsernamePanel));
                 FindName(nameof(BotPanel));
+                FindName(nameof(BotPanel2));
 
                 LayoutRoot.Footer = string.Empty;
 
@@ -83,6 +84,10 @@ namespace Telegram.Views.Users
                     ResetPhotoPhoto.Visibility = Visibility.Collapsed;
                     ResetPhoto.Visibility = Visibility.Collapsed;
                 }
+
+                SuggestPhoto.Visibility = fullInfo.OutgoingPaidMessageStarCount > 0
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
             }
 
             if (fullInfo.NeedPhoneNumberPrivacyException)
@@ -91,10 +96,29 @@ namespace Telegram.Views.Users
 
                 SharePhoneCheck.Content = string.Format(Strings.SharePhoneNumberWith, user.FirstName);
             }
+
+            if (fullInfo.BotInfo?.AffiliateProgram != null)
+            {
+                AffiliateProgram.Badge = fullInfo.BotInfo.AffiliateProgram.Parameters.CommissionPercent();
+            }
+            else if (AffiliateProgram != null)
+            {
+                AffiliateProgram.Badge = Strings.AffiliateProgramBotOff;
+            }
         }
 
         public void UpdateUserStatus(Chat chat, User user) { }
 
         #endregion
+
+        public string ConvertStarCount(StarAmount amount)
+        {
+            if (amount != null)
+            {
+                return amount.ToValue();
+            }
+
+            return null;
+        }
     }
 }

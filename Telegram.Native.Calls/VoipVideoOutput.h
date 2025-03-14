@@ -27,17 +27,12 @@
 
 #include "FrameReceivedEventArgs.h"
 
-//namespace ABI
-//{
-//    using namespace Microsoft::Graphics::Canvas;
-//}
-
 using namespace winrt::Microsoft::Graphics::Canvas;
 using namespace winrt::Microsoft::Graphics::Canvas::Effects;
+using namespace winrt::Microsoft::Graphics::Canvas::UI::Composition;
 using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::Graphics::DirectX;
 using namespace winrt::Microsoft::UI::Composition;
-using namespace winrt::Microsoft::Graphics::Canvas::UI::Composition;
 
 struct VoipVideoOutput : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 {
@@ -102,7 +97,6 @@ struct VoipVideoOutput : public rtc::VideoSinkInterface<webrtc::VideoFrame>
             ReleaseShader();
 
             m_canvasDevice = CanvasDevice();
-
             auto compositor = m_brush.Compositor();
             auto compositionGraphicsDevice = CanvasComposition::CreateCompositionGraphicsDevice(compositor, m_canvasDevice);
 

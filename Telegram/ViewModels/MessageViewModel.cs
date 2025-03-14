@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -305,6 +305,7 @@ namespace Telegram.ViewModels
             _message.SenderBoostCount = message.SenderBoostCount;
             _message.SenderBusinessBotUserId = message.SenderBusinessBotUserId;
             _message.EffectId = message.EffectId;
+            _message.PaidMessageStarCount = message.PaidMessageStarCount;
 
             _isSaved = null;
 
@@ -312,6 +313,8 @@ namespace Telegram.ViewModels
             {
                 FormattedText caption = null;
                 StyledText text = null;
+                bool showCaptionAboveMedia = false;
+                int editDate = 0;
 
                 if (album.IsMedia)
                 {
@@ -323,7 +326,9 @@ namespace Telegram.ViewModels
                             if (caption == null || string.IsNullOrEmpty(caption.Text))
                             {
                                 caption = childCaption;
+                                showCaptionAboveMedia = child.ShowCaptionAboveMedia();
                                 text = child.Text;
+                                editDate = child.EditDate;
                             }
                             else
                             {
@@ -337,11 +342,15 @@ namespace Telegram.ViewModels
                 else if (album.Messages.Count > 0)
                 {
                     caption = album.Messages[^1].GetCaption();
+                    showCaptionAboveMedia = album.Messages[^1].ShowCaptionAboveMedia();
                     text = album.Messages[^1].Text;
+                    editDate = album.Messages[^1].EditDate;
                 }
 
                 album.Caption = caption ?? new FormattedText();
+                album.ShowCaptionAboveMedia = showCaptionAboveMedia;
                 Text = text;
+                EditDate = editDate;
             }
         }
     }
@@ -398,6 +407,7 @@ namespace Telegram.ViewModels
         public long SenderBusinessBotUserId => _message.SenderBusinessBotUserId;
         public long Id => _message.Id;
         public long EffectId => _message.EffectId;
+        public long PaidMessageStarCount => _message.PaidMessageStarCount;
 
         public MessageEffect Effect { get; set; }
 

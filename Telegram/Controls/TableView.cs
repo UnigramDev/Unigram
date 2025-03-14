@@ -161,7 +161,7 @@ namespace Telegram.Controls
 
             Owner.ColumnWidth = header.DesiredSize.Width;
 
-            return new Size(availableSize.Width, Math.Max(32, content.DesiredSize.Height));
+            return new Size(availableSize.Width, Math.Max(32, Math.Max(header.DesiredSize.Height, content.DesiredSize.Height)));
         }
 
         protected override Size ArrangeOverride(Size finalSize)

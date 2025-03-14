@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -501,6 +501,7 @@ namespace Telegram.ViewModels.Payments
 
             if (credentials == null)
             {
+                IsLoading = false;
                 return;
             }
 
@@ -589,7 +590,10 @@ namespace Telegram.ViewModels.Payments
             }
             else if (response is Error error)
             {
-
+                if (error.MessageEquals(ErrorType.PASSWORD_HASH_INVALID))
+                {
+                    return await CreateTemporaryPasswordAsync();
+                }
             }
 
             return new TemporaryPasswordState(false, 0);

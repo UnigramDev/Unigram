@@ -7,7 +7,9 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         mc:Ignorable="d"
-                        ActualThemeChanged="OnActualThemeChanged">
+                        ActualThemeChanged="OnActualThemeChanged"
+                        SizeChanged="OnSizeChanged"
+                        Unloaded="OnUnloaded">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -53,7 +55,7 @@
             <controls:MoreButton x:Name="MoreButton"
                                  Click="More_ContextRequested"
                                  Width="46"
-                                 Height="32"
+                                 Height="40"
                                  Grid.Column="2">
                 <Button.Template>
                     <ControlTemplate TargetType="controls:MoreButton">
@@ -66,7 +68,7 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
                                                                            Storyboard.TargetName="RootGrid">
                                                 <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
+                                                                        Value="{ThemeResource TitleBarButtonBackgroundPointerOver}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                         <VisualState.Setters>
@@ -79,7 +81,7 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
                                                                            Storyboard.TargetName="RootGrid">
                                                 <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
+                                                                        Value="{ThemeResource TitleBarButtonBackgroundPressed}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                         <VisualState.Setters>
@@ -87,15 +89,7 @@
                                                     Value="Pressed" />
                                         </VisualState.Setters>
                                     </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                           Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
+                                    <VisualState x:Name="Disabled" />
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <Border x:Name="RootGrid" />
@@ -118,7 +112,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     Width="46"
-                    Height="32"
+                    Height="40"
                     Grid.Column="3">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
@@ -176,11 +170,19 @@
                 Grid.RowSpan="2"
                 Grid.Row="1" />
 
+        <Border x:Name="PlaceholderPanel"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Width="120"
+                Height="120"
+                Grid.RowSpan="3" />
+
         <controls:WebViewer x:Name="View"
                             Navigating="View_Navigating"
                             Navigated="View_Navigated"
                             EventReceived="View_EventReceived"
                             NewWindowRequested="View_NewWindowRequested"
+                            ScriptDialogOpening="View_ScriptDialogOpening"
                             SizeChanged="View_SizeChanged"
                             Grid.RowSpan="2"
                             Grid.Row="1" />
@@ -189,11 +191,11 @@
               VerticalAlignment="Bottom"
               Height="96"
               Grid.Row="1">
-            <Border x:Name="SecondaryButtonPanel"
-                    Visibility="Collapsed"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Top"
-                    Height="48">
+            <Grid x:Name="SecondaryButtonPanel"
+                  Visibility="Collapsed"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Top"
+                  Height="48">
                 <Button x:Name="SecondaryButton"
                         Click="SecondaryButton_Click"
                         Background="Transparent"
@@ -202,13 +204,16 @@
                         VerticalAlignment="Stretch"
                         HorizontalAlignment="Stretch"
                         FontWeight="SemiBold" />
-            </Border>
+                <muxc:ProgressRing x:Name="SecondaryProgress"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+            </Grid>
 
-            <Border x:Name="MainButtonPanel"
-                    Visibility="Collapsed"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Top"
-                    Height="48">
+            <Grid x:Name="MainButtonPanel"
+                  Visibility="Collapsed"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Top"
+                  Height="48">
                 <Button x:Name="MainButton"
                         Click="MainButton_Click"
                         Background="Transparent"
@@ -217,7 +222,10 @@
                         VerticalAlignment="Stretch"
                         HorizontalAlignment="Stretch"
                         FontWeight="SemiBold" />
-            </Border>
+                <muxc:ProgressRing x:Name="MainProgress"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+            </Grid>
         </Grid>
     </Grid>
 </controls:UserControlEx>

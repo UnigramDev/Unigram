@@ -1,0 +1,66 @@
+<local:HostedPage x:Class="Telegram.Views.Settings.Privacy.SettingsPrivacyAutosaveGiftsPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <local:HostedPage.Action>
+        <Button Content="{CustomResource Save}"
+                Click="{x:Bind ViewModel.Save}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Action>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <controls:HeaderedControl Header="{CustomResource PrivacyGiftsTitle}"
+                                          Footer="{CustomResource PrivacyGiftsInfo}">
+                    <controls:PrivacyRadioButton Content="{CustomResource LastSeenEverybody}"
+                                                 Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                                 Type="AllowAll"
+                                                 Style="{StaticResource SettingsRadioButtonStyle}" />
+
+                    <controls:PrivacyRadioButton Content="{CustomResource LastSeenContacts}"
+                                                 Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                                 Type="AllowContacts"
+                                                 Style="{StaticResource SettingsRadioButtonStyle}" />
+
+                    <controls:PrivacyRadioButton Content="{CustomResource LastSeenNobody}"
+                                                 Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                                 Type="DisallowAll"
+                                                 Style="{StaticResource SettingsRadioButtonStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource AddExceptions}"
+                                          Footer="{CustomResource CustomShareGiftsInfo}">
+                    <controls:BadgeButton Content="{CustomResource AlwaysShareWith}"
+                                          Click="{x:Bind ViewModel.Always}"
+                                          Visibility="{x:Bind ConvertAlways(ViewModel.SelectedItem), Mode=OneWay}"
+                                          Badge="{x:Bind ViewModel.AllowedBadge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xF164;" />
+
+                    <controls:BadgeButton Content="{CustomResource NeverShareWith}"
+                                          Click="{x:Bind ViewModel.Never}"
+                                          Visibility="{x:Bind ConvertNever(ViewModel.SelectedItem), Mode=OneWay}"
+                                          Badge="{x:Bind ViewModel.RestrictedBadge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xF166;" />
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

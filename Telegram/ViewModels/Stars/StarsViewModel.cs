@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -26,19 +26,13 @@ namespace Telegram.ViewModels.Stars
             _subscriptions = new SubscriptionCollection(clientService, settingsService, aggregator);
 
             Items = new IncrementalCollection<StarTransaction>(this);
-            OwnedStarCount = clientService.OwnedStarCount;
         }
 
         public IncrementalCollection<StarTransaction> Items { get; private set; }
 
         public IncrementalCollection<StarSubscription> Subscriptions => _subscriptions.Items;
 
-        private long _ownedStarCount;
-        public long OwnedStarCount
-        {
-            get => _ownedStarCount;
-            set => Set(ref _ownedStarCount, value);
-        }
+        public string OwnedStarCount => ClientService.OwnedStarCount.ToValue();
 
         public override void Subscribe()
         {
@@ -75,8 +69,6 @@ namespace Telegram.ViewModels.Stars
 
                 _nextOffset = transactions.NextOffset;
                 HasMoreItems = transactions.NextOffset.Length > 0;
-
-                OwnedStarCount = transactions.StarCount;
             }
             else
             {

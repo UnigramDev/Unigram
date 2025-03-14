@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -86,6 +86,21 @@ namespace Telegram.Views.Popups
             AllowUserChats = false,
             AllowSecretChats = false,
             AllowSelf = false,
+            CanPostMessages = true,
+            CanInviteUsers = false,
+            CanShareContact = false,
+            Mode = ChooseChatsMode.Chats,
+            ShowMessages = false
+        };
+
+        public static readonly ChooseChatsOptions UsersAndChannels = new()
+        {
+            AllowChannelChats = true,
+            AllowGroupChats = false,
+            AllowBotChats = false,
+            AllowUserChats = true,
+            AllowSecretChats = false,
+            AllowSelf = true,
             CanPostMessages = true,
             CanInviteUsers = false,
             CanShareContact = false,
@@ -281,6 +296,7 @@ namespace Telegram.Views.Popups
             UserIsBot = requestUsers.UserIsBot;
             RestrictUserIsBot = requestUsers.RestrictUserIsBot;
 
+            AllowUserChats = !RestrictUserIsBot || (RestrictUserIsBot && !UserIsBot);
             Mode = ChooseChatsMode.Contacts;
         }
 
@@ -347,6 +363,7 @@ namespace Telegram.Views.Popups
             RestrictChatIsForum = requestChat.RestrictChatIsForum;
             ChatIsChannel = requestChat.ChatIsChannel;
 
+            AllowUserChats = false;
             Mode = ChooseChatsMode.Chats;
         }
 
@@ -446,6 +463,16 @@ namespace Telegram.Views.Popups
 
     #region Configurations
 
+    public partial class ChooseChatsConfigurationTransferGift : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationTransferGift(ReceivedGift gift)
+        {
+            Gift = gift;
+        }
+
+        public ReceivedGift Gift { get; }
+    }
+
     public partial class ChooseChatsConfigurationGroupCall : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationGroupCall(int groupCallId)
@@ -454,6 +481,8 @@ namespace Telegram.Views.Popups
         }
 
         public int GroupCallId { get; }
+
+        public override int NumberOfSentMessages => 1;
     }
 
     public partial class ChooseChatsConfigurationDataPackage : ChooseChatsConfiguration
@@ -475,7 +504,19 @@ namespace Telegram.Views.Popups
             Bot = bot;
         }
 
+        public ChooseChatsConfigurationSwitchInline(PreparedInlineMessage preparedInlineMessage, User bot)
+        {
+            Result = preparedInlineMessage.Result;
+            InlineQueryId = preparedInlineMessage.InlineQueryId;
+            TargetChat = new TargetChatChosen(preparedInlineMessage.ChatTypes);
+            Bot = bot;
+        }
+
         public string Query { get; }
+
+        public InlineQueryResult Result { get; }
+
+        public long InlineQueryId { get; }
 
         public TargetChat TargetChat { get; }
 
@@ -495,6 +536,8 @@ namespace Telegram.Views.Popups
         }
 
         public FormattedText Text { get; }
+
+        public override int NumberOfSentMessages => 1;
     }
 
     public partial class ChooseChatsConfigurationShareMessage : ChooseChatsConfiguration
@@ -511,6 +554,8 @@ namespace Telegram.Views.Popups
         public long MessageId { get; }
 
         public bool WithMyScore { get; }
+
+        public override int NumberOfSentMessages => 1;
     }
 
     public partial class ChooseChatsConfigurationReplyToMessage : ChooseChatsConfiguration
@@ -537,6 +582,8 @@ namespace Telegram.Views.Popups
         public long ChatId { get; }
 
         public int StoryId { get; }
+
+        public override int NumberOfSentMessages => 1;
     }
 
     public partial class ChooseChatsConfigurationShareMessages : ChooseChatsConfiguration
@@ -547,6 +594,8 @@ namespace Telegram.Views.Popups
         }
 
         public IList<MessageId> MessageIds { get; }
+
+        public override int NumberOfSentMessages => MessageIds.Count;
     }
 
     public partial class ChooseChatsConfigurationPostLink : ChooseChatsConfiguration
@@ -564,6 +613,8 @@ namespace Telegram.Views.Popups
         public HttpUrl Url { get; }
 
         public InternalLinkType InternalLink { get; }
+
+        public override int NumberOfSentMessages => 1;
     }
 
     public partial class ChooseChatsConfigurationPostMessage : ChooseChatsConfiguration
@@ -574,6 +625,18 @@ namespace Telegram.Views.Popups
         }
 
         public InputMessageContent Content { get; }
+
+        public override int NumberOfSentMessages => 1;
+    }
+
+    public partial class ChooseChatsConfigurationVerifyChat : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationVerifyChat(long botUserId)
+        {
+            BotUserId = botUserId;
+        }
+
+        public long BotUserId { get; }
     }
 
     public partial class ChooseChatsConfigurationStartBot : ChooseChatsConfiguration
@@ -715,7 +778,7 @@ namespace Telegram.Views.Popups
 
     public abstract class ChooseChatsConfiguration
     {
-
+        public virtual int NumberOfSentMessages => 0;
     }
 
     #endregion
@@ -799,7 +862,75 @@ namespace Telegram.Views.Popups
                 flyout.CreateFlyoutItem(() => { ViewModel.SendAsCopy = true; Hide(ContentDialogResult.Primary); }, Strings.HideSenderNames, Icons.DocumentCopy);
                 flyout.CreateFlyoutItem(() => { ViewModel.RemoveCaptions = true; Hide(ContentDialogResult.Primary); }, Strings.HideCaption, Icons.Block);
 
+                flyout.CreateFlyoutSeparator();
+
+                flyout.CreateFlyoutItem(() => { ViewModel.SendDisableNotifications = true; Hide(ContentDialogResult.Primary); }, Strings.SendWithoutSound, Icons.AlertOff);
+
+                if (ViewModel.SelectedItems.Count == 1)
+                {
+                    var chat = ViewModel.SelectedItems[0];
+                    var self = ViewModel.ClientService.IsSavedMessages(chat);
+
+                    if (ViewModel.ClientService.TryGetUser(chat, out Td.Api.User user) && user.Type is UserTypeRegular && user.Status is not UserStatusRecently && !self)
+                    {
+                        flyout.CreateFlyoutItem(SchedulingStateSendWhenOnline, Strings.SendWhenOnline, Icons.PersonCircleOnline);
+                    }
+
+                    flyout.CreateFlyoutItem(SchedulingStateSendAtDate, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
+                }
+                else
+                {
+                    flyout.CreateFlyoutItem(SchedulingStateSendAtDate, Strings.ScheduleMessage, Icons.CalendarClock);
+                }
+
                 flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.TopEdgeAlignedRight);
+            }
+        }
+
+        private void SchedulingStateSendWhenOnline()
+        {
+            ViewModel.SendSchedulingState = new MessageSchedulingStateSendWhenOnline();
+            Hide(ContentDialogResult.Primary);
+        }
+
+        private async void SchedulingStateSendAtDate()
+        {
+            User user = null;
+            bool self = false;
+
+            if (ViewModel.SelectedItems.Count == 1)
+            {
+                var chat = ViewModel.SelectedItems[0];
+
+                self = ViewModel.ClientService.IsSavedMessages(chat);
+                user = ViewModel.ClientService.GetUser(chat);
+            }
+
+            var popup = new ScheduleMessageToast(user, self)
+            {
+                //Title = Strings.ExpireAfter,
+                //Header = Strings.PaidContentPriceTitle,
+                //ActionButtonContent = Strings.OK,
+                ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
+                //CloseButtonContent = Strings.Cancel,
+                PreferredPlacement = TeachingTipPlacementMode.Center,
+                IsLightDismissEnabled = true,
+                ShouldConstrainToRootBounds = true,
+            };
+
+            var confirm = await popup.ShowAsync(XamlRoot);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                if (popup.IsUntilOnline)
+                {
+                    ViewModel.SendSchedulingState = new MessageSchedulingStateSendWhenOnline();
+                }
+                else
+                {
+                    ViewModel.SendSchedulingState = new MessageSchedulingStateSendAtDate(popup.Value.ToTimestamp());
+                }
+
+                Hide(ContentDialogResult.Primary);
             }
         }
 
@@ -992,7 +1123,6 @@ namespace Telegram.Views.Popups
                 popup.ViewModel.NavigationService = navigationService;
                 popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
                 popup.ViewModel.AllowEmptySelection = true;
-                popup.ViewModel.Folders.Clear();
                 popup.Header = panel;
                 popup.IsPrimaryButtonEnabled = true;
 
@@ -1028,7 +1158,6 @@ namespace Telegram.Views.Popups
                 popup.ViewModel.NavigationService = navigationService;
                 popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
                 popup.ViewModel.AllowEmptySelection = true;
-                popup.ViewModel.Folders.Clear();
                 popup.IsPrimaryButtonEnabled = true;
 
                 var confirm = await popup.PickAsync(navigationService.XamlRoot, target.OfType<FolderChat>().Select(x => x.ChatId).ToArray(), ChooseChatsOptions.All);
@@ -1325,14 +1454,16 @@ namespace Telegram.Views.Popups
 
         #region Binding
 
+        private bool _primaryButtonEnabled;
+
         private bool ConvertButtonEnabled(bool allowEmpty, int count)
         {
             if (Send != null)
             {
-                return Send.IsEnabled = allowEmpty || count > 0;
+                return Send.IsEnabled = _primaryButtonEnabled = allowEmpty || count > 0;
             }
 
-            return allowEmpty || count > 0;
+            return _primaryButtonEnabled = allowEmpty || count > 0;
         }
 
         #endregion
@@ -1359,9 +1490,9 @@ namespace Telegram.Views.Popups
             ViewModel.SelectedItems = new MvxObservableCollection<Chat>(selection);
         }
 
-        private void List_ItemClick(object sender, ItemClickEventArgs e)
+        private async void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ItemClick(e.ClickedItem as Chat, true);
+            await ItemClick(e.ClickedItem as Chat, true);
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -1415,7 +1546,7 @@ namespace Telegram.Views.Popups
             }
 
             var chat = item as Chat;
-            if (chat == null || ItemClick(chat, e.ClickedItem is Chat))
+            if (chat == null || await ItemClick(chat, e.ClickedItem is Chat))
             {
                 return;
             }
@@ -1455,18 +1586,42 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private bool ItemClick(Chat chat, bool origin)
+        private async Task<bool> ItemClick(Chat chat, bool origin)
         {
-            if (ViewModel.Options.CanPostMessages && (ViewModel.ClientService.IsSavedMessages(chat) || ViewModel.SelectionMode == ListViewSelectionMode.None))
+            if (ViewModel.Options.CanPostMessages && ViewModel.ClientService.IsSavedMessages(chat))
             {
                 if (ViewModel.SelectedItems.Empty())
                 {
                     ViewModel.SelectedItems = new MvxObservableCollection<Chat>(new[] { chat });
-                    ViewModel.SendCommand.Execute();
 
-                    Hide();
+                    if (await ViewModel.ConfirmPaidMessagesAsync())
+                    {
+                        ViewModel.SendCommand.Execute();
+
+                        if (ViewModel.ShouldCloseOnCommit)
+                        {
+                            Hide();
+                        }
+                    }
+
                     return true;
                 }
+            }
+            else if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                ViewModel.SelectedItems = new MvxObservableCollection<Chat>(new[] { chat });
+
+                if (await ViewModel.ConfirmPaidMessagesAsync())
+                {
+                    ViewModel.SendCommand.Execute();
+
+                    if (ViewModel.ShouldCloseOnCommit)
+                    {
+                        Hide();
+                    }
+                }
+
+                return true;
             }
             else if (ViewModel.Options.CanPostMessages && origin && ViewModel.ClientService.IsForum(chat))
             {
@@ -1486,12 +1641,12 @@ namespace Telegram.Views.Popups
             return false;
         }
 
-        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private void OnLoaded(object sender, RoutedEventArgs args)
         {
             CharacterReceived += OnCharacterReceived;
         }
 
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private void OnUnloaded(object sender, RoutedEventArgs args)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
             CharacterReceived -= OnCharacterReceived;
@@ -1512,7 +1667,7 @@ namespace Telegram.Views.Popups
                     CaptionInput.Focus(FocusState.Keyboard);
                     CaptionInput.PasteFromClipboard();
                 }
-                else if (args.Character == '\r' && IsPrimaryButtonEnabled && (SearchPanel == null || SearchPanel.Visibility == Visibility.Collapsed))
+                else if (args.Character == '\r' && _primaryButtonEnabled && (SearchPanel == null || SearchPanel.Visibility == Visibility.Collapsed))
                 {
                     Accept();
                 }
@@ -1562,24 +1717,32 @@ namespace Telegram.Views.Popups
         {
             if (e.ClickedItem is EmojiData emoji)
             {
-                EmojiFlyout.Hide();
-
                 CaptionInput.InsertText(emoji.Value);
                 CaptionInput.Focus(FocusState.Programmatic);
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
-                EmojiFlyout.Hide();
-
                 CaptionInput.InsertEmoji(sticker);
                 CaptionInput.Focus(FocusState.Programmatic);
             }
         }
 
-        private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             ViewModel.Caption = CaptionInput.GetFormattedText();
-            ViewModel.SendCommand.Execute();
+
+            var deferral = args.GetDeferral();
+
+            if (await ViewModel.ConfirmPaidMessagesAsync())
+            {
+                ViewModel.SendCommand.Execute();
+            }
+            else
+            {
+                args.Cancel = true;
+            }
+
+            deferral.Complete();
         }
 
         private void CaptionInput_Accept(FormattedTextBox sender, EventArgs args)

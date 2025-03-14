@@ -1,19 +1,20 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Streams;
@@ -35,6 +36,12 @@ namespace Telegram.Views.Popups
             InitializeComponent();
             DataContext = TypeResolver.Current.Resolve<StickersViewModel>(navigationService.SessionId);
 
+            VerticalContentAlignment = VerticalAlignment.Center;
+
+            ViewModel.NavigationService = navigationService;
+            ViewModel.Dispatcher = navigationService.Dispatcher;
+            ViewModel.PropertyChanged += OnPropertyChanged;
+
             // TODO: this might need to change depending on context
             _handler = new AnimatedListHandler(ScrollingHost, AnimatedListType.Stickers);
 
@@ -43,61 +50,53 @@ namespace Telegram.Views.Popups
             _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
-
-            SecondaryButtonText = Strings.Close;
         }
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
+
             _handler.UnloadItems();
             _zoomer.Release();
         }
 
-        #region Show
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("STICKERSET_INVALID"))
+            {
+                Hide();
+                ViewModel.NavigationService.ShowToast(Strings.AddStickersNotFound, ToastPopupIcon.Info);
+            }
+        }
 
-        public Action<Sticker> ItemClick { get; set; }
+        #region Show
 
         public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, StickerSet parameter)
         {
-            return ShowAsyncInternal(navigation, parameter, null);
-        }
-
-        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, StickerSet parameter, Action<Sticker> callback)
-        {
-            return ShowAsyncInternal(navigation, parameter, callback);
+            return ShowAsyncInternal(navigation, parameter);
         }
 
         public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, HashSet<long> parameter)
         {
-            return ShowAsyncInternal(navigation, parameter, null);
-        }
-
-        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, HashSet<long> parameter, Action<Sticker> callback)
-        {
-            return ShowAsyncInternal(navigation, parameter, callback);
+            return ShowAsyncInternal(navigation, parameter);
         }
 
         public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, long parameter)
         {
-            return ShowAsyncInternal(navigation, parameter, null);
-        }
-
-        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, long parameter, Action<Sticker> callback)
-        {
-            return ShowAsyncInternal(navigation, parameter, callback);
+            return ShowAsyncInternal(navigation, parameter);
         }
 
         public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, InputFileId parameter)
         {
-            return ShowAsyncInternal(navigation, parameter, null);
+            return ShowAsyncInternal(navigation, parameter);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, InputFileId parameter, Action<Sticker> callback)
+        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, string parameter)
         {
-            return ShowAsyncInternal(navigation, parameter, callback);
+            return ShowAsyncInternal(navigation, parameter);
         }
 
-        private static Task<ContentDialogResult> ShowAsyncInternal(INavigationService navigation, object parameter, Action<Sticker> callback)
+        private static Task<ContentDialogResult> ShowAsyncInternal(INavigationService navigation, object parameter)
         {
             var popup = new StickersPopup(navigation);
 
@@ -108,7 +107,6 @@ namespace Telegram.Views.Popups
             handler = new RoutedEventHandler(async (s, args) =>
             {
                 popup.Loaded -= handler;
-                popup.ItemClick = callback;
                 await popup.ViewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
             });
 
@@ -116,19 +114,26 @@ namespace Telegram.Views.Popups
             return popup.ShowQueuedAsync(navigation.XamlRoot);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, string parameter)
-        {
-            return ShowAsyncInternal(navigation, parameter, null);
-        }
-
-        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, string parameter, Action<Sticker> callback)
-        {
-            return ShowAsyncInternal(navigation, parameter, callback);
-        }
-
         #endregion
 
         #region Recycle
+
+        private void OnChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)
+        {
+            if (args.GroupHeaderContainer == null)
+            {
+                args.GroupHeaderContainer = new GridViewHeaderItem
+                {
+                    Style = sender.GroupStyle[0].HeaderContainerStyle,
+                    ContentTemplate = sender.GroupStyle[0].HeaderTemplate
+                };
+            }
+
+            args.GroupHeaderContainer.Padding = new Thickness(0, args.GroupIndex > 0 ? 16 : 0, 0, 0);
+            args.GroupHeaderContainer.Visibility = ViewModel.Items.Count > 1
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
@@ -183,72 +188,52 @@ namespace Telegram.Views.Popups
             return type is StickerTypeCustomEmoji ? 8 : 5;
         }
 
-        private string ConvertIsInstalled(bool installed, bool archived, bool official, StickerType type)
+        private string ConvertIsInstalled(bool installed, bool archived, StickerType type)
         {
             if (ViewModel == null || ViewModel.IsLoading)
             {
+                Action.Visibility = Visibility.Collapsed;
                 return string.Empty;
             }
 
-            var masks = type is StickerTypeMask;
+            Action.Visibility = Visibility.Visible;
 
-            if (installed && !archived)
+            if (ViewModel.Items.Count > 1)
             {
-                return official
-                    ? string.Format(masks ? Strings.StickersRemove : Strings.StickersRemove, ViewModel.Count)
-                    : string.Format(masks ? Strings.StickersRemove : Strings.StickersRemove, ViewModel.Count);
+                MoreButton.Visibility = Visibility.Collapsed;
+
+                if (installed && !archived)
+                {
+                    Action.Style = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
+                    return Locale.Declension(Strings.R.RemoveManyEmojiPacksCount, ViewModel.Items.Count(x => x.IsInstalled));
+                }
+
+                Action.Style = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+                return Locale.Declension(Strings.R.AddManyEmojiPacksCount, ViewModel.Items.Count(x => !x.IsInstalled));
+
             }
-
-            return official || archived
-                ? string.Format(masks ? Strings.AddMasks : Strings.AddStickers, ViewModel.Count)
-                : string.Format(masks ? Strings.AddMasks : Strings.AddStickers, ViewModel.Count);
-        }
-
-        private Style ConvertIsInstalledStyle(bool installed, bool archived)
-        {
-            if (ViewModel == null || ViewModel.IsLoading)
+            else
             {
-                return BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            }
+                MoreButton.Visibility = Visibility.Visible;
 
-            if (installed && !archived)
-            {
-                return BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
-            }
+                if (installed && !archived)
+                {
+                    Action.Style = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
+                    return Locale.Declension(type is StickerTypeCustomEmoji ? Strings.R.RemoveManyEmojiCount : Strings.R.RemoveManyStickersCount, ViewModel.Count);
+                }
 
-            return BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+                Action.Style = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+                return Locale.Declension(type is StickerTypeCustomEmoji ? Strings.R.AddManyEmojiCount : Strings.R.AddManyStickersCount, ViewModel.Count);
+            }
         }
 
         #endregion
 
-        private async void Share_Click(object sender, RoutedEventArgs e)
-        {
-            var builder = new StringBuilder();
-
-            foreach (var item in ViewModel.Items)
-            {
-                if (builder.Length > 0)
-                {
-                    builder.AppendLine();
-                }
-
-                builder.Append(MeUrlPrefixConverter.Convert(ViewModel.ClientService, $"addstickers/{item.Name}"));
-            }
-
-            Hide();
-
-            var text = builder.ToString();
-            var formatted = new FormattedText(text, Array.Empty<TextEntity>());
-
-            // TODO: currently not used
-            //await new ChooseChatsPopup().ShowAsync(formatted);
-        }
-
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (ItemClick != null && e.ClickedItem is ViewModels.Drawers.StickerViewModel sticker)
+            if (ViewModel.NavigationService?.Content is Page { Content: ChatView view } && e.ClickedItem is ViewModels.Drawers.StickerViewModel sticker)
             {
-                ItemClick(sticker);
+                view.Stickers_ItemClick(sticker);
                 Hide();
             }
         }
@@ -256,6 +241,32 @@ namespace Telegram.Views.Popups
         private void Player_Ready(object sender, EventArgs e)
         {
             _handler.ThrottleVisibleItems();
+        }
+
+        private void More_ContextRequested(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(Share, Strings.ShareFile, Icons.Share);
+            flyout.CreateFlyoutItem(CopyLink, Strings.CopyLink, Icons.Link);
+
+            flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
+
+        private void Share()
+        {
+            Hide();
+            ViewModel.ShowPopup(new ChooseChatsPopup(), new ChooseChatsConfigurationPostLink(new InternalLinkTypeStickerSet(ViewModel.Items[0].Name, ViewModel.StickerType is StickerTypeCustomEmoji)));
+        }
+
+        private void CopyLink()
+        {
+            MessageHelper.CopyLink(ViewModel.ClientService, XamlRoot, new InternalLinkTypeStickerSet(ViewModel.Items[0].Name, ViewModel.StickerType is StickerTypeCustomEmoji));
+        }
+
+        private void Action_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Execute();
+            Hide();
         }
     }
 }

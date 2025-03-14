@@ -1,11 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -142,7 +144,7 @@ namespace Telegram.Controls
             }
 
             var tsc = new TaskCompletionSource<ContentDialogResult>();
-            var popup = new TeachingTip
+            var popup = new TeachingTipEx
             {
                 Title = title,
                 Subtitle = message,
@@ -168,11 +170,11 @@ namespace Telegram.Controls
 
             popup.Closed += (s, args) =>
             {
-                host.Disconnect(s);
+                host.ToastClosed(s);
                 tsc.TrySetResult(ContentDialogResult.Secondary);
             };
 
-            host.Connect(popup);
+            host.ToastOpened(popup);
             popup.IsOpen = true;
             return tsc.Task;
         }
@@ -185,7 +187,7 @@ namespace Telegram.Controls
             }
 
             var tsc = new TaskCompletionSource<ContentDialogResult>();
-            var popup = new TeachingTip
+            var popup = new TeachingTipEx
             {
                 Title = title,
                 Subtitle = message,
@@ -204,6 +206,8 @@ namespace Telegram.Controls
                 RequestedTheme = target?.ActualTheme ?? requestedTheme
             };
 
+            AutomationProperties.SetName(popup, title);
+
             popup.ActionButtonClick += (s, args) =>
             {
                 popup.IsOpen = false;
@@ -212,13 +216,58 @@ namespace Telegram.Controls
 
             popup.Closed += (s, args) =>
             {
-                host.Disconnect(s);
+                host.ToastClosed(s);
                 tsc.TrySetResult(ContentDialogResult.Secondary);
             };
 
-            host.Connect(popup);
+            host.ToastOpened(popup);
             popup.IsOpen = true;
             return tsc.Task;
+        }
+    }
+
+    public class TeachingTipEx : TeachingTip
+    {
+        public TeachingTipEx()
+        {
+            DefaultStyleKey = typeof(TeachingTipEx);
+
+            RegisterPropertyChangedCallback(TitleProperty, OnTitleChanged);
+        }
+
+        private void OnTitleChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            AutomationProperties.SetName(this, Title);
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            var container = GetTemplateChild("Container") as Border;
+
+            var rootElement = container?.Child as FrameworkElement;
+            if (rootElement != null)
+            {
+                rootElement.Loaded += Container_Loaded;
+            }
+
+            base.OnApplyTemplate();
+        }
+
+        private void Container_Loaded(object sender, RoutedEventArgs e)
+        {
+            //var subtitleTextBlock = GetTemplateChild("SubtitleTextBlock") as TextBlock;
+            //if (subtitleTextBlock.Visibility == Visibility.Visible)
+            //{
+            //    subtitleTextBlock.Focus(FocusState.Keyboard);
+            //}
+            //else
+            {
+                var focusable = FocusManager.FindFirstFocusableElement(sender as DependencyObject) as Control;
+                if (focusable != null)
+                {
+                    focusable.Focus(FocusState.Programmatic);
+                }
+            }
         }
     }
 }

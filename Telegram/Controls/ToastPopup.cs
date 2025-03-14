@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -54,7 +54,8 @@ namespace Telegram.Controls
         Transcribe,
         Translate,
         Unmute,
-        Unpin
+        Unpin,
+        VideoConversion
     }
 
     public partial class ToastPopup : TeachingTip
@@ -221,9 +222,9 @@ namespace Telegram.Controls
             Grid.SetColumn(label, 1);
 
             var content = new Grid();
-            content.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            content.ColumnDefinitions.Add(1, GridUnitType.Auto);
             content.ColumnDefinitions.Add(new ColumnDefinition());
-            content.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            content.ColumnDefinitions.Add(1, GridUnitType.Auto);
             content.Children.Add(label);
 
             if (icon != null)
@@ -240,6 +241,7 @@ namespace Telegram.Controls
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 MinWidth = 0,
+                XamlRoot = xamlRoot
             };
 
             if (requestedTheme != ElementTheme.Default)
@@ -247,16 +249,24 @@ namespace Telegram.Controls
                 toast.RequestedTheme = requestedTheme;
             }
 
-            if (xamlRoot.Content is IToastHost host)
+            try
             {
-                void handler(object sender, object e)
+                if (xamlRoot.Content is IToastHost host)
                 {
-                    host.Disconnect(toast);
-                    toast.Closed -= handler;
-                }
+                    void handler(object sender, object e)
+                    {
+                        host.ToastClosed(toast);
+                        toast.Closed -= handler;
+                    }
 
-                host.Connect(toast);
-                toast.Closed += handler;
+                    host.ToastOpened(toast);
+                    toast.Closed += handler;
+                }
+            }
+            catch
+            {
+                Logger.Info("XamlRoot.Content thrown");
+                return null;
             }
 
             if ((target == null || dismissAfter.HasValue) && (dismissAfter == null || dismissAfter.Value.TotalSeconds > 0))

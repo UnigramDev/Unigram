@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -46,6 +46,10 @@ namespace Telegram.ViewModels.Chats
             {
                 _filter = new SearchMessagesFilterVideoNote();
             }
+            else if (selected.Content is MessageDocument)
+            {
+                _filter = new SearchMessagesFilterDocument();
+            }
             else
             {
                 _filter = new SearchMessagesFilterPhotoAndVideo();
@@ -72,7 +76,7 @@ namespace Telegram.ViewModels.Chats
 
                     foreach (var message in messages.Messages.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id))
                     {
-                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
+                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation or MessageDocument)
                         {
                             Items.Put(!_isMirrored, new GalleryMessage(ClientService, message));
                         }
@@ -84,7 +88,7 @@ namespace Telegram.ViewModels.Chats
 
                     foreach (var message in messages.Messages.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id))
                     {
-                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
+                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation or MessageDocument)
                         {
                             Items.Put(_isMirrored, new GalleryMessage(ClientService, message));
                         }
@@ -136,7 +140,7 @@ namespace Telegram.ViewModels.Chats
 
                     foreach (var message in _isMirrored ? messages.Messages.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id) : messages.Messages.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id))
                     {
-                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
+                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation or MessageDocument)
                         {
                             Items.Insert(0, new GalleryMessage(ClientService, message));
                         }
@@ -173,7 +177,7 @@ namespace Telegram.ViewModels.Chats
 
                     foreach (var message in _isMirrored ? messages.Messages.Where(x => x != null && x.Id < fromMessageId).OrderByDescending(x => x.Id) : messages.Messages.Where(x => x != null && x.Id > fromMessageId).OrderBy(x => x.Id))
                     {
-                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation)
+                        if (message.Content is MessagePhoto or MessageVideo or MessageAnimation or MessageDocument)
                         {
                             Items.Add(new GalleryMessage(ClientService, message));
                         }
@@ -197,7 +201,7 @@ namespace Telegram.ViewModels.Chats
                 var currentIndex = Items.IndexOf(_selectedItem);
 
                 var position = _firstPosition + (firstIndex - currentIndex);
-                return _isMirrored ? position : TotalItems - position;
+                return _isMirrored ? position + 1 : TotalItems - position;
             }
         }
 

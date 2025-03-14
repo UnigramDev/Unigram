@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -9,11 +9,12 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Views.Host;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class CreateLinkPopup : TeachingTip
+    public sealed partial class CreateLinkPopup : TeachingTipEx
     {
         public CreateLinkPopup()
         {
@@ -103,11 +104,11 @@ namespace Telegram.Views.Popups
             {
                 sender.Closed -= handler;
 
-                host.Disconnect(sender);
+                host.ToastClosed(sender);
                 tsc.SetResult(IsValid);
             }
 
-            host.Connect(this);
+            host.ToastOpened(this);
             Closed += handler;
             IsOpen = true;
 

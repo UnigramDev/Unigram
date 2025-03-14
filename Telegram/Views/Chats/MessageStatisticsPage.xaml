@@ -42,8 +42,7 @@
                                 SelectionMode="None">
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
-                    <controls:HeaderedControl Header="{CustomResource StatisticOverview}"
-                                              Style="{StaticResource FooteredControlStyle}">
+                    <controls:HeaderedControl Header="{CustomResource StatisticOverview}">
                         <Grid Background="{ThemeResource SettingsItemBackground}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />

@@ -1,14 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Hosting;
 using System.Numerics;
 using Telegram.Navigation;
+using Telegram.Td.Api;
 using Telegram.ViewModels;
 
 namespace Telegram.Controls.Cells
@@ -144,5 +146,47 @@ namespace Telegram.Controls.Cells
                 iconUnselected.Opacity = 0.6f;
             }
         }
+
+        #region Title
+
+        public static ChatFolderName GetTitle(DependencyObject obj)
+        {
+            return (ChatFolderName)obj.GetValue(TitleProperty);
+        }
+
+        public static void SetTitle(DependencyObject obj, ChatFolderName value)
+        {
+            obj.SetValue(TitleProperty, value);
+        }
+
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.RegisterAttached("Title", typeof(ChatFolderName), typeof(RichTextBlock), new PropertyMetadata(null, OnTitleChanged));
+
+        private static void OnTitleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var textBlock = d as RichTextBlock;
+            var paragraph = textBlock?.Blocks[0] as Paragraph;
+            var formattedText = e.NewValue as ChatFolderName;
+
+            var clientService = textBlock?.DataContext switch
+            {
+                ChatFolderViewModel chatFolder => chatFolder.ClientService,
+                ViewModelBase viewModel => viewModel.ClientService,
+                _ => null
+            };
+
+            if (clientService == null || formattedText == null)
+            {
+                return;
+            }
+
+            var size = textBlock.FontSize < 14
+                ? 14
+                : 20;
+
+            CustomEmojiIcon.Add(textBlock, paragraph.Inlines, clientService, formattedText, size: size);
+        }
+
+        #endregion
     }
 }

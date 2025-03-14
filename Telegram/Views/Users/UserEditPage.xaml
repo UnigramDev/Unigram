@@ -100,6 +100,11 @@
                                           Content="{CustomResource Username}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE9F8;" />
+                    <controls:BadgeButton x:Name="AffiliateProgram"
+                                          Content="{CustomResource AffiliateProgramBot}"
+                                          Click="{x:Bind ViewModel.OpenAffiliate}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEAA6;" />
                     <controls:BadgeButton x:Name="Stars"
                                           Click="{x:Bind ViewModel.ShowBalance}"
                                           Content="{CustomResource StarsBalance}"
@@ -112,11 +117,19 @@
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
                                 <controls:PremiumStarCount Margin="0,-4,0,-6" />
-                                <TextBlock Text="{x:Bind ViewModel.StarCount, Mode=OneWay}"
+                                <TextBlock Text="{x:Bind ConvertStarCount(ViewModel.StarCount), Mode=OneWay}"
                                            Grid.Column="1" />
                             </Grid>
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl x:Name="BotPanel2"
+                                          x:Load="False">
+                    <controls:BadgeButton Click="{x:Bind ViewModel.VerifyAccounts}"
+                                          Content="{CustomResource BotVerifyAccounts}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEA8B;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="BotPanel"
@@ -147,7 +160,8 @@
                                           x:Load="False">
                     <controls:BadgeButton x:Name="SuggestPhoto"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9FE;">
+                                          Glyph="&#xE9FE;"
+                                          Visibility="Collapsed">
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedLeft">
                                 <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"

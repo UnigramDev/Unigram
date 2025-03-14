@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -19,7 +19,8 @@ namespace Telegram.ViewModels.Gallery
         public GalleryMessage(IClientService clientService, Message message)
             : base(clientService)
         {
-            _message = message;
+            // Create a copy so that content doesn't get updated while the gallery is open
+            _message = new(message.Id, message.SenderId, message.ChatId, message.SendingState, message.SchedulingState, message.IsOutgoing, message.IsPinned, message.IsFromOffline, message.CanBeSaved, message.HasTimestampedMedia, message.IsChannelPost, message.IsTopicMessage, message.ContainsUnreadMention, message.Date, message.EditDate, message.ForwardInfo, message.ImportInfo, message.InteractionInfo, message.UnreadReactions, message.FactCheck, message.ReplyTo, message.MessageThreadId, message.SavedMessagesTopicId, message.SelfDestructType, message.SelfDestructIn, message.AutoDeleteIn, message.ViaBotUserId, message.SenderBusinessBotUserId, message.SenderBoostCount, message.PaidMessageStarCount, message.AuthorSignature, message.MediaAlbumId, message.EffectId, message.HasSensitiveContent, message.RestrictionReason, message.Content, message.ReplyMarkup);
 
             if (clientService.TryGetChat(message.ChatId, out Chat chat))
             {
@@ -27,6 +28,13 @@ namespace Telegram.ViewModels.Gallery
             }
 
             File = _message.GetFile();
+            Constraint = _message.Content;
+
+            if (_message.Content is MessageDocument document)
+            {
+                Constraint = null;
+                IsMedia = document.IsPhoto();
+            }
 
             var thumbnail = _message.GetThumbnail();
             if (thumbnail == null)
@@ -47,6 +55,8 @@ namespace Telegram.ViewModels.Gallery
             : this(clientService, message.Get())
         {
         }
+
+        public MessageContent Content => _message.Content;
 
         public long ChatId => _message.ChatId;
         public long Id => _message.Id;
@@ -73,8 +83,6 @@ namespace Telegram.ViewModels.Gallery
                 return Array.Empty<AlternativeVideo>();
             }
         }
-
-        public override object Constraint => _message.Content;
 
         public override object From
         {

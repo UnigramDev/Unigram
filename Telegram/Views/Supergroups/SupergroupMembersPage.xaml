@@ -75,13 +75,11 @@
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.Footer>
-                <Border MaxWidth="640">
-                    <TextBlock x:Name="Footer"
-                               Text="{CustomResource ChannelMembersInfo}"
-                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Margin="12,6,12,32" />
-                </Border>
+                <controls:SettingsPanel IsFooter="True">
+                    <controls:SettingsFooter x:Name="Footer"
+                                             Text="{CustomResource ChannelMembersInfo}"
+                                             Margin="24,6,24,0" />
+                </controls:SettingsPanel>
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

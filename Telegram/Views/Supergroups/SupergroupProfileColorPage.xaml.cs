@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -38,7 +38,7 @@ namespace Telegram.Views.Supergroups
 
             if (ViewModel.Chat.EmojiStatus != null)
             {
-                AnimatedStatus.Source = new CustomEmojiFileSource(ViewModel.ClientService, ViewModel.Chat.EmojiStatus.CustomEmojiId);
+                AnimatedStatus.Source = new CustomEmojiFileSource(ViewModel.ClientService, ViewModel.Chat.EmojiStatus.Type);
                 EmojiStatus.Badge = string.Empty;
             }
             else
@@ -95,12 +95,8 @@ namespace Telegram.Views.Supergroups
                 var response = await ViewModel.ClientService.SendAsync(new GetStickerSet(stickerSetId));
                 if (response is StickerSet set)
                 {
-                    var thumbnail = set.GetThumbnail();
-                    if (thumbnail != null)
-                    {
-                        target.Source = new DelayedFileSource(ViewModel.ClientService, thumbnail);
-                        return;
-                    }
+                    target.Source = DelayedFileSource.FromStickerSet(ViewModel.ClientService, set);
+                    return;
                 }
             }
 
@@ -115,11 +111,16 @@ namespace Telegram.Views.Supergroups
 
         private void Flyout_EmojiSelected(object sender, EmojiSelectedEventArgs e)
         {
-            ViewModel.SelectedEmojiStatus = new EmojiStatus(e.CustomEmojiId, 0);
-
-            if (e.CustomEmojiId != 0)
+            if (e.Type is not ReactionTypeCustomEmoji customEmoji)
             {
-                AnimatedStatus.Source = new CustomEmojiFileSource(ViewModel.ClientService, e.CustomEmojiId);
+                return;
+            }
+
+            ViewModel.SelectedEmojiStatus = new EmojiStatus(new EmojiStatusTypeCustomEmoji(customEmoji.CustomEmojiId), 0);
+
+            if (customEmoji.CustomEmojiId != 0)
+            {
+                AnimatedStatus.Source = new CustomEmojiFileSource(ViewModel.ClientService, customEmoji.CustomEmojiId);
                 EmojiStatus.Badge = string.Empty;
             }
             else
@@ -148,16 +149,7 @@ namespace Telegram.Views.Supergroups
             if (confirm == ContentDialogResult.Primary)
             {
                 ViewModel.SelectedCustomEmojiStickerSet = set?.Id ?? 0;
-
-                var thumbnail = set?.GetThumbnail();
-                if (thumbnail != null)
-                {
-                    EmojiPackAnimated.Source = new DelayedFileSource(ViewModel.ClientService, thumbnail);
-                }
-                else
-                {
-                    EmojiPackAnimated.Source = null;
-                }
+                EmojiPackAnimated.Source = DelayedFileSource.FromStickerSetInfo(ViewModel.ClientService, set);
             }
         }
 
@@ -172,16 +164,7 @@ namespace Telegram.Views.Supergroups
             if (confirm == ContentDialogResult.Primary)
             {
                 ViewModel.SelectedStickerSet = set?.Id ?? 0;
-
-                var thumbnail = set?.GetThumbnail();
-                if (thumbnail != null)
-                {
-                    StickerPackAnimated.Source = new DelayedFileSource(ViewModel.ClientService, thumbnail);
-                }
-                else
-                {
-                    StickerPackAnimated.Source = null;
-                }
+                StickerPackAnimated.Source = DelayedFileSource.FromStickerSetInfo(ViewModel.ClientService, set);
             }
         }
 

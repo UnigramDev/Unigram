@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -86,6 +86,66 @@ namespace Telegram.ViewModels.Settings
 
         #endregion
 
+        public bool ShowName
+        {
+            get => Settings.Notifications.ShowName;
+            set
+            {
+                if (Settings.Notifications.ShowName != value)
+                {
+                    Settings.Notifications.ShowName = value;
+                    RaisePropertyChanged();
+
+                    if (value is false)
+                    {
+                        ShowText = false;
+                        ShowReply = false;
+                    }
+                }
+            }
+        }
+
+        public bool ShowText
+        {
+            get => Settings.Notifications.ShowText;
+            set
+            {
+                if (Settings.Notifications.ShowText != value)
+                {
+                    Settings.Notifications.ShowText = value;
+                    RaisePropertyChanged();
+
+                    if (value)
+                    {
+                        ShowName = true;
+                    }
+                    else
+                    {
+                        ShowReply = false;
+                    }
+                }
+            }
+        }
+
+        public bool ShowReply
+        {
+            get => Settings.Notifications.ShowReply;
+            set
+            {
+                if (Settings.Notifications.ShowReply != value)
+                {
+                    Settings.Notifications.ShowReply = value;
+                    RaisePropertyChanged();
+
+                    if (value)
+                    {
+                        ShowName = true;
+                        ShowText = true;
+                    }
+                }
+            }
+        }
+
         public bool IsContactEnabled
         {
             get => !ClientService.Options.DisableContactRegisteredNotifications;
@@ -132,9 +192,27 @@ namespace Telegram.ViewModels.Settings
                 Settings.Notifications.IncludeMutedChats = value;
                 RaisePropertyChanged();
 
-                var unreadCount = ClientService.GetUnreadCount(new ChatListMain());
-                Aggregator.Publish(unreadCount.UnreadChatCount);
-                Aggregator.Publish(unreadCount.UnreadMessageCount);
+                foreach (var unreadCount in ClientService.UnreadCounts)
+                {
+                    Aggregator.Publish(unreadCount.UnreadChatCount);
+                    Aggregator.Publish(unreadCount.UnreadMessageCount);
+                }
+            }
+        }
+
+        public bool IncludeMutedChatsInFolderCounters
+        {
+            get => Settings.Notifications.IncludeMutedChatsInFolderCounters;
+            set
+            {
+                Settings.Notifications.IncludeMutedChatsInFolderCounters = value;
+                RaisePropertyChanged();
+
+                foreach (var unreadCount in ClientService.UnreadCounts)
+                {
+                    Aggregator.Publish(unreadCount.UnreadChatCount);
+                    Aggregator.Publish(unreadCount.UnreadMessageCount);
+                }
             }
         }
 
@@ -146,9 +224,11 @@ namespace Telegram.ViewModels.Settings
                 Settings.Notifications.CountUnreadMessages = value;
                 RaisePropertyChanged();
 
-                var unreadCount = ClientService.GetUnreadCount(new ChatListMain());
-                Aggregator.Publish(unreadCount.UnreadChatCount);
-                Aggregator.Publish(unreadCount.UnreadMessageCount);
+                foreach (var unreadCount in ClientService.UnreadCounts)
+                {
+                    Aggregator.Publish(unreadCount.UnreadChatCount);
+                    Aggregator.Publish(unreadCount.UnreadMessageCount);
+                }
             }
         }
 

@@ -12,6 +12,7 @@ using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Stories;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Point = Windows.Foundation.Point;
 
@@ -93,6 +94,53 @@ namespace Telegram.Views.Profile
 
                 content.Update(story, ViewModel.IsPinned(story));
                 args.Handled = true;
+            }
+        }
+
+        private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+            try
+            {
+                if (e.Items[0] is StoryViewModel story && ViewModel.IsPinned(story))
+                {
+                    ScrollingHost.CanReorderItems = true;
+                }
+                else
+                {
+                    ScrollingHost.CanReorderItems = false;
+                    e.Cancel = true;
+                }
+            }
+            catch
+            {
+                ScrollingHost.CanReorderItems = false;
+                e.Cancel = true;
+            }
+        }
+
+        private void OnDragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        {
+            ScrollingHost.CanReorderItems = false;
+
+            if (args.DropResult == DataPackageOperation.Move && args.Items.Count == 1 && args.Items[0] is StoryViewModel story)
+            {
+                var items = ViewModel.Items;
+                if (items.Count == 1)
+                {
+                    return;
+                }
+
+                var index = items.IndexOf(story);
+                var compare = items[index > 0 ? index - 1 : index + 1];
+
+                if (ViewModel.IsPinned(compare))
+                {
+                    ViewModel.SetPinnedItems();
+                }
+                else
+                {
+                    ViewModel.SetPinnedItem(story);
+                }
             }
         }
 

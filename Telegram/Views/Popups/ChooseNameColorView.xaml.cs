@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -174,11 +174,16 @@ namespace Telegram.Views.Popups
 
         private void Flyout_EmojiSelected(object sender, EmojiSelectedEventArgs e)
         {
-            SelectedCustomEmojiId = e.CustomEmojiId;
+            if (e.Type is not ReactionTypeCustomEmoji customEmoji)
+            {
+                return;
+            }
+
+            SelectedCustomEmojiId = customEmoji.CustomEmojiId;
 
             Message1.UpdateMockup(_clientService, SelectedCustomEmojiId, SelectedAccentColor.Id);
 
-            if (e.CustomEmojiId != 0)
+            if (customEmoji.CustomEmojiId != 0)
             {
                 Animated.Source = new CustomEmojiFileSource(_clientService, SelectedCustomEmojiId);
                 Badge.Badge = string.Empty;

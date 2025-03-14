@@ -1,11 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml;
 using System.Collections.Generic;
+using Telegram.Common;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -30,7 +31,7 @@ namespace Telegram.ViewModels.Delegates
         ReactionType SavedMessagesTag { get; set; }
 
         void Select(MessageViewModel message);
-        void Unselect(MessageViewModel message);
+        void Unselect(MessageViewModel message, bool updateSelection = false);
 
         bool CanBeDownloaded(object content, File file);
         void DownloadFile(MessageViewModel message, File file);
@@ -41,7 +42,7 @@ namespace Telegram.ViewModels.Delegates
         void OpenThread(MessageViewModel message);
 
         void OpenFile(File file);
-        void OpenWebPage(MessageText text);
+        void OpenWebPage(MessageViewModel message);
         void OpenSticker(Sticker sticker);
         void OpenLocation(Location location, string title);
         void OpenGame(MessageViewModel message);
@@ -63,7 +64,7 @@ namespace Telegram.ViewModels.Delegates
         void OpenChat(long chatId, long messageId);
         void OpenViaBot(long viaBotUserId);
 
-        void OpenUrl(string url, bool untrust);
+        void OpenUrl(string url, bool untrust, OpenUrlSource source = null);
         void OpenHashtag(string hashtag);
         void OpenBankCardNumber(string number);
 

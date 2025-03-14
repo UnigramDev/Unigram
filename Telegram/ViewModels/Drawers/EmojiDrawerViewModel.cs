@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -38,6 +38,7 @@ namespace Telegram.ViewModels.Drawers
 
         private readonly StickerSetViewModel _reactionTopSet;
         private readonly StickerSetViewModel _reactionRecentSet;
+        private readonly StickerSetViewModel _reactionUpgradedSet;
 
         public EmojiDrawerViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -53,6 +54,13 @@ namespace Telegram.ViewModels.Drawers
             });
 
             _reactionRecentSet = new StickerSetViewModel(ClientService, new StickerSetInfo
+            {
+                Title = Strings.RecentStickers,
+                Name = "tg/recentlyUsed",
+                IsInstalled = true
+            });
+
+            _reactionUpgradedSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
                 Title = Strings.RecentStickers,
                 Name = "tg/recentlyUsed",
@@ -303,6 +311,31 @@ namespace Telegram.ViewModels.Drawers
 
                         sets.Insert(0, _reactionTopSet);
                         installedSets.Insert(0, _reactionTopSet);
+
+                        //if (_mode == EmojiDrawerMode.EmojiStatus)
+                        //{
+                        //    var response2 = await ClientService.SendAsync(new GetUpgradedGiftEmojiStatuses());
+                        //    if (response2 is EmojiStatuses statuses)
+                        //    {
+                        //        var ids = new HashSet<long>();
+
+                        //        foreach (var status in statuses.EmojiStatusesValue)
+                        //        {
+                        //            if (status.Type is EmojiStatusTypeUpgradedGift upgradedGift)
+                        //            {
+                        //                ids.Add(upgradedGift.ModelCustomEmojiId);
+                        //            }
+                        //        }
+
+                        //        var response3 = await ClientService.SendAsync(new GetCustomEmojiStickers(ids.ToList()));
+                        //        if (response3 is Stickers stickers2)
+                        //        {
+
+                        //        }
+
+                        //        _reactionUpgradedSet.Update(statuses.EmojiStatusesValue.Select(x => new StickerViewModel(ClientService, x)));
+                        //    }
+                        //}
                     }
                 }
             }
@@ -343,9 +376,9 @@ namespace Telegram.ViewModels.Drawers
 
         private async Task<BaseObject> GetDefaultStatusAsync()
         {
-            var themedResponse = await ClientService.SendAsync(new GetThemedEmojiStatuses()) as EmojiStatuses;
-            var recentResponse = await ClientService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatuses;
-            var defaulResponse = await ClientService.SendAsync(new GetDefaultEmojiStatuses()) as EmojiStatuses;
+            var themedResponse = await ClientService.SendAsync(new GetThemedEmojiStatuses()) as EmojiStatusCustomEmojis;
+            var recentResponse = await ClientService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatusCustomEmojis;
+            var defaulResponse = await ClientService.SendAsync(new GetDefaultEmojiStatuses()) as EmojiStatusCustomEmojis;
 
             var themed = themedResponse?.CustomEmojiIds ?? Array.Empty<long>();
             var recent = recentResponse?.CustomEmojiIds ?? Array.Empty<long>();
@@ -377,11 +410,11 @@ namespace Telegram.ViewModels.Drawers
 
         private async Task<BaseObject> GetDefaultChatStatusAsync()
         {
-            var themedResponse = await ClientService.SendAsync(new GetThemedChatEmojiStatuses()) as EmojiStatuses;
-            var recentResponse = await ClientService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatuses;
-            var defaulResponse = await ClientService.SendAsync(new GetDefaultChatEmojiStatuses()) as EmojiStatuses;
+            var themedResponse = await ClientService.SendAsync(new GetThemedChatEmojiStatuses()) as EmojiStatusCustomEmojis;
+            var recentResponse = await ClientService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatusCustomEmojis;
+            var defaulResponse = await ClientService.SendAsync(new GetDefaultChatEmojiStatuses()) as EmojiStatusCustomEmojis;
 
-            var disallowedResponse = await ClientService.SendAsync(new GetDisallowedChatEmojiStatuses()) as EmojiStatuses;
+            var disallowedResponse = await ClientService.SendAsync(new GetDisallowedChatEmojiStatuses()) as EmojiStatusCustomEmojis;
 
             var themed = themedResponse?.CustomEmojiIds ?? Array.Empty<long>();
             var recent = recentResponse?.CustomEmojiIds ?? Array.Empty<long>();
@@ -479,11 +512,11 @@ namespace Telegram.ViewModels.Drawers
             return Array.Empty<StickerSetViewModel>();
         }
 
-        public async Task<List<(AvailableReaction, Sticker)>> UpdateReactions(AvailableReactions available)
+        public async Task<IList<(AvailableReaction, Sticker)>> UpdateReactions(AvailableReactions available)
         {
             if (available == null)
             {
-                return null;
+                return Array.Empty<(AvailableReaction, Sticker)>();
             }
 
             var sum = available.TopReactions.Count
@@ -540,7 +573,7 @@ namespace Telegram.ViewModels.Drawers
                 var response = await ClientService.SendAsync(new GetCustomEmojiStickers(missingEmoji.ToArray()));
                 if (response is not Stickers stickers)
                 {
-                    return null;
+                    return Array.Empty<(AvailableReaction, Sticker)>();
                 }
 
                 assets = stickers.StickersValue.ToDictionary(x => x.FullType is StickerFullTypeCustomEmoji customEmoji ? customEmoji.CustomEmojiId : 0);
@@ -570,7 +603,7 @@ namespace Telegram.ViewModels.Drawers
                     }
                     else if (item.Type is ReactionTypePaid)
                     {
-                        target.Add((item, new Sticker(0, 0, 512, 512, "\u2B50", new StickerFormatTgs(), new StickerFullTypeRegular(), Array.Empty<ClosedVectorPath>(), null, TdExtensions.GetLocalFile("Assets\\Animations\\PaidReactionActivate.tgs"))));
+                        target.Add((item, new Sticker(0, 0, 512, 512, "\u2B50", new StickerFormatTgs(), new StickerFullTypeRegular(), null, TdExtensions.GetLocalFile("Assets\\Animations\\PaidReactionActivate.tgs"))));
                     }
                 }
             }

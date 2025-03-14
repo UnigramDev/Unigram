@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -19,7 +19,7 @@ namespace Telegram.Controls.Messages
 
         protected override async void OnClick(MessageViewModel message, MessageReaction chosen)
         {
-            var added = await PaidReactionService.AddPendingAsync(XamlRoot, message, 1, true, true);
+            var added = await PaidReactionService.AddPendingAsync(XamlRoot, message, 1, null);
             if (added is Ok)
             {
                 Animate();

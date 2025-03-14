@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -110,7 +110,6 @@ namespace Telegram.Controls
                 if (EmojisRoot == null)
                 {
                     FindName(nameof(EmojisRoot));
-                    EmojisRoot.LayoutUpdated += EmojisRoot_LayoutUpdated;
                     EmojisRoot.DataContext = EmojiDrawerViewModel.Create(SessionId);
                 }
                 else
@@ -143,7 +142,6 @@ namespace Telegram.Controls
                 if (AnimationsRoot == null)
                 {
                     FindName(nameof(AnimationsRoot));
-                    AnimationsRoot.LayoutUpdated += AnimationsRoot_LayoutUpdated;
                     AnimationsRoot.DataContext = AnimationDrawerViewModel.Create(SessionId);
                     AnimationsRoot.ItemClick += AnimationClick;
                     AnimationsRoot.ItemContextRequested += AnimationContextRequested;
@@ -178,7 +176,6 @@ namespace Telegram.Controls
                 if (StickersRoot == null)
                 {
                     FindName(nameof(StickersRoot));
-                    StickersRoot.LayoutUpdated += StickersRoot_LayoutUpdated;
                     StickersRoot.DataContext = StickerDrawerViewModel.Create(SessionId);
                     StickersRoot.ItemClick += StickerClick;
                     StickersRoot.ItemContextRequested += StickerContextRequested;
@@ -342,29 +339,29 @@ namespace Telegram.Controls
             }
         }
 
-        private void EmojisRoot_LayoutUpdated(object sender, object e)
+        private void EmojisRoot_Loaded(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement element)
             {
-                element.LayoutUpdated -= EmojisRoot_LayoutUpdated;
+                element.Loaded -= EmojisRoot_Loaded;
                 Show(Tab0, _prevIndex > 0, 0);
             }
         }
 
-        private void AnimationsRoot_LayoutUpdated(object sender, object e)
+        private void AnimationsRoot_Loaded(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement element)
             {
-                element.LayoutUpdated -= AnimationsRoot_LayoutUpdated;
+                element.Loaded -= AnimationsRoot_Loaded;
                 Show(Tab1, _prevIndex > 1, 1);
             }
         }
 
-        private void StickersRoot_LayoutUpdated(object sender, object e)
+        private void StickersRoot_Loaded(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement element)
             {
-                element.LayoutUpdated -= StickersRoot_LayoutUpdated;
+                element.Loaded -= StickersRoot_Loaded;
                 Show(Tab2, _prevIndex > 2, 2);
             }
         }

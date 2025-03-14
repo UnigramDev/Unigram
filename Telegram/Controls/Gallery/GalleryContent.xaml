@@ -12,6 +12,12 @@
     <Image x:Name="Texture"
            Stretch="UniformToFill" />
 
+    <StackPanel HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+        <TextBlock x:Name="DocumentName"
+                   Margin="0,0,0,80" />
+    </StackPanel>
+    
     <controls:FileButton x:Name="Button"
                          Click="Button_Click"
                          ManipulationMode="System"

@@ -1,0 +1,89 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.ReportAdsPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
+                       mc:Ignorable="d"
+                       Padding="0"
+                       IsDismissButtonVisible="True">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Margin="0,24,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"
+                                  MinWidth="16" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <controls:GlyphButton x:Name="BackButton"
+                                  Click="BackButton_Click"
+                                  RenderTransformOrigin="0.5,0.5"
+                                  VerticalAlignment="Bottom"
+                                  Width="48"
+                                  Height="48"
+                                  Margin="4,-12,-8,-12"
+                                  CornerRadius="20"
+                                  Glyph="&#xe93e;"
+                                  Visibility="Collapsed">
+                <Button.RenderTransform>
+                    <ScaleTransform ScaleX="0.8"
+                                    ScaleY="0.8" />
+                </Button.RenderTransform>
+            </controls:GlyphButton>
+
+            <TextBlock x:Name="Title"
+                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                       TextWrapping="NoWrap"
+                       TextTrimming="CharacterEllipsis"
+                       MaxLines="1"
+                       VerticalAlignment="Center"
+                       Margin="8,0,0,0"
+                       FontSize="20"
+                       Grid.Column="1" />
+        </Grid>
+
+        <Grid x:Name="OptionRoot"
+              Visibility="Collapsed"
+              Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="Subtitle"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       Margin="24,0" />
+
+            <controls:TextListView x:Name="ScrollingHost"
+                                   SelectionMode="None"
+                                   IsItemClickEnabled="True"
+                                   ItemClick="OnItemClick"
+                                   ContainerContentChanging="OnContainerContentChanging"
+                                   Padding="12,6,12,12"
+                                   Style="{StaticResource DefaultListViewStyle}"
+                                   Grid.Row="1">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="12,0">
+                            <TextBlock />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem"
+                           BasedOn="{StaticResource DefaultListViewItemStyle}" />
+                </ListView.ItemContainerStyle>
+            </controls:TextListView>
+
+            <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
+                                        Background="{ThemeResource ContentDialogBackground}"
+                                        Grid.Row="1" />
+        </Grid>
+    </Grid>
+</controls:ContentPopup>

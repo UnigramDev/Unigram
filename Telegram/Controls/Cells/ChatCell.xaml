@@ -118,20 +118,26 @@
                                   VerticalAlignment="Bottom"
                                   Margin="0,0,0,2">
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
+                                <controls:CustomEmojiIcon x:Name="BotVerified"
+                                                          Visibility="Collapsed"
+                                                          VerticalAlignment="Bottom"
+                                                          Margin="0,-2,4,-2" />
                                 <TextBlock x:Name="TitleLabel"
                                            MaxLines="1"
                                            TextWrapping="NoWrap"
                                            TextTrimming="CharacterEllipsis"
                                            Style="{StaticResource BodyTextBlockStyle}"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}" />
+                                           FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                           Grid.Column="1" />
                                 <controls:IdentityIcon x:Name="Identity"
                                                        VerticalAlignment="Bottom"
                                                        Margin="4,0,0,0"
-                                                       Grid.Column="1" />
+                                                       Grid.Column="2" />
                                 <TextBlock x:Name="MutedIcon"
                                            Text="&#xE979;"
                                            FontFamily="{StaticResource TelegramThemeFontFamily}"
@@ -139,7 +145,7 @@
                                            VerticalAlignment="Bottom"
                                            FontSize="16"
                                            Margin="4,0,0,0"
-                                           Grid.Column="2" />
+                                           Grid.Column="3" />
                             </Grid>
 
                             <TextBlock x:Name="TimeLabel"
@@ -245,6 +251,19 @@
                                                    Margin="4,2,0,0"
                                                    Visibility="Collapsed"
                                                    Grid.Column="2" />
+                            <controls:BadgeButton x:Name="BotOpen"
+                                                  Glyph="{CustomResource BotOpen}"
+                                                  Content="{CustomResource BotOpen}"
+                                                  Style="{StaticResource SmallPillButtonStyle}"
+                                                  HorizontalAlignment="Right"
+                                                  VerticalAlignment="Top"
+                                                  Margin="4,0,0,0"
+                                                  Padding="8,5,8,7"
+                                                  CornerRadius="10"
+                                                  Height="20"
+                                                  Visibility="Collapsed"
+                                                  Grid.Column="1"
+                                                  Grid.ColumnSpan="2" />
                         </Grid>
 
                         <StackPanel x:Name="Folders"

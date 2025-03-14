@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -100,7 +100,8 @@ namespace Telegram.Common
                         Width = (int)(width),
                         Height = (int)(height)
                     };
-                };
+                }
+                ;
             }
             catch
             {
@@ -126,53 +127,58 @@ namespace Telegram.Common
         {
             using (var source = await sourceFile.OpenReadAsync())
             {
-                var decoder = await BitmapDecoder.CreateAsync(source);
-                //if (decoder.FrameCount > 1)
-                //{
-                //    throw new InvalidCastException();
-                //}
+                return await ScaleAsync(encoderId, source, resizedImageFile, requestedMinSide, bestQuality);
+            }
+        }
 
-                var originalPixelWidth = decoder.PixelWidth;
-                var originalPixelHeight = decoder.PixelHeight;
+        public static async Task<StorageFile> ScaleAsync(Guid encoderId, IRandomAccessStream source, StorageFile resizedImageFile, int requestedMinSide = 1280, bool bestQuality = false)
+        {
+            var decoder = await BitmapDecoder.CreateAsync(source);
+            //if (decoder.FrameCount > 1)
+            //{
+            //    throw new InvalidCastException();
+            //}
 
-                using (var resizedStream = await resizedImageFile.OpenAsync(FileAccessMode.ReadWrite))
+            var originalPixelWidth = decoder.PixelWidth;
+            var originalPixelHeight = decoder.PixelHeight;
+
+            using (var resizedStream = await resizedImageFile.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                BitmapTransform transform;
+
+                if (requestedMinSide > 0 && (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide))
                 {
-                    BitmapTransform transform;
+                    double ratioX = (double)requestedMinSide / originalPixelWidth;
+                    double ratioY = (double)requestedMinSide / originalPixelHeight;
+                    double ratio = Math.Min(ratioX, ratioY);
 
-                    if (requestedMinSide > 0 && (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide))
+                    uint width = (uint)(originalPixelWidth * ratio);
+                    uint height = (uint)(originalPixelHeight * ratio);
+
+                    transform = new BitmapTransform
                     {
-                        double ratioX = (double)requestedMinSide / originalPixelWidth;
-                        double ratioY = (double)requestedMinSide / originalPixelHeight;
-                        double ratio = Math.Min(ratioX, ratioY);
-
-                        uint width = (uint)(originalPixelWidth * ratio);
-                        uint height = (uint)(originalPixelHeight * ratio);
-
-                        transform = new BitmapTransform
-                        {
-                            ScaledWidth = width,
-                            ScaledHeight = height,
-                            InterpolationMode = bestQuality
-                                ? BitmapInterpolationMode.Fant
-                                : BitmapInterpolationMode.Linear
-                        };
-                    }
-                    else
-                    {
-                        transform = new BitmapTransform();
-                    }
-
-                    var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-
-                    // Not using ATM, quality is too low
-                    //var propertySet = new BitmapPropertySet();
-                    //var qualityValue = new BitmapTypedValue(quality, Windows.Foundation.PropertyType.Single);
-                    //propertySet.Add("ImageQuality", qualityValue);
-
-                    var encoder = await BitmapEncoder.CreateAsync(encoderId, resizedStream/*, propertySet*/);
-                    encoder.SetSoftwareBitmap(pixelData);
-                    await encoder.FlushAsync();
+                        ScaledWidth = width,
+                        ScaledHeight = height,
+                        InterpolationMode = bestQuality
+                            ? BitmapInterpolationMode.Fant
+                            : BitmapInterpolationMode.Linear
+                    };
                 }
+                else
+                {
+                    transform = new BitmapTransform();
+                }
+
+                var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+                // Not using ATM, quality is too low
+                //var propertySet = new BitmapPropertySet();
+                //var qualityValue = new BitmapTypedValue(quality, Windows.Foundation.PropertyType.Single);
+                //propertySet.Add("ImageQuality", qualityValue);
+
+                var encoder = await BitmapEncoder.CreateAsync(encoderId, resizedStream/*, propertySet*/);
+                encoder.SetSoftwareBitmap(pixelData);
+                await encoder.FlushAsync();
             }
 
             return resizedImageFile;
@@ -228,7 +234,7 @@ namespace Telegram.Common
                         }
 
                         var frame = BufferSurface.Create((uint)(width * height * 4));
-                        animation.RenderSync(frame, width, height, false, out _);
+                        animation.RenderSync(frame, width, height, true, out _);
 
                         return frame;
                     });
@@ -298,7 +304,7 @@ namespace Telegram.Common
             }
         }
 
-        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, StorageFile file, Rect cropRectangle, int min = 1280, int max = 0, double quality = 0.77, BitmapRotation rotation = BitmapRotation.None, BitmapFlip flip = BitmapFlip.None)
+        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, StorageFile file, Rect cropRectangle, int min = 1280, int max = 0, double quality = 0.77, BitmapRotation rotation = BitmapRotation.None, BitmapFlip flip = BitmapFlip.None, TimeSpan? trimStart = null)
         {
             file ??= await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
 
@@ -319,11 +325,14 @@ namespace Telegram.Common
                     cropHeight *= ratio;
                 }
 
-                cropRectangle = new Rect(
-                    cropRectangle.X * decoder.PixelWidth,
-                    cropRectangle.Y * decoder.PixelHeight,
-                    cropRectangle.Width * decoder.PixelWidth,
-                    cropRectangle.Height * decoder.PixelHeight);
+                if (cropRectangle.Right <= 1 && cropRectangle.Bottom <= 1)
+                {
+                    cropRectangle = new Rect(
+                        cropRectangle.X * decoder.PixelWidth,
+                        cropRectangle.Y * decoder.PixelHeight,
+                        cropRectangle.Width * decoder.PixelWidth,
+                        cropRectangle.Height * decoder.PixelHeight);
+                }
 
                 if (rotation != BitmapRotation.None)
                 {
@@ -429,22 +438,24 @@ namespace Telegram.Common
         {
             if (source is StorageVideo)
             {
-                return await Task.Run(async () =>
+                using var videoStream = await source.File.OpenReadAsync();
+                using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false, false));
+
+                if (editState.TrimStartTime is TimeSpan trimStart && trimStart > TimeSpan.Zero)
                 {
-                    using var videoStream = await source.File.OpenReadAsync();
-                    using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false, false);
+                    animation.SeekToMilliseconds((long)trimStart.TotalMilliseconds, false);
+                }
 
-                    int width = animation.PixelWidth;
-                    int height = animation.PixelHeight;
+                int width = animation.PixelWidth;
+                int height = animation.PixelHeight;
 
-                    var frame = BufferSurface.Create((uint)(width * height * 4));
-                    animation.RenderSync(frame, width, height, false, out _);
+                var frame = BufferSurface.Create((uint)(width * height * 4));
+                await Task.Run(() => animation.RenderSync(frame, width, height, true, out _));
 
-                    using var stream = new InMemoryRandomAccessStream();
-                    PlaceholderImageHelper.Current.Encode(frame, stream, width, height);
+                using var stream = new InMemoryRandomAccessStream();
+                PlaceholderImageHelper.Current.Encode(frame, stream, width, height);
 
-                    return await CropAndPreviewAsync(stream, editState);
-                });
+                return await CropAndPreviewAsync(stream, editState);
             }
             else
             {
@@ -453,16 +464,16 @@ namespace Telegram.Common
             }
         }
 
-        public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream source, BitmapEditState editState)
+        public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream source, BitmapEditState editState, int maxSize = 1280)
         {
             var decoder = await BitmapDecoder.CreateAsync(source);
             var cropWidth = (double)decoder.PixelWidth;
             var cropHeight = (double)decoder.PixelHeight;
 
-            if (decoder.PixelWidth > 1280 || decoder.PixelHeight > 1280)
+            if (decoder.PixelWidth > maxSize || decoder.PixelHeight > maxSize)
             {
-                double ratioX = 1280d / cropWidth;
-                double ratioY = 1280d / cropHeight;
+                double ratioX = maxSize / cropWidth;
+                double ratioY = maxSize / cropHeight;
                 double ratio = Math.Min(ratioX, ratioY);
 
                 cropWidth *= ratio;
@@ -485,7 +496,7 @@ namespace Telegram.Common
                 cropRectangle = FlipArea(cropRectangle, decoder.PixelWidth);
             }
 
-            var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(decoder.PixelWidth, decoder.PixelHeight), new Size(cropWidth, cropHeight), 1280, 0);
+            var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(decoder.PixelWidth, decoder.PixelHeight), new Size(cropWidth, cropHeight), maxSize, 0);
 
             var bounds = new BitmapBounds();
             bounds.X = (uint)scaledCrop.X;
@@ -522,7 +533,7 @@ namespace Telegram.Common
             }
         }
 
-        public static async Task<IRandomAccessStream> OpenReadAsync(StorageFile sourceFile)
+        public static async Task<IRandomAccessStream> OpenReadAsync(StorageFile sourceFile, TimeSpan? trimStart = null)
         {
             if (sourceFile.FileType.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
             {
@@ -531,11 +542,16 @@ namespace Telegram.Common
                     using var videoStream = await sourceFile.OpenReadAsync();
                     using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false, false);
 
+                    if (trimStart > TimeSpan.Zero)
+                    {
+                        animation.SeekToMilliseconds((long)trimStart.Value.TotalMilliseconds, false);
+                    }
+
                     int width = animation.PixelWidth;
                     int height = animation.PixelHeight;
 
                     var frame = BufferSurface.Create((uint)(width * height * 4));
-                    var result = animation.RenderSync(frame, width, height, false, out _);
+                    var result = animation.RenderSync(frame, width, height, true, out _);
 
                     var stream = new InMemoryRandomAccessStream();
                     PlaceholderImageHelper.Current.Encode(frame, stream, width, height);

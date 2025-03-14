@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -39,7 +38,7 @@ namespace Telegram.ViewModels.Folders
                 : FoldersPlacement.Top;
 
             Items = new DiffObservableCollection<ChatFolderInfo>(new ChatFolderInfoDiffHandler(), Constants.DiffOptions);
-            Recommended = new MvxObservableCollection<RecommendedChatFolder>();
+            Recommended = new DiffObservableCollection<RecommendedChatFolder>(new RecommendedChatFolderDiffHandler(), Constants.DiffOptions);
         }
 
         class ChatFolderInfoDiffHandler : IDiffHandler<ChatFolderInfo>
@@ -51,7 +50,7 @@ namespace Telegram.ViewModels.Folders
 
             public void UpdateItem(ChatFolderInfo oldItem, ChatFolderInfo newItem)
             {
-                oldItem.Title = newItem.Title;
+                oldItem.Name = newItem.Name;
                 oldItem.ColorId = newItem.ColorId;
                 oldItem.Icon = newItem.Icon;
                 oldItem.IsShareable = newItem.IsShareable;
@@ -59,8 +58,21 @@ namespace Telegram.ViewModels.Folders
             }
         }
 
+        class RecommendedChatFolderDiffHandler : IDiffHandler<RecommendedChatFolder>
+        {
+            public bool CompareItems(RecommendedChatFolder oldItem, RecommendedChatFolder newItem)
+            {
+                return oldItem.Folder.AreTheSame(newItem.Folder);
+            }
+
+            public void UpdateItem(RecommendedChatFolder oldItem, RecommendedChatFolder newItem)
+            {
+
+            }
+        }
+
         public DiffObservableCollection<ChatFolderInfo> Items { get; private set; }
-        public MvxObservableCollection<RecommendedChatFolder> Recommended { get; private set; }
+        public DiffObservableCollection<RecommendedChatFolder> Recommended { get; private set; }
 
         private bool _canCreateNew;
         public bool CanCreateNew
@@ -72,26 +84,22 @@ namespace Telegram.ViewModels.Folders
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var folders = ClientService.ChatFolders.ToList();
-            folders.Insert(ClientService.MainChatListPosition, new ChatFolderInfo(0, Strings.FilterAllChats, new ChatFolderIcon("All"), -1, false, false));
+            folders.Insert(ClientService.MainChatListPosition, new ChatFolderInfo
+            {
+                Id = Constants.ChatListMain,
+                Name = new ChatFolderName(new FormattedText(Strings.FilterAllChats, Array.Empty<TextEntity>()), false),
+                Icon = new ChatFolderIcon("All")
+            });
 
             Items.ReplaceDiff(folders);
-
-            if (ClientService.IsPremiumAvailable)
-            {
-                var limit = await ClientService.SendAsync(new GetPremiumLimit(new PremiumLimitTypeChatFolderCount())) as PremiumLimit;
-                CanCreateNew = Items.Count < limit.PremiumValue;
-            }
-            else
-            {
-                CanCreateNew = Items.Count < ClientService.Options.ChatFolderCountMax;
-            }
+            CanCreateNew = Items.Count < ClientService.Options.ChatFolderCountMax;
 
             if (ClientService.Options.ChatFolderCountMax > Items.Count)
             {
                 var response = await ClientService.SendAsync(new GetRecommendedChatFolders());
                 if (response is RecommendedChatFolders recommended)
                 {
-                    Recommended.ReplaceWith(recommended.ChatFolders);
+                    Recommended.ReplaceDiff(recommended.ChatFolders);
                 }
             }
             else
@@ -179,26 +187,18 @@ namespace Telegram.ViewModels.Folders
 
         public void Handle(UpdateChatFolders update)
         {
-            BeginOnUIThread(async () =>
+            BeginOnUIThread(() =>
             {
                 var folders = update.ChatFolders.ToList();
-                folders.Insert(ClientService.MainChatListPosition, new ChatFolderInfo(0, Strings.FilterAllChats, new ChatFolderIcon("All"), -1, false, false));
+                folders.Insert(ClientService.MainChatListPosition, new ChatFolderInfo
+                {
+                    Id = Constants.ChatListMain,
+                    Name = new ChatFolderName(new FormattedText(Strings.FilterAllChats, Array.Empty<TextEntity>()), false),
+                    Icon = new ChatFolderIcon("All")
+                });
 
                 Items.ReplaceDiff(folders);
                 RaisePropertyChanged(nameof(ShowTags));
-
-                if (Items.Count < ClientService.Options.ChatFolderCountMax + 1)
-                {
-                    var response = await ClientService.SendAsync(new GetRecommendedChatFolders());
-                    if (response is RecommendedChatFolders recommended)
-                    {
-                        Recommended.ReplaceWith(recommended.ChatFolders);
-                    }
-                }
-                else
-                {
-                    Recommended.Clear();
-                }
             });
         }
 

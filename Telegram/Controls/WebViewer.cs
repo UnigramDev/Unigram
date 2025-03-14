@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Services;
 using Windows.Data.Json;
+using Windows.Foundation;
 
 namespace Telegram.Controls
 {
@@ -52,6 +53,39 @@ namespace Telegram.Controls
         }
     }
 
+    public enum WebViewerScriptDialogKind
+    {
+        Alert,
+        Confirm,
+        Prompt
+    }
+
+    public partial class WebViewerScriptDialogOpeningEventArgs : EventArgs
+    {
+        private readonly CoreWebView2ScriptDialogOpeningEventArgs _args;
+
+        public WebViewerScriptDialogOpeningEventArgs(CoreWebView2ScriptDialogOpeningEventArgs args)
+        {
+            _args = args;
+        }
+
+        public string ResultText
+        {
+            get => _args.ResultText;
+            set => _args.ResultText = value;
+        }
+
+        public string DefaultText => _args.DefaultText;
+
+        public WebViewerScriptDialogKind Kind => (WebViewerScriptDialogKind)_args.Kind;
+
+        public string Message => _args.Message;
+
+        public void Accept() => _args.Accept();
+
+        public Deferral GetDeferral() => _args.GetDeferral();
+    }
+
     public partial class WebViewer : ContentControl
     {
         private WebPresenter _presenter;
@@ -76,6 +110,7 @@ namespace Telegram.Controls
             _presenter.Navigated += OnNavigated;
             _presenter.EventReceived += OnEventReceived;
             _presenter.NewWindowRequested += OnNewWindowRequested;
+            _presenter.ScriptDialogOpening += OnScriptDialogOpening;
 
             Content = _presenter;
         }
@@ -98,12 +133,14 @@ namespace Telegram.Controls
             _presenter.Navigated -= OnNavigated;
             _presenter.EventReceived -= OnEventReceived;
             _presenter.NewWindowRequested -= OnNewWindowRequested;
+            _presenter.ScriptDialogOpening -= OnScriptDialogOpening;
 
-            _presenter = new EdgeWebPresenter();
-            _presenter.Navigating += OnNavigating;
-            _presenter.Navigated += OnNavigated;
-            _presenter.EventReceived += OnEventReceived;
-            _presenter.NewWindowRequested += OnNewWindowRequested;
+            //_presenter = new EdgeWebPresenter();
+            //_presenter.Navigating += OnNavigating;
+            //_presenter.Navigated += OnNavigated;
+            //_presenter.EventReceived += OnEventReceived;
+            //_presenter.NewWindowRequested += OnNewWindowRequested;
+            //_presenter.ScriptDialogOpening += OnScriptDialogOpening;
 
             Content = _presenter;
 
@@ -138,6 +175,11 @@ namespace Telegram.Controls
             NewWindowRequested?.Invoke(this, e);
         }
 
+        private void OnScriptDialogOpening(object sender, WebViewerScriptDialogOpeningEventArgs e)
+        {
+            ScriptDialogOpening?.Invoke(this, e);
+        }
+
         public event EventHandler<WebViewerNavigatingEventArgs> Navigating;
 
         public event EventHandler<WebViewerNavigatedEventArgs> Navigated;
@@ -145,6 +187,8 @@ namespace Telegram.Controls
         public event EventHandler<WebViewerEventReceivedEventArgs> EventReceived;
 
         public event EventHandler<WebViewerNewWindowRequestedEventArgs> NewWindowRequested;
+
+        public event EventHandler<WebViewerScriptDialogOpeningEventArgs> ScriptDialogOpening;
 
         public async void Navigate(string uri)
         {
@@ -219,6 +263,8 @@ namespace Telegram.Controls
 
         public event EventHandler<WebViewerNewWindowRequestedEventArgs> NewWindowRequested;
 
+        public event EventHandler<WebViewerScriptDialogOpeningEventArgs> ScriptDialogOpening;
+
         public abstract void Navigate(string uri);
 
         public abstract void NavigateToString(string htmlContent);
@@ -251,6 +297,11 @@ namespace Telegram.Controls
             var args = new WebViewerNewWindowRequestedEventArgs(url);
             NewWindowRequested?.Invoke(this, args);
             return args.Cancel;
+        }
+
+        protected void OnScriptDialogOpening(WebViewerScriptDialogOpeningEventArgs args)
+        {
+            ScriptDialogOpening?.Invoke(this, args);
         }
     }
 
@@ -373,14 +424,17 @@ namespace Telegram.Controls
             View.NavigationCompleted += OnNavigationCompleted;
             View.WebMessageReceived += OnWebMessageReceived;
 
+            View.PointerPressed += OnPointerPressed;
+
             await View.EnsureCoreWebView2Async();
 
             if (View.CoreWebView2 != null)
             {
                 View.CoreWebView2.NewWindowRequested += OnNewWindowRequested;
+                View.CoreWebView2.ScriptDialogOpening += OnScriptDialogOpening;
 
-                await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"window.external={invoke:s=>window.chrome.webview.postMessage(s)}");
-                await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
+                await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"Element.prototype.requestPointerLock = undefined;
+window.external={invoke:s=>window.chrome.webview.postMessage(s)};
 window.TelegramWebviewProxy = {
 postEvent: function(eventType, eventData) {
 	if (window.external && window.external.invoke) {
@@ -390,14 +444,34 @@ postEvent: function(eventType, eventData) {
 }");
 
                 View.CoreWebView2.Settings.IsStatusBarEnabled = false;
+                View.CoreWebView2.Settings.AreDefaultScriptDialogsEnabled = false;
                 View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
                 View.CoreWebView2.Settings.AreDevToolsEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
+
+                try
+                {
+                    View.CoreWebView2.Settings.IsSwipeNavigationEnabled = false;
+                    View.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = false;
+                }
+                catch
+                {
+                    // Old versions don't support these
+                }
 
                 Initialize(true);
             }
             else
             {
                 Initialize(false);
+            }
+        }
+
+        private void OnPointerPressed(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            var pointer = e.GetCurrentPoint(this);
+            if (pointer.Properties.IsXButton1Pressed || pointer.Properties.IsXButton2Pressed)
+            {
+                e.Handled = true;
             }
         }
 
@@ -415,7 +489,7 @@ postEvent: function(eventType, eventData) {
         {
             if (args.Exception != null)
             {
-                Logger.Error(args.Exception);
+                Logger.Error(args.Exception.ToString());
             }
         }
 
@@ -460,6 +534,11 @@ postEvent: function(eventType, eventData) {
             args.Handled = OnNewWindowRequested(args.Uri);
         }
 
+        private void OnScriptDialogOpening(CoreWebView2 sender, CoreWebView2ScriptDialogOpeningEventArgs args)
+        {
+            OnScriptDialogOpening(new WebViewerScriptDialogOpeningEventArgs(args));
+        }
+
         public override void Navigate(string uri)
         {
             View?.CoreWebView2?.Navigate(uri);
@@ -484,7 +563,7 @@ postEvent: function(eventType, eventData) {
 
         public override void Reload()
         {
-            View?.Reload();
+            View?.CoreWebView2?.Reload();
         }
 
         public override void Close()

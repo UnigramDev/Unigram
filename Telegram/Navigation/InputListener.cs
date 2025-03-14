@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,9 +7,7 @@
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
-using System;
 using Telegram.Navigation;
-using Windows.Foundation;
 using Windows.System;
 
 namespace Telegram.Services.Keyboard
@@ -63,71 +61,36 @@ namespace Telegram.Services.Keyboard
                 return;
             }
 
-            var args = KeyboardEventArgs(e);
-            if (args.VirtualKey is VirtualKey.GoBack
-                                or VirtualKey.NavigationLeft
-                                or VirtualKey.GamepadLeftShoulder
-                                or VirtualKey.Escape)
+            if (e.Key is VirtualKey.GoBack
+                      or VirtualKey.NavigationLeft
+                      or VirtualKey.GamepadLeftShoulder
+                      or VirtualKey.Escape)
             {
-                BootStrapper.Current.RaiseBackRequested(sender.XamlRoot, args.VirtualKey);
+                BootStrapper.Current.RaiseBackRequested(sender.XamlRoot, e.Key);
             }
-            else if (args.OnlyAlt && args.VirtualKey is VirtualKey.Back
-                                                     or VirtualKey.Left)
-            {
-                BootStrapper.Current.RaiseBackRequested(sender.XamlRoot, args.VirtualKey);
-            }
-            else if (args.VirtualKey is VirtualKey.GoForward
-                                     or VirtualKey.NavigationRight
-                                     or VirtualKey.GamepadRightShoulder)
+            else if (e.Key is VirtualKey.GoForward
+                           or VirtualKey.NavigationRight
+                           or VirtualKey.GamepadRightShoulder)
             {
                 BootStrapper.Current.RaiseForwardRequested(sender.XamlRoot);
             }
-            else if (args.OnlyAlt && args.VirtualKey is VirtualKey.Right)
+            else if (e.Key is VirtualKey.Back
+                           or VirtualKey.Left)
             {
-                BootStrapper.Current.RaiseForwardRequested(sender.XamlRoot);
-            }
-            else
-            {
-                try
+                var modifiers = WindowContext.KeyModifiers();
+                if (modifiers == VirtualKeyModifiers.Menu)
                 {
-                    RaiseAsMulticastDelegate(args);
-                }
-                finally
-                {
-                    e.Handled = args.Handled;
+                    BootStrapper.Current.RaiseBackRequested(sender.XamlRoot, e.Key);
                 }
             }
-        }
-
-        private void RaiseAsMulticastDelegate(InputKeyDownEventArgs args)
-        {
-            if (KeyDown is MulticastDelegate multicast)
+            else if (e.Key is VirtualKey.Right)
             {
-                var list = multicast.GetInvocationList();
-                for (int i = list.Length - 1; i >= 0; i--)
+                var modifiers = WindowContext.KeyModifiers();
+                if (modifiers == VirtualKeyModifiers.Menu)
                 {
-                    list[i].DynamicInvoke(_window, args);
-
-                    if (args.Handled)
-                    {
-                        return;
-                    }
+                    BootStrapper.Current.RaiseForwardRequested(sender.XamlRoot);
                 }
             }
-        }
-
-        public event TypedEventHandler<Window, InputKeyDownEventArgs> KeyDown;
-
-        private InputKeyDownEventArgs KeyboardEventArgs(ProcessKeyboardAcceleratorEventArgs e)
-        {
-            return new InputKeyDownEventArgs
-            {
-                VirtualKey = e.Key,
-                RepeatCount = 1,
-                AltKey = (e.Modifiers & VirtualKeyModifiers.Menu) != 0,
-                ControlKey = (e.Modifiers & VirtualKeyModifiers.Control) != 0,
-                ShiftKey = (e.Modifiers & VirtualKeyModifiers.Shift) != 0
-            };
         }
 
         /// <summary>

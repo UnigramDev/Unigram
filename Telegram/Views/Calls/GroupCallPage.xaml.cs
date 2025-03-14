@@ -1,10 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -28,6 +29,7 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Calls.Popups;
+using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.System;
@@ -38,15 +40,24 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Calls
 {
-    public sealed partial class GroupCallPage : WindowEx, IGroupCallDelegate
+    public record VoipVideoOutputReference(VoipVideoOutputSink Sink, CompositionSurfaceBrush Brush)
+    {
+        public void Stop()
+        {
+            Sink.Stop();
+            Brush.Dispose();
+        }
+    }
+
+    public sealed partial class GroupCallPage : WindowEx, IGroupCallDelegate, IPopupHost, IToastHost
     {
         private bool _disposed;
 
         private readonly VoipGroupCall _call;
 
-        private readonly Dictionary<string, GroupCallParticipantGridCell> _prevGrid = new();
+        private readonly Dictionary<string, VoipVideoOutputReference> _sinks = new();
+
         private readonly Dictionary<string, GroupCallParticipantGridCell> _gridCells = new();
-        private readonly Dictionary<string, GroupCallParticipantGridCell> _prevList = new();
         private readonly Dictionary<string, GroupCallParticipantGridCell> _listCells = new();
 
         private readonly CompositionVoiceBlobVisual _visual;
@@ -104,6 +115,33 @@ namespace Telegram.Views.Calls
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedInfo, true);
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedGlyph, true);
             //ViewportAspect.Constraint = new Size(16, 9);
+        }
+
+        public void ToastOpened(TeachingTip toast)
+        {
+            Resources.Remove("TeachingTip");
+            Resources.Add("TeachingTip", toast);
+        }
+
+        public void ToastClosed(TeachingTip toast)
+        {
+            if (Resources.TryGetValue("TeachingTip", out object cached))
+            {
+                if (cached == toast)
+                {
+                    Resources.Remove("TeachingTip");
+                }
+            }
+        }
+
+        public void PopupOpened()
+        {
+            Window.Current.SetTitleBar(null);
+        }
+
+        public void PopupClosed()
+        {
+            Window.Current.SetTitleBar(TitleArea);
         }
 
         public DispatcherQueue DispatcherQueue => _dispatcherQueue;
@@ -240,29 +278,13 @@ namespace Telegram.Views.Calls
             _call.MutedChanged -= OnMutedChanged;
             _call.PropertyChanged -= OnParticipantsChanged;
 
-            _prevGrid.Clear();
-            _prevList.Clear();
+            _sinks.Values.ForEach(x => x.Stop());
+            _sinks.Clear();
 
             _listCells.Clear();
             _gridCells.Clear();
 
-            RemoveChildren(false);
-            RemoveChildren(true);
-
             _visual.StopAnimating();
-        }
-
-        private void RemoveChildren(bool list)
-        {
-            var collection = list ? ListViewport.Children : Viewport.Children;
-
-            for (int i = 0; i < collection.Count; i++)
-            {
-                if (collection[i] is GroupCallParticipantGridCell cell)
-                {
-                    cell.Disconnect();
-                }
-            }
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -490,11 +512,7 @@ namespace Telegram.Views.Calls
             }
             else
             {
-                _prevList.Clear();
-
                 _listCells.Clear();
-
-                RemoveChildren(true);
                 ListViewport.Children.Clear();
 
                 ShowHideParticipantsWithVideo(true);
@@ -1049,7 +1067,7 @@ namespace Telegram.Views.Calls
             }
             else
             {
-                _call.StartScreenSharing();
+                _call.StartScreenSharing(XamlRoot);
             }
 
             UpdateScreen();
@@ -1104,31 +1122,31 @@ namespace Telegram.Views.Calls
             {
                 case ButtonState.CancelReminder:
                     colors = ButtonColors.Disabled;
-                    AudioInfo.Text = Strings.VoipGroupCancelReminder;
+                    Audio.Content = AudioInfo.Text = Strings.VoipGroupCancelReminder;
                     Lottie.AutoPlay = true;
                     Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceCancelReminder.tgs");
                     break;
                 case ButtonState.SetReminder:
                     colors = ButtonColors.Disabled;
-                    AudioInfo.Text = Strings.VoipGroupSetReminder;
+                    Audio.Content = AudioInfo.Text = Strings.VoipGroupSetReminder;
                     Lottie.AutoPlay = true;
                     Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceSetReminder.tgs");
                     break;
                 case ButtonState.Start:
                     colors = ButtonColors.Disabled;
-                    AudioInfo.Text = Strings.VoipGroupStartNow;
+                    Audio.Content = AudioInfo.Text = Strings.VoipGroupStartNow;
                     Lottie.AutoPlay = false;
                     Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceStart.tgs");
                     break;
                 case ButtonState.Unmute:
                     colors = ButtonColors.Unmute;
-                    AudioInfo.Text = Strings.VoipTapToMute;
+                    Audio.Content = AudioInfo.Text = Strings.VoipTapToMute;
                     Lottie.AutoPlay = true;
                     Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceUnmute.tgs");
                     break;
                 case ButtonState.Mute:
                     colors = ButtonColors.Mute;
-                    AudioInfo.Text = Strings.VoipGroupUnmute;
+                    Audio.Content = AudioInfo.Text = Strings.VoipGroupUnmute;
                     switch (_prevState)
                     {
                         case ButtonState.CancelReminder:
@@ -1157,7 +1175,7 @@ namespace Telegram.Views.Calls
                 case ButtonState.RaiseHand:
                 case ButtonState.HandRaised:
                     colors = ButtonColors.Disabled;
-                    AudioInfo.Text = state == ButtonState.HandRaised
+                    Audio.Content = AudioInfo.Text = state == ButtonState.HandRaised
                         ? Strings.VoipMutedTapedForSpeak
                         : Strings.VoipMutedByAdmin;
                     switch (_prevState)
@@ -1358,7 +1376,12 @@ namespace Telegram.Views.Calls
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(_call.StartScreenSharing, Strings.VoipChatStartScreenCapture, Icons.ShareScreenStart);
+                    void StartScreenSharing()
+                    {
+                        _call.StartScreenSharing(XamlRoot);
+                    }
+
+                    flyout.CreateFlyoutItem(StartScreenSharing, Strings.VoipChatStartScreenCapture, Icons.ShareScreenStart);
                 }
             }
 
@@ -1448,6 +1471,8 @@ namespace Telegram.Views.Calls
                 {
                     output.CreateFlyoutItem(null, hasOutput.HasValue ? Strings.NotFoundSpeakers : Strings.Loading);
                 }
+
+                flyout.CreateFlyoutItem(() => _call.IsNoiseSuppressionEnabled = !_call.IsNoiseSuppressionEnabled, Strings.VoipNoiseCancellation, _call.IsNoiseSuppressionEnabled ? Icons.Checkmark : null);
             }
 
             //flyout.CreateFlyoutItem(ShareInviteLink, Strings.VoipGroupShareInviteLink, Icons.Link);
@@ -1690,35 +1715,10 @@ namespace Telegram.Views.Calls
                     speaking.Foreground = status.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x85, 0x85, 0x85));
                 }
 
-
                 wave.Background = new SolidColorBrush(participant.IsSpeaking ? Color.FromArgb(0xDD, 0x33, 0xc6, 0x59) : Color.FromArgb(0xDD, 0x4D, 0xB8, 0xFF));
                 glyph.Text = Icons.MicOn;
                 glyph.Foreground = new SolidColorBrush(participant.IsSpeaking ? Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) : Color.FromArgb(0xFF, 0x85, 0x85, 0x85));
             }
-        }
-
-        private void UpdateRequestedVideos()
-        {
-            var descriptions = new Dictionary<string, VoipVideoChannelInfo>();
-
-            foreach (var cell in _gridCells.Values)
-            {
-                descriptions[cell.EndpointId] =
-                    new VoipVideoChannelInfo(cell.Participant.AudioSourceId, cell.EndpointId, cell.VideoInfo.SourceGroups, cell.Quality, cell.Quality);
-            }
-
-            foreach (var cell in _listCells.Values)
-            {
-                if (descriptions.ContainsKey(cell.EndpointId))
-                {
-                    continue;
-                }
-
-                descriptions[cell.EndpointId] =
-                    new VoipVideoChannelInfo(cell.Participant.AudioSourceId, cell.EndpointId, cell.VideoInfo.SourceGroups, cell.Quality, cell.Quality);
-            }
-
-            _call?.SetRequestedVideoChannels(descriptions.Values.ToArray());
         }
 
         private void AddGridItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
@@ -1780,7 +1780,6 @@ namespace Telegram.Views.Calls
 
         private void RemoveItem(GroupCallParticipantGridCell cell, bool list)
         {
-            var prev = list ? _prevList : _prevGrid;
             var cells = list ? _listCells : _gridCells;
             var viewport = list ? ListViewport.Children : Viewport.Children;
 
@@ -1789,10 +1788,7 @@ namespace Telegram.Views.Calls
                 _selectedEndpointId = null;
             }
 
-            prev.Remove(cell.EndpointId);
             cells.Remove(cell.EndpointId);
-
-            cell.Disconnect();
             viewport.Remove(cell);
 
             if (_mode == ParticipantsGridMode.Compact)
@@ -2019,8 +2015,16 @@ namespace Telegram.Views.Calls
 
             if (_selectedEndpointId != null || Viewport.Mode != ParticipantsGridMode.Compact)
             {
-                gridFirst = 0;
-                gridLast = Viewport.Children.Count - 1;
+                if (_selectedEndpointId != null && _gridCells.TryGetValue(_selectedEndpointId, out GroupCallParticipantGridCell cell))
+                {
+                    gridFirst = Viewport.Children.IndexOf(cell);
+                    gridLast = gridFirst;
+                }
+                else
+                {
+                    gridFirst = 0;
+                    gridLast = Viewport.Children.Count - 1;
+                }
 
                 listFirst = (int)Math.Truncate(_scrollingHost.VerticalOffset / (ListViewport.ActualWidth / 16 * 9));
                 listLast = (int)Math.Ceiling((_scrollingHost.VerticalOffset + _scrollingHost.ViewportHeight) / (ListViewport.ActualWidth / 16 * 9));
@@ -2036,86 +2040,78 @@ namespace Telegram.Views.Calls
                 gridLast = Math.Min(gridLast - 1, Viewport.Children.Count - 1);
             }
 
-            UpdateVisibleParticipants(gridFirst, gridLast, false);
-            UpdateVisibleParticipants(listFirst, listLast, true);
+            var descriptions = new Dictionary<string, VoipVideoChannelInfo>();
 
-            UpdateRequestedVideos();
-        }
+            UpdateVisibleParticipants(gridFirst, gridLast, false, descriptions);
+            UpdateVisibleParticipants(listFirst, listLast, true, descriptions);
 
-        private void UpdateVisibleParticipants(int first, int last, bool list)
-        {
-            var prev = list ? _prevList : _prevGrid;
-            var viewport = list ? ListViewport.Children : Viewport.Children;
-
-            var next = new Dictionary<string, GroupCallParticipantGridCell>();
-
-            if (last < viewport.Count && first <= last && first >= 0)
+            foreach (var sink in _sinks.ToArray())
             {
-                for (int i = first; i <= last; i++)
-                {
-                    var child = viewport[i] as GroupCallParticipantGridCell;
-                    var participant = child.Participant;
-
-                    if (_selectedEndpointId != null && _selectedEndpointId != child.EndpointId && !list)
-                    {
-                        continue;
-                    }
-
-                    next[child.EndpointId] = child;
-
-                    if (child.IsConnected)
-                    {
-                        continue;
-                    }
-
-                    // Check if already playing
-                    //if (tokens.TryGetValue(child.EndpointId, out var token))
-                    //{
-                    //    if (token.Matches(child.EndpointId, child.VisualId))
-                    //    {
-                    //        token.Stretch = child.GetStretch(_mode, list);
-                    //        continue;
-                    //    }
-                    //}
-
-                    //child.Surface = new CanvasControl();
-                    //child.VisualId = Guid.NewGuid();
-
-                    if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _call.IsScreenSharing)
-                    {
-                        _call.AddScreenSharingVideoOutput(child.EndpointId, child.Connect(false));
-                    }
-                    else
-                    {
-                        _call.AddIncomingVideoOutput(child.VideoInfo.EndpointId, child.Connect(participant.IsCurrentUser));
-                    }
-
-                    //child.Sink.Stretch = child.GetStretch(_mode, list);
-                    //tokens[child.EndpointId] = future;
-                }
-            }
-
-            foreach (var item in prev.Keys.ToArray())
-            {
-                if (next.ContainsKey(item))
+                if (descriptions.ContainsKey(sink.Key))
                 {
                     continue;
                 }
 
-                //if (tokens.TryRemove(item, out var token))
-                //{
-                //    // Wait for token to be disposed to avoid
-                //    // a race condition in CanvasControl.
-                //    token.Stop();
-                //}
-
-                prev[item].Disconnect();
-                prev.Remove(item);
+                _sinks.Remove(sink.Key);
+                sink.Value.Stop();
             }
 
-            foreach (var item in next)
+            _call?.SetRequestedVideoChannels(descriptions.Values.ToArray());
+        }
+
+        private void ConnectVisual(GroupCallParticipantGridCell cell, string endpointId, bool mirrored, Action<string, VoipVideoOutputSink> connect)
+        {
+            if (_sinks.TryGetValue(endpointId, out VoipVideoOutputReference reference))
             {
-                prev[item.Key] = item.Value;
+                cell.Visual.Brush = reference.Brush;
+            }
+            else
+            {
+                var sink = new VoipVideoOutputSink(cell.Visual, mirrored);
+                reference = new VoipVideoOutputReference(sink, cell.Visual.Brush as CompositionSurfaceBrush);
+
+                _sinks[endpointId] = reference;
+                connect(endpointId, sink);
+            }
+        }
+
+        private void UpdateVisibleParticipants(int first, int last, bool list, Dictionary<string, VoipVideoChannelInfo> descriptions)
+        {
+            var viewport = list ? ListViewport.Children : Viewport.Children;
+
+            if (last < viewport.Count && first <= last && first >= 0)
+            {
+                for (int i = 0; i < viewport.Count; i++)
+                {
+                    var child = viewport[i] as GroupCallParticipantGridCell;
+                    var participant = child.Participant;
+
+                    if (i >= first && i <= last)
+                    {
+                        if (descriptions.TryGetValue(child.EndpointId, out VoipVideoChannelInfo info))
+                        {
+                            // TODO
+                        }
+                        else
+                        {
+                            descriptions[child.EndpointId] =
+                                new VoipVideoChannelInfo(child.Participant.AudioSourceId, child.EndpointId, child.VideoInfo.SourceGroups, child.Quality, child.Quality);
+                        }
+
+                        if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _call.IsScreenSharing)
+                        {
+                            //ConnectVisual(child, child.EndpointId, false, _call.AddScreenSharingVideoOutput);
+                        }
+                        else
+                        {
+                            ConnectVisual(child, child.EndpointId, participant.IsCurrentUser, _call.AddIncomingVideoOutput);
+                        }
+                    }
+                    else
+                    {
+                        child.Visual.Brush = null;
+                    }
+                }
             }
         }
 
@@ -2307,6 +2303,11 @@ namespace Telegram.Views.Calls
 
             finalWidth = Math.Max(0, finalWidth);
 
+            static Size SafeSize(double width, double height)
+            {
+                return new Size(Math.Max(0, width), Math.Max(0, height));
+            }
+
             for (int row = 0; row < rows; row++)
             {
                 var rowColumns = columns;
@@ -2324,11 +2325,11 @@ namespace Telegram.Views.Calls
                             finalHeight = finalWidth / 4 * 2;
                         }
 
-                        Children[index].Measure(new Size(finalWidth, finalHeight));
+                        Children[index].Measure(SafeSize(finalWidth, finalHeight));
                     }
                     else
                     {
-                        Children[index].Measure(new Size(finalWidth / (_mode == ParticipantsGridMode.Compact ? rowColumns : columns), finalHeight / rows));
+                        Children[index].Measure(SafeSize(finalWidth / (_mode == ParticipantsGridMode.Compact ? rowColumns : columns), finalHeight / rows));
                     }
 
                     index++;
@@ -2401,14 +2402,19 @@ namespace Telegram.Views.Calls
                     x = 0;
                 }
 
+                static Size SafeSize(double width, double height)
+                {
+                    return new Size(Math.Max(0, width), Math.Max(0, height));
+                }
+
                 for (int column = 0; column < rowColumns; column++)
                 {
-                    var size = new Size(finalWidth / (_mode == ParticipantsGridMode.Compact ? rowColumns : columns), finalHeight / rows);
+                    var size = SafeSize(finalWidth / (_mode == ParticipantsGridMode.Compact ? rowColumns : columns), finalHeight / rows);
                     var point = new Point(x + column * size.Width, row * size.Height);
 
                     if (Children[index] is GroupCallParticipantGridCell cell && cell.IsSelected)
                     {
-                        size = new Size(finalWidth, _mode == ParticipantsGridMode.Compact ? finalWidth / 4 * 2 : finalHeight);
+                        size = SafeSize(finalWidth, _mode == ParticipantsGridMode.Compact ? finalWidth / 4 * 2 : finalHeight);
                         point = new Point(0, 0);
                         pinned = true;
                     }

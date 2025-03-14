@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -59,13 +59,13 @@ namespace Telegram.Views.Calls.Popups
 
             if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
-                StartWith.Visibility = canSchedule && supergroup.Status is ChatMemberStatusCreator
+                StartWith.Visibility = canSchedule && supergroup.CanManageVideoChats()
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }
             else if (clientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
             {
-                StartWith.Visibility = canSchedule && basicGroup.Status is ChatMemberStatusCreator
+                StartWith.Visibility = canSchedule && basicGroup.CanManageVideoChats()
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }

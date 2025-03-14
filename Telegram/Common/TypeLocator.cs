@@ -71,7 +71,6 @@ namespace Telegram.Views
                 _clientService,
                 _settingsService,
                 _eventAggregator,
-                _contactsService,
                 _lifetimeService);
             _notificationsService = new Telegram.Services.NotificationsService(
                 _clientService,
@@ -350,6 +349,11 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case "Telegram.ViewModels.Profile.ProfileBotsTabViewModel":
+                    return (T)(object)new Telegram.ViewModels.Profile.ProfileBotsTabViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case "Telegram.ViewModels.Profile.ProfileGiftsTabViewModel":
                     return (T)(object)new Telegram.ViewModels.Profile.ProfileGiftsTabViewModel(
                         _clientService,
@@ -366,6 +370,11 @@ namespace Telegram.Views
                         _settingsService,
                         _eventAggregator,
                         _profilePhotoService ??= new Telegram.Services.ProfilePhotoService(_clientService));
+                case "Telegram.ViewModels.Users.UserAffiliateViewModel":
+                    return (T)(object)new Telegram.ViewModels.Users.UserAffiliateViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case "Telegram.ViewModels.Supergroups.SupergroupEditViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupEditViewModel(
                         _clientService,
@@ -452,6 +461,11 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case "Telegram.ViewModels.Chats.ChatAffiliateViewModel":
+                    return (T)(object)new Telegram.ViewModels.Chats.ChatAffiliateViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case "Telegram.ViewModels.Chats.MessageStatisticsViewModel":
                     return (T)(object)new Telegram.ViewModels.Chats.MessageStatisticsViewModel(
                         _clientService,
@@ -492,8 +506,6 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator,
-                        _notificationsService,
-                        _contactsService,
                         _passcodeService);
                 case "Telegram.ViewModels.DiagnosticsViewModel":
                     return (T)(object)new Telegram.ViewModels.DiagnosticsViewModel(
@@ -578,17 +590,11 @@ namespace Telegram.Views
                         _settingsService,
                         _eventAggregator,
                         _networkService);
-                case "Telegram.ViewModels.Settings.SettingsQuickReactionViewModel":
-                    return (T)(object)new Telegram.ViewModels.Settings.SettingsQuickReactionViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
                 case "Telegram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
-                        _contactsService,
                         _passcodeService);
                 case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel(
@@ -623,6 +629,11 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAutosaveGiftsViewModel":
+                    return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAutosaveGiftsViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowFindingByPhoneNumberViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowFindingByPhoneNumberViewModel(
                         _clientService,
@@ -651,6 +662,11 @@ namespace Telegram.Views
                         _eventAggregator);
                 case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBirthdateViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBirthdateViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowUnpaidMessagesViewModel":
+                    return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowUnpaidMessagesViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
@@ -780,11 +796,6 @@ namespace Telegram.Views
                         _eventAggregator);
                 case "Telegram.ViewModels.Payments.PaymentFormViewModel":
                     return (T)(object)new Telegram.ViewModels.Payments.PaymentFormViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
-                case "Telegram.ViewModels.InteractionsViewModel":
-                    return (T)(object)new Telegram.ViewModels.InteractionsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);

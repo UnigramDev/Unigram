@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -51,33 +51,30 @@ namespace Telegram.Services
             var count = offset + limit;
             var sorted = _chatList[chatList];
 
+            var haveFullList = _haveFullChatList[chatList];
+
 #if MOCKUP
             _haveFullChatList[index] = true;
 #else
-            if (!_haveFullChatList[chatList] && count > sorted.Count && !reentrancy)
+            if (count > sorted.Count && !haveFullList && !reentrancy)
             {
                 Monitor.Exit(_chatList);
 
                 var response = await SendAsync(new LoadChats(chatList, count - sorted.Count));
-                if (response is Ok or Error)
+                if (response is Error error)
                 {
-                    if (response is Error error)
+                    if (error.Code == 404)
                     {
-                        if (error.Code == 404)
-                        {
-                            _haveFullChatList[chatList] = true;
-                        }
-                        else
-                        {
-                            return null;
-                        }
+                        _haveFullChatList[chatList] = true;
                     }
-
-                    // Chats have already been received through updates, let's retry request
-                    return await GetChatListAsyncImpl(chatList, offset, limit, true);
+                    else
+                    {
+                        return new Chats(0, Array.Empty<long>());
+                    }
                 }
 
-                return null;
+                // Chats have already been received through updates, let's retry request
+                return await GetChatListAsyncImpl(chatList, offset, limit, true);
             }
 #endif
 
@@ -100,8 +97,10 @@ namespace Telegram.Services
                 }
             }
 
+            haveFullList &= count >= sorted.Count;
+
             Monitor.Exit(_chatList);
-            return new Chats(0, result);
+            return new Chats(haveFullList ? -1 : 0, result);
         }
 
         private readonly struct OrderedChat : IComparable<OrderedChat>

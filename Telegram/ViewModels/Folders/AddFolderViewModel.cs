@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -13,6 +13,7 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 
@@ -43,15 +44,15 @@ namespace Telegram.ViewModels.Folders
                 if (inviteLink.ChatFolderInfo.Id == 0)
                 {
                     Title = Strings.FolderLinkTitleAdd;
-                    Subtitle = string.Format(Strings.FolderLinkSubtitle, inviteLink.ChatFolderInfo.Title);
+                    Subtitle = new ChatFolderName(ClientEx.Format(Strings.FolderLinkSubtitle, inviteLink.ChatFolderInfo.Name.Text), inviteLink.ChatFolderInfo.Name.AnimateCustomEmoji);
 
                     _bindButtonToSelection = false;
-                    PrimaryButtonText = string.Format(Strings.FolderLinkButtonAdd, inviteLink.ChatFolderInfo.Title);
+                    PrimaryButtonText = Strings.Add;
                 }
                 else if (inviteLink.MissingChatIds.Count == 0)
                 {
                     Title = Strings.FolderLinkTitleAlready;
-                    Subtitle = string.Format(Strings.FolderLinkSubtitleAlready, inviteLink.ChatFolderInfo.Title);
+                    Subtitle = new ChatFolderName(ClientEx.Format(Strings.FolderLinkSubtitleAlready, inviteLink.ChatFolderInfo.Name.Text), inviteLink.ChatFolderInfo.Name.AnimateCustomEmoji);
 
                     _bindButtonToSelection = false;
                     PrimaryButtonText = Strings.OK;
@@ -59,7 +60,7 @@ namespace Telegram.ViewModels.Folders
                 else
                 {
                     Title = Strings.FolderLinkTitleAddChats;
-                    Subtitle = Locale.Declension(Strings.R.FolderLinkSubtitleChats, inviteLink.MissingChatIds.Count, inviteLink.ChatFolderInfo.Title);
+                    Subtitle = new ChatFolderName(ClientEx.Format(Locale.Declension(Strings.R.FolderLinkSubtitleChats, inviteLink.MissingChatIds.Count, "{0}"), inviteLink.ChatFolderInfo.Name.Text), inviteLink.ChatFolderInfo.Name.AnimateCustomEmoji);
 
                     _bindButtonToSelection = true;
                     PrimaryButtonText = Locale.Declension(Strings.R.FolderLinkButtonJoinPlural, inviteLink.MissingChatIds.Count);
@@ -115,8 +116,8 @@ namespace Telegram.ViewModels.Folders
             set => Set(ref _title, value);
         }
 
-        private string _subtitle;
-        public string Subtitle
+        private ChatFolderName _subtitle;
+        public ChatFolderName Subtitle
         {
             get => _subtitle;
             set => Set(ref _subtitle, value);

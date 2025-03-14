@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -9,11 +9,14 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using System;
+using System.Text.RegularExpressions;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
+using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Streams;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Premium;
 using Telegram.Views.Popups;
@@ -31,6 +34,7 @@ namespace Telegram.Views.Premium.Popups
         }
 
         private readonly StickerSet _stickerSet;
+        private readonly string _giftCode;
 
         public PromoPopup(IClientService clientService, Chat chat, StickerSet stickerSet)
         {
@@ -53,11 +57,11 @@ namespace Telegram.Views.Premium.Popups
                 Animated.Visibility = Visibility.Collapsed;
                 Identity.Visibility = Visibility.Visible;
 
-                Identity.Source = new CustomEmojiFileSource(clientService, chat.EmojiStatus.CustomEmojiId);
+                Identity.Source = new CustomEmojiFileSource(clientService, chat.EmojiStatus.Type);
 
                 var player = new CustomEmojiIcon();
                 player.LoopCount = 0;
-                player.Source = new DelayedFileSource(clientService, stickerSet.GetThumbnail());
+                player.Source = DelayedFileSource.FromStickerSet(clientService, stickerSet);
 
                 player.HorizontalAlignment = HorizontalAlignment.Left;
                 player.FlowDirection = FlowDirection.LeftToRight;
@@ -95,7 +99,7 @@ namespace Telegram.Views.Premium.Popups
                 Animated.Visibility = Visibility.Collapsed;
                 Identity.Visibility = Visibility.Visible;
 
-                Identity.Source = new CustomEmojiFileSource(clientService, chat.EmojiStatus.CustomEmojiId);
+                Identity.Source = new CustomEmojiFileSource(clientService, chat.EmojiStatus.Type);
 
                 var text = string.Format(Strings.TelegramPremiumUserStatusDefaultDialogTitle, title);
 
@@ -126,6 +130,152 @@ namespace Telegram.Views.Premium.Popups
                 TextBlockHelper.SetMarkdown(ChatSubtitle, Strings.TelegramPremiumUserDialogSubtitle);
             }
 
+            ChatTitle.Visibility = Visibility.Visible;
+            ChatSubtitle.Visibility = Visibility.Visible;
+
+            PremiumTitle.Visibility = Visibility.Collapsed;
+            PremiumSubtitle.Visibility = Visibility.Collapsed;
+        }
+
+        public PromoPopup(IClientService clientService, MessageGiftedPremium giftedPremium)
+        {
+            InitializeComponent();
+
+            var gifter = clientService.GetUser(giftedPremium.GifterUserId);
+            var receiver = clientService.GetUser(giftedPremium.ReceiverUserId);
+            var monthCount = Locale.Declension(Strings.R.Gift2Months, giftedPremium.MonthCount);
+
+            if (giftedPremium.ReceiverUserId == 0)
+            {
+                if (gifter == null)
+                {
+                    var paragraph = new Paragraph();
+                    paragraph.Inlines.Add(string.Format(Strings.TelegramPremiumUserGiftedPremiumDialogTitleWithPluralSomeone, monthCount));
+
+                    ChatTitle.Blocks.Add(paragraph);
+                }
+                else
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Inlines.Add(gifter.FirstName);
+
+                    var plural = string.Format(Strings.TelegramPremiumUserGiftedPremiumDialogTitleWithPlural, "{0}", monthCount);
+
+                    var text = plural.Replace("**", string.Empty);
+                    var index = text.IndexOf("{0}");
+
+                    var prefix = text.Substring(0, index);
+                    var suffix = text.Substring(index + 3);
+
+                    var paragraph = new Paragraph();
+                    paragraph.Inlines.Add(prefix);
+                    paragraph.Inlines.Add(hyperlink);
+                    paragraph.Inlines.Add(suffix);
+
+                    ChatTitle.Blocks.Add(paragraph);
+                }
+
+                TextBlockHelper.SetMarkdown(ChatSubtitle, Strings.TelegramPremiumUserGiftedPremiumDialogSubtitle);
+            }
+            else
+            {
+                var hyperlink = new Hyperlink();
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Inlines.Add(receiver.FirstName);
+
+                var plural = string.Format(Strings.TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural, "{0}", monthCount);
+
+                var text = plural.Replace("**", string.Empty);
+                var index = text.IndexOf("{0}");
+
+                var prefix = text.Substring(0, index);
+                var suffix = text.Substring(index + 3);
+
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(prefix);
+                paragraph.Inlines.Add(hyperlink);
+                paragraph.Inlines.Add(suffix);
+
+                ChatTitle.Blocks.Add(paragraph);
+                TextBlockHelper.SetMarkdown(ChatSubtitle, string.Format(Strings.TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle, receiver.FirstName));
+            }
+
+            ChatTitle.FontSize = 14;
+            ChatTitle.Visibility = Visibility.Visible;
+            ChatSubtitle.Visibility = Visibility.Visible;
+
+            PremiumTitle.Visibility = Visibility.Collapsed;
+            PremiumSubtitle.Visibility = Visibility.Collapsed;
+        }
+
+        public PromoPopup(IClientService clientService, MessageSender senderId, PremiumGiftCodeInfo giftCode, string code)
+        {
+            InitializeComponent();
+
+            _giftCode = code;
+
+            // TODO:
+            Link.Text = "t.me/giftcode/" + code;
+            LinkRoot.Visibility = Visibility.Visible;
+
+            var gifter = clientService.GetMessageSender(giftCode.CreatorId ?? senderId);
+            //var receiver = clientService.GetUser(giftedPremium.ReceiverUserId);
+            var monthCount = Locale.Declension(Strings.R.Gift2Months, giftCode.MonthCount);
+
+            if (gifter == null)
+            {
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(string.Format(Strings.TelegramPremiumUserGiftedPremiumDialogTitleWithPluralSomeone, monthCount));
+
+                ChatTitle.Blocks.Add(paragraph);
+            }
+            else
+            {
+                var hyperlink = new Hyperlink();
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+
+                if (gifter is User user)
+                {
+                    hyperlink.Inlines.Add(user.FirstName);
+                }
+                else if (gifter is Chat chat)
+                {
+                    hyperlink.Inlines.Add(chat.Title);
+                }
+
+                var plural = string.Format(Strings.TelegramPremiumUserGiftedPremiumDialogTitleWithPlural, "{0}", monthCount);
+
+                var text = plural.Replace("**", string.Empty);
+                var index = text.IndexOf("{0}");
+
+                var prefix = text.Substring(0, index);
+                var suffix = text.Substring(index + 3);
+
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(prefix);
+                paragraph.Inlines.Add(hyperlink);
+                paragraph.Inlines.Add(suffix);
+
+                ChatTitle.Blocks.Add(paragraph);
+            }
+
+            var formatted = ClientEx.ParseMarkdown(Strings.GiftPremiumAboutThisLink);
+            if (formatted.Entities.Count > 0)
+            {
+                var index0 = formatted.Entities[0].Offset;
+                var index1 = index0 + formatted.Entities[0].Length;
+
+                var prefix = ClientEx.ParseMarkdown(string.Format(formatted.Text.Substring(0, index0), Strings.GiftPremiumAboutThisLinkEnd));
+                var suffix = ClientEx.ParseMarkdown(string.Format(formatted.Text.Substring(index1), Strings.GiftPremiumAboutThisLinkEnd));
+
+                formatted.Entities[0].Type = new TextEntityTypeTextUrl();
+                formatted = TdExtensions.Concat(prefix, formatted.Substring(index0, index1 - index0), suffix);
+            }
+
+            TextBlockHelper.SetFormattedText(ChatSubtitle, formatted);
+
+            ChatTitle.FontSize = 14;
             ChatTitle.Visibility = Visibility.Visible;
             ChatSubtitle.Visibility = Visibility.Visible;
 
@@ -349,6 +499,11 @@ namespace Telegram.Views.Premium.Popups
 
         public string ConvertPurchase(bool premium, PremiumStatePaymentOption option)
         {
+            if (_giftCode != null)
+            {
+                return Strings.GiftPremiumActivateForFree;
+            }
+
             return GetPaymentString(premium, option?.PaymentOption);
         }
 
@@ -369,15 +524,34 @@ namespace Telegram.Views.Premium.Popups
                 : Strings.SubscribeToPremium, Locale.FormatCurrency(option.MonthCount == 12 ? option.Amount : option.Amount / option.MonthCount, option.Currency));
         }
 
-        private void PurchaseShadow_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private async void Purchase_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            VisualUtilities.DropShadow(PurchaseShadow);
+            if (_giftCode != null)
+            {
+                var response = await ViewModel.ClientService.SendAsync(new ApplyPremiumGiftCode(_giftCode));
+                if (response is Ok)
+                {
+                    Hide();
+                }
+                else if (response is Error error)
+                {
+                    var match = Regex.Match(error.Message, "PREMIUM_SUB_ACTIVE_UNTIL_(\\d+)");
+                    if (match.Success && int.TryParse(match.Groups[1].Value, out int after))
+                    {
+                        ViewModel.ShowToast(string.Format("**{0}**\n{1}", Strings.GiftPremiumActivateErrorTitle, string.Format(Strings.GiftPremiumActivateErrorText, Formatter.Date(after))), ToastPopupIcon.Info);
+                    }
+                }
+            }
+            else
+            {
+                Hide();
+                ViewModel.Purchase();
+            }
         }
 
-        private void Purchase_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void CopyLink_Click(object sender, RoutedEventArgs e)
         {
-            Hide();
-            ViewModel.Purchase();
+            MessageHelper.CopyLink(ViewModel.ClientService, XamlRoot, new InternalLinkTypePremiumGiftCode(_giftCode));
         }
     }
 }

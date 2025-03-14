@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -134,18 +134,26 @@ namespace Telegram.Controls
                 Visibility = Visibility.Visible;
             }
 
-            var value = newValue.Value;
-            var difference = value - DateTime.Now;
-
+            var difference = newValue.Value - DateTime.Now;
             var seconds = (float)difference.TotalSeconds;
 
-            var easing = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
-            var angleAnimation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-            angleAnimation.InsertKeyFrame(0, 1f - (seconds / (Maximum ?? 0)));
-            angleAnimation.InsertKeyFrame(1, 1f, easing);
-            angleAnimation.Duration = difference;
+            var value = 1f - (seconds / (Maximum ?? 1));
+            value = Math.Clamp(value, 0, 1);
 
-            _ellipse.StartAnimation("TrimStart", angleAnimation);
+            if (difference.TotalMilliseconds >= 1 && difference.TotalHours < 8)
+            {
+                var easing = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
+                var angleAnimation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+                angleAnimation.InsertKeyFrame(0, value);
+                angleAnimation.InsertKeyFrame(1, 1f, easing);
+                angleAnimation.Duration = difference;
+
+                _ellipse.StartAnimation("TrimStart", angleAnimation);
+            }
+            else
+            {
+                _ellipse.TrimStart = value;
+            }
 
             //double value;
             ////if (oldValue > 0.0 && oldValue < 1.0 && newValue == 0.0)

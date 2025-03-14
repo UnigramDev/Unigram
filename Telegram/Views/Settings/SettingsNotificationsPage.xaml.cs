@@ -1,9 +1,11 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Navigation;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 
 namespace Telegram.Views.Settings
@@ -18,7 +20,34 @@ namespace Telegram.Views.Settings
             Title = Strings.NotificationsAndSounds;
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
+        }
+
         #region Binding
+
+        private string ConvertName(bool value, bool _)
+        {
+            if (value
+                && ViewModel.IsAllAccountsAvailable
+                && ViewModel.IsAllAccountsNotifications
+                && ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
+            {
+                return string.Format("{0} \u2b62 {1}", Strings.NotificationPreviewLine1, user.FullName());
+            }
+
+            return value
+                ? Strings.NotificationPreviewLine1
+                : Strings.AppName;
+        }
+
+        private string ConvertText(bool value)
+        {
+            return value
+                ? Strings.NotificationPreviewLine2
+                : Strings.YouHaveNewMessage;
+        }
 
         private string ConvertCountInfo(bool count)
         {

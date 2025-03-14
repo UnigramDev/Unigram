@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -14,6 +14,7 @@ using Telegram.Controls;
 using Telegram.Controls.Messages.Content;
 using Telegram.Controls.Stories;
 using Telegram.Converters;
+using Telegram.Navigation.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
@@ -133,7 +134,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                NavigationService.NavigateToChat(chatId, messageId, thread: threadId);
+                NavigationService.NavigateToChat(chatId, messageId, thread: threadId, state: new NavigationState { { "highlight", replyToMessage.Quote } });
             }
             else if (replyToMessage.Origin != null && replyToMessage.MessageId == 0)
             {
@@ -191,8 +192,13 @@ namespace Telegram.ViewModels
 
         public bool IsAdministrator(MessageSender memberId) => _messageDelegate.IsAdministrator(memberId);
 
-        public void OpenWebPage(MessageText text)
+        public void OpenWebPage(MessageViewModel message)
         {
+            if (message.Content is not MessageText text)
+            {
+                return;
+            }
+
             if (text.LinkPreview?.InstantViewVersion != 0)
             {
                 var url = text.LinkPreview.Url;
@@ -225,7 +231,7 @@ namespace Telegram.ViewModels
             }
             else if (text.LinkPreview != null)
             {
-                MessageHelper.OpenUrl(ClientService, NavigationService, text.LinkPreview.Url, !text.LinkPreview.SkipConfirmation, new OpenUrlSourceChat(_chat.Id));
+                MessageHelper.OpenUrl(ClientService, NavigationService, text.LinkPreview.Url, !text.LinkPreview.SkipConfirmation, new OpenUrlSourceChat(message.ChatId, message.SenderId));
             }
         }
 
@@ -233,7 +239,7 @@ namespace Telegram.ViewModels
         {
             if (sticker.SetId != 0)
             {
-                await StickersPopup.ShowAsync(NavigationService, sticker.SetId, Sticker_Click);
+                await StickersPopup.ShowAsync(NavigationService, sticker.SetId);
             }
         }
 
@@ -361,9 +367,9 @@ namespace Telegram.ViewModels
             Search = new ChatSearchViewModel(ClientService, NavigationService, Settings, Aggregator, this, hashtag);
         }
 
-        public void OpenUrl(string url, bool untrust)
+        public void OpenUrl(string url, bool untrust, OpenUrlSource source = null)
         {
-            _messageDelegate.OpenUrl(url, untrust);
+            _messageDelegate.OpenUrl(url, untrust, source);
         }
 
         public async void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
@@ -444,6 +450,7 @@ namespace Telegram.ViewModels
                                 MessagePhoto photo => photo.IsSecret,
                                 MessageVideo video => video.IsSecret,
                                 MessageVideoNote videoNote => videoNote.IsSecret,
+                                MessageDocument => false,
                                 _ => true
                             };
                         }
@@ -589,7 +596,7 @@ namespace Telegram.ViewModels
 
 
 
-        public async void Select(MessageViewModel message)
+        public void Select(MessageViewModel message)
         {
             if (message.IsService)
             {
@@ -621,18 +628,10 @@ namespace Telegram.ViewModels
                 message.SelectionChanged();
             }
 
-            RaisePropertyChanged(nameof(CanCopySelectedMessage));
-            RaisePropertyChanged(nameof(CanReportSelectedMessages));
-
-            RaisePropertyChanged(nameof(SelectedCount));
-
-            var properties = await ClientService.GetMessagePropertiesAsync(SelectedItems.Values.Select(x => new MessageId(x)));
-
-            CanDeleteSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
-            CanForwardSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeForwarded);
+            UpdateSelectionState();
         }
 
-        public void Unselect(MessageViewModel message)
+        public void Unselect(MessageViewModel message, bool updateSelection = false)
         {
             if (message.MediaAlbumId != 0)
             {
@@ -659,12 +658,34 @@ namespace Telegram.ViewModels
                 message.SelectionChanged();
             }
 
-            RaisePropertyChanged(nameof(CanForwardSelectedMessages));
-            RaisePropertyChanged(nameof(CanDeleteSelectedMessages));
+            if (updateSelection && SelectedItems.Count < 1 && IsReportingMessages == null)
+            {
+                IsSelectionEnabled = false;
+            }
+
+            UpdateSelectionState();
+        }
+
+        private async void UpdateSelectionState()
+        {
             RaisePropertyChanged(nameof(CanCopySelectedMessage));
             RaisePropertyChanged(nameof(CanReportSelectedMessages));
 
             RaisePropertyChanged(nameof(SelectedCount));
+
+            if (_type is DialogType.BusinessReplies)
+            {
+                CanDeleteSelectedMessages = true;
+                CanForwardSelectedMessages = false;
+            }
+            else
+            {
+                var selectedItems = SelectedItems.Values.ToList();
+                var properties = await ClientService.GetMessagePropertiesAsync(selectedItems.Select(x => new MessageId(x)));
+
+                CanDeleteSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
+                CanForwardSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeForwarded);
+            }
         }
     }
 }

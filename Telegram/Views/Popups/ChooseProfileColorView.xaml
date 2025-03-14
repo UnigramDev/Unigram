@@ -35,7 +35,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </UserControl.Resources>
 
     <controls:HeaderedControl x:Name="ProfileColor">
@@ -97,21 +96,27 @@
                     Grid.Row="1">
                 <Grid x:Name="LabelTitle">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
+                    <controls:CustomEmojiIcon x:Name="BotVerified"
+                                              VerticalAlignment="Bottom"
+                                              Margin="0,0,4,4" />
+
                     <TextBlock x:Name="Title"
                                TextWrapping="NoWrap"
                                TextTrimming="CharacterEllipsis"
                                TextAlignment="Center"
                                IsTextSelectionEnabled="True"
                                Style="{StaticResource SubtitleTextBlockStyle}"
-                               FontFamily="{ThemeResource EmojiThemeFontFamily}" />
+                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               Grid.Column="1" />
 
                     <controls:IdentityIcon x:Name="Identity"
                                            VerticalAlignment="Bottom"
                                            Margin="4,0,0,4"
-                                           Grid.Column="1" />
+                                           Grid.Column="2" />
                 </Grid>
             </Border>
             <Border VerticalAlignment="Top"

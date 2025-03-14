@@ -80,6 +80,7 @@
 
                 <controls:ActiveStoriesSegments x:Name="Segments"
                                                 Click="Segments_Click"
+                                                ContextRequested="Segments_ContextRequested"
                                                 Width="140"
                                                 Height="140"
                                                 AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
@@ -105,23 +106,30 @@
                   HorizontalAlignment="Center"
                   Grid.Row="1">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+                <controls:CustomEmojiIcon x:Name="BotVerified"
+                                          Visibility="Collapsed"
+                                          VerticalAlignment="Bottom"
+                                          Margin="0,0,4,4" />
+
                 <TextBlock x:Name="Title"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"
                            TextAlignment="Center"
                            IsTextSelectionEnabled="True"
                            Style="{StaticResource SubtitleTextBlockStyle}"
-                           FontFamily="{ThemeResource EmojiThemeFontFamily}" />
+                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                           Grid.Column="1" />
 
                 <HyperlinkButton x:Name="IdentityRoot"
                                  Click="Identity_Click"
                                  Style="{StaticResource EmptyHyperlinkButtonStyle}"
                                  VerticalAlignment="Bottom"
                                  Margin="4,0,0,4"
-                                 Grid.Column="1">
+                                 Grid.Column="2">
                     <controls:IdentityIcon x:Name="Identity" />
                 </HyperlinkButton>
             </Grid>
@@ -425,45 +433,100 @@
                 </Border>
             </controls:HeaderedControl>
 
-            <controls:HeaderedControl x:Name="ChannelMembersPanel"
-                                      Header="{CustomResource ChannelMembers}"
-                                      Visibility="Collapsed">
+            <Grid x:Name="BotVerifiedRoot"
+                  Visibility="Collapsed"
+                  MaxWidth="1000"
+                  Margin="24,8,24,8">
+                <RichTextBlock Style="{StaticResource InfoCaptionRichTextBlockStyle}"
+                               IsTextSelectionEnabled="False">
+                    <Paragraph>
+                        <InlineUIContainer>
+                            <controls:CustomEmojiIcon x:Name="BotVerifiedInfo"
+                                                      ReplacementColor="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                      Width="16"
+                                                      Height="16"
+                                                      FrameSize="16,16"
+                                                      Margin="0,0,0,-4" />
+                        </InlineUIContainer>
+                        <Span x:Name="BotVerifiedText" />
+                    </Paragraph>
+                </RichTextBlock>
+            </Grid>
+
+            <controls:HeaderedControl x:Name="AffiliateProgramRoot">
+                <controls:BadgeButton x:Name="AffiliateProgram"
+                                      Content="{CustomResource ProfileBotAffiliateProgram}"
+                                      Click="{x:Bind ViewModel.OpenAffiliate}"
+                                      Style="{StaticResource GlyphBadgeButtonStyle}"
+                                      Glyph="&#xEAA6;"
+                                      Visibility="Collapsed" />
+            </controls:HeaderedControl>
+
+            <controls:HeaderedControl>
                 <controls:BadgeButton x:Name="Members"
                                       Content="{CustomResource ChannelSubscribers}"
                                       Click="{x:Bind ViewModel.OpenMembers}"
                                       Style="{StaticResource GlyphBadgeButtonStyle}"
-                                      Glyph="&#xE716;" />
+                                      Glyph="&#xE716;"
+                                      Visibility="Collapsed" />
                 <controls:BadgeButton x:Name="Admins"
                                       Content="{CustomResource ChannelAdministrators}"
                                       Click="{x:Bind ViewModel.OpenAdmins}"
                                       Style="{StaticResource GlyphBadgeButtonStyle}"
-                                      Glyph="&#xE734;" />
-                <controls:BadgeButton x:Name="Banned"
-                                      Content="{CustomResource ChannelBlockedUsers}"
-                                      Click="{x:Bind ViewModel.OpenBanned}"
-                                      Style="{StaticResource GlyphBadgeButtonStyle}"
-                                      Glyph="&#xF166;" />
-            </controls:HeaderedControl>
-
-            <controls:HeaderedControl x:Name="BotPanel"
-                                      Visibility="Collapsed">
-                <controls:BadgeButton x:Name="Stars"
+                                      Glyph="&#xE983;"
+                                      Visibility="Collapsed" />
+                <controls:BadgeButton x:Name="Statistics"
                                       Click="{x:Bind ViewModel.OpenBalance}"
                                       Content="{CustomResource StarsBalance}"
                                       Style="{StaticResource GlyphBadgeButtonStyle}"
-                                      Glyph="&#xEA8D;">
+                                      Glyph="&#xEA8D;"
+                                      Visibility="Collapsed">
                     <controls:BadgeButton.Badge>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <controls:PremiumStarCount Margin="0,-4,0,-6" />
-                            <TextBlock Text="{x:Bind ViewModel.StarCount, Mode=OneWay}"
-                                       Grid.Column="1" />
+                            <Grid Visibility="{x:Bind ViewModel.CryptoCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="&#xEA7E;"
+                                           FontSize="16"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,4,0" />
+                                <TextBlock Text="{x:Bind ConvertCryptoCount(ViewModel.CryptoCount), Mode=OneWay}"
+                                           VerticalAlignment="Center"
+                                           Grid.Column="1" />
+                            </Grid>
+
+                            <Grid Visibility="{x:Bind ConvertStarVisibility(ViewModel.StarCount), Mode=OneWay}"
+                                  Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <controls:PremiumStarCount Margin="8,-4,4,-6"
+                                                           Width="20" />
+                                <TextBlock Text="{x:Bind ConvertStarCount(ViewModel.StarCount), Mode=OneWay}"
+                                           VerticalAlignment="Center"
+                                           Grid.Column="1" />
+                            </Grid>
                         </Grid>
                     </controls:BadgeButton.Badge>
                 </controls:BadgeButton>
+                <controls:BadgeButton x:Name="ChannelSettings"
+                                      Content="{CustomResource ChannelAdminSettings}"
+                                      Click="{x:Bind ViewModel.Edit}"
+                                      Style="{StaticResource GlyphBadgeButtonStyle}"
+                                      Glyph="&#xE9E9;"
+                                      IsChevronVisible="True"
+                                      Visibility="Collapsed" />
             </controls:HeaderedControl>
 
             <controls:HeaderedControl x:Name="MiscPanel">
@@ -485,15 +548,6 @@
                                     </controls:BadgeButton.Badge>-->
                 </controls:BadgeButton>
             </controls:HeaderedControl>
-
-            <Border x:Name="MembersPanel"
-                    Visibility="Collapsed"
-                    MaxWidth="640"
-                    Margin="0,16,0,0">
-                <TextBlock Text="{CustomResource ChannelMembers}"
-                           Margin="12,0,12,8"
-                           Style="{StaticResource SettingsGroupTextBlockStyle}" />
-            </Border>
         </StackPanel>
     </StackPanel>
 </UserControl>

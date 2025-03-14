@@ -39,7 +39,7 @@ namespace winrt::Telegram::Native::implementation
         Callback = callback;
     }
 
-    winrt::Telegram::Native::FatalError NativeUtils::GetFatalError(bool onlyNative)
+    winrt::Windows::Foundation::Collections::IVector<winrt::Telegram::Native::FatalErrorFrame> NativeUtils::GetStowedException()
     {
         HRESULT result;
 
@@ -75,7 +75,6 @@ namespace winrt::Telegram::Native::implementation
 
         if (stowed != nullptr && stowed->ExceptionForm == 1 && stowed->Header.Signature == 'SE02')
         {
-            std::wstring trace;
             auto frames = winrt::single_threaded_vector<FatalErrorFrame>();
 
             for (int i = 0; i < stowed->StackTraceWords; ++i)
@@ -102,35 +101,17 @@ namespace winrt::Telegram::Native::implementation
                 auto moduleBase = (const unsigned char*)moduleBaseVoid;
                 if (moduleBase != nullptr)
                 {
-                    wchar_t modulePath[MAX_PATH];
-                    const wchar_t* moduleFilename = modulePath;
-                    GetModuleFileName((HMODULE)moduleBase, modulePath, MAX_PATH);
-
-                    int moduleFilenamePos = std::wstring(modulePath).find_last_of(L"\\");
-                    if (moduleFilenamePos >= 0)
-                    {
-                        moduleFilename += moduleFilenamePos + 1;
-                    }
-
-                    trace += wstrprintf(L"   at %s+0x%08lx\n", moduleFilename, (uint32_t)((unsigned char*)pointer - moduleBase));
                     frames.Append({ (intptr_t)pointer, (intptr_t)moduleBase });
                 }
                 else
                 {
-                    trace += wstrprintf(L"   at %s+0x%016llx\n", L"unknown", (uint64_t)pointer);
+                    //trace += wstrprintf(L"   at %s+0x%016llx\n", L"unknown", (uint64_t)pointer);
                 }
             }
 
             if (frames.Size())
             {
-                BSTR description;
-                BSTR restrictedDescription;
-                BSTR reserved;
-                HRESULT hresult;
-                CleanupIfFailed(result, info->GetErrorDetails(&description, &hresult, &restrictedDescription, &reserved));
-
-                auto error = winrt::make_self<FatalError>(stowed->ResultCode, hstring(description), hstring(trace), frames);
-                return error.as<winrt::Telegram::Native::FatalError>();
+                return frames;
             }
         }
 
@@ -157,6 +138,8 @@ namespace winrt::Telegram::Native::implementation
             description += wstrprintf(L"Unhandled exception: %s\n", message);
         }
 
+        bool skipping = false;
+
         for (int i = 0; i < numFrames; ++i)
         {
             PVOID pointer = (unsigned char*)stack[i];
@@ -166,24 +149,33 @@ namespace winrt::Telegram::Native::implementation
 
             auto moduleBase = (const unsigned char*)moduleBaseVoid;
             wchar_t modulePath[MAX_PATH];
-            const wchar_t* moduleFilename = modulePath;
 
             if (moduleBase != nullptr)
             {
                 GetModuleFileName((HMODULE)moduleBase, modulePath, MAX_PATH);
 
-                int moduleFilenamePos = std::wstring(modulePath).find_last_of(L"\\");
+                auto moduleFilename = std::wstring(modulePath);
+
+                int moduleFilenamePos = moduleFilename.find_last_of(L"\\");
                 if (moduleFilenamePos >= 0)
                 {
-                    moduleFilename += moduleFilenamePos + 1;
+                    moduleFilename = moduleFilename.substr(moduleFilenamePos + 1);
                 }
 
-                trace += wstrprintf(L"   at %s+0x%08lx\n", moduleFilename, (uint32_t)((unsigned char*)pointer - moduleBase));
+                if (moduleFilename.rfind(L"Telegram", 0) != 0)
+                {
+                    skipping = true;
+                    continue;
+                }
+
+                if (skipping)
+                {
+                    skipping = false;
+                    trace += L"    ...\n";
+                }
+
+                trace += wstrprintf(L"   at %s+0x%08lx\n", moduleFilename.c_str(), (uint32_t)((unsigned char*)pointer - moduleBase));
                 frames.Append({ (intptr_t)pointer, (intptr_t)moduleBase });
-            }
-            else
-            {
-                trace += wstrprintf(L"   at %s+0x%016llx\n", L"unknown", (uint64_t)pointer);
             }
         }
 
@@ -437,17 +429,96 @@ namespace winrt::Telegram::Native::implementation
         return L"en-US";
     }
 
+    inline static hstring GetDateFormatEx(CONST SYSTEMTIME* lpDate, hstring format)
+    {
+        DWORD flags = NULL;
+        LPCWSTR formatData = NULL;
+
+        if (format == L"DATE_LONGDATE")
+        {
+            flags = DATE_LONGDATE;
+        }
+        else if (format == L"DATE_SHORTDATE")
+        {
+            flags = DATE_SHORTDATE;
+        }
+        else
+        {
+            formatData = format.data();
+        }
+
+        TCHAR dateString[256];
+        if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, flags, lpDate, formatData, dateString, 256, NULL))
+        {
+            return hstring(dateString);
+        }
+
+        return hstring();
+    }
+
+    hstring NativeUtils::FormatDate(winrt::Windows::Foundation::DateTime value, hstring format)
+    {
+        FILETIME fileTime = winrt::clock::to_file_time(value);
+        SYSTEMTIME systemTime;
+        if (FileTimeToSystemTime(&fileTime, &systemTime))
+        {
+            SYSTEMTIME localSystemTime;
+            if (SystemTimeToTzSpecificLocalTime(NULL, &systemTime, &localSystemTime))
+            {
+                return GetDateFormatEx(&localSystemTime, format);
+            }
+        }
+
+        return hstring();
+    }
+
+    hstring NativeUtils::FormatDate(int year, int month, int day, hstring format)
+    {
+        SYSTEMTIME systemTime;
+        systemTime.wYear = year;
+        systemTime.wMonth = month;
+        systemTime.wDay = day;
+        systemTime.wHour = 12;
+
+        return GetDateFormatEx(&systemTime, format);
+    }
+
+    hstring NativeUtils::FormatTime(int value)
+    {
+        FILETIME fileTime;
+        ULARGE_INTEGER uli;
+        uli.QuadPart = (static_cast<ULONGLONG>(value) + 11644473600LL) * 10000000LL;
+        fileTime.dwLowDateTime = uli.LowPart;
+        fileTime.dwHighDateTime = uli.HighPart;
+
+        SYSTEMTIME systemTime;
+        if (FileTimeToSystemTime(&fileTime, &systemTime))
+        {
+            SYSTEMTIME localSystemTime;
+            if (SystemTimeToTzSpecificLocalTime(NULL, &systemTime, &localSystemTime))
+            {
+                TCHAR timeString[128];
+                if (GetTimeFormatEx(LOCALE_NAME_USER_DEFAULT, TIME_NOSECONDS, &localSystemTime, nullptr, timeString, 128))
+                {
+                    return hstring(timeString);
+                }
+            }
+        }
+
+        return hstring();
+    }
+
     hstring NativeUtils::FormatTime(winrt::Windows::Foundation::DateTime value)
     {
         FILETIME fileTime = winrt::clock::to_file_time(value);
-        FILETIME localFileTime;
-        if (FileTimeToLocalFileTime(&fileTime, &localFileTime))
+        SYSTEMTIME systemTime;
+        if (FileTimeToSystemTime(&fileTime, &systemTime))
         {
-            SYSTEMTIME systemTime;
-            if (FileTimeToSystemTime(&localFileTime, &systemTime))
+            SYSTEMTIME localSystemTime;
+            if (SystemTimeToTzSpecificLocalTime(NULL, &systemTime, &localSystemTime))
             {
                 TCHAR timeString[128];
-                if (GetTimeFormatEx(LOCALE_NAME_USER_DEFAULT, TIME_NOSECONDS, &systemTime, nullptr, timeString, 128))
+                if (GetTimeFormatEx(LOCALE_NAME_USER_DEFAULT, TIME_NOSECONDS, &localSystemTime, nullptr, timeString, 128))
                 {
                     return hstring(timeString);
                 }
@@ -471,97 +542,21 @@ namespace winrt::Telegram::Native::implementation
         return hstring();
     }
 
-    hstring NativeUtils::FormatDate(winrt::Windows::Foundation::DateTime value, hstring format)
-    {
-        FILETIME fileTime = winrt::clock::to_file_time(value);
-        FILETIME localFileTime;
-        if (FileTimeToLocalFileTime(&fileTime, &localFileTime))
-        {
-            SYSTEMTIME systemTime;
-            if (FileTimeToSystemTime(&localFileTime, &systemTime))
-            {
-                TCHAR dateString[256];
-                if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, NULL, &systemTime, format.data(), dateString, 256, NULL))
-                {
-                    return hstring(dateString);
-                }
-            }
-        }
-
-        return hstring();
-    }
-
-    hstring NativeUtils::FormatDate(int year, int month, int day, hstring format)
-    {
-        SYSTEMTIME systemTime;
-        systemTime.wYear = year;
-        systemTime.wMonth = month;
-        systemTime.wDay = day;
-        systemTime.wHour = 12;
-
-        TCHAR dateString[256];
-        if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, NULL, &systemTime, format.data(), dateString, 256, NULL))
-        {
-            return hstring(dateString);
-        }
-
-        return hstring();
-    }
-
-    hstring NativeUtils::FormatTime(int value)
-    {
-        FILETIME fileTime;
-        ULARGE_INTEGER uli;
-        uli.QuadPart = (static_cast<ULONGLONG>(value) + 11644473600LL) * 10000000LL;
-        fileTime.dwLowDateTime = uli.LowPart;
-        fileTime.dwHighDateTime = uli.HighPart;
-
-        FILETIME localFileTime;
-        if (FileTimeToLocalFileTime(&fileTime, &localFileTime))
-        {
-            SYSTEMTIME systemTime;
-            if (FileTimeToSystemTime(&localFileTime, &systemTime))
-            {
-                TCHAR timeString[128];
-                if (GetTimeFormatEx(LOCALE_NAME_USER_DEFAULT, TIME_NOSECONDS, &systemTime, nullptr, timeString, 128))
-                {
-                    return hstring(timeString);
-                }
-            }
-        }
-
-        return hstring();
-    }
-
     hstring NativeUtils::FormatDate(int value, hstring format)
     {
-        // TODO: DATE_MONTHDAY doesn't seem to work, so we're not using this method.
-
         FILETIME fileTime;
         ULARGE_INTEGER uli;
         uli.QuadPart = (static_cast<ULONGLONG>(value) + 11644473600LL) * 10000000LL;
         fileTime.dwLowDateTime = uli.LowPart;
         fileTime.dwHighDateTime = uli.HighPart;
 
-        FILETIME localFileTime;
-        if (FileTimeToLocalFileTime(&fileTime, &localFileTime))
+        SYSTEMTIME systemTime;
+        if (FileTimeToSystemTime(&fileTime, &systemTime))
         {
-            SYSTEMTIME systemTime;
-            if (FileTimeToSystemTime(&localFileTime, &systemTime))
+            SYSTEMTIME localSystemTime;
+            if (SystemTimeToTzSpecificLocalTime(NULL, &systemTime, &localSystemTime))
             {
-                //SYSTEMTIME todayTime;
-                //GetSystemTime(&todayTime);
-
-                //int difference = abs(systemTime.wMonth - todayTime.wMonth + 12 * (systemTime.wYear - todayTime.wYear));
-                //DWORD flags = difference >= 11
-                //    ? DATE_LONGDATE
-                //    : DATE_MONTHDAY;
-
-                TCHAR dateString[256];
-                if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, NULL, &systemTime, format.data(), dateString, 256, NULL))
-                {
-                    return hstring(dateString);
-                }
+                return GetDateFormatEx(&localSystemTime, format);
             }
         }
 
@@ -653,6 +648,19 @@ namespace winrt::Telegram::Native::implementation
     {
         int32_t* ciao = nullptr;
         *ciao = 42;
+    }
+
+    hstring NativeUtils::GetLogMessage(int64_t format, int64_t args)
+    {
+        int byteLength = vsnprintf(NULL, NULL, (char*)format, (va_list)args) + 1;
+        if (byteLength <= 1)
+            return L"";
+
+        char* buffer = new char[byteLength];
+        vsprintf(buffer, (char*)format, (va_list)args);
+        hstring result = winrt::to_hstring(std::string(buffer, byteLength));
+        delete[] buffer;
+        return result;
     }
 
 } // namespace winrt::Telegram::Native::implementation

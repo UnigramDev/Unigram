@@ -201,5 +201,38 @@
                 <TransitionCollection />
             </ListView.ItemContainerTransitions>
         </ListView>
+
+        <Grid x:Name="EmptyState"
+              x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
+              VerticalAlignment="Center"
+              Margin="0,-96,0,0"
+              Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/EmptyContacts.tgs"
+                                    IsCachingEnabled="False"
+                                    AutoPlay="True"
+                                    FrameSize="140,140"
+                                    DecodeFrameType="Logical"
+                                    LoopCount="1"
+                                    Width="140"
+                                    Height="140"
+                                    Margin="0,0,0,12" />
+
+            <TextBlock Text="{CustomResource NoResult}"
+                       Style="{StaticResource PopupTextBlockStyle}"
+                       TextAlignment="Center"
+                       VerticalAlignment="Top"
+                       Margin="0,0,0,8"
+                       Grid.Row="1" />
+
+            <TextBlock Loaded="EmptyState_Loaded"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       TextAlignment="Center"
+                       Grid.Row="2" />
+        </Grid>
     </Grid>
 </UserControl>

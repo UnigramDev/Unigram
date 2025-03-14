@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -44,8 +44,8 @@ namespace Telegram.Common
 
         private readonly Dictionary<string, AppWindow> _instantWindows = new Dictionary<string, AppWindow>();
 
-        public TLNavigationService(IClientService clientService, IViewService viewService, WindowContext window, Frame frame, int session, string id)
-            : base(window, frame, session, id)
+        public TLNavigationService(IClientService clientService, IViewService viewService, WindowContext window, Frame frame, string id)
+            : base(window, frame, clientService.SessionId, id)
         {
             _clientService = clientService;
             _passcodeService = TypeResolver.Current.Passcode;
@@ -54,14 +54,36 @@ namespace Telegram.Common
 
         public IClientService ClientService => _clientService;
 
-        public async void NavigateToWebApp(User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
+        public async void NavigateToWebApp(User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, WebAppOpenMode openMode = null, Chat sourceChat = null, InternalLinkType sourceLink = null)
         {
+            if (sourceLink != null)
+            {
+                var oldViewId = WindowContext.Current.Id;
+                var found = false;
+
+                await WindowContext.ForEachAsync(window =>
+                {
+                    if (window.Content is WebAppPage webApp && webApp.AreTheSame(sourceLink))
+                    {
+                        _ = ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
+                        found = true;
+                    }
+                    ;
+                });
+
+                if (found)
+                {
+                    return;
+                }
+            }
+
             await OpenAsync(new ViewServiceOptions
             {
                 Width = 384,
                 Height = 640,
                 PersistedId = "WebApp",
-                Content = control => new WebAppPage(ClientService, botUser, url, launchId, menuBot, sourceChat)
+                ViewMode = openMode is WebAppOpenModeFullScreen ? ViewServiceMode.FullScreen : ViewServiceMode.Default,
+                Content = control => new WebAppPage(ClientService, botUser, url, launchId, menuBot, sourceChat, sourceLink)
             });
         }
 
@@ -78,13 +100,13 @@ namespace Telegram.Common
 
         public async void NavigateToInstant(string url, string fallbackUrl = null)
         {
-            var response = await ClientService.SendAsync(new GetWebPageInstantView(url, true));
+            var response = await ClientService.SendAsync(new GetWebPageInstantView(url, false));
             if (response is WebPageInstantView instantView)
             {
                 TabViewItem CreateTabViewItem(WindowContext window)
                 {
                     var frame = new Frame();
-                    var service = new TLNavigationService(ClientService, null, window, frame, ClientService.SessionId, "InstantView"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
+                    var service = new TLNavigationService(ClientService, null, window, frame, "InstantView"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
 
                     service.Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url));
 
@@ -139,19 +161,19 @@ namespace Telegram.Common
 
         private async void NavigateToTab(Func<WindowContext, TabViewItem> newTab, ViewServiceOptions parameters)
         {
-            var oldViewId = WindowContext.Current.Id;
-
             var already = WindowContext.All.FirstOrDefault(x => x.PersistedId == parameters.PersistedId);
             if (already != null)
             {
-                await already.Dispatcher.DispatchAsync(async () =>
+                var oldViewId = WindowContext.Current.Id;
+
+                await already.Dispatcher.DispatchAsync(() =>
                 {
                     if (WindowContext.Current.Content is TabbedPage page)
                     {
                         page.AddNewTab(newTab(already));
                     }
 
-                    await ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
+                    return ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
                 });
             }
             else
@@ -341,7 +363,7 @@ namespace Telegram.Common
             }
 
             // TODO: do current page matching for ChatSavedPage and ChatThreadPage as well.
-            if (Frame.Content is ChatPage page && page.ViewModel != null && chat.Id.Equals((long)CurrentPageParam) && thread == 0 && savedMessagesTopicId == 0 && !scheduled && !createNewWindow)
+            if (Frame?.Content is ChatPage page && page.ViewModel != null && chat.Id.Equals((long)CurrentPageParam) && thread == 0 && savedMessagesTopicId == 0 && !scheduled && !createNewWindow)
             {
                 var viewModel = page.ViewModel;
                 if (message != null)
@@ -407,7 +429,9 @@ namespace Telegram.Common
                     state["access_token"] = accessToken;
                 }
 
-                if (createNewWindow)
+                var modifiers = WindowContext.KeyModifiers();
+
+                if (createNewWindow || modifiers == Windows.System.VirtualKeyModifiers.Control)
                 {
                     Type target;
                     object parameter;
@@ -447,7 +471,7 @@ namespace Telegram.Common
                 else
                 {
                     // TODO: do current page matching for ChatSavedPage and ChatThreadPage as well.
-                    if (Frame.Content is ChatPage chatPage && thread == 0 && savedMessagesTopicId == 0 && !scheduled && !force)
+                    if (Frame?.Content is ChatPage chatPage && thread == 0 && savedMessagesTopicId == 0 && !scheduled && !force)
                     {
                         chatPage.ViewModel.NavigatedFrom(null, false);
 

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -105,9 +105,11 @@ namespace Telegram
                 typeof(ProfileMembersTabViewModel),
                 typeof(ProfileGroupsTabViewModel),
                 typeof(ProfileChannelsTabViewModel),
+                typeof(ProfileBotsTabViewModel),
                 typeof(ProfileGiftsTabViewModel),
                 typeof(ProfileSavedChatsTabViewModel),
                 typeof(UserEditViewModel),
+                typeof(UserAffiliateViewModel),
                 typeof(SupergroupEditViewModel),
                 typeof(SupergroupEditTypeViewModel),
                 typeof(SupergroupEditStickerSetViewModel),
@@ -125,6 +127,7 @@ namespace Telegram
                 typeof(ChatBoostsViewModel),
                 typeof(ChatRevenueViewModel),
                 typeof(ChatStarsViewModel),
+                typeof(ChatAffiliateViewModel),
                 typeof(MessageStatisticsViewModel),
                 typeof(NewContactViewModel),
                 typeof(NewChannelViewModel),
@@ -146,7 +149,6 @@ namespace Telegram
                 typeof(SettingsDataAndStorageViewModel),
                 typeof(SettingsDataAutoViewModel),
                 typeof(SettingsProxyViewModel),
-                typeof(SettingsQuickReactionViewModel),
                 typeof(SettingsPrivacyAndSecurityViewModel),
                 typeof(SettingsPrivacyAllowCallsViewModel),
                 typeof(SettingsPrivacyAllowP2PCallsViewModel),
@@ -154,12 +156,14 @@ namespace Telegram
                 typeof(SettingsPrivacyShowForwardedViewModel),
                 typeof(SettingsPrivacyPhoneViewModel),
                 typeof(SettingsPrivacyShowPhoneViewModel),
+                typeof(SettingsPrivacyAutosaveGiftsViewModel),
                 typeof(SettingsPrivacyAllowFindingByPhoneNumberViewModel),
                 typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel),
                 typeof(SettingsPrivacyShowPhotoViewModel),
                 typeof(SettingsPrivacyShowStatusViewModel),
                 typeof(SettingsPrivacyShowBioViewModel),
                 typeof(SettingsPrivacyShowBirthdateViewModel),
+                typeof(SettingsPrivacyAllowUnpaidMessagesViewModel),
                 typeof(SettingsPrivacyNewChatViewModel),
                 typeof(SettingsAutoDeleteViewModel),
                 typeof(SettingsProfileViewModel),
@@ -181,7 +185,6 @@ namespace Telegram
                 typeof(PaymentAddressViewModel),
                 typeof(PaymentCredentialsViewModel),
                 typeof(PaymentFormViewModel),
-                typeof(InteractionsViewModel),
                 typeof(StoryInteractionsViewModel),
                 typeof(FoldersViewModel),
                 typeof(FolderViewModel),

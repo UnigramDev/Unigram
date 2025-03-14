@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
@@ -25,7 +26,7 @@ namespace Telegram.Controls.Gallery
         private GalleryViewModelBase _viewModel;
         private VideoPlayerBase _player;
 
-        private static GalleryCompactOverlay _current;
+        private static volatile GalleryCompactOverlay _current;
 
         public GalleryCompactOverlay(AppWindow window, GalleryViewModelBase viewModel, GalleryMedia media, VideoPlayerBase player)
         {
@@ -63,11 +64,17 @@ namespace Telegram.Controls.Gallery
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            Logger.Info();
+
             Controls.Unload();
 
             _player = null;
             _window = null;
-            _current = null;
+
+            if (_current == this)
+            {
+                _current = null;
+            }
         }
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
@@ -111,13 +118,17 @@ namespace Telegram.Controls.Gallery
 
         private async void Controls_CompactClick(object sender, RoutedEventArgs e)
         {
+            Logger.Info();
+
             // TODO: WinUI - Rewrite
-            if (_current == null)
+            var window = _window;
+            if (window == null || _current == null)
             {
                 // Button was already pressed
                 return;
             }
 
+            _window = null;
             _current = null;
 
             _player.IsUnloadedExpected = true;
@@ -127,7 +138,7 @@ namespace Telegram.Controls.Gallery
             {
                 try
                 {
-                    var prevId = CoreAppWindowPreview.GetIdFromWindow(_window);
+                    var prevId = CoreAppWindowPreview.GetIdFromWindow(window);
                     var nextId = ApplicationView.GetForCurrentView().Id;
                     await ApplicationViewSwitcher.TryShowAsStandaloneAsync(nextId);
                     await ApplicationViewSwitcher.SwitchAsync(nextId, prevId);
@@ -139,7 +150,7 @@ namespace Telegram.Controls.Gallery
             }
 
             _ = GalleryWindow.ShowAsync(WindowContext.Current.Content.XamlRoot, _viewModel, null, 0, _player);
-            _ = _window.CloseAsync();
+            _ = window.CloseAsync();
         }
 
         private void Play(GalleryViewModelBase viewModel, VideoPlayerBase player)
@@ -161,6 +172,8 @@ namespace Telegram.Controls.Gallery
 
         private void Close()
         {
+            Logger.Info("Closing");
+
             _ = _window.CloseAsync();
         }
 
@@ -182,11 +195,16 @@ namespace Telegram.Controls.Gallery
             // as the AppWindow will be destroyed as soon as the secondary window gets closed.
             if (_current?.Dispatcher.HasThreadAccess == true)
             {
+                Logger.Info("Exists on the current thread");
+
                 _current.Play(viewModel, player);
             }
             else
             {
+                Logger.Info("Does not exist, or different thread, create");
+
                 _current?.BeginOnUIThread(_current.Close);
+                _current = null;
 
                 // Reset the state so that hopefully the window gets the right size/position
                 AppWindow.ClearPersistedState("Gallery");
@@ -207,16 +225,16 @@ namespace Telegram.Controls.Gallery
                     // Navigate the frame to the CompactOverlay page inside it.
                     //appWindowFrame.Navigate(typeof(SecondaryAppWindowPage));
                     // Attach the frame to the window
-                    ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowContent);
+                    //ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowContent);
                     // Let's set the title so that we can tell the windows apart
 
                     var switched = appWindow.Presenter.RequestPresentation(AppWindowPresentationKind.CompactOverlay);
                     if (switched)
                     {
+                        await appWindow.TryShowAsync();
+
                         // Double call because at times it fails
                         appWindow.Presenter.RequestPresentation(AppWindowPresentationKind.CompactOverlay);
-
-                        await appWindow.TryShowAsync();
                     }
                 }
             }

@@ -51,8 +51,10 @@ namespace Telegram.Native
         static Int32 GetScaleForCurrentView();
 
         static void SetFatalErrorCallback(FatalErrorCallback action);
-        static FatalError GetFatalError(Boolean onlyNative);
+        static Windows.Foundation.Collections.IVector<FatalErrorFrame> GetStowedException();
         static FatalError GetBackTrace(UInt64 code);
+
+        static String GetLogMessage(Int64 format, Int64 args);
 
         static void Crash();
 

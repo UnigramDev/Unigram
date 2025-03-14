@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -61,13 +61,6 @@ namespace Telegram.Services.Settings
         {
             get => _lastUpdateVersion ??= GetValueOrDefault("LastUpdateVersion", 0);
             set => AddOrUpdateValue(ref _lastUpdateVersion, "LastUpdateVersion", value);
-        }
-
-        private int? _lastUpdateTime;
-        public int LastUpdateTime
-        {
-            get => _lastUpdateTime ??= GetValueOrDefault("LastUpdateTime", 0);
-            set => AddOrUpdateValue(ref _lastUpdateTime, "LastUpdateTime", value);
         }
 
         private bool? _enableWebViewDevTools;
@@ -152,6 +145,13 @@ namespace Telegram.Services.Settings
         {
             get => _sendLargePhotos ??= GetValueOrDefault("SendLargePhotos", false);
             set => AddOrUpdateValue(ref _sendLargePhotos, "SendLargePhotos", value);
+        }
+
+        private bool? _useSpeexResampler;
+        public bool UseSpeexResampler
+        {
+            get => _useSpeexResampler ??= GetValueOrDefault("UseSpeexResampler", false);
+            set => AddOrUpdateValue(ref _useSpeexResampler, "UseSpeexResampler", value);
         }
 
         public bool IsLastErrorDiskFull { get; set; }

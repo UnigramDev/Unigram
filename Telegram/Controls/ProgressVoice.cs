@@ -1,10 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
 using System;
@@ -15,6 +16,8 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls
 {
+    public record ProgressVoiceValueChanged(double NewValue);
+
     public partial class ProgressVoice : ProgressBar
     {
         private Path ProgressBarIndicator;
@@ -36,7 +39,7 @@ namespace Telegram.Controls
             ProgressBarIndicator.Data = _group1 = new GeometryGroup();
             HorizontalTrackRect.Data = _group2 = new GeometryGroup();
 
-            if (_deferred != null && _deferred.Duration != 0)
+            if (_deferred != null && _deferred.Duration != -1)
             {
                 UpdateWaveform(_deferred);
                 //_deferred = null;
@@ -47,7 +50,7 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (_deferred != null && _deferred.Duration == 0)
+            if (_deferred != null && _deferred.Duration == -1)
             {
                 UpdateWaveform(_deferred.Waveform, 0, finalSize.Width);
             }
@@ -67,7 +70,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (voiceNote.Duration == 0)
+            if (voiceNote.Duration == -1)
             {
                 // Recording
                 InvalidateArrange();
@@ -81,10 +84,11 @@ namespace Telegram.Controls
                 var minVoiceWidth = 72.0;
                 var maxVoiceWidth = 226.0;
 
+
                 var calcDuration = Math.Max(minVoiceLength, Math.Min(maxVoiceLength, voiceNote.Duration));
                 var waveformWidth = minVoiceWidth + (maxVoiceWidth - minVoiceWidth) * (calcDuration - minVoiceLength) / (maxVoiceLength - minVoiceLength);
 
-                UpdateWaveform(voiceNote.Waveform, voiceNote.Duration, waveformWidth);
+                UpdateWaveform(voiceNote.Waveform, calcDuration, waveformWidth);
             }
         }
 
@@ -148,6 +152,56 @@ namespace Telegram.Controls
             {
                 Width = waveformWidth;
             }
+        }
+
+        private bool _pressed;
+
+        public bool IsChanging => _pressed;
+
+        public new event TypedEventHandler<ProgressVoice, ProgressVoiceValueChanged> ValueChanged;
+
+        protected override void OnPointerPressed(PointerRoutedEventArgs e)
+        {
+            _pressed = true;
+            CapturePointer(e.Pointer);
+
+            var point = e.GetCurrentPoint(this);
+            Value = point.Position.X / ActualWidth * Maximum;
+
+            base.OnPointerPressed(e);
+        }
+
+        protected override void OnPointerMoved(PointerRoutedEventArgs e)
+        {
+            if (_pressed)
+            {
+                var point = e.GetCurrentPoint(this);
+                Value = point.Position.X / ActualWidth * Maximum;
+            }
+
+            base.OnPointerMoved(e);
+        }
+
+        protected override void OnPointerCanceled(PointerRoutedEventArgs e)
+        {
+            _pressed = false;
+            base.OnPointerCanceled(e);
+        }
+
+        protected override void OnPointerCaptureLost(PointerRoutedEventArgs e)
+        {
+            _pressed = false;
+            base.OnPointerCaptureLost(e);
+        }
+
+        protected override void OnPointerReleased(PointerRoutedEventArgs e)
+        {
+            _pressed = false;
+            ReleasePointerCapture(e.Pointer);
+
+            ValueChanged?.Invoke(this, new ProgressVoiceValueChanged(Value));
+
+            base.OnPointerReleased(e);
         }
     }
 }

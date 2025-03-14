@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -65,6 +65,13 @@ namespace Telegram.Services
 
             var culture = new CultureInfo(split[0]);
             rtl = culture.TextInfo.IsRightToLeft && !latin;
+
+            var displayName = LocaleService.Current.GetString("TranslateLanguage" + split[0].ToUpper());
+            if (displayName.Length > 0)
+            {
+                return displayName;
+            }
+
             return culture.DisplayName;
         }
 
@@ -105,8 +112,6 @@ namespace Telegram.Services
 
             if (entireChat)
             {
-                // We always exclude the current UI language when translating whole chat
-                exclude.Add(LocaleService.Current.Id);
                 exclude.Add(LANG_UND);
             }
 

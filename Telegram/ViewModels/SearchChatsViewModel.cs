@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -84,6 +84,11 @@ namespace Telegram.ViewModels
             get => _query;
             set
             {
+                if (string.Equals(value, _query) && !string.IsNullOrEmpty(value))
+                {
+                    return;
+                }
+
                 SynchronizeQuery(value);
 
                 if (SelectedTab == 1)
@@ -109,12 +114,14 @@ namespace Telegram.ViewModels
         {
             _cancellation.Cancel();
             _cancellation = new();
+
+            IsEmpty = false;
         }
 
         private bool _isTopChatsVisible;
         public bool IsTopChatsVisible
         {
-            get => _isTopChatsVisible && SelectedTab == 0;
+            get => _isTopChatsVisible && Options.AllowUserChats && SelectedTab == 0;
             set => Set(ref _isTopChatsVisible, value);
         }
 
@@ -131,7 +138,6 @@ namespace Telegram.ViewModels
 
                     if (value == 1)
                     {
-                        //_channels.Activate();
                         _channels.Query = Query;
                     }
                     else if (value == 2)
@@ -144,6 +150,13 @@ namespace Telegram.ViewModels
                     }
                 }
             }
+        }
+
+        private bool _isEmpty;
+        public bool IsEmpty
+        {
+            get => _isEmpty;
+            set => Set(ref _isEmpty, value);
         }
 
         private bool CanUpdateQuery(string value)
@@ -200,6 +213,8 @@ namespace Telegram.ViewModels
             {
                 await LoadMessagesAsync(query, token);
             }
+
+            IsEmpty = Items.Empty();
         }
 
         private async Task LoadTopChatsAsync(CancellationToken cancellationToken)
@@ -351,7 +366,7 @@ namespace Telegram.ViewModels
 
         private async Task LoadMessagesAsync(string query, CancellationToken cancellationToken)
         {
-            var response = await ClientService.SendAsync(new SearchMessages(null, false, query, _nextOffset ?? string.Empty, 50, null, 0, 0));
+            var response = await ClientService.SendAsync(new SearchMessages(null, query, _nextOffset ?? string.Empty, 50, null, null, 0, 0));
             if (response is FoundMessages messages && !cancellationToken.IsCancellationRequested)
             {
                 _nextOffset = string.IsNullOrEmpty(messages.NextOffset) ? null : messages.NextOffset;

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -76,14 +76,8 @@ namespace Telegram.Views.Settings
             var subtitle = content.Children[2] as TextBlock;
             subtitle.Text = Locale.Declension(Strings.R.Stickers, stickerSet.Size);
 
-            var cover = stickerSet.GetThumbnail();
-            if (cover == null)
-            {
-                return;
-            }
-
             var animated = content.Children[0] as AnimatedImage;
-            animated.Source = new DelayedFileSource(ViewModel.ClientService, cover);
+            animated.Source = DelayedFileSource.FromStickerSetInfo(ViewModel.ClientService, stickerSet);
 
             args.Handled = true;
         }

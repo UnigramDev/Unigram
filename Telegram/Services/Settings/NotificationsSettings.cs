@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -46,6 +46,16 @@ namespace Telegram.Services.Settings
             }
 
             return chat.NotificationSettings.MuteFor;
+        }
+
+        public long GetSoundId(Chat chat)
+        {
+            if (chat.NotificationSettings.UseDefaultSound && TryGetScope(chat, out var scope))
+            {
+                return scope.SoundId;
+            }
+
+            return chat.NotificationSettings.SoundId;
         }
 
         public bool GetShowPreview(Chat chat)
@@ -107,6 +117,27 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _inAppPreview, "InAppPreview", value);
         }
 
+        private bool? _showName;
+        public bool ShowName
+        {
+            get => _showName ??= GetValueOrDefault("ShowName", true);
+            set => AddOrUpdateValue(ref _showName, "ShowName", value);
+        }
+
+        private bool? _showText;
+        public bool ShowText
+        {
+            get => _showText ??= GetValueOrDefault("ShowText", true);
+            set => AddOrUpdateValue(ref _showText, "ShowText", value);
+        }
+
+        private bool? _showReply;
+        public bool ShowReply
+        {
+            get => _showReply ??= GetValueOrDefault("ShowReply", true);
+            set => AddOrUpdateValue(ref _showReply, "ShowReply", value);
+        }
+
         private bool? _inAppVibrate;
         public bool InAppVibrate
         {
@@ -135,11 +166,25 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _includeMutedChats, "IncludeMutedChats", value);
         }
 
+        private bool? _includeMutedChatsInFolderCounters;
+        public bool IncludeMutedChatsInFolderCounters
+        {
+            get => _includeMutedChatsInFolderCounters ??= GetValueOrDefault("IncludeMutedChatsInFolderCounters", true);
+            set => AddOrUpdateValue(ref _includeMutedChatsInFolderCounters, "IncludeMutedChatsInFolderCounters", value);
+        }
+
         private bool? _countUnreadMessages;
         public bool CountUnreadMessages
         {
             get => _countUnreadMessages ??= GetValueOrDefault("CountUnreadMessages", true);
             set => AddOrUpdateValue(ref _countUnreadMessages, "CountUnreadMessages", value);
+        }
+
+        private bool? _hasRemovedCollections;
+        public bool HasRemovedCollections
+        {
+            get => _hasRemovedCollections ?? GetValueOrDefault("HasRemovedCollections", false);
+            set => AddOrUpdateValue(ref _hasRemovedCollections, "HasRemovedCollections", value);
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -42,8 +42,8 @@ namespace Telegram.ViewModels
 
         public IStorageService StorageService => _storageService;
 
-        public string OwnedStarCount => ClientService.OwnedStarCount > 0
-            ? ClientService.OwnedStarCount.ToString("N0")
+        public string OwnedStarCount => ClientService.OwnedStarCount.IsPositive()
+            ? ClientService.OwnedStarCount.ToValue()
             : string.Empty;
 
         public MvxObservableCollection<SettingsSearchEntry> Results { get; private set; }
@@ -136,18 +136,16 @@ namespace Telegram.ViewModels
         public async void PremiumGifting()
         {
             var user = await ChooseChatsPopup.PickUserAsync(ClientService, NavigationService, Strings.SelectContact, false);
-            if (user == null)
+            if (user != null)
             {
-                return;
-            }
+                ClientService.TryGetUserFull(user.Id, out UserFullInfo fullInfo);
+                fullInfo ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
 
-            var userFull = await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
-            if (userFull == null)
-            {
-                return;
+                if (fullInfo != null)
+                {
+                    await ShowPopupAsync(new GiftPopup(ClientService, NavigationService, user, fullInfo));
+                }
             }
-
-            await ShowPopupAsync(new GiftPopup(ClientService, NavigationService, user, userFull.PremiumGiftOptions));
         }
 
         public void Search(string query)
@@ -160,7 +158,11 @@ namespace Telegram.ViewModels
         {
             if (entry is SettingsSearchPage page && page.Page != null)
             {
-                if (page.Page == typeof(SettingsPasscodePage))
+                if (page.Page == typeof(SettingsPasswordPage))
+                {
+                    NavigationService.NavigateToPassword();
+                }
+                else if (page.Page == typeof(SettingsPasscodePage))
                 {
                     NavigationService.NavigateToPasscode();
                 }

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
+using System.Linq;
 using System.Text;
 using Telegram.Controls.Cells;
 
@@ -48,9 +49,9 @@ namespace Telegram.Controls
             }
 
             var builder = new StringBuilder();
-            var descendants = (_owner.ContentTemplateRoot ?? _owner).DescendantsAndSelf<TextBlock>();
+            var descendants = (_owner.ContentTemplateRoot ?? _owner).DescendantsAndSelf();
 
-            foreach (TextBlock child in descendants)
+            foreach (UIElement child in descendants.Where(x => x is TextBlock or RichTextBlock))
             {
                 var view = AutomationProperties.GetAccessibilityView(child);
                 if (view == AccessibilityView.Raw)
@@ -58,12 +59,14 @@ namespace Telegram.Controls
                     continue;
                 }
 
+                var peer = FrameworkElementAutomationPeer.FromElement(child);
+
                 if (builder.Length > 0)
                 {
                     builder.Append(", ");
                 }
 
-                builder.Append(child.Text);
+                builder.Append(peer.GetName());
             }
 
             return builder.ToString();
@@ -93,9 +96,9 @@ namespace Telegram.Controls
         protected override string GetNameCore()
         {
             var builder = new StringBuilder();
-            var descendants = (_owner.ContentTemplateRoot ?? _owner).DescendantsAndSelf<TextBlock>();
+            var descendants = (_owner.ContentTemplateRoot ?? _owner).DescendantsAndSelf();
 
-            foreach (TextBlock child in descendants)
+            foreach (UIElement child in descendants.Where(x => x is TextBlock or RichTextBlock))
             {
                 var view = AutomationProperties.GetAccessibilityView(child);
                 if (view == AccessibilityView.Raw)
@@ -103,12 +106,14 @@ namespace Telegram.Controls
                     continue;
                 }
 
+                var peer = FrameworkElementAutomationPeer.FromElement(child);
+
                 if (builder.Length > 0)
                 {
                     builder.Append(", ");
                 }
 
-                builder.Append(child.Text);
+                builder.Append(peer.GetName());
             }
 
             return builder.ToString();

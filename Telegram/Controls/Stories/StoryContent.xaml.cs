@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -563,6 +563,8 @@ namespace Telegram.Controls.Stories
         {
             if (sender is HyperlinkButton element && element.Tag is StoryArea area)
             {
+                var target = element.Content as FrameworkElement ?? element;
+
                 if (area.Type is StoryAreaTypeLocation or StoryAreaTypeVenue)
                 {
                     var text = new TextBlock();
@@ -573,7 +575,7 @@ namespace Telegram.Controls.Stories
                     });
 
                     var window = element.GetParent<StoriesWindow>();
-                    var result = await window?.ShowActionAsync(element.Content as Border, text, TeachingTipPlacementMode.Top);
+                    var result = await window?.ShowActionAsync(target, text, TeachingTipPlacementMode.Top);
                 }
                 else if (area.Type is StoryAreaTypeMessage typeMessage)
                 {
@@ -585,7 +587,7 @@ namespace Telegram.Controls.Stories
                     });
 
                     var window = element.GetParent<StoriesWindow>();
-                    var result = await window?.ShowActionAsync(element.Content as Border, text, TeachingTipPlacementMode.Top);
+                    var result = await window?.ShowActionAsync(target, text, TeachingTipPlacementMode.Top);
 
                     if (result == ContentDialogResult.Primary)
                     {
@@ -610,11 +612,28 @@ namespace Telegram.Controls.Stories
                     });
 
                     var window = element.GetParent<StoriesWindow>();
-                    var result = await window?.ShowActionAsync(element.Content as Border, text, TeachingTipPlacementMode.Top);
+                    var result = await window?.ShowActionAsync(target, text, TeachingTipPlacementMode.Top);
 
                     if (result == ContentDialogResult.Primary)
                     {
                         MessageHelper.OpenUrl(ViewModel.ClientService, ViewModel.NavigationService, typeLink.Url);
+                    }
+                }
+                else if (area.Type is StoryAreaTypeUpgradedGift typeUpgradedGift)
+                {
+                    var text = new TextBlock();
+                    text.Inlines.Add(new Run
+                    {
+                        Text = Strings.StoryViewGift,
+                        Foreground = new SolidColorBrush(Colors.White)
+                    });
+
+                    var window = element.GetParent<StoriesWindow>();
+                    var result = await window?.ShowActionAsync(target, text, TeachingTipPlacementMode.Top);
+
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        MessageHelper.OpenTelegramUrl(ViewModel.ClientService, ViewModel.NavigationService, new InternalLinkTypeUpgradedGift(typeUpgradedGift.GiftName));
                     }
                 }
             }

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -295,6 +295,20 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
+        private bool _chargePerMessage;
+        public bool ChargePerMessage
+        {
+            get => _chargePerMessage;
+            set => Set(ref _chargePerMessage, value);
+        }
+
+        private int _paidMessageStarCount;
+        public int PaidMessageStarCount
+        {
+            get => _paidMessageStarCount;
+            set => Set(ref _paidMessageStarCount, value);
+        }
+
         private int _unrestrictBoostCount;
         public int UnrestrictBoostCount
         {
@@ -386,6 +400,15 @@ namespace Telegram.ViewModels.Supergroups
             if (supergroup == null)
             {
                 return;
+            }
+
+            if (supergroup.PaidMessageStarCount != _paidMessageStarCount)
+            {
+                var paidMessageStarCount = await ClientService.SendAsync(new SetChatPaidMessageStarCount(chat.Id, _paidMessageStarCount));
+                if (paidMessageStarCount is Error)
+                {
+                    return;
+                }
             }
 
             var fullInfo = ClientService.GetSupergroupFull(chat);

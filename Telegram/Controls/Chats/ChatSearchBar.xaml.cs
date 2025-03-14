@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -19,6 +19,8 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
 using static Telegram.Controls.Chats.ChatTextBox;
+using VirtualKey = Windows.System.VirtualKey;
+using VirtualKeyModifiers = Windows.System.VirtualKeyModifiers;
 
 namespace Telegram.Controls.Chats
 {
@@ -300,7 +302,7 @@ namespace Telegram.Controls.Chats
         {
             if (Field.State == ChatSearchState.Members)
             {
-                ViewModel.Autocomplete = new UsernameCollection(ViewModel.ClientService, ViewModel.Dialog.Chat.Id, 0, Field.Text, false, true);
+                ViewModel.Autocomplete = new UsernameCollection(ViewModel.ClientService, ViewModel.Dialog.Chat.Id, 0, Field.Text, false, true, true);
             }
 
             DeleteButton.Visibility = string.IsNullOrEmpty(Field.Text) && Field.State == ChatSearchState.Text ? Visibility.Collapsed : Visibility.Visible;
@@ -308,20 +310,20 @@ namespace Telegram.Controls.Chats
 
         private void OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            var shift = WindowContext.IsKeyDown(Windows.System.VirtualKey.Shift);
+            var modifiers = WindowContext.KeyModifiers();
 
-            if (e.Key == Windows.System.VirtualKey.Enter && !shift && Field.State != ChatSearchState.Members)
+            if (e.Key == VirtualKey.Enter && modifiers == VirtualKeyModifiers.None && Field.State != ChatSearchState.Members)
             {
                 _debouncer.Cancel();
                 ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter, ViewModel.SavedMessagesTag);
                 e.Handled = true;
             }
-            else if (e.Key == Windows.System.VirtualKey.Enter && shift && Field.State != ChatSearchState.Members)
+            else if (e.Key == VirtualKey.Enter && modifiers == VirtualKeyModifiers.Shift && Field.State != ChatSearchState.Members)
             {
                 ViewModel?.NextCommand.Execute();
                 e.Handled = true;
             }
-            else if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(Field.Text))
+            else if (e.Key == VirtualKey.Back && string.IsNullOrEmpty(Field.Text))
             {
                 Delete(false);
                 e.Handled = true;
@@ -405,7 +407,7 @@ namespace Telegram.Controls.Chats
             {
                 case ChatSearchState.Members:
                     ToolsPanel.Visibility = Visibility.Collapsed;
-                    viewModel.Autocomplete = new UsernameCollection(viewModel.ClientService, viewModel.Dialog.Chat.Id, 0, string.Empty, false, true);
+                    viewModel.Autocomplete = new UsernameCollection(viewModel.ClientService, viewModel.Dialog.Chat.Id, 0, string.Empty, false, true, true);
                     break;
                 case ChatSearchState.Media:
                     ToolsPanel.Visibility = Visibility.Collapsed;

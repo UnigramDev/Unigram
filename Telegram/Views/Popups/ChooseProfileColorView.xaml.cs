@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Shapes;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Navigation;
@@ -66,7 +67,7 @@ namespace Telegram.Views.Popups
                 Title.Text = user.FullName();
                 Subtitle.Text = Strings.Online;
 
-                Identity.SetStatus(clientService, user);
+                Identity.SetStatus(clientService, user, BotVerified);
 
                 BadgeText.Text = Strings.UserProfileIcon;
                 Reset.Content = Strings.UserProfileColorReset;
@@ -97,7 +98,7 @@ namespace Telegram.Views.Popups
                     }
                 }
 
-                Identity.SetStatus(clientService, chat);
+                Identity.SetStatus(clientService, chat, BotVerified);
 
                 BadgeText.Text = Strings.ChannelProfileLogo;
                 Reset.Content = Strings.UserProfileColorReset;
@@ -226,11 +227,16 @@ namespace Telegram.Views.Popups
 
         private void Flyout_EmojiSelected(object sender, EmojiSelectedEventArgs e)
         {
-            SelectedCustomEmojiId = e.CustomEmojiId;
+            if (e.Type is not ReactionTypeCustomEmoji customEmoji)
+            {
+                return;
+            }
+
+            SelectedCustomEmojiId = customEmoji.CustomEmojiId;
 
             UpdateProfileAccentColor(null, SelectedAccentColor?.Id ?? -1, SelectedCustomEmojiId);
 
-            if (e.CustomEmojiId != 0)
+            if (customEmoji.CustomEmojiId != 0)
             {
                 Animated.Source = new CustomEmojiFileSource(_clientService, SelectedCustomEmojiId);
                 Badge.Badge = string.Empty;
@@ -274,6 +280,7 @@ namespace Telegram.Views.Popups
                 var colors = color.ForTheme(_actualTheme);
 
                 Identity.Foreground = new SolidColorBrush(Colors.White);
+                BotVerified.ReplacementColor = new SolidColorBrush(Colors.White);
 
                 HeaderRoot.RequestedTheme = ElementTheme.Dark;
 
@@ -310,6 +317,7 @@ namespace Telegram.Views.Popups
             else
             {
                 Identity.ClearValue(ForegroundProperty);
+                BotVerified.ClearValue(AnimatedImage.ReplacementColorProperty);
 
                 HeaderRoot.ClearValue(Panel.BackgroundProperty);
                 HeaderRoot.RequestedTheme = ElementTheme.Default;

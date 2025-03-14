@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -162,7 +162,7 @@ namespace Telegram.Services
             item.Aggregator.Unsubscribe(item);
             //WindowContext.Unsubscribe(item);
 
-            await WindowContext.ForEachAsync(async window =>
+            await WindowContext.ForEachAsync(window =>
             {
                 if (window.Content is RootPage root && replace != null)
                 {
@@ -174,9 +174,7 @@ namespace Telegram.Services
                     window.NavigationServices.RemoveByFrameId($"{item.Id}");
                     window.NavigationServices.RemoveByFrameId($"Main{item.Id}");
 
-                    var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(window.Content.XamlRoot);
-
-                    foreach (var popup in popups)
+                    foreach (var popup in VisualTreeHelper.GetOpenPopups(window))
                     {
                         if (popup.Child is ContentPopup toast)
                         {
@@ -184,10 +182,12 @@ namespace Telegram.Services
                             toast.Hide();
                         }
                     }
+
+                    return Task.CompletedTask;
                 }
                 else
                 {
-                    await WindowContext.Current.ConsolidateAsync();
+                    return WindowContext.Current.ConsolidateAsync();
                 }
             });
 

@@ -1,20 +1,23 @@
 ﻿using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls.Media;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Windows.Media.Capture;
-using Windows.UI;
+using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace Telegram.Controls.Chats
 {
@@ -125,49 +128,72 @@ namespace Telegram.Controls.Chats
             _controlledButton.ManipulationDelta += OnManipulationDelta;
         }
 
-        private void OnRecordingStarted(object sender, EventArgs e)
+        private async void OnRecordingStarted(object sender, EventArgs e)
         {
-            if (sender is not MediaCapture mediaCapture || mediaCapture.MediaCaptureSettings.StreamingCaptureMode == StreamingCaptureMode.Audio)
+            try
             {
-                return;
-            }
-
-            //_videoElement = new CaptureElement
-            //{
-            //    Source = mediaCapture,
-            //    Stretch = Stretch.UniformToFill,
-            //    Width = 272,
-            //    Height = 272,
-            //    RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5),
-            //    RenderTransform = new ScaleTransform
-            //    {
-            //        ScaleX = -1
-            //    }
-            //};
-
-            _videoPopup = new Popup
-            {
-                XamlRoot = XamlRoot,
-                Child = new Border
+                if (sender is not MediaCapture mediaCapture || mediaCapture.MediaCaptureSettings.StreamingCaptureMode == StreamingCaptureMode.Audio)
                 {
-                    Width = XamlRoot.Size.Width,
-                    Height = XamlRoot.Size.Height,
-                    Background = new SolidColorBrush(ActualTheme == ElementTheme.Light
-                            ? Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF)
-                            : Color.FromArgb(0x99, 0x00, 0x00, 0x00)),
-                    Child = new Border
-                    {
-                        Width = 272,
-                        Height = 272,
-                        Background = new SolidColorBrush(Colors.Black),
-                        CornerRadius = new CornerRadius(272 / 2),
-                        //Child = _videoElement
-                    }
+                    return;
                 }
-            };
 
-            _videoPopup.IsOpen = true;
-            _ = mediaCapture.StartPreviewAsync();
+                //_videoElement = new CaptureElement
+                //{
+                //    Source = mediaCapture,
+                //    Stretch = Stretch.UniformToFill,
+                //    Width = 272,
+                //    Height = 272,
+                //    RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5),
+                //    RenderTransform = new ScaleTransform
+                //    {
+                //        ScaleX = -1
+                //    }
+                //};
+
+                //var videoRoot = new Grid
+                //{
+                //    Width = 272,
+                //    Height = 272,
+                //    Background = await LoadLastFrameAsync(),
+                //    CornerRadius = new CornerRadius(272 / 2),
+                //    Translation = new Vector3(0, 0, 128),
+                //    Shadow = new ThemeShadow()
+                //};
+
+                //videoRoot.Children.Add(_videoElement);
+                //videoRoot.Children.Add(new SelfDestructTimer
+                //{
+                //    Width = 272,
+                //    Height = 272,
+                //    Center = 272 / 2,
+                //    Radius = 272 / 2 - 3,
+                //    Background = new SolidColorBrush(Colors.Transparent),
+                //    Maximum = 60,
+                //    Value = DateTime.Now.AddMinutes(1)
+                //});
+
+                //_videoPopup = new Popup
+                //{
+                //    XamlRoot = XamlRoot,
+                //    IsHitTestVisible = false,
+                //    Child = new Border
+                //    {
+                //        Width = XamlRoot.Size.Width,
+                //        Height = XamlRoot.Size.Height,
+                //        Background = new SolidColorBrush(ActualTheme == ElementTheme.Light
+                //                ? Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF)
+                //                : Color.FromArgb(0x99, 0x00, 0x00, 0x00)),
+                //        Child = videoRoot
+                //    }
+                //};
+
+                //_videoPopup.IsOpen = true;
+                //_ = mediaCapture.StartPreviewAsync();
+            }
+            catch
+            {
+                // As everything happens asynchronously, the media capture could be already disposed
+            }
         }
 
         private void OnRecordingStarting(object sender, EventArgs e)
@@ -191,8 +217,8 @@ namespace Telegram.Controls.Chats
                 _videoPopup.IsOpen = false;
                 _videoPopup = null;
 
-                _videoElement.Source = null;
-                _videoElement = null;
+                //_videoElement.Source = null;
+                //_videoElement = null;
             }
 
             ChatRecordPopup.IsOpen = true;
@@ -240,13 +266,83 @@ namespace Telegram.Controls.Chats
 
             batch.End();
 
-            StartTyping?.Invoke(this, ControlledButton.IsChecked.Value ? new ChatActionRecordingVideoNote() : new ChatActionRecordingVoiceNote());
+            StartTyping?.Invoke(this, ControlledButton.IsChecked.Value
+                ? new ChatActionRecordingVideoNote()
+                : new ChatActionRecordingVoiceNote());
         }
 
         public event EventHandler<ChatAction> StartTyping;
         public event EventHandler CancelTyping;
 
-        private void OnRecordingStopped(object sender, EventArgs e)
+        private async Task<Brush> LoadLastFrameAsync()
+        {
+            try
+            {
+                var file = await ApplicationData.Current.TemporaryFolder.TryGetItemAsync("LastVideoFrame.png");
+                if (file != null)
+                {
+                    var bitmap = new BitmapImage();
+
+                    using (var stream = new InMemoryRandomAccessStream())
+                    {
+                        try
+                        {
+                            await Task.Run(() => PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(file.Path, 3, stream));
+                            await bitmap.SetSourceAsync(stream);
+                        }
+                        catch { }
+                    }
+
+                    return new ImageBrush
+                    {
+                        ImageSource = bitmap
+                    };
+                }
+            }
+            catch
+            {
+                // Catching as this would break the UI otherwise
+            }
+
+            return new SolidColorBrush(Colors.Black);
+        }
+
+        private async Task SaveLastFrameAsync()
+        {
+            try
+            {
+                //var element = _videoElement;
+                //if (element == null || !element.IsConnected())
+                //{
+                //    return;
+                //}
+
+                //var target = new RenderTargetBitmap();
+                //await target.RenderAsync(_videoElement);
+                //var pixels = await target.GetPixelsAsync();
+
+                //var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("LastVideoFrame.png", CreationCollisionOption.ReplaceExisting);
+                //using var stream = await file.OpenAsync(FileAccessMode.ReadWrite);
+                //var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+
+                //var width = (uint)target.PixelWidth;
+                //var height = (uint)target.PixelHeight;
+
+                //encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, width, height, 96, 96, pixels.ToArray());
+
+                //encoder.BitmapTransform.ScaledWidth = 80;
+                //encoder.BitmapTransform.ScaledHeight = 80;
+                //encoder.BitmapTransform.Flip = BitmapFlip.Horizontal;
+
+                //await encoder.FlushAsync();
+            }
+            catch
+            {
+                // Catching as this would break the UI otherwise
+            }
+        }
+
+        private async void OnRecordingStopped(object sender, EventArgs e)
         {
             //if (btnVoiceMessage.IsLocked)
             //{
@@ -257,13 +353,15 @@ namespace Telegram.Controls.Chats
 
             _blobVisual.StopAnimating();
 
+            await SaveLastFrameAsync();
+
             if (_videoPopup != null)
             {
                 _videoPopup.IsOpen = false;
                 _videoPopup = null;
 
-                _videoElement.Source = null;
-                _videoElement = null;
+                //_videoElement.Source = null;
+                //_videoElement = null;
             }
 
             AttachExpression();
@@ -462,7 +560,7 @@ namespace Telegram.Controls.Chats
 
                 WaveformLabel.Text = result.Duration.ToString("m\\:ss");
                 Waveform.Visibility = Visibility.Visible;
-                Waveform.UpdateWaveform(new VoiceNote(0, result.Waveform, string.Empty, null, null));
+                Waveform.UpdateWaveform(new VoiceNote(-1, result.Waveform, string.Empty, null, null));
 
                 var compositor = BootStrapper.Current.Compositor;
                 var ellipse = compositor.CreateRoundedRectangleGeometry();

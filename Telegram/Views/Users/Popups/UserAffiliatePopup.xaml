@@ -1,0 +1,20 @@
+<controls:ContentPopup x:Class="Telegram.Views.Users.Popups.UserAffiliatePopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
+                       mc:Ignorable="d">
+
+    <StackPanel>
+        <TextBlock x:Name="MessageLabel"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Margin="0,0,0,20" />
+        <controls:TableView>
+            <controls:TableViewItem x:Name="Commission"
+                                    Header="{CustomResource AffiliateProgramCommission}" />
+            <controls:TableViewItem x:Name="Duration"
+                                    Header="{CustomResource AffiliateProgramDuration}" />
+        </controls:TableView>
+    </StackPanel>
+</controls:ContentPopup>

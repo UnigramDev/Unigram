@@ -36,7 +36,7 @@
                                 AutoPlay="False"
                                 LoopCount="1"
                                 IsViewportAware="True"
-                                Margin="0,-8,0,0" />
+                                Margin="0,-12,0,0" />
 
         <TextBlock x:Name="Title"
                    TextAlignment="Center"
@@ -48,7 +48,8 @@
                    Style="{StaticResource CaptionTextBlockStyle}"
                    Grid.Row="2" />
 
-        <Grid Background="{ThemeResource MessageReactionBackgroundBrush}"
+        <Grid x:Name="PriceRoot"
+              Background="{ThemeResource MessageReactionBackgroundBrush}"
               HorizontalAlignment="Center"
               Height="24"
               CornerRadius="12"

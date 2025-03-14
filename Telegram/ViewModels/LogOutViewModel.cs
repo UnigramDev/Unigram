@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -15,15 +15,11 @@ namespace Telegram.ViewModels
 {
     public partial class LogOutViewModel : ViewModelBase
     {
-        private readonly INotificationsService _pushService;
-        private readonly IContactsService _contactsService;
         private readonly IPasscodeService _passcodeService;
 
-        public LogOutViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, IContactsService contactsService, IPasscodeService passcodeService)
+        public LogOutViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPasscodeService passcodeService)
             : base(clientService, settingsService, aggregator)
         {
-            _pushService = notificationsService;
-            _contactsService = contactsService;
             _passcodeService = passcodeService;
         }
 

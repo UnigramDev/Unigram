@@ -8,9 +8,11 @@
       xmlns:controls="using:Telegram.Controls"
       xmlns:services="using:Telegram.Services"
       xmlns:settings="using:Telegram.Views.Settings"
+      xmlns:converters="using:Telegram.Converters"
       mc:Ignorable="d"
       d:DesignHeight="300"
-      d:DesignWidth="400">
+      d:DesignWidth="400"
+      ProcessKeyboardAccelerators="OnProcessKeyboardAccelerators">
 
     <Page.Resources>
         <Style x:Key="NavigationViewExpanderStyle"
@@ -113,20 +115,26 @@
                       VerticalAlignment="Center"
                       Grid.Column="1">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
+                    <controls:CustomEmojiIcon x:Name="BotVerified"
+                                              Visibility="Collapsed"
+                                              VerticalAlignment="Bottom"
+                                              Margin="0,-2,4,-2" />
                     <TextBlock x:Name="TitleLabel"
                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                TextWrapping="NoWrap"
-                               TextTrimming="CharacterEllipsis" />
+                               TextTrimming="CharacterEllipsis"
+                               Grid.Column="1" />
                     <controls:IdentityIcon x:Name="Identity"
                                            VerticalAlignment="Bottom"
-                                           Margin="4,0,0,2"
-                                           Grid.Column="1" />
+                                           Margin="4,0,0,0"
+                                           Grid.Column="2" />
                 </Grid>
 
-                <controls:BadgeControl Text="{x:Bind UnreadCount, Mode=OneWay}"
+                <controls:BadgeControl Text="{x:Bind converters:Formatter.ShortNumber(UnreadCount), Mode=OneWay}"
                                        IsUnmuted="{x:Bind IsUnmuted, Mode=OneWay}"
                                        Visibility="{x:Bind ShowCount, Mode=OneWay}"
                                        VerticalAlignment="Center"

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -14,6 +14,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views.Create;
 
 namespace Telegram.ViewModels.Supergroups
 {
@@ -308,6 +309,37 @@ namespace Telegram.ViewModels.Supergroups
             else
             {
 
+            }
+        }
+
+        public async void Create()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var completion = new TaskCompletionSource<Chat>();
+
+            var confirm = await ShowPopupAsync(new NewGroupPopup(completion, string.Format(Strings.GroupCreateDiscussionDefaultName, chat.Title)));
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var linkedChat = await completion.Task;
+                if (linkedChat != null)
+                {
+                    if (linkedChat.Type is ChatTypeSupergroup supergroup)
+                    {
+                        await ClientService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(supergroup.SupergroupId, true));
+                    }
+
+                    var response = await ClientService.SendAsync(new SetChatDiscussionGroup(chat.Id, linkedChat.Id));
+                    if (response is Ok)
+                    {
+                        NavigationService.GoBack();
+                        NavigationService.Frame.ForwardStack.Clear();
+                    }
+                }
             }
         }
     }

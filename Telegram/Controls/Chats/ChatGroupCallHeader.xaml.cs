@@ -1,11 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
@@ -94,6 +95,8 @@ namespace Telegram.Controls.Chats
                     TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : call.ScheduledStartDate != 0 ? Strings.VoipGroupScheduledVoiceChat : Strings.VoipGroupVoiceChat;
                     ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension(Strings.R.Participants, call.ParticipantCount) : Strings.MembersTalkingNobody;
                 }
+
+                AutomationProperties.SetName(this, Label.Text);
 
                 if (call.ScheduledStartDate != 0)
                 {

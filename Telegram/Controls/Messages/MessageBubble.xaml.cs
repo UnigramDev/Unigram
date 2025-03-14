@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -32,6 +32,7 @@ using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Stories;
 using Windows.Foundation;
 
@@ -59,7 +60,7 @@ namespace Telegram.Controls.Messages
         public bool Highlight { get; } = true;
     }
 
-    public sealed partial class MessageBubble : Control
+    public sealed partial class MessageBubble : Control, IReactionsDelegate
     {
         private MessageViewModel _message;
 
@@ -651,7 +652,23 @@ namespace Telegram.Controls.Messages
 
             if (message.IsSaved || message.IsVerificationCode)
             {
-                FwdFrom_Click(null, null);
+                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser)
+                {
+                    message.Delegate.OpenUser(fromUser.SenderUserId);
+                }
+                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
+                {
+                    message.Delegate.OpenChat(fromChat.SenderChatId, true);
+                }
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
+                {
+                    // TODO: verify if this is sufficient
+                    message.Delegate.OpenChat(fromChannel.ChatId);
+                }
+                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
+                {
+                    ToastPopup.Show(XamlRoot, Strings.HidAccount);
+                }
             }
             else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
@@ -1138,7 +1155,7 @@ namespace Telegram.Controls.Messages
 
         private void ViaBot_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
-            if (_message is not MessageViewModel message)
+            if (_message is not MessageViewModel message || message.Delegate?.IsDialog is not true)
             {
                 return;
             }
@@ -1177,7 +1194,7 @@ namespace Telegram.Controls.Messages
 
         private void From_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
-            if (_message is not MessageViewModel message)
+            if (_message is not MessageViewModel message || message.Delegate?.IsDialog is not true)
             {
                 return;
             }
@@ -1970,13 +1987,13 @@ namespace Telegram.Controls.Messages
 
             void OpenUrl(string url, bool trust)
             {
-                if (message.Content is MessageText text && MessageHelper.AreTheSame(text.LinkPreview?.Url, url, out _))
+                if (message.Content is MessageText text && text.LinkPreview?.InstantViewVersion != 0 && MessageHelper.AreTheSame(text.LinkPreview?.Url, url, out _))
                 {
-                    message.Delegate.OpenWebPage(text);
+                    message.Delegate.OpenWebPage(message);
                 }
                 else
                 {
-                    message.Delegate.OpenUrl(url, trust);
+                    message.Delegate.OpenUrl(url, trust, new OpenUrlSourceChat(message.ChatId, message.SenderId));
                 }
             }
 
@@ -2451,7 +2468,7 @@ namespace Telegram.Controls.Messages
                     visual.Opacity = 0;
 
                     var transform = Message.TransformToVisual(ContentPanel);
-                    var point = transform.TransformPoint(new Windows.Foundation.Point());
+                    var position = transform.TransformPoint(new Windows.Foundation.Point());
 
                     for (int j = 0; j < message.Text.Paragraphs.Count; j++)
                     {
@@ -2483,7 +2500,7 @@ namespace Telegram.Controls.Messages
                         var rectangles = PlaceholderImageHelper.Current.RangeMetrics(partial, xoffset, xlength, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft);
                         var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
-                        point = new Windows.Foundation.Point(paragraph.Margin.Left + point.X, relative.Y + point.Y + inset);
+                        var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X, relative.Y + position.Y + inset);
 
                         for (int i = 0; i < rectangles.Count; i++)
                         {
@@ -2751,7 +2768,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            message.Delegate.OpenInlineButton(message, e.Button);
+            message.Delegate?.OpenInlineButton(message, e.Button);
         }
 
         #endregion

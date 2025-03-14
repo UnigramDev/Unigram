@@ -1,11 +1,14 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
 using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Td;
+using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Settings.Privacy;
 
 namespace Telegram.Views.Settings.Privacy
@@ -19,10 +22,47 @@ namespace Telegram.Views.Settings.Privacy
             InitializeComponent();
             Title = Strings.PrivacyMessages;
 
+            SliderHelper.InitializeTicks(Price, PriceTicks, 2, ConvertPriceTicks);
+        }
+
+        private string ConvertFooter(PrivacyValue value)
+        {
+            if (value == PrivacyValue.DisallowAll)
+            {
+                return Strings.PrivateMessagesChargePriceInfo;
+            }
+
             var formatted = Extensions.ReplacePremiumLink(Strings.PrivacyMessagesInfo, null);
             var markdown = ClientEx.GetMarkdownText(formatted);
 
-            Group.Footer = markdown.Text;
+            return markdown.Text;
+        }
+
+        private string ConvertPriceValue(int value)
+        {
+            return Locale.Declension(Strings.R.StarsCount, value);
+        }
+
+        private string ConvertPriceTicks(int value)
+        {
+            return (value == 0 ? 1 : 9000).ToString("N0");
+        }
+
+        private string ConvertPriceFee(int value)
+        {
+            var xtr = value / 1000d;
+            var usd = xtr * ViewModel.ClientService.Options.ThousandStarToUsdRate;
+
+            var format = Formatter.FormatAmount((long)usd, "USD");
+
+            return string.Format(Strings.PrivateMessagesPriceInfo, 85, format);
+        }
+
+        private Visibility ConvertFee(PrivacyValue value)
+        {
+            return value == PrivacyValue.DisallowAll
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -43,6 +43,20 @@ namespace Telegram.ViewModels
             set => Set(ref _alwaysPreview, value);
         }
 
+        private bool _useNoSound;
+        public bool UseNoSound
+        {
+            get => _useNoSound;
+            set => Set(ref _useNoSound, value);
+        }
+
+        private bool _useDefault;
+        public bool UseDefault
+        {
+            get => _useDefault;
+            set => Set(ref _useDefault, value);
+        }
+
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             await base.OnNavigatedToAsync(parameter, mode, state);
@@ -63,13 +77,18 @@ namespace Telegram.ViewModels
                     AlwaysPreview = chat.NotificationSettings.ShowPreview;
                 }
 
-                if (chat.NotificationSettings.UseDefaultSound)
+                var soundId = Settings.Notifications.GetSoundId(chat);
+                if (soundId == -1)
                 {
-
+                    UseDefault = true;
+                }
+                else if (soundId == 0)
+                {
+                    UseNoSound = true;
                 }
                 else
                 {
-                    var sound = Items.FirstOrDefault(x => x.Id == chat.NotificationSettings.SoundId);
+                    var sound = Items.FirstOrDefault(x => x.Id == soundId);
                     if (sound != null)
                     {
                         sound.IsSelected = true;

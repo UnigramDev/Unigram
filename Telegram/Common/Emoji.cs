@@ -1,16 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Controls.Media;
-using Telegram.Native;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
@@ -174,7 +174,7 @@ namespace Telegram.Common
 
     public static partial class Emoji
     {
-        partial class EmojiGroupInternal
+        public partial class EmojiGroupInternal
         {
             public string Title { get; set; }
             public string Glyph { get; set; }
@@ -240,50 +240,12 @@ namespace Telegram.Common
             return results;
         }
 
-        public static async Task<IList<object>> SearchAsync(IClientService clientService, string query, EmojiSkinTone skin, EmojiDrawerMode mode)
-        {
-            var result = new List<object>();
-            var inputLanguage = NativeUtils.GetKeyboardCulture();
-
-            var response = await clientService.SendAsync(new SearchEmojis(query, new[] { inputLanguage }));
-            if (response is EmojiKeywords suggestions)
-            {
-                if (clientService.IsPremium)
-                {
-                    var stickers = await SearchAsync(clientService, suggestions.EmojiKeywordsValue.DistinctBy(x => x.Emoji).Select(x => x.Emoji));
-
-                    foreach (var item in stickers)
-                    {
-                        result.Add(item);
-                    }
-                }
-
-                if (mode == EmojiDrawerMode.Chat)
-                {
-                    foreach (var item in suggestions.EmojiKeywordsValue.DistinctBy(x => x.Emoji))
-                    {
-                        var emoji = item.Emoji;
-                        if (EmojiGroupInternal._skinEmojis.Contains(emoji) || EmojiGroupInternal._skinEmojis.Contains(emoji.TrimEnd('\uFE0F')))
-                        {
-                            result.Add(new EmojiSkinData(emoji, skin));
-                        }
-                        else
-                        {
-                            result.Add(new EmojiData(item.Emoji));
-                        }
-                    }
-                }
-            }
-
-            return result;
-        }
-
         public static async Task<IList<StickerViewModel>> SearchAsync(IClientService clientService, IEnumerable<string> emojis)
         {
             var result = new List<StickerViewModel>();
             var query = string.Join(" ", emojis);
 
-            var resp = await clientService.SendAsync(new SearchStickers(new StickerTypeCustomEmoji(), query, 100));
+            var resp = await clientService.SendAsync(new SearchStickers(new StickerTypeCustomEmoji(), query, string.Empty, Array.Empty<string>(), 0, 100));
             if (resp is Stickers stickers)
             {
                 foreach (var item in stickers.StickersValue)

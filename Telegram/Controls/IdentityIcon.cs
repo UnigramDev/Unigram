@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -90,13 +90,15 @@ namespace Telegram.Controls
             }
             else if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
-                if (clientService.IsPremiumAvailable && chat.EmojiStatus != null && !supergroup.IsFake && !supergroup.IsScam)
+                var status = supergroup.VerificationStatus;
+
+                if (clientService.IsPremiumAvailable && chat.EmojiStatus != null && status.IsFalse())
                 {
                     CurrentType = IdentityIconType.None;
                     UnloadObject(ref Icon);
 
                     LoadObject(ref Status, nameof(Status));
-                    Status.Source = new CustomEmojiFileSource(clientService, chat.EmojiStatus.CustomEmojiId);
+                    Status.Source = new CustomEmojiFileSource(clientService, chat.EmojiStatus.Type);
                 }
                 else
                 {
@@ -121,23 +123,25 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (clientService.IsPremiumAvailable && user.EmojiStatus != null && !user.IsFake && !user.IsScam && (!chatList || user.Id != clientService.Options.MyId))
+            var status = user.VerificationStatus;
+
+            if (clientService.IsPremiumAvailable && user.EmojiStatus != null && status.IsFalse() && (!chatList || user.Id != clientService.Options.MyId))
             {
                 CurrentType = IdentityIconType.Premium;
                 UnloadObject(ref Icon);
 
                 LoadObject(ref Status, nameof(Status));
-                Status.Source = new CustomEmojiFileSource(clientService, user.EmojiStatus.CustomEmojiId);
+                Status.Source = new CustomEmojiFileSource(clientService, user.EmojiStatus.Type);
             }
             else
             {
-                var premium = user.IsPremium && clientService.IsPremiumAvailable && user.Id != clientService.Options.MyId;
+                var premium = user.IsPremium && clientService.IsPremiumAvailable && (!chatList || user.Id != clientService.Options.MyId);
 
-                if (premium || user.IsFake || user.IsScam || user.IsVerified)
+                if (premium || (status != null && (status.IsFake || status.IsScam || status.IsVerified)))
                 {
-                    CurrentType = user.IsFake
+                    CurrentType = status?.IsFake is true
                         ? IdentityIconType.Fake
-                        : user.IsScam
+                        : status?.IsScam is true
                         ? IdentityIconType.Scam
                         : premium
                         ? IdentityIconType.Premium
@@ -170,11 +174,12 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (chat.IsFake || chat.IsScam || chat.IsVerified)
+            var status = chat.VerificationStatus;
+            if (status != null && (status.IsFake || status.IsScam || status.IsVerified))
             {
-                CurrentType = chat.IsFake
+                CurrentType = status.IsFake
                     ? IdentityIconType.Fake
-                    : chat.IsScam
+                    : status.IsScam
                     ? IdentityIconType.Scam
                     : IdentityIconType.Verified;
 
@@ -238,11 +243,12 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (supergroup.IsFake || supergroup.IsScam || supergroup.IsVerified)
+            var status = supergroup.VerificationStatus;
+            if (status != null && (status.IsFake || status.IsScam || status.IsVerified))
             {
-                CurrentType = supergroup.IsFake
+                CurrentType = status.IsFake
                     ? IdentityIconType.Fake
-                    : supergroup.IsScam
+                    : status.IsScam
                     ? IdentityIconType.Scam
                     : IdentityIconType.Verified;
 
@@ -269,6 +275,65 @@ namespace Telegram.Controls
             UnloadObject(ref Icon);
             UnloadObject(ref Status);
         }
+
+        #region Helpers
+
+        public void SetStatus(IClientService clientService, User user, CustomEmojiIcon botVerified, bool chatList = false)
+        {
+            SetStatus(clientService, user, chatList);
+
+            if (user.VerificationStatus?.BotVerificationIconCustomEmojiId is not null and not 0)
+            {
+                botVerified.Source = new CustomEmojiFileSource(clientService, user.VerificationStatus.BotVerificationIconCustomEmojiId);
+                botVerified.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                botVerified.Source = null;
+                botVerified.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        public void SetStatus(IClientService clientService, Chat chat, CustomEmojiIcon botVerified)
+        {
+            long? verification;
+            if (clientService.TryGetUser(chat, out User user) && user.Id != clientService.Options.MyId)
+            {
+                verification = user.VerificationStatus?.BotVerificationIconCustomEmojiId;
+                SetStatus(clientService, user, true);
+            }
+            else if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                verification = supergroup.VerificationStatus?.BotVerificationIconCustomEmojiId;
+                SetStatus(supergroup);
+            }
+            else
+            {
+                verification = null;
+                ClearStatus();
+            }
+
+            if (verification is not null and not 0)
+            {
+                botVerified.Source = new CustomEmojiFileSource(clientService, verification.Value);
+                botVerified.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                botVerified.Source = null;
+                botVerified.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        public void ClearStatus(CustomEmojiIcon botVerified)
+        {
+            ClearStatus();
+
+            botVerified.Source = null;
+            botVerified.Visibility = Visibility.Collapsed;
+        }
+
+        #endregion
 
         private void LoadObject<T>(ref T element, /*[CallerArgumentExpression("element")]*/string name)
             where T : DependencyObject

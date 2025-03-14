@@ -1,19 +1,22 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Controls;
 using Telegram.Native;
+using Telegram.Views.Host;
 using Windows.System.UserProfile;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class ChooseDateTimeToast : TeachingTip
+    public sealed partial class ChooseDateTimeToast : TeachingTipEx
     {
         private readonly TaskCompletionSource<ContentDialogResult> _tsc = new();
 
@@ -62,8 +65,21 @@ namespace Telegram.Views.Popups
             _tsc.TrySetResult(ContentDialogResult.Secondary);
         }
 
-        public Task<ContentDialogResult> ShowAsync()
+        public Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot)
         {
+            if (xamlRoot.Content is not IToastHost host)
+            {
+                return Task.FromResult(ContentDialogResult.None);
+            }
+
+            XamlRoot = xamlRoot;
+            Closed += (s, args) =>
+            {
+                host.ToastClosed(s);
+            };
+
+            host.ToastOpened(this);
+
             IsOpen = true;
             return _tsc.Task;
         }

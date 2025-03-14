@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -235,6 +235,24 @@ namespace Telegram.Controls.Chats
         }
 
         public StickersPanelMode Mode => _stickersMode;
+
+        public void Show(StickersTab tab)
+        {
+            if (ControlledPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Collapsed)
+            {
+                SettingsService.Current.Stickers.SelectedTab = tab;
+                Stickers_PointerEntered(null, null);
+            }
+            else if (SettingsService.Current.Stickers.SelectedTab != tab)
+            {
+                SettingsService.Current.Stickers.SelectedTab = tab;
+                ControlledPanel.Activate();
+            }
+            else
+            {
+                Collapse();
+            }
+        }
 
         public void Collapse()
         {

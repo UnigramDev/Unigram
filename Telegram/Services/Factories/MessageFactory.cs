@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -81,35 +81,26 @@ namespace Telegram.Services.Factories
             };
         }
 
-        public static async Task<InputMessageFactory> CreateVideoAsync(StorageVideo video, bool animated, bool captionAboveMedia = false, bool spoiler = false, MessageSelfDestructType ttl = null, VideoTransformEffectDefinition transform = null)
+        public static async Task<InputMessageFactory> CreateVideoAsync(StorageVideo video, bool animated, bool captionAboveMedia = false, bool spoiler = false, MessageSelfDestructType ttl = null, VideoConversion conversion = null)
         {
             var duration = video.TotalSeconds;
             var videoWidth = video.Width;
             var videoHeight = video.Height;
 
-            var conversion = new VideoConversion
+            conversion ??= new VideoConversion
             {
                 Mute = animated
             };
 
-            //var profile = await video.GetEncodingAsync();
-            //if (profile != null)
-            //{
-            //    conversion.Transcode = true;
-            //    conversion.Mute = animated;
-            //    conversion.Width = profile.Video.Width;
-            //    conversion.Height = profile.Video.Height;
-            //    conversion.Bitrate = profile.Video.Bitrate;
-            //}
-
-            if (transform != null)
+            if (conversion.TrimStartTime is TimeSpan trimStart && conversion.TrimStopTime is TimeSpan trimStop)
             {
-                //conversion.Transcode = true;
-                conversion.Transform = true;
-                conversion.Rotation = transform.Rotation;
-                conversion.OutputSize = transform.OutputSize;
-                conversion.Mirror = transform.Mirror;
-                conversion.CropRectangle = transform.CropRectangle;
+                duration = (int)(trimStop.TotalSeconds - trimStart.TotalSeconds);
+            }
+
+            if (conversion.Transform && !conversion.CropRectangle.IsEmpty)
+            {
+                videoWidth = (int)conversion.CropRectangle.Width;
+                videoHeight = (int)conversion.CropRectangle.Height;
             }
 
             var generated = await video.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
@@ -127,8 +118,8 @@ namespace Telegram.Services.Factories
             return new InputMessageFactory
             {
                 InputFile = generated,
-                Delegate = (inputFile, caption) => new InputMessageVideo(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, true, caption, captionAboveMedia, ttl, spoiler),
-                PaidDelegate = (inputFile) => new InputPaidMedia(new InputPaidMediaTypeVideo(duration, true), inputFile, thumbnail, Array.Empty<int>(), videoWidth, videoHeight)
+                Delegate = (inputFile, caption) => new InputMessageVideo(inputFile, thumbnail, null, 0, Array.Empty<int>(), duration, videoWidth, videoHeight, true, caption, captionAboveMedia, ttl, spoiler),
+                PaidDelegate = (inputFile) => new InputPaidMedia(new InputPaidMediaTypeVideo(null, 0, duration, true), inputFile, thumbnail, Array.Empty<int>(), videoWidth, videoHeight)
             };
         }
 
@@ -186,8 +177,24 @@ namespace Telegram.Services.Factories
         public static async Task<InputMessageFactory> CreateDocumentAsync(StorageMedia media, bool asFile, bool asScreenshot)
         {
             var file = media.File;
-
             var generated = await file.ToGeneratedAsync(asScreenshot ? ConversionType.Screenshot : ConversionType.Copy);
+
+            if (!asFile && media is StorageAudio audio)
+            {
+                var duration = audio.TotalSeconds;
+
+                var title = audio.Title;
+                var performer = audio.Performer;
+
+                var albumCover = new InputThumbnail(await file.ToGeneratedAsync(ConversionType.AlbumCover), 0, 0);
+
+                return new InputMessageFactory
+                {
+                    InputFile = generated,
+                    Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, albumCover, duration, title, performer, caption)
+                };
+            }
+
             var thumbnail = new InputThumbnail(await file.ToGeneratedAsync(ConversionType.DocumentThumbnail), 0, 0);
 
             if (!asFile && file.FileType.Equals(".webp", StringComparison.OrdinalIgnoreCase))
@@ -220,19 +227,6 @@ namespace Telegram.Services.Factories
             else if (!asFile && file.FileType.Equals(".tgs", StringComparison.OrdinalIgnoreCase))
             {
                 // TODO
-            }
-            else if (!asFile && media is StorageAudio audio)
-            {
-                var duration = audio.TotalSeconds;
-
-                var title = audio.Title;
-                var performer = audio.Performer;
-
-                return new InputMessageFactory
-                {
-                    InputFile = generated,
-                    Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, duration, title, performer, caption)
-                };
             }
 
             return new InputMessageFactory

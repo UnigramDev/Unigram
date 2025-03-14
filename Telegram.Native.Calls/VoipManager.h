@@ -7,7 +7,6 @@
 #include "InstanceImpl.h"
 #include "v2/InstanceV2Impl.h"
 #include "v2/InstanceV2ReferenceImpl.h"
-#include "v2_4_0_0/InstanceV2_4_0_0Impl.h"
 #include "VideoCaptureInterface.h"
 #include "SignalingDataEmittedEventArgs.h"
 #include "RemoteMediaStateUpdatedEventArgs.h"

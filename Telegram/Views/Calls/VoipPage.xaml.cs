@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Numerics;
@@ -15,11 +16,11 @@ using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.Views.Host;
 using Windows.Foundation;
-using Windows.Graphics.Capture;
 using Windows.System.Display;
 using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
@@ -33,7 +34,7 @@ namespace Telegram.Views.Calls
         Remote,
     }
 
-    public sealed partial class VoipPage : WindowEx, IToastHost
+    public sealed partial class VoipPage : WindowEx, IToastHost, IPopupHost
     {
         private static readonly int[] _pendingGradient = new[] { 0x568FD6, 0x626ED5, 0xA667D5, 0x7664DA };
         private static readonly int[] _readyGradient = new[] { 0xACBD65, 0x459F8D, 0x53A4D1, 0x3E917A };
@@ -131,6 +132,33 @@ namespace Telegram.Views.Calls
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
         }
 
+        public void ToastOpened(TeachingTip toast)
+        {
+            Resources.Remove("TeachingTip");
+            Resources.Add("TeachingTip", toast);
+        }
+
+        public void ToastClosed(TeachingTip toast)
+        {
+            if (Resources.TryGetValue("TeachingTip", out object cached))
+            {
+                if (cached == toast)
+                {
+                    Resources.Remove("TeachingTip");
+                }
+            }
+        }
+
+        public void PopupOpened()
+        {
+            Window.Current.SetTitleBar(null);
+        }
+
+        public void PopupClosed()
+        {
+            Window.Current.SetTitleBar(TitleBar);
+        }
+
         private void InitializeBlob()
         {
             var device = ElementComposition.GetSharedDevice();
@@ -167,27 +195,6 @@ namespace Telegram.Views.Calls
                 visual.CenterPoint = new Vector3(point.X / 2, point.Y + 4, 0);
             }
         }
-
-        #region IToastHost
-
-        public void Connect(TeachingTip toast)
-        {
-            Resources.Remove("TeachingTip");
-            Resources.Add("TeachingTip", toast);
-        }
-
-        public void Disconnect(TeachingTip toast)
-        {
-            if (Resources.TryGetValue("TeachingTip", out object cached))
-            {
-                if (cached == toast)
-                {
-                    Resources.Remove("TeachingTip");
-                }
-            }
-        }
-
-        #endregion
 
         #region Thread switch
 
@@ -1014,7 +1021,7 @@ namespace Telegram.Views.Calls
 
         private void TempAccept_Click(object sender, RoutedEventArgs e)
         {
-            _call.Accept(XamlRoot);
+            _call.Accept(false);
         }
 
         private void Discard_Click(object sender, RoutedEventArgs e)
@@ -1056,15 +1063,13 @@ namespace Telegram.Views.Calls
                 }
                 else
                 {
-                    var picker = new GraphicsCapturePicker();
-
-                    var item = await picker.PickSingleItemAsync();
+                    var item = await CaptureSessionService.ChooseAsync(XamlRoot, false);
                     if (item == null)
                     {
                         return;
                     }
 
-                    _call.ShareScreen(item);
+                    _call.ShareScreen(item.CaptureItem);
                 }
             }
             catch

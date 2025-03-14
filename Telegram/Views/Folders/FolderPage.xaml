@@ -6,7 +6,9 @@
                   xmlns:common="using:Telegram.Common"
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:cells="using:Telegram.Controls.Cells"
+                  xmlns:messages="using:Telegram.Controls.Messages"
                   xmlns:local="using:Telegram.Views"
+                  xmlns:drawers="using:Telegram.Controls.Drawers"
                   mc:Ignorable="d"
                   Loaded="OnLoaded"
                   Title="{x:Bind ConvertTitle(ViewModel.Folder), Mode=OneWay}">
@@ -51,30 +53,82 @@
                                     <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListNewFolder.tgs" />
 
                                     <Grid>
-                                        <controls:HeaderedControl Header="{CustomResource FilterNameHint}">
-                                            <TextBox x:Name="TitleField"
-                                                     Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                     Style="{StaticResource NoDeleteTextBoxStyle}"
-                                                     Padding="58,11,6,12"
-                                                     Height="44" />
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <FlyoutBase.AttachedFlyout>
+                                            <Flyout x:Name="EmojiFlyout"
+                                                    Placement="Top"
+                                                    ShowMode="Transient">
+                                                <Flyout.FlyoutPresenterStyle>
+                                                    <Style TargetType="FlyoutPresenter">
+                                                        <Setter Property="Padding"
+                                                                Value="0" />
+                                                        <Setter Property="CornerRadius"
+                                                                Value="8" />
+                                                    </Style>
+                                                </Flyout.FlyoutPresenterStyle>
+                                                <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                                                     ItemClick="Emoji_ItemClick"
+                                                                     Width="300"
+                                                                     Height="360" />
+                                            </Flyout>
+                                        </FlyoutBase.AttachedFlyout>
+                                        <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                                                   MaxWidth="1000"
+                                                   Margin="24,16,24,8">
+                                            <Run Text="{x:Bind ConvertTitleHint(ViewModel.HasCustomEmoji), Mode=OneWay}" />
+                                            <Hyperlink Click="ToggleAnimations_Click"
+                                                       UnderlineStyle="None">
+                                                <Run Text="{x:Bind ConvertAnimate(ViewModel.HasCustomEmoji, ViewModel.AnimateCustomEmoji), Mode=OneWay}" />
+                                            </Hyperlink>
+                                        </TextBlock>
+
+                                        <controls:HeaderedControl BorderThickness="0"
+                                                                  Padding="0"
+                                                                  Grid.Row="1">
+                                            <Grid>
+                                                <controls:CaptionTextBox x:Name="TitleField"
+                                                                         TextChanged="TitleField_TextChanged"
+                                                                         FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                                         Padding="58,11,6,12"
+                                                                         Height="44"
+                                                                         MaxLength="12"
+                                                                         AcceptsReturn="False" />
+
+                                                <messages:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                                            IsHitTestVisible="False"
+                                                                            Margin="58,10,0,0" />
+
+                                                <controls:GlyphButton Click="Emoji_Click"
+                                                                      Glyph="&#xE76E;"
+                                                                      AutomationProperties.Name="{CustomResource Emoji}"
+                                                                      AllowFocusOnInteraction="False"
+                                                                      HorizontalAlignment="Right"
+                                                                      VerticalAlignment="Bottom"
+                                                                      FontSize="24"
+                                                                      Height="44"
+                                                                      Grid.Column="1" />
+                                            </Grid>
                                         </controls:HeaderedControl>
 
-                                        <controls:AnimatedGlyphButton x:Name="EmojiButton"
+                                        <controls:AnimatedGlyphButton x:Name="IconButton"
                                                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                                                      Glyph="{x:Bind ConvertEmoji(ViewModel.Icon), Mode=OneWay}"
-                                                                      Click="Emoji_Click"
+                                                                      Glyph="{x:Bind ConvertIcon(ViewModel.Icon), Mode=OneWay}"
+                                                                      Click="Icon_Click"
                                                                       Width="60"
                                                                       Height="46"
                                                                       HorizontalAlignment="Left"
                                                                       VerticalAlignment="Bottom"
                                                                       Margin="24,0,24,0"
-                                                                      Grid.Column="1">
+                                                                      Grid.Column="1"
+                                                                      Grid.Row="1">
                                             <FlyoutBase.AttachedFlyout>
                                                 <Flyout>
-                                                    <GridView x:Name="EmojiList"
-                                                              ItemClick="EmojiList_ItemClick"
-                                                              ContainerContentChanging="EmojiList_ContainerContentChanging"
+                                                    <GridView x:Name="IconList"
+                                                              ItemClick="IconList_ItemClick"
+                                                              ContainerContentChanging="IconList_ContainerContentChanging"
                                                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                                               ScrollViewer.HorizontalScrollMode="Disabled"
                                                               SelectionMode="Single"
@@ -150,7 +204,6 @@
 
                                         <TextBlock Text="{CustomResource FilterIncludeInfo}"
                                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                                   MaxWidth="1000"
                                                    Margin="24,6,24,0" />
                                     </StackPanel>
 
@@ -207,7 +260,6 @@
 
                                 <TextBlock Text="{CustomResource FilterExcludeInfo}"
                                            Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                           MaxWidth="1000"
                                            Margin="24,6,24,0" />
                             </StackPanel>
 
@@ -221,13 +273,27 @@
                                                Style="{StaticResource BaseTextBlockStyle}"
                                                VerticalAlignment="Bottom" />
 
-                                    <controls:BadgeControl x:Name="TagPreview"
-                                                           Text="{x:Bind ViewModel.Title, Mode=OneWay}"
-                                                           HorizontalAlignment="Left"
-                                                           VerticalAlignment="Bottom"
-                                                           CornerRadius="4"
-                                                           Margin="4,0,0,0"
-                                                           Grid.Column="1" />
+                                    <Grid x:Name="TagPreview"
+                                          Height="16"
+                                          MinWidth="16"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Bottom"
+                                          CornerRadius="4"
+                                          Margin="4,0,0,0"
+                                          Grid.Column="1">
+                                        <RichTextBlock x:Name="TagPreviewText"
+                                                       cells:ChatFolderCell.Title="{x:Bind ViewModel.Name, Mode=OneWay}"
+                                                       TextLineBounds="Tight"
+                                                       TextAlignment="Center"
+                                                       OpticalMarginAlignment="TrimSideBearings"
+                                                       FontSize="11"
+                                                       Padding="4,0,4,0"
+                                                       VerticalAlignment="Center"
+                                                       IsTextSelectionEnabled="False"
+                                                       Typography.NumeralAlignment="Tabular">
+                                            <Paragraph />
+                                        </RichTextBlock>
+                                    </Grid>
 
                                     <TextBlock x:Name="TagDisabled"
                                                Style="{StaticResource InfoCaptionTextBlockStyle}"
@@ -396,7 +462,6 @@
                 <controls:SettingsPanel IsFooter="True">
                     <TextBlock Text="{CustomResource FilterInviteLinksHintNew}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               MaxWidth="1000"
                                Margin="24,6,24,0" />
                 </controls:SettingsPanel>
             </ListView.Footer>

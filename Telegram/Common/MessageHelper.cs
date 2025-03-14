@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,6 +7,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,7 @@ using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
+using Telegram.Views.Stars.Popups;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources.Core;
@@ -53,9 +55,12 @@ namespace Telegram.Common
     {
         public long ChatId { get; }
 
-        public OpenUrlSourceChat(long chatId)
+        public MessageSender SenderId { get; }
+
+        public OpenUrlSourceChat(long chatId, MessageSender senderId)
         {
             ChatId = chatId;
+            SenderId = senderId;
         }
     }
 
@@ -223,7 +228,7 @@ namespace Telegram.Common
         public static async void DragStarting(MessageViewModel message, DragStartingEventArgs args)
         {
             var file = message?.GetFile();
-            if (file != null && file.Local.IsDownloadingCompleted)
+            if (file != null && file.Local.IsDownloadingCompleted && message.CanBeSaved)
             {
                 var deferral = args.GetDeferral();
 
@@ -259,6 +264,10 @@ namespace Telegram.Common
                 {
                     deferral.Complete();
                 }
+            }
+            else
+            {
+                args.Cancel = true;
             }
         }
 
@@ -536,7 +545,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypePremiumGiftCode premiumGiftCode)
             {
-                NavigateToPremiumGiftCode(clientService, navigation, premiumGiftCode.Code);
+                NavigateToPremiumGiftCode(clientService, navigation, premiumGiftCode.Code, source);
             }
             else if (internalLink is InternalLinkTypePrivacyAndSecuritySettings)
             {
@@ -556,7 +565,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypePublicChat publicChat)
             {
-                NavigateToUsername(clientService, navigation, publicChat.ChatUsername, null, null, publicChat.DraftText, publicChat.OpenProfile);
+                NavigateToUsername(clientService, navigation, publicChat.ChatUsername, draftText: publicChat.DraftText, openProfile: publicChat.OpenProfile);
             }
             else if (internalLink is InternalLinkTypeQrCodeAuthentication)
             {
@@ -600,20 +609,54 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypeWebApp webApp)
             {
-                NavigateToWebApp(clientService, navigation, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName, source);
+                NavigateToWebApp(clientService, navigation, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName, webApp.Mode, source);
             }
             else if (internalLink is InternalLinkTypeMainWebApp mainWebApp)
             {
-                NavigateToMainWebApp(clientService, navigation, mainWebApp.BotUsername, mainWebApp.StartParameter, source);
+                NavigateToMainWebApp(clientService, navigation, mainWebApp.BotUsername, mainWebApp.StartParameter, mainWebApp.Mode, source);
+            }
+            else if (internalLink is InternalLinkTypeChatAffiliateProgram chatAffiliateProgram)
+            {
+                NavigateToUsername(clientService, navigation, chatAffiliateProgram.Username, referrer: chatAffiliateProgram.Referrer);
+            }
+            else if (internalLink is InternalLinkTypeUpgradedGift upgradedGift)
+            {
+                NavigateToUpgradedGift(clientService, navigation, upgradedGift.Name);
             }
         }
 
-        private static async void NavigateToPremiumGiftCode(IClientService clientService, INavigationService navigation, string code)
+        private static async void NavigateToUpgradedGift(IClientService clientService, INavigationService navigation, string name)
+        {
+            var response = await clientService.SendAsync(new GetUpgradedGift(name));
+            if (response is UpgradedGift gift)
+            {
+                var senderUserId = 0;
+                var receiverUserId = 0;
+
+                var text = gift.OriginalDetails?.Text ?? string.Empty.AsFormattedText();
+                var receivedGift = new ReceivedGift(string.Empty, null, text, true, false, false, false, false, false, 0, new SentGiftUpgraded(gift), 0, 0, 0, 0);
+
+                navigation.ShowPopup(new ReceivedGiftPopup(clientService, navigation, receivedGift, null));
+            }
+            else
+            {
+                navigation.ShowToast(Strings.UniqueGiftNotFound, ToastPopupIcon.Error);
+            }
+        }
+
+        private static async void NavigateToPremiumGiftCode(IClientService clientService, INavigationService navigation, string code, OpenUrlSource source)
         {
             var response = await clientService.SendAsync(new CheckPremiumGiftCode(code));
             if (response is PremiumGiftCodeInfo info)
             {
-                await new GiftCodePopup(clientService, navigation, info, code).ShowQueuedAsync(navigation.XamlRoot);
+                if (source is OpenUrlSourceChat sourceChat)
+                {
+                    navigation.ShowPopup(new PromoPopup(clientService, sourceChat.SenderId ?? new MessageSenderChat(sourceChat.ChatId), info, code));
+                }
+                else
+                {
+                    navigation.ShowPopup(new PromoPopup(clientService, null, info, code));
+                }
             }
             else
             {
@@ -640,12 +683,12 @@ namespace Telegram.Common
                 var response2 = await clientService.SendAsync(new GetAttachmentMenuBot(botUser.Id));
                 if (response2 is AttachmentMenuBot menuBot)
                 {
-                    OpenMiniApp(clientService, navigation, botUser, menuBot, attachmentMenuBot.Url, sourceChat);
+                    OpenMiniApp(clientService, navigation, botUser, menuBot, attachmentMenuBot.Url, sourceChat, attachmentMenuBot);
                 }
             }
         }
 
-        public static async void OpenMiniApp(IClientService clientService, INavigationService navigation, User user, AttachmentMenuBot bot, string url, Chat sourceChat = null, Action<bool> continuation = null)
+        public static async void OpenMiniApp(IClientService clientService, INavigationService navigation, User user, AttachmentMenuBot bot, string url, Chat sourceChat = null, InternalLinkType sourceLink = null, Action<bool> continuation = null)
         {
             if (bot.ShowDisclaimerInSideMenu || !clientService.IsBotAddedToAttachmentMenu(bot.BotUserId))
             {
@@ -684,10 +727,10 @@ namespace Telegram.Common
 
             continuation?.Invoke(true);
 
-            var response = await clientService.SendAsync(new GetWebAppUrl(bot.BotUserId, url, Theme.Current.Parameters, Strings.AppName));
+            var response = await clientService.SendAsync(new GetWebAppUrl(bot.BotUserId, url, new WebAppOpenParameters(Theme.Current.Parameters, "unigram", new WebAppOpenModeFullSize())));
             if (response is HttpUrl httpUrl)
             {
-                navigation.NavigateToWebApp(user, httpUrl.Url, 0, bot, sourceChat);
+                navigation.NavigateToWebApp(user, httpUrl.Url, 0, bot, null, sourceChat, sourceLink);
             }
         }
 
@@ -745,7 +788,7 @@ namespace Telegram.Common
             }
         }
 
-        public static async void NavigateToWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, string webAppShortName, OpenUrlSource source)
+        public static async void NavigateToWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, string webAppShortName, WebAppOpenMode mode, OpenUrlSource source)
         {
             var response = await clientService.SendAsync(new SearchPublicChat(botUsername));
             if (response is Chat chat && clientService.TryGetUser(chat, out User botUser))
@@ -798,10 +841,10 @@ namespace Telegram.Common
                         _ => 0
                     };
 
-                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(chatId, botUser.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, foundWebApp.RequestWriteAccess && popup.IsChecked is true));
+                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(chatId, botUser.Id, webAppShortName, startParameter, foundWebApp.RequestWriteAccess && popup.IsChecked is true, new WebAppOpenParameters(Theme.Current.Parameters, "unigram", mode)));
                     if (responsa is HttpUrl url)
                     {
-                        navigation.NavigateToWebApp(botUser, url.Url);
+                        navigation.NavigateToWebApp(botUser, url.Url, openMode: mode, sourceLink: new InternalLinkTypeWebApp(botUsername, webAppShortName, startParameter, mode));
                     }
                 }
                 else
@@ -815,12 +858,12 @@ namespace Telegram.Common
             }
         }
 
-        public static async void NavigateToMainWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, OpenUrlSource source = null)
+        public static async void NavigateToMainWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, WebAppOpenMode mode, OpenUrlSource source = null)
         {
             var response = await clientService.SendAsync(new SearchPublicChat(botUsername));
             if (response is Chat chat && clientService.TryGetUser(chat, out User botUser))
             {
-                NavigateToMainWebApp(clientService, navigation, botUser, startParameter, source);
+                NavigateToMainWebApp(clientService, navigation, botUser, startParameter, mode, source);
             }
             else
             {
@@ -828,7 +871,7 @@ namespace Telegram.Common
             }
         }
 
-        public static async void NavigateToMainWebApp(IClientService clientService, INavigationService navigation, User botUser, string startParameter, OpenUrlSource source = null)
+        public static async void NavigateToMainWebApp(IClientService clientService, INavigationService navigation, User botUser, string startParameter, WebAppOpenMode mode, OpenUrlSource source = null)
         {
             if (botUser.Type is not UserTypeBot { HasMainWebApp: true })
             {
@@ -881,10 +924,10 @@ namespace Telegram.Common
                 _ => 0
             };
 
-            var responsa = await clientService.SendAsync(new GetMainWebApp(chatId, botUser.Id, startParameter, Theme.Current.Parameters, Strings.AppName));
+            var responsa = await clientService.SendAsync(new GetMainWebApp(chatId, botUser.Id, startParameter, new WebAppOpenParameters(Theme.Current.Parameters, "unigram", mode)));
             if (responsa is MainWebApp webApp)
             {
-                navigation.NavigateToWebApp(botUser, webApp.Url, menuBot: menuBot);
+                navigation.NavigateToWebApp(botUser, webApp.Url, menuBot: menuBot, openMode: webApp.Mode, sourceLink: new InternalLinkTypeMainWebApp(botUser.ActiveUsername(), startParameter, webApp.Mode));
             }
         }
 
@@ -1226,9 +1269,9 @@ namespace Telegram.Common
             }
         }
 
-        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat = null, string game = null, string draftText = null, bool openProfile = false)
+        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat = null, string game = null, string draftText = null, string referrer = null, bool openProfile = false)
         {
-            var response = await clientService.SendAsync(new SearchPublicChat(username));
+            var response = await clientService.SendAsync(referrer != null ? new SearchChatAffiliateProgram(username, referrer) : new SearchPublicChat(username));
             if (response is Chat chat)
             {
                 if (game != null)
@@ -1248,6 +1291,11 @@ namespace Telegram.Common
                     else
                     {
                         navigation.NavigateToChat(chat);
+
+                        if (chat.LastMessage != null && referrer != null)
+                        {
+                            clientService.Send(new SendBotStartMessage(user.Id, chat.Id, string.Empty));
+                        }
                     }
                 }
                 else if (videoChat != null)
@@ -1258,6 +1306,10 @@ namespace Telegram.Common
                 {
                     navigation.NavigateToChat(chat);
                 }
+            }
+            else if (referrer != null)
+            {
+                navigation.ShowPopup(Strings.AffiliateLinkExpiredText, Strings.AffiliateLinkExpiredTitle, Strings.OK);
             }
             else
             {
@@ -1434,7 +1486,7 @@ namespace Telegram.Common
                 {
                     if (untrust)
                     {
-                        var confirm = await navigationService.ShowPopupAsync(string.Format(Strings.OpenUrlAlert, url), Strings.OpenUrlTitle, Strings.Open, Strings.Cancel);
+                        var confirm = await navigationService.ShowPopupAsync(string.Format(Strings.OpenUrlAlert, string.Format("[{0}]({0})", url)), Strings.OpenUrlTitle, Strings.Open, Strings.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;
@@ -1478,6 +1530,24 @@ namespace Telegram.Common
                 {
                     args.Handled = false;
                 }
+            }
+            else
+            {
+                args.Handled = false;
+            }
+        }
+
+        public static void Hyperlink_ContextRequested(ITranslateService service, Hyperlink sender, ContextRequestedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+
+            Hyperlink_ContextRequested(flyout, service, sender);
+
+            if (flyout.Items.Count > 0)
+            {
+                // We don't want to unfocus the text are when the context menu gets opened
+                flyout.ShowAt(sender.ElementStart.VisualParent as FrameworkElement);
+                args.Handled = true;
             }
             else
             {
@@ -1555,36 +1625,39 @@ namespace Telegram.Common
             else
             {
                 var hyperlink = text.GetHyperlinkFromPoint(point);
-                if (hyperlink == null)
+                if (hyperlink != null)
                 {
-                    return;
+                    Hyperlink_ContextRequested(flyout, service, hyperlink);
                 }
+            }
+        }
 
-                var link = GetEntityData(hyperlink);
-                if (link == null)
+        public static void Hyperlink_ContextRequested(MenuFlyout flyout, ITranslateService service, Hyperlink hyperlink)
+        {
+            var link = GetEntityData(hyperlink);
+            if (link == null)
+            {
+                return;
+            }
+
+            var type = GetEntityType(hyperlink);
+            if (type is null or TextEntityTypeUrl or TextEntityTypeTextUrl)
+            {
+                var action = GetEntityAction(hyperlink);
+                if (action != null)
                 {
-                    return;
-                }
-
-                var type = GetEntityType(hyperlink);
-                if (type is null or TextEntityTypeUrl or TextEntityTypeTextUrl)
-                {
-                    var action = GetEntityAction(hyperlink);
-                    if (action != null)
-                    {
-                        flyout.CreateFlyoutItem(action, Strings.Open, Icons.OpenIn);
-                    }
-                    else
-                    {
-                        flyout.CreateFlyoutItem(() => LinkOpen_Click(text.XamlRoot, link), Strings.Open, Icons.OpenIn);
-                    }
-
-                    flyout.CreateFlyoutItem(() => LinkCopy_Click(text.XamlRoot, link), Strings.Copy, Icons.DocumentCopy);
+                    flyout.CreateFlyoutItem(action, Strings.Open, Icons.OpenIn);
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(() => TextCopy_Click(text.XamlRoot, link), Strings.Copy, Icons.DocumentCopy);
+                    flyout.CreateFlyoutItem(() => LinkOpen_Click(hyperlink.XamlRoot, link), Strings.Open, Icons.OpenIn);
                 }
+
+                flyout.CreateFlyoutItem(() => LinkCopy_Click(hyperlink.XamlRoot, link), Strings.Copy, Icons.DocumentCopy);
+            }
+            else
+            {
+                flyout.CreateFlyoutItem(() => TextCopy_Click(hyperlink.XamlRoot, link), Strings.Copy, Icons.DocumentCopy);
             }
         }
 

@@ -88,7 +88,7 @@
                       SelectedItem="{x:Bind ViewModel.SelectedSet, Mode=TwoWay}"
                       Height="40"
                       IsItemClickEnabled="True"
-                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                       ScrollViewer.HorizontalScrollMode="Auto"
                       ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                       ScrollViewer.VerticalScrollBarVisibility="Disabled"

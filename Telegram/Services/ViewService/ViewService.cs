@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -36,7 +36,8 @@ namespace Telegram.Services
     public enum ViewServiceMode
     {
         Default,
-        CompactOverlay
+        CompactOverlay,
+        FullScreen,
     }
 
     public partial class ViewServiceOptions
@@ -168,7 +169,11 @@ namespace Telegram.Services
 
                 await ApplicationViewSwitcher.TryShowAsViewModeAsync(control.Id, viewMode, preferences);
 
-                if (options.Width != 0 && options.Height != 0)
+                if (options.ViewMode == ViewServiceMode.FullScreen)
+                {
+                    newView.DispatcherQueue.TryEnqueue(() => ApplicationView.GetForCurrentView().TryEnterFullScreenMode());
+                }
+                else if (options.Width != 0 && options.Height != 0)
                 {
                     newView.DispatcherQueue.TryEnqueue(() => ApplicationView.GetForCurrentView().TryResizeView(new Size(options.Width, options.Height)));
                 }
@@ -194,7 +199,7 @@ namespace Telegram.Services
             {
                 if (window.IsInMainView)
                 {
-                    return Task.CompletedTask;
+                    return;
                 }
 
                 foreach (var service in window.NavigationServices)
@@ -202,11 +207,9 @@ namespace Telegram.Services
                     if (parameter is long chatId && service.IsChatOpen(chatId, true))
                     {
                         oldControl = ViewLifetimeControl.GetForCurrentView();
-                        return Task.CompletedTask;
+                        return;
                     }
                 }
-
-                return Task.CompletedTask;
             });
 
             if (oldControl != null)

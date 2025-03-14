@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -54,8 +54,8 @@ namespace Telegram.Views.Supergroups.Popups
             var animated = content.Children[1] as AnimatedImage;
             var cross = content.Children[0];
 
-            var cover = stickerSet.GetThumbnail();
-            if (cover == null)
+            var source = DelayedFileSource.FromStickerSetInfo(ViewModel.ClientService, stickerSet);
+            if (source == null)
             {
                 animated.Source = null;
                 cross.Visibility = Visibility.Visible;
@@ -64,7 +64,7 @@ namespace Telegram.Views.Supergroups.Popups
             }
             else
             {
-                animated.Source = new DelayedFileSource(ViewModel.ClientService, cover);
+                animated.Source = source;
                 cross.Visibility = Visibility.Collapsed;
                 title.Margin = new Thickness();
                 subtitle.Text = Locale.Declension(Strings.R.Stickers, stickerSet.Size);

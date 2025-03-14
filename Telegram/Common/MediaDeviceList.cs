@@ -103,7 +103,7 @@ namespace Telegram.Common
             {
                 lock (_cache)
                 {
-                    return _cache.Count > 0 ? true : _watcher.Status == DeviceWatcherStatus.EnumerationCompleted ? false : null;
+                    return _cache.Count > 0 ? true : _watcher?.Status == DeviceWatcherStatus.EnumerationCompleted ? false : null;
                 }
             }
         }

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -85,6 +85,7 @@ namespace Telegram.Views.Supergroups
             var canChangeInfo = group.CanChangeInfo(chat);
             var canInviteUsers = group.CanInviteUsers();
             var canRestrictMembers = group.CanRestrictMembers();
+            var canPostMessages = group.CanPostMessages();
             var hasActiveUsername = group.HasActiveUsername();
 
             TitleLabel.IsReadOnly = !canChangeInfo;
@@ -147,6 +148,8 @@ namespace Telegram.Views.Supergroups
                 || ChatLinked.Visibility == Visibility.Visible
                     ? Visibility.Visible
                     : Visibility.Collapsed;
+
+            AffiliatePrograms.Visibility = group.IsChannel && group.CanPostMessages() ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
@@ -235,6 +238,8 @@ namespace Telegram.Views.Supergroups
                 || ChatLinked.Visibility == Visibility.Visible
                     ? Visibility.Visible
                     : Visibility.Collapsed;
+
+            AffiliatePrograms.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)

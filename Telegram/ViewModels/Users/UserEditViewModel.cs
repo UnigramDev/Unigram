@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -14,7 +14,9 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Chats;
+using Telegram.Views.Popups;
 using Telegram.Views.Settings.Popups;
+using Telegram.Views.Users;
 
 namespace Telegram.ViewModels.Users
 {
@@ -80,8 +82,8 @@ namespace Telegram.ViewModels.Users
             }
         }
 
-        private long? _starCount;
-        public long? StarCount
+        private StarAmount _starCount;
+        public StarAmount StarCount
         {
             get => _starCount;
             set => Set(ref _starCount, value);
@@ -132,7 +134,7 @@ namespace Telegram.ViewModels.Users
                     var response = await ClientService.GetStarTransactionsAsync(new MessageSenderUser(userId), string.Empty, null, string.Empty, 1);
                     if (response is StarTransactions transactions)
                     {
-                        StarCount = transactions.StarCount;
+                        StarCount = transactions.StarAmount;
                     }
                 }
             }
@@ -282,6 +284,11 @@ namespace Telegram.ViewModels.Users
             await ShowPopupAsync(new SettingsUsernamePopup(), _userId);
         }
 
+        public void OpenAffiliate()
+        {
+            NavigationService.Navigate(typeof(UserAffiliatePage), _userId);
+        }
+
         public void ShowBalance()
         {
             NavigationService.Navigate(typeof(ChatStarsPage), new MessageSenderUser(_userId));
@@ -309,6 +316,11 @@ namespace Telegram.ViewModels.Users
             {
                 MessageHelper.OpenTelegramUrl(ClientService, NavigationService, fullInfo.BotInfo.EditSettingsLink);
             }
+        }
+
+        public void VerifyAccounts()
+        {
+            ShowPopup(new ChooseChatsPopup(), new ChooseChatsConfigurationVerifyChat(_userId));
         }
     }
 }

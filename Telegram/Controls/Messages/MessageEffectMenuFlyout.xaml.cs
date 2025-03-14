@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -18,6 +18,7 @@ using Telegram.Controls.Drawers;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Popups;
@@ -31,7 +32,7 @@ namespace Telegram.Controls.Messages
         private readonly IClientService _clientService;
 
         private readonly MessageViewModel _message;
-        private readonly MessageBubble _bubble;
+        private readonly IReactionsDelegate _bubble;
 
         private readonly StoryViewModel _story;
         private readonly FrameworkElement _reserved;
@@ -42,12 +43,12 @@ namespace Telegram.Controls.Messages
 
         public event EventHandler Opened;
 
-        public static MessageEffectMenuFlyout ShowAt(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions, EffectDrawerViewModel viewModel)
+        public static MessageEffectMenuFlyout ShowAt(FrameworkElement element, MessageViewModel message, IReactionsDelegate bubble, AvailableReactions reactions, EffectDrawerViewModel viewModel)
         {
             return new MessageEffectMenuFlyout(element, message, bubble, reactions, viewModel);
         }
 
-        private MessageEffectMenuFlyout(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions, EffectDrawerViewModel viewModel)
+        private MessageEffectMenuFlyout(FrameworkElement element, MessageViewModel message, IReactionsDelegate bubble, AvailableReactions reactions, EffectDrawerViewModel viewModel)
         {
             InitializeComponent();
 

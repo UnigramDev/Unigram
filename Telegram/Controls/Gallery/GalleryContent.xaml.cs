@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -17,6 +17,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
+using Telegram.Views;
 using Windows.Foundation;
 
 namespace Telegram.Controls.Gallery
@@ -161,6 +162,9 @@ namespace Telegram.Controls.Gallery
             RotationAngle = item?.RotationAngle ?? RotationAngle.Angle0;
             Background = null;
             Texture.Source = null;
+            Texture.Stretch = item?.Constraint != null
+                ? Stretch.UniformToFill
+                : Stretch.Uniform;
 
             //ScrollingHost.ChangeView(0, 0, 1, true);
 
@@ -189,8 +193,17 @@ namespace Telegram.Controls.Gallery
                 Constraint = item.Constraint;
             }
 
+            if (item is GalleryMessage message && message.Content is MessageDocument document && !message.IsMedia)
+            {
+                DocumentName.Text = document.Document.FileName;
+            }
+            else
+            {
+                DocumentName.Text = string.Empty;
+            }
+
             var thumbnail = item.Thumbnail;
-            if (thumbnail != null && (item.IsVideo || (item.IsPhoto && !file.Local.IsDownloadingCompleted)))
+            if (thumbnail != null && item.IsMedia && (item.IsVideo || (item.IsPhoto && !file.Local.IsDownloadingCompleted)))
             {
                 UpdateThumbnail(item, thumbnail, null, true);
             }
@@ -231,7 +244,7 @@ namespace Telegram.Controls.Gallery
                 Button.Progress = 0;
                 Button.Opacity = 1;
 
-                if (item.IsPhoto)
+                if (item.IsPhoto && item.IsMedia)
                 {
                     item.ClientService.DownloadFile(file.Id, 1);
                 }
@@ -244,12 +257,18 @@ namespace Telegram.Controls.Gallery
                     Button.Progress = 1;
                     Button.Opacity = 1;
                 }
-                else if (item.IsPhoto)
+                else if (item.IsPhoto && item.IsMedia)
                 {
                     Button.SetGlyph(file.Id, MessageContentState.Photo);
                     Button.Opacity = 0;
 
                     Texture.Source = UriEx.ToBitmap(file.Local.Path, 0, 0);
+                }
+                else
+                {
+                    Button.SetGlyph(file.Id, MessageContentState.Document);
+                    Button.Progress = 1;
+                    Button.Opacity = 1;
                 }
             }
 
@@ -351,6 +370,14 @@ namespace Telegram.Controls.Gallery
             {
                 _delegate?.OpenFile(item, file);
             }
+            else if (item is GalleryMessage message && !item.IsMedia)
+            {
+                var service = TypeResolver.Current.Resolve<IStorageService>(_delegate.ClientService.SessionId);
+                if (service != null)
+                {
+                    _ = service.OpenFileAsync(file);
+                }
+            }
         }
 
         private GalleryTransportControls _controls;
@@ -391,6 +418,7 @@ namespace Telegram.Controls.Gallery
                 controls.Attach(Video);
 
                 Video.Play(item, position);
+                Button.Visibility = Visibility.Collapsed;
             }
             catch { }
         }
@@ -413,6 +441,7 @@ namespace Telegram.Controls.Gallery
                 _fileId = file.Id;
 
                 Video = player;
+                Button.Visibility = Visibility.Collapsed;
                 //Video.IsUnloadedExpected = false;
 
                 controls.Attach(item, file);
@@ -457,6 +486,7 @@ namespace Telegram.Controls.Gallery
             if (Video != null)
             {
                 Video.Stop();
+                Button.Visibility = Visibility.Visible;
             }
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
@@ -483,6 +513,7 @@ namespace Telegram.Controls.Gallery
             {
                 _stopped = false;
                 Video.Clear();
+                Button.Visibility = Visibility.Visible;
             }
         }
 
@@ -495,6 +526,7 @@ namespace Telegram.Controls.Gallery
 
                 _stopped = true;
                 Video.Stop();
+                Button.Visibility = Visibility.Visible;
             }
             else
             {

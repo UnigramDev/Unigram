@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -45,10 +45,9 @@ namespace Telegram.Streams
                         Format = sticker.Format;
                         Width = sticker.Width;
                         Height = sticker.Height;
-                        Outline = sticker.Outline;
                         NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
 
-                        OnOutlineChanged();
+                        OnOutlineChanged(sticker.StickerValue);
                     }
                 }
 

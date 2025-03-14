@@ -86,6 +86,14 @@
                             </MenuFlyout>
                         </Button.Flyout>
                     </controls:BadgeButton>
+
+                    <controls:ProfilePicture x:Name="RemovePhotoPhoto"
+                                             Width="28"
+                                             Height="28"
+                                             HorizontalAlignment="Left"
+                                             Margin="16,0,0,-44"
+                                             Canvas.ZIndex="1" />
+
                     <controls:BadgeButton x:Name="RemovePhoto"
                                           Content="{CustomResource RemovePublicPhoto}"
                                           Click="{x:Bind ViewModel.RemovePhoto}"

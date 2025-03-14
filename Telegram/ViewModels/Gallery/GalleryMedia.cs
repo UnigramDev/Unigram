@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -41,7 +41,7 @@ namespace Telegram.ViewModels.Gallery
 
         public virtual IList<AlternativeVideo> AlternativeVideos => Array.Empty<AlternativeVideo>();
 
-        public virtual object Constraint { get; private set; }
+        public virtual object Constraint { get; protected set; }
 
         public virtual object From { get; private set; }
 
@@ -52,6 +52,8 @@ namespace Telegram.ViewModels.Gallery
         public virtual int Duration { get; private set; }
 
         public bool IsPhoto => !IsVideo;
+
+        public bool IsMedia { get; protected set; } = true;
 
         public virtual bool IsVideo { get; private set; }
         public virtual bool IsStreamable { get; private set; } = true;

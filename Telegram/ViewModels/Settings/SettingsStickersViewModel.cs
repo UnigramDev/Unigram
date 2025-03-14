@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -46,7 +46,7 @@ namespace Telegram.ViewModels.Settings
         public SettingsStickersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new DiffObservableCollection<StickerSetInfo>(new StickerSetInfoDiffHandler());
+            //Items = new DiffObservableCollection<StickerSetInfo>(new StickerSetInfoDiffHandler());
 
             //StickerSetShareCommand = new RelayCommand<StickerSetInfo>(StickerSetShareExecute);
             //StickerSetCopyCommand = new RelayCommand<StickerSetInfo>(StickerSetCopyExecute);
@@ -169,7 +169,7 @@ namespace Telegram.ViewModels.Settings
                     var union = await ClientService.SendAsync(new GetRecentStickers(_type == StickersType.Masks));
                     if (union is Stickers recents && recents.StickersValue.Count > 0)
                     {
-                        BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, Array.Empty<ClosedVectorPath>(), false, false, false, false, StickerType, false, false, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                        BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, null, false, false, false, false, StickerType, false, false, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
                     }
                     else
                     {
@@ -213,7 +213,7 @@ namespace Telegram.ViewModels.Settings
                     {
                         if (resultRecent is Stickers recents && recents.StickersValue.Count > 0)
                         {
-                            BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, Array.Empty<ClosedVectorPath>(), false, false, false, false, StickerType, false, false, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                            BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, null, false, false, false, false, StickerType, false, false, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
                         }
                         else
                         {
@@ -411,11 +411,6 @@ namespace Telegram.ViewModels.Settings
             NavigationService.Navigate(typeof(SettingsStickersPage), (int)type);
         }
 
-        public void OpenReaction()
-        {
-            NavigationService.Navigate(typeof(SettingsQuickReactionPage));
-        }
-
         public partial class ItemsCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
@@ -439,7 +434,7 @@ namespace Telegram.ViewModels.Settings
                         var recentResponse = await _clientService.SendAsync(new GetRecentStickers(_type is StickerTypeMask));
                         if (recentResponse is Stickers stickers && stickers.StickersValue.Count > 0)
                         {
-                            Add(new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, Array.Empty<ClosedVectorPath>(), false, false, false, false, _type, false, false, false, stickers.StickersValue.Count, stickers.StickersValue));
+                            Add(new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue.Count, stickers.StickersValue));
                         }
                     }
 

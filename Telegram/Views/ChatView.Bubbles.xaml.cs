@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -36,6 +36,11 @@ namespace Telegram.Views
 
         private void OnViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            MessagesHeaderRoot.MinHeight = Math.Max(0, Math.Truncate(Messages.ActualHeight - e.NewSize.Height));
+            //MessagesHeaderRoot.Padding = new Thickness(0, ClipperOuter.ActualHeight - DateHeaderRelative.ActualHeight, 0, 0);
+
+            //Logger.Info(MessagesHeaderRoot.Padding.Top);
+
             if (Messages.ScrollingHost.ScrollableHeight > 0)
             {
                 return;
@@ -157,6 +162,10 @@ namespace Telegram.Views
                         {
                             UpdateDateHeader(sendAtDate.SendDate, true);
                         }
+                        else if (message.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed sendWhenVideoProcessed)
+                        {
+                            UpdateDateHeader(sendWhenVideoProcessed.SendDate, true);
+                        }
                         else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
                         {
                             UpdateDateHeader(0, true);
@@ -221,6 +230,10 @@ namespace Telegram.Views
                     if (root is MessageSelector selector && selector.Content is MessageBubble bubble)
                     {
                         bubble.UpdateMessageReactions(message, true);
+                    }
+                    else if (root is MessageService service)
+                    {
+                        service.UpdateMessageReactions(message, true);
                     }
                 }
 
@@ -674,35 +687,31 @@ namespace Telegram.Views
                     return;
                 }
 
-                _updateThemeTask?.TrySetResult(true);
-
-                if (content is MessageSelector checkbox)
+                if (content is MessageService service)
+                {
+                    service.UpdateMessage(args.Item as MessageViewModel);
+                    args.Handled = true;
+                }
+                else if (content is MessageSelector checkbox)
                 {
                     // TODO: are there chances that at this point TextArea is not up to date yet?
                     checkbox.PrepareForItemOverride(message,
                         _viewModel.Type is DialogType.History or DialogType.Thread or DialogType.ScheduledMessages
                         && TextArea.Visibility == Visibility.Visible);
 
+                    if (checkbox.Content is MessageBubble bubble)
+                    {
+                        bubble.UpdateQuery(ViewModel.Search?.Query);
+                        bubble.UpdateMessage(args.Item as MessageViewModel);
+
+                        args.RegisterUpdateCallback(2, RegisterEvents);
+                        args.Handled = true;
+                    }
+
                     checkbox.UpdateMessage(message, Messages, ViewModel.IsSelectionEnabled);
                     checkbox.HorizontalAlignment = message.Date == 0 && message.Id == 0
                         ? HorizontalAlignment.Center
                         : HorizontalAlignment.Stretch;
-
-                    content = checkbox.Content as FrameworkElement;
-                }
-
-                if (content is MessageBubble bubble)
-                {
-                    bubble.UpdateQuery(ViewModel.Search?.Query);
-                    bubble.UpdateMessage(args.Item as MessageViewModel);
-
-                    args.RegisterUpdateCallback(2, RegisterEvents);
-                    args.Handled = true;
-                }
-                else if (content is MessageService service)
-                {
-                    service.UpdateMessage(args.Item as MessageViewModel);
-                    args.Handled = true;
                 }
             }
         }
@@ -807,13 +816,17 @@ namespace Telegram.Views
 
             if (message.IsService)
             {
-                if (message.Content is MessagePremiumGiftCode or MessageGiveawayPrizeStars)
+                if (message.Content is MessageGiveawayPrizeStars)
                 {
                     return ChatHistoryViewItemType.ServiceGiftCode;
                 }
-                else if (message.Content is MessageGiftedPremium or MessageGiftedStars or MessageGift)
+                else if (message.Content is MessageGiftedPremium or MessageGiftedStars or MessageGift or MessagePremiumGiftCode)
                 {
                     return ChatHistoryViewItemType.ServiceGift;
+                }
+                else if (message.Content is MessageUpgradedGift)
+                {
+                    return ChatHistoryViewItemType.ServiceUpgradedGift;
                 }
                 else if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto or MessageAsyncStory)
                 {

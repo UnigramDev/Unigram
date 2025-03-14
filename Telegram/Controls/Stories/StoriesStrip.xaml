@@ -50,7 +50,7 @@
                          Click="Show_Click"
                          IsTabStop="False"
                          Height="32"
-                         Margin="10,18,0,0"
+                         Margin="10,20,0,0"
                          CornerRadius="16"
                          VerticalAlignment="Top"
                          HorizontalAlignment="Left" />

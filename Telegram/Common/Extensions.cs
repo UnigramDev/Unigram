@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -57,6 +57,26 @@ namespace Telegram.Common
 {
     public static class Extensions
     {
+        public static void Add(this ColumnDefinitionCollection columns, double pixels)
+        {
+            columns.Add(new ColumnDefinition { Width = new GridLength(pixels) });
+        }
+
+        public static void Add(this ColumnDefinitionCollection columns, double value, GridUnitType type)
+        {
+            columns.Add(new ColumnDefinition { Width = new GridLength(value, type) });
+        }
+
+        public static void Add(this RowDefinitionCollection rows, double pixels)
+        {
+            rows.Add(new RowDefinition { Height = new GridLength(pixels) });
+        }
+
+        public static void Add(this RowDefinitionCollection rows, double value, GridUnitType type)
+        {
+            rows.Add(new RowDefinition { Height = new GridLength(value, type) });
+        }
+
         public static void SetToolTip(DependencyObject element, object value, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             if (ApiInfo.IsStoreRelease || value == null)
@@ -126,6 +146,11 @@ namespace Telegram.Common
             {
                 Point = new Point(x, y),
             });
+        }
+
+        public static FormattedText AsFormattedText(this string str)
+        {
+            return new FormattedText(str, Array.Empty<TextEntity>());
         }
 
         public static IEnumerable<IList<T>> ToChunks<T>(this List<T> enumerable, int chunkSize)
@@ -437,7 +462,7 @@ namespace Telegram.Common
 
         public static int GetNamedInt32(this JsonObject obj, string name, int defaultValue)
         {
-            return (int)obj.GetNamedNumber(name);
+            return (int)obj.GetNamedNumber(name, defaultValue);
         }
 
         public static bool HasExtension(this IStorageFile file, params string[] extensions)

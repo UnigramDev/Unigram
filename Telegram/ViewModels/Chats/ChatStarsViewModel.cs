@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Cells;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Chats;
 using Telegram.Views.Monetization.Popups;
 using Telegram.Views.Popups;
 using Telegram.Views.Stars.Popups;
@@ -33,7 +33,7 @@ namespace Telegram.ViewModels.Chats
         public ChatStarsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new IncrementalCollection<StarTransaction>(this);
+            Items = new IncrementalCollection<object>(this);
         }
 
         private double _headerHeight;
@@ -43,13 +43,6 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _headerHeight, value);
         }
 
-        private Chat _chat;
-        public Chat Chat
-        {
-            get => _chat;
-            set => Set(ref _chat, value);
-        }
-
         private ChartViewData _revenue;
         public ChartViewData Revenue
         {
@@ -57,22 +50,22 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _revenue, value);
         }
 
-        private CryptoAmount _availableAmount;
-        public CryptoAmount AvailableAmount
+        private StarAmount _availableAmount;
+        public StarAmount AvailableAmount
         {
             get => _availableAmount;
             set => Set(ref _availableAmount, value);
         }
 
-        private CryptoAmount _previousAmount;
-        public CryptoAmount PreviousAmount
+        private StarAmount _previousAmount;
+        public StarAmount PreviousAmount
         {
             get => _previousAmount;
             set => Set(ref _previousAmount, value);
         }
 
-        private CryptoAmount _totalAmount;
-        public CryptoAmount TotalAmount
+        private StarAmount _totalAmount;
+        public StarAmount TotalAmount
         {
             get => _totalAmount;
             set => Set(ref _totalAmount, value);
@@ -85,14 +78,12 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _isEmpty, value);
         }
 
-        private bool _isOwner;
-        public bool IsOwner
+        private double _usdRate;
+        public double UsdRate
         {
-            get => _isOwner;
-            set => Set(ref _isOwner, value);
+            get => _usdRate;
+            set => Set(ref _usdRate, value);
         }
-
-        public double UsdRate { get; private set; }
 
         private bool _withdrawalEnabled;
         public bool WithdrawalEnabled
@@ -108,24 +99,27 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _nextWithdrawalDate, value);
         }
 
-        public IncrementalCollection<StarTransaction> Items { get; }
+        public IncrementalCollection<object> Items { get; }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is long chatId)
             {
-                parameter = new MessageSenderChat(chatId);
+                if (ClientService.TryGetChat(chatId, out Chat chat))
+                {
+                    if (chat.Type is ChatTypePrivate privata)
+                    {
+                        parameter = new MessageSenderUser(privata.UserId);
+                    }
+                    else
+                    {
+                        parameter = new MessageSenderChat(chatId);
+                    }
+                }
             }
 
             _ownerId = parameter as MessageSender;
             IsLoading = true;
-
-            //Chat = ClientService.GetChat(chatId);
-
-            //if (ClientService.TryGetSupergroup(Chat, out Supergroup supergroup))
-            //{
-            //    IsOwner = supergroup.Status is ChatMemberStatusCreator;
-            //}
 
             await LoadAsync();
 
@@ -170,26 +164,9 @@ namespace Telegram.ViewModels.Chats
 
         private void UpdateAmount(StarRevenueStatus status)
         {
-            AvailableAmount = new CryptoAmount
-            {
-                Cryptocurrency = "XTR",
-                CryptocurrencyAmount = status.AvailableCount,
-                UsdRate = UsdRate,
-            };
-
-            PreviousAmount = new CryptoAmount
-            {
-                Cryptocurrency = "XTR",
-                CryptocurrencyAmount = status.CurrentCount,
-                UsdRate = UsdRate,
-            };
-
-            TotalAmount = new CryptoAmount
-            {
-                Cryptocurrency = "XTR",
-                CryptocurrencyAmount = status.TotalCount,
-                UsdRate = UsdRate,
-            };
+            AvailableAmount = status.AvailableAmount;
+            PreviousAmount = status.CurrentAmount;
+            TotalAmount = status.TotalAmount;
 
             WithdrawalEnabled = status.WithdrawalEnabled;
 
@@ -212,8 +189,8 @@ namespace Telegram.ViewModels.Chats
             }
 
             var popup = new InputPopup(InputPopupType.Stars);
-            popup.Value = AvailableAmount?.CryptocurrencyAmount ?? 0;
-            popup.Maximum = AvailableAmount?.CryptocurrencyAmount ?? 0;
+            popup.Value = AvailableAmount?.StarCount ?? 0;
+            popup.Maximum = AvailableAmount?.StarCount ?? 0;
 
             popup.Title = Strings.BotStarsButtonWithdrawUntil;
             popup.Header = Strings.BotStarsWithdrawPlaceholder;
@@ -256,6 +233,25 @@ namespace Telegram.ViewModels.Chats
         public async void LearnMore()
         {
             await ShowPopupAsync(new LearnMorePopup());
+        }
+
+        public void OpenAffiliate()
+        {
+            if (_ownerId is MessageSenderChat senderChat)
+            {
+                NavigationService.Navigate(typeof(ChatAffiliatePage), new AffiliateTypeChannel(senderChat.ChatId));
+            }
+            else if (_ownerId is MessageSenderUser senderUser)
+            {
+                if (senderUser.UserId == ClientService.Options.MyId)
+                {
+                    NavigationService.Navigate(typeof(ChatAffiliatePage), new AffiliateTypeCurrentUser());
+                }
+                else
+                {
+                    NavigationService.Navigate(typeof(ChatAffiliatePage), new AffiliateTypeBot(senderUser.UserId));
+                }
+            }
         }
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)

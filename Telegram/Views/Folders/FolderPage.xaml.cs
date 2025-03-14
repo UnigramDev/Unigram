@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -9,6 +9,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
+using System.ComponentModel;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -16,10 +18,13 @@ using Telegram.Controls.Media;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Folders;
 
 namespace Telegram.Views.Folders
 {
+    public record FolderPageCreateArgs(long IncludeChatId);
+
     public sealed partial class FolderPage : HostedPage
     {
         public FolderViewModel ViewModel => DataContext as FolderViewModel;
@@ -27,6 +32,31 @@ namespace Telegram.Views.Folders
         public FolderPage()
         {
             InitializeComponent();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.SessionId);
+            TagPreviewText.DataContext = ViewModel;
+
+            TitleField.AllowedEntities = FormattedTextEntity.CustomEmoji;
+            TitleField.CustomEmoji = CustomEmoji;
+            TitleField.SetText(ViewModel.Title);
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.Title))
+            {
+                TitleField.SetText(ViewModel.Title);
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -64,18 +94,18 @@ namespace Telegram.Views.Folders
             flyout.ShowAt(sender, args);
         }
 
-        private void Emoji_Click(object sender, RoutedEventArgs e)
+        private void Icon_Click(object sender, RoutedEventArgs e)
         {
-            EmojiList.ItemsSource = Icons.Folders;
-            EmojiList.SelectedItem = ViewModel.Icon;
+            IconList.ItemsSource = Icons.Folders;
+            IconList.SelectedItem = ViewModel.Icon;
 
-            var flyout = FlyoutBase.GetAttachedFlyout(EmojiButton);
-            flyout.ShowAt(EmojiButton, FlyoutPlacementMode.BottomEdgeAlignedRight);
+            var flyout = FlyoutBase.GetAttachedFlyout(IconButton);
+            flyout.ShowAt(IconButton, FlyoutPlacementMode.BottomEdgeAlignedLeft);
         }
 
-        private void EmojiList_ItemClick(object sender, ItemClickEventArgs e)
+        private void IconList_ItemClick(object sender, ItemClickEventArgs e)
         {
-            FlyoutBase.GetAttachedFlyout(EmojiButton).Hide();
+            FlyoutBase.GetAttachedFlyout(IconButton).Hide();
 
             if (e.ClickedItem is ChatFolderIcon2 icon)
             {
@@ -83,7 +113,7 @@ namespace Telegram.Views.Folders
             }
         }
 
-        private void EmojiList_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void IconList_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
@@ -96,14 +126,58 @@ namespace Telegram.Views.Folders
             }
         }
 
+        private void Emoji_Click(object sender, RoutedEventArgs e)
+        {
+            // We don't want to unfocus the text are when the context menu gets opened
+            EmojiPanel.ViewModel.Update();
+            EmojiFlyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions
+            {
+                ShowMode = FlyoutShowMode.Transient,
+                Placement = FlyoutPlacementMode.BottomEdgeAlignedRight
+            });
+        }
+
+        private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is EmojiData emoji)
+            {
+                TitleField.InsertText(emoji.Value);
+            }
+            else if (e.ClickedItem is StickerViewModel sticker)
+            {
+                TitleField.InsertEmoji(sticker);
+            }
+
+            TitleField.Focus(FocusState.Programmatic);
+        }
+
         #region Binding
+
+        private string ConvertTitleHint(bool hasAnimations)
+        {
+            return hasAnimations
+                ? string.Format("{0} \u2022", Strings.FilterNameHint)
+                : Strings.FilterNameHint;
+        }
+
+        private string ConvertAnimate(bool hasAnimations, bool animate)
+        {
+            if (hasAnimations)
+            {
+                return animate
+                    ? Strings.FilterNameAnimationsDisable
+                    : Strings.FilterNameAnimationsEnable;
+            }
+
+            return string.Empty;
+        }
 
         private string ConvertTitle(ChatFolder folder)
         {
-            return folder == null ? Strings.FilterNew : folder.Title;
+            return folder == null ? Strings.FilterNew : Strings.FilterEdit;
         }
 
-        private string ConvertEmoji(ChatFolderIcon2 icon)
+        private string ConvertIcon(ChatFolderIcon2 icon)
         {
             return Icons.FolderToGlyph(icon).Item1;
         }
@@ -184,7 +258,7 @@ namespace Telegram.Views.Folders
             {
                 var foreground = ViewModel.ClientService.GetAccentBrush(colors.Id);
 
-                TagPreview.Foreground = foreground;
+                TagPreviewText.Foreground = foreground;
                 TagPreview.Background = foreground.WithOpacity(0.2);
                 TagPreview.Visibility = colors.Id != -1
                     ? Visibility.Visible
@@ -254,6 +328,16 @@ namespace Telegram.Views.Folders
             {
                 ViewModel.OpenLink(link);
             }
+        }
+
+        private void TitleField_TextChanged(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Title = TitleField.GetFormattedText();
+        }
+
+        private void ToggleAnimations_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        {
+            ViewModel.AnimateCustomEmoji = !ViewModel.AnimateCustomEmoji;
         }
     }
 }

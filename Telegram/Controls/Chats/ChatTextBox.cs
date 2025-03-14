@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,15 +10,16 @@ using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Automation.Provider;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Rg.DiffUtils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
@@ -49,6 +50,8 @@ namespace Telegram.Controls.Chats
         {
             DefaultStyleKey = typeof(ChatTextBox);
             TextChanged += OnTextChanged;
+
+            _blockPadding = 48;
         }
 
         protected override void OnApplyTemplate()
@@ -109,11 +112,18 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private void SetAutocomplete(IAutocompleteCollection collection, bool recycle = false)
+        private void SetAutocomplete(IAutocompleteCollection collection, bool recycle = false, bool inline = false)
         {
+            if (inline is false)
+            {
+                _emojiQuery = null;
+                _emojiFlyout?.Hide();
+                Cancel();
+            }
+
             if (collection != null)
             {
-                if (ViewModel.Autocomplete is AutocompleteCollection autocomplete && recycle)
+                if (recycle && ViewModel.Autocomplete is AutocompleteCollection autocomplete)
                 {
                     autocomplete.Update(collection);
                 }
@@ -149,131 +159,132 @@ namespace Telegram.Controls.Chats
                     // All the remote procedure calls must be wrapped in a try-catch block
                 }
             }
-            else if (e.Key is VirtualKey.Up or VirtualKey.Down)
+            else if (e.Key is VirtualKey.Up or VirtualKey.Down or VirtualKey.Left or VirtualKey.Right or VirtualKey.Tab or VirtualKey.Enter)
             {
-                var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
-                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
-                var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
+                IAutocompleteCollection autocomplete;
+                ListViewBase autocompleteList;
 
-                if (e.Key is VirtualKey.Up or VirtualKey.Down && !alt && !ctrl && !shift && ViewModel.Autocomplete == null)
+                if (_emojiFlyout?.Content is ChatTextFlyout presenter)
                 {
-                    if (e.Key == VirtualKey.Up && IsEmpty)
-                    {
-                        ViewModel.EditLastMessage();
-                        e.Handled = true;
-                    }
-                    else
-                    {
-                        Document.Selection.GetRect(PointOptions.ClientCoordinates, out Rect rect, out _);
+                    autocomplete = presenter.ItemsSource;
+                    autocompleteList = presenter.ControlledList;
+                }
+                else
+                {
+                    autocomplete = ViewModel.Autocomplete;
+                    autocompleteList = ControlledList;
+                }
 
-                        if (e.Key == VirtualKey.Up && rect.Y.AlmostEqualsToZero())
+                var modifiers = WindowContext.KeyModifiers();
+
+                if (e.Key is VirtualKey.Up or VirtualKey.Down)
+                {
+                    if (e.Key is VirtualKey.Up or VirtualKey.Down && modifiers == VirtualKeyModifiers.None && autocomplete == null)
+                    {
+                        if (e.Key == VirtualKey.Up && IsEmpty)
                         {
-                            Document.Selection.SetRange(0, 0);
+                            ViewModel.EditLastMessage();
                             e.Handled = true;
                         }
-                        else if (e.Key == VirtualKey.Down && rect.Bottom >= ContentElement.ExtentHeight - 1)
+                        else
                         {
-                            Document.Selection.SetRange(TextConstants.MaxUnitCount, TextConstants.MaxUnitCount);
+                            Document.Selection.GetRect(PointOptions.ClientCoordinates, out Rect rect, out _);
+
+                            if (e.Key == VirtualKey.Up && rect.Y.AlmostEqualsToZero())
+                            {
+                                Document.Selection.SetRange(0, 0);
+                                e.Handled = true;
+                            }
+                            else if (e.Key == VirtualKey.Down && rect.Bottom >= ContentElement.ExtentHeight - 1)
+                            {
+                                Document.Selection.SetRange(TextConstants.MaxUnitCount, TextConstants.MaxUnitCount);
+                                e.Handled = true;
+                            }
+                        }
+                    }
+                    else if (e.Key == VirtualKey.Up && modifiers == VirtualKeyModifiers.Control)
+                    {
+                        ViewModel.MessageReplyPrevious();
+                        e.Handled = true;
+                    }
+                    else if (e.Key == VirtualKey.Down && modifiers == VirtualKeyModifiers.Control)
+                    {
+                        ViewModel.MessageReplyNext();
+                        e.Handled = true;
+                    }
+                    else if (e.Key is VirtualKey.Up or VirtualKey.Down)
+                    {
+                        if (autocompleteList != null && autocompleteList.Items.Count > 0 && autocomplete?.Orientation == Orientation.Vertical)
+                        {
+                            autocompleteList.SelectionMode = ListViewSelectionMode.Single;
+
+                            var index = e.Key == VirtualKey.Up ? -1 : 1;
+                            var next = autocompleteList.SelectedIndex + index;
+                            if (next >= 0 && next < autocomplete.Count)
+                            {
+                                autocompleteList.SelectedIndex = next;
+                                autocompleteList.ScrollIntoView(autocompleteList.SelectedItem);
+                            }
+
                             e.Handled = true;
                         }
                     }
                 }
-                else if (e.Key == VirtualKey.Up && ctrl && !alt && !shift)
+                else if (e.Key is VirtualKey.Left or VirtualKey.Right && modifiers == VirtualKeyModifiers.None)
                 {
-                    ViewModel.MessageReplyPrevious();
+                    if (autocompleteList != null && autocompleteList.Items.Count > 0 && autocomplete?.Orientation == Orientation.Horizontal)
+                    {
+                        if (autocompleteList.SelectedIndex == 0 && e.Key == VirtualKey.Left)
+                        {
+                            autocompleteList.SelectedIndex = -1;
+                            e.Handled = true;
+                        }
+                        else if (autocompleteList.SelectedIndex == autocompleteList.Items.Count - 1 && e.Key == VirtualKey.Right)
+                        {
+                            autocompleteList.SelectedIndex = 0;
+                            e.Handled = true;
+                        }
+                        else
+                        {
+                            autocompleteList.SelectionMode = ListViewSelectionMode.Single;
+
+                            var index = e.Key == VirtualKey.Left ? -1 : 1;
+                            var next = autocompleteList.SelectedIndex + index;
+                            if (next >= 0 && next < autocomplete.Count)
+                            {
+                                autocompleteList.SelectedIndex = next;
+                                autocompleteList.ScrollIntoView(autocompleteList.SelectedItem);
+
+                                e.Handled = true;
+                            }
+                        }
+                    }
+                }
+                else if (e.Key is VirtualKey.Tab or VirtualKey.Enter && autocompleteList != null && autocompleteList.Items.Count > 0 && autocomplete != null
+                    && ((autocomplete.InsertOnKeyDown is false && autocompleteList.SelectedItem != null) || autocomplete.InsertOnKeyDown))
+                {
+                    if (modifiers == VirtualKeyModifiers.Shift)
+                    {
+                        return;
+                    }
+
+                    var container = autocompleteList.ContainerFromIndex(Math.Max(0, autocompleteList.SelectedIndex)) as GridViewItem;
+                    if (container != null)
+                    {
+                        var peer = new GridViewItemAutomationPeer(container);
+                        var provider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+                        provider.Invoke();
+                    }
+
+                    Logger.Debug("Tab pressed and handled");
                     e.Handled = true;
                 }
-                else if (e.Key == VirtualKey.Down && ctrl && !alt && !shift)
+                else if (e.Key == VirtualKey.Tab)
                 {
-                    ViewModel.MessageReplyNext();
-                    e.Handled = true;
-                }
-                else if (e.Key is VirtualKey.Up or VirtualKey.Down)
-                {
-                    if (ControlledList != null && ControlledList.Items.Count > 0 && ViewModel.Autocomplete?.Orientation == Orientation.Vertical)
+                    // Ignored to allow Ctrl+Tab and Ctrl+Shift+Tab to switch chats
+                    if (modifiers != VirtualKeyModifiers.None)
                     {
-                        ControlledList.SelectionMode = ListViewSelectionMode.Single;
-
-                        var index = e.Key == VirtualKey.Up ? -1 : 1;
-                        var next = ControlledList.SelectedIndex + index;
-                        if (next >= 0 && next < ViewModel.Autocomplete.Count)
-                        {
-                            ControlledList.SelectedIndex = next;
-                            ControlledList.ScrollIntoView(ControlledList.SelectedItem);
-                        }
-
-                        e.Handled = true;
-                    }
-                }
-            }
-            else if (e.Key is VirtualKey.Left or VirtualKey.Right)
-            {
-                if (ControlledList != null && ControlledList.Items.Count > 0 && ViewModel.Autocomplete?.Orientation == Orientation.Horizontal)
-                {
-                    if (ControlledList.SelectedIndex == 0 && e.Key == VirtualKey.Left)
-                    {
-                        ControlledList.SelectedIndex = -1;
-                        e.Handled = true;
-                    }
-                    else if (ControlledList.SelectedIndex == ControlledList.Items.Count - 1 && e.Key == VirtualKey.Right)
-                    {
-                        ControlledList.SelectedIndex = 0;
-                        e.Handled = true;
-                    }
-                    else
-                    {
-                        ControlledList.SelectionMode = ListViewSelectionMode.Single;
-
-                        var index = e.Key == VirtualKey.Left ? -1 : 1;
-                        var next = ControlledList.SelectedIndex + index;
-                        if (next >= 0 && next < ViewModel.Autocomplete.Count)
-                        {
-                            ControlledList.SelectedIndex = next;
-                            ControlledList.ScrollIntoView(ControlledList.SelectedItem);
-
-                            e.Handled = true;
-                        }
-                    }
-                }
-            }
-            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && ControlledList != null && ControlledList.Items.Count > 0 && ViewModel.Autocomplete != null
-                && ((ViewModel.Autocomplete.InsertOnKeyDown is false && ControlledList.SelectedItem != null) || ViewModel.Autocomplete.InsertOnKeyDown))
-            {
-                var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
-                if (shift)
-                {
-                    return;
-                }
-
-                var container = ControlledList.ContainerFromIndex(Math.Max(0, ControlledList.SelectedIndex)) as GridViewItem;
-                if (container != null)
-                {
-                    var peer = new GridViewItemAutomationPeer(container);
-                    var provider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-                    provider.Invoke();
-                }
-
-                Logger.Debug("Tab pressed and handled");
-                e.Handled = true;
-            }
-            else if (e.Key == VirtualKey.Tab)
-            {
-                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
-                if (ctrl)
-                {
-                    return;
-                }
-            }
-            else if (e.Key == VirtualKey.X && Math.Abs(Document.Selection.Length) == 4)
-            {
-                var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
-                if (alt)
-                {
-                    Document.Selection.GetText(TextGetOptions.NoHidden, out string hex);
-
-                    if (int.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int result))
-                    {
-                        Document.Selection.SetText(TextSetOptions.None, new string((char)result, 1));
+                        return;
                     }
                 }
             }
@@ -284,15 +295,25 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        protected override bool CanAccept()
+        {
+            return ViewModel.CurrentInlineBot == null;
+        }
+
         protected override void OnAccept()
         {
-            _ = SendAsync();
+            Send();
         }
 
         private DateTime _lastKeystroke;
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
         {
+            if (IsEmpty)
+            {
+                return;
+            }
+
             var diff = DateTime.Now - _lastKeystroke;
             if (diff.TotalSeconds > 4 || (_wasEmpty && !IsEmpty))
             {
@@ -352,7 +373,7 @@ namespace Telegram.Controls.Chats
 
             // This needs to run before text empty check as it cleans up
             // some stuff it inline bot isn't found
-            if (SearchInlineBotResults(text, out string inlineQuery))
+            if (SearchInlineBotResults(text, true, out string inlineQuery))
             {
                 SetAutocomplete(null);
                 GetInlineBotResults(inlineQuery);
@@ -374,10 +395,10 @@ namespace Telegram.Controls.Chats
                 prev = collection.Source;
             }
 
-            if (TryGetAutocomplete(text, query, prev, fromTextChanging, out var autocomplete, out bool recycle))
+            if (TryGetAutocomplete(text, query, prev, fromTextChanging, out var autocomplete, out bool recycle, out bool inline))
             {
                 ClearInlineBotResults();
-                SetAutocomplete(autocomplete, recycle);
+                SetAutocomplete(autocomplete, recycle, inline);
             }
             else
             {
@@ -392,7 +413,7 @@ namespace Telegram.Controls.Chats
                         return;
                     }
 
-                    if (SearchInlineBotResults(text, out query))
+                    if (SearchInlineBotResults(text, true, out query))
                     {
                         SetAutocomplete(null);
                         GetInlineBotResults(query);
@@ -404,13 +425,17 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private bool TryGetAutocomplete(string text, string query, IAutocompleteCollection prev, bool fromTextChanging, out IAutocompleteCollection autocomplete, out bool recycle)
+        private bool TryGetAutocomplete(string text, string query, IAutocompleteCollection prev, bool fromTextChanging, out IAutocompleteCollection autocomplete, out bool recycle, out bool inline)
         {
             autocomplete = null;
             recycle = false;
+            inline = false;
 
             if (Emoji.ContainsSingleEmoji(text) && ViewModel.ComposerHeader?.EditingMessage == null)
             {
+                ShowOrUpdateEmojiFlyout(0, new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, text, ViewModel.Chat?.Id ?? 0));
+                inline = true;
+
                 var chat = ViewModel.Chat;
                 if (chat?.Permissions.CanSendOtherMessages == false)
                 {
@@ -444,19 +469,15 @@ namespace Telegram.Controls.Chats
                         return false;
                     }
 
-                    var members = true;
-                    if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret || chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
-                    {
-                        members = false;
-                    }
-
                     if (prev is UsernameCollection && prev.Query.Equals(result))
                     {
                         autocomplete = prev;
                         return true;
                     }
 
-                    autocomplete = new UsernameCollection(ViewModel.ClientService, ViewModel.Chat.Id, ViewModel.ThreadId, result, index == 0, members);
+                    var members = chat.Type is ChatTypePrivate or ChatTypeSecret or ChatTypeBasicGroup or ChatTypeSupergroup { IsChannel: false };
+
+                    autocomplete = new UsernameCollection(ViewModel.ClientService, ViewModel.Chat.Id, ViewModel.ThreadId, result, index == 0, members, false);
                     return true;
                 }
                 else if (entity == AutocompleteEntity.Hashtag)
@@ -472,26 +493,18 @@ namespace Telegram.Controls.Chats
                 }
                 else if (entity == AutocompleteEntity.Sticker)
                 {
-                    if (prev is SearchStickersCollection collection && collection.IsCustomEmoji && prev.Query.Equals(text.Trim()))
-                    {
-                        autocomplete = prev;
-                        return true;
-                    }
+                    ShowOrUpdateEmojiFlyout(index, new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, result, ViewModel.Chat?.Id ?? 0));
 
-                    autocomplete = new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, result, ViewModel.Chat?.Id ?? 0);
-                    recycle = prev is SearchStickersCollection { IsCustomEmoji: true };
+                    autocomplete = null;
+                    inline = true;
                     return true;
                 }
                 else if (entity == AutocompleteEntity.Emoji && fromTextChanging)
                 {
-                    if (prev is EmojiCollection && prev.Query.Equals(result))
-                    {
-                        autocomplete = prev;
-                        return true;
-                    }
+                    ShowOrUpdateEmojiFlyout(index, new EmojiCollection(ViewModel.ClientService, result, ViewModel.Chat.Id));
 
-                    autocomplete = new EmojiCollection(ViewModel.ClientService, result, ViewModel.Chat.Id);
-                    recycle = prev is EmojiCollection;
+                    autocomplete = null;
+                    inline = true;
                     return true;
                 }
                 else if (entity == AutocompleteEntity.Command && index == 0)
@@ -509,6 +522,110 @@ namespace Telegram.Controls.Chats
 
             autocomplete = null;
             return false;
+        }
+
+        private Flyout _emojiFlyout;
+        private string _emojiQuery;
+        private CancellationTokenSource _emojiToken;
+
+        public CancellationTokenSource Cancel()
+        {
+            _emojiToken?.Cancel();
+            _emojiToken = new();
+            return _emojiToken;
+        }
+
+        private async void ShowOrUpdateEmojiFlyout(int index, IAutocompleteCollection collection)
+        {
+            if (_emojiQuery == collection.Query)
+            {
+                return;
+            }
+
+            var token = Cancel();
+            var source = new AutocompleteCollection(collection);
+
+            var result = await source.LoadMoreItemsAsync(0);
+            if (result.Count == 0 || token.IsCancellationRequested)
+            {
+                // Only reset if this is the active query
+                if (token == _emojiToken)
+                {
+                    _emojiQuery = null;
+                    _emojiFlyout?.Hide();
+                }
+
+                return;
+            }
+
+            _emojiQuery = collection.Query;
+
+            if (_emojiFlyout?.Content is ChatTextFlyout presenter)
+            {
+                presenter.Update(collection);
+                return;
+            }
+
+            var range = Document.GetRange(index, index);
+            range.GetRect(PointOptions.None, out Rect rect, out _);
+
+            var style = new Style
+            {
+                TargetType = typeof(FlyoutPresenter),
+                BasedOn = BootStrapper.Current.Resources["CommandFlyoutPresenterStyle"] as Style
+            };
+
+            style.Setters.Add(new Setter(FlyoutPresenter.IsDefaultShadowEnabledProperty, false));
+            style.Setters.Add(new Setter(FlyoutPresenter.MinWidthProperty, 40));
+
+            _emojiFlyout = new Flyout
+            {
+                Content = new ChatTextFlyout(this, source),
+                AllowFocusOnInteraction = false,
+                ShouldConstrainToRootBounds = false,
+                FlyoutPresenterStyle = style,
+            };
+
+            _emojiFlyout.Opened += EmojiFlyout_Opened;
+            _emojiFlyout.Closed += EmojiFlyout_Closed;
+
+            _emojiFlyout.ShowAt(this, new FlyoutShowOptions
+            {
+                Position = new Windows.Foundation.Point(rect.X + Padding.Left - 8, rect.Y + 6),
+                Placement = FlyoutPlacementMode.TopEdgeAlignedLeft,
+                ShowMode = FlyoutShowMode.Transient
+            });
+        }
+
+        void EmojiFlyout_Opened(object sender, object args)
+        {
+            if (sender is Flyout { Content: ChatTextFlyout { Parent: FlyoutPresenter flyout } presenter })
+            {
+                AutomationProperties.GetControlledPeers(this).Clear();
+                AutomationProperties.GetControlledPeers(this).Add(presenter.ControlledList);
+
+                var child = VisualTreeHelper.GetChild(flyout, 0);
+                if (child is UIElement element)
+                {
+                    element.Translation = new System.Numerics.Vector3(0, 0, 12);
+                    element.Shadow = new ThemeShadow();
+                }
+            }
+        }
+
+        private void EmojiFlyout_Closed(object sender, object e)
+        {
+            _emojiFlyout.Opened += EmojiFlyout_Opened;
+            _emojiFlyout.Closed += EmojiFlyout_Closed;
+
+            _emojiFlyout = null;
+
+            AutomationProperties.GetControlledPeers(this).Clear();
+
+            if (_controlledList != null)
+            {
+                AutomationProperties.GetControlledPeers(this).Add(_controlledList);
+            }
         }
 
         private AutocompleteList GetCommands(string command)
@@ -548,10 +665,11 @@ namespace Telegram.Controls.Chats
 
             private readonly bool _bots;
             private readonly bool _members;
+            private readonly bool _self;
 
             private bool _hasMore = true;
 
-            public UsernameCollection(IClientService clientService, long chatId, long threadId, string query, bool bots, bool members)
+            public UsernameCollection(IClientService clientService, long chatId, long threadId, string query, bool bots, bool members, bool self)
             {
                 _clientService = clientService;
                 _chatId = chatId;
@@ -560,6 +678,7 @@ namespace Telegram.Controls.Chats
 
                 _bots = bots;
                 _members = members;
+                _self = self;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -588,13 +707,24 @@ namespace Telegram.Controls.Chats
 
                     if (_members)
                     {
+                        if (_self && _clientService.TryGetUser(_clientService.Options.MyId, out Td.Api.User self))
+                        {
+                            Add(self);
+                            count++;
+                        }
+
                         var response = await _clientService.SendAsync(new SearchChatMembers(_chatId, _query, 20, new ChatMembersFilterMention(_threadId)));
                         if (response is ChatMembers members)
                         {
                             foreach (var member in members.Members)
                             {
-                                if (_clientService.TryGetUser(member.MemberId, out Telegram.Td.Api.User user))
+                                if (_clientService.TryGetUser(member.MemberId, out Td.Api.User user))
                                 {
+                                    if (user.Id == _clientService.Options.MyId)
+                                    {
+                                        continue;
+                                    }
+
                                     Add(user);
                                     count++;
                                 }
@@ -666,6 +796,8 @@ namespace Telegram.Controls.Chats
                                 Add(new EmojiData(emoji));
                                 count++;
                             }
+
+                            return new LoadMoreItemsResult { Count = count };
                         }
                     }
 
@@ -742,42 +874,66 @@ namespace Telegram.Controls.Chats
             public bool InsertOnKeyDown => true;
         }
 
-        public async Task SendAsync(bool disableNotification = false)
+        public async void Send(bool disableNotification = false)
         {
-            if (ViewModel.Type == DialogType.ScheduledMessages && ViewModel.ComposerHeader?.EditingMessage == null)
+            Document.GetText(TextGetOptions.NoHidden, out string plain);
+
+            // This needs to run before text empty check as it cleans up
+            // some stuff it inline bot isn't found
+            if (SearchInlineBotResults(plain, false, out string inlineQuery))
             {
-                await ScheduleAsync(false);
+                if (string.IsNullOrEmpty(inlineQuery))
+                {
+                    SetText(null);
+                }
+                else
+                {
+                    var split = plain.Split(' ');
+                    var username = split[0] + " ";
+
+                    Document.SetText(TextSetOptions.None, username);
+                    Document.Selection.StartPosition = username.Length;
+                }
+
+                return;
+            }
+            else if (ViewModel.Type == DialogType.ScheduledMessages && ViewModel.ComposerHeader?.EditingMessage == null)
+            {
+                Schedule(false);
                 return;
             }
 
-            var options = new MessageSendOptions(disableNotification, false, false, false, null, Effect?.Id ?? 0, 0, false);
+            var options = await ViewModel.PickMessageSendOptionsAsync(1, SchedulingState.Auto, disableNotification, false);
+            if (options == null)
+            {
+                return;
+            }
+
+            options.EffectId = Effect?.Id ?? 0;
 
             Sending?.Invoke(this, EventArgs.Empty);
             Effect = null;
 
+            var linkPreview = ViewModel.GetLinkPreviewOptions();
             var text = GetFormattedText(true);
-            await ViewModel.SendMessageAsync(text, options);
+
+            await ViewModel.SendMessageAsync(text, linkPreview, options);
         }
 
-        public async Task ScheduleAsync(bool whenOnline)
+        public async void Schedule(bool whenOnline)
         {
-            Sending?.Invoke(this, EventArgs.Empty);
-
-            MessageSendOptions options;
-
-            if (whenOnline)
-            {
-                options = new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendWhenOnline(), 0, 0, false);
-            }
-            else
-            {
-                options = await ViewModel.PickMessageSendOptionsAsync(true);
-            }
-
+            var options = await ViewModel.PickMessageSendOptionsAsync(1, whenOnline ? SchedulingState.WhenOnline : SchedulingState.Schedule);
             if (options != null)
             {
+                options.EffectId = Effect?.Id ?? 0;
+
+                Sending?.Invoke(this, EventArgs.Empty);
+                Effect = null;
+
+                var linkPreview = ViewModel.GetLinkPreviewOptions();
                 var text = GetFormattedText(true);
-                await ViewModel.SendMessageAsync(text, options);
+
+                await ViewModel.SendMessageAsync(text, linkPreview, options);
             }
         }
 
@@ -861,7 +1017,7 @@ namespace Telegram.Controls.Chats
 
         #region Inline bots
 
-        private bool SearchInlineBotResults(string text, out string searchText)
+        private bool SearchInlineBotResults(string text, bool apply, out string searchText)
         {
             var flag = false;
             searchText = string.Empty;
@@ -886,13 +1042,24 @@ namespace Telegram.Controls.Chats
                     flag = true;
                 }
 
-                if (!flag)
+                if (apply)
                 {
-                    if (string.Equals(text.TrimStart(), "@" + username, StringComparison.OrdinalIgnoreCase))
+                    if (!flag)
                     {
-                        ClearInlineBotResults();
+                        if (string.Equals(text.TrimStart(), "@" + username, StringComparison.OrdinalIgnoreCase))
+                        {
+                            ClearInlineBotResults();
+                        }
+                        else
+                        {
+                            var user = ViewModel.CurrentInlineBot;
+                            if (user != null && user.Type is UserTypeBot bot)
+                            {
+                                UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
+                            }
+                        }
                     }
-                    else
+                    else if (string.IsNullOrEmpty(searchText))
                     {
                         var user = ViewModel.CurrentInlineBot;
                         if (user != null && user.Type is UserTypeBot bot)
@@ -900,25 +1067,18 @@ namespace Telegram.Controls.Chats
                             UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
                         }
                     }
-                }
-                else if (string.IsNullOrEmpty(searchText))
-                {
-                    var user = ViewModel.CurrentInlineBot;
-                    if (user != null && user.Type is UserTypeBot bot)
+                    else
                     {
-                        UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
+                        UpdateInlinePlaceholder(null, null);
                     }
                 }
-                else
-                {
-                    UpdateInlinePlaceholder(null, null);
-                }
             }
-            else
+            else if (apply)
             {
                 ClearInlineBotResults();
             }
 
+            searchText = searchText.TrimEnd('\r', '\n');
             return flag;
         }
 
@@ -1033,13 +1193,13 @@ namespace Telegram.Controls.Chats
 
     public partial class AutocompleteCollection : DiffObservableCollection<object>, ISupportIncrementalLoading, IAutocompleteCollection
     {
-        private readonly DisposableMutex _mutex = new();
-        private CancellationTokenSource _token;
+        private CancellationTokenSource _cancellation;
 
         private IAutocompleteCollection _source;
         private ISupportIncrementalLoading _incrementalSource;
 
         private bool _initialized;
+        private bool _loading;
 
         public AutocompleteCollection(IAutocompleteCollection collection)
             : base(collection, new AutocompleteDiffHandler(), Constants.DiffOptions)
@@ -1050,42 +1210,78 @@ namespace Telegram.Controls.Chats
 
         public IAutocompleteCollection Source => _source;
 
-        public async void Update(IAutocompleteCollection source)
+        public CancellationTokenSource Cancel()
         {
-            _token?.Cancel();
+            _cancellation?.Cancel();
+            _cancellation = new();
+            return _cancellation;
+        }
 
+        public void Update(IAutocompleteCollection source)
+        {
+            UpdateImpl(source, false);
+        }
+
+        private async void UpdateImpl(IAutocompleteCollection source, bool reentrancy)
+        {
             if (source is ISupportIncrementalLoading incremental && incremental.HasMoreItems)
             {
-                var token = new CancellationTokenSource();
-
-                _token = token;
-
                 _source = source;
                 _incrementalSource = incremental;
 
                 if (_initialized)
                 {
-                    using (await _mutex.WaitAsync())
+                    _loading = true;
+
+                    var token = Cancel();
+
+                    await incremental.LoadMoreItemsAsync(0);
+                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
+
+                    if (token.IsCancellationRequested)
                     {
-                        await incremental.LoadMoreItemsAsync(0);
-
-                        // 100% redundant
-                        if (token.IsCancellationRequested)
-                        {
-                            return;
-                        }
-
-                        var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
-                        ReplaceDiff(diff);
-                        UpdateEmpty();
-
-                        if (Count < 1 && incremental.HasMoreItems)
-                        {
-                            // This is 100% illegal and will cause a lot
-                            // but really a lot of problems for sure.
-                            Add(default);
-                        }
+                        _loading = false;
+                        return;
                     }
+
+                    ReplaceDiff(diff);
+                    UpdateEmpty();
+
+                    _loading = false;
+
+                    // I'm not sure in what condition this can happen, but it happens
+                    if (Count < 1 && incremental.HasMoreItems && !reentrancy)
+                    {
+                        UpdateImpl(source, true);
+                    }
+                }
+            }
+        }
+
+        public async void Replace(IAutocompleteCollection source)
+        {
+            if (source is ISupportIncrementalLoading incremental)
+            {
+                _source = source;
+                _incrementalSource = incremental;
+
+                if (_initialized)
+                {
+                    _loading = true;
+
+                    var token = Cancel();
+                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
+
+                    if (token.IsCancellationRequested)
+                    {
+                        _loading = false;
+                        return;
+                    }
+
+                    ReplaceDiff(diff);
+                    UpdateEmpty();
+
+                    _loading = false;
                 }
             }
         }
@@ -1094,29 +1290,37 @@ namespace Telegram.Controls.Chats
         {
             return AsyncInfo.Run(async _ =>
             {
-                using (await _mutex.WaitAsync())
+                if (_loading || _incrementalSource == null || !_incrementalSource.HasMoreItems)
                 {
-                    _initialized = true;
-                    _token?.Cancel();
+                    return new LoadMoreItemsResult
+                    {
+                        Count = 0
+                    };
+                }
 
-                    var token = _token = new CancellationTokenSource();
-                    var result = await _incrementalSource?.LoadMoreItemsAsync(count);
+                _loading = true;
 
-                    // 100% redundant
+                var token = Cancel();
+                var result = await _incrementalSource?.LoadMoreItemsAsync(count);
+
+                if (result.Count > 0 && !token.IsCancellationRequested)
+                {
+                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, _source, DefaultDiffHandler, DefaultOptions));
+
                     if (token.IsCancellationRequested)
                     {
+                        _loading = false;
                         return result;
                     }
 
-                    if (result.Count > 0)
-                    {
-                        var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, _source, DefaultDiffHandler, DefaultOptions));
-                        ReplaceDiff(diff);
-                        UpdateEmpty();
-                    }
-
-                    return result;
+                    ReplaceDiff(diff);
+                    UpdateEmpty();
                 }
+
+                _initialized = true;
+                _loading = false;
+
+                return result;
             });
         }
 

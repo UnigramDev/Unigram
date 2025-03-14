@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Telegram.Services;
 
 namespace LibVLCSharp.Shared
 {
@@ -46,5 +47,6 @@ namespace LibVLCSharp.Shared
             }
         }
 
+        public static bool UseSpeex => SettingsService.Current.Diagnostics.UseSpeexResampler;
     }
 }

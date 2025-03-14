@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -73,7 +73,7 @@ namespace Telegram.Views.Settings.Privacy
                 var forwardInfo = new MessageForwardInfo(origin, 0, null, string.Empty);
                 var content = new MessageText(new FormattedText(Strings.PrivacyForwardsMessageLine, Array.Empty<TextEntity>()), null, null);
 
-                var message = new Message(0, new MessageSenderUser(user.Id), 0, null, null, false, false, false, false, false, false, false, false, DateTime.Now.ToTimestamp(), 0, forwardInfo, null, null, Array.Empty<UnreadReaction>(), null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, content, null);
+                var message = new Message(0, new MessageSenderUser(user.Id), 0, null, null, false, false, false, false, false, false, false, false, DateTime.Now.ToTimestamp(), 0, forwardInfo, null, null, Array.Empty<UnreadReaction>(), null, null, 0, 0, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, content, null);
 
                 var playback = TypeResolver.Current.Playback;
                 var settings = TypeResolver.Current.Resolve<ISettingsService>(ViewModel.ClientService.SessionId);

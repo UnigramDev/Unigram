@@ -1,15 +1,17 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml.Controls;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Folders;
 
@@ -28,6 +30,34 @@ namespace Telegram.Views.Folders.Popups
             _task = task;
 
             SecondaryButtonText = Strings.Cancel;
+        }
+
+        public override void OnNavigatedTo(object parameter)
+        {
+            UpdateSubtitle(ViewModel.Subtitle);
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        public override void OnNavigatedFrom()
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.Subtitle))
+            {
+                UpdateSubtitle(ViewModel.Subtitle);
+            }
+        }
+
+        private void UpdateSubtitle(ChatFolderName text)
+        {
+            var formatted = ClientEx.ParseMarkdown(text.Text);
+            var name = new ChatFolderName(formatted, text.AnimateCustomEmoji);
+
+            CustomEmojiIcon.Add(SubtitleText, SubtitleParagraph.Inlines, ViewModel.ClientService, name);
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

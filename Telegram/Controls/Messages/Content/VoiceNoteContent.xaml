@@ -177,7 +177,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ProgressVoice">
-                    <Grid>
+                    <Grid Background="Transparent">
                         <Path x:Name="HorizontalTrackRect"
                               Margin="{TemplateBinding Padding}"
                               Fill="{TemplateBinding Foreground}"

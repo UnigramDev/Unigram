@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Telegram.Common;
 using Telegram.Converters;
 
 namespace Telegram.Charts.DataView
@@ -140,7 +141,7 @@ namespace Telegram.Charts.DataView
             }
             else
             {
-                Time.Text = FormatData(Formatter.ToLocalTime(date / 1000));
+                Time.Text = FormatDate((int)(date / 1000));
                 //if (useHour) hourTime.Text = hourFormat.format(date);
             }
 
@@ -197,11 +198,11 @@ namespace Telegram.Charts.DataView
             //}
         }
 
-        private string FormatData(DateTime date)
+        private string FormatDate(int date)
         {
             //if (useHour) return capitalize(format2.format(date));
             //return capitalize(format.format(date)) + capitalize(format2.format(date));
-            return Formatter.DayMonthFullYear.Format(date);
+            return Formatter.Date(date, Strings.chatFullDate);
         }
 
         public string FormatWholeNumber(int v)
@@ -291,7 +292,7 @@ namespace Telegram.Charts.DataView
 
                 if (showPercentage)
                 {
-                    ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(48, GridUnitType.Pixel) });
+                    ColumnDefinitions.Add(48, GridUnitType.Pixel);
 
                     percentage = new TextBlock();
                     percentage.Margin = new Thickness(0, 2, 8, 0);
@@ -303,11 +304,11 @@ namespace Telegram.Charts.DataView
                 }
                 else
                 {
-                    ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0, GridUnitType.Pixel) });
+                    ColumnDefinitions.Add(0, GridUnitType.Pixel);
                 }
 
-                ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+                ColumnDefinitions.Add(1, GridUnitType.Star);
+                ColumnDefinitions.Add(1, GridUnitType.Auto);
 
                 signature = new TextBlock();
                 signature.Margin = new Thickness(0, 2, 0, 0);

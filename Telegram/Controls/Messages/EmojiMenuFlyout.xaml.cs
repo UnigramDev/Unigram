@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -19,6 +19,7 @@ using Telegram.Controls.Drawers;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Popups;
@@ -29,11 +30,11 @@ namespace Telegram.Controls.Messages
 {
     public partial class EmojiSelectedEventArgs : EventArgs
     {
-        public long CustomEmojiId { get; }
+        public ReactionType Type { get; }
 
-        public EmojiSelectedEventArgs(long customEmojiId)
+        public EmojiSelectedEventArgs(ReactionType type)
         {
-            CustomEmojiId = customEmojiId;
+            Type = type;
         }
     }
 
@@ -52,7 +53,7 @@ namespace Telegram.Controls.Messages
         private readonly EmojiDrawerMode _mode;
 
         private readonly MessageViewModel _message;
-        private readonly MessageBubble _bubble;
+        private readonly IReactionsDelegate _bubble;
 
         private readonly StoryViewModel _story;
         private readonly FrameworkElement _reserved;
@@ -63,12 +64,12 @@ namespace Telegram.Controls.Messages
 
         public event EventHandler Opened;
 
-        public static EmojiMenuFlyout ShowAt(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
+        public static EmojiMenuFlyout ShowAt(FrameworkElement element, MessageViewModel message, IReactionsDelegate bubble, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
         {
             return new EmojiMenuFlyout(element, message, bubble, reactions, viewModel);
         }
 
-        private EmojiMenuFlyout(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
+        private EmojiMenuFlyout(FrameworkElement element, MessageViewModel message, IReactionsDelegate bubble, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
         {
             InitializeComponent();
 
@@ -85,19 +86,19 @@ namespace Telegram.Controls.Messages
 
         private void OnClosed(object sender, object e)
         {
-            if (_bubble != null && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            if (_bubble is FrameworkElement element && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
             {
-                var selector = _bubble.GetParent<SelectorItem>();
+                var selector = element.GetParent<SelectorItem>();
                 selector?.Focus(FocusState.Keyboard);
             }
         }
 
-        public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment)
+        public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment, EmojiDrawerViewModel viewModel = null)
         {
-            return new EmojiMenuFlyout(clientService, mode, element, alignment);
+            return new EmojiMenuFlyout(clientService, mode, element, alignment, viewModel);
         }
 
-        private EmojiMenuFlyout(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment)
+        private EmojiMenuFlyout(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment, EmojiDrawerViewModel viewModel = null)
         {
             InitializeComponent();
 
@@ -106,7 +107,7 @@ namespace Telegram.Controls.Messages
 
             _popup = new Popup();
 
-            Initialize(clientService, element, alignment);
+            Initialize(clientService, element, alignment, viewModel);
         }
 
         public static EmojiMenuFlyout ShowAt(FrameworkElement element, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
@@ -529,10 +530,7 @@ namespace Telegram.Controls.Messages
             {
                 _popup.IsOpen = false;
 
-                if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji2)
-                {
-                    EmojiSelected?.Invoke(this, new EmojiSelectedEventArgs(customEmoji2.CustomEmojiId));
-                }
+                EmojiSelected?.Invoke(this, new EmojiSelectedEventArgs(sticker.ToReactionType()));
 
                 if (_story != null)
                 {
@@ -544,7 +542,7 @@ namespace Telegram.Controls.Messages
                 }
                 else if (_mode == EmojiDrawerMode.EmojiStatus && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
                 {
-                    _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId, 0)));
+                    _clientService.Send(new SetEmojiStatus(new EmojiStatus(new EmojiStatusTypeCustomEmoji(customEmoji.CustomEmojiId), 0)));
                 }
                 else if (_mode == EmojiDrawerMode.Reactions)
                 {
@@ -557,7 +555,7 @@ namespace Telegram.Controls.Messages
         {
             if (_mode == EmojiDrawerMode.EmojiStatus && item.Sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
-                _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId, item.Duration)));
+                _clientService.Send(new SetEmojiStatus(new EmojiStatus(new EmojiStatusTypeCustomEmoji(customEmoji.CustomEmojiId), item.Duration)));
             }
         }
 
@@ -568,7 +566,7 @@ namespace Telegram.Controls.Messages
             var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary && _mode == EmojiDrawerMode.EmojiStatus && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
-                _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId, popup.Value)));
+                _clientService.Send(new SetEmojiStatus(new EmojiStatus(new EmojiStatusTypeCustomEmoji(customEmoji.CustomEmojiId), popup.Value)));
             }
         }
 
@@ -609,6 +607,5 @@ namespace Telegram.Controls.Messages
                 }
             }
         }
-
     }
 }

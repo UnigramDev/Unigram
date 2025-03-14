@@ -1,17 +1,17 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using System;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Services.Keyboard;
 using Windows.ApplicationModel.Core;
 
 namespace Telegram.Views.Host
@@ -61,7 +61,7 @@ namespace Telegram.Views.Host
 
         public INavigationService NavigationService => _navigationService;
 
-        public void Connect(TeachingTip toast)
+        public void ToastOpened(TeachingTip toast)
         {
             if (_navigationService?.Frame != null)
             {
@@ -70,7 +70,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        public void Disconnect(TeachingTip toast)
+        public void ToastClosed(TeachingTip toast)
         {
             if (_navigationService?.Frame != null && _navigationService.Frame.Resources.TryGetValue("TeachingTip", out object cached))
             {
@@ -117,12 +117,6 @@ namespace Telegram.Views.Host
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var context = WindowContext.ForXamlRoot(this);
-            if (context != null)
-            {
-                context.InputListener.KeyDown += OnAcceleratorKeyActivated;
-            }
-
             InitializeTitleBar();
         }
 
@@ -130,12 +124,6 @@ namespace Telegram.Views.Host
         {
             MasterDetail.NavigationService.FrameFacade.Navigating -= OnNavigating;
             MasterDetail.Dispose();
-
-            var context = WindowContext.ForXamlRoot(this);
-            if (context != null)
-            {
-                context.InputListener.KeyDown -= OnAcceleratorKeyActivated;
-            }
 
             UnloadTitleBar();
         }
@@ -174,7 +162,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        private void OnAcceleratorKeyActivated(Window sender, InputKeyDownEventArgs args)
+        private void OnProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
         {
             var invoked = _shortcutsService.Process(args);
             if (invoked == null)
@@ -188,7 +176,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        private async void ProcessAppCommands(ShortcutCommand command, InputKeyDownEventArgs args)
+        private async void ProcessAppCommands(ShortcutCommand command, ProcessKeyboardAcceleratorEventArgs args)
         {
             if (command == ShortcutCommand.Search)
             {

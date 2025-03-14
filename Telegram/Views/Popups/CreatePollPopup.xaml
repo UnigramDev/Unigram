@@ -59,6 +59,7 @@
 
                     <controls:GlyphButton Click="Emoji_Click"
                                           Glyph="&#xE76E;"
+                                          AutomationProperties.Name="{CustomResource Emoji}"
                                           IsTabStop="False"
                                           AllowFocusOnInteraction="False"
                                           HorizontalAlignment="Right"
@@ -110,6 +111,7 @@
 
                                     <controls:GlyphButton Click="Emoji_Click"
                                                           Glyph="&#xE76E;"
+                                                          AutomationProperties.Name="{CustomResource Emoji}"
                                                           IsTabStop="False"
                                                           AllowFocusOnInteraction="False"
                                                           HorizontalAlignment="Right"

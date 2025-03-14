@@ -4,13 +4,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="using:Telegram.Controls"
+             xmlns:cells="using:Telegram.Controls.Cells"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="400">
 
     <Grid Width="64"
           Height="58"
-          Margin="4,0,0,0"
           CornerRadius="4">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="CommonStates"
@@ -54,13 +54,15 @@
                 Opacity="0.8"
                 Margin="0,0,0,6"
                 Grid.Row="1">
-            <TextBlock x:Name="Title"
-                       Text="{x:Bind ViewModel.Title, Mode=OneWay}"
-                       TextAlignment="Center"
-                       TextWrapping="NoWrap"
-                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                       Style="{StaticResource CaptionTextBlockStyle}"
-                       FontSize="10" />
+            <RichTextBlock x:Name="Title"
+                           cells:ChatFolderCell.Title="{x:Bind ViewModel.Name, Mode=OneWay}"
+                           TextAlignment="Center"
+                           TextWrapping="NoWrap"
+                           IsTextSelectionEnabled="False"
+                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                           FontSize="10">
+                <Paragraph />
+            </RichTextBlock>
         </Border>
     </Grid>
 </UserControl>

@@ -6,12 +6,13 @@
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:cells="using:Telegram.Controls.Cells"
                   xmlns:revenue="using:Telegram.Controls.Cells.Revenue"
+                  xmlns:chats="using:Telegram.Views.Chats"
                   xmlns:local="using:Telegram.Views"
                   mc:Ignorable="d">
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
-                                ItemsSource="{x:Bind ViewModel.Items}"
+                                ItemsSource="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
                                 ItemClick="OnItemClick"
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"
@@ -65,40 +66,66 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <cells:CryptoAmountCell Amount="{x:Bind ViewModel.AvailableAmount, Mode=OneWay}"
-                                                    Text="{CustomResource MonetizationOverviewAvailable}"
-                                                    Margin="12,8"
+                            <cells:CryptoAmountCell x:Name="AvailableCrypto"
+                                                    Amount="{x:Bind ViewModel.AvailableAmount, Mode=OneWay}"
+                                                    Margin="12,8,24,12"
                                                     Grid.ColumnSpan="2" />
-                            <cells:StarAmountCell Amount="{x:Bind ViewModel.Stars.AvailableAmount, Mode=OneWay}"
-                                                  Margin="12,8"
+                            <cells:StarAmountCell x:Name="AvailableStars"
+                                                  UsdRate="{x:Bind ViewModel.Stars.UsdRate, Mode=OneWay}"
+                                                  Amount="{x:Bind ViewModel.Stars.AvailableAmount, Mode=OneWay}"
+                                                  Margin="12,8,12,12"
                                                   Grid.Column="1" />
-                            <cells:CryptoAmountCell Amount="{x:Bind ViewModel.PreviousAmount, Mode=OneWay}"
-                                                    Text="{CustomResource MonetizationOverviewLastWithdrawal}"
-                                                    Margin="12,0"
-                                                    Grid.ColumnSpan="2"
+                            <TextBlock Text="{CustomResource MonetizationOverviewAvailable}"
+                                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                       VerticalAlignment="Bottom"
+                                       Margin="12,0,12,8"
+                                       Grid.ColumnSpan="2" />
+
+                            <cells:CryptoAmountCell x:Name="PreviousCrypto"
+                                                    Amount="{x:Bind ViewModel.PreviousAmount, Mode=OneWay}"
+                                                    Margin="12,8,24,12"
                                                     Grid.Row="1" />
-                            <cells:StarAmountCell Amount="{x:Bind ViewModel.Stars.PreviousAmount, Mode=OneWay}"
-                                                  Margin="12,0"
+                            <cells:StarAmountCell x:Name="PreviousStars"
+                                                  UsdRate="{x:Bind ViewModel.Stars.UsdRate, Mode=OneWay}"
+                                                  Amount="{x:Bind ViewModel.Stars.PreviousAmount, Mode=OneWay}"
+                                                  Margin="12,8,12,12"
                                                   Grid.Column="1"
                                                   Grid.Row="1" />
-                            <cells:CryptoAmountCell Amount="{x:Bind ViewModel.TotalAmount, Mode=OneWay}"
-                                                    Text="{CustomResource MonetizationOverviewTotal}"
-                                                    Margin="12,8"
+                            <TextBlock Text="{CustomResource MonetizationOverviewLastWithdrawal}"
+                                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                       VerticalAlignment="Bottom"
+                                       Margin="12,0,12,8"
+                                       Grid.ColumnSpan="2"
+                                       Grid.Row="1" />
+
+                            <cells:CryptoAmountCell x:Name="TotalCrypto"
+                                                    Amount="{x:Bind ViewModel.TotalAmount, Mode=OneWay}"
+                                                    Margin="12,8,24,12"
                                                     Grid.ColumnSpan="2"
                                                     Grid.Row="2" />
-                            <cells:StarAmountCell Amount="{x:Bind ViewModel.Stars.TotalAmount, Mode=OneWay}"
-                                                  Margin="12,8"
+                            <cells:StarAmountCell x:Name="TotalStars"
+                                                  UsdRate="{x:Bind ViewModel.Stars.UsdRate, Mode=OneWay}"
+                                                  Amount="{x:Bind ViewModel.Stars.TotalAmount, Mode=OneWay}"
+                                                  Margin="12,8,12,12"
                                                   Grid.Column="1"
                                                   Grid.Row="2" />
+                            <TextBlock Text="{CustomResource MonetizationOverviewTotal}"
+                                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                       VerticalAlignment="Bottom"
+                                       Margin="12,0,12,8"
+                                       Grid.ColumnSpan="2"
+                                       Grid.Row="2" />
+
                         </Grid>
                     </controls:HeaderedControl>
 
-                    <controls:HeaderedControl IsFooterLink="True"
+                    <controls:HeaderedControl x:Name="CryptoRoot"
+                                              IsFooterLink="True"
                                               Header="{CustomResource MonetizationBalance}"
                                               Footer="{x:Bind ConvertTransferInfo(ViewModel.WithdrawalEnabled, ViewModel.IsOwner), Mode=OneWay}">
                         <StackPanel Background="{ThemeResource SettingsItemBackground}">
                             <TextBlock TextAlignment="Center"
-                                       Margin="0,8,0,0">
+                                       Margin="0,8,0,8">
                                 <Run Text="&#xEA7E;"
                                      Foreground="{ThemeResource SystemColorControlAccentBrush}"
                                      FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -113,7 +140,7 @@
                                      Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
                             </TextBlock>
 
-                            <Grid>
+                            <Grid Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition />
@@ -126,7 +153,7 @@
                                         Style="{StaticResource AccentButtonStyle}"
                                         HorizontalAlignment="Center"
                                         Height="40"
-                                        Margin="12,8" />
+                                        Margin="12,0,12,8" />
                                 <Button x:Name="AdsButton"
                                         x:Load="{x:Bind ViewModel.IsOwner}"
                                         Click="{x:Bind ViewModel.Transfer}"
@@ -135,35 +162,14 @@
                                         Style="{StaticResource AccentButtonStyle}"
                                         HorizontalAlignment="Center"
                                         Height="40"
-                                        Margin="12,8"
-                                        Grid.Column="1"/>
+                                        Margin="12,8,12,0"
+                                        Grid.Column="1" />
                             </Grid>
                         </StackPanel>
                     </controls:HeaderedControl>
 
-                    <cells:StarWithdrawCell x:Name="Withdraw" />
-
-                    <TextBlock x:Name="TransactionsHeader"
-                               x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                               Text="{CustomResource MonetizationTransactions}"
-                               Style="{StaticResource BaseTextBlockStyle}"
-                               Margin="24,16,24,8" />
-                </controls:SettingsPanel>
-            </ListView.Header>
-            <!--<ListView.Footer>
-                <muxc:ProgressBar Background="Transparent"
-                                       IsIndeterminate="{x:Bind ViewModel.Voice.IsLoading, Mode=OneWay}" />
-            </ListView.Footer>-->
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <revenue:ChatRevenueTransactionCell Background="{ThemeResource SettingsItemBackground}"
-                                                        BorderBrush="{ThemeResource SettingsItemBorderBrush}" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <ListView.Footer>
-                <controls:SettingsPanel IsFooter="True">
                     <controls:HeaderedControl x:Name="SwitchOffRoot"
-                                              x:Load="{x:Bind ViewModel.IsOwner}"
+                                              x:Load="{x:Bind ViewModel.IsOwner, Mode=OneWay}"
                                               Footer="{CustomResource MonetizationSwitchOffInfo}">
                         <controls:FauxCheckBox Click="{x:Bind ViewModel.ToggleSponsoredMessages}"
                                                IsChecked="{x:Bind ViewModel.DisableSponsoredMessages, Mode=OneWay}"
@@ -187,7 +193,63 @@
                             </Grid>
                         </controls:FauxCheckBox>
                     </controls:HeaderedControl>
+
+                    <cells:StarWithdrawCell x:Name="StarsRoot" />
+
+                    <controls:HeaderedControl>
+                        <controls:BadgeButton Click="{x:Bind ViewModel.OpenAffiliate}"
+                                              Content="{CustomResource UserAffiliateProgramRowTitle}"
+                                              Badge="{CustomResource UserAffiliateProgramRowText}"
+                                              Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                              Glyph="&#xE9B5;"
+                                              IsChevronVisible="True" />
+                    </controls:HeaderedControl>
+
+                    <Grid x:Name="TransactionsRoot"
+                          Visibility="{x:Bind ViewModel.ItemsView.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock x:Name="TransactionsHeader"
+                                   x:Load="{x:Bind ViewModel.IsSelectionVisible, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                   Text="{CustomResource MonetizationTransactions}"
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   Margin="24,16,24,8" />
+
+                        <Grid x:Name="TransactionsNavigation"
+                              x:Load="{x:Bind ViewModel.IsSelectionVisible, Mode=OneWay}"
+                              CornerRadius="4"
+                              MaxWidth="1000"
+                              Margin="24,16,24,2">
+                            <Border Background="{ThemeResource SettingsItemBackground}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4" />
+                            <controls:TopNavView SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
+                                                 Height="40"
+                                                 Margin="8,4">
+                                <controls:TopNavViewItem Content="{CustomResource MonetizationTransactionsTON}" />
+                                <controls:TopNavViewItem Content="{CustomResource MonetizationTransactionsStars}" />
+                            </controls:TopNavView>
+                        </Grid>
+                    </Grid>
                 </controls:SettingsPanel>
+            </ListView.Header>
+            <ListView.ItemTemplateSelector>
+                <chats:ChatRevenueTemplateSelector>
+                    <chats:ChatRevenueTemplateSelector.ChatRevenueTransactionTemplate>
+                        <DataTemplate>
+                            <revenue:ChatRevenueTransactionCell Background="{ThemeResource SettingsItemBackground}"
+                                                                BorderBrush="{ThemeResource SettingsItemBorderBrush}" />
+                        </DataTemplate>
+                    </chats:ChatRevenueTemplateSelector.ChatRevenueTransactionTemplate>
+                    <chats:ChatRevenueTemplateSelector.StarTransactionTemplate>
+                        <DataTemplate>
+                            <revenue:StarTransactionCell Background="{ThemeResource SettingsItemBackground}"
+                                                         BorderBrush="{ThemeResource SettingsItemBorderBrush}" />
+                        </DataTemplate>
+                    </chats:ChatRevenueTemplateSelector.StarTransactionTemplate>
+                </chats:ChatRevenueTemplateSelector>
+            </ListView.ItemTemplateSelector>
+            <ListView.Footer>
+                <Border Height="30" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

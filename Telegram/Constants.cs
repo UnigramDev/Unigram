@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -29,9 +29,9 @@ namespace Telegram
         public const int HoldingThrottle = 500;
         public const int AnimatedThrottle = 200;
 
-        public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4" };
+        public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov", ".m4v" };
         public static readonly string[] PhotoTypes = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-        public static readonly string[] VideoTypes = new[] { ".mp4" };
+        public static readonly string[] VideoTypes = new[] { ".mp4", ".mov", ".m4v" };
 
         public const string WallpaperFileName = "wallpaper.jpg";
         public const string WallpaperLocalFileName = "wallpaper.local.jpg";
@@ -64,7 +64,7 @@ namespace Telegram
             DetectMoves = true
         };
 
-        public static MessageSendOptions PreviewOnly = new(false, false, false, false, null, 0, 0, true);
+        public static MessageSendOptions PreviewOnly = new(false, false, false, false, 0, false, null, 0, 0, true);
 
 #if DEBUG
         // We use properties in debug so that the duration is re-evaluated

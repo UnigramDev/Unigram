@@ -1,16 +1,14 @@
-﻿<muxc:TeachingTip x:Class="Telegram.Views.Popups.CreateLinkPopup"
-                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:local="using:Telegram.Views.Popups"
-                  xmlns:controls="using:Telegram.Controls"
-                  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d"
-                  Title="CreateLink"
-                  Style="{StaticResource DefaultTeachingTipStyle}"
-                  ActionButtonStyle="{StaticResource AccentButtonStyle}"
-                  ActionButtonClick="TeachingTip_ActionButtonClick">
+﻿<controls:TeachingTipEx x:Class="Telegram.Views.Popups.CreateLinkPopup"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:controls="using:Telegram.Controls"
+                        mc:Ignorable="d"
+                        Title="CreateLink"
+                        Style="{StaticResource DefaultTeachingTipStyle}"
+                        ActionButtonStyle="{StaticResource AccentButtonStyle}"
+                        ActionButtonClick="TeachingTip_ActionButtonClick">
 
     <StackPanel>
         <TextBox x:Name="TextField"
@@ -24,4 +22,4 @@
                  InputScope="Url"
                  KeyDown="LinkField_KeyDown" />
     </StackPanel>
-</muxc:TeachingTip>
+</controls:TeachingTipEx>

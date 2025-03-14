@@ -377,10 +377,24 @@ namespace LibVLCSharp.Platforms.Windows
             // CompositionScale changes when che SwapChainPanel is inside a ScrollViewer and ZoomLevel changes.
             // We don't want this to happen, so let's try to use XamlRoot.RasterizationScale instead.
 
+            float scaleX;
+            float scaleY;
+
+            if (XamlRoot != null)
+            {
+                scaleX = (float)XamlRoot.RasterizationScale;
+                scaleY = (float)XamlRoot.RasterizationScale;
+            }
+            else
+            {
+                scaleX = _panel.CompositionScaleX;
+                scaleY = _panel.CompositionScaleY;
+            }
+
             _swapChain2!.MatrixTransform = new RawMatrix3x2
             {
-                M11 = 1.0f / (float)XamlRoot.RasterizationScale, //_panel.CompositionScaleX,
-                M22 = 1.0f / (float)XamlRoot.RasterizationScale //_panel.CompositionScaleY
+                M11 = 1.0f / scaleX,
+                M22 = 1.0f / scaleY
             };
         }
 

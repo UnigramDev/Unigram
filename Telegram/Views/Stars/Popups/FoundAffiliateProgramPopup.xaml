@@ -1,0 +1,173 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Stars.Popups.FoundAffiliateProgramPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                       xmlns:controls="using:Telegram.Controls"
+                       mc:Ignorable="d"
+                       Padding="24,0,24,12"
+                       IsDismissButtonVisible="True">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Margin="0,24,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <controls:ProfilePicture x:Name="Photo1"
+                                             Width="64"
+                                             Height="64"
+                                             Margin="0,0,0,8" />
+                    <TextBlock Text="&#xE0E3;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="32"
+                               VerticalAlignment="Center"
+                               Grid.Column="1" />
+                    <controls:ProfilePicture x:Name="Photo2"
+                                             Width="64"
+                                             Height="64"
+                                             Margin="0,0,0,8"
+                                             Grid.Column="2" />
+                </Grid>
+
+                <TextBlock x:Name="Title"
+                           Text="{CustomResource ChannelAffiliateProgramJoinTitle}"
+                           Style="{StaticResource PopupTextBlockStyle}"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Top"
+                           Grid.Row="1" />
+                <TextBlock x:Name="Subtitle"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           TextAlignment="Center"
+                           Margin="12,0,12,8"
+                           Grid.Row="3" />
+            </Grid>
+
+            <controls:TableView x:Name="TableRoot"
+                                Margin="-8,12,-8,0">
+                <controls:TableViewItem x:Name="MonthlyUsers"
+                                        Header="{CustomResource ChannelAffiliateProgramJoinMonthlyUsers}" />
+                <controls:TableViewItem Header="{CustomResource ChannelAffiliateProgramJoinDailyRevenue}"
+                                        Padding="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <controls:PremiumStarCount Margin="8,0,0,0" />
+                        <TextBlock x:Name="StarCount"
+                                   Margin="4,5,8,6"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   VerticalAlignment="Top"
+                                   Grid.Column="1" />
+                    </Grid>
+                </controls:TableViewItem>
+            </controls:TableView>
+
+            <TextBlock Text="{CustomResource ChannelAffiliateProgramLinkSendTo}"
+                       TextAlignment="Center"
+                       Margin="0,12,0,4" />
+
+            <Button Click="Alias_Click"
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource ListEmptyButtonStyle}"
+                    CornerRadius="14">
+                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="1"
+                      CornerRadius="14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <controls:ProfilePicture x:Name="Photo"
+                                             Width="28"
+                                             Height="28" />
+
+                    <TextBlock x:Name="TitleText"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis"
+                               VerticalAlignment="Center"
+                               Margin="8,1,4,3"
+                               Grid.Column="1" />
+
+                    <Grid Width="20"
+                          Height="20"
+                          Margin="0,0,8,0"
+                          Grid.Column="2">
+
+                        <TextBlock Text="&#xE0E4;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Top"
+                                   Grid.Column="2" />
+                        <TextBlock Text="&#xE0E5;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Bottom"
+                                   Grid.Column="2" />
+                    </Grid>
+                </Grid>
+            </Button>
+        </StackPanel>
+
+        <Grid x:Name="PurchasePanel"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Stretch"
+              Margin="0,16,0,0"
+              Grid.Row="1">
+            <controls:BadgeButton x:Name="PurchaseCommand"
+                                  Click="Purchase_Click"
+                                  Style="{StaticResource AccentButtonStyle}"
+                                  HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Center"
+                                  FontWeight="SemiBold"
+                                  CornerRadius="4"
+                                  BorderThickness="1"
+                                  Margin="0"
+                                  Height="32">
+                <Grid>
+                    <TextBlock x:Name="PurchaseText"
+                               Text="{CustomResource ChannelAffiliateProgramJoinButton}"
+                               VerticalAlignment="Center"
+                               Margin="0,3,0,5" />
+                    <muxc:ProgressRing x:Name="PurchaseRing"
+                                       Visibility="Collapsed"
+                                       Foreground="#FFFFFF"
+                                       Width="20"
+                                       Height="20" />
+                </Grid>
+            </controls:BadgeButton>
+        </Grid>
+
+        <controls:SettingsFooter x:Name="Terms"
+                                 IsLink="True"
+                                 Click="SettingsFooter_Click"
+                                 Text="{CustomResource ChannelAffiliateProgramJoinButtonInfo}"
+                                 TextAlignment="Center"
+                                 Margin="0,12,0,4"
+                                 Grid.Row="2" />
+
+    </Grid>
+</controls:ContentPopup>

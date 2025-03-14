@@ -1,0 +1,10 @@
+namespace Telegram.Native.Calls
+{
+    delegate void MediaChannelDescriptionsRequestedDeferral(Int64 time);
+
+    [default_interface]
+    runtimeclass MediaChannelDescriptionsRequestedEventArgs
+    {
+        MediaChannelDescriptionsRequestedDeferral Deferral{ get; };
+    }
+}

@@ -35,10 +35,10 @@
                                           Width="36"
                                           Height="36"
                                           Glyph="&#xE987;"
-                                          CornerRadius="24"
+                                          CornerRadius="18"
+                                          Padding="0"
                                           AutomationProperties.Name="{CustomResource AccDescrReactionMentionDown}"
-                                          ToolTipService.ToolTip="{CustomResource AccDescrReactionMentionDown}"
-                                          Style="{StaticResource RoundGlyphButtonStyle}" />
+                                          ToolTipService.ToolTip="{CustomResource AccDescrReactionMentionDown}" />
                 </Border>
             </Grid>
         </StackPanel>
@@ -65,10 +65,10 @@
                                           Width="36"
                                           Height="36"
                                           Glyph="&#xE168;"
-                                          CornerRadius="24"
+                                          CornerRadius="18"
+                                          Padding="0"
                                           AutomationProperties.Name="{CustomResource AccDescrMentionDown}"
-                                          ToolTipService.ToolTip="{CustomResource AccDescrMentionDown}"
-                                          Style="{StaticResource RoundGlyphButtonStyle}" />
+                                          ToolTipService.ToolTip="{CustomResource AccDescrMentionDown}" />
                 </Border>
             </Grid>
         </StackPanel>
@@ -94,10 +94,10 @@
                                           Width="36"
                                           Height="36"
                                           Glyph="&#xE74B;"
-                                          CornerRadius="24"
+                                          CornerRadius="18"
+                                          Padding="0"
                                           AutomationProperties.Name="{CustomResource AccDescrPageDown}"
-                                          ToolTipService.ToolTip="{CustomResource AccDescrPageDown}"
-                                          Style="{StaticResource RoundGlyphButtonStyle}" />
+                                          ToolTipService.ToolTip="{CustomResource AccDescrPageDown}" />
                 </Border>
             </Grid>
         </StackPanel>

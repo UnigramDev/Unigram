@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
@@ -34,13 +35,14 @@ using Telegram.Views.Authorization;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
+using VirtualKeyModifiers = Windows.System.VirtualKeyModifiers;
 
 namespace Telegram.Views.Host
 {
     public interface IToastHost
     {
-        void Connect(TeachingTip toast);
-        void Disconnect(TeachingTip toast);
+        void ToastOpened(TeachingTip toast);
+        void ToastClosed(TeachingTip toast);
     }
 
     public interface IPopupHost
@@ -156,7 +158,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        public void Connect(TeachingTip toast)
+        public void ToastOpened(TeachingTip toast)
         {
             if (_navigationService?.Frame != null)
             {
@@ -165,7 +167,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        public void Disconnect(TeachingTip toast)
+        public void ToastClosed(TeachingTip toast)
         {
             if (_navigationService?.Frame != null && _navigationService.Frame.Resources.TryGetValue("TeachingTip", out object cached))
             {
@@ -510,11 +512,13 @@ namespace Telegram.Views.Host
         private void OnContextRequested(UIElement sender, Microsoft.UI.Xaml.Input.ContextRequestedEventArgs args)
         {
             var container = sender as ListViewItem;
-            if (container.Content is ISessionService session && !session.IsActive)
+
+            var item = NavigationViewList.ItemFromContainer(container);
+            if (item is ISessionService session && !session.IsActive)
             {
 
             }
-            else if (container.Content is AttachmentMenuBot menuBot)
+            else if (item is AttachmentMenuBot menuBot)
             {
                 if (_navigationService.Content is MainPage page)
                 {
@@ -525,13 +529,10 @@ namespace Telegram.Views.Host
                     flyout.ShowAt(sender, args);
                 }
             }
-            else if (container.Content is RootDestination.AddAccount)
+            else if (item is RootDestination.AddAccount)
             {
-                var alt = WindowContext.IsKeyDown(Windows.System.VirtualKey.Menu);
-                var ctrl = WindowContext.IsKeyDown(Windows.System.VirtualKey.Control);
-                var shift = WindowContext.IsKeyDown(Windows.System.VirtualKey.Shift);
-
-                if (alt && !ctrl && shift)
+                var modifiers = WindowContext.KeyModifiers();
+                if (modifiers == (VirtualKeyModifiers.Menu | VirtualKeyModifiers.Shift))
                 {
                     var flyout = new MenuFlyout();
                     flyout.CreateFlyoutItem(() => Switch(_lifetime.Create(test: false)), "Production Server", Icons.Globe);
@@ -539,7 +540,7 @@ namespace Telegram.Views.Host
                     flyout.ShowAt(sender, args);
                 }
             }
-            else if (container.Content is RootDestination.ArchivedChats)
+            else if (item is RootDestination.ArchivedChats)
             {
                 if (_navigationService.Content is MainPage page)
                 {
@@ -569,6 +570,7 @@ namespace Telegram.Views.Host
             }
 
             UpdateContainerContent(args.ItemContainer, args.Item);
+            args.Handled = true;
         }
 
         private void UpdateContainerContent(SelectorItem container, object item)
@@ -597,7 +599,9 @@ namespace Telegram.Views.Host
                 photo.SetUser(session.ClientService, user, 28);
 
                 var identity = content.FindName("Identity") as IdentityIcon;
-                identity.SetStatus(session.ClientService, user);
+                var botVerified = content.FindName("BotVerified") as CustomEmojiIcon;
+
+                identity.SetStatus(session.ClientService, user, botVerified);
 
                 AutomationProperties.SetName(container, user.FullName());
             }
@@ -611,7 +615,7 @@ namespace Telegram.Views.Host
                 content.Glyph = menuBot.BotUserId == 1985737506 ? Icons.Wallet : Icons.Bot;
                 content.BadgeVisibility = menuBot.ShowDisclaimerInSideMenu ? Visibility.Visible : Visibility.Collapsed;
             }
-            else if (item is RootDestination destination && _navigationService.Content is MainPage page)
+            else if (item is RootDestination destination)
             {
                 var content = container as Controls.NavigationViewItem;
                 if (content != null)
@@ -662,7 +666,7 @@ namespace Telegram.Views.Host
                         break;
 
                     case RootDestination.Status:
-                        if (page.ViewModel.ClientService.TryGetUser(page.ViewModel.ClientService.Options.MyId, out User user))
+                        if (_navigationService.Content is MainPage page && page.ViewModel.ClientService.TryGetUser(page.ViewModel.ClientService.Options.MyId, out User user))
                         {
                             content.Text = user.EmojiStatus == null ? Strings.SetEmojiStatus : Strings.ChangeEmojiStatus;
                             content.Glyph = user.EmojiStatus == null ? Icons.EmojiAdd : Icons.EmojiEdit;
@@ -791,11 +795,9 @@ namespace Telegram.Views.Host
             {
                 if (session.IsActive)
                 {
-                    var alt = WindowContext.IsKeyDown(Windows.System.VirtualKey.Menu);
-                    var ctrl = WindowContext.IsKeyDown(Windows.System.VirtualKey.Control);
-                    var shift = WindowContext.IsKeyDown(Windows.System.VirtualKey.Shift);
+                    var modifiers = WindowContext.KeyModifiers();
 
-                    if (SettingsService.Current.Diagnostics.ShowMemoryUsage && alt && !ctrl && !shift)
+                    if (SettingsService.Current.Diagnostics.ShowMemoryUsage && modifiers == VirtualKeyModifiers.Menu)
                     {
                         TestDestroy();
                     }
@@ -1065,16 +1067,18 @@ namespace Telegram.Views.Host
                         index = i--;
                     }
                 }
+
+                // The list was not initiated yet
+                if (index == -1 && bots.Count > 0)
+                {
+                    InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
+                    return;
+                }
             }
 
             NavigationViewList.ForEach(container =>
             {
-                UpdateContainerContent(container, container.Content);
-
-                if (container.Content is RootDestination.Status)
-                {
-                    return;
-                }
+                UpdateContainerContent(container, NavigationViewList.ItemFromContainer(container));
             });
 
             if (_attachmentMenuBots != botsHash && index != -1)
@@ -1250,6 +1254,14 @@ namespace Telegram.Views.Host
                 {
                     InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
                 }
+            }
+        }
+
+        private void OnProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
+        {
+            if (_navigationService?.Frame.Content is MainPage mainPage)
+            {
+                mainPage.ProcessKeyboardAccelerators(args);
             }
         }
     }

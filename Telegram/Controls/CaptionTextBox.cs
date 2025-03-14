@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -39,11 +39,8 @@ namespace Telegram.Controls
         {
             if (e.Key is VirtualKey.Up or VirtualKey.Down)
             {
-                var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
-                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
-                var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
-
-                if (!alt && !ctrl && !shift)
+                var modifiers = WindowContext.KeyModifiers();
+                if (modifiers == VirtualKeyModifiers.None)
                 {
                     if (Autocomplete != null && View.Autocomplete != null)
                     {
@@ -91,7 +88,14 @@ namespace Telegram.Controls
 
         protected override void OnAccept()
         {
-            View?.Accept();
+            if (View != null)
+            {
+                View?.Accept();
+            }
+            else
+            {
+                base.OnAccept();
+            }
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)
@@ -117,15 +121,9 @@ namespace Telegram.Controls
                         return;
                     }
 
-                    var members = true;
-                    if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret || chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                    if (chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup { IsChannel: false })
                     {
-                        members = false;
-                    }
-
-                    if (members)
-                    {
-                        View.Autocomplete = new ChatTextBox.UsernameCollection(viewModel.ClientService, viewModel.Chat.Id, viewModel.ThreadId, result, false, members);
+                        View.Autocomplete = new ChatTextBox.UsernameCollection(viewModel.ClientService, viewModel.Chat.Id, viewModel.ThreadId, result, false, true, false);
                         return;
                     }
                 }

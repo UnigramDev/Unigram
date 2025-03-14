@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -18,7 +18,7 @@ using Telegram.ViewModels.Delegates;
 using Telegram.Views.Business;
 using Telegram.Views.Folders;
 using Telegram.Views.Settings;
-using Telegram.Views.Stars.Popups;
+using Telegram.Views.Stars;
 
 namespace Telegram.Views
 {
@@ -171,9 +171,9 @@ namespace Telegram.Views
             MasterDetail.NavigationService.ShowPromo(new PremiumSourceSettings());
         }
 
-        private async void Stars_Click(object sender, RoutedEventArgs e)
+        private void Stars_Click(object sender, RoutedEventArgs e)
         {
-            await MasterDetail.NavigationService.ShowPopupAsync(new StarsPopup());
+            MasterDetail.NavigationService.Navigate(typeof(StarsPage));
         }
 
         private void Business_Click(object sender, RoutedEventArgs e)
@@ -195,7 +195,7 @@ namespace Telegram.Views
         {
             Title.Text = user.FullName();
             Photo.SetUser(ViewModel.ClientService, user, 48);
-            Identity.SetStatus(ViewModel.ClientService, user);
+            Identity.SetStatus(ViewModel.ClientService, user, BotVerified);
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)

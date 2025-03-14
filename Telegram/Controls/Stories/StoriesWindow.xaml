@@ -13,7 +13,9 @@
                         Background="{x:Null}"
                         OverlayBrush="{x:Null}"
                         Loaded="OnLoaded"
-                        Unloaded="OnUnloaded">
+                        Unloaded="OnUnloaded"
+                        PreviewKeyDown="OnPreviewKeyDown"
+                        ProcessKeyboardAccelerators="OnProcessKeyboardAccelerators">
 
     <controls:OverlayWindow.Resources>
         <ControlTemplate x:Key="HorizontalNextTemplate"

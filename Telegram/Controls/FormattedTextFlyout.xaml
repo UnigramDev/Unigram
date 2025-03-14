@@ -28,6 +28,15 @@
         </Style>
     </StackPanel.Resources>
 
+    <controls:GlyphToggleButton x:Name="Quote"
+                                Click="{x:Bind TextBox.ToggleQuote}"
+                                AutomationProperties.Name="{CustomResource Quote}"
+                                ToolTipService.ToolTip="{CustomResource Quote}"
+                                AllowFocusOnInteraction="False"
+                                Glyph="&#xEA3E;"
+                                CheckedGlyph="&#xEA3E;"
+                                CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                IsOneWay="False" />
     <controls:GlyphToggleButton x:Name="Bold"
                                 Click="{x:Bind TextBox.ToggleBold}"
                                 AutomationProperties.Name="{CustomResource Bold}"
@@ -81,8 +90,8 @@
                                 AutomationProperties.Name="{CustomResource Spoiler}"
                                 ToolTipService.ToolTip="{CustomResource Spoiler}"
                                 AllowFocusOnInteraction="False"
-                                Glyph="&#xE97C;"
-                                CheckedGlyph="&#xE97C;"
+                                Glyph="&#xEAA1;"
+                                CheckedGlyph="&#xEAA1;"
                                 CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                                 IsOneWay="False" />
 

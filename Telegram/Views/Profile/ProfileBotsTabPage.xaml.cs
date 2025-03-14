@@ -1,0 +1,60 @@
+//
+// Copyright Fela Ameghino 2015-2025
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using Microsoft.UI.Xaml.Controls;
+using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Cells;
+using Telegram.Td.Api;
+
+namespace Telegram.Views.Profile
+{
+    public sealed partial class ProfileBotsTabPage : ProfileTabPage
+    {
+        public ProfileBotsTabPage()
+        {
+            InitializeComponent();
+        }
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is User user)
+            {
+                ViewModel.OpenSimilarBot(user);
+            }
+        }
+
+        protected override void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TableListViewItem();
+                args.ItemContainer.Style = ScrollingHost.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplate;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
+            {
+                content.UpdateSimilarBot(ViewModel.ClientService, args, OnContainerContentChanging);
+            }
+        }
+
+        private FormattedText ConvertMoreSimilar(int totalCount)
+        {
+            var text = string.Format(Strings.MoreSimilarText, "**100**");
+            return Extensions.ReplacePremiumLink(text, new PremiumFeatureIncreasedLimits());
+        }
+    }
+}

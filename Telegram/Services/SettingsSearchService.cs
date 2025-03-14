@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -101,7 +101,7 @@ namespace Telegram.Services
             };
 
             // FAQ indexing is done asyncronously
-            var response = await _clientService.SendAsync(new GetWebPageInstantView(Strings.TelegramFaqUrl, true));
+            var response = await _clientService.SendAsync(new GetWebPageInstantView(Strings.TelegramFaqUrl, false));
             if (response is WebPageInstantView linkPreview)
             {
                 var title = string.Empty;
@@ -126,11 +126,11 @@ namespace Telegram.Services
                             cicci.Add(new SettingsSearchPage(null, title, new Assets.Icons.FAQ(), items.ToArray()));
                         }
                     }
-                    else if (block is PageBlockParagraph para)
+                    else if (block is PageBlockTitle blockTitle)
                     {
-                        title = para.Text.ToPlainText();
+                        title = blockTitle.Title.ToPlainText();
                     }
-                    else if (block is PageBlockDivider)
+                    else if (block is PageBlockAnchor)
                     {
                         break;
                     }

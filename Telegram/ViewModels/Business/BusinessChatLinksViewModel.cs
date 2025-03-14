@@ -102,6 +102,8 @@ namespace Telegram.ViewModels.Business
             {
                 ClientService.Send(new DeleteBusinessChatLink(chatLink.Link));
                 Items.Remove(chatLink);
+
+                NavigationService.Hide(typeof(BusinessChatLinkPopup));
             }
         }
 

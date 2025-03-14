@@ -209,6 +209,20 @@
                TargetType="RichTextBlock"
                BasedOn="{StaticResource BaseRichTextBlockStyle}" />
 
+        <Style x:Key="BlockTableCellStyle"
+               TargetType="Border">
+            <Setter Property="BorderBrush"
+                    Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        </Style>
+
+        <Style x:Key="BlockTableHeaderStyle"
+               TargetType="Border">
+            <Setter Property="Background"
+                    Value="{ThemeResource ControlAltFillColorSecondaryBrush}" />
+            <Setter Property="BorderBrush"
+                    Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        </Style>
+
         <!--<DataTemplate x:Key="ChannelItemTemplate" x:DataType="tl:TLChannel">
              <Grid>
              <Grid.ColumnDefinitions>
@@ -253,7 +267,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource SettingsPageBackground}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -270,7 +284,6 @@
                     </Grid.ColumnDefinitions>
                     <controls:GlyphButton Glyph="&#xE72D;"
                                           Click="Share_Click"
-                                          Style="{StaticResource HeaderGlyphButtonStyle}"
                                           AutomationProperties.Name="{CustomResource ShareLink}"
                                           ToolTipService.ToolTip="{CustomResource ShareLink}" />
                     <controls:MoreButton Margin="-8,0,0,0"

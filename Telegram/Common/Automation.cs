@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -66,7 +66,14 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageVoiceNote voiceNote)
             {
-                builder.Append($"{Strings.AttachAudio}");
+                if (message.SelfDestructType is MessageSelfDestructTypeImmediately)
+                {
+                    builder.Append($"{Strings.AttachOnceAudio}");
+                }
+                else
+                {
+                    builder.Append($"{Strings.AttachAudio}");
+                }
 
                 if (voiceNote.Caption != null && !string.IsNullOrEmpty(voiceNote.Caption.Text))
                 {
@@ -84,7 +91,14 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageVideoNote)
             {
-                builder.Append($"{Strings.AttachRound}");
+                if (message.SelfDestructType is MessageSelfDestructTypeImmediately)
+                {
+                    builder.Append($"{Strings.AttachOnceRound}");
+                }
+                else
+                {
+                    builder.Append($"{Strings.AttachRound}");
+                }
             }
             else if (message.Content is MessageAnimation animation)
             {
@@ -337,7 +351,11 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageVideoNote videoNote)
             {
-                var result = Strings.AttachRound + ", " + (videoNote.IsViewed ? "" : Strings.AccDescrMsgNotPlayed + ", ");
+                var result = message.SelfDestructType is MessageSelfDestructTypeImmediately
+                    ? Strings.AttachOnceRound
+                    : Strings.AttachRound;
+
+                result += ", " + (videoNote.IsViewed ? "" : Strings.AccDescrMsgNotPlayed + ", ");
 
                 if (details)
                 {
@@ -363,7 +381,11 @@ namespace Telegram.Common
 
             if (message.Content is MessageVoiceNote voiceNote)
             {
-                var result = Strings.AttachAudio + GetCaption(voiceNote.Caption.Text) + ", " + (voiceNote.IsListened ? "" : Strings.AccDescrMsgNotPlayed + ", ");
+                var result = message.SelfDestructType is MessageSelfDestructTypeImmediately
+                    ? Strings.AttachOnceAudio
+                    : Strings.AttachAudio;
+
+                result += GetCaption(voiceNote.Caption.Text) + ", " + (voiceNote.IsListened ? "" : Strings.AccDescrMsgNotPlayed + ", ");
 
                 if (details)
                 {

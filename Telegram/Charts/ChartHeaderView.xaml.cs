@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -26,11 +26,11 @@ namespace Telegram.Charts
 
             if (DispatcherQueue.HasThreadAccess)
             {
-                Label1.Text = string.Format("{0} - {1}", Formatter.ShortDate.Format(start), Formatter.ShortDate.Format(end));
+                Label1.Text = string.Format("{0} - {1}", Formatter.Date(start), Formatter.Date(end));
             }
             else
             {
-                DispatcherQueue.TryEnqueue(() => Label1.Text = string.Format("{0} - {1}", Formatter.ShortDate.Format(start), Formatter.ShortDate.Format(end)));
+                DispatcherQueue.TryEnqueue(() => Label1.Text = string.Format("{0} - {1}", Formatter.Date(start), Formatter.Time(end)));
             }
         }
 

@@ -14,7 +14,7 @@
                        FocusPrimaryButton="False"
                        IsLightDismissEnabled="False"
                        IsDismissButtonVisible="True"
-                       Title="{x:Bind SendWithoutCompression, Mode=OneWay}"
+                       Title="{x:Bind TitleText, Mode=OneWay}"
                        Padding="0,24,0,0">
 
     <ContentControl.Resources>
@@ -134,7 +134,7 @@
             <Grid PointerEntered="FileItem_PointerEntered"
                   PointerExited="FileItem_PointerExited"
                   Background="Transparent"
-                  Padding="20,6,20,6">
+                  Padding="12,0,12,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -293,16 +293,6 @@
                 Ttl="{x:Bind Ttl, Mode=OneWay}"/>-->
 
         </DataTemplate>
-
-        <ItemsPanelTemplate x:Key="FilesPanelTemplate">
-            <ItemsStackPanel />
-        </ItemsPanelTemplate>
-
-        <ItemsPanelTemplate x:Key="AlbumPanelTemplate">
-            <local:SendFilesAlbumPanel Loading="SendFilesAlbumPanel_Loading"
-                                       Margin="0,0,-2,-2" />
-        </ItemsPanelTemplate>
-
     </ContentControl.Resources>
 
     <Grid RowSpacing="0">
@@ -369,13 +359,15 @@
 
             <controls:GlyphButton Click="Emoji_Click"
                                   Glyph="&#xE76E;"
+                                  AutomationProperties.Name="{CustomResource Emoji}"
                                   AllowFocusOnInteraction="False"
                                   HorizontalAlignment="Right"
                                   VerticalAlignment="Bottom"
                                   FontSize="24"
                                   Grid.Column="1" />
 
-            <controls:GlyphButton Click="Send_Click"
+            <controls:GlyphButton x:Name="SendMessage"
+                                  Click="Send_Click"
                                   ContextRequested="Send_ContextRequested"
                                   AutomationProperties.Name="{CustomResource Send}"
                                   ToolTipService.ToolTip="{CustomResource Send}"
@@ -385,87 +377,79 @@
                                   Glyph="&#xE919;"
                                   Margin="-8,0,0,0"
                                   Grid.Column="2" />
+            <Button x:Name="PaidMessage"
+                    Click="Send_Click"
+                    ContextRequested="Send_ContextRequested"
+                    Style="{StaticResource AccentButtonStyle}"
+                    FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                    BorderBrush="{ThemeResource AccentButtonBackground}"
+                    AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
+                    ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Visibility="Collapsed"
+                    CornerRadius="16"
+                    Margin="0,8,8,8"
+                    Grid.Column="2" />
         </Grid>
 
-        <Grid x:Name="ListPanel"
-              x:Load="False"
-              Grid.Row="1">
-            <ListView x:Name="ScrollingHost"
-                      ItemsSource="{x:Bind Items}"
-                      ItemTemplate="{StaticResource FileItemTemplate}"
-                      ItemsPanel="{StaticResource FilesPanelTemplate}"
-                      ContainerContentChanging="OnContainerContentChanging"
-                      SelectionMode="None"
-                      DragEnter="ListView_DragEnter"
-                      Drop="ListView_Drop"
-                      CanReorderItems="True"
-                      CanDragItems="True"
-                      AllowDrop="True">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment"
-                                Value="Stretch" />
-                        <Setter Property="VerticalContentAlignment"
-                                Value="Stretch" />
-                        <Setter Property="MinWidth"
-                                Value="0" />
-                        <Setter Property="MinHeight"
-                                Value="0" />
-                        <Setter Property="Padding"
-                                Value="0" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </ListView>
-        </Grid>
-        <Grid x:Name="AlbumPanel"
-              x:Load="False"
-              Grid.Row="1">
-            <ListView x:Name="Album"
-                      ItemsSource="{x:Bind Items}"
-                      ItemTemplate="{StaticResource MediaItemTemplate}"
-                      ItemsPanel="{StaticResource AlbumPanelTemplate}"
-                      ContainerContentChanging="OnContainerContentChanging"
-                      SelectionMode="None"
-                      DragEnter="ListView_DragEnter"
-                      Drop="ListView_Drop"
-                      AllowDrop="True">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment"
-                                Value="Stretch" />
-                        <Setter Property="VerticalContentAlignment"
-                                Value="Stretch" />
-                        <Setter Property="MinWidth"
-                                Value="0" />
-                        <Setter Property="MinHeight"
-                                Value="0" />
-                        <Setter Property="Padding"
-                                Value="0" />
-                        <Setter Property="Margin"
-                                Value="0,0,2,2" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </ListView>
-        </Grid>
+        <ListView x:Name="ScrollingHost"
+                  ItemsSource="{x:Bind ItemsView}"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  SelectionMode="None"
+                  DragEnter="ListView_DragEnter"
+                  Drop="ListView_Drop"
+                  CanReorderItems="True"
+                  CanDragItems="True"
+                  AllowDrop="True"
+                  Padding="8,8,8,0"
+                  Grid.Row="1">
+            <ListView.ItemTemplateSelector>
+                <local:StorageMediaTemplateSelector FileTemplate="{StaticResource FileItemTemplate}">
+                    <local:StorageMediaTemplateSelector.AlbumTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <local:StorageAlbumPanel ItemTemplate="{StaticResource MediaItemTemplate}"
+                                                         ItemClick="Album_ItemClick"
+                                                         Margin="0,0,-2,6" />
 
-        <Button x:Name="PaidMediaButton"
-                Style="{StaticResource InvoiceFileButtonStyle}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                IsHitTestVisible="False"
-                Grid.Row="1">
-            <RichTextBlock IsTextSelectionEnabled="False">
-                <Paragraph>
-                    <Run x:Name="TextPart1" />
-                    <InlineUIContainer>
-                        <controls:PremiumStarCount Width="24"
-                                                   Height="24"
-                                                   Margin="-4,-4,-2,-6" />
-                    </InlineUIContainer>
-                    <Run x:Name="TextPart2" />
-                </Paragraph>
-            </RichTextBlock>
-        </Button>
+                                <Button x:Name="PaidMediaButton"
+                                        Style="{StaticResource InvoiceFileButtonStyle}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        IsHitTestVisible="False">
+                                    <RichTextBlock IsTextSelectionEnabled="False">
+                                        <Paragraph>
+                                            <Run x:Name="TextPart1" />
+                                            <InlineUIContainer>
+                                                <controls:PremiumStarCount Width="24"
+                                                                           Height="24"
+                                                                           Margin="-4,-4,-2,-6" />
+                                            </InlineUIContainer>
+                                            <Run x:Name="TextPart2" />
+                                        </Paragraph>
+                                    </RichTextBlock>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </local:StorageMediaTemplateSelector.AlbumTemplate>
+                </local:StorageMediaTemplateSelector>
+            </ListView.ItemTemplateSelector>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment"
+                            Value="Stretch" />
+                    <Setter Property="MinWidth"
+                            Value="0" />
+                    <Setter Property="MinHeight"
+                            Value="0" />
+                    <Setter Property="Padding"
+                            Value="0" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
 
         <Grid Grid.Row="1">
             <controls:OrientableListView x:Name="ListAutocomplete"
@@ -500,7 +484,8 @@
             </controls:OrientableListView>
         </Grid>
 
-        <controls:MoreButton Click="Menu_Click"
+        <controls:MoreButton x:Name="MoreButton"
+                             Click="More_ContextRequested"
                              HorizontalAlignment="Right"
                              VerticalAlignment="Top"
                              Margin="0,-62,40,0"

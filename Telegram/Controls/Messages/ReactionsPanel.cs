@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -198,16 +198,17 @@ namespace Telegram.Controls.Messages
 
         public Size Footer { get; set; }
 
+        public HorizontalAlignment HorizontalContentAlignment { get; set; } = HorizontalAlignment.Left;
+
         protected override Size MeasureOverride(Size availableSize)
         {
             var totalMeasure = new Size();
-            var parentMeasure = new Size(availableSize.Width, availableSize.Height);
             var lineMeasure = new Size(Padding.Left, 0);
             var count = 0;
 
             void Measure(double currentWidth, double currentHeight)
             {
-                if (parentMeasure.Width > currentWidth + lineMeasure.Width)
+                if (availableSize.Width > currentWidth + lineMeasure.Width)
                 {
                     lineMeasure.Width += currentWidth + Spacing;
                     lineMeasure.Height = Math.Max(lineMeasure.Height, currentHeight);
@@ -220,7 +221,7 @@ namespace Telegram.Controls.Messages
                     totalMeasure.Height += lineMeasure.Height + Spacing;
 
                     // if the next new row still can handle more controls
-                    if (parentMeasure.Width > currentWidth)
+                    if (availableSize.Width > currentWidth)
                     {
                         // set lineMeasure initial values to the currentMeasure to be calculated later on the new loop
                         lineMeasure.Width = currentWidth;
@@ -275,29 +276,70 @@ namespace Telegram.Controls.Messages
         /// <inheritdoc />
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var parentMeasure = new Size(finalSize.Width, finalSize.Height);
             var position = new Size(Padding.Left, Padding.Top);
             var count = 0;
+
+            var center = HorizontalContentAlignment == HorizontalAlignment.Center;
+            var rows = center
+                ? new List<List<Rect>>()
+                : null;
+            var row = center
+                ? new List<Rect>()
+                : null;
 
             double currentV = 0;
             foreach (var child in Children)
             {
                 var desiredMeasure = new Size(child.DesiredSize.Width, child.DesiredSize.Height);
-                if ((desiredMeasure.Width + position.Width) > parentMeasure.Width)
+                if ((desiredMeasure.Width + position.Width) > finalSize.Width)
                 {
                     // next row!
                     position.Width = Padding.Left;
                     position.Height += currentV + Spacing;
                     currentV = 0;
+
+                    if (center)
+                    {
+                        rows.Add(row);
+                        row = new List<Rect>();
+                    }
                 }
 
                 // Place the item
-                child.Arrange(new Rect(position.Width, position.Height, child.DesiredSize.Width, child.DesiredSize.Height));
+                if (center)
+                {
+                    row.Add(new Rect(position.Width, position.Height, child.DesiredSize.Width, child.DesiredSize.Height));
+                }
+                else
+                {
+                    child.Arrange(new Rect(position.Width, position.Height, child.DesiredSize.Width, child.DesiredSize.Height));
+                }
 
                 // adjust the location for the next items
                 position.Width += desiredMeasure.Width + Spacing;
                 currentV = Math.Max(desiredMeasure.Height, currentV);
                 count++;
+            }
+
+            if (center)
+            {
+                if (row.Count > 0)
+                {
+                    rows.Add(row);
+                }
+
+                var i = 0;
+
+                foreach (var item in rows)
+                {
+                    var width = item[^1].Right;
+                    var diff = (finalSize.Width - width) / 2;
+
+                    foreach (var child in item)
+                    {
+                        Children[i++].Arrange(new Rect(child.X + diff, child.Y, child.Width, child.Height));
+                    }
+                }
             }
 
             return finalSize;

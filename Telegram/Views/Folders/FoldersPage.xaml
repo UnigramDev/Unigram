@@ -1,12 +1,10 @@
 ﻿<local:HostedPage x:Class="Telegram.Views.Folders.FoldersPage"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:local="using:Telegram.Views"
-                  xmlns:controls="using:Telegram.Controls"
-                  xmlns:td="using:Telegram.Td.Api"
-                  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:local="using:Telegram.Views"
                   mc:Ignorable="d"
                   NavigationMode="Root">
 
@@ -20,24 +18,96 @@
                                 DragItemsCompleted="OnDragItemsCompleted"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
-                                VerticalContentAlignment="Top"
                                 CanReorderItems="True"
                                 CanDragItems="True"
                                 AllowDrop="True">
             <ListView.Header>
-                <controls:SettingsPanel IsHeader="True">
-                    <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
-                                               Text="{CustomResource CreateNewFilterInfo}" />
+                <controls:TableListView ItemsSource="{x:Bind ViewModel.Recommended}"
+                                        SelectionMode="None"
+                                        ContainerContentChanging="OnContainerContentChanging">
+                    <ListView.Header>
+                        <controls:SettingsPanel IsHeader="True">
+                            <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
+                                                       Text="{CustomResource CreateNewFilterInfo}"
+                                                       Margin="0,0,0,-14" />
 
-                    <TextBlock Text="{CustomResource Filters}"
-                               Style="{StaticResource BaseTextBlockStyle}"
-                               Margin="24,16,24,6" />
-                </controls:SettingsPanel>
+                            <TextBlock Text="{CustomResource FilterRecommended}"
+                                       Style="{StaticResource BaseTextBlockStyle}"
+                                       Visibility="{x:Bind ViewModel.Recommended.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                       Margin="24,30,24,6" />
+                        </controls:SettingsPanel>
+                    </ListView.Header>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="{ThemeResource SettingsItemBackground}"
+                                  BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="56" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock FontSize="20"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           Margin="20,0,0,0"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}" />
+
+                                <RichTextBlock Style="{StaticResource BodyRichTextBlockStyle}"
+                                               Margin="0,11,12,12"
+                                               Grid.Column="1">
+                                    <Paragraph />
+                                </RichTextBlock>
+                                <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                           Margin="0,-10,12,12"
+                                           Grid.Column="1"
+                                           Grid.Row="1" />
+
+                                <controls:BadgeButton Content="{CustomResource Add}"
+                                                      Style="{StaticResource PillButtonStyle}"
+                                                      Click="AddRecommended_Click"
+                                                      HorizontalAlignment="Right"
+                                                      VerticalAlignment="Center"
+                                                      Margin="0,0,12,0"
+                                                      Grid.Column="2"
+                                                      Grid.RowSpan="2" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.Footer>
+                        <controls:SettingsPanel IsHeader="True"
+                                                IsFooter="True">
+                            <TextBlock Text="{CustomResource Filters}"
+                                       Style="{StaticResource BaseTextBlockStyle}"
+                                       Margin="24,30,24,6" />
+                        </controls:SettingsPanel>
+                    </ListView.Footer>
+                    <ListView.Template>
+                        <ControlTemplate TargetType="ListView">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{TemplateBinding CornerRadius}">
+                                <ItemsPresenter Header="{TemplateBinding Header}"
+                                                HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                                HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                                                Footer="{TemplateBinding Footer}"
+                                                FooterTemplate="{TemplateBinding FooterTemplate}"
+                                                FooterTransitions="{TemplateBinding FooterTransitions}"
+                                                Padding="{TemplateBinding Padding}" />
+                            </Border>
+                        </ControlTemplate>
+                    </ListView.Template>
+                </controls:TableListView>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Background="{ThemeResource SettingsItemBackground}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="56" />
                             <ColumnDefinition Width="Auto" />
@@ -52,12 +122,15 @@
                                    AutomationProperties.AccessibilityView="Raw"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />
 
-                        <ContentPresenter x:Name="ContentPresenter"
-                                          AutomationProperties.AccessibilityView="Raw"
-                                          HorizontalContentAlignment="Left"
-                                          Padding="0,11,12,12"
-                                          VerticalContentAlignment="Center"
-                                          Grid.Column="1" />
+                        <RichTextBlock x:Name="ContentPresenter"
+                                       AutomationProperties.AccessibilityView="Raw"
+                                       HorizontalAlignment="Left"
+                                       Padding="0,11,12,12"
+                                       VerticalAlignment="Center"
+                                       IsTextSelectionEnabled="False"
+                                       Grid.Column="1">
+                            <Paragraph />
+                        </RichTextBlock>
                         <ContentControl x:Name="BadgePresenter"
                                         FontSize="20"
                                         FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -107,7 +180,7 @@
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl Footer="{x:Bind ConvertShowTagsFooter(ViewModel.IsPremium), Mode=OneWay}">
-                        <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <Grid BorderBrush="{ThemeResource SettingsItemBorderBrush}">
                             <controls:FauxCheckBox Click="{x:Bind ViewModel.ChangeShowTags}"
                                                    IsFaux="True"
                                                    IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
@@ -123,28 +196,6 @@
                                        Padding="20,12,0,0"
                                        IsHitTestVisible="False" />
                         </Grid>
-                    </controls:HeaderedControl>
-
-                    <controls:HeaderedControl Header="{CustomResource FilterRecommended}"
-                                              Visibility="{x:Bind ViewModel.Recommended.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
-                                            ItemsSource="{x:Bind ViewModel.Recommended}"
-                                            ElementPrepared="Recommended_ElementPrepared">
-                            <muxc:ItemsRepeater.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <controls:BadgeButton Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}" />
-
-                                        <controls:BadgeButton Content="{CustomResource Add}"
-                                                              Style="{StaticResource PillButtonStyle}"
-                                                              Click="AddRecommended_Click"
-                                                              HorizontalAlignment="Right"
-                                                              VerticalAlignment="Center"
-                                                              Margin="0,0,12,0" />
-                                    </Grid>
-                                </DataTemplate>
-                            </muxc:ItemsRepeater.ItemTemplate>
-                        </muxc:ItemsRepeater>
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl Header="{CustomResource TabsView}"

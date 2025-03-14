@@ -97,15 +97,25 @@ namespace Telegram.Views.Popups
 
             if (item is SearchResult result)
             {
-                user = result.User;
+                if (result.Chat != null)
+                {
+                    user = ViewModel.ClientService.GetUser(result.Chat);
+                }
+                else
+                {
+                    user = result.User;
+                }
             }
 
-            var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.SendMessage, user, Strings.SendMessage, Icons.ChatEmpty);
-            flyout.CreateFlyoutItem(ViewModel.CreateSecretChat, user, Strings.StartEncryptedChat, Icons.Timer);
-            flyout.CreateFlyoutItem(ViewModel.VoiceCall, user, Strings.Call, Icons.Call);
-            flyout.CreateFlyoutItem(ViewModel.VideoCall, user, Strings.VideoCall, Icons.Video);
-            flyout.ShowAt(sender, args);
+            if (user != null)
+            {
+                var flyout = new MenuFlyout();
+                flyout.CreateFlyoutItem(ViewModel.SendMessage, user, Strings.SendMessage, Icons.ChatEmpty);
+                flyout.CreateFlyoutItem(ViewModel.CreateSecretChat, user, Strings.StartEncryptedChat, Icons.Timer);
+                flyout.CreateFlyoutItem(ViewModel.VoiceCall, user, Strings.Call, Icons.Call);
+                flyout.CreateFlyoutItem(ViewModel.VideoCall, user, Strings.VideoCall, Icons.Video);
+                flyout.ShowAt(sender, args);
+            }
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)

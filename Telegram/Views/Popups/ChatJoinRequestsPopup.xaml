@@ -5,11 +5,10 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       Title="TITLE"
-                       PrimaryButtonText="Button1"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        Padding="0,24,0,0"
-                       VerticalContentAlignment="Stretch">
+                       VerticalContentAlignment="Stretch"
+                       IsDismissButtonVisible="True">
 
     <Grid>
         <ListView x:Name="ScrollingHost"

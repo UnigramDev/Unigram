@@ -8,7 +8,6 @@
                        xmlns:chats="using:Telegram.Controls.Chats"
                        xmlns:messages="using:Telegram.Controls.Messages"
                        mc:Ignorable="d"
-                       Background="Black"
                        VerticalContentAlignment="Stretch"
                        Padding="0,24,0,0"
                        Closing="OnClosing">

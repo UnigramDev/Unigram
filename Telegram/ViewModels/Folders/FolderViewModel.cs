@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -21,6 +21,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Folders;
 using Telegram.Views.Folders.Popups;
 using Telegram.Views.Popups;
 
@@ -88,6 +89,11 @@ namespace Telegram.ViewModels.Folders
                 folder.PinnedChatIds = new List<long>();
                 folder.IncludedChatIds = new List<long>();
                 folder.ExcludedChatIds = new List<long>();
+
+                if (parameter is FolderPageCreateArgs createArgs)
+                {
+                    folder.IncludedChatIds.Add(createArgs.IncludeChatId);
+                }
             }
 
             if (folder == null)
@@ -95,17 +101,14 @@ namespace Telegram.ViewModels.Folders
                 return;
             }
 
-            if (state != null && state.TryGet("included_chat_id", out long includedChatId))
-            {
-                folder.IncludedChatIds.Add(includedChatId);
-            }
-
             _pinnedChatIds = folder.PinnedChatIds;
 
             _iconPicked = !string.IsNullOrEmpty(folder.Icon?.Name);
             _originalColorId = folder.ColorId;
 
-            Title = folder.Title;
+            //Title = new FormattedText(folder.Title, Array.Empty<TextEntity>());
+            Title = folder.Name?.Text ?? string.Empty.AsFormattedText();
+            AnimateCustomEmoji = folder.Name?.AnimateCustomEmoji ?? true;
             Icon = Icons.ParseFolder(folder);
             SelectedColor = IsPremium && folder.ColorId != -1
                 ? ClientService.GetAccentColor(folder.ColorId)
@@ -191,12 +194,40 @@ namespace Telegram.ViewModels.Folders
             set => Set(ref _folder, value);
         }
 
-        private string _title = string.Empty;
-        public string Title
+        private FormattedText _title;
+        public FormattedText Title
         {
             get => _title;
-            set => Invalidate(ref _title, value);
+            set
+            {
+                if (_title.AreTheSame(value))
+                {
+                    return;
+                }
+
+                Invalidate(ref _title, value);
+                RaisePropertyChanged(nameof(Name));
+                RaisePropertyChanged(nameof(HasCustomEmoji));
+            }
         }
+
+        private bool _animateCustomEmoji;
+        public bool AnimateCustomEmoji
+        {
+            get => _animateCustomEmoji;
+            set
+            {
+                if (Invalidate(ref _animateCustomEmoji, value))
+                {
+                    RaisePropertyChanged(nameof(Name));
+                    RaisePropertyChanged(nameof(HasCustomEmoji));
+                }
+            }
+        }
+
+        public bool HasCustomEmoji => Title?.Entities?.Count > 0;
+
+        public ChatFolderName Name => new ChatFolderName(Title, AnimateCustomEmoji);
 
         private bool _isShareable;
         public bool IsShareable
@@ -351,7 +382,7 @@ namespace Telegram.ViewModels.Folders
         private bool _completed;
         public bool HasChanged => CanBeSaved && (_folder == null || !_folder.AreTheSame(GetFolder()));
 
-        public bool CanBeSaved => !string.IsNullOrEmpty(Title) && Include.Count > 0;
+        public bool CanBeSaved => !string.IsNullOrEmpty(Title?.Text) && Include.Count > 0;
 
         protected bool Invalidate<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
@@ -369,6 +400,7 @@ namespace Telegram.ViewModels.Folders
             var response = await SendAsync();
             if (response is ChatFolderInfo)
             {
+                _completed = true;
                 NavigationService.GoBack();
             }
         }
@@ -391,7 +423,7 @@ namespace Telegram.ViewModels.Folders
         private ChatFolder GetFolder()
         {
             var folder = new ChatFolder();
-            folder.Title = Title ?? string.Empty;
+            folder.Name = new ChatFolderName(Title, AnimateCustomEmoji);
             folder.Icon = new ChatFolderIcon(_iconPicked ? Enum.GetName(typeof(ChatFolderIcon2), Icon) : string.Empty);
             folder.ColorId = IsPremium ? SelectedColor?.Id ?? -1 : _originalColorId;
             folder.IsShareable = IsShareable;
@@ -495,7 +527,7 @@ namespace Telegram.ViewModels.Folders
 
         public async void CreateLink()
         {
-            if (string.IsNullOrEmpty(Title))
+            if (string.IsNullOrEmpty(Title?.Text))
             {
                 ShowPopup(Strings.FilterInviteErrorEmptyName, Strings.AppName, Strings.OK);
                 return;

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -19,6 +19,19 @@ using Windows.ApplicationModel.DataTransfer;
 
 namespace Telegram.Views.Supergroups
 {
+    public partial class SupergroupEditTypeArgs
+    {
+        public SupergroupEditTypeArgs(long chatId, bool isNewChat)
+        {
+            ChatId = chatId;
+            IsNewChat = isNewChat;
+        }
+
+        public long ChatId { get; }
+
+        public bool IsNewChat { get; }
+    }
+
     public sealed partial class SupergroupEditTypePage : HostedPage, ISupergroupEditDelegate
     {
         public SupergroupEditTypeViewModel ViewModel => DataContext as SupergroupEditTypeViewModel;
@@ -43,7 +56,7 @@ namespace Telegram.Views.Supergroups
                 return;
             }
 
-            var popup = new TeachingTip();
+            var popup = new TeachingTipEx();
             popup.Title = username.IsActive
                 ? Strings.UsernameDeactivateLink
                 : Strings.UsernameActivateLink;
@@ -69,11 +82,11 @@ namespace Telegram.Views.Supergroups
             {
                 void handler(object sender, object e)
                 {
-                    host.Disconnect(popup);
+                    host.ToastClosed(popup);
                     popup.Closed -= handler;
                 }
 
-                host.Connect(popup);
+                host.ToastOpened(popup);
                 popup.Closed += handler;
             }
 

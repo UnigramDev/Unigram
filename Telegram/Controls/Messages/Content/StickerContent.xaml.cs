@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -72,13 +72,13 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = message;
 
-            LayoutRoot.Constraint = message;
-
             var sticker = GetContent(message, out bool premium);
             if (sticker == null || !_templateApplied)
             {
                 return;
             }
+
+            LayoutRoot.Constraint = message;
 
             var flip = false;
             var maxSize = 180d;
@@ -265,7 +265,7 @@ namespace Telegram.Controls.Messages.Content
                 }
 
                 var response = await _message.ClientService.SendAsync(new ClickAnimatedEmojiMessage(_message.ChatId, _message.Id));
-                if (response is Sticker interaction)
+                if (response is Sticker interaction && this.IsConnected())
                 {
                     PlayInteraction(_message, interaction);
                 }

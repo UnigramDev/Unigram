@@ -10,7 +10,9 @@
                         VerticalAlignment="Stretch"
                         HorizontalAlignment="Stretch"
                         Background="{x:Null}"
-                        RequestedTheme="Dark">
+                        RequestedTheme="Dark"
+                        PreviewKeyDown="OnPreviewKeyDown"
+                        ProcessKeyboardAccelerators="OnProcessKeyboardAccelerators">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -53,6 +55,7 @@
             <controls:GlyphButton Click="Cancel_Click"
                                   Glyph="&#xE711;"
                                   CornerRadius="13,4,4,13"
+                                  Margin="0,0,-4,0"
                                   AutomationProperties.Name="{CustomResource Close}"
                                   ToolTipService.ToolTip="{CustomResource Close}" />
 
@@ -143,10 +146,10 @@
             <Grid x:Name="TrimToolbar"
                   x:Load="False"
                   Grid.Column="2">
-                <StackPanel x:Name="TrimThumbnails"
-                            Orientation="Horizontal"
-                            Width="296"
-                            CornerRadius="4" />
+                <Grid x:Name="TrimThumbnails"
+                      Height="40"
+                      Width="296"
+                      CornerRadius="4" />
                 <controls:VideoRangeSlider x:Name="TrimRange"
                                            MinimumChanged="TrimRange_MinimumChanged"
                                            MaximumChanged="TrimRange_MaximumChanged"
@@ -165,6 +168,7 @@
                                   Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                   HorizontalAlignment="Right"
                                   CornerRadius="4,13,13,4"
+                                  Margin="-4,0,0,0"
                                   AutomationProperties.Name="{CustomResource Done}"
                                   ToolTipService.ToolTip="{CustomResource Done}"
                                   Grid.Column="4" />

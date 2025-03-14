@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,6 +10,7 @@ using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -61,6 +62,7 @@ namespace Telegram.ViewModels.Profile
         protected readonly ProfileStoriesTabViewModel _archivedStoriesTabViewModel;
         protected readonly ProfileGroupsTabViewModel _groupsTabViewModel;
         protected readonly ProfileChannelsTabViewModel _channelsTabViewModel;
+        protected readonly ProfileBotsTabViewModel _botsTabViewModel;
         protected readonly ProfileGiftsTabViewModel _giftsTabViewModel;
         protected readonly ProfileMembersTabViewModel _membersTabVieModel;
 
@@ -77,6 +79,7 @@ namespace Telegram.ViewModels.Profile
             _archivedStoriesTabViewModel = TypeResolver.Current.Resolve<ProfileStoriesTabViewModel>(clientService.SessionId);
             _groupsTabViewModel = TypeResolver.Current.Resolve<ProfileGroupsTabViewModel>(clientService.SessionId);
             _channelsTabViewModel = TypeResolver.Current.Resolve<ProfileChannelsTabViewModel>(clientService.SessionId);
+            _botsTabViewModel = TypeResolver.Current.Resolve<ProfileBotsTabViewModel>(clientService.SessionId);
             _giftsTabViewModel = TypeResolver.Current.Resolve<ProfileGiftsTabViewModel>(clientService.SessionId);
             _membersTabVieModel = TypeResolver.Current.Resolve<ProfileMembersTabViewModel>(clientService.SessionId);
             _membersTabVieModel.IsEmbedded = true;
@@ -89,13 +92,14 @@ namespace Telegram.ViewModels.Profile
             Children.Add(_archivedStoriesTabViewModel);
             Children.Add(_groupsTabViewModel);
             Children.Add(_channelsTabViewModel);
+            Children.Add(_botsTabViewModel);
             Children.Add(_giftsTabViewModel);
             Children.Add(_membersTabVieModel);
 
             Items = new ObservableCollection<ProfileTabItem>();
 
             SelectedItems = new MvxObservableCollection<MessageWithOwner>();
-            SelectedItems.CollectionChanged += OnConnectionChanged;
+            SelectedItems.CollectionChanged += OnCollectionChanged;
 
             Media = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterPhotoAndVideo(), new MessageDiffHandler());
             Files = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterDocument(), new MessageDiffHandler());
@@ -105,9 +109,10 @@ namespace Telegram.ViewModels.Profile
             Animations = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterAnimation(), new MessageDiffHandler());
         }
 
-        private async void OnConnectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private async void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            var properties = await ClientService.GetMessagePropertiesAsync(SelectedItems.Select(x => new MessageId(x)));
+            var selectedItems = SelectedItems.ToList();
+            var properties = await ClientService.GetMessagePropertiesAsync(selectedItems.Select(x => new MessageId(x)));
 
             CanDeleteSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
             CanForwardSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeForwarded);
@@ -245,6 +250,11 @@ namespace Telegram.ViewModels.Profile
                         AddTab(new ProfileTabItem(Strings.ProfileBotPreviewTab, typeof(ProfileStoriesTabPage), ChatStoriesType.Pinned));
                     }
 
+                    if (cached != null && cached.GiftCount > 0)
+                    {
+                        AddTab(new ProfileTabItem(Strings.ProfileGifts, typeof(ProfileGiftsTabPage)));
+                    }
+
                     await UpdateSharedCountAsync(chat);
 
                     if (cached != null && cached.GroupInCommonCount > 0)
@@ -252,9 +262,14 @@ namespace Telegram.ViewModels.Profile
                         AddTab(new ProfileTabItem(Strings.SharedGroupsTab2, typeof(ProfileGroupsTabPage)));
                     }
 
-                    if (cached != null && cached.GiftCount > 0)
+                    if (user.Type is UserTypeBot)
                     {
-                        AddTab(new ProfileTabItem(Strings.ProfileGifts, typeof(ProfileGiftsTabPage)));
+                        await _botsTabViewModel.LoadMoreItemsAsync(0);
+
+                        if (_botsTabViewModel.Items.Count > 0)
+                        {
+                            AddTab(new ProfileTabItem(Strings.SimilarBotsTab, typeof(ProfileBotsTabPage)));
+                        }
                     }
                 }
             }
@@ -269,6 +284,11 @@ namespace Telegram.ViewModels.Profile
                 if (cached != null && cached.HasPinnedStories)
                 {
                     AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
+                }
+
+                if (cached != null && cached.GiftCount > 0)
+                {
+                    AddTab(new ProfileTabItem(Strings.ProfileGifts, typeof(ProfileGiftsTabPage)));
                 }
 
                 if (typeSupergroup.IsChannel)
@@ -508,10 +528,21 @@ namespace Telegram.ViewModels.Profile
                 return;
             }
 
-            var items = messages.Select(x => x.Get()).ToArray();
+            var items = messages
+                .DistinctBy(x => x.Id)
+                .Select(x => x.Get())
+                .ToList();
+
             var properties = await ClientService.GetMessagePropertiesAsync(items.Select(x => new MessageId(x)));
 
-            var updated = items.Where(x => properties.ContainsKey(new MessageId(x))).ToArray();
+            var updated = items
+                .Where(x => properties.ContainsKey(new MessageId(x)))
+                .ToList();
+
+            if (updated.Empty())
+            {
+                return;
+            }
 
             var popup = new DeleteMessagesPopup(ClientService, SavedMessagesTopicId, chat, updated, properties);
 

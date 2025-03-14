@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -190,7 +190,7 @@ namespace Telegram.ViewModels.Settings
             return _firstName.Length > 0
                 && _firstName.Length <= 64
                 && _lastName.Length <= 64
-                && _bio.Length <= ClientService.Options.BioLengthMax;
+                && _bio?.Length <= ClientService.Options.BioLengthMax;
         }
 
         public async void SetPhoto()

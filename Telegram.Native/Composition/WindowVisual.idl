@@ -1,0 +1,15 @@
+namespace Telegram.Native.Composition
+{
+    [default_interface]
+    runtimeclass WindowVisual
+    {
+        static Boolean IsValid(Windows.UI.WindowId windowId, out String title);
+        static WindowVisual Create(Windows.UI.WindowId windowId);
+
+        static UInt32 GetWindowProcessId(Windows.UI.WindowId windowId);
+        static Windows.UI.WindowId GetCurrentWindowId();
+
+        Windows.UI.Composition.Visual Child{ get; };
+        Windows.Foundation.Numerics.Vector2 Size;
+    }
+}

@@ -155,8 +155,11 @@ namespace winrt::Telegram::Native::implementation
             pixelHeight *= ratio;
         }
 
-        m_pixelWidth = pixelWidth;
-        m_pixelHeight = pixelHeight;
+        auto widthalign = AV_INPUT_BUFFER_PADDING_SIZE / 4;
+        auto neededWidth = pixelWidth + ((pixelWidth % widthalign) ? (widthalign - (pixelWidth % widthalign)) : 0);
+
+        m_pixelWidth = neededWidth; //pixelWidth + (pixelWidth % 4);
+        m_pixelHeight = (int)((double)neededWidth / pixelWidth * pixelHeight); //+(pixelHeight % 4);
 
         m_fps = m_animation->FrameRate();
         return true;

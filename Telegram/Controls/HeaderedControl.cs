@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -13,6 +13,8 @@ namespace Telegram.Controls
 {
     public partial class HeaderedControl : ItemsControl
     {
+        private Grid ContentRoot;
+
         public HeaderedControl()
         {
             DefaultStyleKey = typeof(HeaderedControl);
@@ -25,6 +27,8 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
+            ContentRoot = GetTemplateChild(nameof(ContentRoot)) as Grid;
+
             VisualStateManager.GoToState(this, IsFooterAtBottom ? "FooterBottomLeft" : "FooterTopRight", false);
 
             base.OnApplyTemplate();
@@ -122,6 +126,35 @@ namespace Telegram.Controls
         {
             Click?.Invoke(this, new TextUrlClickEventArgs(url));
         }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            if (ContentRoot == null)
+            {
+                return base.MeasureOverride(availableSize);
+            }
+
+            ContentRoot.Measure(availableSize);
+
+            if (ItemsPanelRoot?.DesiredSize.Height > 0)
+            {
+                return ContentRoot.DesiredSize;
+            }
+
+            return new Size(0, 0);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            if (ContentRoot == null)
+            {
+                return base.ArrangeOverride(finalSize);
+            }
+
+            ContentRoot.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+
+            return finalSize;
+        }
     }
 
     public partial class TextUrlClickEventArgs
@@ -143,9 +176,10 @@ namespace Telegram.Controls
 
             for (int i = Children.Count - 1; i >= 0; i--)
             {
-                if (Children[i].Visibility == Visibility.Visible)
+                var child = Children[i];
+                if (child.Visibility == Visibility.Visible)
                 {
-                    switch (Children[i])
+                    switch (child)
                     {
                         case ContentPresenter presenter:
                             presenter.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
@@ -166,7 +200,7 @@ namespace Telegram.Controls
                     }
 
                     last = false;
-                    first = Children[i];
+                    first = child;
                 }
             }
 

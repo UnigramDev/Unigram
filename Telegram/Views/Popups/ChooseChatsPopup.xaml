@@ -17,8 +17,8 @@
                        SecondaryButtonText="Cancel"
                        VerticalContentAlignment="Stretch"
                        Padding="24,20,24,0"
-                       Opened="OnOpened"
-                       Closing="OnClosing">
+                       Loaded="OnLoaded"
+                       Unloaded="OnUnloaded">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -97,9 +97,12 @@
                     <controls:TopNavView.ItemTemplate>
                         <DataTemplate x:DataType="viewModels:ChatFolderViewModel">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{x:Bind Title, Mode=OneWay}"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                           VerticalAlignment="Bottom" />
+                                <RichTextBlock cells:ChatFolderCell.Title="{x:Bind Name, Mode=OneWay}"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                               VerticalAlignment="Bottom"
+                                               IsTextSelectionEnabled="False">
+                                    <Paragraph />
+                                </RichTextBlock>
 
                                 <controls:BadgeControl Text="{x:Bind UnreadCount, Mode=OneWay}"
                                                        IsUnmuted="{x:Bind IsUnmuted, Mode=OneWay}"
@@ -208,6 +211,7 @@
 
             <controls:GlyphButton Click="Emoji_Click"
                                   Glyph="&#xE76E;"
+                                  AutomationProperties.Name="{CustomResource Emoji}"
                                   AllowFocusOnInteraction="False"
                                   HorizontalAlignment="Right"
                                   VerticalAlignment="Bottom"
@@ -217,6 +221,8 @@
             <controls:GlyphButton x:Name="Send"
                                   Click="Send_Click"
                                   ContextRequested="Send_ContextRequested"
+                                  AutomationProperties.Name="{CustomResource Send}"
+                                  ToolTipService.ToolTip="{CustomResource Send}"
                                   Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                   VerticalAlignment="Bottom"
                                   FontSize="24"

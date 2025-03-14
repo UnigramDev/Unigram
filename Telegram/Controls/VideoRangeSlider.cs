@@ -1,13 +1,15 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using System;
+using Telegram.Common;
 
 namespace Telegram.Controls
 {
@@ -23,12 +25,14 @@ namespace Telegram.Controls
 
         private double _minimum = 0;
         private double _maximum = 1;
-        private double _value = 0.5;
+        private double _value = 0;
 
         private double _minLength = 0;
         private double _maxLength = 1;
 
         private const double THICKNESS = 12;
+
+        private ToolTip _toolTip;
 
         private FrameworkElement BackgroundMinimum;
         private FrameworkElement BackgroundMaximum;
@@ -40,7 +44,9 @@ namespace Telegram.Controls
         public VideoRangeSlider()
         {
             DefaultStyleKey = typeof(VideoRangeSlider);
+
             SizeChanged += OnSizeChanged;
+            Unloaded += OnUnloaded;
         }
 
         public event EventHandler<double> MinimumChanged;
@@ -50,18 +56,20 @@ namespace Telegram.Controls
         public TimeSpan OriginalDuration
         {
             get => _originalDuration;
-            set => SetOriginalDuration(value);
+            set => SetOriginalDuration(value, TimeSpan.FromSeconds(10));
         }
 
-        private void SetOriginalDuration(TimeSpan duration)
+        public void SetOriginalDuration(TimeSpan duration, TimeSpan maxLength)
         {
             _originalDuration = duration;
 
-            _maxLength = Math.Min(10 / duration.TotalSeconds, 1);
+            _maxLength = Math.Min(maxLength.TotalSeconds / duration.TotalSeconds, 1);
             _minLength = Math.Min(3 / duration.TotalSeconds, 1);
 
             _minimum = 0;
             _maximum = _maxLength;
+
+            _value = Math.Clamp(_value, _minimum, _maximum);
 
             Arrange();
         }
@@ -74,6 +82,8 @@ namespace Telegram.Controls
             MinimumThumb = GetTemplateChild("MinimumThumb") as FrameworkElement;
             MaximumThumb = GetTemplateChild("MaximumThumb") as FrameworkElement;
             MiddleThumb2 = GetTemplateChild("MiddleThumb2") as FrameworkElement;
+
+            ToolTipService.SetToolTip(MiddleThumb2, _toolTip = new());
         }
 
         protected override void OnMaximumChanged(double oldMaximum, double newMaximum)
@@ -90,7 +100,7 @@ namespace Telegram.Controls
 
         protected override void OnValueChanged(double oldValue, double newValue)
         {
-            _value = newValue;
+            _value = Math.Clamp(newValue, _minimum, _maximum);
             Arrange();
         }
 
@@ -98,6 +108,13 @@ namespace Telegram.Controls
         {
             Arrange();
         }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _toolTip.IsOpen = false;
+        }
+
+        public bool IsChanging => _pressed;
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
@@ -138,6 +155,11 @@ namespace Telegram.Controls
 
             _delta = _target.Margin.Left - point.X;
             _distance = _maximum - _minimum;
+
+            if (_target != MiddleThumb1)
+            {
+                _toolTip.IsOpen = true;
+            }
         }
 
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
@@ -160,6 +182,8 @@ namespace Telegram.Controls
             var pointer = e.GetCurrentPoint(this);
             Calculate(pointer.Position.X, true);
             Arrange();
+
+            _toolTip.IsOpen = false;
         }
 
         private void Calculate(double x, bool set)
@@ -171,13 +195,13 @@ namespace Telegram.Controls
             if (_target == MinimumThumb)
             {
                 _minimum = delta / width;
-                _value = Math.Max(_minimum, _value);
+                _value = _minimum;
             }
             else if (_target == MiddleThumb1)
             {
                 _minimum = delta / width;
                 _maximum = (delta / width) + _distance;
-                _value = Math.Max(_minimum, Math.Min(_maximum, _value));
+                _value = _minimum;
             }
             else if (_target == MiddleThumb2)
             {
@@ -186,15 +210,23 @@ namespace Telegram.Controls
             else if (_target == MaximumThumb)
             {
                 _maximum = delta / width;
-                _value = Math.Min(_maximum, _value);
+                _value = _maximum;
             }
 
             if (set)
             {
-                Maximum = _maximum;
-                Minimum = _minimum;
-                Value = _value;
+                if (_maximum < Minimum)
+                {
+                    Minimum = _minimum;
+                    Maximum = _maximum;
+                }
+                else
+                {
+                    Maximum = _maximum;
+                    Minimum = _minimum;
+                }
 
+                Value = _value;
                 MaximumChanged?.Invoke(this, _target == MaximumThumb ? _maximum : _target == MiddleThumb2 ? _value : _minimum);
             }
             else
@@ -217,6 +249,9 @@ namespace Telegram.Controls
             MinimumThumb.Margin = new Thickness(_minimum * (width - THICKNESS), 0, 0, 0);
             MiddleThumb2.Margin = new Thickness(THICKNESS / 2 + _value * (width - THICKNESS), 0, 0, 0);
             MaximumThumb.Margin = new Thickness(THICKNESS + _maximum * (width - THICKNESS), 0, 0, 0);
+
+            _toolTip.Content = (_originalDuration * _value).ToDuration();
+            _toolTip.HorizontalOffset = MiddleThumb2.Margin.Left;
         }
     }
 }

@@ -1,0 +1,142 @@
+﻿<UserControl x:Class="Telegram.Controls.Chats.ChatAccountInfo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Telegram.Controls.Chats"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="using:Telegram.Controls"
+             xmlns:messages="using:Telegram.Controls.Messages"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="400">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <messages:MessageService HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"
+                                 Padding="12,0,12,0"
+                                 MinWidth="216">
+            <Grid Padding="0,8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="Title"
+                           TextAlignment="Center"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                           FontSize="16"
+                           Foreground="#FFFFFF" />
+                <TextBlock x:Name="Status"
+                           TextAlignment="Center"
+                           Foreground="#BBFFFFFF"
+                           Margin="0,0,0,8"
+                           Grid.Row="1" />
+                <Grid HorizontalAlignment="Center"
+                      Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="PhoneInfo"
+                               Text="{CustomResource ContactInfoPhone}"
+                               TextAlignment="Right"
+                               Foreground="#BBFFFFFF"
+                               Margin="0,0,4,0" />
+                    <TextBlock x:Name="Phone"
+                               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                               Foreground="#FFFFFF"
+                               Margin="4,0,0,0"
+                               Grid.Column="1" />
+
+                    <TextBlock x:Name="RegistrationInfo"
+                               Text="{CustomResource ContactInfoRegistration}"
+                               TextAlignment="Right"
+                               Foreground="#BBFFFFFF"
+                               Margin="0,0,4,0"
+                               Grid.Row="1" />
+                    <TextBlock x:Name="Registration"
+                               Foreground="#FFFFFF"
+                               Margin="4,0,0,0"
+                               Grid.Row="1"
+                               Grid.Column="1" />
+
+                    <TextBlock x:Name="GroupsInfo"
+                               Text="{CustomResource ContactInfoCommonGroups}"
+                               TextAlignment="Right"
+                               Foreground="#BBFFFFFF"
+                               Margin="0,0,4,0"
+                               Visibility="Collapsed"
+                               Grid.Row="2" />
+                    <TextBlock x:Name="Groups"
+                               Foreground="#FFFFFF"
+                               Margin="4,0,0,0"
+                               Visibility="Collapsed"
+                               Grid.Row="2"
+                               Grid.Column="1" />
+                </Grid>
+
+                <RichTextBlock x:Name="BotVerifiedRoot"
+                               Style="{StaticResource CaptionRichTextBlockStyle}"
+                               Foreground="#BBFFFFFF"
+                               IsTextSelectionEnabled="False"
+                               TextAlignment="Center"
+                               Visibility="Collapsed"
+                               MaxWidth="210"
+                               Margin="0,8,0,0"
+                               Grid.Row="3">
+                    <Paragraph>
+                        <InlineUIContainer>
+                            <controls:CustomEmojiIcon x:Name="BotVerifiedInfo"
+                                                      ReplacementColor="#AAFFFFFF"
+                                                      Width="16"
+                                                      Height="16"
+                                                      FrameSize="16,16"
+                                                      Margin="0,0,0,-4" />
+                        </InlineUIContainer>
+                        <Span x:Name="BotVerifiedText" />
+                    </Paragraph>
+                </RichTextBlock>
+            </Grid>
+        </messages:MessageService>
+
+        <messages:MessageService x:Name="FullNameInfo"
+                                 Margin="0,4,0,0"
+                                 Padding="12,2,12,0"
+                                 MaxWidth="480"
+                                 Visibility="Collapsed"
+                                 Grid.Row="1">
+            <TextBlock x:Name="FullName"
+                       Foreground="#FFFFFF"
+                       TextAlignment="Center"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                       Padding="0,0,0,4" />
+        </messages:MessageService>
+
+        <messages:MessageService x:Name="PhotoInfo"
+                                 Margin="0,4,0,0"
+                                 Padding="12,2,12,0"
+                                 MaxWidth="480"
+                                 Visibility="Collapsed"
+                                 Grid.Row="2">
+            <TextBlock x:Name="Photo"
+                       Foreground="#FFFFFF"
+                       TextAlignment="Center"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                       Padding="0,0,0,4" />
+        </messages:MessageService>
+    </Grid>
+</UserControl>

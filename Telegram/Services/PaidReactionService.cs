@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -36,14 +36,14 @@ namespace Telegram.Services
         [ThreadStatic]
         private static PaidReactionService _toast;
 
-        public static Task<BaseObject> AddPendingAsync(XamlRoot xamlRoot, MessageViewModel message, int starCount, bool useDefaultIsAnonymous, bool isAnonymous)
+        public static Task<BaseObject> AddPendingAsync(XamlRoot xamlRoot, MessageViewModel message, int starCount, PaidReactionType type)
         {
             if (_toast == null || !_toast.IsValid || !_toast.Equals(message))
             {
                 _toast = new PaidReactionService(message);
             }
 
-            return _toast.AddPendingImpl(xamlRoot, message, starCount, useDefaultIsAnonymous, isAnonymous);
+            return _toast.AddPendingImpl(xamlRoot, message, starCount, type);
         }
 
         public bool IsValid => _pendingToast?.IsOpen is true;
@@ -62,16 +62,16 @@ namespace Telegram.Services
             _messageId = message.Id;
         }
 
-        private async Task<BaseObject> AddPendingImpl(XamlRoot xamlRoot, MessageViewModel message, int starCount, bool useDefaultIsAnonymous, bool isAnonymous)
+        private async Task<BaseObject> AddPendingImpl(XamlRoot xamlRoot, MessageViewModel message, int starCount, PaidReactionType type)
         {
-            if (message.ClientService.OwnedStarCount < _pendingCount + starCount)
+            if (message.ClientService.OwnedStarCount.StarCount < _pendingCount + starCount)
             {
                 _ = message.Delegate.NavigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForChannel(starCount, message.ChatId));
                 return null;
             }
 
             _pendingCount += starCount;
-            await message.ClientService.SendAsync(new AddPendingPaidMessageReaction(message.ChatId, message.Id, starCount, useDefaultIsAnonymous, isAnonymous));
+            await message.ClientService.SendAsync(new AddPendingPaidMessageReaction(message.ChatId, message.Id, starCount, type));
 
             var title = message.ClientService.Options.IsPaidReactionAnonymous
                 ? Strings.StarsSentAnonymouslyTitle
@@ -124,8 +124,8 @@ namespace Telegram.Services
                     Margin = new Thickness(8, -12, -4, -12)
                 };
 
-                animated.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-                animated.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(32, GridUnitType.Pixel) });
+                animated.ColumnDefinitions.Add(1, GridUnitType.Auto);
+                animated.ColumnDefinitions.Add(32, GridUnitType.Pixel);
 
                 var slice = new SelfDestructTimer
                 {

@@ -74,10 +74,12 @@
                                Margin="0,16,0,4" />
                     <RadioButton x:Name="NoSound"
                                  Content="{CustomResource NoSound}"
-                                 GroupName="NotificationSound" />
+                                 GroupName="NotificationSound"
+                                 IsChecked="{x:Bind ViewModel.UseNoSound, Mode=TwoWay}" />
                     <RadioButton x:Name="SoundDefault"
                                  Content="{CustomResource SoundDefault}"
-                                 GroupName="NotificationSound" />
+                                 GroupName="NotificationSound"
+                                 IsChecked="{x:Bind ViewModel.UseDefault, Mode=TwoWay}" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

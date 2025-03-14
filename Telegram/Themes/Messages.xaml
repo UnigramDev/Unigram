@@ -76,9 +76,9 @@
         </selectors:AutocompleteTemplateSelector.StickerTemplate>
         <selectors:AutocompleteTemplateSelector.CustomEmojiTemplate>
             <DataTemplate>
-                <Grid Padding="4"
-                      Width="40"
-                      Height="40">
+                <Grid Padding="2"
+                      Width="36"
+                      Height="36">
                     <controls:AnimatedImage x:Name="Player"
                                             AutoPlay="False"
                                             FrameSize="32,32"
@@ -89,18 +89,8 @@
         </selectors:AutocompleteTemplateSelector.CustomEmojiTemplate>
         <selectors:AutocompleteTemplateSelector.EmojiTemplate>
             <DataTemplate x:DataType="common:EmojiData">
-                <!--<Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Border Width="32" Height="32" Margin="0,0,12,0">
-                        <TextBlock Text="{x:Bind Value}" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <TextBlock Text="{x:Bind Value}" VerticalAlignment="Center" Grid.Column="1"/>
-                </Grid>-->
-                <Border Width="40"
-                        Height="40">
+                <Border Width="36"
+                        Height="36">
                     <TextBlock Text="{x:Bind Value}"
                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                FontSize="20"

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -44,34 +44,6 @@ namespace Telegram.Entities
         //public DateTimeOffset ItemDate { get; }
         public ulong Size { get; }
 
-        protected BitmapImage _thumbnail;
-        public BitmapImage Thumbnail
-        {
-            get
-            {
-                if (_thumbnail == null)
-                {
-                    LoadThumbnail();
-                }
-
-                return _thumbnail;
-            }
-        }
-
-        protected ImageSource _bitmap;
-        public ImageSource Bitmap
-        {
-            get
-            {
-                if (_bitmap == null)
-                {
-                    Refresh();
-                }
-
-                return _bitmap;
-            }
-        }
-
         protected ImageSource _preview;
         public ImageSource Preview
         {
@@ -104,6 +76,32 @@ namespace Telegram.Entities
         public virtual int Width { get; }
         public virtual int Height { get; }
 
+        public double ActualWidth
+        {
+            get
+            {
+                if (_editState is BitmapEditState editState && !editState.IsEmpty)
+                {
+                    return editState.Rectangle.Width * Width;
+                }
+
+                return Width;
+            }
+        }
+
+        public double ActualHeight
+        {
+            get
+            {
+                if (_editState is BitmapEditState editState && !editState.IsEmpty)
+                {
+                    return editState.Rectangle.Height * Height;
+                }
+
+                return Height;
+            }
+        }
+
         protected BitmapEditState _editState;
         public BitmapEditState EditState
         {
@@ -117,42 +115,8 @@ namespace Telegram.Entities
 
         public bool IsEdited => !_editState?.IsEmpty ?? false;
 
-        private async void LoadThumbnail()
-        {
-            try
-            {
-                if (!File.Attributes.HasFlag(FileAttributes.Temporary))
-                {
-                    using (var thumbnail = await File.GetThumbnailAsync(ThumbnailMode.ListView, 96, ThumbnailOptions.UseCurrentScale))
-                    {
-                        if (thumbnail != null)
-                        {
-                            var bitmapImage = new BitmapImage();
-                            await bitmapImage.SetSourceAsync(thumbnail);
-
-                            _thumbnail = bitmapImage;
-                        }
-                    }
-
-                    RaisePropertyChanged(nameof(Thumbnail));
-                }
-            }
-            catch { }
-        }
-
         public virtual async void Refresh()
         {
-            if (_bitmap == null)
-            {
-                try
-                {
-                    _bitmap = await ImageHelper.GetPreviewBitmapAsync(this);
-                }
-                catch { }
-            }
-
-            _bitmap ??= new BitmapImage();
-
             if (_editState is BitmapEditState editState && !editState.IsEmpty)
             {
                 try
@@ -161,12 +125,26 @@ namespace Telegram.Entities
                 }
                 catch
                 {
-                    _preview = _bitmap;
+                    try
+                    {
+                        _preview = await ImageHelper.GetPreviewBitmapAsync(this);
+                    }
+                    catch
+                    {
+                        _preview = new BitmapImage();
+                    }
                 }
             }
             else
             {
-                _preview = _bitmap;
+                try
+                {
+                    _preview = await ImageHelper.GetPreviewBitmapAsync(this);
+                }
+                catch
+                {
+                    _preview = new BitmapImage();
+                }
             }
 
             RaisePropertyChanged(nameof(Preview));

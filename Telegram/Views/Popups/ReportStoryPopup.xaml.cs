@@ -1,15 +1,14 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Composition;
 
 namespace Telegram.Views.Popups
 {
@@ -17,8 +16,6 @@ namespace Telegram.Views.Popups
 
     public sealed partial class ReportStoryPopup : ContentPopup
     {
-        private bool _collapsed = true;
-
         private readonly IClientService _clientService;
         private readonly long _storySenderChatId;
         private readonly int _storyId;
@@ -66,12 +63,6 @@ namespace Telegram.Views.Popups
         {
             _selection = selection;
             Title.Text = selection.Option.Text;
-
-            if (_collapsed && selection.Result is not ReportChatResultOk)
-            {
-                _collapsed = false;
-                _ = this.ShowQueuedAsync(XamlRoot);
-            }
 
             if (selection.Result is ReportStoryResultOptionRequired optionRequired)
             {

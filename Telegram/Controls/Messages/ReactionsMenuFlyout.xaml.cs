@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -26,6 +26,7 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Stars.Popups;
@@ -43,7 +44,7 @@ namespace Telegram.Controls.Messages
         private readonly IClientService _clientService;
 
         private readonly MessageViewModel _message;
-        private readonly MessageBubble _bubble;
+        private readonly IReactionsDelegate _bubble;
 
         private readonly StoryViewModel _story;
         private readonly FrameworkElement _reserved;
@@ -53,12 +54,12 @@ namespace Telegram.Controls.Messages
         private MenuFlyoutPresenter _presenter;
         private Popup _popup;
 
-        public static ReactionsMenuFlyout ShowAt(AvailableReactions reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout)
+        public static ReactionsMenuFlyout ShowAt(AvailableReactions reactions, MessageViewModel message, IReactionsDelegate bubble, MenuFlyout flyout)
         {
             return new ReactionsMenuFlyout(reactions, message, bubble, flyout);
         }
 
-        private ReactionsMenuFlyout(AvailableReactions reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout)
+        private ReactionsMenuFlyout(AvailableReactions reactions, MessageViewModel message, IReactionsDelegate bubble, MenuFlyout flyout)
         {
             _reactions = reactions;
             _message = message;
@@ -342,13 +343,13 @@ namespace Telegram.Controls.Messages
 
                 Canvas.SetZIndex(button, 1);
 
-                Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+                Presenter.ColumnDefinitions.Add(1, GridUnitType.Auto);
                 Presenter.Children.Insert(index, button);
                 Preloader.Children.Add(preload);
                 index++;
             }
 
-            Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            Presenter.ColumnDefinitions.Add(1, GridUnitType.Auto);
         }
 
         public static ReactionsMenuFlyout ShowAt(IClientService clientService, IList<long> effectIds, FrameworkElement reserved, MenuFlyout flyout)
@@ -629,13 +630,13 @@ namespace Telegram.Controls.Messages
                 Grid.SetColumn(preload, index);
                 Grid.SetColumn(button, index);
 
-                Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+                Presenter.ColumnDefinitions.Add(1, GridUnitType.Auto);
                 Presenter.Children.Insert(index, button);
                 Preloader.Children.Add(preload);
                 index++;
             }
 
-            Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            Presenter.ColumnDefinitions.Add(1, GridUnitType.Auto);
         }
 
         private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs e)
@@ -704,9 +705,9 @@ namespace Telegram.Controls.Messages
         {
             _popup.IsOpen = false;
 
-            if (_bubble != null && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            if (_bubble is FrameworkElement element && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
             {
-                var selector = _bubble.GetParent<SelectorItem>();
+                var selector = element.GetParent<SelectorItem>();
                 selector?.Focus(FocusState.Keyboard);
             }
         }
@@ -773,8 +774,8 @@ namespace Telegram.Controls.Messages
                         return;
                     }
 
-                    _message.ClientService.Options.IsPaidReactionAnonymous = popup.IsAnonymous;
-                    added = await PaidReactionService.AddPendingAsync(XamlRoot, _message, popup.StarCount, false, popup.IsAnonymous);
+                    _message.ClientService.Send(new SetPaidMessageReactionType(_message.ChatId, _message.Id, popup.Type));
+                    added = await PaidReactionService.AddPendingAsync(XamlRoot, _message, popup.StarCount, popup.Type);
                 }
                 else
                 {

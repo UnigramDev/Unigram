@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -15,11 +15,19 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Supergroups;
 using Telegram.Views;
+using Telegram.Views.Chats;
 using Telegram.Views.Chats.Popups;
 using Telegram.Views.Monetization.Popups;
 
 namespace Telegram.ViewModels.Chats
 {
+    public enum ChatRevenueAvailability
+    {
+        Crypto,
+        Stars,
+        CryptoAndStars
+    }
+
     public partial class ChatRevenueViewModel : MultiViewModelBase, IIncrementalCollectionOwner, IHandle
     {
         private ChatBoostStatus _status;
@@ -29,7 +37,7 @@ namespace Telegram.ViewModels.Chats
             : base(clientService, settingsService, aggregator)
         {
             Stars = TypeResolver.Current.Resolve<ChatStarsViewModel>(clientService.SessionId);
-            Items = new IncrementalCollection<ChatRevenueTransaction>(this);
+            Items = new IncrementalCollection<object>(this);
 
             Children.Add(Stars);
         }
@@ -42,6 +50,13 @@ namespace Telegram.ViewModels.Chats
         }
 
         public ChatStarsViewModel Stars { get; }
+
+        private ChatRevenueAvailability _availability;
+        public ChatRevenueAvailability Availability
+        {
+            get => _availability;
+            set => Set(ref _availability, value);
+        }
 
         private Chat _chat;
         public Chat Chat
@@ -113,17 +128,37 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _minSponsoredMessageDisableBoostLevel, value);
         }
 
+        private int _selectedIndex;
+        public int SelectedIndex
+        {
+            get => _selectedIndex;
+            set
+            {
+                if (Set(ref _selectedIndex, value))
+                {
+                    RaisePropertyChanged(nameof(ItemsView));
+                }
+            }
+        }
+
+        private bool _isSelectionVisible;
+        public bool IsSelectionVisible
+        {
+            get => _isSelectionVisible;
+            set => Set(ref _isSelectionVisible, value);
+        }
+
+        public IncrementalCollection<object> ItemsView => SelectedIndex == 0 ? Items : Stars.Items;
+
         public double UsdRate { get; private set; }
 
         public bool WithdrawalEnabled => AvailableAmount?.CryptocurrencyAmount > 0 && ClientService.Options.CanWithdrawChatRevenue;
 
-        public IncrementalCollection<ChatRevenueTransaction> Items { get; }
+        public IncrementalCollection<object> Items { get; }
 
-        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        public override Task NavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
-
-            IsLoading = true;
 
             Chat = ClientService.GetChat(chatId);
 
@@ -135,7 +170,32 @@ namespace Telegram.ViewModels.Chats
             if (ClientService.TryGetSupergroupFull(Chat, out SupergroupFullInfo fullInfo))
             {
                 DisableSponsoredMessages = !fullInfo.CanHaveSponsoredMessages;
+
+                Availability = fullInfo.CanGetRevenueStatistics && fullInfo.CanGetStarRevenueStatistics
+                    ? ChatRevenueAvailability.CryptoAndStars
+                    : fullInfo.CanGetRevenueStatistics
+                    ? ChatRevenueAvailability.Crypto
+                    : ChatRevenueAvailability.Stars;
+
+                SelectedIndex = fullInfo.CanGetRevenueStatistics ? 0 : 1;
+                IsSelectionVisible = fullInfo.CanGetRevenueStatistics && fullInfo.CanGetStarRevenueStatistics;
             }
+            else if (ClientService.TryGetUserFull(Chat, out UserFullInfo userFullInfo))
+            {
+                Availability = userFullInfo.BotInfo.CanGetRevenueStatistics
+                    ? ChatRevenueAvailability.CryptoAndStars
+                    : ChatRevenueAvailability.Stars;
+
+                SelectedIndex = userFullInfo.BotInfo.CanGetRevenueStatistics ? 0 : 1;
+                IsSelectionVisible = userFullInfo.BotInfo.CanGetRevenueStatistics;
+            }
+
+            return base.NavigatedToAsync(parameter, mode, state);
+        }
+
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        {
+            IsLoading = true;
 
             await LoadAsync();
 
@@ -157,22 +217,34 @@ namespace Telegram.ViewModels.Chats
                 UsdRate = statistics.UsdRate;
 
                 UpdateAmount(statistics.RevenueAmount);
+
+                Availability = statistics.RevenueAmount.TotalAmount > 0 && Stars.TotalAmount.IsPositive()
+                    ? ChatRevenueAvailability.CryptoAndStars
+                    : statistics.RevenueAmount.TotalAmount > 0
+                    ? ChatRevenueAvailability.Crypto
+                    : ChatRevenueAvailability.Stars;
+
+                SelectedIndex = statistics.RevenueAmount.TotalAmount > 0 ? 0 : 1;
+                IsSelectionVisible = statistics.RevenueAmount.TotalAmount > 0 && Stars.TotalAmount.IsPositive();
             }
 
-            var response1 = await ClientService.SendAsync(new GetChatBoostFeatures(Chat.Type is ChatTypeSupergroup { IsChannel: true }));
-            var response2 = await ClientService.SendAsync(new GetChatBoostStatus(Chat.Id));
-
-            if (response1 is ChatBoostFeatures features && response2 is ChatBoostStatus status)
+            if (Chat.Type is ChatTypeSupergroup)
             {
-                _features = features;
-                _status = status;
+                var response1 = await ClientService.SendAsync(new GetChatBoostFeatures(Chat.Type is ChatTypeSupergroup { IsChannel: true }));
+                var response2 = await ClientService.SendAsync(new GetChatBoostStatus(Chat.Id));
 
-                int MinLevelOrZero(int level)
+                if (response1 is ChatBoostFeatures features && response2 is ChatBoostStatus status)
                 {
-                    return level < status.Level ? 0 : level;
-                }
+                    _features = features;
+                    _status = status;
 
-                MinSponsoredMessageDisableBoostLevel = MinLevelOrZero(features.MinSponsoredMessageDisableBoostLevel);
+                    int MinLevelOrZero(int level)
+                    {
+                        return level < status.Level ? 0 : level;
+                    }
+
+                    MinSponsoredMessageDisableBoostLevel = MinLevelOrZero(features.MinSponsoredMessageDisableBoostLevel);
+                }
             }
         }
 
@@ -264,6 +336,25 @@ namespace Telegram.ViewModels.Chats
 
             ClientService.Send(new ToggleSupergroupCanHaveSponsoredMessages(supergroup.Id, DisableSponsoredMessages));
             DisableSponsoredMessages = !DisableSponsoredMessages;
+        }
+
+        public void OpenAffiliate()
+        {
+            if (_chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
+            {
+                NavigationService.Navigate(typeof(ChatAffiliatePage), new AffiliateTypeChannel(_chat.Id));
+            }
+            else if (_chat.Type is ChatTypePrivate privata)
+            {
+                if (privata.UserId == ClientService.Options.MyId)
+                {
+                    NavigationService.Navigate(typeof(ChatAffiliatePage), new AffiliateTypeCurrentUser());
+                }
+                else
+                {
+                    NavigationService.Navigate(typeof(ChatAffiliatePage), new AffiliateTypeBot(privata.UserId));
+                }
+            }
         }
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)

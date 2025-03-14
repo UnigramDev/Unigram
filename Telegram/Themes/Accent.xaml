@@ -205,9 +205,9 @@
                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                    AutomationProperties.AccessibilityView="Raw" />
 
-                        <controls:ProgressBarRing Background="Transparent"
+                        <controls:ProgressBarRing x:Name="ProgressBar"
+                                                  Background="Transparent"
                                                   Foreground="{ThemeResource MessageMediaForegroundBrush}"
-                                                  Value="{TemplateBinding InternalProgress}"
                                                   IsHitTestVisible="False" />
                     </Grid>
                 </ControlTemplate>
@@ -327,13 +327,13 @@
                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                    AutomationProperties.AccessibilityView="Raw" />
 
-                        <controls:ProgressBarRing Radius="7"
+                        <controls:ProgressBarRing x:Name="ProgressBar"
+                                                  Radius="7"
                                                   Center="10"
                                                   Width="20"
                                                   Height="20"
                                                   Background="Transparent"
                                                   Foreground="{ThemeResource MessageMediaForegroundBrush}"
-                                                  Value="{TemplateBinding InternalProgress}"
                                                   IsHitTestVisible="False" />
                     </Grid>
                 </ControlTemplate>
@@ -478,9 +478,9 @@
                             </Grid>
                         </Border>
 
-                        <controls:ProgressBarRing Background="Transparent"
+                        <controls:ProgressBarRing x:Name="ProgressBar"
+                                                  Background="Transparent"
                                                   Foreground="White"
-                                                  Value="{TemplateBinding InternalProgress}"
                                                   IsHitTestVisible="False" />
                     </Grid>
                 </ControlTemplate>
@@ -604,9 +604,9 @@
                                            VerticalAlignment="Center"
                                            AutomationProperties.AccessibilityView="Raw"
                                            Text="{TemplateBinding Glyph}" />
-                                <controls:ProgressBarRing Background="Transparent"
+                                <controls:ProgressBarRing x:Name="ProgressBar"
+                                                          Background="Transparent"
                                                           Foreground="White"
-                                                          Value="{TemplateBinding InternalProgress}"
                                                           IsHitTestVisible="False"
                                                           Radius="17"
                                                           Center="20"

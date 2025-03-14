@@ -1,0 +1,146 @@
+﻿<HyperlinkButton x:Class="Telegram.Controls.Chats.ChatSponsoredHeader"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:controls="using:Telegram.Controls"
+                 mc:Ignorable="d"
+                 d:DesignHeight="300"
+                 d:DesignWidth="400"
+                 Background="Transparent"
+                 MinHeight="48"
+                 HorizontalContentAlignment="Stretch"
+                 VerticalContentAlignment="Stretch"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Top"
+                 BorderThickness="0"
+                 Padding="0"
+                 Margin="0"
+                 Click="SponsoredMessage_Click">
+
+    <HyperlinkButton.Template>
+        <ControlTemplate TargetType="HyperlinkButton">
+            <Grid x:Name="RootGrid"
+                  Padding="{TemplateBinding Padding}">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="PointerOver">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                               Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0"
+                                                            Value="{ThemeResource HyperlinkButtonBackgroundPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Pressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                               Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0"
+                                                            Value="{ThemeResource HyperlinkButtonBackgroundPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Disabled">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                               Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0"
+                                                            Value="{ThemeResource HyperlinkButtonBackgroundDisabled}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <ContentPresenter x:Name="ContentPresenter"
+                                  Background="{TemplateBinding Background}"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="{TemplateBinding BorderThickness}"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                  AutomationProperties.AccessibilityView="Raw" />
+            </Grid>
+        </ControlTemplate>
+    </HyperlinkButton.Template>
+
+    <Grid Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition MaxHeight="24" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="48" />
+        </Grid.ColumnDefinitions>
+        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Grid.ColumnSpan="2"
+                Grid.RowSpan="2" />
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                       FontWeight="SemiBold"
+                       Margin="16,0,0,0"
+                       VerticalAlignment="Bottom">
+                <Run Text="Ad"
+                     Foreground="{ThemeResource SystemColorControlAccentBrush}" />
+                <Run x:Name="TitleText" />
+            </TextBlock>
+
+            <controls:BadgeButton Click="About_Click"
+                                  Style="{StaticResource SmallButtonStyle}"
+                                  Glyph="{CustomResource BotAdWhat}"
+                                  HorizontalAlignment="Left"
+                                  VerticalAlignment="Bottom"
+                                  FontSize="11"
+                                  Padding="8,0"
+                                  Margin="8,0,0,0"
+                                  CornerRadius="8"
+                                  BorderThickness="0"
+                                  Height="16"
+                                  Grid.Column="2" />
+        </Grid>
+
+        <controls:FormattedTextBlock x:Name="MessageText"
+                                     TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                     Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                     AutoFontSize="False"
+                                     IsTextSelectionEnabled="False"
+                                     Margin="16,0,0,4"
+                                     Grid.Row="1" />
+
+        <controls:GlyphButton Click="Remove_Click"
+                              Glyph="&#xE711;"
+                              VerticalAlignment="Top"
+                              Grid.Column="1"
+                              Grid.RowSpan="2" />
+
+        <Border x:Name="ThumbRoot"
+                Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                Width="36"
+                Height="36"
+                Margin="6"
+                CornerRadius="4"
+                Grid.RowSpan="2"
+                Grid.Column="1">
+            <Border x:Name="ThumbEllipse">
+                <Border.Background>
+                    <ImageBrush x:Name="ThumbImage"
+                                Stretch="UniformToFill"
+                                AlignmentX="Center"
+                                AlignmentY="Center" />
+                </Border.Background>
+            </Border>
+        </Border>
+    </Grid>
+</HyperlinkButton>

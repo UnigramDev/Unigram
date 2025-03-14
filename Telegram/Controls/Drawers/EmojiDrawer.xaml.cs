@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Services.Settings;
@@ -62,6 +63,8 @@ namespace Telegram.Controls.Drawers
 
         private readonly AnimatedListHandler _handler;
         private readonly AnimatedListHandler _toolbarHandler;
+
+        private readonly EventDebouncer<TextChangedEventArgs> _typing;
 
         private readonly Dictionary<StickerViewModel, Grid> _itemIdToContent = new();
         private long _selectedSetId;
@@ -112,8 +115,8 @@ namespace Telegram.Controls.Drawers
                 UpdateView();
             }
 
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += async (s, args) =>
+            _typing = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            _typing.Invoked += (s, args) =>
             {
                 if (string.IsNullOrWhiteSpace(SearchField.Text))
                 {
@@ -121,7 +124,7 @@ namespace Telegram.Controls.Drawers
                 }
                 else if (ViewModel != null)
                 {
-                    List.ItemsSource = await Emoji.SearchAsync(ViewModel.ClientService, SearchField.Text, _selected, _mode);
+                    List.ItemsSource = new SearchEmojiCollection(ViewModel.ClientService, SearchField.Text, _selected, _mode);
                 }
             };
         }
@@ -171,6 +174,8 @@ namespace Telegram.Controls.Drawers
             _isActive = false;
             _handler.UnloadItems();
             _toolbarHandler.UnloadItems();
+
+            _typing.Cancel();
 
             // This is called only right before XamlMarkupHelper.UnloadObject
             // so we can safely clean up any kind of anything from here.
@@ -402,9 +407,10 @@ namespace Telegram.Controls.Drawers
                 return;
             }
 
-            if (Toolbar.SelectedItem == null != _emojiCollapsed || collapse)
+            var collapsed = !(_expanded || Toolbar.SelectedItem != null);
+            if (collapsed != _emojiCollapsed || collapse)
             {
-                _emojiCollapsed = Toolbar.SelectedItem == null;
+                _emojiCollapsed = collapsed;
 
                 var show = !_emojiCollapsed;
 
@@ -528,6 +534,8 @@ namespace Telegram.Controls.Drawers
 
             _selected = selected;
             _expanded = expand;
+
+            UpdateToolbar();
         }
 
         #region Recycle
@@ -728,17 +736,8 @@ namespace Telegram.Controls.Drawers
                     return;
                 }
 
-                var cover = sticker.GetThumbnail();
-                if (cover != null)
-                {
-                    var animation = content.Children[0] as AnimatedImage;
-                    animation.Source = new DelayedFileSource(ViewModel.ClientService, cover);
-                }
-                else
-                {
-                    var animation = content.Children[0] as AnimatedImage;
-                    animation.Source = null;
-                }
+                var animation = content.Children[0] as AnimatedImage;
+                animation.Source = DelayedFileSource.FromStickerSetInfo(ViewModel.ClientService, sticker);
 
                 args.Handled = true;
             }

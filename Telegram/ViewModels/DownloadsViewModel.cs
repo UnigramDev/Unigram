@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -34,8 +34,6 @@ namespace Telegram.ViewModels
             Items = new SearchCollection<FileDownloadViewModel, ItemCollection>(SetSearch, new FileDownloadDiffHandler());
             Items.UpdateQuery(string.Empty);
         }
-
-        public Action Hide { get; set; }
 
         public SearchCollection<FileDownloadViewModel, ItemCollection> Items { get; private set; }
 
@@ -149,7 +147,6 @@ namespace Telegram.ViewModels
 
         public void OpenSettings()
         {
-            Hide();
             NavigationService.Navigate(typeof(SettingsStoragePage));
         }
 
@@ -160,7 +157,6 @@ namespace Telegram.ViewModels
 
         public void ViewFileDownload(FileDownloadViewModel fileDownload)
         {
-            Hide();
             NavigationService.NavigateToChat(fileDownload.Message.ChatId, message: fileDownload.Message.Id);
         }
 

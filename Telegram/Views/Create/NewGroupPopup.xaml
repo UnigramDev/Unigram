@@ -59,8 +59,10 @@
                     </Flyout>
                 </FlyoutBase.AttachedFlyout>
             </TextBox>
-            <controls:GlyphButton Click="Emoji_Click"
+            <controls:GlyphButton Visibility="Collapsed"
+                                  Click="Emoji_Click"
                                   Glyph="&#xE76E;"
+                                  AutomationProperties.Name="{CustomResource Emoji}"
                                   AllowFocusOnInteraction="False"
                                   HorizontalAlignment="Right"
                                   VerticalAlignment="Bottom"

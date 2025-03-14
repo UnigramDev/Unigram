@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -17,6 +17,7 @@ using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Services.Factories;
 using Telegram.Td.Api;
+using Telegram.Views.Supergroups.Popups;
 
 namespace Telegram.ViewModels
 {
@@ -236,7 +237,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, isChannel, false, false, chatEvent.Date, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, null, null);
+            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, isChannel, false, false, chatEvent.Date, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, null, null);
         }
 
         private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)

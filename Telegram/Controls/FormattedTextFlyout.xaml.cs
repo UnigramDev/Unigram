@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -33,17 +33,21 @@ namespace Telegram.Controls
                 return;
             }
 
-            Update(_textBox.Document.Selection.CharacterFormat);
+            Update(_textBox.Document.Selection);
         }
 
-        public void Update(ITextCharacterFormat format)
+        public void Update(ITextRange selection)
         {
-            Bold.IsChecked = format.Bold == FormatEffect.On;
-            Italic.IsChecked = format.Italic == FormatEffect.On;
-            Strikethrough.IsChecked = format.Strikethrough == FormatEffect.On;
-            Underline.IsChecked = format.Underline == UnderlineType.Single;
-            Monospace.IsChecked = string.Equals(format.Name, "Consolas", StringComparison.OrdinalIgnoreCase);
-            Spoiler.IsChecked = format.BackgroundColor == Colors.Gray;
+            var paragraph = selection.ParagraphFormat;
+            var character = selection.CharacterFormat;
+
+            Quote.IsChecked = paragraph.SpaceAfter != 0;
+            Bold.IsChecked = character.Bold == FormatEffect.On;
+            Italic.IsChecked = character.Italic == FormatEffect.On;
+            Strikethrough.IsChecked = character.Strikethrough == FormatEffect.On;
+            Underline.IsChecked = character.Underline == UnderlineType.Single;
+            Monospace.IsChecked = string.Equals(character.Name, "Consolas", StringComparison.OrdinalIgnoreCase);
+            Spoiler.IsChecked = character.BackgroundColor == Colors.Gray;
         }
     }
 }

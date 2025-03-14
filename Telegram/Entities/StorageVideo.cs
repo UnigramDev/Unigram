@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using Telegram.Converters;
 using Telegram.Native;
 using Windows.Foundation;
-using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
+using static Telegram.Services.GenerationService;
 
 namespace Telegram.Entities
 {
@@ -388,18 +388,47 @@ namespace Telegram.Entities
             }
         }
 
-        public VideoTransformEffectDefinition GetTransform()
+        public VideoConversion GetConversion()
         {
-            var crop = _editState?.Rectangle ?? Rect.Empty;
-            if (!(crop.IsEmpty || (crop.X == 0 && crop.Y == 0 && crop.Width == 1 && crop.Height == 1)))
-            {
-                var transform = new VideoTransformEffectDefinition();
-                transform.CropRectangle = crop;
+            var conversion = new VideoConversion();
+            conversion.Mute = IsMuted;
 
-                return transform;
+            var state = _editState;
+            if (state == null)
+            {
+                return conversion;
             }
 
-            return null;
+            if (state.TrimStartTime != default)
+            {
+                conversion.TrimStartTime = state.TrimStartTime;
+                conversion.Transcode = true;
+            }
+
+            if (state.TrimStopTime != default)
+            {
+                conversion.TrimStopTime = state.TrimStopTime;
+                conversion.Transcode = true;
+            }
+
+            var crop = state.Rectangle;
+            if (crop.X != 0 || crop.Y != 0 || crop.Right != 1 || crop.Bottom != 1)
+            {
+                var x = Math.Floor(crop.X * Width);
+                var y = Math.Floor(crop.Y * Height);
+                var width = Math.Ceiling(crop.Width * Width);
+                var height = Math.Ceiling(crop.Height * Height);
+
+                width -= (width % 4);
+                height -= (height % 4);
+
+                conversion.CropRectangle = new Rect(x, y, width, height);
+                conversion.OutputSize = new Size(width, height);
+                conversion.Transcode = true;
+                conversion.Transform = true;
+            }
+
+            return conversion;
         }
     }
 }

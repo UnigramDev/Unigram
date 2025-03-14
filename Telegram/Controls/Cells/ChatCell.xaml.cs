@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -24,6 +24,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Telegram.Common;
 using Telegram.Common.Chats;
+using Telegram.Composition;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
@@ -97,28 +98,20 @@ namespace Telegram.Controls.Cells
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_strokeToken == 0 && (_shapes != null || _ellipse != null))
-            {
-                Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
-                OnStrokeChanged(Stroke, SolidColorBrush.ColorProperty);
-            }
-
-            if (_selectionStrokeToken == 0 && _stroke != null)
-            {
-                SelectionStroke?.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
-                OnSelectionStrokeChanged(SelectionStroke, SolidColorBrush.ColorProperty);
-            }
+            _strokeBrush?.Register();
+            _selectionStrokeBrush?.Register();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Stroke?.UnregisterColorChangedCallback(ref _strokeToken);
-            SelectionStroke?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
+            _strokeBrush?.Unregister();
+            _selectionStrokeBrush?.Unregister();
         }
 
         #region InitializeComponent
 
         private Grid PhotoPanel;
+        private CustomEmojiIcon BotVerified;
         private TextBlock TitleLabel;
         private IdentityIcon Identity;
         private TextBlock MutedIcon;
@@ -130,6 +123,7 @@ namespace Telegram.Controls.Cells
         private TextBlock PinnedIcon;
         private Border UnreadMentionsBadge;
         private BadgeControl UnreadBadge;
+        private BadgeButton BotOpen;
         private Rectangle DropVisual;
         private TextBlock UnreadMentionsLabel;
         private Run FromLabel;
@@ -152,6 +146,7 @@ namespace Telegram.Controls.Cells
         protected override void OnApplyTemplate()
         {
             PhotoPanel = GetTemplateChild(nameof(PhotoPanel)) as Grid;
+            BotVerified = GetTemplateChild(nameof(BotVerified)) as CustomEmojiIcon;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
             Identity = GetTemplateChild(nameof(Identity)) as IdentityIcon;
             MutedIcon = GetTemplateChild(nameof(MutedIcon)) as TextBlock;
@@ -163,6 +158,7 @@ namespace Telegram.Controls.Cells
             PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as TextBlock;
             UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
             UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as BadgeControl;
+            BotOpen = GetTemplateChild(nameof(BotOpen)) as BadgeButton;
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
             FromLabel = GetTemplateChild(nameof(FromLabel)) as Run;
@@ -176,6 +172,7 @@ namespace Telegram.Controls.Cells
             Folders = GetTemplateChild(nameof(Folders)) as StackPanel;
 
             Segments.Click += Segments_Click;
+            BotOpen.Click += BotOpen_Click;
 
             _selectionPhoto = ElementComposition.GetElementVisual(Segments);
             _selectionOutline = ElementComposition.GetElementVisual(SelectionOutline);
@@ -207,6 +204,20 @@ namespace Telegram.Controls.Cells
         private void Segments_Click(object sender, RoutedEventArgs e)
         {
             StoryClick?.Invoke(sender, _chat);
+        }
+
+        private void BotOpen_Click(object sender, RoutedEventArgs e)
+        {
+            if (_chat == null || !_clientService.TryGetUser(_chat, out User user))
+            {
+                return;
+            }
+
+            var navigationService = WindowContext.GetNavigationService(XamlRoot);
+            if (navigationService != null)
+            {
+                MessageHelper.NavigateToMainWebApp(_clientService, navigationService, user, string.Empty, new WebAppOpenModeFullSize());
+            }
         }
 
         #endregion
@@ -249,6 +260,7 @@ namespace Telegram.Controls.Cells
                     Photo.Source = PlaceholderImage.GetGlyph(Icons.MyNotesFilled, 5);
                     Photo.Shape = ProfilePictureShape.Ellipse;
                     Identity.ClearStatus();
+                    BotVerified.Visibility = Visibility.Collapsed;
                 }
                 else if (savedMessagesTopic.Type is SavedMessagesTopicTypeAuthorHidden)
                 {
@@ -256,6 +268,7 @@ namespace Telegram.Controls.Cells
                     Photo.Source = PlaceholderImage.GetGlyph(Icons.AuthorHiddenFilled, 5);
                     Photo.Shape = ProfilePictureShape.Ellipse;
                     Identity.ClearStatus();
+                    BotVerified.Visibility = Visibility.Collapsed;
                 }
 
                 if (message != null)
@@ -267,6 +280,7 @@ namespace Telegram.Controls.Cells
             MutedIcon.Visibility = Visibility.Collapsed;
             UnreadBadge.Visibility = Visibility.Collapsed;
             UnreadMentionsBadge.Visibility = Visibility.Collapsed;
+            BotOpen.Visibility = Visibility.Collapsed;
             PinnedIcon.Visibility = savedMessagesTopic.IsPinned
                 ? Visibility.Visible
                 : Visibility.Collapsed;
@@ -307,6 +321,7 @@ namespace Telegram.Controls.Cells
             PinnedIcon.Visibility = Visibility.Collapsed;
             UnreadBadge.Visibility = Visibility.Collapsed;
             UnreadMentionsBadge.Visibility = Visibility.Collapsed;
+            BotOpen.Visibility = Visibility.Collapsed;
 
             FromLabel.Text = UpdateFromLabel(clientService, chat, message);
             _dateLabel = Formatter.DateExtended(message.Date);
@@ -529,12 +544,6 @@ namespace Telegram.Controls.Cells
                 }
             }
 
-            if (_clientService.Notifications.IsMuted(chat))
-            {
-                builder.Append(Strings.AccDescrNotificationsMuted);
-                builder.Append(", ");
-            }
-
             if (chat.UnreadCount > 0)
             {
                 builder.Append(Locale.Declension(Strings.R.NewMessages, chat.UnreadCount));
@@ -550,6 +559,12 @@ namespace Telegram.Controls.Cells
             if (chat.UnreadReactionCount > 0)
             {
                 builder.Append(Strings.AccDescrMentionReaction);
+                builder.Append(", ");
+            }
+
+            if (_clientService.Notifications.IsMuted(chat))
+            {
+                builder.Append(Strings.AccDescrNotificationsMuted);
                 builder.Append(", ");
             }
 
@@ -644,7 +659,7 @@ namespace Telegram.Controls.Cells
             UpdateChatChatLists(chat);
         }
 
-        public void UpdateChatReadInbox(Chat chat, ChatPosition position = null)
+        public void UpdateChatReadInbox(Chat chat, ChatPosition position = null, bool updateBotOpen = true)
         {
             if (_clientService == null || !_templateApplied)
             {
@@ -673,6 +688,11 @@ namespace Telegram.Controls.Cells
             }
 
             //UpdateAutomation(_clientService, chat, chat.LastMessage);
+
+            if (updateBotOpen)
+            {
+                UpdateBotOpen(chat);
+            }
         }
 
         public void UpdateChatReadOutbox(Chat chat)
@@ -691,14 +711,14 @@ namespace Telegram.Controls.Cells
 
         }
 
-        public void UpdateChatUnreadMentionCount(Chat chat, ChatPosition position = null)
+        public void UpdateChatUnreadMentionCount(Chat chat, ChatPosition position = null, bool updateBotOpen = true)
         {
             if (_clientService == null || !_templateApplied)
             {
                 return;
             }
 
-            UpdateChatReadInbox(chat, position);
+            UpdateChatReadInbox(chat, position, false);
 
             var unread = chat.UnreadMentionCount > 0 || chat.UnreadReactionCount > 0 ? Visibility.Visible : Visibility.Collapsed;
             if (unread == Visibility.Visible)
@@ -709,6 +729,26 @@ namespace Telegram.Controls.Cells
             else
             {
                 UnreadMentionsBadge.Visibility = Visibility.Collapsed;
+            }
+
+            if (updateBotOpen)
+            {
+                UpdateBotOpen(chat);
+            }
+        }
+
+        private void UpdateBotOpen(Chat chat)
+        {
+            if (UnreadMentionsBadge.Visibility == Visibility.Collapsed
+                && UnreadBadge.Visibility == Visibility.Collapsed
+                && _clientService.TryGetUser(chat, out User user)
+                && user.Type is UserTypeBot { HasMainWebApp: true })
+            {
+                BotOpen.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                BotOpen.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -767,7 +807,33 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            Identity.SetStatus(_clientService, chat);
+            long? verification;
+            if (_clientService.TryGetUser(chat, out User user) && user.Id != _clientService.Options.MyId)
+            {
+                verification = user.VerificationStatus?.BotVerificationIconCustomEmojiId;
+                Identity.SetStatus(_clientService, user, true);
+            }
+            else if (_clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                verification = supergroup.VerificationStatus?.BotVerificationIconCustomEmojiId;
+                Identity.SetStatus(supergroup);
+            }
+            else
+            {
+                verification = null;
+                Identity.ClearStatus();
+            }
+
+            if (verification is not null and not 0)
+            {
+                BotVerified.Source = new CustomEmojiFileSource(_clientService, verification.Value);
+                BotVerified.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                BotVerified.Source = null;
+                BotVerified.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void UpdateChatActiveStories(ChatActiveStories activeStories)
@@ -1039,7 +1105,7 @@ namespace Telegram.Controls.Cells
 
             UpdateChatLastMessage(chat, position);
             //UpdateChatReadInbox(chat);
-            UpdateChatUnreadMentionCount(chat, position);
+            UpdateChatUnreadMentionCount(chat, position, false);
             UpdateNotificationSettings(chat);
             UpdateChatActions(chat, _clientService.GetChatActions(chat.Id));
 
@@ -1055,6 +1121,8 @@ namespace Telegram.Controls.Cells
             {
                 OnlineBadge.Visibility = Visibility.Collapsed;
             }
+
+            UpdateBotOpen(chat);
         }
 
         public void UpdateChatChatLists(Chat chat)
@@ -1079,24 +1147,49 @@ namespace Telegram.Controls.Cells
                     var folder = folders[i];
                     var foreground = _clientService.GetAccentBrush(folder.ColorId);
 
-                    BadgeControl badge;
+                    Border badge;
+                    RichTextBlock block;
+                    Paragraph paragraph;
                     if (i < Folders.Children.Count)
                     {
-                        badge = Folders.Children[i] as BadgeControl;
+                        badge = Folders.Children[i] as Border;
+                        block = badge.Child as RichTextBlock;
+                        paragraph = block.Blocks[0] as Paragraph;
                     }
                     else
                     {
-                        badge = new BadgeControl
+                        badge = new Border
                         {
+                            Height = 16,
+                            MinWidth = 16,
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            VerticalAlignment = VerticalAlignment.Bottom,
                             CornerRadius = new CornerRadius(4),
                             Margin = new Thickness(0, 0, 2, 0)
                         };
 
+                        block = new RichTextBlock
+                        {
+                            TextLineBounds = TextLineBounds.Tight,
+                            TextAlignment = TextAlignment.Center,
+                            OpticalMarginAlignment = OpticalMarginAlignment.TrimSideBearings,
+                            FontSize = 11,
+                            Padding = new Thickness(4, 0, 4, 0),
+                            VerticalAlignment = VerticalAlignment.Center,
+                            IsTextSelectionEnabled = false
+                        };
+
+                        paragraph = new Paragraph();
+
+                        block.Blocks.Add(paragraph);
+                        badge.Child = block;
+
                         Folders.Children.Add(badge);
                     }
 
-                    badge.Text = folder.Title;
-                    badge.Foreground = foreground;
+                    CustomEmojiIcon.Add(block, paragraph.Inlines, _clientService, folder.Name, 14);
+
+                    block.Foreground = foreground;
                     badge.Background = foreground.WithOpacity(0.2);
                 }
                 else
@@ -1275,7 +1368,7 @@ namespace Telegram.Controls.Cells
                         player.Style = BootStrapper.Current.Resources["InfoCustomEmojiStyle"] as Style;
 
                         var inline = new InlineUIContainer();
-                        inline.Child = new CustomEmojiContainer(BriefText, player);
+                        inline.Child = new CustomEmojiContainer(BriefText, player, baseline: 0);
 
                         // If the Span starts with a InlineUIContainer the RichTextBlock bugs and shows ellipsis
                         if (BriefLabel.Inlines.Empty())
@@ -1555,6 +1648,11 @@ namespace Telegram.Controls.Cells
         {
             if (message.IsService())
             {
+                if (chat == null && clientService.TryGetChat(message.ChatId, out chat))
+                {
+                    clientService.TryGetChat(message.ChatId, out chat);
+                }
+
                 return MessageService.GetText(new MessageViewModel(clientService, null, null, chat, message));
             }
 
@@ -1592,7 +1690,10 @@ namespace Telegram.Controls.Cells
                 {
                     if (fromUser.Id == clientService.Options.MyId)
                     {
-                        return string.Format(format, Strings.FromYou);
+                        if (fromUser.Id != chat?.Id)
+                        {
+                            return string.Format(format, Strings.FromYou);
+                        }
                     }
                     else if (!string.IsNullOrEmpty(fromUser.FirstName))
                     {
@@ -1622,37 +1723,32 @@ namespace Telegram.Controls.Cells
 
         public static bool ShowFrom(IClientService clientService, Chat chat, Message message, out User senderUser, out Chat senderChat)
         {
+            senderUser = null;
+            senderChat = null;
+
             if (message.IsService())
             {
-                senderUser = null;
-                senderChat = null;
                 return false;
             }
 
-            if (message.IsOutgoing || message.ChatId == clientService.Options.MyId || message.ChatId == clientService.Options.VerificationCodesBotChatId)
+            if (message.SavedMessagesTopicId != 0 && clientService.TryGetSavedMessagesTopic(message.SavedMessagesTopicId, out SavedMessagesTopic topic))
+            {
+                if (topic.Type is SavedMessagesTopicTypeMyNotes or SavedMessagesTopicTypeAuthorHidden)
+                {
+                    return false;
+                }
+            }
+
+            if (chat?.Type is not ChatTypePrivate and not ChatTypeSecret
+                || message.ChatId == clientService.Options.MyId
+                || message.ChatId == clientService.Options.RepliesBotChatId
+                || message.ChatId == clientService.Options.VerificationCodesBotChatId)
             {
                 senderChat = null;
                 return clientService.TryGetUser(message.SenderId, out senderUser)
                     || clientService.TryGetChat(message.SenderId, out senderChat);
             }
 
-            if (chat?.Type is ChatTypeBasicGroup)
-            {
-                senderChat = null;
-                return clientService.TryGetUser(message.SenderId, out senderUser);
-            }
-
-            if (chat?.Type is ChatTypeSupergroup supergroup)
-            {
-                senderUser = null;
-                senderChat = null;
-                return !supergroup.IsChannel
-                    && clientService.TryGetUser(message.SenderId, out senderUser)
-                    || clientService.TryGetChat(message.SenderId, out senderChat);
-            }
-
-            senderUser = null;
-            senderChat = null;
             return false;
         }
 
@@ -1783,7 +1879,7 @@ namespace Telegram.Controls.Cells
 
             var context = WindowContext.ForXamlRoot(this);
 
-            var service = new TLNavigationService(_clientService, null, context, frame, _clientService.SessionId, "ChatPreview");
+            var service = new TLNavigationService(_clientService, null, context, frame, "ChatPreview");
             service.NavigateToChat(_chat);
 
             var chatPage = frame.Content as ChatPage;
@@ -1947,7 +2043,7 @@ namespace Telegram.Controls.Cells
 
         #region SelectionStroke
 
-        private long _selectionStrokeToken;
+        private CompositionColorSource _selectionStrokeBrush;
 
         public SolidColorBrush SelectionStroke
         {
@@ -1965,30 +2061,7 @@ namespace Telegram.Controls.Cells
 
         private void OnSelectionStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            oldValue?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
-
-            if (newValue == null || _stroke == null)
-            {
-                return;
-            }
-
-            _stroke.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(newValue.Color);
-
-            if (IsConnected)
-            {
-                newValue.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
-            }
-        }
-
-        private void OnSelectionStrokeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            var solid = sender as SolidColorBrush;
-            if (solid == null || _stroke == null)
-            {
-                return;
-            }
-
-            _stroke.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
+            _selectionStrokeBrush?.PropertyChanged(newValue, IsConnected);
         }
 
         #endregion
@@ -1999,8 +2072,6 @@ namespace Telegram.Controls.Cells
         private Visual _selectionPhoto;
 
         private CompositionPathGeometry _polygon;
-        private CompositionSpriteShape _ellipse;
-        private CompositionSpriteShape _stroke;
         private ShapeVisual _visual;
 
         private void InitializeSelection()
@@ -2039,7 +2110,7 @@ namespace Telegram.Controls.Cells
 
             var shape2 = compositor.CreateSpriteShape();
             shape2.Geometry = ellipse;
-            shape2.FillBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape2.FillBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
 
             var outer = compositor.CreateEllipseGeometry();
             outer.Radius = new Vector2(10);
@@ -2047,7 +2118,7 @@ namespace Telegram.Controls.Cells
 
             var shape3 = compositor.CreateSpriteShape();
             shape3.Geometry = outer;
-            shape3.FillBrush = GetBrush(SelectionStrokeProperty, ref _selectionStrokeToken, OnSelectionStrokeChanged);
+            shape3.FillBrush = _selectionStrokeBrush ??= new CompositionColorSource(SelectionStroke, IsConnected);
 
             var visual = compositor.CreateShapeVisual();
             visual.Shapes.Add(shape3);
@@ -2061,8 +2132,6 @@ namespace Telegram.Controls.Cells
             ElementCompositionPreview.SetElementChildVisual(PhotoPanel, visual);
 
             _polygon = polygon;
-            _ellipse = shape2;
-            _stroke = shape3;
             _visual = visual;
         }
 
@@ -2138,13 +2207,11 @@ namespace Telegram.Controls.Cells
         private CompositionGeometry _line22;
         private ShapeVisual _visual2;
 
-        private CompositionSpriteShape[] _shapes;
-
         private SpriteVisual _container;
 
         #region Stroke
 
-        private long _strokeToken;
+        private CompositionColorSource _strokeBrush;
 
         public Brush Stroke
         {
@@ -2162,75 +2229,10 @@ namespace Telegram.Controls.Cells
 
         private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            oldValue?.UnregisterColorChangedCallback(ref _strokeToken);
-
-            if (newValue == null || (_shapes == null && _ellipse == null))
-            {
-                return;
-            }
-
-            var brush = BootStrapper.Current.Compositor.CreateColorBrush(newValue.Color);
-
-            if (_shapes != null)
-            {
-                foreach (var shape in _shapes)
-                {
-                    shape.StrokeBrush = brush;
-                }
-            }
-
-            if (_ellipse != null)
-            {
-                _ellipse.FillBrush = brush;
-            }
-
-            if (IsConnected)
-            {
-                newValue.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
-            }
-        }
-
-        private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            var solid = sender as SolidColorBrush;
-            if (solid == null || (_shapes == null && _ellipse == null))
-            {
-                return;
-            }
-
-            var brush = BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
-
-            if (_shapes != null)
-            {
-                foreach (var shape in _shapes)
-                {
-                    shape.StrokeBrush = brush;
-                }
-            }
-
-            if (_ellipse != null)
-            {
-                _ellipse.FillBrush = brush;
-            }
+            _strokeBrush?.PropertyChanged(newValue, IsConnected);
         }
 
         #endregion
-
-        private CompositionBrush GetBrush(DependencyProperty dp, ref long token, DependencyPropertyChangedCallback callback)
-        {
-            var value = GetValue(dp);
-            if (value is SolidColorBrush solid)
-            {
-                if (IsConnected)
-                {
-                    solid.RegisterColorChangedCallback(callback, ref token);
-                }
-
-                return BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
-            }
-
-            return BootStrapper.Current.Compositor.CreateColorBrush(Colors.Black);
-        }
 
         private void InitializeTicks()
         {
@@ -2260,13 +2262,13 @@ namespace Telegram.Controls.Cells
 
             var shape11 = compositor.CreateSpriteShape(line11);
             shape11.StrokeThickness = stroke;
-            shape11.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape11.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape11.IsStrokeNonScaling = true;
             shape11.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape12 = compositor.CreateSpriteShape(line12);
             shape12.StrokeThickness = stroke;
-            shape12.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape12.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape12.IsStrokeNonScaling = true;
             shape12.StrokeEndCap = CompositionStrokeCap.Round;
 
@@ -2288,12 +2290,12 @@ namespace Telegram.Controls.Cells
 
             var shape21 = compositor.CreateSpriteShape(line21);
             shape21.StrokeThickness = stroke;
-            shape21.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape21.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape21.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape22 = compositor.CreateSpriteShape(line22);
             shape22.StrokeThickness = stroke;
-            shape22.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape22.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape22.StrokeEndCap = CompositionStrokeCap.Round;
 
             var visual2 = compositor.CreateShapeVisual();
@@ -2316,7 +2318,6 @@ namespace Telegram.Controls.Cells
             _line12 = line12;
             _line21 = line21;
             _line22 = line22;
-            _shapes = new[] { shape11, shape12, shape21, shape22 };
             _visual1 = visual1;
             _visual2 = visual2;
             _container = container;

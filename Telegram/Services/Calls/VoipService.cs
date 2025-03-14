@@ -1,13 +1,17 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native.Calls;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services.Calls;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
+using Telegram.Views.Calls;
 using Telegram.Views.Calls.Popups;
-using System.Threading.Tasks;
 
 namespace Telegram.Services
 {
@@ -18,7 +22,7 @@ namespace Telegram.Services
         void StartPrivateCall(INavigationService navigation, Chat chat, bool video);
         void StartPrivateCall(INavigationService navigation, User user, bool video);
 
-        void JoinGroupCall(INavigationService navigation, long chatId);
+        void JoinGroupCall(INavigationService navigation, long chatId, string inviteHash = null);
         void CreateGroupCall(INavigationService navigation, long chatId);
     }
 
@@ -162,7 +166,7 @@ namespace Telegram.Services
 
             var protocol = VoipManager.Protocol;
 
-            var response = await ClientService.SendAsync(new CreateCall(user.Id, protocol, video));
+            var response = await ClientService.SendAsync(new CreateCall(user.Id, protocol, video, 0));
             if (response is Error error)
             {
                 if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
@@ -183,7 +187,7 @@ namespace Telegram.Services
 
         #region Group
 
-        public async void JoinGroupCall(INavigationService navigation, long chatId)
+        public async void JoinGroupCall(INavigationService navigation, long chatId, string inviteHash)
         {
             if (MediaDevicePermissions.IsUnsupported(navigation.XamlRoot))
             {
@@ -202,7 +206,7 @@ namespace Telegram.Services
                 return;
             }
 
-            await JoinAsyncInternal(navigation.XamlRoot, chat, chat.VideoChat.GroupCallId, null);
+            await JoinAsyncInternal(navigation.XamlRoot, chat, chat.VideoChat.GroupCallId, null, inviteHash, false);
         }
 
         public async void CreateGroupCall(INavigationService navigation, long chatId)
@@ -275,12 +279,12 @@ namespace Telegram.Services
                 var response = await ClientService.SendAsync(new CreateVideoChat(chat.Id, string.Empty, startDate, popup.IsStartWithSelected));
                 if (response is GroupCallId groupCallId)
                 {
-                    await JoinAsyncInternal(navigation.XamlRoot, chat, groupCallId.Id, alias);
+                    await JoinAsyncInternal(navigation.XamlRoot, chat, groupCallId.Id, alias, string.Empty, false);
                 }
             }
         }
 
-        private async Task JoinAsyncInternal(XamlRoot xamlRoot, Chat chat, int groupCallId, MessageSender alias)
+        private async Task JoinAsyncInternal(XamlRoot xamlRoot, Chat chat, int groupCallId, MessageSender alias, string inviteHash, bool upgrade)
         {
             alias ??= chat.VideoChat.DefaultParticipantId;
 
@@ -319,7 +323,7 @@ namespace Telegram.Services
 
                     lock (_activeLock)
                     {
-                        _activeCall = new VoipGroupCall(ClientService, Settings, Aggregator, xamlRoot, chat, groupCall, alias);
+                        _activeCall = new VoipGroupCall(ClientService, Settings, Aggregator, xamlRoot, chat, groupCall, alias, inviteHash, upgrade);
                         changed = groupCall.ScheduledStartDate > 0;
                     }
 
@@ -327,7 +331,7 @@ namespace Telegram.Services
 
                     if (changed)
                     {
-                        Aggregator.Publish(new UpdateGroupCall(new GroupCall(groupCall.Id, groupCall.Title, groupCall.ScheduledStartDate, groupCall.EnabledStartNotification, groupCall.IsActive, groupCall.IsRtmpStream, true, false, groupCall.CanBeManaged, groupCall.ParticipantCount, groupCall.HasHiddenListeners, groupCall.LoadedAllParticipants, groupCall.RecentSpeakers, groupCall.IsMyVideoEnabled, groupCall.IsMyVideoPaused, groupCall.CanEnableVideo, groupCall.MuteNewParticipants, groupCall.CanToggleMuteNewParticipants, groupCall.RecordDuration, groupCall.IsVideoRecorded, groupCall.Duration)));
+                        Aggregator.Publish(new UpdateGroupCall(new GroupCall(groupCall.Id, groupCall.FromCallId, groupCall.Title, groupCall.ScheduledStartDate, groupCall.EnabledStartNotification, groupCall.IsActive, groupCall.IsRtmpStream, true, false, groupCall.CanBeManaged, groupCall.ParticipantCount, groupCall.HasHiddenListeners, groupCall.LoadedAllParticipants, groupCall.RecentSpeakers, groupCall.IsMyVideoEnabled, groupCall.IsMyVideoPaused, groupCall.CanEnableVideo, groupCall.MuteNewParticipants, groupCall.CanToggleMuteNewParticipants, groupCall.RecordDuration, groupCall.IsVideoRecorded, groupCall.Duration)));
                     }
                 });
             }
@@ -380,6 +384,10 @@ namespace Telegram.Services
                         _activeCall = null;
                         changed = true;
                     }
+                    else if (state is VoipState.Ready && update.Call.GroupCallId != 0)
+                    {
+                        ClientService.Send(new GetGroupCall(update.Call.GroupCallId));
+                    }
                 }
             }
 
@@ -405,6 +413,20 @@ namespace Telegram.Services
                         changed = true;
                     }
                 }
+                else if (_activeCall is VoipCall call && call.GroupCallId == update.GroupCall.Id && !_upgrading)
+                {
+                    _upgrading = true;
+
+                    ClientService.TryGetChatFromUser(call.UserId, out Chat chat);
+
+                    WindowContext.ForEach(window =>
+                    {
+                        if (window.Content is VoipPage page)
+                        {
+                            _ = JoinAsyncInternal(page.XamlRoot, chat, call.GroupCallId, null, string.Empty, true);
+                        }
+                    });
+                }
             }
 
             if (changed)
@@ -412,6 +434,8 @@ namespace Telegram.Services
                 Aggregator.Publish(new UpdateActiveCall());
             }
         }
+
+        private bool _upgrading;
 
         public void Handle(UpdateGroupCallParticipant update)
         {

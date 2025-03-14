@@ -12,6 +12,9 @@
     <Style TargetType="controls:ToastPopup"
            BasedOn="{StaticResource DefaultTeachingTipStyle}" />
 
+    <Style TargetType="controls:TeachingTipEx"
+           BasedOn="{StaticResource DefaultTeachingTipStyle}" />
+
     <Style x:Key="DefaultTeachingTipStyle"
            TargetType="local:TeachingTip">
         <Setter Property="Background"
@@ -436,7 +439,8 @@
                                 <VisualState x:Name="CollapseSubtitleTextBlock" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid MinHeight="{TemplateBinding MinHeight}"
+                        <Grid x:Name="TeachingTipRootGrid"
+                              MinHeight="{TemplateBinding MinHeight}"
                               MinWidth="{TemplateBinding MinWidth}"
                               MaxHeight="{TemplateBinding MaxHeight}"
                               MaxWidth="{TemplateBinding MaxWidth}"
@@ -533,7 +537,7 @@
                                                                    FontFamily="{TemplateBinding FontFamily}"
                                                                    TextWrapping="WrapWholeWords"
                                                                    Visibility="Collapsed"
-                                                                   Margin="0,0,0,8"/>
+                                                                   Margin="0,0,0,8" />
                                                     </StackPanel>
                                                 </Grid>
                                                 <ContentPresenter x:Name="MainContentPresenter"
@@ -552,6 +556,7 @@
                                                     </Grid.ColumnDefinitions>
                                                     <Button x:Name="ActionButton"
                                                             HorizontalAlignment="Stretch"
+                                                            FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                                             Style="{TemplateBinding ActionButtonStyle}"
                                                             Command="{TemplateBinding ActionButtonCommand}"
                                                             CommandParameter="{TemplateBinding ActionButtonCommandParameter}">
@@ -560,6 +565,7 @@
                                                     </Button>
                                                     <Button x:Name="CloseButton"
                                                             HorizontalAlignment="Stretch"
+                                                            FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                                             Style="{TemplateBinding CloseButtonStyle}"
                                                             Command="{TemplateBinding CloseButtonCommand}"
                                                             CommandParameter="{TemplateBinding CloseButtonCommandParameter}"

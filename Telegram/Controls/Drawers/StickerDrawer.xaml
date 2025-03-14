@@ -146,7 +146,7 @@
                       ItemClick="Toolbar_ItemClick"
                       SelectionChanged="Toolbar_SelectionChanged"
                       ContainerContentChanging="Toolbar_ContainerContentChanging"
-                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                       ScrollViewer.HorizontalScrollMode="Auto"
                       ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                       ScrollViewer.VerticalScrollBarVisibility="Disabled"

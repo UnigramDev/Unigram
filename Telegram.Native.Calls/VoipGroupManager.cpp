@@ -87,39 +87,91 @@ namespace winrt::Telegram::Native::Calls::implementation
         }
 
         m_impl = std::make_unique<tgcalls::GroupInstanceCustomImpl>(std::move(impl));
+
+        if (VoipVideoContentType::Screencast == descriptor.VideoContentType())
+        {
+            auto audioProcessId = descriptor.AudioProcessId();
+            if (audioProcessId == 0)
+            {
+                return;
+            }
+
+            m_loopback.SetOutputSink([weakThis{ get_weak() }](std::vector<uint8_t>&& samples) {
+                if (auto strongThis = weakThis.get())
+                {
+                    strongThis->AddExternalAudioSamples(std::move(samples));
+                }
+                });
+
+            if (audioProcessId == -1)
+            {
+                m_loopback.StartCaptureAsync(GetCurrentProcessId(), false);
+            }
+            else
+            {
+                m_loopback.StartCaptureAsync(audioProcessId, true);
+            }
+
+            m_impl->setIsMuted(false);
+        }
     }
 
     void VoipGroupManager::Stop()
     {
-        m_impl->stop();
+        m_loopback.StopCaptureAsync();
+
+        if (m_impl)
+        {
+            m_impl->stop([]() {});
+            m_impl.reset();
+        }
     }
 
     void VoipGroupManager::SetConnectionMode(VoipGroupConnectionMode connectionMode, bool keepBroadcastIfWasEnabled, bool isUnifiedBroadcast)
     {
-        m_impl->setConnectionMode((tgcalls::GroupConnectionMode)connectionMode, keepBroadcastIfWasEnabled, isUnifiedBroadcast);
+        if (m_impl)
+        {
+            m_impl->setConnectionMode((tgcalls::GroupConnectionMode)connectionMode, keepBroadcastIfWasEnabled, isUnifiedBroadcast);
+        }
     }
 
     void VoipGroupManager::EmitJoinPayload(EmitJsonPayloadDelegate completion)
     {
-        m_impl->emitJoinPayload([completion](auto const& payload) {
-            completion(payload.audioSsrc, winrt::to_hstring(payload.json));
-            });
+        if (m_impl)
+        {
+            m_impl->emitJoinPayload([completion](auto const& payload) {
+                completion(payload.audioSsrc, winrt::to_hstring(payload.json));
+                });
+        }
+        else
+        {
+            completion(0, L"");
+        }
     }
 
     void VoipGroupManager::SetJoinResponsePayload(hstring payload)
     {
-        m_impl->setJoinResponsePayload(winrt::to_string(payload));
+        if (m_impl)
+        {
+            m_impl->setJoinResponsePayload(winrt::to_string(payload));
+        }
     }
 
     void VoipGroupManager::RemoveSsrcs(IVector<int32_t> ssrcs)
     {
-        m_impl->removeSsrcs(std::vector<uint32_t>(ssrcs.begin(), ssrcs.end()));
+        if (m_impl)
+        {
+            m_impl->removeSsrcs(std::vector<uint32_t>(ssrcs.begin(), ssrcs.end()));
+        }
     }
 
     void VoipGroupManager::AddIncomingVideoOutput(hstring endpointId, winrt::Telegram::Native::Calls::VoipVideoOutputSink sink)
     {
-        auto implementation = winrt::get_self<VoipVideoOutputSink>(sink);
-        m_impl->addIncomingVideoOutput(winrt::to_string(endpointId), implementation->Sink());
+        if (m_impl)
+        {
+            auto implementation = winrt::get_self<VoipVideoOutputSink>(sink);
+            m_impl->addIncomingVideoOutput(winrt::to_string(endpointId), implementation->Sink());
+        }
     }
 
 
@@ -131,7 +183,10 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipGroupManager::IsMuted(bool value)
     {
-        m_impl->setIsMuted(m_isMuted = value);
+        if (m_impl)
+        {
+            m_impl->setIsMuted(m_isMuted = value);
+        }
     }
 
     bool VoipGroupManager::IsNoiseSuppressionEnabled()
@@ -141,47 +196,65 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipGroupManager::IsNoiseSuppressionEnabled(bool value)
     {
-        m_impl->setIsNoiseSuppressionEnabled(m_isNoiseSuppressionEnabled = value);
+        if (m_impl)
+        {
+            m_impl->setIsNoiseSuppressionEnabled(m_isNoiseSuppressionEnabled = value);
+        }
     }
 
     void VoipGroupManager::SetAudioOutputDevice(hstring id)
     {
-        m_impl->setAudioOutputDevice(winrt::to_string(id));
+        if (m_impl)
+        {
+            m_impl->setAudioOutputDevice(winrt::to_string(id));
+        }
     }
     void VoipGroupManager::SetAudioInputDevice(hstring id)
     {
-        m_impl->setAudioInputDevice(winrt::to_string(id));
+        if (m_impl)
+        {
+            m_impl->setAudioInputDevice(winrt::to_string(id));
+        }
     }
 
     void VoipGroupManager::SetVideoCapture(Telegram::Native::Calls::VoipCaptureBase videoCapture)
     {
-        if (videoCapture)
+        if (m_impl)
         {
-            if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>())
+            if (videoCapture)
             {
-                auto implementation = winrt::get_self<VoipScreenCapture>(screen);
-                m_impl->setVideoCapture(implementation->m_impl);
+                if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>())
+                {
+                    auto implementation = winrt::get_self<VoipScreenCapture>(screen);
+                    m_impl->setVideoCapture(implementation->m_impl);
+                }
+                else if (auto video = videoCapture.try_as<winrt::default_interface<VoipVideoCapture>>())
+                {
+                    auto implementation = winrt::get_self<VoipVideoCapture>(video);
+                    m_impl->setVideoCapture(implementation->m_impl);
+                }
             }
-            else if (auto video = videoCapture.try_as<winrt::default_interface<VoipVideoCapture>>())
+            else
             {
-                auto implementation = winrt::get_self<VoipVideoCapture>(video);
-                m_impl->setVideoCapture(implementation->m_impl);
+                m_impl->setVideoCapture(nullptr);
             }
-        }
-        else
-        {
-            m_impl->setVideoCapture(nullptr);
         }
     }
 
     void VoipGroupManager::AddExternalAudioSamples(std::vector<uint8_t>&& samples)
     {
-        m_impl->addExternalAudioSamples(std::move(samples));
+        if (m_impl)
+        {
+            m_impl->addExternalAudioSamples(std::move(samples));
+        }
     }
 
     void VoipGroupManager::SetVolume(int32_t ssrc, double volume)
     {
-        m_impl->setVolume(ssrc, volume);
+        if (m_impl)
+        {
+            m_impl->setVolume(ssrc, volume);
+        }
     }
 
     void VoipGroupManager::SetRequestedVideoChannels(IVector<VoipVideoChannelInfo> descriptions)
@@ -208,7 +281,10 @@ namespace winrt::Telegram::Native::Calls::implementation
             impl.push_back(std::move(item));
         }
 
-        m_impl->setRequestedVideoChannels(std::move(impl));
+        if (m_impl)
+        {
+            m_impl->setRequestedVideoChannels(std::move(impl));
+        }
     }
 
 
@@ -305,6 +381,7 @@ namespace winrt::Telegram::Native::Calls::implementation
     std::shared_ptr<tgcalls::RequestMediaChannelDescriptionTask> VoipGroupManager::OnRequestMediaChannelDescriptions(const std::vector<uint32_t>& ssrcs, std::function<void(std::vector<tgcalls::MediaChannelDescription>&&)> done)
     {
         // TODO: missing implementation
+        m_mediaChannelDescriptionsRequested(*this, nullptr);
         return nullptr;
     }
 
@@ -370,5 +447,21 @@ namespace winrt::Telegram::Native::Calls::implementation
     {
         std::lock_guard const guard(m_lock);
         m_broadcastTimeRequested.remove(token);
+    }
+
+
+
+    winrt::event_token VoipGroupManager::MediaChannelDescriptionsRequested(Windows::Foundation::TypedEventHandler<
+        winrt::Telegram::Native::Calls::VoipGroupManager,
+        winrt::Telegram::Native::Calls::MediaChannelDescriptionsRequestedEventArgs> const& value)
+    {
+        std::lock_guard const guard(m_lock);
+        return m_mediaChannelDescriptionsRequested.add(value);
+    }
+
+    void VoipGroupManager::MediaChannelDescriptionsRequested(winrt::event_token const& token)
+    {
+        std::lock_guard const guard(m_lock);
+        m_mediaChannelDescriptionsRequested.remove(token);
     }
 }

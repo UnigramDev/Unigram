@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -22,13 +22,14 @@ using Telegram.Navigation;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.Views.Calls.Popups;
+using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.System.Display;
 using Windows.UI.ViewManagement;
 
 namespace Telegram.Views.Calls
 {
-    public sealed partial class LiveStreamPage : WindowEx
+    public sealed partial class LiveStreamPage : WindowEx, IToastHost, IPopupHost
     {
         private readonly VoipGroupCall _call;
 
@@ -75,6 +76,32 @@ namespace Telegram.Views.Calls
             OnPropertyChanged();
         }
 
+        public void ToastOpened(TeachingTip toast)
+        {
+            Resources.Remove("TeachingTip");
+            Resources.Add("TeachingTip", toast);
+        }
+
+        public void ToastClosed(TeachingTip toast)
+        {
+            if (Resources.TryGetValue("TeachingTip", out object cached))
+            {
+                if (cached == toast)
+                {
+                    Resources.Remove("TeachingTip");
+                }
+            }
+        }
+
+        public void PopupOpened()
+        {
+            Window.Current.SetTitleBar(null);
+        }
+
+        public void PopupClosed()
+        {
+            Window.Current.SetTitleBar(TitleArea);
+        }
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
         {
             _inactivityTimer.Stop();
@@ -417,7 +444,7 @@ namespace Telegram.Views.Calls
 
             if (_call.ClientService.TryGetSupergroup(_call.Chat, out Supergroup supergroup))
             {
-                if (supergroup.Status is ChatMemberStatusCreator)
+                if (supergroup.CanManageVideoChats())
                 {
                     flyout.CreateFlyoutSeparator();
                     flyout.CreateFlyoutItem(StreamWith, Strings.VoipStreamWith, Icons.Live);
@@ -425,7 +452,7 @@ namespace Telegram.Views.Calls
             }
             else if (_call.ClientService.TryGetBasicGroup(_call.Chat, out BasicGroup basicGroup))
             {
-                if (basicGroup.Status is ChatMemberStatusCreator)
+                if (basicGroup.CanManageVideoChats())
                 {
                     flyout.CreateFlyoutSeparator();
                     flyout.CreateFlyoutItem(StreamWith, Strings.VoipStreamWith, Icons.Live);

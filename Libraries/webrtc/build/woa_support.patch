@@ -1,0 +1,55 @@
+diff --git a/toolchain/win/tool_wrapper.py b/toolchain/win/tool_wrapper.py
+index 47bbfe2a0..bd7b89d9a 100644
+--- a/toolchain/win/tool_wrapper.py
++++ b/toolchain/win/tool_wrapper.py
+@@ -151,11 +151,29 @@ class WinTool(object):
+     """Filter logo banner from invocations of asm.exe."""
+     env = self._GetEnv(arch)
+     if sys.platform == 'win32':
+-      # Windows ARM64 uses clang-cl as assembler which has '/' as path
+-      # separator, convert it to '\\' when running on Windows.
+-      args = list(args) # *args is a tuple by default, which is read-only
+-      args[0] = args[0].replace('/', '\\')
+-    # See comment in ExecLinkWrapper() for why shell=False on non-win.
++        args = list(args)  # Convert args to a list to modify
++
++        # Replace armasm64.exe with the specified clang.exe path
++        args[0] = "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/Llvm/ARM64/bin/clang.exe"
++
++        # Add necessary Clang flags for assembly
++        args.insert(1, '-c')  # Add '-c' flag to compile
++
++        # Identify and replace MSVC output flag with Clang's '-o'
++        output_arg = next((arg for arg in args if arg.startswith('/Fo')), None)
++        if output_arg:
++            output_index = args.index(output_arg)
++            output_file = output_arg[3:]  # Extract the output file path after '/Fo'
++            args[output_index] = '-o'  # Replace '/Fo' with '-o'
++            args.insert(output_index + 1, output_file.replace('\\', '/'))  # Add output file path correctly formatted
++
++        # Remove MSVC-specific flags like '/nologo'
++        args = [arg for arg in args if arg not in ['/nologo']]
++
++        # Print the command for debugging purposes
++        print("Executing command:", args)
++
++    # Execute the command using subprocess
+     popen = subprocess.Popen(args, shell=sys.platform == 'win32', env=env,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+     out, _ = popen.communicate()
+diff --git a/vs_toolchain.py b/vs_toolchain.py
+index a9cd6f03d..7909abdd3 100755
+--- a/vs_toolchain.py
++++ b/vs_toolchain.py
+@@ -400,8 +400,8 @@ def CopyDlls(target_dir, configuration, target_cpu):
+   _CopyDebugger(target_dir, target_cpu)
+   if target_cpu == 'arm64':
+     target_dir = os.path.join(target_dir, 'win_clang_x64')
+-    target_cpu = 'x64'
+-    runtime_dir = x64_runtime
++    target_cpu = 'arm64'
++    runtime_dir = arm64_runtime
+     os.makedirs(target_dir, exist_ok=True)
+     _CopyRuntime(target_dir, runtime_dir, target_cpu, debug=False)
+     if configuration == 'Debug':
+

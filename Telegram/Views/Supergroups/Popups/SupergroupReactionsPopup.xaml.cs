@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -196,7 +196,7 @@ namespace Telegram.Views.Supergroups.Popups
                 .ToList();
 
             // We don't want to unfocus the text are when the context menu gets opened
-            EmojiPanel.ViewModel.UpdateReactions(new AvailableReactions(reactions, empty, empty, ViewModel.AllowCustomEmoji, false, null));
+            _ = EmojiPanel.ViewModel.UpdateReactions(new AvailableReactions(reactions, empty, empty, ViewModel.AllowCustomEmoji, false, null));
             EmojiFlyout.ShowAt(CaptionInput, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
         }
 

@@ -1,10 +1,9 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI;
 using Microsoft.UI.Input;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -25,7 +24,6 @@ using Telegram.Views.Authorization;
 using Telegram.Views.Calls;
 using Telegram.Views.Host;
 using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.ViewManagement;
 using WinRT.Interop;
 
@@ -41,6 +39,8 @@ namespace Telegram.Navigation
 
         private readonly InputListener _inputListener;
         public InputListener InputListener => _inputListener;
+
+        public static implicit operator Window(WindowContext window) => window._window;
 
         public Windows.UI.Core.CoreWindow CoreWindow => _window.CoreWindow;
 
@@ -497,27 +497,6 @@ namespace Telegram.Navigation
         {
             try
             {
-                if (args is ShareTargetActivatedEventArgs shareTarget && state is not AuthorizationStateReady)
-                {
-                    var options = new Windows.System.LauncherOptions();
-                    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
-
-                    try
-                    {
-                        await Windows.System.Launcher.LaunchUriAsync(new Uri("tg:"), options);
-                    }
-                    catch
-                    {
-                        // It's too early?
-                    }
-                    finally
-                    {
-                        shareTarget.ShareOperation.ReportCompleted();
-                    }
-
-                    return;
-                }
-
                 switch (state)
                 {
                     case AuthorizationStateReady:
@@ -553,7 +532,70 @@ namespace Telegram.Navigation
             catch { }
         }
 
-        private async void Activate(LaunchActivatedEventArgs args, INavigationService service)
+        //private async void Activate(LaunchActivatedEventArgs args, INavigationService service)
+        //{
+        //    WatchDog.TrackEvent("ShareTarget");
+
+        //    if (state is AuthorizationStateReady)
+        //    {
+        //        var package = new DataPackage();
+
+        //        try
+        //        {
+        //            var operation = args.ShareOperation.Data;
+        //            if (operation.AvailableFormats.Contains(StandardDataFormats.ApplicationLink))
+        //            {
+        //                package.SetApplicationLink(await operation.GetApplicationLinkAsync());
+        //            }
+        //            if (operation.AvailableFormats.Contains(StandardDataFormats.Bitmap))
+        //            {
+        //                package.SetBitmap(await operation.GetBitmapAsync());
+        //            }
+        //            //if (operation.Contains(StandardDataFormats.Html))
+        //            //{
+        //            //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
+        //            //}
+        //            //if (operation.Contains(StandardDataFormats.Rtf))
+        //            //{
+        //            //    package.SetRtf(await operation.GetRtfAsync());
+        //            //}
+        //            if (operation.AvailableFormats.Contains(StandardDataFormats.StorageItems))
+        //            {
+        //                package.SetStorageItems(await operation.GetStorageItemsAsync());
+        //            }
+        //            if (operation.AvailableFormats.Contains(StandardDataFormats.Text))
+        //            {
+        //                package.SetText(await operation.GetTextAsync());
+        //            }
+        //            //if (operation.Contains(StandardDataFormats.Uri))
+        //            //{
+        //            //    package.SetUri(await operation.GetUriAsync());
+        //            //}
+        //            if (operation.AvailableFormats.Contains(StandardDataFormats.WebLink))
+        //            {
+        //                package.SetWebLink(await operation.GetWebLinkAsync());
+        //            }
+        //        }
+        //        catch { }
+
+        //        App.DataPackages[0] = package.GetView();
+        //        App.ShareOperation = args.ShareOperation;
+        //    }
+
+        //    var options = new Windows.System.LauncherOptions();
+        //    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
+
+        //    try
+        //    {
+        //        await Windows.System.Launcher.LaunchUriAsync(new Uri("tg://"), options);
+        //    }
+        //    catch
+        //    {
+        //        // It's too early?
+        //    }
+        //}
+
+        private void Activate(LaunchActivatedEventArgs args, INavigationService service)
         {
             service ??= Current.NavigationServices.FirstOrDefault();
 
@@ -564,111 +606,6 @@ namespace Telegram.Navigation
 
             //if (args is ShareTargetActivatedEventArgs share)
             //{
-            //    WatchDog.TrackEvent("ShareTarget");
-            //    var package = new DataPackage();
-
-            //    try
-            //    {
-            //        var operation = share.ShareOperation.Data;
-            //        if (operation.AvailableFormats.Contains(StandardDataFormats.ApplicationLink))
-            //        {
-            //            package.SetApplicationLink(await operation.GetApplicationLinkAsync());
-            //        }
-            //        if (operation.AvailableFormats.Contains(StandardDataFormats.Bitmap))
-            //        {
-            //            package.SetBitmap(await operation.GetBitmapAsync());
-            //        }
-            //        //if (operation.Contains(StandardDataFormats.Html))
-            //        //{
-            //        //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
-            //        //}
-            //        //if (operation.Contains(StandardDataFormats.Rtf))
-            //        //{
-            //        //    package.SetRtf(await operation.GetRtfAsync());
-            //        //}
-            //        if (operation.AvailableFormats.Contains(StandardDataFormats.StorageItems))
-            //        {
-            //            package.SetStorageItems(await operation.GetStorageItemsAsync());
-            //        }
-            //        if (operation.AvailableFormats.Contains(StandardDataFormats.Text))
-            //        {
-            //            package.SetText(await operation.GetTextAsync());
-            //        }
-            //        //if (operation.Contains(StandardDataFormats.Uri))
-            //        //{
-            //        //    package.SetUri(await operation.GetUriAsync());
-            //        //}
-            //        if (operation.AvailableFormats.Contains(StandardDataFormats.WebLink))
-            //        {
-            //            package.SetWebLink(await operation.GetWebLinkAsync());
-            //        }
-            //    }
-            //    catch { }
-
-            //    var query = "tg://";
-            //    var chatId = 0L;
-
-            //    try
-            //    {
-            //        var contactId = await ContactsService.GetContactIdAsync(share.ShareOperation.Contacts.FirstOrDefault());
-            //        if (contactId is long userId)
-            //        {
-            //            var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
-            //            if (response is Chat chat)
-            //            {
-            //                query = $"ms-contact-profile://meh?ContactRemoteIds=u" + userId;
-            //                chatId = chat.Id;
-            //            }
-            //        }
-            //    }
-            //    catch
-            //    {
-            //        // ShareOperation.Contacts can throw an InvalidCastException
-            //    }
-
-            //    App.DataPackages[chatId] = package.GetView();
-
-            //    App.ShareOperation = share.ShareOperation;
-            //    App.ShareWindow = _window;
-
-            //    var options = new Windows.System.LauncherOptions();
-            //    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
-
-            //    try
-            //    {
-            //        await Windows.System.Launcher.LaunchUriAsync(new Uri(query), options);
-            //    }
-            //    catch
-            //    {
-            //        // It's too early?
-            //    }
-            //}
-            //else if (args is ContactPanelActivatedEventArgs contact)
-            //{
-            //    SetContactPanel(contact.ContactPanel);
-
-            //    if (Application.Current.Resources.TryGet("PageHeaderBackgroundBrush", out SolidColorBrush backgroundBrush))
-            //    {
-            //        contact.ContactPanel.HeaderColor = backgroundBrush.Color;
-            //    }
-
-            //    var contactId = await ContactsService.GetContactIdAsync(contact.Contact.Id);
-            //    if (contactId is long userId)
-            //    {
-            //        var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
-            //        if (response is Chat chat)
-            //        {
-            //            service.NavigateToChat(chat);
-            //        }
-            //        else
-            //        {
-            //            ContactPanelFallback(service);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        ContactPanelFallback(service);
-            //    }
             //}
             //else if (args is ProtocolActivatedEventArgs protocol)
             //{
@@ -690,19 +627,6 @@ namespace Telegram.Navigation
             //        }
             //        catch { }
             //    }
-
-            //    if (App.ShareWindow != null)
-            //    {
-            //        try
-            //        {
-            //            await App.ShareWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            //            {
-            //                App.ShareWindow.Close();
-            //                App.ShareWindow = null;
-            //            });
-            //        }
-            //        catch { }
-            //    }
             //}
             //else if (args is FileActivatedEventArgs file)
             //{
@@ -720,7 +644,7 @@ namespace Telegram.Navigation
             //        // TODO: WinUI - most likely XamlRoot is going to be null at this stage.
             //        // As well, Content may be null too.
 
-            //        await new ThemePreviewPopup(item).ShowQueuedAsync(Content?.XamlRoot);
+            //        _ = new ThemePreviewPopup(item).ShowQueuedAsync(Content?.XamlRoot);
             //    }
             //}
             //else if (args is CommandLineActivatedEventArgs commandLine)
@@ -755,50 +679,50 @@ namespace Telegram.Navigation
         /// </summary>
         public void UpdateTitleBar()
         {
-            //Color background;
-            Color foreground;
-            Color buttonHover;
-            Color buttonPressed;
+            ////Color background;
+            //Color foreground;
+            //Color buttonHover;
+            //Color buttonPressed;
 
-            // Apply buttons feedback based on Light or Dark theme
-            var theme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
-            if (theme == ApplicationTheme.Dark)
-            {
-                //background = Color.FromArgb(255, 43, 43, 43);
-                foreground = Colors.White;
-                buttonHover = Color.FromArgb(25, 255, 255, 255);
-                buttonPressed = Color.FromArgb(51, 255, 255, 255);
-            }
-            else
-            {
-                //background = Color.FromArgb(255, 230, 230, 230);
-                foreground = Colors.Black;
-                buttonHover = Color.FromArgb(25, 0, 0, 0);
-                buttonPressed = Color.FromArgb(51, 0, 0, 0);
-            }
+            //// Apply buttons feedback based on Light or Dark theme
+            //var theme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
+            //if (theme == ApplicationTheme.Dark)
+            //{
+            //    //background = Color.FromArgb(255, 43, 43, 43);
+            //    foreground = Colors.White;
+            //    buttonHover = Color.FromArgb(25, 255, 255, 255);
+            //    buttonPressed = Color.FromArgb(51, 255, 255, 255);
+            //}
+            //else
+            //{
+            //    //background = Color.FromArgb(255, 230, 230, 230);
+            //    foreground = Colors.Black;
+            //    buttonHover = Color.FromArgb(25, 0, 0, 0);
+            //    buttonPressed = Color.FromArgb(51, 0, 0, 0);
+            //}
 
-            // Desktop Title Bar
-            var titleBar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+            //// Desktop Title Bar
+            //var titleBar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
+            //CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
 
-            // Background
-            //titleBar.BackgroundColor = background;
-            //titleBar.InactiveBackgroundColor = background;
+            //// Background
+            ////titleBar.BackgroundColor = background;
+            ////titleBar.InactiveBackgroundColor = background;
 
-            // Foreground
-            titleBar.ForegroundColor = foreground;
-            titleBar.ButtonForegroundColor = foreground;
-            titleBar.ButtonHoverForegroundColor = foreground;
+            //// Foreground
+            //titleBar.ForegroundColor = foreground;
+            //titleBar.ButtonForegroundColor = foreground;
+            //titleBar.ButtonHoverForegroundColor = foreground;
 
-            // Buttons
-            //titleBar.ButtonBackgroundColor = background;
-            //titleBar.ButtonInactiveBackgroundColor = background;
-            titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            //// Buttons
+            ////titleBar.ButtonBackgroundColor = background;
+            ////titleBar.ButtonInactiveBackgroundColor = background;
+            //titleBar.ButtonBackgroundColor = Colors.Transparent;
+            //titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
-            // Buttons feedback
-            titleBar.ButtonPressedBackgroundColor = buttonPressed;
-            titleBar.ButtonHoverBackgroundColor = buttonHover;
+            //// Buttons feedback
+            //titleBar.ButtonPressedBackgroundColor = buttonPressed;
+            //titleBar.ButtonHoverBackgroundColor = buttonHover;
         }
 
         private void ClearTitleBar(ApplicationView view)
@@ -827,6 +751,30 @@ namespace Telegram.Navigation
             return (InputKeyboardSource.GetKeyStateForCurrentThread(key) & Windows.UI.Core.CoreVirtualKeyStates.Down) != 0;
         }
 
+        public static Windows.System.VirtualKeyModifiers KeyModifiers()
+        {
+            //return (InputKeyboardSource.GetKeyStateForCurrentThread(key) & Windows.UI.Core.CoreVirtualKeyStates.Down) != 0;
+
+            var modifiers = Windows.System.VirtualKeyModifiers.None;
+
+            if ((InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control) & Windows.UI.Core.CoreVirtualKeyStates.Down) != 0)
+            {
+                modifiers |= Windows.System.VirtualKeyModifiers.Control;
+            }
+
+            if ((InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Menu) & Windows.UI.Core.CoreVirtualKeyStates.Down) != 0)
+            {
+                modifiers |= Windows.System.VirtualKeyModifiers.Menu;
+            }
+
+            if ((InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift) & Windows.UI.Core.CoreVirtualKeyStates.Down) != 0)
+            {
+                modifiers |= Windows.System.VirtualKeyModifiers.Shift;
+            }
+
+            return modifiers;
+        }
+
         public static async void Activate(string persistedId)
         {
             var oldViewId = WindowContext.Current.Id;
@@ -850,6 +798,21 @@ namespace Telegram.Navigation
         }
 
         public static Task ForEachAsync(Func<WindowContext, Task> action)
+        {
+            var tasks = new List<Task>();
+
+            lock (_allLock)
+            {
+                foreach (var window in All)
+                {
+                    tasks.Add(window.Dispatcher.DispatchAsync(() => action(window)));
+                }
+            }
+
+            return Task.WhenAll(tasks);
+        }
+
+        public static Task ForEachAsync(Action<WindowContext> action)
         {
             var tasks = new List<Task>();
 

@@ -54,7 +54,6 @@
                     </controls:SettingsExpander>
 
                     <controls:SettingsExpander x:Name="CanManageStoriesRoot"
-                                               Visibility="Collapsed"
                                                Background="Transparent"
                                                MinHeight="32">
                         <controls:SettingsExpander.Header>

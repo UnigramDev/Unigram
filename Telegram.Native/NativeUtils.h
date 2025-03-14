@@ -46,8 +46,10 @@ namespace winrt::Telegram::Native::implementation
         static int32_t GetScaleForCurrentView();
 
         static void SetFatalErrorCallback(FatalErrorCallback action);
-        static winrt::Telegram::Native::FatalError GetFatalError(bool onlyNative);
+        static winrt::Windows::Foundation::Collections::IVector<winrt::Telegram::Native::FatalErrorFrame> GetStowedException();
         static winrt::Telegram::Native::FatalError GetBackTrace(DWORD code);
+
+        static hstring GetLogMessage(int64_t format, int64_t args);
 
         static void Crash();
 

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -13,12 +13,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
-using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
@@ -361,7 +361,8 @@ namespace Telegram.ViewModels
                             await ClientService.SendAsync(new DeleteChatHistory(chat.Id, true, false));
                         }
                     }
-                };
+                }
+                ;
             }
         }
 
@@ -410,7 +411,8 @@ namespace Telegram.ViewModels
                             await ClientService.SendAsync(new DeleteChatHistory(chat.Id, true, false));
                         }
                     }
-                };
+                }
+                ;
             }
 
             Delegate?.SetSelectionMode(false);
@@ -570,17 +572,14 @@ namespace Telegram.ViewModels
 
         public void CreateFolder(Chat chat)
         {
-            NavigationService.Navigate(typeof(FolderPage), state: new NavigationState { { "included_chat_id", chat.Id } });
+            NavigationService.Navigate(typeof(FolderPage), new FolderPageCreateArgs(chat.Id));
         }
 
         #endregion
 
-        public async void SetFolder(ChatList chatList)
+        public void SetList(ChatList chatList)
         {
-            await Items.ReloadAsync(chatList);
-            //Aggregator.Unsubscribe(Items);
-            //Items = new ItemsCollection(ClientService, Aggregator, this, chatList);
-            //RaisePropertyChanged(nameof(Items));
+            _ = Items.ReloadAsync(chatList);
         }
 
         public partial class ItemsCollection : ObservableCollection<Chat>, ISupportIncrementalLoading
@@ -588,7 +587,7 @@ namespace Telegram.ViewModels
             private readonly IClientService _clientService;
             private readonly IEventAggregator _aggregator;
 
-            private readonly DisposableMutex _loadMoreLock = new();
+            private CancellationTokenSource _token = new();
             private readonly HashSet<long> _chats = new();
 
             private readonly ChatListViewModel _viewModel;
@@ -608,8 +607,6 @@ namespace Telegram.ViewModels
                 _aggregator = aggregator;
 
                 _viewModel = viewModel;
-                _viewModel.IsLoading = true;
-
                 _chatList = chatList;
 
 #if MOCKUP
@@ -619,24 +616,23 @@ namespace Telegram.ViewModels
                 _ = LoadMoreItemsAsync(0);
             }
 
-            public async Task ReloadAsync(ChatList chatList)
+            public Task ReloadAsync(ChatList chatList)
             {
-                _viewModel.IsLoading = true;
+                _token?.Cancel();
+                _token = new CancellationTokenSource();
 
-                using (await _loadMoreLock.WaitAsync())
-                {
-                    _aggregator.Unsubscribe(this);
+                _aggregator.Unsubscribe(this);
+                _hasMoreItems = false;
 
-                    _lastChatId = 0;
-                    _lastOrder = 0;
+                _lastChatId = 0;
+                _lastOrder = 0;
 
-                    _chatList = chatList;
+                _chatList = chatList;
 
-                    _chats.Clear();
-                    Clear();
-                }
+                _chats.Clear();
+                Clear();
 
-                await LoadMoreItemsAsync();
+                return LoadMoreItemsAsync();
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -646,18 +642,16 @@ namespace Telegram.ViewModels
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
             {
-                using var guard = await _loadMoreLock.WaitAsync();
+                Logger.Info(Count);
+
+                var token = _token;
                 var totalCount = 0u;
 
-                var response = await _clientService.GetChatListAsync(_chatList, Count, 20);
-                if (response is Telegram.Td.Api.Chats chats)
-                {
-                    if (_viewModel.Delegate != null)
-                    {
-                        // Exp: does this affect layout cycles?
-                        await _viewModel.Delegate.UpdateLayoutAsync();
-                    }
+                await Task.Yield();
 
+                var response = await _clientService.GetChatListAsync(_chatList, Count, 20);
+                if (response is Telegram.Td.Api.Chats chats && !token.IsCancellationRequested)
+                {
                     foreach (var chat in _clientService.GetChats(chats.ChatIds))
                     {
                         var order = chat.GetOrder(_chatList);
@@ -688,12 +682,13 @@ namespace Telegram.ViewModels
                         }
                     }
 
+                    Logger.Info(string.Format("Received {0} items, added {1}", chats.ChatIds.Count, totalCount));
+
                     IsEmpty = Count == 0;
 
-                    _hasMoreItems = chats.ChatIds.Count > 0;
+                    _hasMoreItems = chats.TotalCount >= 0;
                     Subscribe();
 
-                    _viewModel.IsLoading = false;
                     _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
                 }
 
@@ -719,7 +714,7 @@ namespace Telegram.ViewModels
             {
                 if (update.AuthorizationState is AuthorizationStateReady)
                 {
-                    _viewModel.BeginOnUIThread(async () => await ReloadAsync(_chatList));
+                    _viewModel.BeginOnUIThread(() => _ = ReloadAsync(_chatList));
                 }
             }
 

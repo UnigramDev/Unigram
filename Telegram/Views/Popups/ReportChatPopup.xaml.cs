@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
 using System;
@@ -10,7 +11,6 @@ using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Composition;
 
 namespace Telegram.Views.Popups
 {

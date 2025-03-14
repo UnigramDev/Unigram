@@ -58,7 +58,6 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Border x:Name="Icon"
-                                x:Load="False"
                                 Canvas.ZIndex="1"
                                 AutomationProperties.AccessibilityView="Raw"
                                 HorizontalAlignment="Left"

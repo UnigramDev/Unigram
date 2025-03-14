@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -856,23 +856,30 @@ namespace Telegram.Controls
             _rotation = rotation;
             _flip = flip;
 
-            SoftwareBitmapSource source;
-            using (var fileStream = await ImageHelper.OpenReadAsync(file))
+            try
             {
-                var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);
+                SoftwareBitmapSource source;
+                using (var fileStream = await ImageHelper.OpenReadAsync(file))
+                {
+                    var decoder = await BitmapDecoder.CreateAsync(fileStream);
+                    var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);
 
-                transform.Rotation = rotation;
-                transform.Flip = flip;
+                    transform.Rotation = rotation;
+                    transform.Flip = flip;
 
-                var software = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-                source = new SoftwareBitmapSource();
-                await source.SetBitmapAsync(software);
+                    var software = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+                    source = new SoftwareBitmapSource();
+                    await source.SetBitmapAsync(software);
 
-                SetSource(file, source, software.PixelWidth, software.PixelHeight, proportions, cropRectangle);
+                    SetSource(file, source, software.PixelWidth, software.PixelHeight, proportions, cropRectangle);
+                }
+
+                UpdatePresenterTransform();
             }
-
-            UpdatePresenterTransform();
+            catch
+            {
+                // TODO: decide how to handle failures in opening the image
+            }
         }
 
         public void SetSource(StorageFile file, ImageSource source, double width, double height, BitmapProportions proportions = BitmapProportions.Custom, Rect? cropRectangle = null)

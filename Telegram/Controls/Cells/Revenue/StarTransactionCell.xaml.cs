@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
@@ -27,20 +28,20 @@ namespace Telegram.Controls.Cells.Revenue
             UpdateManager.Unsubscribe(this, ref _media1Token, true);
             UpdateManager.Unsubscribe(this, ref _media2Token, true);
 
-            if (transaction.Partner is StarTransactionPartnerTelegram)
+            if (transaction.Type is StarTransactionTypePremiumBotDeposit)
             {
-                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                MediaPreview.Visibility = Visibility.Collapsed;
                 Photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 Title.Text = Strings.StarsTransactionBot;
-                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                Subtitle.Visibility = Visibility.Collapsed;
             }
-            else if (transaction.Partner is StarTransactionPartnerFragment)
+            else if (transaction.Type is StarTransactionTypeFragmentWithdrawal or StarTransactionTypeFragmentDeposit)
             {
-                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                MediaPreview.Visibility = Visibility.Collapsed;
                 Photo.Source = new PlaceholderImage(Icons.FragmentFilled, true, Colors.Black, Colors.Black);
-                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                Subtitle.Visibility = Visibility.Collapsed;
 
-                if (transaction.IsFragmentWithdrawal())
+                if (transaction.Type is StarTransactionTypeFragmentWithdrawal)
                 {
                     Title.Text = Strings.StarsTransactionWithdrawFragment;
                 }
@@ -49,161 +50,201 @@ namespace Telegram.Controls.Cells.Revenue
                     Title.Text = Strings.StarsTransactionFragment;
                 }
             }
-            else if (transaction.Partner is StarTransactionPartnerAppStore or StarTransactionPartnerGooglePlay)
+            else if (transaction.Type is StarTransactionTypeAppStoreDeposit or StarTransactionTypeGooglePlayDeposit)
             {
                 MediaPreview.Visibility = Visibility.Collapsed;
                 Photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 Title.Text = Strings.StarsTransactionInApp;
                 Subtitle.Visibility = Visibility.Collapsed;
             }
-            else if (transaction.Partner is StarTransactionPartnerBot sourceBot && clientService.TryGetUser(sourceBot.UserId, out User botUser))
+            else if (transaction.Type is StarTransactionTypeBotInvoicePurchase botInvoicePurchase)
             {
+                var botUser = clientService.GetUser(botInvoicePurchase.UserId);
+
                 Subtitle.Text = botUser.FullName();
                 Subtitle.Visibility = Visibility.Visible;
 
-                if (sourceBot.Purpose is BotTransactionPurposeInvoicePayment invoicePayment)
-                {
-                    Title.Text = invoicePayment.ProductInfo.Title;
-                    Photo.SetUser(clientService, botUser, 36);
+                Title.Text = botInvoicePurchase.ProductInfo.Title;
+                Photo.SetUser(clientService, botUser, 36);
 
-                    MediaPreview.Visibility = Visibility.Collapsed;
-                }
-                else if (sourceBot.Purpose is BotTransactionPurposePaidMedia paidMedia)
-                {
-                    Title.Text = Strings.StarMediaPurchase;
-                    Subtitle.Visibility = Visibility.Collapsed;
-
-                    if (paidMedia.Media.Count > 0)
-                    {
-                        MediaPreview.Visibility = Visibility.Visible;
-
-                        UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
-
-                        if (paidMedia.Media.Count > 1)
-                        {
-                            UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
-
-                            Media2.Visibility = Visibility.Visible;
-                        }
-                        else
-                        {
-                            Media2.Visibility = Visibility.Collapsed;
-                        }
-                    }
-                    else
-                    {
-                        Photo.SetUser(clientService, botUser, 36);
-
-                        MediaPreview.Visibility = Visibility.Collapsed;
-                    }
-                }
-                else
-                {
-                    Title.Text = botUser.FullName();
-                    Subtitle.Visibility = Visibility.Collapsed;
-
-                    Photo.SetUser(clientService, botUser, 36);
-
-                    MediaPreview.Visibility = Visibility.Collapsed;
-                }
+                MediaPreview.Visibility = Visibility.Collapsed;
             }
-            else if (transaction.Partner is StarTransactionPartnerBusiness sourceBusiness && clientService.TryGetUser(sourceBusiness.UserId, out User businessUser))
+            else if (transaction.Type is StarTransactionTypeBotPaidMediaPurchase botPaidMediaPurchase)
             {
-                Subtitle.Text = businessUser.FullName();
+                var botUser = clientService.GetUser(botPaidMediaPurchase.UserId);
+
+                Subtitle.Text = botUser.FullName();
                 Subtitle.Visibility = Visibility.Visible;
 
                 Title.Text = Strings.StarMediaPurchase;
+                UpdatePaidMedia(clientService, botPaidMediaPurchase.Media, botUser, null);
 
-                MediaPreview.Visibility = Visibility.Visible;
-
-                Photo.Source = null;
-
-                UpdateMedia(clientService, sourceBusiness.Media[0], Media1, ref _media1Token);
-
-                if (sourceBusiness.Media.Count > 1)
-                {
-                    UpdateMedia(clientService, sourceBusiness.Media[1], Media2, ref _media2Token);
-
-                    Media2.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    Media2.Visibility = Visibility.Collapsed;
-                }
             }
-            else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
+            else if (transaction.Type is StarTransactionTypeBotInvoiceSale botInvoiceSale)
             {
+                var botUser = clientService.GetUser(botInvoiceSale.UserId);
+
+                Subtitle.Text = botUser.FullName();
+                Subtitle.Visibility = Visibility.Visible;
+
+                Title.Text = botInvoiceSale.ProductInfo.Title;
+                Photo.SetUser(clientService, botUser, 36);
+
+                MediaPreview.Visibility = Visibility.Collapsed;
+            }
+            else if (transaction.Type is StarTransactionTypeBotPaidMediaSale botPaidMediaSale)
+            {
+                var botUser = clientService.GetUser(botPaidMediaSale.UserId);
+
+                Subtitle.Text = botUser.FullName();
+                Subtitle.Visibility = Visibility.Visible;
+
+                Title.Text = Strings.StarMediaPurchase;
+                UpdatePaidMedia(clientService, botPaidMediaSale.Media, botUser, null);
+            }
+            else if (transaction.Type is StarTransactionTypeGiftSale giftSale)
+            {
+                var user = clientService.GetUser(giftSale.UserId);
+
                 Subtitle.Visibility = Visibility.Visible;
                 Photo.SetUser(clientService, user, 36);
                 MediaPreview.Visibility = Visibility.Collapsed;
 
-                if (sourceUser.Purpose is UserTransactionPurposeGiftedStars giftedStars)
+                Title.Text = user.FullName();
+                Subtitle.Text = transaction.StarAmount.IsNegative()
+                    ? Strings.Gift2TransactionRefundedConverted
+                    : Strings.Gift2TransactionConverted;
+            }
+            else if (transaction.Type is StarTransactionTypeUserDeposit userDeposit)
+            {
+                var user = clientService.GetUser(userDeposit.UserId);
+
+                Subtitle.Visibility = Visibility.Visible;
+                MediaPreview.Visibility = Visibility.Collapsed;
+
+                Title.Text = transaction.StarAmount.IsNegative()
+                    ? Strings.StarsGiftSent
+                    : Strings.StarsGiftReceived;
+
+                if (user != null)
                 {
-                    Title.Text = transaction.StarCount < 0
-                        ? Strings.StarsGiftSent
-                        : Strings.StarsGiftReceived;
+                    Photo.SetUser(clientService, user, 36);
                     Subtitle.Text = user.FullName();
                 }
-                else if (sourceUser.Purpose is UserTransactionPurposeGiftSell giftSell)
+                else
                 {
-                    Title.Text = user.FullName();
-                    Subtitle.Text = transaction.StarCount < 0
-                        ? Strings.Gift2TransactionRefundedConverted
-                        : Strings.Gift2TransactionConverted;
-                }
-                else if (sourceUser.Purpose is UserTransactionPurposeGiftSend giftSend)
-                {
-                    Title.Text = user.FullName();
-                    Subtitle.Text = transaction.StarCount < 0
-                        ? Strings.Gift2TransactionSent
-                        : Strings.Gift2TransactionRefundedSent;
+                    Photo.Source = new PlaceholderImage(Icons.FragmentFilled, true, Colors.Black, Colors.Black);
+                    Subtitle.Text = Strings.StarsTransactionUnknown;
                 }
             }
-            else if (transaction.Partner is StarTransactionPartnerChat sourceChat && clientService.TryGetChat(sourceChat.ChatId, out Chat chat))
+            else if (transaction.Type is StarTransactionTypeGiftPurchase giftPurchase)
             {
+                if (clientService.TryGetUser(giftPurchase.OwnerId, out User user))
+                {
+                    Photo.SetUser(clientService, user, 36);
+                    Title.Text = user.FullName();
+                }
+                else if (clientService.TryGetChat(giftPurchase.OwnerId, out Chat chat))
+                {
+                    Photo.SetChat(clientService, chat, 36);
+                    Title.Text = chat.Title;
+                }
+
+                Subtitle.Visibility = Visibility.Visible;
+                MediaPreview.Visibility = Visibility.Collapsed;
+                Subtitle.Text = transaction.StarAmount.IsNegative()
+                    ? Strings.Gift2TransactionSent
+                    : Strings.Gift2TransactionRefundedSent;
+            }
+            else if (transaction.Type is StarTransactionTypeChannelPaidMediaPurchase channelPaidMediaPurchase)
+            {
+                var chat = clientService.GetChat(channelPaidMediaPurchase.ChatId);
+
                 Subtitle.Text = chat.Title;
                 Subtitle.Visibility = Visibility.Visible;
 
-                if (sourceChat.Purpose is ChatTransactionPurposePaidMedia paidMedia)
-                {
-                    Title.Text = Strings.StarMediaPurchase;
+                Title.Text = Strings.StarMediaPurchase;
+                UpdatePaidMedia(clientService, channelPaidMediaPurchase.Media, null, chat);
+            }
+            else if (transaction.Type is StarTransactionTypeChannelPaidReactionSend channelPaidReactionSend)
+            {
+                var chat = clientService.GetChat(channelPaidReactionSend.ChatId);
 
-                    MediaPreview.Visibility = Visibility.Visible;
+                Subtitle.Text = chat.Title;
+                Subtitle.Visibility = Visibility.Visible;
 
-                    UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
+                Title.Text = Strings.StarsReactionsSent;
+                Photo.SetChat(clientService, chat, 36);
 
-                    if (paidMedia.Media.Count > 1)
-                    {
-                        UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
+                MediaPreview.Visibility = Visibility.Collapsed;
+            }
+            else if (transaction.Type is StarTransactionTypeChannelSubscriptionPurchase channelSubscriptionPurchase)
+            {
+                var chat = clientService.GetChat(channelSubscriptionPurchase.ChatId);
 
-                        Media2.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        Media2.Visibility = Visibility.Collapsed;
-                    }
-                }
-                else if (sourceChat.Purpose is ChatTransactionPurposeReaction)
-                {
-                    Title.Text = Strings.StarsReactionsSent;
-                    Photo.SetChat(clientService, chat, 36);
+                Subtitle.Text = chat.Title;
+                Subtitle.Visibility = Visibility.Visible;
 
-                    MediaPreview.Visibility = Visibility.Collapsed;
-                }
-                else if (sourceChat.Purpose is ChatTransactionPurposeJoin)
-                {
-                    Title.Text = Strings.StarsTransactionSubscriptionMonthly;
-                    Photo.SetChat(clientService, chat, 36);
+                Title.Text = Strings.StarsTransactionSubscriptionMonthly;
+                Photo.SetChat(clientService, chat, 36);
 
-                    MediaPreview.Visibility = Visibility.Collapsed;
-                }
-                else if (sourceChat.Purpose is ChatTransactionPurposeGiveaway)
-                {
-                    Title.Text = Strings.StarsGiveawayPrizeReceived;
-                    Photo.SetChat(clientService, chat, 36);
+                MediaPreview.Visibility = Visibility.Collapsed;
+            }
+            else if (transaction.Type is StarTransactionTypeChannelPaidMediaSale channelPaidMediaSale)
+            {
+                var user = clientService.GetUser(channelPaidMediaSale.UserId);
 
-                    MediaPreview.Visibility = Visibility.Collapsed;
-                }
+                Subtitle.Text = user.FullName();
+                Subtitle.Visibility = Visibility.Visible;
+
+                Title.Text = Strings.StarMediaPurchase;
+                UpdatePaidMedia(clientService, channelPaidMediaSale.Media, user, null);
+            }
+            else if (transaction.Type is StarTransactionTypeChannelPaidReactionReceive channelPaidReactionReceive)
+            {
+                var user = clientService.GetUser(channelPaidReactionReceive.UserId);
+
+                Subtitle.Text = user.FullName();
+                Subtitle.Visibility = Visibility.Visible;
+
+                Title.Text = Strings.StarsReactionsSent;
+                Photo.SetUser(clientService, user, 36);
+
+                MediaPreview.Visibility = Visibility.Collapsed;
+            }
+            else if (transaction.Type is StarTransactionTypeChannelSubscriptionSale channelSubscriptionSale)
+            {
+                var user = clientService.GetUser(channelSubscriptionSale.UserId);
+
+                Subtitle.Text = user.FullName();
+                Subtitle.Visibility = Visibility.Visible;
+
+                Title.Text = Strings.StarsTransactionSubscriptionMonthly;
+                Photo.SetUser(clientService, user, 36);
+
+                MediaPreview.Visibility = Visibility.Collapsed;
+            }
+            else if (transaction.Type is StarTransactionTypeGiveawayDeposit giveawayDeposit)
+            {
+                var chat = clientService.GetChat(giveawayDeposit.ChatId);
+
+                Subtitle.Text = chat.Title;
+                Subtitle.Visibility = Visibility.Visible;
+
+                Title.Text = Strings.StarsGiveawayPrizeReceived;
+                Photo.SetChat(clientService, chat, 36);
+
+                MediaPreview.Visibility = Visibility.Collapsed;
+            }
+            else if (transaction.Type is StarTransactionTypeTelegramApiUsage telegramApiUsage)
+            {
+                Title.Text = Strings.StarsTransactionFloodskip;
+                Photo.Source = PlaceholderImage.GetGlyph(Icons.ChatStarsFilled, 3);
+
+                MediaPreview.Visibility = Visibility.Collapsed;
+
+                Subtitle.Text = Locale.Declension(Strings.R.StarsTransactionFloodskipMessages, telegramApiUsage.RequestCount);
+                Subtitle.Visibility = Visibility.Visible;
             }
             else
             {
@@ -215,24 +256,57 @@ namespace Telegram.Controls.Cells.Revenue
 
             Date.Text = Formatter.DateAt(transaction.Date);
 
-            if (transaction.IsFragmentWithdrawal())
+            if (transaction.Type is StarTransactionTypeFragmentWithdrawal)
             {
                 if (transaction.IsRefund)
                 {
                     Date.Text += string.Format(" — {0}", Strings.StarsRefunded);
                 }
-                else if (transaction.Partner is StarTransactionPartnerFragment { WithdrawalState: RevenueWithdrawalStateFailed })
+                else if (transaction.Type is StarTransactionTypeFragmentWithdrawal { WithdrawalState: RevenueWithdrawalStateFailed })
                 {
                     Date.Text += string.Format(" — {0}", Strings.StarsFailed);
                 }
-                else if (transaction.Partner is StarTransactionPartnerFragment { WithdrawalState: RevenueWithdrawalStatePending })
+                else if (transaction.Type is StarTransactionTypeFragmentWithdrawal { WithdrawalState: RevenueWithdrawalStatePending })
                 {
                     Date.Text += string.Format(" — {0}", Strings.StarsPending);
                 }
             }
 
-            StarCount.Text = (transaction.StarCount < 0 ? string.Empty : "+") + transaction.StarCount.ToString("N0");
-            StarCount.Foreground = BootStrapper.Current.Resources[transaction.StarCount < 0 ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;
+            StarCount.Text = transaction.StarAmount.ToValue(true);
+            StarCount.Foreground = BootStrapper.Current.Resources[transaction.StarAmount.IsNegative() ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;
+        }
+
+        private void UpdatePaidMedia(IClientService clientService, IList<PaidMedia> paidMedia, User fallbackUser, Chat fallbackChat)
+        {
+            if (paidMedia.Count > 0)
+            {
+                MediaPreview.Visibility = Visibility.Visible;
+
+                UpdateMedia(clientService, paidMedia[0], Media1, ref _media1Token);
+
+                if (paidMedia.Count > 1)
+                {
+                    UpdateMedia(clientService, paidMedia[1], Media2, ref _media2Token);
+
+                    Media2.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    Media2.Visibility = Visibility.Collapsed;
+                }
+            }
+            else if (fallbackUser != null)
+            {
+                Photo.SetUser(clientService, fallbackUser, 36);
+
+                MediaPreview.Visibility = Visibility.Collapsed;
+            }
+            else if (fallbackChat != null)
+            {
+                Photo.SetChat(clientService, fallbackChat, 36);
+
+                MediaPreview.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void UpdateMedia(IClientService clientService, PaidMedia media, Border target, ref long token)

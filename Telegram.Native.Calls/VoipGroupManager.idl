@@ -6,6 +6,7 @@ import "VoipVideoOutputSink.idl";
 import "GroupNetworkStateChangedEventArgs.idl";
 import "BroadcastTimeRequestedEventArgs.idl";
 import "BroadcastPartRequestedEventArgs.idl";
+import "MediaChannelDescriptionsRequestedEventArgs.idl";
 
 namespace Telegram.Native.Calls
 {
@@ -41,5 +42,7 @@ namespace Telegram.Native.Calls
 
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, BroadcastTimeRequestedEventArgs> BroadcastTimeRequested;
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, BroadcastPartRequestedEventArgs> BroadcastPartRequested;
+
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, MediaChannelDescriptionsRequestedEventArgs> MediaChannelDescriptionsRequested;
     }
 }

@@ -21,6 +21,8 @@ namespace Telegram.Native
         void PrepareToSeek();
         void SeekToMilliseconds(Int64 ms, Boolean precise);
 
+        Windows.Storage.Streams.IRandomAccessStream GetAlbumCover();
+
         Int32 RenderSync(Windows.Storage.Streams.IBuffer bitmap, Int32 width, Int32 height, Boolean preview, out Int32 seconds);
 
         Int32 PixelWidth{ get; };
@@ -37,5 +39,7 @@ namespace Telegram.Native
 
         Boolean HasVideo{ get; };
         Boolean HasAudio{ get; };
+
+        Boolean HasAlbumCover{ get; };
     }
 } // namespace Telegram.Native

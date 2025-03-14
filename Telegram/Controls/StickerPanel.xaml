@@ -64,6 +64,7 @@
                     <Border x:Name="EmojisPanel">
                         <drawers:EmojiDrawer x:Name="EmojisRoot"
                                              x:Load="False"
+                                             Loaded="EmojisRoot_Loaded"
                                              ItemClick="Emojis_ItemClick" />
                     </Border>
                     <TextBlock x:Name="EmojisPermission"
@@ -78,7 +79,8 @@
                 <Grid x:Name="Tab1">
                     <Border x:Name="AnimationsPanel">
                         <drawers:AnimationDrawer x:Name="AnimationsRoot"
-                                                 x:Load="False" />
+                                                 x:Load="False"
+                                                 Loaded="AnimationsRoot_Loaded" />
                     </Border>
                     <TextBlock x:Name="AnimationsPermission"
                                Visibility="Collapsed"
@@ -92,7 +94,8 @@
                 <Grid x:Name="Tab2">
                     <Border x:Name="StickersPanel">
                         <drawers:StickerDrawer x:Name="StickersRoot"
-                                               x:Load="False" />
+                                               x:Load="False"
+                                               Loaded="StickersRoot_Loaded" />
                     </Border>
                     <TextBlock x:Name="StickersPermission"
                                Visibility="Collapsed"

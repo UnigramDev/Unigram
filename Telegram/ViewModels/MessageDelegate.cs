@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -47,13 +47,13 @@ namespace Telegram.ViewModels
 
         public override INavigationService NavigationService
         {
-            get => _viewModel.NavigationService;
+            get => _viewModel?.NavigationService;
             set => _viewModel.NavigationService = value;
         }
 
         public override IDispatcherContext Dispatcher
         {
-            get => _viewModel.Dispatcher;
+            get => _viewModel?.Dispatcher;
             set => _viewModel.Dispatcher = value;
         }
 
@@ -139,14 +139,13 @@ namespace Telegram.ViewModels
             ClientService.DownloadFile(file.Id, 32);
         }
 
-        public async void OpenFile(File file)
+        public void OpenFile(File file)
         {
             // TODO: I don't like retrieving services this way
             var service = TypeResolver.Current.Resolve<IStorageService>(ClientService.SessionId);
             if (service != null)
             {
-                await service.OpenFileAsync(file);
-                return;
+                _ = service.OpenFileAsync(file);
             }
         }
 
@@ -160,9 +159,10 @@ namespace Telegram.ViewModels
             NavigationService.NavigateToUser(userId);
         }
 
-        public void OpenUrl(string url, bool untrust)
+        public void OpenUrl(string url, bool untrust, OpenUrlSource source = null)
         {
-            MessageHelper.OpenUrl(ClientService, NavigationService, url, untrust, Chat == null ? null : new OpenUrlSourceChat(Chat.Id));
+            source ??= (Chat == null ? null : new OpenUrlSourceChat(Chat.Id, null));
+            MessageHelper.OpenUrl(ClientService, NavigationService, url, untrust, source);
         }
 
         public string GetAdminTitle(MessageViewModel message)
@@ -266,7 +266,7 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual void OpenWebPage(MessageText text) { }
+        public virtual void OpenWebPage(MessageViewModel message) { }
 
         /// <summary>
         /// Only available when created through DialogViewModel
@@ -275,16 +275,23 @@ namespace Telegram.ViewModels
 
         public async void OpenLocation(Location location, string title)
         {
-            var options = new Windows.System.LauncherOptions();
-            options.FallbackUri = new Uri(string.Format(CultureInfo.InvariantCulture, "https://www.google.com/maps/search/?api=1&query={0},{1}", location.Latitude, location.Longitude));
+            try
+            {
+                var options = new Windows.System.LauncherOptions();
+                options.FallbackUri = new Uri(string.Format(CultureInfo.InvariantCulture, "https://www.google.com/maps/search/?api=1&query={0},{1}", location.Latitude, location.Longitude));
 
-            if (title != null)
-            {
-                await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}_{2}", location.Latitude, location.Longitude, WebUtility.UrlEncode(title))), options);
+                if (title != null)
+                {
+                    await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}_{2}", location.Latitude, location.Longitude, WebUtility.UrlEncode(title))), options);
+                }
+                else
+                {
+                    await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}", location.Latitude, location.Longitude)), options);
+                }
             }
-            else
+            catch
             {
-                await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}", location.Latitude, location.Longitude)), options);
+                // All the remote procedure calls must be wrapped in a try-catch block
             }
         }
 
@@ -387,7 +394,7 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual void Unselect(MessageViewModel message) { }
+        public virtual void Unselect(MessageViewModel message, bool updateSelection) { }
 
         #endregion
     }
@@ -447,7 +454,7 @@ namespace Telegram.ViewModels
 
         public override void OpenThread(MessageViewModel message) => _viewModel.OpenThread(message);
 
-        public override void OpenWebPage(MessageText text) => _viewModel.OpenWebPage(text);
+        public override void OpenWebPage(MessageViewModel message) => _viewModel.OpenWebPage(message);
 
         public override void OpenSticker(Sticker sticker) => _viewModel.OpenSticker(sticker);
 
@@ -500,7 +507,7 @@ namespace Telegram.ViewModels
 
         public override void Select(MessageViewModel message) => _viewModel.Select(message);
 
-        public override void Unselect(MessageViewModel message) => _viewModel.Unselect(message);
+        public override void Unselect(MessageViewModel message, bool updateSelection) => _viewModel.Unselect(message, updateSelection);
 
         #endregion
     }

@@ -1,12 +1,12 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Controls;
-using Windows.Devices.Enumeration;
-using Windows.Media.Capture;
+using Windows.Security.Authorization.AppCapabilityAccess;
 using Windows.System;
-using Windows.System.Profile;
 
 namespace Telegram.Common
 {
@@ -33,126 +33,88 @@ namespace Telegram.Common
             return true;
         }
 
-        public static Task<bool> CheckAccessAsync(XamlRoot xamlRoot, MediaDeviceAccess requestedAccess, ElementTheme requestedTheme = ElementTheme.Default)
+        public static async Task<bool> CheckAccessAsync(XamlRoot xamlRoot, MediaDeviceAccess requestedAccess, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            var captureMode = requestedAccess switch
-            {
-                MediaDeviceAccess.Audio => StreamingCaptureMode.Audio,
-                MediaDeviceAccess.Video => StreamingCaptureMode.Video,
-                _ => StreamingCaptureMode.AudioAndVideo
-            };
+            string[] capabilities;
 
-            if (captureMode == StreamingCaptureMode.Audio)
+            if (requestedAccess == MediaDeviceAccess.AudioAndVideo)
             {
-                var access = GetAccess(DeviceClass.AudioCapture);
-                return CheckDeviceAccessAsync(xamlRoot, captureMode, access, true, requestedTheme);
+                capabilities = new[] { "microphone", "webcam" };
             }
-            else if (captureMode == StreamingCaptureMode.Video)
+            else if (requestedAccess == MediaDeviceAccess.Audio)
             {
-                var access = GetAccess(DeviceClass.VideoCapture);
-                return CheckDeviceAccessAsync(xamlRoot, captureMode, access, true, requestedTheme);
+                capabilities = new[] { "microphone" };
+            }
+            else
+            {
+                capabilities = new[] { "webcam" };
             }
 
-            var audio = GetAccess(DeviceClass.AudioCapture);
-            var video = GetAccess(DeviceClass.VideoCapture);
-
-            if (audio == DeviceAccessStatus.Unspecified && video == DeviceAccessStatus.Unspecified)
+            IReadOnlyDictionary<string, AppCapabilityAccessStatus> access;
+            try
             {
-                return CheckDeviceAccessAsync(xamlRoot, captureMode, audio, true, requestedTheme);
+                access = await AppCapability.RequestAccessForCapabilitiesAsync(capabilities);
             }
-            else if (audio == DeviceAccessStatus.Unspecified && video == DeviceAccessStatus.Allowed)
+            catch
             {
-                return CheckDeviceAccessAsync(xamlRoot, StreamingCaptureMode.Audio, audio, true, requestedTheme);
-            }
-            else if (audio == DeviceAccessStatus.Allowed && video == DeviceAccessStatus.Unspecified)
-            {
-                return CheckDeviceAccessAsync(xamlRoot, StreamingCaptureMode.Video, video, true, requestedTheme);
-            }
-            else if (audio != DeviceAccessStatus.Allowed && video != DeviceAccessStatus.Allowed)
-            {
-                return CheckDeviceAccessAsync(xamlRoot, captureMode, audio, true, requestedTheme);
-            }
-            else if (audio != DeviceAccessStatus.Allowed)
-            {
-                return CheckDeviceAccessAsync(xamlRoot, StreamingCaptureMode.Audio, audio, true, requestedTheme);
-            }
-            else if (video != DeviceAccessStatus.Allowed)
-            {
-                return CheckDeviceAccessAsync(xamlRoot, StreamingCaptureMode.Video, video, true, requestedTheme);
+                access = capabilities.ToDictionary(x => x, y => AppCapabilityAccessStatus.DeniedBySystem);
             }
 
-            return Task.FromResult(true);
-        }
+            access.TryGetValue("microphone", out AppCapabilityAccessStatus audio);
+            access.TryGetValue("webcam", out AppCapabilityAccessStatus video);
 
-        private static async Task<bool> CheckDeviceAccessAsync(XamlRoot xamlRoot, StreamingCaptureMode captureMode, DeviceAccessStatus access, bool required, ElementTheme requestedTheme = ElementTheme.Default)
-        {
-            if (access == DeviceAccessStatus.Unspecified)
+            if (requestedAccess == MediaDeviceAccess.AudioAndVideo)
             {
-                MediaCapture capture = null;
-                bool success = false;
-                try
+                if (audio != AppCapabilityAccessStatus.Allowed && video != AppCapabilityAccessStatus.Allowed)
                 {
-                    capture = new MediaCapture();
-                    var settings = new MediaCaptureInitializationSettings();
-                    settings.StreamingCaptureMode = captureMode;
-                    await capture.InitializeAsync(settings);
-                    success = true;
+                    ShowPopup(xamlRoot, MediaDeviceAccess.AudioAndVideo, requestedTheme);
+                    return false;
                 }
-                catch
+                else if (audio != AppCapabilityAccessStatus.Allowed)
                 {
-                    success = !required;
+                    ShowPopup(xamlRoot, MediaDeviceAccess.Audio, requestedTheme);
+                    return false;
                 }
-                finally
+                else if (video != AppCapabilityAccessStatus.Allowed)
                 {
-                    capture?.Dispose();
+                    ShowPopup(xamlRoot, MediaDeviceAccess.Video, requestedTheme);
+                    return false;
                 }
-
-                return success;
             }
-            else if (access != DeviceAccessStatus.Allowed && required)
+            else if (requestedAccess == MediaDeviceAccess.Audio && audio != AppCapabilityAccessStatus.Allowed)
             {
-                var popup = new MessagePopup
-                {
-                    Title = Strings.AppName,
-                    Message = captureMode switch
-                    {
-                        StreamingCaptureMode.Audio => Strings.PermissionNoAudioCalls,
-                        StreamingCaptureMode.Video => Strings.PermissionNoVideoCalls,
-                        _ => Strings.PermissionNoAudioVideoCalls
-                    },
-                    PrimaryButtonText = Strings.Settings,
-                    SecondaryButtonText = Strings.OK,
-                    RequestedTheme = requestedTheme
-                };
-
-                var confirm = await popup.ShowQueuedAsync(xamlRoot);
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));
-                }
-
+                ShowPopup(xamlRoot, MediaDeviceAccess.Audio, requestedTheme);
+                return false;
+            }
+            else if (requestedAccess == MediaDeviceAccess.Video && video != AppCapabilityAccessStatus.Allowed)
+            {
+                ShowPopup(xamlRoot, MediaDeviceAccess.Video, requestedTheme);
                 return false;
             }
 
             return true;
         }
 
-        private static DeviceAccessStatus GetAccess(DeviceClass deviceClass)
+        private static async void ShowPopup(XamlRoot xamlRoot, MediaDeviceAccess requestedAccess, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            // For some reason, as far as I understood, CurrentStatus is always Unspecified on Xbox
-            if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Xbox"))
+            var popup = new MessagePopup
             {
-                return DeviceAccessStatus.Allowed;
-            }
+                Title = Strings.AppName,
+                Message = requestedAccess switch
+                {
+                    MediaDeviceAccess.Audio => Strings.PermissionNoAudioCalls,
+                    MediaDeviceAccess.Video => Strings.PermissionNoVideoCalls,
+                    _ => Strings.PermissionNoAudioVideoCalls
+                },
+                PrimaryButtonText = Strings.Settings,
+                SecondaryButtonText = Strings.OK,
+                RequestedTheme = requestedTheme
+            };
 
-            try
+            var confirm = await popup.ShowQueuedAsync(xamlRoot);
+            if (confirm == ContentDialogResult.Primary)
             {
-                var access = DeviceAccessInformation.CreateFromDeviceClass(deviceClass);
-                return access.CurrentStatus;
-            }
-            catch
-            {
-                return DeviceAccessStatus.Unspecified;
+                await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));
             }
         }
     }

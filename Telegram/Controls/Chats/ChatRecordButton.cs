@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -221,7 +221,10 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            //ViewModel.PlaybackService.Pause();
+            if (ViewModel is DialogViewModel viewModel)
+            {
+                viewModel.PlaybackService.Pause();
+            }
 
             Logger.Debug("Permissions granted, mode: " + Mode);
 
@@ -369,7 +372,11 @@ namespace Telegram.Controls.Chats
         {
             if (ClickMode == ClickMode.Press)
             {
-                if (IsRestricted)
+                if (MediaDevicePermissions.IsUnsupported(XamlRoot))
+                {
+                    return;
+                }
+                else if (IsRestricted)
                 {
                     var message = Mode == ChatRecordMode.Video
                         ? Strings.VideoMessagesRestrictedByPrivacy
@@ -1042,7 +1049,11 @@ namespace Telegram.Controls.Chats
                         return;
                     }
 
-                    _recorder.m_mediaCapture.Failed -= OnFailed;
+                    if (recorder.m_mediaCapture != null)
+                    {
+                        recorder.m_mediaCapture.Failed -= OnFailed;
+                    }
+
                     RecordingStopped?.Invoke(this, EventArgs.Empty);
 
                     Logger.Debug("stopping reader");
@@ -1182,10 +1193,11 @@ namespace Telegram.Controls.Chats
 
                 private void InitializeSettings()
                 {
+                    // We're forcing CPU because "Auto" seems to be failing on some devices.
                     settings = new MediaCaptureInitializationSettings();
                     settings.MediaCategory = MediaCategory.Media;
                     settings.AudioProcessing = m_isVideo ? AudioProcessing.Default : SettingsService.Current.Diagnostics.ForceRawAudio ? AudioProcessing.Raw : AudioProcessing.Default;
-                    settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
+                    settings.MemoryPreference = MediaCaptureMemoryPreference.Cpu;
                     settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
                     settings.StreamingCaptureMode = m_isVideo ? StreamingCaptureMode.AudioAndVideo : StreamingCaptureMode.Audio;
                 }

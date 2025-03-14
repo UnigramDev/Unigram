@@ -1,0 +1,20 @@
+<controls:TeachingTipEx x:Class="Telegram.Views.Popups.VerifyChatPopup"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                        xmlns:controls="using:Telegram.Controls"
+                        Style="{StaticResource DefaultTeachingTipStyle}"
+                        mc:Ignorable="d">
+
+    <StackPanel>
+        <TextBlock x:Name="MessageLabel"
+                   Margin="0,0,0,4"
+                   Style="{StaticResource BodyTextBlockStyle}" />
+
+        <TextBox x:Name="Label"
+                 Margin="0,12,0,0"
+                 VerticalAlignment="Top" />
+    </StackPanel>
+</controls:TeachingTipEx>

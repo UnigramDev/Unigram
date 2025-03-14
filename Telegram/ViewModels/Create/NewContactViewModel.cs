@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -91,7 +91,7 @@ namespace Telegram.ViewModels.Create
             get => _phoneNumber;
             set
             {
-                if (Set(ref _firstName, value))
+                if (Set(ref _phoneNumber, value))
                 {
                     RaisePropertyChanged(nameof(CanCreate));
                 }
@@ -109,24 +109,16 @@ namespace Telegram.ViewModels.Create
             {
                 if (imported.UserIds.Count > 0)
                 {
-                    var create = await ClientService.SendAsync(new CreatePrivateChat(imported.UserIds[0], false));
-                    if (create is Chat chat)
-                    {
-                        NavigationService.NavigateToChat(chat);
-                    }
-                    else
-                    {
-                        await ShowPopupAsync(Strings.ContactNotRegistered, Strings.AppName, Strings.Invite, Strings.Cancel);
-                    }
+                    NavigationService.NavigateToUser(imported.UserIds[0]);
                 }
                 else
                 {
-                    await ShowPopupAsync(Strings.ContactNotRegistered, Strings.AppName, Strings.Invite, Strings.Cancel);
+                    await ShowPopupAsync(string.Format(Strings.ContactNotRegistered, _firstName), Strings.AppName, Strings.OK);
                 }
             }
             else
             {
-                await ShowPopupAsync(Strings.ContactNotRegistered, Strings.AppName, Strings.Invite, Strings.Cancel);
+                await ShowPopupAsync(string.Format(Strings.ContactNotRegistered, _firstName), Strings.AppName, Strings.OK);
             }
         }
     }

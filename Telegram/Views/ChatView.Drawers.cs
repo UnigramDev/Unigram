@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,6 +10,7 @@ using Telegram.Common;
 using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 
 namespace Telegram.Views
 {
@@ -20,7 +21,7 @@ namespace Telegram.Views
             var element = sender as FrameworkElement;
             var sticker = args.Item;
 
-            if (sticker == null)
+            if (sticker?.StickerValue == null)
             {
                 return;
             }
@@ -42,7 +43,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(ViewModel.RemoveRecentSticker, sticker, Strings.DeleteFromRecent, Icons.Delete, destructive: true);
             }
 
-            if (ViewModel.Type == ViewModels.DialogType.History)
+            if (ViewModel.Type == ViewModels.DialogType.History && !ViewModel.ClientService.IsPaid(ViewModel.Chat))
             {
                 var chat = ViewModel.Chat;
                 if (chat == null)
@@ -53,8 +54,8 @@ namespace Telegram.Views
                 var self = ViewModel.ClientService.IsSavedMessages(chat);
 
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(anim => ViewModel.SendSticker(anim, null, true), sticker, Strings.SendWithoutSound, Icons.AlertOff);
-                flyout.CreateFlyoutItem(anim => ViewModel.SendSticker(anim, true, null), sticker, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
+                flyout.CreateFlyoutItem(anim => ViewModel.SendSticker(anim, SchedulingState.Auto, true), sticker, Strings.SendWithoutSound, Icons.AlertOff);
+                flyout.CreateFlyoutItem(anim => ViewModel.SendSticker(anim, SchedulingState.Schedule, null), sticker, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
             }
 
             args.ShowAt(flyout, element);
@@ -81,7 +82,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(ViewModel.SaveAnimation, animation, Strings.SaveToGIFs, Icons.Gif);
             }
 
-            if (ViewModel.Type == ViewModels.DialogType.History)
+            if (ViewModel.Type == ViewModels.DialogType.History && !ViewModel.ClientService.IsPaid(ViewModel.Chat))
             {
                 var chat = ViewModel.Chat;
                 if (chat == null)
@@ -92,8 +93,8 @@ namespace Telegram.Views
                 var self = ViewModel.ClientService.IsSavedMessages(chat);
 
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(anim => ViewModel.SendAnimation(anim, null, true), animation, Strings.SendWithoutSound, Icons.AlertOff);
-                flyout.CreateFlyoutItem(anim => ViewModel.SendAnimation(anim, true, null), animation, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
+                flyout.CreateFlyoutItem(anim => ViewModel.SendAnimation(anim, SchedulingState.Auto, true), animation, Strings.SendWithoutSound, Icons.AlertOff);
+                flyout.CreateFlyoutItem(anim => ViewModel.SendAnimation(anim, SchedulingState.Schedule, null), animation, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
             }
 
             args.ShowAt(flyout, element);

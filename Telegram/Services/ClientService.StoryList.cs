@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -46,29 +46,30 @@ namespace Telegram.Services
             var count = offset + limit;
             var sorted = _storyList[storyList];
 
+            var haveFullList = _haveFullStoryList[storyList];
+
 #if MOCKUP
             _haveFullStoryList[index] = true;
 #else
-            if (!_haveFullStoryList[storyList] && count > sorted.Count && !reentrancy)
+            if (count > sorted.Count && !haveFullList && !reentrancy)
             {
                 Monitor.Exit(_storyList);
 
                 var response = await SendAsync(new LoadActiveStories(storyList));
-                if (response is Ok or Error)
+                if (response is Error error)
                 {
-                    if (response is Error error)
+                    if (error.Code == 404)
                     {
-                        if (error.Code == 404)
-                        {
-                            _haveFullStoryList[storyList] = true;
-                        }
+                        _haveFullStoryList[storyList] = true;
                     }
-
-                    // Chats have already been received through updates, let's retry request
-                    return await GetStoryListAsyncImpl(storyList, offset, limit, true);
+                    else
+                    {
+                        return new Chats(0, Array.Empty<long>());
+                    }
                 }
 
-                return null;
+                // Chats have already been received through updates, let's retry request
+                return await GetStoryListAsyncImpl(storyList, offset, limit, true);
             }
 #endif
 
@@ -91,8 +92,10 @@ namespace Telegram.Services
                 }
             }
 
+            haveFullList &= count >= sorted.Count;
+
             Monitor.Exit(_storyList);
-            return new Chats(0, result);
+            return new Chats(haveFullList ? -1 : 0, result);
         }
 
         private readonly struct OrderedActiveStories : IComparable<OrderedActiveStories>

@@ -226,7 +226,7 @@ namespace Telegram.Controls.Views
 
                 if (user.Type is UserTypeBot { HasMainWebApp: true })
                 {
-                    MessageHelper.NavigateToMainWebApp(ViewModel.ClientService, ViewModel.NavigationService, user, string.Empty);
+                    MessageHelper.NavigateToMainWebApp(ViewModel.ClientService, ViewModel.NavigationService, user, string.Empty, new WebAppOpenModeFullSize());
                     ItemClick?.Invoke(this, null);
                     return;
                 }
@@ -288,6 +288,14 @@ namespace Telegram.Controls.Views
         private void ClearRecentChats_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.ClearRecentChats();
+        }
+
+        private void EmptyState_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBlock textBlock)
+            {
+                textBlock.Text = string.Format(Strings.NoResultFoundFor2, ViewModel.Query);
+            }
         }
     }
 }

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Dispatching;
@@ -16,7 +17,7 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Converters;
@@ -33,6 +34,8 @@ namespace Telegram.Controls.Messages
         private MessageTicksState _ticksState;
         private long _ticksHash;
 
+        private bool _outgoing;
+
         private string _effectGlyph;
         private string _pinnedGlyph;
         private string _repliesLabel;
@@ -40,7 +43,6 @@ namespace Telegram.Controls.Messages
         private string _editedLabel;
         private string _authorLabel;
         private string _dateLabel;
-        private string _stateLabel;
 
         private MessageViewModel _message;
 
@@ -54,16 +56,17 @@ namespace Telegram.Controls.Messages
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_strokeToken == 0 && _shapes != null)
+            _strokeBrush?.Register();
+
+            if (_message?.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed)
             {
-                Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
-                OnStrokeChanged(Stroke, SolidColorBrush.ColorProperty);
+                ToastPopup.Show(this, Strings.VideoConversionTimeInfo, TeachingTipPlacementMode.Top, dismissAfter: TimeSpan.FromSeconds(3));
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Stroke?.UnregisterColorChangedCallback(ref _strokeToken);
+            _strokeBrush?.Unregister();
         }
 
         #region InitializeComponent
@@ -97,14 +100,7 @@ namespace Telegram.Controls.Messages
         {
             if (Label != null)
             {
-                if (Formatter.IsTimeRightToLeft)
-                {
-                    Label.Text = _effectGlyph + _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + Icons.LTR + Icons.RTL + _dateLabel + _stateLabel;
-                }
-                else
-                {
-                    Label.Text = _effectGlyph + _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + _dateLabel + _stateLabel;
-                }
+                Label.Text = _effectGlyph + _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + _dateLabel;
             }
         }
 
@@ -122,7 +118,7 @@ namespace Telegram.Controls.Messages
 
         private void UpdateMessageImpl(MessageViewModel message, bool fromApplyTemplate)
         {
-            UpdateMessageStateImpl(message);
+            UpdateMessageState(message);
             UpdateMessageDateImpl(message);
             UpdateMessageEditedImpl(message);
             UpdateMessageIsPinnedImpl(message);
@@ -289,6 +285,10 @@ namespace Telegram.Controls.Messages
             {
                 _dateLabel = Formatter.Time(sendAtDate.SendDate);
             }
+            else if (message.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed sendWhenVideoProcessed)
+            {
+                _dateLabel = string.Format(Strings.ScheduledTimeApprox, Formatter.Time(sendWhenVideoProcessed.SendDate));
+            }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
                 _dateLabel = string.Empty;
@@ -304,6 +304,11 @@ namespace Telegram.Controls.Messages
             else if (message.Date > 0)
             {
                 _dateLabel = Formatter.Time(message.Date);
+
+                if (message.PaidMessageStarCount > 0)
+                {
+                    _dateLabel = string.Format("{1} {2}, {0}", _dateLabel, Icons.Premium, Formatter.ShortNumber(message.PaidMessageStarCount));
+                }
             }
             else
             {
@@ -314,9 +319,8 @@ namespace Telegram.Controls.Messages
         public void Mockup(bool outgoing, DateTime date)
         {
             _dateLabel = Formatter.Time(date);
-            _stateLabel = outgoing ? "\u00A0\uE603" : string.Empty;
             UpdateLabel();
-            UpdateTicks(outgoing, outgoing ? true : null);
+            UpdateTicks(outgoing, outgoing ? MessageTicksState.Read : MessageTicksState.None);
         }
 
         public void UpdateMessageInteractionInfo(MessageViewModel message)
@@ -430,18 +434,6 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            UpdateMessageStateImpl(message);
-            UpdateLabel();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void UpdateMessageStateImpl(MessageViewModel message)
-        {
-            _stateLabel = UpdateStateIcon(message);
-        }
-
-        private string UpdateStateIcon(MessageViewModel message)
-        {
             if (message.IsOutgoing && !message.IsChannelPost && !message.IsSaved)
             {
                 var maxId = 0L;
@@ -455,47 +447,58 @@ namespace Telegram.Controls.Messages
 
                 if (message.SendingState is MessageSendingStateFailed)
                 {
-                    UpdateTicks(true, null);
+                    UpdateMessageOutgoing(true);
+                    UpdateTicks(true, MessageTicksState.Failed);
 
                     _ticksState = MessageTicksState.Failed;
                     _ticksHash = messageHash;
 
-                    // TODO: 
-                    return "\u00A0failed"; // Failed
+                    return; // Failed
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {
-                    UpdateTicks(true, null);
+                    UpdateMessageOutgoing(true);
+                    UpdateTicks(true, MessageTicksState.Pending);
 
                     _ticksState = MessageTicksState.Pending;
                     _ticksHash = messageHash;
 
-                    return "\u00A0\uEA06"; // Pending
+                    return; // Pending
                 }
                 else if (message.Id <= maxId)
                 {
-                    UpdateTicks(true, true, _ticksState == MessageTicksState.Sent && _ticksHash == messageHash);
+                    UpdateMessageOutgoing(true);
+                    UpdateTicks(true, MessageTicksState.Read, _ticksState == MessageTicksState.Sent && _ticksHash == messageHash);
 
                     _ticksState = MessageTicksState.Read;
                     _ticksHash = messageHash;
 
-                    return "\u00A0\uEA07"; // Read
+                    return; // Read
                 }
 
-                UpdateTicks(true, false, _ticksState == MessageTicksState.Pending && _ticksHash == messageHash);
+                UpdateMessageOutgoing(true);
+                UpdateTicks(true, MessageTicksState.Sent, _ticksState == MessageTicksState.Pending && _ticksHash == messageHash);
 
                 _ticksState = MessageTicksState.Sent;
                 _ticksHash = messageHash;
 
-                return "\u00A0\uEA07"; // Unread
+                return; // Unread
             }
 
-            UpdateTicks(false, null);
+            UpdateMessageOutgoing(false);
+            UpdateTicks(false, MessageTicksState.None);
 
             _ticksState = MessageTicksState.None;
             _ticksHash = 0;
+        }
 
-            return string.Empty;
+        private void UpdateMessageOutgoing(bool outgoing)
+        {
+            if (_outgoing != outgoing)
+            {
+                _outgoing = outgoing;
+                Label.Padding = new Thickness(0, 0, outgoing ? 22 : 0, 0);
+            }
         }
 
         private void ToolTip_Opened(object sender, RoutedEventArgs e)
@@ -515,11 +518,14 @@ namespace Telegram.Controls.Messages
             string text;
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtTime)
             {
-                var dateTime = Formatter.ToLocalTime(sendAtTime.SendDate);
-                var date = Formatter.LongDate.Format(dateTime);
-                var time = Formatter.LongTime.Format(dateTime);
+                var date = Formatter.Date(sendAtTime.SendDate, "DATE_LONGDATE");
+                var time = Formatter.Time(sendAtTime.SendDate);
 
                 text = string.Format(Strings.formatDateAtTime, date, time);
+            }
+            if (message.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed sendWhenVideoProcessed)
+            {
+                text = Strings.VideoConversionTimeInfo;
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
@@ -527,9 +533,8 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                var dateTime = Formatter.ToLocalTime(message.Date);
-                var date = Formatter.LongDate.Format(dateTime);
-                var time = Formatter.LongTime.Format(dateTime);
+                var date = Formatter.Date(message.Date, "DATE_LONGDATE");
+                var time = Formatter.Time(message.Date);
 
                 text = string.Format(Strings.formatDateAtTime, date, time);
             }
@@ -562,13 +567,14 @@ namespace Telegram.Controls.Messages
         private CompositionGeometry _line22;
         private ShapeVisual _visual2;
 
-        private CompositionSpriteShape[] _shapes;
+        private ShapeVisual _pending;
+        private ShapeVisual _failed;
 
         private SpriteVisual _container;
 
         #region Stroke
 
-        private long _strokeToken;
+        private CompositionColorSource _strokeBrush;
 
         public Brush Stroke
         {
@@ -586,44 +592,101 @@ namespace Telegram.Controls.Messages
 
         private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            if (oldValue != null && _strokeToken != 0)
-            {
-                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
-                _strokeToken = 0;
-            }
-
-            if (newValue == null || _container == null)
-            {
-                return;
-            }
-
-            var brush = BootStrapper.Current.Compositor.CreateColorBrush(newValue.Color);
-
-            foreach (var shape in _shapes)
-            {
-                shape.StrokeBrush = brush;
-            }
-
-            _strokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
-        }
-
-        private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            var solid = sender as SolidColorBrush;
-            if (solid == null || _shapes == null)
-            {
-                return;
-            }
-
-            var brush = BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
-
-            foreach (var shape in _shapes)
-            {
-                shape.StrokeBrush = brush;
-            }
+            _strokeBrush?.PropertyChanged(newValue, IsConnected);
         }
 
         #endregion
+
+        private void InitializePending()
+        {
+            if (_container == null)
+            {
+                InitializeTicks();
+            }
+
+            var width = 18f;
+            var height = 10f;
+            var stroke = 1.33f;
+
+            static CompositionPath GetPending()
+            {
+                var stroke = 1.33f;
+                var radius = 5 - stroke / 2;
+
+                CanvasGeometry result;
+                using (var builder = new CanvasPathBuilder(null))
+                {
+                    builder.AddGeometry(CanvasGeometry.CreateEllipse(null, 13, 5, radius, radius));
+                    builder.BeginFigure(new Vector2(12.5f, 3f));
+                    builder.AddLine(new Vector2(12.5f, 5.5f));
+                    builder.AddLine(new Vector2(15f, 5.5f));
+                    builder.EndFigure(CanvasFigureLoop.Open);
+                    result = CanvasGeometry.CreatePath(builder);
+                }
+                return new CompositionPath(result);
+            }
+
+            var shape11 = BootStrapper.Current.Compositor.CreateSpriteShape(BootStrapper.Current.Compositor.CreatePathGeometry(GetPending()));
+            shape11.StrokeThickness = stroke;
+            shape11.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
+            shape11.IsStrokeNonScaling = true;
+            shape11.StrokeStartCap = CompositionStrokeCap.Round;
+
+            var visual1 = BootStrapper.Current.Compositor.CreateShapeVisual();
+            visual1.Shapes.Add(shape11);
+            visual1.Size = new Vector2(width, height);
+            visual1.CenterPoint = new Vector3(width, height / 2f, 0);
+            visual1.Offset = new Vector3(0, 1, 0);
+
+            _pending = visual1;
+            _container.Children.InsertAtBottom(visual1);
+        }
+
+        private void InitializeFailed()
+        {
+            if (_container == null)
+            {
+                InitializeTicks();
+            }
+
+            var width = 18f;
+            var height = 10f;
+            var stroke = 1.33f;
+
+            static CompositionPath GetFailed()
+            {
+                var stroke = 1.33f;
+                var center = stroke / 2;
+
+                CanvasGeometry result;
+                using (var builder = new CanvasPathBuilder(null))
+                {
+                    builder.AddGeometry(CanvasGeometry.CreateRoundedRectangle(null, 4 + center, center, 11 - stroke, 11 - stroke, 2, 2));
+                    builder.BeginFigure(new Vector2(9.5f, 3f));
+                    builder.AddLine(new Vector2(9.5f, 5.5f + center));
+                    builder.EndFigure(CanvasFigureLoop.Open);
+                    builder.BeginFigure(new Vector2(9.5f, 7f + center));
+                    builder.AddLine(new Vector2(9.5f, 8f + center));
+                    builder.EndFigure(CanvasFigureLoop.Open);
+                    result = CanvasGeometry.CreatePath(builder);
+                }
+                return new CompositionPath(result);
+            }
+
+            var shape11 = BootStrapper.Current.Compositor.CreateSpriteShape(BootStrapper.Current.Compositor.CreatePathGeometry(GetFailed()));
+            shape11.StrokeThickness = stroke;
+            shape11.StrokeBrush = BootStrapper.Current.Compositor.CreateColorBrush(Colors.Red);
+            shape11.IsStrokeNonScaling = true;
+            shape11.StrokeStartCap = CompositionStrokeCap.Round;
+
+            var visual1 = BootStrapper.Current.Compositor.CreateShapeVisual();
+            visual1.Shapes.Add(shape11);
+            visual1.Size = new Vector2(width, height + 1);
+            visual1.CenterPoint = new Vector3(width, height / 2f, 0);
+
+            _failed = visual1;
+            _container.Children.InsertAtBottom(visual1);
+        }
 
         private void InitializeTicks()
         {
@@ -651,13 +714,13 @@ namespace Telegram.Controls.Messages
 
             var shape11 = BootStrapper.Current.Compositor.CreateSpriteShape(line11);
             shape11.StrokeThickness = stroke;
-            shape11.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape11.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape11.IsStrokeNonScaling = true;
             shape11.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape12 = BootStrapper.Current.Compositor.CreateSpriteShape(line12);
             shape12.StrokeThickness = stroke;
-            shape12.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape12.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape12.IsStrokeNonScaling = true;
             shape12.StrokeEndCap = CompositionStrokeCap.Round;
 
@@ -666,6 +729,7 @@ namespace Telegram.Controls.Messages
             visual1.Shapes.Add(shape11);
             visual1.Size = new Vector2(width, height);
             visual1.CenterPoint = new Vector3(width, height / 2f, 0);
+            visual1.Offset = new Vector3(0, 1, 0);
 
 
             var line21 = BootStrapper.Current.Compositor.CreateLineGeometry();
@@ -679,26 +743,26 @@ namespace Telegram.Controls.Messages
 
             var shape21 = BootStrapper.Current.Compositor.CreateSpriteShape(line21);
             shape21.StrokeThickness = stroke;
-            shape21.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape21.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape21.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape22 = BootStrapper.Current.Compositor.CreateSpriteShape(line22);
             shape22.StrokeThickness = stroke;
-            shape22.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape22.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape22.StrokeEndCap = CompositionStrokeCap.Round;
 
             var visual2 = BootStrapper.Current.Compositor.CreateShapeVisual();
             visual2.Shapes.Add(shape22);
             visual2.Shapes.Add(shape21);
             visual2.Size = new Vector2(width, height);
-
+            visual2.Offset = new Vector3(0, 1, 0);
 
             var container = BootStrapper.Current.Compositor.CreateSpriteVisual();
             container.Children.InsertAtTop(visual2);
             container.Children.InsertAtTop(visual1);
-            container.Size = new Vector2(width, height);
+            container.Size = new Vector2(width, height + 1);
             container.AnchorPoint = new Vector2(1, 0);
-            container.Offset = new Vector3(0, 4, 0);
+            container.Offset = new Vector3(0, 3, 0);
             container.RelativeOffsetAdjustment = new Vector3(1, 0, 0);
 
             ElementCompositionPreview.SetElementChildVisual(Label, container);
@@ -707,24 +771,47 @@ namespace Telegram.Controls.Messages
             _line12 = line12;
             _line21 = line21;
             _line22 = line22;
-            _shapes = new[] { shape11, shape12, shape21, shape22 };
             _visual1 = visual1;
             _visual2 = visual2;
             _container = container;
         }
 
-        private void UpdateTicks(bool outgoing, bool? read, bool animate = false)
+        private void UpdateTicks(bool outgoing, MessageTicksState state, bool animate = false)
         {
-            if (read == null)
+            void RemoveAdditionalVisuals(bool visible)
+            {
+                if (_pending != null && state != MessageTicksState.Pending)
+                {
+                    _container.Children.Remove(_pending);
+                    _pending = null;
+                }
+                else if (_failed != null && state != MessageTicksState.Failed)
+                {
+                    _container.Children.Remove(_failed);
+                    _failed = null;
+                }
+
+                _visual1.IsVisible = visible;
+                _visual2.IsVisible = visible;
+            }
+
+            if (state is not MessageTicksState.Sent and not MessageTicksState.Read)
             {
                 if (outgoing)
                 {
-                    InitializeTicks();
+                    if (_pending == null && state == MessageTicksState.Pending)
+                    {
+                        InitializePending();
+                    }
+                    else if (_failed == null && state == MessageTicksState.Failed)
+                    {
+                        InitializeFailed();
+                    }
                 }
 
                 if (_container != null)
                 {
-                    _container.IsVisible = false;
+                    RemoveAdditionalVisuals(false);
                 }
             }
             else
@@ -734,42 +821,24 @@ namespace Telegram.Controls.Messages
                     InitializeTicks();
                 }
 
+                RemoveAdditionalVisuals(true);
+
                 if (animate)
                 {
-                    AnimateTicks(read == true);
+                    AnimateTicks(state == MessageTicksState.Read);
                 }
                 else
                 {
-                    _line11.TrimEnd = read == true ? 1 : 0;
-                    _line12.TrimEnd = read == true ? 1 : 0;
+                    _line11.TrimEnd = state == MessageTicksState.Read ? 1 : 0;
+                    _line12.TrimEnd = state == MessageTicksState.Read ? 1 : 0;
 
-                    _line21.TrimStart = read == true ? 1 : 0;
-
-                    _container.IsVisible = true;
+                    _line21.TrimStart = state == MessageTicksState.Read ? 1 : 0;
                 }
             }
-        }
-
-        private CompositionBrush GetBrush(DependencyProperty dp, ref long token, DependencyPropertyChangedCallback callback)
-        {
-            var value = GetValue(dp);
-            if (value is SolidColorBrush solid)
-            {
-                if (token == 0)
-                {
-                    token = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, callback);
-                }
-
-                return BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
-            }
-
-            return BootStrapper.Current.Compositor.CreateColorBrush(Colors.Black);
         }
 
         private void AnimateTicks(bool read)
         {
-            _container.IsVisible = true;
-
             var height = 10f;
             var stroke = 2f;
 

@@ -272,7 +272,7 @@ namespace Telegram.Views.Stories.Popups
             var rows = Math.Min(ViewModel.Story.InteractionInfo.ViewCount, Math.Ceiling(size.Y / itemHeight));
             var shapes = new List<CanvasGeometry>();
 
-            var maxWidth = (int)Math.Min(size.X - 32 - 12 - 12 - 48 - 12, 280);
+            var maxWidth = (int)Math.Clamp(size.X - 32 - 12 - 12 - 48 - 12, 80, 280);
             var random = new Random();
 
             for (int i = 0; i < rows; i++)

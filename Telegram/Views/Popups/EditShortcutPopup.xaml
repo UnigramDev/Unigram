@@ -10,11 +10,10 @@
                        PrimaryButtonText="Button1"
                        SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-                       Opened="OnOpened"
-                       Closed="OnClosed">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}"
+    <Grid ProcessKeyboardAccelerators="OnProcessKeyboardAccelerators"
+          Background="{ThemeResource PageBackgroundDarkBrush}"
           Padding="0,0,0,16">
         <controls:HeaderedControl Header="Press desired key combination">
             <TextBox x:Name="TextField"

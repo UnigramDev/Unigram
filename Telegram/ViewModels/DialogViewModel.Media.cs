@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Entities;
 using Telegram.Services.Factories;
 using Telegram.Td.Api;
@@ -44,7 +46,49 @@ namespace Telegram.ViewModels
 
         protected override bool CanSchedule => _type is DialogType.History or DialogType.Thread;
 
-        public override async Task<MessageSendOptions> PickMessageSendOptionsAsync(bool? schedule = null, bool? silent = null, bool reorder = false)
+        private async Task<ContentDialogResult> ShowPaidMessageConfirmationAsync(int messageCount, long starCount)
+        {
+            Settings.Chats.TryGet(Chat.Id, 0, Services.ChatSetting.PaidMessageStarCount, out long savedMessageStarCount);
+
+            if (starCount != 0 && starCount != savedMessageStarCount)
+            {
+                var message1 = Locale.Declension(Strings.R.MessageLockedStarsConfirmMessage1, starCount, Chat.Title);
+
+                string message2;
+                if (messageCount > 1)
+                {
+                    var message3 = Locale.Declension(Strings.R.MessageLockedStarsConfirmMessage2Many1, starCount * messageCount);
+                    var message4 = Locale.Declension(Strings.R.MessageLockedStarsConfirmMessage2Many2, messageCount);
+
+                    message2 = string.Format("{0} {1}", message3, message4);
+                }
+                else
+                {
+                    message2 = Locale.Declension(Strings.R.MessageLockedStarsConfirmMessage2One, starCount);
+                }
+
+                var popup = new MessagePopup
+                {
+                    Title = Strings.MessageLockedStarsConfirmTitle,
+                    Message = string.Format("{0} {1}", message1, message2),
+                    CheckBoxLabel = Strings.MessageLockedStarsConfirmMessageDontAsk,
+                    PrimaryButtonText = Icons.Premium16 + Icons.Spacing + (starCount * messageCount).ToString("N0"), //Locale.Declension(Strings.R.MessageLockedStarsConfirmMessagePay, messageCount),
+                    SecondaryButtonText = Strings.Cancel
+                };
+
+                var confirm = await ShowPopupAsync(popup);
+                if (confirm == ContentDialogResult.Primary && popup.IsChecked is true)
+                {
+                    Settings.Chats[Chat.Id, 0, Services.ChatSetting.PaidMessageStarCount] = starCount;
+                }
+
+                return confirm;
+            }
+
+            return ContentDialogResult.Primary;
+        }
+
+        public override async Task<MessageSendOptions> PickMessageSendOptionsAsync(int messageCount = 1, SchedulingState schedule = SchedulingState.Auto, bool? disableNotification = null, bool reorder = false)
         {
             var chat = _chat;
             if (chat == null)
@@ -52,7 +96,25 @@ namespace Telegram.ViewModels
                 return null;
             }
 
-            if (schedule == true || (_type == DialogType.ScheduledMessages && schedule == null))
+            var paidMessageStarCount = 0L;
+
+            if (ClientService.TryGetUserFull(Chat, out UserFullInfo userFullInfo))
+            {
+                paidMessageStarCount = userFullInfo.OutgoingPaidMessageStarCount;
+            }
+            else if (ClientService.TryGetSupergroup(Chat, out Supergroup supergroup))
+            {
+                paidMessageStarCount = supergroup.PaidMessageStarCount;
+            }
+
+            var paid = await ShowPaidMessageConfirmationAsync(messageCount, paidMessageStarCount);
+            if (paid != ContentDialogResult.Primary)
+            {
+                return null;
+            }
+
+            MessageSchedulingState schedulingState = null;
+            if (schedule == SchedulingState.Schedule || (_type == DialogType.ScheduledMessages && schedule == SchedulingState.Auto))
             {
                 var user = ClientService.GetUser(chat);
                 var popup = new ScheduleMessagePopup(user, ClientService.IsSavedMessages(chat));
@@ -65,17 +127,19 @@ namespace Telegram.ViewModels
 
                 if (popup.IsUntilOnline)
                 {
-                    return new MessageSendOptions(false, false, false, Settings.Stickers.DynamicPackOrder && reorder, new MessageSchedulingStateSendWhenOnline(), 0, 0, false);
+                    schedulingState = new MessageSchedulingStateSendWhenOnline();
                 }
                 else
                 {
-                    return new MessageSendOptions(false, false, false, Settings.Stickers.DynamicPackOrder && reorder, new MessageSchedulingStateSendAtDate(popup.Value.ToTimestamp()), 0, 0, false);
+                    schedulingState = new MessageSchedulingStateSendAtDate(popup.Value.ToTimestamp());
                 }
             }
-            else
+            else if (schedule == SchedulingState.WhenOnline)
             {
-                return new MessageSendOptions(silent ?? false, false, false, Settings.Stickers.DynamicPackOrder && reorder, null, 0, 0, false);
+                schedulingState = new MessageSchedulingStateSendWhenOnline();
             }
+
+            return new MessageSendOptions(disableNotification ?? false, false, false, false, messageCount * paidMessageStarCount, Settings.Stickers.DynamicPackOrder && reorder, schedulingState, 0, 0, false);
         }
 
         protected override void ContinueSendMessage(MessageSendOptions options)
@@ -127,38 +191,36 @@ namespace Telegram.ViewModels
                             destination.GetOutputStreamAt(0));
                     }
 
-                    var media = await StorageMedia.CreateAsync(cache);
-                    if (media == null)
+                    var photo = await StorageMedia.CreateAsync(cache);
+                    if (photo != null)
                     {
-                        return;
-                    }
+                        photo.IsScreenshot = true;
 
-                    media.IsScreenshot = true;
-
-                    var header = _composerHeader;
-                    if (header?.EditingMessage != null)
-                    {
-                        await EditMediaAsync(media);
-                    }
-                    else
-                    {
-                        var captionElements = new List<string>();
-
-                        if (package.AvailableFormats.Contains(StandardDataFormats.Text))
+                        var header = _composerHeader;
+                        if (header?.EditingMessage != null)
                         {
-                            var text = await package.GetTextAsync();
-                            captionElements.Add(text);
+                            await EditMediaAsync(photo);
                         }
-
-                        FormattedText caption = null;
-                        if (captionElements.Count > 0)
+                        else
                         {
-                            var resultCaption = string.Join(Environment.NewLine, captionElements);
-                            caption = new FormattedText(resultCaption, Array.Empty<TextEntity>())
-                                .Substring(0, ClientService.Options.MessageCaptionLengthMax);
-                        }
+                            var captionElements = new List<string>();
 
-                        SendFileExecute(new[] { media }, caption);
+                            if (package.AvailableFormats.Contains(StandardDataFormats.Text))
+                            {
+                                var text = await package.GetTextAsync();
+                                captionElements.Add(text);
+                            }
+
+                            FormattedText caption = null;
+                            if (captionElements.Count > 0)
+                            {
+                                var resultCaption = string.Join(Environment.NewLine, captionElements);
+                                caption = new FormattedText(resultCaption, Array.Empty<TextEntity>())
+                                    .Substring(0, ClientService.Options.MessageCaptionLengthMax);
+                            }
+
+                            SendFileExecute(new[] { photo }, caption);
+                        }
                     }
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
@@ -251,11 +313,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var factory = await MessageFactory.CreateDocumentAsync(media, false, false);
-                if (factory != null)
-                {
-                    header.EditingMessageMedia = factory;
-                }
+                await EditMediaAsync(media);
             }
             catch { }
         }
@@ -320,18 +378,26 @@ namespace Telegram.ViewModels
 
         public async Task EditMediaAsync(StorageMedia storage)
         {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             var header = _composerHeader;
             if (header?.EditingMessage == null)
             {
                 return;
             }
 
+            var linkPreview = GetLinkPreviewOptions();
             var formattedText = GetFormattedText(true);
 
-            var mediaAllowed = header.EditingMessage.Content is not MessageDocument;
+            var mediaSelected = header.EditingMessage.Content is not MessageDocument;
+            var permissions = ClientService.GetPermissions(chat, out _);
 
             var items = new[] { storage };
-            var popup = new SendFilesPopup(this, items, mediaAllowed, mediaAllowed, true, false, false, false);
+            var popup = new SendFilesPopup(this, items, mediaSelected, permissions, false, false, false, true);
             popup.ShowCaptionAboveMedia = header.EditingMessage.ShowCaptionAboveMedia();
             popup.Caption = formattedText
                 .Substring(0, ClientService.Options.MessageCaptionLengthMax);
@@ -345,6 +411,8 @@ namespace Telegram.ViewModels
                 TextField?.SetText(formattedText);
                 return;
             }
+
+            storage = popup.Items[0];
 
             var captionAboveMedia = popup.ShowCaptionAboveMedia;
             var hasSpoiler = popup.SendWithSpoiler && !popup.IsFilesSelected;
@@ -360,7 +428,7 @@ namespace Telegram.ViewModels
             }
             else if (storage is StorageVideo video)
             {
-                request = MessageFactory.CreateVideoAsync(video, video.IsMuted, captionAboveMedia, hasSpoiler, storage.Ttl, video.GetTransform());
+                request = MessageFactory.CreateVideoAsync(video, video.IsMuted, captionAboveMedia, hasSpoiler, storage.Ttl, video.GetConversion());
             }
 
             if (request == null)
@@ -372,7 +440,7 @@ namespace Telegram.ViewModels
             if (factory != null)
             {
                 header.EditingMessageMedia = factory;
-                await BeforeSendMessageAsync(popup.Caption);
+                await BeforeSendMessageAsync(popup.Caption, linkPreview);
             }
         }
     }

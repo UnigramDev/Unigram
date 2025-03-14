@@ -216,7 +216,7 @@ namespace Telegram.Controls
 
         private void OnInitialized(object sender, InitializedEventArgs e)
         {
-            _core = new AsyncMediaPlayer(e.SwapChainOptions);
+            _core = new AsyncMediaPlayer(DispatcherQueue, e.SwapChainOptions);
             _core.Vout += OnVout;
             _core.Stopped += OnStopped;
             _core.TimeChanged += OnTimeChanged;

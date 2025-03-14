@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,7 +10,6 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Telegram.Converters;
 using Windows.Data.Json;
-using Windows.Globalization.DateTimeFormatting;
 using Windows.UI;
 
 namespace Telegram.Charts.Data
@@ -155,19 +154,18 @@ namespace Telegram.Charts.Data
 
 
             daysLookup = new string[(int)((end - start) / timeStep) + 10];
-            DateTimeFormatter formatter;
+            string formatter;
             if (timeStep == 1)
             {
                 formatter = null;
             }
             else if (timeStep < 86400000L)
             {
-                formatter = Formatter.ShortTime;
+                formatter = "HH:mm";
             }
             else
             {
-                //formatter = new SimpleDateFormat("MMM d");
-                formatter = Formatter.MonthAbbreviatedDay;
+                formatter = "MMM d";
             }
 
             for (int i = 0; i < daysLookup.Length; i++)
@@ -180,7 +178,7 @@ namespace Telegram.Charts.Data
                 else
                 {
                     //daysLookup[i] = formatter.format(new Date(start + (i * timeStep)));
-                    daysLookup[i] = formatter.Format(Formatter.ToLocalTime((start + i * timeStep) / 1000));
+                    daysLookup[i] = Formatter.ToLocalTime((start + i * timeStep) / 1000).ToString(formatter);
                 }
             }
 

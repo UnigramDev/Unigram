@@ -391,12 +391,15 @@
                         <controls:GlyphButton Click="{x:Bind ViewModel.Dialog.JumpDate}"
                                               Glyph="&#xE787;"
                                               AllowFocusOnInteraction="False"
+                                              AutomationProperties.Name="{CustomResource JumpToDate}"
+                                              ToolTipService.ToolTip="{CustomResource JumpToDate}"
                                               FontSize="{StaticResource GlyphMediumFontSize}"
                                               Grid.Column="2" />
                     </Grid>
 
                     <controls:GlyphButton Click="Close_Click"
                                           Glyph="&#xE711;"
+                                          AutomationProperties.Name="{CustomResource AccDescrCloseSearch}"
                                           Grid.Column="1" />
                 </Grid>
             </Grid>

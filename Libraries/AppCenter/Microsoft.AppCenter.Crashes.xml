@@ -54,7 +54,7 @@
             Public constructor for testing purposes.
             </summary>
         </member>
-        <member name="M:Microsoft.AppCenter.Crashes.Utils.ErrorLogHelper.CreateErrorLog(System.Exception)">
+        <member name="M:Microsoft.AppCenter.Crashes.Utils.ErrorLogHelper.CreateErrorLog(System.Exception,System.Collections.Generic.IList{Microsoft.AppCenter.Utils.NativeStackFrame})">
             <summary>
             Creates an error log for the given exception object.
             </summary>
@@ -372,7 +372,7 @@
             <param name="properties">Optional properties.</param>
             <param name="attachments">Optional attachments.</param>
         </member>
-        <member name="M:Microsoft.AppCenter.Crashes.Crashes.TrackCrash(System.Exception)">
+        <member name="M:Microsoft.AppCenter.Crashes.Crashes.TrackCrash(System.Exception,System.Collections.Generic.IList{Microsoft.AppCenter.Utils.NativeStackFrame})">
             <summary>
             Track an unhandled error.
             </summary>

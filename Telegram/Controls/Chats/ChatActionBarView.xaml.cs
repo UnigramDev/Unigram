@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -83,11 +83,11 @@ namespace Telegram.Controls.Chats
                 if (reportAddBlock.CanUnarchive)
                 {
                     CreateButton(Strings.Unarchive.ToUpper(), ViewModel.Unarchive);
-                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpam, new ReportReasonSpam(), column: 1, danger: true);
+                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpam, column: 1, danger: true);
                 }
                 else
                 {
-                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpam, new ReportReasonSpam(), danger: true);
+                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpam, danger: true);
                     CreateButton(Strings.AddContactChat, ViewModel.AddToContacts, column: 1);
                 }
             }
@@ -96,16 +96,12 @@ namespace Telegram.Controls.Chats
                 var user = ViewModel.ClientService.GetUser(chat);
                 if (user != null)
                 {
-                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpam, new ReportReasonSpam(), danger: true);
+                    CreateButton(Strings.ReportSpamUser, ViewModel.ReportSpam, danger: true);
                 }
                 else
                 {
-                    CreateButton(Strings.ReportSpamAndLeave, ViewModel.ReportSpam, new ReportReasonSpam(), danger: true);
+                    CreateButton(Strings.ReportSpamAndLeave, ViewModel.ReportSpam, danger: true);
                 }
-            }
-            else if (chat.ActionBar is ChatActionBarReportUnrelatedLocation)
-            {
-                CreateButton(Strings.ReportSpamLocation, ViewModel.ReportSpam, new ReportReasonUnrelatedLocation(), danger: true);
             }
             else if (chat.ActionBar is ChatActionBarSharePhoneNumber)
             {
@@ -113,20 +109,6 @@ namespace Telegram.Controls.Chats
             }
 
             ShowHide(chat.ActionBar != null);
-        }
-
-        private Button CreateButton<T>(string text, Action<T> command, T commandParameter = null, int column = 0, bool danger = false) where T : class
-        {
-            var button = CreateButton(text, column, danger);
-
-            void handler(object sender, RoutedEventArgs e)
-            {
-                button.Click -= handler;
-                command(commandParameter);
-            };
-
-            button.Click += handler;
-            return button;
         }
 
         private Button CreateButton(string text, Action command, int column = 0, bool danger = false)
@@ -137,7 +119,8 @@ namespace Telegram.Controls.Chats
             {
                 //button.Click -= handler;
                 command();
-            };
+            }
+            ;
 
             button.Click += handler;
             return button;

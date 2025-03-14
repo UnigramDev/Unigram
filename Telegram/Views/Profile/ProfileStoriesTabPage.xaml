@@ -29,6 +29,11 @@
                   SelectionMode="None"
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
+                  DragItemsStarting="OnDragItemsStarting"
+                  DragItemsCompleted="OnDragItemsCompleted"
+                  AllowDrop="True"
+                  CanDragItems="True"
+                  CanReorderItems="False"
                   common:FluidGridView.MaxLength="1004"
                   Padding="24,0,20,0">
             <common:SelectedItemsBinder.Attached>

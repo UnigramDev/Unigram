@@ -23,7 +23,7 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="22"
-                       FontFamily="{ThemeResource EmojiThemeFontFamily}" />
+                       FontFamily="{ThemeResource EmojiOnlyThemeFontFamily}" />
         </DataTemplate>
 
         <DataTemplate x:Key="EmojiSkinTemplate"
@@ -33,7 +33,7 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="22"
-                       FontFamily="{ThemeResource EmojiThemeFontFamily}" />
+                       FontFamily="{ThemeResource EmojiOnlyThemeFontFamily}" />
         </DataTemplate>
 
         <DataTemplate x:Key="ItemTemplate">
@@ -288,7 +288,7 @@
                       ItemClick="Toolbar_ItemClick"
                       SelectionChanged="Toolbar_SelectionChanged"
                       ContainerContentChanging="Toolbar_ContainerContentChanging"
-                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                       ScrollViewer.HorizontalScrollMode="Auto"
                       ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                       ScrollViewer.VerticalScrollBarVisibility="Disabled"

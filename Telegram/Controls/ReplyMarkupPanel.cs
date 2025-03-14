@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -206,7 +206,7 @@ namespace Telegram.Controls
 
                 SetRow(panel, j);
 
-                RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+                RowDefinitions.Add(1, GridUnitType.Star);
                 Children.Add(panel);
             }
 
@@ -267,7 +267,7 @@ namespace Telegram.Controls
 
                 SetRow(panel, j);
 
-                RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, resize ? GridUnitType.Auto : GridUnitType.Star) });
+                RowDefinitions.Add(1, resize ? GridUnitType.Auto : GridUnitType.Star);
                 Children.Add(panel);
             }
 

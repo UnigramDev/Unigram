@@ -1,70 +1,34 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.Globalization.DateTimeFormatting;
-using Windows.System.UserProfile;
 
 namespace Telegram.Converters
 {
     public static class Formatter
     {
-        public static DateTimeFormatter ShortDate { get; private set; }
-        public static DateTimeFormatter ShortTime { get; private set; }
-        public static DateTimeFormatter LongDate { get; private set; }
-        public static DateTimeFormatter LongTime { get; private set; }
+        //public static IList<string> Languages { get; }
 
-        public static DateTimeFormatter MonthFull { get; private set; }
-        public static DateTimeFormatter MonthAbbreviatedDay { get; private set; }
-        public static DateTimeFormatter MonthFullYear { get; private set; }
-        public static DateTimeFormatter DayMonthFull { get; private set; }
-        public static DateTimeFormatter DayMonthFullYear { get; private set; }
-        public static DateTimeFormatter MonthAbbreviatedYear { get; private set; }
-        public static DateTimeFormatter DayMonthAbbreviated { get; private set; }
-        public static DateTimeFormatter DayMonthAbbreviatedYear { get; private set; }
-        public static DateTimeFormatter DayOfWeekAbbreviated { get; private set; }
+        //static Formatter()
+        //{
+        //    var culture = NativeUtils.GetCurrentCulture();
+        //    var languages = GlobalizationPreferences.Languages.ToList();
 
-        public static IList<string> Languages { get; }
+        //    if (Windows.Globalization.Language.IsWellFormed(culture) && !languages.Contains(culture))
+        //    {
+        //        languages.Insert(0, culture);
+        //    }
 
-        static Formatter()
-        {
-            var culture = NativeUtils.GetCurrentCulture();
-            var languages = GlobalizationPreferences.Languages.ToList();
-            var region = GlobalizationPreferences.HomeGeographicRegion;
-            var calendar = GlobalizationPreferences.Calendars.FirstOrDefault();
-            var clock = GlobalizationPreferences.Clocks.FirstOrDefault();
-
-            if (Windows.Globalization.Language.IsWellFormed(culture))
-            {
-                languages.Insert(0, culture);
-            }
-
-            Languages = languages;
-
-            ShortDate = new DateTimeFormatter("shortdate", languages, region, calendar, clock);
-            ShortTime = new DateTimeFormatter("shorttime", languages, region, calendar, clock);
-            LongDate = new DateTimeFormatter("longdate", languages, region, calendar, clock);
-            LongTime = new DateTimeFormatter("longtime", languages, region, calendar, clock);
-            MonthFull = new DateTimeFormatter("month.full", languages, region, calendar, clock);
-            MonthAbbreviatedDay = new DateTimeFormatter("month.abbreviated day", languages, region, calendar, clock);
-            MonthFullYear = new DateTimeFormatter("month.full year", languages, region, calendar, clock);
-            DayMonthFull = new DateTimeFormatter("day month.full", languages, region, calendar, clock);
-            DayMonthFullYear = new DateTimeFormatter("day month.full year", languages, region, calendar, clock);
-            MonthAbbreviatedYear = new DateTimeFormatter("month.abbreviated year", languages, region, calendar, clock);
-            DayMonthAbbreviated = new DateTimeFormatter("day month.abbreviated", languages, region, calendar, clock);
-            DayMonthAbbreviatedYear = new DateTimeFormatter("day month.abbreviated year", languages, region, calendar, clock);
-            DayOfWeekAbbreviated = new DateTimeFormatter("dayofweek.abbreviated", languages, region, calendar, clock);
-        }
+        //    Languages = languages;
+        //}
 
         public static string UtcTimeOffset(int value)
         {
@@ -82,41 +46,22 @@ namespace Telegram.Converters
             return string.Format("UTC-{0:hh\\:mm}", span);
         }
 
-        public static string MonthGrouping(int value)
-        {
-            var date = ToLocalTime(value);
-            var now = DateTime.Now;
-
-            var difference = Math.Abs(date.Month - now.Month + 12 * (date.Year - now.Year));
-            if (difference >= 12)
-            {
-                return MonthFullYear.Format(date);
-            }
-
-            return MonthFull.Format(date);
-        }
-
         public static string DayGrouping(int value)
         {
-            //if (SettingsService.Current.Diagnostics.NativeTimeFormatter)
-            //{
-            //    return NativeUtils.FormatDate(value);
-            //}
-
             var date = ToLocalTime(value);
             var now = DateTime.Now;
 
             var difference = Math.Abs(date.Month - now.Month + 12 * (date.Year - now.Year));
             if (difference >= 12)
             {
-                return DayMonthFullYear.Format(date);
+                return Date(value, Strings.chatFullDate);
             }
             else if (date.Date == now.Date)
             {
                 return Strings.MessageScheduleToday;
             }
 
-            return DayMonthFull.Format(date);
+            return Date(value, Strings.chatDate);
         }
 
         public static string Distance(float distance, bool away = true)
@@ -353,28 +298,20 @@ namespace Telegram.Converters
         {
             var dateTime = ToLocalTime(value);
 
-            //Today
             if (dateTime.Date == DateTime.Now.Date)
             {
-                //TimeLabel.Text = dateTime.ToString(string.Format("{0}", shortTimePattern), cultureInfo);
                 return Time(dateTime);
             }
-
-            //Week
-            if (dateTime.Date.AddDays(6) >= DateTime.Now.Date)
+            else if (dateTime.Date.AddDays(6) >= DateTime.Now.Date)
             {
-                return DayOfWeekAbbreviated.Format(dateTime);
+                return Date(value, Strings.formatterWeek);
+            }
+            else if (dateTime.Date.Year == DateTime.Now.Year)
+            {
+                return Date(value, Strings.formatterMonth);
             }
 
-            //Year
-            if (dateTime.Date.Year == DateTime.Now.Year)
-            {
-                // TODO: no idea about how to get a short date without year
-            }
-
-            //Long long time ago
-            //TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
-            return Date(dateTime);
+            return Date(value, Strings.formatterYear);
         }
 
         public static string Duration(int value)
@@ -390,41 +327,20 @@ namespace Telegram.Converters
             }
         }
 
-        private static bool? _isTimeRightToLeft;
-        public static bool IsTimeRightToLeft => _isTimeRightToLeft is true;
-
         public static string Time(int value)
         {
             // "۰۱:۵۹ ق.ظ"
-            if (_isTimeRightToLeft == null)
-            {
-                var time = NativeUtils.FormatTime(value);
-                var direction = NativeUtils.GetDirectionality(time);
-
-                _isTimeRightToLeft = direction == TextDirectionality.RightToLeft;
-                return time;
-            }
-
             return NativeUtils.FormatTime(value);
         }
 
         public static string Time(DateTime value)
         {
-            if (_isTimeRightToLeft == null)
-            {
-                var time = NativeUtils.FormatTime(value);
-                var direction = NativeUtils.GetDirectionality(time);
-
-                _isTimeRightToLeft = direction == TextDirectionality.RightToLeft;
-                return time;
-            }
-
             return NativeUtils.FormatTime(value);
         }
 
         public static string Date(int value)
         {
-            return ShortDate.Format(ToLocalTime(value));
+            return NativeUtils.FormatDate(value, "DATE_SHORTDATE");
         }
 
         public static string Date(int value, string format)
@@ -434,7 +350,12 @@ namespace Telegram.Converters
 
         public static string Date(DateTime value)
         {
-            return ShortDate.Format(value);
+            return NativeUtils.FormatDate(value, "DATE_SHORTDATE");
+        }
+
+        public static string Date(DateTime value, string format)
+        {
+            return NativeUtils.FormatDate(value, format);
         }
 
         public static DateTime ToLocalTime(long value)
@@ -458,10 +379,45 @@ namespace Telegram.Converters
             return string.Format(Strings.formatDateAtTime, Date(value), Time(value));
         }
 
-        public static string ShortNumber(int number)
+        public static string RelativeDate(long value)
+        {
+            long j2 = value / 60;
+            long j3 = j2 / 60;
+            long j4 = j3 / 24;
+            long j5 = j4 / 30;
+            long j6 = j4 / 365;
+            return j6 >= 1
+                ? j6 == 1
+                ? Strings.YearAgo
+                : Locale.Declension(Strings.R.YearsAgo, (int)j6)
+                : j5 >= 1
+                ? j5 == 1
+                ? Strings.MonthAgo
+                : Locale.Declension(Strings.R.MonthsAgo, (int)j5)
+                : j4 >= 1
+                ? j4 == 1
+                ? Strings.DayAgo
+                : Locale.Declension(Strings.R.DaysAgo, (int)j4)
+                : j3 >= 1
+                ? j3 == 1
+                ? Strings.HourAgo
+                : Locale.Declension(Strings.R.HoursAgo, (int)j3)
+                : j2 >= 1
+                ? j2 == 1
+                ? Strings.MinuteAgo
+                : Locale.Declension(Strings.R.MinutesAgo, (int)j2)
+                : Strings.LessMinuteAgo;
+        }
+
+        public static string ShortNumber(long number)
+        {
+            return ShortNumber(number, false);
+        }
+
+        public static string ShortNumber(long number, bool round)
         {
             var K = string.Empty;
-            var lastDec = 0;
+            var lastDec = 0L;
 
             while (number / 1000 > 0)
             {
@@ -470,7 +426,7 @@ namespace Telegram.Converters
                 number /= 1000;
             }
 
-            if (lastDec != 0 && K.Length > 0)
+            if (lastDec != 0 && K.Length > 0 && !round)
             {
                 if (K.Length == 2)
                 {

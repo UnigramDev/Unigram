@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -66,7 +66,11 @@ namespace Telegram.Services
         bool IsPremium { get; }
         bool IsPremiumAvailable { get; }
 
-        long OwnedStarCount { get; }
+        bool IsFrozen { get; }
+
+        PaidReactionType DefaultPaidReactionType { get; }
+
+        StarAmount OwnedStarCount { get; }
 
         UnconfirmedSession UnconfirmedSession { get; }
 
@@ -147,6 +151,9 @@ namespace Telegram.Services
 
         bool IsForum(Chat chat);
 
+        bool IsPaid(Chat chat);
+        long PaidMessageStarCount(Chat chat);
+
         bool IsChatAccessible(Chat chat);
 
         bool IsBotAddedToAttachmentMenu(long userId);
@@ -160,6 +167,7 @@ namespace Telegram.Services
 
         bool TryGetChat(long chatId, out Chat chat);
         bool TryGetChat(MessageSender sender, out Chat value);
+        bool TryGetChat(AffiliateType type, out Chat value);
 
         bool TryGetChatFromUser(long userId, out long value);
         bool TryGetChatFromUser(long userId, out Chat value);
@@ -178,6 +186,7 @@ namespace Telegram.Services
         bool TryGetUser(long id, out User value);
         bool TryGetUser(Chat chat, out User value);
         bool TryGetUser(MessageSender sender, out User value);
+        bool TryGetUser(AffiliateType type, out User value);
 
         UserFullInfo GetUserFull(long id);
         UserFullInfo GetUserFull(Chat chat);
@@ -186,10 +195,13 @@ namespace Telegram.Services
 
         IList<User> GetUsers(IEnumerable<long> ids);
 
+        ChatPermissions GetPermissions(Chat chat, out bool restricted);
+
         BasicGroup GetBasicGroup(long id);
         BasicGroup GetBasicGroup(Chat chat);
         bool TryGetBasicGroup(long id, out BasicGroup value);
         bool TryGetBasicGroup(Chat chat, out BasicGroup value);
+        bool TryGetBasicGroup(MessageSender sender, out BasicGroup value);
 
         BasicGroupFullInfo GetBasicGroupFull(long id);
         BasicGroupFullInfo GetBasicGroupFull(Chat chat);
@@ -200,6 +212,7 @@ namespace Telegram.Services
         Supergroup GetSupergroup(Chat chat);
         bool TryGetSupergroup(long id, out Supergroup value);
         bool TryGetSupergroup(Chat chat, out Supergroup value);
+        bool TryGetSupergroup(MessageSender sender, out Supergroup value);
 
         SupergroupFullInfo GetSupergroupFull(long id);
         SupergroupFullInfo GetSupergroupFull(Chat chat);
@@ -215,11 +228,14 @@ namespace Telegram.Services
         int GetMembersCount(long chatId);
         int GetMembersCount(Chat chat);
 
+        Task<BotVerification> GetBotVerificationAsync(Chat chat);
+
         bool IsAnimationSaved(int id);
         bool IsStickerRecent(int id);
         bool IsStickerFavorite(int id);
         bool IsStickerSetInstalled(long id);
 
+        ICollection<ChatListUnreadCount> UnreadCounts { get; }
         ChatListUnreadCount GetUnreadCount(ChatList chatList);
 
         UpdateStoryStealthMode StealthMode { get; }
@@ -331,7 +347,7 @@ namespace Telegram.Services
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
 
-        private long _ownedStarCount = -1;
+        private StarAmount _ownedStarCount;
 
         private JsonValueObject _config;
 
@@ -654,7 +670,10 @@ namespace Telegram.Services
 
         public bool TryGetTimeZone(string timeZoneId, out TimeZone timeZone)
         {
-            return _timezones.TryGetValue(timeZoneId, out timeZone);
+            lock (_timezones)
+            {
+                return _timezones.TryGetValue(timeZoneId, out timeZone);
+            }
         }
 
         private void UpdateGreetingStickers()
@@ -956,8 +975,8 @@ namespace Telegram.Services
             {
                 if (ownerId == null || ownerId.IsUser(Options.MyId))
                 {
-                    _ownedStarCount = transactions.StarCount;
-                    _aggregator.Publish(new UpdateOwnedStarCount(transactions.StarCount));
+                    _ownedStarCount = transactions.StarAmount;
+                    _aggregator.Publish(new UpdateOwnedStarCount(transactions.StarAmount));
                 }
             }
 
@@ -1048,6 +1067,8 @@ namespace Telegram.Services
 
         public UpdateStoryStealthMode StealthMode => _storyStealthMode;
 
+        public ICollection<ChatListUnreadCount> UnreadCounts => _unreadCounts.Values;
+
         public ChatListUnreadCount GetUnreadCount(ChatList chatList)
         {
             var id = chatList switch
@@ -1120,19 +1141,23 @@ namespace Telegram.Services
 
         public bool IsPremiumAvailable => _options.IsPremium || _options.IsPremiumAvailable;
 
-        public long OwnedStarCount
+        public bool IsFrozen => Constants.DEBUG;
+
+        public StarAmount OwnedStarCount
         {
             get
             {
-                if (_ownedStarCount == -1)
+                if (_ownedStarCount == null)
                 {
                     Send(new GetStarTransactions(MyId, string.Empty, null, string.Empty, 1));
-                    return 0;
+                    return new StarAmount(0, 0);
                 }
 
                 return _ownedStarCount;
             }
         }
+
+        public PaidReactionType DefaultPaidReactionType { get; private set; } = new PaidReactionTypeRegular();
 
         public MessageSender MyId => new MessageSenderUser(_options.MyId);
 
@@ -1440,7 +1465,7 @@ namespace Telegram.Services
         {
             var map = new Dictionary<MessageId, MessageProperties>();
 
-            foreach (var messageId in messageIds.ToArray())
+            foreach (var messageId in messageIds)
             {
                 var properties = await SendAsync(new GetMessageProperties(messageId.ChatId, messageId.Id)) as MessageProperties;
                 if (properties != null)
@@ -1571,6 +1596,42 @@ namespace Telegram.Services
             return false;
         }
 
+        public bool IsPaid(Chat chat)
+        {
+            if (TryGetUserFull(chat, out UserFullInfo userFullInfo))
+            {
+                return userFullInfo.OutgoingPaidMessageStarCount > 0;
+            }
+            else if (TryGetUser(chat, out User user))
+            {
+                return user.PaidMessageStarCount > 0;
+            }
+            else if (TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                return supergroup.PaidMessageStarCount > 0;
+            }
+
+            return false;
+        }
+
+        public long PaidMessageStarCount(Chat chat)
+        {
+            if (TryGetUserFull(chat, out UserFullInfo userFullInfo))
+            {
+                return userFullInfo.OutgoingPaidMessageStarCount;
+            }
+            else if (TryGetUser(chat, out User user))
+            {
+                return user.PaidMessageStarCount;
+            }
+            else if (TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                return supergroup.PaidMessageStarCount;
+            }
+
+            return 0;
+        }
+
         public bool IsChatAccessible(Chat chat)
         {
             // This method is definitely misleading, and it should probably cover more cases
@@ -1656,6 +1717,17 @@ namespace Telegram.Services
             if (sender is MessageSenderChat senderChat)
             {
                 return TryGetChat(senderChat.ChatId, out value);
+            }
+
+            value = null;
+            return false;
+        }
+
+        public bool TryGetChat(AffiliateType type, out Chat value)
+        {
+            if (type is AffiliateTypeChannel typeChannel)
+            {
+                return TryGetChat(typeChannel.ChatId, out value);
             }
 
             value = null;
@@ -1817,6 +1889,21 @@ namespace Telegram.Services
             return false;
         }
 
+        public bool TryGetUser(AffiliateType type, out User value)
+        {
+            if (type is AffiliateTypeBot typeBot)
+            {
+                return TryGetUser(typeBot.UserId, out value);
+            }
+            else if (type is AffiliateTypeCurrentUser)
+            {
+                return TryGetUser(Options.MyId, out value);
+            }
+
+            value = null;
+            return false;
+        }
+
         public bool TryGetUser(Chat chat, out User value)
         {
             if (chat?.Type is ChatTypePrivate privata)
@@ -1878,6 +1965,38 @@ namespace Telegram.Services
             return false;
         }
 
+        public ChatPermissions GetPermissions(Chat chat, out bool restrict)
+        {
+            restrict = false;
+
+            if (TryGetSupergroup(chat, out var supergroup))
+            {
+                if (supergroup.Status is ChatMemberStatusRestricted restricted)
+                {
+                    restrict = true;
+                    return restricted.Permissions;
+                }
+                else if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
+                {
+                    return new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+                }
+            }
+            else if (TryGetBasicGroup(chat, out var basicGroup))
+            {
+                if (basicGroup.Status is ChatMemberStatusRestricted restricted)
+                {
+                    restrict = true;
+                    return restricted.Permissions;
+                }
+                else if (basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
+                {
+                    return new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+                }
+            }
+
+            return chat?.Permissions;
+        }
+
 
 
         public BasicGroup GetBasicGroup(long id)
@@ -1910,6 +2029,17 @@ namespace Telegram.Services
             if (chat?.Type is ChatTypeBasicGroup basicGroup)
             {
                 return TryGetBasicGroup(basicGroup.BasicGroupId, out value);
+            }
+
+            value = null;
+            return false;
+        }
+
+        public bool TryGetBasicGroup(MessageSender sender, out BasicGroup value)
+        {
+            if (sender is MessageSenderChat senderChat && TryGetChat(senderChat.ChatId, out Chat chat))
+            {
+                return TryGetBasicGroup(chat, out value);
             }
 
             value = null;
@@ -1986,6 +2116,17 @@ namespace Telegram.Services
             if (chat?.Type is ChatTypeSupergroup supergroup)
             {
                 return TryGetSupergroup(supergroup.SupergroupId, out value);
+            }
+
+            value = null;
+            return false;
+        }
+
+        public bool TryGetSupergroup(MessageSender sender, out Supergroup value)
+        {
+            if (sender is MessageSenderChat senderChat && TryGetChat(senderChat.ChatId, out Chat chat))
+            {
+                return TryGetSupergroup(chat, out value);
             }
 
             value = null;
@@ -2100,6 +2241,32 @@ namespace Telegram.Services
             }
 
             return 0;
+        }
+
+        public async Task<BotVerification> GetBotVerificationAsync(Chat chat)
+        {
+            if (chat.Type is ChatTypePrivate privata)
+            {
+                if (TryGetUserFull(chat, out UserFullInfo fullInfo))
+                {
+                    return fullInfo.BotVerification;
+                }
+
+                var response = await SendAsync(new GetUserFullInfo(privata.UserId)) as UserFullInfo;
+                return response?.BotVerification;
+            }
+            else if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                if (TryGetSupergroupFull(supergroup.SupergroupId, out SupergroupFullInfo fullInfo))
+                {
+                    return fullInfo.BotVerification;
+                }
+
+                var response = await SendAsync(new GetSupergroupFullInfo(supergroup.SupergroupId)) as SupergroupFullInfo;
+                return response?.BotVerification;
+            }
+
+            return null;
         }
 
 
@@ -2921,7 +3088,11 @@ namespace Telegram.Services
             }
             else if (update is UpdateOwnedStarCount updateOwnedStarCount)
             {
-                _ownedStarCount = updateOwnedStarCount.StarCount;
+                _ownedStarCount = updateOwnedStarCount.StarAmount;
+            }
+            else if (update is UpdateDefaultPaidReactionType updateDefaultPaidReactionType)
+            {
+                DefaultPaidReactionType = updateDefaultPaidReactionType.Type;
             }
 
             _aggregator.Publish(update);

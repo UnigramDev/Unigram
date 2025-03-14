@@ -97,8 +97,7 @@
                                 </Button.Content>
                             </Button>
 
-                            <controls:GlyphButton Style="{StaticResource HeaderGlyphButtonStyle}"
-                                                  Glyph="&#xE717;"
+                            <controls:GlyphButton Glyph="&#xE717;"
                                                   AutomationProperties.Name="{CustomResource Call}"
                                                   ToolTipService.ToolTip="{CustomResource Call}"
                                                   Grid.Column="1" />
@@ -170,7 +169,6 @@
                                        Grid.Column="1" />
 
                             <controls:GlyphButton Glyph="&#xE721;"
-                                                  Style="{StaticResource HeaderGlyphButtonStyle}"
                                                   AutomationProperties.LandmarkType="Search"
                                                   AutomationProperties.Name="{CustomResource Search}"
                                                   ToolTipService.ToolTip="{CustomResource Search}"

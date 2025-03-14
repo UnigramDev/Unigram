@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -13,7 +13,7 @@ using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
 using System;
 using System.Numerics;
-using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -80,23 +80,14 @@ namespace Telegram.Controls.Cells
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_strokeToken == 0 && _ellipse != null)
-            {
-                Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
-                OnStrokeChanged(Stroke, SolidColorBrush.ColorProperty);
-            }
-
-            if (_selectionStrokeToken == 0 && _stroke != null)
-            {
-                SelectionStroke?.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
-                OnSelectionStrokeChanged(SelectionStroke, SolidColorBrush.ColorProperty);
-            }
+            _strokeBrush?.Register();
+            _selectionStrokeBrush?.Register();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Stroke?.UnregisterColorChangedCallback(ref _strokeToken);
-            SelectionStroke?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
+            _strokeBrush?.Unregister();
+            _selectionStrokeBrush?.Unregister();
         }
 
         public void UpdateChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
@@ -126,7 +117,7 @@ namespace Telegram.Controls.Cells
             else if (args.Phase == 2)
             {
                 Photo.SetChat(clientService, chat, 36);
-                Identity.SetStatus(clientService, chat);
+                Identity.SetStatus(clientService, chat, BotVerified);
 
                 SelectionOutline.RadiusX = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
                 SelectionOutline.RadiusY = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
@@ -158,7 +149,7 @@ namespace Telegram.Controls.Cells
             else if (args.Phase == 2)
             {
                 Photo.SetUser(clientService, user, 36);
-                Identity.SetStatus(clientService, user);
+                Identity.SetStatus(clientService, user, BotVerified);
 
                 SelectionOutline.RadiusX = 18;
                 SelectionOutline.RadiusY = 18;
@@ -200,12 +191,12 @@ namespace Telegram.Controls.Cells
                 if (clientService.TryGetUser(messageSender, out User user))
                 {
                     Photo.SetUser(clientService, user, 36);
-                    Identity.SetStatus(clientService, user);
+                    Identity.SetStatus(clientService, user, BotVerified);
                 }
                 else if (clientService.TryGetChat(messageSender, out Chat chat))
                 {
                     Photo.SetChat(clientService, chat, 36);
-                    Identity.SetStatus(clientService, chat);
+                    Identity.SetStatus(clientService, chat, BotVerified);
                 }
 
                 SelectionOutline.RadiusX = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
@@ -247,7 +238,7 @@ namespace Telegram.Controls.Cells
             else if (args.Phase == 2)
             {
                 Photo.SetChat(clientService, chat, 36);
-                Identity.SetStatus(clientService, chat);
+                Identity.SetStatus(clientService, chat, BotVerified);
 
                 SelectionOutline.RadiusX = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
                 SelectionOutline.RadiusY = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
@@ -264,7 +255,7 @@ namespace Telegram.Controls.Cells
         public void UpdateChatFolder(FolderFlag folder)
         {
             Photo.Source = PlaceholderImage.GetGlyph(MainPage.GetFolderIcon(folder.Flag), (int)folder.Flag);
-            Identity.ClearStatus();
+            Identity.ClearStatus(BotVerified);
 
             SelectionOutline.RadiusX = 18;
             SelectionOutline.RadiusY = 18;
@@ -308,7 +299,7 @@ namespace Telegram.Controls.Cells
 
         #region Stroke
 
-        private long _strokeToken;
+        private CompositionColorSource _strokeBrush;
 
         public Brush Stroke
         {
@@ -326,37 +317,14 @@ namespace Telegram.Controls.Cells
 
         private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            oldValue?.UnregisterColorChangedCallback(ref _strokeToken);
-
-            if (newValue == null || _ellipse == null)
-            {
-                return;
-            }
-
-            _ellipse.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(newValue.Color);
-
-            if (IsConnected)
-            {
-                newValue.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
-            }
-        }
-
-        private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            var solid = sender as SolidColorBrush;
-            if (solid == null || _ellipse == null)
-            {
-                return;
-            }
-
-            _ellipse.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
+            _strokeBrush?.PropertyChanged(newValue, IsConnected);
         }
 
         #endregion
 
         #region SelectionStroke
 
-        private long _selectionStrokeToken;
+        private CompositionColorSource _selectionStrokeBrush;
 
         public SolidColorBrush SelectionStroke
         {
@@ -374,30 +342,7 @@ namespace Telegram.Controls.Cells
 
         private void OnSelectionStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            oldValue?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
-
-            if (newValue == null || _stroke == null)
-            {
-                return;
-            }
-
-            _stroke.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(newValue.Color);
-
-            if (IsConnected)
-            {
-                newValue.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
-            }
-        }
-
-        private void OnSelectionStrokeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            var solid = sender as SolidColorBrush;
-            if (solid == null || _stroke == null)
-            {
-                return;
-            }
-
-            _stroke.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
+            _selectionStrokeBrush?.PropertyChanged(newValue, IsConnected);
         }
 
         #endregion
@@ -408,25 +353,7 @@ namespace Telegram.Controls.Cells
         private readonly Visual _selectionPhoto;
 
         private CompositionPathGeometry _polygon;
-        private CompositionSpriteShape _ellipse;
-        private CompositionSpriteShape _stroke;
         private ShapeVisual _visual;
-
-        private CompositionBrush GetBrush(DependencyProperty dp, ref long token, DependencyPropertyChangedCallback callback)
-        {
-            var value = GetValue(dp);
-            if (value is SolidColorBrush solid)
-            {
-                if (IsConnected)
-                {
-                    solid.RegisterColorChangedCallback(callback, ref token);
-                }
-
-                return BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
-            }
-
-            return BootStrapper.Current.Compositor.CreateColorBrush(Colors.Black);
-        }
 
         private void InitializeSelection()
         {
@@ -464,7 +391,7 @@ namespace Telegram.Controls.Cells
 
             var shape2 = compositor.CreateSpriteShape();
             shape2.Geometry = ellipse;
-            shape2.FillBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape2.FillBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
 
             var outer = compositor.CreateEllipseGeometry();
             outer.Radius = new Vector2(10);
@@ -472,7 +399,7 @@ namespace Telegram.Controls.Cells
 
             var shape3 = compositor.CreateSpriteShape();
             shape3.Geometry = outer;
-            shape3.FillBrush = GetBrush(SelectionStrokeProperty, ref _selectionStrokeToken, OnSelectionStrokeChanged);
+            shape3.FillBrush = _selectionStrokeBrush ??= new CompositionColorSource(SelectionStroke, IsConnected);
 
             var visual = compositor.CreateShapeVisual();
             visual.Shapes.Add(shape3);
@@ -486,8 +413,6 @@ namespace Telegram.Controls.Cells
             ElementCompositionPreview.SetElementChildVisual(PhotoPanel, visual);
 
             _polygon = polygon;
-            _ellipse = shape2;
-            _stroke = shape3;
             _visual = visual;
         }
 

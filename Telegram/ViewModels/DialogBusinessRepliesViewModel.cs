@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -59,7 +59,7 @@ namespace Telegram.ViewModels
 
             var replied = update.Messages.OrderBy(x => x.Id).Select(x =>
             {
-                var message = new Message(x.Id, new MessageSenderUser(ClientService.Options.MyId), ClientService.Options.MyId, x.SendingState, null, true, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, x.ViaBotUserId, 0, 0, string.Empty, x.MediaAlbumId, 0, false, string.Empty, x.Content, x.ReplyMarkup);
+                var message = new Message(x.Id, new MessageSenderUser(ClientService.Options.MyId), ClientService.Options.MyId, x.SendingState, null, true, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, x.ViaBotUserId, 0, 0, 0, string.Empty, x.MediaAlbumId, 0, false, string.Empty, x.Content, x.ReplyMarkup);
                 var model = new QuickReplyMessageViewModel(ClientService, PlaybackService, _messageDelegate, _chat, message, true)
                 {
                     CanBeEdited = x.CanBeEdited
@@ -110,6 +110,7 @@ namespace Telegram.ViewModels
         public void UpdateItem(MessageViewModel oldItem, MessageViewModel newItem)
         {
             oldItem.UpdateWith(newItem);
+            oldItem.Content = newItem.Content;
         }
     }
 }

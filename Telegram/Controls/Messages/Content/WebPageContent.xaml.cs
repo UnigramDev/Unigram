@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -389,11 +389,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var text = GetContent(_message);
-            if (text?.LinkPreview != null)
-            {
-                _message?.Delegate?.OpenWebPage(text);
-            }
+            _message?.Delegate?.OpenWebPage(_message);
 
         }
 
@@ -594,7 +590,7 @@ namespace Telegram.Controls.Messages.Content
         {
             if (linkPreview.Type is LinkPreviewTypeAlbum)
             {
-                var response = await _message.ClientService.SendAsync(new GetWebPageInstantView(linkPreview.Url, false));
+                var response = await _message.ClientService.SendAsync(new GetWebPageInstantView(linkPreview.Url, true));
                 if (response is WebPageInstantView instantView && instantView.IsFull && !token.IsCancellationRequested)
                 {
                     var count = CountWebPageMedia(instantView);

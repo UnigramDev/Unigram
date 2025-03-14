@@ -112,13 +112,12 @@
                                           Click="Biometrics_Click"
                                           AutomationProperties.Name="{CustomResource UnlockWindowsHello}"
                                           ToolTipService.ToolTip="{CustomResource UnlockWindowsHello}"
-                                          Style="{StaticResource RoundGlyphButtonStyle}"
                                           AllowFocusOnInteraction="False"
                                           Foreground="#FFFFFF"
                                           Width="32"
                                           Height="32"
                                           CornerRadius="16"
-                                          Padding="0,0,0,0" />
+                                          Padding="0" />
                 </Border>
 
                 <PasswordBox x:Name="Field"
@@ -138,13 +137,12 @@
                                           Click="Enter_Click"
                                           AutomationProperties.Name="{CustomResource AccDescrPasscodeUnlock}"
                                           ToolTipService.ToolTip="{CustomResource AccDescrPasscodeUnlock}"
-                                          Style="{StaticResource RoundGlyphButtonStyle}"
                                           AllowFocusOnInteraction="False"
                                           Foreground="#FFFFFF"
                                           Width="32"
                                           Height="32"
                                           CornerRadius="16"
-                                          Padding="0,0,0,0" />
+                                          Padding="0" />
                 </Border>
             </Grid>
         </StackPanel>

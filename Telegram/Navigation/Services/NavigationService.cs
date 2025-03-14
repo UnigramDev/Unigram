@@ -1,11 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
@@ -67,6 +68,8 @@ namespace Telegram.Navigation.Services
         void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
         Task<InputPopupResult> ShowInputAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
         //Task<InputPopupResult> ShowInputAsync(FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+
+        void Hide(Type type);
 
         ToastPopup ShowToast(string text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
         ToastPopup ShowToast(string text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
@@ -221,7 +224,7 @@ namespace Telegram.Navigation.Services
         public NavigationService(WindowContext window, Frame frame, int session, string id)
         {
             Window = window;
-            Dispatcher = window.Dispatcher;
+            Dispatcher = window?.Dispatcher;
             SessionId = session;
             FrameFacade = new FrameFacade(this, frame, id);
             FrameFacade.Navigating += OnNavigating;
@@ -289,8 +292,8 @@ namespace Telegram.Navigation.Services
                 // This is solely used by MasterDetailView for the animation
                 e.VerticalOffset = entry.Position switch
                 {
-                    HostedPageScrollViewerPosition scrollViewerPosition => scrollViewerPosition.VerticalOffset,
-                    HostedPageListViewPosition listViewPosition => listViewPosition.VerticalOffset,
+                    HostedPageScrollViewerPosition scrollViewerPosition => scrollViewerPosition.ScrollPosition,
+                    HostedPageListViewPosition listViewPosition => listViewPosition.ScrollPosition,
                     _ => 0
                 };
 
@@ -546,6 +549,17 @@ namespace Telegram.Navigation.Services
         //    return InputPopup.ShowAsync(target, type, message, title, placeholderText, primary, secondary, destructive, requestedTheme);
         //}
 
+        public void Hide(Type type)
+        {
+            foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
+            {
+                if (popup.Child is ContentPopup dialog && type == dialog.GetType())
+                {
+                    dialog.Hide();
+                }
+            }
+        }
+
         public ToastPopup ShowToast(string text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             return ToastPopup.Show(XamlRoot, ClientEx.ParseMarkdown(text), null, requestedTheme, dismissAfter);
@@ -574,7 +588,7 @@ namespace Telegram.Navigation.Services
 
         public event EventHandler<NavigatedEventArgs> Navigated;
 
-        public bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true)
+        public virtual bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true)
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");
 

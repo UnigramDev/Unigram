@@ -35,6 +35,8 @@ namespace Telegram.Services.Calls
         /// </summary>
         public int Id { get; }
 
+        public int GroupCallId { get; private set; }
+
         public CallState State { get; private set; }
 
         public int Duration
@@ -309,26 +311,42 @@ namespace Telegram.Services.Calls
             }
         }
 
-        public async void Accept(XamlRoot xamlRoot)
+        public void Accept(bool video)
         {
-            if (xamlRoot == null)
+            var media = VoipPhoneCallMedia.Audio;
+            if (video)
             {
-                ClientService.Send(new AcceptCall(Id, VoipManager.Protocol));
+                media |= VoipPhoneCallMedia.Video;
+            }
 
-                // TODO: consider delivering a fake update to speed up initialization
+            if (_systemCall != null)
+            {
+                _systemCall.NotifyCallAccepted(media);
             }
             else
             {
-                var permissions = await MediaDevicePermissions.CheckAccessAsync(xamlRoot, IsVideo ? MediaDeviceAccess.AudioAndVideo : MediaDeviceAccess.Audio, ElementTheme.Light);
-                if (permissions == false)
-                {
-                    ClientService.Send(new DiscardCall(Id, false, 0, false, 0));
-                }
-                else
-                {
-                    ClientService.Send(new AcceptCall(Id, VoipManager.Protocol));
-                }
+                Accept();
             }
+        }
+
+        public void Accept()
+        {
+            try
+            {
+                _systemCall?.TryShowAppUI();
+
+                // NotifyCallActive causes the main app window to be focused
+                // We call it immediately, so that the focus can move to the call window.
+                _systemCall?.NotifyCallActive();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+
+            ClientService.Send(new AcceptCall(Id, VoipManager.Protocol));
+
+            // TODO: consider delivering a fake update to speed up initialization
         }
 
         public override void Discard()
@@ -354,6 +372,8 @@ namespace Telegram.Services.Calls
 
         public void Update(Call call, VoipState state)
         {
+            GroupCallId = call.GroupCallId;
+
             if (_state >= state)
             {
                 return;
@@ -627,6 +647,10 @@ namespace Telegram.Services.Calls
                 // TODO: check if call was in progress
                 SoundEffects.Play(SoundEffect.VoipEnd);
             }
+            else
+            {
+                SoundEffects.Stop();
+            }
         }
 
         private void TransitionToError(CallStateError error)
@@ -715,9 +739,7 @@ namespace Telegram.Services.Calls
                     _manager.SetVideoCapture(null);
 
                     _manager.Stop();
-
-                    // TODO: Exp. see if it helps
-                    //_manager = null;
+                    _manager = null;
                 }
             }
         }
@@ -868,21 +890,8 @@ namespace Telegram.Services.Calls
 
         private void OnAnswerRequested(VoipPhoneCall sender, CallAnswerEventArgs args)
         {
-            try
-            {
-                sender.TryShowAppUI();
-
-                // NotifyCallActive causes the main app window to be focused
-                // We call it immediately, so that the focus can move to the call window.
-                sender.NotifyCallActive();
-            }
-            catch
-            {
-                // All the remote procedure calls must be wrapped in a try-catch block
-            }
-
             IsVideo = args.AcceptedMedia.HasFlag(VoipPhoneCallMedia.Video);
-            Accept(null);
+            Accept();
         }
 
         private void OnRejectRequested(VoipPhoneCall sender, CallRejectEventArgs args)

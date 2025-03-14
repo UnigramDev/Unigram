@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -42,6 +42,7 @@ using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Popups;
 using Telegram.Views.Settings.Privacy;
+using Telegram.Views.Stars;
 using Telegram.Views.Stars.Popups;
 using Telegram.Views.Stories.Popups;
 using Telegram.Views.Supergroups;
@@ -58,11 +59,10 @@ namespace Telegram
     sealed partial class App : BootStrapper
     {
         public static ShareOperation ShareOperation { get; set; }
-        public static Window ShareWindow { get; set; }
 
         public static ConcurrentDictionary<long, DataPackageView> DataPackages { get; } = new ConcurrentDictionary<long, DataPackageView>();
 
-        private ExtendedExecutionSession _extendedSession;
+        private static ExtendedExecutionSession _extendedSession;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
@@ -75,7 +75,6 @@ namespace Telegram
 
             if (SettingsService.Current.Diagnostics.LastUpdateVersion < Constants.BuildNumber)
             {
-                SettingsService.Current.Diagnostics.LastUpdateTime = DateTime.Now.ToTimestamp();
                 SettingsService.Current.Diagnostics.LastUpdateVersion = Constants.BuildNumber;
                 SettingsService.Current.Diagnostics.UpdateCount++;
             }
@@ -180,22 +179,28 @@ namespace Telegram
 
             var navService = WindowContext.Current.NavigationServices.GetByFrameId($"{TypeResolver.Current.Lifetime.ActiveItem.Id}");
 
-            var service = TypeResolver.Current.Resolve<IClientService>();
             var update = TypeResolver.Current.Resolve<ICloudUpdateService>();
+            var service = TypeResolver.Current.Resolve<IClientService>();
 
-            if (service?.AuthorizationState != null)
+            var state = await service.GetAuthorizationStateAsync();
+
+            //if (args is not ShareTargetActivatedEventArgs share)
             {
-                WindowContext.Current.Activate(args, navService, service.AuthorizationState);
-            }
+                WindowContext.Current.Activate(args, navService, state);
 
-            _ = Task.Run(() => OnStartSync(startKind, navService, update));
+                _ = Task.Run(() => OnStartSync(startKind, navService, update));
 
-            if (startKind != StartKind.Launch && WindowContext.Current.IsInMainView)
-            {
-                var view = ApplicationView.GetForCurrentView();
-                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(view.Id);
-                view.TryResizeView(WindowContext.Current.Bounds.ToSize());
+                if (startKind != StartKind.Launch && WindowContext.Current.IsInMainView)
+                {
+                    var view = ApplicationView.GetForCurrentView();
+                    await ApplicationViewSwitcher.TryShowAsStandaloneAsync(view.Id);
+                    //view.TryResizeView(WindowContext.Current.Bounds.ToSize());
+                }
             }
+            //else
+            //{
+            //    WindowContext.Activate(share, state);
+            //}
         }
 
         public override UIElement CreateRootElement(LaunchActivatedEventArgs e, WindowContext window)
@@ -226,7 +231,7 @@ namespace Telegram
                 return new TLRootNavigationService(TypeResolver.Current.Resolve<ISessionService>(session), window, frame, session, id);
             }
 
-            return new TLNavigationService(TypeResolver.Current.Resolve<IClientService>(session), TypeResolver.Current.Resolve<IViewService>(session), window, frame, session, id);
+            return new TLNavigationService(TypeResolver.Current.Resolve<IClientService>(session), TypeResolver.Current.Resolve<IViewService>(session), window, frame, id);
         }
 
         private async void OnStartSync(StartKind startKind, INavigationService navigation, ICloudUpdateService updateService = null)
@@ -317,6 +322,7 @@ namespace Telegram
                 NewChannelPopup => TypeResolver.Current.Resolve<NewChannelViewModel>(sessionId),
                 NewGroupPopup => TypeResolver.Current.Resolve<NewGroupViewModel>(sessionId),
                 UserEditPage userEdit => TypeResolver.Current.Resolve<UserEditViewModel, IUserDelegate>(userEdit, sessionId),
+                UserAffiliatePage => TypeResolver.Current.Resolve<UserAffiliateViewModel>(sessionId),
                 //
                 SupergroupChooseMemberPopup => TypeResolver.Current.Resolve<SupergroupChooseMemberViewModel>(sessionId),
                 SupergroupAdministratorsPage supergroupAdministrators => TypeResolver.Current.Resolve<SupergroupAdministratorsViewModel, ISupergroupDelegate>(supergroupAdministrators, sessionId),
@@ -332,6 +338,7 @@ namespace Telegram
                 SupergroupReactionsPopup => TypeResolver.Current.Resolve<SupergroupReactionsViewModel>(sessionId),
                 SupergroupProfileColorPage => TypeResolver.Current.Resolve<SupergroupProfileColorViewModel>(sessionId),
                 ChatBoostsPage => TypeResolver.Current.Resolve<ChatBoostsViewModel>(sessionId),
+                ChatAffiliatePage => TypeResolver.Current.Resolve<ChatAffiliateViewModel>(sessionId),
                 //
                 AuthorizationRecoveryPage => TypeResolver.Current.Resolve<AuthorizationRecoveryViewModel>(sessionId),
                 AuthorizationRegistrationPage => TypeResolver.Current.Resolve<AuthorizationRegistrationViewModel>(sessionId),
@@ -374,7 +381,6 @@ namespace Telegram
                 SettingsStoragePage => TypeResolver.Current.Resolve<SettingsStorageViewModel>(sessionId),
                 SettingsProfilePage settingsProfilePage => TypeResolver.Current.Resolve<SettingsProfileViewModel, IUserDelegate>(settingsProfilePage, sessionId),
                 SettingsProfileColorPage => TypeResolver.Current.Resolve<SettingsProfileColorViewModel>(sessionId),
-                SettingsQuickReactionPage => TypeResolver.Current.Resolve<SettingsQuickReactionViewModel>(sessionId),
                 SettingsPowerSavingPage => TypeResolver.Current.Resolve<SettingsPowerSavingViewModel>(sessionId),
                 SettingsPrivacyAllowCallsPage => TypeResolver.Current.Resolve<SettingsPrivacyAllowCallsViewModel>(sessionId),
                 SettingsPrivacyAllowChatInvitesPage => TypeResolver.Current.Resolve<SettingsPrivacyAllowChatInvitesViewModel>(sessionId),
@@ -387,6 +393,7 @@ namespace Telegram
                 SettingsPrivacyShowBioPage => TypeResolver.Current.Resolve<SettingsPrivacyShowBioViewModel>(sessionId),
                 SettingsPrivacyShowBirthdatePage => TypeResolver.Current.Resolve<SettingsPrivacyShowBirthdateViewModel>(sessionId),
                 SettingsPrivacyNewChatPage => TypeResolver.Current.Resolve<SettingsPrivacyNewChatViewModel>(sessionId),
+                SettingsPrivacyAutosaveGiftsPage => TypeResolver.Current.Resolve<SettingsPrivacyAutosaveGiftsViewModel>(sessionId),
 
                 BusinessPage => TypeResolver.Current.Resolve<BusinessViewModel>(sessionId),
                 BusinessLocationPage => TypeResolver.Current.Resolve<BusinessLocationViewModel>(sessionId),
@@ -411,6 +418,7 @@ namespace Telegram
                 // Popups
                 ContactsPopup => TypeResolver.Current.Resolve<ContactsViewModel>(sessionId),
                 CallsPopup => TypeResolver.Current.Resolve<CallsViewModel>(sessionId),
+                DownloadsPopup => TypeResolver.Current.Resolve<DownloadsViewModel>(sessionId),
                 SettingsUsernamePopup => TypeResolver.Current.Resolve<SettingsUsernameViewModel>(sessionId),
                 SettingsDataAutoPopup => TypeResolver.Current.Resolve<SettingsDataAutoViewModel>(sessionId),
                 ChooseChatsPopup => TypeResolver.Current.Resolve<ChooseChatsViewModel>(sessionId),
@@ -418,10 +426,9 @@ namespace Telegram
                 ChatNotificationsPopup => TypeResolver.Current.Resolve<ChatNotificationsViewModel>(sessionId),
                 CreateChatPhotoPopup => TypeResolver.Current.Resolve<CreateChatPhotoViewModel>(sessionId),
                 PromoPopup => TypeResolver.Current.Resolve<PromoViewModel>(sessionId),
-                StarsPopup => TypeResolver.Current.Resolve<StarsViewModel>(sessionId),
+                StarsPage => TypeResolver.Current.Resolve<StarsViewModel>(sessionId),
                 BuyPopup => TypeResolver.Current.Resolve<BuyViewModel>(sessionId),
                 PayPopup => TypeResolver.Current.Resolve<PayViewModel>(sessionId),
-                InteractionsPopup => TypeResolver.Current.Resolve<InteractionsViewModel>(sessionId),
                 StoryInteractionsPopup => TypeResolver.Current.Resolve<StoryInteractionsViewModel>(sessionId),
                 BackgroundsPopup => TypeResolver.Current.Resolve<SettingsBackgroundsViewModel>(sessionId),
                 BackgroundPopup backgroundPopup => TypeResolver.Current.Resolve<BackgroundViewModel, IBackgroundDelegate>(backgroundPopup, sessionId),

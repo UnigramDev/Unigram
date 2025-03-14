@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -14,6 +14,24 @@ namespace Telegram.Controls
         public MenuFlyoutContent()
         {
             DefaultStyleKey = typeof(MenuFlyoutContent);
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            if (Content is Control control && FocusState != FocusState.Unfocused)
+            {
+                control.Focus(FocusState);
+            }
+        }
+
+        protected override void OnGotFocus(RoutedEventArgs e)
+        {
+            if (Content is Control control && FocusState != FocusState.Unfocused)
+            {
+                control.Focus(FocusState);
+            }
         }
 
         #region Content

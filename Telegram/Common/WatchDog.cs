@@ -1,7 +1,4 @@
-﻿//using Microsoft.AppCenter;
-//using Microsoft.AppCenter.Analytics;
-//using Microsoft.AppCenter.Crashes;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -76,6 +73,8 @@ namespace Telegram
         private static string _lastSessionErrorReportId;
         private static bool _lastSessionTerminatedUnexpectedly;
 
+        private static DateTime _launchTime;
+
         static WatchDog()
         {
             _crashLog = Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.log");
@@ -96,6 +95,7 @@ namespace Telegram
                 return;
             }
 
+            _launchTime = DateTime.UtcNow;
             Read();
 
             TaskScheduler.UnobservedTaskException += (s, args) =>
@@ -104,22 +104,11 @@ namespace Telegram
                 args.SetObserved();
             };
 
-            //Crashes.UnhandledErrorDetected = () =>
+            //Crashes.UnhandledExceptionOccurring += (s, args) =>
             //{
-            //    try
-            //    {
-            //        var error = ToException(NativeUtils.GetFatalError(false));
-            //        if (error != null)
-            //        {
-            //            Crashes.TrackCrash(error);
-            //        }
-
-            //        return null;
-            //    }
-            //    catch
-            //    {
-            //        return null;
-            //    }
+            //    args.Frames = NativeUtils.GetStowedException()
+            //        .Select(x => new NativeStackFrame(x.NativeIP, x.NativeImageBase))
+            //        .ToList();
             //};
 
             //Crashes.CreatingErrorReport += (s, args) =>
@@ -239,29 +228,14 @@ namespace Telegram
             }
         }
 
-        //class StackFrame : NativeStackFrame
-        //{
-        //    private FatalErrorFrame _frame;
-
-        //    public StackFrame(FatalErrorFrame frame)
-        //    {
-        //        _frame = frame;
-        //    }
-
-        //    public override IntPtr GetNativeIP()
-        //    {
-        //        return (IntPtr)_frame.NativeIP;
-        //    }
-
-        //    public override IntPtr GetNativeImageBase()
-        //    {
-        //        return (IntPtr)_frame.NativeImageBase;
-        //    }
-        //}
-
         public static void FatalErrorCallback(FatalError error)
         {
-            //Crashes.TrackCrash(ToException(error));
+            //var exception = ToException(error);
+            //var frames = error.Frames
+            //    .Select(x => new NativeStackFrame(x.NativeIP, x.NativeImageBase))
+            //    .ToList();
+
+            //Crashes.TrackCrash(exception, frames);
         }
 
         //private static Exception ToException(FatalError error)
@@ -273,21 +247,11 @@ namespace Telegram
 
         //    if (error.StackTrace.Contains("libvlc.dll") || error.StackTrace.Contains("libvlccore.dll"))
         //    {
-        //        return new VLCException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace, error.Frames.Select(x => new StackFrame(x)));
+        //        return new VLCException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace);
         //    }
 
-        //    return new NativeException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace, error.Frames.Select(x => new StackFrame(x)));
+        //    return new NativeException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace);
         //}
-
-        private static Exception ToException2(FatalError error)
-        {
-            if (error == null)
-            {
-                return null;
-            }
-
-            return new Exception(error.Message + Environment.NewLine + error.StackTrace);
-        }
 
         private static void FatalErrorCallback(int verbosityLevel, string message)
         {
@@ -322,28 +286,65 @@ namespace Telegram
             File.WriteAllText(GetErrorReportPath(reportId), report);
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        private class MEMORYSTATUSEX
+        {
+            public uint dwLength;
+            public uint dwMemoryLoad;
+            public ulong ullTotalPhys;
+            public ulong ullAvailPhys;
+            public ulong ullTotalPageFile;
+            public ulong ullAvailPageFile;
+            public ulong ullTotalVirtual;
+            public ulong ullAvailVirtual;
+            public ulong ullAvailExtendedVirtual;
+            public MEMORYSTATUSEX()
+            {
+                dwLength = (uint)Marshal.SizeOf<MEMORYSTATUSEX>();
+            }
+        }
+
+        [DllImport("kernelbase.dll", ExactSpelling = true, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
+
+        public static void MemoryStatus()
+        {
+            var status = new MEMORYSTATUSEX();
+            GlobalMemoryStatusEx(status);
+
+            var memoryUsage = FileSizeConverter.Convert((long)MemoryManager.AppMemoryUsage);
+            var memoryUsageAvailable = FileSizeConverter.Convert((long)status.ullAvailPhys);
+            var memoryUsageTotal = FileSizeConverter.Convert((long)status.ullTotalPhys);
+
+            Logger.Debug(string.Format("Usage: {0}, available: {1}, total: {2}", memoryUsage, memoryUsageAvailable, memoryUsageTotal));
+        }
+
         public static string BuildReport(Exception exception)
         {
             var version = VersionLabel.GetVersion();
             var language = LocaleService.Current.Id;
 
-            var next = DateTime.Now.ToTimestamp();
-            var prev = SettingsService.Current.Diagnostics.LastUpdateTime;
+            var next = DateTime.UtcNow - _launchTime;
+            var diff = next.ToDuration();
 
             var count = SettingsService.Current.Diagnostics.UpdateCount;
 
+            var status = new MEMORYSTATUSEX();
+            GlobalMemoryStatusEx(status);
+
             var memoryUsage = FileSizeConverter.Convert((long)MemoryManager.AppMemoryUsage);
-            var memoryUsageLimit = FileSizeConverter.Convert((long)MemoryManager.AppMemoryUsageLimit);
+            var memoryUsageAvailable = FileSizeConverter.Convert((long)status.ullAvailPhys);
+            var memoryUsageTotal = FileSizeConverter.Convert((long)status.ullTotalPhys);
 
             var info =
                 $"Current version: {version}\n" +
                 $"Current language: {language}\n" +
+                $"Current duration: {diff}\n" +
                 $"Memory usage: {memoryUsage}\n" +
-                $"Memory usage level: {MemoryManager.AppMemoryUsageLevel}\n" +
-                $"Memory usage limit: {memoryUsageLimit}\n" +
-                $"Time since last update: {next - prev}s\n" +
-                $"Update count: {count}\n" +
-                $"Tabs on the left: {SettingsService.Current.IsLeftTabsEnabled}\n";
+                $"Memory available: {memoryUsageAvailable}\n" +
+                $"Memory total: {memoryUsageTotal}\n" +
+                $"Update count: {count}\n";
 
             if (WindowContext.Current != null)
             {
@@ -386,11 +387,19 @@ namespace Telegram
         }
     }
 
-    //public partial class VLCException : NativeException
-    //{
-    //    public VLCException(string message, string stackTrace, IEnumerable<NativeStackFrame> frames)
-    //        : base(message, stackTrace, frames)
-    //    {
-    //    }
-    //}
+    public partial class VLCException : Exception
+    {
+        public VLCException(string message, string stackTrace)
+            : base(message + "\n" + stackTrace)
+        {
+        }
+    }
+
+    public partial class NativeException : Exception
+    {
+        public NativeException(string message, string stackTrace)
+            : base(message + "\n" + stackTrace)
+        {
+        }
+    }
 }

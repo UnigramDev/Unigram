@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -237,7 +237,7 @@ namespace Telegram.ViewModels.Chats
                 var items = previews.Previews
                     .Select((x, i) => new Story
                     {
-                        Id = i,
+                        Id = i + 1,
                         SenderChatId = _chatId,
                         Date = x.Date,
                         Content = x.Content,
@@ -291,6 +291,40 @@ namespace Telegram.ViewModels.Chats
         public bool IsPinned(StoryViewModel story)
         {
             return _pinnedStoryIds != null && _pinnedStoryIds.Contains(story.StoryId);
+        }
+
+        public void SetPinnedItems()
+        {
+            var storyIds = new List<int>();
+
+            foreach (var item in Items)
+            {
+                if (IsPinned(item))
+                {
+                    storyIds.Add(item.StoryId);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            if (storyIds.Count != _pinnedStoryIds.Count)
+            {
+                return;
+            }
+
+            ClientService.Send(new SetChatPinnedStories(_chatId, storyIds));
+        }
+
+        public void SetPinnedItem(StoryViewModel story)
+        {
+            var index = _pinnedStoryIds.IndexOf(story.StoryId);
+            if (index >= 0 && index < Items.Count)
+            {
+                Items.Remove(story);
+                Items.Insert(index, story);
+            }
         }
     }
 }

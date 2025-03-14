@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -20,15 +20,15 @@ namespace Telegram.Collections
     public partial class SearchCollection<T, TSource> : DiffObservableCollection<T>, ISupportIncrementalLoading where TSource : IEnumerable<T>
     {
         private readonly Func<object, string, TSource> _factory;
-        private readonly object _sender;
+        private object _sender;
 
-        private readonly DisposableMutex _mutex = new();
         private CancellationTokenSource _cancellation;
 
         private TSource _source;
         private ISupportIncrementalLoading _incrementalSource;
 
         private bool _initialized;
+        private bool _loading;
 
         public SearchCollection(Func<object, string, TSource> factory, IDiffHandler<T> handler)
             : this(factory, null, handler)
@@ -61,14 +61,16 @@ namespace Telegram.Collections
         public void Reload()
         {
             Update(_factory(_sender ?? this, _query.Value));
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Query)));
+        }
+
+        public void UpdateSender(object sender)
+        {
+            Update(_factory((_sender = sender) ?? this, _query.Value));
         }
 
         public void UpdateQuery(string value)
         {
-            _query.Value = value;
-            Update(_factory(_sender ?? this, value));
-            //OnPropertyChanged(new PropertyChangedEventArgs(nameof(Query)));
+            Update(_factory(_sender ?? this, _query.Value = value));
         }
 
         public CancellationTokenSource Cancel()
@@ -78,7 +80,12 @@ namespace Telegram.Collections
             return _cancellation;
         }
 
-        public async void Update(TSource source)
+        public void Update(TSource source)
+        {
+            UpdateImpl(source, false);
+        }
+
+        private async void UpdateImpl(TSource source, bool reentrancy)
         {
             if (source is ISupportIncrementalLoading incremental && incremental.HasMoreItems)
             {
@@ -87,6 +94,8 @@ namespace Telegram.Collections
 
                 if (_initialized)
                 {
+                    _loading = true;
+
                     var token = Cancel();
 
                     await incremental.LoadMoreItemsAsync(0);
@@ -94,17 +103,19 @@ namespace Telegram.Collections
 
                     if (token.IsCancellationRequested)
                     {
+                        _loading = false;
                         return;
                     }
 
                     ReplaceDiff(diff);
                     UpdateEmpty();
 
-                    if (Count < 1 && incremental.HasMoreItems)
+                    _loading = false;
+
+                    // I'm not sure in what conditions this can happen, but it happens
+                    if (Count < 1 && incremental.HasMoreItems && !reentrancy)
                     {
-                        // This is 100% illegal and will cause a lot
-                        // but really a lot of problems for sure.
-                        Add(default);
+                        UpdateImpl(source, true);
                     }
                 }
             }
@@ -114,7 +125,15 @@ namespace Telegram.Collections
         {
             return AsyncInfo.Run(async _ =>
             {
-                _initialized = true;
+                if (_loading)
+                {
+                    return new LoadMoreItemsResult
+                    {
+                        Count = 0
+                    };
+                }
+
+                _loading = true;
 
                 var token = Cancel();
                 var result = await _incrementalSource?.LoadMoreItemsAsync(count);
@@ -125,12 +144,16 @@ namespace Telegram.Collections
 
                     if (token.IsCancellationRequested)
                     {
+                        _loading = false;
                         return result;
                     }
 
                     ReplaceDiff(diff);
                     UpdateEmpty();
                 }
+
+                _initialized = true;
+                _loading = false;
 
                 return result;
             });

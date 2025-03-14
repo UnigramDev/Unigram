@@ -436,8 +436,8 @@
                                     Height="40"
                                     Grid.Column="7"
                                     IsOneWay="False"
-                                    AutomationProperties.Name="{CustomResource Shuffle}"
-                                    ToolTipService.ToolTip="{CustomResource Shuffle}" />
+                                    AutomationProperties.Name="{CustomResource ReverseOrder}"
+                                    ToolTipService.ToolTip="{CustomResource ReverseOrder}" />
 
         <!--<controls:GlyphToggleButton
             x:Name="ShuffleButton"

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -185,7 +185,7 @@ namespace Telegram.Controls
                 }
             }
 
-            if (_changingView || direction == CarouselDirection.None || !IsConnected || !PowerSavingPolicy.AreSmoothTransitionsEnabled)
+            if (_changingView || _tracker == null || direction == CarouselDirection.None || !IsConnected || !PowerSavingPolicy.AreSmoothTransitionsEnabled)
             {
                 Continue(true);
                 return;

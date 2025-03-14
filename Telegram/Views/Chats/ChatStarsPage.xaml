@@ -33,20 +33,32 @@
                                               Footer="{CustomResource BotStarsOverviewInfo}"
                                               Background="{ThemeResource SettingsItemBackground}">
                         <cells:StarAmountCell x:Name="AvailableAmount"
+                                              UsdRate="{x:Bind ViewModel.UsdRate, Mode=OneWay}"
                                               Amount="{x:Bind ViewModel.AvailableAmount, Mode=OneWay}"
                                               Text="{CustomResource BotStarsOverviewAvailableBalance}"
                                               Margin="12,8" />
                         <!--<cells:StarAmountCell x:Name="PreviousAmount"
+                                              UsdRate="{x:Bind ViewModel.UsdRate, Mode=OneWay}"
                                               Amount="{x:Bind ViewModel.PreviousAmount, Mode=OneWay}"
                                               Text="{CustomResource BotStarsOverviewAvailableBalance}"
                                               Margin="12,8" />-->
                         <cells:StarAmountCell x:Name="TotalAmount"
+                                              UsdRate="{x:Bind ViewModel.UsdRate, Mode=OneWay}"
                                               Amount="{x:Bind ViewModel.TotalAmount, Mode=OneWay}"
                                               Text="{CustomResource BotStarsOverviewTotalBalance}"
                                               Margin="12,8" />
                     </controls:HeaderedControl>
 
                     <cells:StarWithdrawCell x:Name="Withdraw" />
+
+                    <controls:HeaderedControl>
+                        <controls:BadgeButton Click="{x:Bind ViewModel.OpenAffiliate}"
+                                              Content="{CustomResource UserAffiliateProgramRowTitle}"
+                                              Badge="{CustomResource UserAffiliateProgramRowText}"
+                                              Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                              Glyph="&#xE9B5;"
+                                              IsChevronVisible="True" />
+                    </controls:HeaderedControl>
 
                     <TextBlock x:Name="TransactionsHeader"
                                x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"

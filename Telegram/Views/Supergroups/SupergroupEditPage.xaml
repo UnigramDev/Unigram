@@ -177,6 +177,13 @@
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE984;" />
+
+                    <controls:BadgeButton x:Name="AffiliatePrograms"
+                                          Content="{CustomResource ChannelAffiliatePrograms}"
+                                          Click="{x:Bind ViewModel.AffiliatePrograms}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xEAA6;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="DeletePanel">

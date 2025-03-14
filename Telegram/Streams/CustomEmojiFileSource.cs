@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -12,14 +12,27 @@ namespace Telegram.Streams
 {
     public partial class CustomEmojiFileSource : DelayedFileSource
     {
-        private readonly IClientService _clientService;
         private readonly long _customEmojiId;
 
         public CustomEmojiFileSource(IClientService clientService, long customEmojiId)
             : base(clientService, null as File)
         {
-            _clientService = clientService;
             _customEmojiId = customEmojiId;
+
+            DownloadFile(null, null);
+        }
+
+        public CustomEmojiFileSource(IClientService clientService, EmojiStatusType type)
+            : base(clientService, null as File)
+        {
+            if (type is EmojiStatusTypeCustomEmoji customEmoji)
+            {
+                _customEmojiId = customEmoji.CustomEmojiId;
+            }
+            else if (type is EmojiStatusTypeUpgradedGift upgradedGift)
+            {
+                _customEmojiId = upgradedGift.ModelCustomEmojiId;
+            }
 
             DownloadFile(null, null);
         }
@@ -45,10 +58,9 @@ namespace Telegram.Streams
                         Format = sticker.Format;
                         Width = sticker.Width;
                         Height = sticker.Height;
-                        Outline = sticker.Outline;
                         NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
 
-                        OnOutlineChanged();
+                        OnOutlineChanged(sticker.StickerValue);
                     }
                 }
 

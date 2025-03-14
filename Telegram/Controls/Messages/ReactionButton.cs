@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using Telegram.Common;
+using Telegram.Controls.Views;
 using Telegram.Converters;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -45,13 +46,36 @@ namespace Telegram.Controls.Messages
         {
             if (_reaction is MessageReaction interaction)
             {
+                string GetAutomationName(MessageSender sender, string emoji)
+                {
+                    if (_message.ClientService.TryGetUser(sender, out Td.Api.User user))
+                    {
+                        if (user.Id == _message.ClientService.Options.MyId)
+                        {
+                            return string.Format(Strings.AccDescrYouReactedWith, emoji);
+                        }
+
+                        return string.Format(Strings.AccDescrReactedWith, user.FullName(true), emoji);
+                    }
+                    else if (_message.ClientService.TryGetChat(sender, out Chat chat))
+                    {
+                        return string.Format(Strings.AccDescrReactedWith, chat.Title, emoji);
+                    }
+
+                    return Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, emoji);
+                }
+
                 if (interaction.Type is ReactionTypeEmoji emoji)
                 {
-                    return Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, emoji.Emoji);
+                    return interaction.TotalCount > 1 || interaction.RecentSenderIds.Count == 0
+                        ? Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, emoji.Emoji)
+                        : GetAutomationName(interaction.RecentSenderIds[0], emoji.Emoji);
                 }
                 else
                 {
-                    return Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, Strings.AccDescrCustomEmoji2);
+                    return interaction.TotalCount > 1 || interaction.RecentSenderIds.Count == 0
+                        ? Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, Strings.AccDescrCustomEmoji2)
+                        : GetAutomationName(interaction.RecentSenderIds[0], Strings.AccDescrCustomEmoji2);
                 }
             }
 
@@ -218,10 +242,53 @@ namespace Telegram.Controls.Messages
             //base.OnToggle();
         }
 
+        public virtual void OnContextRequested(ContextRequestedEventArgs args)
+        {
+            var message = _message;
+            if (message == null || message.IsChannelPost)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
+            var popup = new InteractionsView(message.ClientService, message.ChatId, message.Id, _reactionType)
+            {
+                Width = 264,
+                Height = 48 * _reaction.TotalCount,
+                MinHeight = 48,
+                MaxHeight = 360
+            };
+
+            void handler(InteractionsView sender, ItemClickEventArgs e)
+            {
+                sender.ItemClick -= handler;
+                flyout.Hide();
+
+                if (e.ClickedItem is AddedReaction addedReaction)
+                {
+                    message.Delegate.NavigationService.NavigateToSender(addedReaction.SenderId);
+                }
+                else if (e.ClickedItem is MessageViewer messageViewer)
+                {
+                    message.Delegate.NavigationService.NavigateToUser(messageViewer.UserId);
+                }
+            }
+
+            popup.ItemClick += handler;
+
+            flyout.Items.Add(new MenuFlyoutContent
+            {
+                Content = popup,
+                Padding = new Thickness(0)
+            });
+
+            flyout.ShowAt(this, args);
+        }
+
         private void OnClick(object sender, RoutedEventArgs e)
         {
             var chosen = _reaction;
-            if (chosen != null && Icon != null)
+            if (chosen != null && Icon != null && _message?.Id != 0)
             {
                 OnClick(_message, chosen);
             }
@@ -258,7 +325,7 @@ namespace Telegram.Controls.Messages
                     var around = await _message.ClientService.DownloadFileAsync(reaction.AroundAnimation.StickerValue, 32);
                     if (around.Local.IsDownloadingCompleted && this.IsConnected())
                     {
-                        Animate(around, true);
+                        DispatcherQueue.TryEnqueue(() => Animate(around, true));
                     }
                 }
             }
@@ -273,7 +340,7 @@ namespace Telegram.Controls.Messages
                     var around = await _message.ClientService.DownloadFileAsync(stickers.StickersValue[next].StickerValue, 32);
                     if (around.Local.IsDownloadingCompleted && this.IsConnected())
                     {
-                        Animate(around, true);
+                        DispatcherQueue.TryEnqueue(() => Animate(around, true));
                     }
                 }
             }
@@ -285,14 +352,13 @@ namespace Telegram.Controls.Messages
                 var around = TdExtensions.GetLocalFile($"Assets\\Animations\\PaidReactionAround{next}.tgs");
                 if (around.Local.IsDownloadingCompleted && this.IsConnected())
                 {
-                    Animate(around, false);
+                    DispatcherQueue.TryEnqueue(() => Animate(around, false));
                 }
             }
         }
 
         protected void Animate(File around, bool cache)
         {
-            _aroundCompleted = false;
             Icon?.Play();
 
             var popup = Overlay;
@@ -322,13 +388,9 @@ namespace Telegram.Controls.Messages
             popup.IsOpen = true;
         }
 
-        private bool _aroundCompleted;
-
         private void Continue()
         {
             Logger.Info();
-
-            _aroundCompleted = true;
 
             var popup = Overlay;
             if (popup == null)

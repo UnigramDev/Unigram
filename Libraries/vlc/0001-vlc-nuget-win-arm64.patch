@@ -1,0 +1,142 @@
+From: thirumalai-qcom <quic_tnagalin@quicinc.com>
+Subject: [PATCH] vlc-nuget-win-arm64
+
+---
+ VideoLAN.LibVLC.UWP.nuspec        |  9 +++---
+ build/VideoLAN.LibVLC.UWP.targets | 20 +++++++++++--
+ package-nuget-win-arm64.bash      | 48 +++++++++++++++++++++++++++++++
+ 3 files changed, 71 insertions(+), 6 deletions(-)
+ create mode 100644 package-nuget-win-arm64.bash
+
+diff --git a/VideoLAN.LibVLC.UWP.nuspec b/VideoLAN.LibVLC.UWP.nuspec
+index eb1c465..fcb97d0 100644
+--- a/VideoLAN.LibVLC.UWP.nuspec
++++ b/VideoLAN.LibVLC.UWP.nuspec
+@@ -9,7 +9,7 @@
+     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+     <summary>LibVLC is a modular multimedia framework</summary>
+     <description>LibVLC is a modular multimedia framework that can render video and output audio as well as encode and stream. As it is native code, you will need to use a wrapper library such as LibVLCSharp to use it from .NET.
+-    
++
+ Use this LibVLC build for Windows Universal projects (UAP) on Windows 10 Desktop, Mobile and Xbox.
+     </description>
+     <tags>libvlc;vlc;videolan;native;c/c++;video;audio;player;media;mediaplayer;codec;ffmpeg;xamarin;graphics;ios;android;linux;windows;macos;cross-platform</tags>
+@@ -21,9 +21,10 @@ Use this LibVLC build for Windows Universal projects (UAP) on Windows 10 Desktop
+   <files>
+     <!-- https://code.videolan.org/videolan/vlc/-/commit/c900a2183f8988f32e60afdcae3aa398387295f1 -->
+     <file src="build\VideoLAN.LibVLC.UWP.targets" target="build\VideoLAN.LibVLC.UWP.targets"/>
+-    <file src="build\win10-x86\native\**" target="build\win10-x86"/>
+-    <file src="build\win10-x64\native\**" target="build\win10-x64"/>
+-    <file src="build\win10-arm\native\**" target="build\win10-arm"/>
++    <!-- <file src="build\win10-x86\native\**" target="build\win10-x86"/> -->
++    <!-- <file src="build\win10-x64\native\**" target="build\win10-x64"/> -->
++    <!-- <file src="build\win10-arm\native\**" target="build\win10-arm"/> -->
++    <file src="build\win10-arm64\native\**" target="build\win10-arm64"/>
+     <file src="icon.png" target="" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/build/VideoLAN.LibVLC.UWP.targets b/build/VideoLAN.LibVLC.UWP.targets
+index 9ee8f71..1810968 100644
+--- a/build/VideoLAN.LibVLC.UWP.targets
++++ b/build/VideoLAN.LibVLC.UWP.targets
+@@ -4,6 +4,7 @@
+     <VlcUWPX64Enabled Condition="'$(VlcUWPX64Enabled)' == '' AND ('$(Platform)' == 'x64' OR '$(Platform)' == 'AnyCPU')">true</VlcUWPX64Enabled>
+     <VlcUWPX86Enabled Condition="'$(VlcUWPX86Enabled)' == '' AND ('$(Platform)' == 'x86' OR '$(Platform)' == 'AnyCPU')">true</VlcUWPX86Enabled>
+     <VlcUWPARMEnabled Condition="'$(VlcUWPARMEnabled)' == '' AND ('$(Platform)' == 'ARM')">true</VlcUWPARMEnabled>
++    <VlcUWPARM64Enabled Condition="'$(VlcUWPARM64Enabled)' == '' AND ('$(Platform)' == 'ARM64')">true</VlcUWPARM64Enabled>
+   </PropertyGroup>
+ 
+   <ItemGroup>
+@@ -11,11 +12,12 @@
+     <VlcUWPX64IncludeFiles Condition="'@(VlcUWPX64IncludeFiles)'==''" Include="libvlc.%2A;libvlccore.%2A;hrtfs\%2A%2A;locale\%2A%2A;lua\%2A%2A;plugins\%2A%2A" />
+     <VlcUWPX86IncludeFiles Condition="'@(VlcUWPX86IncludeFiles)'==''" Include="libvlc.%2A;libvlccore.%2A;hrtfs\%2A%2A;locale\%2A%2A;lua\%2A%2A;plugins\%2A%2A" />
+     <VlcUWPARMIncludeFiles Condition="'@(VlcUWPARMIncludeFiles)'==''" Include="libvlc.%2A;libvlccore.%2A;hrtfs\%2A%2A;locale\%2A%2A;lua\%2A%2A;plugins\%2A%2A" />
++    <VlcUWPARM64IncludeFiles Condition="'@(VlcUWPARM64IncludeFiles)'==''" Include="libvlc.%2A;libvlccore.%2A;hrtfs\%2A%2A;locale\%2A%2A;lua\%2A%2A;plugins\%2A%2A" />
+   </ItemGroup>
+ 
+   <ItemGroup>
+-    <SDKReference Include="Microsoft.VCLibs.120, Version=14.0">
+-      <Name>Microsoft Visual C++ 2013 Runtime Package for Windows Universal</Name>
++    <SDKReference Include="Microsoft.VCLibs.140, Version=14.0">
++      <Name>Microsoft Visual C++ 2015 Runtime Package for Windows Universal</Name>
+     </SDKReference>
+   </ItemGroup>
+ 
+@@ -67,5 +69,19 @@
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+       </Content>
+     </ItemGroup>
++
++     <!-- ARM64 -->
++    <ItemGroup Condition="'$(VlcUWPARM64Enabled)' == 'true'">
++      <!-- Expand selectors and compute absolute paths for include, exclude and MainLibraries -->
++      <VlcUWPARM64IncludeFilesFullPath Include="$([MSBuild]::Unescape($(MSBuildThisFileDirectory)..\build\win10-arm64\%(VlcUWPARM64IncludeFiles.Identity)))" />
++      <VlcUWPARM64ExcludeFilesFullPath Include="$([MSBuild]::Unescape($(MSBuildThisFileDirectory)..\build\win10-arm64\%(VlcUWPARM64ExcludeFiles.Identity)))" Condition="'%(VlcWindowsARM64ExcludeFiles.Identity)'!=''" />
++
++      <!-- We have gathered all the full path of what should be copied and what should be skipped, let's include that as Content that gets copied -->
++      <Content Include="@(VlcUWPARM64IncludeFilesFullPath)" Exclude="@(VlcUWPARM64ExcludeFilesFullPath)">
++        <Link>$([MSBuild]::MakeRelative($(MSBuildThisFileDirectory)..\build\win10-arm64\, %(FullPath)))</Link>
++        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++      </Content>
++    </ItemGroup>
++
+   </Target>
+ </Project>
+\ No newline at end of file
+diff --git a/package-nuget-win-arm64.bash b/package-nuget-win-arm64.bash
+new file mode 100644
+index 0000000..1326a9b
+--- /dev/null
++++ b/package-nuget-win-arm64.bash
+@@ -0,0 +1,48 @@
++#!/usr/bin/env bash
++set -e
++
++version=${1:?"Usage: $0 <libvlc version>"}
++downloadUrlARM64="https://web.archive.org/web/20230317114436/https://artifacts.videolan.org/vlc/nightly-win64-arm-llvm/20221105-0434/vlc-4.0.0-dev-win64-debug-4216987a.7z"
++
++packageName="VideoLAN.LibVLC.UWP"
++
++if ! command -v 7z &> /dev/null; then
++    echo "7z is not Installed. Installing with win-get.."
++    winget install --id 7zip.7zip
++fi
++export PATH=$PATH:"/c/Program Files/7-Zip"
++echo "downloading ARM64 binaries..." $downloadUrlARM64
++curl -Lsfo ARM64.7z $downloadUrlARM64
++
++
++echo "downloading NuGet..."
++curl -Lsfo nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
++echo "unzipping vlc..."
++7z x ARM64.7z -o./ARM64
++
++echo "copying ARM64 dlls, libs and headers files..."
++mkdir -p build/win10-ARM64/native/
++pwd
++cp -R ./ARM64/vlc-$version-dev/{libvlc.dll,libvlccore.dll,hrtfs,lua,plugins} build/win10-ARM64/native/
++cp ./ARM64/vlc-$version-dev/sdk/lib/{libvlc.lib,libvlccore.lib} build/win10-ARM64/native/
++cp -R ./ARM64/vlc-$version-dev/sdk/include build/win10-ARM64/native/
++
++echo "packaging VLC"
++#Download and install mono from the below link
++#https://www.mono-project.com/download/stable/#download-win
++
++echo "Checking for Mono.exe..."
++if ! command -v mono &> /dev/null; then
++    echo "Mono is not installed. Installing with winget..."
++    winget install --id Mono.Mono
++fi
++export PATH=$PATH:"/c/Program Files/Mono/bin"
++echo "Creating VLC Nupkg for Win_Arm64"
++mono nuget.exe pack "$packageName".nuspec -Version "$version"
++
++echo "cleaning up..."
++
++rm ./ARM64.7z
++rm -rf ./ARM64
++echo "=====================DONE========================="
++echo "VLC Nuget package is created in the same directory"
+\ No newline at end of file
+

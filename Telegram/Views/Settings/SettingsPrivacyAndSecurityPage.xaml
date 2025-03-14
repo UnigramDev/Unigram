@@ -82,6 +82,13 @@
                                           IsChevronVisible="True"
                                           Glyph="&#xEA0A;" />
 
+                    <controls:BadgeButton Content="{CustomResource PrivacyGifts}"
+                                          Badge="{x:Bind ViewModel.AutosaveGiftsRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenGifts}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xE9D4;" />
+
                     <controls:BadgeButton Content="{CustomResource PrivacyBirthday}"
                                           Badge="{x:Bind ViewModel.ShowBirthdateRules.Badge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
@@ -116,7 +123,7 @@
                     <controls:BadgeButton x:Name="PrivacyMessages"
                                           x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
                                           Content="{CustomResource PrivacyMessages}"
-                                          Badge="{x:Bind ConvertNewChat(ViewModel.AllowNewChatsFromUnknownUsers), Mode=OneWay}"
+                                          Badge="{x:Bind ViewModel.NewChatRules.Badge, Mode=OneWay}"
                                           IsPremiumVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Click="{x:Bind ViewModel.OpenMessages}"
@@ -166,16 +173,6 @@
 
                 <controls:HeaderedControl Header="{CustomResource Contacts}"
                                           Footer="{CustomResource SuggestContactsInfo}">
-                    <controls:BadgeButton Click="{x:Bind ViewModel.ClearContacts}"
-                                          Content="{CustomResource SyncContactsDelete}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Foreground="{ThemeResource DangerButtonBackground}"
-                                          Glyph="&#xE74D;" />
-
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
-                              Content="{CustomResource SyncContacts}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
                     <CheckBox IsChecked="{x:Bind ViewModel.IsContactsSuggestEnabled, Mode=TwoWay}"
                               Content="{CustomResource SuggestContacts}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

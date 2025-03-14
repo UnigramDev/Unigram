@@ -1,11 +1,10 @@
 <controls:GridEx x:Class="Telegram.Views.Popups.ZoomableMediaPopup"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                 xmlns:controls="using:Telegram.Controls"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:controls="using:Telegram.Controls"
                  mc:Ignorable="d"
-                 Background="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}"
                  IsHitTestVisible="False"
                  d:DesignHeight="300"
                  d:DesignWidth="400">

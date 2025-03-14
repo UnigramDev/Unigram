@@ -48,15 +48,11 @@ namespace Telegram.Views.Business.Popups
         {
             if (e.ClickedItem is EmojiData emoji)
             {
-                EmojiFlyout.Hide();
-
                 CaptionInput.InsertText(emoji.Value);
                 CaptionInput.Focus(FocusState.Programmatic);
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
-                EmojiFlyout.Hide();
-
                 CaptionInput.InsertEmoji(sticker);
                 CaptionInput.Focus(FocusState.Programmatic);
             }

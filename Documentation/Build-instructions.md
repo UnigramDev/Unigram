@@ -1,3 +1,14 @@
+## Requirements
+
+The following tools and SDKs are mandatory for the project development:
+* Visual Studio 2022, with
+    * .NET desktop development
+    * Desktop development with C++
+    * Universal Windows Platform deveopment
+	    * Windows 11 SDK (10.0.22621.0)
+ 
+## Getting started
+
 1. First, check that you have the [necessary tools](#requirements) installed.
 2. Go to <https://my.telegram.org/apps> and register a new app.
 3. Clone the repository __*recursively*__ by using `git clone --recursive https://github.com/UnigramDev/Unigram.git`.
@@ -29,16 +40,18 @@ Run the following commands to clone vcpkg:
 ```shell
 > git clone https://github.com/Microsoft/vcpkg.git
 > cd vcpkg
-> git checkout cd5e746ec203c8c3c61647e0886a8df8c1e78e41
+> git checkout cff6ed45719c0162fa7065fdac90506a0add812c
 > ./bootstrap-vcpkg.bat
 ```
+
+Apply the patch contained in `Libraries\vcpkg.patch`.
 
 Now that vcpkg is ready, you must customize the **ffmpeg** port to be built with all the flags needed by the app:
 - Navigate to `vcpkg\ports\ffmpeg`
 - Open `portfile.cmake`
 - Locate `--enable-libvpx` and replace it with the following:
 ```
---disable-everything --enable-protocol=file --enable-libopus --enable-libvpx --enable-decoder=gif --enable-decoder=h264 --enable-decoder=hevc --enable-decoder=libvpx_vp8 --enable-decoder=libvpx_vp9 --enable-decoder=mpeg4 --enable-decoder=msmpeg4v2 --enable-decoder=msmpeg4v3 --enable-decoder=opus --enable-decoder=vorbis --enable-encoder=libopus --enable-parser=h264 --enable-parser=hevc --enable-parser=mpeg4video --enable-parser=opus --enable-parser=vorbis --enable-demuxer=gif --enable-demuxer=h264 --enable-demuxer=hevc --enable-demuxer=matroska --enable-demuxer=m4v --enable-demuxer=mov --enable-demuxer=ogg --enable-muxer=ogg --enable-muxer=opus
+--disable-everything --enable-protocol=file --enable-libopus --enable-libvpx --enable-decoder=aac --enable-decoder=aac_at --enable-decoder=aac_fixed --enable-decoder=aac_latm --enable-decoder=aasc --enable-decoder=ac3 --enable-decoder=alac --enable-decoder=alac_at --enable-decoder=av1 --enable-decoder=eac3 --enable-decoder=flac --enable-decoder=gif --enable-decoder=h264 --enable-decoder=hevc --enable-decoder=libvpx_vp8 --enable-decoder=libvpx_vp9 --enable-decoder=mp1 --enable-decoder=mp1float --enable-decoder=mp2 --enable-decoder=mp2float --enable-decoder=mp3 --enable-decoder=mp3adu --enable-decoder=mp3adufloat --enable-decoder=mp3float --enable-decoder=mp3on4 --enable-decoder=mp3on4float --enable-decoder=mpeg4 --enable-decoder=msmpeg4v2 --enable-decoder=msmpeg4v3 --enable-decoder=opus --enable-decoder=pcm_alaw --enable-decoder=pcm_alaw_at --enable-decoder=pcm_f32be --enable-decoder=pcm_f32le --enable-decoder=pcm_f64be --enable-decoder=pcm_f64le --enable-decoder=pcm_lxf --enable-decoder=pcm_mulaw --enable-decoder=pcm_mulaw_at --enable-decoder=pcm_s16be --enable-decoder=pcm_s16be_planar --enable-decoder=pcm_s16le --enable-decoder=pcm_s16le_planar --enable-decoder=pcm_s24be --enable-decoder=pcm_s24daud --enable-decoder=pcm_s24le --enable-decoder=pcm_s24le_planar --enable-decoder=pcm_s32be --enable-decoder=pcm_s32le --enable-decoder=pcm_s32le_planar --enable-decoder=pcm_s64be --enable-decoder=pcm_s64le --enable-decoder=pcm_s8 --enable-decoder=pcm_s8_planar --enable-decoder=pcm_u16be --enable-decoder=pcm_u16le --enable-decoder=pcm_u24be --enable-decoder=pcm_u24le --enable-decoder=pcm_u32be --enable-decoder=pcm_u32le --enable-decoder=pcm_u8 --enable-decoder=vorbis --enable-decoder=vp8 --enable-decoder=wavpack --enable-decoder=wmalossless --enable-decoder=wmapro --enable-decoder=wmav1 --enable-decoder=wmav2 --enable-decoder=wmavoice --enable-encoder=aac --enable-encoder=libopus --enable-parser=aac --enable-parser=aac_latm --enable-parser=flac --enable-parser=gif --enable-parser=h264 --enable-parser=hevc --enable-parser=mpeg4video --enable-parser=mpegaudio --enable-parser=opus --enable-parser=vorbis --enable-demuxer=aac --enable-demuxer=flac --enable-demuxer=gif --enable-demuxer=h264 --enable-demuxer=hevc --enable-demuxer=matroska --enable-demuxer=m4v --enable-demuxer=mov --enable-demuxer=mp3 --enable-demuxer=ogg --enable-demuxer=w64 --enable-demuxer=wav --enable-muxer=mp4 --enable-muxer=ogg --enable-muxer=opus
 ```
 Now that everything is properly configured go back to the terminal and enter the following:
 ```
@@ -64,7 +77,7 @@ Here is complete instruction for TDLib binaries building, taken from the officia
 > cd td
 > git clone https://github.com/Microsoft/vcpkg.git
 > cd vcpkg
-> git checkout cd5e746ec203c8c3c61647e0886a8df8c1e78e41
+> git checkout cff6ed45719c0162fa7065fdac90506a0add812c
 > ./bootstrap-vcpkg.bat
 > ./vcpkg.exe install gperf:x86-windows openssl:arm-uwp openssl:arm64-uwp openssl:x64-uwp openssl:x86-uwp zlib:arm-uwp zlib:arm64-uwp zlib:x64-uwp zlib:x86-uwp
 > cd ..
@@ -79,11 +92,14 @@ Unigram uses VLC to play videos and audio in the app. This is required because t
 You can freely use the pre-built NuGet packages `VideoLAN.LibVLC.UWP` and `LibVLCSharp` provided by VLC, however we ship the app with binaries built by us,
 as we disable all the features that we don't need to save a bit of disk space:
 1. Clone VLC [repository](https://code.videolan.org/videolan/vlc) in `C:\Source` and check out branch `3.0.x`.
-2. Apply the patch located in `Unigram repository\Libraries\vlc`
-3. Make sure to have docker installed on your machine
+2. Apply the patch located in `Unigram repository\Libraries\vlc` by running the following command :
+```
+git apply --3way --ignore-whitespace {Your Repository Folder}\Libraries\vlc\vlc.patch
+```
+3. Make sure to have docker installed on your machine 
 4. Open the terminal and run the following commands:
 ```
-docker run -it -v C:\Source\vlc:/vlc registry.videolan.org/vlc-debian-llvm-uwp:20200706065223`
+docker run -it -v C:\Source\vlc:/vlc registry.videolan.org/vlc-debian-llvm-uwp:20200706065223
 cd ../vlc
 extras/package/win32/build.sh -a x86_64 -z -r -u -w -D=C:/Source/vlc
 ```
@@ -120,6 +136,23 @@ For reference, this is the list of VLC plugins currently needed by Unigram to pr
 
 ⚠️ TODO: there must be a way to compile WITHOUT libd3d11va and just use libavcodec
 
+### VLC-arm64-NuGet Package
+
+To build the VLC-arm64 NuGet package for Unigram, please follow these steps in Git Bash shell:
+```
+git clone https://code.videolan.org/videolan/libvlc-nuget.git
+cd libvlc-nuget
+git apply <path-to-Unigram>/Libraries/vlc/0001-vlc-nuget-win-arm64.patch
+bash ./package-nuget-win-arm64.bash 4.0.0
+cp VideoLAN.LibVLC.UWP.4.0.0.nupkg <path-to-Unigram>/Libraries/
+```
+
+1. Clone the VLC-NuGet Repository at your desired location.
+2. Navigate to the root of the cloned repository and apply the patch from `Unigram/libraries/vlc`.
+3. Run the Package Creation Script (`package-nuget-win-arm64.bash`) with version (`4.0.0`) in git bash terminal from the root folder of the `libvlc-nuget` repository.
+4. On Successful execution, the `VideoLAN.LibVLC.UWP.4.0.0.nupkg` file will be created in the same directory.
+5. Copy the generated NuGet package to the `Unigram/Libraries` directory to build Unigram for win-arm64.
+
 ### WebRTC
 Unigram uses WebRTC for calls and video chats. Since WebRTC doesn't currently support UWP, you must use our fork to build it.
 1. Click on Start Menu → Visual Studio 2022 → x64 Native Tools Command Prompt for VS 2022.
@@ -137,15 +170,6 @@ Since compiling WebRTC is time and resources consuming, it is possible to build 
   - Controls/Cells/GroupCallParticipantGridCell.xaml
   - Views/Calls/*
 
-## Requirements
-
-The following tools and SDKs are mandatory for the project development:
-* Visual Studio 2022, with
-    * .NET desktop development
-    * Desktop development with C++
-    * Universal Windows Platform deveopment
-	    * Windows 11 SDK (10.0.22621.0)
-    * [TDLib for Universal Windows Platform](https://tdlib.github.io/td/build.html?language=C%23)
 
 ### Code fails to build?
 

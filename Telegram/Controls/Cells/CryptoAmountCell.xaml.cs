@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System.Globalization;
 using Telegram.Converters;
+using Telegram.Native;
 
 namespace Telegram.Controls.Cells
 {
@@ -43,8 +44,11 @@ namespace Telegram.Controls.Cells
             var integerAmount = long.Parse(stringAmount[0]);
             var decimalAmount = stringAmount.Length > 1 ? stringAmount[1] : "0";
 
+            var culture = new CultureInfo(NativeUtils.GetCurrentCulture());
+            var separator = culture.NumberFormat.NumberDecimalSeparator;
+
             CryptocurrencyAmountLabel.Text = integerAmount.ToString("N0");
-            CryptocurrencyDecimalLabel.Text = string.Format(".{0}", decimalAmount.PadRight(2, '0'));
+            CryptocurrencyDecimalLabel.Text = string.Format("{0}{1}", separator, decimalAmount.PadRight(2, '0'));
 
             AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount((long)(value.CryptocurrencyAmount * value.UsdRate), "USD"));
         }

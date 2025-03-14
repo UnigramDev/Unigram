@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
@@ -9,9 +8,9 @@ using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Services.Keyboard;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
+using Windows.System;
 using Windows.System.Display;
 using Windows.UI.ViewManagement;
 using VirtualKey = Windows.System.VirtualKey;
@@ -20,8 +19,6 @@ namespace Telegram.Controls.Gallery
 {
     public sealed partial class GalleryTransportControls : UserControl
     {
-        private readonly DispatcherQueue _dispatcherQueue;
-
         private bool _loopingEnabled;
         private bool _playing;
         private bool _unloaded;
@@ -31,8 +28,6 @@ namespace Telegram.Controls.Gallery
         public GalleryTransportControls()
         {
             InitializeComponent();
-
-            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             var muted = SettingsService.Current.VolumeMuted;
             var volume = (int)Math.Round(SettingsService.Current.VolumeLevel * 100);
@@ -351,14 +346,22 @@ namespace Telegram.Controls.Gallery
 
         private string FormatTime(double time)
         {
-            var span = TimeSpan.FromSeconds(time);
-            if (span.TotalHours >= 1)
+            try
             {
-                return span.ToString("h\\:mm\\:ss");
+                var span = TimeSpan.FromSeconds(time);
+                if (span.TotalHours >= 1)
+                {
+                    return span.ToString("h\\:mm\\:ss");
+                }
+                else
+                {
+                    return span.ToString("mm\\:ss");
+                }
             }
-            else
+            catch
             {
-                return span.ToString("mm\\:ss");
+                // May overflow
+                return "00:00";
             }
         }
 
@@ -422,10 +425,14 @@ namespace Telegram.Controls.Gallery
 
         private void UpdatePlaybackSpeed(double value)
         {
-            value = Math.Clamp(value, 0.5, 2);
+            value = Math.Clamp(value, 0.2, 2.5);
             SettingsService.Current.Playback.VideoSpeed = value;
 
-            _player.Rate = value;
+            if (_player != null)
+            {
+                _player.Rate = value;
+            }
+
             SpeedText.Text = string.Format("{0:N1}x", value);
             SpeedButton.Badge = string.Format("{0:N1}x", value);
         }
@@ -544,41 +551,46 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        public void OnAcceleratorKeyActivated(InputKeyDownEventArgs args)
+        public new void ProcessKeyboardAccelerators(ProcessKeyboardAcceleratorEventArgs args)
         {
             if (_player == null)
             {
                 return;
             }
 
-            var keyCode = (int)args.VirtualKey;
+            var keyCode = (int)args.Key;
 
-            if (args.VirtualKey is VirtualKey.Space or VirtualKey.K && args.OnlyKey)
+            if (args.Key is VirtualKey.K && args.Modifiers == VirtualKeyModifiers.None)
             {
                 TogglePlaybackState();
                 args.Handled = true;
             }
-            else if (args.VirtualKey is VirtualKey.Up && args.OnlyKey)
+            else if (args.Key is VirtualKey.M && args.Modifiers == VirtualKeyModifiers.None)
+            {
+                Volume_Click(null, null);
+                args.Handled = true;
+            }
+            else if (args.Key is VirtualKey.Up && args.Modifiers == VirtualKeyModifiers.None)
             {
                 VolumeSlider.Value += 10;
                 args.Handled = true;
             }
-            else if (args.VirtualKey is VirtualKey.Down && args.OnlyKey)
+            else if (args.Key is VirtualKey.Down && args.Modifiers == VirtualKeyModifiers.None)
             {
                 VolumeSlider.Value -= 10;
                 args.Handled = true;
             }
-            else if ((args.VirtualKey is VirtualKey.J && args.OnlyKey) || (args.VirtualKey is VirtualKey.Left && args.OnlyControl))
+            else if ((args.Key is VirtualKey.J && args.Modifiers == VirtualKeyModifiers.None) || (args.Key is VirtualKey.Left && args.Modifiers == VirtualKeyModifiers.Control))
             {
                 _player.AddTime(-10000);
                 args.Handled = true;
             }
-            else if ((args.VirtualKey is VirtualKey.L && args.OnlyKey) || (args.VirtualKey is VirtualKey.Right && args.OnlyControl))
+            else if ((args.Key is VirtualKey.L && args.Modifiers == VirtualKeyModifiers.None) || (args.Key is VirtualKey.Right && args.Modifiers == VirtualKeyModifiers.Control))
             {
                 _player.AddTime(10000);
                 args.Handled = true;
             }
-            else if (keyCode is 188 or 190 && args.OnlyShift)
+            else if (keyCode is 188 or 190 && args.Modifiers == VirtualKeyModifiers.Shift)
             {
                 ChangePlaybackSpeed(keyCode is 188 ? -0.25f : 0.25f);
                 args.Handled = true;

@@ -876,13 +876,16 @@ namespace winrt::Telegram::Native::implementation
                 ReturnIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
             }
         }
+        
+        DWRITE_TEXT_METRICS metrics;
+        ReturnIfFailed(result, textLayout->GetMetrics(&metrics));
 
-        FLOAT x;
-        FLOAT y;
-        DWRITE_HIT_TEST_METRICS metrics;
-        ReturnIfFailed(result, textLayout->HitTestTextPosition(text.size() - 1, false, &x, &y, &metrics));
+        BOOL isTrailingHit;
+        BOOL isInside;
+        DWRITE_HIT_TEST_METRICS hitTestMetrics;
+        ReturnIfFailed(result, textLayout->HitTestPoint(metrics.width, metrics.height, &isTrailingHit, &isInside, &hitTestMetrics));
 
-        offset = float2(metrics.left + metrics.width, metrics.top + metrics.height);
+        offset = float2(hitTestMetrics.left + hitTestMetrics.width, hitTestMetrics.top + hitTestMetrics.height);
         return result;
     }
 

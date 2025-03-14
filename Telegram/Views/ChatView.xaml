@@ -12,7 +12,9 @@
                         mc:Ignorable="d"
                         Connected="OnLoaded"
                         Disconnected="OnUnloaded"
-                        SizeChanged="OnSizeChanged">
+                        SizeChanged="OnSizeChanged"
+                        PreviewKeyDown="OnPreviewKeyDown"
+                        ProcessKeyboardAccelerators="OnProcessKeyboardAccelerators">
 
     <!--<Page.Transitions>
         <TransitionCollection>
@@ -281,7 +283,7 @@
             </messages:MessageService>
         </DataTemplate>
 
-        <DataTemplate x:Name="ServiceMessageGiftTemplate">
+        <DataTemplate x:Name="ServiceMessageGiftCodeTemplate">
             <messages:MessageService x:Name="Service"
                                      Click="ServiceMessage_Click"
                                      Margin="0,4,0,0"
@@ -333,12 +335,24 @@
             </messages:MessageService>
         </DataTemplate>
 
-        <DataTemplate x:Name="ServiceMessageGiftedTemplate">
+        <DataTemplate x:Name="ServiceMessageGiftTemplate">
             <messages:MessageService>
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-                        <ContentPresenter HorizontalContentAlignment="Stretch"
-                                          VerticalContentAlignment="Stretch" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <ContentPresenter HorizontalContentAlignment="Stretch"
+                                              VerticalContentAlignment="Stretch" />
+                            <messages:ReactionsPanel x:Name="Reactions"
+                                                     MaxWidth="{StaticResource MessageMaxWidth}"
+                                                     HorizontalAlignment="Stretch"
+                                                     HorizontalContentAlignment="Center"
+                                                     Padding="0,4,0,0"
+                                                     Grid.Row="1" />
+                        </Grid>
                     </ControlTemplate>
                 </Button.Template>
                 <StackPanel>
@@ -425,6 +439,186 @@
                                     <RotateTransform Angle="45" />
                                 </Border.RenderTransform>
                                 <TextBlock x:Name="Ribbon"
+                                           Foreground="#FFFFFF"
+                                           TextAlignment="Center"
+                                           FontSize="12" />
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </StackPanel>
+            </messages:MessageService>
+        </DataTemplate>
+
+        <DataTemplate x:Name="ServiceMessageUpgradedGiftTemplate">
+            <messages:MessageService Click="ServiceMessage_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <ContentPresenter HorizontalContentAlignment="Stretch"
+                                              VerticalContentAlignment="Stretch" />
+                            <messages:ReactionsPanel x:Name="Reactions"
+                                                     MaxWidth="{StaticResource MessageMaxWidth}"
+                                                     HorizontalAlignment="Stretch"
+                                                     HorizontalContentAlignment="Center"
+                                                     Padding="0,4,0,0"
+                                                     Grid.Row="1" />
+                        </Grid>
+                    </ControlTemplate>
+                </Button.Template>
+                <StackPanel>
+                    <messages:MessageService Click="ServiceMessage_Click"
+                                             Margin="0,4,0,0"
+                                             Padding="12,2,12,0"
+                                             MaxWidth="480">
+                        <controls:FormattedTextBlock x:Name="Text"
+                                                     Foreground="#FFFFFF"
+                                                     TextAlignment="Center"
+                                                     TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                                     FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                     AutoFontSize="False"
+                                                     IsTextSelectionEnabled="False"
+                                                     HyperlinkStyle="None"
+                                                     HyperlinkForeground="#FFFFFF"
+                                                     HyperlinkFontWeight="SemiBold"
+                                                     Padding="0,0,0,4" />
+                    </messages:MessageService>
+
+                    <Grid Width="216">
+                        <Border BorderBrush="{ThemeResource MessageServiceBackgroundBrush}"
+                                BorderThickness="6"
+                                CornerRadius="12"
+                                Margin="0,4,0,0" />
+
+                        <controls:PatternBackground x:Name="Pattern"
+                                                    Margin="4,8,4,4"
+                                                    Padding="12,2,12,0"
+                                                    CornerRadius="12"
+                                                    Width="208">
+                            <controls:PatternBackground.Footer>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock x:Name="Title"
+                                               Foreground="#FFFFFF"
+                                               Text="{CustomResource BoostingCongratulations}"
+                                               TextAlignment="Center"
+                                               Style="{StaticResource SubtitleTextBlockStyle}"
+                                               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                               FontSize="16"
+                                               Grid.ColumnSpan="2" />
+                                    <TextBlock x:Name="Subtitle"
+                                               Foreground="#AAFFFFFF"
+                                               TextAlignment="Center"
+                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                               Margin="0,0,0,8"
+                                               Grid.ColumnSpan="2"
+                                               Grid.Row="1" />
+
+                                    <TextBlock x:Name="AttributeInfo"
+                                               Text="{CustomResource Gift2AttributeModel}"
+                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="#AAFFFFFF"
+                                               TextAlignment="Right"
+                                               TextWrapping="NoWrap"
+                                               Margin="0,0,4,0"
+                                               Grid.Row="2" />
+                                    <TextBlock x:Name="AttributeText"
+                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                               TextWrapping="NoWrap"
+                                               Margin="4,0,0,0"
+                                               Grid.Column="1"
+                                               Grid.Row="2" />
+
+                                    <Border x:Name="View"
+                                            Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                            CornerRadius="12"
+                                            HorizontalAlignment="Center"
+                                            Padding="12,4,12,4"
+                                            Margin="0,8,0,12"
+                                            Grid.ColumnSpan="2"
+                                            Grid.Row="3">
+                                        <TextBlock x:Name="ViewLabel"
+                                                   Text="{CustomResource Gift2UniqueView}"
+                                                   Foreground="#FFFFFF"
+                                                   TextAlignment="Center"
+                                                   Style="{StaticResource CaptionTextBlockStyle}" />
+                                    </Border>
+                                </Grid>
+                            </controls:PatternBackground.Footer>
+                            <controls:AnimatedImage x:Name="Animation"
+                                                    Width="120"
+                                                    Height="120"
+                                                    FrameSize="120,120"
+                                                    DecodeFrameType="Logical"
+                                                    IsViewportAware="True"
+                                                    LoopCount="1"
+                                                    Margin="0,-20,0,12" />
+                            <!--<StackPanel>
+
+                                <TextBlock x:Name="Title"
+                                           Foreground="#FFFFFF"
+                                           Text="{CustomResource BoostingCongratulations}"
+                                           TextAlignment="Center"
+                                           Style="{StaticResource SubtitleTextBlockStyle}"
+                                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                           FontSize="16" />
+
+                                <controls:FormattedTextBlock x:Name="Subtitle"
+                                                             Foreground="#FFFFFF"
+                                                             TextAlignment="Center"
+                                                             TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                                             FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                             AutoFontSize="False"
+                                                             IsTextSelectionEnabled="False"
+                                                             Padding="0,0,0,4"
+                                                             Margin="0,0,0,8" />
+
+                                <Border x:Name="View"
+                                        Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                        CornerRadius="12"
+                                        HorizontalAlignment="Center"
+                                        Padding="12,4,12,4"
+                                        Margin="0,0,0,12">
+                                    <TextBlock x:Name="ViewLabel"
+                                               Text="{CustomResource BoostingReceivedGiftOpenBtn}"
+                                               Foreground="#FFFFFF"
+                                               TextAlignment="Center"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                </Border>
+                            </StackPanel>-->
+                        </controls:PatternBackground>
+
+                        <Grid x:Name="RibbonRoot"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Top"
+                              Margin="0,6,2,0"
+                              Width="72"
+                              Height="72">
+                            <Path Data="M69.6569 41.1569L30.8431 2.34315C29.3429 0.842855 27.308 0 25.1863 0H2.82843C1.04662 0 0.154286 2.15429 1.41422 3.41422L68.5858 70.5858C69.8457 71.8457 72 70.9534 72 69.1716V46.8137C72 44.692 71.1571 42.6571 69.6569 41.1569Z"
+                                  Fill="{StaticResource MessageServiceBackgroundBrush}" />
+
+                            <Border Width="72"
+                                    VerticalAlignment="Center"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Margin="0,-14,-14,0">
+                                <Border.RenderTransform>
+                                    <RotateTransform Angle="45" />
+                                </Border.RenderTransform>
+                                <TextBlock x:Name="Ribbon"
+                                           Text="{CustomResource Gift2UniqueRibbon}"
                                            Foreground="#FFFFFF"
                                            TextAlignment="Center"
                                            FontSize="12" />
@@ -639,21 +833,28 @@
                     </Grid.RowDefinitions>
                     <Grid HorizontalAlignment="Left">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+                        <controls:CustomEmojiIcon x:Name="BotVerified"
+                                                  Visibility="Collapsed"
+                                                  VerticalAlignment="Bottom"
+                                                  Margin="0,-2,4,-2" />
+
                         <TextBlock x:Name="Title"
                                    Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                    Style="{StaticResource BaseTextBlockStyle}"
                                    FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                    TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis"
-                                   MaxLines="1" />
+                                   MaxLines="1"
+                                   Grid.Column="1" />
 
                         <controls:IdentityIcon x:Name="Identity"
                                                VerticalAlignment="Bottom"
                                                Margin="4,0,0,0"
-                                               Grid.Column="1" />
+                                               Grid.Column="2" />
                     </Grid>
 
                     <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
@@ -687,6 +888,7 @@
 
             <Grid x:Name="Options"
                   SizeChanged="Options_SizeChanged"
+                  Background="Transparent"
                   HorizontalAlignment="Right">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -701,7 +903,6 @@
                     <controls:GlyphButton x:Name="VideoCall"
                                           Visibility="Collapsed"
                                           Click="{x:Bind ViewModel.VideoCall}"
-                                          Style="{StaticResource HeaderGlyphButtonStyle}"
                                           Glyph="&#xE714;"
                                           FontSize="20"
                                           AutomationProperties.Name="{CustomResource VideoCall}"
@@ -711,7 +912,6 @@
                     <controls:GlyphButton x:Name="Call"
                                           Visibility="Collapsed"
                                           Click="{x:Bind ViewModel.VoiceCall}"
-                                          Style="{StaticResource HeaderGlyphButtonStyle}"
                                           Glyph="&#xE717;"
                                           AutomationProperties.Name="{CustomResource Call}"
                                           ToolTipService.ToolTip="{CustomResource Call}"
@@ -720,7 +920,6 @@
 
                     <controls:GlyphButton x:Name="SearchOption"
                                           Click="{x:Bind Search}"
-                                          Style="{StaticResource HeaderGlyphButtonStyle}"
                                           Glyph="&#xE721;"
                                           AutomationProperties.Name="{CustomResource Search}"
                                           ToolTipService.ToolTip="{CustomResource Search}"
@@ -734,6 +933,7 @@
         </Grid>
 
         <StackPanel x:Name="ClipperOuter"
+                    SizeChanged="ClipperOuter_SizeChanged"
                     VerticalAlignment="Top"
                     Canvas.ZIndex="2"
                     Grid.Row="2">
@@ -758,59 +958,71 @@
                             <chats:ChatConnectedBotHeader x:Name="ConnectedBot"
                                                           Visibility="Collapsed"
                                                           Canvas.ZIndex="1" />
-                            <Grid x:Name="Clipper">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <!--
-                        48: header
-                        40: music player
-                        40: active call
-                        40: group call
-                        40: join request
-                        32: translate
-                        -->
-                                <Border x:Name="ClipperBackground"
-                                        Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                                        Margin="0,-248,0,0" />
-
+                            <StackPanel x:Name="ClipperPinned">
                                 <messages:MessagePinned x:Name="PinnedMessage"
                                                         Click="Reply_Click"
                                                         ActionClick="PinnedAction_Click"
                                                         HideClick="{x:Bind ViewModel.HidePinnedMessage}"
                                                         ListClick="{x:Bind ViewModel.OpenPinnedMessages}"
-                                                        Visibility="Collapsed" />
+                                                        Visibility="Collapsed"
+                                                        Canvas.ZIndex="1" />
 
-                                <Grid x:Name="CallbackQueryAnswerPanel"
-                                      Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                                      Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                                      MinHeight="{ThemeResource AppBarThemeCompactHeight}">
-                                    <messages:MessageReply x:Name="CallbackQueryAnswer"
-                                                           VerticalAlignment="Stretch"
-                                                           Padding="12,6"
-                                                           IsHitTestVisible="False" />
-                                </Grid>
+                                <StackPanel x:Name="ClipperAccountInfo">
+                                    <chats:ChatAccountInfoHeader x:Name="AccountInfoHeader"
+                                                                 Visibility="Collapsed"
+                                                                 Canvas.ZIndex="1" />
 
-                                <Border x:Name="DateHeaderRelative"
-                                        SizeChanged="DateHeaderPanel_SizeChanged"
-                                        Grid.Row="1">
-                                    <Border x:Name="DateHeaderPanel"
-                                            Visibility="Collapsed"
-                                            HorizontalAlignment="Center">
-                                        <messages:MessageService x:Name="DateHeader"
-                                                                 Click="Date_Click"
-                                                                 BorderThickness="0,4,0,0">
-                                            <TextBlock x:Name="DateHeaderLabel"
-                                                       Text="31 dicembre 2017"
-                                                       Foreground="White"
-                                                       TextAlignment="Center"
-                                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                       Style="{StaticResource CaptionTextBlockStyle}" />
-                                        </messages:MessageService>
-                                    </Border>
-                                </Border>
-                            </Grid>
+                                    <Grid x:Name="Clipper">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <!--
+                            48: header
+                            40: music player
+                            40: active call
+                            40: group call
+                            40: join request
+                            32: translate
+                            -->
+                                        <Border x:Name="ClipperBackground"
+                                                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                                Margin="0,-248,0,0" />
+
+                                        <chats:ChatSponsoredHeader x:Name="Sponsored"
+                                                                   Visibility="Collapsed" />
+
+                                        <Grid x:Name="CallbackQueryAnswerPanel"
+                                              Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                                              Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                                              MinHeight="{ThemeResource AppBarThemeCompactHeight}">
+                                            <messages:MessageReply x:Name="CallbackQueryAnswer"
+                                                                   VerticalAlignment="Stretch"
+                                                                   Padding="12,6"
+                                                                   IsHitTestVisible="False" />
+                                        </Grid>
+
+                                        <Border x:Name="DateHeaderRelative"
+                                                SizeChanged="DateHeaderPanel_SizeChanged"
+                                                Grid.Row="1">
+                                            <Border x:Name="DateHeaderPanel"
+                                                    Visibility="Collapsed"
+                                                    HorizontalAlignment="Center">
+                                                <messages:MessageService x:Name="DateHeader"
+                                                                         Click="Date_Click"
+                                                                         BorderThickness="0,4,0,0">
+                                                    <TextBlock x:Name="DateHeaderLabel"
+                                                               Text="31 dicembre 2017"
+                                                               Foreground="White"
+                                                               TextAlignment="Center"
+                                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                                </messages:MessageService>
+                                            </Border>
+                                        </Border>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -875,25 +1087,12 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.Header>
-                    <Grid Padding="0,48,0,0">
-                        <!--<Grid.RowDefinitions>
-                             <RowDefinition/>
-                             <RowDefinition Height="Auto"/>
-                             </Grid.RowDefinitions>
-                             <StackPanel x:Name="BotInfoPanel"
-                             Visibility="Collapsed"
-                             Padding="{ThemeResource MessageContentPadding}"
-                             Background="{ThemeResource MessageBackgroundBrush}"
-                             BorderBrush="{ThemeResource MessageBorderBrush}"
-                             BorderThickness="0,0,0,2"
-                             VerticalAlignment="Center"
-                             MaxWidth="360"
-                             Margin="12,12,12,8">
-                             <TextBlock Text="What can this bot do?" Style="{StaticResource BaseTextBlockStyle}"/>
-                             <TextBlock Style="{StaticResource BodyTextBlockStyle}"/>
-                             </StackPanel>-->
-                        <!--<Border Height="4"
-                                Grid.Row="1" />-->
+                    <Grid x:Name="MessagesHeaderRoot"
+                          Padding="0,48,0,0">
+                        <chats:ChatAccountInfo x:Name="AccountInfo"
+                                               x:Load="False"
+                                               HorizontalAlignment="Stretch"
+                                               VerticalAlignment="Stretch" />
                     </Grid>
                 </ListView.Header>
             </chats:ChatHistoryView>
@@ -983,7 +1182,6 @@
                     </Border>
                 </StackPanel>
             </messages:MessageService>
-
 
             <chats:ChatHistoryArrows x:Name="Arrows"
                                      UnreadCount="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
@@ -1088,11 +1286,11 @@
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-
                     <Grid x:Name="ComposerHeader"
                           Visibility="Collapsed"
-                          Grid.ColumnSpan="5">
+                          Grid.ColumnSpan="6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="48" />
                             <ColumnDefinition />
@@ -1158,7 +1356,7 @@
                     </HyperlinkButton>
 
                     <Border x:Name="TextFieldPanel"
-                            Grid.ColumnSpan="2"
+                            Grid.ColumnSpan="3"
                             Grid.Column="1"
                             Grid.Row="1">
                         <chats:ChatTextBox x:Name="TextField"
@@ -1175,7 +1373,7 @@
                                            PreventKeyboardDisplayOnProgrammaticFocus="True"
                                            MinHeight="{StaticResource TelegramToolBarHeight}"
                                            MaxHeight="192"
-                                           TextChanged="TextField_TextChanged"
+                                           TextChanging="TextField_TextChanging"
                                            Capture="TextField_Tapped"
                                            Sending="TextField_Sending" />
                     </Border>
@@ -1193,164 +1391,174 @@
                                                       ToolTipService.ToolTip="{CustomResource AccDescrAttachButton}" />
                     </Border>
 
-                    <Grid x:Name="ButtonsPanel"
+                    <Grid x:Name="SecondaryButtonsPanel"
                           Grid.Column="3"
-                          Grid.ColumnSpan="2"
                           Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Grid x:Name="SecondaryButtonsPanel">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
 
-                            <!-- Button to access scheduled messages -->
-                            <Border x:Name="btnScheduled">
-                                <controls:GlyphButton x:Name="ButtonScheduled"
-                                                      Glyph="&#xE9DA;"
-                                                      Click="{x:Bind ViewModel.ShowScheduled}"
-                                                      FontSize="{StaticResource GlyphLargeFontSize}"
-                                                      AutomationProperties.Name="{CustomResource ScheduledMessages}"
-                                                      ToolTipService.ToolTip="{CustomResource ScheduledMessages}"
-                                                      VerticalAlignment="Bottom" />
-                            </Border>
+                        <!-- Button to access scheduled messages -->
+                        <Border x:Name="btnScheduled">
+                            <controls:GlyphButton x:Name="ButtonScheduled"
+                                                  Glyph="&#xE9DA;"
+                                                  Click="{x:Bind ViewModel.ShowScheduled}"
+                                                  FontSize="{StaticResource GlyphLargeFontSize}"
+                                                  AutomationProperties.Name="{CustomResource ScheduledMessages}"
+                                                  ToolTipService.ToolTip="{CustomResource ScheduledMessages}"
+                                                  VerticalAlignment="Bottom" />
+                        </Border>
 
-                            <!-- Button to toggle silent mode, channels only -->
-                            <controls:AnimatedIconToggleButton x:Name="ButtonSilent"
-                                                               Click="{x:Bind ViewModel.ToggleSilent}"
-                                                               FontSize="{StaticResource GlyphLargeFontSize}"
-                                                               VerticalAlignment="Bottom"
-                                                               Glyph="&#xE9DF;"
-                                                               CheckedGlyph="&#xE9DE;"
-                                                               Grid.Column="1">
-                                <controls:AnimatedIconToggleButton.Source>
-                                    <icons:MuteUnmute />
-                                </controls:AnimatedIconToggleButton.Source>
-                            </controls:AnimatedIconToggleButton>
+                        <!-- Button to toggle silent mode, channels only -->
+                        <controls:AnimatedIconToggleButton x:Name="ButtonSilent"
+                                                           Click="{x:Bind ViewModel.ToggleSilent}"
+                                                           FontSize="{StaticResource GlyphLargeFontSize}"
+                                                           VerticalAlignment="Bottom"
+                                                           Glyph="&#xE9DF;"
+                                                           CheckedGlyph="&#xE9DE;"
+                                                           Grid.Column="1">
+                            <controls:AnimatedIconToggleButton.Source>
+                                <icons:MuteUnmute />
+                            </controls:AnimatedIconToggleButton.Source>
+                        </controls:AnimatedIconToggleButton>
 
-                            <!-- Button to change self-destructing timer, secret chats only -->
-                            <controls:GlyphButton x:Name="ButtonTimer"
-                                                  Glyph="&#xE9DB;"
-                                                  Click="{x:Bind ViewModel.SetTimer}"
+                        <!-- Button to change self-destructing timer, secret chats only -->
+                        <controls:GlyphButton x:Name="ButtonTimer"
+                                              Glyph="&#xE9DB;"
+                                              Click="{x:Bind ViewModel.SetTimer}"
+                                              FontSize="{StaticResource GlyphLargeFontSize}"
+                                              VerticalAlignment="Bottom"
+                                              Grid.Column="1" />
+
+                        <!-- Button to use bot commands, bots/groups only -->
+                        <Border x:Name="btnCommands"
+                                VerticalAlignment="Bottom"
+                                Grid.Column="2">
+                            <controls:GlyphButton x:Name="ButtonCommands"
+                                                  Click="Commands_Click"
+                                                  AllowFocusOnInteraction="False"
+                                                  Glyph="&#xE9DC;"
+                                                  Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay}"
+                                                  FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                   FontSize="{StaticResource GlyphLargeFontSize}"
                                                   VerticalAlignment="Bottom"
+                                                  AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
+                                                  ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"
                                                   Grid.Column="1" />
+                        </Border>
 
-                            <!-- Button to use bot commands, bots/groups only -->
-                            <Border x:Name="btnCommands"
-                                    VerticalAlignment="Bottom"
-                                    Grid.Column="2">
-                                <controls:GlyphButton x:Name="ButtonCommands"
-                                                      Click="Commands_Click"
-                                                      AllowFocusOnInteraction="False"
-                                                      Glyph="&#xE9DC;"
-                                                      Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay}"
-                                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                                      FontSize="{StaticResource GlyphLargeFontSize}"
-                                                      VerticalAlignment="Bottom"
-                                                      AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
-                                                      ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"
-                                                      Grid.Column="1" />
-                            </Border>
+                        <!-- Button to use bot keyboard, bots/groups only -->
+                        <Border x:Name="btnMarkup"
+                                VerticalAlignment="Bottom"
+                                Grid.Column="2">
+                            <controls:AnimatedGlyphButton x:Name="ButtonMarkup"
+                                                          Click="Markup_Click"
+                                                          AllowFocusOnInteraction="False"
+                                                          Glyph="&#xE9D5;"
+                                                          FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                          FontSize="{StaticResource GlyphLargeFontSize}"
+                                                          VerticalAlignment="Bottom"
+                                                          AutomationProperties.Name="{CustomResource AccDescrBotKeyboard}"
+                                                          ToolTipService.ToolTip="{CustomResource AccDescrBotKeyboard}"
+                                                          Grid.Column="1" />
+                        </Border>
+                    </Grid>
 
-                            <!-- Button to use bot keyboard, bots/groups only -->
-                            <Border x:Name="btnMarkup"
-                                    VerticalAlignment="Bottom"
-                                    Grid.Column="2">
-                                <controls:AnimatedGlyphButton x:Name="ButtonMarkup"
-                                                              Click="Markup_Click"
-                                                              AllowFocusOnInteraction="False"
-                                                              Glyph="&#xE9D5;"
-                                                              FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                                              FontSize="{StaticResource GlyphLargeFontSize}"
-                                                              VerticalAlignment="Bottom"
-                                                              AutomationProperties.Name="{CustomResource AccDescrBotKeyboard}"
-                                                              ToolTipService.ToolTip="{CustomResource AccDescrBotKeyboard}"
-                                                              Grid.Column="1" />
-                            </Border>
-                        </Grid>
+                    <!-- Button to use stickers keyboard, all -->
+                    <chats:ChatStickerButton x:Name="ButtonStickers"
+                                             Redirect="Stickers_Redirect"
+                                             ControlledPanel="{x:Bind StickersPanel}"
+                                             AllowFocusOnInteraction="False"
+                                             VerticalAlignment="Bottom"
+                                             AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
+                                             Grid.Column="4"
+                                             Grid.Row="1" />
+                    <!--ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"-->
 
-                        <!-- Button to use stickers keyboard, all -->
-                        <chats:ChatStickerButton x:Name="ButtonStickers"
-                                                 Redirect="Stickers_Redirect"
-                                                 ControlledPanel="{x:Bind StickersPanel}"
-                                                 AllowFocusOnInteraction="False"
-                                                 VerticalAlignment="Bottom"
-                                                 AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
-                                                 Grid.Column="1" />
-                        <!--ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"-->
+                    <Grid x:Name="ButtonRecord"
+                          VerticalAlignment="Bottom"
+                          Grid.Column="5"
+                          Grid.Row="1"
+                          Canvas.ZIndex="1000">
+                        <chats:ChatRecordButton x:Name="btnVoiceMessage"
+                                                AllowFocusOnInteraction="False"
+                                                Glyph="&#xE9E4;"
+                                                CheckedGlyph="&#xE9E0;"
+                                                ManipulationMode="TranslateX,TranslateY">
+                            <controls:AnimatedIconToggleButton.Source>
+                                <icons:VoiceVideo />
+                            </controls:AnimatedIconToggleButton.Source>
+                        </chats:ChatRecordButton>
+                    </Grid>
 
-                        <Grid x:Name="ButtonRecord"
-                              VerticalAlignment="Bottom"
-                              Grid.Column="2"
-                              Canvas.ZIndex="1000">
-                            <chats:ChatRecordButton x:Name="btnVoiceMessage"
-                                                    AllowFocusOnInteraction="False"
-                                                    Glyph="&#xE9E4;"
-                                                    CheckedGlyph="&#xE9E0;"
-                                                    ManipulationMode="TranslateX,TranslateY">
-                                <controls:AnimatedIconToggleButton.Source>
-                                    <icons:VoiceVideo />
-                                </controls:AnimatedIconToggleButton.Source>
-                            </chats:ChatRecordButton>
-                        </Grid>
-
-                        <Grid x:Name="SendMessageButton"
-                              Grid.Column="2"
-                              Canvas.ZIndex="1001"
-                              Visibility="Collapsed">
-                            <chats:ChatSendButton x:Name="btnSendMessage"
-                                                  ContextRequested="Send_ContextRequested"
-                                                  VerticalAlignment="Bottom"
-                                                  Click="btnSendMessage_Click"
-                                                  Glyph="&#xE919;"
-                                                  AllowFocusOnInteraction="False"
-                                                  AutomationProperties.Name="{CustomResource Send}"
-                                                  ToolTipService.ToolTip="{CustomResource Send}" />
-
-                            <Grid x:Name="SendEffectRoot"
-                                  IsHitTestVisible="False"
-                                  HorizontalAlignment="Right"
-                                  VerticalAlignment="Bottom"
-                                  Margin="8,4">
-                                <Border Background="{ThemeResource SystemColorControlAccentBrush}"
-                                        Opacity="0" />
-                                <TextBlock x:Name="SendEffectText"
-                                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                           FontSize="16"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                                <controls:AnimatedImage x:Name="SendEffect"
-                                                        AutoPlay="True"
-                                                        Width="16"
-                                                        Height="16"
-                                                        FrameSize="16,16"
-                                                        DecodeFrameType="Logical"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center" />
-                                <Popup x:Name="SendEffectInteractionsPopup">
-                                    <Grid x:Name="SendEffectInteractions" />
-                                </Popup>
-                            </Grid>
-                        </Grid>
-
-                        <controls:GlyphButton x:Name="btnEdit"
+                    <Grid x:Name="SendMessageButton"
+                          Grid.Column="5"
+                          Grid.Row="1"
+                          Canvas.ZIndex="1001"
+                          Visibility="Collapsed">
+                        <chats:ChatSendButton x:Name="btnSendMessage"
+                                              ContextRequested="Send_ContextRequested"
                                               VerticalAlignment="Bottom"
                                               Click="btnSendMessage_Click"
-                                              Glyph="&#xEC61;"
+                                              Glyph="&#xE919;"
                                               AllowFocusOnInteraction="False"
-                                              Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                              FontSize="24"
-                                              Grid.Column="2"
-                                              AutomationProperties.Name="{CustomResource Done}"
-                                              ToolTipService.ToolTip="{CustomResource Done}"
-                                              Visibility="Collapsed" />
+                                              AutomationProperties.Name="{CustomResource Send}"
+                                              ToolTipService.ToolTip="{CustomResource Send}" />
+
+                        <Grid x:Name="SendEffectRoot"
+                              IsHitTestVisible="False"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Bottom"
+                              Margin="8,4">
+                            <Border Background="{ThemeResource SystemColorControlAccentBrush}"
+                                    Opacity="0" />
+                            <TextBlock x:Name="SendEffectText"
+                                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                       FontSize="16"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                            <controls:AnimatedImage x:Name="SendEffect"
+                                                    AutoPlay="True"
+                                                    Width="16"
+                                                    Height="16"
+                                                    FrameSize="16,16"
+                                                    DecodeFrameType="Logical"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center" />
+                            <Popup x:Name="SendEffectInteractionsPopup">
+                                <Grid x:Name="SendEffectInteractions" />
+                            </Popup>
+                        </Grid>
+
+                        <Button x:Name="btnPaidMessage"
+                                ContextRequested="Send_ContextRequested"
+                                Click="btnSendMessage_Click"
+                                Style="{StaticResource AccentButtonStyle}"
+                                FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                BorderBrush="{ThemeResource AccentButtonBackground}"
+                                AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
+                                ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Visibility="Collapsed"
+                                CornerRadius="16"
+                                Margin="0,8,8,8" />
                     </Grid>
+
+                    <controls:GlyphButton x:Name="btnEdit"
+                                          VerticalAlignment="Bottom"
+                                          Click="btnSendMessage_Click"
+                                          Glyph="&#xE9F4;"
+                                          AllowFocusOnInteraction="False"
+                                          Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                          FontSize="24"
+                                          Grid.Column="5"
+                                          Grid.Row="1"
+                                          AutomationProperties.Name="{CustomResource Done}"
+                                          ToolTipService.ToolTip="{CustomResource Done}"
+                                          Visibility="Collapsed" />
                 </Grid>
             </Grid>
         </ContentControl>

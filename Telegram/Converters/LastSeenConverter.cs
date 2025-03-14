@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2024
+// Copyright Fela Ameghino & Contributors 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -62,18 +62,18 @@ namespace Telegram.Converters
             }
         }
 
-        public static string GetLabel(User user, bool details)
+        public static string GetLabel(User user, bool details, bool relative = false)
         {
             if (user == null)
             {
                 return string.Empty;
             }
 
-            if (IsServiceUser(user))
+            if (user.Id == 777000)
             {
                 return Strings.ServiceNotifications;
             }
-            else if (IsSupportUser(user))
+            else if (user.IsSupport)
             {
                 return Strings.SupportStatus;
             }
@@ -97,7 +97,7 @@ namespace Telegram.Converters
 
             if (user.Status is UserStatusOffline offline)
             {
-                return FormatDateOnline(offline.WasOnline);
+                return FormatDateOnline(offline.WasOnline, relative);
             }
             else if (user.Status is UserStatusOnline online)
             {
@@ -107,7 +107,7 @@ namespace Telegram.Converters
                 }
                 else
                 {
-                    return FormatDateOnline(online.Expires);
+                    return FormatDateOnline(online.Expires, relative);
                 }
             }
             else if (user.Status is UserStatusRecently)
@@ -128,17 +128,32 @@ namespace Telegram.Converters
             }
         }
 
-        private static string FormatDateOnline(long date)
+        private static string FormatDateOnline(long till, bool relative)
         {
             try
             {
                 var rightNow = DateTime.Now;
+                var now = rightNow.ToTimestamp();
+
                 int day = rightNow.DayOfYear;
                 int year = rightNow.Year;
 
-                var online = Formatter.ToLocalTime(date);
+                var online = Formatter.ToLocalTime(till);
                 int dateDay = online.DayOfYear;
                 int dateYear = online.Year;
+
+                if (relative)
+                {
+                    var minutes = (now - till) / 60;
+                    if (minutes < 1)
+                    {
+                        return Strings.LastSeenNow;
+                    }
+                    else if (minutes < 60)
+                    {
+                        return Locale.Declension(Strings.R.LastSeenMinutes, minutes);
+                    }
+                }
 
                 if (dateDay == day && year == dateYear)
                 {
@@ -148,7 +163,7 @@ namespace Telegram.Converters
                 {
                     return string.Format(Strings.LastSeenFormatted, string.Format(Strings.YesterdayAtFormatted, Formatter.Time(online)));
                 }
-                else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
+                else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - till) < 31536000000L)
                 {
                     string format = string.Format(Strings.formatDateAtTime, online.ToString(Strings.formatterMonth), Formatter.Time(online));
                     return string.Format(Strings.LastSeenDateFormatted, format);
@@ -167,24 +182,37 @@ namespace Telegram.Converters
             return "LOC_ERR";
         }
 
-        public static bool IsServiceUser(User user)
+        public static double OnlinePhraseChange(UserStatus status, DateTime now)
         {
-            return user.Id == 777000;
+            return Math.Clamp(OnlinePhraseChangeInSeconds(status, now.ToTimestamp()), 0, 86400);
         }
 
-        public static bool IsSupportUser(User user)
+        public static double OnlinePhraseChangeInSeconds(UserStatus status, int now)
         {
-            return user != null && (user.IsSupport || user.Id / 1000 == 777 || user.Id == 333000 ||
-                    user.Id == 4240000 || user.Id == 4240000 || user.Id == 4244000 ||
-                    user.Id == 4245000 || user.Id == 4246000 || user.Id == 410000 ||
-                    user.Id == 420000 || user.Id == 431000 || user.Id == 431415000 ||
-                    user.Id == 434000 || user.Id == 4243000 || user.Id == 439000 ||
-                    user.Id == 449000 || user.Id == 450000 || user.Id == 452000 ||
-                    user.Id == 454000 || user.Id == 4254000 || user.Id == 455000 ||
-                    user.Id == 460000 || user.Id == 470000 || user.Id == 479000 ||
-                    user.Id == 796000 || user.Id == 482000 || user.Id == 490000 ||
-                    user.Id == 496000 || user.Id == 497000 || user.Id == 498000 ||
-                    user.Id == 4298000);
+            var till = status switch
+            {
+                UserStatusOnline online => online.Expires,
+                UserStatusOffline offline => offline.WasOnline,
+                _ => -1
+            };
+
+            if (till < 0)
+            {
+                return till;
+            }
+
+            if (till > now)
+            {
+                return till - now;
+            }
+
+            var minutes = (now - till) / 60;
+            if (minutes < 60)
+            {
+                return (minutes + 1) * 60 - (now - till);
+            }
+
+            return -1;
         }
     }
 }

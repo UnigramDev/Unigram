@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
@@ -58,7 +59,7 @@ namespace Telegram.Views
         public override HostedPagePositionBase GetPosition()
         {
             ViewModel.Delegate = null;
-            return new HostedPageListViewPosition(DataContext, ScrollingHost.VerticalOffset);
+            return new HostedPageListViewPosition(DataContext, ScrollingHost.VerticalOffset, string.Empty);
         }
 
         public override void SetPosition(HostedPagePositionBase position)
@@ -71,7 +72,7 @@ namespace Telegram.Views
                 void handler(object sender, RoutedEventArgs e)
                 {
                     ScrollingHost.Loaded -= handler;
-                    ScrollingHost.ChangeView(null, listViewPosition.VerticalOffset, null, true);
+                    ScrollingHost.ChangeView(null, listViewPosition.ScrollPosition, null, true);
                 }
 
                 ScrollingHost.Loaded += handler;
@@ -429,11 +430,11 @@ namespace Telegram.Views
             var container = scrollingHost.Items[index];
             if (container is MessageWithOwner message)
             {
-                DateHeaderLabel.Text = Formatter.MonthGrouping(message.Date);
+                DateHeaderLabel.Text = Formatter.Date(message.Date, Strings.formatterMonthYear);
             }
             else if (container is StoryViewModel story)
             {
-                DateHeaderLabel.Text = Formatter.MonthGrouping(story.Date);
+                DateHeaderLabel.Text = Formatter.Date(story.Date, Strings.formatterMonthYear);
             }
             else
             {
@@ -487,6 +488,8 @@ namespace Telegram.Views
         {
             if (Navigation.SelectedItem is ProfileTabItem page && (page.Parameter != null || page.Type != MediaFrame.Content?.GetType()))
             {
+                Logger.Info(page.Type);
+
                 NavigationTransitionInfo transition = _prevSelectedIndex == -1
                     ? new SuppressNavigationTransitionInfo()
                     : new SlideNavigationTransitionInfo
@@ -518,6 +521,123 @@ namespace Telegram.Views
             }
 
             flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
+
+        private void Navigation_ItemContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var item = Navigation.ItemFromContainer(sender) as ProfileTabItem;
+            if (item != ViewModel.SelectedItem)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
+
+            if (item.Type == typeof(ProfileMediaTabPage))
+            {
+                var photos = new ToggleMenuFlyoutItem
+                {
+                    Text = Strings.MediaShowPhotos,
+                    IsChecked = ViewModel.Media.Source.Filter is SearchMessagesFilterPhoto or SearchMessagesFilterPhotoAndVideo
+                };
+
+                var videos = new ToggleMenuFlyoutItem
+                {
+                    Text = Strings.MediaShowVideos,
+                    IsChecked = ViewModel.Media.Source.Filter is SearchMessagesFilterVideo or SearchMessagesFilterPhotoAndVideo
+                };
+
+                photos.Click += MediaShowPhotos_Click;
+                videos.Click += MediaShowVideos_Click;
+
+                flyout.Items.Add(photos);
+                flyout.Items.Add(videos);
+            }
+            else if (item.Type == typeof(ProfileGiftsTabPage))
+            {
+                var sort = new MenuFlyoutItem
+                {
+                    Text = ViewModel.GiftsTab.SortByPrice
+                        ? Strings.Gift2FilterSortByValue
+                        : Strings.Gift2FilterSortByDate
+                };
+
+                var unlimited = new ToggleMenuFlyoutItem
+                {
+                    Text = Strings.Gift2FilterUnlimited,
+                    IsChecked = !ViewModel.GiftsTab.ExcludeUnlimited
+                };
+
+                var limited = new ToggleMenuFlyoutItem
+                {
+                    Text = Strings.Gift2FilterLimited,
+                    IsChecked = !ViewModel.GiftsTab.ExcludeLimited
+                };
+
+                var unique = new ToggleMenuFlyoutItem
+                {
+                    Text = Strings.Gift2FilterUnique,
+                    IsChecked = !ViewModel.GiftsTab.ExcludeUpgraded
+                };
+
+                sort.Click += (s, args) => ViewModel.GiftsTab.SortByPrice = !ViewModel.GiftsTab.SortByPrice;
+                unlimited.Click += (s, args) => ViewModel.GiftsTab.ExcludeUnlimited = !ViewModel.GiftsTab.ExcludeUnlimited;
+                limited.Click += (s, args) => ViewModel.GiftsTab.ExcludeLimited = !ViewModel.GiftsTab.ExcludeLimited;
+                unique.Click += (s, args) => ViewModel.GiftsTab.ExcludeUpgraded = !ViewModel.GiftsTab.ExcludeUpgraded;
+
+                flyout.Items.Add(sort);
+                flyout.CreateFlyoutSeparator();
+                flyout.Items.Add(unlimited);
+                flyout.Items.Add(limited);
+                flyout.Items.Add(unique);
+                if (ViewModel.ClientService.IsSavedMessages(ViewModel.Chat) || ViewModel.ClientService.TryGetSupergroup(ViewModel.Chat, out Supergroup supergroup) && supergroup.CanPostMessages())
+                {
+                    var displayed = new ToggleMenuFlyoutItem
+                    {
+                        Text = Strings.Gift2FilterDisplayed,
+                        IsChecked = !ViewModel.GiftsTab.ExcludeSaved
+                    };
+
+                    var hidden = new ToggleMenuFlyoutItem
+                    {
+                        Text = Strings.Gift2FilterHidden,
+                        IsChecked = !ViewModel.GiftsTab.ExcludeUnsaved
+                    };
+
+                    displayed.Click += (s, args) => ViewModel.GiftsTab.ExcludeSaved = !ViewModel.GiftsTab.ExcludeSaved;
+                    hidden.Click += (s, args) => ViewModel.GiftsTab.ExcludeUnsaved = !ViewModel.GiftsTab.ExcludeUnsaved;
+
+                    flyout.CreateFlyoutSeparator();
+                    flyout.Items.Add(displayed);
+                    flyout.Items.Add(hidden);
+                }
+            }
+
+            flyout.ShowAt(sender, FlyoutPlacementMode.Bottom);
+        }
+
+        private void MediaShowPhotos_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.Media.Source.Filter is SearchMessagesFilterPhotoAndVideo)
+            {
+                ViewModel.Media.UpdateSender(new SearchMessagesFilterVideo());
+            }
+            else if (ViewModel.Media.Source.Filter is SearchMessagesFilterVideo)
+            {
+                ViewModel.Media.UpdateSender(new SearchMessagesFilterPhotoAndVideo());
+            }
+        }
+
+        private void MediaShowVideos_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.Media.Source.Filter is SearchMessagesFilterPhotoAndVideo)
+            {
+                ViewModel.Media.UpdateSender(new SearchMessagesFilterPhoto());
+            }
+            else if (ViewModel.Media.Source.Filter is SearchMessagesFilterPhoto)
+            {
+                ViewModel.Media.UpdateSender(new SearchMessagesFilterPhotoAndVideo());
+            }
         }
 
         #region Selection

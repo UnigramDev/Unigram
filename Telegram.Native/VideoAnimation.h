@@ -71,7 +71,7 @@ namespace winrt::Telegram::Native::implementation
 
             if (video_dec_ctx)
             {
-                avcodec_close(video_dec_ctx);
+                avcodec_free_context(&video_dec_ctx);
                 video_dec_ctx = nullptr;
             }
             if (fmt_ctx)
@@ -129,6 +129,8 @@ namespace winrt::Telegram::Native::implementation
         void PrepareToSeek();
         void SeekToMilliseconds(int64_t ms, bool precise);
 
+        IRandomAccessStream GetAlbumCover();
+
         int RenderSync(IBuffer buffer, int32_t width, int32_t height, bool preview, int32_t& seconds);
         int RenderSync(uint8_t* pixels, int32_t width, int32_t height, bool preview, int32_t& seconds, bool& completed);
 
@@ -179,6 +181,11 @@ namespace winrt::Telegram::Native::implementation
             return audio_stream_idx != -1;
         }
 
+        bool HasAlbumCover()
+        {
+            return album_stream_idx != -1;
+        }
+
     private:
         void decode_frame(uint8_t* pixels, int32_t width, int32_t height);
         static void requestFd(VideoAnimation* info);
@@ -187,7 +194,6 @@ namespace winrt::Telegram::Native::implementation
 
         static void RedirectLoggingOutputs(void* ptr, int level, const char* fmt, va_list vargs);
 
-
         winrt::slim_mutex m_lock;
 
         AVFormatContext* fmt_ctx = nullptr;
@@ -195,6 +201,7 @@ namespace winrt::Telegram::Native::implementation
         HANDLE fileEvent = INVALID_HANDLE_VALUE;
         int video_stream_idx = -1;
         int audio_stream_idx = -1;
+        int album_stream_idx = -1;
         AVStream* video_stream = nullptr;
         AVStream* audio_stream = nullptr;
         AVCodecContext* video_dec_ctx = nullptr;

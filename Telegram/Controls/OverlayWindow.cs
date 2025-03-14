@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -15,8 +15,6 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
-using Telegram.Services;
-using Telegram.Services.Keyboard;
 using Telegram.Views.Host;
 using Windows.Foundation;
 
@@ -54,13 +52,7 @@ namespace Telegram.Controls
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
             var pointer = e.GetCurrentPoint(this);
-            if (!IsConstrainedToRootBounds && InputListener.IsPointerGoBackGesture(pointer))
-            {
-                var args = new BackRequestedRoutedEventArgs();
-                OnBackRequested(args);
-                e.Handled = args.Handled;
-            }
-            else if (pointer.Properties.IsLeftButtonPressed && IsLightDismissEnabled && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
+            if (pointer.Properties.IsLeftButtonPressed && IsLightDismissEnabled && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
             {
                 OnBackRequested(new BackRequestedRoutedEventArgs());
             }
@@ -103,10 +95,6 @@ namespace Telegram.Controls
             //window.UpdateTitleBar();
         }
 
-        public bool IsConstrainedToRootBounds => _popupHost?.IsConstrainedToRootBounds ?? !CanUnconstrainFromRootBounds;
-
-        public bool CanUnconstrainFromRootBounds => SettingsService.Current.FullScreenGallery;
-
         public async Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot)
         {
             Current = this;
@@ -131,11 +119,6 @@ namespace Telegram.Controls
                 _popupHost.Loaded += PopupHost_Loaded;
                 _popupHost.Opened += PopupHost_Opened;
                 _popupHost.Closed += PopupHost_Closed;
-
-                if (CanUnconstrainFromRootBounds)
-                {
-                    _popupHost.ShouldConstrainToRootBounds = false;
-                }
 
                 Unloaded += PopupHost_Unloaded;
             }

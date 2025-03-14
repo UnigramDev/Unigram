@@ -1,6 +1,9 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Globalization;
 using Telegram.Converters;
+using Telegram.Native;
+using Telegram.Td.Api;
 
 namespace Telegram.Controls.Cells
 {
@@ -17,26 +20,30 @@ namespace Telegram.Controls.Cells
             set => TextLabel.Text = value;
         }
 
-        public CryptoAmount Amount
+        public double UsdRate { get; set; }
+
+        public StarAmount Amount
         {
             set => UpdateAmount(value);
         }
 
-        public void UpdateAmount(CryptoAmount value)
+        public void UpdateAmount(StarAmount amount)
         {
-            if (value == null)
+            if (amount == null)
             {
                 return;
             }
 
-            var doubleAmount = Formatter.Amount(value.CryptocurrencyAmount, value.Cryptocurrency);
-            var stringAmount = doubleAmount.ToString(CultureInfo.InvariantCulture).Split('.');
-            var integerAmount = long.Parse(stringAmount[0]);
-            var decimalAmount = stringAmount.Length > 1 ? stringAmount[1] : "0";
+            var integerAmount = Math.Abs(amount.StarCount);
+            var decimalAmount = Math.Abs(amount.NanostarCount);
+
+            var culture = new CultureInfo(NativeUtils.GetCurrentCulture());
+            var separator = culture.NumberFormat.NumberDecimalSeparator;
 
             CryptocurrencyAmountLabel.Text = integerAmount.ToString("N0");
+            CryptocurrencyDecimalLabel.Text = decimalAmount > 0 ? string.Format("{0}{1}", separator, decimalAmount) : string.Empty;
 
-            AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount((long)(value.CryptocurrencyAmount * value.UsdRate), "USD"));
+            AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount((long)(integerAmount * UsdRate), "USD"));
         }
     }
 }

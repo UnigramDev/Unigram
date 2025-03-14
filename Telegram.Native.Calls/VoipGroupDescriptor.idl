@@ -14,5 +14,7 @@ namespace Telegram.Native.Calls
         VoipCaptureBase VideoCapture;
 
         Boolean IsNoiseSuppressionEnabled;
+
+        Int64 AudioProcessId;
     }
 }

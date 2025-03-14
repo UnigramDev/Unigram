@@ -1,6 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4" xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2" xmlns:uap6="http://schemas.microsoft.com/appx/manifest/uap/windows10/6" IgnorableNamespaces="uap uap3 uap4 uap5 mp rescap desktop desktop4 iot2 uap6">
-  <Identity Name="38833FF26BA1D.UnigramExperimental2" Publisher="CN=Fela" Version="11.1.6.10131" />
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+         xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
+         xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+         xmlns:uap6="http://schemas.microsoft.com/appx/manifest/uap/windows10/6"
+         xmlns:uap11="http://schemas.microsoft.com/appx/manifest/uap/windows10/11"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+         xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+         IgnorableNamespaces="mp uap uap3 uap4 uap5 uap6 uap11 rescap desktop desktop4">
+  <Identity Name="38833FF26BA1D.UnigramExperimental2" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="11.8.0.10781" />
   <mp:PhoneIdentity PhoneProductId="bf16cc61-265a-4c8a-9ead-f4f77e6a0a97" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Unigram Experimental</DisplayName>
@@ -37,7 +48,6 @@
             <uap3:Host Name="telegram.dog" />
           </uap3:AppUriHandler>
         </uap3:Extension>
-        <uap4:Extension Category="windows.contactPanel" />
         <uap5:Extension Category="windows.startupTask" Executable="Telegram.exe" EntryPoint="Telegram.App">
           <uap5:StartupTask TaskId="Telegram" Enabled="false" DisplayName="Unigram" />
         </uap5:Extension>
@@ -53,21 +63,6 @@
         </uap:Extension>
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="tonsite">
-            <uap:DisplayName>Unigram</uap:DisplayName>
-          </uap:Protocol>
-        </uap:Extension>
-        <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="ms-voip-call">
-            <uap:DisplayName>Unigram</uap:DisplayName>
-          </uap:Protocol>
-        </uap:Extension>
-        <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="ms-ipmessaging">
-            <uap:DisplayName>Unigram</uap:DisplayName>
-          </uap:Protocol>
-        </uap:Extension>
-        <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="ms-contact-profile">
             <uap:DisplayName>Unigram</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
@@ -102,9 +97,9 @@
     <uap:Capability Name="removableStorage" />
     <uap:Capability Name="picturesLibrary" />
     <uap:Capability Name="voipCall" />
-    <uap:Capability Name="contacts" />
     <uap3:Capability Name="backgroundMediaPlayback" />
     <uap6:Capability Name="graphicsCapture" />
+    <uap11:Capability Name="graphicsCaptureProgrammatic"/>
     <rescap:Capability Name="packageManagement" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="oneProcessVoIP" />

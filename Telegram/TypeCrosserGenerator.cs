@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -38,9 +38,9 @@ namespace Telegram
                     foreach (var item in properties)
                     {
                         var property = item.PropertyType;
-                        if (property.IsGenericType)
+                        while (property.IsGenericType)
                         {
-                            property = item.PropertyType.GenericTypeArguments[0];
+                            property = property.GenericTypeArguments[0];
                         }
 
                         if (property == typeof(Telegram.Td.Api.File) || typesToCross.Contains(property))
@@ -81,25 +81,16 @@ namespace Telegram
             var builder = new FormattedBuilder();
             builder.AppendLine("public void ProcessFiles(object target)");
             builder.AppendLine("{");
-
-            var first = true;
+            builder.AppendLine("switch (target)");
+            builder.AppendLine("{");
 
             foreach (var type in typesToCrossMap.OrderBy(x => x.Key.Name))
             {
                 var key = type.Key.Name;
                 var name = type.Key.Name.CamelCase();
 
-                if (first)
-                {
-                    builder.AppendLine($"if (target is {key} {name})");
-                    first = false;
-                }
-                else
-                {
-                    builder.AppendLine($"else if (target is {key} {name})");
-                }
-
-                builder.AppendLine("{");
+                builder.AppendLine($"case {key} {name}:");
+                builder.Increment();
 
                 foreach (var property in type.Value.OrderBy(x => x.Key))
                 {
@@ -107,7 +98,16 @@ namespace Telegram
 
                     if (property.Value.IsGenericType)
                     {
-                        builder.AppendLine($"foreach (var item in {name}.{propertyKey})");
+                        var argument = property.Value.GenericTypeArguments[0];
+                        if (argument.IsGenericType)
+                        {
+                            builder.AppendLine($"foreach (var item in {name}.{propertyKey}.SelectMany(x => x))");
+                        }
+                        else
+                        {
+                            builder.AppendLine($"foreach (var item in {name}.{propertyKey})");
+                        }
+
                         builder.AppendLine("{");
 
                         builder.AppendLine($"ProcessFiles(item);");
@@ -130,7 +130,8 @@ namespace Telegram
                     builder.AppendLine("}");
                 }
 
-                builder.AppendLine("}");
+                builder.AppendLine("break;");
+                builder.Decrement();
             }
 
             builder.AppendLine("}");
@@ -160,6 +161,16 @@ namespace Telegram
         public void Append(string text)
         {
             _builder.Append(text);
+        }
+
+        public void Increment()
+        {
+            _indent++;
+        }
+
+        public void Decrement()
+        {
+            _indent--;
         }
 
         public void AppendLine(string text)

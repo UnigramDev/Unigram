@@ -457,7 +457,7 @@ namespace Telegram.Controls.Stories
                 "(_.Padding - _.First * 12) * (1 - _.Progress)");
 
             var storiesVisualOffsetAnimation = compositor.CreateExpressionAnimation(
-                "-22 + (48 * _.Progress)");
+                "-24 + (48 * _.Progress)");
 
             var headerVisualOffsetAnimation = compositor.CreateExpressionAnimation(
                 "84 * _.Progress");

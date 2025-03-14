@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -25,6 +25,7 @@ using Telegram.Views;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
+using Telegram.Views.Stars.Popups;
 using Telegram.Views.Supergroups;
 using Telegram.Views.Supergroups.Popups;
 using Telegram.Views.Users;
@@ -58,6 +59,7 @@ namespace Telegram.ViewModels
         public ProfileStoriesTabViewModel ArchivedStoriesTab => _archivedStoriesTabViewModel;
         public ProfileGroupsTabViewModel GroupsTab => _groupsTabViewModel;
         public ProfileChannelsTabViewModel ChannelsTab => _channelsTabViewModel;
+        public ProfileBotsTabViewModel BotsTab => _botsTabViewModel;
         public ProfileGiftsTabViewModel GiftsTab => _giftsTabViewModel;
         public SupergroupMembersViewModel MembersTab => _membersTabVieModel;
 
@@ -131,18 +133,9 @@ namespace Telegram.ViewModels
                     Delegate?.UpdateUserFullInfo(chat, item, cache, false, false);
                 }
 
-                if (item.Type is UserTypeBot { CanBeEdited: true })
+                if (cache?.BotInfo?.CanGetRevenueStatistics is true || item.Type is UserTypeBot { CanBeEdited: true })
                 {
-                    async void UpdateStarCount()
-                    {
-                        var response = await ClientService.GetStarTransactionsAsync(new MessageSenderUser(item.Id), string.Empty, null, string.Empty, 1);
-                        if (response is StarTransactions transactions)
-                        {
-                            StarCount = transactions.StarCount;
-                        }
-                    }
-
-                    UpdateStarCount();
+                    UpdateBalance(chat.Id, new MessageSenderUser(item.Id));
                 }
             }
             else if (chat.Type is ChatTypeSecret secretType)
@@ -186,6 +179,11 @@ namespace Telegram.ViewModels
                 {
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
+
+                if (cache?.CanGetRevenueStatistics is true || cache?.CanGetStarRevenueStatistics is true)
+                {
+                    UpdateBalance(chat.Id, new MessageSenderChat(chat.Id));
+                }
             }
 
             return base.OnNavigatedToAsync(parameter, mode, state);
@@ -209,7 +207,20 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatNotificationSettings>(Handle);
         }
 
+        private async void UpdateBalance(long chatId, MessageSender senderId)
+        {
+            var response = await ClientService.SendAsync(new GetStarTransactions(senderId, string.Empty, null, string.Empty, 1));
+            if (response is StarTransactions transactions)
+            {
+                StarCount = transactions.StarAmount;
+            }
 
+            var response2 = await ClientService.SendAsync(new GetChatRevenueStatistics(chatId, false));
+            if (response2 is ChatRevenueStatistics statistics)
+            {
+                CryptoCount = statistics.RevenueAmount.BalanceAmount;
+            }
+        }
 
         public void Handle(UpdateUser update)
         {
@@ -240,7 +251,15 @@ namespace Telegram.ViewModels
             if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
             {
                 LinkedChatId = update.UserFullInfo.PersonalChatId;
-                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ClientService.GetUser(update.UserId), update.UserFullInfo, false, false));
+                BeginOnUIThread(() =>
+                {
+                    Delegate?.UpdateUserFullInfo(chat, ClientService.GetUser(update.UserId), update.UserFullInfo, false, false);
+
+                    if (update.UserFullInfo.BotInfo?.CanGetRevenueStatistics is true)
+                    {
+                        UpdateBalance(chat.Id, new MessageSenderUser(update.UserId));
+                    }
+                });
             }
             else if (chat.Type is ChatTypeSecret secret && secret.UserId == update.UserId)
             {
@@ -321,6 +340,11 @@ namespace Telegram.ViewModels
                 {
                     MembersTab.UpdateMembers();
                     Delegate?.UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo);
+
+                    if (update.SupergroupFullInfo?.CanGetRevenueStatistics is true || update.SupergroupFullInfo?.CanGetStarRevenueStatistics is true)
+                    {
+                        UpdateBalance(chat.Id, new MessageSenderChat(chat.Id));
+                    }
                 });
             }
         }
@@ -662,7 +686,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void GiftPremium()
+        public void GiftPremium()
         {
             var chat = _chat;
             if (chat == null)
@@ -670,10 +694,14 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (ClientService.TryGetUser(chat, out User user)
-                && ClientService.TryGetUserFull(chat, out UserFullInfo userFull))
+            if (ClientService.TryGetUser(chat, out User user) &&
+                ClientService.TryGetUserFull(chat, out UserFullInfo fullInfo))
             {
-                await ShowPopupAsync(new GiftPopup(ClientService, NavigationService, user, userFull.PremiumGiftOptions));
+                ShowPopup(new GiftPopup(ClientService, NavigationService, user, fullInfo));
+            }
+            else
+            {
+                ShowPopup(new GiftPopup(ClientService, NavigationService, chat));
             }
         }
 
@@ -977,24 +1005,39 @@ namespace Telegram.ViewModels
 
         public async void ShowPromo()
         {
-            if (Chat?.EmojiStatus != null)
+            if (Chat?.EmojiStatus?.Type is EmojiStatusTypeCustomEmoji emojiStatusTypeCustomEmoji)
             {
-                var response = await ClientService.SendAsync(new GetCustomEmojiStickers(new[] { Chat.EmojiStatus.CustomEmojiId }));
+                var response = await ClientService.SendAsync(new GetCustomEmojiStickers(new[] { emojiStatusTypeCustomEmoji.CustomEmojiId }));
                 if (response is Stickers stickers)
                 {
                     var second = await ClientService.SendAsync(new GetStickerSet(stickers.StickersValue[0].SetId));
                     if (second is StickerSet stickerSet)
                     {
-                        NavigationService.ShowPopup(new PromoPopup(ClientService, Chat, stickerSet));
+                        NavigationService.ShowPopup(new PromoPopup(ClientService, Chat, stickerSet), new PremiumSourceFeature(new PremiumFeatureEmojiStatus()));
                         return;
                     }
                 }
             }
+            else if (Chat?.EmojiStatus?.Type is EmojiStatusTypeUpgradedGift emojiStatusTypeUpgradedGift)
+            {
+
+            }
 
             if (ClientService.TryGetUser(Chat, out User user) && user.IsPremium)
             {
-                NavigationService.ShowPopup(new PromoPopup(ClientService, Chat, null));
+                NavigationService.ShowPopup(new PromoPopup(ClientService, Chat, null), new PremiumSourceFeature(new PremiumFeatureEmojiStatus()));
             }
+        }
+
+        public void OpenChat()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.NavigateToChat(chat.Id, createNewWindow: true);
         }
 
         public async void DeleteChat()
@@ -1171,17 +1214,17 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (ttl is int value)
+            if (ttl is int value && value != chat.MessageAutoDeleteTime)
             {
                 ClientService.Send(new SetChatMessageAutoDeleteTime(chat.Id, value));
             }
-            else
+            else if (ttl == null)
             {
                 var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret ? ChatTtlType.Secret : ChatTtlType.Normal);
                 dialog.Value = chat.MessageAutoDeleteTime;
 
                 var confirm = await ShowPopupAsync(dialog);
-                if (confirm != ContentDialogResult.Primary)
+                if (confirm != ContentDialogResult.Primary || chat.MessageAutoDeleteTime == dialog.Value)
                 {
                     return;
                 }
@@ -1199,7 +1242,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            MessageHelper.NavigateToMainWebApp(ClientService, NavigationService, user, string.Empty);
+            MessageHelper.NavigateToMainWebApp(ClientService, NavigationService, user, string.Empty, new WebAppOpenModeFullSize());
         }
 
         #region Supergroup
@@ -1210,27 +1253,50 @@ namespace Telegram.ViewModels
             NavigationService.NavigateToChat(chat);
         }
 
+        public void OpenSimilarBot(User user)
+        {
+            if (_chat.Type is ChatTypePrivate privata)
+            {
+                ClientService.Send(new OpenBotSimilarBot(privata.UserId, user.Id));
+                NavigationService.NavigateToUser(user.Id);
+            }
+        }
+
         public void OpenSavedMessagesTopic(SavedMessagesTopic topic)
         {
             NavigationService.NavigateToChat(_chat.Id, savedMessagesTopicId: topic.Id);
         }
 
-        private long? _starCount;
-        public long? StarCount
+        private StarAmount _starCount;
+        public StarAmount StarCount
         {
             get => _starCount;
             set => Set(ref _starCount, value);
         }
 
+        private long _cryptoCount;
+        public long CryptoCount
+        {
+            get => _cryptoCount;
+            set => Set(ref _cryptoCount, value);
+        }
+
         public void OpenBalance()
         {
             var chat = _chat;
-            if (chat == null || chat.Type is not ChatTypePrivate privata)
+            if (chat == null)
             {
                 return;
             }
 
-            NavigationService.Navigate(typeof(ChatStarsPage), new MessageSenderUser(privata.UserId));
+            if (chat.Type is ChatTypePrivate privata)
+            {
+                NavigationService.Navigate(typeof(ChatRevenuePage), chat.Id);
+            }
+            else if (chat.Type is ChatTypeSupergroup)
+            {
+                NavigationService.Navigate(typeof(RevenuePage), chat.Id, new NavigationState { { "selectedIndex", 2 } });
+            }
         }
 
         public void OpenAdmins()
@@ -1242,17 +1308,6 @@ namespace Telegram.ViewModels
             }
 
             NavigationService.Navigate(typeof(SupergroupAdministratorsPage), chat.Id);
-        }
-
-        public void OpenBanned()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            NavigationService.Navigate(typeof(SupergroupBannedPage), chat.Id);
         }
 
         public void OpenKicked()
@@ -1275,6 +1330,27 @@ namespace Telegram.ViewModels
             }
 
             NavigationService.Navigate(typeof(SupergroupMembersPage), chat.Id);
+        }
+
+        public async void OpenAffiliate()
+        {
+            var chat = _chat;
+            if (chat == null || !ClientService.TryGetUser(chat, out User user) || !ClientService.TryGetUserFull(user.Id, out UserFullInfo fullInfo))
+            {
+                return;
+            }
+
+            var affiliateType = new AffiliateTypeCurrentUser();
+
+            var response = await ClientService.SendAsync(new GetConnectedAffiliateProgram(affiliateType, user.Id));
+            if (response is ConnectedAffiliateProgram program)
+            {
+                ShowPopup(new ConnectedAffiliateProgramPopup(ClientService, NavigationService, program, affiliateType));
+            }
+            else
+            {
+                ShowPopup(new FoundAffiliateProgramPopup(ClientService, NavigationService, new FoundAffiliateProgram(user.Id, fullInfo.BotInfo.AffiliateProgram), affiliateType));
+            }
         }
 
         public virtual ChatMemberCollection CreateMembers(long supergroupId)

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -63,7 +63,7 @@ namespace Telegram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
             {
-                var header = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
+                var header = chat.Type is ChatTypeSupergroup { IsChannel: true }
                     ? Strings.AddSubscriber
                     : Strings.AddMember;
 
@@ -74,6 +74,17 @@ namespace Telegram.ViewModels.Supergroups
                 var selected = await ChooseChatsPopup.PickUsersAsync(ClientService, NavigationService, header, selectionMode);
                 if (selected == null || selected.Count == 0)
                 {
+                    return;
+                }
+
+                if (selected[0].Type is UserTypeBot && chat.Type is ChatTypeSupergroup { IsChannel: true })
+                {
+                    var admin = await ShowPopupAsync(Strings.AddBotAsAdmin, Strings.AddBotAdminAlert, Strings.AddAsAdmin, Strings.Cancel);
+                    if (admin == ContentDialogResult.Primary)
+                    {
+                        _ = NavigationService.ShowPopupAsync(new SupergroupEditAdministratorPopup(), new SupergroupEditMemberArgs(chat.Id, new MessageSenderUser(selected[0].Id)));
+                    }
+
                     return;
                 }
 

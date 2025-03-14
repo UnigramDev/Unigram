@@ -42,37 +42,10 @@ namespace LibVLCSharp.Shared.Helpers
 #endif
             [DllImport(Constants.LibraryName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "libvlc_free", SetLastError = true)]
             public static extern void LibVLCFree(IntPtr ptr);
-
-            const string Write = "w";
-
-            [DllImport(Constants.Msvcrt, EntryPoint = "vsprintf", CallingConvention = CallingConvention.Cdecl)]
-            public static extern int vsprintf_windows(IntPtr buffer, IntPtr format, IntPtr args);
-
-            [DllImport(Constants.Msvcrt, EntryPoint = "vsnprintf", CallingConvention = CallingConvention.Cdecl)]
-            public static extern int vsnprintf_windows(IntPtr buffer, UIntPtr size, IntPtr format, IntPtr args);
 #pragma warning restore IDE1006 // Naming Styles
         }
 
         #region logging
-
-        internal static string GetLogMessage(IntPtr format, IntPtr args)
-        {
-            var byteLength = vsnprintf(IntPtr.Zero, UIntPtr.Zero, format, args) + 1;
-            if (byteLength <= 1)
-                return string.Empty;
-
-            var buffer = IntPtr.Zero;
-            try
-            {
-                buffer = Marshal.AllocHGlobal(byteLength);
-                vsprintf(buffer, format, args);
-                return buffer.FromUtf8()!;
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(buffer);
-            }
-        }
 
         static string UseStructurePointer<T>(T structure, Func<IntPtr, string> action) where T : notnull
         {
@@ -104,20 +77,7 @@ namespace LibVLCSharp.Shared.Helpers
             }
         }
 
-#pragma warning disable IDE1006 // Naming Styles
-        static int vsnprintf(IntPtr buffer, UIntPtr size, IntPtr format, IntPtr args)
-        {
-            return Native.vsnprintf_windows(buffer, size, format, args);
-        }
-
-        static int vsprintf(IntPtr buffer, IntPtr format, IntPtr args)
-        {
-            return Native.vsprintf_windows(buffer, format, args);
-        }
-
         #endregion
-#pragma warning restore IDE1006 // Naming Styles
-
         /// <summary>
         /// Helper for libvlc_new
         /// </summary>

@@ -180,8 +180,8 @@
 
                     <controls:HeaderedControl Header="{CustomResource StatisticOverview}"
                                               Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
-                                              Style="{StaticResource FooteredControlStyle}"
-                                              Background="{ThemeResource SettingsItemBackground}">
+                                              Background="{ThemeResource SettingsItemBackground}"
+                                              IsFooterAtBottom="False">
                         <ContentControl Content="{x:Bind ViewModel.Statistics, Mode=OneWay, FallbackValue=''}"
                                         HorizontalContentAlignment="Stretch"
                                         VerticalContentAlignment="Stretch">
@@ -204,7 +204,7 @@
                     <controls:HeaderedControl Header="{CustomResource RecentPosts}"
                                               Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
                                               Visibility="{x:Bind ViewModel.Interactions.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              Style="{StaticResource FooteredControlStyle}">
+                                              IsFooterAtBottom="False">
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
                                             ItemsSource="{x:Bind ViewModel.Interactions}"
                                             ItemTemplate="{StaticResource PostTemplate}"
@@ -214,7 +214,7 @@
                     <controls:HeaderedControl Header="{CustomResource TopMembers}"
                                               Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
                                               Visibility="{x:Bind ViewModel.TopSenders.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              Style="{StaticResource FooteredControlStyle}">
+                                              IsFooterAtBottom="False">
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
                                             ItemsSource="{x:Bind ViewModel.TopSenders}"
                                             ItemTemplate="{StaticResource UserTemplate}"
@@ -229,7 +229,7 @@
                     <controls:HeaderedControl Header="{CustomResource TopAdmins}"
                                               Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
                                               Visibility="{x:Bind ViewModel.TopAdministrators.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              Style="{StaticResource FooteredControlStyle}">
+                                              IsFooterAtBottom="False">
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
                                             ItemsSource="{x:Bind ViewModel.TopAdministrators}"
                                             ItemTemplate="{StaticResource UserTemplate}"
@@ -239,7 +239,7 @@
                     <controls:HeaderedControl Header="{CustomResource TopInviters}"
                                               Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
                                               Visibility="{x:Bind ViewModel.TopInviters.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              Style="{StaticResource FooteredControlStyle}">
+                                              IsFooterAtBottom="False">
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
                                             ItemsSource="{x:Bind ViewModel.TopInviters}"
                                             ItemTemplate="{StaticResource UserTemplate}"

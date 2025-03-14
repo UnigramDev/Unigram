@@ -70,10 +70,12 @@
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True"
                                         IsFooter="True">
-                    <TextBlock common:TextBlockHelper.Markdown="{x:Bind ViewModel.Subtitle}"
-                               Style="{StaticResource BodyTextBlockStyle}"
-                               Margin="24,0"
-                               Grid.Row="1" />
+                    <RichTextBlock x:Name="SubtitleText"
+                                   Style="{StaticResource BodyRichTextBlockStyle}"
+                                   Margin="24,0"
+                                   Grid.Row="1">
+                        <Paragraph x:Name="SubtitleParagraph" />
+                    </RichTextBlock>
 
                     <Grid x:Name="MissingHeader"
                           x:Load="{x:Bind ConvertTotalCount(ViewModel.TotalCount)}"

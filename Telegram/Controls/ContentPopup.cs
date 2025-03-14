@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2024
+// Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Automation.Provider;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
@@ -21,6 +22,7 @@ using Telegram.Composition;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Views.Host;
+using Windows.System;
 using Windows.UI;
 
 namespace Telegram.Controls
@@ -73,7 +75,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Hide(result));
+            DispatcherQueue.TryEnqueue(() => Hide(result));
             args.Cancel = true;
         }
 
@@ -165,15 +167,17 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (XamlRoot.Content is IPopupHost host)
+            try
             {
-                host.PopupOpened();
+                if (XamlRoot.Content is IPopupHost host)
+                {
+                    host.PopupOpened();
+                }
             }
-
-            var context = WindowContext.ForXamlRoot(this);
-            if (context != null)
+            catch
             {
-                context.InputListener.KeyDown += OnKeyDown;
+                // XamlRoot.Content seems to throw a NullReferenceException
+                // whenever corresponding window has been already closed.
             }
 
             var canvas = VisualTreeHelper.GetParent(this) as Canvas;
@@ -185,13 +189,29 @@ namespace Telegram.Controls
                     {
                         // TODO: I don't remember why it is needed to show-hide it.
                         Smoke = rectangle;
-                        Smoke.Visibility = Visibility.Visible;
                         Smoke.Fill = new SolidColorBrush(ActualTheme == ElementTheme.Light
                             ? Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF)
                             : Color.FromArgb(0x99, 0x00, 0x00, 0x00));
                     }
                 }
             }
+
+            // This won't look great because the smoke will disappear instantly, but at least it won't flash
+            if (Smoke != null && Parent is Popup popup)
+            {
+                popup.Opened += OnOpened;
+                popup.Closed += OnClosed;
+            }
+        }
+
+        private void OnOpened(object sender, object e)
+        {
+            Smoke.Visibility = Visibility.Visible;
+        }
+
+        private void OnClosed(object sender, object e)
+        {
+            Smoke.Visibility = Visibility.Collapsed;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -208,22 +228,11 @@ namespace Telegram.Controls
                 // XamlRoot.Content seems to throw a NullReferenceException
                 // whenever corresponding window has been already closed.
             }
-
-            var context = WindowContext.ForXamlRoot(this);
-            if (context != null)
-            {
-                context.InputListener.KeyDown -= OnKeyDown;
-            }
-
-            if (Smoke != null)
-            {
-                Smoke.Visibility = Visibility.Collapsed;
-            }
         }
 
-        private void OnKeyDown(Window sender, Services.Keyboard.InputKeyDownEventArgs args)
+        private void OnProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
         {
-            if (args.VirtualKey == Windows.System.VirtualKey.Enter && args.OnlyKey && DefaultButton != ContentDialogButton.Primary)
+            if (args.Key == VirtualKey.Enter && args.Modifiers == VirtualKeyModifiers.None && DefaultButton != ContentDialogButton.Primary)
             {
                 // TODO: should the if be simplified to focused is null or not Control?
 
@@ -262,6 +271,7 @@ namespace Telegram.Controls
             if (IsDismissButtonVisible)
             {
                 DismissButton = GetTemplateChild(nameof(DismissButton)) as Button;
+                DismissButton.RequestedTheme = DismissButtonRequestedTheme;
                 DismissButton.Click += DismissButton_Click;
             }
 
@@ -277,16 +287,21 @@ namespace Telegram.Controls
                 ContentElement.SizeChanged += OnSizeChanged;
             }
 
-
             if (LayoutRoot != null)
             {
+                LayoutRoot.ProcessKeyboardAccelerators += OnProcessKeyboardAccelerators;
                 ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
             }
         }
 
         private void DismissButton_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            OnDismissButtonClick();
+        }
+
+        protected virtual void OnDismissButtonClick()
+        {
+            Hide();
         }
 
         private void PrimaryButton_Loaded(object sender, RoutedEventArgs e)
@@ -390,7 +405,31 @@ namespace Telegram.Controls
         private static void OnDismissButtonVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as ContentPopup;
-            if (sender?.DismissButton != null || (bool)e.NewValue)
+            if (sender?.DismissButton != null)
+            {
+                sender.DismissButton.Visibility = (bool)e.NewValue
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
+
+        #endregion
+
+        #region DismissButtonRequestedTheme
+
+        public ElementTheme DismissButtonRequestedTheme
+        {
+            get { return (ElementTheme)GetValue(DismissButtonRequestedThemeProperty); }
+            set { SetValue(DismissButtonRequestedThemeProperty, value); }
+        }
+
+        public static readonly DependencyProperty DismissButtonRequestedThemeProperty =
+            DependencyProperty.Register("DismissButtonRequestedTheme", typeof(ElementTheme), typeof(ContentPopup), new PropertyMetadata(ElementTheme.Default, OnDismissButtonRequestedThemeChanged));
+
+        private static void OnDismissButtonRequestedThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as ContentPopup;
+            if (sender?.DismissButton != null)
             {
                 if (sender.DismissButton == null)
                 {
@@ -398,15 +437,13 @@ namespace Telegram.Controls
 
                     if (sender.DismissButton != null)
                     {
+                        sender.DismissButton.RequestedTheme = sender.DismissButtonRequestedTheme;
                         sender.DismissButton.Click += sender.DismissButton_Click;
                     }
                 }
-
-                if (sender.DismissButton != null)
+                else
                 {
-                    sender.DismissButton.Visibility = (bool)e.NewValue
-                        ? Visibility.Visible
-                        : Visibility.Collapsed;
+                    sender.DismissButton.RequestedTheme = (ElementTheme)e.NewValue;
                 }
             }
         }
