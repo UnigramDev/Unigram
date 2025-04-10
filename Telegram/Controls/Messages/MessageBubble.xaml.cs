@@ -581,11 +581,11 @@ namespace Telegram.Controls.Messages
             if (_cornerRadius == null)
             {
                 //_cornerRadius = CompositionDevice.CreateRectangleClip(ContentPanel);
-                _cornerRadius.Set(
-                    (float)ContentPanel.CornerRadius.TopLeft,
-                    (float)ContentPanel.CornerRadius.TopRight,
-                    (float)ContentPanel.CornerRadius.BottomRight,
-                    (float)ContentPanel.CornerRadius.BottomLeft);
+                //_cornerRadius.Set(
+                //    (float)ContentPanel.CornerRadius.TopLeft,
+                //    (float)ContentPanel.CornerRadius.TopRight,
+                //    (float)ContentPanel.CornerRadius.BottomRight,
+                //    (float)ContentPanel.CornerRadius.BottomLeft);
 
                 ContentPanel.CornerRadius = new CornerRadius();
                 UpdateClip();
@@ -2190,15 +2190,15 @@ namespace Telegram.Controls.Messages
 
                 if (reply)
                 {
-                    //_cornerRadius.AnimateBottom(Window.Current.Compositor, ContentPanel.ActualSize.Y * yScale, ContentPanel.ActualSize.Y, outer / 1000);
+                    //_cornerRadius.AnimateBottom(BootStrapper.Current.Compositor, ContentPanel.ActualSize.Y * yScale, ContentPanel.ActualSize.Y, outer / 1000);
                 }
                 else
                 {
                     var scaled = ContentPanel.ActualSize.Y * yScale;
                     var diff = (scaled - ContentPanel.ActualSize.Y) / 2;
 
-                    //_cornerRadius.AnimateTop(Window.Current.Compositor, -diff, 0, outer / 1000);
-                    //_cornerRadius.AnimateBottom(Window.Current.Compositor, ContentPanel.ActualSize.Y + diff, ContentPanel.ActualSize.Y, outer / 1000);
+                    //_cornerRadius.AnimateTop(BootStrapper.Current.Compositor, -diff, 0, outer / 1000);
+                    //_cornerRadius.AnimateBottom(BootStrapper.Current.Compositor, ContentPanel.ActualSize.Y + diff, ContentPanel.ActualSize.Y, outer / 1000);
                 }
             }
 
@@ -3464,8 +3464,8 @@ namespace Telegram.Controls.Messages
             {
                 // We actually don't have to calculate bubble width for video notes,
                 // As it might be wider due to reply/forward
-                //width = 200;
-                //height = 200;
+                //width = 224;
+                //height = 224;
 
                 //goto Calculate;
             }

@@ -162,6 +162,13 @@ namespace Telegram.Views
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
+            ViewModel.Delegate = null;
+
+            if (MediaFrame.Content is ProfileTabPage tabPage)
+            {
+                tabPage.ScrollingHost.UnregisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, ref _itemsSourceToken);
+                tabPage.ScrollingHost.UnregisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, ref _selectionModeToken);
+            }
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)

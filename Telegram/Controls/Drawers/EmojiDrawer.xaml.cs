@@ -17,6 +17,8 @@ using System.Linq;
 using System.Numerics;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls.Cells;
+using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Streams;
@@ -30,7 +32,7 @@ namespace Telegram.Controls.Drawers
     public partial class TopicsEmojiDrawer : EmojiDrawer
     {
         public TopicsEmojiDrawer()
-            : base(EmojiDrawerMode.EmojiStatus)
+            : base(EmojiDrawerMode.Topics)
         {
 
         }
@@ -94,6 +96,11 @@ namespace Telegram.Controls.Drawers
 
             _mode = mode;
 
+            if (mode == EmojiDrawerMode.Topics)
+            {
+                TopicIconRoot.Visibility = Visibility.Visible;
+            }
+
             if (mode != EmojiDrawerMode.Chat)
             {
                 SearchField.Margin = new Thickness(0, 8, 8, 8);
@@ -106,8 +113,11 @@ namespace Telegram.Controls.Drawers
                     List.ItemContainerStyle.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 4, 4)));
                     List.GroupStyle[0].HeaderContainerStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0, 0, 8, 0)));
 
+                    var trigger = new FixedGridViewTrigger { ItemLength = 36 };
+                    trigger.Activated += FluidGridViewTrigger_Activated;
+
                     FluidGridView.GetTriggers(List).Clear();
-                    FluidGridView.GetTriggers(List).Add(new FixedGridViewTrigger { ItemLength = 36 });
+                    FluidGridView.GetTriggers(List).Add(trigger);
                 }
             }
             else
@@ -129,6 +139,15 @@ namespace Telegram.Controls.Drawers
             };
         }
 
+        public void UpdateTopicIcon(string name, int color)
+        {
+            var brush = ForumTopicCell.GetIconGradient(new ForumTopicIcon(color, 0));
+
+            TopicIconPath.Fill = brush;
+            TopicIconPath.Stroke = new SolidColorBrush(brush.GradientStops[1].Color);
+            TopicIconText.Text = InitialNameStringConverter.Convert(name);
+        }
+
         public bool IsShadowVisible
         {
             get => Separator.Visibility == Visibility.Visible;
@@ -140,7 +159,7 @@ namespace Telegram.Controls.Drawers
         public Thickness ScrollingHostPadding
         {
             get => List.Padding;
-            set => List.Padding = new Thickness(0, value.Top, 0, value.Bottom);
+            set => List.Padding = new Thickness(value.Left, value.Top, value.Right, value.Bottom);
         }
 
         public ListViewBase ScrollingHost => List;
@@ -762,6 +781,13 @@ namespace Telegram.Controls.Drawers
         private void Toolbar_Ready(object sender, System.EventArgs e)
         {
             _toolbarHandler.ThrottleVisibleItems();
+        }
+
+        private void FluidGridViewTrigger_Activated(object sender, double e)
+        {
+            DefaultIcon.Width = e;
+            DefaultIcon.Height = e;
+            DefaultIcon.Margin = new Thickness(0, 0, 0, -e);
         }
     }
 

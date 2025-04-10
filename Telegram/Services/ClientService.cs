@@ -51,6 +51,13 @@ namespace Telegram.Services
 
         Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit);
         Task<Chats> GetStoryListAsync(StoryList storyList, int offset, int limit);
+        Task<ForuminoTopicinos> GetForumTopicsAsync(long chatId, int offset, int limit);
+
+        ForuminoTopicino GetTopic(long chatId, long id);
+        IEnumerable<ForuminoTopicino> GetTopics(long chatId, IEnumerable<long> ids);
+        int UnreadTopicCount(long chatId);
+
+        void ViewMessages(long chatId, long messageThreadId, IList<long> messageIds, MessageSource source, bool forceRead);
 
         Task<IList<SavedMessagesTopic>> GetSavedMessagesChatsAsync(int offset, int limit);
 
@@ -65,8 +72,6 @@ namespace Telegram.Services
     {
         bool IsPremium { get; }
         bool IsPremiumAvailable { get; }
-
-        bool IsFrozen { get; }
 
         PaidReactionType DefaultPaidReactionType { get; }
 
@@ -113,6 +118,7 @@ namespace Telegram.Services
         Task<AuthorizationState> GetAuthorizationStateAsync();
         AuthorizationState AuthorizationState { get; }
         ConnectionState ConnectionState { get; }
+        UpdateFreezeState FreezeState { get; }
 
         string GetTitle(Chat chat, bool tiny = false);
         string GetTitle(long chatId, bool tiny = false);
@@ -346,6 +352,7 @@ namespace Telegram.Services
         private TaskCompletionSource<bool> _authorizationStateTask = new();
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
+        private UpdateFreezeState _freezeState = new();
 
         private StarAmount _ownedStarCount;
 
@@ -359,6 +366,8 @@ namespace Telegram.Services
         private static volatile Task _longRunningTask;
         private static readonly object _longRunningLock = new();
 
+        private readonly Test2 _test;
+
         public ClientService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
         {
             _session = session;
@@ -368,9 +377,41 @@ namespace Telegram.Services
             _options = new OptionsService(this);
             _aggregator = aggregator;
 
+            _test = new Test2(this, aggregator);
+
             _processFilesDelegate = new Action<BaseObject>(ProcessFiles);
 
             Initialize(online);
+        }
+
+        public Task<ForuminoTopicinos> GetForumTopicsAsync(long chatId, int offset, int limit)
+        {
+            return _test.GetForumTopicsAsync(chatId, offset, limit);
+        }
+
+        public ForuminoTopicino GetTopic(long chatId, long id)
+        {
+            return _test.GetTopic(chatId, id);
+        }
+
+        public IEnumerable<ForuminoTopicino> GetTopics(long chatId, IEnumerable<long> ids)
+        {
+            return _test.GetTopics(chatId, ids);
+        }
+
+        public int UnreadTopicCount(long chatId)
+        {
+            return _test.UnreadCount(chatId);
+        }
+
+        public void ViewMessages(long chatId, long messageThreadId, IList<long> messageIds, MessageSource source, bool forceRead)
+        {
+            Send(new ViewMessages(chatId, messageIds, source, forceRead));
+
+            if (source is MessageSourceForumTopicHistory)
+            {
+                _test.ViewMessages(chatId, messageThreadId, messageIds);
+            }
         }
 
         public bool TryInitialize()
@@ -1135,13 +1176,13 @@ namespace Telegram.Services
 
         public ConnectionState ConnectionState => _connectionState;
 
+        public UpdateFreezeState FreezeState => _freezeState;
+
         public Settings.NotificationsSettings Notifications => _settings.Notifications;
 
         public bool IsPremium => _options.IsPremium;
 
         public bool IsPremiumAvailable => _options.IsPremium || _options.IsPremiumAvailable;
-
-        public bool IsFrozen => Constants.DEBUG;
 
         public StarAmount OwnedStarCount
         {
@@ -1772,6 +1813,7 @@ namespace Telegram.Services
                 var chat = GetChat(id);
                 if (chat != null)
                 {
+                    _test.UpdateNewChat(chat);
                     yield return chat;
                 }
             }
@@ -2454,6 +2496,8 @@ namespace Telegram.Services
 
                     Monitor.Exit(value);
                 }
+
+                _test.UpdateChatLastMessage(updateChatLastMessage.ChatId, updateChatLastMessage.LastMessage);
             }
             else if (update is UpdateUser updateUser)
             {
@@ -2660,6 +2704,8 @@ namespace Telegram.Services
 
                     Monitor.Exit(value);
                 }
+
+                _test.UpdateChatDraftMessage(updateChatDraftMessage.ChatId, updateChatDraftMessage.DraftMessage);
             }
             else if (update is UpdateChatFolders updateChatFolders)
             {
@@ -2716,6 +2762,8 @@ namespace Telegram.Services
                 {
                     value.NotificationSettings = updateNotificationSettings.NotificationSettings;
                 }
+
+                _test.UpdateChatNotificationSettings(updateNotificationSettings.ChatId, updateNotificationSettings.NotificationSettings);
             }
             else if (update is UpdateChatPendingJoinRequests updateChatPendingJoinRequests)
             {
@@ -2745,6 +2793,8 @@ namespace Telegram.Services
                     value.UnreadCount = updateChatReadInbox.UnreadCount;
                     value.LastReadInboxMessageId = updateChatReadInbox.LastReadInboxMessageId;
                 }
+
+                _test.UpdateChatReadInbox(updateChatReadInbox.ChatId, updateChatReadInbox.LastReadInboxMessageId, updateChatReadInbox.UnreadCount);
             }
             else if (update is UpdateChatReadOutbox updateChatReadOutbox)
             {
@@ -2752,6 +2802,8 @@ namespace Telegram.Services
                 {
                     value.LastReadOutboxMessageId = updateChatReadOutbox.LastReadOutboxMessageId;
                 }
+
+                _test.UpdateChatReadOutbox(updateChatReadOutbox.ChatId, updateChatReadOutbox.LastReadOutboxMessageId);
             }
             else if (update is UpdateChatReplyMarkup updateChatReplyMarkup)
             {
@@ -2791,6 +2843,8 @@ namespace Telegram.Services
                 {
                     value.UnreadMentionCount = updateChatUnreadMentionCount.UnreadMentionCount;
                 }
+
+                _test.UpdateChatUnreadMentionCount(updateChatUnreadMentionCount.ChatId, updateChatUnreadMentionCount.UnreadMentionCount);
             }
             else if (update is UpdateChatUnreadReactionCount updateChatUnreadReactionCount)
             {
@@ -2798,6 +2852,8 @@ namespace Telegram.Services
                 {
                     value.UnreadReactionCount = updateChatUnreadReactionCount.UnreadReactionCount;
                 }
+
+                _test.UpdateChatUnreadReactionCount(updateChatUnreadReactionCount.ChatId, updateChatUnreadReactionCount.UnreadReactionCount);
             }
             else if (update is UpdateChatVideoChat updateChatVideoChat)
             {
@@ -2839,6 +2895,8 @@ namespace Telegram.Services
             else if (update is UpdateForumTopicInfo updateForumTopicInfo)
             {
                 _topics[new ChatMessageId(updateForumTopicInfo.ChatId, updateForumTopicInfo.Info.MessageThreadId)] = updateForumTopicInfo.Info;
+
+                _test.UpdateForumTopicInfo(updateForumTopicInfo.ChatId, updateForumTopicInfo.Info);
             }
             else if (update is UpdateInstalledStickerSets updateInstalledStickerSets)
             {
@@ -2862,6 +2920,7 @@ namespace Telegram.Services
             else if (update is UpdateMessageIsPinned updateMessageIsPinned)
             {
                 _settings.SetChatPinnedMessage(updateMessageIsPinned.ChatId, 0);
+                _test.UpdateMessageIsPinned(updateMessageIsPinned.ChatId, updateMessageIsPinned.ChatId, updateMessageIsPinned.IsPinned);
             }
             else if (update is UpdateMessageMentionRead updateMessageMentionRead)
             {
@@ -2869,6 +2928,8 @@ namespace Telegram.Services
                 {
                     value.UnreadMentionCount = updateMessageMentionRead.UnreadMentionCount;
                 }
+
+                _test.UpdateMessageMentionRead(updateMessageMentionRead.ChatId, updateMessageMentionRead.MessageId, updateMessageMentionRead.UnreadMentionCount);
             }
             else if (update is UpdateMessageUnreadReactions updateMessageUnreadReactions)
             {
@@ -2876,6 +2937,8 @@ namespace Telegram.Services
                 {
                     value.UnreadReactionCount = updateMessageUnreadReactions.UnreadReactionCount;
                 }
+
+                _test.UpdateMessageUnreadReactions(updateMessageUnreadReactions.ChatId, updateMessageUnreadReactions.MessageId, updateMessageUnreadReactions.UnreadReactions, updateMessageUnreadReactions.UnreadReactionCount);
             }
             else if (update is UpdateOption updateOption)
             {
@@ -3093,6 +3156,46 @@ namespace Telegram.Services
             else if (update is UpdateDefaultPaidReactionType updateDefaultPaidReactionType)
             {
                 DefaultPaidReactionType = updateDefaultPaidReactionType.Type;
+            }
+            else if (update is UpdateFreezeState updateFreezeState)
+            {
+                _freezeState = updateFreezeState;
+            }
+            else if (update is UpdateNewMessage updateNewMessage)
+            {
+                _test.UpdateNewMessage(updateNewMessage.Message);
+            }
+            else if (update is UpdateDeleteMessages updateDeleteMessages)
+            {
+                _test.UpdateDeleteMessages(updateDeleteMessages.ChatId, updateDeleteMessages.MessageIds, updateDeleteMessages.IsPermanent, updateDeleteMessages.FromCache);
+            }
+            else if (update is UpdateMessageSendSucceeded updateMessageSendSucceeded)
+            {
+                _test.UpdateMessageSendSucceeded(updateMessageSendSucceeded.Message, updateMessageSendSucceeded.OldMessageId);
+            }
+            else if (update is UpdateMessageSendFailed updateMessageSendFailed)
+            {
+                _test.UpdateMessageSendFailed(updateMessageSendFailed.Message, updateMessageSendFailed.OldMessageId, updateMessageSendFailed.Error);
+            }
+            else if (update is UpdateMessageContent updateMessageContent)
+            {
+                _test.UpdateMessageContent(updateMessageContent.ChatId, updateMessageContent.MessageId, updateMessageContent.NewContent);
+            }
+            else if (update is UpdateMessageEdited updateMessageEdited)
+            {
+                _test.UpdateMessageEdited(updateMessageEdited.ChatId, updateMessageEdited.MessageId, updateMessageEdited.EditDate, updateMessageEdited.ReplyMarkup);
+            }
+            else if (update is UpdateMessageInteractionInfo updateMessageInteractionInfo)
+            {
+                _test.UpdateMessageInteractionInfo(updateMessageInteractionInfo.ChatId, updateMessageInteractionInfo.MessageId, updateMessageInteractionInfo.InteractionInfo);
+            }
+            else if (update is UpdateMessageContentOpened updateMessageContentOpened)
+            {
+                _test.UpdateMessageContentOpened(updateMessageContentOpened.ChatId, updateMessageContentOpened.MessageId);
+            }
+            else if (update is UpdateMessageFactCheck updateMessageFactCheck)
+            {
+                _test.UpdateMessageFactCheck(updateMessageFactCheck.ChatId, updateMessageFactCheck.MessageId, updateMessageFactCheck.FactCheck);
             }
 
             _aggregator.Publish(update);

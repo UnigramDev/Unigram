@@ -6,10 +6,12 @@
 //
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -17,6 +19,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views.Supergroups.Popups;
 using Windows.Foundation;
 
 namespace Telegram.ViewModels
@@ -83,7 +86,7 @@ namespace Telegram.ViewModels
 
         #region Open
 
-        public void OpenTopic(ForumTopic chat)
+        public void OpenTopic(ForuminoTopicino chat)
         {
             //NavigationService.NavigateToChat(chat, createNewWindow: true);
         }
@@ -92,7 +95,7 @@ namespace Telegram.ViewModels
 
         #region Pin
 
-        public void HideTopic(ForumTopic topic)
+        public void HideTopic(ForuminoTopicino topic)
         {
             if (Chat is Chat chat)
             {
@@ -104,7 +107,7 @@ namespace Telegram.ViewModels
 
         #region Pin
 
-        public async void PinTopic(ForumTopic chat)
+        public async void PinTopic(ForuminoTopicino chat)
         {
             //var position = chat.GetPosition(Items.ChatList);
             //if (position == null)
@@ -124,7 +127,7 @@ namespace Telegram.ViewModels
 
         #region Mark
 
-        public void MarkTopicAsRead(ForumTopic topic)
+        public void MarkTopicAsRead(ForuminoTopicino topic)
         {
             if (Chat is Chat chat && topic.UnreadCount > 0)
             {
@@ -186,7 +189,7 @@ namespace Telegram.ViewModels
 
         #region Notify
 
-        public void NotifyTopic(ForumTopic topic)
+        public void NotifyTopic(ForuminoTopicino topic)
         {
             if (Chat is Chat chat)
             {
@@ -198,7 +201,7 @@ namespace Telegram.ViewModels
 
         #region Notify
 
-        public void CloseTopic(ForumTopic topic)
+        public void CloseTopic(ForuminoTopicino topic)
         {
             if (Chat is Chat chat)
             {
@@ -234,62 +237,17 @@ namespace Telegram.ViewModels
 
         #region Delete
 
-        public async void DeleteTopic(ForumTopic chat)
+        public async void DeleteTopic(ForuminoTopicino topic)
         {
-            //var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
-            //var dialog = new DeleteChatPopup(ClientService, updated, Items.ChatList, false);
+            var message = string.Format(Strings.DeleteSelectedTopic, topic.Info.Name);
+            var title = Locale.Declension(Strings.R.DeleteTopics, 1);
 
-            //var confirm = await ShowPopupAsync(dialog);
-            //if (confirm == ContentDialogResult.Primary)
-            //{
-            //    var check = dialog.IsChecked == true;
-
-            //    _deletedChats[chat.Id] = true;
-            //    Items.Handle(chat.Id, 0);
-
-            //    Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Delete, items =>
-            //    {
-            //        var undo = items.FirstOrDefault();
-            //        if (undo == null)
-            //        {
-            //            return;
-            //        }
-
-            //        _deletedChats.Remove(undo.Id);
-            //        Items.Handle(undo.Id, undo.Positions);
-            //    }, async items =>
-            //    {
-            //        var delete = items.FirstOrDefault();
-            //        if (delete == null)
-            //        {
-            //            return;
-            //        }
-
-            //        if (delete.Type is ChatTypeSecret secret)
-            //        {
-            //            await ClientService.SendAsync(new CloseSecretChat(secret.SecretChatId));
-            //        }
-            //        else if (delete.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
-            //        {
-            //            await ClientService.SendAsync(new LeaveChat(delete.Id));
-            //        }
-
-            //        var user = ClientService.GetUser(delete);
-            //        if (user != null && user.Type is UserTypeRegular)
-            //        {
-            //            ClientService.Send(new DeleteChatHistory(delete.Id, true, check));
-            //        }
-            //        else
-            //        {
-            //            if (delete.Type is ChatTypePrivate privata && check)
-            //            {
-            //                await ClientService.SendAsync(new ToggleMessageSenderIsBlocked(new MessageSenderUser(privata.UserId), true));
-            //            }
-
-            //            ClientService.Send(new DeleteChatHistory(delete.Id, true, false));
-            //        }
-            //    });
-            //}
+            var confirm = await ShowPopupAsync(message, title, Strings.Delete, Strings.Cancel, destructive: true);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                // TODO: Handle the case where topics can't be deleted because user isn't admin
+                ClientService.Send(new DeleteForumTopic(Chat.Id, topic.Id));
+            }
         }
 
         #endregion
@@ -410,7 +368,7 @@ namespace Telegram.ViewModels
 
         #region Select
 
-        public void SelectTopic(ForumTopic chat)
+        public void SelectTopic(ForuminoTopicino chat)
         {
             //SelectedItems.ReplaceWith(new[] { chat });
             //SelectionMode = ListViewSelectionMode.Multiple;
@@ -422,28 +380,52 @@ namespace Telegram.ViewModels
 
         public Chat Chat => Items.Chat;
 
-        public async void SetFilter(Chat chat)
+        public void SetChat(Chat chat)
         {
             if (chat?.Id != Items.Chat?.Id)
             {
-                await Items.ReloadAsync(chat);
-                //Aggregator.Unsubscribe(Items);
-                //Items = new ItemsCollection(ClientService, Aggregator, this, chatList);
-                //RaisePropertyChanged(nameof(Items));
+                _ = Items.ReloadAsync(chat);
             }
         }
 
-        public partial class ItemsCollection : ObservableCollection<ForumTopic>
-            , ISupportIncrementalLoading
-        //, IHandle<UpdateAuthorizationState>
-        //, IHandle<UpdateChatDraftMessage>
-        //, IHandle<UpdateChatLastMessage>
-        //, IHandle<UpdateChatPosition>
+        public async void ViewAsMessages()
+        {
+            if (Chat is not Chat chat)
+            {
+                return;
+            }
+
+            await ClientService.SendAsync(new ToggleChatViewAsTopics(chat.Id, false));
+            NavigationService.NavigateToChat(chat, force: false, clearBackStack: true);
+        }
+
+        public async void CreateTopic()
+        {
+            if (Chat is not Chat chat)
+            {
+                return;
+            }
+
+            var popup = new SupergroupTopicPopup(ClientService, null);
+
+            var confirm = await ShowPopupAsync(popup);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var response = await ClientService.SendAsync(new CreateForumTopic(chat.Id, popup.SelectedName, popup.SelectedIcon));
+                if (response is ForumTopicInfo info)
+                {
+                    NavigationService.NavigateToChat(chat, thread: info.MessageThreadId, force: false, clearBackStack: true);
+                }
+            }
+        }
+
+        public partial class ItemsCollection : ObservableCollection<ForuminoTopicino>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly IEventAggregator _aggregator;
 
-            private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+            private CancellationTokenSource _token = new();
+            private readonly HashSet<long> _topics = new();
 
             private readonly TopicListViewModel _viewModel;
 
@@ -451,11 +433,8 @@ namespace Telegram.ViewModels
 
             private bool _hasMoreItems = true;
 
-            private long _nextOffsetMessageThreadId;
-            private long _nextOffsetMessageId;
-            private int _nextOffsetDate;
-
-            private readonly Dictionary<long, ForumTopic> _topics = new();
+            private long _lastTopicId;
+            private long _lastOrder;
 
             public Chat Chat => _chat;
 
@@ -464,11 +443,8 @@ namespace Telegram.ViewModels
                 _clientService = clientService;
                 _aggregator = aggregator;
 
-                //_viewModel = viewModel;
-                //_viewModel.IsLoading = true;
-
+                _viewModel = viewModel;
                 _chat = chat;
-                _hasMoreItems = chat != null;
 
 #if MOCKUP
                 _hasMoreItems = false;
@@ -477,33 +453,34 @@ namespace Telegram.ViewModels
                 _ = LoadMoreItemsAsync(0);
             }
 
-            public async Task ReloadAsync(Chat chat)
+            public Task ReloadAsync(Chat chat)
             {
-                //_viewModel.IsLoading = true;
-
-                using (await _loadMoreLock.WaitAsync())
+                if (_chat != null)
                 {
-                    _aggregator.Unsubscribe(this);
-
-                    _nextOffsetMessageThreadId = 0;
-                    _nextOffsetMessageId = 0;
-                    _nextOffsetDate = 0;
-
-                    _topics.Clear();
-                    _chat = chat;
-
-                    Clear();
+                    _clientService.Send(new CloseChat(_chat.Id));
                 }
 
-                if (chat != null)
-                {
-                    await LoadMoreItemsAsync();
-                }
-            }
+                _token?.Cancel();
+                _token = new CancellationTokenSource();
 
-            public bool TryGetValue(long key, out ForumTopic value)
-            {
-                return _topics.TryGetValue(key, out value);
+                _aggregator.Unsubscribe(this);
+                _hasMoreItems = false;
+
+                _lastTopicId = 0;
+                _lastOrder = 0;
+
+                _chat = chat;
+
+                _topics.Clear();
+                Clear();
+
+                if (_chat != null)
+                {
+                    _clientService.Send(new OpenChat(chat.Id));
+                    return LoadMoreItemsAsync();
+                }
+
+                return Task.CompletedTask;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -513,61 +490,243 @@ namespace Telegram.ViewModels
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
             {
-                using (await _loadMoreLock.WaitAsync())
-                {
-                    if (_chat == null)
-                    {
-                        return new LoadMoreItemsResult();
-                    }
+                Logger.Info(Count);
 
-                    //var response = await _clientService.SendAsync(new GetChats(_chatList, _internalOrder, _internalChatId, 20));
-                    var response = await _clientService.SendAsync(new GetForumTopics(_chat.Id, string.Empty, _nextOffsetDate, _nextOffsetMessageId, _nextOffsetMessageThreadId, 20));
-                    if (response is ForumTopics topics)
+                var token = _token;
+                var totalCount = 0u;
+
+                await Task.Yield();
+
+                if (_chat == null)
+                {
+                    return new LoadMoreItemsResult
                     {
-                        foreach (var topic in topics.Topics)
+                        Count = totalCount
+                    };
+                }
+
+                var response = await _clientService.GetForumTopicsAsync(_chat.Id, Count, 20);
+                if (response is ForuminoTopicinos topics && !token.IsCancellationRequested)
+                {
+                    foreach (var topic in _clientService.GetTopics(_chat.Id, topics.TopicIds))
+                    {
+                        var order = topic.Order;
+                        if (order != 0)
                         {
-                            if (_topics.ContainsKey(topic.Info.MessageThreadId))
+                            // TODO: is this redundant?
+                            var next = NextIndexOf(topic, order);
+                            if (next >= 0)
                             {
-                                continue;
+                                if (_topics.Contains(topic.Id))
+                                {
+                                    Remove(topic);
+                                }
+
+                                _topics.Add(topic.Id);
+                                Insert(Math.Min(Count, next), topic);
+
+                                if (topic.Id == _viewModel?._selectedItem)
+                                {
+                                    //_viewModel.Delegate?.SetSelectedItem(topic);
+                                }
+
+                                totalCount++;
                             }
 
-                            _topics[topic.Info.MessageThreadId] = topic;
-                            Add(topic);
+                            _lastTopicId = topic.Id;
+                            _lastOrder = order;
                         }
-
-                        IsEmpty = Count == 0;
-
-                        _nextOffsetMessageThreadId = topics.NextOffsetMessageThreadId;
-                        _nextOffsetMessageId = topics.NextOffsetMessageId;
-                        _nextOffsetDate = topics.NextOffsetDate;
-
-                        _hasMoreItems = topics.Topics.Count > 0;
-
-                        //_viewModel.IsLoading = false;
-                        //_viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
-
-                        if (_hasMoreItems == false)
-                        {
-                            OnPropertyChanged(new PropertyChangedEventArgs("HasMoreItems"));
-                        }
-
-                        return new LoadMoreItemsResult { Count = (uint)topics.Topics.Count };
                     }
 
-                    return new LoadMoreItemsResult { Count = 0 };
+                    Logger.Info(string.Format("Received {0} items, added {1}", topics.TopicIds.Count, totalCount));
+
+                    IsEmpty = Count == 0;
+
+                    _hasMoreItems = topics.TotalCount >= 0;
+                    Subscribe();
+
+                    //_viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
                 }
+
+                return new LoadMoreItemsResult
+                {
+                    Count = totalCount
+                };
             }
+
+            private void Subscribe()
+            {
+                _aggregator.Subscribe<UpdateAuthorizationState>(this, Handle)
+                    //.Subscribe<UpdateChatDraftMessage>(Handle)
+                    .Subscribe<UpdateForumTopicLastMessage>(Handle)
+                    .Subscribe<UpdateForumTopicPosition>(Handle);
+            }
+
+            public bool HasMoreItems => _hasMoreItems;
 
             #region Handle
 
-            public void Handle(UpdateForumTopicInfo update)
+            public void Handle(UpdateAuthorizationState update)
             {
+                if (update.AuthorizationState is AuthorizationStateReady)
+                {
+                    _viewModel.BeginOnUIThread(() => _ = ReloadAsync(_chat));
+                }
+            }
 
+            public void Handle(UpdateForumTopicPosition update)
+            {
+                if (update.ChatId == _chat.Id)
+                {
+                    Handle(update.MessageThreadId, update.Order);
+                }
+            }
+
+            public void Handle(UpdateForumTopicLastMessage update)
+            {
+                if (update.ChatId == _chat.Id)
+                {
+                    Handle(update.MessageThreadId, update.Order, true);
+                }
+            }
+
+            //public void Handle(UpdateChatDraftMessage update)
+            //{
+            //    Handle(update.ChatId, update.Positions, true);
+            //}
+
+            public void Handle(long chatId, long order, bool lastMessage = false)
+            {
+                var topic = GetTopic(chatId);
+
+                Handle(topic, order, lastMessage);
+            }
+
+            public void Handle(long chatId, long order)
+            {
+                var chat = GetTopic(chatId);
+                if (chat != null)
+                {
+                    Handle(chat, order, false);
+                }
+            }
+
+            private void Handle(ForuminoTopicino topic, long order, bool lastMessage)
+            {
+                //var chat = GetChat(chatId);
+                if (topic != null /*&& _chatList.ListEquals(chat.ChatList)*/)
+                {
+                    _viewModel?.BeginOnUIThread(() => UpdateForumTopicOrder(topic, order, lastMessage));
+                }
+            }
+
+            private void UpdateForumTopicOrder(ForuminoTopicino topic, long order, bool lastMessage)
+            {
+                if (order > 0 && (order > _lastOrder || (order == _lastOrder && topic.Id >= _lastTopicId)))
+                {
+                    var next = NextIndexOf(topic, order);
+                    if (next >= 0)
+                    {
+                        if (_topics.Contains(topic.Id))
+                        {
+                            Remove(topic);
+                        }
+                        else
+                        {
+                            _topics.Add(topic.Id);
+                        }
+
+                        Insert(Math.Min(Count, next), topic);
+
+                        if (next == Count - 1)
+                        {
+                            _lastTopicId = topic.Id;
+                            _lastOrder = order;
+                        }
+
+                        //if (topic.Id == _viewModel._selectedItem)
+                        //{
+                        //    _viewModel.Delegate?.SetSelectedItem(topic);
+                        //}
+                        //if (_viewModel.SelectedItems.Contains(topic))
+                        //{
+                        //    _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+                        //}
+
+                        IsEmpty = Count == 0;
+                    }
+                    else if (lastMessage)
+                    {
+                        _viewModel.Delegate?.UpdateForumTopicLastMessage(topic);
+                    }
+                }
+                else if (_topics.Contains(topic.Id))
+                {
+                    _topics.Remove(topic.Id);
+                    Remove(topic);
+
+                    //if (topic.Id == _viewModel._selectedItem)
+                    //{
+                    //    _viewModel.Delegate?.SetSelectedItem(topic);
+                    //}
+                    //if (_viewModel.SelectedItems.Contains(topic))
+                    //{
+                    //    _viewModel.SelectedItems.Remove(topic);
+                    //    _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+                    //}
+
+                    IsEmpty = Count == 0;
+
+                    //if (!_hasMoreItems)
+                    //{
+                    //    await LoadMoreItemsAsync(0);
+                    //}
+                }
+            }
+
+            private int NextIndexOf(ForuminoTopicino topic, long order)
+            {
+                var prev = -1;
+                var next = 0;
+
+                for (int i = 0; i < Count; i++)
+                {
+                    var item = this[i];
+                    if (item.Id == topic.Id)
+                    {
+                        prev = i;
+                        continue;
+                    }
+
+                    if (order > item.Order || order == item.Order && topic.Id >= item.Id)
+                    {
+                        return next == prev ? -1 : next;
+                    }
+
+                    next++;
+                }
+
+                return Count;
+            }
+
+            private ForuminoTopicino GetTopic(long messageThreadId)
+            {
+                //if (_viewModels.ContainsKey(chatId))
+                //{
+                //    return _viewModels[chatId];
+                //}
+                //else
+                //{
+                //    var chat = ClientService.GetChat(chatId);
+                //    var item = _viewModels[chatId] = new ChatViewModel(ClientService, chat);
+
+                //    return item;
+                //}
+
+                return _clientService.GetTopic(_chat.Id, messageThreadId);
             }
 
             #endregion
-
-            public bool HasMoreItems => _hasMoreItems;
 
             private bool _isEmpty;
             public bool IsEmpty
@@ -581,9 +740,14 @@ namespace Telegram.ViewModels
                     if (_isEmpty != value)
                     {
                         _isEmpty = value;
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));
+                        _viewModel.Dispatcher?.Dispatch(NotifyChanged, Microsoft.UI.Dispatching.DispatcherQueuePriority.Low);
                     }
                 }
+            }
+
+            private void NotifyChanged()
+            {
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));
             }
         }
     }

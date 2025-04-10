@@ -104,13 +104,6 @@ namespace Telegram
                 args.SetObserved();
             };
 
-            //Crashes.UnhandledExceptionOccurring += (s, args) =>
-            //{
-            //    args.Frames = NativeUtils.GetStowedException()
-            //        .Select(x => new NativeStackFrame(x.NativeIP, x.NativeImageBase))
-            //        .ToList();
-            //};
-
             //Crashes.CreatingErrorReport += (s, args) =>
             //{
             //    Track(args.ReportId, args.Exception);
@@ -120,7 +113,14 @@ namespace Telegram
             //{
             //    if (File.Exists(GetErrorReportPath(args.Report.Id)))
             //    {
-            //        File.Delete(GetErrorReportPath(args.Report.Id));
+            //        try
+            //        {
+            //            File.Delete(GetErrorReportPath(args.Report.Id));
+            //        }
+            //        catch
+            //        {
+            //            // Somehow AppCenter messes up and the file might still be open
+            //        }
             //    }
             //};
 
@@ -238,20 +238,20 @@ namespace Telegram
             //Crashes.TrackCrash(exception, frames);
         }
 
-        //private static Exception ToException(FatalError error)
-        //{
-        //    if (error == null)
-        //    {
-        //        return null;
-        //    }
+        private static Exception ToException(FatalError error)
+        {
+            if (error == null)
+            {
+                return null;
+            }
 
-        //    if (error.StackTrace.Contains("libvlc.dll") || error.StackTrace.Contains("libvlccore.dll"))
-        //    {
-        //        return new VLCException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace);
-        //    }
+            if (error.StackTrace.Contains("libvlc.dll") || error.StackTrace.Contains("libvlccore.dll"))
+            {
+                return new VLCException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace);
+            }
 
-        //    return new NativeException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace);
-        //}
+            return new NativeException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace);
+        }
 
         private static void FatalErrorCallback(int verbosityLevel, string message)
         {

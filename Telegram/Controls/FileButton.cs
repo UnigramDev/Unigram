@@ -410,7 +410,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class FileButtonAutomationPeer : HyperlinkButtonAutomationPeer, IValueProvider
+    public partial class FileButtonAutomationPeer : HyperlinkButtonAutomationPeer, IValueProvider
     {
         private readonly FileButton _owner;
 

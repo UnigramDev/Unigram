@@ -54,7 +54,7 @@
                         </Border>
 
                         <Border x:Name="Element"
-                                CornerRadius="100">
+                                CornerRadius="112">
                             <controls:AnimatedImage x:Name="Player"
                                                     AutoPlay="False"
                                                     FrameSize="0,0"

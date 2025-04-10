@@ -188,8 +188,8 @@ namespace Telegram.ViewModels
             set => Set(ref _thread, value);
         }
 
-        protected ForumTopic _topic;
-        public ForumTopic Topic
+        protected ForuminoTopicino _topic;
+        public ForuminoTopicino Topic
         {
             get => _topic;
             set => Set(ref _topic, value);
@@ -593,7 +593,7 @@ namespace Telegram.ViewModels
             field.SetScrollingMode(mode, force);
         }
 
-        public override FormattedText GetFormattedText(bool clear = false)
+        public override FormattedText GetFormattedText(bool clear = false, bool parseMarkdown = true)
         {
             var field = TextField;
             if (field == null)
@@ -601,7 +601,7 @@ namespace Telegram.ViewModels
                 return new FormattedText(string.Empty, Array.Empty<TextEntity>());
             }
 
-            return field.GetFormattedText(clear);
+            return field.GetFormattedText(clear, parseMarkdown);
         }
 
         public bool IsEndReached()
@@ -965,7 +965,7 @@ namespace Telegram.ViewModels
                 lastReadMessageId = savedMessagesTopic.LastMessage?.Id ?? long.MaxValue;
                 lastMessageId = savedMessagesTopic.LastMessage?.Id ?? long.MaxValue;
             }
-            else if (_topic is ForumTopic topic)
+            else if (_topic is ForuminoTopicino topic)
             {
                 lastReadMessageId = topic.LastReadInboxMessageId;
                 lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
@@ -1058,7 +1058,7 @@ namespace Telegram.ViewModels
             await Task.Yield();
 
             var chat = _chat;
-            if (chat == null || _type != DialogType.History)
+            if (chat == null || (_type != DialogType.History && (_type == DialogType.Thread && Topic == null)))
             {
                 return;
             }
@@ -1086,14 +1086,24 @@ namespace Telegram.ViewModels
             }
 
             var filter = new SearchMessagesFilterPinned();
+            var threadId = 0L;
 
-            if (!_hasLoadedLastPinnedMessage)
+            if (_topic is ForuminoTopicino topic)
+            {
+                threadId = topic.Info.MessageThreadId;
+            }
+            else if (_thread is MessageThreadInfo thread)
+            {
+                threadId = thread.MessageThreadId;
+            }
+
+            if (!_hasLoadedLastPinnedMessage && _type == DialogType.History)
             {
                 _hasLoadedLastPinnedMessage = true;
                 //Delegate?.UpdatePinnedMessage(chat, null, chat.PinnedMessageId != 0);
                 //Delegate?.UpdatePinnedMessage(chat, true);
 
-                var count = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, filter, 0, true)) as Count;
+                var count = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, filter, SavedMessagesTopicId, true)) as Count;
                 if (count != null)
                 {
                     Delegate?.UpdatePinnedMessage(chat, count.CountValue > 0);
@@ -1102,16 +1112,6 @@ namespace Telegram.ViewModels
                 {
                     Delegate?.UpdatePinnedMessage(chat, false);
                 }
-
-                var pinned = await ClientService.SendAsync(new GetChatPinnedMessage(chat.Id)) as Message;
-                //if (pinned == null)
-                //{
-                //    Delegate?.UpdatePinnedMessage(chat, false);
-                //    return;
-                //}
-
-                LastPinnedMessage = CreateMessage(pinned);
-                //Delegate?.UpdatePinnedMessage(chat, LastPinnedMessage);
             }
 
             var offset = direction == PanelScrollingDirection.Backward ? 0 : direction == PanelScrollingDirection.Forward ? -49 : -25;
@@ -1123,7 +1123,7 @@ namespace Telegram.ViewModels
                 limit = 100;
             }
 
-            var func = new SearchChatMessages(chat.Id, string.Empty, null, maxId, offset, limit, new SearchMessagesFilterPinned(), 0, 0);
+            var func = new SearchChatMessages(chat.Id, string.Empty, null, maxId, offset, limit, filter, threadId, SavedMessagesTopicId);
 
             var tsc = new TaskCompletionSource<List<MessageViewModel>>();
             void handler(BaseObject result)
@@ -1141,7 +1141,7 @@ namespace Telegram.ViewModels
             ClientService.Send(func, handler);
 
             var response = await tsc.Task;
-            if (response is List<MessageViewModel> messages)
+            if (response is List<MessageViewModel> messages && messages.Count > 0)
             {
                 if (direction == PanelScrollingDirection.None)
                 {
@@ -1162,7 +1162,7 @@ namespace Telegram.ViewModels
 
                 Delegate?.ViewVisibleMessages();
             }
-            else
+            else if (PinnedMessages.Empty())
             {
                 Delegate?.UpdatePinnedMessage(chat, false);
             }
@@ -1183,6 +1183,10 @@ namespace Telegram.ViewModels
             {
                 NotifyMessageSliceLoaded();
                 return;
+            }
+            else if (_type is DialogType.Thread)
+            {
+                NotifyMessageSliceLoaded();
             }
 
             var chat = _chat;
@@ -1207,7 +1211,7 @@ namespace Telegram.ViewModels
                 if (alignment == VerticalAlignment.Top && !onlyRemote)
                 {
                     long lastMessageId;
-                    if (_topic is ForumTopic topic)
+                    if (_topic is ForuminoTopicino topic)
                     {
                         lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
                     }
@@ -1475,7 +1479,7 @@ namespace Telegram.ViewModels
                         lastReadMessageId = savedMessagesTopic.LastMessage?.Id ?? long.MaxValue;
                         lastMessageId = savedMessagesTopic.LastMessage?.Id ?? long.MaxValue;
                     }
-                    else if (_topic is ForumTopic topic)
+                    else if (_topic is ForuminoTopicino topic)
                     {
                         lastReadMessageId = topic.LastReadInboxMessageId;
                         lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
@@ -2113,7 +2117,20 @@ namespace Telegram.ViewModels
             }
             else if (parameter is ChatMessageIdNavigationArgs messageIdArgs)
             {
-                Topic = await ClientService.SendAsync(new GetForumTopic(messageIdArgs.ChatId, messageIdArgs.MessageId)) as ForumTopic;
+                var topic = ClientService.GetTopic(messageIdArgs.ChatId, messageIdArgs.MessageId);
+                if (topic != null)
+                {
+                    Topic = topic;
+                }
+                else
+                {
+                    var response = await ClientService.SendAsync(new GetForumTopic(messageIdArgs.ChatId, messageIdArgs.MessageId)) as ForumTopic;
+                    if (response != null)
+                    {
+                        Topic = new ForuminoTopicino(response);
+                    }
+                }
+
                 Thread = await ClientService.SendAsync(new GetMessageThread(messageIdArgs.ChatId, messageIdArgs.MessageId)) as MessageThreadInfo;
 
                 if (Topic != null)
@@ -2205,7 +2222,7 @@ namespace Telegram.ViewModels
                     lastMessageId = savedMessagesTopic.LastMessage?.Id ?? long.MaxValue;
                     secondaryId = savedMessagesTopic.Id;
                 }
-                else if (_topic is ForumTopic topic)
+                else if (_topic is ForuminoTopicino topic)
                 {
                     lastReadMessageId = topic.LastReadInboxMessageId;
                     lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
@@ -2429,7 +2446,7 @@ namespace Telegram.ViewModels
                 lastReadMessageId = 0;
                 secondaryId = savedMessagesTopic.Id;
             }
-            else if (_topic is ForumTopic topic)
+            else if (_topic is ForuminoTopicino topic)
             {
                 lastReadMessageId = topic.LastReadInboxMessageId;
                 secondaryId = ThreadId; // topic.Info.MessageThreadId;
@@ -2724,7 +2741,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            var formattedText = GetFormattedText(clear);
+            var formattedText = GetFormattedText(clear, false);
             if (formattedText == null)
             {
                 return;
@@ -3308,8 +3325,7 @@ namespace Telegram.ViewModels
 
         public async void ViewAsChats()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (Chat is not Chat chat)
             {
                 return;
             }
@@ -3324,6 +3340,17 @@ namespace Telegram.ViewModels
             NavigationService.Frame.BackStack.Add(new PageStackEntry(target, parameter, null));
             NavigationService.GoBack(infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromLeft });
             NavigationService.Frame.ForwardStack.Clear();
+        }
+
+        public async void ViewAsTopics()
+        {
+            if (Chat is not Chat chat)
+            {
+                return;
+            }
+
+            await ClientService.SendAsync(new ToggleChatViewAsTopics(chat.Id, true));
+            NavigationService.GoBackAt(0);
         }
 
         public void OpenProfile(INavigationService navigationService)
@@ -4118,9 +4145,9 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (ClientService.IsFrozen)
+            if (ClientService.FreezeState.IsFrozen)
             {
-                ShowPopup(new FrozenPopup());
+                ShowPopup(new FrozenPopup(ClientService.FreezeState));
             }
             else if (Search?.SavedMessagesTag != null)
             {

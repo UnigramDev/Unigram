@@ -289,7 +289,7 @@ namespace Telegram.Views.Stars.Popups
             var text = CaptionInput.GetFormattedText();
             var user = _senderId as MessageSenderUser;
 
-            _navigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposePremiumGiftCodes(0, _option.Currency, _option.Amount, new[] { user.UserId }, _option.MonthCount, text)));
+            _navigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposePremiumGift(_option.Currency, _option.Amount, user.UserId, _option.MonthCount, text)));
             return Task.FromResult(PayResult.Succeeded);
         }
 

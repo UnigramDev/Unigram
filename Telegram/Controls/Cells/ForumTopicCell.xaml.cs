@@ -1,16 +1,16 @@
-//
+﻿//
 // Copyright Fela Ameghino 2015-2025
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.UI;
 using Microsoft.UI.Composition;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Shapes;
@@ -20,37 +20,37 @@ using System.Numerics;
 using System.Text;
 using Telegram.Common;
 using Telegram.Common.Chats;
+using Telegram.Composition;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
-using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
-using Windows.Foundation;
+using Telegram.Views;
 using Windows.Storage.Streams;
+using Windows.UI;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class ForumTopicCell : ControlEx, IMultipleElement
+    public sealed partial class ForumTopicCell : ControlEx
     {
         private bool _selected;
 
-        private ForumTopic _topic;
+        private ForuminoTopicino _topic;
         private Chat _chat;
+
+        private int _thumbnailId;
+
+        private string _dateLabel;
+        private string _stateLabel;
 
         private IClientService _clientService;
 
-        private Visual _onlineBadge;
-        private bool _onlineCall;
-
-        // Used only to prevent garbage collection
-        private CompositionAnimation _size1;
-        private CompositionAnimation _size2;
-        private CompositionAnimation _offset1;
-        private CompositionAnimation _offset2;
-        private CompositionAnimation _offset3;
+        private bool _draft;
 
         private MessageTicksState _ticksState;
 
@@ -64,87 +64,65 @@ namespace Telegram.Controls.Cells
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_strokeToken == 0 && (_shapes != null || _ellipse != null))
-            {
-                Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
-                OnStrokeChanged(Stroke, SolidColorBrush.ColorProperty);
-            }
-
-            if (_selectionStrokeToken == 0 && _stroke != null)
-            {
-                SelectionStroke?.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
-                OnSelectionStrokeChanged(SelectionStroke, SolidColorBrush.ColorProperty);
-            }
+            _strokeBrush?.Register();
+            _selectionStrokeBrush?.Register();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Stroke?.UnregisterColorChangedCallback(ref _strokeToken);
-            SelectionStroke?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
+            _strokeBrush?.Unregister();
+            _selectionStrokeBrush?.Unregister();
         }
 
         #region InitializeComponent
 
-        private Grid PhotoPanel;
         private IdentityIcon TypeIcon;
         private TextBlock TitleLabel;
-        private FontIcon MutedIcon;
-        private FontIcon StateIcon;
+        private TextBlock MutedIcon;
         private TextBlock TimeLabel;
+        private Grid PreviewPanel;
         private Border MinithumbnailPanel;
-        private TextBlock BriefInfo;
         private ChatActionIndicator ChatActionIndicator;
         private TextBlock TypingLabel;
-        private Border PinnedIcon;
+        private TextBlock PinnedIcon;
         private Border UnreadMentionsBadge;
         private BadgeControl UnreadBadge;
         private Rectangle DropVisual;
-        private TextBlock FailedLabel;
         private TextBlock UnreadMentionsLabel;
         private Run FromLabel;
         private Run DraftLabel;
+        private RichTextBlock BriefText;
         private Span BriefLabel;
-        private Image Minithumbnail;
-        private Ellipse SelectionOutline;
-        private ProfilePicture Photo;
+        private ImageBrush Minithumbnail;
+        private Grid IconRoot;
+        private Path IconPath;
+        private TextBlock IconText;
 
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
         {
-            PhotoPanel = GetTemplateChild(nameof(PhotoPanel)) as Grid;
             TypeIcon = GetTemplateChild(nameof(TypeIcon)) as IdentityIcon;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
-            MutedIcon = GetTemplateChild(nameof(MutedIcon)) as FontIcon;
-            StateIcon = GetTemplateChild(nameof(StateIcon)) as FontIcon;
+            MutedIcon = GetTemplateChild(nameof(MutedIcon)) as TextBlock;
             TimeLabel = GetTemplateChild(nameof(TimeLabel)) as TextBlock;
+            PreviewPanel = GetTemplateChild(nameof(PreviewPanel)) as Grid;
             MinithumbnailPanel = GetTemplateChild(nameof(MinithumbnailPanel)) as Border;
-            BriefInfo = GetTemplateChild(nameof(BriefInfo)) as TextBlock;
             ChatActionIndicator = GetTemplateChild(nameof(ChatActionIndicator)) as ChatActionIndicator;
             TypingLabel = GetTemplateChild(nameof(TypingLabel)) as TextBlock;
-            PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as Border;
+            PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as TextBlock;
             UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
             UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as BadgeControl;
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
-            FailedLabel = GetTemplateChild(nameof(FailedLabel)) as TextBlock;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
             FromLabel = GetTemplateChild(nameof(FromLabel)) as Run;
             DraftLabel = GetTemplateChild(nameof(DraftLabel)) as Run;
+            BriefText = GetTemplateChild(nameof(BriefText)) as RichTextBlock;
             BriefLabel = GetTemplateChild(nameof(BriefLabel)) as Span;
-            Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as Image;
-            SelectionOutline = GetTemplateChild(nameof(SelectionOutline)) as Ellipse;
-            Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
-
-            var tooltip = new ToolTip();
-            tooltip.Opened += ToolTip_Opened;
-
-            ToolTipService.SetToolTip(BriefInfo, tooltip);
-
-            _selectionPhoto = ElementComposition.GetElementVisual(Photo);
-            _selectionOutline = ElementComposition.GetElementVisual(SelectionOutline);
-            _selectionPhoto.CenterPoint = new Vector3(24);
-            _selectionOutline.CenterPoint = new Vector3(24);
-            _selectionOutline.Opacity = 0;
+            Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as ImageBrush;
+            IconRoot = GetTemplateChild(nameof(IconRoot)) as Grid;
+            IconPath = GetTemplateChild(nameof(IconPath)) as Path;
+            IconText = GetTemplateChild(nameof(IconText)) as TextBlock;
 
             _templateApplied = true;
 
@@ -156,7 +134,7 @@ namespace Telegram.Controls.Cells
 
         #endregion
 
-        public void UpdateForumTopic(IClientService clientService, ForumTopic topic, Chat chat)
+        public void UpdateForumTopic(IClientService clientService, ForuminoTopicino topic, Chat chat)
         {
             _clientService = clientService;
 
@@ -178,7 +156,7 @@ namespace Telegram.Controls.Cells
             return null;
         }
 
-        private string UpdateAutomation(IClientService clientService, ForumTopic topic, Chat chat, Message message)
+        private string UpdateAutomation(IClientService clientService, ForuminoTopicino topic, Chat chat, Message message)
         {
             var builder = new StringBuilder();
 
@@ -246,76 +224,116 @@ namespace Telegram.Controls.Cells
 
         #region Updates
 
-        public void UpdateForumTopicLastMessage(ForumTopic topic)
+        public void UpdateForumTopicLastMessage(ForuminoTopicino topic)
         {
             if (topic == null || _chat == null || !_templateApplied)
             {
                 return;
             }
 
-            DraftLabel.Text = UpdateDraftLabel(topic);
-            FromLabel.Text = UpdateFromLabel(_chat, topic);
-            TimeLabel.Text = UpdateTimeLabel(topic);
-            StateIcon.Glyph = UpdateStateIcon(topic.LastReadOutboxMessageId, topic, topic.DraftMessage, topic.LastMessage, topic.LastMessage?.SendingState);
+            var from = UpdateFromLabel(_chat, topic, out bool draft);
 
-            UpdateBriefLabel(UpdateBriefLabel(topic));
-            UpdateMinithumbnail(topic, topic.DraftMessage == null ? topic.LastMessage : null);
+            if (draft)
+            {
+                DraftLabel.Text = from;
+
+                if (!_draft)
+                {
+                    FromLabel.Text = Icons.ZWJ;
+                }
+            }
+            else
+            {
+                FromLabel.Text = from;
+
+                if (_draft)
+                {
+                    DraftLabel.Text = Icons.ZWJ;
+                }
+            }
+
+            _draft = draft;
+            _dateLabel = UpdateTimeLabel(topic);
+            _stateLabel = UpdateStateIcon(topic.LastReadOutboxMessageId, topic, topic.DraftMessage, topic.LastMessage, topic.LastMessage?.SendingState);
+            TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
+
+            UpdateBriefLabel(UpdateBriefLabel(topic, out MinithumbnailId thumbnail));
+            UpdateMinithumbnail(thumbnail);
         }
 
-        public void UpdateForumTopicReadInbox(ForumTopic topic)
+        public void UpdateForumTopicReadInbox(ForuminoTopicino topic)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
 
-            PinnedIcon.Visibility = topic.UnreadCount == 0 && topic.IsPinned ? Visibility.Visible : Visibility.Collapsed;
-            UnreadBadge.Visibility = topic.UnreadCount > 0 ? topic.UnreadMentionCount == 1 && topic.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
-            UnreadBadge.Text = topic.UnreadCount.ToString();
+            PinnedIcon.Visibility = topic.UnreadCount == 0 /*&& !topic.IsMarkedAsUnread*/ && topic.IsPinned ? Visibility.Visible : Visibility.Collapsed;
 
-            //UpdateAutomation(_clientService, topic, topic.LastMessage);
+            var unread = (topic.UnreadCount > 0 /*|| topic.IsMarkedAsUnread*/) ? topic.UnreadMentionCount == 1 && topic.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
+            if (unread == Visibility.Visible)
+            {
+                UnreadBadge.Visibility = Visibility.Visible;
+                //UnreadBadge.Text = topic.UnreadCount > 0 ? topic.UnreadCount.ToString() : string.Empty;
+            }
+            else
+            {
+                UnreadBadge.Visibility = Visibility.Collapsed;
+            }
+
+            //UpdateAutomation(_clientService, chat, chat.LastMessage);
         }
 
-        //public void UpdateForumTopicReadOutbox(ForumTopic topic)
-        //{
-        //    if (!_templateApplied)
-        //    {
-        //        return;
-        //    }
-
-        //    StateIcon.Glyph = UpdateStateIcon(topic.LastReadOutboxMessageId, topic, topic.DraftMessage, topic.LastMessage, topic.LastMessage?.SendingState);
-        //}
-
-        //public void UpdateForumTopicIsMarkedAsUnread(ForumTopic topic)
-        //{
-
-        //}
-
-        public void UpdateForumTopicUnreadMentionCount(ForumTopic topic)
+        public void UpdateForumTopicReadOutbox(ForuminoTopicino topic)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
+            {
+                return;
+            }
+
+            _stateLabel = UpdateStateIcon(topic.LastReadOutboxMessageId, topic, topic.DraftMessage, topic.LastMessage, topic.LastMessage?.SendingState);
+            TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
+        }
+
+        public void UpdateChatIsMarkedAsUnread(Chat chat)
+        {
+
+        }
+
+        public void UpdateForumTopicUnreadMentionCount(ForuminoTopicino topic)
+        {
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
 
             UpdateForumTopicReadInbox(topic);
-            UnreadMentionsBadge.Visibility = topic.UnreadMentionCount > 0 || topic.UnreadReactionCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-            UnreadMentionsLabel.Text = topic.UnreadMentionCount > 0 ? Icons.Mention16 : Icons.HeartFilled12;
+
+            var unread = topic.UnreadMentionCount > 0 || topic.UnreadReactionCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            if (unread == Visibility.Visible)
+            {
+                UnreadMentionsBadge.Visibility = Visibility.Visible;
+                UnreadMentionsLabel.Text = topic.UnreadMentionCount > 0 ? Icons.Mention16 : Icons.HeartFilled12;
+            }
+            else
+            {
+                UnreadMentionsBadge.Visibility = Visibility.Collapsed;
+            }
         }
 
-        public void UpdateNotificationSettings(ForumTopic topic)
+        public void UpdateNotificationSettings(ForuminoTopicino topic)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
 
-            var muted = _clientService.Notifications.GetMuteFor(_chat, topic) > 0;
-            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
+            var muted = _clientService.Notifications.IsMuted(_chat, topic);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
+            UnreadBadge.IsUnmuted = !muted;
         }
 
-        public void UpdateForumTopicInfo(ForumTopic topic)
+        public void UpdateForumTopicInfo(ForuminoTopicino topic)
         {
             if (!_templateApplied)
             {
@@ -326,9 +344,9 @@ namespace Telegram.Controls.Cells
             UpdateForumTopicIcon(topic);
         }
 
-        public void UpdateForumTopicName(ForumTopic topic)
+        public void UpdateForumTopicName(ForuminoTopicino topic)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
@@ -336,20 +354,111 @@ namespace Telegram.Controls.Cells
             TitleLabel.Text = topic.Info.Name;
         }
 
-        public void UpdateForumTopicIcon(ForumTopic topic)
+        public static Color[] ServerSupportedColors = new Color[6]
         {
-            if (!_templateApplied)
+            Color.FromArgb(0xFF, 0x6F, 0xB9, 0xF0), // blue
+            Color.FromArgb(0xFF, 0xFF, 0xD6, 0x7E), // yellow
+            Color.FromArgb(0xFF, 0xCB, 0x86, 0xDB), // violet
+            Color.FromArgb(0xFF, 0x8E, 0xEE, 0x98), // green
+            Color.FromArgb(0xFF, 0xFF, 0x93, 0xB2), // rose
+            Color.FromArgb(0xFF, 0xFB, 0x6F, 0x5F), // orange
+        };
+
+        private static readonly Color[] _colorsTop = new Color[6]
+        {
+            Color.FromArgb(0xFF, 0x8A, 0xD3, 0xF9), // blue
+            Color.FromArgb(0xFF, 0xF7, 0xCE, 0x79), // yellow
+            Color.FromArgb(0xFF, 0x8C, 0xAF, 0xF9), // violet
+            Color.FromArgb(0xFF, 0xAC, 0xDC, 0x89), // green
+            Color.FromArgb(0xFF, 0xFF, 0xAF, 0xC7), // rose
+            Color.FromArgb(0xFF, 0xEF, 0x8E, 0x67), // orange
+        };
+
+        private static readonly Color[] _colors = new Color[6]
+        {
+            Color.FromArgb(0xFF, 0x51, 0x9D, 0xEA), // blue
+            Color.FromArgb(0xFF, 0xF2, 0xAC, 0x6A), // yellow
+            Color.FromArgb(0xFF, 0x65, 0x60, 0xF6), // violet
+            Color.FromArgb(0xFF, 0x75, 0xC8, 0x73), // green
+            Color.FromArgb(0xFF, 0xF2, 0x74, 0x9A), // rose
+            Color.FromArgb(0xFF, 0xEC, 0x5F, 0x6D), // orange
+        };
+
+        public static int FindIconColorIndex(int color)
+        {
+            static int Distance(Color a, Color b)
+            {
+                return Math.Abs(a.R - b.R) + Math.Abs(a.G - b.G) + Math.Abs(a.B - b.B);
+            }
+
+            var value = color.ToColor();
+
+            int distance = Distance(ServerSupportedColors[0], value);
+            var index = 0;
+
+            for (int i = 0; i < ServerSupportedColors.Length; i++)
+            {
+                int distanceLocal = Distance(ServerSupportedColors[i], value);
+                if (distanceLocal < distance)
+                {
+                    distance = distanceLocal;
+                    index = i;
+                }
+            }
+
+            return index;
+        }
+
+        public static LinearGradientBrush GetIconGradient(ForumTopicIcon icon)
+        {
+            var index = FindIconColorIndex(icon.Color);
+
+            var top = _colorsTop[index];
+            var bottom = _colors[index];
+
+            return new LinearGradientBrush(new GradientStopCollection
+            {
+                new GradientStop
+                {
+                    Color = top,
+                    Offset = 0
+                },
+                new GradientStop
+                {
+                    Color = bottom,
+                    Offset = 1
+                }
+            }, 90);
+        }
+
+        public void UpdateForumTopicIcon(ForuminoTopicino topic)
+        {
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
 
-            //Photo.SetForumTopic(_clientService, topic, 48);
-            TypeIcon.SetStatus(_clientService, topic.Info.Icon);
+            if (topic.Info.IsGeneral || topic.Info.Icon.CustomEmojiId != 0)
+            {
+                TypeIcon.SetStatus(_clientService, topic.Info.Icon);
+                IconRoot.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                TypeIcon.ClearStatus();
+                IconRoot.Visibility = Visibility.Visible;
+
+                var brush = GetIconGradient(topic.Info.Icon);
+
+                IconPath.Fill = brush;
+                IconPath.Stroke = new SolidColorBrush(brush.GradientStops[1].Color);
+                IconText.Text = InitialNameStringConverter.Convert(topic.Info.Name);
+            }
         }
 
-        public void UpdateForumTopicActions(ForumTopic topic, IDictionary<MessageSender, ChatAction> actions)
+        public void UpdateForumTopicActions(ForuminoTopicino topic, IDictionary<MessageSender, ChatAction> actions)
         {
-            if (!_templateApplied)
+            if (_clientService == null || !_templateApplied)
             {
                 return;
             }
@@ -360,47 +469,33 @@ namespace Telegram.Controls.Cells
                 ChatActionIndicator.UpdateAction(commonAction);
                 ChatActionIndicator.Visibility = Visibility.Visible;
                 TypingLabel.Visibility = Visibility.Visible;
-                BriefInfo.Visibility = Visibility.Collapsed;
-                Minithumbnail.Visibility = Visibility.Collapsed;
+                BriefText.Visibility = Visibility.Collapsed;
             }
             else
             {
                 ChatActionIndicator.Visibility = Visibility.Collapsed;
                 ChatActionIndicator.UpdateAction(null);
                 TypingLabel.Visibility = Visibility.Collapsed;
-                BriefInfo.Visibility = Visibility.Visible;
-                Minithumbnail.Visibility = Visibility.Visible;
+                BriefText.Visibility = Visibility.Visible;
             }
         }
 
-        //private void UpdateForumTopicType(ForumTopic topic)
-        //{
-        //    var type = UpdateType(topic);
-        //    TypeIcon.Text = type ?? string.Empty;
-        //    TypeIcon.Visibility = type == null ? Visibility.Collapsed : Visibility.Visible;
-
-        //    Identity.SetStatus(_clientService, topic);
-        //}
-
-        private void Update(ForumTopic topic, Chat chat)
+        private void Update(ForuminoTopicino topic, Chat chat)
         {
             _topic = topic;
             _chat = chat;
-
-            Tag = topic;
 
             if (!_templateApplied)
             {
                 return;
             }
 
-            //UpdateViewState(topic, ForumTopicFilterMode.None, false, false);
-
             UpdateForumTopicName(topic);
             UpdateForumTopicIcon(topic);
+            //UpdateChatEmojiStatus(topic);
 
             UpdateForumTopicLastMessage(topic);
-            //UpdateForumTopicReadInbox(topic);
+            //UpdateChatReadInbox(chat);
             UpdateForumTopicUnreadMentionCount(topic);
             UpdateNotificationSettings(topic);
             UpdateForumTopicActions(topic, _clientService.GetChatActions(chat.Id, topic.Info.MessageThreadId));
@@ -408,16 +503,17 @@ namespace Telegram.Controls.Cells
 
         #endregion
 
-        public void UpdateViewState(ForumTopic topic, bool compact)
+        private async void UpdateMinithumbnail(MinithumbnailId thumbnail)
         {
-            VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
-        }
-
-        private void UpdateMinithumbnail(ForumTopic topic, Message message)
-        {
-            var thumbnail = message?.GetMinithumbnail(false);
             if (thumbnail != null)
             {
+                if (_thumbnailId == thumbnail.Id)
+                {
+                    return;
+                }
+
+                _thumbnailId = thumbnail.Id;
+
                 double ratioX = (double)16 / thumbnail.Width;
                 double ratioY = (double)16 / thumbnail.Height;
                 double ratio = Math.Max(ratioX, ratioY);
@@ -425,14 +521,24 @@ namespace Telegram.Controls.Cells
                 var width = (int)(thumbnail.Width * ratio);
                 var height = (int)(thumbnail.Height * ratio);
 
-                var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+                var bitmap = new BitmapImage
+                {
+                    DecodePixelWidth = width,
+                    DecodePixelHeight = height,
+                    DecodePixelType = DecodePixelType.Logical
+                };
+
+                Minithumbnail.ImageSource = bitmap;
+                MinithumbnailPanel.Visibility = Visibility.Visible;
+
+                MinithumbnailPanel.CornerRadius = new CornerRadius(thumbnail.IsVideoNote ? 9 : 2);
 
                 using (var stream = new InMemoryRandomAccessStream())
                 {
                     try
                     {
                         PlaceholderImageHelper.WriteBytes(thumbnail.Data, stream);
-                        bitmap.SetSource(stream);
+                        await bitmap.SetSourceAsync(stream);
                     }
                     catch
                     {
@@ -440,16 +546,13 @@ namespace Telegram.Controls.Cells
                         // not so frequent, but if it happens during ContainerContentChanging it crashes the app.
                     }
                 }
-
-                Minithumbnail.Source = bitmap;
-                MinithumbnailPanel.Visibility = Visibility.Visible;
-
-                MinithumbnailPanel.CornerRadius = new CornerRadius(message.Content is MessageVideoNote ? 8 : 2);
             }
             else
             {
+                _thumbnailId = 0;
+
                 MinithumbnailPanel.Visibility = Visibility.Collapsed;
-                Minithumbnail.Source = null;
+                Minithumbnail.ImageSource = null;
             }
         }
 
@@ -476,7 +579,22 @@ namespace Telegram.Controls.Cells
                             BriefLabel.Inlines.Add(new Run { Text = clean.Text.Substring(previous, entity.Offset - previous) });
                         }
 
-                        BriefLabel.Inlines.Add(new Run { Text = clean.Text.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
+                        var player = new CustomEmojiIcon();
+                        player.LoopCount = 0;
+                        player.Source = new CustomEmojiFileSource(_clientService, customEmoji.CustomEmojiId);
+                        player.Style = BootStrapper.Current.Resources["InfoCustomEmojiStyle"] as Style;
+
+                        var inline = new InlineUIContainer();
+                        inline.Child = new CustomEmojiContainer(BriefText, player, baseline: 0);
+
+                        // If the Span starts with a InlineUIContainer the RichTextBlock bugs and shows ellipsis
+                        if (BriefLabel.Inlines.Empty())
+                        {
+                            BriefLabel.Inlines.Add(Icons.ZWNJ);
+                        }
+
+                        BriefLabel.Inlines.Add(inline);
+                        BriefLabel.Inlines.Add(Icons.ZWNJ);
 
                         previous = entity.Offset + entity.Length;
                     }
@@ -490,99 +608,45 @@ namespace Telegram.Controls.Cells
         }
 
 
-        private FormattedText UpdateBriefLabel(ForumTopic topic)
+        private FormattedText UpdateBriefLabel(ForuminoTopicino topic, out MinithumbnailId thumbnail)
         {
+            thumbnail = null;
+
             var topMessage = topic.LastMessage;
             if (topMessage != null)
             {
-                return UpdateBriefLabel(topic, topMessage, true, true);
+                return ChatCell.UpdateBriefLabel(topMessage.Content, topMessage.IsOutgoing, topic.DraftMessage, false, out thumbnail);
             }
 
             return new FormattedText(string.Empty, Array.Empty<TextEntity>());
         }
 
-        private FormattedText UpdateBriefLabel(ForumTopic topic, Message value, bool showContent, bool draft)
+        private string UpdateFromLabel(Chat chat, ForuminoTopicino topic, out bool draft)
         {
-            //if (ViewModel.DraftMessage is DraftMessage draft && !string.IsNullOrWhiteSpace(draft.InputMessageText.ToString()))
-            //{
-            //    return draft.Message;
-            //}
-
-            if (topic.DraftMessage != null && draft)
+            if (topic.DraftMessage is not null)
             {
-                switch (topic.DraftMessage.InputMessageText)
-                {
-                    case InputMessageText text:
-                        return text.Text;
-                }
-            }
-
-            //if (value is TLMessageEmpty messageEmpty)
-            //{
-            //    return string.Empty;
-            //}
-
-            //if (value is TLMessageService messageService)
-            //{
-            //    return string.Empty;
-            //}
-
-            if (!showContent)
-            {
-                return new FormattedText(Strings.Message, Array.Empty<TextEntity>());
-            }
-
-            return value.Content switch
-            {
-                MessageAnimation animation => animation.Caption,
-                MessageAudio audio => audio.Caption,
-                MessageDocument document => document.Caption,
-                MessagePhoto photo => photo.Caption,
-                MessageVideo video => video.Caption,
-                MessageVoiceNote voiceNote => voiceNote.Caption,
-                MessageText text => text.Text,
-                MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>()),
-                MessageDice dice => new FormattedText(dice.Emoji, Array.Empty<TextEntity>()),
-                MessageInvoice invoice => invoice.PaidMediaCaption,
-                _ => new FormattedText(string.Empty, Array.Empty<TextEntity>()),
-            };
-        }
-
-        private string UpdateDraftLabel(ForumTopic topic)
-        {
-            if (topic.DraftMessage != null)
-            {
-                switch (topic.DraftMessage.InputMessageText)
-                {
-                    case InputMessageText:
-                        return string.Format("{0}: ", Strings.Draft);
-                }
-            }
-
-            return string.Empty;
-        }
-
-        private string UpdateFromLabel(Chat chat, ForumTopic topic)
-        {
-            if (topic.DraftMessage != null)
-            {
-                switch (topic.DraftMessage.InputMessageText)
-                {
-                    case InputMessageText:
-                        return string.Empty;
-                }
+                draft = true;
+                return string.Format("{0}: \u200B​​​", Strings.Draft);
             }
 
             var message = topic.LastMessage;
             if (message == null)
             {
+                if (topic.LastReadOutboxMessageId != 0 || topic.LastReadInboxMessageId != 0)
+                {
+                    draft = false;
+                    return Strings.HistoryCleared;
+                }
+
+                draft = false;
                 return string.Empty;
             }
 
-            return ChatCell.UpdateFromLabel(_clientService, null, message);
+            draft = false;
+            return ChatCell.UpdateFromLabel(_clientService, chat, message);
         }
 
-        private string UpdateStateIcon(long maxId, ForumTopic topic, DraftMessage draft, Message message, MessageSendingState state)
+        private string UpdateStateIcon(long maxId, ForuminoTopicino topic, DraftMessage draft, Message message, MessageSendingState state)
         {
             if (draft != null || message == null)
             {
@@ -608,20 +672,20 @@ namespace Telegram.Controls.Cells
                     UpdateTicks(null);
 
                     _ticksState = MessageTicksState.Pending;
-                    return "\uE600"; // Pending
+                    return "\uEA06"; // Pending
                 }
                 else if (message.Id <= maxId)
                 {
                     UpdateTicks(true, _ticksState == MessageTicksState.Sent);
 
                     _ticksState = MessageTicksState.Read;
-                    return _container != null ? "\uE603" : "\uE601"; // Read
+                    return "\uEA07"; // Read
                 }
 
                 UpdateTicks(false, _ticksState == MessageTicksState.Pending);
 
                 _ticksState = MessageTicksState.Sent;
-                return _container != null ? "\uE603" : "\uE602"; // Unread
+                return "\uEA07"; // Unread
             }
 
             UpdateTicks(null);
@@ -630,75 +694,117 @@ namespace Telegram.Controls.Cells
             return string.Empty;
         }
 
-        private string UpdateTimeLabel(ForumTopic topic)
+        private string UpdateTimeLabel(ForuminoTopicino topic)
         {
             var lastMessage = topic.LastMessage;
             if (lastMessage != null)
             {
-                return UpdateTimeLabel(lastMessage);
+                return Formatter.DateExtended(lastMessage.Date);
             }
 
             return string.Empty;
         }
 
-        private string UpdateTimeLabel(Message message)
+        public void ShowPreview(HoldingEventArgs args)
         {
-            return Formatter.DateExtended(message.Date);
-        }
+            Logger.Info();
 
-        private void ToolTip_Opened(object sender, RoutedEventArgs e)
-        {
-            var tooltip = sender as ToolTip;
-            if (tooltip != null)
+            var tooltip = new MenuFlyoutContent();
+
+            var flyout = new MenuFlyout();
+            flyout.MenuFlyoutPresenterStyle = new Style(typeof(MenuFlyoutPresenter));
+            flyout.MenuFlyoutPresenterStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0)));
+
+            flyout.Items.Add(tooltip);
+
+            var chat = _chat;
+            var message = chat?.LastMessage;
+
+            if (chat == null)
             {
-                if (BriefInfo.IsTextTrimmed)
-                {
-                    tooltip.Content = BriefInfo.Text;
-                }
-                else
-                {
-                    tooltip.IsOpen = false;
-                }
+                return;
             }
+
+            var grid = new Grid();
+            var frame = new Frame
+            {
+                Width = 320,
+                Height = 360
+            };
+
+            var context = WindowContext.ForXamlRoot(this);
+
+            var service = new TLNavigationService(_clientService, null, context, frame, "ChatPreview");
+            service.NavigateToChat(_chat);
+
+            var chatPage = frame.Content as ChatPage;
+            var chatView = chatPage?.Content as ChatView;
+
+            if (chatView != null)
+            {
+                void handler(object sender, RoutedEventArgs e)
+                {
+                    Logger.Info("Unloaded");
+
+                    chatView.Unloaded -= handler;
+                    chatView.ViewModel.NavigatedFrom(null, false);
+                    chatView.Deactivate(false);
+                }
+
+                chatView.Unloaded += handler;
+            }
+
+            var background = new ChatBackgroundControl();
+            background.Update(_clientService, null);
+
+            grid.Children.Add(background);
+            grid.Children.Add(frame);
+            grid.CornerRadius = new CornerRadius(8);
+
+            tooltip.Content = grid;
+            tooltip.Padding = new Thickness();
+            tooltip.MaxWidth = double.PositiveInfinity;
+
+            flyout.ShowAt(this, args.Position);
         }
 
         protected override void OnDragEnter(DragEventArgs e)
         {
-            //var topic = _topic;
-            //if (topic == null)
-            //{
-            //    return;
-            //}
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
 
-            //try
-            //{
-            //    if (_clientService.CanPostMessages(topic) && e.DataView.AvailableFormats.Count > 0)
-            //    {
-            //        if (DropVisual == null)
-            //        {
-            //            FindName(nameof(DropVisual));
-            //        }
+            try
+            {
+                if (_clientService.CanPostMessages(chat) && e.DataView.AvailableFormats.Count > 0)
+                {
+                    if (DropVisual == null)
+                    {
+                        FindName(nameof(DropVisual));
+                    }
 
-            //        DropVisual.Visibility = Visibility.Visible;
-            //        e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
-            //    }
-            //    else
-            //    {
-            //        if (DropVisual != null)
-            //        {
-            //            DropVisual.Visibility = Visibility.Collapsed;
-            //        }
+                    DropVisual.Visibility = Visibility.Visible;
+                    e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
+                }
+                else
+                {
+                    if (DropVisual != null)
+                    {
+                        DropVisual.Visibility = Visibility.Collapsed;
+                    }
 
-            //        e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
-            //    }
-            //}
-            //catch
-            //{
-            //    if (DropVisual != null)
-            //    {
-            //        DropVisual.Visibility = Visibility.Collapsed;
-            //    }
-            //}
+                    e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
+                }
+            }
+            catch
+            {
+                if (DropVisual != null)
+                {
+                    DropVisual.Visibility = Visibility.Collapsed;
+                }
+            }
 
             base.OnDragEnter(e);
         }
@@ -715,39 +821,38 @@ namespace Telegram.Controls.Cells
 
         protected override void OnDrop(DragEventArgs e)
         {
-            //if (DropVisual != null)
-            //{
-            //    DropVisual.Visibility = Visibility.Collapsed;
-            //}
+            if (DropVisual != null)
+            {
+                DropVisual.Visibility = Visibility.Collapsed;
+            }
 
-            //try
-            //{
-            //    if (e.DataView.AvailableFormats.Count == 0)
-            //    {
-            //        return;
-            //    }
+            try
+            {
+                if (e.DataView.AvailableFormats.Count == 0)
+                {
+                    return;
+                }
 
-            //    var topic = _topic;
-            //    if (topic == null)
-            //    {
-            //        return;
-            //    }
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return;
+                }
 
-            //    var service = WindowContext.Current.NavigationServices.GetByFrameId($"Main{_clientService.SessionId}") as NavigationService;
-            //    if (service != null)
-            //    {
-            //        App.DataPackages[topic.Id] = e.DataView;
-            //        service.NavigateToForumTopic(topic);
-            //    }
-            //}
-            //catch { }
+                var service = WindowContext.GetNavigationService(this);
+                service?.NavigateToChat(chat, state: new NavigationState
+                {
+                    { "package", e.DataView }
+                });
+            }
+            catch { }
 
             base.OnDrop(e);
         }
 
         #region SelectionStroke
 
-        private long _selectionStrokeToken;
+        private CompositionColorSource _selectionStrokeBrush;
 
         public SolidColorBrush SelectionStroke
         {
@@ -765,165 +870,7 @@ namespace Telegram.Controls.Cells
 
         private void OnSelectionStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            oldValue?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
-
-            if (newValue == null || _stroke == null)
-            {
-                return;
-            }
-
-            _stroke.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(newValue.Color);
-
-            if (IsConnected)
-            {
-                newValue.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
-            }
-        }
-
-        private void OnSelectionStrokeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            var solid = sender as SolidColorBrush;
-            if (solid == null || _stroke == null)
-            {
-                return;
-            }
-
-            _stroke.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
-        }
-
-        #endregion
-
-        #region Selection Animation
-
-        private Visual _selectionOutline;
-        private Visual _selectionPhoto;
-
-        private CompositionPathGeometry _polygon;
-        private CompositionSpriteShape _ellipse;
-        private CompositionSpriteShape _stroke;
-        private ShapeVisual _visual;
-
-        private void InitializeSelection()
-        {
-            static CompositionPath GetCheckMark()
-            {
-                CanvasGeometry result;
-                using (var builder = new CanvasPathBuilder(null))
-                {
-                    //builder.BeginFigure(new Vector2(3.821f, 7.819f));
-                    //builder.AddLine(new Vector2(6.503f, 10.501f));
-                    //builder.AddLine(new Vector2(12.153f, 4.832f));
-                    builder.BeginFigure(new Vector2(5.821f, 9.819f));
-                    builder.AddLine(new Vector2(7.503f, 12.501f));
-                    builder.AddLine(new Vector2(14.153f, 6.832f));
-                    builder.EndFigure(CanvasFigureLoop.Open);
-                    result = CanvasGeometry.CreatePath(builder);
-                }
-                return new CompositionPath(result);
-            }
-
-            var compositor = BootStrapper.Current.Compositor;
-            //12.711,5.352 11.648,4.289 6.5,9.438 4.352,7.289 3.289,8.352 6.5,11.563
-
-            var polygon = compositor.CreatePathGeometry();
-            polygon.Path = GetCheckMark();
-
-            var shape1 = compositor.CreateSpriteShape();
-            shape1.Geometry = polygon;
-            shape1.StrokeThickness = 1.5f;
-            shape1.StrokeBrush = compositor.CreateColorBrush(Colors.White);
-
-            var ellipse = compositor.CreateEllipseGeometry();
-            ellipse.Radius = new Vector2(8);
-            ellipse.Center = new Vector2(10);
-
-            var shape2 = compositor.CreateSpriteShape();
-            shape2.Geometry = ellipse;
-            shape2.FillBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
-
-            var outer = compositor.CreateEllipseGeometry();
-            outer.Radius = new Vector2(10);
-            outer.Center = new Vector2(10);
-
-            var shape3 = compositor.CreateSpriteShape();
-            shape3.Geometry = outer;
-            shape3.FillBrush = GetBrush(SelectionStrokeProperty, ref _selectionStrokeToken, OnSelectionStrokeChanged);
-
-            var visual = compositor.CreateShapeVisual();
-            visual.Shapes.Add(shape3);
-            visual.Shapes.Add(shape2);
-            visual.Shapes.Add(shape1);
-            visual.Size = new Vector2(20, 20);
-            visual.Offset = new Vector3(48 - 19, 48 - 19, 0);
-            visual.CenterPoint = new Vector3(8);
-            visual.Scale = new Vector3(0);
-
-            ElementCompositionPreview.SetElementChildVisual(PhotoPanel, visual);
-
-            _polygon = polygon;
-            _ellipse = shape2;
-            _stroke = shape3;
-            _visual = visual;
-        }
-
-        public void UpdateState(bool selected, bool animate, bool multiple)
-        {
-            if (_selected == selected)
-            {
-                return;
-            }
-
-            if (_visual == null)
-            {
-                InitializeSelection();
-            }
-
-            if (animate)
-            {
-                var compositor = BootStrapper.Current.Compositor;
-
-                var anim3 = compositor.CreateScalarKeyFrameAnimation();
-                anim3.InsertKeyFrame(selected ? 0 : 1, 0);
-                anim3.InsertKeyFrame(selected ? 1 : 0, 1);
-
-                var anim1 = compositor.CreateScalarKeyFrameAnimation();
-                anim1.InsertKeyFrame(selected ? 0 : 1, 0);
-                anim1.InsertKeyFrame(selected ? 1 : 0, 1);
-                anim1.DelayTime = TimeSpan.FromMilliseconds(anim1.Duration.TotalMilliseconds / 2);
-                anim1.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-
-                var anim2 = compositor.CreateVector3KeyFrameAnimation();
-                anim2.InsertKeyFrame(selected ? 0 : 1, new Vector3(0));
-                anim2.InsertKeyFrame(selected ? 1 : 0, new Vector3(1));
-
-                _polygon.StartAnimation("TrimEnd", anim1);
-                _visual.StartAnimation("Scale", anim2);
-                _visual.StartAnimation("Opacity", anim3);
-
-                var anim4 = compositor.CreateVector3KeyFrameAnimation();
-                anim4.InsertKeyFrame(selected ? 0 : 1, new Vector3(1));
-                anim4.InsertKeyFrame(selected ? 1 : 0, new Vector3(40f / 48f));
-
-                var anim5 = compositor.CreateVector3KeyFrameAnimation();
-                anim5.InsertKeyFrame(selected ? 1 : 0, new Vector3(1));
-                anim5.InsertKeyFrame(selected ? 0 : 1, new Vector3(40f / 48f));
-
-                _selectionPhoto.StartAnimation("Scale", anim4);
-                _selectionOutline.StartAnimation("Scale", anim5);
-                _selectionOutline.StartAnimation("Opacity", anim3);
-            }
-            else
-            {
-                _polygon.TrimEnd = selected ? 1 : 0;
-                _visual.Scale = new Vector3(selected ? 1 : 0);
-                _visual.Opacity = selected ? 1 : 0;
-
-                _selectionPhoto.Scale = new Vector3(selected ? 40f / 48f : 1);
-                _selectionOutline.Scale = new Vector3(selected ? 1 : 40f / 48f);
-                _selectionOutline.Opacity = selected ? 1 : 0;
-            }
-
-            _selected = selected;
+            _selectionStrokeBrush?.PropertyChanged(newValue, IsConnected);
         }
 
         #endregion
@@ -938,13 +885,11 @@ namespace Telegram.Controls.Cells
         private CompositionGeometry _line22;
         private ShapeVisual _visual2;
 
-        private CompositionSpriteShape[] _shapes;
-
         private SpriteVisual _container;
 
         #region Stroke
 
-        private long _strokeToken;
+        private CompositionColorSource _strokeBrush;
 
         public Brush Stroke
         {
@@ -962,75 +907,10 @@ namespace Telegram.Controls.Cells
 
         private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            oldValue?.UnregisterColorChangedCallback(ref _strokeToken);
-
-            if (newValue == null || (_shapes == null && _ellipse == null))
-            {
-                return;
-            }
-
-            var brush = BootStrapper.Current.Compositor.CreateColorBrush(newValue.Color);
-
-            if (_shapes != null)
-            {
-                foreach (var shape in _shapes)
-                {
-                    shape.StrokeBrush = brush;
-                }
-            }
-
-            if (_ellipse != null)
-            {
-                _ellipse.FillBrush = brush;
-            }
-
-            if (IsConnected)
-            {
-                newValue.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
-            }
-        }
-
-        private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            var solid = sender as SolidColorBrush;
-            if (solid == null || (_shapes == null && _ellipse == null))
-            {
-                return;
-            }
-
-            var brush = BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
-
-            if (_shapes != null)
-            {
-                foreach (var shape in _shapes)
-                {
-                    shape.StrokeBrush = brush;
-                }
-            }
-
-            if (_ellipse != null)
-            {
-                _ellipse.FillBrush = brush;
-            }
+            _strokeBrush?.PropertyChanged(newValue, IsConnected);
         }
 
         #endregion
-
-        private CompositionBrush GetBrush(DependencyProperty dp, ref long token, DependencyPropertyChangedCallback callback)
-        {
-            var value = GetValue(dp);
-            if (value is SolidColorBrush solid)
-            {
-                if (IsConnected)
-                {
-                    solid.RegisterColorChangedCallback(callback, ref token);
-                }
-
-                return BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
-            }
-
-            return BootStrapper.Current.Compositor.CreateColorBrush(Colors.Black);
-        }
 
         private void InitializeTicks()
         {
@@ -1060,13 +940,13 @@ namespace Telegram.Controls.Cells
 
             var shape11 = compositor.CreateSpriteShape(line11);
             shape11.StrokeThickness = stroke;
-            shape11.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape11.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape11.IsStrokeNonScaling = true;
             shape11.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape12 = compositor.CreateSpriteShape(line12);
             shape12.StrokeThickness = stroke;
-            shape12.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape12.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape12.IsStrokeNonScaling = true;
             shape12.StrokeEndCap = CompositionStrokeCap.Round;
 
@@ -1088,12 +968,12 @@ namespace Telegram.Controls.Cells
 
             var shape21 = compositor.CreateSpriteShape(line21);
             shape21.StrokeThickness = stroke;
-            shape21.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape21.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape21.StrokeStartCap = CompositionStrokeCap.Round;
 
             var shape22 = compositor.CreateSpriteShape(line22);
             shape22.StrokeThickness = stroke;
-            shape22.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
+            shape22.StrokeBrush = _strokeBrush ??= new CompositionColorSource(Stroke, IsConnected);
             shape22.StrokeEndCap = CompositionStrokeCap.Round;
 
             var visual2 = compositor.CreateShapeVisual();
@@ -1106,14 +986,16 @@ namespace Telegram.Controls.Cells
             container.Children.InsertAtTop(visual2);
             container.Children.InsertAtTop(visual1);
             container.Size = new Vector2(width, height);
+            container.AnchorPoint = new Vector2(0, 0);
+            container.Offset = new Vector3(0, 3, 0);
+            container.RelativeOffsetAdjustment = new Vector3(0, 0, 0);
 
-            ElementCompositionPreview.SetElementChildVisual(StateIcon, container);
+            ElementCompositionPreview.SetElementChildVisual(TimeLabel, container);
 
             _line11 = line11;
             _line12 = line12;
             _line21 = line21;
             _line22 = line22;
-            _shapes = new[] { shape11, shape12, shape21, shape22 };
             _visual1 = visual1;
             _visual2 = visual2;
             _container = container;
@@ -1216,232 +1098,25 @@ namespace Telegram.Controls.Cells
 
         #endregion
 
-    }
+        #region XamlMarkupHelper
 
-    public partial class ForumTopicCellPanel : Panel
-    {
-        protected override Size MeasureOverride(Size availableSize)
+        private void LoadObject<T>(ref T element, /*[CallerArgumentExpression("element")]*/string name)
+            where T : DependencyObject
         {
-            var PhotoPanel = Children[0];
-
-            var TypeIcon = Children[1];
-            var TitleLabel = Children[2];
-            var MutedIcon = Children[3];
-            var StateIcon = Children[4];
-            var TimeLabel = Children[5];
-
-            var MinithumbnailPanel = Children[6];
-            var BriefInfo = Children[7];
-
-            var shift = 0;
-            var CustomEmoji = default(CustomEmojiCanvas);
-
-            if (Children[8] is CustomEmojiCanvas)
-            {
-                shift++;
-                CustomEmoji = Children[8] as CustomEmojiCanvas;
-            }
-
-            var ForumTopicActionIndicator = Children[8 + shift];
-            var TypingLabel = Children[9 + shift];
-            var PinnedIcon = Children[10 + shift];
-            var UnreadMentionsBadge = Children[11 + shift];
-            var UnreadBadge = Children[12 + shift];
-
-            PhotoPanel.Measure(availableSize);
-
-            TimeLabel.Measure(availableSize);
-            StateIcon.Measure(availableSize);
-            TypeIcon.Measure(availableSize);
-            MutedIcon.Measure(availableSize);
-
-            var line1Left = /*8 + PhotoPanel.DesiredSize.Width +*/ 8 + TypeIcon.DesiredSize.Width;
-            var line1Right = availableSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
-
-            var titleWidth = Math.Max(0, line1Right - (line1Left + MutedIcon.DesiredSize.Width));
-
-            TitleLabel.Measure(new Size(titleWidth, availableSize.Height));
-
-
-
-            MinithumbnailPanel.Measure(availableSize);
-            ForumTopicActionIndicator.Measure(availableSize);
-            PinnedIcon.Measure(availableSize);
-            UnreadBadge.Measure(availableSize);
-            UnreadMentionsBadge.Measure(availableSize);
-
-            var line2RightPadding = Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width);
-
-            var line2Left = /*8 + PhotoPanel.DesiredSize.Width +*/ 8 + MinithumbnailPanel.DesiredSize.Width;
-            var line2Right = availableSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
-
-            var briefWidth = Math.Max(0, line2Right - line2Left);
-
-            BriefInfo.Measure(new Size(briefWidth, availableSize.Height));
-            CustomEmoji?.Measure(new Size(briefWidth, availableSize.Height));
-            TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
-
-            if (Children.Count > 13)
-            {
-                Children[13].Measure(availableSize);
-            }
-
-            return base.MeasureOverride(availableSize);
-
-            return new Size(availableSize.Width, PhotoPanel.DesiredSize.Height);
+            element ??= GetTemplateChild(name) as T;
         }
 
-        protected override Size ArrangeOverride(Size finalSize)
+        private void UnloadObject<T>(ref T element)
+            where T : DependencyObject
         {
-            var PhotoPanel = Children[0];
-
-            var TypeIcon = Children[1];
-            var TitleLabel = Children[2];
-            var MutedIcon = Children[3];
-            var StateIcon = Children[4];
-            var TimeLabel = Children[5];
-
-            var MinithumbnailPanel = Children[6];
-            var BriefInfo = Children[7];
-
-            var shift = 0;
-            var CustomEmoji = default(CustomEmojiCanvas);
-
-            if (Children[8] is CustomEmojiCanvas)
+            if (element != null)
             {
-                shift++;
-                CustomEmoji = Children[8] as CustomEmojiCanvas;
+                XamlMarkupHelper.UnloadObject(element);
+                element = null;
             }
-
-            var ForumTopicActionIndicator = Children[8 + shift];
-            var TypingLabel = Children[9 + shift];
-            var PinnedIcon = Children[10 + shift];
-            var UnreadMentionsBadge = Children[11 + shift];
-            var UnreadBadge = Children[12 + shift];
-
-            var rect = new Rect();
-            var min = /*8 + PhotoPanel.DesiredSize.Width +*/ 8;
-
-            rect.X = 8;
-            rect.Y = 0;
-            rect.Width = PhotoPanel.DesiredSize.Width;
-            rect.Height = PhotoPanel.DesiredSize.Height;
-            PhotoPanel.Arrange(rect);
-
-            rect.X = Math.Max(min, finalSize.Width - 8 - TimeLabel.DesiredSize.Width);
-            rect.Y = 13;
-            rect.Width = TimeLabel.DesiredSize.Width;
-            rect.Height = TimeLabel.DesiredSize.Height;
-            TimeLabel.Arrange(rect);
-
-            rect.X = Math.Max(min, finalSize.Width - 8 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width);
-            rect.Y = 13;
-            rect.Width = StateIcon.DesiredSize.Width;
-            rect.Height = StateIcon.DesiredSize.Height;
-            StateIcon.Arrange(rect);
-
-            rect.X = min;
-            rect.Y = 14;
-            rect.Width = TypeIcon.DesiredSize.Width;
-            rect.Height = TypeIcon.DesiredSize.Height;
-            TypeIcon.Arrange(rect);
-
-            var line1Left = min + TypeIcon.DesiredSize.Width;
-            var line1Right = finalSize.Width - 8 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
-
-            double titleWidth;
-            if (line1Left + TitleLabel.DesiredSize.Width + MutedIcon.DesiredSize.Width > line1Right)
-            {
-                titleWidth = Math.Max(0, line1Right - (line1Left + MutedIcon.DesiredSize.Width));
-            }
-            else
-            {
-                titleWidth = TitleLabel.DesiredSize.Width;
-            }
-
-            rect.X = min + TypeIcon.DesiredSize.Width;
-            rect.Y = 12;
-            rect.Width = titleWidth;
-            rect.Height = TitleLabel.DesiredSize.Height;
-            TitleLabel.Arrange(rect);
-
-            rect.X = min + TypeIcon.DesiredSize.Width + titleWidth;
-            rect.Y = 14;
-            rect.Width = MutedIcon.DesiredSize.Width;
-            rect.Height = MutedIcon.DesiredSize.Height;
-            MutedIcon.Arrange(rect);
-
-
-
-            rect.X = min;
-            rect.Y = 36;
-            rect.Width = MinithumbnailPanel.DesiredSize.Width;
-            rect.Height = MinithumbnailPanel.DesiredSize.Height;
-            MinithumbnailPanel.Arrange(rect);
-
-            rect.X = Math.Max(min, finalSize.Width - 8 - PinnedIcon.DesiredSize.Width);
-            rect.Y = 34;
-            rect.Width = PinnedIcon.DesiredSize.Width;
-            rect.Height = PinnedIcon.DesiredSize.Height;
-            PinnedIcon.Arrange(rect);
-
-            rect.X = finalSize.Width - 8 - UnreadBadge.DesiredSize.Width;
-            rect.Y = 36;
-            rect.Width = UnreadBadge.DesiredSize.Width;
-            rect.Height = UnreadBadge.DesiredSize.Height;
-            UnreadBadge.Arrange(rect);
-
-            rect.X = finalSize.Width - 8 - UnreadBadge.DesiredSize.Width - UnreadMentionsBadge.DesiredSize.Width;
-            rect.Y = 36;
-            rect.Width = UnreadMentionsBadge.DesiredSize.Width;
-            rect.Height = UnreadMentionsBadge.DesiredSize.Height;
-            UnreadMentionsBadge.Arrange(rect);
-
-            var line2RightPadding = Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width);
-
-            var line2Left = min + MinithumbnailPanel.DesiredSize.Width;
-            var line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
-
-            var briefWidth = Math.Max(0, line2Right - line2Left);
-
-            rect.X = min + MinithumbnailPanel.DesiredSize.Width;
-            rect.Y = 34;
-            rect.Width = briefWidth;
-            rect.Height = BriefInfo.DesiredSize.Height;
-            BriefInfo.Arrange(rect);
-
-            if (CustomEmoji != null)
-            {
-                rect.X -= 2;
-                rect.Y -= 2;
-                rect.Width += 4;
-                rect.Height += 4;
-                CustomEmoji.Arrange(rect);
-            }
-
-            rect.X = min;
-            rect.Y = 34;
-            rect.Width = ForumTopicActionIndicator.DesiredSize.Width;
-            rect.Height = ForumTopicActionIndicator.DesiredSize.Height;
-            ForumTopicActionIndicator.Arrange(rect);
-
-            line2Left = min + ForumTopicActionIndicator.DesiredSize.Width;
-            line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
-
-            var typingLabel = Math.Max(0, line2Right - line2Left);
-
-            rect.X = min + ForumTopicActionIndicator.DesiredSize.Width;
-            rect.Y = 34;
-            rect.Width = typingLabel;
-            rect.Height = TypingLabel.DesiredSize.Height;
-            TypingLabel.Arrange(rect);
-
-            if (Children.Count > 13)
-            {
-                Children[13].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
-            }
-
-            return finalSize;
         }
+
+        #endregion
+
     }
 }

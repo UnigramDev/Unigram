@@ -699,7 +699,14 @@ namespace Telegram.Controls
 
         public void UpdateChatEmojiStatus(Chat chat)
         {
-            Identity.SetStatus(ViewModel.ClientService, chat, BotVerified);
+            if (ViewModel.ClientService.TryGetUser(chat, out User user))
+            {
+                Identity.SetStatus(ViewModel.ClientService, user, BotVerified);
+            }
+            else
+            {
+                Identity.SetStatus(ViewModel.ClientService, chat, BotVerified);
+            }
         }
 
         public void UpdateChatActiveStories(Chat chat)

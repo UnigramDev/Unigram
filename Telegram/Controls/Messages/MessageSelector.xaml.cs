@@ -540,7 +540,7 @@ namespace Telegram.Controls.Messages
             _tracker.ConfigurePositionXInertiaModifiers(new InteractionTrackerInertiaModifier[] { neutralX });
         }
 
-        private void ConfigureAnimations(Visual visual, Visual indicator)
+        private void ConfigureAnimations(Visual visual)
         {
             // Create an animation that changes the offset of the photoVisual and shadowVisual based on the manipulation progress
             var offsetExp = _compositor.CreateExpressionAnimation("(tracker.Position.X > 0 && !tracker.CanReply) || (tracker.Position.X <= 0 && !tracker.CanShare) ? 0 : -tracker.Position.X");
@@ -681,6 +681,11 @@ namespace Telegram.Controls.Messages
                 {
                     _owner.ViewModel.ForwardMessage(Message);
                 }
+                else if (sender.Position.X <= -72)
+                {
+                    var master = this.GetParent<MasterDetailView>();
+                    master?.NavigationService.GoBack();
+                }
             }
         }
 
@@ -694,14 +699,17 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                ConfigureAnimations(_visual, null);
+                ConfigureAnimations(_visual);
             }
         }
 
         private void OnInteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
         {
             _interacting = true;
-            ConfigureAnimations(_visual, null);
+            ConfigureAnimations(_visual);
+
+            var master = this.GetParent<MasterDetailView>();
+            master?.ConfigureAnimations(_tracker);
         }
 
         #endregion

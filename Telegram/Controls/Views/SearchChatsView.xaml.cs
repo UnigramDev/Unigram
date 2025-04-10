@@ -189,7 +189,7 @@ namespace Telegram.Controls.Views
             var result = ScrollingHost.ItemFromContainer(sender) as SearchResult;
             if (result != null)
             {
-                if (result.Type == SearchResultType.Recent)
+                if (result.Type == SearchResultType.Recent && ViewModel.SelectedTab == 0)
                 {
                     var flyout = new MenuFlyout();
                     flyout.CreateFlyoutItem(ViewModel.RemoveRecentChat, result, Strings.DeleteFromRecent, Icons.Delete);

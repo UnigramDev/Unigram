@@ -377,8 +377,8 @@ namespace Telegram.Controls
             }
             else if (constraint is VideoNote videoNote)
             {
-                width = 200;
-                height = 200;
+                width = 224;
+                height = 224;
             }
 
             if (constraint is PhotoSize photoSize)

@@ -503,7 +503,8 @@
 
                 <Grid x:Name="ChatsRoot"
                       Margin="0,-72,0,0"
-                      Grid.Row="1">
+                      Grid.Row="1"
+                      Canvas.ZIndex="1">
                     <views:SearchChatsView x:Name="DialogsSearchPanel"
                                            x:Load="False"
                                            DataContext="{x:Bind ViewModel.SearchChats}"
@@ -602,6 +603,9 @@
                                                                              x:Load="False"
                                                                              ConfirmClick="{x:Bind ViewModel.ConfirmSession}"
                                                                              DenyClick="{x:Bind ViewModel.DenySession}" />
+                                            <controls:FrozenAccountCard x:Name="FrozenCard"
+                                                                        x:Load="False"
+                                                                        Click="{x:Bind ViewModel.UnfreezeAccount}" />
                                         </Grid>
 
                                         <Grid x:Name="ArchivedChatsPresenter">
@@ -654,38 +658,11 @@
                                 </ListView.ItemContainerTransitions>
                             </controls:ChatListListView>
 
-                            <Grid x:Name="TopicListPresenter"
-                                  x:Load="False"
-                                  Margin="68,-78,0,0"
-                                  Grid.Row="1">
-                                <Border Background="{ThemeResource SettingsItemBackground}"
-                                        BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                                        CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
-                                        BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
-                                        BackgroundSizing="InnerBorderEdge" />
-                                <controls:TopNavView x:Name="TopicList"
-                                                     ItemsSource="{x:Bind ViewModel.Topics.Items}"
-                                                     ChoosingItemContainer="TopicList_ChoosingItemContainer"
-                                                     ContainerContentChanging="TopicList_ContainerContentChanging"
-                                                     Orientation="Vertical"
-                                                     IsItemClickEnabled="True"
-                                                     ItemClick="ListView_ItemClick"
-                                                     Style="{StaticResource DefaultListViewStyle}"
-                                                     VerticalAlignment="Stretch"
-                                                     Height="Auto">
-                                    <ListView.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <ItemsStackPanel />
-                                        </ItemsPanelTemplate>
-                                    </ListView.ItemsPanel>
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <cells:ForumTopicCell Stroke="{ThemeResource ChatLastMessageStateBrush}"
-                                                                  SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </controls:TopNavView>
-                            </Grid>
+                            <views:ForumView x:Name="TopicListPresenter"
+                                             x:Load="False"
+                                             Margin="68,-78,0,0"
+                                             Grid.Row="1"
+                                             ItemClick="ListView_ItemClick" />
 
                             <Grid x:Name="EmptyState"
                                   x:Load="{x:Bind ViewModel.Chats.Items.IsEmpty, Mode=OneWay}"

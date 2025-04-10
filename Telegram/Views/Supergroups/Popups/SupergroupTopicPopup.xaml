@@ -13,9 +13,9 @@
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
                        VerticalContentAlignment="Stretch"
-                       ContentMaxHeight="400">
+                       Padding="24,24,24,0">
 
-    <Grid>
+    <Grid Margin="0,0,0,-32">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -27,25 +27,47 @@
                    Margin="0,0,0,8" />
 
         <TextBox x:Name="NameLabel"
+                 TextChanged="NameLabel_TextChanged"
                  PlaceholderText="{CustomResource EnterTopicName}"
-                 Padding="32,5,6,6"
+                 Padding="40,5,6,6"
                  Grid.Row="1" />
 
-        <controls:IdentityIcon x:Name="Identity"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Center"
-                               Margin="6"
-                               Grid.Row="1" />
+        <Grid Grid.Row="1">
+            <controls:IdentityIcon x:Name="Identity"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   Margin="12,0" />
+            <Grid x:Name="IconRoot"
+                  VerticalAlignment="Center"
+                  Margin="12,0">
+                <Path x:Name="IconPath"
+                      Data="M18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10L2.00738 10.3463L2.03275 10.7283C2.12433 11.7422 2.4066 12.7186 2.86169 13.6153L2.925 13.735L2.01493 17.3787L2.00114 17.4624L2.00131 17.5438C2.02622 17.8369 2.31127 18.0625 2.62109 17.9851L6.266 17.075L6.38669 17.1393C7.49591 17.7018 8.72679 18 10 18C14.4183 18 18 14.4183 18 10Z" />
+                <TextBlock x:Name="IconText"
+                           TextAlignment="Center"
+                           Foreground="#FFFFFF"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Left"
+                           Margin="2,2,0,0"
+                           Width="16" />
+            </Grid>
+
+            <HyperlinkButton Click="Color_Click"
+                             VerticalAlignment="Stretch"
+                             Padding="0"
+                             Margin="4"
+                             Width="36" />
+        </Grid>
 
 
-        <Grid Margin="0,8,0,-12"
+        <Grid Margin="-24,8,-24,0"
               Grid.Row="2">
-            <Border Background="{ThemeResource TextControlBackground}"
-                    BorderBrush="{ThemeResource TextControlBorderBrush}"
-                    CornerRadius="4"
-                    BorderThickness="1"
-                    BackgroundSizing="InnerBorderEdge" />
-            <drawers:TopicsEmojiDrawer x:Name="Emoji" />
+            <drawers:TopicsEmojiDrawer x:Name="Emoji"
+                                       ScrollingHostPadding="8,0,0,56" />
+            <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                                        ScrollingHost="{x:Bind Emoji.ScrollingHost}"
+                                        TopInset="0"
+                                        BottomInset="56" />
         </Grid>
 
     </Grid>

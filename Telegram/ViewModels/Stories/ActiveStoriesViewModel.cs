@@ -181,7 +181,7 @@ namespace Telegram.ViewModels.Stories
             return new InputMessageReplyToStory(ChatId, SelectedItem.StoryId);
         }
 
-        public override FormattedText GetFormattedText(bool clear)
+        public override FormattedText GetFormattedText(bool clear, bool parseMarkdown)
         {
             return new FormattedText(string.Empty, Array.Empty<TextEntity>());
         }

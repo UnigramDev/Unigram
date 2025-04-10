@@ -11,9 +11,8 @@
              d:DesignWidth="400">
 
     <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-          CornerRadius="0,0,15,15"
-          Height="56"
-          Padding="0,8,0,0">
+          CornerRadius="8"
+          Height="48">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"
                               MinWidth="48" />
@@ -24,6 +23,10 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <Border BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                BorderThickness="1"
+                Grid.ColumnSpan="7" />
+
         <TextBlock x:Name="ReplyDisabled"
                    Text="{CustomResource StoryReplyDisabled}"
                    TextAlignment="Center"
@@ -47,10 +50,12 @@
                                     Grid.Column="1" />
 
         <controls:GlyphButton x:Name="ShareButton"
+                              CornerRadius="4"
                               Glyph="&#xE72D;"
                               Grid.Column="3" />
 
         <local:StoryReactionButton x:Name="ReactButton"
+                                   CornerRadius="4"
                                    Grid.Column="6" />
 
     </Grid>

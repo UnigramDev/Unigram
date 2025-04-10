@@ -161,18 +161,18 @@
                                    VerticalAlignment="Center"
                                    Margin="20,0,0,0"
                                    AutomationProperties.AccessibilityView="Raw"
-                                   Text="&#xE9EB;"
+                                   Text="&#xE9E8;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />
 
-                        <TextBlock x:Name="TextSizeHeader"
-                                   Text="{CustomResource TextSizeHeader}"
+                        <TextBlock x:Name="BubbleRadiusHeader"
+                                   Text="{CustomResource BubbleRadius}"
                                    VerticalAlignment="Center"
                                    Grid.Column="1" />
-                        <Slider x:Name="FontSizeSlider"
-                                Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
-                                AutomationProperties.Name="{CustomResource TextSizeHeader}"
+                        <Slider x:Name="BubbleRadiusSlider"
+                                Value="{x:Bind ViewModel.BubbleRadius, Mode=TwoWay}"
+                                AutomationProperties.Name="{CustomResource BubbleRadius}"
                                 Minimum="0"
-                                Maximum="6"
+                                Maximum="15"
                                 SmallChange="1"
                                 LargeChange="1"
                                 TickFrequency="1"
@@ -198,18 +198,18 @@
                                    VerticalAlignment="Center"
                                    Margin="20,0,0,0"
                                    AutomationProperties.AccessibilityView="Raw"
-                                   Text="&#xE9E8;"
+                                   Text="&#xE9EB;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />
 
-                        <TextBlock x:Name="BubbleRadiusHeader"
-                                   Text="{CustomResource BubbleRadius}"
+                        <TextBlock x:Name="TextSizeHeader"
+                                   Text="{CustomResource TextSizeHeader}"
                                    VerticalAlignment="Center"
                                    Grid.Column="1" />
-                        <Slider x:Name="BubbleRadiusSlider"
-                                Value="{x:Bind ViewModel.BubbleRadius, Mode=TwoWay}"
-                                AutomationProperties.Name="{CustomResource BubbleRadius}"
+                        <Slider x:Name="FontSizeSlider"
+                                Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
+                                AutomationProperties.Name="{CustomResource TextSizeHeader}"
                                 Minimum="0"
-                                Maximum="15"
+                                Maximum="6"
                                 SmallChange="1"
                                 LargeChange="1"
                                 TickFrequency="1"
@@ -219,6 +219,21 @@
                                 Grid.Column="2"
                                 Grid.ColumnSpan="3" />
                     </Grid>
+                    <controls:BadgeButton Content="{CustomResource FontFamily}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEAA9;">
+                        <controls:BadgeButton.Badge>
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.FontFamilyOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.FontFamily, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Text}"
+                                                   FontFamily="{Binding Value}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </controls:SettingsComboBox>
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Footer="{CustomResource StickersNameInfo}">

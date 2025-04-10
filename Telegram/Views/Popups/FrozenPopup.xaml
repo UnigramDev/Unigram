@@ -36,28 +36,60 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <controls:BadgeButton Content="{CustomResource AccountFrozen1Title}"
-                                  Badge="{CustomResource AccountFrozen1Text}"
-                                  Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
-                                  Glyph="&#xE98B;"
-                                  Margin="-12,0,-12,0"
-                                  IsHitTestVisible="False" />
-            <controls:BadgeButton Content="{CustomResource AccountFrozen2Title}"
-                                  Badge="{CustomResource AccountFrozen2Text}"
-                                  Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
-                                  Glyph="&#xEAA3;"
-                                  Margin="-12,-4,-12,0"
-                                  IsHitTestVisible="False"
-                                  Grid.Row="1" />
-            <controls:BadgeButton Content="{CustomResource AccountFrozen3Title}"
-                                  Badge="{CustomResource AccountFrozen3Text}"
-                                  Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
-                                  Glyph="&#xEAA8;"
-                                  Margin="-12,-4,-12,0"
-                                  IsHitTestVisible="False"
-                                  Grid.Row="2" />
-        </Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="&#xE98B;"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="20"
+                       Margin="0,0,12,0" />
 
+            <TextBlock Text="{CustomResource AccountFrozen1Title}"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       Grid.Column="1" />
+
+            <TextBlock Text="{CustomResource AccountFrozen1Text}"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       Margin="0,0,0,12"
+                       Grid.Column="1"
+                       Grid.Row="1" />
+
+            <TextBlock Text="&#xEAA3;"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="20"
+                       Margin="0,0,12,0"
+                       Grid.Row="2" />
+
+            <TextBlock Text="{CustomResource AccountFrozen2Title}"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       Grid.Column="1"
+                       Grid.Row="2" />
+
+            <TextBlock Text="{CustomResource AccountFrozen2Text}"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       Margin="0,0,0,12"
+                       Grid.Column="1"
+                       Grid.Row="3" />
+
+            <TextBlock Text="&#xEAA8;"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="20"
+                       Margin="0,0,12,0"
+                       Grid.Row="4" />
+
+            <TextBlock Text="{CustomResource AccountFrozen3Title}"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       Grid.Column="1"
+                       Grid.Row="4" />
+
+            <TextBlock x:Name="Line3"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       Grid.Column="1"
+                       Grid.Row="5" />
+        </Grid>
     </Grid>
 </controls:ContentPopup>

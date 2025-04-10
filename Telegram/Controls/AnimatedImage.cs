@@ -600,7 +600,7 @@ namespace Telegram.Controls
 
         protected void ReplacementColorChanged(bool fast = false)
         {
-            if (_needsBrushUpdate)
+            if (_needsBrushUpdate || _presenter == null)
             {
                 return;
             }

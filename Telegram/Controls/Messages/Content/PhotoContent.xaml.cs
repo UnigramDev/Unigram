@@ -113,7 +113,6 @@ namespace Telegram.Controls.Messages.Content
 
             LayoutRoot.Constraint = isSecret ? Constants.SecretSize : ((object)_paidMedia ?? photo);
             LayoutRoot.Background = null;
-            Texture.ImageSource = null;
             Texture.Stretch = _album
                 ? Stretch.UniformToFill
                 : Stretch.Uniform;
@@ -125,6 +124,7 @@ namespace Telegram.Controls.Messages.Content
 
             if (small == null || big == null)
             {
+                UpdateTexture(message, null);
                 return;
             }
 
@@ -230,11 +230,11 @@ namespace Telegram.Controls.Messages.Content
 
                 if (isSecret || string.IsNullOrEmpty(file.Local.Path))
                 {
-                    Texture.ImageSource = null;
+                    UpdateTexture(message, null);
                 }
                 else
                 {
-                    UpdateTexture(message, big, file);
+                    UpdateTexture(message, big);
                 }
             }
             else if (canBeDownloaded)
@@ -253,7 +253,7 @@ namespace Telegram.Controls.Messages.Content
 
                     Button.Opacity = 1;
 
-                    Texture.ImageSource = null;
+                    UpdateTexture(message, null);
                 }
                 else
                 {
@@ -272,32 +272,48 @@ namespace Telegram.Controls.Messages.Content
 
                     if (hasSpoiler && _hidden)
                     {
-                        Texture.ImageSource = null;
+                        UpdateTexture(message, null);
                     }
                     else
                     {
-                        UpdateTexture(message, big, file);
+                        UpdateTexture(message, big);
                     }
                 }
             }
         }
 
-        private void UpdateTexture(MessageViewModel message, PhotoSize big, File file)
+        private int _textureId;
+
+        private void UpdateTexture(MessageViewModel message, PhotoSize photoSize)
         {
-            var width = 0;
-            var height = 0;
-
-            if (width > MaxWidth || height > MaxHeight)
+            if (_textureId == photoSize.Photo.Id)
             {
-                double ratioX = MaxWidth / big.Width;
-                double ratioY = MaxHeight / big.Height;
-                double ratio = Math.Max(ratioX, ratioY);
-
-                width = (int)(big.Width * ratio);
-                height = (int)(big.Height * ratio);
+                return;
             }
 
-            Texture.ImageSource = UriEx.ToBitmap(file.Local.Path, width, height);
+            if (photoSize != null)
+            {
+                var width = 0;
+                var height = 0;
+
+                if (width > MaxWidth || height > MaxHeight)
+                {
+                    double ratioX = MaxWidth / photoSize.Width;
+                    double ratioY = MaxHeight / photoSize.Height;
+                    double ratio = Math.Max(ratioX, ratioY);
+
+                    width = (int)(photoSize.Width * ratio);
+                    height = (int)(photoSize.Height * ratio);
+                }
+
+                _textureId = photoSize.Photo.Id;
+                Texture.ImageSource = UriEx.ToBitmap(photoSize.Photo.Local.Path, width, height);
+            }
+            else
+            {
+                _textureId = 0;
+                Texture.ImageSource = null;
+            }
         }
 
         private void UpdateThumbnail(object target, File file)

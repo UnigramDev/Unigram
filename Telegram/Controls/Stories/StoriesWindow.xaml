@@ -192,7 +192,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="24" />
             <RowDefinition />
-            <RowDefinition Height="64" />
+            <RowDefinition Height="Auto"
+                           MinHeight="64" />
         </Grid.RowDefinitions>
         <Border x:Name="Layer"
                 Margin="0,-40,0,0"
@@ -268,14 +269,15 @@
 
         <controls:StickerPanel x:Name="StickersPanel"
                                Visibility="Collapsed"
-                               Margin="0,56,0,56"
+                               Margin="0,56,0,81"
                                MaxWidth="664"
                                Canvas.ZIndex="3"
                                Grid.Row="1"
-                               Grid.RowSpan="2" />
+                               Grid.RowSpan="1" />
 
         <Grid x:Name="Composer"
               VerticalAlignment="Bottom"
+              Canvas.ZIndex="2"
               Grid.RowSpan="2"
               Grid.Row="1">
 
@@ -283,21 +285,16 @@
                             IsTabStop="False"
                             HorizontalContentAlignment="Stretch"
                             VerticalContentAlignment="Stretch"
-                            Margin="12,0,12,8"
-                            Grid.Row="3">
+                            Margin="12,0,12,0">
                 <Grid x:Name="TextRoot"
                       Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                       MinHeight="{StaticResource TelegramToolBarHeight}"
                       SizeChanged="TextArea_SizeChanged"
-                      Padding="0,8,0,0"
-                      CornerRadius="0,0,15,15">
+                      CornerRadius="8">
+                    <Border BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                            BorderThickness="1" />
                     <Grid x:Name="TextMain"
                           VerticalAlignment="Bottom">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
@@ -306,17 +303,9 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.ColumnSpan="5"
-                                Grid.Row="2">
-                            <Border x:Name="TextBackground"
-                                    Background="{ThemeResource PageBackgroundDarkBrush}"
-                                    Visibility="Collapsed" />
-                        </Border>
-
                         <Border x:Name="TextFieldPanel"
                                 Grid.ColumnSpan="2"
-                                Grid.Column="1"
-                                Grid.Row="1">
+                                Grid.Column="1">
                             <controls:FormattedTextBox x:Name="TextField"
                                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                        Background="Transparent"
@@ -324,7 +313,7 @@
                                                        PlaceholderText="{CustomResource ReplyPrivately}"
                                                        AcceptsReturn="False"
                                                        BorderThickness="0"
-                                                       Padding="48,4,0,6"
+                                                       Padding="48,0,0,0"
                                                        TextWrapping="Wrap"
                                                        InputScope="Chat"
                                                        VerticalAlignment="Bottom"
@@ -332,16 +321,16 @@
                                                        PreventKeyboardDisplayOnProgrammaticFocus="True"
                                                        MinHeight="{StaticResource TelegramToolBarHeight}"
                                                        MaxHeight="192"
-                                                       TextChanged="TextField_TextChanged"
+                                                       Accept="TextField_Accept"
+                                                       TextChanging="TextField_TextChanging"
                                                        GotFocus="TextField_GotFocus"
                                                        LostFocus="TextField_LostFocus"
                                                        Style="{StaticResource DefaultChatTextBoxStyle}" />
                         </Border>
                         <Border x:Name="btnAttach"
-                                Grid.Column="1"
-                                Grid.Row="1">
+                                Grid.Column="1">
                             <controls:GlyphButton x:Name="ButtonAttach"
-                                                  CornerRadius="4,4,4,13"
+                                                  CornerRadius="4"
                                                   Click="Attach_Click"
                                                   Glyph="&#xE9D8;"
                                                   AllowFocusOnInteraction="False"
@@ -354,8 +343,7 @@
 
                         <Grid x:Name="ButtonsPanel"
                               Grid.Column="3"
-                              Grid.ColumnSpan="2"
-                              Grid.Row="1">
+                              Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
@@ -380,7 +368,7 @@
                                 <chats:ChatRecordButton x:Name="btnVoiceMessage"
                                                         RecordingStarting="ButtonRecord_Started"
                                                         RecordingStopped="ButtonRecord_Stopped"
-                                                        CornerRadius="4,4,13,4"
+                                                        CornerRadius="4"
                                                         AllowFocusOnInteraction="False"
                                                         Glyph="&#xE9E4;"
                                                         CheckedGlyph="&#xE9E0;"
@@ -392,7 +380,7 @@
                             </Grid>
 
                             <chats:ChatSendButton x:Name="btnSendMessage"
-                                                  CornerRadius="4,4,13,4"
+                                                  CornerRadius="4"
                                                   ContextRequested="Send_ContextRequested"
                                                   VerticalAlignment="Bottom"
                                                   Click="btnSendMessage_Click"
@@ -410,21 +398,20 @@
 
             <chats:ChatRecordBar x:Name="ChatRecord"
                                  ControlledButton="{x:Bind btnVoiceMessage}"
-                                 CornerRadius="15"
-                                 Margin="12,0,12,8"
-                                 Visibility="Collapsed"
-                                 Grid.Row="3" />
+                                 CornerRadius="8"
+                                 Margin="12,0,12,0"
+                                 Visibility="Collapsed" />
 
             <local:StoryInteractionBar x:Name="Interactions"
                                        ViewersClick="Interactions_ViewersClick"
                                        DeleteClick="Interactions_DeleteClick"
                                        VerticalAlignment="Bottom"
-                                       Margin="12,0,12,8" />
+                                       Margin="12,0,12,0" />
 
             <local:StoryChannelInteractionBar x:Name="ChannelInteractions"
                                               ShareClick="Interactions_ShareClick"
                                               VerticalAlignment="Bottom"
-                                              Margin="12,0,12,8" />
+                                              Margin="12,0,12,0" />
         </Grid>
 
     </Grid>

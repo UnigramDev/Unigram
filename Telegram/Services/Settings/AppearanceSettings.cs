@@ -512,6 +512,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _isQuickReplySelected, "IsQuickReplySelected", value);
         }
 
+        private string _fontFamily;
+        public string FontFamily
+        {
+            get => _fontFamily ??= GetValueOrDefault("FontFamily", string.Empty);
+            set => AddOrUpdateValue(ref _fontFamily, "FontFamily", value);
+        }
+
         private bool _chatThemeLoaded;
 
         private ChatTheme _chatTheme;

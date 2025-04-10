@@ -609,11 +609,6 @@ namespace Telegram.ViewModels.Drawers
             Update(sticker);
         }
 
-        public StickerViewModel(IClientService clientService, EmojiStatus status)
-        {
-
-        }
-
         public void Update(Sticker sticker)
         {
             Id = sticker.Id;
@@ -648,7 +643,7 @@ namespace Telegram.ViewModels.Drawers
         public int Height { get; private set; }
         public int Width { get; private set; }
         public long SetId { get; private set; }
-        public EmojiStatusType EmojiStatusType { get; private set; }
+        public EmojiStatusType EmojiStatusType { get; set; }
 
         public ReactionType ToReactionType()
         {

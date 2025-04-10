@@ -168,7 +168,7 @@ namespace Telegram.Services
             { ShortcutCommand.Downloads      , "downloads" },
 
             { ShortcutCommand.CallAccept     , "call_accept" },
-            { ShortcutCommand.CallReject     , "call_accept" },
+            { ShortcutCommand.CallReject     , "call_reject" },
             { ShortcutCommand.CallToggleCamera     , "call_camera" },
             { ShortcutCommand.CallToggleMicrophone , "call_microphone" },
         };

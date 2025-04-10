@@ -379,14 +379,18 @@ namespace Telegram.Views.Stars.Popups
 
             _submitted = true;
 
-            if (_gift.Gift is SentGiftRegular && (_gift.PrepaidUpgradeStarCount > 0 || !_upgradeCollapsed))
+            if (_gift?.Gift is SentGiftRegular && (_gift.PrepaidUpgradeStarCount > 0 || !_upgradeCollapsed))
             {
                 Upgrade2();
             }
             else
             {
                 Hide(ContentDialogResult.Primary);
-                Toggle_Click(sender, e);
+
+                if (_gift != null)
+                {
+                    Toggle_Click(sender, e);
+                }
             }
         }
 
@@ -420,7 +424,7 @@ namespace Telegram.Views.Stars.Popups
 
             //await Task.Delay(2000);
 
-            var response = await _clientService.SendAsync(new UpgradeGift(_gift.ReceivedGiftId, KeepOriginalDetails.IsChecked is true, _gift.PrepaidUpgradeStarCount > 0 ? 0 : regular.Gift.UpgradeStarCount));
+            var response = await _clientService.SendAsync(new UpgradeGift(string.Empty, _gift.ReceivedGiftId, KeepOriginalDetails.IsChecked is true, _gift.PrepaidUpgradeStarCount > 0 ? 0 : regular.Gift.UpgradeStarCount));
             if (response is UpgradeGiftResult result)
             {
                 var id = _gift.ReceivedGiftId;
@@ -477,7 +481,7 @@ namespace Telegram.Views.Stars.Popups
                 var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, message, Strings.Gift2ConvertTitle, Strings.Gift2ConvertButton, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    var response = await _clientService.SendAsync(new SellGift(_gift.ReceivedGiftId));
+                    var response = await _clientService.SendAsync(new SellGift(string.Empty, _gift.ReceivedGiftId));
                     if (response is Ok)
                     {
                         Hide(ContentDialogResult.Secondary);

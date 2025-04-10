@@ -2841,11 +2841,65 @@ Do you want to revoke verification?</value>
   <data name="BusinessBotPermissions" xml:space="preserve">
     <value>Bot permissions</value>
   </data>
+  <data name="BusinessBotPermissionsGiftsSection" xml:space="preserve">
+    <value>Manage Gifts and Stars</value>
+  </data>
+  <data name="BusinessBotPermissionsGiftsSell" xml:space="preserve">
+    <value>Sell Gifts</value>
+  </data>
+  <data name="BusinessBotPermissionsGiftsSettings" xml:space="preserve">
+    <value>Change Gift Settings</value>
+  </data>
+  <data name="BusinessBotPermissionsGiftsTransfer" xml:space="preserve">
+    <value>Transfer and Upgrade Gifts</value>
+  </data>
+  <data name="BusinessBotPermissionsGiftsTransferStars" xml:space="preserve">
+    <value>Transfer Stars</value>
+  </data>
+  <data name="BusinessBotPermissionsGiftsView" xml:space="preserve">
+    <value>View Gifts</value>
+  </data>
   <data name="BusinessBotPermissionsInfo" xml:space="preserve">
     <value>The bot can only reply on your behalf in chats that were active during the last 24h.</value>
   </data>
+  <data name="BusinessBotPermissionsMessagesDeleteReceived" xml:space="preserve">
+    <value>Delete Received Messages</value>
+  </data>
+  <data name="BusinessBotPermissionsMessagesDeleteSent" xml:space="preserve">
+    <value>Delete Sent Messages</value>
+  </data>
+  <data name="BusinessBotPermissionsMessagesMarkAsRead" xml:space="preserve">
+    <value>Mark Messages As Read</value>
+  </data>
+  <data name="BusinessBotPermissionsMessagesRead" xml:space="preserve">
+    <value>Read Messages</value>
+  </data>
+  <data name="BusinessBotPermissionsMessagesReply" xml:space="preserve">
+    <value>Reply to Messages</value>
+  </data>
+  <data name="BusinessBotPermissionsMessagesSection" xml:space="preserve">
+    <value>Manage Messages</value>
+  </data>
+  <data name="BusinessBotPermissionsProfileBio" xml:space="preserve">
+    <value>Edit Bio</value>
+  </data>
+  <data name="BusinessBotPermissionsProfileName" xml:space="preserve">
+    <value>Edit Name</value>
+  </data>
+  <data name="BusinessBotPermissionsProfilePicture" xml:space="preserve">
+    <value>Edit Profile Picture</value>
+  </data>
+  <data name="BusinessBotPermissionsProfileSection" xml:space="preserve">
+    <value>Manage Profile</value>
+  </data>
+  <data name="BusinessBotPermissionsProfileUsername" xml:space="preserve">
+    <value>Edit Username</value>
+  </data>
   <data name="BusinessBotPermissionsReply" xml:space="preserve">
     <value>Reply to Messages</value>
+  </data>
+  <data name="BusinessBotPermissionsStories" xml:space="preserve">
+    <value>Manage Stories</value>
   </data>
   <data name="BusinessBotRemove" xml:space="preserve">
     <value>Remove Bot</value>
@@ -4216,7 +4270,7 @@ Minimum length is 5 characters.</value>
     <value>Only people from your Close Friends list can view this story</value>
   </data>
   <data name="CloseTopic" xml:space="preserve">
-    <value>Close topic</value>
+    <value>Close Topic</value>
   </data>
   <data name="CloudUpdateInstallingText" xml:space="preserve">
     <value>A new version of Unigram is being installed...</value>
@@ -4416,6 +4470,9 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="CreateTheme" xml:space="preserve">
     <value>Create Theme</value>
+  </data>
+  <data name="CreateTopic" xml:space="preserve">
+    <value>Create Topic</value>
   </data>
   <data name="CreateTopicTitle" xml:space="preserve">
     <value>Choose a topic name and icon</value>
@@ -4654,6 +4711,12 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DeleteSelectedCallsText" xml:space="preserve">
     <value>Do you want to delete selected calls from recent?</value>
   </data>
+  <data name="DeleteSelectedTopic" xml:space="preserve">
+    <value>Are you sure you want to delete {0}?</value>
+  </data>
+  <data name="DeleteSelectedTopics" xml:space="preserve">
+    <value>Are you sure you want to delete these topics?</value>
+  </data>
   <data name="DeleteSingleMessagesTitle" xml:space="preserve">
     <value>Delete message</value>
   </data>
@@ -4692,6 +4755,12 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DeleteToggleRestrictUsers" xml:space="preserve">
     <value>Partially restrict users</value>
+  </data>
+  <data name="DeleteTopics_one" xml:space="preserve">
+    <value>Delete Topic</value>
+  </data>
+  <data name="DeleteTopics_other" xml:space="preserve">
+    <value>Delete Topics</value>
   </data>
   <data name="Deletions_one" xml:space="preserve">
     <value>{0} deletion</value>
@@ -5089,7 +5158,7 @@ If the number above is correct, please wait for the verification code.</value>
     <value>Personal channel</value>
   </data>
   <data name="EditTopic" xml:space="preserve">
-    <value>Edit topic</value>
+    <value>Edit Topic</value>
   </data>
   <data name="EmailAddressInvalid" xml:space="preserve">
     <value>Invalid email address.</value>
@@ -6040,6 +6109,9 @@ Duration: {1}</value>
   <data name="FollowersChartTitle" xml:space="preserve">
     <value>Followers</value>
   </data>
+  <data name="FontFamily" xml:space="preserve">
+    <value>Font family</value>
+  </data>
   <data name="FontSize" xml:space="preserve">
     <value>Font Size</value>
   </data>
@@ -6393,7 +6465,7 @@ This action cannot be undone. This will permanently destroy the gift.</value>
     <value>You can add this gift of {0} Stars to your profile.</value>
   </data>
   <data name="Gift2Info2OutExpired" xml:space="preserve">
-    <value>{0} can keep this gift in their Profile.</value>
+    <value>{0} can add this gift to their Profile.</value>
   </data>
   <data name="Gift2InfoConverted_one" xml:space="preserve">
     <value>You converted this gift to **{0}** Star.</value>
@@ -8165,7 +8237,7 @@ Minimum length is 5 characters.</value>
     <value>{0} months</value>
   </data>
   <data name="MonthsAgo_one" xml:space="preserve">
-    <value>{0} months ago</value>
+    <value>{0} month ago</value>
   </data>
   <data name="MonthsAgo_other" xml:space="preserve">
     <value>{0} months ago</value>
@@ -8810,6 +8882,30 @@ messages from multiple devices.</value>
   <data name="PaidMediaPriceButton" xml:space="preserve">
     <value>Edit Price</value>
   </data>
+  <data name="PaidMessagesPriceUpdated_one" xml:space="preserve">
+    <value>un1 changed price to {0} Star per message</value>
+  </data>
+  <data name="PaidMessagesPriceUpdated_other" xml:space="preserve">
+    <value>un1 changed price to {0} Stars per message</value>
+  </data>
+  <data name="PaidMessagesPriceUpdatedOut_one" xml:space="preserve">
+    <value>You changed price to {0} Star per message</value>
+  </data>
+  <data name="PaidMessagesPriceUpdatedOut_other" xml:space="preserve">
+    <value>You changed price to {0} Stars per message</value>
+  </data>
+  <data name="PaidMessagesRefunded_one" xml:space="preserve">
+    <value>un1 refunded {0} Star to you</value>
+  </data>
+  <data name="PaidMessagesRefunded_other" xml:space="preserve">
+    <value>un1 refunded {0} Stars to you</value>
+  </data>
+  <data name="PaidMessagesRefundedOut_one" xml:space="preserve">
+    <value>You refunded {0} Star to un1</value>
+  </data>
+  <data name="PaidMessagesRefundedOut_other" xml:space="preserve">
+    <value>You refunded {0} Stars to un1</value>
+  </data>
   <data name="Participants_one" xml:space="preserve">
     <value>{0} participant</value>
   </data>
@@ -9386,7 +9482,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Message Privacy</value>
   </data>
   <data name="PremiumPreviewMessagePrivacyDescription" xml:space="preserve">
-    <value>Restrict people you don&apos;t know from sending you messages.</value>
+    <value>Limit messages from strangers or charge for incoming messages.</value>
   </data>
   <data name="PremiumPreviewNoAds" xml:space="preserve">
     <value>No Ads</value>
@@ -9650,8 +9746,32 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PrivacyGiftsInfo" xml:space="preserve">
     <value>Choose whether gifts from specific senders need your approval before they’re visible to others on your profile.</value>
   </data>
+  <data name="PrivacyGiftsShowIcon" xml:space="preserve">
+    <value>Show Gift Icon in Chats</value>
+  </data>
+  <data name="PrivacyGiftsShowIconInfo" xml:space="preserve">
+    <value>Display the {0} Gift in the message input field for both participants in all chats.</value>
+  </data>
   <data name="PrivacyGiftsTitle" xml:space="preserve">
     <value>Who can display gifts on my profile</value>
+  </data>
+  <data name="PrivacyGiftsTypeHeader" xml:space="preserve">
+    <value>Accepted gift types</value>
+  </data>
+  <data name="PrivacyGiftsTypeInfo" xml:space="preserve">
+    <value>Choose the types of gifts that you allow others to send you.</value>
+  </data>
+  <data name="PrivacyGiftsTypeLimited" xml:space="preserve">
+    <value>Limited-Edition</value>
+  </data>
+  <data name="PrivacyGiftsTypePremium" xml:space="preserve">
+    <value>Premium Subscription</value>
+  </data>
+  <data name="PrivacyGiftsTypeUnique" xml:space="preserve">
+    <value>Unique</value>
+  </data>
+  <data name="PrivacyGiftsTypeUnlimited" xml:space="preserve">
+    <value>Unlimited</value>
   </data>
   <data name="PrivacyInvites" xml:space="preserve">
     <value>Invites</value>
@@ -9808,7 +9928,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Remove Fee</value>
   </data>
   <data name="PrivateMessagesExceptionsHeader" xml:space="preserve">
-    <value>Exception</value>
+    <value>Exceptions</value>
   </data>
   <data name="PrivateMessagesExceptionsInfo" xml:space="preserve">
     <value>Add users or entire groups who won&apos;t be charged for sending messages to you.</value>
@@ -10114,10 +10234,10 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Are you sure you want to allow **{0}** to message you for free?</value>
   </data>
   <data name="RemoveMessageFeeRefund_one" xml:space="preserve">
-    <value>Refund already paid {0} Star</value>
+    <value>Refund the already paid {0} Star</value>
   </data>
   <data name="RemoveMessageFeeRefund_other" xml:space="preserve">
-    <value>Refund already paid {0} Stars</value>
+    <value>Refund the already paid {0} Stars</value>
   </data>
   <data name="RemoveMessageFeeTitle" xml:space="preserve">
     <value>Remove Fee</value>
@@ -10404,7 +10524,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Reset Photo</value>
   </data>
   <data name="RestartTopic" xml:space="preserve">
-    <value>Reopen topic</value>
+    <value>Reopen Topic</value>
   </data>
   <data name="Restore" xml:space="preserve">
     <value>Restore</value>
@@ -11447,6 +11567,12 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsTransactionMedia" xml:space="preserve">
     <value>Media</value>
   </data>
+  <data name="StarsTransactionMessageFee_one" xml:space="preserve">
+    <value>Fee for {0} Message</value>
+  </data>
+  <data name="StarsTransactionMessageFee_other" xml:space="preserve">
+    <value>Fee for {0} Messages</value>
+  </data>
   <data name="StarsTransactionRecipient" xml:space="preserve">
     <value>From</value>
   </data>
@@ -12119,6 +12245,12 @@ Please try again in {0}.</value>
   </data>
   <data name="Topics" xml:space="preserve">
     <value>Topics</value>
+  </data>
+  <data name="TopicViewAsMessages" xml:space="preserve">
+    <value>View as Messages</value>
+  </data>
+  <data name="TopicViewAsTopics" xml:space="preserve">
+    <value>View as Topics</value>
   </data>
   <data name="TopicWasClosedAction" xml:space="preserve">
     <value>{0} closed {1}</value>
@@ -13476,7 +13608,7 @@ in your streaming app.</value>
     <value>{0} years</value>
   </data>
   <data name="YearsAgo_one" xml:space="preserve">
-    <value>{0} years ago</value>
+    <value>{0} year ago</value>
   </data>
   <data name="YearsAgo_other" xml:space="preserve">
     <value>{0} years ago</value>

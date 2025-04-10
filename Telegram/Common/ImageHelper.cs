@@ -101,7 +101,6 @@ namespace Telegram.Common
                         Height = (int)(height)
                     };
                 }
-                ;
             }
             catch
             {

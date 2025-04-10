@@ -4,17 +4,23 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
 using Microsoft.UI.Composition;
+using Microsoft.UI.Composition.Interactions;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Telegram.Assets.Icons;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls.Chats;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -43,6 +49,9 @@ namespace Telegram.Controls
         private Border BorderPart;
         private Border MaterialPart;
 
+        private Border GoBackIcon;
+        private Border GoBackGlyph;
+
         public ViewModelBase ViewModel { get; private set; }
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
@@ -59,6 +68,7 @@ namespace Telegram.Controls
             DefaultStyleKey = typeof(MasterDetailView);
 
             Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
         #region Initialize
@@ -171,6 +181,8 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            OnLoaded2(sender, e);
+
             if (CurrentState != MasterDetailState.Minimal)
             {
                 OnViewStateChanged();
@@ -316,6 +328,8 @@ namespace Telegram.Controls
             BackgroundPart = GetTemplateChild(nameof(BackgroundPart)) as ChatBackgroundControl;
             BorderPart = GetTemplateChild(nameof(BorderPart)) as Border;
             MaterialPart = GetTemplateChild(nameof(MaterialPart)) as Border;
+            GoBackIcon = GetTemplateChild(nameof(GoBackIcon)) as Border;
+            GoBackGlyph = GetTemplateChild(nameof(GoBackGlyph)) as Border;
             AdaptivePanel = GetTemplateChild(nameof(AdaptivePanel)) as MasterDetailPanel;
             AdaptivePanel.ViewStateChanged += OnViewStateChanged;
             AdaptivePanel.HasMaster = HasMaster;
@@ -329,6 +343,8 @@ namespace Telegram.Controls
             MaterialPart.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
             DetailHeaderPresenter.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
             BackButton.Visibility = _backgroundType == BackgroundKind.Material && _showDetailHeader ? Visibility.Visible : Visibility.Collapsed;
+
+            InitializeGoBack();
 
             _templateApplied = true;
 
@@ -465,6 +481,8 @@ namespace Telegram.Controls
                 {
                     _backStack.Clear();
                     ShowHideDetailHeader(false, false);
+
+                    SetParent(hosted);
                 }
             }
             else
@@ -605,6 +623,10 @@ namespace Telegram.Controls
             {
                 SetScrollingHost(scroll);
             }
+            else
+            {
+                SetParent(hosted);
+            }
         }
 
         private void SetScrollingHost(object sender, RoutedEventArgs e)
@@ -631,6 +653,34 @@ namespace Telegram.Controls
             animation.SetReferenceParameter("scrollViewer", properties);
 
             _properties.StartAnimation("Translation", animation);
+
+            SetParent(scroller.ContentTemplateRoot);
+        }
+
+        private UIElement _lastParent;
+
+        private void SetParent(UIElement parent)
+        {
+            return;
+
+            if (_lastParent != null)
+            {
+                ElementCompositionPreview.SetElementChildVisual(_lastParent, null);
+            }
+
+            if (parent is ChatPage or null)
+            {
+                return;
+            }
+
+            //if (parent is ChatPage page && !SettingsService.Current.SwipeToShare)
+            //{
+            //    var view = page.GetChild<ChatHistoryView>();
+            //    var scroll = view.GetScrollViewer();
+            //    parent = scroll.ContentTemplateRoot;
+            //}
+
+            ElementCompositionPreview.SetElementChildVisual(_lastParent = parent, _container);
         }
 
         private void OnTitleChanged(DependencyObject sender, DependencyProperty dp)
@@ -720,6 +770,311 @@ namespace Telegram.Controls
         private bool _isMinimal = false;
         private bool IsMinimal =>
             AdaptivePanel?.CurrentState == MasterDetailState.Minimal;
+
+        #region Icon
+
+        // This should be held in memory, or animation will stop
+        private CompositionPropertySet _props;
+
+        private IAnimatedVisual _previous;
+        private IAnimatedVisualSource2 _source;
+
+        private void InitializeGoBack()
+        {
+            return;
+
+            var visual = GetVisual(BootStrapper.Current.Compositor, out var source, out _props);
+            var container = visual.RootVisual.Compositor.CreateContainerVisual();
+
+            _source = source;
+            _previous = visual;
+
+            _previous.RootVisual.Scale = new Vector3(72f / 512f, 72f / 512f, 1);
+            _previous.RootVisual.RotationAngleInDegrees = -90;
+            _previous.RootVisual.Offset = new Vector3(0, 72, 0);
+            _previous.RootVisual.CenterPoint = new Vector3(0);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(GoBackIcon, true);
+            ElementCompositionPreview.SetElementChildVisual(GoBackIcon, visual.RootVisual);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(GoBackGlyph, true);
+        }
+
+        private IAnimatedVisual GetVisual(Compositor compositor, out IAnimatedVisualSource2 source, out CompositionPropertySet properties)
+        {
+            source = new UserAvatarMask();
+
+            if (source == null)
+            {
+                properties = null;
+                return null;
+            }
+
+            var visual = source.TryCreateAnimatedVisual(compositor, out _);
+            if (visual == null)
+            {
+                properties = null;
+                return null;
+            }
+
+            properties = compositor.CreatePropertySet();
+            properties.InsertScalar("Progress", 1.0F);
+
+            var progressAnimation = compositor.CreateExpressionAnimation("_.Progress");
+            progressAnimation.SetReferenceParameter("_", properties);
+            visual.RootVisual.Properties.InsertScalar("Progress", 1.0F);
+            visual.RootVisual.Properties.StartAnimation("Progress", progressAnimation);
+
+            return visual;
+        }
+
+        #endregion
+
+        #region Swipe
+
+        public bool CanGoNext { get; set; } = true;
+        public bool CanGoPrev { get; set; } = true;
+
+        private SpriteVisual _hitTest;
+        private ContainerVisual _container;
+        private Visual _visual;
+        private ContainerVisual _indicator;
+
+        private bool _hasInitialLoadedEventFired;
+        private WeakInteractionTrackerOwner _trackerOwner;
+        private InteractionTracker _tracker;
+        private VisualInteractionSource _interactionSource;
+
+        private void OnLoaded2(object sender, RoutedEventArgs e)
+        {
+            return;
+
+            if (!_hasInitialLoadedEventFired)
+            {
+                _hasInitialLoadedEventFired = true;
+
+                _visual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
+
+                _hitTest = _visual.Compositor.CreateSpriteVisual();
+                _hitTest.Brush = _visual.Compositor.CreateColorBrush(Colors.Transparent);
+                _hitTest.RelativeSizeAdjustment = Vector2.One;
+
+                _container = _visual.Compositor.CreateContainerVisual();
+                _container.Children.InsertAtBottom(_hitTest);
+                _container.RelativeSizeAdjustment = Vector2.One;
+
+                ConfigureInteractionTracker();
+                ConfigureAnimations(null);
+            }
+
+            if (_trackerOwner != null)
+            {
+                _trackerOwner.ValuesChanged += OnValuesChanged;
+                _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered += OnIdleStateEntered;
+                _trackerOwner.CustomAnimationStateEntered += OnCustomAnimationStateEntered;
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (_trackerOwner != null)
+            {
+                _trackerOwner.ValuesChanged -= OnValuesChanged;
+                _trackerOwner.InertiaStateEntered -= OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered -= OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered -= OnIdleStateEntered;
+                _trackerOwner.CustomAnimationStateEntered -= OnCustomAnimationStateEntered;
+            }
+        }
+
+        private void ConfigureInteractionTracker()
+        {
+            _interactionSource = VisualInteractionSource.Create(_hitTest);
+
+            //Configure for x-direction panning
+            _interactionSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
+            _interactionSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
+            _interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
+            _interactionSource.IsPositionXRailsEnabled = true;
+
+            _trackerOwner = new WeakInteractionTrackerOwner();
+
+            //Create tracker and associate interaction source
+            _tracker = InteractionTracker.CreateWithOwner(_visual.Compositor, _trackerOwner);
+            _tracker.InteractionSources.Add(_interactionSource);
+
+            _tracker.MaxPosition = new Vector3(72);
+            _tracker.MinPosition = new Vector3(-72);
+
+            _tracker.Properties.InsertBoolean("FromAnimation", false);
+            _tracker.Properties.InsertBoolean("CanGoNext", CanGoNext);
+            _tracker.Properties.InsertBoolean("CanGoPrev", CanGoPrev);
+
+            //ConfigureAnimations(_visual, null);
+            ConfigureRestingPoints();
+        }
+
+        private void ConfigureRestingPoints()
+        {
+            var neutralX = InteractionTrackerInertiaRestingValue.Create(_visual.Compositor);
+            neutralX.Condition = _visual.Compositor.CreateExpressionAnimation("true");
+            neutralX.RestingValue = _visual.Compositor.CreateExpressionAnimation("0");
+
+            _tracker.ConfigurePositionXInertiaModifiers(new InteractionTrackerInertiaModifier[] { neutralX });
+        }
+
+        public void ConfigureAnimations(InteractionTracker tracker)
+        {
+            ConfigureAnimations(tracker, false);
+        }
+
+        private void ConfigureAnimations(InteractionTracker tracker, bool interacting)
+        {
+            if (tracker == null)
+            {
+                tracker = _tracker;
+
+                if (interacting)
+                {
+                    _tracker.Properties.InsertBoolean("FromAnimation", /*_fromAnimation =*/ false);
+                }
+
+                _tracker.Properties.InsertBoolean("CanGoNext", CanGoNext);
+                _tracker.Properties.InsertBoolean("CanGoPrev", CanGoPrev);
+                _tracker.MaxPosition = new Vector3(CanGoNext ? 72 : 0);
+                _tracker.MinPosition = new Vector3(CanGoPrev ? -72 : 0);
+            }
+
+            // This should be enough: tracker.FromAnimation ? -tracker.Position.X : Clamp(-tracker.Position.X, -72, 72)
+            var offsetExp = _visual.Compositor.CreateExpressionAnimation("1 - (Clamp(-tracker.Position.X, -72, 72) / 72)");
+            offsetExp.SetReferenceParameter("tracker", tracker);
+
+            _props.StartAnimation("Progress", offsetExp);
+
+            var progressExp = _visual.Compositor.CreateExpressionAnimation("(Clamp(-tracker.Position.X, -72, 72) / 72)");
+            progressExp.SetReferenceParameter("tracker", tracker);
+
+            var translateExp = _visual.Compositor.CreateExpressionAnimation("-(1 - (Clamp(-tracker.Position.X, -72, 72) / 72)) * 42");
+            translateExp.SetReferenceParameter("tracker", tracker);
+
+            var visual = ElementCompositionPreview.GetElementVisual(GoBackGlyph);
+
+            visual.StartAnimation("Translation.X", translateExp);
+            visual.StartAnimation("Scale.X", progressExp);
+            visual.StartAnimation("Scale.Y", progressExp);
+            visual.CenterPoint = new Vector3(21, 21, 0);
+        }
+
+        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            {
+                try
+                {
+                    _interactionSource.TryRedirectForManipulation(e.GetCurrentPoint(this));
+                }
+                catch { }
+            }
+        }
+
+        private void OnValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
+        {
+            return;
+
+            if (_indicator == null && (_tracker.Position.X > 0.0001f || _tracker.Position.X < -0.0001f) /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
+            {
+                var sprite = _visual.Compositor.CreateSpriteVisual();
+                sprite.Size = new Vector2(30, 30);
+                sprite.CenterPoint = new Vector3(15);
+
+                var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/ArrowLeft.png"));
+                void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
+                {
+                    s.LoadCompleted -= handler;
+                    sprite.Brush = _visual.Compositor.CreateSurfaceBrush(s);
+                }
+
+                surface.LoadCompleted += handler;
+
+                var ellipse = _visual.Compositor.CreateEllipseGeometry();
+                ellipse.Radius = new Vector2(15);
+
+                var ellipseShape = _visual.Compositor.CreateSpriteShape(ellipse);
+                ellipseShape.FillBrush = _visual.Compositor.CreateColorBrush((Windows.UI.Color)App.Current.Resources["MessageServiceBackgroundColor"]);
+                ellipseShape.Offset = new Vector2(15);
+
+                var shape = _visual.Compositor.CreateShapeVisual();
+                shape.Shapes.Add(ellipseShape);
+                shape.Size = new Vector2(30, 30);
+
+                _indicator = _visual.Compositor.CreateContainerVisual();
+                _indicator.Children.InsertAtBottom(shape);
+                _indicator.Children.InsertAtTop(sprite);
+                _indicator.Size = new Vector2(30, 30);
+                _indicator.CenterPoint = new Vector3(15);
+                _indicator.Scale = new Vector3();
+
+                _container.Children.InsertAtTop(_indicator);
+            }
+
+            var offset = (_tracker.Position.X > 0 && !CanGoNext) || (_tracker.Position.X <= 0 && !CanGoPrev) ? 0 : Math.Clamp(Math.Abs(_tracker.Position.X), 0, 72);
+
+            var abs = Math.Abs(offset);
+            var percent = /*_fromAnimation ? 0 :*/ abs / 72f;
+
+            var width = ActualSize.X;
+            var height = ActualSize.Y;
+
+            if (_indicator != null)
+            {
+                _indicator.Offset = new Vector3(_tracker.Position.X > 0 ? width - percent * 60 : -30 + percent * 55, (height - 30) / 2, 0);
+                _indicator.Scale = new Vector3(_tracker.Position.X > 0 ? 0.8f + percent * 0.2f : -(0.8f + percent * 0.2f), 0.8f + percent * 0.2f, 1);
+                _indicator.Opacity = percent;
+            }
+        }
+
+        private void OnInertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
+        {
+            var position = _tracker.Position;
+            if (position.X >= 72 && CanGoNext || position.X <= -72 && CanGoPrev)
+            {
+                //sender.TryUpdatePosition(sender.Position);
+
+                var direction = position.X <= -72 && CanGoPrev
+                    ? CarouselDirection.Previous
+                    : CarouselDirection.Next;
+
+                //ChangeView(direction, null);
+
+                if (direction == CarouselDirection.Previous)
+                {
+                    NavigationService.GoBack();
+                }
+                else
+                {
+                    NavigationService.GoForward();
+                }
+            }
+        }
+
+        private void OnIdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
+        {
+            ConfigureAnimations(null, false);
+        }
+
+        private void OnInteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
+        {
+            ConfigureAnimations(null, true);
+        }
+
+        private void OnCustomAnimationStateEntered(InteractionTracker sender, InteractionTrackerCustomAnimationStateEnteredArgs args)
+        {
+            _tracker.Properties.InsertBoolean("FromAnimation", /*_fromAnimation =*/ true);
+        }
+
+        #endregion
 
         #region Public methods
 

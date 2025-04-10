@@ -25,7 +25,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.250228001" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -45,7 +45,7 @@
 
   <ItemGroup>
     <Reference Include="Telegram.Td">
-      <HintPath>..\packages\Telegram.Td.UWP.1.8.46\lib\uap10.0\Telegram.Td.winmd</HintPath>
+      <HintPath>..\packages\Telegram.Td.UWP.1.8.47\lib\uap10.0\Telegram.Td.winmd</HintPath>
       <Implementation>Telegram.Td.dll</Implementation>
     </Reference>
     <Reference Include="RLottie">

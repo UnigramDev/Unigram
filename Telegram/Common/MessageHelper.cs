@@ -956,23 +956,39 @@ namespace Telegram.Common
         private static async void NavigateToMessage(IClientService clientService, INavigationService navigation, string url)
         {
             var response = await clientService.SendAsync(new GetMessageLinkInfo(url));
-            if (response is MessageLinkInfo info && info.ChatId != 0)
+            if (response is MessageLinkInfo info && clientService.TryGetChat(info.ChatId, out Chat chat))
             {
+                if (info.Message != null && clientService.IsForum(chat))
+                {
+                    if (info.Message.Id == ForuminoTopicino.GeneralId && info.MessageThreadId == 0)
+                    {
+                        info.Message = null;
+                        info.MessageThreadId = ForuminoTopicino.GeneralId;
+                    }
+                    else if (info.Message.IsTopicMessage is false)
+                    {
+                        info.MessageThreadId = ForuminoTopicino.GeneralId;
+                    }
+                }
+
                 if (info.Message != null)
                 {
                     if (info.MessageThreadId != 0)
                     {
-                        // TODO: should thread be info.MessageThreadId?
-                        navigation.NavigateToChat(info.ChatId, info.Message.Id, thread: info.Message.Id);
+                        navigation.NavigateToChat(chat, info.Message.Id, thread: info.MessageThreadId);
                     }
                     else
                     {
-                        navigation.NavigateToChat(info.ChatId, info.Message.Id);
+                        navigation.NavigateToChat(chat, info.Message.Id);
                     }
+                }
+                else if (info.MessageThreadId != 0)
+                {
+                    navigation.NavigateToChat(chat, thread: info.MessageThreadId);
                 }
                 else
                 {
-                    navigation.NavigateToChat(info.ChatId);
+                    navigation.NavigateToChat(chat);
                 }
             }
             else

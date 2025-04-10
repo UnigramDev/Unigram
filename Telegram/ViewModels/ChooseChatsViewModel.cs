@@ -854,7 +854,7 @@ namespace Telegram.ViewModels
                 {
                     NavigationService.Hide(typeof(ChooseChatsPopup));
 
-                    var response = await ClientService.SendAsync(new TransferGift(transferGift.Gift.ReceivedGiftId, chats[0].ToMessageSender(), transferGift.Gift.TransferStarCount));
+                    var response = await ClientService.SendAsync(new TransferGift(string.Empty, transferGift.Gift.ReceivedGiftId, chats[0].ToMessageSender(), transferGift.Gift.TransferStarCount));
                     if (response is Ok && transferGift.Gift.Gift is SentGiftUpgraded upgraded)
                     {
                         Aggregator.Publish(new UpdateGiftIsSold(transferGift.Gift.ReceivedGiftId));

@@ -226,7 +226,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class TeachingTipEx : TeachingTip
+    public partial class TeachingTipEx : TeachingTip
     {
         public TeachingTipEx()
         {

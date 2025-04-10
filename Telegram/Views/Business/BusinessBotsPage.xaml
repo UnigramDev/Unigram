@@ -149,9 +149,155 @@
 
                     <controls:HeaderedControl Header="{CustomResource BusinessBotPermissions}"
                                               Footer="{CustomResource BusinessBotPermissionsInfo}">
-                        <controls:FauxCheckBox IsChecked="{x:Bind ViewModel.CanReply, Mode=TwoWay}"
-                                               Content="{CustomResource BusinessBotPermissionsReply}"
-                                               Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <controls:SettingsExpander>
+                            <controls:SettingsExpander.Header>
+                                <CheckBox IsThreeState="True"
+                                          IsChecked="{x:Bind ViewModel.CanManageMessages, Mode=TwoWay}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          CornerRadius="0">
+                                    <TextBlock>
+                                        <Run Text="{CustomResource BusinessBotPermissionsMessagesSection}" />
+                                        <Run Text="{x:Bind ViewModel.ManageMessagesCount, Mode=OneWay}"
+                                             FontWeight="SemiBold" />
+                                    </TextBlock>
+                                </CheckBox>
+                            </controls:SettingsExpander.Header>
+                            <StackPanel>
+                                <CheckBox IsChecked="True"
+                                          IsEnabled="False"
+                                          Content="{CustomResource BusinessBotPermissionsMessagesRead}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          BorderThickness="0,0,0,1"
+                                          CornerRadius="0" />
+
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanReply, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsMessagesReply}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          BorderThickness="0,0,0,1"
+                                          CornerRadius="0" />
+
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanReadMessages, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsMessagesMarkAsRead}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          BorderThickness="0,0,0,1"
+                                          CornerRadius="0" />
+
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanDeleteOutgoingMessages, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsMessagesDeleteSent}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          BorderThickness="0,0,0,1"
+                                          CornerRadius="0" />
+
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanDeleteIncomingMessages, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsMessagesDeleteReceived}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          CornerRadius="0" />
+                            </StackPanel>
+                        </controls:SettingsExpander>
+
+                        <controls:SettingsExpander>
+                            <controls:SettingsExpander.Header>
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanManageProfile, Mode=TwoWay}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          CornerRadius="0">
+                                    <TextBlock>
+                                        <Run Text="{CustomResource BusinessBotPermissionsProfileSection}" />
+                                        <Run Text="{x:Bind ViewModel.ManageProfileCount, Mode=OneWay}"
+                                             FontWeight="SemiBold" />
+                                    </TextBlock>
+                                </CheckBox>
+                            </controls:SettingsExpander.Header>
+                            <StackPanel>
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanEditName, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsProfileName}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          BorderThickness="0,0,0,1"
+                                          CornerRadius="0" />
+
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanEditBio, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsProfileBio}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          BorderThickness="0,0,0,1"
+                                          CornerRadius="0" />
+
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanEditProfilePhoto, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsProfilePicture}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          BorderThickness="0,0,0,1"
+                                          CornerRadius="0" />
+
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanEditUsername, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsProfileUsername}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          BorderThickness="0,0,0,1"
+                                          CornerRadius="0" />
+                            </StackPanel>
+                        </controls:SettingsExpander>
+
+                        <controls:SettingsExpander>
+                            <controls:SettingsExpander.Header>
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanManageGifts, Mode=TwoWay}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          CornerRadius="0">
+                                    <TextBlock>
+                                        <Run Text="{CustomResource BusinessBotPermissionsGiftsSection}" />
+                                        <Run Text="{x:Bind ViewModel.ManageGiftsCount, Mode=OneWay}"
+                                             FontWeight="SemiBold" />
+                                    </TextBlock>
+                                </CheckBox>
+                            </controls:SettingsExpander.Header>
+                            <StackPanel>
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanViewGifts, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsGiftsView}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          BorderThickness="0,0,0,1"
+                                          CornerRadius="0" />
+
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanSellGifts, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsGiftsSell}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          BorderThickness="0,0,0,1"
+                                          CornerRadius="0" />
+
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanChangeGiftSettings, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsGiftsSettings}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          BorderThickness="0,0,0,1"
+                                          CornerRadius="0" />
+
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanTransferGifts, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsGiftsTransfer}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          BorderThickness="0,0,0,1"
+                                          CornerRadius="0" />
+
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanTransferStars, Mode=TwoWay}"
+                                          Content="{CustomResource BusinessBotPermissionsGiftsTransferStars}"
+                                          Style="{StaticResource SettingsCheckBoxStyle}"
+                                          Background="Transparent"
+                                          CornerRadius="0" />
+                            </StackPanel>
+                        </controls:SettingsExpander>
+
+                        <CheckBox IsChecked="{x:Bind ViewModel.CanManageStories, Mode=TwoWay}"
+                                  Content="{CustomResource BusinessBotPermissionsStories}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Footer>

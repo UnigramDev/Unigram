@@ -31,6 +31,7 @@ using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Telegram.ViewModels.Users;
+using Telegram.Views;
 using Windows.Foundation;
 using VirtualKey = Windows.System.VirtualKey;
 using VirtualKeyModifiers = Windows.System.VirtualKeyModifiers;
@@ -337,6 +338,8 @@ namespace Telegram.Controls.Gallery
 
         public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null, long timestamp = 0, VideoPlayerBase player = null)
         {
+            TypeResolver.Current.Playback.Pause();
+
             var popup = new GalleryWindow
             {
                 InitialPosition = timestamp
@@ -424,12 +427,13 @@ namespace Telegram.Controls.Gallery
                 Controls.IsFullScreen = fullScreen;
                 Padding = new Thickness(0, fullScreen ? 0 : 40, 0, 0);
 
-                if (LayoutRoot.CurrentElement is GalleryContent container)
-                {
-                    container.Stretch = fullScreen
-                        ? Stretch.UniformToFill
-                        : Stretch.Uniform;
-                }
+                var stretch = fullScreen
+                    ? Stretch.UniformToFill
+                    : Stretch.Uniform;
+
+                Element2.Stretch = stretch;
+                Element0.Stretch = stretch;
+                Element1.Stretch = stretch;
 
                 var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 anim.InsertKeyFrame(0, fullScreen ? 0 : 1);

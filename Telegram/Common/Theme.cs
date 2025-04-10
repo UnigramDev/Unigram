@@ -56,7 +56,13 @@ namespace Telegram.Common
 
         public void UpdateEmojiSet()
         {
-            var xamlAutoFontFamilyValue = FontFamily.XamlAutoFontFamily.Source;
+            var xamlAutoFontFamilyValue = SettingsService.Current.Appearance.FontFamily;
+
+            if (string.IsNullOrEmpty(xamlAutoFontFamilyValue))
+            {
+                xamlAutoFontFamilyValue = FontFamily.XamlAutoFontFamily.Source;
+            }
+
             if (xamlAutoFontFamilyValue == "Segoe UI Variable")
             {
                 xamlAutoFontFamilyValue = "Segoe UI";

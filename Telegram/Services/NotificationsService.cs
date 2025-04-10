@@ -699,6 +699,15 @@ namespace Telegram.Services
                 launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;msg_id={1}", launch, message.Id);
             }
 
+            if (message.IsTopicMessage)
+            {
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;thread_id={1}", launch, message.MessageThreadId);
+            }
+            else if (_clientService.IsForum(chat))
+            {
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;thread_id={1}", launch, ForuminoTopicino.GeneralId);
+            }
+
             return launch;
         }
 
@@ -784,7 +793,7 @@ namespace Telegram.Services
                 return Strings.YouHaveNewMessage;
             }
 
-            var brief = ChatCell.UpdateBriefLabel(chat, message.Content, message.IsOutgoing, false, true, out _);
+            var brief = ChatCell.UpdateBriefLabel(message.Content, message.IsOutgoing, null, true, out _);
             var clean = brief.ReplaceSpoilers(false);
 
             var content = ChatCell.UpdateFromLabel(_clientService, chat, message) + clean.Text;

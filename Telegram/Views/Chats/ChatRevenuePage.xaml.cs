@@ -192,7 +192,7 @@ namespace Telegram.Views.Chats
         #endregion
     }
 
-    public class ChatRevenueTemplateSelector : DataTemplateSelector
+    public partial class ChatRevenueTemplateSelector : DataTemplateSelector
     {
         public DataTemplate ChatRevenueTransactionTemplate { get; set; }
 

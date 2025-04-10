@@ -1383,7 +1383,7 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public class StorageMediaTemplateSelector : DataTemplateSelector
+    public partial class StorageMediaTemplateSelector : DataTemplateSelector
     {
         public DataTemplate FileTemplate { get; set; }
 

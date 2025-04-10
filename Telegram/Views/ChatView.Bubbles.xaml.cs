@@ -181,7 +181,7 @@ namespace Telegram.Views
                 {
                     var transform = container.TransformToVisual(DateHeaderRelative);
                     var point = transform.TransformPoint(new Point());
-                    var height = DateHeader.ActualSize.Y;
+                    var height = DateHeader.ActualSize.Y + 4;
                     var offset = (float)point.Y + height;
 
                     minDate = false;
@@ -199,11 +199,11 @@ namespace Telegram.Views
 
                     if (offset >= height && offset < height * 2)
                     {
-                        _dateHeader.Offset = new Vector3(0, -height * 2 + offset, 0);
+                        _dateHeader.Properties.InsertVector3("Translation", new Vector3(0, -height * 2 + offset, 0));
                     }
                     else
                     {
-                        _dateHeader.Offset = Vector3.Zero;
+                        _dateHeader.Properties.InsertVector3("Translation", Vector3.Zero);
                     }
                 }
                 else
@@ -255,7 +255,7 @@ namespace Telegram.Views
 
             if (minDate)
             {
-                _dateHeader.Offset = Vector3.Zero;
+                _dateHeader.Properties.InsertVector3("Translation", Vector3.Zero);
             }
 
             _dateHeaderTimer.Stop();
@@ -274,7 +274,18 @@ namespace Telegram.Views
                     _ => new MessageSourceChatHistory()
                 };
 
-                ViewModel.ClientService.Send(new ViewMessages(chat.Id, messages, source, false));
+                // This is needed because we don't keep all topics messages in memory as TDLib would do
+                long messageThreadId = 0;
+                if (ViewModel.Topic != null)
+                {
+                    messageThreadId = ViewModel.Topic.Info.MessageThreadId;
+                }
+                else if (ViewModel.Thread != null)
+                {
+                    messageThreadId = ViewModel.Thread.MessageThreadId;
+                }
+
+                ViewModel.ClientService.ViewMessages(chat.Id, messageThreadId, messages, source, false);
             }
 
             if (animations.Count > 0 && !intermediate && ViewModel.NavigationService.Window.ActivationMode != WindowActivationState.Deactivated)
@@ -293,8 +304,7 @@ namespace Telegram.Views
                 ViewModel.LockedPinnedMessageId = 0;
             }
 
-            var thread = ViewModel.Thread;
-            if (thread != null)
+            if (ViewModel.Thread is MessageThreadInfo thread && ViewModel.Topic == null)
             {
                 var message = thread.Messages.LastOrDefault();
                 if (message == null || (firstVisibleId <= message.Id && lastVisibleId >= message.Id) || Messages.ScrollingHost.ScrollableHeight == 0)

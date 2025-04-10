@@ -11,7 +11,7 @@ using Windows.Foundation;
 
 namespace Telegram.Collections
 {
-    public class SearchEmojiCollection : ObservableCollection<object>, ISupportIncrementalLoading
+    public partial class SearchEmojiCollection : ObservableCollection<object>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
         private readonly string _query;

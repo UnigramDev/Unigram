@@ -879,7 +879,7 @@ namespace Telegram.Controls.Chats
             Document.GetText(TextGetOptions.NoHidden, out string plain);
 
             // This needs to run before text empty check as it cleans up
-            // some stuff it inline bot isn't found
+            // some stuff if inline bot isn't found
             if (SearchInlineBotResults(plain, false, out string inlineQuery))
             {
                 if (string.IsNullOrEmpty(inlineQuery))

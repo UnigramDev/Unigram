@@ -658,7 +658,7 @@ namespace winrt::Telegram::Native::implementation
 
         char* buffer = new char[byteLength];
         vsprintf(buffer, (char*)format, (va_list)args);
-        hstring result = winrt::to_hstring(std::string(buffer, byteLength));
+        hstring result = winrt::to_hstring(std::string(buffer, byteLength - 1));
         delete[] buffer;
         return result;
     }

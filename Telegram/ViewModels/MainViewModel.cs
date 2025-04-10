@@ -363,7 +363,7 @@ namespace Telegram.ViewModels
                 {
                     Logger.Info();
 
-                    Chats.SetList(value.ChatList);
+                    Chats.SetChatList(value.ChatList);
                     Stories.SetList(value.ChatList is ChatListArchive
                         ? new StoryListArchive()
                         : new StoryListMain());
@@ -435,7 +435,7 @@ namespace Telegram.ViewModels
             ToastPopup.Show(NavigationService.XamlRoot, text, ToastPopupIcon.Success);
         }
 
-        public async void DenySession()
+        public void DenySession()
         {
             var session = ClientService.UnconfirmedSession;
             if (session == null)
@@ -447,7 +447,12 @@ namespace Telegram.ViewModels
             ClientService.Send(new TerminateSession(session.Id));
             //Aggregator.Publish(new UpdateUnconfirmedSession(null));
 
-            await ShowPopupAsync(new UnconfirmedSessionPopup(session));
+            ShowPopup(new UnconfirmedSessionPopup(session));
+        }
+
+        public void UnfreezeAccount()
+        {
+            ShowPopup(new FrozenPopup(ClientService.FreezeState));
         }
 
         public async void SetBirthdate()

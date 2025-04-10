@@ -148,6 +148,8 @@ namespace Telegram.Views
                 _dateHeader = ElementComposition.GetElementVisual(DateHeader);
 
                 _dateHeaderPanel.Clip = _dateHeaderPanel.Compositor.CreateInsetClip();
+
+                ElementCompositionPreview.SetIsTranslationEnabled(DateHeader, true);
             }
 
             _debouncer = new DispatcherTimer();
@@ -381,7 +383,7 @@ namespace Telegram.Views
 
             StickersPanel.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
 
-            Options.Visibility = ViewModel.Type is DialogType.History or DialogType.SavedMessagesTopic
+            Options.Visibility = ViewModel.Type is DialogType.History or DialogType.Thread or DialogType.SavedMessagesTopic
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
@@ -2095,6 +2097,10 @@ namespace Telegram.Views
             if (supergroup != null && supergroup.Status is not ChatMemberStatusCreator && (supergroup.IsChannel || supergroup.HasActiveUsername()))
             {
                 flyout.CreateFlyoutItem(ViewModel.Report, Strings.ReportChat, Icons.ErrorCircle);
+            }
+            if (supergroup != null && supergroup.IsForum && _viewModel.Type == DialogType.History)
+            {
+                flyout.CreateFlyoutItem(ViewModel.ViewAsTopics, Strings.TopicViewAsTopics, Icons.ChatEmpty);
             }
             if (user != null && user.Type is not UserTypeDeleted && user.Id != ViewModel.ClientService.Options.MyId)
             {
@@ -4151,7 +4157,7 @@ namespace Telegram.Views
                 TextArea.Visibility = Visibility.Collapsed;
                 return;
             }
-            else if (ViewModel.ClientService.IsFrozen)
+            else if (ViewModel.ClientService.FreezeState.IsFrozen)
             {
                 ShowFrozen();
                 return;
@@ -4216,7 +4222,7 @@ namespace Telegram.Views
                 TextArea.Visibility = Visibility.Collapsed;
                 return;
             }
-            else if (ViewModel.ClientService.IsFrozen)
+            else if (ViewModel.ClientService.FreezeState.IsFrozen)
             {
                 ShowFrozen();
                 return;
@@ -4487,11 +4493,35 @@ namespace Telegram.Views
         {
             if (ViewModel.Type == DialogType.Thread)
             {
-                if (ViewModel.Topic != null)
+                if (ViewModel.Topic is ForuminoTopicino topic)
                 {
                     LoadObject(ref Icon, nameof(Icon));
-                    Icon.Source = new CustomEmojiFileSource(ViewModel.ClientService, ViewModel.Topic.Info.Icon.CustomEmojiId);
                     Photo.Clear();
+
+                    if (topic.Info.Icon.CustomEmojiId != 0)
+                    {
+                        Icon.Source = new CustomEmojiFileSource(ViewModel.ClientService, topic.Info.Icon.CustomEmojiId);
+                        TopicIconRoot.Visibility = Visibility.Collapsed;
+                        TopicIconGeneral.Visibility = Visibility.Collapsed;
+                    }
+                    else if (topic.Info.IsGeneral)
+                    {
+                        Icon.Source = null;
+                        TopicIconRoot.Visibility = Visibility.Collapsed;
+                        TopicIconGeneral.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        Icon.Source = null;
+                        TopicIconRoot.Visibility = Visibility.Visible;
+                        TopicIconGeneral.Visibility = Visibility.Collapsed;
+
+                        var brush = ForumTopicCell.GetIconGradient(topic.Info.Icon);
+
+                        TopicIconPath.Fill = brush;
+                        TopicIconPath.Stroke = new SolidColorBrush(brush.GradientStops[1].Color);
+                        TopicIconText.Text = InitialNameStringConverter.Convert(topic.Info.Name);
+                    }
                 }
                 else
                 {
@@ -4502,6 +4532,8 @@ namespace Telegram.Views
             else if (ViewModel.Type == DialogType.SavedMessagesTopic)
             {
                 UnloadObject(Icon);
+                TopicIconRoot.Visibility = Visibility.Collapsed;
+                TopicIconGeneral.Visibility = Visibility.Collapsed;
 
                 if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeMyNotes)
                 {
@@ -4521,6 +4553,9 @@ namespace Telegram.Views
             else
             {
                 UnloadObject(Icon);
+                TopicIconRoot.Visibility = Visibility.Collapsed;
+                TopicIconGeneral.Visibility = Visibility.Collapsed;
+
                 Photo.SetChat(ViewModel.ClientService, chat, 36);
             }
         }
@@ -5228,7 +5263,10 @@ namespace Telegram.Views
             var list = ElementComposition.GetElementVisual(ListAutocomplete);
             list.StopAnimation("Translation");
 
-            await ListAutocomplete.UpdateLayoutAsync();
+            if (show)
+            {
+                await ListAutocomplete.UpdateLayoutAsync();
+            }
 
             var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>

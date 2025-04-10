@@ -102,6 +102,7 @@ namespace Telegram.Controls.Stories
             if (count > 0 && _collapsed)
             {
                 Show.Width = count * 12 + 12 + 8;
+                Show.Margin = new Thickness(_first > 0 ? 22 : 10, 20, 0, 0);
                 Show.Visibility = Visibility.Visible;
             }
             else

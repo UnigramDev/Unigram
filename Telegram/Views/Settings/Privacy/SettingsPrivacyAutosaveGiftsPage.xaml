@@ -26,6 +26,12 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <controls:SettingsPanel>
+                <controls:HeaderedControl x:Name="ShowIconRoot">
+                    <CheckBox Content="{CustomResource PrivacyGiftsShowIcon}"
+                              IsChecked="{x:Bind ViewModel.ShowIcon, Mode=TwoWay}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
                 <controls:HeaderedControl Header="{CustomResource PrivacyGiftsTitle}"
                                           Footer="{CustomResource PrivacyGiftsInfo}">
                     <controls:PrivacyRadioButton Content="{CustomResource LastSeenEverybody}"
@@ -59,6 +65,98 @@
                                           Badge="{x:Bind ViewModel.RestrictedBadge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xF166;" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource PrivacyGiftsTypeHeader}"
+                                          Footer="{CustomResource PrivacyGiftsTypeInfo}">
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <controls:FauxCheckBox Click="{x:Bind ViewModel.ChangeAllowLimited}"
+                                               IsFaux="True"
+                                               IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
+                                               IsChecked="{x:Bind ViewModel.AllowLimited, Mode=OneWay}"
+                                               Content="{CustomResource PrivacyGiftsTypeLimited}"
+                                               Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <Border x:Name="AllowLimitedLock"
+                                x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                Background="{ThemeResource CheckBoxCheckBackgroundFillChecked}"
+                                CornerRadius="{ThemeResource ControlCornerRadius}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Margin="20,12,0,0"
+                                Padding="2"
+                                IsHitTestVisible="False">
+                            <TextBlock Text="&#xE9BE;"
+                                       Foreground="{ThemeResource CheckBoxCheckGlyphForegroundChecked}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="16" />
+                        </Border>
+                    </Grid>
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <controls:FauxCheckBox Click="{x:Bind ViewModel.ChangeAllowUnlimited}"
+                                               IsFaux="True"
+                                               IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
+                                               IsChecked="{x:Bind ViewModel.AllowUnlimited, Mode=OneWay}"
+                                               Content="{CustomResource PrivacyGiftsTypeUnlimited}"
+                                               Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <Border x:Name="AllowUnlimitedLock"
+                                x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                Background="{ThemeResource CheckBoxCheckBackgroundFillChecked}"
+                                CornerRadius="{ThemeResource ControlCornerRadius}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Margin="20,12,0,0"
+                                Padding="2"
+                                IsHitTestVisible="False">
+                            <TextBlock Text="&#xE9BE;"
+                                       Foreground="{ThemeResource CheckBoxCheckGlyphForegroundChecked}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="16" />
+                        </Border>
+                    </Grid>
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <controls:FauxCheckBox Click="{x:Bind ViewModel.ChangeAllowUnique}"
+                                               IsFaux="True"
+                                               IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
+                                               IsChecked="{x:Bind ViewModel.AllowUnique, Mode=OneWay}"
+                                               Content="{CustomResource PrivacyGiftsTypeUnique}"
+                                               Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <Border x:Name="AllowUniqueLock"
+                                x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                Background="{ThemeResource CheckBoxCheckBackgroundFillChecked}"
+                                CornerRadius="{ThemeResource ControlCornerRadius}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Margin="20,12,0,0"
+                                Padding="2"
+                                IsHitTestVisible="False">
+                            <TextBlock Text="&#xE9BE;"
+                                       Foreground="{ThemeResource CheckBoxCheckGlyphForegroundChecked}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="16" />
+                        </Border>
+                    </Grid>
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <controls:FauxCheckBox Click="{x:Bind ViewModel.ChangeAllowPremium}"
+                                               IsFaux="True"
+                                               IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
+                                               IsChecked="{x:Bind ViewModel.AllowPremium, Mode=OneWay}"
+                                               Content="{CustomResource PrivacyGiftsTypePremium}"
+                                               Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <Border x:Name="AllowPremiumLock"
+                                x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                Background="{ThemeResource CheckBoxCheckBackgroundFillChecked}"
+                                CornerRadius="{ThemeResource ControlCornerRadius}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Margin="20,12,0,0"
+                                Padding="2"
+                                IsHitTestVisible="False">
+                            <TextBlock Text="&#xE9BE;"
+                                       Foreground="{ThemeResource CheckBoxCheckGlyphForegroundChecked}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="16" />
+                        </Border>
+                    </Grid>
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

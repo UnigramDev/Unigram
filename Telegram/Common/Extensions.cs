@@ -1213,6 +1213,11 @@ namespace Telegram.Common
         {
             try
             {
+                if (element?.DispatcherQueue == null)
+                {
+                    return;
+                }
+
                 if (element.DispatcherQueue.HasThreadAccess)
                 {
                     action();

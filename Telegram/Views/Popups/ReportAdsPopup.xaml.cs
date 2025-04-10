@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -66,26 +67,26 @@ namespace Telegram.Views.Popups
             _selection = selection;
             Title.Text = selection.Option.Text;
 
-            if (selection.Result is ReportChatSponsoredMessageResultOptionRequired optionRequired)
+            if (selection.Result is ReportSponsoredResultOptionRequired optionRequired)
             {
                 OptionRoot.Visibility = Visibility.Visible;
 
                 Subtitle.Text = optionRequired.Title;
                 ScrollingHost.ItemsSource = optionRequired.Options;
             }
-            else if (selection.Result is ReportChatSponsoredMessageResultPremiumRequired textRequired)
+            else if (selection.Result is ReportSponsoredResultPremiumRequired textRequired)
             {
                 Hide();
                 _navigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureDisabledAds()));
             }
-            else if (selection.Result is ReportChatSponsoredMessageResultAdsHidden)
+            else if (selection.Result is ReportSponsoredResultAdsHidden)
             {
                 Hide();
                 _viewModel.SponsoredMessage = null;
 
                 ToastPopup.Show(XamlRoot, Strings.AdHidden, ToastPopupIcon.AntiSpam);
             }
-            else if (selection.Result is ReportChatSponsoredMessageResultOk)
+            else if (selection.Result is ReportSponsoredResultOk)
             {
                 Hide();
                 _viewModel.SponsoredMessage = null;
@@ -158,12 +159,12 @@ namespace Telegram.Views.Popups
             offset.InsertKeyFrame(1, show ? 0 : -28);
             offset.Duration = Constants.FastAnimation;
 
-            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
             scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
             scale.Duration = Constants.FastAnimation;
 
-            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(show ? 0 : 1, 0);
             opacity.InsertKeyFrame(show ? 1 : 0, 1);
 

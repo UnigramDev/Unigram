@@ -166,7 +166,7 @@ namespace Telegram.Controls
         private bool _changingView;
         private bool _fromAnimation;
 
-        public async void ChangeView(CarouselDirection direction, Action continuation)
+        public void ChangeView(CarouselDirection direction, Action continuation)
         {
             void Continue(bool restore)
             {
@@ -198,25 +198,26 @@ namespace Telegram.Controls
 
             var visual = BootStrapper.Current.Compositor.CreateRedirectBrush(child, Vector2.Zero, childSize, true);
 
-            await VisualUtilities.WaitForCompositionRenderedAsync();
+            VisualUtilities.QueueCallbackForCompositionRendered(() =>
+            {
+                Continue(false);
+                ConfigureAnimations(false);
 
-            Continue(false);
-            ConfigureAnimations(false);
+                var position = ActualSize.X * (ActualSize.X / (ActualSize.X - 72));
 
-            var position = ActualSize.X * (ActualSize.X / (ActualSize.X - 72));
+                var w = continuation != null ? position : ActualSize.X;
+                var x = direction == CarouselDirection.Previous ? w : -w;
 
-            var w = continuation != null ? position : ActualSize.X;
-            var x = direction == CarouselDirection.Previous ? w : -w;
+                var translate = _tracker.Compositor.CreateVector3KeyFrameAnimation();
+                translate.InsertKeyFrame(0, new Vector3(x, 0, 0));
+                translate.InsertKeyFrame(1, new Vector3(0));
 
-            var translate = _tracker.Compositor.CreateVector3KeyFrameAnimation();
-            translate.InsertKeyFrame(0, new Vector3(x, 0, 0));
-            translate.InsertKeyFrame(1, new Vector3(0));
+                _tracker.Properties.InsertBoolean("FromAnimation", _fromAnimation = true);
+                _tracker.TryUpdatePositionWithAnimation(translate);
 
-            _tracker.Properties.InsertBoolean("FromAnimation", _fromAnimation = true);
-            _tracker.TryUpdatePositionWithAnimation(translate);
-
-            _changingView = false;
-            _redirect.Brush = visual;
+                _changingView = false;
+                _redirect.Brush = visual;
+            });
         }
 
         #region Swipe
@@ -259,15 +260,15 @@ namespace Telegram.Controls
                 ElementCompositionPreview.SetElementChildVisual(Ghost, _redirect);
                 ElementCompositionPreview.SetElementChildVisual(this, _container);
                 ConfigureInteractionTracker();
-            }
 
-            if (_trackerOwner != null)
-            {
-                _trackerOwner.ValuesChanged += OnValuesChanged;
-                _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
-                _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
-                _trackerOwner.IdleStateEntered += OnIdleStateEntered;
-                _trackerOwner.CustomAnimationStateEntered += OnCustomAnimationStateEntered;
+                if (_trackerOwner != null)
+                {
+                    _trackerOwner.ValuesChanged += OnValuesChanged;
+                    _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
+                    _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
+                    _trackerOwner.IdleStateEntered += OnIdleStateEntered;
+                    _trackerOwner.CustomAnimationStateEntered += OnCustomAnimationStateEntered;
+                }
             }
         }
 
@@ -283,6 +284,8 @@ namespace Telegram.Controls
                 _trackerOwner.IdleStateEntered -= OnIdleStateEntered;
                 _trackerOwner.CustomAnimationStateEntered -= OnCustomAnimationStateEntered;
             }
+
+            _hasInitialLoadedEventFired = false;
         }
 
         private void ConfigureInteractionTracker()

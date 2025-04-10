@@ -68,7 +68,6 @@ namespace Telegram.Common
                         _ = ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
                         found = true;
                     }
-                    ;
                 });
 
                 if (found)
@@ -429,9 +428,7 @@ namespace Telegram.Common
                     state["access_token"] = accessToken;
                 }
 
-                var modifiers = WindowContext.KeyModifiers();
-
-                if (createNewWindow || modifiers == Windows.System.VirtualKeyModifiers.Control)
+                if (createNewWindow)
                 {
                     Type target;
                     object parameter;

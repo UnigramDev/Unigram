@@ -117,6 +117,8 @@ namespace Telegram.Common
                         reference.ItemWidth = itemLength;
                     }
                 }
+
+                trigger.Activate(itemLength);
             }
         }
 
@@ -198,7 +200,6 @@ namespace Telegram.Common
             DependencyProperty.RegisterAttached("Padding", typeof(Thickness), typeof(FluidGridView), new PropertyMetadata(default(Thickness)));
 
         #endregion
-
 
         #region Reference
         private static WrapGridReference GetReference(DependencyObject obj)
@@ -400,7 +401,8 @@ namespace Telegram.Common
         public abstract double GetItemLength(double parentLength, out int maximumRowsOrColumns);
 
         #region PropertyChanged
-        private static void OnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+
+        protected static void OnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as FluidGridViewTriggerBase;
             if (sender.PropertyChanged != null)
@@ -409,8 +411,21 @@ namespace Telegram.Common
             }
         }
 
-        public virtual event EventHandler PropertyChanged;
+        public event EventHandler PropertyChanged;
+
+        public void OnPropertyChanged()
+        {
+            PropertyChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         #endregion
+
+        public event EventHandler<double> Activated;
+
+        public void Activate(double itemLength)
+        {
+            Activated?.Invoke(this, itemLength);
+        }
     }
 
     public partial class FluidGridViewTrigger : FluidGridViewTriggerBase
@@ -461,19 +476,6 @@ namespace Telegram.Common
 
             return (parentLength / RowsOrColumns) - Margin;
         }
-
-        #region PropertyChanged
-        private static void OnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as FluidGridViewTrigger;
-            if (sender.PropertyChanged != null)
-            {
-                sender.PropertyChanged(sender, EventArgs.Empty);
-            }
-        }
-
-        public override event EventHandler PropertyChanged;
-        #endregion
     }
 
     public partial class FixedGridViewTrigger : FluidGridViewTriggerBase
@@ -494,19 +496,6 @@ namespace Telegram.Common
             maximumRowsOrColumns = (int)Math.Floor(parentLength / ItemLength);
             return ItemLength;
         }
-
-        #region PropertyChanged
-        private static void OnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as FixedGridViewTrigger;
-            if (sender.PropertyChanged != null)
-            {
-                sender.PropertyChanged(sender, EventArgs.Empty);
-            }
-        }
-
-        public override event EventHandler PropertyChanged;
-        #endregion
     }
 
     public partial class LengthGridViewTrigger : FluidGridViewTriggerBase
@@ -549,18 +538,5 @@ namespace Telegram.Common
                 return Math.Floor(parentLength / itemsCount);
             }
         }
-
-        #region PropertyChanged
-        private static void OnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as LengthGridViewTrigger;
-            if (sender.PropertyChanged != null)
-            {
-                sender.PropertyChanged(sender, EventArgs.Empty);
-            }
-        }
-
-        public override event EventHandler PropertyChanged;
-        #endregion
     }
 }

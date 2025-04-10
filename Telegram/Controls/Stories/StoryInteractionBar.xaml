@@ -10,16 +10,19 @@
              d:DesignWidth="400">
 
     <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-          CornerRadius="0,0,15,15"
-          Padding="0,8,0,0"
-          Height="56">
+          CornerRadius="8"
+          Height="48">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <Border BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                BorderThickness="1"
+                Grid.ColumnSpan="3" />
+
         <HyperlinkButton x:Name="ViewersButton"
-                         CornerRadius="13"
+                         CornerRadius="4"
                          VerticalAlignment="Stretch"
                          Margin="4"
                          Padding="0">
@@ -58,7 +61,7 @@
 
         <controls:GlyphButton x:Name="DeleteButton"
                               Glyph="&#xE74D;"
-                              CornerRadius="4,4,13,4"
+                              CornerRadius="4"
                               Grid.Column="2" />
     </Grid>
 </UserControl>

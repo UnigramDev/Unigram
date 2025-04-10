@@ -288,6 +288,7 @@ namespace Telegram.Controls
         {
             if (_volumeWorkaround)
             {
+                _volumeWorkaround = false;
                 OnReady(true);
             }
             else

@@ -486,6 +486,8 @@ namespace Telegram.Controls.Messages
                 MessageInviteVideoChatParticipants inviteVideoChatParticipants => UpdateInviteVideoChatParticipants(message, inviteVideoChatParticipants, active),
                 MessageProximityAlertTriggered proximityAlertTriggered => UpdateProximityAlertTriggered(message, proximityAlertTriggered, active),
                 MessagePremiumGiftCode premiumGiftCode => UpdatePremiumGiftCode(message, premiumGiftCode, active),
+                MessagePaidMessagePriceChanged paidMessagePriceChanged => UpdatePaidMessagePriceChanged(message, paidMessagePriceChanged, active),
+                MessagePaidMessagesRefunded paidMessagesRefunded => UpdatePaidMessagesRefunded(message, paidMessagesRefunded, active),
                 MessagePassportDataSent passportDataSent => UpdatePassportDataSent(message, passportDataSent, active),
                 MessagePaymentSuccessful paymentSuccessful => UpdatePaymentSuccessful(message, paymentSuccessful, active),
                 MessagePaymentRefunded paymentRefunded => UpdatePaymentRefunded(message, paymentRefunded, active),
@@ -2356,6 +2358,43 @@ namespace Telegram.Controls.Messages
             var formatted = ClientEx.ParseMarkdown(content, (IList<TextEntity>)entities ?? Array.Empty<TextEntity>());
 
             return (formatted.Text, active ? formatted.Entities : null);
+        }
+
+        private static (string, IList<TextEntity>) UpdatePaidMessagePriceChanged(MessageViewModel message, MessagePaidMessagePriceChanged paidMessagePriceChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.IsOutgoing)
+            {
+                content = Locale.Declension(Strings.R.PaidMessagesPriceUpdatedOut, paidMessagePriceChanged.PaidMessageStarCount);
+            }
+            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
+            {
+                content = Locale.Declension(Strings.R.PaidMessagesPriceUpdated, paidMessagePriceChanged.PaidMessageStarCount);
+                content = ReplaceWithLink(content, "un1", senderUser, entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdatePaidMessagesRefunded(MessageViewModel message, MessagePaidMessagesRefunded paidMessagesRefunded, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.IsOutgoing && message.ClientService.TryGetUser(message.Chat, out User receiverUser))
+            {
+                content = Locale.Declension(Strings.R.PaidMessagesRefundedOut, paidMessagesRefunded.StarCount);
+                content = ReplaceWithLink(content, "un1", receiverUser, entities);
+            }
+            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
+            {
+                content = Locale.Declension(Strings.R.PaidMessagesRefunded, paidMessagesRefunded.StarCount);
+                content = ReplaceWithLink(content, "un1", senderUser, entities);
+            }
+
+            return (content, entities);
         }
 
         private static (string Text, IList<TextEntity> Entities) UpdatePassportDataSent(MessageViewModel message, MessagePassportDataSent passportDataSent, bool active)

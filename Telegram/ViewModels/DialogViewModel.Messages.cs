@@ -440,7 +440,6 @@ namespace Telegram.ViewModels
                             ClientService.Send(new AddFileToDownloads(video.Video.VideoValue.Id, message.ChatId, message.Id, 32));
                             break;
                     }
-                    ;
                 }
             }
         }

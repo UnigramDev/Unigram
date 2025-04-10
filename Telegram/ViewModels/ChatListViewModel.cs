@@ -362,7 +362,6 @@ namespace Telegram.ViewModels
                         }
                     }
                 }
-                ;
             }
         }
 
@@ -412,7 +411,6 @@ namespace Telegram.ViewModels
                         }
                     }
                 }
-                ;
             }
 
             Delegate?.SetSelectionMode(false);
@@ -577,7 +575,7 @@ namespace Telegram.ViewModels
 
         #endregion
 
-        public void SetList(ChatList chatList)
+        public void SetChatList(ChatList chatList)
         {
             _ = Items.ReloadAsync(chatList);
         }
@@ -937,6 +935,7 @@ namespace Telegram.ViewModels
         Contacts,
         PublicChats,
 
+        Ads,
         RecentWebApps,
         WebApps,
         ChatMembers,

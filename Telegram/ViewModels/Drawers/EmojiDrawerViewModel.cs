@@ -307,6 +307,13 @@ namespace Telegram.ViewModels.Drawers
                     var response = await GetDefaultStickersAsync(_mode);
                     if (response is Stickers defaultStickers)
                     {
+                        if (_mode == EmojiDrawerMode.Topics)
+                        {
+                            // This is a placeholder, actual icon is drawn using the list header with negative margins
+                            // TODO: do the same for emoji status
+                            defaultStickers.StickersValue.Insert(0, new Sticker(0, 0, 0, 0, string.Empty, null, null, null, null));
+                        }
+
                         _reactionTopSet.Update(defaultStickers.StickersValue);
 
                         sets.Insert(0, _reactionTopSet);

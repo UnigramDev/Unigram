@@ -2008,8 +2008,35 @@ namespace Telegram.Td.Api
             }
 
             return x.BotUserId == y.BotUserId
-                && x.CanReply == y.CanReply
+                && x.Rights.AreTheSame(y.Rights)
                 && x.Recipients.AreTheSame(y.Recipients);
+        }
+
+        private static bool AreTheSame(this BusinessBotRights x, BusinessBotRights y)
+        {
+            return x.CanChangeGiftSettings == y.CanChangeGiftSettings
+                && x.CanDeleteIncomingMessages == y.CanDeleteIncomingMessages
+                && x.CanDeleteOutgoingMessages == y.CanDeleteOutgoingMessages
+                && x.CanEditBio == y.CanEditBio
+                && x.CanEditName == y.CanEditName
+                && x.CanEditProfilePhoto == y.CanEditProfilePhoto
+                && x.CanEditUsername == y.CanEditUsername
+                && x.CanManageStories == y.CanManageStories
+                && x.CanReadMessages == y.CanReadMessages
+                && x.CanReply == y.CanReply
+                && x.CanSellGifts == y.CanSellGifts
+                && x.CanTransferAndUpgradeGifts == y.CanTransferAndUpgradeGifts
+                && x.CanTransferStars == y.CanTransferStars
+                && x.CanViewGifts == y.CanViewGifts;
+        }
+
+        public static bool AreTheSame(this GiftSettings x, GiftSettings y)
+        {
+            return x.AcceptedGiftTypes.LimitedGifts == y.AcceptedGiftTypes.LimitedGifts
+                && x.AcceptedGiftTypes.PremiumSubscription == y.AcceptedGiftTypes.PremiumSubscription
+                && x.AcceptedGiftTypes.UnlimitedGifts == y.AcceptedGiftTypes.UnlimitedGifts
+                && x.AcceptedGiftTypes.UpgradedGifts == y.AcceptedGiftTypes.UpgradedGifts
+                && x.ShowGiftButton == y.ShowGiftButton;
         }
 
         public static bool AreTheSame(this BusinessAwayMessageSchedule x, BusinessAwayMessageSchedule y)
@@ -2617,13 +2644,14 @@ namespace Telegram.Td.Api
             {
                 return false;
             }
-
-            if (basicGroup.Status is ChatMemberStatusMember)
+            else if (basicGroup.Status is ChatMemberStatusMember)
             {
                 return chat.Permissions.CanChangeInfo;
             }
 
-            return basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { Rights.CanChangeInfo: true };
+            return basicGroup.Status is ChatMemberStatusCreator
+                or ChatMemberStatusAdministrator { Rights.CanChangeInfo: true }
+                or ChatMemberStatusRestricted { Permissions.CanChangeInfo: true };
         }
 
         public static bool CanChangeInfo(this Supergroup supergroup, Chat chat)
@@ -2632,13 +2660,14 @@ namespace Telegram.Td.Api
             {
                 return false;
             }
-
-            if (supergroup.Status is ChatMemberStatusMember)
+            else if (supergroup.Status is ChatMemberStatusMember)
             {
                 return chat.Permissions.CanChangeInfo;
             }
 
-            return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { Rights.CanChangeInfo: true };
+            return supergroup.Status is ChatMemberStatusCreator
+                or ChatMemberStatusAdministrator { Rights.CanChangeInfo: true }
+                or ChatMemberStatusRestricted { Permissions.CanChangeInfo: true };
         }
 
         public static bool CanManageVideoChats(this Supergroup supergroup)
@@ -2649,6 +2678,32 @@ namespace Telegram.Td.Api
             }
 
             return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { Rights.CanManageVideoChats: true };
+        }
+
+        public static bool CanManageTopics(this Supergroup supergroup)
+        {
+            if (supergroup.Status == null)
+            {
+                return false;
+            }
+
+            return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { Rights.CanManageTopics: true };
+        }
+
+        public static bool CanCreateTopics(this Supergroup supergroup, Chat chat)
+        {
+            if (supergroup.Status == null)
+            {
+                return false;
+            }
+            else if (supergroup.Status is ChatMemberStatusMember)
+            {
+                return chat.Permissions.CanCreateTopics;
+            }
+
+            return supergroup.Status is ChatMemberStatusCreator
+                or ChatMemberStatusAdministrator { Rights.CanManageTopics: true }
+                or ChatMemberStatusRestricted { Permissions.CanCreateTopics: true };
         }
 
         public static bool CanManageVideoChats(this BasicGroup basicGroup)

@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Media;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
-using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -65,6 +64,9 @@ namespace Telegram.Controls.Cells
                     RibbonRoot.Visibility = Visibility.Visible;
                     Ribbon.Text = string.Format(Strings.Gift2Limited1OfRibbon, Formatter.ShortNumber(regular.Gift.TotalCount, true));
 
+                    RibbonTop.Color = _ribbonLimitedTop;
+                    RibbonBottom.Color = _ribbonLimitedBottom;
+
                     if (RibbonPath.Fill is not LinearGradientBrush)
                     {
                         RibbonPath.Fill = RibbonGradient;
@@ -103,10 +105,8 @@ namespace Telegram.Controls.Cells
                 RibbonRoot.Visibility = Visibility.Visible;
                 Ribbon.Text = string.Format(Strings.Gift2Limited1OfRibbon, Formatter.ShortNumber(upgraded.Gift.MaxUpgradedCount, true));
 
-                if (RibbonPath.Fill is LinearGradientBrush)
-                {
-                    RibbonPath.Fill = BootStrapper.Current.Resources["MessageServiceBackgroundBrush"] as Brush;
-                }
+                RibbonTop.Color = centerColor.WithBrightness(-0.1f);
+                RibbonBottom.Color = edgeColor.WithBrightness(-0.1f);
             }
 
             if (gift.IsSaved)

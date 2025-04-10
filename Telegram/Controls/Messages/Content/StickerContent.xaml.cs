@@ -81,7 +81,7 @@ namespace Telegram.Controls.Messages.Content
             LayoutRoot.Constraint = message;
 
             var flip = false;
-            var maxSize = 180d;
+            var maxSize = 224d;
 
             if (message.Content is MessageAnimatedEmoji animatedEmoji)
             {
@@ -99,10 +99,8 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                var premiumAnimation = sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null;
+                var premiumAnimation = sticker.FullType is StickerFullTypeRegular { PremiumAnimation: not null };
                 flip = premium && premiumAnimation && (message.IsChannelPost || !message.IsOutgoing);
-
-                maxSize = 180;
             }
 
             MaxWidth = maxSize;

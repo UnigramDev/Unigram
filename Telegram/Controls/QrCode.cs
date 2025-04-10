@@ -90,20 +90,17 @@ namespace Telegram.Controls
                         || column >= replaceTill)
                     && data.Values[row * data.Size + column];
             }
-            ;
             bool blackFull(int row, int column)
             {
                 return (value(row - 1, column) && value(row + 1, column))
                     || (value(row, column - 1) && value(row, column + 1));
             }
-            ;
             bool whiteCorner(int row, int column, int dx, int dy)
             {
                 return !value(row + dy, column)
                     || !value(row, column + dx)
                     || !value(row + dy, column + dx);
             }
-            ;
             bool whiteFull(int row, int column)
             {
                 return whiteCorner(row, column, -1, -1)
@@ -111,7 +108,6 @@ namespace Telegram.Controls
                     && whiteCorner(row, column, 1, 1)
                     && whiteCorner(row, column, -1, 1);
             }
-            ;
 
             var skip = pixel - pixel / 2;
 
@@ -129,12 +125,10 @@ namespace Telegram.Controls
                 geometries[geometry++] = rect1.CombineWith(rect2, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
                 geometries[geometry++] = rect3;
             }
-            ;
             void brect(float x, float y, float width, float height)
             {
                 builder.AddGeometry(CanvasGeometry.CreateRectangle(null, x, y, width, height));
             }
-            ;
             void barch(float x, float y, bool topLeft, bool topRight, bool bottomRight, bool bottomLeft)
             {
                 var width = pixel / 2.0f;
@@ -183,7 +177,6 @@ namespace Telegram.Controls
 
                 builder.EndFigure(CanvasFigureLoop.Closed);
             }
-            ;
             void warch(float x, float y, float width, float height, int direction)
             {
                 if (direction == 0)

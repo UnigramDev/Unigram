@@ -210,7 +210,7 @@ namespace Telegram.ViewModels.Profile
         {
             var total = 0u;
 
-            var response = await ClientService.SendAsync(new GetReceivedGifts(_senderId, _excludeUnsaved, _excludeSaved, _excludeUnlimited, _excludeLimited, _excludeUpgraded, _sortByPrice, _nextOffsetId, 50));
+            var response = await ClientService.SendAsync(new GetReceivedGifts(string.Empty, _senderId, _excludeUnsaved, _excludeSaved, _excludeUnlimited, _excludeLimited, _excludeUpgraded, _sortByPrice, _nextOffsetId, 50));
             if (response is ReceivedGifts gifts)
             {
                 _nextOffsetId = gifts.NextOffset;

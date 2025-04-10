@@ -232,8 +232,11 @@ namespace Telegram.Common
             string[] items = arguments.Split('&');
             foreach (string item in items)
             {
-                string[] pair = item.Split('=');
-                dictionary.Add(pair[0], pair[1]);
+                var pair = item.Split('=');
+                if (pair.Length == 2)
+                {
+                    dictionary.Add(pair[0], pair[1]);
+                }
             }
 
             return dictionary;

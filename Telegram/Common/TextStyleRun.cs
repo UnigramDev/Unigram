@@ -268,6 +268,10 @@ namespace Telegram.Common
                     {
                         CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeCode());
                     }
+                    if (run.HasFlag(TextStyle.Quote))
+                    {
+                        CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeBlockQuote());
+                    }
                 }
                 else
                 {

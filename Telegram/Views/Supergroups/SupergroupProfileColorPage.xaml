@@ -108,6 +108,7 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="StickerPackRoot"
+                                          Visibility="Collapsed"
                                           Footer="{CustomResource GroupStickersInfo}">
                     <Grid>
                         <controls:BadgeButton x:Name="StickerPack"

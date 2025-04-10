@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml;
+using Telegram.Controls.Media;
 using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Settings.Privacy;
 
@@ -18,6 +19,8 @@ namespace Telegram.Views.Settings.Privacy
         {
             InitializeComponent();
             Title = Strings.PrivacyGifts;
+
+            ShowIconRoot.Footer = string.Format(Strings.PrivacyGiftsShowIconInfo, Icons.GiftPremium);
         }
 
         #region Binding

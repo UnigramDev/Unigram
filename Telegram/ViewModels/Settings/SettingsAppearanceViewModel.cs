@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.Graphics.Canvas.Text;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,13 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             _themeService = themeService;
+
+            var fonts = CanvasTextFormat.GetSystemFontFamilies()
+                .OrderBy(x => x)
+                .Select(x => new SettingsOptionItem<string>(x, x));
+
+            FontFamilyOptions = new List<SettingsOptionItem<string>>(fonts);
+            FontFamilyOptions.Insert(0, new SettingsOptionItem<string>(string.Empty, Strings.Default));
 
             ChatThemes = new ObservableCollection<ChatThemeViewModel>();
 
@@ -332,6 +340,24 @@ namespace Telegram.ViewModels.Settings
                 RaisePropertyChanged();
             }
         }
+
+        public int FontFamily
+        {
+            get => FontFamilyOptions.FindIndex(x => x.Value == SettingsService.Current.Appearance.FontFamily);
+            set
+            {
+                if (value >= 0 && value < FontFamilyOptions.Count && SettingsService.Current.Appearance.FontFamily != FontFamilyOptions[value].Value)
+                {
+                    SettingsService.Current.Appearance.FontFamily = FontFamilyOptions[value].Value;
+                    Theme.Current.UpdateEmojiSet();
+                    SettingsService.Current.Appearance.UpdateNightMode(true);
+
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public List<SettingsOptionItem<string>> FontFamilyOptions { get; }
 
         public int SendBy
         {
