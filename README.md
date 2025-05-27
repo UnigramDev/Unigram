@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">
+  <a href="https://apps.microsoft.com/detail/9n97zckpd60q">
     <img src="/Telegram/Assets/Logos/StoreLogo.scale-200.png" width=80 height=80>
   </a>
 
@@ -9,7 +9,7 @@
     Telegram for Windows
     <br>
     <br>
-    <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">Microsoft Store</a>
+    <a href="https://apps.microsoft.com/detail/9n97zckpd60q">Microsoft Store</a>
     &middot;
     <a href="https://unigramdev.github.io">Direct Download</a>
     <br>
