@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Telegram": {
+      "commandName": "MsixPackage"
+    }
+  }
+}
