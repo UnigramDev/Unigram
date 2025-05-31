@@ -384,7 +384,7 @@ namespace Telegram.Common
                 {
                     if (item.Value is AccentShade or Color)
                     {
-                        Color value;
+                        Color value = default;
                         if (item.Value is AccentShade shade)
                         {
                             value = GetShade(shade);

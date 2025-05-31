@@ -198,7 +198,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class Dots_AnimatedVisual_UAPv15 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
+        sealed partial class Dots_AnimatedVisual_UAPv15 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
             const long c_durationTicks = 10000000;
             readonly Compositor _c;
@@ -562,7 +562,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class Dots_AnimatedVisual_UAPv7 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
+        sealed partial class Dots_AnimatedVisual_UAPv7 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
             const long c_durationTicks = 10000000;
             readonly Compositor _c;

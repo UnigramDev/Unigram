@@ -3241,7 +3241,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class DashedLine : Path
+    public partial class DashedLine : Path
     {
         private readonly LineGeometry _geometry;
 

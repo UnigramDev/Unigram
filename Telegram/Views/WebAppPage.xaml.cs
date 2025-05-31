@@ -100,16 +100,11 @@ namespace Telegram.Views
 
             ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
-            Window.Current.SetTitleBar(TitleBar);
+            WindowContext.Current.SetTitleBar(TitleBar, true);
             Window.Current.Activated += OnActivated;
 
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
             ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
-
-            var coreWindow = (IInternalCoreWindowPhone)(object)Window.Current.CoreWindow;
-            var navigationClient = (IApplicationWindowTitleBarNavigationClient)coreWindow.NavigationClient;
-
-            navigationClient.TitleBarPreferredVisibilityMode = AppWindowTitleBarVisibility.AlwaysHidden;
 
             LoadPlaceholder();
         }
@@ -197,15 +192,10 @@ namespace Telegram.Views
 
             ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
-            Window.Current.SetTitleBar(TitleBar);
+            WindowContext.Current.SetTitleBar(TitleBar, true);
 
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
             ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
-
-            var coreWindow = (IInternalCoreWindowPhone)(object)Window.Current.CoreWindow;
-            var navigationClient = (IApplicationWindowTitleBarNavigationClient)coreWindow.NavigationClient;
-
-            navigationClient.TitleBarPreferredVisibilityMode = AppWindowTitleBarVisibility.AlwaysHidden;
         }
 
         #region IToastHost

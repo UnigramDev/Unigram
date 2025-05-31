@@ -858,7 +858,7 @@ namespace Telegram.Controls.Chats
                 using var bufferReference = audioBuffer.CreateReference();
 
                 // Get the buffer from the AudioFrame
-                ((IMemoryBufferByteAccess)bufferReference).GetBuffer(out byte* buffer, out uint capacity);
+                bufferReference.Buffer(out byte* buffer, out uint capacity);
 
                 var samples = (float*)buffer;
                 var count = capacity / 4;

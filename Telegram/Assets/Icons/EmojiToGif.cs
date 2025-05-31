@@ -193,7 +193,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class EmojiToGif_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class EmojiToGif_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 3333333;
             readonly Compositor _c;

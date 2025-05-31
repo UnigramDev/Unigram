@@ -2499,6 +2499,10 @@ namespace Telegram.Views
             {
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(point, element);
 
+#if NET9_0_OR_GREATER
+                children = children.ToList();
+#endif
+
                 var textBlock = children.FirstOrDefault() as RichTextBlock;
                 if (textBlock?.SelectionStart != null && textBlock?.SelectionEnd != null)
                 {

@@ -63,7 +63,7 @@ namespace Telegram.Assets.Icons
     // Frame rate:  60 fps
     // Frame count: 75
     // Duration:    1250.0 mS
-    sealed class ReactionsMore
+    sealed partial class ReactionsMore
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -158,7 +158,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class ReactionsMore_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class ReactionsMore_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 12500000;
             readonly Compositor _c;
@@ -1103,7 +1103,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class ReactionsMore_AnimatedVisual_UAPv7 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class ReactionsMore_AnimatedVisual_UAPv7 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 12500000;
             readonly Compositor _c;

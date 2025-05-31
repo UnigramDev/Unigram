@@ -210,9 +210,6 @@ namespace Telegram
             return Architecture.X86;
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool IsWow64Process2(IntPtr process, out ushort processMachine, out ushort nativeMachine);
-
         public static void TrackEvent(string name, Properties properties = null)
         {
             if (_disabled)
@@ -298,8 +295,8 @@ namespace Telegram
             File.WriteAllText(GetErrorReportPath(reportId), report);
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        private class MEMORYSTATUSEX
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        private unsafe struct MEMORYSTATUSEX
         {
             public uint dwLength;
             public uint dwMemoryLoad;
@@ -310,20 +307,39 @@ namespace Telegram
             public ulong ullTotalVirtual;
             public ulong ullAvailVirtual;
             public ulong ullAvailExtendedVirtual;
+
             public MEMORYSTATUSEX()
             {
                 dwLength = (uint)Marshal.SizeOf<MEMORYSTATUSEX>();
             }
         }
 
+#if NET9_0_OR_GREATER
+        [LibraryImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool IsWow64Process2(IntPtr process, out ushort processMachine, out ushort nativeMachine);
+
+        [LibraryImport("kernelbase.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static unsafe partial bool GlobalMemoryStatusEx(MEMORYSTATUSEX* lpBuffer);
+
+#else
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool IsWow64Process2(IntPtr process, out ushort processMachine, out ushort nativeMachine);
+
         [DllImport("kernelbase.dll", ExactSpelling = true, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
+#endif
 
-        public static void MemoryStatus()
+        public static unsafe void MemoryStatus()
         {
             var status = new MEMORYSTATUSEX();
+#if NET9_0_OR_GREATER
+            GlobalMemoryStatusEx(&status);
+#else
             GlobalMemoryStatusEx(status);
+#endif
 
             var memoryUsage = FileSizeConverter.Convert((long)MemoryManager.AppMemoryUsage);
             var memoryUsageAvailable = FileSizeConverter.Convert((long)status.ullAvailPhys);
@@ -332,7 +348,7 @@ namespace Telegram
             Logger.Debug(string.Format("Usage: {0}, available: {1}, total: {2}", memoryUsage, memoryUsageAvailable, memoryUsageTotal));
         }
 
-        public static string BuildReport(Exception exception)
+        public static unsafe string BuildReport(Exception exception)
         {
             var version = VersionLabel.GetVersion();
             var language = LocaleService.Current.Id;
@@ -343,7 +359,11 @@ namespace Telegram
             var count = SettingsService.Current.Diagnostics.UpdateCount;
 
             var status = new MEMORYSTATUSEX();
+#if NET9_0_OR_GREATER
+            GlobalMemoryStatusEx(&status);
+#else
             GlobalMemoryStatusEx(status);
+#endif
 
             var memoryUsage = FileSizeConverter.Convert((long)MemoryManager.AppMemoryUsage);
             var memoryUsageAvailable = FileSizeConverter.Convert((long)status.ullAvailPhys);

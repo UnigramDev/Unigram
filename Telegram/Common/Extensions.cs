@@ -34,6 +34,7 @@ using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
@@ -51,6 +52,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using WinRT;
 using static Telegram.Services.GenerationService;
 using Point = Windows.Foundation.Point;
 
@@ -1065,6 +1067,27 @@ namespace Telegram.Common
             relative = null;
             return string.Equals(relativeFull, pathFull, StringComparison.OrdinalIgnoreCase);
         }
+        
+        public static unsafe void Buffer(this WriteableBitmap bitmap, out byte* imageBytes)
+        {
+#if NET9_0_OR_GREATER
+            var access = bitmap.PixelBuffer.As<IBufferByteAccess>();
+#else
+            var access = (IBufferByteAccess)bitmap.PixelBuffer;
+#endif
+            access.Buffer(out imageBytes);
+        }
+
+        public static unsafe void Buffer(this IMemoryBufferReference reference, out byte* buffer, out uint capacity)
+        {
+#if NET9_0_OR_GREATER
+            var access = reference.As<IMemoryBufferByteAccess>();
+#else
+            var access = (IMemoryBufferByteAccess)reference;
+#endif
+            access.GetBuffer(out buffer, out capacity);
+
+        }
 
         public static async Task<InputFile> ToGeneratedAsync(this StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null, bool forceCopy = false)
         {
@@ -1151,6 +1174,7 @@ namespace Telegram.Common
             return new InputThumbnail(await file.File.ToGeneratedAsync(conversion, arguments), width, height);
         }
 
+#if !NET9_0_OR_GREATER
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
             HashSet<TKey> seenKeys = new();
@@ -1162,6 +1186,7 @@ namespace Telegram.Common
                 }
             }
         }
+#endif
 
         public static T RemoveLast<T>(this List<T> list)
         {

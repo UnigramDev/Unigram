@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupFeedbackGroupViewModel : SupergroupViewModelBase
+    public partial class SupergroupFeedbackGroupViewModel : SupergroupViewModelBase
     {
         public SupergroupFeedbackGroupViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

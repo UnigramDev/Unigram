@@ -29,8 +29,10 @@ using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using WinRT;
 
 namespace Telegram.Navigation
 {
@@ -478,6 +480,26 @@ namespace Telegram.Navigation
             ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
         }
 
+        public void SetTitleBar(UIElement titleBar, bool collapsed = false)
+        {
+            _window.SetTitleBar(titleBar);
+
+            if (collapsed)
+            {
+#if NET9_0_OR_GREATER
+                var coreWindow = _window.CoreWindow.As<IInternalCoreWindowPhone>();
+                var navigationClient = coreWindow.get_NavigationClient().As<IApplicationWindowTitleBarNavigationClient>();
+
+                navigationClient.set_TitleBarPreferredVisibilityMode(AppWindowTitleBarVisibility.AlwaysHidden);
+#else
+                var coreWindow = (IInternalCoreWindowPhone)(object)_window.CoreWindow;
+                var navigationClient = (IApplicationWindowTitleBarNavigationClient)coreWindow.NavigationClient;
+
+                navigationClient.TitleBarPreferredVisibilityMode = AppWindowTitleBarVisibility.AlwaysHidden;
+#endif
+            }
+        }
+
         #endregion
 
         #region Legacy code
@@ -612,7 +634,7 @@ namespace Telegram.Navigation
                 buttonHover = Color.FromArgb(25, 255, 255, 255);
                 buttonPressed = Color.FromArgb(51, 255, 255, 255);
             }
-            else if (theme == ApplicationTheme.Light)
+            else
             {
                 //background = Color.FromArgb(255, 230, 230, 230);
                 foreground = Colors.Black;

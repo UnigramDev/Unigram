@@ -417,10 +417,15 @@ namespace Telegram.ViewModels
 
         public async void Change()
         {
-            var items = Enum.GetValues(typeof(VerbosityLevel)).Cast<VerbosityLevel>().Select(x =>
+            var items = new[]
             {
-                return new ChooseOptionItem(x, Enum.GetName(typeof(VerbosityLevel), x), x == _value);
-            }).ToArray();
+                new ChooseOptionItem(VerbosityLevel.Assert, nameof(VerbosityLevel.Assert), _value == VerbosityLevel.Assert),
+                new ChooseOptionItem(VerbosityLevel.Error, nameof(VerbosityLevel.Error), _value == VerbosityLevel.Error),
+                new ChooseOptionItem(VerbosityLevel.Warning, nameof(VerbosityLevel.Warning), _value == VerbosityLevel.Warning),
+                new ChooseOptionItem(VerbosityLevel.Info, nameof(VerbosityLevel.Info), _value == VerbosityLevel.Info),
+                new ChooseOptionItem(VerbosityLevel.Debug, nameof(VerbosityLevel.Assert), _value == VerbosityLevel.Debug),
+                new ChooseOptionItem(VerbosityLevel.Verbose, nameof(VerbosityLevel.Assert), _value == VerbosityLevel.Verbose),
+            };
 
             var popup = new ChooseOptionPopup(items);
             popup.Title = Name;

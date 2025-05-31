@@ -7,6 +7,7 @@ using Telegram.Common;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
+using WinRT;
 
 namespace Windows.UI.Xaml.Hosting
 {
@@ -69,12 +70,25 @@ namespace Telegram.Composition
             surfaceBrush.Surface = surface;
             surfaceBrush.Stretch = CompositionStretch.Fill;
 
+#if NET9_0_OR_GREATER
+            if (freeze)
+            {
+                var partner = surface.As<ICompositionVisualSurfacePartner>();
+                if (partner != null)
+                {
+                    partner.set_Stretch(CompositionStretch.Fill);
+                    partner.set_RealizationSize(sourceSize * (float)source.XamlRoot.RasterizationScale);
+                    partner.Freeze();
+                }
+            }
+#else
             if (freeze && surface is object obj && obj is ICompositionVisualSurfacePartner partner)
             {
                 partner.Stretch = CompositionStretch.Fill;
                 partner.RealizationSize = sourceSize * (float)source.XamlRoot.RasterizationScale;
                 partner.Freeze();
             }
+#endif
 
             return surfaceBrush;
         }

@@ -220,7 +220,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class Select_AnimatedVisual : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class Select_AnimatedVisual : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 2500000;
             readonly Compositor _c;

@@ -75,22 +75,53 @@ namespace Telegram.Views.Popups
 
         internal const int LOCALE_NAME_MAX_LENGTH = 85;
 
+#if NET9_0_OR_GREATER
+        [LibraryImport("kernel32.dll")]
+        private static partial int GetUserDefaultLocaleName(Span<char> buf, int bufferLength);
+
+        private static string GetUserDefaultLocaleName()
+        {
+            Span<char> buffer = stackalloc char[LOCALE_NAME_MAX_LENGTH];
+
+            int result = GetUserDefaultLocaleName(buffer, buffer.Length);
+            if (result != 0)
+            {
+                int length = buffer.IndexOf('\0');
+                if (length == -1)
+                    length = result - 1;
+
+                return new string(buffer.Slice(0, length));
+            }
+            return null;
+        }
+#else
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        internal static extern int GetUserDefaultLocaleName(StringBuilder buf, int bufferLength);
+        private static extern int GetUserDefaultLocaleName(StringBuilder buf, int bufferLength);
+
+        private static string GetUserDefaultLocaleName()
+        {
+            var sb = new StringBuilder(LOCALE_NAME_MAX_LENGTH);
+            if (GetUserDefaultLocaleName(sb, LOCALE_NAME_MAX_LENGTH) != 0)
+            {
+                return sb.ToString();
+            }
+
+            return null;
+        }
+#endif
 
         // This was largely copied from Calculator's GetRegionalSettingsAwareDecimalFormatter()
         private DecimalFormatter GetRegionalSettingsAwareDecimalFormatter()
         {
             DecimalFormatter formatter = null;
 
-            var sb = new StringBuilder(LOCALE_NAME_MAX_LENGTH);
-            if (GetUserDefaultLocaleName(sb, LOCALE_NAME_MAX_LENGTH) != 0)
+            var currentLocale = GetUserDefaultLocaleName();
+            if (currentLocale != null)
             {
                 // GetUserDefaultLocaleName may return an invalid bcp47 language tag with trailing non-BCP47 friendly characters,
                 // which if present would start with an underscore, for example sort order
                 // (see https://msdn.microsoft.com/en-us/library/windows/desktop/dd373814(v=vs.85).aspx).
                 // Therefore, if there is an underscore in the locale name, trim all characters from the underscore onwards.
-                var currentLocale = sb.ToString();
 
                 var underscore = currentLocale.IndexOf('_');
                 if (underscore != -1)

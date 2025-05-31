@@ -3291,7 +3291,7 @@ namespace Telegram.Services
 
 namespace Telegram.Td.Api
 {
-    public sealed class Topics
+    public sealed partial class Topics
     {
         public Topics(int totalCount, IList<long> topics)
         {

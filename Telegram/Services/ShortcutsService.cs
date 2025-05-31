@@ -627,24 +627,18 @@ namespace Telegram.Services
         private string[] GetComponents()
         {
             var parts = new List<string>();
-            var modifiers = Enum.GetValues(typeof(VirtualKeyModifiers))
-                .Cast<VirtualKeyModifiers>()
-                .Where(v => v != VirtualKeyModifiers.None && Modifiers.HasFlag(v));
 
-            foreach (var key in modifiers)
+            if (Modifiers.HasFlag(VirtualKeyModifiers.Control))
             {
-                switch (key)
-                {
-                    case VirtualKeyModifiers.Control:
-                        parts.Add("Ctrl");
-                        break;
-                    case VirtualKeyModifiers.Menu:
-                        parts.Add("Alt");
-                        break;
-                    case VirtualKeyModifiers.Shift:
-                        parts.Add("Shift");
-                        break;
-                }
+                parts.Add("Ctrl");
+            }
+            if (Modifiers.HasFlag(VirtualKeyModifiers.Menu))
+            {
+                parts.Add("Alt");
+            }
+            if (Modifiers.HasFlag(VirtualKeyModifiers.Shift))
+            {
+                parts.Add("Shift");
             }
 
             if (Key is >= VirtualKey.Number0 and <= VirtualKey.Number9)

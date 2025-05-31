@@ -10,7 +10,6 @@ using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Payments;
 using Telegram.Views.Host;
-using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -27,12 +26,7 @@ namespace Telegram.Views.Payments
 
             VisualUtilities.DropShadow(BuyShadow);
 
-            Window.Current.SetTitleBar(TitleBar);
-
-            var coreWindow = (IInternalCoreWindowPhone)(object)Window.Current.CoreWindow;
-            var navigationClient = (IApplicationWindowTitleBarNavigationClient)coreWindow.NavigationClient;
-
-            navigationClient.TitleBarPreferredVisibilityMode = AppWindowTitleBarVisibility.AlwaysHidden;
+            WindowContext.Current.SetTitleBar(TitlePanel, true);
         }
 
         private string ConvertTitle(bool receipt, bool test)

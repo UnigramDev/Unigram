@@ -63,7 +63,7 @@ namespace Telegram.Assets.Icons
     // Frame rate:  60 fps
     // Frame count: 30
     // Duration:    500.0 mS
-    sealed class Username
+    sealed partial class Username
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -141,7 +141,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class Username_AnimatedVisual : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class Username_AnimatedVisual : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 5000000;
             readonly Compositor _c;

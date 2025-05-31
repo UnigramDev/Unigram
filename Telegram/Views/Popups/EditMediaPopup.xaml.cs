@@ -267,8 +267,8 @@ namespace Telegram.Views.Popups
             {
                 var rect = Cropper.CropRectangle;
 
-                TimeSpan trimStartTime;
-                TimeSpan trimStopTime;
+                TimeSpan trimStartTime = default;
+                TimeSpan trimStopTime = default;
 
                 if (TrimRange != null && (TrimRange.Minimum != 0 || TrimRange.Maximum != 1))
                 {

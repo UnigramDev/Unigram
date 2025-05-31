@@ -252,7 +252,7 @@ namespace Telegram.Charts.DataView
             //}
         }
 
-        class Holder : Grid
+        partial class Holder : Grid
         {
             private readonly TextBlock _value;
             private readonly TextBlock signature;

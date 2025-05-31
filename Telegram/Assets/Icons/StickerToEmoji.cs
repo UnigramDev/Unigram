@@ -195,7 +195,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class StickerToEmoji_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class StickerToEmoji_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 3333333;
             readonly Compositor _c;

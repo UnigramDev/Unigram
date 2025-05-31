@@ -1,6 +1,6 @@
 ﻿namespace Telegram.Td.Api
 {
-    public class ErrorStarsNeeded : BaseObject
+    public partial class ErrorStarsNeeded : BaseObject
     {
         public NativeObject ToUnmanaged()
         {

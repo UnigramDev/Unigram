@@ -62,7 +62,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #000000        | Color_000000 | Color | #FF000000 Black |
     // -----------------------------------------------------------
-    public sealed class UserAvatarMask
+    public sealed partial class UserAvatarMask
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -206,7 +206,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class UserAvatarMask_AnimatedVisual_UAPv15
+        sealed partial class UserAvatarMask_AnimatedVisual_UAPv15
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 90000000;
@@ -1315,7 +1315,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class UserAvatarMask_AnimatedVisual_UAPv11
+        sealed partial class UserAvatarMask_AnimatedVisual_UAPv11
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 90000000;
@@ -2424,7 +2424,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class UserAvatarMask_AnimatedVisual_UAPv7
+        sealed partial class UserAvatarMask_AnimatedVisual_UAPv7
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 90000000;

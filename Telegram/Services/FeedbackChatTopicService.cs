@@ -196,7 +196,7 @@ namespace Telegram.Services
 
 namespace Telegram.Td.Api
 {
-    public sealed class UpdateFeedbackChatTopicLastMessage
+    public sealed partial class UpdateFeedbackChatTopicLastMessage
     {
         public UpdateFeedbackChatTopicLastMessage(long chatId, long topicId, long order, Message lastMessage)
         {
@@ -223,7 +223,7 @@ namespace Telegram.Td.Api
         public Message LastMessage { get; set; }
     }
 
-    public sealed class UpdateFeedbackChatTopicPosition
+    public sealed partial class UpdateFeedbackChatTopicPosition
     {
         public UpdateFeedbackChatTopicPosition(long chatId, long topicId, long order)
         {
@@ -239,7 +239,7 @@ namespace Telegram.Td.Api
         public long Order { get; set; }
     }
 
-    public sealed class UpdateFeedbackChatTopicReadInbox
+    public sealed partial class UpdateFeedbackChatTopicReadInbox
     {
         public UpdateFeedbackChatTopicReadInbox(long chatId, long topicId, long lastReadInboxMessageId, long unreadCount)
         {
@@ -257,7 +257,7 @@ namespace Telegram.Td.Api
         public long UnreadCount { get; set; }
     }
 
-    public sealed class UpdateFeedbackChatTopicReadOutbox
+    public sealed partial class UpdateFeedbackChatTopicReadOutbox
     {
         public UpdateFeedbackChatTopicReadOutbox(long chatId, long topicId, long lastReadOutboxMessageId)
         {
@@ -273,7 +273,7 @@ namespace Telegram.Td.Api
         public long LastReadOutboxMessageId { get; set; }
     }
 
-    public sealed class UpdateFeedbackChatTopicUnreadReactionCount
+    public sealed partial class UpdateFeedbackChatTopicUnreadReactionCount
     {
         public UpdateFeedbackChatTopicUnreadReactionCount(long chatId, long topicId, long unreadReactionCount)
         {
@@ -289,7 +289,7 @@ namespace Telegram.Td.Api
         public long UnreadReactionCount { get; set; }
     }
 
-    public sealed class UpdateFeedbackChatTopicUnreadMentionCount
+    public sealed partial class UpdateFeedbackChatTopicUnreadMentionCount
     {
         public UpdateFeedbackChatTopicUnreadMentionCount(long chatId, long topicId, long unreadMentionCount)
         {

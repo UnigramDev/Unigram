@@ -197,7 +197,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class Sun_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class Sun_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 6000000;
             readonly Compositor _c;

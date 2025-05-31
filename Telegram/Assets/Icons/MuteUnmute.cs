@@ -199,7 +199,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class MuteUnmute_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class MuteUnmute_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 13333333;
             readonly Compositor _c;

@@ -22,6 +22,10 @@ namespace Telegram.Common
                 currencyCode = "USD";
             }
 
+#if NET9_0_OR_GREATER
+            languages = languages.ToList();
+#endif
+
             var formatter = new CurrencyFormatter(currencyCode, languages, geographicRegion);
             var formatted = formatter.Format(0);
             var splitted = formatted.Split('\u00A0');

@@ -146,7 +146,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class ActionTyping_AnimatedVisual : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class ActionTyping_AnimatedVisual : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 6666666;
             readonly Compositor _c;

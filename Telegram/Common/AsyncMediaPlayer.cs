@@ -21,7 +21,7 @@ using Windows.Storage;
 
 namespace Telegram.Common
 {
-    public class AsyncMediaTrack
+    public partial class AsyncMediaTrack
     {
         public AsyncMediaTrack(int width, int height)
         {

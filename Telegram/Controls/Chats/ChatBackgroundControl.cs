@@ -426,8 +426,7 @@ namespace Telegram.Controls.Chats
         {
             var width = context.PixelWidth;
             var height = context.PixelHeight;
-            var buffer = (IBufferByteAccess)context.PixelBuffer;
-            buffer.Buffer(out byte* imageBytes);
+            context.Buffer(out byte* imageBytes);
 
             for (int y = 0; y < height; y++)
             {

@@ -747,7 +747,7 @@ namespace Telegram.Services
 
 namespace Telegram.Td.Api
 {
-    public sealed class UpdateForumTopicLastMessage
+    public sealed partial class UpdateForumTopicLastMessage
     {
         public UpdateForumTopicLastMessage(long chatId, long messageThreadId, long order, Message lastMessage)
         {
@@ -774,7 +774,7 @@ namespace Telegram.Td.Api
         public Message LastMessage { get; set; }
     }
 
-    public sealed class UpdateForumTopicPosition
+    public sealed partial class UpdateForumTopicPosition
     {
         public UpdateForumTopicPosition(long chatId, long messageThreadId, long order)
         {
@@ -790,7 +790,7 @@ namespace Telegram.Td.Api
         public long Order { get; set; }
     }
 
-    public sealed class UpdateForumTopicReadInbox
+    public sealed partial class UpdateForumTopicReadInbox
     {
         public UpdateForumTopicReadInbox(long chatId, long messageThreadId, long lastReadInboxMessageId, int unreadCount)
         {
@@ -808,7 +808,7 @@ namespace Telegram.Td.Api
         public int UnreadCount { get; set; }
     }
 
-    public sealed class UpdateForumTopicReadOutbox
+    public sealed partial class UpdateForumTopicReadOutbox
     {
         public UpdateForumTopicReadOutbox(long chatId, long messageThreadId, long lastReadOutboxMessageId)
         {
@@ -824,7 +824,7 @@ namespace Telegram.Td.Api
         public long LastReadOutboxMessageId { get; set; }
     }
 
-    public sealed class UpdateForumTopicUnreadReactionCount
+    public sealed partial class UpdateForumTopicUnreadReactionCount
     {
         public UpdateForumTopicUnreadReactionCount(long chatId, long messageThreadId, long unreadReactionCount)
         {
@@ -840,7 +840,7 @@ namespace Telegram.Td.Api
         public long UnreadReactionCount { get; set; }
     }
 
-    public sealed class UpdateForumTopicUnreadMentionCount
+    public sealed partial class UpdateForumTopicUnreadMentionCount
     {
         public UpdateForumTopicUnreadMentionCount(long chatId, long messageThreadId, long unreadMentionCount)
         {
@@ -856,7 +856,7 @@ namespace Telegram.Td.Api
         public long UnreadMentionCount { get; set; }
     }
 
-    public sealed class UpdateChatUnreadTopicCount
+    public sealed partial class UpdateChatUnreadTopicCount
     {
         public UpdateChatUnreadTopicCount(long chatId, int unreadTopicCount)
         {
