@@ -6,6 +6,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -13,6 +14,7 @@ namespace Telegram
 {
     public partial class TypeCrosserGenerator
     {
+        [Conditional("DEBUG")]
         public static void Generate()
         {
             var types = typeof(Telegram.Td.Api.File).Assembly.GetTypes();
