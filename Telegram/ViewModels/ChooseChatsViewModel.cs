@@ -122,7 +122,7 @@ namespace Telegram.ViewModels
             }
             else if (parameter is ChooseChatsConfigurationReplyToMessage)
             {
-                SelectionMode = ListViewSelectionMode.None;
+                SelectionMode = ListViewSelectionMode.Single;
                 Options = ChooseChatsOptions.PostMessages;
                 IsCommentEnabled = false;
                 IsChatSelection = false;
