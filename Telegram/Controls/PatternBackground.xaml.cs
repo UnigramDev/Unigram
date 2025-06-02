@@ -1,15 +1,18 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI.Xaml.Media;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Streams;
-using Windows.Foundation;
+using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls
 {
@@ -49,6 +52,15 @@ namespace Telegram.Controls
         }
 
         #endregion
+
+        public void Update(IClientService clientService, UpgradedGift gift)
+        {
+            var source = DelayedFileSource.FromSticker(clientService, gift.Symbol.Sticker);
+            var centerColor = gift.Backdrop.Colors.CenterColor.ToColor();
+            var edgeColor = gift.Backdrop.Colors.EdgeColor.ToColor();
+
+            Update(source, centerColor, edgeColor);
+        }
 
         public void Update(AnimatedImageSource pattern, Color centerColor, Color edgeColor)
         {
