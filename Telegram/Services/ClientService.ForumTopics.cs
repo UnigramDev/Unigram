@@ -107,10 +107,12 @@ namespace Telegram.Services
             }
             else
             {
-                //manager = new ForumTopicService(this, _aggregator, chatId);
-                //_forums[chatId] = manager;
+                manager = new ForumTopicService(this, _aggregator, chatId);
+                _forums[chatId] = manager;
 
-                //update(manager);
+                manager.GetForumTopicsAsync(0, 20);
+
+                update(manager);
             }
         }
 
