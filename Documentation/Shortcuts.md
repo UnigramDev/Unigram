@@ -36,7 +36,7 @@
       <td>Ctrl + F</td>
     </tr>
     <tr>
-      <td rowspan="13">Selected Text <br>in typing area</td>
+      <td rowspan="15">Selected Text <br>in typing area</td>
       <td>Undo</td>
       <td>Ctrl + Z</td>
     </tr>
