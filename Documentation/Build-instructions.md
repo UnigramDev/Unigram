@@ -4,7 +4,7 @@ The following tools and SDKs are mandatory for the project development:
 * Visual Studio 2022, with
     * .NET desktop development
     * Desktop development with C++
-    * Universal Windows Platform deveopment
+    * Universal Windows Platform development
 	    * Windows 11 SDK (10.0.22621.0)
  
 ## Getting started
