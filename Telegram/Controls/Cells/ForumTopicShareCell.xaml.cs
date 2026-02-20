@@ -1,13 +1,21 @@
-﻿using Telegram.Converters;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class ForumTopicShareCell : GridEx
+    public sealed partial class ForumTopicShareCell : Grid
     {
         public ForumTopicShareCell()
         {
@@ -44,14 +52,14 @@ namespace Telegram.Controls.Cells
             TitleLabel.Text = topic.Info.Name;
         }
 
-        public void UpdateCell(IClientService clientService, FeedbackChatTopic topic)
+        public void UpdateCell(IClientService clientService, DirectMessagesChatTopic topic)
         {
             Animated.Source = null;
             IconRoot.Visibility = Visibility.Collapsed;
             General.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = clientService.GetTitle(topic.SenderId);
-            Photo.SetMessageSender(clientService, topic.SenderId, 36);
+            Photo.Source = ProfilePictureSource.MessageSender(clientService, topic.SenderId);
         }
     }
 }

@@ -1,12 +1,14 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
@@ -36,7 +38,6 @@ namespace Telegram.Controls.Drawers
         public event EventHandler<StickerDrawerItemClickEventArgs> ItemClick;
         public event EventHandler<ItemContextRequestedEventArgs<Sticker>> ItemContextRequested;
         public event EventHandler ChoosingItem;
-        public event EventHandler SettingsClick;
 
         private readonly AnimatedListHandler _handler;
         private readonly ZoomableListHandler _zoomer;
@@ -63,10 +64,8 @@ namespace Telegram.Controls.Drawers
             _toolbarHandler = new AnimatedListHandler(Toolbar, AnimatedListType.Stickers);
 
             _zoomer = new ZoomableListHandler(List);
-            _zoomer.Opening = UnloadVisibleItems;
-            _zoomer.Closing = ThrottleVisibleItems;
-            _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
-            _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
+            _zoomer.Opening = _handler.Suspend;
+            _zoomer.Closing = _handler.Resume;
 
             _typing = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             _typing.Invoked += async (s, args) =>
@@ -93,7 +92,7 @@ namespace Telegram.Controls.Drawers
         public void Activate(Chat chat, EmojiSearchType type = EmojiSearchType.Combined)
         {
             _isActive = true;
-            _handler.ThrottleVisibleItems();
+            _handler.Resume();
             _toolbarHandler.ThrottleVisibleItems();
 
             SearchField.SetType(ViewModel.ClientService, type);
@@ -216,11 +215,6 @@ namespace Telegram.Controls.Drawers
             }
         }
 
-        private void Settings_Click(object sender, RoutedEventArgs e)
-        {
-            SettingsClick?.Invoke(this, EventArgs.Empty);
-        }
-
         private async void OnChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)
         {
             if (args.GroupHeaderContainer == null)
@@ -324,7 +318,7 @@ namespace Telegram.Controls.Drawers
                     return;
                 }
 
-                photo.SetChat(ViewModel.ClientService, chat, 24);
+                photo.Source = ProfilePictureSource.Chat(ViewModel.ClientService, chat);
                 args.Handled = true;
             }
             else if (args.Item is StickerSetViewModel sticker)
@@ -332,14 +326,20 @@ namespace Telegram.Controls.Drawers
                 Automation.SetToolTip(args.ItemContainer, sticker.Title);
 
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
-                if (content == null || sticker == null || (sticker.Thumbnail == null && sticker.Covers == null))
+                if (content?.Children[0] is FontIcon icon)
                 {
-                    return;
+                    icon.Glyph = sticker.Name switch
+                    {
+                        "tg/favedStickers" => Icons.Bookmark,
+                        "tg/recentlyUsed" => Icons.EmojiRecents,
+                        "tg/collectibles" => Icons.Diamond,
+                        _ => string.Empty
+                    };
                 }
-
-                var animation = content.Children[0] as AnimatedImage;
-                animation.Source = DelayedFileSource.FromStickerSetInfo(ViewModel.ClientService, sticker);
+                else if (content?.Children[0] is AnimatedImage animated)
+                {
+                    animated.Source = DelayedFileSource.FromStickerSetInfo(ViewModel.ClientService, sticker);
+                }
 
                 args.Handled = true;
             }

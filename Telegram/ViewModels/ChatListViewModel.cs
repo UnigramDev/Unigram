@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,7 +32,7 @@ namespace Telegram.ViewModels
     {
         private readonly INotificationsService _notificationsService;
 
-        private readonly Dictionary<long, bool> _deletedChats = new Dictionary<long, bool>();
+        private readonly Dictionary<long, bool> _deletedChats = new();
 
         public IChatListDelegate Delegate { get; set; }
 
@@ -271,6 +272,17 @@ namespace Telegram.ViewModels
                     _notificationsService.SetMuteFor(chat, popup.Value, XamlRoot);
                 }
             }
+        }
+
+        public void SetChatSound(Tuple<Chat, bool> value)
+        {
+            var chat = value.Item1;
+            if (chat == null)
+            {
+                return;
+            }
+
+            _notificationsService.SetSound(chat, value.Item2, XamlRoot);
         }
 
         #endregion
@@ -639,8 +651,6 @@ namespace Telegram.ViewModels
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
             {
-                Logger.Info(Count);
-
                 var token = _token;
                 var totalCount = 0u;
 
@@ -678,8 +688,6 @@ namespace Telegram.ViewModels
                             _lastOrder = order;
                         }
                     }
-
-                    Logger.Info(string.Format("Received {0} items, added {1}", chats.ChatIds.Count, totalCount));
 
                     IsEmpty = Count == 0;
 
@@ -799,16 +807,22 @@ namespace Telegram.ViewModels
                     var next = NextIndexOf(chat, order);
                     if (next >= 0)
                     {
+                        var oldIndex = -1;
+
                         if (_chats.Contains(chat.Id))
                         {
-                            Remove(chat);
+                            oldIndex = IndexOf(chat);
+                            RemoveAt(oldIndex);
                         }
                         else
                         {
                             _chats.Add(chat.Id);
                         }
 
-                        Insert(Math.Min(Count, next), chat);
+                        var newIndex = Math.Min(Count, next);
+                        Insert(newIndex, chat);
+
+                        RaiseMoved(oldIndex, newIndex);
 
                         if (next == Count - 1)
                         {
@@ -834,8 +848,11 @@ namespace Telegram.ViewModels
                 }
                 else if (_chats.Contains(chat.Id))
                 {
+                    var oldIndex = IndexOf(chat);
+                    RaiseMoved(oldIndex, -1);
+
                     _chats.Remove(chat.Id);
-                    Remove(chat);
+                    RemoveAt(oldIndex);
 
                     if (_viewModel.SelectedItems.Contains(chat))
                     {
@@ -850,6 +867,18 @@ namespace Telegram.ViewModels
                     //    await LoadMoreItemsAsync(0);
                     //}
                 }
+            }
+
+            private ChatListMovedEventArgs _moved;
+            public event EventHandler<ChatListMovedEventArgs> Moved;
+
+            private void RaiseMoved(int oldIndex, int newIndex)
+            {
+                _moved ??= new();
+                _moved.OldIndex = oldIndex;
+                _moved.NewIndex = newIndex;
+
+                Moved?.Invoke(this, _moved);
             }
 
             private int NextIndexOf(Chat chat, long order)
@@ -920,6 +949,13 @@ namespace Telegram.ViewModels
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));
             }
         }
+    }
+
+    public class ChatListMovedEventArgs
+    {
+        public int OldIndex { get; set; }
+
+        public int NewIndex { get; set; }
     }
 
     public enum SearchResultType

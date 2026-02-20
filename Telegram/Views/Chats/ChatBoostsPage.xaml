@@ -20,17 +20,37 @@
                 <controls:SettingsPanel IsHeader="True">
                     <Border Margin="0,64,0,0" />
 
-                    <controls:PremiumProgressBar x:Name="Progress"
-                                                 Minimum="{x:Bind ViewModel.CurrentLevelBoostCount, Mode=OneWay}"
-                                                 Maximum="{x:Bind ViewModel.NextLevelBoostCount, Mode=OneWay}"
-                                                 Value="{x:Bind ViewModel.BoostCount, Mode=OneWay}"
-                                                 MinimumText="{x:Bind ConvertLevel(ViewModel.Level, x:False), Mode=OneWay}"
-                                                 MaximumText="{x:Bind ConvertLevel(ViewModel.Level, x:True), Mode=OneWay}"
-                                                 Glyph="&#xEA3A;"
-                                                 HorizontalAlignment="Stretch"
-                                                 MaxWidth="1000"
-                                                 Margin="24,8,24,0"
-                                                 Grid.Row="1" />
+                    <Grid HorizontalAlignment="Stretch"
+                          MaxWidth="1000"
+                          Margin="24,8,24,0"
+                          Grid.Row="1">
+                        <Grid Background="{ThemeResource ControlFillColorDefaultBrush}"
+                              CornerRadius="4"
+                              VerticalAlignment="Bottom">
+                            <TextBlock TextAlignment="Left"
+                                       FontWeight="SemiBold"
+                                       Margin="8,4,8,5" />
+                        </Grid>
+
+                        <controls:PremiumProgressBar x:Name="Progress"
+                                                     Background="{StaticResource PremiumLinearGradientBrush}"
+                                                     MaximumVisibility="Collapsed"
+                                                     Minimum="{x:Bind ViewModel.CurrentLevelBoostCount, Mode=OneWay}"
+                                                     Maximum="{x:Bind ViewModel.NextLevelBoostCount, Mode=OneWay}"
+                                                     Value="{x:Bind ViewModel.BoostCount, Mode=OneWay}"
+                                                     MinimumText="{x:Bind ConvertLevel(ViewModel.Level, x:False), Mode=OneWay}"
+                                                     MaximumText="{x:Bind ConvertLevel(ViewModel.Level, x:True), Mode=OneWay}"
+                                                     Glyph="&#xEA3A;" />
+
+                        <Grid BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                              BorderThickness="1"
+                              CornerRadius="4"
+                              VerticalAlignment="Bottom">
+                            <TextBlock TextAlignment="Left"
+                                       FontWeight="SemiBold"
+                                       Margin="8,4,8,5" />
+                        </Grid>
+                    </Grid>
 
                     <controls:HeaderedControl Header="{CustomResource StatisticOverview}">
                         <Grid Background="{ThemeResource SettingsItemBackground}">
@@ -137,10 +157,9 @@
                     <controls:HeaderedControl x:Name="LoadMore"
                                               x:Load="{x:Bind ViewModel.HasRemainingItems, Mode=OneWay}"
                                               Margin="0,-14,0,0">
-                        <controls:BadgeButton Click="LoadMore_Click"
-                                              Content="{x:Bind ConvertRemaining(ViewModel.RemainingItems), Mode=OneWay}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xE0E5;" />
+                        <controls:SettingsButton Click="LoadMore_Click"
+                                                 Content="{x:Bind ConvertRemaining(ViewModel.RemainingItems), Mode=OneWay}"
+                                                 Glyph="&#xE0E5;" />
                     </controls:HeaderedControl>
 
                     <controls:SettingsFooter x:Name="BoostersFooter"

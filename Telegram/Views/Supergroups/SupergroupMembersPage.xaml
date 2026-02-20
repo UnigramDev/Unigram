@@ -28,8 +28,7 @@
                                 Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                    <cells:ProfileCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Header>
@@ -66,11 +65,10 @@
                     <controls:HeaderedControl x:Name="AddNewPanel"
                                               Visibility="Collapsed"
                                               Margin="0,0,0,2">
-                        <controls:BadgeButton x:Name="AddNew"
-                                              Content="{CustomResource AddSubscriber}"
-                                              Click="{x:Bind ViewModel.Add}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xE8FA;" />
+                        <controls:SettingsButton x:Name="AddNew"
+                                                 Content="{CustomResource AddSubscriber}"
+                                                 Click="{x:Bind ViewModel.Add}"
+                                                 Glyph="&#xE8FA;" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Header>

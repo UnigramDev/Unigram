@@ -1,4 +1,11 @@
-﻿using System;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Services;
@@ -30,7 +37,7 @@ namespace Telegram.Controls.Cells.Business
         {
             if (clientService.TryGetUser(clientService.Options.MyId, out User user))
             {
-                Photo.SetUser(clientService, user, 36);
+                Photo.Source = ProfilePictureSource.User(clientService, user);
             }
 
             if (template)

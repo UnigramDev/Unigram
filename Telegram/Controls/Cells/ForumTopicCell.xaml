@@ -126,14 +126,16 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <RichTextBlock x:Name="BriefText"
-                                           Style="{StaticResource InfoBodyRichTextBlockStyle}"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
-                                           IsTextSelectionEnabled="False"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap"
-                                           VerticalAlignment="Top"
-                                           MaxLines="1">
+                            <controls:FormattedTextBlock x:Name="BriefText"
+                                                         Style="{StaticResource InfoBodyFormattedTextBlockStyle}"
+                                                         EmojiStyle="{StaticResource InfoCustomEmojiStyle}"
+                                                         FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                                         IsTextSelectionEnabled="False"
+                                                         TextTrimming="CharacterEllipsis"
+                                                         TextWrapping="NoWrap"
+                                                         VerticalAlignment="Top"
+                                                         AutoFontSize="False"
+                                                         MaxLines="1">
                                 <Paragraph>
                                     <Run x:Name="FromLabel"
                                          Foreground="{ThemeResource ChatFromLabelBrush}" /><Run x:Name="DraftLabel"
@@ -155,7 +157,7 @@
                                         </Border>
                                     </InlineUIContainer><Span x:Name="BriefLabel" />
                                 </Paragraph>
-                            </RichTextBlock>
+                            </controls:FormattedTextBlock>
                             <chats:ChatActionIndicator x:Name="ChatActionIndicator"
                                                        Visibility="Collapsed"
                                                        Fill="{ThemeResource PageHeaderHighlightBrush}"
@@ -213,7 +215,7 @@
 
                         <Rectangle x:Name="DropVisual"
                                    x:Load="False"
-                                   Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                   Stroke="{ThemeResource TextFillColorPrimaryBrush}"
                                    StrokeThickness="2"
                                    RadiusX="4"
                                    RadiusY="4"

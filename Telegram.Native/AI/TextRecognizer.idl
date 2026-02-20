@@ -1,0 +1,16 @@
+import "AI/RecognizedText.idl";
+
+namespace Telegram.Native.AI
+{
+    interface ITextRecognizer
+    {
+        Windows.Foundation.IAsyncOperation<RecognizedText> RecognizeAsync(Windows.Graphics.Imaging.SoftwareBitmap bitmap);
+    };
+
+    [default_interface]
+    runtimeclass TextRecognizer : ITextRecognizer
+    {
+        static ITextRecognizer GetDefault();
+        static ITextRecognizer GetOne(String modelKey);
+    }
+}

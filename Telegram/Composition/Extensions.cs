@@ -1,4 +1,11 @@
-﻿using Microsoft.Graphics.Canvas;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
@@ -7,7 +14,9 @@ using Telegram.Common;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
+#if NET9_0_OR_GREATER
 using WinRT;
+#endif
 
 namespace Windows.UI.Xaml.Hosting
 {
@@ -17,7 +26,7 @@ namespace Windows.UI.Xaml.Hosting
         {
             if (element == null)
             {
-                Telegram.Logger.Error(new ArgumentNullException(nameof(element), Environment.StackTrace));
+                Telegram.Logger.Exception(new ArgumentNullException(nameof(element), Environment.StackTrace));
             }
 
             return ElementCompositionPreview.GetElementVisual(element);

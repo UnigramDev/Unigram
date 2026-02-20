@@ -1,11 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Threading.Tasks;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -121,10 +121,6 @@ namespace Telegram.Views.Popups
             }
 
             _loadingMore = false;
-        }
-
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private async void ToLanguage_Click(Hyperlink sender, HyperlinkClickEventArgs args)

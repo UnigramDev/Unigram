@@ -1,16 +1,19 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -19,10 +22,11 @@ namespace Telegram.Controls.Cells
 {
     public sealed partial class SharedFileCell : Grid
     {
-        private IMessageDelegate _delegate;
+        private MediaTabsViewModelBase _viewModel;
         private MessageWithOwner _message;
 
         private long _fileToken;
+        private long _thumbnailToken;
 
         public SharedFileCell()
         {
@@ -39,9 +43,30 @@ namespace Telegram.Controls.Cells
             UpdateMessage(null, new MessageWithOwner(viewModel.ClientService, fileDownload.Message));
         }
 
-        public void UpdateMessage(IMessageDelegate delegato, MessageWithOwner message)
+        private bool _hidden;
+
+        public void Hide()
         {
-            _delegate = delegato;
+            if (_hidden)
+            {
+                return;
+            }
+
+            _hidden = true;
+            ButtonRoot.Opacity = 0;
+            TextRoot.Opacity = 0;
+        }
+
+        public void UpdateMessage(MediaTabsViewModelBase viewModel, MessageWithOwner message)
+        {
+            if (_hidden)
+            {
+                _hidden = false;
+                ButtonRoot.Opacity = 1;
+                TextRoot.Opacity = 1;
+            }
+
+            _viewModel = viewModel;
             _message = message;
 
             var data = message.GetFileAndThumbnailAndName();
@@ -50,31 +75,44 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            Ellipse.Background = UpdateEllipseBrush(data.FileName);
+            ButtonRoot.Background = UpdateEllipseBrush(data.FileName);
 
             if (string.IsNullOrEmpty(data.FileName))
             {
                 if (message.ClientService.TryGetUser(message.SenderId, out User user))
                 {
                     Title.Text = user.FullName();
+                    TitleTrim.Text = string.Empty;
                 }
                 else if (message.ClientService.TryGetChat(message.SenderId, out Chat chat))
                 {
                     Title.Text = chat.Title;
+                    TitleTrim.Text = string.Empty;
                 }
                 else
                 {
                     Title.Text = string.Empty;
+                    TitleTrim.Text = string.Empty;
                 }
             }
             else
             {
-                Title.Text = data.FileName;
+                var index = data.FileName.LastIndexOf('.');
+                if (index > 0)
+                {
+                    Title.Text = data.FileName.Substring(0, index + 1);
+                    TitleTrim.Text = data.FileName.Substring(index + 1);
+                }
+                else
+                {
+                    Title.Text = data.FileName;
+                    TitleTrim.Text = string.Empty;
+                }
             }
 
             if (data.Thumbnail != null)
             {
-                UpdateThumbnail(message, data.Thumbnail, data.Thumbnail.File);
+                UpdateThumbnail(message, data.Thumbnail, data.Thumbnail.File, true);
             }
             else
             {
@@ -101,7 +139,7 @@ namespace Telegram.Controls.Cells
 
             if (data.Thumbnail != null && data.Thumbnail.File.Id == file.Id)
             {
-                UpdateThumbnail(message, data.Thumbnail, file);
+                UpdateThumbnail(message, data.Thumbnail, file, false);
                 return;
             }
             else if (data.File.Id != file.Id)
@@ -144,7 +182,7 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        private void UpdateThumbnail(MessageWithOwner message, Thumbnail thumbnail, File file)
+        private void UpdateThumbnail(MessageWithOwner message, Thumbnail thumbnail, File file, bool download)
         {
             if (file.Local.IsDownloadingCompleted)
             {
@@ -171,9 +209,14 @@ namespace Telegram.Controls.Cells
                 Texture.Background = null;
                 Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
 
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                if (download)
                 {
-                    message.ClientService.DownloadFile(file.Id, 1);
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        message.ClientService.DownloadFile(file.Id, 1);
+                    }
+
+                    UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateFile, true);
                 }
             }
         }
@@ -247,7 +290,7 @@ namespace Telegram.Controls.Cells
 
             if (file.Local.IsDownloadingActive)
             {
-                if (_delegate != null)
+                if (_viewModel != null)
                 {
                     _message.ClientService.CancelDownloadFile(file);
                 }
@@ -258,7 +301,7 @@ namespace Telegram.Controls.Cells
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                if (_delegate != null)
+                if (_viewModel != null)
                 {
                     if (_message.CanBeAddedToDownloads)
                     {
@@ -274,19 +317,30 @@ namespace Telegram.Controls.Cells
                     _message.ClientService.Send(new ToggleDownloadIsPaused(file.Id, false));
                 }
             }
-            else if (_delegate == null)
+            else if (_viewModel == null)
             {
-                // TODO: Replace with IStorageService.OpenFileAsync
-
-                var permanent = await _message.ClientService.GetPermanentFileAsync(file);
-                if (permanent != null)
+                // TODO: I don't like retrieving services this way
+                var service = _message.ClientService.Session.Resolve<IStorageService>();
+                if (service != null)
                 {
-                    await Windows.System.Launcher.LaunchFileAsync(permanent);
+                    _ = service.OpenFileAsync(file);
                 }
+            }
+            else if (_message.Content is MessageDocument document && document.IsPhoto())
+            {
+                var response = await _message.ClientService.SendAsync(new GetMessageProperties(_message.ChatId, _message.Id));
+                if (response is not MessageProperties properties)
+                {
+                    return;
+                }
+
+                var storageService = _message.ClientService.Session.Resolve<IStorageService>();
+                var viewModel = new ChatGalleryViewModel(_message.ClientService, storageService, _viewModel.Aggregator, _message.ChatId, _viewModel.Topic, _message, properties);
+                _viewModel.NavigationService.ShowGallery(viewModel, Texture);
             }
             else
             {
-                _delegate.OpenFile(file);
+                _viewModel.MessageDelegate.OpenFile(file);
             }
         }
     }

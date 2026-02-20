@@ -1,9 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System.Runtime.CompilerServices;
 using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Streams;
@@ -26,6 +28,7 @@ namespace Telegram.Controls
 
     public partial class IdentityIcon : Control
     {
+        private AnimatedImage Particles;
         private AnimatedImage Status;
         private FontIcon Icon;
 
@@ -68,7 +71,7 @@ namespace Telegram.Controls
             }
             else if (_parameter is ChatInviteLinkInfo chatInviteLinkInfo)
             {
-                SetStatus(chatInviteLinkInfo);
+                SetStatus(_clientService, chatInviteLinkInfo);
             }
 
             _clientService = null;
@@ -107,10 +110,20 @@ namespace Telegram.Controls
                 if (clientService.IsPremiumAvailable && chat.EmojiStatus != null && status.IsFalse())
                 {
                     CurrentType = IdentityIconType.None;
-                    UnloadObject(ref Icon);
+                    UnloadTemplateChild(ref Icon);
 
-                    LoadObject(ref Status, nameof(Status));
+                    LoadTemplateChild(ref Status);
                     Status.Source = new CustomEmojiFileSource(clientService, chat.EmojiStatus.Type);
+
+                    if (chat.EmojiStatus.Type is EmojiStatusTypeUpgradedGift upgraded)
+                    {
+                        LoadTemplateChild(ref Particles);
+                        Particles.Source = new ParticlesImageSource(upgraded.BackdropColors);
+                    }
+                    else
+                    {
+                        UnloadTemplateChild(ref Particles);
+                    }
                 }
                 else
                 {
@@ -121,8 +134,9 @@ namespace Telegram.Controls
             {
                 CurrentType = IdentityIconType.None;
 
-                UnloadObject(ref Icon);
-                UnloadObject(ref Status);
+                UnloadTemplateChild(ref Icon);
+                UnloadTemplateChild(ref Status);
+                UnloadTemplateChild(ref Particles);
             }
         }
 
@@ -140,10 +154,20 @@ namespace Telegram.Controls
             if (clientService.IsPremiumAvailable && user.EmojiStatus != null && status.IsFalse() && (!chatList || user.Id != clientService.Options.MyId))
             {
                 CurrentType = IdentityIconType.Premium;
-                UnloadObject(ref Icon);
+                UnloadTemplateChild(ref Icon);
 
-                LoadObject(ref Status, nameof(Status));
+                LoadTemplateChild(ref Status);
                 Status.Source = new CustomEmojiFileSource(clientService, user.EmojiStatus.Type);
+
+                if (user.EmojiStatus.Type is EmojiStatusTypeUpgradedGift upgraded)
+                {
+                    LoadTemplateChild(ref Particles);
+                    Particles.Source = new ParticlesImageSource(upgraded.BackdropColors);
+                }
+                else
+                {
+                    UnloadTemplateChild(ref Particles);
+                }
             }
             else
             {
@@ -159,7 +183,7 @@ namespace Telegram.Controls
                         ? IdentityIconType.Premium
                         : IdentityIconType.Verified;
 
-                    LoadObject(ref Icon, nameof(Icon));
+                    LoadTemplateChild(ref Icon);
                     Icon.Glyph = CurrentType switch
                     {
                         IdentityIconType.Fake => Icons.Fake16,
@@ -171,17 +195,35 @@ namespace Telegram.Controls
                 else
                 {
                     CurrentType = IdentityIconType.None;
-                    UnloadObject(ref Icon);
+                    UnloadTemplateChild(ref Icon);
                 }
 
-                UnloadObject(ref Status);
+                UnloadTemplateChild(ref Status);
+                UnloadTemplateChild(ref Particles);
             }
         }
 
-        public void SetStatus(ChatInviteLinkInfo chat)
+        public void SetStatus(IClientService clientService, ChatInviteLinkInfo chat, CustomEmojiIcon botVerified)
+        {
+            SetStatus(clientService, chat);
+
+            if (chat.VerificationStatus?.BotVerificationIconCustomEmojiId is not null and not 0)
+            {
+                botVerified.Source = new CustomEmojiFileSource(clientService, chat.VerificationStatus.BotVerificationIconCustomEmojiId);
+                botVerified.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                botVerified.Source = null;
+                botVerified.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        public void SetStatus(IClientService clientService, ChatInviteLinkInfo chat)
         {
             if (!_templateApplied)
             {
+                _clientService = clientService;
                 _parameter = chat;
                 return;
             }
@@ -195,7 +237,7 @@ namespace Telegram.Controls
                     ? IdentityIconType.Scam
                     : IdentityIconType.Verified;
 
-                LoadObject(ref Icon, nameof(Icon));
+                LoadTemplateChild(ref Icon);
                 Icon.Glyph = CurrentType switch
                 {
                     IdentityIconType.Fake => Icons.Fake16,
@@ -206,10 +248,11 @@ namespace Telegram.Controls
             else
             {
                 CurrentType = IdentityIconType.None;
-                UnloadObject(ref Icon);
+                UnloadTemplateChild(ref Icon);
             }
 
-            UnloadObject(ref Status);
+            UnloadTemplateChild(ref Status);
+            UnloadTemplateChild(ref Particles);
         }
 
         public void SetStatus(IClientService clientService, ForumTopicIcon icon)
@@ -223,10 +266,10 @@ namespace Telegram.Controls
 
             if (icon.CustomEmojiId != 0)
             {
-                LoadObject(ref Status, nameof(Status));
+                LoadTemplateChild(ref Status);
                 Status.Source = new CustomEmojiFileSource(clientService, icon.CustomEmojiId);
 
-                UnloadObject(ref Icon);
+                UnloadTemplateChild(ref Icon);
             }
             else
             {
@@ -235,7 +278,7 @@ namespace Telegram.Controls
 
                 //if (premium || verified)
                 {
-                    LoadObject(ref Icon, nameof(Icon));
+                    LoadTemplateChild(ref Icon);
                     Icon.Glyph = /*premium ? Icons.Premium16 :*/ Icons.NumberSymbolFilled16;
                 }
                 //else
@@ -243,8 +286,10 @@ namespace Telegram.Controls
                 //    UnloadObject(ref Icon);
                 //}
 
-                UnloadObject(ref Status);
+                UnloadTemplateChild(ref Status);
             }
+
+            UnloadTemplateChild(ref Particles);
         }
 
         public void SetStatus(Supergroup supergroup)
@@ -264,7 +309,7 @@ namespace Telegram.Controls
                     ? IdentityIconType.Scam
                     : IdentityIconType.Verified;
 
-                LoadObject(ref Icon, nameof(Icon));
+                LoadTemplateChild(ref Icon);
                 Icon.Glyph = CurrentType switch
                 {
                     IdentityIconType.Fake => Icons.Fake16,
@@ -275,17 +320,19 @@ namespace Telegram.Controls
             else
             {
                 CurrentType = IdentityIconType.None;
-                UnloadObject(ref Icon);
+                UnloadTemplateChild(ref Icon);
             }
 
-            UnloadObject(ref Status);
+            UnloadTemplateChild(ref Status);
+            UnloadTemplateChild(ref Particles);
         }
 
         public void ClearStatus()
         {
             CurrentType = IdentityIconType.None;
-            UnloadObject(ref Icon);
-            UnloadObject(ref Status);
+            UnloadTemplateChild(ref Icon);
+            UnloadTemplateChild(ref Status);
+            UnloadTemplateChild(ref Particles);
         }
 
         #region Helpers
@@ -347,13 +394,13 @@ namespace Telegram.Controls
 
         #endregion
 
-        private void LoadObject<T>(ref T element, /*[CallerArgumentExpression("element")]*/string name)
+        private void LoadTemplateChild<T>(ref T element, [CallerArgumentExpression("element")] string name = null)
             where T : DependencyObject
         {
             element ??= GetTemplateChild(name) as T;
         }
 
-        private void UnloadObject<T>(ref T element)
+        private void UnloadTemplateChild<T>(ref T element)
             where T : DependencyObject
         {
             if (element != null)

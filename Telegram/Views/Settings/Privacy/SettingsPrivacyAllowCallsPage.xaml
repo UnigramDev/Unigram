@@ -16,9 +16,10 @@
     </Page.Transitions>
 
     <local:HostedPage.Action>
-        <Button Content="{CustomResource Save}"
-                Click="{x:Bind ViewModel.Save}"
-                Style="{StaticResource AccentButtonStyle}" />
+        <Button Content="{CustomResource Done}"
+                Click="{x:Bind ViewModel.Continue}"
+                Style="{StaticResource AccentButtonStyle}"
+                Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
     </local:HostedPage.Action>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
@@ -46,27 +47,24 @@
 
                 <controls:HeaderedControl Header="{CustomResource AddExceptions}"
                                           Footer="{CustomResource CustomCallInfo}">
-                    <controls:BadgeButton Content="{CustomResource AlwaysAllow}"
-                                          Click="{x:Bind ViewModel.Always}"
-                                          Visibility="{x:Bind ConvertAlways(ViewModel.SelectedItem), Mode=OneWay}"
-                                          Badge="{x:Bind ViewModel.AllowedBadge, Mode=OneWay}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xF164;" />
+                    <controls:SettingsButton Content="{CustomResource AlwaysAllow}"
+                                             Click="{x:Bind ViewModel.Always}"
+                                             Visibility="{x:Bind ConvertAlways(ViewModel.SelectedItem), Mode=OneWay}"
+                                             Badge="{x:Bind ViewModel.AllowedBadge, Mode=OneWay}"
+                                             Glyph="&#xF164;" />
 
-                    <controls:BadgeButton Content="{CustomResource NeverAllow}"
-                                          Click="{x:Bind ViewModel.Never}"
-                                          Visibility="{x:Bind ConvertNever(ViewModel.SelectedItem), Mode=OneWay}"
-                                          Badge="{x:Bind ViewModel.RestrictedBadge, Mode=OneWay}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xF166;" />
+                    <controls:SettingsButton Content="{CustomResource NeverAllow}"
+                                             Click="{x:Bind ViewModel.Never}"
+                                             Visibility="{x:Bind ConvertNever(ViewModel.SelectedItem), Mode=OneWay}"
+                                             Badge="{x:Bind ViewModel.RestrictedBadge, Mode=OneWay}"
+                                             Glyph="&#xF166;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource PrivacyP2PHeader}">
-                    <controls:BadgeButton Content="{CustomResource PrivacyP2P2}"
-                                          Badge="{x:Bind ViewModel.AllowP2PCallsRules.Badge, Mode=OneWay}"
-                                          Click="{x:Bind ViewModel.OpenP2PCall}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9E6;" />
+                    <controls:SettingsButton Content="{CustomResource PrivacyP2P2}"
+                                             Badge="{x:Bind ViewModel.AllowP2PCallsRules.Badge, Mode=OneWay}"
+                                             Click="{x:Bind ViewModel.OpenP2PCall}"
+                                             Glyph="&#xE9E6;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

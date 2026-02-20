@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Windows.UI;
 using Windows.UI.Text;
@@ -15,6 +16,7 @@ namespace Telegram.Controls
     public sealed partial class FormattedTextFlyout : StackPanel
     {
         private readonly FormattedTextBox _textBox;
+        private bool _registered;
 
         public FormattedTextBox TextBox => _textBox;
 
@@ -23,12 +25,31 @@ namespace Telegram.Controls
             InitializeComponent();
 
             _textBox = textBox;
-            _textBox.SelectionChanged += OnSelectionChanged;
+        }
+
+        public void Register()
+        {
+            if (!_registered)
+            {
+                _registered = true;
+                _textBox.SelectionChanged += OnSelectionChanged;
+            }
+
+            OnSelectionChanged(null, null);
+        }
+
+        public void Unregister()
+        {
+            if (_registered)
+            {
+                _registered = false;
+                _textBox.SelectionChanged -= OnSelectionChanged;
+            }
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (_textBox == null)
+            if (_textBox == null || _textBox.Document.Selection.Length == 0)
             {
                 return;
             }

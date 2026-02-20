@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Numerics;
 using Telegram.Common;
@@ -11,7 +12,6 @@ using Telegram.Composition;
 using Telegram.Navigation;
 using Windows.Devices.Input;
 using Windows.Foundation;
-using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
@@ -67,10 +67,8 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (!_hasInitialLoadedEventFired)
+            if (_trackerOwner == null)
             {
-                _hasInitialLoadedEventFired = true;
-
                 _hitTest = BootStrapper.Current.Compositor.CreateSpriteVisual();
                 _hitTest.Brush = BootStrapper.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
 
@@ -226,12 +224,9 @@ namespace Telegram.Controls
             get => _interactionSource?.PositionXSourceMode == InteractionSourceMode.EnabledWithInertia;
             set
             {
-                if (_interactionSource != null)
-                {
-                    _interactionSource.PositionXSourceMode = value
-                        ? InteractionSourceMode.EnabledWithInertia
-                        : InteractionSourceMode.Disabled;
-                }
+                _interactionSource?.PositionXSourceMode = value
+                    ? InteractionSourceMode.EnabledWithInertia
+                    : InteractionSourceMode.Disabled;
             }
         }
 
@@ -265,7 +260,7 @@ namespace Telegram.Controls
             Canvas.SetZIndex(next, 0);
         }
 
-        public void ChangeView(CarouselDirection direction)
+        public void ChangeView(CarouselDirection direction, bool disableAnimation = false)
         {
             _scrolling = Logger.TickCount;
 
@@ -273,12 +268,22 @@ namespace Telegram.Controls
                 ? _tracker.MinPosition
                 : _tracker.MaxPosition;
 
-            var anim = _tracker.Compositor.CreateVector3KeyFrameAnimation();
-            anim.InsertKeyFrame(0, new Vector3(_restingValue, 0, 0));
-            anim.InsertKeyFrame(1, position);
+            if (disableAnimation || !PowerSavingPolicy.AreSmoothTransitionsEnabled)
+            {
+                _viewChanged = CarouselDirection.None;
+                _tracker.TryUpdatePosition(position);
 
-            _viewChanged = direction;
-            _tracker.TryUpdatePositionWithAnimation(anim);
+                ViewChanged?.Invoke(this, new CarouselViewChangedEventArgs(_viewChanged));
+            }
+            else
+            {
+                var anim = _tracker.Compositor.CreateVector3KeyFrameAnimation();
+                anim.InsertKeyFrame(0, new Vector3(_restingValue, 0, 0));
+                anim.InsertKeyFrame(1, position);
+
+                _viewChanged = direction;
+                _tracker.TryUpdatePositionWithAnimation(anim);
+            }
 
             ConfigureAnimations(position.X);
         }
@@ -293,7 +298,6 @@ namespace Telegram.Controls
         private readonly FrameworkElement[] _elements = new FrameworkElement[3];
         private readonly Visual[] _visuals = new Visual[3];
 
-        private bool _hasInitialLoadedEventFired;
         private bool _hasConfiguredElements;
 
         private WeakInteractionTrackerOwner _trackerOwner;

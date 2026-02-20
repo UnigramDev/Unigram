@@ -1,16 +1,16 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Native.Composition;
 using Telegram.Views.Stars.Popups;
-using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -20,7 +20,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Shapes;
-using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls
 {
@@ -54,10 +53,14 @@ namespace Telegram.Controls
             DefaultStyleKey = typeof(PremiumSlider);
         }
 
-        public void Initialize(int value, long maxRealValue)
+        public void Initialize(long value, long minRealValue, long maxRealValue)
         {
             var sliderSteps = new List<int> { 1, 10, 50, 100, 500, 1_000, 2_000, 5_000, 7_500, 10_000 };
-            sliderSteps.RemoveAll(x => x >= maxRealValue);
+            sliderSteps.RemoveAll(x => x >= maxRealValue || x <= minRealValue);
+            if (minRealValue != maxRealValue)
+            {
+                sliderSteps.Insert(0, (int)minRealValue);
+            }
             sliderSteps.Add((int)maxRealValue);
 
             _stepped = new SteppedValue(100, sliderSteps);
@@ -296,10 +299,6 @@ namespace Telegram.Controls
 
                 _thumb.Offset = new Vector3(-width - 12, 0, 0);
                 _arrow.Properties.InsertVector3("Translation", new Vector3(radiusLeft, 0, 0));
-
-                Arrow.Fill = new SolidColorBrush(ColorsHelper.Mix(
-                    Color.FromArgb(0xFF, 0xEE, 0xAC, 0x0D),
-                    Color.FromArgb(0xFF, 0xF9, 0xD3, 0x16), 0.25));
             }
             else if (width > ValueRoot.ActualSize.X - center + 12 || Value == Maximum)
             {
@@ -307,26 +306,20 @@ namespace Telegram.Controls
 
                 _thumb.Offset = new Vector3((ValueRoot.ActualSize.X - width - Thumb.ActualSize.X + 12), 0, 0);
                 _arrow.Properties.InsertVector3("Translation", new Vector3(-radiusRight, 0, 0));
-
-                Arrow.Fill = new SolidColorBrush(ColorsHelper.Mix(
-                    Color.FromArgb(0xFF, 0xEE, 0xAC, 0x0D),
-                    Color.FromArgb(0xFF, 0xF9, 0xD3, 0x16), 0.75));
             }
             else
             {
                 _thumb.Offset = new Vector3(-Thumb.ActualSize.X / 2, 0, 0);
                 _arrow.Properties.InsertVector3("Translation", new Vector3());
-
-                Arrow.Fill = new SolidColorBrush(ColorsHelper.Mix(
-                    Color.FromArgb(0xFF, 0xEE, 0xAC, 0x0D),
-                    Color.FromArgb(0xFF, 0xF9, 0xD3, 0x16), 0.5));
             }
+
+            Arrow.Fill = GetArrowFill(-_thumb.Offset.X / Thumb.ActualSize.X);
 
             Vector2 CalculateRadius(float diff)
             {
                 diff = center + diff - Arrow.ActualSize.X / 2;
                 diff = Math.Min(diff + 2, 20);
-                diff = Math.Max(diff, 6);
+                diff = Math.Max(diff, 8);
                 return new Vector2(diff, 20);
             }
 
@@ -334,6 +327,113 @@ namespace Telegram.Controls
 
             _thumbClip.BottomLeft = CalculateRadius(radiusLeft);
             _thumbClip.BottomRight = CalculateRadius(radiusRight);
+
+            float CalculateRadius2(float diff)
+            {
+                diff = center + diff - Arrow.ActualSize.X / 2;
+                diff = Math.Min(diff + 2, 20);
+                diff = Math.Max(diff, 2);
+                return diff;
+            }
+
+            if ((center + radiusLeft - Arrow.ActualSize.X / 2) <= 6)
+            {
+                _arrowCentered = false;
+                CreatePathGeometry(CalculateRadius2(radiusLeft), 0);
+            }
+            else if ((center + radiusRight - Arrow.ActualSize.X / 2) <= 6)
+            {
+                _arrowCentered = false;
+                CreatePathGeometry(0, CalculateRadius2(radiusRight));
+            }
+            else if (!_arrowCentered)
+            {
+                _arrowCentered = true;
+                CreatePathGeometry(0, 0);
+            }
+        }
+
+        private SolidColorBrush GetArrowFill(double amount)
+        {
+            return Foreground switch
+            {
+                SolidColorBrush solid => solid,
+                LinearGradientBrush linear => new SolidColorBrush(ColorsHelper.Mix(linear.GradientStops[0].Color, linear.GradientStops[^1].Color, amount)),
+                _ => null
+            };
+        }
+
+        private bool _arrowCentered = true;
+
+        public void CreatePathGeometry(double radiusLeft, double radiusRight)
+        {
+            if (Arrow.Data is not PathGeometry pathGeometry)
+            {
+                return;
+            }
+
+            var pathFigure = new PathFigure();
+            pathFigure.IsClosed = true;
+
+            if (radiusLeft != 0)
+            {
+                pathFigure.StartPoint = new Point(6 - radiusLeft, -1);
+            }
+            else
+            {
+                pathFigure.StartPoint = new Point(0, 0);
+                pathFigure.Segments.Add(new LineSegment { Point = new Point(0, 2) });
+
+                pathFigure.Segments.Add(new BezierSegment
+                {
+                    Point1 = new Point(0.923074, 2),
+                    Point2 = new Point(1.80816, 2.36679),
+                    Point3 = new Point(2.46094, 3.01953)
+                });
+            }
+
+            pathFigure.Segments.Add(new LineSegment { Point = new Point(6.76172, 7.32031) });
+
+            pathFigure.Segments.Add(new BezierSegment
+            {
+                Point1 = new Point(7.23956, 7.79815),
+                Point2 = new Point(8, 8),
+                Point3 = new Point(8.5, 7.99512)
+            });
+
+            pathFigure.Segments.Add(new BezierSegment
+            {
+                Point1 = new Point(9, 8),
+                Point2 = new Point(9.76044, 7.79815),
+                Point3 = new Point(10.2383, 7.32031)
+            });
+
+            if (radiusRight != 0)
+            {
+                pathFigure.Segments.Add(new LineSegment { Point = new Point(17 - (6 - radiusRight), -1) });
+            }
+            else
+            {
+                pathFigure.Segments.Add(new LineSegment { Point = new Point(14.5391, 3.01953) });
+
+                pathFigure.Segments.Add(new BezierSegment
+                {
+                    Point1 = new Point(15.1918, 2.36679),
+                    Point2 = new Point(16.0769, 2),
+                    Point3 = new Point(17, 2)
+                });
+
+                pathFigure.Segments.Add(new LineSegment { Point = new Point(17, 0) });
+                pathFigure.Segments.Add(new LineSegment { Point = new Point(17, 0) });
+            }
+
+            var measure = new PathFigure();
+            measure.StartPoint = new Point(0, 0);
+            measure.Segments.Add(new LineSegment { Point = new Point(17, 8) });
+
+            pathGeometry.Figures.Clear();
+            pathGeometry.Figures.Add(pathFigure);
+            pathGeometry.Figures.Add(measure);
         }
 
         #region MinimumText

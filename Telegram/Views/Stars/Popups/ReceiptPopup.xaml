@@ -24,8 +24,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <controls:ProfilePicture x:Name="Photo"
-                                         Width="96"
-                                         Height="96"
+                                         Size="96"
                                          Margin="0,0,0,8" />
                 <controls:AnimatedImage x:Name="AnimatedPhoto"
                                         Width="120"
@@ -54,7 +53,7 @@
                                 CornerRadius="12"
                                 Width="120"
                                 Height="120"
-                                BorderBrush="{ThemeResource ContentDialogBackground}"
+                                BorderBrush="{ThemeResource ContentDialogTopOverlaySolid}"
                                 BorderThickness="2"
                                 Margin="-8" />
                     </Grid>
@@ -111,8 +110,7 @@
                         </Grid.ColumnDefinitions>
                         <controls:ProfilePicture x:Name="FromPhoto"
                                                  Margin="8,4,0,4"
-                                                 Width="24"
-                                                 Height="24" />
+                                                 Size="24" />
                         <TextBlock Margin="8,5,4,6"
                                    Style="{StaticResource BodyTextBlockStyle}"
                                    VerticalAlignment="Top"
@@ -125,28 +123,36 @@
                 </controls:TableViewItem>
                 <controls:TableViewItem x:Name="Transaction"
                                         Header="{CustomResource StarsTransactionID}"
+                                        HorizontalContentAlignment="Stretch"
+                                        VerticalContentAlignment="Stretch"
                                         Padding="0">
                     <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
                         <TextBlock x:Name="Identifier"
                                    Style="{StaticResource BodyTextBlockStyle}"
                                    FontFamily="Consolas"
-                                   TextWrapping="Wrap"
-                                   Margin="8,5,4,10"
-                                   VerticalAlignment="Top" />
+                                   TextWrapping="NoWrap"
+                                   Margin="8,5,4,6"
+                                   VerticalAlignment="Bottom" />
 
-                        <TextBlock Text="&#xE8C8;"
+                        <TextBlock Text="&#xEAC9;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    FontSize="20"
                                    Foreground="{ThemeResource AccentButtonBackground}"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Bottom"
                                    Margin="4"
-                                   IsHitTestVisible="False" />
+                                   IsHitTestVisible="False"
+                                   Grid.Column="1" />
 
                         <Button Click="CopyLink_Click"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Opacity="0" />
+                                Opacity="0"
+                                Grid.ColumnSpan="2" />
                     </Grid>
                 </controls:TableViewItem>
                 <controls:TableViewItem x:Name="Messages"
@@ -169,23 +175,13 @@
                                      Margin="0,4,0,4" />
         </StackPanel>
 
-        <Grid x:Name="PurchasePanel"
-              VerticalAlignment="Bottom"
-              HorizontalAlignment="Stretch"
-              Margin="0,8,0,0"
-              Grid.Row="1">
-            <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Content="{CustomResource OK}"
-                                  Click="Purchase_Click"
-                                  Style="{StaticResource AccentButtonStyle}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  FontWeight="SemiBold"
-                                  Padding="16,3,16,5"
-                                  CornerRadius="4"
-                                  BorderThickness="1"
-                                  Margin="0"
-                                  Height="32" />
-        </Grid>
+        <Button x:Name="PurchaseCommand"
+                Click="Purchase_Click"
+                Content="{CustomResource OK}"
+                Style="{StaticResource AccentButtonStyle}"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Stretch"
+                Margin="0,8,0,0"
+                Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace Telegram.Common
             public double[] Heights;
         }
 
-        public static ((Rect, MosaicItemPosition)[], Size) chatMessageBubbleMosaicLayout(Size maxSize, IEnumerable<Size> itemSizes)
+        public static ((Rect, MosaicItemPosition)[], Size) chatMessageBubbleMosaicLayout(double availableWidth, double availableHeight, IEnumerable<Size> itemSizes)
         {
             var spacing = 0.0d;
 
@@ -81,7 +82,7 @@ namespace Telegram.Common
 
             var minWidth = 68.0d;
             var minHeight = 81.0;
-            var maxAspectRatio = maxSize.Width / maxSize.Height;
+            var maxAspectRatio = availableWidth / availableHeight;
             if (itemInfos.Length > 0)
             {
                 averageAspectRatio /= itemInfos.Length;
@@ -93,8 +94,8 @@ namespace Telegram.Common
                 {
                     if (proportions == "ww" && averageAspectRatio > 1.4 * maxAspectRatio && itemInfos[1].AspectRatio - itemInfos[0].AspectRatio < 0.2)
                     {
-                        var width = maxSize.Width;
-                        var height = Math.Floor(Math.Min(width / itemInfos[0].AspectRatio, Math.Min(width / itemInfos[1].AspectRatio, (maxSize.Height - spacing) / 2.0)));
+                        var width = availableWidth;
+                        var height = Math.Floor(Math.Min(width / itemInfos[0].AspectRatio, Math.Min(width / itemInfos[1].AspectRatio, (availableHeight - spacing) / 2.0)));
 
                         itemInfos[0].LayoutFrame = new Rect(0.0, 0.0, width, height);
                         itemInfos[0].Position = MosaicItemPosition.Top | MosaicItemPosition.Left | MosaicItemPosition.Right;
@@ -105,8 +106,8 @@ namespace Telegram.Common
                     }
                     else if (proportions is "ww" or "qq")
                     {
-                        var width = (maxSize.Width - spacing) / 2.0;
-                        var height = Math.Floor(Math.Min(width / itemInfos[0].AspectRatio, Math.Min(width / itemInfos[1].AspectRatio, maxSize.Height)));
+                        var width = (availableWidth - spacing) / 2.0;
+                        var height = Math.Floor(Math.Min(width / itemInfos[0].AspectRatio, Math.Min(width / itemInfos[1].AspectRatio, availableHeight)));
 
                         itemInfos[0].LayoutFrame = new Rect(0.0, 0.0, width, height);
                         itemInfos[0].Position = MosaicItemPosition.Top | MosaicItemPosition.Left | MosaicItemPosition.Bottom;
@@ -117,9 +118,9 @@ namespace Telegram.Common
                     }
                     else
                     {
-                        var secondWidth = Math.Floor(Math.Min(0.5 * (maxSize.Width - spacing), Math.Round((maxSize.Width - spacing) / itemInfos[0].AspectRatio / (1.0 / itemInfos[0].AspectRatio + 1.0 / itemInfos[1].AspectRatio))));
-                        var firstWidth = maxSize.Width - secondWidth - spacing;
-                        var height = Math.Floor(Math.Min(maxSize.Height, Math.Round(Math.Min(firstWidth / itemInfos[0].AspectRatio, secondWidth / itemInfos[1].AspectRatio))));
+                        var secondWidth = Math.Floor(Math.Min(0.5 * (availableWidth - spacing), Math.Round((availableWidth - spacing) / itemInfos[0].AspectRatio / (1.0 / itemInfos[0].AspectRatio + 1.0 / itemInfos[1].AspectRatio))));
+                        var firstWidth = availableWidth - secondWidth - spacing;
+                        var height = Math.Floor(Math.Min(availableHeight, Math.Round(Math.Min(firstWidth / itemInfos[0].AspectRatio, secondWidth / itemInfos[1].AspectRatio))));
 
                         itemInfos[0].LayoutFrame = new Rect(0.0, 0.0, firstWidth, height);
                         itemInfos[0].Position = MosaicItemPosition.Top | MosaicItemPosition.Left | MosaicItemPosition.Bottom;
@@ -133,13 +134,13 @@ namespace Telegram.Common
                 {
                     if (proportions.StartsWith("n"))
                     {
-                        var firstHeight = maxSize.Height;
+                        var firstHeight = availableHeight;
 
-                        var thirdHeight = Math.Min((maxSize.Height - spacing) * 0.5, Math.Round(itemInfos[1].AspectRatio * (maxSize.Width - spacing) / (itemInfos[2].AspectRatio + itemInfos[1].AspectRatio)));
-                        var secondHeight = maxSize.Height - thirdHeight - spacing;
-                        var rightWidth = Math.Max(minWidth, Math.Min((maxSize.Width - spacing) * 0.5, Math.Round(Math.Min(thirdHeight * itemInfos[2].AspectRatio, secondHeight * itemInfos[1].AspectRatio))));
+                        var thirdHeight = Math.Min((availableHeight - spacing) * 0.5, Math.Round(itemInfos[1].AspectRatio * (availableWidth - spacing) / (itemInfos[2].AspectRatio + itemInfos[1].AspectRatio)));
+                        var secondHeight = availableHeight - thirdHeight - spacing;
+                        var rightWidth = Math.Max(minWidth, Math.Min((availableWidth - spacing) * 0.5, Math.Round(Math.Min(thirdHeight * itemInfos[2].AspectRatio, secondHeight * itemInfos[1].AspectRatio))));
 
-                        var leftWidth = Math.Round(Math.Min(firstHeight * itemInfos[0].AspectRatio, maxSize.Width - spacing - rightWidth));
+                        var leftWidth = Math.Round(Math.Min(firstHeight * itemInfos[0].AspectRatio, availableWidth - spacing - rightWidth));
                         itemInfos[0].LayoutFrame = new Rect(0.0, 0.0, leftWidth, firstHeight);
                         itemInfos[0].Position = MosaicItemPosition.Top | MosaicItemPosition.Left | MosaicItemPosition.Bottom;
 
@@ -153,14 +154,14 @@ namespace Telegram.Common
                     }
                     else
                     {
-                        var width = maxSize.Width;
-                        var firstHeight = Math.Floor(Math.Min(width / itemInfos[0].AspectRatio, (maxSize.Height - spacing) * 0.66));
+                        var width = availableWidth;
+                        var firstHeight = Math.Floor(Math.Min(width / itemInfos[0].AspectRatio, (availableHeight - spacing) * 0.66));
                         itemInfos[0].LayoutFrame = new Rect(0.0, 0.0, width, firstHeight);
                         itemInfos[0].Position = MosaicItemPosition.Top | MosaicItemPosition.Left | MosaicItemPosition.Right;
 
 
-                        width = (maxSize.Width - spacing) / 2.0;
-                        var secondHeight = Math.Min(maxSize.Height - firstHeight - spacing, Math.Round(Math.Min(width / itemInfos[1].AspectRatio, width / itemInfos[2].AspectRatio)));
+                        width = (availableWidth - spacing) / 2.0;
+                        var secondHeight = Math.Min(availableHeight - firstHeight - spacing, Math.Round(Math.Min(width / itemInfos[1].AspectRatio, width / itemInfos[2].AspectRatio)));
                         itemInfos[1].LayoutFrame = new Rect(0.0, firstHeight + spacing, width, secondHeight);
                         itemInfos[1].Position = MosaicItemPosition.Left | MosaicItemPosition.Bottom;
 
@@ -173,16 +174,16 @@ namespace Telegram.Common
                 {
                     if (proportions == "wwww" || proportions.StartsWith("w"))
                     {
-                        var w = maxSize.Width;
-                        var h0 = Math.Round(Math.Min(w / itemInfos[0].AspectRatio, (maxSize.Height - spacing) * 0.66));
+                        var w = availableWidth;
+                        var h0 = Math.Round(Math.Min(w / itemInfos[0].AspectRatio, (availableHeight - spacing) * 0.66));
                         itemInfos[0].LayoutFrame = new Rect(0.0, 0.0, w, h0);
                         itemInfos[0].Position = MosaicItemPosition.Top | MosaicItemPosition.Left | MosaicItemPosition.Right;
 
-                        var h = Math.Round((maxSize.Width - 2 * spacing) / (itemInfos[1].AspectRatio + itemInfos[2].AspectRatio + itemInfos[3].AspectRatio));
-                        var w0 = Math.Max(minWidth, Math.Min((maxSize.Width - 2 * spacing) * 0.4, h * itemInfos[1].AspectRatio));
-                        var w2 = Math.Max(Math.Max(minWidth, (maxSize.Width - 2 * spacing) * 0.33), h * itemInfos[3].AspectRatio);
+                        var h = Math.Round((availableWidth - 2 * spacing) / (itemInfos[1].AspectRatio + itemInfos[2].AspectRatio + itemInfos[3].AspectRatio));
+                        var w0 = Math.Max(minWidth, Math.Min((availableWidth - 2 * spacing) * 0.4, h * itemInfos[1].AspectRatio));
+                        var w2 = Math.Max(Math.Max(minWidth, (availableWidth - 2 * spacing) * 0.33), h * itemInfos[3].AspectRatio);
                         var w1 = w - w0 - w2 - 2 * spacing;
-                        h = Math.Max(minHeight, Math.Min(maxSize.Height - h0 - spacing, h));
+                        h = Math.Max(minHeight, Math.Min(availableHeight - h0 - spacing, h));
                         itemInfos[1].LayoutFrame = new Rect(0.0, h0 + spacing, w0, h);
                         itemInfos[1].Position = MosaicItemPosition.Left | MosaicItemPosition.Bottom;
 
@@ -194,16 +195,16 @@ namespace Telegram.Common
                     }
                     else
                     {
-                        var h = maxSize.Height;
-                        var w0 = Math.Round(Math.Min(h * itemInfos[0].AspectRatio, (maxSize.Width - spacing) * 0.6));
+                        var h = availableHeight;
+                        var w0 = Math.Round(Math.Min(h * itemInfos[0].AspectRatio, (availableWidth - spacing) * 0.6));
                         itemInfos[0].LayoutFrame = new Rect(0.0, 0.0, w0, h);
                         itemInfos[0].Position = MosaicItemPosition.Top | MosaicItemPosition.Left | MosaicItemPosition.Bottom;
 
-                        var w = Math.Round((maxSize.Height - 2 * spacing) / (1.0 / itemInfos[1].AspectRatio + 1.0 / itemInfos[2].AspectRatio + 1.0 / itemInfos[3].AspectRatio));
+                        var w = Math.Round((availableHeight - 2 * spacing) / (1.0 / itemInfos[1].AspectRatio + 1.0 / itemInfos[2].AspectRatio + 1.0 / itemInfos[3].AspectRatio));
                         var h0 = Math.Floor(w / itemInfos[1].AspectRatio);
                         var h1 = Math.Floor(w / itemInfos[2].AspectRatio);
                         var h2 = h - h0 - h1 - 2.0 * spacing;
-                        w = Math.Max(minWidth, Math.Min(maxSize.Width - w0 - spacing, w));
+                        w = Math.Max(minWidth, Math.Min(availableWidth - w0 - spacing, w));
                         itemInfos[1].LayoutFrame = new Rect(w0 + spacing, 0.0, w, h0);
                         itemInfos[1].Position = MosaicItemPosition.Right | MosaicItemPosition.Top;
 
@@ -248,7 +249,7 @@ namespace Telegram.Common
                         ratioSum += ratio;
                     }
 
-                    return (maxSize.Width - (count - 1) * spacing) / ratioSum;
+                    return (availableWidth - (count - 1) * spacing) / ratioSum;
                 }
 
                 var attempts = new List<MosaicLayoutAttempt>();
@@ -315,7 +316,7 @@ namespace Telegram.Common
                     }
                 }
 
-                var maxHeight = Math.Floor(maxSize.Width / 3.0 * 4.0);
+                var maxHeight = Math.Floor(availableWidth / 3.0 * 4.0);
                 var optimalo = default(MosaicLayoutAttempt?);
                 var optimalDiff = 0.0;
                 foreach (var attempt in attempts)
@@ -393,7 +394,7 @@ namespace Telegram.Common
                                 innerPositionFlags |= MosaicItemPosition.Right;
                             }
 
-                            if (positionFlags == MosaicItemPosition.None)
+                            if (innerPositionFlags == MosaicItemPosition.None)
                             {
                                 innerPositionFlags = MosaicItemPosition.Inside;
                             }

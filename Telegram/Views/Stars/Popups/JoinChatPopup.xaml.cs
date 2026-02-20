@@ -1,9 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services;
@@ -23,9 +25,9 @@ namespace Telegram.Views.Popups2
 
             _clientService = clientService;
 
-            Photo.SetChat(clientService, info, 96);
+            Photo.Source = ProfilePictureSource.Chat(clientService, info);
 
-            Identity.SetStatus(info);
+            Identity.SetStatus(clientService, info);
 
             Title.Text = info.Title;
             Subtitle.Text = ConvertCount(info.MemberCount, info.Type is InviteLinkChatTypeChannel);
@@ -39,7 +41,7 @@ namespace Telegram.Views.Popups2
                 Footer.Text = string.Format("+{0}", info.MemberCount - info.MemberUserIds.Count);
 
                 Members.Visibility = Visibility.Visible;
-                Members.ItemsSource = clientService.GetUsers(info.MemberUserIds);
+                Members.ItemsSource = clientService.GetUsers(info.MemberUserIds).ToList();
             }
             else
             {
@@ -79,7 +81,7 @@ namespace Telegram.Views.Popups2
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(_clientService, user, 48);
+                photo.Source = ProfilePictureSource.User(_clientService, user);
             }
 
             if (args.Phase < 2)

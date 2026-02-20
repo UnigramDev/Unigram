@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
@@ -13,26 +14,39 @@ using Telegram.ViewModels.Delegates;
 
 namespace Telegram.ViewModels
 {
+    public partial class PinnedMessageViewModel : MessageViewModel
+    {
+        public PinnedMessageViewModel(IClientService clientService, WeakReference delegato, Chat chat, Message message, int index)
+            : base(clientService, delegato, chat, null, null, message, true)
+        {
+            Index = index;
+        }
+
+        public int Index { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("Id: {0}, Index: {1}", Id, Index);
+        }
+    }
+
     public partial class MessageViewModel : MessageWithOwner
     {
-        private readonly IPlaybackService _playbackService;
-
         // TODO: find a way NOT to use a weak reference here
         private readonly WeakReference _delegate;
 
-        protected readonly Chat _chat;
-        protected readonly ForumTopic _topic;
+        protected readonly ForumTopic _forumTopic;
+        protected readonly DirectMessagesChatTopic _directMessagesChatTopic;
 
         private Action _updateSelection;
 
-        public MessageViewModel(IClientService clientService, IPlaybackService playbackService, IMessageDelegate delegato, Chat chat, ForumTopic topic, Message message, bool processText = false)
-            : base(clientService, message)
+        public MessageViewModel(IClientService clientService, IMessageDelegate delegato, Chat chat, ForumTopic forumTopic, DirectMessagesChatTopic directMessagesChatTopic, Message message, bool processText = false)
+            : base(clientService, message, chat)
         {
-            _playbackService = playbackService;
             _delegate = new WeakReference(delegato);
 
-            _chat = chat;
-            _topic = topic;
+            _forumTopic = forumTopic;
+            _directMessagesChatTopic = directMessagesChatTopic;
 
             if (processText)
             {
@@ -40,10 +54,23 @@ namespace Telegram.ViewModels
             }
         }
 
-        public Chat Chat => _chat;
+        public MessageViewModel(IClientService clientService, WeakReference delegato, Chat chat, ForumTopic forumTopic, DirectMessagesChatTopic directMessagesChatTopic, Message message, bool processText = false)
+            : base(clientService, message, chat)
+        {
+            _delegate = delegato;
 
-        // WARNING: currently this is only valid when opening the topic itself.
-        public ForumTopic Topic => _topic;
+            _forumTopic = forumTopic;
+            _directMessagesChatTopic = directMessagesChatTopic;
+
+            if (processText)
+            {
+                SetText(message.Content?.GetCaption());
+            }
+        }
+
+        public long LastReadOutboxMessageId => _forumTopic?.LastReadOutboxMessageId
+            ?? _directMessagesChatTopic?.LastReadOutboxMessageId
+            ?? Chat.LastReadOutboxMessageId;
 
         public void SelectionChanged()
         {
@@ -76,7 +103,6 @@ namespace Telegram.ViewModels
         //    ReplyToMessage = null;
         //}
 
-        public IPlaybackService PlaybackService => _playbackService;
         public IMessageDelegate Delegate => _delegate.Target as IMessageDelegate;
 
         public bool IsInitial { get; set; } = true;
@@ -84,22 +110,19 @@ namespace Telegram.ViewModels
         public bool IsFirst { get; set; } = true;
         public bool IsLast { get; set; } = true;
 
-        // Used only by animated emojis
-        public Sticker Interaction { get; set; }
-
         // Used only in recent actions
         public ChatEvent Event { get; set; }
 
-        public Photo GetPhoto() => _message.GetPhoto();
+        public Photo GetPhoto() => Content.GetPhoto();
 
         private bool? _isService;
-        public bool IsService => _isService ??= _message.IsService();
+        public bool IsService => _isService ??= Content.IsService();
 
         private bool? _isSaved;
-        public bool IsSaved => _isSaved ??= _message.IsSaved(_clientService.Options.MyId);
+        public bool IsSaved => _isSaved ??= this.IsSaved(_clientService.Options.MyId);
 
         private bool? _isVerificationCode;
-        public bool IsVerificationCode => _isVerificationCode ??= _message.ChatId == _clientService.Options.VerificationCodesBotChatId && _message.ForwardInfo != null;
+        public bool IsVerificationCode => _isVerificationCode ??= ChatId == _clientService.Options.VerificationCodesBotChatId && ForwardInfo != null;
 
         // TODO: BaseObject
         public object ReplyToItem { get; set; }
@@ -131,41 +154,92 @@ namespace Telegram.ViewModels
 
         public bool GeneratedContentUnread { get; set; }
 
-        public BaseObject GetSender()
-        {
-            if (_message.SenderId is MessageSenderUser user)
-            {
-                return ClientService.GetUser(user.UserId);
-            }
-            else if (_message.SenderId is MessageSenderChat chat)
-            {
-                return ClientService.GetChat(chat.ChatId);
-            }
-
-            return null;
-        }
-
-        public User GetViaBotUser()
-        {
-            if (_message.ViaBotUserId != 0)
-            {
-                return ClientService.GetUser(_message.ViaBotUserId);
-            }
-
-            if (ClientService.TryGetUser(_message.SenderId, out User user) && user.Type is UserTypeBot)
-            {
-                return user;
-            }
-
-            return null;
-        }
-
-
         public override bool CanBeAddedToDownloads => CanBeSaved && !Chat.HasProtectedContent && Content is MessageAudio or MessageDocument or MessageVideo;
+
+        public bool IsVisuallyOutgoing => (IsOutgoing && !IsChannelPost) || (IsSaved && ForwardInfo?.Source is { IsOutgoing: true });
 
         public void Replace(Message message)
         {
-            _message = message;
+            Content = message.Content;
+            ReplyMarkup = message.ReplyMarkup;
+            MediaAlbumId = message.MediaAlbumId;
+            InteractionInfo = message.InteractionInfo;
+            AuthorSignature = message.AuthorSignature;
+            ViaBotUserId = message.ViaBotUserId;
+            SelfDestructIn = message.SelfDestructIn;
+            SelfDestructType = message.SelfDestructType;
+            ReplyTo = message.ReplyTo;
+            FactCheck = message.FactCheck;
+            ForwardInfo = message.ForwardInfo;
+            ImportInfo = message.ImportInfo;
+            UnreadReactions = message.UnreadReactions;
+            EditDate = message.EditDate;
+            Date = message.Date;
+            ContainsUnreadMention = message.ContainsUnreadMention;
+            IsFromOffline = message.IsFromOffline;
+            IsChannelPost = message.IsChannelPost;
+            IsPaidStarSuggestedPost = message.IsPaidStarSuggestedPost;
+            IsPaidTonSuggestedPost = message.IsPaidTonSuggestedPost;
+            SuggestedPostInfo = message.SuggestedPostInfo;
+            CanBeSaved = message.CanBeSaved;
+            IsOutgoing = message.IsOutgoing;
+            IsPinned = message.IsPinned;
+            HasTimestampedMedia = message.HasTimestampedMedia;
+            SchedulingState = message.SchedulingState;
+            SendingState = message.SendingState;
+            ChatId = message.ChatId;
+            TopicId = message.TopicId;
+            SenderId = message.SenderId;
+            SenderBoostCount = message.SenderBoostCount;
+            SenderBusinessBotUserId = message.SenderBusinessBotUserId;
+            Id = message.Id;
+            EffectId = message.EffectId;
+            PaidMessageStarCount = message.PaidMessageStarCount;
+            RestrictionInfo = message.RestrictionInfo;
+            SummaryLanguageCode = message.SummaryLanguageCode;
+            AutoDeleteIn = message.AutoDeleteIn;
+        }
+
+        public void Replace(MessageViewModel message)
+        {
+            Content = message.Content;
+            ReplyMarkup = message.ReplyMarkup;
+            MediaAlbumId = message.MediaAlbumId;
+            InteractionInfo = message.InteractionInfo;
+            AuthorSignature = message.AuthorSignature;
+            ViaBotUserId = message.ViaBotUserId;
+            SelfDestructIn = message.SelfDestructIn;
+            SelfDestructType = message.SelfDestructType;
+            ReplyTo = message.ReplyTo;
+            FactCheck = message.FactCheck;
+            ForwardInfo = message.ForwardInfo;
+            ImportInfo = message.ImportInfo;
+            UnreadReactions = message.UnreadReactions;
+            EditDate = message.EditDate;
+            Date = message.Date;
+            ContainsUnreadMention = message.ContainsUnreadMention;
+            IsFromOffline = message.IsFromOffline;
+            IsChannelPost = message.IsChannelPost;
+            IsPaidStarSuggestedPost = message.IsPaidStarSuggestedPost;
+            IsPaidTonSuggestedPost = message.IsPaidTonSuggestedPost;
+            SuggestedPostInfo = message.SuggestedPostInfo;
+            CanBeSaved = message.CanBeSaved;
+            IsOutgoing = message.IsOutgoing;
+            IsPinned = message.IsPinned;
+            HasTimestampedMedia = message.HasTimestampedMedia;
+            SchedulingState = message.SchedulingState;
+            SendingState = message.SendingState;
+            ChatId = message.ChatId;
+            TopicId = message.TopicId;
+            SenderId = message.SenderId;
+            SenderBoostCount = message.SenderBoostCount;
+            SenderBusinessBotUserId = message.SenderBusinessBotUserId;
+            Id = message.Id;
+            EffectId = message.EffectId;
+            PaidMessageStarCount = message.PaidMessageStarCount;
+            RestrictionInfo = message.RestrictionInfo;
+            SummaryLanguageCode = message.SummaryLanguageCode;
+            AutoDeleteIn = message.AutoDeleteIn;
         }
 
         private bool? _canBeShared;
@@ -185,7 +259,7 @@ namespace Telegram.ViewModels
             {
                 return true;
             }
-            else if (Content is MessageSticker or MessageDice)
+            else if (Content is MessageSticker or MessageDice or MessageStakeDice)
             {
                 return false;
             }
@@ -231,12 +305,20 @@ namespace Telegram.ViewModels
             return false;
         }
 
+        public bool IsDirectMessagesChatTopicMessage => _directMessagesChatTopic != null && _directMessagesChatTopic.SenderId.AreTheSame(SenderId);
+
         private bool? _hasSenderPhoto;
         public bool HasSenderPhoto => _hasSenderPhoto ??= GetHasSenderPhoto();
 
+#if DEBUG
+        public bool CanSummarizeText => Text?.Text.Length > 1000 && !IsVisuallyOutgoing;
+#else
+        public bool CanSummarizeText => SummaryLanguageCode?.Length > 0 && !IsVisuallyOutgoing;
+#endif
+
         private bool GetHasSenderPhoto()
         {
-            if (IsService)
+            if (IsService || _directMessagesChatTopic != null)
             {
                 return false;
             }
@@ -259,7 +341,7 @@ namespace Telegram.ViewModels
                 return false;
             }
 
-            return Chat?.Type is ChatTypeSupergroup or ChatTypeBasicGroup || _message.ChatId == _clientService.Options.VerificationCodesBotChatId;
+            return Chat?.Type is ChatTypeSupergroup or ChatTypeBasicGroup || (ChatId == _clientService.Options.VerificationCodesBotChatId && Id != 0);
         }
 
 
@@ -268,52 +350,50 @@ namespace Telegram.ViewModels
             return base.GetHashCode();
         }
 
-        public void UpdateWith(MessageViewModel message)
+        public void UpdateAlbum(MessageViewModel message)
         {
-            UpdateWith(message.Get());
-        }
-
-        public void UpdateWith(Message message)
-        {
-            _message.AuthorSignature = message.AuthorSignature;
-            _message.CanBeSaved = message.CanBeSaved;
-            _message.ChatId = message.ChatId;
-            _message.ContainsUnreadMention = message.ContainsUnreadMention;
-            //_message.Content = message.Content;
-            //_message.Date = message.Date;
-            _message.EditDate = message.EditDate;
-            _message.ForwardInfo = message.ForwardInfo;
-            _message.Id = message.Id;
-            _message.IsFromOffline = message.IsFromOffline;
-            _message.IsChannelPost = message.IsChannelPost;
-            _message.IsOutgoing = message.IsOutgoing;
-            _message.IsPinned = message.IsPinned;
-            _message.MessageThreadId = message.MessageThreadId;
-            _message.MediaAlbumId = message.MediaAlbumId;
-            _message.ReplyMarkup = message.ReplyMarkup;
-            _message.ReplyTo = message.ReplyTo;
-            _message.FactCheck = message.FactCheck;
-            _message.SenderId = message.SenderId;
-            _message.SendingState = message.SendingState;
-            _message.SelfDestructType = message.SelfDestructType;
-            _message.SelfDestructIn = message.SelfDestructIn;
-            _message.AutoDeleteIn = message.AutoDeleteIn;
-            _message.ViaBotUserId = message.ViaBotUserId;
-            _message.InteractionInfo = message.InteractionInfo;
-            _message.UnreadReactions = message.UnreadReactions;
-            _message.RestrictionReason = message.RestrictionReason;
-            _message.ImportInfo = message.ImportInfo;
-            _message.TopicId = message.TopicId;
-            _message.HasTimestampedMedia = message.HasTimestampedMedia;
-            _message.SchedulingState = message.SchedulingState;
-            _message.SenderBoostCount = message.SenderBoostCount;
-            _message.SenderBusinessBotUserId = message.SenderBusinessBotUserId;
-            _message.EffectId = message.EffectId;
-            _message.PaidMessageStarCount = message.PaidMessageStarCount;
+            AuthorSignature = message.AuthorSignature;
+            CanBeSaved = message.CanBeSaved;
+            ChatId = message.ChatId;
+            ContainsUnreadMention = message.ContainsUnreadMention;
+            //Content = message.Content;
+            //Date = message.Date;
+            EditDate = message.EditDate;
+            ForwardInfo = message.ForwardInfo;
+            Id = message.Id;
+            IsFromOffline = message.IsFromOffline;
+            IsChannelPost = message.IsChannelPost;
+            IsPaidStarSuggestedPost = message.IsPaidStarSuggestedPost;
+            IsPaidTonSuggestedPost = message.IsPaidTonSuggestedPost;
+            SuggestedPostInfo = message.SuggestedPostInfo;
+            IsOutgoing = message.IsOutgoing;
+            IsPinned = message.IsPinned;
+            MediaAlbumId = message.MediaAlbumId;
+            ReplyMarkup = message.ReplyMarkup;
+            ReplyTo = message.ReplyTo;
+            FactCheck = message.FactCheck;
+            SenderId = message.SenderId;
+            SendingState = message.SendingState;
+            SelfDestructType = message.SelfDestructType;
+            SelfDestructIn = message.SelfDestructIn;
+            AutoDeleteIn = message.AutoDeleteIn;
+            ViaBotUserId = message.ViaBotUserId;
+            InteractionInfo = message.InteractionInfo;
+            UnreadReactions = message.UnreadReactions;
+            RestrictionInfo = message.RestrictionInfo;
+            SummaryLanguageCode = message.SummaryLanguageCode;
+            ImportInfo = message.ImportInfo;
+            TopicId = message.TopicId;
+            HasTimestampedMedia = message.HasTimestampedMedia;
+            SchedulingState = message.SchedulingState;
+            SenderBoostCount = message.SenderBoostCount;
+            SenderBusinessBotUserId = message.SenderBusinessBotUserId;
+            EffectId = message.EffectId;
+            PaidMessageStarCount = message.PaidMessageStarCount;
 
             _isSaved = null;
 
-            if (_message.Content is MessageAlbum album)
+            if (Content is MessageAlbum album)
             {
                 FormattedText caption = null;
                 StyledText text = null;
@@ -362,62 +442,136 @@ namespace Telegram.ViewModels
     public partial class MessageWithOwner
     {
         protected readonly IClientService _clientService;
-        protected Message _message;
+        protected readonly Chat _chat;
 
-        public MessageWithOwner(IClientService clientService, Message message)
+        public MessageWithOwner(IClientService clientService, Message message, Chat chat = null)
         {
             _clientService = clientService;
-            _message = message;
+            _chat = chat ?? clientService.GetChat(message.ChatId);
+            _content = message.Content;
+
+            ReplyMarkup = message.ReplyMarkup;
+            MediaAlbumId = message.MediaAlbumId;
+            InteractionInfo = message.InteractionInfo;
+            AuthorSignature = message.AuthorSignature;
+            ViaBotUserId = message.ViaBotUserId;
+            SelfDestructIn = message.SelfDestructIn;
+            SelfDestructType = message.SelfDestructType;
+            ReplyTo = message.ReplyTo;
+            FactCheck = message.FactCheck;
+            ForwardInfo = message.ForwardInfo;
+            ImportInfo = message.ImportInfo;
+            UnreadReactions = message.UnreadReactions;
+            EditDate = message.EditDate;
+            Date = message.Date;
+            ContainsUnreadMention = message.ContainsUnreadMention;
+            IsFromOffline = message.IsFromOffline;
+            IsChannelPost = message.IsChannelPost;
+            IsPaidStarSuggestedPost = message.IsPaidStarSuggestedPost;
+            IsPaidTonSuggestedPost = message.IsPaidTonSuggestedPost;
+            SuggestedPostInfo = message.SuggestedPostInfo;
+            CanBeSaved = message.CanBeSaved;
+            IsOutgoing = message.IsOutgoing;
+            IsPinned = message.IsPinned;
+            HasTimestampedMedia = message.HasTimestampedMedia;
+            SchedulingState = message.SchedulingState;
+            SendingState = message.SendingState;
+            ChatId = message.ChatId;
+            TopicId = message.TopicId;
+            SenderId = message.SenderId;
+            SenderBoostCount = message.SenderBoostCount;
+            SenderBusinessBotUserId = message.SenderBusinessBotUserId;
+            Id = message.Id;
+            EffectId = message.EffectId;
+            PaidMessageStarCount = message.PaidMessageStarCount;
+            RestrictionInfo = message.RestrictionInfo;
+            SummaryLanguageCode = message.SummaryLanguageCode;
+            AutoDeleteIn = message.AutoDeleteIn;
         }
 
-        public override string ToString()
+        public Object GetSender()
         {
-            return _message.ToString();
+            if (SenderId is MessageSenderUser user)
+            {
+                return ClientService.GetUser(user.UserId);
+            }
+            else if (SenderId is MessageSenderChat chat)
+            {
+                return ClientService.GetChat(chat.ChatId);
+            }
+
+            return null;
         }
+
+        public User GetViaBotUser()
+        {
+            if (ViaBotUserId != 0)
+            {
+                return ClientService.GetUser(ViaBotUserId);
+            }
+
+            if (ClientService.TryGetUser(SenderId, out User user) && user.Type is UserTypeBot)
+            {
+                return user;
+            }
+
+            return null;
+        }
+
+        //public override string ToString()
+        //{
+        //    return _message.ToString();
+        //}
+
+        public Chat Chat => _chat;
 
         public MessageId CombinedId => new(this);
 
         public IClientService ClientService => _clientService;
 
-        public ReplyMarkup ReplyMarkup { get => _message.ReplyMarkup; set => _message.ReplyMarkup = value; }
-        public MessageContent Content { get => _message.Content; set => SetContent(value); }
-        public long MediaAlbumId => _message.MediaAlbumId;
-        public MessageInteractionInfo InteractionInfo { get => _message.InteractionInfo; set => _message.InteractionInfo = value; }
-        public string AuthorSignature => _message.AuthorSignature;
-        public long ViaBotUserId => _message.ViaBotUserId;
-        public double SelfDestructIn { get => _message.SelfDestructIn; set => _message.SelfDestructIn = value; }
-        public MessageSelfDestructType SelfDestructType => _message.SelfDestructType;
-        public MessageReplyTo ReplyTo { get => _message.ReplyTo; set => _message.ReplyTo = value; }
-        public FactCheck FactCheck { get => _message.FactCheck; set => _message.FactCheck = value; }
-        public MessageForwardInfo ForwardInfo => _message.ForwardInfo;
-        public MessageImportInfo ImportInfo => _message.ImportInfo;
-        public IList<UnreadReaction> UnreadReactions { get => _message.UnreadReactions; set => _message.UnreadReactions = value; }
-        public int EditDate { get => _message.EditDate; set => _message.EditDate = value; }
-        public int Date => _message.Date;
-        public bool ContainsUnreadMention { get => _message.ContainsUnreadMention; set => _message.ContainsUnreadMention = value; }
-        public bool IsFromOffline => _message.IsFromOffline;
-        public bool IsChannelPost => _message.IsChannelPost;
-        public bool CanBeSaved => _message.CanBeSaved;
-        public bool IsOutgoing { get => _message.IsOutgoing; set => _message.IsOutgoing = value; }
-        public bool IsPinned { get => _message.IsPinned; set => _message.IsPinned = value; }
-        public bool HasTimestampedMedia => _message.HasTimestampedMedia;
-        public MessageSchedulingState SchedulingState => _message.SchedulingState;
-        public MessageSendingState SendingState => _message.SendingState;
-        public long ChatId => _message.ChatId;
-        public long MessageThreadId => _message.MessageThreadId;
-        public MessageTopic TopicId => _message.TopicId;
-        public MessageSender SenderId { get => _message.SenderId; set => _message.SenderId = value; }
-        public int SenderBoostCount => _message.SenderBoostCount;
-        public long SenderBusinessBotUserId => _message.SenderBusinessBotUserId;
-        public long Id => _message.Id;
-        public long EffectId => _message.EffectId;
-        public long PaidMessageStarCount => _message.PaidMessageStarCount;
+        public ReplyMarkup ReplyMarkup { get; set; }
+        public long MediaAlbumId { get; protected set; }
+        public MessageInteractionInfo InteractionInfo { get; set; }
+        public string AuthorSignature { get; protected set; }
+        public long ViaBotUserId { get; protected set; }
+        public double SelfDestructIn { get; set; }
+        public MessageSelfDestructType SelfDestructType { get; protected set; }
+        public MessageReplyTo ReplyTo { get; set; }
+        public FactCheck FactCheck { get; set; }
+        public MessageForwardInfo ForwardInfo { get; protected set; }
+        public MessageImportInfo ImportInfo { get; protected set; }
+        public IList<UnreadReaction> UnreadReactions { get; set; }
+        public int EditDate { get; set; }
+        public int Date { get; protected set; }
+        public bool ContainsUnreadMention { get; set; }
+        public bool IsFromOffline { get; protected set; }
+        public bool IsChannelPost { get; protected set; }
+        public bool IsPaidStarSuggestedPost { get; protected set; }
+        public bool IsPaidTonSuggestedPost { get; protected set; }
+        public SuggestedPostInfo SuggestedPostInfo { get; set; }
+        public bool CanBeSaved { get; protected set; }
+        public bool IsOutgoing { get; protected set; }
+        public bool IsPinned { get; set; }
+        public bool HasTimestampedMedia { get; protected set; }
+        public MessageSchedulingState SchedulingState { get; protected set; }
+        public MessageSendingState SendingState { get; protected set; }
+        public long ChatId { get; protected set; }
+        public MessageTopic TopicId { get; protected set; }
+        public MessageSender SenderId { get; set; }
+        public int SenderBoostCount { get; protected set; }
+        public long SenderBusinessBotUserId { get; protected set; }
+        public long Id { get; protected set; }
+        public long EffectId { get; protected set; }
+        public long PaidMessageStarCount { get; protected set; }
+        public RestrictionInfo RestrictionInfo { get; protected set; }
+        public double AutoDeleteIn { get; protected set; }
+        public string SummaryLanguageCode { get; protected set; }
 
         public MessageEffect Effect { get; set; }
 
         private void SetContent(MessageContent content)
         {
-            _message.Content = content;
+            _content = content;
             SetText(content?.GetCaption());
         }
 
@@ -429,13 +583,22 @@ namespace Telegram.ViewModels
             }
             else
             {
-                Text = null;
+                Text = StyledText.Empty;
             }
+        }
+
+        protected MessageContent _content;
+        public MessageContent Content
+        {
+            get => _content;
+            set => SetContent(value);
         }
 
         public StyledText Text { get; set; }
 
         public MessageTranslateResult TranslatedText { get; set; }
+
+        public MessageTranslateResult SummarizedText { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -456,9 +619,10 @@ namespace Telegram.ViewModels
             return HashCode.Combine(ChatId, Id);
         }
 
+        // TODO: Get rid of this
         public Message Get()
         {
-            return _message;
+            return new Message(Id, SenderId, ChatId, SendingState, SchedulingState, IsOutgoing, IsPinned, IsFromOffline, CanBeSaved, HasTimestampedMedia, IsChannelPost, IsPaidStarSuggestedPost, IsPaidTonSuggestedPost, ContainsUnreadMention, Date, EditDate, ForwardInfo, ImportInfo, InteractionInfo, UnreadReactions, FactCheck, SuggestedPostInfo, ReplyTo, TopicId, SelfDestructType, SelfDestructIn, AutoDeleteIn, ViaBotUserId, SenderBusinessBotUserId, SenderBoostCount, PaidMessageStarCount, AuthorSignature, MediaAlbumId, EffectId, RestrictionInfo, SummaryLanguageCode, Content, ReplyMarkup);
         }
 
         public virtual bool CanBeAddedToDownloads

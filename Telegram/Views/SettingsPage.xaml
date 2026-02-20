@@ -31,8 +31,7 @@
                                      Margin="12,8"
                                      Grid.RowSpan="2">
                         <controls:ProfilePicture x:Name="Photo"
-                                                 Height="48"
-                                                 Width="48" />
+                                                 Size="48" />
                     </HyperlinkButton>
 
                     <Grid VerticalAlignment="Bottom"
@@ -67,6 +66,16 @@
                                VerticalAlignment="Top"
                                Grid.Row="1"
                                Grid.Column="1" />
+
+                    <controls:GlyphButton Content="&#xEACA;"
+                                          Click="{x:Bind ViewModel.ShareUsername}"
+                                          Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                                          AutomationProperties.Name="{CustomResource QrCode}"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,0,0"
+                                          CornerRadius="20"
+                                          Grid.RowSpan="2"
+                                          Grid.Column="2" />
                 </Grid>
 
                 <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
@@ -141,8 +150,8 @@
                                                            Height="16"
                                                            Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
                                                            Opacity="0"
-                                                           RadiusX="3"
-                                                           RadiusY="3" />
+                                                           RadiusX="1.5"
+                                                           RadiusY="1.5" />
                                             </Grid>
                                         </Grid>
                                     </ControlTemplate>
@@ -150,86 +159,86 @@
                             </Setter>
                         </Style>
                     </controls:TopNavView.ItemContainerStyle>
-                    <controls:BadgeButton x:Name="Profile"
-                                          Content="{CustomResource EditProfile}"
-                                          Style="{StaticResource IconBadgeButtonStyle}"
-                                          Click="Profile_Click">
-                        <controls:BadgeButton.IconSource>
+                    <controls:SettingsButton x:Name="Profile"
+                                             Content="{CustomResource AccountSettings}"
+                                             Style="{StaticResource IconBadgeButtonStyle}"
+                                             Click="Profile_Click">
+                        <controls:SettingsButton.IconSource>
                             <icons:Profile />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Appearance"
-                                          Click="Appearance_Click"
-                                          Content="{CustomResource Appearance}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton x:Name="Appearance"
+                                             Click="Appearance_Click"
+                                             Content="{CustomResource Appearance}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:Appearance />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Privacy"
-                                          Click="Privacy_Click"
-                                          Content="{CustomResource PrivacySettings}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton x:Name="Privacy"
+                                             Click="Privacy_Click"
+                                             Content="{CustomResource PrivacySettings}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:Privacy />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Notifications"
-                                          Click="Notifications_Click"
-                                          Content="{CustomResource NotificationsAndSounds}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton x:Name="Notifications"
+                                             Click="Notifications_Click"
+                                             Content="{CustomResource NotificationsAndSounds}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:Notifications />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Data"
-                                          Click="Data_Click"
-                                          Content="{CustomResource DataSettings}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton x:Name="Data"
+                                             Click="Data_Click"
+                                             Content="{CustomResource DataSettings}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:Data />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="PowerSaving"
-                                          Click="PowerSaving_Click"
-                                          Content="{CustomResource PowerUsage}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton x:Name="PowerSaving"
+                                             Click="PowerSaving_Click"
+                                             Content="{CustomResource PowerUsage}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:PowerSaving />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Folders"
-                                          Click="Folders_Click"
-                                          Content="{CustomResource Filters}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton x:Name="Folders"
+                                             Click="Folders_Click"
+                                             Content="{CustomResource Filters}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:Folders />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Sessions"
-                                          Click="Sessions_Click"
-                                          Content="{CustomResource Devices}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton x:Name="Sessions"
+                                             Click="Sessions_Click"
+                                             Content="{CustomResource Devices}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:Devices />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Language"
-                                          Click="Language_Click"
-                                          Content="{CustomResource Language}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton x:Name="Language"
+                                             Click="Language_Click"
+                                             Content="{CustomResource Language}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:Language />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="Advanced"
-                                          Click="Advanced_Click"
-                                          Content="{CustomResource PrivacyAdvanced}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton x:Name="Advanced"
+                                             Click="Advanced_Click"
+                                             Content="{CustomResource PrivacyAdvanced}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:Advanced />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
                 </controls:TopNavView>
 
                 <StackPanel x:Name="PremiumRoot"
@@ -238,77 +247,73 @@
                                Margin="12,2"
                                Height="1" />
 
-                    <controls:BadgeButton Click="Premium_Click"
-                                          Content="{CustomResource TelegramPremium}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                    <controls:SettingsButton Click="Premium_Click"
+                                             Content="{CustomResource TelegramPremium}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:Premium />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
 
-                    <controls:BadgeButton Click="Stars_Click"
-                                          Badge="{x:Bind ViewModel.OwnedStarCount, Mode=OneWay}"
-                                          Content="{CustomResource MenuTelegramStars}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                    <controls:SettingsButton Click="Stars_Click"
+                                             Badge="{x:Bind ViewModel.OwnedStarCount, Mode=OneWay}"
+                                             Content="{CustomResource MenuTelegramStars}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:PremiumStars />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
 
-                    <controls:BadgeButton Click="Business_Click"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                    <controls:SettingsButton Click="Business_Click"
+                                             Content="{CustomResource TelegramBusiness}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:Business />
-                        </controls:BadgeButton.IconSource>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{CustomResource TelegramBusiness}" />
-                            <controls:BadgeControl Text="NEW"
-                                                   VerticalAlignment="Bottom"
-                                                   CornerRadius="4"
-                                                   Margin="4,0,0,0"
-                                                   Grid.Column="1" />
-                        </Grid>
-                    </controls:BadgeButton>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
 
-                    <controls:BadgeButton x:Name="PremiumGifting"
-                                          Click="{x:Bind ViewModel.PremiumGifting}"
-                                          Content="{CustomResource SendAGift}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                    <controls:SettingsButton x:Name="PremiumGifting"
+                                             Click="{x:Bind ViewModel.PremiumGifting}"
+                                             Content="{CustomResource SendAGift}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:PremiumGifting />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
                 </StackPanel>
                 <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
                            Margin="12,2"
                            Height="1" />
 
                 <StackPanel>
-                    <controls:BadgeButton Content="{CustomResource AskAQuestion}"
-                                          Click="{x:Bind ViewModel.Ask}"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                    <controls:SettingsButton Content="{CustomResource AskAQuestion}"
+                                             Click="{x:Bind ViewModel.Ask}"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:AskQ />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton Content="{CustomResource TelegramFAQ}"
-                                          Click="Questions_Click"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton Content="{CustomResource TelegramFAQ}"
+                                             Click="Questions_Click"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:FAQ />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton Content="{CustomResource PrivacyPolicy}"
-                                          Click="PrivacyPolicy_Click"
-                                          Style="{StaticResource IconBadgeButtonStyle}">
-                        <controls:BadgeButton.IconSource>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton Content="{CustomResource TelegramFeatures}"
+                                             Click="Features_Click"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
+                            <icons:Tips />
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
+                    <controls:SettingsButton Content="{CustomResource PrivacyPolicy}"
+                                             Click="PrivacyPolicy_Click"
+                                             Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:SettingsButton.IconSource>
                             <icons:PrivacyPolicy />
-                        </controls:BadgeButton.IconSource>
-                    </controls:BadgeButton>
+                        </controls:SettingsButton.IconSource>
+                    </controls:SettingsButton>
                 </StackPanel>
 
                 <controls:VersionLabel Navigate="VersionLabel_Navigate"

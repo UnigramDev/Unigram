@@ -23,10 +23,12 @@
                                    Margin="0,-10,0,-6"
                                    Canvas.ZIndex="1" />
             <Grid>
-                <Ellipse x:Name="ArrowReactionsShadow"
-                         Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                         Width="36"
-                         Height="36" />
+                <Rectangle x:Name="ArrowReactionsShadow"
+                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                           Width="36"
+                           Height="36"
+                           RadiusX="18"
+                           RadiusY="18" />
                 <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                         CornerRadius="18"
                         Height="36"
@@ -53,10 +55,12 @@
                                    Margin="0,-10,0,-6"
                                    Canvas.ZIndex="1" />
             <Grid>
-                <Ellipse x:Name="ArrowMentionsShadow"
-                         Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                         Width="36"
-                         Height="36" />
+                <Rectangle x:Name="ArrowMentionsShadow"
+                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                           Width="36"
+                           Height="36"
+                           RadiusX="18"
+                           RadiusY="18" />
                 <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                         CornerRadius="18"
                         Height="36"
@@ -82,10 +86,12 @@
                                    Margin="0,-10,0,-6"
                                    Canvas.ZIndex="1" />
             <Grid>
-                <Ellipse x:Name="ArrowShadow"
-                         Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                         Width="36"
-                         Height="36" />
+                <Rectangle x:Name="ArrowShadow"
+                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                           Width="36"
+                           Height="36"
+                           RadiusX="18"
+                           RadiusY="18" />
                 <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                         CornerRadius="18"
                         Height="36"

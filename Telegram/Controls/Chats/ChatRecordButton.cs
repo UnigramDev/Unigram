@@ -1,15 +1,17 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Entities;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -20,7 +22,6 @@ using Windows.Media;
 using Windows.Media.Capture;
 using Windows.Media.Capture.Frames;
 using Windows.Media.Devices;
-using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.System;
@@ -171,10 +172,46 @@ namespace Telegram.Controls.Chats
             _recorder.QuantumProcessed = null;
         }
 
+        protected override void OnPointerEntered(PointerRoutedEventArgs e)
+        {
+            _pointerEntered = true;
+
+            try
+            {
+                base.OnPointerEntered(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
+        protected override void OnPointerExited(PointerRoutedEventArgs e)
+        {
+            _pointerEntered = false;
+
+            try
+            {
+                base.OnPointerExited(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
             Icon.CapturePointer(e.Pointer);
-            base.OnPointerPressed(e);
+
+            try
+            {
+                base.OnPointerPressed(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
@@ -221,10 +258,7 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            if (ViewModel is DialogViewModel viewModel)
-            {
-                viewModel.PlaybackService.Pause();
-            }
+            LifetimeService.Current.Playback.Pause();
 
             Logger.Debug("Permissions granted, mode: " + Mode);
 
@@ -264,6 +298,18 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        private void UpdateVisualState()
+        {
+            if (_pointerEntered)
+            {
+                VisualStateManager.GoToState(this, Mode == ChatRecordMode.Voice ? "PointerOver" : "CheckedPointerOver", false);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, Mode == ChatRecordMode.Voice ? "Normal" : "Checked", false);
+            }
+        }
+
         private int recordInterfaceState;
 
         private DisplayRequest _request;
@@ -282,7 +328,7 @@ namespace Telegram.Controls.Chats
 
                 this.BeginOnUIThread(() =>
                 {
-                    VisualStateManager.GoToState(this, "Locked", false);
+                    UpdateVisualState();
 
                     ClickMode = ClickMode.Press;
                     RecordingLocked?.Invoke(this, EventArgs.Empty);
@@ -298,7 +344,7 @@ namespace Telegram.Controls.Chats
 
                 this.BeginOnUIThread(() =>
                 {
-                    VisualStateManager.GoToState(this, "Locked", false);
+                    UpdateVisualState();
 
                     ClickMode = ClickMode.Press;
                     RecordingStopped?.Invoke(this, EventArgs.Empty);
@@ -319,7 +365,7 @@ namespace Telegram.Controls.Chats
 
                 this.BeginOnUIThread(() =>
                 {
-                    VisualStateManager.GoToState(this, "Started", false);
+                    UpdateVisualState();
 
                     ClickMode = ClickMode.Release;
                     RecordingStarting?.Invoke(this, EventArgs.Empty);
@@ -350,18 +396,15 @@ namespace Telegram.Controls.Chats
 
                 this.BeginOnUIThread(() =>
                 {
-                    VisualStateManager.GoToState(this, "Stopped", false);
+                    UpdateVisualState();
 
                     ClickMode = ClickMode.Press;
                     RecordingStopped?.Invoke(this, EventArgs.Empty);
 
                     Automation.SetToolTip(this, Mode == ChatRecordMode.Video ? Strings.AccDescrVideoMessage : Strings.AccDescrVoiceMessage);
 
-                    if (_request != null)
-                    {
-                        _request.TryRequestRelease();
-                        _request = null;
-                    }
+                    _request?.TryRequestRelease();
+                    _request = null;
                 });
             }
 
@@ -477,6 +520,8 @@ namespace Telegram.Controls.Chats
                 _recordingAudioVideo = false;
                 UpdateRecordingInterface();
             }
+
+            UpdateVisualState();
         }
 
         private async Task<bool> CheckAccessAsync(ChatRecordMode mode)
@@ -531,11 +576,8 @@ namespace Telegram.Controls.Chats
                 catch { }
                 finally
                 {
-                    if (capture != null)
-                    {
-                        capture.Dispose();
-                        capture = null;
-                    }
+                    capture?.Dispose();
+                    capture = null;
                 }
 
                 return false;
@@ -565,6 +607,7 @@ namespace Telegram.Controls.Chats
 
         private readonly bool _hasRecordVideo = true;
 
+        private bool _pointerEntered;
         private bool _pointerReleased;
 
         private bool _calledRecordRunnable;
@@ -653,6 +696,12 @@ namespace Telegram.Controls.Chats
 
         public event EventHandler<float> QuantumProcessed;
 
+        public bool IsViewOnce
+        {
+            get => _recorder.IsViewOnce;
+            set => _recorder.IsViewOnce = value;
+        }
+
         public partial class Recorder
         {
             public event EventHandler RecordingFailed;
@@ -687,6 +736,8 @@ namespace Telegram.Controls.Chats
             {
                 _current = null;
             }
+
+            public bool IsViewOnce { get; set; }
 
             public async void Start(ChatRecordMode mode, Chat chat)
             {
@@ -1113,6 +1164,12 @@ namespace Telegram.Controls.Chats
 
             private async void Send(ComposeViewModel viewModel, ChatRecordMode mode, Chat chat, StorageFile file, bool mirroring, int duration)
             {
+                var selfDestructType = IsViewOnce
+                        ? new MessageSelfDestructTypeImmediately()
+                        : null;
+
+                IsViewOnce = false;
+
                 if (mode == ChatRecordMode.Video)
                 {
                     var props = await file.Properties.GetVideoPropertiesAsync();
@@ -1136,20 +1193,23 @@ namespace Telegram.Controls.Chats
                     var videoBitrate = viewModel.ClientService.Options.SuggestedVideoNoteVideoBitrate;
                     var audioBitrate = viewModel.ClientService.Options.SuggestedVideoNoteAudioBitrate;
 
-                    var transform = new VideoTransformEffectDefinition();
-                    transform.CropRectangle = new Rect(x, y, width, height);
-                    transform.OutputSize = new Size(length, length);
-                    transform.Mirror = mirroring ? MediaMirroringOptions.Horizontal : MediaMirroringOptions.None;
-
-                    var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
-                    profile.Video.Width = (uint)length;
-                    profile.Video.Height = (uint)length;
-                    profile.Video.Bitrate = (uint)videoBitrate * 1000;
-                    profile.Audio.Bitrate = (uint)audioBitrate * 1000;
+                    var video = await StorageMedia.CreateAsync(file);
+                    var generation = new VideoGeneration
+                    {
+                        Transcode = true,
+                        Transform = true,
+                        CropRectangle = new Rect(x, y, width, height),
+                        OutputSize = new Size(length, length),
+                        Flip = mirroring ? ImageFlip.Horizontal : ImageFlip.None,
+                        Width = (uint)length,
+                        Height = (uint)length,
+                        VideoBitrate = (uint)videoBitrate * 1000,
+                        AudioBitrate = (uint)audioBitrate * 1000
+                    };
 
                     try
                     {
-                        _dispatcherQueue.TryEnqueue(() => _ = viewModel.SendVideoNoteAsync(file, profile, transform));
+                        _dispatcherQueue.TryEnqueue(() => _ = viewModel.SendVideoNoteAsync(video as StorageVideo, generation, selfDestructType));
                     }
                     catch { }
                 }
@@ -1157,7 +1217,7 @@ namespace Telegram.Controls.Chats
                 {
                     try
                     {
-                        _dispatcherQueue.TryEnqueue(() => _ = viewModel.SendVoiceNoteAsync(file, duration, null));
+                        _dispatcherQueue.TryEnqueue(() => _ = viewModel.SendVoiceNoteAsync(file, duration, null, selfDestructType));
                     }
                     catch { }
                 }

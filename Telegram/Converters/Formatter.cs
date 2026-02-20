@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Globalization;
 using Telegram.Common;
@@ -61,6 +62,16 @@ namespace Telegram.Converters
             }
 
             return Date(date, Strings.chatDate);
+        }
+
+        public static string PremiumDuration(int days)
+        {
+            if (days >= 30)
+            {
+                return Locale.Declension(Strings.R.Gift2Months, days / 30);
+            }
+
+            return Locale.Declension(Strings.R.Days, days);
         }
 
         public static string Distance(float distance, bool away = true)
@@ -228,7 +239,7 @@ namespace Telegram.Converters
                 case "MRO":
                     return 10.0d;
                 case "TON":
-                    return 1000000000.0d;
+                    return Constants.ToncoinMin;
                 default:
                     return 100.0d;
             }
@@ -277,6 +288,22 @@ namespace Telegram.Converters
             return string.Format(Strings.PmEditedDateTimeAt, Date(dateTime), Time(dateTime));
         }
 
+        public static string CompletedDate(int value)
+        {
+            var dateTime = ToLocalTime(value);
+
+            if (dateTime.Date == DateTime.Now.Date)
+            {
+                return string.Format(Strings.TodoCompletedTodayAt, Time(dateTime));
+            }
+            else if (dateTime.Date == DateTime.Now.Date.AddDays(-1))
+            {
+                return string.Format(Strings.TodoCompletedYesterdayAt, Time(dateTime));
+            }
+
+            return string.Format(Strings.TodoCompletedDateTimeAt, Date(dateTime), Time(dateTime));
+        }
+
         public static string ForwardDate(int value)
         {
             var dateTime = ToLocalTime(value);
@@ -291,6 +318,22 @@ namespace Telegram.Converters
             }
 
             return string.Format(Strings.PmFwdOriginalDateTimeAt, Date(dateTime), Time(dateTime));
+        }
+
+        public static string SentDate(int value)
+        {
+            var dateTime = ToLocalTime(value);
+
+            if (dateTime.Date == DateTime.Now.Date)
+            {
+                return string.Format(Strings.LiveStoryMessageSentTodayAt, Time(dateTime));
+            }
+            else if (dateTime.Date == DateTime.Now.Date.AddDays(-1))
+            {
+                return string.Format(Strings.LiveStoryMessageSentYesterdayAt, Time(dateTime));
+            }
+
+            return string.Format(Strings.LiveStoryMessageSentDateTimeAt, Date(dateTime), Time(dateTime));
         }
 
         public static string DateExtended(int value)
@@ -406,6 +449,64 @@ namespace Telegram.Converters
                 ? Strings.MinuteAgo
                 : Locale.Declension(Strings.R.MinutesAgo, (int)j2)
                 : Strings.LessMinuteAgo;
+        }
+
+        public static string ShortRating(double size, bool forceDecimal)
+        {
+            var number = (long)size;
+            if (number >= 1000 * 1000)
+            {
+                var K = string.Empty;
+                var lastDec = 0L;
+
+                while (number / 1000 > 0)
+                {
+                    K += "K";
+                    lastDec = (number % 1000) / 100;
+                    number /= 1000;
+                }
+
+                if (lastDec != 0 || forceDecimal)
+                {
+                    if (K.Length >= 2)
+                    {
+                        return string.Format("{0}.{1}M", number, lastDec);
+                    }
+                    else
+                    {
+                        return string.Format("{0}.{1}{2}", number, lastDec, K);
+                    }
+                }
+
+                if (K.Length >= 2)
+                {
+                    return string.Format("{0}M", number);
+                }
+                else
+                {
+                    return string.Format("{0}{1}", number, K);
+                }
+            }
+
+            return size.ToString("N0");
+        }
+
+        public static string Percent(double percent)
+        {
+            return (percent * 100).ToString("0.##") + "%";
+        }
+
+        public static string ShortDuration(int time)
+        {
+            int minutes = time / 60;
+            int hours = time / 3600;
+
+            if (hours > 0)
+            {
+                return Locale.Declension(Strings.R.ShortHoursAgo, hours) + " " + Locale.Declension(Strings.R.ShortMinutesAgo, minutes % 60);
+            }
+
+            return Locale.Declension(Strings.R.ShortMinutesAgo, minutes);
         }
 
         public static string ShortNumber(long number)

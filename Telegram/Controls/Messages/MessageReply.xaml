@@ -27,6 +27,19 @@
                                                 Margin="9,5,0,0"
                                                 Opacity="0.1"
                                                 IsTabStop="False" />
+                        <controls:AnimatedImage x:Name="ModelAnimated"
+                                                x:Load="False"
+                                                FrameSize="19,19"
+                                                DecodeFrameType="Logical"
+                                                AutoPlay="False"
+                                                IsViewportAware="False"
+                                                Source="{TemplateBinding Model}"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Top"
+                                                Width="19"
+                                                Height="19"
+                                                Margin="103,7,0,0"
+                                                IsTabStop="False" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -45,6 +58,8 @@
         <Setter Property="SubtleBrush"
                 Value="{ThemeResource MessageSubtleForegroundBrush}" />
         <Setter Property="BorderBrush"
+                Value="{ThemeResource MessageHeaderBorderBrush}" />
+        <Setter Property="Background"
                 Value="{ThemeResource MessageHeaderBorderBrush}" />
         <Setter Property="HorizontalContentAlignment"
                 Value="Stretch" />
@@ -97,7 +112,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Rectangle x:Name="BackgroundOverlay"
-                                   Fill="{TemplateBinding BorderBrush}"
+                                   Fill="{TemplateBinding Background}"
                                    Opacity="0.1"
                                    Grid.ColumnSpan="3" />
                         <Rectangle x:Name="Pill"
@@ -110,16 +125,18 @@
                                                    Grid.Column="2"
                                                    HorizontalAlignment="Right"
                                                    VerticalAlignment="Stretch"
-                                                   BorderBrush="{TemplateBinding BorderBrush}"
+                                                   BorderBrush="{TemplateBinding Background}"
                                                    IsTabStop="False"
                                                    Margin="0,-3,7,0" />
 
                         <Border x:Name="ThumbRoot"
                                 x:DeferLoadStrategy="Lazy"
-                                Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                VerticalAlignment="Top"
                                 Width="36"
                                 Height="36"
-                                Margin="8,0,0,0"
+                                Margin="8,4,0,0"
+                                CornerRadius="2"
                                 Grid.Column="1">
                             <Border x:Name="ThumbEllipse">
                                 <Border.Background>
@@ -131,32 +148,44 @@
                             </Border>
                         </Border>
 
-                        <RichTextBlock x:Name="Label"
-                                       Margin="8,0,8,2"
-                                       VerticalAlignment="Center"
-                                       MaxLines="2"
-                                       IsTextSelectionEnabled="False"
-                                       Foreground="{TemplateBinding Foreground}"
+                        <Grid VerticalAlignment="Center"
+                              Margin="8,4,8,6"
+                              Grid.Column="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock x:Name="TitleLabel"
+                                       Style="{StaticResource ReplyBaseTextBlockStyle}"
+                                       Foreground="{TemplateBinding HeaderBrush}"
                                        FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
-                                       Style="{StaticResource ReplyBodyRichTextBlockStyle}"
-                                       Grid.Column="2">
-                            <Paragraph>
-                                <Run x:Name="TitleLabel"
-                                     Foreground="{Binding HeaderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                     FontWeight="SemiBold" />
-                            </Paragraph>
-                            <Paragraph>
-                                <Run x:Name="ServiceLabel"
-                                     Foreground="{Binding SubtleBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}" /><Span x:Name="MessageLabel" />
-                            </Paragraph>
-                        </RichTextBlock>
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"
+                                       MaxLines="1" />
 
+                            <controls:FormattedTextBlock x:Name="Label"
+                                                         MaxLines="1"
+                                                         IsTextSelectionEnabled="False"
+                                                         TextTrimming="CharacterEllipsis"
+                                                         TextWrapping="Wrap"
+                                                         Foreground="{TemplateBinding Foreground}"
+                                                         IconForeground="{TemplateBinding SubtleBrush}"
+                                                         FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                                         Style="{StaticResource ReplyBodyFormattedTextBlockStyle}"
+                                                         EmojiStyle="{StaticResource MessageCustomEmojiStyle}"
+                                                         AutoFontSize="False"
+                                                         Grid.Row="1">
+                                <Paragraph>
+                                    <Run x:Name="ServiceLabel" /><Span x:Name="MessageLabel" />
+                                </Paragraph>
+                            </controls:FormattedTextBlock>
+                        </Grid>
                         <TextBlock x:Name="Quote"
                                    Visibility="Collapsed"
                                    Text="&#xEA01;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    FontSize="16"
-                                   Foreground="{TemplateBinding BorderBrush}"
+                                   Foreground="{TemplateBinding Background}"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
                                    Margin="4"

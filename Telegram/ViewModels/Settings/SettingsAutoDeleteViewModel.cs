@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -71,10 +72,7 @@ namespace Telegram.ViewModels.Settings
                 }
             }
 
-            if (selected != null)
-            {
-                selected.IsChecked = false;
-            }
+            selected?.IsChecked = false;
 
             var already = Items.FirstOrDefault(x => x.Value == value);
             if (already != null)

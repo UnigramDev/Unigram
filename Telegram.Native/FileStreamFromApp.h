@@ -2,6 +2,10 @@
 
 #include "FileStreamFromApp.g.h"
 
+#include <winrt/Windows.Storage.Streams.h>
+
+using namespace winrt::Windows::Storage::Streams;
+
 namespace winrt::Telegram::Native::implementation
 {
     struct FileStreamFromApp : FileStreamFromAppT<FileStreamFromApp>
@@ -12,6 +16,7 @@ namespace winrt::Telegram::Native::implementation
 
         bool Seek(int64_t offset);
         int32_t Read(int64_t pointer, uint32_t length);
+        int32_t Read(IBuffer buffer, uint32_t length);
 
         void Close();
 

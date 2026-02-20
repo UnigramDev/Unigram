@@ -1,15 +1,15 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Threading;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -177,7 +177,7 @@ namespace Telegram.Services.Settings
             UpdateNightMode(false);
         }
 
-        public async void UpdateNightMode(bool? force = false, bool updateBackground = true)
+        public async void UpdateNightMode(bool? force = false, bool updateBackground = true, bool updateEmojiSet = false)
         {
             // Same theme:
             // - false: update dictionaries
@@ -201,6 +201,11 @@ namespace Telegram.Services.Settings
             {
                 if (force is not null)
                 {
+                    if (updateBackground)
+                    {
+                        Theme.Current.UpdateEmojiSet();
+                    }
+
                     Theme.Current.Update(theme);
                 }
 
@@ -222,8 +227,8 @@ namespace Telegram.Services.Settings
 
             if (updateBackground)
             {
-                var aggregator = TypeResolver.Current.Resolve<IEventAggregator>();
-                var clientService = TypeResolver.Current.Resolve<IClientService>();
+                var aggregator = LifetimeService.Current.ActiveItem.Resolve<IEventAggregator>();
+                var clientService = LifetimeService.Current.ActiveItem.Resolve<IClientService>();
 
                 if (aggregator != null && clientService != null)
                 {
@@ -504,6 +509,8 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _bubbleRadius, "BubbleRadius", value);
         }
 
+        public int CornerRadius => BubbleRadius > 0 ? BubbleRadius < 15 ? BubbleRadius : 24 : 0;
+
         private bool? _isQuickReplySelected;
         public bool IsQuickReplySelected
         {
@@ -520,15 +527,14 @@ namespace Telegram.Services.Settings
 
         private bool _chatThemeLoaded;
 
-        private ChatTheme _chatTheme;
-        public ChatTheme ChatTheme
+        private EmojiChatTheme _chatTheme;
+        public EmojiChatTheme ChatTheme
         {
             get => _chatTheme ??= LoadChatTheme();
             set => SaveChatTheme(value);
         }
 
-
-        private void SaveChatTheme(ChatTheme theme)
+        private void SaveChatTheme(EmojiChatTheme theme)
         {
             if (theme?.Name == "\U0001F3E0")
             {
@@ -562,7 +568,7 @@ namespace Telegram.Services.Settings
             AddOrUpdateValue(container, "AccentColor", settings.AccentColor);
         }
 
-        private ChatTheme LoadChatTheme()
+        private EmojiChatTheme LoadChatTheme()
         {
             if (_chatThemeLoaded)
             {
@@ -577,7 +583,7 @@ namespace Telegram.Services.Settings
                 var light = _container.CreateContainer("ChatThemeLight", ApplicationDataCreateDisposition.Always);
                 var dark = _container.CreateContainer("ChatThemeDark", ApplicationDataCreateDisposition.Always);
 
-                return new ChatTheme
+                return new EmojiChatTheme
                 {
                     Name = name,
                     LightSettings = LoadChatThemeSettings(light),

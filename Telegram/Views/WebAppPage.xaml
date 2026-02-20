@@ -35,8 +35,7 @@
                                   Visibility="Collapsed" />
 
             <controls:ProfilePicture x:Name="Photo"
-                                     Width="24"
-                                     Height="24" />
+                                     Size="24" />
 
             <Border x:Name="TitleBar"
                     Background="Transparent"

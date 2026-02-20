@@ -38,9 +38,15 @@
                 Value="{ThemeResource MessageHeaderForegroundBrush}" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource MessageHeaderBorderBrush}" />
+        <Setter Property="Background"
+                Value="{ThemeResource MessageHeaderBorderBrush}" />
         <Setter Property="Margin"
                 Value="0,8,0,6" />
         <Setter Property="IsTabStop"
+                Value="True" />
+        <Setter Property="CornerRadius"
+                Value="4" />
+        <Setter Property="UseSystemFocusVisuals"
                 Value="True" />
         <Setter Property="Template">
             <Setter.Value>
@@ -68,7 +74,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Rectangle x:Name="BackgroundOverlay"
-                                   Fill="{TemplateBinding BorderBrush}"
+                                   Fill="{TemplateBinding Background}"
                                    Opacity="0.1"
                                    Grid.ColumnSpan="2" />
                         <Rectangle Fill="{TemplateBinding BorderBrush}"
@@ -80,7 +86,7 @@
                                                       Grid.Column="2"
                                                       HorizontalAlignment="Right"
                                                       VerticalAlignment="Stretch"
-                                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                                      BorderBrush="{TemplateBinding Background}"
                                                       IsTabStop="False"
                                                       Margin="0,-3,7,0" />
 
@@ -97,27 +103,40 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-
-                            <RichTextBlock x:Name="Label"
-                                           TextAlignment="DetectFromContent"
-                                           IsTextSelectionEnabled="False"
-                                           Margin="0,4,0,0"
-                                           MaxLines="3"
+                            <Grid x:Name="Label"
+                                  Margin="0,4,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock x:Name="TitleLabel"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           Foreground="{TemplateBinding HeaderBrush}"
+                                           FontWeight="SemiBold"
+                                           MaxLines="1"
                                            TextTrimming="CharacterEllipsis"
-                                           Style="{StaticResource CaptionRichTextBlockStyle}"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamily}">
-                                <Paragraph>
-                                    <Run x:Name="TitleLabel"
-                                         Foreground="{Binding HeaderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                         FontWeight="SemiBold" />
-                                    <Run x:Name="SubtitleLabel"
-                                         FontWeight="SemiBold" />
-                                    <Run x:Name="ContentLabel" />
-                                </Paragraph>
-                            </RichTextBlock>
+                                           TextAlignment="DetectFromContent" />
+                                <TextBlock x:Name="SubtitleLabel"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           FontWeight="SemiBold"
+                                           MaxLines="1"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextAlignment="DetectFromContent"
+                                           Grid.Row="1" />
+                                <controls:FormattedTextBlock x:Name="ContentLabel"
+                                                             TextAlignment="DetectFromContent"
+                                                             IsTextSelectionEnabled="False"
+                                                             MaxLines="1"
+                                                             TextTrimming="CharacterEllipsis"
+                                                             Style="{StaticResource CaptionFormattedTextBlockStyle}"
+                                                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                             AutoFontSize="False"
+                                                             Grid.Row="2" />
+                            </Grid>
 
                             <RichTextBlockOverflow x:Name="OverflowArea"
-                                                   MaxLines="6"
+                                                   MaxLines="7"
                                                    Grid.ColumnSpan="2"
                                                    Grid.Row="1" />
 
@@ -149,7 +168,7 @@
                                   Grid.Row="4"
                                   Grid.ColumnSpan="2">
                                 <Rectangle VerticalAlignment="Top"
-                                           Fill="{TemplateBinding BorderBrush}"
+                                           Fill="{TemplateBinding Background}"
                                            Height="1"
                                            Opacity="0.2"
                                            Grid.Row="3"

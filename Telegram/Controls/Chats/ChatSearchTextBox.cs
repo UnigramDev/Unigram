@@ -1,11 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Td.Api;
-using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
 
 namespace Telegram.Controls.Chats
@@ -36,12 +36,10 @@ namespace Telegram.Controls.Chats
                 case ChatSearchState.Text:
                     VisualStateManager.GoToState(this, "Text", false);
                     break;
-                case ChatSearchState.Media:
                 case ChatSearchState.Members:
                     VisualStateManager.GoToState(this, "Members", false);
                     break;
                 case ChatSearchState.TextByMember:
-                case ChatSearchState.TextByMedia:
                     VisualStateManager.GoToState(this, "TextByMember", false);
                     break;
             }
@@ -53,13 +51,6 @@ namespace Telegram.Controls.Chats
             get => _from;
             set => _from = value;//Header = _from?.FirstName ?? string.Empty;
         }
-
-        private ChatSearchMediaFilter _filter;
-        public ChatSearchMediaFilter Filter
-        {
-            get => _filter;
-            set => _filter = value;//Header = _filter?.Text ?? string.Empty;
-        }
     }
 
     public enum ChatSearchState
@@ -68,8 +59,5 @@ namespace Telegram.Controls.Chats
 
         Members,
         TextByMember,
-
-        Media,
-        TextByMedia
     }
 }

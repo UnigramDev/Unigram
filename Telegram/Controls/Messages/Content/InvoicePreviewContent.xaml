@@ -1,9 +1,9 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="using:Telegram.Controls.Messages.Content"
-                    xmlns:controls="using:Telegram.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:local="using:Telegram.Controls.Messages.Content"
                     mc:Ignorable="d">
 
     <Style x:Key="InvoiceFileButtonStyle"
@@ -12,7 +12,7 @@
         <Setter Property="Foreground"
                 Value="#FFFFFF" />
         <Setter Property="BorderBrush"
-                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                Value="{ThemeResource TextFillColorPrimaryBrush}" />
         <Setter Property="BorderThickness"
                 Value="0" />
         <Setter Property="Padding"
@@ -158,13 +158,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:InvoicePreviewContent">
-                    <controls:AspectView x:Name="LayoutRoot"
-                                         Background="Black">
-                        <Image x:Name="Texture"
-                               Stretch="Uniform"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Stretch" />
-
+                    <controls:AspectView x:Name="LayoutRoot">
+                        <controls:AspectView.Background>
+                            <ImageBrush x:Name="ThumbnailTexture"
+                                        Stretch="UniformToFill"
+                                        AlignmentX="Center"
+                                        AlignmentY="Center" />
+                        </controls:AspectView.Background>
                         <Border x:Name="Overlay"
                                 Background="{ThemeResource MessageServiceBackgroundBrush}"
                                 CornerRadius="{ThemeResource MessageOverlayCornerRadius}"

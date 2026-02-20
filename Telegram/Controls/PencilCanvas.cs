@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI;
@@ -32,15 +33,15 @@ namespace Telegram.Controls
 
         private List<SmoothPathBuilder> _drawing;
 
-        private List<SmoothPathBuilder> _strokes = new List<SmoothPathBuilder>();
-        private readonly List<SmoothPathBuilder> _history = new List<SmoothPathBuilder>();
+        private List<SmoothPathBuilder> _strokes = new();
+        private readonly List<SmoothPathBuilder> _history = new();
 
         private PencilCanvasMode _mode;
 
         private bool _needToCreateSizeDependentResources;
         private bool _needToRedrawInkSurface;
 
-        private CanvasControl _canvas;
+        private CanvasControl Canvas;
 
         public PencilCanvas()
         {
@@ -51,21 +52,21 @@ namespace Telegram.Controls
         {
             _builders = new ConcurrentDictionary<uint, SmoothPathBuilder>();
 
-            _canvas = (CanvasControl)GetTemplateChild("Canvas");
+            Canvas = (CanvasControl)GetTemplateChild(nameof(Canvas));
 
-            _canvas.SizeChanged += OnSizeChanged;
+            Canvas.SizeChanged += OnSizeChanged;
 
-            _canvas.CreateResources += OnCreateResources;
-            _canvas.Draw += OnDraw;
+            Canvas.CreateResources += OnCreateResources;
+            Canvas.Draw += OnDraw;
 
-            _canvas.PointerPressed += OnPointerPressed;
-            _canvas.PointerMoved += OnPointerMoved;
-            _canvas.PointerReleased += OnPointerReleased;
+            Canvas.PointerPressed += OnPointerPressed;
+            Canvas.PointerMoved += OnPointerMoved;
+            Canvas.PointerReleased += OnPointerReleased;
 
             base.OnApplyTemplate();
         }
 
-        public ICanvasResourceCreatorWithDpi Creator => _canvas;
+        public ICanvasResourceCreatorWithDpi Creator => Canvas;
 
         public PencilCanvasMode Mode
         {
@@ -94,7 +95,7 @@ namespace Telegram.Controls
                 _strokes = value?.ToList() ?? new List<SmoothPathBuilder>();
                 _history.Clear();
 
-                _canvas?.Invalidate();
+                Canvas?.Invalidate();
             }
         }
 
@@ -113,7 +114,7 @@ namespace Telegram.Controls
             _history.Insert(0, last);
 
             _needToRedrawInkSurface = true;
-            _canvas.Invalidate();
+            Canvas.Invalidate();
 
             StrokesChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -130,7 +131,7 @@ namespace Telegram.Controls
             _strokes.Add(first);
 
             _needToRedrawInkSurface = true;
-            _canvas.Invalidate();
+            Canvas.Invalidate();
 
             StrokesChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -145,12 +146,12 @@ namespace Telegram.Controls
             _strokes = _drawing?.ToList() ?? new List<SmoothPathBuilder>();
             _history.Clear();
 
-            _canvas.Invalidate();
+            Canvas.Invalidate();
         }
 
         public void Invalidate()
         {
-            _canvas?.Invalidate();
+            Canvas?.Invalidate();
         }
 
         #region Resources
@@ -163,12 +164,12 @@ namespace Telegram.Controls
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             _needToCreateSizeDependentResources = true;
-            _canvas.Invalidate();
+            Canvas.Invalidate();
         }
 
         private void CreateSizeDependentResources()
         {
-            _renderTarget = new CanvasRenderTarget(_canvas, _canvas.Size);
+            _renderTarget = new CanvasRenderTarget(Canvas, Canvas.Size);
 
             _needToCreateSizeDependentResources = false;
             _needToRedrawInkSurface = true;
@@ -180,12 +181,12 @@ namespace Telegram.Controls
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            _canvas.CapturePointer(e.Pointer);
+            Canvas.CapturePointer(e.Pointer);
 
-            var point = e.GetCurrentPoint(_canvas);
+            var point = e.GetCurrentPoint(Canvas);
             var erasing = _mode == PencilCanvasMode.Eraser || point.Properties.IsEraser;
 
-            _builders[point.PointerId] = new SmoothPathBuilder(point.Position.ToVector2() / _canvas.Size.ToVector2())
+            _builders[point.PointerId] = new SmoothPathBuilder(point.Position.ToVector2() / Canvas.Size.ToVector2())
             {
                 Stroke = erasing ? ERASING_STROKE : Stroke,
                 StrokeThickness = erasing ? ERASING_STROKE_THICKNESS : StrokeThickness
@@ -196,14 +197,14 @@ namespace Telegram.Controls
         {
             if (_builders.TryGetValue(e.Pointer.PointerId, out SmoothPathBuilder _builder))
             {
-                _builder.MoveTo(e.GetCurrentPoint(_canvas).Position.ToVector2() / _canvas.Size.ToVector2());
-                _canvas.Invalidate();
+                _builder.MoveTo(e.GetCurrentPoint(Canvas).Position.ToVector2() / Canvas.Size.ToVector2());
+                Canvas.Invalidate();
             }
         }
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            _canvas.ReleasePointerCapture(e.Pointer);
+            Canvas.ReleasePointerCapture(e.Pointer);
 
             if (_builders.TryRemove(e.Pointer.PointerId, out SmoothPathBuilder builder))
             {

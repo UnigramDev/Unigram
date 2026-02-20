@@ -35,43 +35,38 @@
                     <controls:SettingsPanel x:Name="InstalledPanel"
                                             x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Installed)}">
                         <controls:HeaderedControl Footer="{CustomResource StickersBotInfo}">
-                            <controls:BadgeButton Content="{CustomResource FeaturedStickers}"
-                                                  Click="{x:Bind ViewModel.OpenFeaturedStickers}"
-                                                  Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"
-                                                  BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                  IsChevronVisible="True"
-                                                  Glyph="&#xE989;" />
+                            <controls:SettingsButton Content="{CustomResource FeaturedStickers}"
+                                                     Click="{x:Bind ViewModel.OpenFeaturedStickers}"
+                                                     Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"
+                                                     BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                     IsChevronVisible="True"
+                                                     Glyph="&#xE989;" />
 
-                            <controls:BadgeButton Content="{CustomResource ArchivedStickers}"
-                                                  Click="{x:Bind ViewModel.OpenArchivedStickers}"
-                                                  Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
-                                                  Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                  IsChevronVisible="True"
-                                                  Glyph="&#xE7B8;" />
+                            <controls:SettingsButton Content="{CustomResource ArchivedStickers}"
+                                                     Click="{x:Bind ViewModel.OpenArchivedStickers}"
+                                                     Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
+                                                     Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                     IsChevronVisible="True"
+                                                     Glyph="&#xE7B8;" />
 
                             <!--<controls:BadgeButton Content="{CustomResource Masks}"
                                                   Click="{x:Bind ViewModel.OpenMasks}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
                                                   IsChevronVisible="True"
                                                   Glyph="&#xE997;" />-->
 
-                            <controls:BadgeButton Content="{CustomResource Emoji}"
-                                                  Click="{x:Bind ViewModel.OpenEmoji}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                  IsChevronVisible="True"
-                                                  Glyph="&#xE76E;" />
+                            <controls:SettingsButton Content="{CustomResource Emoji}"
+                                                     Click="{x:Bind ViewModel.OpenEmoji}"
+                                                     IsChevronVisible="True"
+                                                     Glyph="&#xE76E;" />
                         </controls:HeaderedControl>
 
                         <controls:HeaderedControl Footer="{CustomResource DynamicPackOrderInfo}">
-                            <controls:BadgeButton Content="{CustomResource SuggestStickers}">
-                                <controls:BadgeButton.Badge>
+                            <controls:SettingsButton Content="{CustomResource SuggestStickers}">
+                                <controls:SettingsButton.Badge>
                                     <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.SuggestStickersOptions}"
-                                                               SelectedIndex="{x:Bind ViewModel.SuggestStickers, Mode=TwoWay}"
-                                                               DisplayMemberPath="Text" />
-                                </controls:BadgeButton.Badge>
-                            </controls:BadgeButton>
+                                                               SelectedIndex="{x:Bind ViewModel.SuggestStickers, Mode=TwoWay}" />
+                                </controls:SettingsButton.Badge>
+                            </controls:SettingsButton>
 
                             <CheckBox IsChecked="{x:Bind ViewModel.LargeEmoji, Mode=TwoWay}"
                                       Content="{CustomResource LargeEmoji}"
@@ -87,12 +82,11 @@
                                             x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Masks)}"
                                             IsHeader="True">
                         <controls:HeaderedControl Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <controls:BadgeButton Content="{CustomResource ArchivedMasks}"
-                                                  Click="{x:Bind ViewModel.OpenArchivedMasks}"
-                                                  Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                  IsChevronVisible="True"
-                                                  Glyph="&#xE7B8;" />
+                            <controls:SettingsButton Content="{CustomResource ArchivedMasks}"
+                                                     Click="{x:Bind ViewModel.OpenArchivedMasks}"
+                                                     Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
+                                                     IsChevronVisible="True"
+                                                     Glyph="&#xE7B8;" />
                         </controls:HeaderedControl>
 
                         <controls:SettingsFooter Text="{CustomResource MasksInfo}"
@@ -102,23 +96,21 @@
                     <controls:SettingsPanel x:Name="EmojiPanel"
                                             x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Emoji)}">
                         <controls:HeaderedControl Footer="{CustomResource SuggestAnimatedEmojiInfo}">
-                            <controls:BadgeButton Content="{CustomResource ArchivedEmojiPacks}"
-                                                  Click="{x:Bind ViewModel.OpenArchivedEmoji}"
-                                                  Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                  Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                  IsChevronVisible="True"
-                                                  Glyph="&#xE7B8;" />
-                            <controls:BadgeButton Content="{CustomResource EmojiSet}"
-                                                  Style="{StaticResource EmojiBadgeButtonStyle}"
-                                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                  Glyph="{x:Bind ViewModel.EmojiStyleIcon}">
-                                <controls:BadgeButton.Badge>
+                            <controls:SettingsButton Content="{CustomResource ArchivedEmojiPacks}"
+                                                     Click="{x:Bind ViewModel.OpenArchivedEmoji}"
+                                                     Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
+                                                     Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                     IsChevronVisible="True"
+                                                     Glyph="&#xE7B8;" />
+                            <controls:SettingsButton Content="{CustomResource EmojiSet}"
+                                                     Style="{StaticResource EmojiBadgeButtonStyle}"
+                                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                     Glyph="{x:Bind ViewModel.EmojiStyleIcon}">
+                                <controls:SettingsButton.Badge>
                                     <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.EmojiStyleOptions}"
-                                                               SelectedIndex="{x:Bind ViewModel.EmojiStyle, Mode=TwoWay}"
-                                                               DisplayMemberPath="Text" />
-                                </controls:BadgeButton.Badge>
-                            </controls:BadgeButton>
+                                                               SelectedIndex="{x:Bind ViewModel.EmojiStyle, Mode=TwoWay}" />
+                                </controls:SettingsButton.Badge>
+                            </controls:SettingsButton>
                             <CheckBox Content="{CustomResource SuggestAnimatedEmoji}"
                                       IsChecked="{x:Bind ViewModel.SuggestCustomEmoji, Mode=TwoWay}"
                                       Style="{StaticResource SettingsCheckBoxStyle}" />
@@ -148,9 +140,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="12,6"
-                          Background="{ThemeResource SettingsItemBackground}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                    <Grid Padding="12,6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -168,7 +158,7 @@
                                                 DecodeFrameType="Logical"
                                                 Width="36"
                                                 Height="36"
-                                                Margin="0,0,8,0"
+                                                Margin="0,0,10,0"
                                                 VerticalAlignment="Top"
                                                 Grid.RowSpan="2" />
 

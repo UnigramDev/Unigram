@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -180,6 +181,56 @@ namespace Telegram.Controls
             return tsc.Task;
         }
 
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FrameworkElement target, FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            if (xamlRoot.Content is not IToastHost host)
+            {
+                return Task.FromResult(ContentDialogResult.None);
+            }
+
+            var content = new TextBlock
+            {
+                Style = BootStrapper.Current.Resources["BodyTextBlockStyle"] as Style
+            };
+
+            TextBlockHelper.SetFormattedText(content, message);
+
+            var tsc = new TaskCompletionSource<ContentDialogResult>();
+            var popup = new TeachingTipEx
+            {
+                Title = title,
+                Content = content,
+                ActionButtonContent = primary,
+                ActionButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
+                CloseButtonContent = secondary,
+                PreferredPlacement = target != null ? TeachingTipPlacementMode.Top : TeachingTipPlacementMode.Center,
+                Width = 314,
+                MinWidth = 314,
+                MaxWidth = 314,
+                Target = target,
+                IsLightDismissEnabled = true,
+                ShouldConstrainToRootBounds = true,
+                // TODO:
+                RequestedTheme = target?.ActualTheme ?? requestedTheme
+            };
+
+            popup.ActionButtonClick += (s, args) =>
+            {
+                popup.IsOpen = false;
+                tsc.TrySetResult(ContentDialogResult.Primary);
+            };
+
+            popup.Closed += (s, args) =>
+            {
+                host.ToastClosed(s);
+                tsc.TrySetResult(ContentDialogResult.Secondary);
+            };
+
+            host.ToastOpened(popup);
+            popup.IsOpen = true;
+            return tsc.Task;
+        }
+
         public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FrameworkElement target, string message, string title = null, FrameworkElement content = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             if (xamlRoot.Content is not IToastHost host)
@@ -243,6 +294,7 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
+            // TODO: Name
             var container = GetTemplateChild("Container") as Border;
 
             var rootElement = container?.Child as FrameworkElement;
@@ -264,10 +316,7 @@ namespace Telegram.Controls
             //else
             {
                 var focusable = FocusManager.FindFirstFocusableElement(sender as DependencyObject) as Control;
-                if (focusable != null)
-                {
-                    focusable.Focus(FocusState.Programmatic);
-                }
+                focusable?.Focus(FocusState.Programmatic);
             }
         }
     }

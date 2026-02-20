@@ -177,13 +177,7 @@
     <ClCompile Include="VoipVideoOutputSink.cpp" />
     <ClCompile Include="LoopbackCapture.cpp" />
     <ClCompile Include="MediaChannelDescriptionsRequestedEventArgs.cpp" />
-    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\ikcp.cpp">
-      <Filter>tgcalls\v2</Filter>
-    </ClCompile>
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\RawTcpSocket.cpp">
-      <Filter>tgcalls\v2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\SignalingKcpConnection.cpp">
       <Filter>tgcalls\v2</Filter>
     </ClCompile>
   </ItemGroup>
@@ -407,13 +401,7 @@
     <ClInclude Include="VoipVideoOutput.h" />
     <ClInclude Include="LoopbackCapture.h" />
     <ClInclude Include="MediaChannelDescriptionsRequestedEventArgs.h" />
-    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\ikcp.h">
-      <Filter>tgcalls\v2</Filter>
-    </ClInclude>
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\RawTcpSocket.h">
-      <Filter>tgcalls\v2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingKcpConnection.h">
       <Filter>tgcalls\v2</Filter>
     </ClInclude>
   </ItemGroup>
@@ -437,6 +425,9 @@
     <Midl Include="VoipVideoOutputSink.idl" />
     <Midl Include="FrameReceivedEventArgs.idl" />
     <Midl Include="MediaChannelDescriptionsRequestedEventArgs.idl" />
+    <Midl Include="VoipVideoSourceGroup.idl" />
+    <Midl Include="VoipCallProtocol.idl" />
+    <Midl Include="VoipCallServer.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

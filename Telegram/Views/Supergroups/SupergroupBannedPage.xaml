@@ -28,8 +28,7 @@
                                 Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                    <cells:ProfileCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Header>
@@ -57,16 +56,15 @@
                     <controls:HeaderedControl x:Name="AddNewPanel"
                                               Visibility="Collapsed"
                                               Margin="0,0,0,2">
-                        <controls:BadgeButton Content="{CustomResource ChannelBlockUser}"
-                                              Click="{x:Bind ViewModel.Add}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xF166;" />
+                        <controls:SettingsButton Content="{CustomResource ChannelBlockUser}"
+                                                 Click="{x:Bind ViewModel.Add}"
+                                                 Glyph="&#xF166;" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.Footer>
                 <TextBlock x:Name="Footer"
-                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            Margin="24,6,24,32" />
             </ListView.Footer>

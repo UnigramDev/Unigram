@@ -1,16 +1,19 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI;
+using Telegram.Views.Premium.Popups;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -22,6 +25,10 @@ namespace Telegram.Controls.Cells.Premium
         public PremiumFeatureBusinessCell()
         {
             InitializeComponent();
+
+            _viewChangedTimer = new DispatcherTimer();
+            _viewChangedTimer.Interval = TimeSpan.FromMilliseconds(Constants.TypingTimeout);
+            _viewChangedTimer.Tick += OnTick;
         }
 
         public void UpdateFeature(IClientService clientService, IList<BusinessFeature> features)
@@ -30,30 +37,6 @@ namespace Telegram.Controls.Cells.Premium
                 .Where(x => x is not BusinessFeatureChatFolderTags and not BusinessFeatureEmojiStatus and not BusinessFeatureUpgradedStories)
                 .ToList();
         }
-
-        private readonly Color[] _gradient = new Color[]
-        {
-            Color.FromArgb(0xFF, 0xef, 0x69, 0x22), //
-            Color.FromArgb(0xFF, 0xe9, 0x5a, 0x2c),
-            Color.FromArgb(0xFF, 0xe7, 0x4e, 0x33),
-            Color.FromArgb(0xFF, 0xe5, 0x49, 0x37), //
-            Color.FromArgb(0xFF, 0xe3, 0x43, 0x3c),
-            Color.FromArgb(0xFF, 0xdb, 0x37, 0x4b),
-            Color.FromArgb(0xFF, 0xcb, 0x3e, 0x6d), //
-            Color.FromArgb(0xFF, 0xbc, 0x43, 0x95),
-            Color.FromArgb(0xFF, 0xab, 0x4a, 0xc4),
-            Color.FromArgb(0xFF, 0xa3, 0x4c, 0xd7), //
-            Color.FromArgb(0xFF, 0x9b, 0x4f, 0xed),
-            Color.FromArgb(0xFF, 0x89, 0x58, 0xff),
-            Color.FromArgb(0xFF, 0x67, 0x6b, 0xff), //
-            Color.FromArgb(0xFF, 0x61, 0x72, 0xff),
-            Color.FromArgb(0xFF, 0x5b, 0x79, 0xff),
-            Color.FromArgb(0xFF, 0x44, 0x92, 0xff),
-            Color.FromArgb(0xFF, 0x42, 0x9b, 0xd5), //
-            Color.FromArgb(0xFF, 0x41, 0xa6, 0xa5),
-            Color.FromArgb(0xFF, 0x3e, 0xb2, 0x6d),
-            Color.FromArgb(0xFF, 0x3d, 0xbd, 0x4a), //
-        };
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
@@ -129,16 +112,10 @@ namespace Telegram.Controls.Cells.Premium
             var subtitle = content.FindName("Subtitle") as TextBlock;
             var icon = content.FindName("Icon") as TextBlock;
 
-            var item = (double)args.ItemIndex;
-            var total = sender.Items.Count - 1;
-            var length = _gradient.Length - 1;
-
-            var index = (int)(item / total * length);
-
             title.Text = titleValue;
             subtitle.Text = subtitleValue;
             icon.Text = iconValue;
-            icon.Foreground = new SolidColorBrush(_gradient[index]);
+            icon.Foreground = new SolidColorBrush(ColorsHelper.CalculateColor(PromoPopup.Gradient, (float)args.ItemIndex / (sender.Items.Count - 1)));
 
             args.Handled = true;
         }
@@ -146,18 +123,60 @@ namespace Telegram.Controls.Cells.Premium
         public void PlayAnimation()
         {
             var scrollingHost = ScrollingHost.GetScrollViewer();
-            scrollingHost?.AddHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChangedEvent), true);
+            if (scrollingHost != null)
+            {
+                _loading = false;
+                scrollingHost?.AddHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChangedEvent), true);
+                scrollingHost.ViewChanged += OnViewChanged;
+            }
+            else if (!_loading)
+            {
+                _loading = true;
+                ScrollingHost.Loaded += OnLoaded;
+            }
+
+            _viewChanged = false;
         }
 
         public void StopAnimation()
         {
             var scrollingHost = ScrollingHost.GetScrollViewer();
             scrollingHost?.RemoveHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChangedEvent));
+            scrollingHost.ViewChanged -= OnViewChanged;
+
+            _loading = false;
+            _viewChangedTimer.Stop();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_loading)
+            {
+                PlayAnimation();
+            }
+        }
+
+        private bool _loading;
+
+        private bool _viewChanged;
+        private DispatcherTimer _viewChangedTimer;
+
+        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            _viewChanged = true;
+            _viewChangedTimer.Stop();
+            _viewChangedTimer.Start();
+        }
+
+        private void OnTick(object sender, object e)
+        {
+            _viewChangedTimer.Stop();
+            _viewChanged = false;
         }
 
         private void OnPointerWheelChangedEvent(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse && sender is ScrollViewer scrollingHost)
+            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse && sender is ScrollViewer scrollingHost && !_viewChanged)
             {
                 var currentPoint = e.GetCurrentPoint(this);
                 if (currentPoint.Properties.MouseWheelDelta > 0 && scrollingHost.VerticalOffset == 0)
@@ -166,6 +185,15 @@ namespace Telegram.Controls.Cells.Premium
                     if (parent?.SelectedIndex > 0 && parent.SelectedItem is PremiumFeatureBusiness)
                     {
                         parent.SelectedIndex--;
+                        StopAnimation();
+                    }
+                }
+                else if (currentPoint.Properties.MouseWheelDelta < 0 && scrollingHost.VerticalOffset.AlmostEquals(scrollingHost.ScrollableHeight))
+                {
+                    var parent = this.GetParent<FlipView>();
+                    if (parent?.SelectedIndex < parent.Items.Count - 1 && parent.SelectedItem is PremiumFeatureBusiness)
+                    {
+                        parent.SelectedIndex++;
                         StopAnimation();
                     }
                 }

@@ -5,87 +5,112 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-                       Opened="OnOpened">
+                       Opened="OnOpened"
+                       Padding="0">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <controls:AnimatedImage Source="ms-appx:///Assets/Animations/StartLiveStream.tgs"
-                                IsCachingEnabled="False"
-                                AutoPlay="True"
-                                FrameSize="140,140"
-                                DecodeFrameType="Logical"
-                                Width="140"
-                                Height="140"
-                                Margin="0,0,0,12" />
+        <ScrollViewer x:Name="ScrollingHost">
+            <Grid Padding="24">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <controls:AnimatedImage Source="ms-appx:///Assets/Animations/StartLiveStream.tgs"
+                                        IsCachingEnabled="False"
+                                        AutoPlay="True"
+                                        FrameSize="140,140"
+                                        DecodeFrameType="Logical"
+                                        Width="140"
+                                        Height="140"
+                                        Margin="0,0,0,12" />
 
-        <TextBlock Text="{CustomResource VoipStreamStart}"
-                   Style="{StaticResource BodyTextBlockStyle}"
-                   Grid.Row="1" />
+                <TextBlock Text="{CustomResource Streaming}"
+                           Style="{StaticResource PopupTextBlockStyle}"
+                           TextAlignment="Center"
+                           VerticalAlignment="Top"
+                           Margin="0,0,0,8"
+                           Grid.Row="1" />
 
-        <TextBlock Text="{CustomResource VoipChatStreamServerUrl}"
-                   Style="{StaticResource InfoCaptionTextBlockStyle}"
-                   Margin="0,12,0,4"
-                   Grid.Row="2" />
+                <TextBlock Text="{CustomResource VoipStreamStart}"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           TextAlignment="Center"
+                           Grid.Row="2" />
+
+                <TextBlock Text="{CustomResource VoipChatStreamServerUrl}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="0,12,0,4"
+                           Grid.Row="3" />
 
 
-        <Grid Grid.Row="3">
-            <Button Click="CopyServer_Click"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Left">
-                <controls:LoadingTextBlock x:Name="ServerField"
-                                           PlaceholderText="rtmps://dc4-1.rtmp.t.me/s/"
-                                           PlaceholderBrush="Transparent"
-                                           IsTextSelectionEnabled="False"
-                                           Margin="-4" />
-            </Button>
-            <!--<TextBlock Text="&#xE8C8;"
-                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                       FontSize="20"
-                       Foreground="{ThemeResource AccentButtonBackground}"
-                       HorizontalAlignment="Right"
-                       VerticalAlignment="Center"
-                       Margin="8,0"
-                       IsHitTestVisible="False" />-->
-        </Grid>
+                <Grid Grid.Row="4">
+                    <Button Click="CopyServer_Click"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left">
+                        <controls:LoadingTextBlock x:Name="ServerField"
+                                                   PlaceholderText="rtmps://dc4-1.rtmp.t.me/s/"
+                                                   PlaceholderBrush="Transparent"
+                                                   IsTextSelectionEnabled="False"
+                                                   Margin="-4" />
+                    </Button>
+                    <!--<TextBlock Text="&#xEAC9;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="20"
+                               Foreground="{ThemeResource AccentButtonBackground}"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Margin="8,0"
+                               IsHitTestVisible="False" />-->
+                </Grid>
 
-        <TextBlock Text="{CustomResource VoipChatStreamKey}"
-                   Style="{StaticResource InfoCaptionTextBlockStyle}"
-                   Margin="0,12,0,4"
-                   Grid.Row="4" />
+                <TextBlock Text="{CustomResource VoipChatStreamKey}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="0,12,0,4"
+                           Grid.Row="5" />
 
-        <Grid Grid.Row="5">
-            <Button Click="CopyKey_Click"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Left">
-                <controls:LoadingTextBlock x:Name="StreamKeyField"
-                                           PlaceholderText="1471070970:_hTkPyitg8sw8kimE7v3FQ"
-                                           PlaceholderBrush="Transparent"
-                                           IsTextSelectionEnabled="False"
-                                           Margin="-4" />
-            </Button>
-            <!--<TextBlock Text="&#xE8C8;"
-                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                       FontSize="20"
-                       Foreground="{ThemeResource AccentButtonBackground}"
-                       HorizontalAlignment="Right"
-                       VerticalAlignment="Center"
-                       Margin="8,0"
-                       IsHitTestVisible="False" />-->
-        </Grid>
+                <Grid Grid.Row="6">
+                    <Button Click="CopyKey_Click"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left">
+                        <controls:LoadingTextBlock x:Name="StreamKeyField"
+                                                   PlaceholderText="1471070970:_hTkPyitg8sw8kimE7v3FQ"
+                                                   PlaceholderBrush="Transparent"
+                                                   IsTextSelectionEnabled="False"
+                                                   Margin="-4" />
+                    </Button>
+                    <!--<TextBlock Text="&#xEAC9;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="20"
+                               Foreground="{ThemeResource AccentButtonBackground}"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Margin="8,0"
+                               IsHitTestVisible="False" />-->
+                </Grid>
 
-        <TextBlock Text="{CustomResource VoipChatStreamWithAnotherAppDescription}"
-                   Style="{StaticResource BodyTextBlockStyle}"
-                   Margin="0,12"
-                   Grid.Row="6" />
+                <TextBlock x:Name="Description"
+                           Text="{CustomResource VoipChatStreamWithAnotherAppDescription}"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           TextAlignment="Center"
+                           Margin="0,12,0,0"
+                           Grid.Row="7" />
+            </Grid>
+        </ScrollViewer>
+
+        <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
+                                    Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    BottomInset="0" />
+
+        <controls:MoreButton x:Name="MoreButton"
+                             Click="More_ContextRequested"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Top"
+                             Margin="0,0,40,0"
+                             CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

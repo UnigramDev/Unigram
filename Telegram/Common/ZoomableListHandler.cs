@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Linq;
 using Telegram.Td.Api;
@@ -75,8 +76,6 @@ namespace Telegram.Common
             // owner classes from being disposed
             Opening = null;
             Closing = null;
-            DownloadFile = null;
-            SessionId = null;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -93,19 +92,6 @@ namespace Telegram.Common
             _listView.PointerReleased -= OnPointerReleased;
             _listView.PointerCanceled -= OnPointerReleased;
             _listView.PointerCaptureLost -= OnPointerReleased;
-        }
-
-        public Action<int> DownloadFile
-        {
-            get => _popupPanel.DownloadFile;
-            set => _popupPanel.DownloadFile = value;
-        }
-
-
-        public Func<int> SessionId
-        {
-            get => _popupPanel.SessionId;
-            set => _popupPanel.SessionId = value;
         }
 
         public Action Opening { get; set; }
@@ -200,6 +186,10 @@ namespace Telegram.Common
                     {
                         _popupPanel.SetAnimation(animation);
                     }
+                    else if (content is Photo photo)
+                    {
+                        _popupPanel.SetPhoto(photo);
+                    }
                 }
             }
         }
@@ -219,6 +209,10 @@ namespace Telegram.Common
             {
                 return resultSticker.Sticker;
             }
+            else if (content is InlineQueryResultPhoto resultPhoto)
+            {
+                return resultPhoto.Photo;
+            }
             else if (content is Sticker or Animation)
             {
                 return content;
@@ -229,21 +223,24 @@ namespace Telegram.Common
 
         private void DoSomething(object item)
         {
-            if (item is null or not (StickerViewModel or Sticker or Animation))
+            if (item is null or not (StickerViewModel or Sticker or Animation or Photo))
             {
                 return;
             }
 
-            //if (_pointer != null)
-            //{
-            //    _listView.CapturePointer(_pointer);
-            //    _pointer = null;
-            //}
-
             if (_pointer != null)
             {
-                _listView.CapturePointer(_pointer);
-                //_listView.ReleasePointerCapture(_pointer);
+                // Capture the pointer with the scroll viewer so that mouse wheel is still handled
+                var scrollViewer = _listView.GetScrollViewer();
+                if (scrollViewer != null && _pointer.PointerDeviceType != PointerDeviceType.Touch)
+                {
+                    scrollViewer.CapturePointer(_pointer);
+                }
+                else
+                {
+                    _listView.CapturePointer(_pointer);
+                }
+
                 _pointer = null;
             }
 
@@ -253,22 +250,12 @@ namespace Telegram.Common
                 _element = null;
             }
 
-            //if (item is TLBotInlineMediaResult inlineMediaResult)
-            //{
-            //    if (inlineMediaResult.HasDocument)
-            //    {
-            //        item = inlineMediaResult.Document;
-            //    }
-            //    else
-            //    {
-            //        return;
-            //    }
-            //}
-
             if (item is StickerViewModel stickerViewModel)
             {
                 item = (Sticker)stickerViewModel;
             }
+
+            _popupPanel.DataContext = _listView.DataContext;
 
             if (item is Sticker sticker)
             {
@@ -277,6 +264,10 @@ namespace Telegram.Common
             else if (item is Animation animation)
             {
                 _popupPanel.SetAnimation(animation);
+            }
+            else if (item is Photo photo)
+            {
+                _popupPanel.SetPhoto(photo);
             }
 
             // TODO: WinUI - Can be safely removed.
@@ -306,6 +297,7 @@ namespace Telegram.Common
 
             _popupContent = item;
             _popupHost.XamlRoot = _listView.XamlRoot;
+            _popupHost.IsHitTestVisible = false;
             _popupHost.IsOpen = true;
 
             //_scrollingHost.CancelDirectManipulations();

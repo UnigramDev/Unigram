@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Controls;
 using Windows.Foundation.Collections;
@@ -36,6 +37,7 @@ namespace Telegram.Common
 
         private readonly AnimatedListType _type;
 
+        private bool _paused;
         private bool _unloaded;
 
         public AnimatedListHandler(ListViewBase listView, AnimatedListType type)
@@ -114,7 +116,7 @@ namespace Telegram.Common
             //_throttling = true;
             //VisualUtilities.QueueCallbackForCompositionRendering(LoadVisibleItems);
 
-            if (_debouncer.IsEnabled)
+            if (_debouncer.IsEnabled || _paused)
             {
                 return;
             }
@@ -134,6 +136,18 @@ namespace Telegram.Common
             };
         }
 
+        public void Suspend()
+        {
+            _paused = true;
+            UpdateVisibleItems(false);
+        }
+
+        public void Resume()
+        {
+            _paused = false;
+            ThrottleVisibleItems();
+        }
+
         public void LoadVisibleItems() => UpdateVisibleItems(true);
 
         public void UnloadVisibleItems() => UpdateVisibleItems(false);
@@ -143,6 +157,11 @@ namespace Telegram.Common
         public void UpdateVisibleItems(bool load)
         {
             //_throttling = false;
+
+            if (_paused && load)
+            {
+                return;
+            }
 
             int lastVisibleIndex;
             int firstVisibleIndex;
@@ -173,7 +192,8 @@ namespace Telegram.Common
                 return;
             }
 
-            for (int i = firstCacheIndex; i <= lastCacheIndex; i++)
+            // We do three passes to try to optimize download order
+            for (int i = lastVisibleIndex; i >= firstVisibleIndex; i--)
             {
                 var container = _listView.ContainerFromIndex(i) as SelectorItem;
                 if (container == null || container.ContentTemplateRoot is not FrameworkElement content)
@@ -181,11 +201,35 @@ namespace Telegram.Common
                     continue;
                 }
 
-                var within = load && i >= firstVisibleIndex && i <= lastVisibleIndex;
+                var player = content as IPlayerView;
+                player ??= content.FindName("Player") as IPlayerView;
+                player?.ViewportChanged(true);
+            }
+
+            for (int i = firstCacheIndex; i < firstVisibleIndex; i++)
+            {
+                var container = _listView.ContainerFromIndex(i) as SelectorItem;
+                if (container == null || container.ContentTemplateRoot is not FrameworkElement content)
+                {
+                    continue;
+                }
 
                 var player = content as IPlayerView;
                 player ??= content.FindName("Player") as IPlayerView;
-                player?.ViewportChanged(within);
+                player?.ViewportChanged(false);
+            }
+
+            for (int i = lastCacheIndex; i > lastVisibleIndex; i--)
+            {
+                var container = _listView.ContainerFromIndex(i) as SelectorItem;
+                if (container == null || container.ContentTemplateRoot is not FrameworkElement content)
+                {
+                    continue;
+                }
+
+                var player = content as IPlayerView;
+                player ??= content.FindName("Player") as IPlayerView;
+                player?.ViewportChanged(false);
             }
 
             _unloaded = !load;

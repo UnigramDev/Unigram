@@ -6,19 +6,34 @@
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       CloseButtonClick="ContentDialog_SecondaryButtonClick"
+                       ButtonsLayout="Vertical"
+                       IsDismissButtonVisible="True">
 
     <StackPanel>
+        <TextBlock Text="{CustomResource ScheduleMessageDate}" />
         <CalendarDatePicker x:Name="Date"
-                            Margin="0,12,0,12"
+                            DateChanged="Date_DateChanged"
+                            Margin="0,8,0,12"
                             HorizontalAlignment="Stretch" />
+        <TextBlock Text="{CustomResource ScheduleMessageTime}" />
         <TimePicker x:Name="Time"
+                    TimeChanged="Time_TimeChanged"
                     BorderBrush="{ThemeResource ButtonBorderBrush}"
+                    Margin="0,8,0,12"
                     HorizontalAlignment="Stretch" />
-
-        <HyperlinkButton x:Name="Online"
-                         Click="Online_Click"
-                         HorizontalAlignment="Left"
-                         Margin="0,12,0,-20" />
+        <TextBlock Text="{CustomResource MessageScheduledRepeatOption}" />
+        <Grid Margin="0,8,0,0">
+            <ComboBox x:Name="RepeatSelector"
+                      ItemsSource="{x:Bind RepeatOptions}"
+                      SelectedIndex="{x:Bind Repeat, Mode=TwoWay}"
+                      HorizontalAlignment="Stretch" />
+            <Button x:Name="RepeatButton"
+                    Click="RepeatButton_Click"
+                    Style="{StaticResource ListEmptyButtonStyle}"
+                    VerticalAlignment="Bottom"
+                    Height="32"
+                    CornerRadius="4" />
+        </Grid>
     </StackPanel>
 </controls:ContentPopup>

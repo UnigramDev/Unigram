@@ -5,15 +5,95 @@
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:windows11="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 14)"
+                       xmlns:windows10="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractNotPresent(Windows.Foundation.UniversalApiContract, 14)"
                        mc:Ignorable="d"
                        PrimaryButtonText="OK"
                        SecondaryButtonText="Cancel"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-                       Padding="0,6,0,24">
+                       ContentMinWidth="300"
+                       Padding="0,0,0,0">
+    
+    <controls:ContentPopup.Resources>
+        <windows11:Style x:Key="DefaultCalendarViewDayItemStyle"
+                         TargetType="CalendarViewDayItem">
+            <Setter Property="MinWidth"
+                    Value="40" />
+            <Setter Property="MinHeight"
+                    Value="40" />
+            <Setter Property="Margin"
+                    Value="1" />
+            <Setter Property="Padding"
+                    Value="0,0,0,4" />
+            <Setter Property="UseSystemFocusVisuals"
+                    Value="True" />
+            <Setter Property="FocusVisualMargin"
+                    Value="-3" />
+            <Setter Property="FocusVisualPrimaryBrush"
+                    Value="{ThemeResource CalendarViewFocusVisualPrimaryBrush}" />
+            <Setter Property="FocusVisualPrimaryThickness"
+                    Value="2" />
+            <Setter Property="FocusVisualSecondaryBrush"
+                    Value="{ThemeResource CalendarViewFocusVisualSecondaryBrush}" />
+            <Setter Property="FocusVisualSecondaryThickness"
+                    Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CalendarViewDayItem">
+                        <Grid Background="#000000"
+                              CornerRadius="20"
+                              Margin="0,0,0,-4">
+                            <controls:ImageView Stretch="UniformToFill"
+                                                CornerRadius="20"
+                                                Opacity="0.7" />
+                            <TextBlock Foreground="#FFFFFF"
+                                       FontWeight="SemiBold"
+                                       TextAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </windows11:Style>
+
+        <windows10:Style x:Key="DefaultCalendarViewDayItemStyle"
+                         TargetType="CalendarViewDayItem">
+            <Setter Property="MinWidth"
+                    Value="40" />
+            <Setter Property="MinHeight"
+                    Value="40" />
+            <Setter Property="Margin"
+                    Value="1" />
+            <Setter Property="Padding"
+                    Value="0,0,0,4" />
+            <Setter Property="UseSystemFocusVisuals"
+                    Value="True" />
+            <Setter Property="FocusVisualMargin"
+                    Value="-3" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CalendarViewDayItem">
+                        <Grid Background="#000000"
+                              Margin="0,0,0,-4">
+                            <controls:ImageView Stretch="UniformToFill"
+                                                Opacity="0.7" />
+                            <TextBlock Foreground="#FFFFFF"
+                                       FontWeight="SemiBold"
+                                       TextAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </windows10:Style>
+    </controls:ContentPopup.Resources>
 
     <CalendarView x:Name="View"
-                  HorizontalAlignment="Stretch"
+                  CalendarViewDayItemStyle="{StaticResource DefaultCalendarViewDayItemStyle}"
+                  CalendarViewDayItemChanging="OnCalendarViewDayItemChanging"
+                  HorizontalAlignment="Center"
                   VerticalAlignment="Top"
-                  BorderThickness="0,0,0,1" />
+                  BorderThickness="0" />
+
 </controls:ContentPopup>

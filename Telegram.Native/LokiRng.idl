@@ -5,5 +5,7 @@ namespace Telegram.Native
     {
         LokiRng(UInt32 seed0, UInt32 seed1, UInt32 seed2);
         Single Next();
+
+        static Single Random(UInt32 withSeed0, UInt32 seed1, UInt32 seed2);
     }
 }

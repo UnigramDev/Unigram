@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Rg.DiffUtils;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,6 +14,7 @@ using Telegram.Td;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
@@ -152,14 +154,6 @@ namespace Telegram.Views.Popups
             ScrollingHost.ItemsSource = _diff;
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
-
         private void SearchField_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(SearchField.Text))
@@ -172,6 +166,15 @@ namespace Telegram.Views.Popups
             }
 
             ShowHideNoResult(_diff.Count == 0);
+        }
+
+        private void SearchField_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter && _diff.Count > 0)
+            {
+                SelectedItem = _diff[0].Id;
+                Hide(ContentDialogResult.Primary);
+            }
         }
 
         private bool _noResultCollapsed = true;

@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Td.Api;
@@ -77,16 +78,16 @@ namespace Telegram.Streams
             _offset = offset;
         }
 
-        public override void ReadCallback(long count)
+        public override void ReadCallback(long count, long buffer, out long bytesRead)
         {
-            // Nothing
+            bytesRead = count;
         }
 
         public override bool Equals(object obj)
         {
             if (obj is LocalFileSource y && !y.IsUnique && !IsUnique)
             {
-                return y.FilePath == FilePath;
+                return y.FilePath == FilePath && y.IsAnimated == IsAnimated;
             }
 
             return base.Equals(obj);
@@ -99,7 +100,7 @@ namespace Telegram.Streams
                 return base.GetHashCode();
             }
 
-            return FilePath.GetHashCode();
+            return HashCode.Combine(FilePath, IsAnimated);
         }
     }
 }

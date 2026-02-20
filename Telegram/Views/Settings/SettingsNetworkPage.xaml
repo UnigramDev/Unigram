@@ -3,8 +3,8 @@
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:common="using:Telegram.Common"
                   xmlns:controls="using:Telegram.Controls"
-                  xmlns:viewModels="using:Telegram.ViewModels.Settings"
                   xmlns:local="using:Telegram.Views"
                   d:DesignHeight="2000"
                   mc:Ignorable="d">
@@ -22,75 +22,113 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <controls:SettingsPanel>
+                <Grid MaxWidth="1000"
+                      Margin="24,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid Width="140"
+                          Height="140"
+                          Margin="0,16,0,16">
+                        <controls:StorageChart x:Name="Chart"
+                                               Items="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
+                                               Width="120"
+                                               Height="120" />
+
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock x:Name="SizeLabel"
+                                       Style="{StaticResource PopupTextBlockStyle}"
+                                       FontWeight="SemiBold"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextAlignment="Center"
+                                       Margin="0,0,0,-4" />
+                            <TextBlock x:Name="UnitLabel"
+                                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"
+                                       TextAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                    <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertSinceDate(ViewModel.SinceDate, ViewModel.TotalBytes), Mode=OneWay}"
+                               Style="{StaticResource InfoBodyTextBlockStyle}"
+                               TextAlignment="Center"
+                               Margin="12,0,12,0"
+                               MaxWidth="480"
+                               Grid.Row="1" />
+                </Grid>
+
                 <controls:HeaderedControl ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="viewModels:NetworkStatisticsItem">
-                            <controls:SettingsExpander HorizontalContentAlignment="Stretch"
-                                                       BorderThickness="0">
+                        <DataTemplate x:DataType="controls:StorageChartItem">
+                            <controls:SettingsExpander Badge="{x:Bind TotalBytes, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
+                                                       HorizontalContentAlignment="Stretch"
+                                                       Background="Transparent"
+                                                       BorderThickness="0"
+                                                       Padding="0"
+                                                       CornerRadius="4">
                                 <controls:SettingsExpander.Header>
-                                    <Grid>
+                                    <Grid Margin="-12,0,0,0">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="56" />
+                                            <ColumnDefinition Width="58" />
                                             <ColumnDefinition />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
-                                                   HorizontalAlignment="Left"
-                                                   VerticalAlignment="Center"
-                                                   Margin="20,0,0,0"
-                                                   AutomationProperties.AccessibilityView="Raw"
-                                                   Text="{x:Bind Glyph}"
-                                                   FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                                        <Border HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                CornerRadius="4"
+                                                Margin="18,-2,0,-3"
+                                                Padding="2">
+                                            <Border.Background>
+                                                <SolidColorBrush Color="{x:Bind Stroke}" />
+                                            </Border.Background>
+                                            <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
+                                                       AutomationProperties.AccessibilityView="Raw"
+                                                       Text="{x:Bind Glyph}"
+                                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                       Foreground="#FFFFFF" />
+                                        </Border>
 
                                         <TextBlock Text="{x:Bind Name}"
                                                    Style="{StaticResource BodyTextBlockStyle}"
                                                    TextWrapping="NoWrap"
                                                    Grid.Column="1" />
-                                        <TextBlock Text="{x:Bind TotalBytes, Converter={StaticResource FileSizeConverter}}"
-                                                   Style="{StaticResource InfoBodyTextBlockStyle}"
-                                                   Margin="0,0,-12,0"
-                                                   Grid.Column="2" />
                                     </Grid>
                                 </controls:SettingsExpander.Header>
                                 <StackPanel>
-                                    <controls:BadgeButton Content="{CustomResource BytesReceived}"
-                                                          Badge="{x:Bind ReceivedBytes, Converter={StaticResource FileSizeConverter}}"
-                                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                          Glyph="&#xE118;"
-                                                          Background="Transparent"
-                                                          BorderThickness="0,0,0,1"
-                                                          CornerRadius="0" />
+                                    <controls:SettingsButton Content="{CustomResource BytesReceived}"
+                                                             Badge="{x:Bind ReceivedBytes, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
+                                                             Glyph="&#xE118;"
+                                                             BorderThickness="0,1,0,1"
+                                                             CornerRadius="0" />
 
-                                    <controls:BadgeButton Content="{CustomResource BytesSent}"
-                                                          Badge="{x:Bind SentBytes, Converter={StaticResource FileSizeConverter}}"
-                                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                          Glyph="&#xEA00;"
-                                                          Background="Transparent"
-                                                          CornerRadius="0" />
+                                    <controls:SettingsButton Content="{CustomResource BytesSent}"
+                                                             Badge="{x:Bind SentBytes, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
+                                                             Glyph="&#xEA00;"
+                                                             CornerRadius="0,0,4,4" />
                                 </StackPanel>
                             </controls:SettingsExpander>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Header="{CustomResource TotalNetworkUsage}">
-                    <controls:BadgeButton Content="{CustomResource BytesReceived}"
-                                          Badge="{x:Bind ViewModel.TotalReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE118;" />
+                <controls:HeaderedControl Header="{CustomResource TotalNetworkUsage}"
+                                          Footer="{x:Bind ConvertSinceDate(ViewModel.SinceDate, ViewModel.TotalBytes), Mode=OneWay}">
+                    <controls:SettingsButton Content="{CustomResource BytesReceived}"
+                                             Badge="{x:Bind ViewModel.TotalReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
+                                             Glyph="&#xE118;" />
 
-                    <controls:BadgeButton Content="{CustomResource BytesSent}"
-                                          Badge="{x:Bind ViewModel.TotalSentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEA00;" />
+                    <controls:SettingsButton Content="{CustomResource BytesSent}"
+                                             Badge="{x:Bind ViewModel.TotalSentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}, ConverterParameter=allowGb}"
+                                             Glyph="&#xEA00;" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Footer="{x:Bind ConvertSinceDate(ViewModel.SinceDate), Mode=OneWay}">
-                    <controls:BadgeButton Click="{x:Bind ViewModel.Reset}"
-                                          Content="{CustomResource ResetStatistics}"
-                                          Foreground="{ThemeResource DangerButtonBackground}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEA09;" />
+                <controls:HeaderedControl>
+                    <controls:SettingsButton Click="{x:Bind ViewModel.Reset}"
+                                             Content="{CustomResource ResetStatistics}"
+                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Glyph="&#xEA09;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

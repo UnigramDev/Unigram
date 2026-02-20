@@ -50,8 +50,7 @@
             </Grid>
 
             <controls:ProfilePicture x:Name="Photo"
-                                     Width="96"
-                                     Height="96"
+                                     Size="96"
                                      Margin="0,24,0,8" />
 
             <Grid x:Name="MediaPreview"
@@ -63,20 +62,33 @@
                       VerticalAlignment="Bottom"
                       CornerRadius="12"
                       Width="110"
-                      Height="110" />
+                      Height="110">
+                    <Grid.Background>
+                        <ImageBrush x:Name="Thumbnail2"
+                                    Stretch="UniformToFill"
+                                    AlignmentX="Center"
+                                    AlignmentY="Center" />
+                    </Grid.Background>
+                </Grid>
                 <Grid x:Name="Media1"
                       HorizontalAlignment="Left"
                       VerticalAlignment="Top"
                       CornerRadius="12"
                       Width="120"
                       Height="120"
-                      BorderBrush="{ThemeResource ContentDialogBackground}"
+                      BorderBrush="{ThemeResource ContentDialogTopOverlaySolid}"
                       BorderThickness="2"
                       Margin="-8">
+                    <Grid.Background>
+                        <ImageBrush x:Name="Thumbnail1"
+                                    Stretch="UniformToFill"
+                                    AlignmentX="Center"
+                                    AlignmentY="Center" />
+                    </Grid.Background>
                     <controls:AnimatedImage x:Name="Particles"
                                             IsViewportAware="True"
                                             FrameSize="0,0"
-                                            FitToSize="True"
+                                            ResizeMode="Fill"
                                             DecodeFrameType="Logical"
                                             Stretch="UniformToFill" />
 
@@ -113,31 +125,23 @@
                        Grid.Row="2" />
         </Grid>
 
-        <Grid x:Name="PurchasePanel"
-              VerticalAlignment="Bottom"
-              HorizontalAlignment="Stretch"
-              Margin="24,0,24,24"
-              Grid.Row="1">
-            <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Click="Purchase_Click"
-                                  Style="{StaticResource AccentButtonStyle}"
-                                  FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  FontWeight="SemiBold"
-                                  BorderThickness="1"
-                                  Height="32">
-                <Grid>
-                    <TextBlock x:Name="PurchaseText"
-                               VerticalAlignment="Center"
-                               Margin="0,3,0,5" />
-                    <muxc:ProgressRing x:Name="PurchaseRing"
-                                       Visibility="Collapsed"
-                                       Foreground="#FFFFFF"
-                                       Width="20"
-                                       Height="20" />
-                </Grid>
-            </controls:BadgeButton>
-        </Grid>
+        <Button x:Name="PurchaseCommand"
+                Click="Purchase_Click"
+                Style="{StaticResource AccentButtonStyle}"
+                FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Stretch"
+                Margin="24,0,24,24"
+                Grid.Row="1">
+            <Grid>
+                <TextBlock x:Name="PurchaseText"
+                           VerticalAlignment="Center" />
+                <muxc:ProgressRing x:Name="PurchaseRing"
+                                   Visibility="Collapsed"
+                                   Foreground="#FFFFFF"
+                                   Width="20"
+                                   Height="20" />
+            </Grid>
+        </Button>
     </Grid>
 </controls:ContentPopup>

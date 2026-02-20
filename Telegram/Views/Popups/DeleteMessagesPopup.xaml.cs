@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Telegram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -32,11 +34,11 @@ namespace Telegram.Views.Popups
         private IList<MessageSender> _deleteAll;
         private IList<MessageSender> _banUser;
 
-        public DeleteMessagesPopup(IClientService clientService, Chat chat, MessageTopic topic, IList<Message> messages, IDictionary<MessageId, MessageProperties> properties)
+        public DeleteMessagesPopup(IClientService clientService, Chat chat, MessageTopic topic, IList<MessageWithOwner> messages, IDictionary<MessageId, MessageProperties> properties)
         {
             InitializeComponent();
 
-            DataContext = TypeResolver.Current.Resolve<SupergroupEditRestrictedViewModel>(clientService.SessionId);
+            DataContext = clientService.Session.Resolve<SupergroupEditRestrictedViewModel>();
 
             Title = messages.Count == 1
                 ? topic is not MessageTopicSavedMessages ? Strings.DeleteSingleMessagesTitle : Strings.UnsaveSingleMessagesTitle
@@ -48,10 +50,10 @@ namespace Telegram.Views.Popups
             var senders = messages
                 .Select(x => x.SenderId)
                 .Distinct(new MessageSenderEqualityComparer())
-                .Where(x => !x.IsUser(clientService.Options.MyId))
+                .Where(x => !x.IsUser(clientService.Options.MyId) && !x.IsChat(chat.Id))
                 .ToList();
 
-            if (senders.Count > 1 && supergroup?.IsChannel is false)
+            if (senders.Count > 1 && supergroup?.IsChannel is false && supergroup?.IsDirectMessagesGroup is false)
             {
                 ReportSpamCheck.Content = Strings.DeleteReportSpam;
                 DeleteAllCheck.Content = Strings.DeleteAllFromUsers;
@@ -67,7 +69,7 @@ namespace Telegram.Views.Popups
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }
-            else if (senders.Count > 0 && supergroup?.IsChannel is false)
+            else if (senders.Count > 0 && supergroup?.IsChannel is false && supergroup?.IsDirectMessagesGroup is false)
             {
                 ReportSpamCheck.Content = Strings.DeleteReportSpam;
                 DeleteAllCheck.Content = string.Format(Strings.DeleteAllFrom, clientService.GetTitle(senders[0]));
@@ -124,25 +126,30 @@ namespace Telegram.Views.Popups
                 {
                     if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
                     {
-                        TextBlockHelper.SetMarkdown(Message, chat.Type is ChatTypePrivate && clientService.TryGetUser(chat, out User user)
+                        User user = null;
+                        TextBlockHelper.SetMarkdown(Message, chat.Type is ChatTypePrivate && clientService.TryGetUser(chat, out user)
                             ? string.Format(Strings.DeleteMessagesText, Locale.Declension(Strings.R.messages, messages.Count), user.FirstName)
                             : string.Format(Strings.DeleteMessagesTextGroup, Locale.Declension(Strings.R.messages, messages.Count)));
 
-                        RevokeCheck.IsChecked = true;
-                        RevokeCheck.Visibility = Visibility.Visible;
-                        RevokeCheck.Content = Strings.DeleteMessagesOption;
+                        if (user?.Type is not UserTypeBot)
+                        {
+                            RevokeCheck.IsChecked = true;
+                            RevokeCheck.Visibility = Visibility.Visible;
+                            RevokeCheck.Content = Strings.DeleteMessagesOption;
+                        }
                     }
                     else
                     {
+                        User user = clientService.GetUser(chat);
                         TextBlockHelper.SetMarkdown(Message, messages.Count == 1
                             ? Strings.AreYouSureDeleteSingleMessage
                             : Strings.AreYouSureDeleteFewMessages);
 
-                        if (canBeDeletedForAllUsers)
+                        if (canBeDeletedForAllUsers && user?.Type is not UserTypeBot)
                         {
                             RevokeCheck.IsChecked = true;
                             RevokeCheck.Visibility = Visibility.Visible;
-                            RevokeCheck.Content = chat.Type is ChatTypePrivate && clientService.TryGetUser(chat, out User user)
+                            RevokeCheck.Content = chat.Type is ChatTypePrivate && user != null
                                 ? string.Format(Strings.DeleteMessagesOptionAlso, user.FirstName)
                                 : Strings.DeleteForAll;
                         }
@@ -156,7 +163,24 @@ namespace Telegram.Views.Popups
                 }
                 else
                 {
-                    if (messages.Count == 1 && messages[0].Content is MessageGiveaway giveaway)
+                    var now = DateTime.Now.ToTimestamp();
+                    var paid = messages.FirstOrDefault(x => (x.IsPaidStarSuggestedPost || x.IsPaidTonSuggestedPost) && now < (int)clientService.Options.SuggestedPostLifetimeMin + x.GetDate());
+
+                    if (paid != null && paid.IsPaidStarSuggestedPost)
+                    {
+                        Title = Strings.SuggestionStarsWillBeLost;
+                        TextBlockHelper.SetMarkdown(Message, string.Format(Strings.SuggestionStarsWillBeLostInfo, (clientService.Options.SuggestedPostLifetimeMin / 3600.0).ToString("N0")));
+
+                        PrimaryButtonText = Strings.SuggestionStarsWillBeLostDelete;
+                    }
+                    else if (paid != null && paid.IsPaidTonSuggestedPost)
+                    {
+                        Title = Strings.SuggestionTONWillBeLost;
+                        TextBlockHelper.SetMarkdown(Message, string.Format(Strings.SuggestionTONWillBeLostInfo, (clientService.Options.SuggestedPostLifetimeMin / 3600.0).ToString("N0")));
+
+                        PrimaryButtonText = Strings.SuggestionStarsWillBeLostDelete;
+                    }
+                    else if (messages.Count == 1 && messages[0].Content is MessageGiveaway giveaway)
                     {
                         Title = Strings.BoostingGiveawayDeleteMsgTitle;
                         TextBlockHelper.SetMarkdown(Message, string.Format(Strings.BoostingGiveawayDeleteMsgText, Formatter.DateAt(giveaway.Parameters.WinnersSelectionDate)));
@@ -206,6 +230,58 @@ namespace Telegram.Views.Popups
             CanChangeInfo.IsEnabled = chat.Permissions.CanChangeInfo;
 
             UpdatePermissions();
+        }
+
+        public DeleteMessagesPopup(IClientService clientService, GroupCall groupCall, GroupCallMessage message)
+        {
+            InitializeComponent();
+
+            DataContext = clientService.Session.Resolve<SupergroupEditRestrictedViewModel>();
+
+            Title = Strings.DeleteSingleMessagesTitle;
+            PrimaryButtonText = Strings.Delete;
+            SecondaryButtonText = Strings.Cancel;
+
+            if (groupCall.CanDeleteMessages)
+            {
+                ReportSpamCheck.Content = Strings.DeleteReportSpam;
+                DeleteAllCheck.Content = string.Format(Strings.DeleteAllFrom, clientService.GetTitle(message.SenderId));
+                BanUserCheck.Content = string.Format(Strings.DeleteBan, clientService.GetTitle(message.SenderId));
+
+                ReportSpamCount.Visibility =
+                    DeleteAllCount.Visibility =
+                    BanUserCount.Visibility = Visibility.Collapsed;
+
+                ReportSpamIcon.Visibility =
+                    DeleteAllIcon.Visibility =
+                    BanUserIcon.Visibility = Visibility.Collapsed;
+
+                ReportSpamExpander.Margin =
+                    DeleteAllExpander.Margin =
+                    BanUserExpander.Margin = new Thickness(0, 0, -72, 0);
+
+                PermissionsToggle.Content = Strings.DeleteToggleRestrictUser;
+
+                BanUserRoot.Visibility = Visibility.Collapsed;
+
+                _messagesCount = 0;
+            }
+            else
+            {
+                AdditionalRoot.Visibility = Visibility.Collapsed;
+                BasicRoot.Visibility = Visibility.Visible;
+
+                RevokeCheck.Visibility = Visibility.Collapsed;
+
+                TextBlockHelper.SetMarkdown(Message, Strings.AreYouSureDeleteSingleMessage);
+            }
+
+            _clientService = clientService;
+            _senders = [message.SenderId];
+
+            _reportSpam = Array.Empty<MessageSender>();
+            _deleteAll = Array.Empty<MessageSender>();
+            _banUser = Array.Empty<MessageSender>();
         }
 
         #region Binding
@@ -259,12 +335,11 @@ namespace Telegram.Views.Popups
             {
                 var photo = new ProfilePicture
                 {
-                    Width = 28,
-                    Height = 28,
+                    Size = 28,
                     Margin = new Thickness(0, -4, 8, 0),
                 };
 
-                photo.SetMessageSender(_clientService, sender, 28);
+                photo.Source = ProfilePictureSource.MessageSender(_clientService, sender);
 
                 var title = new TextBlock
                 {

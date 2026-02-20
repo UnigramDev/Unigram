@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Controls;
@@ -26,9 +27,12 @@ namespace Telegram.Views.Settings
             Title = Strings.Language;
         }
 
-        private void List_ItemClick(object sender, ItemClickEventArgs e)
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            ViewModel.Change(e.ClickedItem as LanguagePackInfo);
+            if (sender is RadioButton { Tag: LanguagePackInfo language })
+            {
+                ViewModel.Change(language);
+            }
         }
 
         #region Context menu
@@ -69,18 +73,33 @@ namespace Telegram.Views.Settings
             {
                 return;
             }
+            else if (args.ItemContainer.ContentTemplateRoot is RadioButton content && args.Item is LanguagePackInfo language)
+            {
+                content.Checked -= RadioButton_Checked;
 
-            // TODO: no x:Bind
+                // Justified because Checked
+                content.Tag = language;
+                content.IsChecked = language == ViewModel.SelectedItem;
+
+                content.Checked += RadioButton_Checked;
+
+                var grid = content.Content as Grid;
+                if (grid != null)
+                {
+                    var nativeName = grid.Children[0] as TextBlock;
+                    var name = grid.Children[1] as TextBlock;
+
+                    nativeName.Text = language.NativeName;
+                    name.Text = language.Name;
+                }
+
+                args.Handled = true;
+            }
         }
 
         #endregion
 
         #region Binding
-
-        private string ConvertTranslateInfo(bool enabled)
-        {
-            return enabled ? Strings.TranslateMessagesInfo1 : Strings.TranslateMessagesInfo1 + Environment.NewLine + Environment.NewLine + Strings.TranslateMessagesInfo2;
-        }
 
         private Visibility ConvertDoNotTranslate(bool messages, bool chats)
         {
@@ -90,6 +109,5 @@ namespace Telegram.Views.Settings
         }
 
         #endregion
-
     }
 }

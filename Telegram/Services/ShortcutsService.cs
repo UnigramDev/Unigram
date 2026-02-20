@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +13,16 @@ using Telegram.Collections;
 using Telegram.Navigation;
 using Windows.Data.Json;
 using Windows.Storage;
-using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Services
 {
     public interface IShortcutsService
     {
-        InvokedShortcut Process(ProcessKeyboardAcceleratorEventArgs args);
+        InvokedShortcut Process(AcceleratorKeyEventArgs args, out VirtualKeyModifiers modifiers);
 
-        bool TryGetShortcut(ProcessKeyboardAcceleratorEventArgs args, out Shortcut shortcut);
+        bool TryGetShortcut(KeyRoutedEventArgs args, out Shortcut shortcut);
 
         IList<ShortcutList> GetShortcuts();
         IList<ShortcutList> Update(Shortcut shortcut, ShortcutCommand command);
@@ -38,7 +39,7 @@ namespace Telegram.Services
         }
     }
 
-    public partial class ShortcutsService : ViewModelBase, IShortcutsService
+    public partial class ShortcutsService : IShortcutsService
     {
         #region Const
 
@@ -46,6 +47,8 @@ namespace Telegram.Services
         {
             //ShortcutCommand.MediaPrevious,
             //ShortcutCommand.MediaNext,
+            ShortcutCommand.ChatRecentPrevious,
+            ShortcutCommand.ChatRecentNext,
             ShortcutCommand.ChatPrevious,
             ShortcutCommand.ChatNext,
             ShortcutCommand.ChatFirst,
@@ -85,91 +88,95 @@ namespace Telegram.Services
 
         private readonly Dictionary<string, ShortcutCommand> _commandByName = new()
         {
-            { "close_telegram"    , ShortcutCommand.Close },
-            { "lock_telegram"     , ShortcutCommand.Lock },
-            { "minimize_telegram" , ShortcutCommand.Minimize },
-            { "quit_telegram"     , ShortcutCommand.Quit },
+            { "close_telegram"      , ShortcutCommand.Close },
+            { "lock_telegram"       , ShortcutCommand.Lock },
+            { "minimize_telegram"   , ShortcutCommand.Minimize },
+            { "quit_telegram"       , ShortcutCommand.Quit },
 
             //{ "media_play"        , ShortcutCommand.MediaPlay },
             //{ "media_pause"       , ShortcutCommand.MediaPause },
             //{ "media_playpause"   , ShortcutCommand.MediaPlayPause },
-            //{ "media_stop"        , ShortcutCommand.MediaStop },
+            { "media_stop"        , ShortcutCommand.MediaStop },
             //{ "media_previous"    , ShortcutCommand.MediaPrevious },
             //{ "media_next"        , ShortcutCommand.MediaNext },
 
-            { "search"            , ShortcutCommand.Search },
+            { "search"              , ShortcutCommand.Search },
 
-            { "previous_chat"     , ShortcutCommand.ChatPrevious },
-            { "next_chat"         , ShortcutCommand.ChatNext },
-            { "first_chat"        , ShortcutCommand.ChatFirst },
-            { "last_chat"         , ShortcutCommand.ChatLast },
-            { "self_chat"         , ShortcutCommand.ChatSelf },
+            { "previous_chat"       , ShortcutCommand.ChatPrevious },
+            { "next_chat"           , ShortcutCommand.ChatNext },
+            { "previous_recent_chat", ShortcutCommand.ChatRecentPrevious },
+            { "next_recent_chat"    , ShortcutCommand.ChatRecentNext },
+            { "first_chat"          , ShortcutCommand.ChatFirst },
+            { "last_chat"           , ShortcutCommand.ChatLast },
+            { "self_chat"           , ShortcutCommand.ChatSelf },
 
-            { "previous_folder"   , ShortcutCommand.FolderPrevious },
-            { "next_folder"       , ShortcutCommand.FolderNext },
-            { "all_chats"         , ShortcutCommand.ShowAllChats },
+            { "previous_folder"     , ShortcutCommand.FolderPrevious },
+            { "next_folder"         , ShortcutCommand.FolderNext },
+            { "all_chats"           , ShortcutCommand.ShowAllChats },
 
-            { "folder1"           , ShortcutCommand.ShowFolder1 },
-            { "folder2"           , ShortcutCommand.ShowFolder2 },
-            { "folder3"           , ShortcutCommand.ShowFolder3 },
-            { "folder4"           , ShortcutCommand.ShowFolder4 },
-            { "folder5"           , ShortcutCommand.ShowFolder5 },
-            { "folder6"           , ShortcutCommand.ShowFolder6 },
-            { "last_folder"       , ShortcutCommand.ShowFolderLast },
+            { "folder1"             , ShortcutCommand.ShowFolder1 },
+            { "folder2"             , ShortcutCommand.ShowFolder2 },
+            { "folder3"             , ShortcutCommand.ShowFolder3 },
+            { "folder4"             , ShortcutCommand.ShowFolder4 },
+            { "folder5"             , ShortcutCommand.ShowFolder5 },
+            { "folder6"             , ShortcutCommand.ShowFolder6 },
+            { "last_folder"         , ShortcutCommand.ShowFolderLast },
 
-            { "show_archive"      , ShortcutCommand.ShowArchive },
+            { "show_archive"        , ShortcutCommand.ShowArchive },
 
-            { "set_status"        , ShortcutCommand.SetStatus },
-            { "downloads"         , ShortcutCommand.Downloads },
+            { "set_status"          , ShortcutCommand.SetStatus },
+            { "downloads"           , ShortcutCommand.Downloads },
 
-			// Shortcuts that have no default values.
-			{ "message"           , ShortcutCommand.JustSendMessage },
-            { "message_silently"  , ShortcutCommand.SendSilentMessage },
-            { "message_scheduled" , ShortcutCommand.ScheduleMessage },
-			//
-		};
+            // Shortcuts that have no default values.
+            { "message"             , ShortcutCommand.JustSendMessage },
+            { "message_silently"    , ShortcutCommand.SendSilentMessage },
+            { "message_scheduled"   , ShortcutCommand.ScheduleMessage },
+            //
+        };
 
         private readonly Dictionary<ShortcutCommand, string> _commandNames = new()
         {
-            { ShortcutCommand.Close          , "close_telegram" },
-            { ShortcutCommand.Lock           , "lock_telegram" },
-            { ShortcutCommand.Minimize       , "minimize_telegram" },
-            { ShortcutCommand.Quit           , "quit_telegram" },
+            { ShortcutCommand.Close             , "close_telegram" },
+            { ShortcutCommand.Lock              , "lock_telegram" },
+            { ShortcutCommand.Minimize          , "minimize_telegram" },
+            { ShortcutCommand.Quit              , "quit_telegram" },
 
             //{ ShortcutCommand.MediaPlay      , "media_play" },
             //{ ShortcutCommand.MediaPause     , "media_pause" },
             //{ ShortcutCommand.MediaPlayPause , "media_playpause" },
-            //{ ShortcutCommand.MediaStop      , "media_stop" },
+            { ShortcutCommand.MediaStop      , "media_stop" },
             //{ ShortcutCommand.MediaPrevious  , "media_previous" },
             //{ ShortcutCommand.MediaNext      , "media_next" },
 
-            { ShortcutCommand.Search         , "search" },
+            { ShortcutCommand.Search            , "search" },
 
-            { ShortcutCommand.ChatPrevious   , "previous_chat" },
-            { ShortcutCommand.ChatNext       , "next_chat" },
-            { ShortcutCommand.ChatFirst      , "first_chat" },
-            { ShortcutCommand.ChatLast       , "last_chat" },
-            { ShortcutCommand.ChatSelf       , "self_chat" },
+            { ShortcutCommand.ChatPrevious      , "previous_chat" },
+            { ShortcutCommand.ChatNext          , "next_chat" },
+            { ShortcutCommand.ChatRecentPrevious, "previous_recent_chat" },
+            { ShortcutCommand.ChatRecentNext    , "next_recent_chat" },
+            { ShortcutCommand.ChatFirst         , "first_chat" },
+            { ShortcutCommand.ChatLast          , "last_chat" },
+            { ShortcutCommand.ChatSelf          , "self_chat" },
 
-            { ShortcutCommand.FolderPrevious , "previous_folder" },
-            { ShortcutCommand.FolderNext     , "next_folder" },
-            { ShortcutCommand.ShowAllChats   , "all_chats" },
+            { ShortcutCommand.FolderPrevious    , "previous_folder" },
+            { ShortcutCommand.FolderNext        , "next_folder" },
+            { ShortcutCommand.ShowAllChats      , "all_chats" },
 
-            { ShortcutCommand.ShowFolder1    , "folder1" },
-            { ShortcutCommand.ShowFolder2    , "folder2" },
-            { ShortcutCommand.ShowFolder3    , "folder3" },
-            { ShortcutCommand.ShowFolder4    , "folder4" },
-            { ShortcutCommand.ShowFolder5    , "folder5" },
-            { ShortcutCommand.ShowFolder6    , "folder6" },
-            { ShortcutCommand.ShowFolderLast , "last_folder" },
+            { ShortcutCommand.ShowFolder1       , "folder1" },
+            { ShortcutCommand.ShowFolder2       , "folder2" },
+            { ShortcutCommand.ShowFolder3       , "folder3" },
+            { ShortcutCommand.ShowFolder4       , "folder4" },
+            { ShortcutCommand.ShowFolder5       , "folder5" },
+            { ShortcutCommand.ShowFolder6       , "folder6" },
+            { ShortcutCommand.ShowFolderLast    , "last_folder" },
 
-            { ShortcutCommand.ShowArchive    , "show_archive" },
-            { ShortcutCommand.SetStatus      , "set_status" },
-            { ShortcutCommand.Downloads      , "downloads" },
+            { ShortcutCommand.ShowArchive       , "show_archive" },
+            { ShortcutCommand.SetStatus         , "set_status" },
+            { ShortcutCommand.Downloads         , "downloads" },
 
-            { ShortcutCommand.CallAccept     , "call_accept" },
-            { ShortcutCommand.CallReject     , "call_reject" },
-            { ShortcutCommand.CallToggleCamera     , "call_camera" },
+            { ShortcutCommand.CallAccept        , "call_accept" },
+            { ShortcutCommand.CallReject        , "call_reject" },
+            { ShortcutCommand.CallToggleCamera  , "call_camera" },
             { ShortcutCommand.CallToggleMicrophone , "call_microphone" },
         };
 
@@ -177,21 +184,22 @@ namespace Telegram.Services
 
         private readonly Dictionary<Shortcut, List<ShortcutCommand>> _commands = new();
 
-        public ShortcutsService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(clientService, settingsService, aggregator)
+        public ShortcutsService()
         {
             InitializeDefault();
             InitializeCustom();
         }
 
-        public InvokedShortcut Process(ProcessKeyboardAcceleratorEventArgs args)
+        public InvokedShortcut Process(AcceleratorKeyEventArgs args, out VirtualKeyModifiers modifiers)
         {
-            if (args.Key is >= VirtualKey.NumberPad0 and <= VirtualKey.NumberPad9)
+            modifiers = WindowContext.KeyModifiers();
+
+            if (args.VirtualKey is >= VirtualKey.NumberPad0 and <= VirtualKey.NumberPad9)
             {
-                return Process(args.Modifiers, VirtualKey.Number0 + (args.Key - VirtualKey.NumberPad0));
+                return Process(modifiers, VirtualKey.Number0 + (args.VirtualKey - VirtualKey.NumberPad0));
             }
 
-            return Process(args.Modifiers, args.Key);
+            return Process(modifiers, args.VirtualKey);
         }
 
         private InvokedShortcut Process(VirtualKeyModifiers modifiers, VirtualKey key)
@@ -211,9 +219,9 @@ namespace Telegram.Services
         //int nonVirtualKey = MapVirtualKey((uint)args.VirtualKey, 2);
         //char mappedChar = Convert.ToChar(nonVirtualKey);
 
-        public bool TryGetShortcut(ProcessKeyboardAcceleratorEventArgs args, out Shortcut shortcut)
+        public bool TryGetShortcut(KeyRoutedEventArgs args, out Shortcut shortcut)
         {
-            return TryGetShortcut(args.Modifiers, args.Key, out shortcut);
+            return TryGetShortcut(WindowContext.KeyModifiers(), args.Key, out shortcut);
         }
 
         private bool TryGetShortcut(VirtualKeyModifiers modifiers, VirtualKey key, out Shortcut shortcut)
@@ -267,10 +275,10 @@ namespace Telegram.Services
                 {
                     "App", new[]
                     {
-                        ShortcutCommand.Close          ,
-                        ShortcutCommand.Lock           ,
-                        ShortcutCommand.Minimize       ,
-                        ShortcutCommand.Quit           ,
+                        ShortcutCommand.Close              ,
+                        ShortcutCommand.Lock               ,
+                        ShortcutCommand.Minimize           ,
+                        ShortcutCommand.Quit               ,
                         ShortcutCommand.Search
                     }
                 },
@@ -287,27 +295,29 @@ namespace Telegram.Services
                 {
                     "Chats", new[]
                     {
-                        ShortcutCommand.ChatPrevious   ,
-                        ShortcutCommand.ChatNext       ,
-                        ShortcutCommand.ChatFirst      ,
-                        ShortcutCommand.ChatLast       ,
-                        ShortcutCommand.ChatSelf       ,
+                        ShortcutCommand.ChatPrevious       ,
+                        ShortcutCommand.ChatNext           ,
+                        ShortcutCommand.ChatFirst          ,
+                        ShortcutCommand.ChatLast           ,
+                        ShortcutCommand.ChatSelf           ,
+                        ShortcutCommand.ChatRecentPrevious ,
+                        ShortcutCommand.ChatRecentNext     ,
                     }
                 },
                 {
                     "Folders", new[]
                     {
-                        ShortcutCommand.FolderPrevious ,
-                        ShortcutCommand.FolderNext     ,
-                        ShortcutCommand.ShowAllChats   ,
-                        ShortcutCommand.ShowFolder1    ,
-                        ShortcutCommand.ShowFolder2    ,
-                        ShortcutCommand.ShowFolder3    ,
-                        ShortcutCommand.ShowFolder4    ,
-                        ShortcutCommand.ShowFolder5    ,
-                        ShortcutCommand.ShowFolder6    ,
-                        ShortcutCommand.ShowFolderLast ,
-                        ShortcutCommand.ShowArchive    ,
+                        ShortcutCommand.FolderPrevious     ,
+                        ShortcutCommand.FolderNext         ,
+                        ShortcutCommand.ShowAllChats       ,
+                        ShortcutCommand.ShowFolder1        ,
+                        ShortcutCommand.ShowFolder2        ,
+                        ShortcutCommand.ShowFolder3        ,
+                        ShortcutCommand.ShowFolder4        ,
+                        ShortcutCommand.ShowFolder5        ,
+                        ShortcutCommand.ShowFolder6        ,
+                        ShortcutCommand.ShowFolderLast     ,
+                        ShortcutCommand.ShowArchive        ,
                     }
                 }
             };
@@ -362,6 +372,8 @@ namespace Telegram.Services
             Set("ctrl+m", ShortcutCommand.Minimize);
             Set("ctrl+q", ShortcutCommand.Quit);
 
+            Set("ctrl+shift+w", ShortcutCommand.MediaStop);
+
             Set("ctrl+shift+f", ShortcutCommand.SearchChats);
             Set("ctrl+e", ShortcutCommand.SearchChats);
             Set("ctrl+f", ShortcutCommand.Search);
@@ -372,8 +384,8 @@ namespace Telegram.Services
             Set("ctrl+pgup", ShortcutCommand.ChatPrevious);
             Set("alt+up", ShortcutCommand.ChatPrevious);
 
-            Set("ctrl+tab", ShortcutCommand.ChatNext);
-            Set("ctrl+shift+tab", ShortcutCommand.ChatPrevious);
+            Set("ctrl+tab", ShortcutCommand.ChatRecentNext);
+            Set("ctrl+shift+tab", ShortcutCommand.ChatRecentPrevious);
 
             Set("ctrl+alt+home", ShortcutCommand.ChatFirst);
             Set("ctrl+alt+end", ShortcutCommand.ChatLast);
@@ -544,6 +556,46 @@ namespace Telegram.Services
 
             return null;
         }
+
+        public static string GetStringRepresentation(VirtualKey key, VirtualKeyModifiers modifiers = VirtualKeyModifiers.None)
+        {
+            var builder = new StringBuilder();
+
+            static void ConcatVirtualKey(VirtualKey key, StringBuilder builder)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append("+");
+                }
+
+                builder.Append(key switch
+                {
+                    VirtualKey.Control => Strings.VirtualKeyModifiersControl,
+                    VirtualKey.Menu => Strings.VirtualKeyModifiersMenu,
+                    VirtualKey.Shift => Strings.VirtualKeyModifiersShift,
+                    (VirtualKey)190 => '.',
+                    _ => key.ToString()
+                });
+            }
+
+            if ((modifiers & VirtualKeyModifiers.Control) != 0)
+            {
+                ConcatVirtualKey(VirtualKey.Control, builder);
+            }
+
+            if ((modifiers & VirtualKeyModifiers.Menu) != 0)
+            {
+                ConcatVirtualKey(VirtualKey.Menu, builder);
+            }
+
+            if ((modifiers & VirtualKeyModifiers.Shift) != 0)
+            {
+                ConcatVirtualKey(VirtualKey.Shift, builder);
+            }
+
+            ConcatVirtualKey(key, builder);
+            return builder.ToString();
+        }
     }
 
     public sealed partial class ShortcutList : KeyedList<string, ShortcutInfo>
@@ -603,8 +655,7 @@ namespace Telegram.Services
 
         public override int GetHashCode()
         {
-            return Modifiers.GetHashCode()
-                ^ Key.GetHashCode();
+            return HashCode.Combine(Modifiers, Key);
         }
 
         public override string ToString()
@@ -664,7 +715,7 @@ namespace Telegram.Services
         //MediaPlay,
         //MediaPause,
         //MediaPlayPause,
-        //MediaStop,
+        MediaStop,
         //MediaPrevious,
         //MediaNext,
 
@@ -673,6 +724,8 @@ namespace Telegram.Services
 
         ChatPrevious,
         ChatNext,
+        ChatRecentPrevious,
+        ChatRecentNext,
         ChatFirst,
         ChatLast,
         ChatSelf,

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Controls.Cells;
@@ -12,7 +13,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Supergroups;
-using Telegram.Views;
 using Telegram.Views.Chats;
 using Telegram.Views.Chats.Popups;
 using Telegram.Views.Monetization.Popups;
@@ -36,7 +36,7 @@ namespace Telegram.ViewModels.Chats
         public ChatRevenueViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Stars = TypeResolver.Current.Resolve<ChatStarsViewModel>(clientService.SessionId);
+            Stars = clientService.Session.Resolve<ChatStarsViewModel>();
             Items = new IncrementalCollection<object>(this);
 
             Children.Add(Stars);
@@ -290,7 +290,7 @@ namespace Telegram.ViewModels.Chats
             RaisePropertyChanged(nameof(WithdrawalEnabled));
         }
 
-        public async void Transfer()
+        public void Transfer()
         {
             //if (!IsAddressValid)
             //{
@@ -357,11 +357,13 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
+        private string _nextOffset = string.Empty;
+
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
             var totalCount = 0u;
 
-            var response = await ClientService.SendAsync(new GetChatRevenueTransactions(Chat.Id, Items.Count, 10));
+            var response = await ClientService.SendAsync(new GetChatRevenueTransactions(Chat.Id, _nextOffset, 10));
             if (response is ChatRevenueTransactions transactions)
             {
                 foreach (var transaction in transactions.Transactions)
@@ -369,9 +371,11 @@ namespace Telegram.ViewModels.Chats
                     Items.Add(transaction);
                     totalCount++;
                 }
+
+                _nextOffset = transactions.NextOffset;
+                HasMoreItems = transactions.NextOffset.Length > 0;
             }
 
-            HasMoreItems = totalCount > 0;
             IsEmpty = Items.Count == 0;
 
             return new LoadMoreItemsResult

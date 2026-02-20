@@ -1,107 +1,124 @@
-﻿<Grid x:Class="Telegram.Controls.Cells.ProfileCell"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:controls="using:Telegram.Controls"
-      mc:Ignorable="d"
-      d:DesignHeight="300"
-      d:DesignWidth="400"
-      Padding="12,0">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:local="using:Telegram.Controls.Cells"
+                    mc:Ignorable="d">
 
-    <Grid.RowDefinitions>
-        <RowDefinition />
-        <RowDefinition />
-    </Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto" />
-        <ColumnDefinition />
-        <ColumnDefinition Width="Auto" />
-    </Grid.ColumnDefinitions>
-    <Rectangle x:Name="SelectionOutline"
-               Visibility="Collapsed"
-               Width="36"
-               Height="36"
-               Margin="0,0,8,0"
-               Grid.RowSpan="2"
-               StrokeThickness="2"
-               Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" />
+    <Style TargetType="local:ProfileCell">
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalAlignment"
+                Value="Stretch" />
+        <Setter Property="Padding"
+                Value="12,0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ProfileCell">
+                    <Grid Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          Padding="{TemplateBinding Padding}"
+                          CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Rectangle x:Name="SelectionOutline"
+                                   Visibility="Collapsed"
+                                   Width="36"
+                                   Height="36"
+                                   Margin="0,0,10,0"
+                                   Grid.RowSpan="2"
+                                   StrokeThickness="2"
+                                   Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" />
 
-    <controls:ActiveStoriesSegments x:Name="Segments"
-                                    IsClickEnabled="False"
-                                    IsEnabled="False"
-                                    Width="36"
-                                    Height="36"
-                                    Margin="0,6,8,6"
-                                    Grid.RowSpan="2">
-        <controls:ProfilePicture x:Name="Photo"
-                                 Width="36"
-                                 Height="36" />
-    </controls:ActiveStoriesSegments>
+                        <controls:ActiveStoriesSegments x:Name="Segments"
+                                                        InteractionMode="Disabled"
+                                                        IsEnabled="False"
+                                                        Width="36"
+                                                        Height="36"
+                                                        Margin="0,6,10,6"
+                                                        Grid.RowSpan="2">
+                            <controls:ProfilePicture x:Name="Photo"
+                                                     Size="36" />
+                        </controls:ActiveStoriesSegments>
 
-    <Border x:Name="RestrictsNewChats"
-            x:Load="False"
-            Width="36"
-            Height="36"
-            Margin="0,0,8,0"
-            Grid.RowSpan="2">
-        <Border HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Background="{ThemeResource PremiumObliqueGradientBrush}"
-                BorderBrush="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-                BorderThickness="2"
-                CornerRadius="10"
-                Width="20"
-                Height="20"
-                Margin="0,0,-2,-2">
-            <TextBlock Text="&#xE9DD;"
-                       Foreground="#FFFFFF"
-                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                       FontSize="12"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center" />
-        </Border>
-    </Border>
+                        <Border x:Name="RestrictsNewChats"
+                                x:Load="False"
+                                Width="36"
+                                Height="36"
+                                Margin="0,0,10,0"
+                                Grid.RowSpan="2">
+                            <Border HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Background="{ThemeResource PremiumObliqueGradientBrush}"
+                                    BorderBrush="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                                    BorderThickness="2"
+                                    CornerRadius="10"
+                                    Width="20"
+                                    Height="20"
+                                    Margin="0,0,-2,-2">
+                                <TextBlock Text="&#xE9DD;"
+                                           Foreground="#FFFFFF"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           FontSize="12"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+                        </Border>
 
-    <Grid x:Name="TitlePanel"
-          Grid.Column="1"
-          HorizontalAlignment="Left"
-          VerticalAlignment="Bottom">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <controls:CustomEmojiIcon x:Name="BotVerified"
-                                  Visibility="Collapsed"
-                                  VerticalAlignment="Bottom"
-                                  Margin="0,-2,4,-2" />
-        <TextBlock x:Name="TitleLabel"
-                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                   TextWrapping="NoWrap"
-                   TextTrimming="CharacterEllipsis"
-                   Grid.Column="1" />
-        <controls:IdentityIcon x:Name="Identity"
-                               VerticalAlignment="Bottom"
-                               Margin="4,0,0,0"
-                               Grid.Column="2" />
-    </Grid>
-    <TextBlock x:Name="SubtitleLabel"
-               VerticalAlignment="Top"
-               Style="{StaticResource InfoCaptionTextBlockStyle}"
-               TextTrimming="CharacterEllipsis"
-               TextWrapping="NoWrap"
-               Grid.Column="1"
-               Grid.Row="1"
-               MaxLines="1" />
+                        <Grid x:Name="TitlePanel"
+                              Grid.Column="1"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Bottom">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <controls:CustomEmojiIcon x:Name="BotVerified"
+                                                      Visibility="Collapsed"
+                                                      VerticalAlignment="Bottom"
+                                                      Margin="0,-2,4,-2" />
+                            <TextBlock x:Name="TitleLabel"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       Grid.Column="1" />
+                            <controls:IdentityIcon x:Name="Identity"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="4,0,0,0"
+                                                   Grid.Column="2" />
+                        </Grid>
+                        <TextBlock x:Name="SubtitleLabel"
+                                   VerticalAlignment="Top"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   Grid.Column="1"
+                                   Grid.Row="1"
+                                   MaxLines="1" />
 
-    <TextBlock x:Name="InfoLabel"
-               x:Load="False"
-               Style="{StaticResource InfoCaptionTextBlockStyle}"
-               VerticalAlignment="Center"
-               TextTrimming="CharacterEllipsis"
-               TextWrapping="NoWrap"
-               Grid.Column="2"
-               Grid.RowSpan="2"
-               MaxLines="1" />
-</Grid>
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          x:Load="False"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Grid.Column="2"
+                                          Grid.RowSpan="2" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
+    

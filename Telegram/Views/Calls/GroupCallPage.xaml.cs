@@ -1,31 +1,34 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
+
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
+using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
 using Telegram.Services.Calls;
 using Telegram.Streams;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Drawers;
 using Telegram.Views.Calls.Popups;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.Foundation;
-using Windows.System;
 using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -35,8 +38,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Calls
 {
@@ -49,7 +52,7 @@ namespace Telegram.Views.Calls
         }
     }
 
-    public sealed partial class GroupCallPage : WindowEx, IGroupCallDelegate, IPopupHost, IToastHost
+    public sealed partial class GroupCallPage : WindowEx, IGroupCallDelegate, IPopupHost
     {
         private bool _disposed;
 
@@ -69,6 +72,8 @@ namespace Telegram.Views.Calls
 
         private readonly DispatcherQueue _dispatcherQueue;
 
+        private readonly ObservableCollection<GroupCallMessage> _messages;
+
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         private bool _docked = true;
 
@@ -77,7 +82,7 @@ namespace Telegram.Views.Calls
             InitializeComponent();
             Logger.Info();
 
-            _visual = new CompositionVoiceBlobVisual(AudioBlob, 300, 300, 1.5f);
+            _visual = new CompositionVoiceBlobVisual(AudioBlob, 150, 150, 1.5f);
 
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
@@ -97,6 +102,7 @@ namespace Telegram.Views.Calls
             _call.NetworkStateChanged += OnNetworkStateChanged;
             _call.JoinedStateChanged += OnJoinedStateChanged;
             _call.VerificationStateChanged += OnVerificationStateChanged;
+            _call.MessagesChanged += OnMessagesChanged;
             _call.AudioLevelsUpdated += OnAudioLevelsUpdated;
             _call.MutedChanged += OnMutedChanged;
             _call.PropertyChanged += OnParticipantsChanged;
@@ -108,6 +114,14 @@ namespace Telegram.Views.Calls
 
                 ScrollingHost.ItemsSource = _call.Participants;
             }
+
+            _messages = new ObservableCollection<GroupCallMessage>(_call.Messages);
+            MessagesHost.ItemsSource = _messages;
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(_call.ClientService.Session);
+            MessageField.CustomEmoji = CustomEmoji;
+            MessageField.DataContext = EmojiPanel.DataContext;
+            MessageField.MaxLength = (int)_call.ClientService.Options.GroupCallMessageTextLengthMax;
+            MessageReactions.Initialize(_call.ClientService);
 
             Window.Current.SetTitleBar(TitleArea);
 
@@ -131,23 +145,6 @@ namespace Telegram.Views.Calls
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedInfo, true);
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedGlyph, true);
             //ViewportAspect.Constraint = new Size(16, 9);
-        }
-
-        public void ToastOpened(TeachingTip toast)
-        {
-            Resources.Remove("TeachingTip");
-            Resources.Add("TeachingTip", toast);
-        }
-
-        public void ToastClosed(TeachingTip toast)
-        {
-            if (Resources.TryGetValue("TeachingTip", out object cached))
-            {
-                if (cached == toast)
-                {
-                    Resources.Remove("TeachingTip");
-                }
-            }
         }
 
         public void PopupOpened()
@@ -233,6 +230,7 @@ namespace Telegram.Views.Calls
         private enum ButtonColors
         {
             None,
+            Connecting,
             Disabled,
             Unmute,
             Mute
@@ -291,6 +289,7 @@ namespace Telegram.Views.Calls
             _call.NetworkStateChanged -= OnNetworkStateChanged;
             _call.JoinedStateChanged -= OnJoinedStateChanged;
             _call.VerificationStateChanged -= OnVerificationStateChanged;
+            _call.MessagesChanged -= OnMessagesChanged;
             _call.AudioLevelsUpdated -= OnAudioLevelsUpdated;
             _call.MutedChanged -= OnMutedChanged;
             _call.PropertyChanged -= OnParticipantsChanged;
@@ -375,52 +374,17 @@ namespace Telegram.Views.Calls
                 }
 
                 BottomShadow.Visibility = Visibility.Collapsed;
-                BottomRoot.Padding = new Thickness(4, 8, 4, 8);
-                BottomBackground.Background = new AcrylicBrush { TintColor = Colors.Black, TintOpacity = 0, FallbackColor = Color.FromArgb(0xDD, 0, 0, 0) /*TintLuminosityOpacity = 0.5*/ }; //new SolidColorBrush(Color.FromArgb(0x99, 0x33, 0x33, 0x33));
-                BottomRoot.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Auto);
-
-                foreach (var column in BottomRoot.ColumnDefinitions)
-                {
-                    column.Width = new GridLength(48 + 12 + 12, GridUnitType.Pixel);
-                }
-
-                _visual.Scale = new Vector3(0.5f);
-                AudioBlob.Margin = new Thickness(-126, -126, -126, -126);
-
-                Audio.Width = Lottie.Width = 48;
-                Audio.Height = Lottie.Height = 48;
-                Audio.Margin = Lottie.Margin = new Thickness(12, 0, 12, 0);
-                Audio.CornerRadius = new CornerRadius(24);
+                BottomRoot.Padding = new Thickness(12, 8, 12, 8);
+                BottomRoot.Background = new AcrylicBrush { TintColor = Colors.Black, TintOpacity = 0, FallbackColor = Color.FromArgb(0xDD, 0, 0, 0) /*TintLuminosityOpacity = 0.5*/ }; //new SolidColorBrush(Color.FromArgb(0x99, 0x33, 0x33, 0x33));
+                BottomRoot.CornerRadius = new CornerRadius(4);
 
                 AudioInfo.Margin = new Thickness(0, 4, 0, 0);
 
-                Grid.SetColumn(Screen, 0);
-                Grid.SetColumn(ScreenInfo, 0);
-
-                Grid.SetColumn(Video, 1);
-                Grid.SetColumn(VideoInfo, 1);
-
-                Grid.SetColumn(AudioBlob, 2);
-                Grid.SetRow(AudioBlob, 1);
-                Grid.SetRowSpan(AudioBlob, 1);
-
-                Grid.SetColumn(Audio, 2);
-                Grid.SetRow(Audio, 1);
-                Grid.SetRowSpan(Audio, 1);
-
-                Grid.SetColumn(Lottie, 2);
-                Grid.SetRow(Lottie, 1);
-                Grid.SetRowSpan(Lottie, 1);
-
-                Grid.SetColumn(AudioInfo, 2);
-                Grid.SetRow(AudioInfo, 2);
-
-                Grid.SetColumn(Settings, 3);
-                Grid.SetColumn(SettingsInfo, 3);
+                MessagesHost.Padding = new Thickness(0, 0, 0, 132);
+                MessageRoot.Margin = new Thickness(24, 0, 24, 132);
 
                 UpdateVideo();
                 UpdateScreen();
-                Settings.Visibility = SettingsInfo.Visibility = Visibility.Visible;
             }
             else
             {
@@ -446,53 +410,18 @@ namespace Telegram.Views.Calls
                 }
 
                 BottomShadow.Visibility = Visibility.Visible;
-                BottomPanel.Padding = new Thickness(0, 0, 0, 0);
-                BottomRoot.Padding = new Thickness(0, 0, 0, 0);
-                BottomBackground.Background = null;
-                BottomRoot.RowDefinitions[0].Height = new GridLength(24, GridUnitType.Pixel);
+                BottomPanel.Padding = new Thickness(0);
+                BottomRoot.Padding = new Thickness(0);
+                BottomRoot.Background = null;
+                BottomRoot.CornerRadius = new CornerRadius(0);
 
-                foreach (var column in BottomRoot.ColumnDefinitions)
-                {
-                    column.Width = new GridLength(1, GridUnitType.Auto);
-                }
+                AudioInfo.Margin = new Thickness(0, 4, 0, 12);
 
-                _visual.Scale = new Vector3(1);
-                AudioBlob.Margin = new Thickness(-102, -102, -102, -102);
-
-                Audio.Width = Lottie.Width = 96;
-                Audio.Height = Lottie.Height = 96;
-                Audio.Margin = Lottie.Margin = new Thickness(48, 0, 48, 0);
-                Audio.CornerRadius = new CornerRadius(48);
-
-                AudioInfo.Margin = new Thickness(0, 8, 0, 24);
-
-                Grid.SetColumn(Screen, 0);
-                Grid.SetColumn(ScreenInfo, 0);
-
-                Grid.SetColumn(Video, 0);
-                Grid.SetColumn(VideoInfo, 0);
-
-                Grid.SetColumn(AudioBlob, 1);
-                Grid.SetRow(AudioBlob, 0);
-                Grid.SetRowSpan(AudioBlob, 3);
-
-                Grid.SetColumn(Audio, 1);
-                Grid.SetRow(Audio, 0);
-                Grid.SetRowSpan(Audio, 3);
-
-                Grid.SetColumn(Lottie, 1);
-                Grid.SetRow(Lottie, 0);
-                Grid.SetRowSpan(Lottie, 3);
-
-                Grid.SetColumn(AudioInfo, 1);
-                Grid.SetRow(AudioInfo, 3);
-
-                Grid.SetColumn(Settings, 0);
-                Grid.SetColumn(SettingsInfo, 0);
+                MessagesHost.Padding = new Thickness(0, 0, 0, 72);
+                MessageRoot.Margin = new Thickness(24, 0, 24, 72);
 
                 UpdateVideo();
                 UpdateScreen();
-                Settings.Visibility = SettingsInfo.Visibility = service.CanEnableVideo ? Visibility.Collapsed : Visibility.Visible;
             }
 
             await this.UpdateLayoutAsync();
@@ -645,27 +574,24 @@ namespace Telegram.Views.Calls
             var root = ElementComposition.GetElementVisual(BottomRoot);
             var list = ElementComposition.GetElementVisual(ScrollingHost);
             var audio1 = ElementComposition.GetElementVisual(AudioBlob);
-            var audio2 = ElementComposition.GetElementVisual(Lottie);
+            var audio2 = ElementComposition.GetElementVisual(AudioRoot);
             var audioInfo = ElementComposition.GetElementVisual(AudioInfo);
             var video = ElementComposition.GetElementVisual(Video);
             var videoInfo = ElementComposition.GetElementVisual(VideoInfo);
             var screen = ElementComposition.GetElementVisual(Screen);
             var screenInfo = ElementComposition.GetElementVisual(ScreenInfo);
-            var settings = ElementComposition.GetElementVisual(Settings);
-            var settingsInfo = ElementComposition.GetElementVisual(SettingsInfo);
+            //var settings = ElementComposition.GetElementVisual(Settings);
+            //var settingsInfo = ElementComposition.GetElementVisual(SettingsInfo);
             var leave = ElementComposition.GetElementVisual(Leave);
             var leaveInfo = ElementComposition.GetElementVisual(LeaveInfo);
 
             var expanded = next is ParticipantsGridMode.Expanded or ParticipantsGridMode.Docked;
 
-            audio1.CenterPoint = new Vector3(150, 150, 0);
-            audio2.CenterPoint = new Vector3(expanded ? 24 : 48, expanded ? 24 : 48, 0);
-
             screen.CenterPoint = new Vector3(24, 24, 0);
             screenInfo.CenterPoint = new Vector3(ScreenInfo.ActualSize / 2, 0);
 
-            settings.CenterPoint = new Vector3(24, 24, 0);
-            settingsInfo.CenterPoint = new Vector3(SettingsInfo.ActualSize / 2, 0);
+            //settings.CenterPoint = new Vector3(24, 24, 0);
+            //settingsInfo.CenterPoint = new Vector3(SettingsInfo.ActualSize / 2, 0);
 
             ElementCompositionPreview.SetIsTranslationEnabled(BottomRoot, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
@@ -676,8 +602,8 @@ namespace Telegram.Views.Calls
             ElementCompositionPreview.SetIsTranslationEnabled(VideoInfo, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Screen, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ScreenInfo, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(Settings, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(SettingsInfo, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(MessageInfo, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Leave, true);
             ElementCompositionPreview.SetIsTranslationEnabled(LeaveInfo, true);
 
@@ -713,34 +639,6 @@ namespace Telegram.Views.Calls
 
             listOffset.InsertKeyFrame(1, Vector3.Zero);
 
-            // Audio scale
-            var audioScale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-
-            if (expanded)
-            {
-                audioScale.InsertKeyFrame(0, new Vector3(2, 2, 1));
-            }
-            else
-            {
-                audioScale.InsertKeyFrame(0, new Vector3(0.5f, 0.5f, 0));
-            }
-
-            audioScale.InsertKeyFrame(1, Vector3.One);
-
-            // Audio info offset
-            var audioInfoOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-
-            if (expanded)
-            {
-                audioInfoOffset.InsertKeyFrame(0, new Vector3(0, 26, 0));
-            }
-            else
-            {
-                audioInfoOffset.InsertKeyFrame(0, new Vector3(0, -26, 0));
-            }
-
-            audioInfoOffset.InsertKeyFrame(1, Vector3.Zero);
-
             // Other offset
             var otherOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
@@ -771,10 +669,8 @@ namespace Telegram.Views.Calls
 
             rootOffset.Duration =
                 listOffset.Duration =
-                audioScale.Duration =
                 otherScale.Duration =
-                otherOffset.Duration =
-                audioInfoOffset.Duration = TimeSpan.FromMilliseconds(300);
+                otherOffset.Duration = TimeSpan.FromMilliseconds(300);
             //rootOffset.DelayTime =
             //    audioScale.DelayTime =
             //    leaveOffset.DelayTime =
@@ -792,11 +688,11 @@ namespace Telegram.Views.Calls
 
             root.StartAnimation("Translation", rootOffset);
             list.StartAnimation("Translation", listOffset);
-            audio1.StartAnimation("Scale", audioScale);
-            audio2.StartAnimation("Scale", audioScale);
-            audioInfo.StartAnimation("Translation", audioInfoOffset);
-            screen.StartAnimation("Scale", otherScale);
-            screenInfo.StartAnimation("Scale", otherScale);
+            //audio1.StartAnimation("Scale", audioScale);
+            //audio2.StartAnimation("Scale", audioScale);
+            //audioInfo.StartAnimation("Translation", audioInfoOffset);
+            //screen.StartAnimation("Scale", otherScale);
+            //screenInfo.StartAnimation("Scale", otherScale);
             screen.StartAnimation("Translation", otherOffset);
             screenInfo.StartAnimation("Translation", otherOffset);
             leave.StartAnimation("Translation", otherOffset);
@@ -806,15 +702,15 @@ namespace Telegram.Views.Calls
             {
                 video.StartAnimation("Translation", otherOffset);
                 videoInfo.StartAnimation("Translation", otherOffset);
-                settings.StartAnimation("Scale", otherScale);
-                settingsInfo.StartAnimation("Scale", otherScale);
-                settings.StartAnimation("Translation", otherOffset);
-                settingsInfo.StartAnimation("Translation", otherOffset);
+                //settings.StartAnimation("Scale", otherScale);
+                //settingsInfo.StartAnimation("Scale", otherScale);
+                //settings.StartAnimation("Translation", otherOffset);
+                //settingsInfo.StartAnimation("Translation", otherOffset);
             }
             else
             {
-                settings.Scale = Vector3.One;
-                settingsInfo.Scale = Vector3.One;
+                //settings.Scale = Vector3.One;
+                //settingsInfo.Scale = Vector3.One;
             }
         }
 
@@ -847,7 +743,7 @@ namespace Telegram.Views.Calls
                 Menu.Visibility = Visibility.Collapsed;
                 LogoBasic.Visibility = Visibility.Visible;
 
-                Settings.Visibility = SettingsInfo.Visibility = Visibility.Visible;
+                Message.Visibility = MessageInfo.Visibility = Visibility.Collapsed;
                 Video.Visibility = VideoInfo.Visibility = Visibility.Collapsed;
             }
             else
@@ -862,18 +758,27 @@ namespace Telegram.Views.Calls
                 if (_mode != ParticipantsGridMode.Compact)
                 {
                     Menu.Visibility = Visibility.Collapsed;
-                    Settings.Visibility = SettingsInfo.Visibility = Visibility.Visible;
+                    Message.Visibility = MessageInfo.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     Menu.Visibility = _call.CanEnableVideo ? Visibility.Visible : Visibility.Collapsed;
-                    Settings.Visibility = SettingsInfo.Visibility = _call.CanEnableVideo ? Visibility.Collapsed : Visibility.Visible;
+                    Message.Visibility = MessageInfo.Visibility = Visibility.Visible;
                 }
 
                 Menu.Visibility = Visibility.Visible;
                 LogoBasic.Visibility = Visibility.Collapsed;
 
                 SubtitleInfo.Text = Locale.Declension(Strings.R.Participants, call.ParticipantCount);
+
+                Message.Visibility = MessageInfo.Visibility = call.CanSendMessages
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
+                if (!call.CanSendMessages)
+                {
+                    ShowHideMessage(false);
+                }
 
                 UpdateVideo();
                 UpdateScreen();
@@ -899,6 +804,23 @@ namespace Telegram.Views.Calls
         private void OnVerificationStateChanged(VoipGroupCall sender, VoipGroupCallVerificationStateChangedEventArgs args)
         {
             this.BeginOnUIThread(() => VerificationState.UpdateState(args.Generation, args.Emojis));
+        }
+
+        private void OnMessagesChanged(VoipGroupCall sender, VoipGroupCallMessagesChangedEventArgs args)
+        {
+            this.BeginOnUIThread(() => UpdateMessages(args.Message, args.Deleted));
+        }
+
+        private void UpdateMessages(GroupCallMessage message, bool expired)
+        {
+            if (expired)
+            {
+                _messages.Remove(message);
+            }
+            else
+            {
+                _messages.Add(message);
+            }
         }
 
         private void OnAudioLevelsUpdated(object sender, IList<VoipGroupParticipant> levels)
@@ -1100,45 +1022,46 @@ namespace Telegram.Views.Calls
             UpdateScreen();
         }
 
-        private void UpdateNetworkState(GroupCallParticipant currentUser, bool? connected = null)
+        private void UpdateNetworkState(GroupCallParticipant currentUser, bool connected)
         {
             if (_call.ScheduledStartDate > 0)
             {
                 if (_call.CanBeManaged)
                 {
-                    SetButtonState(ButtonState.Start);
+                    SetButtonState(ButtonState.Start, connected);
                 }
                 else
                 {
-                    SetButtonState(_call.EnabledStartNotification ? ButtonState.SetReminder : ButtonState.CancelReminder);
+                    SetButtonState(_call.EnabledStartNotification ? ButtonState.SetReminder : ButtonState.CancelReminder, connected);
                 }
             }
             //else if (currentUser != null && currentUser.CanBeUnmutedForAllUsers)
             else if (currentUser != null && currentUser.CanUnmuteSelf && (_call.IsMuted || currentUser.IsMutedForAllUsers))
             {
-                SetButtonState(ButtonState.Mute);
+                SetButtonState(ButtonState.Mute, connected);
             }
             //else if (currentUser != null && currentUser.CanBeMutedForAllUsers)
             else if (currentUser != null && (!_call.IsMuted || !currentUser.IsMutedForAllUsers))
             {
-                SetButtonState(ButtonState.Unmute);
+                SetButtonState(ButtonState.Unmute, connected);
             }
             else if (currentUser != null && currentUser.IsHandRaised)
             {
-                SetButtonState(ButtonState.HandRaised);
+                SetButtonState(ButtonState.HandRaised, connected);
             }
             else if (_call.IsJoined)
             {
-                SetButtonState(ButtonState.RaiseHand);
+                SetButtonState(ButtonState.RaiseHand, connected);
             }
         }
 
         private ButtonState _prevState;
         private ButtonColors _prevColors;
+        private bool _prevConnected;
 
-        private void SetButtonState(ButtonState state)
+        private void SetButtonState(ButtonState state, bool connected)
         {
-            if (state == _prevState)
+            if (state == _prevState && connected == _prevConnected)
             {
                 return;
             }
@@ -1232,10 +1155,25 @@ namespace Telegram.Views.Calls
             }
 
             _prevState = state;
+            _prevConnected = connected;
+
+            if (state is not ButtonState.CancelReminder and not ButtonState.SetReminder and not ButtonState.Start && !connected)
+            {
+                colors = ButtonColors.Connecting;
+            }
 
             if (colors == _prevColors)
             {
                 return;
+            }
+
+            if (connected)
+            {
+                UnloadObject(Indeterminate);
+            }
+            else
+            {
+                FindName(nameof(Indeterminate));
             }
 
             switch (colors)
@@ -1243,17 +1181,22 @@ namespace Telegram.Views.Calls
                 case ButtonColors.Disabled:
                     _visual.SetColorStops(0xff57A4FE, 0xffF05459, 0xff766EE9);
                     StartAnimating();
-                    Settings.Background = new SolidColorBrush(Color.FromArgb(0x66, 0x76, 0x6E, 0xE9));
+                    Message.Background = new SolidColorBrush(Color.FromArgb(0x66, 0x76, 0x6E, 0xE9));
                     break;
                 case ButtonColors.Unmute:
                     _visual.SetColorStops(0xFF0078ff, 0xFF33c659);
                     StartAnimating();
-                    Settings.Background = new SolidColorBrush(Color.FromArgb(0x66, 0x33, 0xc6, 0x59));
+                    Message.Background = new SolidColorBrush(Color.FromArgb(0x66, 0x33, 0xc6, 0x59));
                     break;
                 case ButtonColors.Mute:
                     _visual.SetColorStops(0xFF59c7f8, 0xFF0078ff);
                     StartAnimating();
-                    Settings.Background = new SolidColorBrush(Color.FromArgb(0x66, 0x00, 0x78, 0xff));
+                    Message.Background = new SolidColorBrush(Color.FromArgb(0x66, 0x00, 0x78, 0xff));
+                    break;
+                case ButtonColors.Connecting:
+                    _visual.SetColorStops(0xFF3e3f41, 0xFF3e3f41);
+                    StartAnimating();
+                    Message.Background = new SolidColorBrush(Color.FromArgb(0x66, 0x3e, 0x3f, 0x41));
                     break;
             }
 
@@ -1297,6 +1240,9 @@ namespace Telegram.Views.Calls
                     case ButtonColors.Mute:
                         Video.Background = new SolidColorBrush(Color.FromArgb((byte)(_call.IsVideoEnabled ? 0xFF : 0x66), 0x00, 0x78, 0xff));
                         break;
+                    case ButtonColors.Connecting:
+                        Video.Background = new SolidColorBrush(Color.FromArgb(0x66, 0x3e, 0x3f, 0x41));
+                        break;
                 }
 
                 Video.Glyph = service.IsVideoEnabled ? Icons.VideoFilled : Icons.VideoOffFilled;
@@ -1316,7 +1262,7 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            if (_mode != ParticipantsGridMode.Compact && service.CanEnableVideo && VoipScreenCapture.IsSupported())
+            if (service.CanEnableVideo && VoipScreenCapture.IsSupported())
             {
                 switch (_prevColors)
                 {
@@ -1328,6 +1274,9 @@ namespace Telegram.Views.Calls
                         break;
                     case ButtonColors.Mute:
                         Screen.Background = new SolidColorBrush(Color.FromArgb((byte)(service.IsScreenSharing ? 0xFF : 0x66), 0x00, 0x78, 0xff));
+                        break;
+                    case ButtonColors.Connecting:
+                        Screen.Background = new SolidColorBrush(Color.FromArgb(0x66, 0x3e, 0x3f, 0x41));
                         break;
                 }
 
@@ -1410,6 +1359,11 @@ namespace Telegram.Views.Calls
 
                     flyout.CreateFlyoutItem(StartScreenSharing, Strings.VoipChatStartScreenCapture, Icons.ShareScreenStart);
                 }
+            }
+
+            if (_call.CanToggleAreMessagesAllowed)
+            {
+                flyout.CreateFlyoutItem(ToggleAreMessagesAllowed, _call.AreMessagesAllowed ? Strings.VoipChannelDisableComments : Strings.VoipChannelEnableComments, _call.AreMessagesAllowed ? Icons.ChatOff : Icons.Chat);
             }
 
             if (_call.ScheduledStartDate == 0)
@@ -1512,15 +1466,13 @@ namespace Telegram.Views.Calls
 
             if (flyout.Items.Count > 0)
             {
-                if (sender == Settings)
-                {
-                    flyout.ShowAt(sender as Button, FlyoutPlacementMode.TopEdgeAlignedLeft);
-                }
-                else
-                {
-                    flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedLeft);
-                }
+                flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedLeft);
             }
+        }
+
+        private void ToggleAreMessagesAllowed()
+        {
+            _call.ClientService.Send(new ToggleGroupCallAreMessagesAllowed(_call.Id, !_call.AreMessagesAllowed));
         }
 
         private async void SetTitle()
@@ -1570,9 +1522,9 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private async void ShareInviteLink()
+        private void ShareInviteLink()
         {
-            await this.ShowPopupAsync(_call.ClientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationGroupCall(_call.Id));
+            this.ShowPopup(_call.ClientService.Session, new ChooseChatsPopup(), new ChooseChatsConfigurationGroupCall(_call.Id, false));
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
@@ -1643,12 +1595,12 @@ namespace Telegram.Views.Calls
 
             if (_call.ClientService.TryGetUser(participant.ParticipantId, out Telegram.Td.Api.User user))
             {
-                photo.SetUser(_call.ClientService, user, 36);
+                photo.Source = ProfilePictureSource.User(_call.ClientService, user);
                 title.Text = user.FullName();
             }
             else if (_call.ClientService.TryGetChat(participant.ParticipantId, out Chat chat))
             {
-                photo.SetChat(_call.ClientService, chat, 36);
+                photo.Source = ProfilePictureSource.Chat(_call.ClientService, chat);
                 title.Text = _call.ClientService.GetTitle(chat);
             }
 
@@ -1892,7 +1844,7 @@ namespace Telegram.Views.Calls
             if (_mode == ParticipantsGridMode.Compact)
             {
                 var scrollingHost = ScrollingHost.GetScrollViewer();
-                scrollingHost?.ChangeView(null, 0, null, false);
+                scrollingHost?.TryChangeView(null, 0, null, false);
             }
         }
 
@@ -1904,38 +1856,6 @@ namespace Telegram.Views.Calls
             var participant = (element.Tag ?? ScrollingHost.ItemFromContainer(sender)) as GroupCallParticipant;
 
             var call = _call;
-
-            var slider = new MenuFlyoutSlider
-            {
-                Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3),
-                TextValueConverter = new TextValueProvider(newValue => string.Format("{0:P0}", newValue / 100)),
-                IconValueConverter = new IconValueProvider(newValue => newValue switch
-                {
-                    double n when n > 66 => Icons.Speaker3,
-                    double n when n > 33 => Icons.Speaker2,
-                    double n when n > 0 => Icons.Speaker1,
-                    _ => Icons.SpeakerOff
-                }),
-                FontWeight = FontWeights.SemiBold,
-                Value = participant.VolumeLevel / 100d,
-                Minimum = 0,
-                Maximum = 200
-            };
-
-            var debounder = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.HoldingThrottle, handler => slider.ValueChanged += new RangeBaseValueChangedEventHandler(handler), handler => slider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
-            debounder.Invoked += (s, args) =>
-            {
-                if (args.NewValue > 0)
-                {
-                    _call.ClientService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.ParticipantId, (int)(args.NewValue * 100)));
-                }
-                else
-                {
-                    _call.ClientService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, participant.ParticipantId, true));
-                }
-            };
-
-            flyout.Items.Add(slider);
 
             if (participant.IsCurrentUser)
             {
@@ -1958,6 +1878,38 @@ namespace Telegram.Views.Calls
             }
             else
             {
+                var slider = new MenuFlyoutSlider
+                {
+                    Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3),
+                    TextValueConverter = new TextValueProvider(newValue => string.Format("{0:P0}", newValue / 100)),
+                    IconValueConverter = new IconValueProvider(newValue => newValue switch
+                    {
+                        double n when n > 66 => Icons.Speaker3,
+                        double n when n > 33 => Icons.Speaker2,
+                        double n when n > 0 => Icons.Speaker1,
+                        _ => Icons.SpeakerOff
+                    }),
+                    FontWeight = FontWeights.SemiBold,
+                    Value = participant.VolumeLevel / 100d,
+                    Minimum = 0,
+                    Maximum = 200
+                };
+
+                var debounder = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.HoldingThrottle, handler => slider.ValueChanged += new RangeBaseValueChangedEventHandler(handler), handler => slider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
+                debounder.Invoked += (s, args) =>
+                {
+                    if (args.NewValue > 0)
+                    {
+                        _call.ClientService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.ParticipantId, (int)(args.NewValue * 100)));
+                    }
+                    else
+                    {
+                        _call.ClientService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, participant.ParticipantId, true));
+                    }
+                };
+
+                flyout.Items.Add(slider);
+
                 if (participant.HasVideoInfo())
                 {
                     //if (participant.ParticipantId.IsEqual(_pinnedParticipant?.ParticipantId))
@@ -2127,7 +2079,7 @@ namespace Telegram.Views.Calls
             }
             else
             {
-                var sink = new VoipVideoOutputSink(cell.Visual, mirrored);
+                var sink = new VoipVideoOutputSink(PlaceholderHelper.Foreground.Device, cell.Visual, mirrored, false);
                 reference = new VoipVideoOutputReference(sink, cell.Visual.Brush as CompositionSurfaceBrush);
 
                 _sinks[endpointId] = reference;
@@ -2157,9 +2109,9 @@ namespace Telegram.Views.Calls
                             descriptions[child.EndpointId] =
                                 new VoipVideoChannelInfo(
                                     child.Participant.AudioSourceId,
-                                    child.Participant.ParticipantId,
+                                    child.Participant.ParticipantId.ToId(),
                                     child.EndpointId,
-                                    child.VideoInfo.SourceGroups,
+                                    child.VideoInfo.SourceGroups.ToCalls(),
                                     child.Quality,
                                     child.Quality);
                         }
@@ -2208,6 +2160,11 @@ namespace Telegram.Views.Calls
         private void ShowHideInfo(bool show)
         {
             if (_infoCollapsed == !show)
+            {
+                return;
+            }
+
+            if (!_messageCollapsed && !show)
             {
                 return;
             }
@@ -2302,6 +2259,380 @@ namespace Telegram.Views.Calls
 
             geometry.Size = e.NewSize.ToVector2();
             geometry.CornerRadius = new Vector2(8);
+        }
+
+        private void MessagesHost_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is GroupCallMessageCell content && args.Item is GroupCallMessage message)
+            {
+                content.Update(_call.ClientService, message);
+            }
+        }
+
+        private void MessageField_TextChanged(object sender, RoutedEventArgs e)
+        {
+            ShowHideReactions(MessageField.IsEmpty && !_messageCollapsed);
+            SendMessage.IsEnabled = !MessageField.IsEmpty;
+        }
+
+        private bool _reactionsCollapsed = true;
+
+        private void ShowHideReactions(bool show)
+        {
+            if (_reactionsCollapsed != show)
+            {
+                return;
+            }
+
+            _reactionsCollapsed = !show;
+            MessageReactions.Visibility = Visibility.Visible;
+            MessageReactionsPlaceholder.Visibility = show
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            var visual = ElementComposition.GetElementVisual(MessageReactions);
+            visual.CenterPoint = new Vector3(264 / 2, 112 - 20, 0);
+
+            var compositor = visual.Compositor;
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (_reactionsCollapsed)
+                {
+                    MessageReactions.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var scale = compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
+            scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
+            scale.Duration = Constants.SoftAnimation;
+
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+            opacity.Duration = Constants.SoftAnimation;
+
+            visual.StartAnimation("Scale", scale);
+            visual.StartAnimation("Opacity", opacity);
+            batch.End();
+        }
+
+        private bool _messageCollapsed = true;
+
+        private void ShowHideMessage(bool show)
+        {
+            if (_messageCollapsed != show)
+            {
+                return;
+            }
+
+            ShowHideReactions(show);
+
+            _messageCollapsed = !show;
+            MessagePanel.Visibility = Visibility.Visible;
+            MessagePlaceholder.Visibility = show
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            Message.Glyph = _messageCollapsed
+                ? Icons.ChatFilled
+                : Icons.DismissFilled;
+
+            var width = Math.Min(MessagesHost.ActualSize.X - 48, 320);
+            var transform = Message.TransformToVector2(MessageRoot);
+            var offset = transform.X;
+
+            var visual = ElementComposition.GetElementVisual(MessagePanel);
+            ElementCompositionPreview.SetIsTranslationEnabled(MessagePanel, true);
+
+            visual.CenterPoint = new Vector3(MessageRoot.ActualSize.X - 24, 48 + 16, 0);
+
+            var compositor = visual.Compositor;
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                visual.Clip = null;
+
+                if (_messageCollapsed)
+                {
+                    MessagePanel.Visibility = Visibility.Collapsed;
+                    MessageField.ClearText();
+                }
+                else
+                {
+                    MessageField.Focus(FocusState.Keyboard);
+                }
+            };
+
+            var rectangle = compositor.CreateRoundedRectangleGeometry();
+            rectangle.CornerRadius = new Vector2(24);
+            rectangle.Size = new Vector2(48);
+
+            visual.Clip = compositor.CreateGeometricClip(rectangle);
+
+            var resize = compositor.CreateVector2KeyFrameAnimation();
+            resize.InsertKeyFrame(show ? 0 : 1, new Vector2(48));
+            resize.InsertKeyFrame(show ? 1 : 0, new Vector2(width, 48));
+            resize.Duration = Constants.SoftAnimation;
+
+            var remove = compositor.CreateScalarKeyFrameAnimation();
+            remove.InsertKeyFrame(show ? 0 : 1, MessageRoot.ActualSize.X - 48);
+            remove.InsertKeyFrame(show ? 1 : 0, 0);
+            remove.Duration = Constants.SoftAnimation;
+
+            var translation = compositor.CreateScalarKeyFrameAnimation();
+            translation.InsertKeyFrame(show ? 0 : 1, offset - MessageRoot.ActualSize.X + 48);
+            translation.InsertKeyFrame(show ? 1 : 0, 0);
+            translation.Duration = Constants.SoftAnimation;
+
+            var scale = compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
+            scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
+
+            //if (!show)
+            //{
+            //    //scale.DelayTime = show ? TimeSpan.Zero : Constants.FastAnimation;
+            //    scale.Duration = Constants.SoftAnimation;
+            //}
+            //else
+            {
+                //scale.DelayTime = scale.DelayTime = show ? TimeSpan.Zero : Constants.FastAnimation;
+                scale.Duration = Constants.SoftAnimation;
+            }
+
+            rectangle.StartAnimation("Size", resize);
+            rectangle.StartAnimation("Offset.X", remove);
+            visual.StartAnimation("Scale", scale);
+            visual.StartAnimation("Translation.X", translation);
+            batch.End();
+        }
+
+        private void MessageField_Accept(FormattedTextBox sender, EventArgs args)
+        {
+            _call.SendMessage(sender.GetFormattedText(true));
+        }
+
+        private void Emoji_Click(object sender, RoutedEventArgs e)
+        {
+            // We don't want to unfocus the text are when the context menu gets opened
+            EmojiPanel.ViewModel.Update();
+            EmojiFlyout.ShowAt(MessagePanel, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
+        }
+
+        private void Emoji_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)
+        {
+            if (e.ClickedItem is EmojiData emoji)
+            {
+                MessageField.InsertText(emoji.Value);
+                MessageField.Focus(FocusState.Programmatic);
+            }
+            else if (e.ClickedItem is StickerViewModel sticker)
+            {
+                MessageField.InsertEmoji(sticker);
+                MessageField.Focus(FocusState.Programmatic);
+            }
+        }
+
+        private void Send_Click(object sender, RoutedEventArgs e)
+        {
+            _call.SendMessage(MessageField.GetFormattedText(true));
+        }
+
+        private void MessageField_GotFocus(object sender, RoutedEventArgs e)
+        {
+
+
+        }
+
+        private void MessageField_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (MessageField.IsEmpty)
+            {
+                //MessagePanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void Message_Click(object sender, RoutedEventArgs e)
+        {
+            ShowHideMessage(_messageCollapsed);
+        }
+
+        private void MessageReactions_ItemClick(object sender, AvailableReaction e)
+        {
+            if (e.Type is ReactionTypeEmoji emoji)
+            {
+                _call.SendMessage(emoji.Emoji.AsFormattedText());
+            }
+            else if (e.Type is ReactionTypeCustomEmoji customEmoji)
+            {
+                _call.SendMessage(ClientEx.CustomEmoji(customEmoji.CustomEmojiId));
+            }
+
+            ShowHideMessage(false);
+        }
+
+        private void MessagePill_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var transform = Message.TransformToPoint(MessageRoot);
+            var offset = transform.X + Message.ActualWidth;
+
+            var width = e.NewSize.Width;
+            var height = e.NewSize.Height;
+            var haheight = 24;
+
+            var figure = new PathFigure();
+            figure.StartPoint = new Point(haheight, 0);
+            figure.Segments.Add(new LineSegment { Point = new Point(width - haheight, 0) });
+            figure.Segments.Add(new ArcSegment { Point = new Point(width, haheight), Size = new Size(haheight, haheight), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+            figure.Segments.Add(new LineSegment { Point = new Point(width, height - haheight) });
+            figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight, height), Size = new Size(haheight, haheight), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+
+            figure.Segments.Add(new LineSegment { Point = new Point(offset, height) });
+            //figure.Segments.Add(new LineSegment { Point = new Point(offset + 7, height + 7) });
+
+            figure.Segments.Add(new ArcSegment { Point = new Point(offset - 14, height), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+            //figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight - 14, height), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+
+            figure.Segments.Add(new LineSegment { Point = new Point(haheight, height) });
+            figure.Segments.Add(new ArcSegment { Point = new Point(0, height - haheight), Size = new Size(haheight, haheight), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+            figure.Segments.Add(new LineSegment { Point = new Point(0, haheight) });
+            figure.Segments.Add(new ArcSegment { Point = new Point(haheight, 0), Size = new Size(haheight, haheight), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+
+            var path = new PathGeometry();
+            path.Figures.Add(figure);
+
+            var data = new GeometryGroup();
+            data.FillRule = FillRule.Nonzero;
+            data.Children.Add(path);
+
+            //figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight - 14, height), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+
+            data.Children.Add(new EllipseGeometry { Center = new Point(offset - 8 + 5, height + 20 - 7), RadiusX = 3.5f, RadiusY = 3.5f });
+            //data.Children.Add(new EllipseGeometry { Center = new Point(width - haheight - 8 + 5, height + 20 - 7), RadiusX = 3.5f, RadiusY = 3.5f });
+
+            MessagePill.Data = data;
+        }
+
+        private void MessageRoot_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var next = e.NewSize.ToVector2();
+            var prev = e.PreviousSize.ToVector2();
+
+            var panel = MessagesHost.ItemsPanelRoot;
+            if (panel == null)
+            {
+                return;
+            }
+
+            var visual = ElementComposition.GetElementVisual(panel);
+            ElementCompositionPreview.SetIsTranslationEnabled(panel, true);
+
+            var compositor = visual.Compositor;
+            var translation = compositor.CreateScalarKeyFrameAnimation();
+            translation.InsertKeyFrame(0, next.Y - prev.Y);
+            translation.InsertKeyFrame(1, 0);
+            translation.Duration = Constants.SoftAnimation;
+
+            visual.StartAnimation("Translation.Y", translation);
+
+        }
+
+        private void MessagePanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MessagePlaceholder.Height = e.NewSize.Height + MessagePanel.Margin.Top + MessagePanel.Margin.Bottom;
+        }
+
+        private void MessageReactions_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MessageReactionsPlaceholder.Height = e.NewSize.Height + MessageReactions.Margin.Top + MessageReactions.Margin.Bottom;
+        }
+
+        private void MessagesHost_Loaded(object sender, RoutedEventArgs e)
+        {
+            var scrollingHost = MessagesHost.GetScrollViewer();
+            scrollingHost?.VerticalAnchorRatio = 1.0;
+
+            AddHandler(PointerPressedEvent, new PointerEventHandler(Test), true);
+        }
+
+        private void Test(object sender, PointerRoutedEventArgs e)
+        {
+            var children = VisualTreeHelper.FindElementsInHostCoordinates(e.GetCurrentPoint(this).Position, this).ToList();
+            var a = 1 + 2;
+        }
+    }
+
+    public partial class BottomPanel : Grid
+    {
+        private int _columns;
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var columns = 0;
+            var availableWidth = Math.Min(availableSize.Width - Padding.Left - Padding.Right, 288);
+
+            for (int i = 0; i < Children.Count; i += 2)
+            {
+                var child = Children[i];
+                if (child.Visibility == Visibility.Collapsed)
+                {
+                    continue;
+                }
+
+                columns++;
+            }
+
+            var column = new Size(Math.Max(0, (availableWidth - ColumnSpacing * (columns - 1)) / columns), availableSize.Height);
+            var height = 0d;
+
+            for (int i = 0; i < Children.Count; i += 2)
+            {
+                var child0 = Children[i];
+                var child1 = Children[i + 1];
+                child0.Measure(column);
+                child1.Measure(availableSize);
+
+                if (child0.Visibility == Visibility.Visible)
+                {
+                    height = Math.Max(height, child0.DesiredSize.Height + child1.DesiredSize.Height);
+                }
+            }
+
+            _columns = columns;
+            return new Size(availableWidth + Padding.Left + Padding.Right, height + Padding.Top + Padding.Bottom);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var x = Padding.Left;
+            var y = Padding.Top;
+
+            var availableWidth = finalSize.Width - Padding.Left - Padding.Right;
+            var column = (availableWidth - ColumnSpacing * (_columns - 1)) / _columns;
+
+            for (int i = 0; i < Children.Count; i += 2)
+            {
+                var child0 = Children[i];
+                var child1 = Children[i + 1];
+
+                var offset0 = (x + column / 2) - child0.DesiredSize.Width / 2;
+                var offset1 = (x + column / 2) - child1.DesiredSize.Width / 2;
+
+                child0.Arrange(new Rect(offset0, y, child0.DesiredSize.Width, child0.DesiredSize.Height));
+                child1.Arrange(new Rect(offset1, y + child0.DesiredSize.Height, child1.DesiredSize.Width, child1.DesiredSize.Height));
+
+                if (child0.Visibility == Visibility.Visible)
+                {
+                    x += column + ColumnSpacing;
+                }
+            }
+
+            return finalSize;
         }
     }
 
@@ -2463,6 +2794,8 @@ namespace Telegram.Views.Calls
             var animate = _prevMode != _mode || _prevCount != Children.Count;
             var pinned = false;
 
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
             for (int row = 0; row < rows; row++)
             {
                 var rowColumns = columns;
@@ -2486,17 +2819,23 @@ namespace Telegram.Views.Calls
 
                 for (int column = 0; column < rowColumns; column++)
                 {
+                    var cell = Children[index] as GroupCallParticipantGridCell;
+                    if (cell == null)
+                    {
+                        continue;
+                    }
+
                     var size = SafeSize(finalWidth / (_mode == ParticipantsGridMode.Compact ? rowColumns : columns), finalHeight / rows);
                     var point = new Point(x + column * size.Width, row * size.Height);
 
-                    if (Children[index] is GroupCallParticipantGridCell cell && cell.IsSelected)
+                    if (cell.IsSelected)
                     {
                         size = SafeSize(finalWidth, _mode == ParticipantsGridMode.Compact ? finalWidth / 4 * 2 : finalHeight);
                         point = new Point(0, 0);
                         pinned = true;
                     }
 
-                    Children[index].Arrange(new Rect(point, size));
+                    cell.Arrange(new Rect(point, size));
 
                     Rect prev;
                     if (index < _prev.Count)
@@ -2512,9 +2851,9 @@ namespace Telegram.Views.Calls
                     {
                         if (prev.X != point.X || prev.Y != point.Y)
                         {
-                            ElementCompositionPreview.SetIsTranslationEnabled(Children[index], true);
+                            ElementCompositionPreview.SetIsTranslationEnabled(cell, true);
 
-                            var visual = ElementComposition.GetElementVisual(Children[index]);
+                            var visual = ElementComposition.GetElementVisual(cell);
                             var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                             offset.InsertKeyFrame(0, new Vector3((float)(prev.X - point.X), (float)(prev.Y - point.Y), 0));
                             offset.InsertKeyFrame(1, Vector3.Zero);
@@ -2524,12 +2863,16 @@ namespace Telegram.Views.Calls
 
                         if (prev.Width != size.Width || prev.Height != size.Height)
                         {
-                            var visual = ElementComposition.GetElementVisual(Children[index]);
+                            var visual = ElementComposition.GetElementVisual(cell);
                             var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                             scale.InsertKeyFrame(0, new Vector3((float)(prev.Width / size.Width), (float)(prev.Height / size.Height), 0));
                             scale.InsertKeyFrame(1, Vector3.One);
                             scale.Duration = TimeSpan.FromMilliseconds(300);
                             visual.StartAnimation("Scale", scale);
+
+                            var factor = BootStrapper.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
+                            factor.SetReferenceParameter("content", visual);
+                            cell.StartAnimation(factor);
                         }
 
                         // Save previous position only when there's an animation-
@@ -2548,6 +2891,8 @@ namespace Telegram.Views.Calls
                     index++;
                 }
             }
+
+            batch.End();
 
             for (int i = _prev.Count - 1; i >= Children.Count; i--)
             {

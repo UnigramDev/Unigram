@@ -24,7 +24,7 @@ namespace winrt::Telegram::Native::implementation
 
         }
 
-        void ReadCallback(int64_t count)
+        void ReadCallback(int64_t count, int64_t buffer, int64_t& bytesRead)
         {
 
         }

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -42,7 +43,7 @@ namespace Telegram
                 typeof(ILifetimeService),
                 typeof(ILocaleService),
                 typeof(IPasscodeService),
-                typeof(IPlaybackService)
+                typeof(IShortcutsService),
             };
 
             _singletons = new List<(Type, Type)>
@@ -60,13 +61,11 @@ namespace Telegram
                 ( typeof(ISettingsService), typeof(SettingsService) ),
                 ( typeof(ISettingsSearchService), typeof(SettingsSearchService) ),
                 ( typeof(ICloudUpdateService), typeof(CloudUpdateService) ),
-                ( typeof(IShortcutsService), typeof(ShortcutsService) ),
                 ( typeof(IDeviceInfoService), typeof(DeviceInfoService) ),
                 ( typeof(IEventAggregator), typeof(EventAggregator) ),
                 ( typeof(ILocationService), typeof(LocationService) ),
                 ( typeof(IThemeService), typeof(ThemeService) ),
                 ( typeof(IViewService), typeof(ViewService) ),
-                ( typeof(ISessionService), typeof(SessionService) ),
                 ( typeof(IStorageService), typeof(StorageService) ),
                 ( typeof(ITranslateService), typeof(TranslateService) ),
                 ( typeof(IProfilePhotoService), typeof(ProfilePhotoService) ),
@@ -104,6 +103,7 @@ namespace Telegram
                 typeof(ProfileBotsTabViewModel),
                 typeof(ProfileGiftsTabViewModel),
                 typeof(ProfileSavedChatsTabViewModel),
+                typeof(ProfileTopicsTabViewModel),
                 typeof(UserEditViewModel),
                 typeof(UserAffiliateViewModel),
                 typeof(SupergroupEditViewModel),
@@ -157,6 +157,7 @@ namespace Telegram
                 typeof(SettingsPrivacyAllowFindingByPhoneNumberViewModel),
                 typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel),
                 typeof(SettingsPrivacyShowPhotoViewModel),
+                typeof(SettingsPrivacyShowProfileAudioViewModel),
                 typeof(SettingsPrivacyShowStatusViewModel),
                 typeof(SettingsPrivacyShowBioViewModel),
                 typeof(SettingsPrivacyShowBirthdateViewModel),
@@ -167,6 +168,7 @@ namespace Telegram
                 typeof(SettingsProfileColorViewModel),
                 typeof(SupergroupProfileColorViewModel),
                 typeof(SettingsPasswordViewModel),
+                typeof(SettingsPasskeysViewModel),
                 typeof(SettingsPasscodeViewModel),
                 typeof(SettingsStickersViewModel),
                 typeof(SettingsLanguageViewModel),
@@ -249,11 +251,11 @@ namespace Telegram
             var singletonBucket = new Dictionary<Type, Type>();
 
             var builder = new FormattedBuilder();
-            builder.AppendLine("namespace Telegram.Views");
+            builder.AppendLine("namespace Telegram.Services");
             builder.AppendLine("{");
-            builder.AppendLine("public partial class TypeLocator");
+            builder.AppendLine("public partial class SessionService");
             builder.AppendLine("{");
-            builder.AppendLine("private readonly int _session;");
+            builder.AppendLine("private readonly int _id;");
             builder.AppendLine();
 
             for (int i = 0; i < _globals.Count; i++)
@@ -280,7 +282,7 @@ namespace Telegram
 
             builder.AppendLine();
 
-            builder.AppendIndent("public TypeLocator(");
+            builder.AppendIndent("public SessionService(");
 
             for (int i = 0; i < _globals.Count; i++)
             {
@@ -291,7 +293,8 @@ namespace Telegram
             builder.Append("int session, bool active)\r\n");
             builder.AppendLine("{");
 
-            builder.AppendLine("_session = session;");
+            builder.AppendLine("_id = session;");
+            builder.AppendLine("_sessionService = this;");
             builder.AppendLine();
 
             for (int i = 0; i < _globals.Count; i++)
@@ -316,6 +319,9 @@ namespace Telegram
 
                 singletonBucket[singleton.Value] = singleton.Key;
             }
+
+            builder.AppendLine();
+            builder.AppendLine("Initialize(active);");
 
             builder.AppendLine("}");
             builder.AppendLine();
@@ -391,11 +397,15 @@ namespace Telegram
                 {
                     getter = GetSingletonName(param.ParameterType) + " ??= " + GenerateConstructor(param.ParameterType, depth + 1);
                 }
-                else if (param.Name == "session" && param.ParameterType == typeof(int))
+                else if (param.ParameterType == typeof(ISession))
+                {
+                    getter = "_sessionService";
+                }
+                else if (param.Name == "session")
                 {
                     getter = "_session";
                 }
-                else if (param.Name == "selected" || param.Name == "online")
+                else if (param.Name == "active" || param.Name == "online")
                 {
                     getter = "active";
                 }

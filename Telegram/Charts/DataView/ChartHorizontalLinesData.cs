@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -217,7 +218,7 @@ namespace Telegram.Charts.DataView
                 return count.ToString();
             }
 
-            List<string> strings = new List<string>();
+            List<string> strings = new();
             while (count != 0)
             {
                 int mod = count % 1000;
@@ -232,7 +233,7 @@ namespace Telegram.Charts.DataView
                     strings.Add(mod.ToString());
                 }
             }
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new();
             for (int i = strings.Count - 1; i >= 0; i--)
             {
                 stringBuilder.Append(strings[i]);

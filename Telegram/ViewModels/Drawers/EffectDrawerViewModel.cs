@@ -1,16 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Linq;
 using Telegram.Collections;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views;
 
 namespace Telegram.ViewModels.Drawers
 {
@@ -25,9 +25,9 @@ namespace Telegram.ViewModels.Drawers
             SavedStickers = new MvxObservableCollection<MessageEffect>();
         }
 
-        public static EffectDrawerViewModel Create(int sessionId)
+        public static EffectDrawerViewModel Create(ISession session)
         {
-            var context = TypeResolver.Current.Resolve<EffectDrawerViewModel>(sessionId);
+            var context = session.Resolve<EffectDrawerViewModel>();
             context.Dispatcher = WindowContext.Current.Dispatcher;
             return context;
         }

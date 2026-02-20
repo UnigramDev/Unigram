@@ -1,15 +1,17 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Common;
 using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -44,7 +46,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(ViewModel.RemoveRecentSticker, sticker, Strings.DeleteFromRecent, Icons.Delete, destructive: true);
             }
 
-            if (ViewModel.Type is DialogType.History or DialogType.Thread && !ViewModel.ClientService.IsPaid(ViewModel.Chat) && !ViewModel.ClientService.IsFeedbackGroup(ViewModel.Chat))
+            if (ViewModel.Type is DialogType.History or DialogType.Thread && !ViewModel.ClientService.IsPaid(ViewModel.Chat) && !ViewModel.ClientService.IsDirectMessagesGroup(ViewModel.Chat))
             {
                 var chat = ViewModel.Chat;
                 if (chat == null)
@@ -83,7 +85,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(ViewModel.SaveAnimation, animation, Strings.SaveToGIFs, Icons.Gif);
             }
 
-            if (ViewModel.Type is DialogType.History or DialogType.Thread && !ViewModel.ClientService.IsPaid(ViewModel.Chat) && !ViewModel.ClientService.IsFeedbackGroup(ViewModel.Chat))
+            if (ViewModel.Type is DialogType.History or DialogType.Thread && !ViewModel.ClientService.IsPaid(ViewModel.Chat) && !ViewModel.ClientService.IsDirectMessagesGroup(ViewModel.Chat))
             {
                 var chat = ViewModel.Chat;
                 if (chat == null)
@@ -101,7 +103,7 @@ namespace Telegram.Views
             args.ShowAt(flyout, element);
         }
 
-        private void Emoji_ContextRequested(object sender, ItemContextRequestedEventArgs<Sticker> args)
+        private void Emoji_ContextRequested(object sender, ItemContextRequestedEventArgs<StickerViewModel> args)
         {
             var element = sender as FrameworkElement;
             var sticker = args.Item;
@@ -131,14 +133,14 @@ namespace Telegram.Views
 
             if (ViewModel.Type is DialogType.History or DialogType.Thread && ViewModel.IsPremium)
             {
-                flyout.CreateFlyoutItem(Send, sticker, Strings.SendEmojiPreview, Icons.Send);
+                flyout.CreateFlyoutItem(Send, (Sticker)sticker, Strings.SendEmojiPreview, Icons.Send);
             }
 
-            flyout.CreateFlyoutItem(Copy, sticker, Strings.CopyEmojiPreview, Icons.DocumentCopy);
+            flyout.CreateFlyoutItem(Copy, (Sticker)sticker, Strings.CopyEmojiPreview, Icons.Copy);
 
             if (ViewModel.Type is DialogType.History or DialogType.Thread && ViewModel.IsPremium)
             {
-                flyout.CreateFlyoutItem(SetAsStatus, sticker, Strings.SetAsEmojiStatus, Icons.Emoji);
+                flyout.CreateFlyoutItem(SetAsStatus, (Sticker)sticker, Strings.SetAsEmojiStatus, Icons.Emoji);
             }
 
             args.ShowAt(flyout, element);

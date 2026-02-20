@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace Telegram.Views.Popups
         private StickersPopup(INavigationService navigationService)
         {
             InitializeComponent();
-            DataContext = TypeResolver.Current.Resolve<StickersViewModel>(navigationService.SessionId);
+            DataContext = navigationService.Session.Resolve<StickersViewModel>();
 
             VerticalContentAlignment = VerticalAlignment.Center;
 
@@ -47,10 +48,8 @@ namespace Telegram.Views.Popups
             _handler = new AnimatedListHandler(ScrollingHost, AnimatedListType.Stickers);
 
             _zoomer = new ZoomableListHandler(ScrollingHost);
-            _zoomer.Opening = _handler.UnloadVisibleItems;
-            _zoomer.Closing = _handler.ThrottleVisibleItems;
-            _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
-            _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
+            _zoomer.Opening = _handler.Suspend;
+            _zoomer.Closing = _handler.Resume;
         }
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
@@ -193,11 +192,8 @@ namespace Telegram.Views.Popups
         {
             if (ViewModel == null || ViewModel.IsLoading)
             {
-                Action.Visibility = Visibility.Collapsed;
                 return string.Empty;
             }
-
-            Action.Visibility = Visibility.Visible;
 
             if (ViewModel.Items.Count > 1)
             {
@@ -205,11 +201,11 @@ namespace Telegram.Views.Popups
 
                 if (installed && !archived)
                 {
-                    Action.Style = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
+                    PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
                     return Locale.Declension(Strings.R.RemoveManyEmojiPacksCount, ViewModel.Items.Count(x => x.IsInstalled));
                 }
 
-                Action.Style = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+                PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
                 return Locale.Declension(Strings.R.AddManyEmojiPacksCount, ViewModel.Items.Count(x => !x.IsInstalled));
 
             }
@@ -219,11 +215,11 @@ namespace Telegram.Views.Popups
 
                 if (installed && !archived)
                 {
-                    Action.Style = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
+                    PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
                     return Locale.Declension(type is StickerTypeCustomEmoji ? Strings.R.RemoveManyEmojiCount : Strings.R.RemoveManyStickersCount, ViewModel.Count);
                 }
 
-                Action.Style = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+                PrimaryButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
                 return Locale.Declension(type is StickerTypeCustomEmoji ? Strings.R.AddManyEmojiCount : Strings.R.AddManyStickersCount, ViewModel.Count);
             }
         }
@@ -272,7 +268,7 @@ namespace Telegram.Views.Popups
             }
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(Copy, (Sticker)sticker, Strings.CopyEmojiPreview, Icons.DocumentCopy);
+            flyout.CreateFlyoutItem(Copy, (Sticker)sticker, Strings.CopyEmojiPreview, Icons.Copy);
             flyout.CreateFlyoutItem(SetAsStatus, (Sticker)sticker, Strings.SetAsEmojiStatus, Icons.Emoji);
 
             flyout.ShowAt(sender as UIElement, args);
@@ -298,10 +294,9 @@ namespace Telegram.Views.Popups
             MessageHelper.CopyLink(ViewModel.ClientService, XamlRoot, new InternalLinkTypeStickerSet(ViewModel.Items[0].Name, ViewModel.StickerType is StickerTypeCustomEmoji));
         }
 
-        private void Action_Click(object sender, RoutedEventArgs e)
+        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             ViewModel.Execute();
-            Hide();
         }
     }
 }

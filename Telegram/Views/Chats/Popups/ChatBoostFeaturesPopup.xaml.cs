@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
@@ -26,6 +27,7 @@ namespace Telegram.Views.Chats.Popups
         private readonly Chat _chat;
         private readonly ChatBoostStatus _status;
 
+        private int _boostCount;
         private ChatBoostSlots _slots;
 
         public ChatBoostFeaturesPopup(IClientService clientService, INavigationService navigationService, Chat chat, ChatBoostStatus status, ChatBoostSlots slots, ChatBoostFeatures features, ChatBoostFeature feature, int requiredLevel)
@@ -51,7 +53,7 @@ namespace Telegram.Views.Chats.Popups
 
             Link.Text = status.BoostUrl.Replace("https://", string.Empty);
 
-            Title = status.AppliedSlotIds.Count > 0
+            TitleLabel.Text = status.AppliedSlotIds.Count > 0
                 ? Strings.YouBoostedChannel
                 : status.Level == 0
                 ? Strings.BoostingEnableStoriesForChannel
@@ -59,12 +61,12 @@ namespace Telegram.Views.Chats.Popups
 
             if (status.Level == _clientService.Options.ChatBoostLevelMax)
             {
-                Title = Strings.BoostsMaxLevelReached;
+                TitleLabel.Text = Strings.BoostsMaxLevelReached;
                 TextBlockHelper.SetMarkdown(Description, string.Format(Strings.BoostsMaxLevelReachedDescription, chat.Title, string.Format(Strings.BoostsLevel, status.Level)));
             }
             else
             {
-                Title = feature switch
+                TitleLabel.Text = feature switch
                 {
                     ChatBoostFeature.AccentColor => Strings.BoostingEnableColor,
                     ChatBoostFeature.ProfileAccentColor => Strings.BoostingEnableProfileColor,
@@ -93,7 +95,7 @@ namespace Telegram.Views.Chats.Popups
 
                 if (feature == ChatBoostFeature.None)
                 {
-                    description = string.Format(description, chat.Title, status.NextLevelBoostCount - status.BoostCount);
+                    description = string.Format(description, chat.Title, Locale.Declension(Strings.R.MoreBoosts, status.NextLevelBoostCount - status.BoostCount));
 
                     if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator && requiredLevel != 0)
                     {
@@ -116,7 +118,6 @@ namespace Telegram.Views.Chats.Popups
             {
                 Progress.Minimum = 0;
                 Progress.Maximum = status.BoostCount;
-                Progress.Value = status.BoostCount;
 
                 Progress.MinimumText = string.Format(Strings.BoostsLevel, status.Level - 1);
                 Progress.MaximumText = string.Format(Strings.BoostsLevel, status.Level);
@@ -125,7 +126,6 @@ namespace Telegram.Views.Chats.Popups
             {
                 Progress.Minimum = status.CurrentLevelBoostCount;
                 Progress.Maximum = status.NextLevelBoostCount;
-                Progress.Value = status.BoostCount;
 
                 Progress.MinimumText = string.Format(Strings.BoostsLevel, status.Level);
                 Progress.MaximumText = string.Format(Strings.BoostsLevel, status.Level + 1);
@@ -134,15 +134,19 @@ namespace Telegram.Views.Chats.Popups
             if (supergroup.Status is not ChatMemberStatusCreator and not ChatMemberStatusAdministrator || requiredLevel == 0)
             {
                 CopyRoot.Visibility = Visibility.Collapsed;
-                Description.Padding = new Thickness(0, 24, 0, 24);
 
-                ScrollingHost.Padding = new Thickness(24, 0, 24, 24 + 32);
-
-                PurchasePanel.Visibility = Visibility.Visible;
-                PurchaseCommand.Content = _channel
+                PrimaryButtonText = _channel
                     ? Strings.BoostChannel
                     : Strings.BoostGroup;
             }
+
+            _boostCount = status.BoostCount;
+            Opened += OnOpened;
+        }
+
+        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            Progress.Animate(_status.BoostCount);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -162,13 +166,21 @@ namespace Telegram.Views.Chats.Popups
             MessageHelper.CopyLink(XamlRoot, _status.BoostUrl);
         }
 
-        private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
-        {
-            VisualUtilities.DropShadow(PurchaseShadow);
-        }
+        private bool _submitted;
+        private bool _completed;
 
-        private async void Purchase_Click(object sender, RoutedEventArgs e)
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            args.Cancel = !_completed;
+
+            if (_submitted)
+            {
+                return;
+            }
+
+            _submitted = true;
+            IsPrimaryButtonPending = true;
+
             var already = _slots.Slots
                 .Where(x => x.CurrentlyBoostedChatId == _chat.Id)
                 .Select(x => x.SlotId)
@@ -189,15 +201,16 @@ namespace Telegram.Views.Chats.Popups
                     if (response is ChatBoostSlots slots)
                     {
                         _slots = slots;
-                        Progress.Value += 1;
+                        Progress.Animate(++_boostCount);
 
-                        var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(_clientService.SessionId);
+                        var aggregator = _clientService.Session.Resolve<IEventAggregator>();
                         aggregator.Publish(new UpdateConfetti());
                     }
                 }
                 else if (already.Count < _slots.Slots.Count)
                 {
                     // TODO: reassign boost slots
+                    _completed = true;
                     Hide();
 
                     await _navigationService.ShowPopupAsync(new ChatBoostReassignPopup(_clientService, _chat, _slots));
@@ -211,6 +224,7 @@ namespace Telegram.Views.Chats.Popups
                     var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, message, Strings.BoostingMoreBoostsNeeded, Strings.GiftPremium, Strings.Close);
                     if (confirm == ContentDialogResult.Primary)
                     {
+                        _completed = true;
                         Hide();
                     }
                 }
@@ -220,11 +234,15 @@ namespace Telegram.Views.Chats.Popups
                 var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, _channel ? Strings.PremiumNeededForBoosting : Strings.PremiumNeededForBoostingGroup, Strings.PremiumNeeded, Strings.CheckPhoneNumberYes, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
+                    _completed = true;
                     Hide();
 
                     _navigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureChatBoost()));
                 }
             }
+
+            _submitted = false;
+            IsPrimaryButtonPending = false;
         }
     }
 }

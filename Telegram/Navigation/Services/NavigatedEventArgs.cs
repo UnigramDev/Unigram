@@ -1,11 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Navigation.Services
@@ -20,9 +22,11 @@ namespace Telegram.Navigation.Services
             SourcePageType = e.SourcePageType;
             Parameter = e.Parameter;
             NavigationMode = e.NavigationMode;
+            NavigationTransitionInfo = e.NavigationTransitionInfo;
         }
 
         public NavigationMode NavigationMode { get; set; }
+        public NavigationTransitionInfo NavigationTransitionInfo { get; set; }
         public Type SourcePageType { get; set; }
         public object Parameter { get; set; }
         public Page Content { get; set; }

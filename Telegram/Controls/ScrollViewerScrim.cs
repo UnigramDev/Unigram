@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -20,8 +21,8 @@ namespace Telegram.Controls
     {
         private CompositionPropertySet _propertySet;
 
-        private Rectangle _topScrim;
-        private Rectangle _bottomScrim;
+        private Rectangle TopScrim;
+        private Rectangle BottomScrim;
         private ScrollViewer _scrollViewer;
 
         public ScrollViewerScrim()
@@ -36,25 +37,25 @@ namespace Telegram.Controls
 
         private void OnBackgroundChanged(DependencyObject sender, DependencyProperty dp)
         {
-            if (Background is SolidColorBrush brush && _topScrim != null && _bottomScrim != null)
+            if (Background is SolidColorBrush brush && TopScrim != null && BottomScrim != null)
             {
-                Scrim.SetGradient(_topScrim.Fill, new CubicBezierGradient(brush, 1, brush, 0));
-                Scrim.SetGradient(_bottomScrim.Fill, new CubicBezierGradient(brush, 0, brush, 1));
+                Scrim.SetGradient(TopScrim.Fill, new CubicBezierGradient(brush, 1, brush, 0));
+                Scrim.SetGradient(BottomScrim.Fill, new CubicBezierGradient(brush, 0, brush, 1));
             }
         }
 
         protected override void OnApplyTemplate()
         {
-            _topScrim = GetTemplateChild("TopScrim") as Rectangle;
-            _topScrim.Height = _topInset;
+            TopScrim = GetTemplateChild(nameof(TopScrim)) as Rectangle;
+            TopScrim.Height = _topInset;
 
-            _bottomScrim = GetTemplateChild("BottomScrim") as Rectangle;
-            _bottomScrim.Height = _bottomInset;
+            BottomScrim = GetTemplateChild(nameof(BottomScrim)) as Rectangle;
+            BottomScrim.Height = _bottomInset;
 
-            if (Background is SolidColorBrush brush && _topScrim != null && _bottomScrim != null)
+            if (Background is SolidColorBrush brush && TopScrim != null && BottomScrim != null)
             {
-                Scrim.SetGradient(_topScrim.Fill, new CubicBezierGradient(brush, 1, brush, 0));
-                Scrim.SetGradient(_bottomScrim.Fill, new CubicBezierGradient(brush, 0, brush, 1));
+                Scrim.SetGradient(TopScrim.Fill, new CubicBezierGradient(brush, 1, brush, 0));
+                Scrim.SetGradient(BottomScrim.Fill, new CubicBezierGradient(brush, 0, brush, 1));
             }
 
             if (_scrollingHost != null && _scrollViewer == null)
@@ -87,7 +88,7 @@ namespace Telegram.Controls
 
             _scrollingHost = value;
 
-            if (_topScrim == null || _bottomScrim == null)
+            if (TopScrim == null || BottomScrim == null)
             {
                 return;
             }
@@ -117,8 +118,8 @@ namespace Telegram.Controls
             _propertySet.InsertScalar("TopInset", _topInset);
             _propertySet.InsertScalar("BottomInset", _bottomInset);
 
-            var top = ElementComposition.GetElementVisual(_topScrim);
-            var bottom = ElementComposition.GetElementVisual(_bottomScrim);
+            var top = ElementComposition.GetElementVisual(TopScrim);
+            var bottom = ElementComposition.GetElementVisual(BottomScrim);
             var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
 
             var topAnimation = BootStrapper.Current.Compositor.CreateExpressionAnimation("Clamp(-(Scroll.Translation.Y / Props.TopInset), 0, 1)");
@@ -156,10 +157,7 @@ namespace Telegram.Controls
                 _topInset = (float)value;
                 _propertySet?.InsertScalar("TopInset", _topInset);
 
-                if (_topScrim != null)
-                {
-                    _topScrim.Height = _topInset;
-                }
+                TopScrim?.Height = _topInset;
             }
         }
 
@@ -172,11 +170,11 @@ namespace Telegram.Controls
                 _bottomInset = (float)value;
                 _propertySet?.InsertScalar("BottomInset", _bottomInset);
 
-                if (_bottomScrim != null)
+                if (BottomScrim != null)
                 {
-                    _bottomScrim.Height = _bottomInset;
+                    BottomScrim.Height = _bottomInset;
 
-                    var bottom = ElementComposition.GetElementVisual(_bottomScrim);
+                    var bottom = ElementComposition.GetElementVisual(BottomScrim);
                     bottom.CenterPoint = new Vector3(0, _bottomInset, 0);
                 }
             }

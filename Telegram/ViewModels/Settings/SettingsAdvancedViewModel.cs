@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -168,7 +169,7 @@ namespace Telegram.ViewModels.Settings
             }
             else if (update.File != null && launch && Constants.RELEASE)
             {
-                await CloudUpdateService.LaunchAsync(NavigationService, false);
+                await CloudUpdateService.LaunchAsync(false);
             }
 
             UpdateFile(update, update?.Document, true);
@@ -194,11 +195,11 @@ namespace Telegram.ViewModels.Settings
 
             if (value)
             {
-                await NotifyIcon.LaunchAsync();
+                await BridgeApplicationContext.LaunchAsync();
             }
             else
             {
-                await NotifyIcon.ExitAsync();
+                await BridgeApplicationContext.ExitAsync();
             }
         }
     }

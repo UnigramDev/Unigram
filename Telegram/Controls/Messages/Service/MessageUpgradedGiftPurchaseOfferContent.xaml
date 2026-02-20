@@ -1,0 +1,95 @@
+﻿<messages:MessageService x:Class="Telegram.Controls.Messages.Service.MessageUpgradedGiftPurchaseOfferContent"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:local="using:Telegram.Controls.Messages.Service"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:messages="using:Telegram.Controls.Messages"
+                         xmlns:controls="using:Telegram.Controls"
+                         mc:Ignorable="d"
+                         d:DesignHeight="300"
+                         d:DesignWidth="400">
+
+    <Button.Template>
+        <ControlTemplate TargetType="Button">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ContentPresenter HorizontalContentAlignment="Stretch"
+                                  VerticalContentAlignment="Stretch" />
+                <messages:ReactionsPanel x:Name="Reactions"
+                                         MaxWidth="{StaticResource MessageMaxWidth}"
+                                         HorizontalAlignment="Stretch"
+                                         HorizontalContentAlignment="Center"
+                                         Padding="0,4,0,0"
+                                         Grid.Row="1" />
+            </Grid>
+        </ControlTemplate>
+    </Button.Template>
+    <StackPanel>
+        <Grid Width="216">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <messages:MessageService x:Name="Service"
+                                     Margin="0,4,0,0"
+                                     Padding="12,2,12,0"
+                                     Width="216"
+                                     Grid.ColumnSpan="2">
+                <StackPanel>
+                    <controls:PatternBackground x:Name="Pattern"
+                                                Margin="4,12,4,12"
+                                                Padding="12"
+                                                CornerRadius="12"
+                                                HorizontalAlignment="Center">
+                        <controls:AnimatedImage x:Name="Animation"
+                                                Width="72"
+                                                Height="72"
+                                                FrameSize="72,72"
+                                                DecodeFrameType="Logical"
+                                                IsViewportAware="True"
+                                                LoopCount="1" />
+                    </controls:PatternBackground>
+
+                    <controls:FormattedTextBlock x:Name="Text"
+                                                 Foreground="#FFFFFF"
+                                                 TextAlignment="Center"
+                                                 Style="{StaticResource CaptionFormattedTextBlockStyle}"
+                                                 FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                 AutoFontSize="False"
+                                                 IsTextSelectionEnabled="False"
+                                                 Padding="0,0,0,4"
+                                                 Margin="0,0,0,8" />
+                </StackPanel>
+            </messages:MessageService>
+            <Border x:Name="Reject"
+                    Background="{ThemeResource MessageServiceBackgroundBrush}"
+                    CornerRadius="4,4,4,11"
+                    Margin="0,4,2,0"
+                    Grid.Row="1">
+                <controls:ReplyMarkupInlineButton Click="Reject_Click"
+                                                  Icon="&#xEACD;"
+                                                  Text="{CustomResource GiftOfferDecline}"
+                                                  HorizontalAlignment="Stretch" />
+            </Border>
+            <Border x:Name="Accept"
+                    Background="{ThemeResource MessageServiceBackgroundBrush}"
+                    CornerRadius="4,4,11,4"
+                    Margin="2,4,0,0"
+                    Grid.Column="1"
+                    Grid.Row="1">
+                <controls:ReplyMarkupInlineButton Click="Accept_Click"
+                                                  Icon="&#xEACC;"
+                                                  Text="{CustomResource GiftOfferAccept}"
+                                                  HorizontalAlignment="Stretch" />
+            </Border>
+        </Grid>
+    </StackPanel>
+</messages:MessageService>

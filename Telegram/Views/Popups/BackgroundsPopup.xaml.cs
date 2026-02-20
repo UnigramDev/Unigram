@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -31,7 +32,6 @@ namespace Telegram.Views.Popups
             _task = task;
 
             Title = Strings.ChatBackground;
-            SecondaryButtonText = Strings.Cancel;
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

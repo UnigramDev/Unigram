@@ -1,10 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System.Numerics;
+
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Services;
@@ -12,13 +12,12 @@ using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.Views;
 using Telegram.Views.Premium.Popups;
 using Windows.Foundation;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Chats
 {
@@ -27,19 +26,24 @@ namespace Telegram.Controls.Chats
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         private IClientService _clientService;
-        private UIElement _parent;
+
+        private ChatView _chatView;
 
         private long _thumbnailToken;
 
         public ChatAccountInfoHeader()
         {
             InitializeComponent();
+
+            _collapsed = new SlidePanel.SlideState(this, false, 0);
         }
 
-        public void InitializeParent(UIElement parent)
+        private float _animatedHeight;
+        public float AnimatedHeight => _collapsed ? 0 : ActualSize.Y;
+
+        public void InitializeParent(ChatView chatView)
         {
-            _parent = parent;
-            ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
+            _chatView = chatView;
         }
 
         public void UpdateUser(IClientService clientService, Chat chat, User user, UserFullInfo fullInfo)
@@ -77,6 +81,10 @@ namespace Telegram.Controls.Chats
                         player.Height = 20;
                         player.FrameSize = new Size(20, 20);
                         player.Source = new CustomEmojiFileSource(clientService, user.EmojiStatus.Type);
+                        player.HorizontalAlignment = HorizontalAlignment.Left;
+                        player.FlowDirection = FlowDirection.LeftToRight;
+                        player.IsHitTestVisible = false;
+                        player.Margin = new Thickness(0, -2, 0, -6);
 
                         //if (style != null)
                         //{
@@ -87,7 +95,7 @@ namespace Telegram.Controls.Chats
                         //var baseline = parent.FontSize == 11 ? -3 : 0;
 
                         var inline = new InlineUIContainer();
-                        inline.Child = new CustomEmojiContainer(PremiumUser, player, size: 20);
+                        inline.Child = player;
 
                         // If the Span starts with a InlineUIContainer the RichTextBlock bugs and shows ellipsis
                         if (PremiumUserText.Inlines.Empty())
@@ -127,7 +135,7 @@ namespace Telegram.Controls.Chats
                 PayingUser.Visibility = Visibility.Visible;
                 PayingUserText.Inlines.Clear();
 
-                var text = string.Format(Strings.MessageLockedStarsRemoveFee, "{0}", fullInfo.IncomingPaidMessageStarCount.ToString("N0")).Replace("\u2B50", Icons.Premium + "\u200A");
+                var text = string.Format(Strings.MessageLockedStarsRemoveFee.ReplaceStar(Icons.Premium), "{0}", fullInfo.IncomingPaidMessageStarCount.ToString("N0"));
 
                 var markdown = ClientEx.ParseMarkdown(text);
                 if (markdown.Entities.Count == 1)
@@ -219,53 +227,17 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private bool _collapsed = true;
+        private SlidePanel.SlideState _collapsed;
 
-        private async void ShowHide(bool show)
+        private void ShowHide(bool show)
         {
             if (_collapsed != show)
             {
                 return;
             }
 
-            _collapsed = !show;
-            Visibility = Visibility.Visible;
-
-            if (show)
-            {
-                await this.UpdateLayoutAsync();
-            }
-
-            var parent = ElementComposition.GetElementVisual(_parent);
-            var visual = ElementComposition.GetElementVisual(this);
-            visual.Clip = visual.Compositor.CreateInsetClip();
-
-            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                visual.Clip = null;
-                parent.Properties.InsertVector3("Translation", Vector3.Zero);
-
-                if (_collapsed)
-                {
-                    Visibility = Visibility.Collapsed;
-                }
-            };
-
-            var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
-            clip.InsertKeyFrame(show ? 0 : 1, ActualSize.Y);
-            clip.InsertKeyFrame(show ? 1 : 0, 0);
-            clip.Duration = Constants.FastAnimation;
-
-            var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -ActualSize.Y, 0));
-            offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = Constants.FastAnimation;
-
-            visual.Clip.StartAnimation("TopInset", clip);
-            parent.StartAnimation("Translation", offset);
-
-            batch.End();
+            _collapsed.IsVisible = show;
+            _chatView.UpdateMessagesHeaderPadding();
         }
     }
 }

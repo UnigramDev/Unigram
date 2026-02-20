@@ -1,16 +1,17 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Text.RegularExpressions;
 using Telegram.Controls;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -58,7 +59,12 @@ namespace Telegram.Common
             var sender = d as TextBlock;
             var markdown = e.NewValue as string;
 
-            sender.Inlines.Clear();
+            SetMarkdown(sender, sender.Inlines, markdown);
+        }
+
+        public static void SetMarkdown(DependencyObject sender, InlineCollection inlines, string markdown)
+        {
+            inlines.Clear();
 
             if (markdown == null)
             {
@@ -71,13 +77,13 @@ namespace Telegram.Common
             }
 
             var entities = ClientEx.GetTextEntities(markdown);
-            var handleLinks = GetIsLink(d);
+            var handleLinks = GetIsLink(sender);
 
             if (handleLinks is false)
             {
                 for (int i = 0; i < entities.Count; i++)
                 {
-                    if (entities[i].Type is TextEntityTypeUrl)
+                    if (entities[i].Type is TextEntityTypeUrl or TextEntityTypeMention or TextEntityTypeMediaTimestamp)
                     {
                         entities.RemoveAt(i);
                         i--;
@@ -98,7 +104,7 @@ namespace Telegram.Common
             {
                 if (entity.Offset > previous)
                 {
-                    sender.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
+                    inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
                 }
 
                 if (entity.Length + entity.Offset > text.Length)
@@ -111,11 +117,11 @@ namespace Telegram.Common
 
                 if (entity.Type is TextEntityTypeBold)
                 {
-                    sender.Inlines.Add(substring, FontWeights.SemiBold);
+                    inlines.Add(substring, FontWeights.SemiBold);
                 }
                 else if (entity.Type is TextEntityTypeItalic)
                 {
-                    sender.Inlines.Add(substring, FontStyle.Italic);
+                    inlines.Add(substring, FontStyle.Italic);
                 }
                 else if (entity.Type is TextEntityTypeTextUrl textUrl)
                 {
@@ -123,7 +129,7 @@ namespace Telegram.Common
                     hyperlink.Inlines.Add(substring);
                     hyperlink.Click += (s, args) => Hyperlink_Click(s, entity.Type, textUrl.Url);
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    sender.Inlines.Add(hyperlink);
+                    inlines.Add(hyperlink);
                 }
                 else if (entity.Type is TextEntityTypeMention)
                 {
@@ -131,7 +137,7 @@ namespace Telegram.Common
                     hyperlink.Inlines.Add(substring);
                     hyperlink.Click += (s, args) => Hyperlink_Click(s, entity.Type, substring);
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    sender.Inlines.Add(hyperlink);
+                    inlines.Add(hyperlink);
                 }
                 else if (entity.Type is TextEntityTypeUrl && handleLinks)
                 {
@@ -139,11 +145,11 @@ namespace Telegram.Common
                     hyperlink.Inlines.Add(substring);
                     hyperlink.Click += (s, args) => Hyperlink_Click(s, entity.Type, substring);
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    sender.Inlines.Add(hyperlink);
+                    inlines.Add(hyperlink);
                 }
                 else
                 {
-                    sender.Inlines.Add(substring);
+                    inlines.Add(substring);
                 }
 
                 previous = entity.Offset + entity.Length;
@@ -151,7 +157,7 @@ namespace Telegram.Common
 
             if (text.Length > previous)
             {
-                sender.Inlines.Add(text.Substring(previous));
+                inlines.Add(text.Substring(previous));
             }
         }
 
@@ -187,6 +193,11 @@ namespace Telegram.Common
                 span = new Span();
                 textBlock.Inlines.Clear();
                 textBlock.Inlines.Add(span);
+            }
+
+            if (span == null)
+            {
+                return;
             }
 
             markdown = markdown.ReplaceSpoilers(false);
@@ -237,6 +248,15 @@ namespace Telegram.Common
                         local = hyperlink;
                     }
                     else if (entity.Type is TextEntityTypeMention mention)
+                    {
+                        var data = text.Substring(entity.Offset + 1, entity.Length - 1);
+                        var hyperlink = new Hyperlink();
+                        hyperlink.Click += (s, args) => Hyperlink_Click(s, entity.Type, data);
+                        hyperlink.UnderlineStyle = UnderlineStyle.None;
+                        span.Inlines.Add(hyperlink);
+                        local = hyperlink;
+                    }
+                    else if (entity.Type is TextEntityTypeMentionName mentionName)
                     {
                         var data = text.Substring(entity.Offset + 1, entity.Length - 1);
                         var hyperlink = new Hyperlink();
@@ -421,7 +441,7 @@ namespace Telegram.Common
                 return;
             }
 
-            var clientService = TypeResolver.Current.Resolve<IClientService>(navigationService.SessionId);
+            var clientService = navigationService.Session.Resolve<IClientService>();
 
             if (type is TextEntityTypeTextUrl textUrl)
             {
@@ -439,6 +459,9 @@ namespace Telegram.Common
 
                     var headline = sender.GetParent<SettingsHeadline>();
                     headline?.OnClick(string.Empty);
+
+                    var info = sender.GetParent<PopupInfo>();
+                    info?.OnClick(string.Empty);
                 }
                 else
                 {
@@ -449,20 +472,37 @@ namespace Telegram.Common
             {
                 MessageHelper.NavigateToUsername(clientService, navigationService, data.TrimStart('@'));
             }
+            else if (type is TextEntityTypeMentionName mentionName)
+            {
+                navigationService.NavigateToUser(mentionName.UserId);
+            }
             else if (type is TextEntityTypeUrl)
             {
                 var header = sender.GetParent<HeaderedControl>();
-                if (header != null)
+                if (header != null && header.OnClick(data))
                 {
-                    header?.OnClick(data);
                     return;
                 }
 
                 var footer = sender.GetParent<SettingsFooter>();
-                footer?.OnClick(data);
+                if (footer != null && footer.OnClick(data))
+                {
+                    return;
+                }
 
                 var headline = sender.GetParent<SettingsHeadline>();
-                headline?.OnClick(string.Empty);
+                if (headline != null && headline.OnClick(data))
+                {
+                    return;
+                }
+
+                var info = sender.GetParent<PopupInfo>();
+                if (info != null && info.OnClick(data))
+                {
+                    return;
+                }
+
+                MessageHelper.OpenUrl(clientService, navigationService, data);
             }
         }
     }

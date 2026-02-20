@@ -1,13 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Numerics;
 using Telegram.Assets.Icons;
+using Telegram.Common;
+using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -89,7 +92,7 @@ namespace Telegram.Controls.Chats
 
                     foreach (var popup in popups)
                     {
-                        if (popup.Child is MenuFlyoutPresenter or ZoomableMediaPopup)
+                        if (popup.Child is FlyoutPresenter { Content: EmojiSkinFlyout } or MenuFlyoutPresenter or ZoomableMediaPopup)
                         {
                             return;
                         }
@@ -155,14 +158,25 @@ namespace Telegram.Controls.Chats
             Redirect?.Invoke(this, EventArgs.Empty);
             Opening?.Invoke(this, EventArgs.Empty);
 
+            ControlledPanel.Visibility = Visibility.Visible;
+            ControlledPanel.Activate();
+
+            if (!PowerSavingPolicy.AreSmoothTransitionsEnabled)
+            {
+                _stickersPanel.Opacity = 1;
+                _stickersPanel.Clip = _stickersPanel.Compositor.CreateInsetClip(0, 0, 0, 0);
+
+                _stickersShadow.Opacity = 1;
+                _stickersShadow.Clip = _stickersPanel.Compositor.CreateInsetClip(-48, -48, -48, -4);
+
+                return;
+            }
+
             _stickersPanel.Opacity = 0;
             _stickersPanel.Clip = _stickersPanel.Compositor.CreateInsetClip(48, 48, 0, 0);
 
             _stickersShadow.Opacity = 0;
             _stickersShadow.Clip = _stickersPanel.Compositor.CreateInsetClip(48, 48, -48, -4);
-
-            ControlledPanel.Visibility = Visibility.Visible;
-            ControlledPanel.Activate();
 
             var opacity = _stickersPanel.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 0);
@@ -196,6 +210,20 @@ namespace Telegram.Controls.Chats
             SettingsService.Current.IsSidebarOpen = false;
 
             Closing?.Invoke(this, EventArgs.Empty);
+
+            if (!PowerSavingPolicy.AreSmoothTransitionsEnabled)
+            {
+                _stickersPanel.Opacity = 0;
+                _stickersPanel.Clip = _stickersPanel.Compositor.CreateInsetClip(48, 48, 0, 0);
+
+                _stickersShadow.Opacity = 0;
+                _stickersShadow.Clip = _stickersPanel.Compositor.CreateInsetClip(48, 48, -48, -4);
+
+                ControlledPanel.Visibility = Visibility.Collapsed;
+                ControlledPanel.Deactivate();
+
+                return;
+            }
 
             var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>

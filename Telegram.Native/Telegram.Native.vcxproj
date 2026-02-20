@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props')" />
+  <Import Project="..\packages\VideoLAN.LibVLC.UWP.3.0.22-rc1\build\native\VideoLAN.LibVLC.UWP.props" Condition="Exists('..\packages\VideoLAN.LibVLC.UWP.3.0.22-rc1\build\native\VideoLAN.LibVLC.UWP.props')" />
+  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM64">
       <Configuration>Debug</Configuration>
@@ -35,7 +36,7 @@
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
-    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.18362.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <ProjectName>Telegram.Native</ProjectName>
@@ -53,35 +54,35 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -139,7 +140,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -159,7 +160,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -179,7 +180,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -199,7 +200,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -219,7 +220,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -239,7 +240,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -303,6 +304,14 @@
     <ClInclude Include="..\Libraries\libwebp\src\webp\mux.h" />
     <ClInclude Include="..\Libraries\libwebp\src\webp\mux_types.h" />
     <ClInclude Include="..\Libraries\libwebp\src\webp\types.h" />
+    <ClInclude Include="Controls\AnimatedImageBase.h">
+      <DependentUpon>Controls\AnimatedImageBase.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="AnimationEffects.h">
+      <DependentUpon>AnimationEffects.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="AudioPitchEffect.h">
       <DependentUpon>AudioPitchEffect.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -317,14 +326,13 @@
     <ClInclude Include="Composition\CompositionDevice.h">
       <DependentUpon>Composition\CompositionDevice.idl</DependentUpon>
     </ClInclude>
-    <ClInclude Include="Composition\dcomp.local.h" />
-    <ClInclude Include="Composition\dcompex.h" />
-    <ClInclude Include="Composition\DirectRectangleClip.h">
-      <DependentUpon>Composition\DirectRectangleClip.idl</DependentUpon>
-    </ClInclude>
     <ClInclude Include="Composition\DirectRectangleClip2.h" />
     <ClInclude Include="Composition\DwmThumbnail.h" />
     <ClInclude Include="Composition\WindowVisual.h" />
+    <ClInclude Include="Controls\ControlEx.h">
+      <DependentUpon>Controls\ControlEx.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="DebugUtils.h" />
     <ClInclude Include="FatalError.h">
       <DependentUpon>FatalError.idl</DependentUpon>
@@ -334,6 +342,24 @@
       <DependentUpon>FileStreamFromApp.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ChatBackgroundPattern.h">
+      <DependentUpon>ChatBackgroundPattern.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Controls\FrameworkElementEx.h" />
+    <ClInclude Include="Controls\FormattedTextBlockBase.h">
+      <DependentUpon>Controls\FormattedTextBlockBase.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="FreeformGradientSurface.h">
+      <DependentUpon>FreeformGradientSurface.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="GarbageCollectionMonitor.h">
+      <DependentUpon>GarbageCollectionMonitor.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Helpers\BlurHelper.h" />
     <ClInclude Include="Helpers\COMHelper.h" />
     <ClInclude Include="Helpers\DebugHelper.h" />
     <ClInclude Include="Helpers\LibraryHelper.h" />
@@ -349,36 +375,43 @@
       <DependentUpon>LanguageIdentification.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="libyuv\include\libyuv.h" />
-    <ClInclude Include="libyuv\include\libyuv\basic_types.h" />
-    <ClInclude Include="libyuv\include\libyuv\compare.h" />
-    <ClInclude Include="libyuv\include\libyuv\compare_row.h" />
-    <ClInclude Include="libyuv\include\libyuv\convert.h" />
-    <ClInclude Include="libyuv\include\libyuv\convert_argb.h" />
-    <ClInclude Include="libyuv\include\libyuv\convert_from.h" />
-    <ClInclude Include="libyuv\include\libyuv\convert_from_argb.h" />
-    <ClInclude Include="libyuv\include\libyuv\cpu_id.h" />
-    <ClInclude Include="libyuv\include\libyuv\loongson_intrinsics.h" />
-    <ClInclude Include="libyuv\include\libyuv\macros_msa.h" />
-    <ClInclude Include="libyuv\include\libyuv\mjpeg_decoder.h" />
-    <ClInclude Include="libyuv\include\libyuv\planar_functions.h" />
-    <ClInclude Include="libyuv\include\libyuv\rotate.h" />
-    <ClInclude Include="libyuv\include\libyuv\rotate_argb.h" />
-    <ClInclude Include="libyuv\include\libyuv\rotate_row.h" />
-    <ClInclude Include="libyuv\include\libyuv\row.h" />
-    <ClInclude Include="libyuv\include\libyuv\scale.h" />
-    <ClInclude Include="libyuv\include\libyuv\scale_argb.h" />
-    <ClInclude Include="libyuv\include\libyuv\scale_rgb.h" />
-    <ClInclude Include="libyuv\include\libyuv\scale_row.h" />
-    <ClInclude Include="libyuv\include\libyuv\scale_uv.h" />
-    <ClInclude Include="libyuv\include\libyuv\version.h" />
-    <ClInclude Include="libyuv\include\libyuv\video_common.h" />
     <ClInclude Include="LokiRng.h">
       <DependentUpon>LokiRng.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Media\AsyncMediaPlayer.h" />
+    <ClInclude Include="Media\AsyncMediaPlayerBufferingEventArgs.h" />
+    <ClInclude Include="Media\AsyncMediaPlayerDurationChangedEventArgs.h" />
+    <ClInclude Include="Media\AsyncMediaPlayerLogEventArgs.h" />
+    <ClInclude Include="Media\AsyncMediaPlayerOptions.h" />
+    <ClInclude Include="Media\AsyncMediaPlayerPositionChangedEventArgs.h" />
+    <ClInclude Include="Media\AsyncMediaPlayerStateChangedEventArgs.h" />
+    <ClInclude Include="Media\AsyncMediaPlayerStreamSelectedEventArgs.h" />
+    <ClInclude Include="Media\AsyncMediaPlayerSwapChain.h" />
+    <ClInclude Include="MessageBubbleNineGrid.h">
+      <DependentUpon>MessageBubbleNineGrid.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="NativeUtils.h">
       <DependentUpon>NativeUtils.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="AI\TextRecognizer.h">
+      <DependentUpon>AI\TextRecognizer.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="AI\TextRecognizerDefault.h" />
+    <ClInclude Include="AI\TextRecognizerOne.h" />
+    <ClInclude Include="AI\RecognizedLine.h">
+      <DependentUpon>AI\RecognizedLine.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="AI\RecognizedText.h">
+      <DependentUpon>AI\RecognizedText.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="AI\RecognizedWord.h">
+      <DependentUpon>AI\RecognizedWord.idl</DependentUpon>
+      <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Opus\OpusOutput.h">
       <DependentUpon>Opus\OpusOutput.idl</DependentUpon>
@@ -970,8 +1003,20 @@
     <ClCompile Include="..\Libraries\libwebp\src\utils\utils.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Controls\AnimatedImageBase.cpp">
+      <DependentUpon>Controls\AnimatedImageBase.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="AnimationEffects.cpp">
+      <DependentUpon>AnimationEffects.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Composition\DirectRectangleClip2.cpp" />
     <ClCompile Include="Composition\WindowVisual.cpp" />
+    <ClCompile Include="Controls\ControlEx.cpp">
+      <DependentUpon>Controls\ControlEx.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="FatalError.cpp">
       <DependentUpon>FatalError.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -980,32 +1025,57 @@
       <DependentUpon>FileStreamFromApp.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ChatBackgroundPattern.cpp">
+      <DependentUpon>ChatBackgroundPattern.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Controls\FormattedTextBlockBase.cpp">
+      <DependentUpon>Controls\FormattedTextBlockBase.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="FreeformGradientSurface.cpp">
+      <DependentUpon>FreeformGradientSurface.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="GarbageCollectionMonitor.cpp">
+      <DependentUpon>GarbageCollectionMonitor.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Highlight\SyntaxToken.cpp" />
     <ClCompile Include="Highlight\TextToken.cpp" />
     <ClCompile Include="InternalsRT\CoreWindowHelpers.cpp" />
-    <ClCompile Include="libyuv\source\rotate_lsx.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_lasx.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_lsx.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_rvv.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_lsx.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_rgb.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_rvv.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="LokiRng.cpp">
       <DependentUpon>LokiRng.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="AI\TextRecognizer.cpp">
+      <DependentUpon>AI\TextRecognizer.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="AI\TextRecognizerDefault.cpp" />
+    <ClCompile Include="AI\RecognizedLine.cpp">
+      <DependentUpon>AI\RecognizedLine.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="AI\RecognizedText.cpp">
+      <DependentUpon>AI\RecognizedText.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="AI\RecognizedWord.cpp">
+      <DependentUpon>AI\RecognizedWord.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Media\AsyncMediaPlayer.cpp" />
+    <ClCompile Include="Media\AsyncMediaPlayerBufferingEventArgs.cpp" />
+    <ClCompile Include="Media\AsyncMediaPlayerDurationChangedEventArgs.cpp" />
+    <ClCompile Include="Media\AsyncMediaPlayerLogEventArgs.cpp" />
+    <ClCompile Include="Media\AsyncMediaPlayerOptions.cpp" />
+    <ClCompile Include="Media\AsyncMediaPlayerPositionChangedEventArgs.cpp" />
+    <ClCompile Include="Media\AsyncMediaPlayerStateChangedEventArgs.cpp" />
+    <ClCompile Include="Media\AsyncMediaPlayerStreamSelectedEventArgs.cpp" />
+    <ClCompile Include="Media\AsyncMediaPlayerSwapChain.cpp" />
+    <ClCompile Include="MessageBubbleNineGrid.cpp">
+      <DependentUpon>MessageBubbleNineGrid.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ParticlesAnimation.cpp">
@@ -1041,9 +1111,6 @@
     <ClCompile Include="Composition\CompositionDevice.cpp">
       <DependentUpon>Composition\CompositionDevice.idl</DependentUpon>
     </ClCompile>
-    <ClCompile Include="Composition\DirectRectangleClip.cpp">
-      <DependentUpon>Composition\DirectRectangleClip.idl</DependentUpon>
-    </ClCompile>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Generated Files\module.g.cpp" />
     <ClCompile Include="Helpers\LibraryHelper.cpp" />
@@ -1054,141 +1121,6 @@
     <ClCompile Include="LanguageIdentification.cpp">
       <DependentUpon>LanguageIdentification.idl</DependentUpon>
       <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\compare.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\compare_common.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\compare_gcc.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\compare_msa.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\compare_neon.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\compare_neon64.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\compare_win.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\convert.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\convert_argb.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\convert_from.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\convert_from_argb.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\convert_jpeg.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\convert_to_argb.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\convert_to_i420.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\cpu_id.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\mjpeg_decoder.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\mjpeg_validate.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\planar_functions.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\rotate.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_any.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_argb.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_common.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_gcc.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_msa.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_neon.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_neon64.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_win.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_any.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_common.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_gcc.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_msa.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_neon.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_neon64.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_win.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_any.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_argb.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_common.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_gcc.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_msa.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_neon.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_neon64.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_uv.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_win.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\video_common.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="NativeUtils.cpp">
       <DependentUpon>NativeUtils.idl</DependentUpon>
@@ -1234,6 +1166,12 @@
     <None Include="Telegram.Native.def" />
   </ItemGroup>
   <ItemGroup>
+    <Midl Include="Controls\AnimatedImageBase.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="AnimationEffects.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="AudioPitchEffect.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -1242,13 +1180,27 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="Composition\CompositionDevice.idl" />
-    <Midl Include="Composition\DirectRectangleClip.idl" />
     <Midl Include="Composition\DirectRectangleClip2.idl" />
     <Midl Include="Composition\WindowVisual.idl" />
+    <Midl Include="Controls\ControlEx.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="FatalError.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="FileStreamFromApp.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="ChatBackgroundPattern.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="Controls\FormattedTextBlockBase.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="FreeformGradientSurface.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="GarbageCollectionMonitor.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="Highlight\SyntaxToken.idl" />
@@ -1262,7 +1214,23 @@
     <Midl Include="LokiRng.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="Media\AsyncMediaPlayer.idl" />
+    <Midl Include="Media\AsyncMediaPlayerBufferingEventArgs.idl" />
+    <Midl Include="Media\AsyncMediaPlayerDurationChangedEventArgs.idl" />
+    <Midl Include="Media\AsyncMediaPlayerLogEventArgs.idl" />
+    <Midl Include="Media\AsyncMediaPlayerOptions.idl" />
+    <Midl Include="Media\AsyncMediaPlayerPositionChangedEventArgs.idl" />
+    <Midl Include="Media\AsyncMediaPlayerStateChangedEventArgs.idl" />
+    <Midl Include="Media\AsyncMediaPlayerStreamSelectedEventArgs.idl" />
+    <Midl Include="Media\AsyncMediaPlayerSwapChain.idl" />
+    <Midl Include="MessageBubbleNineGrid.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="NativeUtils.idl" />
+    <Midl Include="AI\TextRecognizer.idl" />
+    <Midl Include="AI\RecognizedLine.idl" />
+    <Midl Include="AI\RecognizedText.idl" />
+    <Midl Include="AI\RecognizedWord.idl" />
     <Midl Include="Opus\OpusOutput.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -1291,15 +1259,16 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets')" />
-    <Import Project="..\packages\Telegram.Td.UWP.1.8.50\build\native\Telegram.Td.UWP.targets" Condition="Exists('..\packages\Telegram.Td.UWP.1.8.50\build\native\Telegram.Td.UWP.targets')" />
+    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\packages\VideoLAN.LibVLC.UWP.3.0.22-rc1\build\VideoLAN.LibVLC.UWP.targets" Condition="Exists('..\packages\VideoLAN.LibVLC.UWP.3.0.22-rc1\build\VideoLAN.LibVLC.UWP.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets'))" />
-    <Error Condition="!Exists('..\packages\Telegram.Td.UWP.1.8.50\build\native\Telegram.Td.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Telegram.Td.UWP.1.8.50\build\native\Telegram.Td.UWP.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.250303.1\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="!Exists('..\packages\VideoLAN.LibVLC.UWP.3.0.22-rc1\build\VideoLAN.LibVLC.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\VideoLAN.LibVLC.UWP.3.0.22-rc1\build\VideoLAN.LibVLC.UWP.targets'))" />
+    <Error Condition="!Exists('..\packages\VideoLAN.LibVLC.UWP.3.0.22-rc1\build\native\VideoLAN.LibVLC.UWP.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\VideoLAN.LibVLC.UWP.3.0.22-rc1\build\native\VideoLAN.LibVLC.UWP.props'))" />
   </Target>
 </Project>

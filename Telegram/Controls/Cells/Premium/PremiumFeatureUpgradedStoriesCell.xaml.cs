@@ -1,14 +1,17 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -20,6 +23,10 @@ namespace Telegram.Controls.Cells.Premium
         public PremiumFeatureUpgradedStoriesCell()
         {
             InitializeComponent();
+
+            _viewChangedTimer = new DispatcherTimer();
+            _viewChangedTimer.Interval = TimeSpan.FromMilliseconds(Constants.TypingTimeout);
+            _viewChangedTimer.Tick += OnTick;
         }
 
         public void UpdateFeature(IClientService clientService)
@@ -40,7 +47,7 @@ namespace Telegram.Controls.Cells.Premium
                 clientService.TryGetUser(chat, out User user))
             {
                 Segments.UpdateSegments(96, 8, 8, 3);
-                Photo.SetUser(clientService, user, 96);
+                Photo.Source = ProfilePictureSource.User(clientService, user);
             }
 
             //clientService.Send(new ViewPremiumFeature(new PremiumFeatureUpgradedStories()));
@@ -119,16 +126,10 @@ namespace Telegram.Controls.Cells.Premium
             var subtitle = content.FindName("Subtitle") as TextBlock;
             var icon = content.FindName("Icon") as TextBlock;
 
-            var item = (double)args.ItemIndex;
-            var total = sender.Items.Count - 1;
-            var length = _gradient.Length - 1;
-
-            var index = (int)(item / total * length);
-
             title.Text = titleValue;
             subtitle.Text = subtitleValue;
             icon.Text = iconValue;
-            icon.Foreground = new SolidColorBrush(_gradient[index]);
+            icon.Foreground = new SolidColorBrush(ColorsHelper.CalculateColor(_gradient, (float)args.ItemIndex / (sender.Items.Count - 1)));
 
             args.Handled = true;
         }
@@ -136,18 +137,60 @@ namespace Telegram.Controls.Cells.Premium
         public void PlayAnimation()
         {
             var scrollingHost = ScrollingHost.GetScrollViewer();
-            scrollingHost?.AddHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChangedEvent), true);
+            if (scrollingHost != null)
+            {
+                _loading = false;
+                scrollingHost?.AddHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChangedEvent), true);
+                scrollingHost.ViewChanged += OnViewChanged;
+            }
+            else if (!_loading)
+            {
+                _loading = true;
+                ScrollingHost.Loaded += OnLoaded;
+            }
+
+            _viewChanged = false;
         }
 
         public void StopAnimation()
         {
             var scrollingHost = ScrollingHost.GetScrollViewer();
             scrollingHost?.RemoveHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChangedEvent));
+            scrollingHost.ViewChanged -= OnViewChanged;
+
+            _loading = false;
+            _viewChangedTimer.Stop();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_loading)
+            {
+                PlayAnimation();
+            }
+        }
+
+        private bool _loading;
+
+        private bool _viewChanged;
+        private DispatcherTimer _viewChangedTimer;
+
+        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            _viewChanged = true;
+            _viewChangedTimer.Stop();
+            _viewChangedTimer.Start();
+        }
+
+        private void OnTick(object sender, object e)
+        {
+            _viewChangedTimer.Stop();
+            _viewChanged = false;
         }
 
         private void OnPointerWheelChangedEvent(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse && sender is ScrollViewer scrollingHost)
+            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse && sender is ScrollViewer scrollingHost && !_viewChanged)
             {
                 var currentPoint = e.GetCurrentPoint(this);
                 if (currentPoint.Properties.MouseWheelDelta > 0 && scrollingHost.VerticalOffset == 0)
@@ -156,6 +199,15 @@ namespace Telegram.Controls.Cells.Premium
                     if (parent?.SelectedIndex > 0 && parent.SelectedItem is PremiumFeatureUpgradedStories or BusinessFeatureUpgradedStories)
                     {
                         parent.SelectedIndex--;
+                        StopAnimation();
+                    }
+                }
+                else if (currentPoint.Properties.MouseWheelDelta < 0 && scrollingHost.VerticalOffset.AlmostEquals(scrollingHost.ScrollableHeight))
+                {
+                    var parent = this.GetParent<FlipView>();
+                    if (parent?.SelectedIndex < parent.Items.Count - 1 && parent.SelectedItem is PremiumFeatureUpgradedStories or BusinessFeatureUpgradedStories)
+                    {
+                        parent.SelectedIndex++;
                         StopAnimation();
                     }
                 }

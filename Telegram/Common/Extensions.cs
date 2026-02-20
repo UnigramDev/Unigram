@@ -1,12 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using LinqToVisualTree;
+using Microsoft.Web.WebView2.Core;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -49,12 +53,10 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using WinRT;
-using static Telegram.Services.GenerationService;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Common
 {
@@ -104,9 +106,9 @@ namespace Telegram.Common
 
         // TODO: this is a duplicat of INavigationService.ShowPopupAsync, and it's needed by GamePage, GroupCallPage and LiveStreamPage.
         // Must be removed at some point.
-        public static Task<ContentDialogResult> ShowPopupAsync(this UserControl frame, int sessionId, ContentPopup popup, object parameter = null)
+        public static void ShowPopup(this UserControl frame, ISession session, ContentPopup popup, object parameter = null)
         {
-            var viewModel = BootStrapper.Current.ViewModelForPage(popup, sessionId);
+            var viewModel = BootStrapper.Current.ViewModelForPage(popup, session);
             if (viewModel != null)
             {
                 viewModel.XamlRoot = frame.XamlRoot;
@@ -130,7 +132,21 @@ namespace Telegram.Common
                 popup.Closed += OnClosed;
             }
 
-            return popup.ShowQueuedAsync(frame.XamlRoot);
+            _ = popup.ShowQueuedAsync(frame.XamlRoot);
+        }
+
+        public static int FindIndex<T>(this IList<T> list, Func<T, bool> predicate)
+        {
+            for (int i = 0; i < list.Count; i++)
+                if (predicate(list[i])) return i;
+            return -1;
+        }
+
+        public static int FindLastIndex<T>(this IList<T> list, Func<T, bool> predicate)
+        {
+            for (int i = list.Count - 1; i >= 0; i--)
+                if (predicate(list[i])) return i;
+            return -1;
         }
 
         public static void AddCubicBezier(this PathFigure figure, Point controlPoint1, Point controlPoint2, Point endPoint)
@@ -151,9 +167,29 @@ namespace Telegram.Common
             });
         }
 
-        public static FormattedText AsFormattedText(this string str)
+        public static FormattedText AsFormattedText(this string str, bool allocate = true)
         {
-            return new FormattedText(str, Array.Empty<TextEntity>());
+            return new FormattedText(str, allocate ? Array.Empty<TextEntity>() : null);
+        }
+
+        public static FormattedText AsFormattedText(this string str, TextEntityType type)
+        {
+            return new FormattedText(str, new[]
+            {
+                new TextEntity(0, str.Length, type)
+            });
+        }
+
+        public static bool TryGetValue(this CoreWebView2HttpRequestHeaders headers, string key, out string value)
+        {
+            if (headers.Contains(key))
+            {
+                value = headers.GetHeader(key);
+                return true;
+            }
+
+            value = null;
+            return false;
         }
 
         public static IEnumerable<IList<T>> ToChunks<T>(this List<T> enumerable, int chunkSize)
@@ -165,6 +201,46 @@ namespace Telegram.Common
                 int currentChunkSize = Math.Min(chunkSize, count - itemsReturned);
                 yield return enumerable.GetRange(itemsReturned, currentChunkSize);
                 itemsReturned += currentChunkSize;
+            }
+        }
+
+        public static void ForEach<TContent, TValue>(this ListViewBase listView, Action<TContent, TValue> handler) where TContent : class where TValue : class
+        {
+            int lastCacheIndex;
+            int firstCacheIndex;
+
+            if (listView.ItemsPanelRoot is ItemsStackPanel stack)
+            {
+                lastCacheIndex = stack.LastCacheIndex;
+                firstCacheIndex = stack.FirstCacheIndex;
+            }
+            else if (listView.ItemsPanelRoot is ItemsWrapGrid wrap)
+            {
+                lastCacheIndex = wrap.LastCacheIndex;
+                firstCacheIndex = wrap.FirstCacheIndex;
+            }
+            else
+            {
+                return;
+            }
+
+            for (int i = firstCacheIndex; i <= lastCacheIndex; i++)
+            {
+                var container = listView.ContainerFromIndex(i) as SelectorItem;
+                var content = container?.ContentTemplateRoot as TContent;
+
+                if (content == null)
+                {
+                    continue;
+                }
+
+                var item = listView.ItemFromContainer(container) as TValue;
+                if (item == null)
+                {
+                    continue;
+                }
+
+                handler(content, item);
             }
         }
 
@@ -316,7 +392,7 @@ namespace Telegram.Common
                 // Element start
                 index++;
 
-                if (OffsetToIndex(textBlock, block.Inlines, pointer, ref index))
+                if (OffsetToIndex(textBlock, block, block.Inlines, pointer, ref index))
                 {
                     break;
                 }
@@ -325,12 +401,12 @@ namespace Telegram.Common
                 {
                     if (pointer.Offset == block.ContentEnd.Offset)
                     {
-                        if (i == textBlock.Blocks.Count - 1)
-                        {
-                            // Always close when ending on the last paragraph
-                            index++;
-                        }
-                        else
+                        //if (i == textBlock.Blocks.Count - 1)
+                        //{
+                        //    // Always close when ending on the last paragraph
+                        //    index++;
+                        //}
+                        //else
                         {
                             index += paragraph.Padding;
                         }
@@ -340,20 +416,30 @@ namespace Telegram.Common
                 }
 
                 // Element end
+                if (paragraph.Padding == 0)
+                {
+                    index++;
+                }
+
                 //index += paragraph.Padding;
             }
 
             // Adjust the offset if the selection ends on the text block itself
             if (pointer.Offset == textBlock.ContentEnd.Offset && pointer.Parent is RichTextBlock)
             {
-                index += 2;
+                index++;
             }
 
             return pointer.Offset - index;
         }
 
-        private static bool OffsetToIndex(RichTextBlock textBlock, InlineCollection inlines, TextPointer pointer, ref int index)
+        private static bool OffsetToIndex(RichTextBlock textBlock, TextElement parent, InlineCollection inlines, TextPointer pointer, ref int index)
         {
+            if (parent.ContentStart.Offset == pointer.Offset && inlines.Empty())
+            {
+                index--;
+            }
+
             foreach (var element in inlines)
             {
                 if (pointer.Offset == element.ElementStart.Offset)
@@ -364,7 +450,7 @@ namespace Telegram.Common
                 // Element start
                 index++;
 
-                if (element is Span span && OffsetToIndex(textBlock, span.Inlines, pointer, ref index))
+                if (element is Span span && OffsetToIndex(textBlock, span, span.Inlines, pointer, ref index))
                 {
                     return true;
                 }
@@ -396,6 +482,11 @@ namespace Telegram.Common
                 return -1;
             }
 
+            return OffsetToIndex(pointer, textBlock);
+        }
+
+        public static int OffsetToIndex(this TextPointer pointer, RichTextBlock textBlock)
+        {
             var index = 0;
 
             for (int i = 0; i < textBlock.Blocks.Count; i++)
@@ -410,7 +501,7 @@ namespace Telegram.Common
                 // Element start
                 index++;
 
-                if (OffsetToIndex(textBlock, block.Inlines, pointer, ref index))
+                if (OffsetToIndex(textBlock, block, block.Inlines, pointer, ref index))
                 {
                     break;
                 }
@@ -560,6 +651,30 @@ namespace Telegram.Common
             }
         }
 
+        public static void TryReportDataRetrieved(this ShareOperation operation)
+        {
+            try
+            {
+                operation.ReportDataRetrieved();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
+        public static void TryReportError(this ShareOperation operation, string value)
+        {
+            try
+            {
+                operation.ReportError(value);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
         public static void TryProcessDownEvent(this GestureRecognizer recognizer, PointerPoint value)
         {
             try
@@ -699,6 +814,32 @@ namespace Telegram.Common
             }
         }
 
+        public static bool TryChangeView(this ScrollViewer scrollViewer, double? horizontalOffset, double? verticalOffset, float? zoomFactor)
+        {
+            try
+            {
+                return scrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+                return false;
+            }
+        }
+
+        public static bool TryChangeView(this ScrollViewer scrollViewer, double? horizontalOffset, double? verticalOffset, float? zoomFactor, bool disableAnimation)
+        {
+            try
+            {
+                return scrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor, disableAnimation);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+                return false;
+            }
+        }
+
         public static void CreateInsetClip(this UIElement element)
         {
             var visual = ElementComposition.GetElementVisual(element);
@@ -743,6 +884,16 @@ namespace Telegram.Common
                 a = 255;
             }
 
+            byte r = (byte)((color & 0x00ff0000) >> 16);
+            byte g = (byte)((color & 0x0000ff00) >> 8);
+            byte b = (byte)(color & 0x000000ff);
+
+            return Color.FromArgb(a, r, g, b);
+        }
+
+        public static Color ToColor(this int color, double alpha)
+        {
+            byte a = (byte)(alpha * 255);
             byte r = (byte)((color & 0x00ff0000) >> 16);
             byte g = (byte)((color & 0x0000ff00) >> 8);
             byte b = (byte)(color & 0x000000ff);
@@ -812,16 +963,13 @@ namespace Telegram.Common
             return (number - other).AlmostEqualsToZero(epsilon);
         }
 
-        public static bool VisualContains(this FrameworkElement destination, FrameworkElement source)
+        public static bool ViewportContains(this ScrollViewer destination, SelectorItem container)
         {
-            var transform = source.TransformToVisual(destination);
-            var point = transform.TransformPoint(new Point());
-
-            var y1 = Math.Ceiling(point.Y);
-            var y2 = Math.Truncate(point.Y + source.ActualHeight);
+            var y1 = Math.Ceiling(container.ActualOffset.Y - destination.VerticalOffset);
+            var y2 = Math.Truncate(container.ActualOffset.Y - destination.VerticalOffset + container.ActualSize.Y);
 
             var p1 = 0;
-            var p2 = Math.Truncate(destination.ActualHeight);
+            var p2 = Math.Truncate(destination.ActualSize.Y);
 
             return y1 >= p1 && y2 <= p2;
         }
@@ -842,9 +990,27 @@ namespace Telegram.Common
             return (long)(dateTime.ToUniversalTime() - dtDateTime).TotalMilliseconds;
         }
 
+        public static bool IntersectsOrTouches(this Rect a, Rect b)
+        {
+            return a.Left <= b.Right &&
+                   a.Right >= b.Left &&
+                   a.Top <= b.Bottom &&
+                   a.Bottom >= b.Top;
+        }
+
         public static Size ToSize(this Rect rectangle)
         {
             return new Size(rectangle.Width, rectangle.Height);
+        }
+
+        public static Vector2 ToSizeF(this Rect rectangle)
+        {
+            return new Vector2((float)rectangle.Width, (float)rectangle.Height);
+        }
+
+        public static Vector3 ToOffset(this Rect rectangle)
+        {
+            return new Vector3((float)rectangle.X, (float)rectangle.Y, 0);
         }
 
         public static bool IntersectsWith(this Rect a, Rect b)
@@ -1013,6 +1179,11 @@ namespace Telegram.Common
             return output;
         }
 
+        public static string ReplaceStar(this string str, string value)
+        {
+            return str.Replace("\u2B50\uFE0F", value + "\u200A");
+        }
+
         /// <summary>
         /// Creates a relative path from one file or folder to another.
         /// </summary>
@@ -1052,6 +1223,12 @@ namespace Telegram.Common
 
         public static bool IsRelativePath(string relativeTo, string path, out string relative)
         {
+            if (string.IsNullOrEmpty(relativeTo) || string.IsNullOrEmpty(path))
+            {
+                relative = null;
+                return false;
+            }
+
             var relativeFull = Path.GetFullPath(relativeTo);
             var pathFull = Path.GetFullPath(path);
 
@@ -1067,7 +1244,7 @@ namespace Telegram.Common
             relative = null;
             return string.Equals(relativeFull, pathFull, StringComparison.OrdinalIgnoreCase);
         }
-        
+
         public static unsafe void Buffer(this WriteableBitmap bitmap, out byte* imageBytes)
         {
 #if NET9_0_OR_GREATER
@@ -1130,30 +1307,7 @@ namespace Telegram.Common
             }
         }
 
-        public static async Task<InputThumbnail> ToVideoThumbnailAsync(this StorageFile file, VideoConversion video = null, ConversionType conversion = ConversionType.Copy, string arguments = null)
-        {
-            var props = await file.Properties.GetVideoPropertiesAsync();
-
-            double originalWidth = props.GetWidth();
-            double originalHeight = props.GetHeight();
-
-            if (!video.CropRectangle.IsEmpty)
-            {
-                originalWidth = video.CropRectangle.Width;
-                originalHeight = video.CropRectangle.Height;
-            }
-
-            double ratioX = 90 / originalWidth;
-            double ratioY = 90 / originalHeight;
-            double ratio = Math.Min(ratioX, ratioY);
-
-            int width = (int)(originalWidth * ratio);
-            int height = (int)(originalHeight * ratio);
-
-            return new InputThumbnail(await file.ToGeneratedAsync(conversion, arguments), width, height);
-        }
-
-        public static async Task<InputThumbnail> ToVideoThumbnailAsync(this StorageVideo file, VideoConversion video = null, ConversionType conversion = ConversionType.Copy, string arguments = null)
+        public static async Task<InputThumbnail> ToVideoThumbnailAsync(this StorageVideo file, VideoGeneration video = null, ConversionType conversion = ConversionType.Copy, string arguments = null)
         {
             double originalWidth = file.Width;
             double originalHeight = file.Height;
@@ -1185,6 +1339,19 @@ namespace Telegram.Common
                     yield return element;
                 }
             }
+        }
+#endif
+
+        public static long Hash<T>(this IEnumerable<T> source, Func<T, long> predicate)
+        {
+            var hash = 0L;
+
+            foreach (var item in source)
+            {
+                hash = ((hash * 20261) + 0x80000000L + predicate(item)) % 0x80000000L;
+            }
+
+            return hash;
         }
 #endif
 
@@ -1258,6 +1425,19 @@ namespace Telegram.Common
             return element.TransformToVisual(visual).TransformPoint(new Point());
         }
 
+        public static Point TransformToPointerPosition(this UIElement element)
+        {
+            var transform = element.TransformToPoint(null);
+
+            var bounds = Window.Current.Bounds;
+            var point = Window.Current.CoreWindow.PointerPosition;
+
+            point = new Point(point.X - bounds.X, point.Y - bounds.Y);
+            point = new Point(point.X - transform.X, point.Y - transform.Y);
+
+            return point;
+        }
+
         public static void BeginOnUIThread(this DependencyObject element, Action action)
         {
             try
@@ -1297,7 +1477,7 @@ namespace Telegram.Common
             return Equals(o1.GetType(), o2.GetType());
         }
 
-        public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);
+        public static Regex _pattern = new("[\\-0-9]+", RegexOptions.Compiled);
         public static int ToInt32(this string value)
         {
             if (value == null)
@@ -1328,7 +1508,7 @@ namespace Telegram.Common
             var first = query.Split('?');
             if (first.Length > 1)
             {
-                query = first.Last();
+                query = first[^1];
             }
 
             var queryDict = new Dictionary<string, string>();
@@ -1460,7 +1640,27 @@ namespace Telegram.Common
             return GetHyperlink(parent.ElementStart.Parent as TextElement);
         }
 
+        public static bool ClearIfNotEmpty<T>(this IList<T> list)
+        {
+            if (list.Count > 0)
+            {
+                list.Clear();
+            }
+
+            return false;
+        }
+
+        public static bool Empty<T>(this ISet<T> list)
+        {
+            return list.Count == 0;
+        }
+
         public static bool Empty<T>(this IList<T> list)
+        {
+            return list.Count == 0;
+        }
+
+        public static bool EmptyT(this IList list)
         {
             return list.Count == 0;
         }
@@ -1473,6 +1673,17 @@ namespace Telegram.Common
             }
         }
 
+        public static bool Contains(this FrameworkElement element, PointerRoutedEventArgs e)
+        {
+            var point = e.GetCurrentPoint(element);
+            if (point.Position.X >= 0 && point.Position.Y >= 0 && point.Position.X <= element.ActualWidth && point.Position.Y <= element.ActualHeight)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static T GetChild<T>(this DependencyObject parentContainer)
         {
             return parentContainer.Descendants<T>().FirstOrDefault();
@@ -1481,6 +1692,16 @@ namespace Telegram.Common
         public static T GetChild<T>(this DependencyObject parentContainer, Func<T, bool> predicate)
         {
             return parentContainer.Descendants<T>().FirstOrDefault(predicate);
+        }
+
+        public static T GetLastChild<T>(this DependencyObject parentContainer)
+        {
+            return parentContainer.Descendants<T>(true).FirstOrDefault();
+        }
+
+        public static T GetLastChild<T>(this DependencyObject parentContainer, Func<T, bool> predicate)
+        {
+            return parentContainer.Descendants<T>(true).FirstOrDefault(predicate);
         }
 
         public static T GetChildOrSelf<T>(this DependencyObject parentContainer)
@@ -1533,29 +1754,55 @@ namespace Telegram.Common
             return childContainer.Ancestors<T>().FirstOrDefault(predicate);
         }
 
-        public static async Task UpdateLayoutAsync(this FrameworkElement element, bool update = false)
+        public static Task UpdateLayoutAsync(this FrameworkElement element)
         {
             var tcs = new TaskCompletionSource<bool>();
             void layoutUpdated(object s1, object e1)
             {
+                element.LayoutUpdated -= layoutUpdated;
                 tcs.TrySetResult(true);
             }
 
-            try
+            element.LayoutUpdated += layoutUpdated;
+            return tcs.Task;
+        }
+
+        public static Task UpdateLayoutAsync(this FrameworkElement element, CancellationToken token)
+        {
+            if (token.IsCancellationRequested)
             {
-                element.LayoutUpdated += layoutUpdated;
-
-                if (update)
-                {
-                    element.UpdateLayout();
-                }
-
-                await tcs.Task;
+                return Task.CompletedTask;
             }
-            finally
+
+            var tcs = new TaskCompletionSource<bool>();
+            var registration = token.Register(() =>
             {
                 element.LayoutUpdated -= layoutUpdated;
+                tcs.TrySetResult(false);
+            });
+
+            void layoutUpdated(object s1, object e1)
+            {
+                element.LayoutUpdated -= layoutUpdated;
+                tcs.TrySetResult(true);
+
+                registration.Dispose();
             }
+
+            element.LayoutUpdated += layoutUpdated;
+            return tcs.Task;
+        }
+
+        public static Task DispatchAsync(this FrameworkElement element)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+
+            _ = element.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                tcs.TrySetResult(true);
+            });
+
+            return tcs.Task;
         }
     }
 
@@ -1573,6 +1820,36 @@ namespace Telegram.Common
                 // All the remote procedure calls must be wrapped in a try-catch block
             }
         }
+
+        public static DataPackageView TryGetContent()
+        {
+            try
+            {
+                return Clipboard.GetContent();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+                return null;
+            }
+        }
+
+    }
+
+    public static class FocusManagerEx
+    {
+        public static object TryGetFocusedElement()
+        {
+            try
+            {
+                return FocusManager.GetFocusedElement();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+                return null;
+            }
+        }
     }
 
     public static class UriEx
@@ -1586,6 +1863,8 @@ namespace Telegram.Common
 
             return new BitmapImage(ToLocal(path))
             {
+                // TODO: experiment
+                //CreateOptions = BitmapCreateOptions.IgnoreImageCache,
                 DecodePixelWidth = width,
                 DecodePixelHeight = height,
                 DecodePixelType = width > 0 || height > 0
@@ -1627,6 +1906,23 @@ namespace Telegram.Common
             }
 
             return new Uri("file:///" + directory + "\\" + Uri.EscapeDataString(file));
+        }
+    }
+
+    public static class MonotonicUnixTime
+    {
+        private static readonly long startTicks = Stopwatch.GetTimestamp();
+        private static readonly double startUnixTime = (DateTime.UtcNow -
+            new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+
+        public static long Now
+        {
+            get
+            {
+                long ticks = Stopwatch.GetTimestamp();
+                double elapsedSeconds = (double)(ticks - startTicks) / Stopwatch.Frequency;
+                return (long)(startUnixTime + elapsedSeconds);
+            }
         }
     }
 }

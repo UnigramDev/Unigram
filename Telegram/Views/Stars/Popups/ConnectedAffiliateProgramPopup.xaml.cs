@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.ObjectModel;
 using Telegram.Common;
 using Telegram.Controls;
@@ -44,7 +45,7 @@ namespace Telegram.Views.Stars.Popups
 
             InitializeOwnedChats();
 
-            Photo1.Source = PlaceholderImage.GetGlyph(Icons.LinkDiagonal);
+            Photo1.Source = ProfilePictureSourceText.GetGlyph(Icons.LinkDiagonal);
 
             Link.Text = program.Url.Replace("https://", string.Empty);
 
@@ -52,12 +53,12 @@ namespace Telegram.Views.Stars.Popups
 
             if (_clientService.TryGetUser(affiliateType, out User senderUser))
             {
-                Photo.SetUser(_clientService, senderUser, 28);
+                Photo.Source = ProfilePictureSource.User(_clientService, senderUser);
                 TitleText.Text = senderUser.FullName();
             }
             else if (_clientService.TryGetChat(affiliateType, out Chat senderChat))
             {
-                Photo.SetChat(_clientService, senderChat, 28);
+                Photo.Source = ProfilePictureSource.Chat(_clientService, senderChat);
                 TitleText.Text = senderChat.Title;
             }
 
@@ -121,8 +122,7 @@ namespace Telegram.Views.Stars.Popups
             foreach (var type in _items)
             {
                 var picture = new ProfilePicture();
-                picture.Width = 36;
-                picture.Height = 36;
+                picture.Size = 36;
                 picture.Margin = new Thickness(-4, -2, 0, -2);
 
                 var item = new MenuFlyoutProfile();
@@ -134,7 +134,7 @@ namespace Telegram.Views.Stars.Popups
 
                 if (_clientService.TryGetUser(type, out User senderUser))
                 {
-                    picture.SetUser(_clientService, senderUser, 36);
+                    picture.Source = ProfilePictureSource.User(_clientService, senderUser);
 
                     item.Text = senderUser.FullName();
                     item.Info = senderUser.Type is UserTypeRegular
@@ -143,7 +143,7 @@ namespace Telegram.Views.Stars.Popups
                 }
                 else if (_clientService.TryGetChat(type, out Chat senderChat))
                 {
-                    picture.SetChat(_clientService, senderChat, 36);
+                    picture.Source = ProfilePictureSource.Chat(_clientService, senderChat);
 
                     item.Text = senderChat.Title;
                     item.Info = Strings.DiscussChannel;

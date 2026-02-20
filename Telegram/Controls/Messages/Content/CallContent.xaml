@@ -15,7 +15,7 @@
         <Setter Property="Foreground"
                 Value="{ThemeResource MessageMediaForegroundBrush}" />
         <Setter Property="BorderBrush"
-                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                Value="{ThemeResource TextFillColorPrimaryBrush}" />
         <Setter Property="BorderThickness"
                 Value="0" />
         <Setter Property="Padding"
@@ -154,9 +154,13 @@
                             <TextBlock x:Name="IconLabel"
                                        Foreground="{ThemeResource MessageCallForegroundBrush}"
                                        FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                       Margin="0,1,4,-1"
                                        Grid.Row="1" />
                             <TextBlock x:Name="DateLabel"
-                                       Style="{StaticResource DisabledCaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
                                        Grid.Column="1"
                                        Grid.Row="1">
                                 <ToolTipService.ToolTip>

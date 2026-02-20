@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -21,10 +22,10 @@ namespace Telegram.Common
     {
         private readonly ILifetimeService _lifetimeService;
 
-        public TLRootNavigationService(ISessionService sessionService, WindowContext window, Frame frame, int session, string id)
-            : base(window, frame, session, id)
+        public TLRootNavigationService(ISession session, WindowContext window, Frame frame, string id)
+            : base(session, window, frame, id)
         {
-            _lifetimeService = TypeResolver.Current.Lifetime;
+            _lifetimeService = LifetimeService.Current;
         }
 
         public async void Handle(UpdateAuthorizationState update)
@@ -47,7 +48,7 @@ namespace Telegram.Common
                         Navigate(typeof(AuthorizationPage));
                     }
 
-                    if (_lifetimeService.Items.Count > 1)
+                    if (_lifetimeService.Count > 1)
                     {
                         ClearBackStack();
                         AddToBackStack(typeof(BlankPage));

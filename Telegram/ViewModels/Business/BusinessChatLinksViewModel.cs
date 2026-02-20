@@ -1,4 +1,11 @@
-﻿using System;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -45,7 +52,7 @@ namespace Telegram.ViewModels.Business
 
         public async void Create()
         {
-            var response = await ClientService.SendAsync(new CreateBusinessChatLink(new InputBusinessChatLink(new FormattedText(string.Empty, Array.Empty<TextEntity>()), string.Empty)));
+            var response = await ClientService.SendAsync(new CreateBusinessChatLink(new InputBusinessChatLink(string.Empty.AsFormattedText(false), string.Empty)));
             if (response is BusinessChatLink chatLink)
             {
                 Items.Add(chatLink);
@@ -103,7 +110,7 @@ namespace Telegram.ViewModels.Business
                 ClientService.Send(new DeleteBusinessChatLink(chatLink.Link));
                 Items.Remove(chatLink);
 
-                NavigationService.Hide(typeof(BusinessChatLinkPopup));
+                NavigationService.HidePopup(typeof(BusinessChatLinkPopup));
             }
         }
 

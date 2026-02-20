@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI.Xaml.Controls;
 using Rg.DiffUtils;
@@ -18,11 +19,11 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Chats;
+using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Navigation;
-using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -69,10 +70,10 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private bool _photoAllowed;
-        private bool _videoAllowed;
-        private bool _audioAllowed;
-        private bool _documentAllowed;
+        private readonly bool _photoAllowed;
+        private readonly bool _videoAllowed;
+        private readonly bool _audioAllowed;
+        private readonly bool _documentAllowed;
 
         public bool IsMediaAllowed
         {
@@ -95,9 +96,9 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private bool _editing;
+        private readonly bool _editing;
 
-        private bool _ttlAllowed;
+        private readonly bool _ttlAllowed;
         public bool IsTtlAvailable => _ttlAllowed && Items.Count == 1;
 
         public bool HasPaidMediaAllowed { get; set; }
@@ -276,9 +277,9 @@ namespace Telegram.Views.Popups
             IsMediaSelected = media && IsMediaAllowed;
             IsFilesSelected = !IsMediaSelected;
 
-            SendHighQuality = SettingsService.Current.Diagnostics.SendLargePhotos;
+            SendHighQuality = viewModel.Settings.SendLargePhotos;
 
-            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(viewModel.SessionId);
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(viewModel.Session);
             CaptionInput.CustomEmoji = CustomEmoji;
             CaptionInput.ViewModel = viewModel;
 
@@ -345,10 +346,8 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            CaptionInput.Document.GetText(TextGetOptions.None, out string text);
-
-            var query = text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length));
-            var entity = AutocompleteEntityFinder.Search(query, out string result, out int index);
+            var selection = CaptionInput.Document.Selection.GetClone();
+            var entity = AutocompleteEntityFinder.Search(selection, out string result, out int index);
 
             if (e.ClickedItem is User user && entity == AutocompleteEntity.Username)
             {
@@ -432,7 +431,7 @@ namespace Telegram.Views.Popups
                     username.Text = string.Empty;
                 }
 
-                photo.SetUser(ViewModel.ClientService, user, 32);
+                photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
             }
             else if (args.Item is Sticker sticker)
             {
@@ -587,14 +586,11 @@ namespace Telegram.Views.Popups
             var storage = content.DataContext as StorageMedia;
 
             var glyph = content.FindName("Glyph") as AnimatedGlyphButton;
-            if (glyph != null)
-            {
-                glyph.Glyph = storage is StoragePhoto
-                    ? Icons.ImageFilled24
-                    : storage is StorageVideo or StorageAudio
-                    ? Icons.PlayFilled24
-                    : Icons.DocumentFilled24;
-            }
+            glyph?.Glyph = storage is StoragePhoto
+                ? Icons.ImageFilled24
+                : storage is StorageVideo or StorageAudio
+                ? Icons.PlayFilled24
+                : Icons.DocumentFilled24;
         }
 
         private void MediaItem_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -681,7 +677,12 @@ namespace Telegram.Views.Popups
 
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
         {
-            var content = Clipboard.GetContent();
+            var content = ClipboardEx.TryGetContent();
+            if (content == null)
+            {
+                return;
+            }
+
             if (content.AvailableFormats.Contains(StandardDataFormats.Text))
             {
                 e.Handled = true;
@@ -874,12 +875,9 @@ namespace Telegram.Views.Popups
                     UpdateTemplate(content, content.DataContext as StorageMedia);
 
                     var particles = content.FindName("Particles") as AnimatedImage;
-                    if (particles != null)
-                    {
-                        particles.Source = SendWithSpoiler || StarCount > 0
-                            ? new ParticlesImageSource()
-                            : null;
-                    }
+                    particles?.Source = SendWithSpoiler || StarCount > 0
+                        ? new ParticlesImageSource()
+                        : null;
 
                     var border = content.FindName("BackDrop") as Border;
                     if (border != null)
@@ -1135,7 +1133,13 @@ namespace Telegram.Views.Popups
 
                 var flyout = new MenuFlyout();
 
-                flyout.CreateFlyoutItem(SendWithoutGrouping, Strings.SendWithoutGrouping, "\uE90C");
+                // If number of items is different from the view then there's some album
+                var itemsView = ComposeViewModel.GetItemsView(Items, true, false, _photoAllowed, _videoAllowed, _audioAllowed, _documentAllowed);
+                if (itemsView.Count < Items.Count)
+                {
+                    flyout.CreateFlyoutItem(SendWithoutGrouping, Strings.SendWithoutGrouping, "\uE90C");
+                }
+
                 flyout.CreateFlyoutItem(SendWithoutSound, Strings.SendWithoutSound, Icons.AlertOff);
                 flyout.CreateFlyoutItem(SendScheduled, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
 
@@ -1188,7 +1192,7 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            var focused = FocusManager.GetFocusedElement();
+            var focused = FocusManagerEx.TryGetFocusedElement();
             if (focused is null or (not TextBox and not RichEditBox and not Button and not MenuFlyoutItem))
             {
                 var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
@@ -1227,7 +1231,7 @@ namespace Telegram.Views.Popups
             EmojiFlyout.ShowAt(CaptionPanel, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
         }
 
-        private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
+        private void Emoji_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)
         {
             if (e.ClickedItem is EmojiData emoji)
             {
@@ -1280,11 +1284,8 @@ namespace Telegram.Views.Popups
 
                 if (IsMediaSelected && Items.All(x => x is StoragePhoto or StorageVideo))
                 {
-                    if (Items.Any(x => x is StoragePhoto && (x.Width > 1280 || x.Height > 1280)))
-                    {
-                        flyout.CreateFlyoutSeparator();
-                        flyout.CreateFlyoutItem(ToggleSendHighQuality, Strings.SendInHighQuality, SendHighQuality ? Icons.Checkmark : null);
-                    }
+                    flyout.CreateFlyoutSeparator();
+                    flyout.CreateFlyoutItem(ToggleSendHighQuality, Strings.SendInHighQuality, SendHighQuality ? Icons.Checkmark : null);
 
                     flyout.CreateFlyoutSeparator();
 
@@ -1321,6 +1322,7 @@ namespace Telegram.Views.Popups
         private void ToggleSendHighQuality()
         {
             SendHighQuality = !SendHighQuality;
+            ViewModel.Settings.SendLargePhotos = SendHighQuality;
         }
 
         private void ToggleSendWithSpoiler()
@@ -1468,7 +1470,7 @@ namespace Telegram.Views.Popups
         public StorageAlbumPanel()
         {
             // I don't like this much, but it's the easier way to add margins between children
-            Margin = new Thickness(0, 0, -MessageAlbum.ITEM_MARGIN, -MessageAlbum.ITEM_MARGIN);
+            Margin = new Thickness(0, 0, -StorageAlbum.ITEM_MARGIN, -StorageAlbum.ITEM_MARGIN);
         }
 
         private (Rect[], Size) _positions;
@@ -1539,9 +1541,9 @@ namespace Telegram.Views.Popups
                     VerticalContentAlignment = VerticalAlignment.Stretch,
                     MinWidth = 0,
                     MinHeight = 0,
-                    MaxWidth = MessageAlbum.MAX_WIDTH,
-                    MaxHeight = MessageAlbum.MAX_HEIGHT,
-                    Margin = new Thickness(0, 0, MessageAlbum.ITEM_MARGIN, MessageAlbum.ITEM_MARGIN),
+                    MaxWidth = StorageAlbum.MAX_WIDTH,
+                    MaxHeight = StorageAlbum.MAX_HEIGHT,
+                    Margin = new Thickness(0, 0, StorageAlbum.ITEM_MARGIN, StorageAlbum.ITEM_MARGIN),
                     Padding = new Thickness(0),
                     Style = BootStrapper.Current.Resources["EmptyButtonStyle"] as Style
                 };

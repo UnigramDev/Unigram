@@ -31,7 +31,8 @@
                                                Margin="0,0,-16,0">
                         <controls:SettingsExpander.Header>
                             <CheckBox x:Name="CanSendMediaMessages"
-                                      IsChecked="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}">
+                                      IsChecked="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}"
+                                      Margin="-12,-11,0,-12">
                                 <TextBlock>
                                         <Run Text="{CustomResource UserRestrictionsSendMedia}" />
                                         <Run Text="{x:Bind ConvertCanSendCount(ViewModel.CanSendCount), Mode=OneWay}"
@@ -98,12 +99,12 @@
                           ItemsSource="{x:Bind ViewModel.Duration}"
                           SelectedItem="{x:Bind ViewModel.SelectedDuration, Mode=TwoWay}"
                           SelectionChanged="Duration_SelectionChanged"
-                          DisplayMemberPath="Text"
                           HorizontalAlignment="Stretch" />
             </StackPanel>
         </ScrollViewer>
 
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
-                                    Background="{ThemeResource ContentDialogBackground}" />
+                                    Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    BottomInset="0" />
     </Grid>
 </controls:ContentPopup>

@@ -61,7 +61,9 @@
                 startLevel: 0,
                 testBandwidth: false,
                 debug: params['debug'],
-                autoStartLoad: true
+                autoStartLoad: true,
+                maxMaxBufferLength: 30,
+                frontBufferFlushThreshold: 60
             });
             hls.on(Hls.Events.MANIFEST_PARSED, function () {
                 isManifestParsed = true;
@@ -77,6 +79,14 @@
 
             hls.on(Hls.Events.ERROR, function (event, data) {
                 console.log(data);
+
+                if (data.fatal) {
+                    postPlayerEvent('playerError', {
+                        'type': data.type
+                    });
+
+                    hls.destroy();
+                }
             });
 
             hls.loadSource('master.m3u8');
@@ -120,6 +130,10 @@
 
         function playerSeek(value) {
             video.currentTime = value;
+        }
+
+        function playerAddTime(value) {
+            video.currentTime = video.currentTime + value;
         }
 
         function playerSetIsMuted(value) {

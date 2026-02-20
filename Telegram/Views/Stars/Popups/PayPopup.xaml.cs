@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
@@ -14,7 +15,6 @@ using Telegram.ViewModels.Stars;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Stars.Popups
 {
@@ -27,7 +27,8 @@ namespace Telegram.Views.Stars.Popups
             InitializeComponent();
         }
 
-        private long _thumbnailToken;
+        private ThumbnailController _media1Controller;
+        private ThumbnailController _media2Controller;
 
         private long _media1Token;
         private long _media2Token;
@@ -65,11 +66,11 @@ namespace Telegram.Views.Stars.Popups
                 MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 Particles.Source = new ParticlesImageSource();
 
-                UpdateMedia(ViewModel.Media[0], Media1);
+                UpdateMedia(ViewModel.Media[0], Thumbnail1, ref _media1Controller);
 
                 if (ViewModel.Media.Count > 1)
                 {
-                    UpdateMedia(ViewModel.Media[1], Media2);
+                    UpdateMedia(ViewModel.Media[1], Thumbnail2, ref _media1Controller);
 
                     Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 }
@@ -89,18 +90,17 @@ namespace Telegram.Views.Stars.Popups
                 var small = ViewModel.PaymentForm.ProductInfo.Photo?.GetSmall();
                 if (small != null)
                 {
-                    UpdateManager.Subscribe(this, ViewModel.ClientService, small.Photo, ref _thumbnailToken, UpdateFile, true);
-                    UpdateThumbnail(ViewModel.PaymentForm, small.Photo);
+                    Photo.Source = new ProfilePictureSourcePhoto(ViewModel.ClientService, user.Id, small.Photo, ViewModel.PaymentForm.ProductInfo.Photo.Minithumbnail);
                 }
                 else
                 {
-                    Photo.SetUser(ViewModel.ClientService, user, 96);
+                    Photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
                 }
             }
 
             TextBlockHelper.SetMarkdown(Subtitle, text);
 
-            PurchaseText.Text = Locale.Declension(Strings.R.StarsConfirmPurchaseButton, stars.StarCount).Replace("\u2B50", Icons.Premium);
+            PurchaseText.Text = Locale.Declension(Strings.R.StarsConfirmPurchaseButton, stars.StarCount).ReplaceStar(Icons.Premium);
         }
 
         private bool _submitted;
@@ -136,81 +136,20 @@ namespace Telegram.Views.Stars.Popups
             //await Task.Delay(2000);
 
             var result = await ViewModel.SubmitAsync();
-            if (result != PayResult.Failed)
+
+            Hide(result == PayResult.Succeeded
+                ? ContentDialogResult.Primary
+                : ContentDialogResult.Secondary);
+
+            if (result == PayResult.StarsNeeded && ViewModel.PaymentForm?.Type is PaymentFormTypeStars stars)
             {
-                Hide(result == PayResult.Succeeded
-                    ? ContentDialogResult.Primary
-                    : ContentDialogResult.Secondary);
-
-                if (result == PayResult.StarsNeeded && ViewModel.PaymentForm?.Type is PaymentFormTypeStars stars)
-                {
-                    await ViewModel.NavigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForSellerBotUser(stars.StarCount, ViewModel.PaymentForm.SellerBotUserId));
-                }
-
-                return;
-            }
-
-            _submitted = false;
-
-            translate1.InsertKeyFrame(0, 32);
-            translate1.InsertKeyFrame(1, 0);
-
-            translate2.InsertKeyFrame(0, 0);
-            translate2.InsertKeyFrame(1, -32);
-
-            visual1.StartAnimation("Translation.Y", translate1);
-            visual2.StartAnimation("Translation.Y", translate2);
-
-            //Hide();
-            //ViewModel.Submit();
-        }
-
-        private void UpdateFile(object target, File file)
-        {
-            UpdateFile(ViewModel.PaymentForm, file);
-        }
-
-        private void UpdateFile(PaymentForm paymentForm, File file)
-        {
-            var small = paymentForm.ProductInfo.Photo?.GetSmall();
-            if (small != null && (file == null || small.Photo.Id == file.Id))
-            {
-                UpdateThumbnail(paymentForm, small.Photo);
+                await ViewModel.NavigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForSellerBotUser(stars.StarCount, ViewModel.PaymentForm.SellerBotUserId));
             }
         }
 
-        private void UpdateThumbnail(PaymentForm paymentForm, File file)
+        private void UpdateMedia(PaidMedia media, ImageBrush brush, ref ThumbnailController controller)
         {
-            if (file.Local.IsDownloadingCompleted)
-            {
-                Photo.Source = UriEx.ToBitmap(file.Local.Path);
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                ViewModel.ClientService.DownloadFile(file.Id, 1);
-            }
-        }
-
-        private void UpdateMedia(PaidMedia media, Grid target)
-        {
-            BitmapImage source = null;
-            ImageBrush brush;
-
-            if (target.Background is ImageBrush existing)
-            {
-                brush = existing;
-            }
-            else
-            {
-                brush = new ImageBrush
-                {
-                    Stretch = Stretch.UniformToFill,
-                    AlignmentX = AlignmentX.Center,
-                    AlignmentY = AlignmentY.Center
-                };
-
-                target.Background = brush;
-            }
+            controller ??= new ThumbnailController(brush);
 
             Minithumbnail minithumbnail = null;
             if (media is PaidMediaPhoto photo)
@@ -228,11 +167,12 @@ namespace Telegram.Views.Stars.Popups
 
             if (minithumbnail != null)
             {
-                source = new BitmapImage();
-                PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
+                controller.Blur(minithumbnail.Data, 3);
             }
-
-            brush.ImageSource = source;
+            else
+            {
+                controller.Recycle();
+            }
         }
     }
 }

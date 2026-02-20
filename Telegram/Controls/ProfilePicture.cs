@@ -1,26 +1,30 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
+using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
@@ -29,28 +33,27 @@ namespace Telegram.Controls
         None,
         Ellipse,
         Superellipse,
-        Tail
+        Tail,
+        Auto
     }
 
-    public partial class ProfilePicture : Control
+    public partial class ProfilePicture : ControlEx
     {
-        private long _fileToken;
-        private int? _fileId;
-        private long? _referenceId;
+        private Border LayoutRoot;
+        private LinearGradientBrush Gradient;
+        private TextBlock Initials;
+
+        private ProfilePictureShape _appliedShape;
+        private int _appliedSize;
 
         private int _fontSize;
         private bool _glyph;
-
         private bool _tail;
+        private bool _invalidated;
 
-        private object _parameters;
+        private bool _templateApplied;
 
-        private Border LayoutRoot;
-        private ImageBrush Texture;
-        private LinearGradientBrush Gradient;
-
-        // TODO: consider lazy loading
-        private TextBlock Initials;
+        private ProfilePicturePresenter _presenter;
 
         public ProfilePicture()
         {
@@ -60,9 +63,7 @@ namespace Telegram.Controls
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Border;
-
             Initials = GetTemplateChild(nameof(Initials)) as TextBlock;
-            Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
 
             Gradient = new LinearGradientBrush();
             Gradient.StartPoint = new Windows.Foundation.Point(0, 0);
@@ -70,21 +71,241 @@ namespace Telegram.Controls
             Gradient.GradientStops.Add(new GradientStop { Offset = 0 });
             Gradient.GradientStops.Add(new GradientStop { Offset = 1 });
 
-            //UpdateCornerRadius();
-            //UpdateFontSize();
+            _templateApplied = true;
+            InvalidateShape();
 
-            OnSourceChanged(Source);
             base.OnApplyTemplate();
         }
 
-        private void UpdateCornerRadius()
+        protected override Size MeasureOverride(Size availableSize)
         {
-            if (LayoutRoot == null || double.IsNaN(Width))
+            availableSize = new Size(Size, Size);
+
+            LayoutRoot.Measure(availableSize);
+            return availableSize;
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            LayoutRoot.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+            return finalSize;
+        }
+
+        protected override void OnLoaded()
+        {
+            Load();
+        }
+
+        protected override void OnUnloaded()
+        {
+            Unload();
+        }
+
+        private void Load()
+        {
+            var source = Source;
+            if (source != null && IsConnected)
+            {
+                if (source is ProfilePictureSourceText or ProfilePictureSourceBitmap)
+                {
+                    _presenter?.Unload(this);
+                    _presenter = null;
+
+                    Invalidate(source);
+                }
+                else
+                {
+                    var presentation = new ProfilePicturePresentation(source, Size);
+
+                    if (_presenter == null || _presenter.Presentation != presentation)
+                    {
+                        if (IsCachingEnabled || (_presenter != null && !_presenter.IsCachingEnabled))
+                        {
+                            _presenter?.Unload(this);
+                            _presenter = Loader.Current.GetOrCreate(presentation, true);
+                        }
+                        else
+                        {
+                            if (_presenter == null || _presenter.IsCachingEnabled)
+                            {
+                                _presenter = Loader.Current.GetOrCreate(presentation, false);
+                            }
+                            else
+                            {
+                                _presenter.Presentation = presentation;
+                            }
+                        }
+
+                        _presenter.Load(this);
+                    }
+                }
+            }
+            else if (source == null)
+            {
+                Unload();
+            }
+        }
+
+        private void Unload()
+        {
+            if (_presenter != null)
+            {
+                _presenter.Unload(this);
+                _presenter = null;
+            }
+            else if (_invalidated)
+            {
+                Invalidate(null);
+            }
+        }
+
+        private ProfilePictureSource _source;
+        public ProfilePictureSource Source
+        {
+            get => _source;
+            set
+            {
+                if (_source != value)
+                {
+                    _source = value;
+                    InvalidateShape();
+                    Load();
+                }
+            }
+        }
+
+        private int _size;
+        public int Size
+        {
+            get => _size;
+            set
+            {
+                if (_size != value)
+                {
+                    _size = value;
+                    InvalidateMeasure();
+                    InvalidateShape();
+                    Load();
+                }
+            }
+        }
+
+        private ProfilePictureShape _shape = ProfilePictureShape.Auto;
+        public ProfilePictureShape Shape
+        {
+            get => _shape;
+            set
+            {
+                if (_shape != value)
+                {
+                    _shape = value;
+                    InvalidateShape();
+                }
+            }
+        }
+
+        public ProfilePictureShape ComputedShape
+        {
+            get
+            {
+                if (_shape == ProfilePictureShape.Auto)
+                {
+                    if (_source != null)
+                    {
+                        return _source.Shape;
+                    }
+
+                    return ProfilePictureShape.Ellipse;
+                }
+
+                return _shape;
+            }
+        }
+
+        private bool _isCachingEnabled;
+        public bool IsCachingEnabled
+        {
+            get => _isCachingEnabled;
+            set
+            {
+                if (_isCachingEnabled != value)
+                {
+                    _isCachingEnabled = value;
+                    Load();
+                }
+            }
+        }
+
+        private void Invalidate(object newValue)
+        {
+            if (LayoutRoot == null)
             {
                 return;
             }
 
-            var shape = Shape;
+            if (newValue is ImageBrush texture)
+            {
+                _invalidated = true;
+                LayoutRoot.Background = texture;
+                Initials.Visibility = Visibility.Collapsed;
+            }
+            else if (newValue is ProfilePictureSourceText text)
+            {
+                _invalidated = true;
+                Gradient.GradientStops[0].Color = text.TopColor;
+                Gradient.GradientStops[1].Color = text.BottomColor;
+
+                LayoutRoot.Background = Gradient;
+
+                Initials.Visibility = Visibility.Visible;
+                Initials.Text = text.Initials;
+
+                if (_glyph != text.IsGlyph)
+                {
+                    _glyph = text.IsGlyph;
+                    Initials.Margin = new Thickness(0, 1, 0, _glyph ? 0 : 2);
+                }
+
+                InvalidateFontSize();
+            }
+            else if (newValue is ProfilePictureSourceBitmap bitmap)
+            {
+                _invalidated = true;
+                LayoutRoot.Background = new ImageBrush
+                {
+                    ImageSource = bitmap.Bitmap,
+                    Stretch = Stretch.UniformToFill,
+                    AlignmentX = AlignmentX.Center,
+                    AlignmentY = AlignmentY.Center
+                };
+                Initials.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                _invalidated = false;
+                LayoutRoot.Background = null;
+                Initials.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void InvalidateShape()
+        {
+            var shape = ComputedShape;
+            var size = Size;
+
+            if (shape == _appliedShape && size == _appliedSize)
+            {
+                return;
+            }
+
+            if (LayoutRoot == null || size == 0)
+            {
+                return;
+            }
+
+            _appliedShape = shape;
+            _appliedSize = size;
+
             if (shape == ProfilePictureShape.Tail)
             {
                 _tail = true;
@@ -126,7 +347,7 @@ namespace Telegram.Controls
                 var compositor = BootStrapper.Current.Compositor;
 
                 var polygon = compositor.CreatePathGeometry();
-                polygon.Path = GetTail((float)Width / 2);
+                polygon.Path = GetTail(Size / 2f);
 
                 var visual = ElementComposition.GetElementVisual(this);
                 visual.Clip = compositor.CreateGeometricClip(polygon);
@@ -141,20 +362,20 @@ namespace Telegram.Controls
 
             LayoutRoot.CornerRadius = new CornerRadius(shape switch
             {
-                ProfilePictureShape.Superellipse => Width / 4,
-                ProfilePictureShape.Ellipse => Width / 2,
+                ProfilePictureShape.Superellipse => size / 4d,
+                ProfilePictureShape.Ellipse => size / 2d,
                 _ => 0
             });
         }
 
-        private void UpdateFontSize()
+        private void InvalidateFontSize()
         {
-            if (Initials == null || double.IsNaN(Width))
+            if (Initials == null || Size == 0)
             {
                 return;
             }
 
-            var fontSize = Width switch
+            var fontSize = Size switch
             {
                 < 20 => 10,
                 < 30 => 12,
@@ -173,619 +394,436 @@ namespace Telegram.Controls
             }
         }
 
-        #region Shape
+        public record ProfilePicturePresentation(ProfilePictureSource Source, int Size);
 
-        public ProfilePictureShape Shape
+        public class ProfilePicturePresenter
         {
-            get { return (ProfilePictureShape)GetValue(ShapeProperty); }
-            set { SetValue(ShapeProperty, value); }
-        }
-
-        public static readonly DependencyProperty ShapeProperty =
-            DependencyProperty.Register("Shape", typeof(ProfilePictureShape), typeof(ProfilePicture), new PropertyMetadata(ProfilePictureShape.Ellipse, OnShapeChanged));
-
-        private static void OnShapeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ProfilePicture)d).UpdateCornerRadius();
-        }
-
-        #endregion
-
-        public void Clear()
-        {
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
-
-            _fileId = null;
-            _referenceId = null;
-
-            _parameters = null;
-
-            Source = null;
-        }
-
-        #region Source
-
-        public object Source
-        {
-            get => (object)GetValue(SourceProperty);
-            set => SetValue(SourceProperty, value);
-        }
-
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(object), typeof(ProfilePicture), new PropertyMetadata(null, OnSourceChanged));
-
-        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ProfilePicture)d).OnSourceChanged((object)e.NewValue);
-        }
-
-        private void OnSourceChanged(object newValue)
-        {
-            if (LayoutRoot == null)
+            public enum State
             {
-                return;
+                Download,
+                Update
             }
 
-            if (newValue is PlaceholderImage or null)
+            private readonly Loader _loader;
+            private ProfilePicturePresentation _presentation;
+
+            private readonly ImageBrush _texture;
+            private readonly ThumbnailController _controller;
+
+            private readonly DispatcherQueue _dispatcherQueue;
+
+            private readonly HashSet<ProfilePicture> _pictures = new();
+
+            private int? _fileId;
+            private long _fileToken;
+
+            private object _source;
+
+            public ProfilePicturePresenter(Loader loader, ProfilePicturePresentation presentation)
             {
-                UpdateManager.Unsubscribe(this, ref _fileToken, true);
+                _loader = loader;
+                _presentation = presentation;
 
-                _fileId = null;
-                _referenceId = null;
-
-                _parameters = null;
-            }
-
-            if (newValue is PlaceholderImage placeholder)
-            {
-                Gradient.GradientStops[0].Color = placeholder.TopColor;
-                Gradient.GradientStops[1].Color = placeholder.BottomColor;
-
-                LayoutRoot.Background = Gradient;
-
-                Initials.Visibility = Visibility.Visible;
-                Initials.Text = placeholder.Initials;
-
-                if (_glyph != placeholder.IsGlyph)
+                _texture = new ImageBrush
                 {
-                    _glyph = placeholder.IsGlyph;
-                    Initials.Margin = new Thickness(0, 1, 0, _glyph ? 0 : 2);
-                }
-            }
-            else if (newValue is ImageSource source)
-            {
-                Texture.ImageSource = source;
+                    Stretch = Stretch.UniformToFill,
+                    AlignmentX = AlignmentX.Center,
+                    AlignmentY = AlignmentY.Center
+                };
 
-                LayoutRoot.Background = Texture;
+                _controller = new ThumbnailController(_texture);
 
-                Initials.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                LayoutRoot.Background = null;
-
-                Initials.Visibility = Visibility.Collapsed;
+                _dispatcherQueue = loader.DispatcherQueue;
+                IsCachingEnabled = true;
             }
 
-            UpdateCornerRadius();
-            UpdateFontSize();
-        }
-
-        #endregion
-
-        private void UpdateFile(object target, File file)
-        {
-            if (_parameters is ChatParameters chat)
+            public ProfilePicturePresenter(DispatcherQueue dispatcherQueue, ProfilePicturePresentation presentation)
             {
-                SetChat(chat.ClientService, chat.Chat, chat.Side, false);
-            }
-            else if (_parameters is UserParameters user)
-            {
-                SetUser(user.ClientService, user.User, user.Side, false);
-            }
-            else if (_parameters is ChatInviteParameters chatInvite)
-            {
-                SetChat(chatInvite.ClientService, chatInvite.Chat, chatInvite.Side, false);
-            }
-            else if (_parameters is ChatPhotoParameters chatPhoto)
-            {
-                SetChatPhoto(chatPhoto.ClientService, chatPhoto.Photo, chatPhoto.Side, false);
-            }
-            else if (_parameters is StoryParameters story)
-            {
-                SetStory(story.ClientService, story.Story, story.Side, false);
-            }
-        }
+                _presentation = presentation;
 
-        #region MessageSender
-
-        public void SetMessageSender(IClientService clientService, MessageSender sender, int side, bool download = true)
-        {
-            if (clientService.TryGetUser(sender, out User user))
-            {
-                SetUser(clientService, user, side, download);
-            }
-            else if (clientService.TryGetChat(sender, out Chat chat))
-            {
-                SetChat(clientService, chat, side, download);
-            }
-        }
-
-        #endregion
-
-        #region Story
-
-        struct StoryParameters
-        {
-            public IClientService ClientService;
-            public Story Story;
-            public int Side;
-
-            public StoryParameters(IClientService clientService, Story story, int side)
-            {
-                ClientService = clientService;
-                Story = story;
-                Side = side;
-            }
-        }
-
-        public void SetStory(IClientService clientService, Story story, int side, bool download = true)
-        {
-            if (story.Content is StoryContentPhoto photo)
-            {
-                SetStory(clientService, story, photo.Photo.GetSmall()?.Photo, side, download);
-            }
-            else if (story.Content is StoryContentVideo video)
-            {
-                SetStory(clientService, story, video.Video.Thumbnail?.File, side, download);
-            }
-        }
-
-        private void SetStory(IClientService clientService, Story story, File file, int side, bool download = true)
-        {
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
-
-            if (_referenceId != story.Id || _fileId != file?.Id || Source == null || !download)
-            {
-                _referenceId = story.Id;
-                _fileId = file?.Id;
-
-                Source = GetStory(clientService, story, file, side, out var shape, download);
-                Shape = shape;
-            }
-        }
-
-        private object GetStory(IClientService clientService, Story story, File file, int side, out ProfilePictureShape shape, bool download = true)
-        {
-            System.Diagnostics.Debug.Assert(side == Width);
-
-            shape = ProfilePictureShape.Ellipse;
-
-            if (file != null)
-            {
-                if (file.Local.IsDownloadingCompleted)
+                _texture = new ImageBrush
                 {
-                    return UriEx.ToBitmap(file.Local.Path, 0, 0);
-                }
-                else if (download)
+                    Stretch = Stretch.UniformToFill,
+                    AlignmentX = AlignmentX.Center,
+                    AlignmentY = AlignmentY.Center
+                };
+
+                _controller = new ThumbnailController(_texture);
+
+                _dispatcherQueue = dispatcherQueue;
+                IsCachingEnabled = false;
+            }
+
+            public bool IsCachingEnabled { get; }
+
+            public ProfilePicturePresentation Presentation
+            {
+                get => _presentation;
+                set
                 {
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    if (_loader == null)
                     {
-                        clientService.DownloadFile(file.Id, 1);
+                        _presentation = value;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
+            }
+
+            public void Load(ProfilePicture picture)
+            {
+                _pictures.Add(picture);
+                picture.Invalidate(_source);
+
+                Load(State.Download);
+            }
+
+            private void Load(State state)
+            {
+                var source = _presentation.Source;
+                if (source is ProfilePictureSourcePhoto sourcePhoto && (_fileId != sourcePhoto.Photo.Id || state != State.Download))
+                {
+                    _fileId = sourcePhoto.Photo.Id;
+                    UpdateManager.Unsubscribe(this, ref _fileToken);
+
+                    Invalidate(sourcePhoto, _presentation.Size, state);
+                }
+                else if (source is ProfilePictureSourceText sourceText)
+                {
+                    _fileId = null;
+                    UpdateManager.Unsubscribe(this, ref _fileToken);
+
+                    Invalidate(sourceText);
+                }
+            }
+
+            private void Invalidate(ProfilePictureSourcePhoto photo, int side, State state = State.Download)
+            {
+                if (photo.Photo.Local.IsDownloadingCompleted)
+                {
+                    _controller.Bitmap(photo.Photo.Local.Path, side, side, photo.Id);
+                    Invalidate(_texture);
+
+                    return;
+                }
+                else
+                {
+                    if (photo.Photo.Local.CanBeDownloaded && !photo.Photo.Local.IsDownloadingActive && state != State.Update)
+                    {
+                        photo.ClientService.DownloadFile(photo.Photo.Id, 1);
                     }
 
-                    _parameters = new StoryParameters(clientService, story, side);
-                    UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile, true);
+                    UpdateManager.Subscribe(this, photo.ClientService, photo.Photo, ref _fileToken, UpdateFile, true);
+                }
+
+                if (photo.Minithumbnail != null)
+                {
+                    _controller.Blur(photo.Minithumbnail.Data, 3, photo.Id);
+                    Invalidate(_texture);
+
+                    return;
+                }
+
+                _controller.Recycle();
+                Invalidate(photo.Text);
+            }
+
+            private void Invalidate(object value)
+            {
+                if (_source != value)
+                {
+                    _source = value;
+
+                    foreach (var picture in _pictures)
+                    {
+                        picture.Invalidate(value);
+                    }
                 }
             }
 
-            if (story.Content is StoryContentPhoto photo && photo.Photo.Minithumbnail != null)
+            private void UpdateFile(object target, File file)
             {
-                var bitmap = new BitmapImage();
-                PlaceholderHelper.GetBlurred(bitmap, photo.Photo.Minithumbnail.Data);
-                return bitmap;
+                _dispatcherQueue.TryEnqueue(() => Load(State.Update));
             }
-            else if (story.Content is StoryContentVideo video && video.Video.Minithumbnail != null)
+
+            public void Unload(ProfilePicture picture)
             {
-                var bitmap = new BitmapImage();
-                PlaceholderHelper.GetBlurred(bitmap, video.Video.Minithumbnail.Data);
-                return bitmap;
+                _pictures.Remove(picture);
+                picture.Invalidate(null);
+
+                if (_pictures.Empty())
+                {
+                    UpdateManager.Unsubscribe(this, ref _fileToken);
+
+                    _controller.Recycle();
+                    _loader?.Unload(this);
+                }
+            }
+        }
+
+        public class Loader
+        {
+            [ThreadStatic]
+            private static Loader _current;
+            public static Loader Current => _current ??= new();
+
+            public static void Release()
+            {
+                _current = null;
+            }
+
+            private readonly Dictionary<ProfilePicturePresentation, ProfilePicturePresenter> _presenters = new();
+            private readonly DispatcherQueue _dispatcherQueue;
+
+            private Loader()
+            {
+                _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            }
+
+            public DispatcherQueue DispatcherQueue => _dispatcherQueue;
+
+            public ProfilePicturePresenter GetOrCreate(ProfilePicturePresentation presentation, bool isCachingEnabled)
+            {
+                if (isCachingEnabled)
+                {
+                    if (_presenters.TryGetValue(presentation, out var presenter))
+                    {
+                        return presenter;
+                    }
+
+                    presenter = new ProfilePicturePresenter(this, presentation);
+                    _presenters.Add(presentation, presenter);
+
+                    return presenter;
+                }
+
+                return new ProfilePicturePresenter(_dispatcherQueue, presentation);
+            }
+
+            public void Unload(ProfilePicturePresenter presenter)
+            {
+                _presenters.Remove(presenter.Presentation);
+            }
+        }
+    }
+
+    public abstract record ProfilePictureSource(ProfilePictureShape Shape)
+    {
+        public static ProfilePictureSource Message(MessageViewModel message)
+        {
+            if (message.IsSaved || message.IsVerificationCode)
+            {
+                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
+                {
+                    return ProfilePictureSource.User(message.ClientService, fromUserUser);
+                }
+                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
+                {
+                    return ProfilePictureSource.Chat(message.ClientService, fromChatChat);
+                }
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
+                {
+                    return ProfilePictureSource.Chat(message.ClientService, fromChannelChat);
+                }
+                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
+                {
+                    return ProfilePictureSourceText.GetNameForUser(fromHiddenUser.SenderName, long.MinValue);
+                }
+                else if (message.ImportInfo != null)
+                {
+                    return ProfilePictureSourceText.GetNameForUser(message.ImportInfo.SenderName, long.MinValue);
+                }
+            }
+            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
+            {
+                return ProfilePictureSource.User(message.ClientService, senderUser);
+            }
+            else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
+            {
+                return ProfilePictureSource.Chat(message.ClientService, senderChat);
             }
 
             return null;
         }
 
-        #endregion
-
-        #region Chat
-
-        struct ChatParameters
+        public static ProfilePictureSource MessageSender(IClientService clientService, MessageSender sender)
         {
-            public IClientService ClientService;
-            public Chat Chat;
-            public int Side;
-
-            public ChatParameters(IClientService clientService, Chat chat, int side)
+            if (clientService.TryGetUser(sender, out User user))
             {
-                ClientService = clientService;
-                Chat = chat;
-                Side = side;
+                return ProfilePictureSource.User(clientService, user);
             }
-        }
-
-        public void SetChat(IClientService clientService, Chat chat, int side, bool download = true)
-        {
-            SetChat(clientService, chat, chat.Photo?.Small, side, download);
-        }
-
-        private void SetChat(IClientService clientService, Chat chat, File file, int side, bool download = true)
-        {
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
-
-            if (_referenceId != chat.Id || _fileId != file?.Id || Source == null || !download)
+            else if (clientService.TryGetChat(sender, out Chat chat))
             {
-                _referenceId = chat.Id;
-                _fileId = file?.Id;
-
-                Source = GetChat(clientService, chat, file, side, out var shape, download);
-                Shape = shape;
+                return ProfilePictureSource.Chat(clientService, chat);
             }
+
+            return null;
         }
 
-        private object GetChat(IClientService clientService, Chat chat, File file, int side, out ProfilePictureShape shape, bool download = true)
+        public static ProfilePictureSource User(IClientService clientService, User user)
         {
-            // TODO: this method may throw a NullReferenceException in some conditions
+            ProfilePictureSourceText text;
+            if (user.Type is UserTypeDeleted)
+            {
+                text = ProfilePictureSourceText.GetGlyph(Icons.GhostFilled, long.MinValue);
+            }
+            else
+            {
+                text = ProfilePictureSourceText.GetUser(clientService, user);
+            }
 
-            System.Diagnostics.Debug.Assert(side == Width);
+            var photo = user.ProfilePhoto;
+            if (photo != null)
+            {
+                return new ProfilePictureSourcePhoto(clientService, user.Id, photo.Small, photo.Minithumbnail, text, ProfilePictureShape.Ellipse);
+            }
 
-            shape = ProfilePictureShape.Ellipse;
+            return text;
+        }
 
+        public static ProfilePictureSource ChatPhoto(IClientService clientService, User user, ChatPhoto chatPhoto, bool big)
+        {
+            ProfilePictureSourceText text;
+            if (user.Type is UserTypeDeleted)
+            {
+                text = ProfilePictureSourceText.GetGlyph(Icons.GhostFilled, long.MinValue);
+            }
+            else
+            {
+                text = ProfilePictureSourceText.GetUser(clientService, user);
+            }
+
+            var photo = big ? chatPhoto?.GetBig() : chatPhoto?.GetSmall();
+            if (photo != null)
+            {
+                return new ProfilePictureSourcePhoto(clientService, user.Id, photo.Photo, chatPhoto.Minithumbnail, text, ProfilePictureShape.Ellipse);
+            }
+
+            return text;
+        }
+
+        public static ProfilePictureSource ChatPhoto(IClientService clientService, Chat chat, ChatPhoto chatPhoto, bool big)
+        {
+            ProfilePictureSourceText text;
+            text = ProfilePictureSourceText.GetChat(clientService, chat);
+
+            var photo = big ? chatPhoto?.GetBig() : chatPhoto?.GetSmall();
+            if (photo != null)
+            {
+                return new ProfilePictureSourcePhoto(clientService, chat.Id, photo.Photo, chatPhoto.Minithumbnail, text, ProfilePictureShape.Ellipse);
+            }
+
+            return text;
+        }
+
+        public static ProfilePictureSource Chat(IClientService clientService, Chat chat)
+        {
             if (chat.Id == clientService.Options.MyId)
             {
-                return PlaceholderImage.GetGlyph(Icons.BookmarkFilled, 5);
+                return ProfilePictureSourceText.GetGlyph(Icons.BookmarkFilled, 5);
             }
             else if (chat.Id == clientService.Options.RepliesBotChatId)
             {
-                return PlaceholderImage.GetGlyph(Icons.ArrowReplyFilled, 5);
+                return ProfilePictureSourceText.GetGlyph(Icons.ArrowReplyFilled, 5);
             }
 
+            var shape = ProfilePictureShape.Ellipse;
             if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
                 if (supergroup.IsForum)
                 {
                     shape = ProfilePictureShape.Superellipse;
                 }
-                else if (supergroup.IsFeedbackGroup)
+                else if (supergroup.IsDirectMessagesGroup)
                 {
                     shape = ProfilePictureShape.Tail;
                 }
             }
 
-            if (file != null)
+            ProfilePictureSourceText text;
+            if (supergroup == null && clientService.TryGetUser(chat, out User user))
             {
-                if (file.Local.IsDownloadingCompleted)
+                if (user.Type is UserTypeDeleted)
                 {
-                    return UriEx.ToBitmap(file.Local.Path, side, side);
-                }
-                else if (download)
-                {
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        clientService.DownloadFile(file.Id, 1);
-                    }
-
-                    _parameters = new ChatParameters(clientService, chat, side);
-                    UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile, true);
-                }
-            }
-            else if (clientService.TryGetUser(chat, out User user) && user.Type is UserTypeDeleted)
-            {
-                return PlaceholderImage.GetGlyph(Icons.GhostFilled, long.MinValue);
-            }
-
-            var minithumbnail = chat.Photo?.Minithumbnail;
-            if (minithumbnail != null)
-            {
-                var bitmap = new BitmapImage();
-                PlaceholderHelper.GetBlurred(bitmap, minithumbnail.Data);
-                return bitmap;
-            }
-
-            return PlaceholderImage.GetChat(clientService, chat);
-        }
-
-        #endregion
-
-        #region User
-
-        struct UserParameters
-        {
-            public IClientService ClientService;
-            public User User;
-            public int Side;
-
-            public UserParameters(IClientService clientService, User user, int side)
-            {
-                ClientService = clientService;
-                User = user;
-                Side = side;
-            }
-        }
-
-        public void SetUser(IClientService clientService, User user, int side, bool download = true)
-        {
-            SetUser(clientService, user, user.ProfilePhoto?.Small, side, download);
-        }
-
-        public void SetUser(IClientService clientService, User user, File file, int side, bool download = true)
-        {
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
-
-            if (_referenceId != user.Id || _fileId != file?.Id || Source == null || !download)
-            {
-                _referenceId = user.Id;
-                _fileId = file?.Id;
-
-                Source = GetUser(clientService, user, file, side, download);
-                Shape = ProfilePictureShape.Ellipse;
-            }
-        }
-
-        private object GetUser(IClientService clientService, User user, File file, int side, bool download = true)
-        {
-            System.Diagnostics.Debug.Assert(side == Width);
-
-            if (file != null)
-            {
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    return UriEx.ToBitmap(file.Local.Path, side, side);
-                }
-                else if (download)
-                {
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        clientService.DownloadFile(file.Id, 1);
-                    }
-
-                    _parameters = new UserParameters(clientService, user, side);
-                    UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile, true);
-                }
-            }
-            else if (user.Type is UserTypeDeleted)
-            {
-                return PlaceholderImage.GetGlyph(Icons.GhostFilled, long.MinValue);
-            }
-
-            var minithumbnail = user.ProfilePhoto?.Minithumbnail;
-            if (minithumbnail != null)
-            {
-                var bitmap = new BitmapImage();
-                PlaceholderHelper.GetBlurred(bitmap, minithumbnail.Data);
-                return bitmap;
-            }
-
-            return PlaceholderImage.GetUser(clientService, user);
-        }
-
-
-        #endregion
-
-        #region Chat invite
-
-        struct ChatInviteParameters
-        {
-            public IClientService ClientService;
-            public ChatInviteLinkInfo Chat;
-            public int Side;
-
-            public ChatInviteParameters(IClientService clientService, ChatInviteLinkInfo chat, int side)
-            {
-                ClientService = clientService;
-                Chat = chat;
-                Side = side;
-            }
-        }
-
-        public void SetChat(IClientService clientService, ChatInviteLinkInfo chat, int side, bool download = true)
-        {
-            SetChat(clientService, chat, chat.Photo?.Small, side, download);
-        }
-
-        private void SetChat(IClientService clientService, ChatInviteLinkInfo chat, File file, int side, bool download = true)
-        {
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
-
-            Source = GetChat(clientService, chat, file, side, download);
-            Shape = ProfilePictureShape.Ellipse;
-        }
-
-        private object GetChat(IClientService clientService, ChatInviteLinkInfo chat, File file, int side, bool download = true)
-        {
-            if (file != null)
-            {
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    return UriEx.ToBitmap(file.Local.Path, side, side);
+                    text = ProfilePictureSourceText.GetGlyph(Icons.GhostFilled, long.MinValue);
                 }
                 else
                 {
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && download)
-                    {
-                        clientService.DownloadFile(file.Id, 1);
-                    }
-
-                    _parameters = new ChatInviteParameters(clientService, chat, side);
-                    UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile, true);
+                    text = ProfilePictureSourceText.GetUser(clientService, user);
                 }
             }
-
-            if (chat.Photo?.Minithumbnail != null)
+            else
             {
-                var bitmap = new BitmapImage();
-                PlaceholderHelper.GetBlurred(bitmap, chat.Photo.Minithumbnail.Data);
-                return bitmap;
+                text = ProfilePictureSourceText.GetChat(clientService, chat, shape);
             }
 
-            return PlaceholderImage.GetChat(clientService, chat);
-        }
-
-        #endregion
-
-        #region Chat invite
-
-        struct ChatPhotoParameters
-        {
-            public IClientService ClientService;
-            public ChatPhoto Photo;
-            public int Side;
-
-            public ChatPhotoParameters(IClientService clientService, ChatPhoto photo, int side)
+            var photo = chat.Photo;
+            if (photo != null)
             {
-                ClientService = clientService;
-                Photo = photo;
-                Side = side;
+                return new ProfilePictureSourcePhoto(clientService, chat.Id, photo.Small, photo.Minithumbnail, text, shape);
             }
+
+            return text;
         }
 
-        public void SetChatPhoto(IClientService clientService, ChatPhoto photo, int side, bool download = true)
+        public static ProfilePictureSource Chat(IClientService clientService, ChatInviteLinkInfo chat)
         {
-            SetChatPhoto(clientService, photo, photo.GetBig()?.Photo, side, download);
-        }
+            ProfilePictureSourceText text;
+            text = ProfilePictureSourceText.GetChat(clientService, chat);
 
-        private void SetChatPhoto(IClientService clientService, ChatPhoto photo, File file, int side, bool download = true)
-        {
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
-
-            Source = GetChatPhoto(clientService, photo, file, side, download);
-            Shape = ProfilePictureShape.Ellipse;
-        }
-
-        private object GetChatPhoto(IClientService clientService, ChatPhoto photo, File file, int side, bool download = true)
-        {
-            if (file != null)
+            var photo = chat.Photo;
+            if (photo != null)
             {
-                if (file.Local.IsDownloadingCompleted)
+                return new ProfilePictureSourcePhoto(clientService, chat.ChatId, photo.Small, photo.Minithumbnail, text);
+            }
+
+            return text;
+        }
+
+        public static ProfilePictureSource Story(IClientService clientService, Story story)
+        {
+            if (story.Content is StoryContentPhoto photo)
+            {
+                var file = photo.Photo.GetSmall()?.Photo;
+                if (file != null)
                 {
-                    return UriEx.ToBitmap(file.Local.Path, side, side);
+                    return new ProfilePictureSourcePhoto(clientService, photo.Photo.Sizes[0].Photo.Id, file, photo.Photo.Minithumbnail);
                 }
-                else
+            }
+            else if (story.Content is StoryContentVideo video)
+            {
+                var file = video.Video.Thumbnail?.File;
+                if (file != null)
                 {
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && download)
-                    {
-                        clientService.DownloadFile(file.Id, 1);
-                    }
-
-                    _parameters = new ChatPhotoParameters(clientService, photo, side);
-                    UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile, true);
+                    return new ProfilePictureSourcePhoto(clientService, video.Video.Video.Id, file, video.Video.Minithumbnail);
                 }
             }
 
-            if (photo.Minithumbnail != null)
+            if (story.PosterId != null)
             {
-                var bitmap = new BitmapImage();
-                PlaceholderHelper.GetBlurred(bitmap, photo.Minithumbnail.Data);
-                return bitmap;
+                return ProfilePictureSource.MessageSender(clientService, story.PosterId);
+            }
+
+            if (clientService.TryGetChat(story.PosterChatId, out Chat chat))
+            {
+                return ProfilePictureSource.Chat(clientService, chat);
             }
 
             return null;
         }
-
-        #endregion
-
-        public void SetMessage(MessageViewModel message)
-        {
-            if (message.IsSaved || message.IsVerificationCode)
-            {
-                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
-                {
-                    SetUser(message.ClientService, fromUserUser, 30);
-                }
-                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
-                {
-                    SetChat(message.ClientService, fromChatChat, 30);
-                }
-                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
-                {
-                    SetChat(message.ClientService, fromChannelChat, 30);
-                }
-                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
-                {
-                    Source = PlaceholderImage.GetNameForUser(fromHiddenUser.SenderName, long.MinValue);
-                    Shape = ProfilePictureShape.Ellipse;
-                }
-                else if (message.ImportInfo != null)
-                {
-                    Source = PlaceholderImage.GetNameForUser(message.ImportInfo.SenderName, long.MinValue);
-                    Shape = ProfilePictureShape.Ellipse;
-                }
-            }
-            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
-            {
-                SetUser(message.ClientService, senderUser, 30);
-            }
-            else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
-            {
-                SetChat(message.ClientService, senderChat, 30);
-            }
-        }
     }
 
-    public partial class PlaceholderImage
+    public record ProfilePictureSourceBitmap(ImageSource Bitmap, ProfilePictureShape Shape = ProfilePictureShape.Ellipse)
+        : ProfilePictureSource(Shape);
+
+    public record ProfilePictureSourcePhoto(IClientService ClientService, long Id, File Photo, Minithumbnail Minithumbnail, ProfilePictureSourceText Text = null, ProfilePictureShape Shape = ProfilePictureShape.Ellipse)
+        : ProfilePictureSource(Shape);
+
+    public record ProfilePictureSourceText(string Initials, bool IsGlyph, Color TopColor, Color BottomColor, ProfilePictureShape Shape = ProfilePictureShape.Ellipse)
+        : ProfilePictureSource(Shape)
     {
-        public string Initials { get; }
-
-        public bool IsGlyph { get; }
-
-        public Color TopColor { get; }
-
-        public Color BottomColor { get; }
-
-        public PlaceholderImage(string initials, bool isGlyph, NameColor color)
-        {
-            Initials = initials;
-            IsGlyph = isGlyph;
-
-            if (color == null)
-            {
-                TopColor = _disabledTop;
-                BottomColor = _disabled;
-            }
-            else
-            {
-                TopColor = _colorsTop[Math.Abs(color.BuiltInAccentColorId % _colors.Length)];
-                BottomColor = _colors[Math.Abs(color.BuiltInAccentColorId % _colors.Length)];
-            }
-        }
-
-        public PlaceholderImage(string initials, bool isGlyph, long id)
-        {
-            Initials = initials;
-            IsGlyph = isGlyph;
-
-            if (id == long.MinValue)
-            {
-                TopColor = _disabledTop;
-                BottomColor = _disabled;
-            }
-            else
-            {
-                TopColor = _colorsTop[Math.Abs(id % _colors.Length)];
-                BottomColor = _colors[Math.Abs(id % _colors.Length)];
-            }
-        }
-
-        public PlaceholderImage(string initials, bool isGlyph, Color topColor, Color bottomColor)
-        {
-            Initials = initials;
-            IsGlyph = isGlyph;
-
-            TopColor = topColor;
-            BottomColor = bottomColor;
-        }
-
-        #region Static stuff
-
         private static readonly Color[] _colorsTop = new Color[7]
         {
             Color.FromArgb(0xFF, 0xEF, 0x8E, 0x67), // orange
@@ -834,41 +872,82 @@ namespace Telegram.Controls
             return compositor.CreateColorBrush(_colors[Math.Abs(i % _colors.Length)]);
         }
 
-        public static PlaceholderImage GetChat(IClientService clientService, Chat chat)
+        public static ProfilePictureSourceText GetChat(IClientService clientService, Chat chat, ProfilePictureShape shape = ProfilePictureShape.None)
         {
-            return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, clientService.GetAccentColor(chat.AccentColorId));
+            if (shape == ProfilePictureShape.None)
+            {
+                shape = ProfilePictureShape.Ellipse;
+
+                if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    if (supergroup.IsForum)
+                    {
+                        shape = ProfilePictureShape.Superellipse;
+                    }
+                    else if (supergroup.IsDirectMessagesGroup)
+                    {
+                        shape = ProfilePictureShape.Tail;
+                    }
+                }
+            }
+
+            return ProfilePictureSourceText.FromNameColor(InitialNameStringConverter.Convert(chat.Title), false, clientService.GetAccentColor(chat.AccentColorId), shape);
         }
 
-        public static PlaceholderImage GetChat(IClientService clientService, ChatInviteLinkInfo chat)
+        public static ProfilePictureSourceText GetChat(IClientService clientService, ChatInviteLinkInfo chat)
         {
-            return new PlaceholderImage(InitialNameStringConverter.Convert(chat.Title), false, clientService.GetAccentColor(chat.AccentColorId));
+            return ProfilePictureSourceText.FromNameColor(InitialNameStringConverter.Convert(chat.Title), false, clientService.GetAccentColor(chat.AccentColorId));
         }
 
-        public static PlaceholderImage GetUser(IClientService clientService, User user)
+        public static ProfilePictureSourceText GetUser(IClientService clientService, User user)
         {
-            return new PlaceholderImage(InitialNameStringConverter.Convert(user), false, clientService.GetAccentColor(user.AccentColorId));
+            return ProfilePictureSourceText.FromNameColor(InitialNameStringConverter.Convert(user.FirstName, user.LastName), false, clientService.GetAccentColor(user.AccentColorId));
         }
 
-        public static PlaceholderImage GetNameForUser(string firstName, string lastName, long id = 5)
+        public static ProfilePictureSourceText GetNameForUser(string firstName, string lastName, long id = 5, ProfilePictureShape shape = ProfilePictureShape.Ellipse)
         {
-            return new PlaceholderImage(InitialNameStringConverter.Convert(firstName, lastName), false, id);
+            return ProfilePictureSourceText.FromId(InitialNameStringConverter.Convert(firstName, lastName), false, id);
         }
 
-        public static PlaceholderImage GetNameForUser(string name, long id = 5)
+        public static ProfilePictureSourceText GetNameForUser(string name, long id = 5, ProfilePictureShape shape = ProfilePictureShape.Ellipse)
         {
-            return new PlaceholderImage(InitialNameStringConverter.Convert((object)name), false, id);
+            return ProfilePictureSourceText.FromId(InitialNameStringConverter.Convert(name), false, id);
         }
 
-        public static PlaceholderImage GetNameForChat(string title, long id = 5)
+        public static ProfilePictureSourceText GetNameForChat(string title, long id = 5, ProfilePictureShape shape = ProfilePictureShape.Ellipse)
         {
-            return new PlaceholderImage(InitialNameStringConverter.Convert(title), false, id);
+            return ProfilePictureSourceText.FromId(InitialNameStringConverter.Convert(title), false, id);
         }
 
-        public static PlaceholderImage GetGlyph(string glyph, long id = 5)
+        public static ProfilePictureSourceText GetGlyph(string glyph, long id = 5, ProfilePictureShape shape = ProfilePictureShape.Ellipse)
         {
-            return new PlaceholderImage(glyph, true, id);
+            return ProfilePictureSourceText.FromId(glyph, true, id);
         }
 
-        #endregion
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static ProfilePictureSourceText FromNameColor(string initials, bool isGlyph, NameColor color, ProfilePictureShape shape = ProfilePictureShape.Ellipse)
+        {
+            if (color == null)
+            {
+                return new ProfilePictureSourceText(initials, isGlyph, _disabledTop, _disabled, shape);
+            }
+            else
+            {
+                return new ProfilePictureSourceText(initials, isGlyph, _colorsTop[Math.Abs(color.BuiltInAccentColorId % _colors.Length)], _colors[Math.Abs(color.BuiltInAccentColorId % _colors.Length)], shape);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static ProfilePictureSourceText FromId(string initials, bool isGlyph, long id, ProfilePictureShape shape = ProfilePictureShape.Ellipse)
+        {
+            if (id == long.MinValue)
+            {
+                return new ProfilePictureSourceText(initials, isGlyph, _disabledTop, _disabled, shape);
+            }
+            else
+            {
+                return new ProfilePictureSourceText(initials, isGlyph, _colorsTop[Math.Abs(id % _colors.Length)], _colors[Math.Abs(id % _colors.Length)], shape);
+            }
+        }
     }
 }

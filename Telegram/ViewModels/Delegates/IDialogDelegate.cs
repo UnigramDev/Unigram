@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using Telegram.Controls.Chats;
@@ -38,7 +39,6 @@ namespace Telegram.ViewModels.Delegates
         void UpdateSupergroupEmptyState(Chat chat, Supergroup supergroup);
 
         void UpdatePinnedMessage(Chat chat, bool known);
-        void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel answer);
 
         void UpdateComposerHeader(Chat chat, MessageComposerHeader header);
         void UpdateSearchMask(Chat chat, ChatSearchViewModel search);
@@ -47,8 +47,6 @@ namespace Telegram.ViewModels.Delegates
 
         void UpdateGroupCall(Chat chat, GroupCall groupCall);
 
-        void UpdateDeleteMessages(Chat chat, IList<MessageViewModel> messages);
-
 
 
         void PlayMessage(MessageViewModel message, FrameworkElement target);
@@ -56,11 +54,14 @@ namespace Telegram.ViewModels.Delegates
         void ViewVisibleMessages();
 
 
+        void DisableScreenCapture();
+
         void HideStickers();
 
         void ChangeTheme();
 
         void UpdateMessageSendSucceeded(long oldMessageId, MessageViewModel message);
+        void UpdateMessageSummary(MessageViewModel message);
 
         void UpdateContainerWithMessageId(long messageId, Action<SelectorItem> action);
 
@@ -69,10 +70,15 @@ namespace Telegram.ViewModels.Delegates
 
         void UpdateBubbleWithReplyToMessageId(long messageId, Action<MessageBubble, MessageViewModel> action);
 
+        void UpdateServiceWithForumTopic(int forumTopicId, Action<MessageService> action);
+
         void ForEach(Action<MessageBubble, MessageViewModel> action);
         void ForEach(Action<MessageBubble> action);
 
         bool HasContainerForItem(long id);
         SelectorItem ContainerFromItem(long id);
+
+        float AnimatedHeight { get; }
+        bool HasMessagesPadding { get; }
     }
 }

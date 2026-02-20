@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
@@ -18,6 +19,8 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
+    public record QrCodeGeometry(CompositionPath Data, CompositionPath Position = null);
+
     public partial class QrCode : Control
     {
         private string _text;
@@ -70,11 +73,53 @@ namespace Telegram.Controls
                 return;
             }
 
+            var geometry = CreateGeometry(text);
+            var size = 222;
+
+            var compositor = BootStrapper.Current.Compositor;
+            var blackBrush = compositor.CreateColorBrush(foreground);
+
+            var path1 = compositor.CreatePathGeometry(geometry.Position);
+            var path2 = compositor.CreatePathGeometry(geometry.Data);
+
+            var shape1 = compositor.CreateSpriteShape(path1);
+            shape1.FillBrush = blackBrush;
+
+            var shape2 = compositor.CreateSpriteShape(path2);
+            shape2.FillBrush = blackBrush;
+
+            var visual1 = compositor.CreateShapeVisual();
+            visual1.Size = new Vector2(size, size);
+            visual1.Shapes.Add(shape1);
+
+            var visual2 = compositor.CreateShapeVisual();
+            visual2.Size = new Vector2(size, size);
+            visual2.Shapes.Add(shape2);
+
+            var container = compositor.CreateContainerVisual();
+            container.Size = new Vector2(size, size);
+            container.Children.InsertAtTop(visual1);
+            container.Children.InsertAtTop(visual2);
+
+            ElementCompositionPreview.SetElementChildVisual(this, container);
+
+            if (fadeIn)
+            {
+                var opacity = compositor.CreateScalarKeyFrameAnimation();
+                opacity.InsertKeyFrame(0, 0);
+                opacity.InsertKeyFrame(1, 1);
+
+                visual2.StartAnimation("Opacity", opacity);
+            }
+        }
+
+        public static QrCodeGeometry CreateGeometry(string text, int minVersion = 1, int maxVersion = 40, bool combine = false)
+        {
             var data = QrBuffer.FromString(text);
             var replaceFrom = data.ReplaceFrom;
             var replaceTill = data.ReplaceTill;
 
-            var size = 222;
+            var size = 222f;
             var pixel = size / data.Size;
 
             bool value(int row, int column)
@@ -121,8 +166,16 @@ namespace Telegram.Controls
                 var rect2 = CanvasGeometry.CreateRoundedRectangle(null, x + pixel, y + pixel, pixel * 5 + 2, pixel * 5 + 2, 9, 9);
                 var rect3 = CanvasGeometry.CreateRoundedRectangle(null, x + pixel * 2, y + pixel * 2, pixel * 3 + 2, pixel * 3 + 2, pixel, pixel);
 
-                geometries[geometry++] = rect1.CombineWith(rect2, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
-                geometries[geometry++] = rect3;
+                if (combine)
+                {
+                    builder.AddGeometry(rect1.CombineWith(rect2, Matrix3x2.Identity, CanvasGeometryCombine.Exclude));
+                    builder.AddGeometry(rect3);
+                }
+                else
+                {
+                    geometries[geometry++] = rect1.CombineWith(rect2, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
+                    geometries[geometry++] = rect3;
+                }
             }
             void brect(float x, float y, float width, float height)
             {
@@ -261,41 +314,17 @@ namespace Telegram.Controls
             large((data.Size - 7) * pixel - 2, 0);
             large(0, (data.Size - 7) * pixel - 2);
 
-            var compositor = BootStrapper.Current.Compositor;
-            var blackBrush = compositor.CreateColorBrush(foreground);
-
-            var path1 = compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreateGroup(null, geometries, CanvasFilledRegionDetermination.Winding)));
-            var path2 = compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreatePath(builder)));
-
-            var shape1 = compositor.CreateSpriteShape(path1);
-            shape1.FillBrush = blackBrush;
-
-            var shape2 = compositor.CreateSpriteShape(path2);
-            shape2.FillBrush = blackBrush;
-
-            var visual1 = compositor.CreateShapeVisual();
-            visual1.Size = new Vector2(size, size);
-            visual1.Shapes.Add(shape1);
-
-            var visual2 = compositor.CreateShapeVisual();
-            visual2.Size = new Vector2(size, size);
-            visual2.Shapes.Add(shape2);
-
-            var container = compositor.CreateContainerVisual();
-            container.Size = new Vector2(size, size);
-            container.Children.InsertAtTop(visual1);
-            container.Children.InsertAtTop(visual2);
-
-            ElementCompositionPreview.SetElementChildVisual(this, container);
-
-            if (fadeIn)
+            if (combine)
             {
-                var opacity = compositor.CreateScalarKeyFrameAnimation();
-                opacity.InsertKeyFrame(0, 0);
-                opacity.InsertKeyFrame(1, 1);
+                // If combined we add the inner circle
+                builder.AddGeometry(CanvasGeometry.CreateCircle(null, 111, 111, 16));
 
-                visual2.StartAnimation("Opacity", opacity);
+                return new QrCodeGeometry(new CompositionPath(CanvasGeometry.CreatePath(builder)));
             }
+
+            return new QrCodeGeometry(
+                new CompositionPath(CanvasGeometry.CreatePath(builder)),
+                new CompositionPath(CanvasGeometry.CreateGroup(null, geometries, CanvasFilledRegionDetermination.Winding)));
         }
 
         #region Text

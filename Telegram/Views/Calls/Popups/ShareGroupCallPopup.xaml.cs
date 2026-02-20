@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
@@ -33,7 +34,7 @@ namespace Telegram.Views.Calls.Popups
 
             _groupCall = groupCall;
 
-            Photo.Source = PlaceholderImage.GetGlyph(Icons.LinkDiagonal);
+            Photo.Source = ProfilePictureSourceText.GetGlyph(Icons.LinkDiagonal);
             InitializeInviteLink();
         }
 
@@ -73,7 +74,7 @@ namespace Telegram.Views.Calls.Popups
         private void Join_Click(object sender, TextUrlClickEventArgs e)
         {
             Hide();
-            TypeResolver.Current.Resolve<IVoipService>(_clientService.SessionId).JoinGroupCall(_navigationService, new InputGroupCallLink(_groupCall.InviteLink));
+            _clientService.Session.Resolve<IVoipService>().JoinGroupCall(_navigationService, new InputGroupCallLink(_groupCall.InviteLink));
         }
     }
 }

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,6 @@ using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Xaml.Data;
@@ -76,9 +76,9 @@ namespace Telegram.ViewModels.Drawers
                 .Subscribe<UpdateInstalledStickerSets>(Handle);
         }
 
-        public static StickerDrawerViewModel Create(int sessionId)
+        public static StickerDrawerViewModel Create(ISession session)
         {
-            var context = TypeResolver.Current.Resolve<StickerDrawerViewModel>(sessionId);
+            var context = session.Resolve<StickerDrawerViewModel>();
             context.Dispatcher = WindowContext.Current.Dispatcher;
             return context;
         }
@@ -101,7 +101,7 @@ namespace Telegram.ViewModels.Drawers
                 return;
             }
 
-            ClientService.Send(new GetRecentStickers(), result =>
+            ClientService.Send(new GetRecentStickers(false), result =>
             {
                 if (result is Stickers recent)
                 {
@@ -313,7 +313,7 @@ namespace Telegram.ViewModels.Drawers
             _updating = true;
 
             var result1 = await ClientService.SendAsync(new GetFavoriteStickers());
-            var result2 = await ClientService.SendAsync(new GetRecentStickers());
+            var result2 = await ClientService.SendAsync(new GetRecentStickers(false));
             var result4 = await GetInstalledSets();
 
             if (result1 is Stickers favorite && result2 is Stickers recent)
@@ -558,6 +558,20 @@ namespace Telegram.ViewModels.Drawers
             }
         }
 
+        public virtual void Update(IEnumerable<StickerViewModel> stickers, bool raise = false)
+        {
+            stickers ??= Enumerable.Empty<StickerViewModel>();
+
+            if (raise)
+            {
+                Stickers.ReplaceWith(stickers);
+            }
+            else
+            {
+                Stickers = new MvxObservableCollection<StickerViewModel>(stickers);
+            }
+        }
+
         public MvxObservableCollection<StickerViewModel> Stickers { get; protected set; }
 
         public bool IsLoaded { get; set; }
@@ -603,13 +617,13 @@ namespace Telegram.ViewModels.Drawers
             SetId = setId;
         }
 
-        public StickerViewModel(IClientService clientService, Sticker sticker)
+        public StickerViewModel(IClientService clientService, Sticker sticker, EmojiStatusType emojiStatusType = null, AvailableReaction reaction = null)
         {
             _clientService = clientService;
-            Update(sticker);
+            Update(sticker, emojiStatusType, reaction);
         }
 
-        public void Update(Sticker sticker)
+        public void Update(Sticker sticker, EmojiStatusType emojiStatusType = null, AvailableReaction reaction = null)
         {
             Id = sticker.Id;
             StickerValue = sticker.StickerValue;
@@ -621,9 +635,22 @@ namespace Telegram.ViewModels.Drawers
             Width = sticker.Width;
             SetId = sticker.SetId;
 
-            if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+            if (emojiStatusType != null)
             {
-                EmojiStatusType = new EmojiStatusTypeCustomEmoji(customEmoji.CustomEmojiId);
+                EmojiStatusType ??= emojiStatusType;
+            }
+            else if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+            {
+                EmojiStatusType ??= new EmojiStatusTypeCustomEmoji(customEmoji.CustomEmojiId);
+            }
+
+            if (reaction != null)
+            {
+                Reaction ??= reaction;
+            }
+            else if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+            {
+                Reaction ??= new AvailableReaction(new ReactionTypeCustomEmoji(customEmoji.CustomEmojiId), true);
             }
         }
 
@@ -644,6 +671,8 @@ namespace Telegram.ViewModels.Drawers
         public int Width { get; private set; }
         public long SetId { get; private set; }
         public EmojiStatusType EmojiStatusType { get; set; }
+
+        public AvailableReaction Reaction { get; set; }
 
         public ReactionType ToReactionType()
         {

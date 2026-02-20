@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -176,7 +177,9 @@ namespace Telegram.ViewModels.Chats
                         var inner = await ClientService.SendAsync(new GetMessages(chatId, messageIds)) as Messages;
                         if (inner != null)
                         {
-                            messages = inner.MessagesValue.ToDictionary(x => x.Id);
+                            messages = inner.MessagesValue
+                                .Where(x => x != null)
+                                .ToDictionary(x => x.Id);
                         }
                     }
 
@@ -212,10 +215,7 @@ namespace Telegram.ViewModels.Chats
                         ChartViewData.Create(groupStats.WeekGraph, Strings.TopDaysOfWeekChartTitle, 4)
                     };
 
-                    if (stats[7] != null)
-                    {
-                        stats[7].useWeekFormat = true;
-                    }
+                    stats[7]?.useWeekFormat = true;
 
                     Interactions.Clear();
                     TopInviters.ReplaceWith(groupStats.TopInviters);

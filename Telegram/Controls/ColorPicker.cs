@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Windows.Foundation;
@@ -29,7 +30,7 @@ namespace Telegram.Controls
         private bool _loaded;
         private bool _pressed;
 
-        private HSV _color = new HSV(0, 1, 1);
+        private HSV _color = new(0, 1, 1);
         private double _value = 1;
         private byte _alpha = 255;
         private Color _current;
@@ -43,10 +44,10 @@ namespace Telegram.Controls
         {
             _current = _color.ToRGB(_alpha);
 
-            Spectrum = GetTemplateChild("Spectrum") as Border;
-            SpectrumThumb = GetTemplateChild("SpectrumThumb") as UIElement;
+            Spectrum = GetTemplateChild(nameof(Spectrum)) as Border;
+            SpectrumThumb = GetTemplateChild(nameof(SpectrumThumb)) as UIElement;
 
-            ValueSlider = GetTemplateChild("ValueSlider") as Slider;
+            ValueSlider = GetTemplateChild(nameof(ValueSlider)) as Slider;
 
             if (Spectrum != null)
             {

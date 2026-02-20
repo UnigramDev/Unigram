@@ -8,12 +8,20 @@
                         Style="{StaticResource DefaultTeachingTipStyle}">
 
     <StackPanel>
+        <TextBlock Text="{CustomResource ScheduleMessageDate}" />
         <CalendarDatePicker x:Name="Date"
-                            Margin="0,12,0,12"
+                            Margin="0,8,0,12"
                             HorizontalAlignment="Stretch" />
+        <TextBlock Text="{CustomResource ScheduleMessageTime}" />
         <TimePicker x:Name="Time"
                     BorderBrush="{ThemeResource ButtonBorderBrush}"
+                    Margin="0,8,0,12"
                     HorizontalAlignment="Stretch" />
+        <TextBlock Text="{CustomResource MessageScheduledRepeatOption}" />
+        <ComboBox ItemsSource="{x:Bind RepeatOptions}"
+                  SelectedIndex="{x:Bind Repeat, Mode=TwoWay}"
+                  HorizontalAlignment="Stretch"
+                  Margin="0,8,0,0" />
 
         <HyperlinkButton x:Name="Online"
                          Click="Online_Click"

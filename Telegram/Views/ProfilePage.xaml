@@ -6,6 +6,7 @@
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:messages="using:Telegram.Controls.Messages"
                   xmlns:local="using:Telegram.Views"
+                  xmlns:chats="using:Telegram.Controls.Chats"
                   mc:Ignorable="d"
                   ShowHeader="False"
                   NavigationMode="Root">
@@ -19,27 +20,28 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
+        <chats:ChatBackgroundControl x:Name="BackgroundRoot" />
+
         <ScrollViewer x:Name="ScrollingHost"
                       SizeChanged="OnSizeChanged"
-                      ViewChanged="OnViewChanged">
-            <Grid>
+                      DirectManipulationStarted="OnDirectManipulationStarted"
+                      DirectManipulationCompleted="OnDirectManipulationCompleted"
+                      ViewChanging="OnViewChanging"
+                      ViewChanged="OnViewChanged"
+                      VerticalSnapPointsAlignment="Near"
+                      VerticalSnapPointsType="Mandatory">
+            <local:ProfileSnapGrid x:Name="RootGrid">
                 <StackPanel x:Name="Header"
                             SizeChanged="ProfileHeader_SizeChanged"
                             VerticalAlignment="Top"
                             Canvas.ZIndex="1">
                     <controls:ProfileHeader x:Name="ProfileHeader"
-                                            Margin="0,0,0,16" />
+                                            Margin="0,0,0,16"
+                                            Canvas.ZIndex="2" />
 
                     <Grid x:Name="HeaderPanel"
                           Opacity="{x:Bind ViewModel.Items.Count, Mode=OneWay}"
-                          Canvas.ZIndex="1">
-                        <Border x:Name="ClipperBackground"
-                                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                                BorderThickness="0,0,0,1"
-                                BackgroundSizing="OuterBorderEdge"
-                                Height="48" />
-
+                          Canvas.ZIndex="2">
                         <Grid CornerRadius="4"
                               MaxWidth="1000"
                               Margin="24,0">
@@ -49,19 +51,23 @@
                                     BorderThickness="1"
                                     CornerRadius="4" />
                             <controls:TopNavView x:Name="Navigation"
+                                                 IsItemClickEnabled="True"
+                                                 ItemClick="Navigation_ItemClick"
                                                  SelectionChanged="Navigation_SelectionChanged"
+                                                 PrepareContainerForItem="Navigation_PrepareContainerForItem"
                                                  ItemContextRequested="Navigation_ItemContextRequested"
                                                  ItemsSource="{x:Bind ViewModel.Items}"
                                                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-                                                 DisplayMemberPath="Text"
-                                                 Height="40"
-                                                 Margin="16,4" />
+                                                 Height="48"
+                                                 Padding="8,0,8,4">
+                                <controls:TopNavView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"
+                                                    HorizontalAlignment="Center" />
+                                    </ItemsPanelTemplate>
+                                </controls:TopNavView.ItemsPanel>
+                            </controls:TopNavView>
                         </Grid>
-
-                        <controls:MoreButton x:Name="Menu"
-                                             Click="Menu_ContextRequested"
-                                             HorizontalAlignment="Right"
-                                             VerticalAlignment="Top" />
 
                         <messages:MessageService x:Name="DateHeader"
                                                  Visibility="Collapsed"
@@ -79,19 +85,35 @@
                 <Frame x:Name="MediaFrame"
                        Navigating="OnNavigating"
                        Navigated="OnNavigated" />
-            </Grid>
+            </local:ProfileSnapGrid>
         </ScrollViewer>
 
         <Grid MaxWidth="1000"
               Margin="24,0">
             <controls:BackButton x:Name="BackButton"
-                                 Margin="0,18,0,0"
+                                 Margin="-20,18,0,0"
                                  CornerRadius="20"
                                  Glyph="&#xE93E;"
                                  Width="48"
                                  Height="48" />
+
+            <Border x:Name="MenuRoot"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top">
+                <controls:MoreButton x:Name="Menu"
+                                     Click="Menu_ContextRequested" />
+            </Border>
         </Grid>
 
+        <ToolTip x:Name="ToolTip"
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Top"
+                 Visibility="Collapsed"
+                 Margin="0,88,16,0">
+            <controls:AnimatedTextBlock x:Name="ToolTipContent"
+                                        TextAlignment="Right"
+                                        TextWrapping="WrapWholeWords" />
+        </ToolTip>
 
         <Grid x:Name="ManagePanel"
               Background="{ThemeResource PageSubHeaderBackgroundBrush2}"

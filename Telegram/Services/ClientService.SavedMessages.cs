@@ -1,21 +1,24 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Td.Api;
 
 namespace Telegram.Services
 {
     public partial interface ICacheService
     {
-        Task<Topics> GetSavedMessagesChatsAsync(int offset, int limit);
+        int SavedMessagesTopicCount { get; }
+
+        Task<Topics> GetSavedMessagesTopicsAsync(int offset, int limit);
 
         bool TryGetSavedMessagesTopic(long savedMessagesTopicId, out SavedMessagesTopic topic);
 
@@ -27,7 +30,7 @@ namespace Telegram.Services
 
     public partial class ClientService
     {
-        private readonly ConcurrentDictionary<long, SavedMessagesTopic> _savedMessagesTopics = new();
+        private readonly ReaderWriterDictionary<long, SavedMessagesTopic> _savedMessagesTopics = new(100);
         private readonly SortedSet<OrderedItem> _savedMessages = new();
         private bool _haveFullSavedMessages;
 
@@ -46,6 +49,8 @@ namespace Telegram.Services
 
             Monitor.Exit(_savedMessages);
         }
+
+        public int SavedMessagesTopicCount { get; private set; }
 
         public bool TryGetSavedMessagesTopic(long savedMessagesTopicId, out SavedMessagesTopic topic)
         {
@@ -92,7 +97,7 @@ namespace Telegram.Services
             return Strings.AnonymousForward;
         }
 
-        public Task<Topics> GetSavedMessagesChatsAsync(int offset, int limit)
+        public Task<Topics> GetSavedMessagesTopicsAsync(int offset, int limit)
         {
             return GetSavedMessagesChatsAsyncImpl(offset, limit, false);
         }

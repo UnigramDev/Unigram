@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -37,6 +39,8 @@ namespace Telegram.Controls.Messages
             {
                 new RepositionThemeTransition()
             };
+
+            ElementComposition.GetElementVisual(this);
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
@@ -279,7 +283,7 @@ namespace Telegram.Controls.Messages
             var position = new Size(Padding.Left, Padding.Top);
             var count = 0;
 
-            var center = HorizontalContentAlignment == HorizontalAlignment.Center;
+            var center = HorizontalContentAlignment != HorizontalAlignment.Left;
             var rows = center
                 ? new List<List<Rect>>()
                 : null;
@@ -333,7 +337,7 @@ namespace Telegram.Controls.Messages
                 foreach (var item in rows)
                 {
                     var width = item[^1].Right;
-                    var diff = (finalSize.Width - width) / 2;
+                    var diff = HorizontalContentAlignment == HorizontalAlignment.Center ? (finalSize.Width - width) / 2 : finalSize.Width - width;
 
                     foreach (var child in item)
                     {

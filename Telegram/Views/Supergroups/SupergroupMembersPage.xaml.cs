@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -99,7 +100,7 @@ namespace Telegram.Views.Supergroups
 
         private bool MemberRestrict_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)
         {
-            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator admin && !admin.CanBeEdited)
+            if (member.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { CanBeEdited: false })
             {
                 return false;
             }
@@ -114,12 +115,12 @@ namespace Telegram.Views.Supergroups
                 return false;
             }
 
-            return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanRestrictMembers;
+            return status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { Rights.CanRestrictMembers: true };
         }
 
         private bool MemberRemove_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)
         {
-            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator admin && !admin.CanBeEdited)
+            if (member.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { CanBeEdited: false })
             {
                 return false;
             }
@@ -134,7 +135,7 @@ namespace Telegram.Views.Supergroups
                 return member.InviterUserId == ViewModel.ClientService.Options.MyId;
             }
 
-            return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanRestrictMembers;
+            return status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { Rights.CanRestrictMembers: true };
         }
 
         #endregion
@@ -185,7 +186,7 @@ namespace Telegram.Views.Supergroups
             Title = group.IsChannel ? Strings.ChannelSubscribers : Strings.ChannelMembers;
 
             AddNew.Content = group.IsChannel ? Strings.AddSubscriber : Strings.AddMember;
-            AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            AddNewPanel.Visibility = group.CanInviteUsers(chat) ? Visibility.Visible : Visibility.Collapsed;
 
             Footer.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -203,7 +204,7 @@ namespace Telegram.Views.Supergroups
             }
 
             AddNew.Content = Strings.AddMember;
-            AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            AddNewPanel.Visibility = group.CanInviteUsers(chat) ? Visibility.Visible : Visibility.Collapsed;
 
             Footer.Visibility = Visibility.Collapsed;
         }

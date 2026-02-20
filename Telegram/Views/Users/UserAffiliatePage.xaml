@@ -21,18 +21,15 @@
                                            Text="{CustomResource BotAffiliateProgramText}" />
 
                 <controls:HeaderedControl>
-                    <controls:BadgeButton Content="{CustomResource BotAffiliateProgramFeature1Title}"
-                                          Badge="{CustomResource BotAffiliateProgramFeature1}"
-                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                          Glyph="&#xE9B5;" />
-                    <controls:BadgeButton Content="{CustomResource BotAffiliateProgramFeature2Title}"
-                                          Badge="{CustomResource BotAffiliateProgramFeature2}"
-                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                          Glyph="&#xE95C;" />
-                    <controls:BadgeButton Content="{CustomResource BotAffiliateProgramFeature3Title}"
-                                          Badge="{CustomResource BotAffiliateProgramFeature3}"
-                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                          Glyph="&#xE9F8;" />
+                    <controls:SettingsButton Content="{CustomResource BotAffiliateProgramFeature1Title}"
+                                             Description="{CustomResource BotAffiliateProgramFeature1}"
+                                             Glyph="&#xE9B5;" />
+                    <controls:SettingsButton Content="{CustomResource BotAffiliateProgramFeature2Title}"
+                                             Description="{CustomResource BotAffiliateProgramFeature2}"
+                                             Glyph="&#xE95C;" />
+                    <controls:SettingsButton Content="{CustomResource BotAffiliateProgramFeature3Title}"
+                                             Description="{CustomResource BotAffiliateProgramFeature3}"
+                                             Glyph="&#xE9F8;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource AffiliateProgramCommission}"
@@ -267,16 +264,16 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Footer="{CustomResource AffiliateProgramExistingProgramsText}">
-                    <controls:BadgeButton Content="{CustomResource AffiliateProgramExistingProgramsTitle}"
-                                          Click="{x:Bind ViewModel.Existing}"
-                                          IsChevronVisible="True" />
+                    <controls:SettingsButton Content="{CustomResource AffiliateProgramExistingProgramsTitle}"
+                                             Click="{x:Bind ViewModel.Existing}"
+                                             IsChevronVisible="True" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
-                    <controls:BadgeButton x:Name="Stop"
-                                          Click="{x:Bind ViewModel.Stop}"
-                                          Content="{CustomResource AffiliateProgramStop}"
-                                          Foreground="{ThemeResource DangerButtonBackground}" />
+                    <controls:SettingsButton x:Name="Stop"
+                                             Click="{x:Bind ViewModel.Stop}"
+                                             Content="{CustomResource AffiliateProgramStop}"
+                                             Foreground="{ThemeResource DangerButtonBackground}" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

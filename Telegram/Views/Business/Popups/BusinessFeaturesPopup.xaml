@@ -9,7 +9,9 @@
                        xmlns:selectors="using:Telegram.Selectors"
                        mc:Ignorable="d"
                        Padding="0"
-                       IsDismissButtonVisible="True">
+                       IsDismissButtonVisible="True"
+                       PrimaryButtonStyle="{StaticResource PremiumButtonStyle}"
+                       ButtonsLayout="Vertical">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -52,35 +54,7 @@
         <muxc:PipsPager x:Name="Pager"
                         SelectedPageIndex="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}"
                         HorizontalAlignment="Center"
+                        Margin="0,0,0,12"
                         Grid.Row="1" />
-
-        <Grid x:Name="PurchasePanel"
-              VerticalAlignment="Bottom"
-              HorizontalAlignment="Stretch"
-              Margin="24,12,24,24"
-              Grid.Row="2">
-            <Rectangle x:Name="PurchaseShadow"
-                       Loaded="PurchaseShadow_Loaded"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
-                       Fill="White"
-                       Margin="0"
-                       RadiusX="4"
-                       RadiusY="4">
-            </Rectangle>
-            <Border Background="{StaticResource PremiumLinearGradientBrush}"
-                    CornerRadius="4"
-                    Height="32" />
-            <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Click="Purchase_Click"
-                                  Style="{StaticResource StartButtonStyle}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  FontWeight="SemiBold"
-                                  Padding="16,3,16,5"
-                                  CornerRadius="4"
-                                  Margin="0"
-                                  Height="32" />
-        </Grid>
     </Grid>
 </controls:ContentPopup>

@@ -62,11 +62,10 @@
                                                     Placement="Top"
                                                     ShowMode="Transient">
                                                 <Flyout.FlyoutPresenterStyle>
-                                                    <Style TargetType="FlyoutPresenter">
+                                                    <Style TargetType="FlyoutPresenter"
+                                                           BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
                                                         <Setter Property="Padding"
                                                                 Value="0" />
-                                                        <Setter Property="CornerRadius"
-                                                                Value="8" />
                                                     </Style>
                                                 </Flyout.FlyoutPresenterStyle>
                                                 <drawers:EmojiDrawer x:Name="EmojiPanel"
@@ -172,23 +171,16 @@
 
                                     <controls:HeaderedControl Header="{CustomResource FilterInclude}"
                                                               Margin="0,0,0,2">
-                                        <controls:HeaderedControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel />
-                                            </ItemsPanelTemplate>
-                                        </controls:HeaderedControl.ItemsPanel>
-                                        <controls:BadgeButton Click="{x:Bind ViewModel.AddIncluded}"
-                                                              Content="{CustomResource FilterAddChats}"
-                                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                              BorderThickness="0"
-                                                              Glyph="&#xEA08;" />
+                                        <controls:SettingsButton Click="{x:Bind ViewModel.AddIncluded}"
+                                                                 Content="{CustomResource FilterAddChats}"
+                                                                 BorderThickness="0"
+                                                                 Glyph="&#xEA08;" />
                                     </controls:HeaderedControl>
                                 </controls:SettingsPanel>
                             </ListView.Header>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                                       BorderBrush="{ThemeResource SettingsItemBorderBrush}" />
+                                    <cells:ProfileCell />
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                             <ListView.Footer>
@@ -198,8 +190,9 @@
                                         <controls:HeaderedControl Visibility="{x:Bind ViewModel.Include.RemainingCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                                   Padding="0"
                                                                   Margin="0,2,0,2">
-                                            <controls:BadgeButton Click="{x:Bind ViewModel.Include.Load}"
-                                                                  Content="{x:Bind ConvertRemanining(ViewModel.Include.RemainingCount), Mode=OneWay}" />
+                                            <controls:SettingsButton Click="{x:Bind ViewModel.Include.Load}"
+                                                                     Content="{x:Bind ConvertRemanining(ViewModel.Include.RemainingCount), Mode=OneWay}"
+                                                                     Glyph="&#xEACB;" />
                                         </controls:HeaderedControl>
 
                                         <TextBlock Text="{CustomResource FilterIncludeInfo}"
@@ -209,16 +202,10 @@
 
                                     <controls:HeaderedControl Header="{CustomResource FilterExclude}"
                                                               Visibility="{x:Bind ConvertExcludeVisibility(ViewModel.Links.Count), Mode=OneWay}">
-                                        <controls:HeaderedControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel />
-                                            </ItemsPanelTemplate>
-                                        </controls:HeaderedControl.ItemsPanel>
-                                        <controls:BadgeButton Click="{x:Bind ViewModel.AddExcluded}"
-                                                              Content="{CustomResource FilterAddChats}"
-                                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                              BorderThickness="0"
-                                                              Glyph="&#xEA08;" />
+                                        <controls:SettingsButton Click="{x:Bind ViewModel.AddExcluded}"
+                                                                 Content="{CustomResource FilterAddChats}"
+                                                                 BorderThickness="0"
+                                                                 Glyph="&#xEA08;" />
                                     </controls:HeaderedControl>
                                 </controls:SettingsPanel>
                             </ListView.Footer>
@@ -242,8 +229,7 @@
                     </ListView.Header>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                               BorderBrush="{ThemeResource SettingsItemBorderBrush}" />
+                            <cells:ProfileCell />
                         </DataTemplate>
                     </ListView.ItemTemplate>
                     <ListView.Footer>
@@ -254,8 +240,9 @@
                                 <controls:HeaderedControl Visibility="{x:Bind ViewModel.Exclude.RemainingCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                           Padding="0"
                                                           Margin="0,2,0,2">
-                                    <controls:BadgeButton Click="{x:Bind ViewModel.Exclude.Load}"
-                                                          Content="{x:Bind ConvertRemanining(ViewModel.Exclude.RemainingCount), Mode=OneWay}" />
+                                    <controls:SettingsButton Click="{x:Bind ViewModel.Exclude.Load}"
+                                                             Content="{x:Bind ConvertRemanining(ViewModel.Exclude.RemainingCount), Mode=OneWay}"
+                                                             Glyph="&#xEACB;" />
                                 </controls:HeaderedControl>
 
                                 <TextBlock Text="{CustomResource FilterExcludeInfo}"
@@ -306,7 +293,7 @@
                                           BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                                         <Button Click="Purchase_Click"
                                                 IsEnabled="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                                Style="{StaticResource EmptyButtonStyle}" />
+                                                Style="{StaticResource ListEmptyButtonStyle}" />
 
                                         <GridView x:Name="Tags"
                                                   IsHitTestVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
@@ -421,16 +408,10 @@
                             <controls:HeaderedControl Header="{CustomResource InviteLinks}"
                                                       Footer="{CustomResource FilterInviteLinksHint}"
                                                       Margin="0,0,0,2">
-                                <controls:HeaderedControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel />
-                                    </ItemsPanelTemplate>
-                                </controls:HeaderedControl.ItemsPanel>
-                                <controls:BadgeButton Click="{x:Bind ViewModel.CreateLink}"
-                                                      Content="{CustomResource CreateNewLink}"
-                                                      Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                      BorderThickness="0"
-                                                      Glyph="&#xE9F8;" />
+                                <controls:SettingsButton Click="{x:Bind ViewModel.CreateLink}"
+                                                         Content="{CustomResource CreateNewLink}"
+                                                         BorderThickness="0"
+                                                         Glyph="&#xE9F8;" />
                             </controls:HeaderedControl>
                         </controls:SettingsPanel>
                     </ListView.Footer>

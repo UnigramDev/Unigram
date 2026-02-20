@@ -1,13 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Gallery;
 using Telegram.Services;
@@ -17,18 +17,21 @@ using Telegram.ViewModels.Gallery;
 using Telegram.Views;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
+using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
-using WinRT;
 
 namespace Telegram.Navigation.Services
 {
     public interface INavigationService
     {
+        void Connect();
+        void Disconnect();
+
         void GoBack(NavigationState state = null, NavigationTransitionInfo infoOverride = null);
         void GoBackAt(int index, bool back = true);
         void GoForward();
@@ -38,6 +41,8 @@ namespace Telegram.Navigation.Services
         XamlRoot XamlRoot { get; }
 
         bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true);
+        void GoBack(NavigatingEventArgs args);
+        void GoBack(NavigatingCancelEventArgs args);
 
         event EventHandler<NavigatedEventArgs> Navigated;
 
@@ -69,14 +74,14 @@ namespace Telegram.Navigation.Services
         Task<InputPopupResult> ShowInputAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
         //Task<InputPopupResult> ShowInputAsync(FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
 
-        void Hide(Type type);
+        void HidePopup(Type type);
 
         ToastPopup ShowToast(string text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
         ToastPopup ShowToast(string text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
         ToastPopup ShowToast(FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
         ToastPopup ShowToast(FormattedText text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
 
-        void ShowGallery(GalleryViewModelBase parameter, FrameworkElement closing = null, long timestamp = 0);
+        void ShowGallery(GalleryViewModelBase parameter, FrameworkElement closing = null, double timestamp = 0);
 
         object CurrentPageParam { get; }
         Type CurrentPageType { get; }
@@ -90,7 +95,7 @@ namespace Telegram.Navigation.Services
 
         WindowContext Window { get; }
 
-        int SessionId { get; }
+        ISession Session { get; }
 
         void AddToBackStack(Type type, object parameter = null, NavigationTransitionInfo info = null);
         void InsertToBackStack(int index, Type type, object parameter = null, NavigationTransitionInfo info = null);
@@ -98,7 +103,6 @@ namespace Telegram.Navigation.Services
         void ClearBackStack();
     }
 
-    [GeneratedBindableCustomProperty]
     public partial class NavigationStackItem : BindableBase
     {
         public NavigationStackItem(Type sourcePageType, object parameter, string title, HostedNavigationMode mode)
@@ -143,7 +147,7 @@ namespace Telegram.Navigation.Services
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
     public partial class NavigationService : INavigationService
     {
-        private static readonly HashSet<Type> _unallowedTypes = new HashSet<Type>
+        private static readonly HashSet<Type> _unallowedTypes = new()
         {
             typeof(SettingsPasswordPage),
             typeof(SettingsPasscodePage)
@@ -154,7 +158,7 @@ namespace Telegram.Navigation.Services
         public FrameFacade FrameFacade { get; }
         public Frame Frame => FrameFacade.Frame;
         public object Content => Frame?.Content;
-        public XamlRoot XamlRoot => Window.Content?.XamlRoot;
+        public XamlRoot XamlRoot => Window.XamlRoot;
 
         public IDispatcherContext Dispatcher { get; }
 
@@ -165,7 +169,7 @@ namespace Telegram.Navigation.Services
             set => Frame.SetNavigationState(value);
         }
 
-        public int SessionId { get; private set; }
+        public ISession Session { get; private set; }
 
         public IDictionary<string, object> CacheKeyToParameter { get; } = new Dictionary<string, object>();
 
@@ -221,14 +225,48 @@ namespace Telegram.Navigation.Services
             BackStack.Clear();
         }
 
-        public NavigationService(WindowContext window, Frame frame, int session, string id)
+        public NavigationService(ISession session, WindowContext window, Frame frame, string id)
         {
             Window = window;
             Dispatcher = window?.Dispatcher;
-            SessionId = session;
+            Session = session;
             FrameFacade = new FrameFacade(this, frame, id);
             FrameFacade.Navigating += OnNavigating;
             FrameFacade.Navigated += OnNavigated;
+        }
+
+        private bool _connected;
+
+        public void Connect()
+        {
+            if (_connected)
+            {
+                return;
+            }
+
+            _connected = true;
+            Application.Current.Resuming += OnResuming;
+            Application.Current.Suspending += OnSuspending;
+        }
+
+        public void Disconnect()
+        {
+            if (_connected)
+            {
+                _connected = false;
+                Application.Current.Resuming -= OnResuming;
+                Application.Current.Suspending -= OnSuspending;
+            }
+        }
+
+        private void OnResuming(object sender, object e)
+        {
+            Resume();
+        }
+
+        private void OnSuspending(object sender, SuspendingEventArgs e)
+        {
+            Suspend();
         }
 
         private void OnNavigating(object sender, NavigatingEventArgs e)
@@ -320,17 +358,31 @@ namespace Telegram.Navigation.Services
             }
 
             Navigated?.Invoke(this, e);
-
-            try
-            {
-                await NavigateToAsync(e.NavigationMode, parameter, FrameFacade.Frame.Content);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
-
             OverlayWindow.Current?.TryHide(ContentDialogResult.None);
+
+            await NavigateToAsync(e.NavigationMode, parameter, FrameFacade.Frame.Content);
+        }
+
+        public async void Resume()
+        {
+            var page = FrameFacade.Content as Page;
+            if (page != null)
+            {
+                if (page is IActivablePage cleanup)
+                {
+                    cleanup.Activate(this);
+                }
+
+                // call navagable override (navigating)
+                var dataContext = ViewModelForPage(page);
+                if (dataContext != null)
+                {
+                    dataContext.NavigationService = this;
+                    dataContext.Dispatcher = Dispatcher;
+                    var pageState = FrameFacade.PageStateSettingsService(page.GetType(), parameter: CurrentPageParam).Values;
+                    await dataContext.NavigatedToAsync(CurrentPageParam, NavigationMode.New, pageState);
+                }
+            }
         }
 
         public void Suspend()
@@ -366,7 +418,7 @@ namespace Telegram.Navigation.Services
             if (page.DataContext is not INavigable or null && allowCreate)
             {
                 // to support dependency injection, but keeping it optional.
-                var viewModel = BootStrapper.Current.ViewModelForPage(page, SessionId);
+                var viewModel = BootStrapper.Current.ViewModelForPage(page, Session);
                 if (viewModel != null)
                 {
                     page.DataContext = viewModel;
@@ -383,7 +435,6 @@ namespace Telegram.Navigation.Services
 
             dataContext.NavigationService = this;
             dataContext.Dispatcher = Dispatcher;
-            dataContext.SessionState = BootStrapper.Current.SessionState;
 
             var args = new NavigatingEventArgs
             {
@@ -405,7 +456,6 @@ namespace Telegram.Navigation.Services
 
             dataContext.NavigationService = this;
             dataContext.Dispatcher = Dispatcher;
-            dataContext.SessionState = BootStrapper.Current.SessionState;
 
             var pageState = FrameFacade.PageStateSettingsService(page.GetType()).Values;
             dataContext.NavigatedFrom(pageState, suspending);
@@ -426,7 +476,7 @@ namespace Telegram.Navigation.Services
                 }
                 else if (page is BlankPage blank)
                 {
-                    blank.Activate(SessionId);
+                    blank.Activate(Session);
                 }
 
                 //if (mode == NavigationMode.New)
@@ -441,7 +491,6 @@ namespace Telegram.Navigation.Services
                     // prepare for state load
                     dataContext.NavigationService = this;
                     dataContext.Dispatcher = Dispatcher;
-                    dataContext.SessionState = BootStrapper.Current.SessionState;
                     var pageState = FrameFacade.PageStateSettingsService(page.GetType(), parameter: parameter).Values;
                     await dataContext.NavigatedToAsync(parameter, mode, pageState);
                 }
@@ -453,7 +502,7 @@ namespace Telegram.Navigation.Services
         public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default)
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
-            return viewService.OpenAsync(page, parameter, title, size, SessionId);
+            return viewService.OpenAsync(Session, page, parameter, title, size);
         }
 
         public void ShowPopup(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default)
@@ -468,7 +517,7 @@ namespace Telegram.Navigation.Services
                 popup.RequestedTheme = requestedTheme;
             }
 
-            var viewModel = BootStrapper.Current.ViewModelForPage(popup, SessionId);
+            var viewModel = BootStrapper.Current.ViewModelForPage(popup, Session);
             if (viewModel != null)
             {
                 viewModel.NavigationService = this;
@@ -537,6 +586,12 @@ namespace Telegram.Navigation.Services
 
         public void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
+            if (ContentPopup.IsAnyPopupOpen(XamlRoot))
+            {
+                _ = MessagePopup.ShowAsync(XamlRoot, target: null, message, title, primary, secondary ?? tertiary, destructive, requestedTheme);
+                return;
+            }
+
             _ = MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, tertiary, destructive, requestedTheme);
         }
 
@@ -550,7 +605,7 @@ namespace Telegram.Navigation.Services
         //    return InputPopup.ShowAsync(target, type, message, title, placeholderText, primary, secondary, destructive, requestedTheme);
         //}
 
-        public void Hide(Type type)
+        public void HidePopup(Type type)
         {
             foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
             {
@@ -581,7 +636,7 @@ namespace Telegram.Navigation.Services
             return ToastPopup.Show(XamlRoot, text, icon, requestedTheme, dismissAfter);
         }
 
-        public void ShowGallery(GalleryViewModelBase parameter, FrameworkElement closing = null, long timestamp = 0)
+        public void ShowGallery(GalleryViewModelBase parameter, FrameworkElement closing = null, double timestamp = 0)
         {
             parameter.NavigationService = this;
             _ = GalleryWindow.ShowAsync(XamlRoot, parameter, closing, timestamp);
@@ -633,7 +688,55 @@ namespace Telegram.Navigation.Services
                 CacheKeyToParameter[cacheKey] = cacheParameter;
             }
 
-            return FrameFacade.Navigate(page, parameter, infoOverride, navigationStackEnabled);
+            try
+            {
+                IsNavigating = true;
+                return FrameFacade.Navigate(page, parameter, infoOverride, navigationStackEnabled);
+            }
+            finally
+            {
+                IsNavigating = false;
+            }
+        }
+
+        public void GoBack(NavigatingEventArgs args)
+        {
+            if (args == null || args.NavigationMode == NavigationMode.Back)
+            {
+                GoBack();
+            }
+            else if (args.NavigationMode == NavigationMode.Forward)
+            {
+                GoForward();
+            }
+            else if (args.NavigationMode == NavigationMode.New)
+            {
+                Navigate(args.SourcePageType, args.Parameter, infoOverride: args.NavigationTransitionInfo);
+            }
+            else
+            {
+                Logger.Info("Unhandled: " + args.NavigationMode);
+            }
+        }
+
+        public void GoBack(NavigatingCancelEventArgs args)
+        {
+            if (args == null || args.NavigationMode == NavigationMode.Back)
+            {
+                GoBack();
+            }
+            else if (args.NavigationMode == NavigationMode.Forward)
+            {
+                GoForward();
+            }
+            else if (args.NavigationMode == NavigationMode.New)
+            {
+                Navigate(args.SourcePageType, args.Parameter, infoOverride: args.NavigationTransitionInfo);
+            }
+            else
+            {
+                Logger.Info("Unhandled: " + args.NavigationMode);
+            }
         }
 
         public void Refresh() { FrameFacade.Refresh(); }
@@ -697,6 +800,8 @@ namespace Telegram.Navigation.Services
 
             FrameFacade.Frame.CacheSize = currentSize;
         }
+
+        public bool IsNavigating { get; private set; }
 
         public Type CurrentPageType => FrameFacade.CurrentPageType;
         public object CurrentPageParam => FrameFacade.CurrentPageParam;

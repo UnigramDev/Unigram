@@ -1,16 +1,17 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Rg.DiffUtils;
 using System;
 using System.ComponentModel;
 using System.Linq;
 using Telegram.Common;
 
-namespace Telegram.Collection
+namespace Telegram.Collections
 {
     // TODO: This is not the best solution ever, but I am lazy
     public partial class BatchedObservableCollection<T> : DiffObservableCollection<T>

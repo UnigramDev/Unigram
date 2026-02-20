@@ -165,7 +165,7 @@
         <Style x:Key="BlockBlockquoteStyle"
                TargetType="StackPanel">
             <Setter Property="BorderBrush"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
             <Setter Property="BorderThickness"
                     Value="2,0,0,0" />
             <Setter Property="Padding"
@@ -197,7 +197,7 @@
         <Style x:Key="BlockEmbedPostStyle"
                TargetType="StackPanel">
             <Setter Property="BorderBrush"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
             <Setter Property="BorderThickness"
                     Value="2,0,0,0" />
         </Style>
@@ -306,7 +306,7 @@
                                 <MenuFlyoutItem Click="Copy_Click"
                                                 Text="{CustomResource CopyLink}">
                                     <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE8C8;"
+                                        <FontIcon Glyph="&#xEAC9;"
                                                   Style="{StaticResource DefaultFontIconStyle}" />
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
@@ -317,48 +317,51 @@
             </controls:TabbedPageHeader.Options>
         </controls:TabbedPageHeader>
 
-        <ListView x:Name="ScrollingHost"
-                  SelectionMode="None"
-                  Padding="0,0,0,0"
-                  Grid.Row="1">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="MinHeight"
-                            Value="0" />
-                    <Setter Property="Padding"
-                            Value="0" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListViewItem">
-                                <Grid MaxWidth="1000"
-                                      Margin="24,0">
-                                    <ContentPresenter />
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.Footer>
-                <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-                    <Button Click="Feedback_Click"
-                            Content="{CustomResource PreviewFeedback2}"
-                            HorizontalContentAlignment="Right"
-                            VerticalAlignment="Center"
-                            Padding="12,6"
-                            Style="{StaticResource EmptyButtonStyle}" />
+        <controls:ZoomBox x:Name="ZoomingHost"
+                          Grid.Row="1">
+            <ListView x:Name="ScrollingHost"
+                      SelectionMode="None"
+                      Padding="0,0,0,0"
+                      Grid.Row="1">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="MinHeight"
+                                Value="0" />
+                        <Setter Property="Padding"
+                                Value="0" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <Grid MaxWidth="1000"
+                                          Margin="24,0">
+                                        <ContentPresenter />
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.Footer>
+                    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+                        <Button Click="Feedback_Click"
+                                Content="{CustomResource PreviewFeedback2}"
+                                HorizontalContentAlignment="Right"
+                                VerticalAlignment="Center"
+                                Padding="12,6"
+                                Style="{StaticResource EmptyButtonStyle}" />
 
-                    <TextBlock x:Name="ViewsLabel"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Center"
-                               Margin="12,0" />
-                </Grid>
-            </ListView.Footer>
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection />
-            </ListView.ItemContainerTransitions>
-        </ListView>
+                        <TextBlock x:Name="ViewsLabel"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   Margin="12,0" />
+                    </Grid>
+                </ListView.Footer>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection />
+                </ListView.ItemContainerTransitions>
+            </ListView>
+        </controls:ZoomBox>
     </Grid>
 </local:HostedPage>

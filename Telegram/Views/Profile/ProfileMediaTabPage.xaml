@@ -5,26 +5,35 @@
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:common="using:Telegram.Common"
                       xmlns:controls="using:Telegram.Controls"
-                      xmlns:messages="using:Telegram.Controls.Messages"
-                      xmlns:selectors="using:Telegram.Selectors"
+                      xmlns:cells="using:Telegram.Controls.Cells"
                       xmlns:local="using:Telegram.Views.Profile"
-                      mc:Ignorable="d">
+                      mc:Ignorable="d"
+                      ItemsSource="{x:Bind ViewModel.Media.ItemsView, Mode=OneWay}">
 
     <Grid>
+        <Grid x:Name="TestGrid"
+              VerticalAlignment="Top"
+              MaxWidth="1000"
+              Margin="24,0,16,0" />
+
         <controls:SelectGridView x:Name="ScrollingHost"
-                                 ItemsSource="{x:Bind ViewModel.Media, Mode=OneWay}"
+                                 IsItemClickEnabled="True"
+                                 ItemClick="OnItemClick"
                                  SelectionMode="None"
                                  ChoosingItemContainer="OnChoosingItemContainer"
                                  ContainerContentChanging="OnContainerContentChanging"
-                                 Padding="24,0,20,8"
+                                 Padding="24,0,16,8"
+                                 common:FluidGridView.Padding="0,0,4,0"
                                  common:FluidGridView.MaxLength="1008"
                                  common:FluidGridView.OrientationOnly="False">
             <common:SelectedItemsBinder.Attached>
-                <common:SelectedItemsBinder SelectionMode="Auto"
+                <common:SelectedItemsBinder IsItemClickEnabled="True"
+                                            SelectionMode="Auto"
                                             SelectedItems="{x:Bind ViewModel.SelectedItems}" />
             </common:SelectedItemsBinder.Attached>
             <common:FluidGridView.Triggers>
-                <common:LengthGridViewTrigger ItemLength="120" />
+                <common:LengthGridViewTrigger x:Name="Test"
+                                              ItemLength="120" />
             </common:FluidGridView.Triggers>
             <GridView.Template>
                 <ControlTemplate TargetType="GridView">
@@ -42,6 +51,13 @@
                     </Border>
                 </ControlTemplate>
             </GridView.Template>
+            <GridView.ItemContainerTransitions>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition />
+                    <ContentThemeTransition />
+                    <ReorderThemeTransition />
+                </TransitionCollection>
+            </GridView.ItemContainerTransitions>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem"
                        BasedOn="{StaticResource DefaultGridViewItemStyle}">
@@ -53,48 +69,21 @@
                             Value="Stretch" />
                     <Setter Property="VerticalContentAlignment"
                             Value="Stretch" />
+                    <!--<Setter Property="MinWidth"
+                            Value="0" />
+                    <Setter Property="MinHeight"
+                            Value="0" />-->
                 </Style>
             </GridView.ItemContainerStyle>
             <GridView.Header>
-                <Border Height="{x:Bind ViewModel.HeaderHeight, Mode=OneWay}" />
+                <Border x:Name="Header" />
             </GridView.Header>
             <GridView.Footer>
                 <Border Height="60" />
             </GridView.Footer>
             <GridView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Background="{ThemeResource SettingsItemBackground}">
-                        <controls:ImageView Click="Photo_Click"
-                                            HorizontalContentAlignment="Center"
-                                            VerticalContentAlignment="Center"
-                                            Stretch="UniformToFill" />
-
-                        <!--<controls:BadgeControl Text="00:08"
-                                               Background="{ThemeResource MessageOverlayBackgroundBrush}"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Bottom"
-                                               Margin="4" />-->
-
-                        <Border x:Name="Overlay"
-                                Background="{ThemeResource MessageOverlayBackgroundBrush}"
-                                CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                Padding="6,1,6,3"
-                                Margin="4">
-                            <TextBlock x:Name="Subtitle"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="White"
-                                       TextAlignment="Right"
-                                       TextWrapping="NoWrap"
-                                       Typography.NumeralAlignment="Tabular" />
-                        </Border>
-
-                        <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="2">
-                        </Border>
-                    </Grid>
+                    <cells:SharedMediaCell />
                 </DataTemplate>
             </GridView.ItemTemplate>
             <GridView.ItemsPanel>

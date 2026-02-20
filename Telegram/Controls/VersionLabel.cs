@@ -1,4 +1,11 @@
-﻿using Telegram.Common;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Views;
 using Windows.ApplicationModel;
@@ -49,7 +56,7 @@ namespace Telegram.Controls
             var flyout = new MenuFlyout();
             var element = sender as FrameworkElement;
 
-            flyout.CreateFlyoutItem(CopyVersion, Strings.Copy, Icons.DocumentCopy);
+            flyout.CreateFlyoutItem(CopyVersion, Strings.Copy, Icons.Copy);
 
             flyout.ShowAt(element, args);
         }

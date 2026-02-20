@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +23,8 @@ namespace Telegram.ViewModels
 {
     public partial class DialogEventLogViewModel : DialogViewModel
     {
-        public DialogEventLogViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, INetworkService networkService, IStorageService storageService, ITranslateService translateService)
-            : base(clientService, settingsService, aggregator, locationService, pushService, playbackService, voipService, networkService, storageService, translateService)
+        public DialogEventLogViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IVoipService voipService, INetworkService networkService, IStorageService storageService, ITranslateService translateService)
+            : base(clientService, settingsService, aggregator, locationService, pushService, voipService, networkService, storageService, translateService)
         {
         }
 
@@ -31,7 +32,7 @@ namespace Telegram.ViewModels
 
         private long _minEventId = long.MaxValue;
 
-        private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+        private ChatEventLogFilters _filters = new(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
         public ChatEventLogFilters Filters
         {
             get => _filters;
@@ -112,51 +113,48 @@ namespace Telegram.ViewModels
 
         public override async Task LoadEventLogSliceAsync(string query = "")
         {
-            NotifyMessageSliceLoaded();
+            NotifyInitialized();
 
-            using (await _loadMoreLock.WaitAsync())
+            var chat = _chat;
+            if (chat == null)
             {
-                var chat = _chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
-                if (_loadingSlice)
-                {
-                    return;
-                }
-
-                _loadingSlice = true;
-                IsLastSliceLoaded = null;
-                IsFirstSliceLoaded = null;
-                IsLoading = true;
-
-                System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadScheduledSliceAsync");
-
-                var response = await ClientService.SendAsync(new GetChatEventLog(chat.Id, query, 0, 50, _filters, _userIds));
-                if (response is ChatEvents events)
-                {
-                    _groupedMessages.Clear();
-
-                    if (events.Events.Count > 0)
-                    {
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Logger.Debug("Setting scroll mode to KeepLastItemInView");
-                    }
-
-                    var replied = ProcessEvents(events);
-                    ProcessMessages(chat, replied);
-
-                    Items.RawReplaceWith(replied);
-
-                    IsLastSliceLoaded = false;
-                    IsFirstSliceLoaded = true;
-                }
-
-                _loadingSlice = false;
-                IsLoading = false;
+                return;
             }
+
+            if (_loadingSlice)
+            {
+                return;
+            }
+
+            _loadingSlice = true;
+            IsOldestSliceLoaded = null;
+            IsNewestSliceLoaded = null;
+            IsLoading = true;
+
+            System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadScheduledSliceAsync");
+
+            var response = await ClientService.SendAsync(new GetChatEventLog(chat.Id, query, 0, 50, _filters, _userIds));
+            if (response is ChatEvents events)
+            {
+                _groupedMessages.Clear();
+
+                if (events.Events.Count > 0)
+                {
+                    SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                    Logger.Debug("Setting scroll mode to KeepLastItemInView");
+                }
+
+                var replied = ProcessEvents(events);
+                ProcessMessages(chat, replied);
+
+                Items.RawReplaceWith(replied);
+
+                IsOldestSliceLoaded = false;
+                IsNewestSliceLoaded = true;
+            }
+
+            _loadingSlice = false;
+            IsLoading = false;
 
             var already = Items.LastOrDefault();
             if (already != null)
@@ -165,51 +163,48 @@ namespace Telegram.ViewModels
             }
         }
 
-        public override async Task LoadNextSliceAsync()
+        public override async Task LoadNextSliceAsync(PanelScrollingDirection direction)
         {
-            using (await _loadMoreLock.WaitAsync())
+            var chat = _chat;
+            if (chat == null)
             {
-                var chat = _chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
-                if (_loadingSlice || Items.Count < 1 || IsLastSliceLoaded == true)
-                {
-                    return;
-                }
-
-                _loadingSlice = true;
-                IsLoading = true;
-
-                System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
-                System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
-
-                var response = await ClientService.SendAsync(new GetChatEventLog(chat.Id, string.Empty, _minEventId, 50, _filters, _userIds));
-                if (response is ChatEvents events)
-                {
-                    if (events.Events.Count > 0)
-                    {
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Logger.Debug("Setting scroll mode to KeepLastItemInView");
-                    }
-
-                    var replied = ProcessEvents(events);
-                    ProcessMessages(chat, replied);
-
-                    Items.RawInsertRange(0, replied, false, out bool empty);
-                    IsLastSliceLoaded = empty;
-
-                    if (empty)
-                    {
-                        //await AddHeaderAsync();
-                    }
-                }
-
-                _loadingSlice = false;
-                IsLoading = false;
+                return;
             }
+
+            if (_loadingSlice || Items.Count < 1 || IsOldestSliceLoaded == true || direction != PanelScrollingDirection.Backward)
+            {
+                return;
+            }
+
+            _loadingSlice = true;
+            IsLoading = true;
+
+            System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
+            System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
+
+            var response = await ClientService.SendAsync(new GetChatEventLog(chat.Id, string.Empty, _minEventId, 50, _filters, _userIds));
+            if (response is ChatEvents events)
+            {
+                if (events.Events.Count > 0)
+                {
+                    SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                    Logger.Debug("Setting scroll mode to KeepLastItemInView");
+                }
+
+                var replied = ProcessEvents(events);
+                ProcessMessages(chat, replied);
+
+                Items.RawInsertRange(0, replied, false, out bool empty);
+                IsOldestSliceLoaded = empty;
+
+                if (empty)
+                {
+                    //await AddHeaderAsync();
+                }
+            }
+
+            _loadingSlice = false;
+            IsLoading = false;
         }
 
         private Message CreateMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)
@@ -236,7 +231,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, isChannel, false, chatEvent.Date, 0, null, null, null, null, null, null, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, null, null);
+            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, false, false, false, false, chatEvent.Date, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, 0, null, string.Empty, null, null);
         }
 
         private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)
@@ -369,8 +364,8 @@ namespace Telegram.ViewModels
         {
             if (item.Action is ChatEventDescriptionChanged descriptionChanged)
             {
-                var text = new FormattedText(descriptionChanged.NewDescription, Array.Empty<TextEntity>());
-                var linkPreview = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new LinkPreview { SiteName = Strings.EventLogPreviousGroupDescription, Description = new FormattedText { Text = descriptionChanged.OldDescription } };
+                var text = descriptionChanged.NewDescription.AsFormattedText();
+                var linkPreview = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new LinkPreview { SiteName = Strings.EventLogPreviousGroupDescription, Description = descriptionChanged.OldDescription.AsFormattedText() };
 
                 return new MessageText(text, linkPreview, null);
             }
@@ -379,7 +374,7 @@ namespace Telegram.ViewModels
                 var link = string.IsNullOrEmpty(usernameChanged.NewUsername) ? string.Empty : MeUrlPrefixConverter.Convert(ClientService, usernameChanged.NewUsername);
 
                 var text = new FormattedText(link, new[] { new TextEntity(0, link.Length, new TextEntityTypeUrl()) });
-                var linkPreview = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new LinkPreview { SiteName = Strings.EventLogPreviousLink, Description = new FormattedText { Text = MeUrlPrefixConverter.Convert(ClientService, usernameChanged.OldUsername) } };
+                var linkPreview = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new LinkPreview { SiteName = Strings.EventLogPreviousLink, Description = MeUrlPrefixConverter.Convert(ClientService, usernameChanged.OldUsername).AsFormattedText() };
 
                 return new MessageText(text, linkPreview, null);
             }
@@ -847,7 +842,7 @@ namespace Telegram.ViewModels
             return new MessageChatEvent(item);
         }
 
-        private string GetUserName(BaseObject sender, List<TextEntity> entities, int offset)
+        private string GetUserName(Object sender, List<TextEntity> entities, int offset)
         {
             if (sender is User user)
             {

@@ -54,5 +54,14 @@
                          CornerRadius="16"
                          VerticalAlignment="Top"
                          HorizontalAlignment="Left" />
+
+        <HyperlinkButton x:Name="Icon"
+                         Click="Icon_Click"
+                         Width="32"
+                         Height="32"
+                         Margin="10,20,0,0"
+                         VerticalAlignment="Top"
+                         HorizontalAlignment="Left"
+                         Style="{StaticResource EmptyHyperlinkButtonStyle}" />
     </Grid>
 </controls:UserControlEx>

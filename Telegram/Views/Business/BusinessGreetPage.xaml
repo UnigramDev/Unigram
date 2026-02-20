@@ -42,13 +42,12 @@
                 <controls:SettingsPanel IsFooter="True"
                                         Visibility="{x:Bind ViewModel.IsEnabled, Mode=OneWay}">
                     <controls:HeaderedControl x:Name="CreateRoot">
-                        <controls:BadgeButton Click="{x:Bind ViewModel.Create}"
-                                              Visibility="{x:Bind ViewModel.Replies, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
-                                              Content="{CustomResource BusinessGreetCreate}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xEA08;"
-                                              IsChevronVisible="True"
-                                              Height="48" />
+                        <controls:SettingsButton Click="{x:Bind ViewModel.Create}"
+                                                 Visibility="{x:Bind ViewModel.Replies, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
+                                                 Content="{CustomResource BusinessGreetCreate}"
+                                                 Glyph="&#xEA08;"
+                                                 IsChevronVisible="True"
+                                                 Height="48" />
 
                         <Button Click="{x:Bind ViewModel.Create}"
                                 Visibility="{x:Bind ConvertReplies(ViewModel.Replies), Mode=OneWay, FallbackValue=Collapsed}"
@@ -60,22 +59,19 @@
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl Header="{CustomResource BusinessRecipients}">
-                        <controls:FauxRadioButton IsChecked="{x:Bind ViewModel.IsExclude, Mode=TwoWay}"
-                                                  Content="{CustomResource BusinessChatsAllPrivateExcept}"
-                                                  Style="{StaticResource SettingsRadioButtonStyle}"
-                                                  GroupName="BusinessRecipients" />
-                        <controls:FauxRadioButton IsChecked="{x:Bind ViewModel.IsInclude, Mode=TwoWay}"
-                                                  Content="{CustomResource BusinessChatsOnlySelected}"
-                                                  Style="{StaticResource SettingsRadioButtonStyle}"
-                                                  GroupName="BusinessRecipients" />
+                        <controls:SettingsRadioButton IsChecked="{x:Bind ViewModel.IsExclude, Mode=TwoWay}"
+                                                      Content="{CustomResource BusinessChatsAllPrivateExcept}"
+                                                      GroupName="BusinessRecipients" />
+                        <controls:SettingsRadioButton IsChecked="{x:Bind ViewModel.IsInclude, Mode=TwoWay}"
+                                                      Content="{CustomResource BusinessChatsOnlySelected}"
+                                                      GroupName="BusinessRecipients" />
                     </controls:HeaderedControl>
 
                     <StackPanel Visibility="{x:Bind ViewModel.IsExclude, Mode=OneWay}">
                         <controls:HeaderedControl Header="{CustomResource BusinessChatsExcluded}">
-                            <controls:BadgeButton Click="{x:Bind ViewModel.AddExcluded}"
-                                                  Content="{CustomResource BusinessChatsExcludedAdd}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                  Glyph="&#xEA08;" />
+                            <controls:SettingsButton Click="{x:Bind ViewModel.AddExcluded}"
+                                                     Content="{CustomResource BusinessChatsExcludedAdd}"
+                                                     Glyph="&#xEA08;" />
                         </controls:HeaderedControl>
 
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
@@ -97,10 +93,9 @@
 
                     <StackPanel Visibility="{x:Bind ViewModel.IsInclude, Mode=OneWay}">
                         <controls:HeaderedControl Header="{CustomResource BusinessChatsIncluded}">
-                            <controls:BadgeButton Click="{x:Bind ViewModel.AddIncluded}"
-                                                  Content="{CustomResource BusinessChatsIncludedAdd}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                  Glyph="&#xEA08;" />
+                            <controls:SettingsButton Click="{x:Bind ViewModel.AddIncluded}"
+                                                     Content="{CustomResource BusinessChatsIncludedAdd}"
+                                                     Glyph="&#xEA08;" />
                         </controls:HeaderedControl>
 
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"

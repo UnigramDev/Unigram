@@ -5,7 +5,6 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        Title="{x:Null}"
-                       TitleTemplate="{x:Null}"
                        Padding="24,0,24,24"
                        mc:Ignorable="d">
 
@@ -24,8 +23,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <controls:ProfilePicture x:Name="Photo"
-                                     Width="96"
-                                     Height="96"
+                                     Size="96"
                                      Margin="0,24,0,8" />
             <Grid HorizontalAlignment="Center"
                   Grid.Row="1">
@@ -70,8 +68,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <controls:ProfilePicture Width="48"
-                                                 Height="48"
+                        <controls:ProfilePicture Size="48"
                                                  Margin="8,0" />
                         <TextBlock Margin="0,8,0,0"
                                    FontSize="10"

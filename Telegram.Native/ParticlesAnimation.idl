@@ -1,9 +1,17 @@
 namespace Telegram.Native
 {
+    enum ParticlesType
+    {
+        Media,
+        Text,
+        Status,
+        Premium
+    };
+
     [default_interface]
     runtimeclass ParticlesAnimation 
     {
-        ParticlesAnimation(Int32 width, Int32 height, Double rasterizationScale);
+        ParticlesAnimation(Int32 width, Int32 height, Double rasterizationScale, ParticlesType type, Windows.UI.Color foreground, Windows.UI.Color background);
 
         void RenderSync(Windows.Storage.Streams.IBuffer bitmap);
 

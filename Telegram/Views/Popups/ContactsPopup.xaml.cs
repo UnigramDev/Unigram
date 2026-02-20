@@ -1,10 +1,16 @@
-﻿using System;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
-using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Create;
@@ -114,6 +120,7 @@ namespace Telegram.Views.Popups
                 flyout.CreateFlyoutItem(ViewModel.CreateSecretChat, user, Strings.StartEncryptedChat, Icons.Timer);
                 flyout.CreateFlyoutItem(ViewModel.VoiceCall, user, Strings.Call, Icons.Call);
                 flyout.CreateFlyoutItem(ViewModel.VideoCall, user, Strings.VideoCall, Icons.Video);
+                flyout.CreateFlyoutItem(ViewModel.Delete, user, Strings.DeleteContact, Icons.Delete, destructive: true);
                 flyout.ShowAt(sender, args);
             }
         }
@@ -200,10 +207,7 @@ namespace Telegram.Views.Popups
         {
             SearchField.Text = string.Empty;
 
-            if (ContactsPanel != null)
-            {
-                ContactsPanel.Visibility = Visibility.Visible;
-            }
+            ContactsPanel?.Visibility = Visibility.Visible;
 
             ViewModel.Search = null;
         }
@@ -212,10 +216,7 @@ namespace Telegram.Views.Popups
 
         private void ScrollingHeader_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (EmptyState != null)
-            {
-                EmptyState.Margin = new Thickness(0, e.NewSize.Height - 36, 0, 0);
-            }
+            EmptyState?.Margin = new Thickness(0, e.NewSize.Height - 36, 0, 0);
         }
 
         private void EmptyState_Loaded(object sender, RoutedEventArgs e)

@@ -1,11 +1,14 @@
-﻿using System;
-using System.Globalization;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
 using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Business
@@ -36,25 +39,21 @@ namespace Telegram.Views.Business
             {
                 VisualUtilities.ShakeView(Address);
             }
+            else if (e.PropertyName == nameof(ViewModel.IsLocationValid) || e.PropertyName == nameof(ViewModel.Location))
+            {
+                UpdateLocation(ViewModel.IsLocationValid, ViewModel.Location);
+            }
         }
 
         #region Binding
 
-        private ImageSource ConvertLocation(bool valid, Location location)
+        private void UpdateLocation(bool valid, Location location)
         {
             if (valid)
             {
-                var width = 1000 * XamlRoot.RasterizationScale;
-                var height = 200 * XamlRoot.RasterizationScale;
-
-                var latitude = location.Latitude.ToString(CultureInfo.InvariantCulture);
-                var longitude = location.Longitude.ToString(CultureInfo.InvariantCulture);
-
-                return new BitmapImage(new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3:F0},{4:F0}&key={5}",
-                    latitude, longitude, 15, width, height, Constants.BingMapsApiKey)));
+                Map.XamlRoot = XamlRoot;
+                Map.SetSource(ViewModel.ClientService, location, 200, 200, 0);
             }
-
-            return null;
         }
 
         private Visibility ConvertClear(string address, bool valid)
@@ -68,6 +67,8 @@ namespace Telegram.Views.Business
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            UpdateLocation(ViewModel.IsLocationValid, ViewModel.Location);
+
             Address.Focus(FocusState.Pointer);
             Address.SelectionStart = int.MaxValue;
         }

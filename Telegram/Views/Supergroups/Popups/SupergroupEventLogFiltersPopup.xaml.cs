@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -115,12 +116,11 @@ namespace Telegram.Views.Supergroups.Popups
             {
                 var photo = new ProfilePicture
                 {
-                    Width = 28,
-                    Height = 28,
+                    Size = 28,
                     Margin = new Thickness(0, -4, 8, 0),
                 };
 
-                photo.SetUser(_clientService, sender, 28);
+                photo.Source = ProfilePictureSource.User(_clientService, sender);
 
                 var title = new TextBlock
                 {

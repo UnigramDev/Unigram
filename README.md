@@ -47,11 +47,4 @@ We have a list of shortcuts to ease the use with a keyboard. An up-to-date list 
 In order to be able to use Unigram in Windows 10 N, you will need Media Feature pack. To install it properly, go to ```Settings > Apps and Features > Add a feature.``` At this point, select ```Media Feature pack```, install it and reboot.
 
 ## Privacy policy
-In order to guarantee a great user experience, Unigram uses some third party services:
-- [**Microsoft Bing Maps**](https://www.microsoft.com/en-us/maps/product)  
-  Used to generate map previews when receiving and sharing locations.
-- [**Microsoft AppCenter**](https://learn.microsoft.com/en-us/appcenter/gdpr/)  
-  Used to collect anonymous crash data and usage statistics, fundamental to monitor app health and to fix issues.  
-  Anonymised data is stored for 28 days.
-
-Additionally to this, Telegram [privacy policy](https://telegram.org/privacy) applies.
+Unigram doesn't collect any data, Telegram [privacy policy](https://telegram.org/privacy) applies.

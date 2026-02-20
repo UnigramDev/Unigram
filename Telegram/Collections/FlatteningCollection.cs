@@ -1,12 +1,14 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 
 namespace Telegram.Collections
 {
@@ -66,12 +68,42 @@ namespace Telegram.Collections
                 case NotifyCollectionChangedAction.Remove:
                     Remove(collection, e.OldStartingIndex, e.OldItems.Count);
                     break;
+                case NotifyCollectionChangedAction.Replace:
+                    Replace(collection, e.OldStartingIndex, e.OldItems[0], e.NewItems[0]);
+                    break;
                 case NotifyCollectionChangedAction.Reset:
                     Reset(collection);
                     break;
             }
 
             UpdateIndexes(collection);
+            Assert();
+        }
+
+        [Conditional("DEBUG")]
+        private void Assert()
+        {
+            var temp = new List<object>();
+
+            foreach (var collection in _groups)
+            {
+                if (collection.Count > 0 && collection.Key != null)
+                {
+                    temp.Add(collection);
+                }
+
+                foreach (var item in collection)
+                {
+                    temp.Add(item);
+                }
+            }
+
+            Debug.Assert(temp.Count == Count);
+
+            for (int i = 0; i < Count; i++)
+            {
+                Debug.Assert(temp[i] == this[i]);
+            }
         }
 
         private void Insert(IKeyedCollection collection, int newStartingIndex, IList newItems)
@@ -92,13 +124,18 @@ namespace Telegram.Collections
         {
             for (int i = oldStartingIndex; i < oldStartingIndex + oldItemsCount; i++)
             {
-                RemoveAt(collection.TotalIndex + i);
+                RemoveAt(collection.TotalIndex + oldStartingIndex);
             }
 
             if (collection.Count == 0 && oldItemsCount > 0 && collection.Key != null)
             {
                 RemoveAt(collection.Index);
             }
+        }
+
+        private void Replace(IKeyedCollection collection, int oldStartingIndex, object oldItem, object newItem)
+        {
+            this[collection.TotalIndex + oldStartingIndex] = newItem;
         }
 
         private void Reset(IKeyedCollection collection)

@@ -5,7 +5,6 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        Title="{x:Null}"
-                       TitleTemplate="{x:Null}"
                        Padding="24,0,24,24"
                        mc:Ignorable="d">
 
@@ -17,98 +16,66 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid>
+        <Grid Margin="0,0,0,20">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <controls:ProfilePicture x:Name="Photo"
-                                     Width="96"
-                                     Height="96"
+                                     Size="96"
                                      Margin="0,24,0,8" />
             <Grid HorizontalAlignment="Center"
                   Grid.Row="1">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+                <controls:CustomEmojiIcon x:Name="BotVerified"
+                                          Visibility="Collapsed"
+                                          VerticalAlignment="Bottom"
+                                          Margin="0,0,4,4" />
+
                 <TextBlock x:Name="Title"
                            Style="{StaticResource PopupTextBlockStyle}"
                            TextAlignment="Center"
                            VerticalAlignment="Bottom" />
+
                 <controls:IdentityIcon x:Name="Identity"
                                        VerticalAlignment="Bottom"
-                                       Margin="4,0,0,2"
+                                       Margin="4,0,0,4"
                                        Grid.Column="1" />
 
             </Grid>
             <TextBlock x:Name="Subtitle"
                        Style="{StaticResource InfoCaptionTextBlockStyle}"
                        TextAlignment="Center"
-                       Margin="12,0,12,24"
+                       Margin="12,0,12,0"
                        Grid.Row="2" />
+
+            <TextBlock x:Name="Description"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       Margin="12,8,12,0"
+                       Grid.Row="3" />
         </Grid>
 
-        <ListView x:Name="Members"
-                  SelectionMode="None"
-                  Style="{StaticResource HorizontalListViewStyle}"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  Margin="0,12,0,0"
-                  Padding="0,0,0,12"
-                  Grid.Row="2">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Padding"
-                            Value="4,0" />
-                    <Setter Property="MinWidth"
-                            Value="0" />
-                    <Setter Property="Width"
-                            Value="72" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel>
-                        <controls:ProfilePicture Width="48"
-                                                 Height="48"
-                                                 Margin="8,0" />
-                        <TextBlock Margin="0,8,0,0"
-                                   FontSize="10"
-                                   TextAlignment="Center"
-                                   TextWrapping="NoWrap"
-                                   TextTrimming="CharacterEllipsis"
-                                   Style="{StaticResource CaptionTextBlockStyle}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <ListView.Footer>
-                <StackPanel x:Name="FooterPanel"
-                            Margin="12,0">
-                    <Border Background="{ThemeResource Placeholder0Brush}"
-                            Width="48"
-                            Height="48"
-                            CornerRadius="24">
-                        <TextBlock x:Name="Footer"
-                                   TextAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   TextLineBounds="Tight"
-                                   Foreground="White"
-                                   Style="{StaticResource SubtitleTextBlockStyle}" />
-                    </Border>
-                    <TextBlock Margin="0,8,0,0"
-                               FontSize="10"
-                               TextAlignment="Center"
-                               TextWrapping="NoWrap"
-                               TextTrimming="CharacterEllipsis"
-                               Style="{StaticResource CaptionTextBlockStyle}" />
-                </StackPanel>
-            </ListView.Footer>
-        </ListView>
+        <controls:RecentUserHeads x:Name="Participants"
+                                  BorderBrush="{ThemeResource ContentDialogTopOverlaySolid}"
+                                  ItemSize="48"
+                                  ItemOverlap="16"
+                                  RecentUserHeadChanged="Participants_RecentUserHeadChanged"
+                                  HorizontalAlignment="Center"
+                                  Margin="0,0,0,4"
+                                  Grid.Row="2" />
 
         <TextBlock x:Name="JoinRequestInfo"
                    Text="{CustomResource RequestToJoinChannelDescription}"
-                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   TextAlignment="Center"
                    Grid.Row="3" />
     </Grid>
 </controls:ContentPopup>

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Drawers;
 using Telegram.Controls.Messages;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -35,16 +37,21 @@ namespace Telegram.Views.Popups
     {
         private readonly CreatePollViewModel _viewModel;
 
-        public CreatePollPopup(IClientService clientService, bool forceQuiz, bool forceRegular, bool forceAnonymous)
+        public CreatePollPopup(IClientService clientService, FormattedText question, bool forceQuiz, bool forceRegular, bool forceAnonymous)
         {
             InitializeComponent();
 
             _viewModel = new CreatePollViewModel(clientService,
-                TypeResolver.Current.Resolve<ISettingsService>(clientService.SessionId),
-                TypeResolver.Current.Resolve<IEventAggregator>(clientService.SessionId));
+                clientService.Session.Resolve<ISettingsService>(),
+                clientService.Session.Resolve<IEventAggregator>());
 
             QuestionText.DataContext = _viewModel;
-            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(clientService.SessionId);
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(clientService.Session);
+
+            if (question != null)
+            {
+                QuestionText.SetText(question);
+            }
 
             Title = Strings.NewPoll;
             PrimaryButtonText = Strings.OK;
@@ -149,14 +156,6 @@ namespace Telegram.Views.Popups
         }
 
         public ObservableCollection<PollOptionViewModel> Items { get; private set; }
-
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
 
         private void AddAnOption_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -271,7 +270,17 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void Question_GotFocus(object sender, RoutedEventArgs e)
+        private void QuestionText_GotFocus(object sender, RoutedEventArgs e)
+        {
+            OnVisibleChanged(QuestionEmoji, true);
+        }
+
+        private void QuestionText_LostFocus(object sender, RoutedEventArgs e)
+        {
+            OnVisibleChanged(QuestionEmoji, false);
+        }
+
+        private void Option_GotFocus(object sender, RoutedEventArgs e)
         {
             AddAnOption.IsReadOnly = false;
 
@@ -281,7 +290,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void Question_LostFocus(object sender, RoutedEventArgs e)
+        private void Option_LostFocus(object sender, RoutedEventArgs e)
         {
             if (sender is FormattedTextBox textBox && textBox.Parent != null)
             {
@@ -376,7 +385,7 @@ namespace Telegram.Views.Popups
 
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
-            var element = FocusManager.GetFocusedElement();
+            var element = FocusManagerEx.TryGetFocusedElement();
             if (element is not FormattedTextBox textBox)
             {
                 return;
@@ -389,7 +398,7 @@ namespace Telegram.Views.Popups
             EmojiFlyout.ShowAt(textBox, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
         }
 
-        private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
+        private void Emoji_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)
         {
             if (e.ClickedItem is EmojiData emoji)
             {
@@ -415,7 +424,7 @@ namespace Telegram.Views.Popups
 
         public PollOptionViewModel(string text, bool quiz, bool focus, Action<PollOptionViewModel> remove)
         {
-            _text = new FormattedText(text, Array.Empty<TextEntity>());
+            _text = text.AsFormattedText();
             _isQuiz = quiz;
             _focusOnLoaded = focus;
             _remove = remove;

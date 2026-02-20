@@ -19,6 +19,7 @@
 [Pp]roduction/
 x64/
 x86/
+ARM64/
 bld/
 [Bb]in/
 [Oo]bj/
@@ -274,5 +275,6 @@ _Pvt_Extensions
 /Telegram.Native/Generated Files
 /Telegram.Native.Calls/Generated Files
 /Telegram/Constants.Secret.cs
-/Libraries/rlottie/ARM64
 /Telegram2
+/Libraries/tdjson/td_api.tl
+/Libraries/tdjson/build-native

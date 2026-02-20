@@ -7,11 +7,8 @@
 
 #include "LoopbackCapture.h"
 
-#include <winrt/Telegram.Td.Api.h>
 #include <mutex>
 
-using namespace winrt::Microsoft::Graphics::Canvas::UI::Xaml;
-using namespace winrt::Telegram::Td::Api;
 using namespace winrt::Windows::Foundation::Collections;
 
 namespace winrt::Telegram::Native::Calls::implementation
@@ -57,10 +54,15 @@ namespace winrt::Telegram::Native::Calls::implementation
             IVector<winrt::Telegram::Native::Calls::VoipGroupParticipant>> const& value);
         void AudioLevelsUpdated(winrt::event_token const& token);
 
-        winrt::event_token BroadcastPartRequested(Windows::Foundation::TypedEventHandler<
+        winrt::event_token AudioBroadcastPartRequested(Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipGroupManager,
-            winrt::Telegram::Native::Calls::BroadcastPartRequestedEventArgs> const& value);
-        void BroadcastPartRequested(winrt::event_token const& token);
+            winrt::Telegram::Native::Calls::AudioBroadcastPartRequestedEventArgs> const& value);
+        void AudioBroadcastPartRequested(winrt::event_token const& token);
+
+        winrt::event_token VideoBroadcastPartRequested(Windows::Foundation::TypedEventHandler<
+            winrt::Telegram::Native::Calls::VoipGroupManager,
+            winrt::Telegram::Native::Calls::VideoBroadcastPartRequestedEventArgs> const& value);
+        void VideoBroadcastPartRequested(winrt::event_token const& token);
 
         winrt::event_token BroadcastTimeRequested(Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipGroupManager,
@@ -102,7 +104,10 @@ namespace winrt::Telegram::Native::Calls::implementation
             IVector<winrt::Telegram::Native::Calls::VoipGroupParticipant>>> m_audioLevelsUpdated;
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipGroupManager,
-            winrt::Telegram::Native::Calls::BroadcastPartRequestedEventArgs>> m_broadcastPartRequested;
+            winrt::Telegram::Native::Calls::AudioBroadcastPartRequestedEventArgs>> m_audioBroadcastPartRequested;
+        winrt::event<Windows::Foundation::TypedEventHandler<
+            winrt::Telegram::Native::Calls::VoipGroupManager,
+            winrt::Telegram::Native::Calls::VideoBroadcastPartRequestedEventArgs>> m_videoBroadcastPartRequested;
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipGroupManager,
             winrt::Telegram::Native::Calls::BroadcastTimeRequestedEventArgs>> m_broadcastTimeRequested;
@@ -120,7 +125,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         }
 
-        void done(IVector<Telegram::Td::Api::GroupCallParticipant> participants)
+        void done(IVector<VoipMediaChannelDescription> participants)
         {
             webrtc::MutexLock lock(&_mutex);
 
@@ -131,11 +136,10 @@ namespace winrt::Telegram::Native::Calls::implementation
 
                 for (auto const& value : participants)
                 {
-                    MessageSenderUser user = value.ParticipantId().try_as<MessageSenderUser>();
                     result.push_back(tgcalls::MediaChannelDescription{
                         .type = tgcalls::MediaChannelDescription::Type::Audio,
-                        .audioSsrc = (uint32_t)value.AudioSourceId(),
-                        .userId = user.UserId()
+                        .audioSsrc = uint32_t(value.AudioSource),
+                        .userId = value.UserId
                         });
                 }
 
@@ -170,7 +174,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         }
 
-        void done(int64_t time, int64_t response, Telegram::Td::Api::Data filePart)
+        void done(int64_t time, int64_t response, IVector<uint8_t> filePart)
         {
             webrtc::MutexLock lock(&_mutex);
 
@@ -180,10 +184,9 @@ namespace winrt::Telegram::Native::Calls::implementation
 
                 if (filePart)
                 {
-                    auto part = filePart.DataValue();
-                    std::vector data(begin(part), end(part));
+                    std::vector data(begin(filePart), end(filePart));
 
-                    const auto size = part.Size();
+                    const auto size = filePart.Size();
                     auto bytes = std::vector<uint8_t>(size);
                     memcpy(bytes.data(), data.data(), size);
 

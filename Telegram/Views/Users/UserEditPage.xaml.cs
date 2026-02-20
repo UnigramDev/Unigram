@@ -1,16 +1,20 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Users;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Views.Users
 {
@@ -21,14 +25,13 @@ namespace Telegram.Views.Users
         public UserEditPage()
         {
             InitializeComponent();
-            Title = Strings.EditContact;
         }
 
         #region Delegate
 
         public void UpdateUser(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
-            Photo.SetUser(ViewModel.ClientService, user, 96);
+            Photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
 
             if (user.Type is UserTypeBot userTypeBot && userTypeBot.CanBeEdited)
             {
@@ -38,7 +41,15 @@ namespace Telegram.Views.Users
 
                 FindName(nameof(UsernamePanel));
                 FindName(nameof(BotPanel));
-                FindName(nameof(BotPanel2));
+
+                if (fullInfo?.BotInfo?.VerificationParameters != null)
+                {
+                    FindName(nameof(BotPanel2));
+                }
+                else
+                {
+                    BotPanel2?.Visibility = Visibility.Collapsed;
+                }
 
                 LayoutRoot.Footer = string.Empty;
 
@@ -56,6 +67,16 @@ namespace Telegram.Views.Users
                 FindName(nameof(PhotoPanel));
                 FindName(nameof(LastName));
 
+                if (NotePanel == null)
+                {
+                    FindName(nameof(NotePanel));
+
+                    EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.Session);
+                    NoteField.AllowedEntities = FormattedTextEntity.Bold | FormattedTextEntity.Italic | FormattedTextEntity.Underline | FormattedTextEntity.Strikethrough | FormattedTextEntity.Spoiler | FormattedTextEntity.CustomEmoji;
+                    NoteField.CustomEmoji = CustomEmoji;
+                    NoteField.MaxLength = (int)ViewModel.ClientService.Options.UserNoteTextLengthMax;
+                }
+
                 SuggestPhoto.Content = string.Format(Strings.SuggestPhotoFor, user.FirstName);
                 PersonalPhoto.Content = string.Format(Strings.SetPhotoFor, user.FirstName);
             }
@@ -65,19 +86,13 @@ namespace Telegram.Views.Users
                 return;
             }
 
+            NoteField?.SetText(fullInfo.Note);
+
             if (ResetPhoto != null)
             {
                 if (fullInfo.PersonalPhoto != null)
                 {
-                    if (fullInfo.Photo != null)
-                    {
-                        ResetPhotoPhoto.SetChatPhoto(ViewModel.ClientService, fullInfo.Photo, 28);
-                    }
-                    else
-                    {
-                        ResetPhotoPhoto.Source = PlaceholderImage.GetUser(ViewModel.ClientService, user);
-                    }
-
+                    ResetPhotoPhoto.Source = ProfilePictureSource.ChatPhoto(ViewModel.ClientService, user, fullInfo.Photo, false);
                     ResetPhotoPhoto.Visibility = Visibility.Visible;
                     ResetPhoto.Visibility = Visibility.Visible;
                 }
@@ -88,6 +103,10 @@ namespace Telegram.Views.Users
                 }
 
                 SuggestPhoto.Visibility = fullInfo.OutgoingPaidMessageStarCount > 0
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+
+                SuggestBirthday.Visibility = fullInfo.OutgoingPaidMessageStarCount > 0 || fullInfo.Birthdate != null
                     ? Visibility.Collapsed
                     : Visibility.Visible;
             }
@@ -103,9 +122,9 @@ namespace Telegram.Views.Users
             {
                 AffiliateProgram.Badge = fullInfo.BotInfo.AffiliateProgram.Parameters.CommissionPercent();
             }
-            else if (AffiliateProgram != null)
+            else
             {
-                AffiliateProgram.Badge = Strings.AffiliateProgramBotOff;
+                AffiliateProgram?.Badge = Strings.AffiliateProgramBotOff;
             }
         }
 
@@ -121,6 +140,36 @@ namespace Telegram.Views.Users
             }
 
             return null;
+        }
+
+        private void NoteField_TextChanged(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Note = NoteField.GetFormattedText();
+        }
+
+        private void Emoji_Click(object sender, RoutedEventArgs e)
+        {
+            // We don't want to unfocus the text are when the context menu gets opened
+            EmojiPanel.ViewModel.Update();
+            EmojiFlyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions
+            {
+                ShowMode = FlyoutShowMode.Transient,
+                Placement = FlyoutPlacementMode.BottomEdgeAlignedRight
+            });
+        }
+
+        private void Emoji_ItemClick(object sender, Controls.Drawers.EmojiDrawerItemClickEventArgs e)
+        {
+            if (e.ClickedItem is EmojiData emoji)
+            {
+                NoteField.InsertText(emoji.Value);
+            }
+            else if (e.ClickedItem is StickerViewModel sticker)
+            {
+                NoteField.InsertEmoji(sticker);
+            }
+
+            NoteField.Focus(FocusState.Programmatic);
         }
     }
 }

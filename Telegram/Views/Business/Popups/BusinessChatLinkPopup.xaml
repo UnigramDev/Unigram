@@ -54,14 +54,15 @@
             </Grid>
 
             <Grid x:Name="CaptionPanel"
-                  Background="{ThemeResource TextControlBackground}"
+                  Background="{ThemeResource ContentDialogBackground}"
                   Grid.Row="2">
                 <FlyoutBase.AttachedFlyout>
                     <Flyout x:Name="EmojiFlyout"
                             Placement="Top"
                             ShowMode="Transient">
                         <Flyout.FlyoutPresenterStyle>
-                            <Style TargetType="FlyoutPresenter">
+                            <Style TargetType="FlyoutPresenter"
+                                   BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
                                 <Setter Property="Padding"
                                         Value="0" />
                             </Style>
@@ -103,7 +104,7 @@
                 <controls:GlyphButton Click="Edit_Click"
                                       Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                       VerticalAlignment="Bottom"
-                                      FontSize="24"
+                                      FontSize="28"
                                       Glyph="&#xE9F4;"
                                       Margin="-8,0,0,0"
                                       Grid.Column="2" />

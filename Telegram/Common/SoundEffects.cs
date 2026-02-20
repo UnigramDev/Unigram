@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -93,6 +94,9 @@ namespace Telegram.Common
                 case SoundEffect.Sent:
                     _ = PlayImpl("ms-appx:///Assets/Audio/sent.mp3");
                     break;
+                case SoundEffect.Received:
+                    _ = PlayImpl("ms-appx:///Assets/Audio/received.mp3");
+                    break;
                 case SoundEffect.VoipIncoming:
                     _ = PlayImpl("ms-appx:///Assets/Audio/voip_incoming.mp3", null, EffectType.Voip);
                     break;
@@ -166,9 +170,9 @@ namespace Telegram.Common
                 fileInputNodeResult.FileInputNode
                     .AddOutgoingConnection(deviceOutputNodeResult.DeviceOutputNode);
 
-                async void handler(AudioFileInputNode node, object args)
+                void handler(AudioFileInputNode node, object args)
                 {
-                    using (await _lock.WaitAsync())
+                    using (_lock.Wait())
                     {
                         try
                         {
@@ -189,7 +193,7 @@ namespace Telegram.Common
                     }
                 }
 
-                using (await _lock.WaitAsync())
+                using (_lock.Wait())
                 {
                     Stop(type);
 
@@ -207,6 +211,7 @@ namespace Telegram.Common
     public enum SoundEffect
     {
         Sent,
+        Received,
         VoipIncoming,
         VoipRingback,
         VoipBusy,

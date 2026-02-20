@@ -11,11 +11,11 @@
 
     <Page.Resources>
         <Style x:Key="ShortcutBadgeButtonStyle"
-               TargetType="controls:BadgeButton">
+               TargetType="controls:SettingsButton">
             <Setter Property="Background"
                     Value="Transparent" />
             <Setter Property="Foreground"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
             <Setter Property="BorderBrush"
                     Value="{ThemeResource TelegramSeparatorMediumBrush}" />
             <Setter Property="BorderThickness"
@@ -38,7 +38,7 @@
                     Value="True" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="controls:BadgeButton">
+                    <ControlTemplate TargetType="controls:SettingsButton">
                         <StackPanel>
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
@@ -130,8 +130,8 @@
                                                     ElementPrepared="OnElementPrepared">
                                     <muxc:ItemsRepeater.ItemTemplate>
                                         <DataTemplate x:DataType="services:ShortcutInfo">
-                                            <controls:BadgeButton Style="{StaticResource ShortcutBadgeButtonStyle}">
-                                                <controls:BadgeButton.Badge>
+                                            <controls:SettingsButton Style="{StaticResource ShortcutBadgeButtonStyle}">
+                                                <controls:SettingsButton.Badge>
                                                     <ItemsControl ItemsSource="{x:Bind Shortcut.Components, Mode=OneWay}">
                                                         <ItemsControl.ItemTemplate>
                                                             <DataTemplate x:DataType="x:String">
@@ -157,8 +157,8 @@
                                                         </ItemsControl.ItemsPanel>
                                                     </ItemsControl>
 
-                                                </controls:BadgeButton.Badge>
-                                            </controls:BadgeButton>
+                                                </controls:SettingsButton.Badge>
+                                            </controls:SettingsButton>
                                         </DataTemplate>
                                     </muxc:ItemsRepeater.ItemTemplate>
                                 </muxc:ItemsRepeater>

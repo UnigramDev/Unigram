@@ -1,0 +1,27 @@
+namespace Telegram.Native.Media
+{
+    [default_interface]
+    runtimeclass AsyncMediaPlayerSwapChain : Windows.Foundation.IClosable
+    {
+        AsyncMediaPlayerSwapChain();
+        AsyncMediaPlayerSwapChain(Boolean create);
+
+        Boolean IsLoaded{ get; };
+
+        void Clear();
+
+        Windows.Foundation.Collections.IVector<String> SwapChainOptions{ get; };
+
+        Boolean Create();
+        Boolean Create(Boolean subscribe);
+
+        void Attach(Windows.UI.Xaml.Controls.SwapChainPanel panel);
+        void Attach(Windows.UI.Xaml.Controls.SwapChainPanel panel, Boolean subscribe);
+
+        void Detach();
+        void Detach(Windows.UI.Xaml.Controls.SwapChainPanel panel);
+
+        void UpdateSize();
+        void UpdateScale();
+    }
+}

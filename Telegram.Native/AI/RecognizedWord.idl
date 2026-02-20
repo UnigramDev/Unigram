@@ -1,0 +1,22 @@
+namespace Telegram.Native.AI
+{
+    struct RecognizedTextBoundingBox
+    {
+        Windows.Foundation.Numerics.Vector2 TopLeft;
+        Windows.Foundation.Numerics.Vector2 TopRight;
+        Windows.Foundation.Numerics.Vector2 BottomRight;
+        Windows.Foundation.Numerics.Vector2 BottomLeft;
+    };
+
+    interface IOcrObject requires Windows.Foundation.IStringable
+    {
+        RecognizedTextBoundingBox BoundingBox{ get; };
+    };
+
+    [default_interface]
+    runtimeclass RecognizedWord : IOcrObject
+    {
+        RecognizedWord(String text, RecognizedTextBoundingBox boundingBox);
+        String Text{ get; };
+    }
+}

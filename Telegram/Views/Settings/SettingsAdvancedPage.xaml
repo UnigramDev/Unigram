@@ -26,12 +26,11 @@
                                           x:Load="False"
                                           Header="{CustomResource VersionAndUpdates}"
                                           Footer="{x:Bind ViewModel.UpdateFooter, Mode=OneWay}">
-                    <controls:BadgeButton x:Name="Version"
-                                          Click="{x:Bind ViewModel.Update}"
-                                          Content="{x:Bind ViewModel.UpdateText, Mode=OneWay}"
-                                          Glyph="{x:Bind ViewModel.UpdateGlyph, Mode=OneWay}"
-                                          IsEnabled="{x:Bind ViewModel.IsUpdateEnabled, Mode=OneWay}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                    <controls:SettingsButton x:Name="Version"
+                                             Click="{x:Bind ViewModel.Update}"
+                                             Content="{x:Bind ViewModel.UpdateText, Mode=OneWay}"
+                                             Glyph="{x:Bind ViewModel.UpdateGlyph, Mode=OneWay}"
+                                             IsEnabled="{x:Bind ViewModel.IsUpdateEnabled, Mode=OneWay}" />
 
                     <CheckBox Content="{CustomResource InstallBetaUpdates}"
                               IsChecked="{x:Bind ViewModel.InstallBetaUpdates, Mode=TwoWay}"

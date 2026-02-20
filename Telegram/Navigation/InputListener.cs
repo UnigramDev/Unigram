@@ -1,11 +1,11 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Navigation;
-using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
@@ -42,13 +42,13 @@ namespace Telegram.Services.Keyboard
                                 or VirtualKey.GamepadLeftShoulder
                                 or VirtualKey.Escape)
             {
-                BootStrapper.Current.RaiseBackRequested(null, args.VirtualKey);
+                args.Handled = BootStrapper.Current.RaiseBackRequested(null, args.VirtualKey);
             }
             else if (args.VirtualKey is VirtualKey.GoForward
                                      or VirtualKey.NavigationRight
                                      or VirtualKey.GamepadRightShoulder)
             {
-                BootStrapper.Current.RaiseForwardRequested();
+                args.Handled = BootStrapper.Current.RaiseForwardRequested();
             }
             else if (args.VirtualKey is VirtualKey.Back
                                      or VirtualKey.Left)
@@ -56,7 +56,7 @@ namespace Telegram.Services.Keyboard
                 var modifiers = WindowContext.KeyModifiers();
                 if (modifiers == VirtualKeyModifiers.Menu)
                 {
-                    BootStrapper.Current.RaiseBackRequested(null, args.VirtualKey);
+                    args.Handled = BootStrapper.Current.RaiseBackRequested(null, args.VirtualKey);
                 }
             }
             else if (args.VirtualKey is VirtualKey.Right)
@@ -64,7 +64,15 @@ namespace Telegram.Services.Keyboard
                 var modifiers = WindowContext.KeyModifiers();
                 if (modifiers == VirtualKeyModifiers.Menu)
                 {
-                    BootStrapper.Current.RaiseForwardRequested();
+                    args.Handled = BootStrapper.Current.RaiseForwardRequested();
+                }
+            }
+            else
+            {
+                var invoked = LifetimeService.Current.Shortcuts.Process(args, out VirtualKeyModifiers modifiers);
+                if (invoked != null)
+                {
+                    args.Handled = BootStrapper.Current.RaiseShortcutInvoked(invoked, modifiers);
                 }
             }
         }

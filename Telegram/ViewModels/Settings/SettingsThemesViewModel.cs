@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,6 @@ using Telegram.Views.Popups;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -94,7 +94,7 @@ namespace Telegram.ViewModels.Settings
             AreCustomThemesAvailable = Custom.Count > 0;
         }
 
-        private readonly Dictionary<TelegramThemeType, Color[]> _defaultAccents = new Dictionary<TelegramThemeType, Color[]>
+        private readonly Dictionary<TelegramThemeType, Color[]> _defaultAccents = new()
         {
             {
                 TelegramThemeType.Tinted, new Color[]
@@ -214,7 +214,7 @@ namespace Telegram.ViewModels.Settings
             await SetThemeAsync(theme);
 
             //NavigationService.Navigate(typeof(SettingsThemePage), theme.Path);
-            if (Window.Current.Content is Views.Host.RootPage root)
+            if (WindowContext.Current.Content is Views.Host.RootPage root)
             {
                 root.ShowEditor(theme);
             }

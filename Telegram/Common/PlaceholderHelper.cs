@@ -1,22 +1,19 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using RLottie;
+
 using System;
 using System.Collections.Generic;
-using System.IO.Compression;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Telegram.Native;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.Foundation;
 using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.UI;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -24,6 +21,66 @@ namespace Telegram.Common
 {
     public static class PlaceholderHelper
     {
+        [ThreadStatic]
+        private static PlaceholderImageHelper _foreground;
+
+        public static PlaceholderImageHelper Foreground
+        {
+            get
+            {
+                if (_foreground == null)
+                {
+                    try
+                    {
+                        _foreground = new PlaceholderImageHelper(Window.Current);
+                    }
+                    catch
+                    {
+                        Logger.Error(Environment.StackTrace);
+                        throw;
+                    }
+                }
+
+                _foreground.HandleDeviceLost();
+                return _foreground;
+            }
+        }
+
+        public static void Release()
+        {
+            _foreground?.Dispose();
+            _foreground = null;
+        }
+
+        private static PlaceholderImageHelper _background;
+        private static readonly object _backgroundLock = new();
+
+        public static PlaceholderImageHelper Background
+        {
+            get
+            {
+                lock (_backgroundLock)
+                {
+                    if (_background == null)
+                    {
+                        try
+                        {
+                            _background = new PlaceholderImageHelper(null);
+                        }
+                        catch
+                        {
+                            Logger.Error(Environment.StackTrace);
+                            throw;
+                        }
+                    }
+
+                    _background.HandleDeviceLost();
+                    return _background;
+                }
+            }
+        }
+
+
         public static ImageSource GetBitmap(IClientService clientService, PhotoSize photoSize)
         {
             return GetBitmap(clientService, photoSize.Photo, photoSize.Width, photoSize.Height);
@@ -43,14 +100,15 @@ namespace Telegram.Common
             return null;
         }
 
-        public static async Task<LoadedImageSurface> LoadBitmapAsync(File file)
+        public static async Task<ChatBackgroundPattern> LoadBitmapAsync(File file)
         {
             try
             {
                 var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
                 using (var stream = await item.OpenReadAsync())
                 {
-                    return LoadedImageSurface.StartLoadFromStream(stream);
+                    var surface = LoadedImageSurface.StartLoadFromStream(stream);
+                    return new ChatBackgroundPattern(surface);
                 }
             }
             catch
@@ -61,208 +119,30 @@ namespace Telegram.Common
 
         private static readonly DisposableMutex _patternSurfaceLock = new();
 
-        public static async Task<LoadedImageSurface> LoadPatternBitmapAsync(File file, double rasterizationScale)
+        public static async Task<ChatBackgroundPattern> LoadPatternBitmapAsync(File file, float intensity, bool negative, double rasterizationScale)
         {
             using var locked = await _patternSurfaceLock.WaitAsync();
-
-            var bitmap = default(LoadedImageSurface);
-            var scale = (int)(rasterizationScale * 100);
-
-            rasterizationScale = 0.25 * rasterizationScale;
-
-            var cache = $"{file.Remote.UniqueId}.scale-{scale}.png";
-            var relative = System.IO.Path.Combine("Wallpapers", cache);
-
-            var delete = false;
-
-            var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
-            if (item == null)
-            {
-                try
-                {
-                    item = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative, CreationCollisionOption.ReplaceExisting);
-
-                    using (var stream = await item.OpenAsync(FileAccessMode.ReadWrite))
-                    {
-                        var text = await ProcessSvgXmlAsync(file.Local.Path);
-                        await PlaceholderImageHelper.Current.DrawSvgAsync(text, Colors.White, stream, rasterizationScale);
-
-                        bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(360, 740));
-                    }
-                }
-                catch
-                {
-                    delete = true;
-                }
-            }
-            else
-            {
-                try
-                {
-                    using (var stream = await item.OpenReadAsync())
-                    {
-                        bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(360, 740));
-                    }
-                }
-                catch
-                {
-                    delete = true;
-                }
-            }
-
-            if (item != null && delete)
-            {
-                try
-                {
-                    await item.DeleteAsync();
-                }
-                catch
-                {
-                    // Shit happens
-                }
-            }
-
-            return bitmap;
+            return await Background.DrawSvgAsync(BootStrapper.Current.Compositor, file.Local.Path, 1, false, rasterizationScale);
         }
 
-        private static async Task<string> ProcessSvgXmlAsync(string filePath)
-        {
-            var styles = new Dictionary<string, string>();
-            var text = string.Empty;
-
-            using (var source = System.IO.File.OpenRead(filePath))
-            using (var decompress = new GZipStream(source, CompressionMode.Decompress))
-            using (var reader = new System.IO.StreamReader(decompress))
-            {
-                text = await reader.ReadToEndAsync();
-            }
-
-            var document = XDocument.Parse(text);
-            var svg = XNamespace.Get("http://www.w3.org/2000/svg");
-
-            foreach (var styleNode in document.Root.Descendants(svg + "style"))
-            {
-                var currentStyleString = styleNode.Value;
-                int currentClassNameStartIndex = -1;
-                int currentClassContentsStartIndex = -1;
-
-                string currentClassName = null;
-
-                for (int i = 0; i < currentStyleString.Length; i++)
-                {
-                    var c = currentStyleString[i];
-                    if (currentClassNameStartIndex != -1)
-                    {
-                        if (!char.IsLetterOrDigit(c))
-                        {
-                            currentClassName = currentStyleString.Substring(currentClassNameStartIndex, i - currentClassNameStartIndex);
-                            currentClassNameStartIndex = -1;
-                        }
-                    }
-                    else if (currentClassContentsStartIndex != -1)
-                    {
-                        if (c == '}')
-                        {
-                            var classContents = currentStyleString.Substring(currentClassContentsStartIndex, i - currentClassContentsStartIndex);
-                            if (currentClassName != null && classContents != null)
-                            {
-                                styles[currentClassName] = classContents;
-                                currentClassName = null;
-                            }
-                            currentClassContentsStartIndex = -1;
-                        }
-                    }
-
-                    if (currentClassNameStartIndex == -1 && currentClassContentsStartIndex == -1)
-                    {
-                        if (c == '.')
-                        {
-                            currentClassNameStartIndex = i + 1;
-                        }
-                        else if (c == '{')
-                        {
-                            currentClassContentsStartIndex = i + 1;
-                        }
-                    }
-                }
-
-            }
-
-            foreach (var styleName in styles)
-            {
-                text = text.Replace($"class=\"{styleName.Key}\"", $"style=\"{styleName.Value}\"");
-            }
-
-            return text;
-        }
-
-        public static async void GetBlurred(BitmapImage bitmap, string path, float amount = 3)
-        {
-            using (var stream = new InMemoryRandomAccessStream())
-            {
-                try
-                {
-                    await Task.Run(() => PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(path, amount, stream));
-                    await bitmap.SetSourceAsync(stream);
-                }
-                catch { }
-            }
-        }
-
-        public static async void GetBlurred(BitmapImage bitmap, IList<byte> bytes, float amount = 3)
-        {
-            using (var stream = new InMemoryRandomAccessStream())
-            {
-                try
-                {
-                    await Task.Run(() => PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(bytes, amount, stream));
-                    await bitmap.SetSourceAsync(stream);
-                }
-                catch { }
-            }
-        }
-
-        public static ImageSource GetWebPFrame(string path, double maxWidth = 512)
+        public static async void GetBlurred(SoftwareBitmapSource source, string path, float amount = 3)
         {
             try
             {
-                var buffer = PlaceholderImageHelper.DrawWebP(path, (int)maxWidth, out int pixelWidth, out int pixelHeight);
-                if (pixelWidth > 0 && pixelHeight > 0)
-                {
-                    var bitmap = new WriteableBitmap(pixelWidth, pixelHeight);
-                    BufferSurface.Copy(buffer, bitmap.PixelBuffer);
-
-                    return bitmap;
-                }
-                else
-                {
-                    return UriEx.ToBitmap(path);
-                }
+                var bitmap = await Task.Run(() => Background.DrawBlurred(path, amount));
+                await source.SetBitmapAsync(bitmap);
             }
             catch { }
-
-            return null;
         }
 
-        public static ImageSource GetLottieFrame(string path, int frame, int width, int height, bool webp = true)
+        public static async void GetBlurred(SoftwareBitmapSource source, IList<byte> bytes, float amount = 3)
         {
-            // Frame size affects disk cache, so we always use 256.
-            var animation = LottieAnimation.LoadFromFile(path, width, height, false, null);
-            if (animation == null)
+            try
             {
-                if (webp)
-                {
-                    return GetWebPFrame(path, width);
-                }
-
-                return null;
+                var bitmap = await Task.Run(() => Background.DrawBlurred(bytes, amount));
+                await source.SetBitmapAsync(bitmap);
             }
-
-            var bitmap = new WriteableBitmap(width, height);
-            animation.RenderSync(bitmap.PixelBuffer, frame);
-            animation.Dispose();
-
-            return bitmap;
+            catch { }
         }
     }
 }

@@ -1,25 +1,23 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Numerics;
-using Telegram.Common;
+using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
-    public partial class ProgressBarRing : Control
+    public partial class ProgressBarRing : ControlEx
     {
-        private readonly FrameworkElementState _manager;
-
         private readonly ShapeVisual _visual;
         private readonly CompositionSpriteShape _shape;
         private readonly CompositionEllipseGeometry _ellipse;
@@ -30,10 +28,6 @@ namespace Telegram.Controls
         public ProgressBarRing()
         {
             DefaultStyleKey = typeof(ProgressBarRing);
-
-            _manager = new FrameworkElementState(this);
-            _manager.Loaded += OnLoaded;
-            _manager.Unloaded += OnUnloaded;
 
             var ellipse = BootStrapper.Current.Compositor.CreateEllipseGeometry();
             ellipse.Radius = new Vector2((float)Radius);
@@ -106,7 +100,7 @@ namespace Telegram.Controls
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded()
         {
             if (_spinning is false && Value is > 0 and < 1 && Spin)
             {
@@ -115,7 +109,7 @@ namespace Telegram.Controls
             }
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
             if (_spinning)
             {

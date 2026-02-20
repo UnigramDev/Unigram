@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -40,6 +41,13 @@ namespace Telegram.ViewModels
                     _inlineBotResults?.Reset();
                 }
             }
+        }
+
+        private bool _isInlineBotResultsLoading;
+        public bool IsInlineBotResultsLoading
+        {
+            get => _isInlineBotResultsLoading;
+            set => Set(ref _isInlineBotResultsLoading, value);
         }
 
         public bool IsInlineBotResultsVisible => _inlineBotResults != null && (_inlineBotResults.Button != null || _inlineBotResults.Count > 0);
@@ -135,9 +143,12 @@ namespace Telegram.ViewModels
             if (false && string.IsNullOrEmpty(query))
             {
                 InlineBotResults = null;
+                IsInlineBotResultsLoading = false;
             }
             else
             {
+                IsInlineBotResultsLoading = true;
+
                 var collection = new BotResultsCollection(ClientService, _currentInlineBot.Id, chat.Id, null, query, token);
                 await collection.LoadMoreItemsAsync(0);
 
@@ -146,6 +157,7 @@ namespace Telegram.ViewModels
                     InlineBotResults = collection;
                 }
 
+                IsInlineBotResultsLoading = false;
                 //var response = await ClientService.GetInlineBotResultsAsync(CurrentInlineBot.ToInputUser(), Peer, null, query, string.Empty);
                 //if (response.IsSucceeded)
                 //{
@@ -196,16 +208,14 @@ namespace Telegram.ViewModels
             //}
 
             SetText(null, false);
+            ClearInlineBot();
 
-            CurrentInlineBot = null;
-            InlineBotResults = null;
-
-            var reply = GetReply(true);
+            var replyTo = GetReply(true);
             Function function;
 
             if (QuickReplyShortcut != null)
             {
-                if (reply is InputMessageReplyToMessage replyToMessage)
+                if (replyTo is InputMessageReplyToMessage replyToMessage)
                 {
                     function = new AddQuickReplyShortcutInlineQueryResultMessage(QuickReplyShortcut.Name, replyToMessage.MessageId, queryId, queryResult.GetId(), false);
                 }
@@ -216,10 +226,24 @@ namespace Telegram.ViewModels
             }
             else
             {
-                function = new SendInlineQueryResultMessage(chat.Id, OutgoingThreadId, reply, options, queryId, queryResult.GetId(), false);
+                var topicId = OutgoingTopicId;
+                if (replyTo is InputMessageReplyToTopicMessage replyToTopicMessage)
+                {
+                    topicId = replyToTopicMessage.TopicId;
+                    replyTo = new InputMessageReplyToMessage(replyToTopicMessage.MessageId, replyToTopicMessage.Quote, replyToTopicMessage.ChecklistTaskId);
+                }
+
+                function = new SendInlineQueryResultMessage(chat.Id, topicId, replyTo, options, queryId, queryResult.GetId(), false);
             }
 
             var response = await ClientService.SendAsync(function);
+        }
+
+        public void ClearInlineBot()
+        {
+            CurrentInlineBot = null;
+            InlineBotResults = null;
+            IsInlineBotResultsLoading = false;
         }
     }
 

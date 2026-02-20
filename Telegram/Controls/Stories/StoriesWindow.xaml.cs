@@ -1,4 +1,11 @@
-﻿using Microsoft.UI.Xaml.Controls;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -24,9 +31,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using DispatcherQueue = Windows.System.DispatcherQueue;
-using VirtualKey = Windows.System.VirtualKey;
-using VirtualKeyModifiers = Windows.System.VirtualKeyModifiers;
 
 namespace Telegram.Controls.Stories
 {
@@ -93,7 +97,15 @@ namespace Telegram.Controls.Stories
             Move(direction);
 
             e.Handled = true;
-            base.OnPointerWheelChanged(e);
+
+            try
+            {
+                base.OnPointerWheelChanged(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         private void StoriesWindow_Loaded(object sender, RoutedEventArgs e)
@@ -343,33 +355,52 @@ namespace Telegram.Controls.Stories
                             return;
                         }
 
-                        if (viewModel.Items[real].IsMyStory)
+                        if (selectedItem.Content is StoryContentLive)
+                        {
+                            Interactions.Visibility = Visibility.Collapsed;
+                            LiveInteractions.Visibility = Visibility.Visible;
+                            ChannelInteractions.Visibility = Visibility.Collapsed;
+                            TextArea.Visibility = Visibility.Collapsed;
+
+                            LiveInteractions.Update(child, activeStories, selectedItem);
+                        }
+                        else if (viewModel.Items[real].IsMyStory)
                         {
                             Interactions.Visibility = Visibility.Visible;
+                            LiveInteractions.Visibility = Visibility.Collapsed;
                             ChannelInteractions.Visibility = Visibility.Collapsed;
                             TextArea.Visibility = Visibility.Collapsed;
 
                             Interactions.Update(selectedItem);
+                            LiveInteractions.Unload();
                         }
                         else if (selectedItem.Chat.Type is ChatTypeSupergroup || !selectedItem.CanBeReplied)
                         {
                             Interactions.Visibility = Visibility.Collapsed;
+                            LiveInteractions.Visibility = Visibility.Collapsed;
                             ChannelInteractions.Visibility = Visibility.Visible;
                             TextArea.Visibility = Visibility.Collapsed;
 
                             ChannelInteractions.Update(selectedItem);
+                            LiveInteractions.Unload();
                         }
                         else if (selectedItem.CanBeReplied)
                         {
                             Interactions.Visibility = Visibility.Collapsed;
+                            LiveInteractions.Visibility = Visibility.Collapsed;
                             ChannelInteractions.Visibility = Visibility.Collapsed;
                             TextArea.Visibility = Visibility.Visible;
+
+                            LiveInteractions.Unload();
                         }
                         else
                         {
                             Interactions.Visibility = Visibility.Collapsed;
+                            LiveInteractions.Visibility = Visibility.Collapsed;
                             ChannelInteractions.Visibility = Visibility.Collapsed;
                             TextArea.Visibility = Visibility.Collapsed;
+
+                            LiveInteractions.Unload();
                         }
                     }
                 }
@@ -774,9 +805,9 @@ namespace Telegram.Controls.Stories
             if (shouldPurchase && ViewModel.IsPremiumAvailable && !ViewModel.IsPremium)
             {
                 var popup = new Telegram.Views.Premium.Popups.FeaturesPopup(ViewModel.ClientService, null, new[] { new PremiumFeatureUpgradedStories() }, null, null, null, null, new PremiumFeatureUpgradedStories());
-                await ViewModel.ShowPopupAsync(popup, requestedTheme: ElementTheme.Dark);
 
-                if (popup.ShouldPurchase)
+                var confirm = await ViewModel.ShowPopupAsync(popup, requestedTheme: ElementTheme.Dark);
+                if (confirm == ContentDialogResult.Primary)
                 {
                     await ViewModel.NavigationService.ShowPromoAsync(new PremiumSourceStoryFeature(feature), ElementTheme.Dark);
                     return false;
@@ -835,8 +866,12 @@ namespace Telegram.Controls.Stories
         {
             if (args.Key is VirtualKey.Space /*&& args.Modifiers == VirtualKeyModifiers.None*/)
             {
-                ActiveCard.Toggle();
-                args.Handled = true;
+                var focused = FocusManager.GetFocusedElement(XamlRoot);
+                if (focused is not RichEditBox)
+                {
+                    ActiveCard.Toggle();
+                    args.Handled = true;
+                }
             }
         }
 
@@ -1124,8 +1159,8 @@ namespace Telegram.Controls.Stories
 
         public Task<ContentDialogResult> ShowActionAsync(FrameworkElement target, object text, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark)
         {
-            var toast = ToastPopup.ShowImpl(XamlRoot, target, null, null, placement, requestedTheme);
-            if (toast.Content is Grid content)
+            var toast = ToastPopup.ShowImpl(XamlRoot, null as FormattedText, null, placement, requestedTheme, target: target);
+            if (toast?.Content is Grid content)
             {
                 var tsc = new TaskCompletionSource<ContentDialogResult>();
                 var undo = new Button()
@@ -1326,7 +1361,8 @@ namespace Telegram.Controls.Stories
         Popup = 1 << 5,
         Interaction = 1 << 6,
         Caption = 1 << 7,
-        Window = 1 << 8
+        Window = 1 << 8,
+        Live = 1 << 9
     }
 
     enum Direction

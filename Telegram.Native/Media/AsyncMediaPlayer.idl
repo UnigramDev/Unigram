@@ -1,0 +1,72 @@
+import "Media/AsyncMediaPlayerStateChangedEventArgs.idl";
+import "Media/AsyncMediaPlayerDurationChangedEventArgs.idl";
+import "Media/AsyncMediaPlayerPositionChangedEventArgs.idl";
+import "Media/AsyncMediaPlayerStreamSelectedEventArgs.idl";
+import "Media/AsyncMediaPlayerBufferingEventArgs.idl";
+import "Media/AsyncMediaPlayerLogEventArgs.idl";
+import "Media/AsyncMediaPlayerSwapChain.idl";
+import "Media/AsyncMediaPlayerOptions.idl";
+import "VideoAnimation.idl";
+
+namespace Telegram.Native.Media
+{
+    interface IAsyncMediaPlayerSource requires Telegram.Native.IVideoAnimationSource
+    {
+        void Open();
+        void Close();
+
+        Double Duration{ get; };
+        Double DownloadRate{ get; };
+        Int64 DownloadedBytes{ get; };
+    };
+
+
+    [default_interface]
+    runtimeclass AsyncMediaPlayer
+    {
+        AsyncMediaPlayer(AsyncMediaPlayerOptions options);
+        AsyncMediaPlayer(AsyncMediaPlayerOptions options, AsyncMediaPlayerSwapChain context);
+
+        AsyncMediaPlayerSwapChain Context{ get; };
+
+        [default_overload]
+        void Play(IAsyncMediaPlayerSource stream);
+        //[default_overload]
+        //void Play(IAsyncMediaPlayerSource stream, Double position);
+        void Play(Windows.Foundation.Uri uri);
+        //void Play(Windows.Foundation.Uri uri, Double position);
+        void Play();
+        void Stop();
+        void Pause();
+        void Pause(Boolean pause);
+        void Toggle();
+        void Close();
+
+        AsyncMediaPlayerState State{ get; };
+        Boolean IsPlaying{ get; };
+        Boolean CanPause{ get; };
+
+        Double Duration{ get; };
+        Double Position;
+
+        void Seek(Double value, Boolean relative);
+
+        Double Rate;
+        Double Volume;
+        Boolean Mute;
+
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, AsyncMediaPlayerStateChangedEventArgs> StateChanged;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> VideoOut;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, AsyncMediaPlayerStreamSelectedEventArgs> StreamSelected;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> EndReached;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, AsyncMediaPlayerBufferingEventArgs> Buffering;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, AsyncMediaPlayerPositionChangedEventArgs> PositionChanged;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, AsyncMediaPlayerDurationChangedEventArgs> DurationChanged;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> Playing;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> Paused;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> Stopped;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> VolumeChanged;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, IInspectable> EncounteredError;
+        event Windows.Foundation.TypedEventHandler<AsyncMediaPlayer, AsyncMediaPlayerLogEventArgs> Log;
+    }
+}

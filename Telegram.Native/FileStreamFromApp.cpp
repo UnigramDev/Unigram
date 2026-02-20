@@ -69,6 +69,24 @@ namespace winrt::Telegram::Native::implementation
         return -1;
     }
 
+    int32_t FileStreamFromApp::Read(IBuffer buffer, uint32_t length)
+    {
+        std::lock_guard const guard(m_lock);
+
+        if (m_handle != INVALID_HANDLE_VALUE)
+        {
+            auto pointer = buffer.data();
+
+            DWORD numberOfBytesRead;
+            if (ReadFile(m_handle, (LPVOID)pointer, length, &numberOfBytesRead, NULL))
+            {
+                return numberOfBytesRead;
+            }
+        }
+
+        return -1;
+    }
+
     void FileStreamFromApp::Close()
     {
         std::lock_guard const guard(m_lock);

@@ -165,26 +165,15 @@
         </ScrollViewer>
 
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
-                                    Background="{ThemeResource ContentDialogBackground}" />
+                                    Background="{ThemeResource ContentDialogTopOverlaySolid}" />
 
-        <Grid x:Name="ChangePanel"
-              VerticalAlignment="Bottom"
-              HorizontalAlignment="Stretch"
-              Margin="24,0,24,24"
-              Grid.Row="1">
-            <controls:BadgeButton x:Name="LearnCommand"
-                                  Content="{CustomResource GotIt}"
-                                  Click="Learn_Click"
-                                  Style="{StaticResource AccentButtonStyle}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  Typography.NumeralAlignment="Tabular"
-                                  FontWeight="SemiBold"
-                                  Padding="16,3,16,5"
-                                  BorderThickness="0,0,0,1"
-                                  CornerRadius="4"
-                                  Margin="0"
-                                  Height="32" />
-        </Grid>
+        <Button x:Name="LearnCommand"
+                Content="{CustomResource GotIt}"
+                Click="Learn_Click"
+                Style="{StaticResource AccentButtonStyle}"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Stretch"
+                Margin="24,0,24,24"
+                Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>

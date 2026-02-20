@@ -16,7 +16,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <messages:MessageService HorizontalAlignment="Center"
+        <messages:MessageService IsTabStop="False"
+                                 HorizontalAlignment="Center"
                                  VerticalAlignment="Center"
                                  Padding="12,0,12,0"
                                  MinWidth="216">
@@ -112,6 +113,7 @@
         </messages:MessageService>
 
         <messages:MessageService x:Name="FullNameInfo"
+                                 IsTabStop="False"
                                  Margin="0,4,0,0"
                                  Padding="12,2,12,0"
                                  MaxWidth="480"
@@ -126,6 +128,7 @@
         </messages:MessageService>
 
         <messages:MessageService x:Name="PhotoInfo"
+                                 IsTabStop="False"
                                  Margin="0,4,0,0"
                                  Padding="12,2,12,0"
                                  MaxWidth="480"

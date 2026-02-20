@@ -24,9 +24,6 @@ namespace Telegram
             ApiHash = "your_api_hash";
             
             AppChannel = "Telegram channel username used for in-app updates";
-
-            AppCenterId = "AppCenter ID used for crash data";
-            BingMapsApiKey = "Bing Maps API key used for map previews";
         }
     }
 }
@@ -55,20 +52,21 @@ Now that vcpkg is ready, you must customize the **ffmpeg** port to be built with
 ```
 Now that everything is properly configured go back to the terminal and enter the following:
 ```
-> ./vcpkg.exe install ffmpeg[dav1d,opus,vpx]:$arch$-uwp lz4:$arch$-uwp openssl:$arch$-uwp zlib:$arch$-uwp libogg:$arch$-uwp opus:$arch$-uwp boost-regex:$arch$-uwp
+> ./vcpkg.exe install ffmpeg[dav1d,opus,vpx]:x64-uwp lz4:x64-uwp openssl:x64-uwp zlib:x64-uwp libogg:x64-uwp opus:x64-uwp boost-regex:x64-uwp
+> ./vcpkg.exe install ffmpeg[dav1d,opus,vpx]:arm64-uwp lz4:arm64-uwp openssl:arm64-uwp zlib:arm64-uwp libogg:arm64-uwp opus:arm64-uwp boost-regex:arm64-uwp
 > ./vcpkg.exe integrate install
 ```
-Make sure to replace `$arch$` with either `x64`, `x86` or `arm64` depending on your build target.
+
+You can choose to install both `x64` and `arm64` or just opt for the architecture you need.
 
 ### TDLib
 In order to communicate with Telegram servers, Unigram uses TDLib.
-Here is complete instruction for TDLib binaries building, taken from the official [documentation](https://tdlib.github.io/td/build.html?language=C%23):
+Here is complete instruction for TDLib binaries building:
 
 - Download and install Microsoft Visual Studio. Enable C++ and Windows 10 SDK support while installing.
 - Download and install CMake; choose "Add CMake to the system PATH" option while installing.
 - Download and install Git.
 - Download and unpack PHP. Add the path to php.exe to the PATH environment variable.
-- Download and install 7-Zip archiver. Add the path to 7z.exe to the PATH environment variable.
 - Close and re-open PowerShell if the PATH environment variable was changed.
 - Run these commands in PowerShell to build TDLib and to install it to td/tdlib:
 
@@ -79,79 +77,65 @@ Here is complete instruction for TDLib binaries building, taken from the officia
 > cd vcpkg
 > git checkout cff6ed45719c0162fa7065fdac90506a0add812c
 > ./bootstrap-vcpkg.bat
-> ./vcpkg.exe install gperf:x86-windows openssl:arm-uwp openssl:arm64-uwp openssl:x64-uwp openssl:x86-uwp zlib:arm-uwp zlib:arm64-uwp zlib:x64-uwp zlib:x86-uwp
+> ./vcpkg.exe install gperf:x86-windows openssl:x64-uwp zlib:x64-uwp
+> ./vcpkg.exe install gperf:x86-windows openssl:arm64-uwp zlib:x64-uwp
 > cd ..
 > cd example/uwp
 > powershell -ExecutionPolicy ByPass ./build.ps1 -vcpkg_root ../../vcpkg -nupkg
 ```
 
+You can choose to install both `x64` and `arm64` or just opt for the architecture you need.
+Note that `gperf:x86-windows` is needed regardless of the architecture you choose.
 The resulting .nupkg file must be copied into Unigram\Libraries.
 
-### VLC
-Unigram uses VLC to play videos and audio in the app. This is required because the system provided media player doesn't meet the app quality expectations.
-You can freely use the pre-built NuGet packages `VideoLAN.LibVLC.UWP` and `LibVLCSharp` provided by VLC, however we ship the app with binaries built by us,
-as we disable all the features that we don't need to save a bit of disk space:
-1. Clone VLC [repository](https://code.videolan.org/videolan/vlc) in `C:\Source` and check out branch `3.0.x`.
-2. Apply the patch located in `Unigram repository\Libraries\vlc` by running the following command :
+### LibVLC
+Unigram uses LibVLC to play videos and audio in the app. We can't use the system provided media player doesn't meet the app quality expectations.
+The app is currently using version `3.0.22-rc1` with some patches applied on top, and can be built by running the script `build.ps1` located in `Unigram repository\Libraries\vlc`.
+
+Building LibVLC requires [Docker](https://docs.docker.com/desktop/setup/install/windows-install/) to be installed and running.
+
+```shell
+powershell -ExecutionPolicy ByPass ./build.ps1 -arch x64,ARM64
 ```
-git apply --3way --ignore-whitespace {Your Repository Folder}\Libraries\vlc\vlc.patch
-```
-3. Make sure to have docker installed on your machine 
-4. Open the terminal and run the following commands:
-```
-docker run -it -v C:\Source\vlc:/vlc registry.videolan.org/vlc-debian-llvm-uwp:20200706065223
-cd ../vlc
-extras/package/win32/build.sh -a x86_64 -z -r -u -w -D=C:/Source/vlc
-```
-When the building is complete, the NuGet package can be [manually created](https://code.videolan.org/videolan/LibVLCSharp).
+
+The script will automatically apply the needed patches to libvlc (that comes as a submodule when you clone the repository) and create a NuGet package inside the `Libraries` folder.
 
 For reference, this is the list of VLC plugins currently needed by Unigram to properly work:
+- access\libhttps_plugin.dll
+- access\libhttp_plugin.dll
 - access\libimem_plugin.dll
-- audio_filter\libaudio_format_plugin.dll # .MP3/.M4A/.OGG/.FLAC
+- audio_filter\libaudio_format_plugin.dll
 - audio_filter\libsamplerate_plugin.dll
 - audio_filter\libscaletempo_plugin.dll
-- audio_filter\libtrivial_channel_mixer_plugin.dll # .OGG
+- audio_filter\libtrivial_channel_mixer_plugin.dll
 - audio_filter\libugly_resampler_plugin.dll
 - audio_mixer\libfloat_mixer_plugin.dll
 - audio_output\libwasapi_plugin.dll
 - audio_output\libwinstore_plugin.dll
 - codec\libavcodec_plugin.dll
 - codec\libd3d11va_plugin.dll
-- codec\libflac_plugin.dll # .FLAC
-- codec\libmpg123_plugin.dll # .MP3
-- codec\libopus_plugin.dll # .OGG
-- demux\libes_plugin.dll # .MP3
-- demux\libflacsys_plugin.dll # .FLAC
+- codec\libdav1d_plugin.dll
+- codec\libflac_plugin.dll
+- codec\libfaad_plugin.dll
+- codec\libmpg123_plugin.dll
+- codec\libopus_plugin.dll
+- demux\libes_plugin.dll
+- demux\libflacsys_plugin.dll
 - demux\libmp4_plugin.dll
-- demux\libogg_plugin.dll # .OGG
-- packetizer\libpacketizer_flac_plugin.dll # .FLAC
-- packetizer\libpacketizer_mpegaudio_plugin.dll # .MP3
+- demux\libogg_plugin.dll
+- demux\libps_plugin.dll
+- packetizer\libpacketizer_flac_plugin.dll
+- packetizer\libpacketizer_h264_plugin.dll
+- packetizer\libpacketizer_mpegaudio_plugin.dll
+- packetizer\libpacketizer_mpegvideo_plugin.dll
+- stream_filter\libcache_block_plugin.dll
 - stream_filter\libcache_read_plugin.dll
 - stream_filter\librecord_plugin.dll
-- stream_filter\libskiptags_plugin.dll # .MP3
+- stream_filter\libskiptags_plugin.dll
 - text_renderer\libtdummy_plugin.dll
 - video_chroma\libswscale_plugin.dll
 - video_chroma\libyuvp_plugin.dll
 - video_output\libdirect3d11_plugin.dll
-
-⚠️ TODO: there must be a way to compile WITHOUT libd3d11va and just use libavcodec
-
-### VLC-arm64-NuGet Package
-
-To build the VLC-arm64 NuGet package for Unigram, please follow these steps in Git Bash shell:
-```
-git clone https://code.videolan.org/videolan/libvlc-nuget.git
-cd libvlc-nuget
-git apply <path-to-Unigram>/Libraries/vlc/0001-vlc-nuget-win-arm64.patch
-bash ./package-nuget-win-arm64.bash 4.0.0
-cp VideoLAN.LibVLC.UWP.4.0.0.nupkg <path-to-Unigram>/Libraries/
-```
-
-1. Clone the VLC-NuGet Repository at your desired location.
-2. Navigate to the root of the cloned repository and apply the patch from `Unigram/libraries/vlc`.
-3. Run the Package Creation Script (`package-nuget-win-arm64.bash`) with version (`4.0.0`) in git bash terminal from the root folder of the `libvlc-nuget` repository.
-4. On Successful execution, the `VideoLAN.LibVLC.UWP.4.0.0.nupkg` file will be created in the same directory.
-5. Copy the generated NuGet package to the `Unigram/Libraries` directory to build Unigram for win-arm64.
 
 ### WebRTC
 Unigram uses WebRTC for calls and video chats. Since WebRTC doesn't currently support UWP, you must use our fork to build it.

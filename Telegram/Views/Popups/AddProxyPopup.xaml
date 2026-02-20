@@ -1,0 +1,35 @@
+<controls:ContentPopup x:Class="Telegram.Views.Popups.AddProxyPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
+                       mc:Ignorable="d"
+                       ButtonsLayout="Vertical"
+                       IsDismissButtonVisible="True">
+
+    <StackPanel>
+        <controls:TableView>
+            <controls:TableViewItem x:Name="Server"
+                                    Header="{CustomResource UseProxyAddress}" />
+            <controls:TableViewItem x:Name="Port"
+                                    Header="{CustomResource UseProxyPort}" />
+            <controls:TableViewItem x:Name="Username"
+                                    Header="{CustomResource UseProxyUsername}" />
+            <controls:TableViewItem x:Name="Password"
+                                    Header="{CustomResource UseProxyPassword}" />
+            <controls:TableViewItem x:Name="Secret"
+                                    Header="{CustomResource UseProxySecret}" />
+            <controls:TableViewItem x:Name="Status"
+                                    Header="{CustomResource ProxyStatus}">
+                <TextBlock x:Name="StatusInfo" />
+            </controls:TableViewItem>
+        </controls:TableView>
+
+        <TextBlock x:Name="SponsorInfo"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   Text="{CustomResource UseProxyTelegramInfo2}"
+                   Visibility="Collapsed"
+                   Margin="0,8,0,0"/>
+    </StackPanel>
+</controls:ContentPopup>

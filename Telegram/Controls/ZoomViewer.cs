@@ -1,14 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
+using System.ComponentModel;
+using Telegram.Common;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls
 {
@@ -40,6 +42,8 @@ namespace Telegram.Controls
         public bool CanZoomOut => ScrollingHost?.ZoomFactor > MinZoomFactor;
 
         public double ZoomFactor => ScrollingHost?.ZoomFactor ?? 1;
+
+        public event CancelEventHandler PanStarting;
 
         #region MaxZoomFactor
 
@@ -102,7 +106,7 @@ namespace Telegram.Controls
                     vertical /= 2;
                 }
 
-                ScrollingHost.ChangeView(horizontal, vertical, factor, disableAnimation);
+                ScrollingHost.TryChangeView(horizontal, vertical, factor, disableAnimation);
             }
         }
 
@@ -114,6 +118,14 @@ namespace Telegram.Controls
         private void ScrollingHost_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            {
+                return;
+            }
+
+            var args = new CancelEventArgs();
+            PanStarting?.Invoke(this, args);
+
+            if (args.Cancel)
             {
                 return;
             }
@@ -141,7 +153,7 @@ namespace Telegram.Controls
                 var diffX = _pointerPosition.X - point.Position.X;
                 var diffY = _pointerPosition.Y - point.Position.Y;
 
-                ScrollingHost.ChangeView(diffX, diffY, null, true);
+                ScrollingHost.TryChangeView(diffX, diffY, null, true);
             }
         }
 

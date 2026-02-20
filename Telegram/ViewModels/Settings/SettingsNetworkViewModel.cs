@@ -1,15 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Controls.Media;
+using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -25,7 +26,7 @@ namespace Telegram.ViewModels.Settings
         public SettingsNetworkViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<NetworkStatisticsItem>();
+            Items = new MvxObservableCollection<StorageChartItem>();
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -35,31 +36,42 @@ namespace Telegram.ViewModels.Settings
             {
                 SinceDate = Formatter.ToLocalTime(statistics.SinceDate);
 
-                var notes = new NetworkStatisticsEntryFile(new FileTypeNotes(), null, 0, 0);
-                var other = new NetworkStatisticsEntryFile(new FileTypeOther(), null, 0, 0);
-
                 var totalSent = 0L;
                 var totalReceived = 0L;
 
-                var results = new List<NetworkStatisticsEntry>();
+                StorageChartItem photo = null;
+                StorageChartItem video = null;
+                StorageChartItem document = null;
+                StorageChartItem audio = null;
+                StorageChartItem voice = null;
+                StorageChartItem local = null;
 
                 foreach (var entry in statistics.Entries)
                 {
                     if (entry is NetworkStatisticsEntryFile file)
                     {
-                        if (IsSecondaryType(file.FileType))
+                        switch (file.FileType)
                         {
-                            other.SentBytes += file.SentBytes;
-                            other.ReceivedBytes += file.ReceivedBytes;
-                        }
-                        else if (IsNotesType(file.FileType))
-                        {
-                            notes.SentBytes += file.SentBytes;
-                            notes.ReceivedBytes += file.ReceivedBytes;
-                        }
-                        else
-                        {
-                            results.Add(entry);
+                            case FileTypePhoto:
+                                photo = new StorageChartItem(file);
+                                break;
+                            case FileTypeVideo:
+                            case FileTypeAnimation:
+                                video = video?.Add(file) ?? new StorageChartItem(file);
+                                break;
+                            case FileTypeDocument:
+                                document = new StorageChartItem(file);
+                                break;
+                            case FileTypeAudio:
+                                audio = new StorageChartItem(file);
+                                break;
+                            case FileTypeVideoNote:
+                            case FileTypeVoiceNote:
+                                voice = voice?.Add(file) ?? new StorageChartItem(file);
+                                break;
+                            default:
+                                local = local?.Add(file) ?? new StorageChartItem(file);
+                                break;
                         }
 
                         totalSent += file.SentBytes;
@@ -67,55 +79,28 @@ namespace Telegram.ViewModels.Settings
                     }
                     else if (entry is NetworkStatisticsEntryCall call)
                     {
-                        results.Add(entry);
+                        //results.Add(entry);
 
-                        totalSent += call.SentBytes;
-                        totalReceived += call.ReceivedBytes;
+                        //totalSent += call.SentBytes;
+                        //totalReceived += call.ReceivedBytes;
                     }
                 }
 
-                if (notes.SentBytes > 0 || notes.ReceivedBytes > 0)
+                Items.ReplaceWith(new[]
                 {
-                    results.Add(notes);
-                }
-
-                if (other.SentBytes > 0 || other.ReceivedBytes > 0)
-                {
-                    results.Add(other);
-                }
-
-                Items.ReplaceWith(results.Select(x => new NetworkStatisticsItem(x)).OrderByDescending(x => x.TotalBytes));
+                    photo ?? new StorageChartItem(new FileTypePhoto()),
+                    video ?? new StorageChartItem(new FileTypeVideo()),
+                    document ?? new StorageChartItem(new FileTypeDocument()),
+                    audio ?? new StorageChartItem(new FileTypeAudio()),
+                    voice ?? new StorageChartItem(new FileTypeVoiceNote()),
+                    local ?? new StorageChartItem(new FileTypeUnknown())
+                }.Where(x => x != null).OrderByDescending(x => x.TotalBytes));
 
                 TotalSentBytes = totalSent;
                 TotalReceivedBytes = totalReceived;
-            }
-        }
 
-        private bool IsSecondaryType(FileType type)
-        {
-            switch (type)
-            {
-                case FileTypePhoto:
-                case FileTypeVideo:
-                case FileTypeVideoNote:
-                case FileTypeVoiceNote:
-                case FileTypeDocument:
-                case FileTypeAudio:
-                    return false;
-                default:
-                    return true;
-            }
-        }
-
-        private bool IsNotesType(FileType type)
-        {
-            switch (type)
-            {
-                case FileTypeVideoNote:
-                case FileTypeVoiceNote:
-                    return true;
-                default:
-                    return false;
+                RaisePropertyChanged(nameof(ItemsView));
+                RaisePropertyChanged(nameof(TotalBytes));
             }
         }
 
@@ -140,119 +125,20 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _totalReceivedBytes, value);
         }
 
-        public MvxObservableCollection<NetworkStatisticsItem> Items { get; private set; }
+        public long TotalBytes => TotalSentBytes + TotalReceivedBytes;
+
+        public MvxObservableCollection<StorageChartItem> Items { get; private set; }
+
+        public IList<StorageChartItem> ItemsView => Items.Count > 0 ? Items : null;
 
         public async void Reset()
         {
-            var confirm = await ShowPopupAsync(Strings.ResetStatisticsAlert, Strings.AppName, Strings.Reset, Strings.Cancel);
+            var confirm = await ShowPopupAsync(Strings.ResetStatisticsAlert, Strings.ResetStatisticsAlertTitle, Strings.Reset, Strings.Cancel, destructive: true);
             if (confirm == ContentDialogResult.Primary)
             {
                 await ClientService.SendAsync(new ResetNetworkStatistics());
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
             }
         }
-    }
-
-    public partial class NetworkStatisticsItem
-    {
-        public NetworkStatisticsItem(NetworkStatisticsEntry entry)
-            : this(entry as NetworkStatisticsEntryFile)
-        {
-
-        }
-
-        public NetworkStatisticsItem(NetworkStatisticsEntryFile entry)
-        {
-            if (entry == null)
-            {
-                return;
-            }
-
-            TotalBytes = entry.SentBytes + entry.ReceivedBytes;
-            SentBytes = entry.SentBytes;
-            ReceivedBytes = entry.ReceivedBytes;
-
-            switch (entry.FileType)
-            {
-                case FileTypeNotes:
-                    Name = Strings.LocalAudioCache;
-                    Glyph = Icons.MicOn;
-                    break;
-                case FileTypeOther:
-                    Name = Strings.MessagesOverview;
-                    Glyph = Icons.ChatMultiple;
-                    break;
-                case FileTypeAudio:
-                    Name = Strings.LocalMusicCache;
-                    Glyph = Icons.PlayCircle;
-                    break;
-                case FileTypeDocument:
-                    Name = Strings.LocalDocumentCache;
-                    Glyph = Icons.Document;
-                    break;
-                case FileTypePhoto:
-                    Name = Strings.LocalPhotoCache;
-                    Glyph = Icons.Image;
-                    break;
-                case FileTypeVideo:
-                    Name = Strings.LocalVideoCache;
-                    Glyph = Icons.Video;
-                    break;
-            }
-
-        }
-
-        public string Glyph { get; }
-
-        public string Name { get; }
-
-        public long TotalBytes { get; }
-
-        public long SentBytes { get; }
-
-        public long ReceivedBytes { get; }
-    }
-
-    public partial class FileTypeNotes : FileType
-    {
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public partial class FileTypeOther : FileType
-    {
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public partial class FileTypeTotal : FileType
-    {
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public enum TdFileType
-    {
-        Animation,
-        Audio,
-        Document,
-        None,
-        Photo,
-        ProfilePhoto,
-        Secret,
-        SecretThumbnail,
-        Sticker,
-        Thumbnail,
-        Unknown,
-        Video,
-        VideoNote,
-        VoiceNote,
-        Wallpaper
     }
 }

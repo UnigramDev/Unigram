@@ -1,4 +1,10 @@
-﻿using System;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -21,13 +27,14 @@ namespace Telegram.Controls.Cells.Business
 
             if (string.IsNullOrEmpty(chatLink.Text.Text))
             {
-                BriefLabel.Inlines.Clear();
-                BriefLabel.Inlines.Add(Strings.NoText);
+                BriefText.SetText(clientService, Strings.NoText.AsFormattedText());
             }
             else
             {
-                CustomEmojiIcon.Add(BriefText, BriefLabel.Inlines, clientService, chatLink.Text, "InfoCustomEmojiStyle");
+                BriefText.SetText(clientService, chatLink.Text);
             }
+
+            BriefText.SetQuery(string.Empty);
 
             ViewCountLabel.Text = chatLink.ViewCount > 0
                 ? Locale.Declension(Strings.R.Clicks, chatLink.ViewCount)

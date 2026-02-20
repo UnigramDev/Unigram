@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Linq;
@@ -13,6 +14,8 @@ using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Messages.Content;
+using Telegram.Controls.Messages.Service;
+using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -32,6 +35,8 @@ namespace Telegram.Controls.Messages
 {
     public sealed partial class MessageSelector : ToggleButtonEx
     {
+        private Border Header;
+        private Border Footer;
         private Border Icon;
         private ContentPresenter Presenter;
 
@@ -45,11 +50,6 @@ namespace Telegram.Controls.Messages
         public MessageSelector()
         {
             DefaultStyleKey = typeof(MessageSelector);
-
-            Connected += OnLoaded;
-            Disconnected += OnUnloaded;
-
-            AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
 
         public MessageSelector(MessageViewModel message, UIElement child)
@@ -59,16 +59,13 @@ namespace Telegram.Controls.Messages
             Content = child;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        public bool IsTrackerEnabled { get; set; } = true;
+
+        protected override void OnLoaded()
         {
-            if (!_hasInitialLoadedEventFired && RootGrid != null && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare))
+            if (_trackerOwner == null && RootGrid != null && IsTrackerEnabled && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare))
             {
-                _hasInitialLoadedEventFired = true;
-
-                _hitTest = ElementComposition.GetElementVisual(this);
-                _visual = ElementComposition.GetElementVisual(RootGrid);
-
-                _compositor = _hitTest.Compositor;
+                _compositor = BootStrapper.Current.Compositor;
                 _container ??= _compositor.CreateContainerVisual();
 
                 if (_requiresArrange)
@@ -93,7 +90,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
             if (_trackerOwner != null)
             {
@@ -101,11 +98,6 @@ namespace Telegram.Controls.Messages
                 _trackerOwner.InertiaStateEntered -= OnInertiaStateEntered;
                 _trackerOwner.InteractingStateEntered -= OnInteractingStateEntered;
                 _trackerOwner.IdleStateEntered -= OnIdleStateEntered;
-            }
-
-            if (_message != null)
-            {
-                Recycle();
             }
         }
 
@@ -184,6 +176,8 @@ namespace Telegram.Controls.Messages
             Presenter = GetTemplateChild(nameof(Presenter)) as ContentPresenter;
             ElementCompositionPreview.SetIsTranslationEnabled(Presenter, true);
 
+            _hitTest = ElementComposition.GetElementVisual(this);
+            _visual = ElementComposition.GetElementVisual(Presenter);
             _templateApplied = true;
 
             if (_message?.Delegate != null)
@@ -214,36 +208,83 @@ namespace Telegram.Controls.Messages
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            if (e.OriginalSource is Grid { Name: "RootGrid" } || e.OriginalSource is TextBlock { Name: "Label" })
+            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            {
+                try
+                {
+                    _interactionSource.TryRedirectForManipulation(e.GetCurrentPoint(this));
+                }
+                catch (Exception)
+                {
+                    // Ignoring the failed redirect to prevent app crashing
+                }
+            }
+
+            if (e.OriginalSource is Grid { Name: "RootGrid" } or TextBlock { Name: "Label" })
             {
                 _owner?.OnPointerPressed(this, e);
             }
 
-            base.OnPointerPressed(e);
+            try
+            {
+                base.OnPointerPressed(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
         {
             _owner?.OnPointerEntered(this, e);
-            base.OnPointerEntered(e);
+
+            try
+            {
+                base.OnPointerEntered(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
         {
             _owner?.OnPointerMoved(this, e);
-            base.OnPointerMoved(e);
+
+            try
+            {
+                base.OnPointerMoved(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         protected override void OnPointerReleased(PointerRoutedEventArgs e)
         {
             _owner?.OnPointerReleased(this, e);
-            base.OnPointerReleased(e);
+
+            try
+            {
+                base.OnPointerReleased(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
-        protected override void OnPointerCanceled(PointerRoutedEventArgs e)
+        protected override void OnDoubleTapped(DoubleTappedRoutedEventArgs e)
         {
-            _owner?.OnPointerCanceled(this, e);
-            base.OnPointerCanceled(e);
+            if (e.OriginalSource is Grid { Name: "RootGrid" } or TextBlock { Name: "Label" })
+            {
+                _owner?.OnDoubleTapped(_message, e);
+            }
+
+            base.OnDoubleTapped(e);
         }
 
         public void UpdateMessage(MessageViewModel message, ChatHistoryView owner, bool selectionEnabled)
@@ -259,6 +300,52 @@ namespace Telegram.Controls.Messages
             message.UpdateSelectionCallback(UpdateSelection);
 
             UpdateSelectionEnabled(selectionEnabled, false);
+            UpdateMessageSuggestedPostInfo(message);
+            UpdateMessageStakeDice(message);
+        }
+
+        private bool _hasSuggestedPostInfo;
+
+        public void UpdateMessageSuggestedPostInfo(MessageViewModel message)
+        {
+            if (message == null || !_templateApplied)
+            {
+                return;
+            }
+
+            if (message.SuggestedPostInfo != null)
+            {
+                _hasSuggestedPostInfo = true;
+                Header ??= GetTemplateChild(nameof(Header)) as Border;
+                Header.Child = new SuggestedPostInfoCell(message);
+            }
+            else if (_hasSuggestedPostInfo)
+            {
+                _hasSuggestedPostInfo = false;
+                Header.Child = null;
+            }
+        }
+
+        private bool _hasStakeDice;
+
+        public void UpdateMessageStakeDice(MessageViewModel message)
+        {
+            if (message == null || !_templateApplied)
+            {
+                return;
+            }
+
+            if (message.Content is MessageStakeDice { Value: not 0 } && !message.GeneratedContentUnread)
+            {
+                _hasStakeDice = true;
+                Footer ??= GetTemplateChild(nameof(Footer)) as Border;
+                Footer.Child = new StakeDiceInfoCell(message);
+            }
+            else if (_hasStakeDice)
+            {
+                _hasStakeDice = false;
+                Footer.Child = null;
+            }
         }
 
         private bool _selectionEnabled;
@@ -275,14 +362,12 @@ namespace Telegram.Controls.Messages
 
                 _selectionEnabled = value;
 
-                if (_interactionSource != null)
-                {
-                    _interactionSource.PositionXSourceMode = value
-                        ? InteractionSourceMode.Disabled
-                        : InteractionSourceMode.EnabledWithInertia;
-                }
+                _interactionSource?.PositionXSourceMode = value
+                    ? InteractionSourceMode.Disabled
+                    : InteractionSourceMode.EnabledWithInertia;
 
                 IsChecked = _selected = selected;
+                IsDoubleTapEnabled = !value;
                 Presenter.IsHitTestVisible = !value || IsAlbum;
 
                 CreateIcon();
@@ -427,11 +512,11 @@ namespace Telegram.Controls.Messages
             }
 
             properties = compositor.CreatePropertySet();
-            properties.InsertScalar("Progress", 1.0F);
+            properties.InsertScalar("Progress", 0.0F);
 
             var progressAnimation = compositor.CreateExpressionAnimation("_.Progress");
             progressAnimation.SetReferenceParameter("_", properties);
-            visual.RootVisual.Properties.InsertScalar("Progress", 1.0F);
+            visual.RootVisual.Properties.InsertScalar("Progress", 0.0F);
             visual.RootVisual.Properties.StartAnimation("Progress", progressAnimation);
 
             return visual;
@@ -468,13 +553,14 @@ namespace Telegram.Controls.Messages
 
         #region Moved from ChatHistoryViewItem
 
+        public Visual ContentVisual => _visual;
+
         private Visual _hitTest;
         private Visual _visual;
         private Compositor _compositor;
         private ContainerVisual _container;
         private ContainerVisual _indicator;
 
-        private bool _hasInitialLoadedEventFired;
         private WeakInteractionTrackerOwner _trackerOwner;
         private InteractionTracker _tracker;
         private VisualInteractionSource _interactionSource;
@@ -550,31 +636,22 @@ namespace Telegram.Controls.Messages
             visual.StartAnimation("Translation.X", offsetExp);
         }
 
-        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
-            {
-                try
-                {
-                    _interactionSource.TryRedirectForManipulation(e.GetCurrentPoint(this));
-                }
-                catch (Exception)
-                {
-                    // Ignoring the failed redirect to prevent app crashing
-                }
-            }
-        }
-
         public async void PrepareForItemOverride(MessageViewModel message, bool canReply)
         {
-            var properties = await message.ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
-            if (properties == null)
-            {
-                return;
-            }
+            bool share = false;
+            bool reply = false;
 
-            var share = SettingsService.Current.SwipeToShare && properties.CanBeForwarded;
-            var reply = SettingsService.Current.SwipeToReply && (canReply || properties.CanBeRepliedInAnotherChat);
+            if (message.SendingState == null)
+            {
+                var properties = await message.ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
+                if (properties == null)
+                {
+                    return;
+                }
+
+                share = SettingsService.Current.SwipeToShare && properties.CanBeForwarded;
+                reply = SettingsService.Current.SwipeToReply && (properties.CanBeReplied || properties.CanBeRepliedInAnotherChat);
+            }
 
             if (_tracker != null)
             {
@@ -695,7 +772,7 @@ namespace Telegram.Controls.Messages
 
             if (IsDisconnected)
             {
-                OnUnloaded(null, null);
+                OnUnloaded();
             }
             else
             {

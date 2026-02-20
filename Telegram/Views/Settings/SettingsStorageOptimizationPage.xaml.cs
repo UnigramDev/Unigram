@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
@@ -28,7 +29,7 @@ namespace Telegram.Views.Settings
 
             var chat = clientService.GetChat(statistics.ChatId);
 
-            Title = chat == null
+            TitleLabel.Text = chat == null
                 ? Strings.ClearMediaCache
                 : clientService.GetTitle(chat);
 
@@ -88,12 +89,12 @@ namespace Telegram.Views.Settings
                 stickers,
                 stories,
                 local
-            }.Where(x => x != null).ToList();
+            }.Where(x => x != null).OrderByDescending(x => x.TotalBytes).ToList();
 
             ScrollingHost.ItemsSource = items;
             Chart.Items = items;
 
-            var size = Chart.Items.Where(x => x.IsVisible).Sum(x => x.Size);
+            var size = Chart.Items.Where(x => x.IsVisible).Sum(x => x.TotalBytes);
             var readable = FileSizeConverter.Convert(size, true).Split(' ');
 
             SizeLabel.Text = readable[0];
@@ -125,7 +126,7 @@ namespace Telegram.Views.Settings
                 check.Tag = item;
 
                 title.Text = item.Name;
-                subtitle.Text = FileSizeConverter.Convert(item.Size, true);
+                subtitle.Text = FileSizeConverter.Convert(item.TotalBytes, true);
 
                 args.Handled = true;
             }
@@ -179,7 +180,7 @@ namespace Telegram.Views.Settings
                 VisualUtilities.ShakeView(check);
             }
 
-            var size = Chart.Items.Where(x => x.IsVisible).Sum(x => x.Size);
+            var size = Chart.Items.Where(x => x.IsVisible).Sum(x => x.TotalBytes);
             var readable = FileSizeConverter.Convert(size, true).Split(' ');
 
             SizeLabel.Text = readable[0];

@@ -1,17 +1,19 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Telegram.Views.Settings.Privacy;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -33,36 +35,58 @@ namespace Telegram.ViewModels.Settings.Privacy
         public SettingsPrivacyNewChatViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            _allowUnpaidRules = TypeResolver.Current.Resolve<SettingsPrivacyAllowUnpaidMessagesViewModel>(SessionId);
+            _allowUnpaidRules = Session.Resolve<SettingsPrivacyAllowUnpaidMessagesViewModel>();
+            _allowUnpaidRules.PropertyChanged += OnPropertyChanged;
 
             Children.Add(_allowUnpaidRules);
         }
 
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(HasChanged))
+            {
+                RaisePropertyChanged(nameof(HasChanged));
+            }
+        }
+
         public SettingsPrivacyAllowUnpaidMessagesViewModel AllowUnpaidRules => _allowUnpaidRules;
 
-        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            UpdatePrivacy();
-            return Task.CompletedTask;
+            var response = await ClientService.SendAsync(new GetNewChatPrivacySettings());
+            if (response is NewChatPrivacySettings rules)
+            {
+                UpdatePrivacy(rules);
+            }
+        }
+
+        public override async void NavigatingFrom(NavigatingEventArgs args)
+        {
+            if (!_completed && HasChanged)
+            {
+                args.Cancel = true;
+
+                var confirm = await ShowPopupAsync(Strings.PrivacySettingsChangedAlert, Strings.UnsavedChanges, Strings.ApplyTheme, Strings.PassportDiscard);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    ContinueImpl(args);
+                }
+                else if (confirm == ContentDialogResult.Secondary)
+                {
+                    _completed = true;
+                    NavigationService.GoBack(args);
+                }
+            }
         }
 
         public bool CanSetNewChatPrivacySettings => ClientService.Options.CanSetNewChatPrivacySettings;
 
-        private void UpdatePrivacy()
-        {
-            ClientService.Send(new GetNewChatPrivacySettings(), result =>
-            {
-                if (result is NewChatPrivacySettings rules)
-                {
-                    UpdatePrivacyImpl(rules);
-                }
-            });
-        }
-
-        private void UpdatePrivacyImpl(NewChatPrivacySettings rules)
+        private void UpdatePrivacy(NewChatPrivacySettings rules)
         {
             BeginOnUIThread(() =>
             {
+                _cached = rules;
+
                 SelectedItem = rules.IncomingPaidMessageStarCount > 0
                     ? PrivacyValue.DisallowAll
                     : rules.AllowNewChatsFromUnknownUsers
@@ -90,14 +114,14 @@ namespace Telegram.ViewModels.Settings.Privacy
         public PrivacyValue SelectedItem
         {
             get => _selectedItem;
-            set => Set(ref _selectedItem, value);
+            set => Invalidate(ref _selectedItem, value);
         }
 
         private int _incomingPaidMessageStarCount;
         public int IncomingPaidMessageStarCount
         {
             get => _incomingPaidMessageStarCount;
-            set => Set(ref _incomingPaidMessageStarCount, value);
+            set => Invalidate(ref _incomingPaidMessageStarCount, value);
         }
 
         public void Enable()
@@ -108,19 +132,44 @@ namespace Telegram.ViewModels.Settings.Privacy
             }
         }
 
-        public async void Save()
+        private NewChatPrivacySettings _cached;
+
+        protected bool _completed;
+        public virtual bool HasChanged => _cached != null && (_allowUnpaidRules.HasChanged || !_cached.AreTheSame(GetSettings()));
+
+        protected bool Invalidate<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (Set(ref storage, value, propertyName))
+            {
+                RaisePropertyChanged(nameof(HasChanged));
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Continue()
+        {
+            ContinueImpl(null);
+        }
+
+        private async void ContinueImpl(NavigatingEventArgs args)
         {
             if (IsPremium)
             {
-                var response = await ClientService.SendAsync(new SetNewChatPrivacySettings(new NewChatPrivacySettings(_selectedItem is not PrivacyValue.AllowContacts, _selectedItem is PrivacyValue.DisallowAll ? _incomingPaidMessageStarCount : 0)));
+                var response = await ClientService.SendAsync(new SetNewChatPrivacySettings(GetSettings()));
                 if (response is Ok)
                 {
+                    _completed = true;
+
                     if (_selectedItem is PrivacyValue.DisallowAll)
                     {
-                        _allowUnpaidRules.Save();
+                        _allowUnpaidRules.Continue();
                     }
-
-                    NavigationService.GoBack();
+                    else
+                    {
+                        NavigationService.GoBack(args);
+                    }
 
                     if (await CheckAllowAllAsync(new UserPrivacySettingAllowCalls()))
                     {
@@ -139,15 +188,21 @@ namespace Telegram.ViewModels.Settings.Privacy
                         }
                     }
                 }
-                else
+                else if (response is Error error)
                 {
-                    // TODO: ...
+                    ShowToast(error);
                 }
             }
             else
             {
-                NavigationService.GoBack();
+                _completed = true;
+                NavigationService.GoBack(args);
             }
+        }
+
+        private NewChatPrivacySettings GetSettings()
+        {
+            return new NewChatPrivacySettings(_selectedItem is not PrivacyValue.AllowContacts, _selectedItem is PrivacyValue.DisallowAll ? _incomingPaidMessageStarCount : 0);
         }
 
         private async Task<bool> CheckAllowAllAsync(UserPrivacySetting setting)

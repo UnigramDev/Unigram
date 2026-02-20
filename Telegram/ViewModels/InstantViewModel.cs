@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -20,15 +21,13 @@ namespace Telegram.ViewModels
     public partial class InstantViewModel : MultiViewModelBase
     {
         private readonly ITranslateService _translateService;
-        private readonly IPlaybackService _playbackService;
 
         private readonly IMessageDelegate _messageDelegate;
 
-        public InstantViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, ITranslateService translateService, IPlaybackService playbackService, IEventAggregator aggregator)
+        public InstantViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, ITranslateService translateService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
             _translateService = translateService;
-            _playbackService = playbackService;
             _gallery = new InstantGalleryViewModel(clientService, storageService, aggregator);
 
             _messageDelegate = new InstantMessageDelegate(this);
@@ -42,7 +41,7 @@ namespace Telegram.ViewModels
         {
             if (parameter is InstantPageArgs args)
             {
-                var response = await ClientService.SendAsync(new GetLinkPreview(new FormattedText(args.Url, Array.Empty<TextEntity>()), null));
+                var response = await ClientService.SendAsync(new GetLinkPreview(args.Url.AsFormattedText(false), null));
                 if (response is LinkPreview linkPreview)
                 {
                     Title = linkPreview.SiteName;
@@ -60,7 +59,7 @@ namespace Telegram.ViewModels
                 return null;
             }
 
-            return new MessageViewModel(ClientService, _playbackService, _messageDelegate, null, null, message, false);
+            return new MessageViewModel(ClientService, _messageDelegate, null, null, null, message, false);
         }
 
         private InstantGalleryViewModel _gallery;

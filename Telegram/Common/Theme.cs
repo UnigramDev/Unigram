@@ -1,13 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;
@@ -15,8 +15,6 @@ using Telegram.Td.Api;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using AcrylicBrush = Microsoft.UI.Xaml.Media.AcrylicBrush;
 
@@ -43,7 +41,7 @@ namespace Telegram.Common
                 this.Add("ThreadStackLayout", new StackLayout());
 
                 UpdateEmojiSet();
-                //UpdateScrolls();
+                UpdateScrolls();
             }
             catch { }
 
@@ -57,10 +55,14 @@ namespace Telegram.Common
         public void UpdateEmojiSet()
         {
             var xamlAutoFontFamilyValue = SettingsService.Current.Appearance.FontFamily;
+            var xamlAutoFontFamilyDefault = false;
+
+            var comma = ", ";
 
             if (string.IsNullOrEmpty(xamlAutoFontFamilyValue))
             {
                 xamlAutoFontFamilyValue = FontFamily.XamlAutoFontFamily.Source;
+                xamlAutoFontFamilyDefault = true;
             }
 
             if (xamlAutoFontFamilyValue == "Segoe UI Variable")
@@ -68,121 +70,65 @@ namespace Telegram.Common
                 xamlAutoFontFamilyValue = "Segoe UI";
             }
 
-            // TODO: including Segoe UI breaks keycap emoji,
-            // not including it breaks persian numerals.
-            //if (xamlAutoFontFamilyValue == "Segoe UI")
-            //{
-            //    xamlAutoFontFamilyValue = string.Empty;
-            //}
-
-            var xamlAutoFontFamily = new StringBuilder(xamlAutoFontFamilyValue);
-            var comma = ", ";
-
-            //if (false)
-            //{
-            //    foreach (var language in Formatter.Languages)
-            //    {
-            //        // We copy XAML behavior, only resolve for Japanese and Korean
-            //        if (language == "ja" || language == "ko" || language == "ja-JP" || language == "ko-KR")
-            //        {
-            //            try
-            //            {
-            //                var recommendedFonts = new LanguageFontGroup(language);
-            //                var family = recommendedFonts.UITextFont.FontFamily;
-
-            //                xamlAutoFontFamily.Prepend(family, comma);
-            //            }
-            //            catch
-            //            {
-            //                // All the remote procedure calls must be wrapped in a try-catch block
-            //            }
-            //        }
-            //    }
-
-            //    xamlAutoFontFamily.Prepend("Segoe UI", comma);
-            //}
-
-            switch (SettingsService.Current.Appearance.EmojiSet)
+            var emojiFontFamily = SettingsService.Current.Appearance.EmojiSet switch
             {
-                case "microsoft":
-                    this["EmojiOnlyThemeFontFamily"] = "ms-appx:///Assets/Emoji/microsoft.ttf#Segoe UI Emoji";
-                    xamlAutoFontFamily.Prepend("ms-appx:///Assets/Emoji/microsoft.ttf#Segoe UI Emoji", comma);
-                    break;
-                default:
-                    this["EmojiOnlyThemeFontFamily"] = "ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji";
-                    xamlAutoFontFamily.Prepend("ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji", comma);
-                    break;
+                "microsoft" => "ms-appx:///Assets/Emoji/microsoft.ttf#Segoe UI Emoji",
+                _ => "ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji",
+            };
+
+            // When using custom fonts we prioritize the user choice over emojis.
+            // This will break all keycaps emojis, but preserves 
+
+            if (xamlAutoFontFamilyDefault)
+            {
+                XamlAutoFontFamily = emojiFontFamily;
+                this["EmojiTextThemeFontFamily"] = new FontFamily(emojiFontFamily + comma + xamlAutoFontFamilyValue);
+            }
+            else
+            {
+                XamlAutoFontFamily = xamlAutoFontFamilyValue + comma + emojiFontFamily;
+                this["EmojiTextThemeFontFamily"] = new FontFamily(xamlAutoFontFamilyValue + comma + emojiFontFamily);
             }
 
-            XamlAutoFontFamily = xamlAutoFontFamily.ToString();
-
-            this["EmojiThemeFontFamily"] = new FontFamily(xamlAutoFontFamily.ToString());
-            this["ContentControlThemeFontFamily"] = new FontFamily(xamlAutoFontFamily.ToString());
-
-            xamlAutoFontFamily.Prepend("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram", comma);
-
-            this["EmojiThemeFontFamilyWithSymbols"] = new FontFamily(xamlAutoFontFamily.ToString());
+            this["ContentControlThemeFontFamily"] = new FontFamily(XamlAutoFontFamily);
+            this["EmojiThemeFontFamily"] = new FontFamily(XamlAutoFontFamily);
+            this["EmojiThemeFontFamilyWithSymbols"] = new FontFamily(XamlAutoFontFamily + comma + "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
+            this["EmojiThemeFontFamilyWithRounded"] = new FontFamily(XamlAutoFontFamily + comma + "ms-appx:///Assets/Fonts/Nunito.ttf#Nunito" + comma + "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
         }
 
         public string XamlAutoFontFamily { get; private set; }
 
         private bool _legacyScrollBars;
-        private bool _legacyScrollViewer;
+        private ResourceDictionary _scrollBars;
 
         public void UpdateScrolls()
         {
-            if (_legacyScrollBars != SettingsService.Current.Diagnostics.LegacyScrollBars)
+            if (_legacyScrollBars != SettingsService.Current.Diagnostics.LegacyScrollBars || _scrollBars == null)
             {
-                if (SettingsService.Current.Diagnostics.LegacyScrollBars)
+                if (_scrollBars != null)
                 {
-                    var style = new Style
-                    {
-                        TargetType = typeof(ScrollBar)
-                    };
-
-                    // Microsoft recommends turning off layout rounding for VerticalPanningRoot and/or HorizontalPanningRoot.
-                    // We do it for the whole thing because it's just easier.
-                    // https://github.com/microsoft/microsoft-ui-xaml/issues/3779#issuecomment-1896403485
-                    style.Setters.Add(new Setter(UIElement.UseLayoutRoundingProperty, false));
-
-                    this.Add(typeof(ScrollBar), style);
+                    MergedDictionaries.Remove(_scrollBars);
                 }
-                else
+
+                _scrollBars = new ResourceDictionary
                 {
-                    this.Remove(typeof(ScrollBar));
-                }
+                    Source = new Uri("ms-appx:///Themes/ScrollBar_themeresources" + (SettingsService.Current.Diagnostics.LegacyScrollBars ? "_v1" : string.Empty) + ".xaml")
+                };
+
+                MergedDictionaries.Add(_scrollBars);
 
                 _legacyScrollBars = SettingsService.Current.Diagnostics.LegacyScrollBars;
-            }
-
-            if (_legacyScrollViewer != SettingsService.Current.Diagnostics.LegacyScrollViewers)
-            {
-                if (SettingsService.Current.Diagnostics.LegacyScrollViewers)
-                {
-                    var style = new Style
-                    {
-                        TargetType = typeof(ScrollViewer),
-                    };
-
-                    style.Setters.Add(new Setter(ScrollViewer.VerticalScrollBarVisibilityProperty, ScrollBarVisibility.Auto));
-                    style.Setters.Add(new Setter(ScrollViewer.VerticalScrollModeProperty, ScrollMode.Enabled));
-
-                    this.Add(typeof(ScrollViewer), style);
-                }
-                else
-                {
-                    this.Remove(typeof(ScrollViewer));
-                }
-
-                _legacyScrollViewer = SettingsService.Current.Diagnostics.LegacyScrollViewers;
             }
         }
 
         public static Color Accent { get; private set; } = Colors.Red;
 
-        public ChatTheme ChatTheme => _lastTheme;
+        public ThemeSettings LightSettings => _lastLightSettings;
+        public ThemeSettings DarkSettings => _lastDarkSettings;
 
         public ChatBackground ChatBackground => _lastChatBackground;
+
+        public ChatTheme ChatTheme => _lastChatTheme;
 
         public void Update(ElementTheme requested)
         {
@@ -197,23 +143,28 @@ namespace Telegram.Common
         #region Local 
 
         private int? _lastAccent;
-        private long? _lastBackground;
+        private Background _lastBackground;
 
-        private ChatTheme _lastTheme;
+        private ThemeSettings _lastLightSettings;
+        private ThemeSettings _lastDarkSettings;
+
         private ChatBackground _lastChatBackground;
+        private ChatTheme _lastChatTheme;
 
-        public bool Update(ElementTheme elementTheme, ChatTheme theme, ChatBackground background)
+        public bool Update(ElementTheme elementTheme, ChatTheme theme, ThemeSettings lightSettings, ThemeSettings darkSettings, ChatBackground background)
         {
             var updated = false;
             var requested = elementTheme == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light;
             var nextBackground = background?.Background;
 
-            var settings = requested == TelegramTheme.Light ? theme?.LightSettings : theme?.DarkSettings;
+            var settings = requested == TelegramTheme.Light ? lightSettings : darkSettings;
             if (settings != null)
             {
                 if (_lastAccent != settings.AccentColor)
                 {
-                    _lastTheme = theme;
+                    _lastLightSettings = lightSettings;
+                    _lastDarkSettings = darkSettings;
+                    _lastChatTheme = theme;
 
                     var tint = SettingsService.Current.Appearance[requested].Type;
                     if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && requested == TelegramTheme.Light))
@@ -227,6 +178,13 @@ namespace Telegram.Common
 
                     var accent = settings.AccentColor.ToColor();
                     var outgoing = settings.OutgoingMessageAccentColor.ToColor();
+                    //var outgoing = settings.OutgoingMessageFill switch
+                    //{
+                    //    //BackgroundFillSolid solid => solid.Color.ToColor(),
+                    //    BackgroundFillGradient gradient => gradient.TopColor.ToColor(),
+                    //    BackgroundFillFreeformGradient freeform => freeform.Colors[0].ToColor(),
+                    //    _ => settings.OutgoingMessageAccentColor.ToColor()
+                    //};
 
                     var info = ThemeAccentInfo.FromAccent(tint, accent, outgoing);
                     ThemeOutgoing.Update(info.Parent, info.Values);
@@ -241,7 +199,9 @@ namespace Telegram.Common
             {
                 if (_lastAccent != null)
                 {
-                    _lastTheme = null;
+                    _lastLightSettings = null;
+                    _lastDarkSettings = null;
+                    _lastChatTheme = null;
 
                     var options = SettingsService.Current.Appearance;
                     if (options[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(options[requested].Custom))
@@ -266,12 +226,12 @@ namespace Telegram.Common
                 _lastAccent = null;
             }
 
-            if (nextBackground?.Id != _lastBackground)
+            if (!_lastBackground.AreTheSame(nextBackground))
             {
                 updated = true;
             }
 
-            _lastBackground = nextBackground?.Id;
+            _lastBackground = nextBackground;
             _lastChatBackground = background;
 
             return updated;
@@ -290,7 +250,7 @@ namespace Telegram.Common
 
             if (settings.ChatTheme != null)
             {
-                Update(requested, settings.ChatTheme);
+                Update(requested, settings.ChatTheme.LightSettings, settings.ChatTheme.DarkSettings);
             }
             else if (settings[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(settings[requested].Custom))
             {
@@ -305,15 +265,15 @@ namespace Telegram.Common
                 Update(requested);
             }
 
-            if (ChatTheme != null)
+            if (LightSettings != null && DarkSettings != null)
             {
-                Update(theme == ApplicationTheme.Light ? ElementTheme.Light : ElementTheme.Dark, ChatTheme, ChatBackground);
+                Update(theme == ApplicationTheme.Light ? ElementTheme.Light : ElementTheme.Dark, ChatTheme, LightSettings, DarkSettings, ChatBackground);
             }
         }
 
-        private void Update(TelegramTheme requested, ChatTheme theme)
+        private void Update(TelegramTheme requested, ThemeSettings lightSettings, ThemeSettings darkSettings)
         {
-            var settings = requested == TelegramTheme.Light ? theme?.LightSettings : theme?.DarkSettings;
+            var settings = requested == TelegramTheme.Light ? lightSettings : darkSettings;
 
             var tint = SettingsService.Current.Appearance[requested].Type;
             if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && requested == TelegramTheme.Light))
@@ -545,6 +505,11 @@ namespace Telegram.Common
 
                     // The exception MIGHT be related to StaticResources
                     // but I'm not able to confirm this.
+                }
+                catch (Exception ex)
+                {
+                    // Some other errors seem to be randomly thrown
+                    Logger.Error(ex);
                 }
             }
         }

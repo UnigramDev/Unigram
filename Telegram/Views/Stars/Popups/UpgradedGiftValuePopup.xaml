@@ -1,0 +1,147 @@
+<controls:TeachingTipEx x:Class="Telegram.Views.Stars.Popups.UpgradedGiftValuePopup"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                        xmlns:controls="using:Telegram.Controls"
+                        Style="{StaticResource DefaultTeachingTipStyle}"
+                        mc:Ignorable="d">
+
+    <StackPanel>
+        <controls:AnimatedImage x:Name="AnimatedPhoto"
+                                Width="120"
+                                Height="120"
+                                FrameSize="120,120"
+                                DecodeFrameType="Logical"
+                                IsViewportAware="True"
+                                LoopCount="1"
+                                Margin="0,0,0,12" />
+
+        <Border Background="#40B145"
+                HorizontalAlignment="Center"
+                Padding="8,1,8,3"
+                CornerRadius="15">
+            <TextBlock x:Name="TitleLabel"
+                       Style="{StaticResource PopupTextBlockStyle}"
+                       Foreground="#FFFFFF" />
+        </Border>
+
+        <TextBlock x:Name="MessageLabel"
+                   Margin="0,4,0,4"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   TextAlignment="Center" />
+
+        <controls:TableView Margin="8,8,8,0">
+            <controls:TableViewItem x:Name="InitialSale"
+                                    Header="{CustomResource GiftValueInitialSale}" />
+            <controls:TableViewItem Header="{CustomResource GiftValueInitialPrice}"
+                                    Padding="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <controls:PremiumStarCount Margin="8,0,0,0" />
+                    <TextBlock x:Name="InitialPrice"
+                               Margin="4,5,8,6"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis"
+                               VerticalAlignment="Top"
+                               Grid.Column="1" />
+                </Grid>
+            </controls:TableViewItem>
+            <controls:TableViewItem x:Name="LastSale"
+                                    Header="{CustomResource GiftValueLastSale}" />
+            <controls:TableViewItem x:Name="LastPriceRoot"
+                                    Header="{CustomResource GiftValueLastPrice}"
+                                    Padding="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="LastPrice"
+                               Margin="8,5,8,6"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               VerticalAlignment="Top" />
+
+                    <controls:SettingsButton x:Name="LastPriceInfo"
+                                             Style="{StaticResource SmallButtonStyle}"
+                                             VerticalAlignment="Center"
+                                             FontSize="11"
+                                             Padding="4,0"
+                                             CornerRadius="8"
+                                             BorderThickness="0"
+                                             Height="16"
+                                             Grid.Column="1" />
+                </Grid>
+            </controls:TableViewItem>
+            <controls:TableViewItem x:Name="MinimumPriceRoot"
+                                    Header="{CustomResource GiftValueMinPrice}"
+                                    Padding="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="MinimumPrice"
+                               Margin="8,5,8,6"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               VerticalAlignment="Top" />
+
+                    <controls:SettingsButton x:Name="MinimumPriceInfo"
+                                             Click="MinimumPriceInfo_Click"
+                                             Glyph="?"
+                                             Style="{StaticResource SmallButtonStyle}"
+                                             VerticalAlignment="Center"
+                                             FontSize="11"
+                                             Padding="4,0"
+                                             CornerRadius="8"
+                                             BorderThickness="0"
+                                             Height="16"
+                                             Grid.Column="1" />
+                </Grid>
+            </controls:TableViewItem>
+            <controls:TableViewItem x:Name="AveragePriceRoot"
+                                    Header="{CustomResource GiftValueAveragePrice}"
+                                    Padding="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="AveragePrice"
+                               Margin="8,5,8,6"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               VerticalAlignment="Top" />
+
+                    <controls:SettingsButton x:Name="AveragePriceInfo"
+                                             Click="AveragePriceInfo_Click"
+                                             Glyph="?"
+                                             Style="{StaticResource SmallButtonStyle}"
+                                             VerticalAlignment="Center"
+                                             FontSize="11"
+                                             Padding="4,0"
+                                             CornerRadius="8"
+                                             BorderThickness="0"
+                                             Height="16"
+                                             Grid.Column="1" />
+                </Grid>
+            </controls:TableViewItem>
+        </controls:TableView>
+
+        <Button x:Name="TelegramListedGiftCount"
+                Click="TelegramListedGiftCount_Click"
+                Style="{StaticResource AccentTextButtonStyle}"
+                HorizontalAlignment="Center"
+                Margin="0,8,0,0" />
+
+        <Button x:Name="FragmentListedGiftCount"
+                Click="FragmentListedGiftCount_Click"
+                Style="{StaticResource AccentTextButtonStyle}"
+                HorizontalAlignment="Center"
+                Margin="0,8,0,0" />
+    </StackPanel>
+</controls:TeachingTipEx>

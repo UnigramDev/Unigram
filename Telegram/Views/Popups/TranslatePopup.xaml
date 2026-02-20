@@ -5,7 +5,6 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        Padding="0,12,0,0">
 
     <controls:ContentPopup.Resources>
@@ -15,9 +14,9 @@
             <Setter Property="BorderBrush"
                     Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
             <Setter Property="Foreground"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
             <Setter Property="PlaceholderBrush"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
             <Setter Property="VerticalAlignment"
                     Value="Top" />
             <Setter Property="HorizontalAlignment"
@@ -70,11 +69,12 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <controls:LoadingTextBlock x:Name="Presenter"
-                                       Margin="0,8,0,24" />
+                                       Margin="0,8,0,20" />
         </ScrollViewer>
 
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
-                                    Background="{ThemeResource ContentDialogBackground}"
+                                    Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    BottomInset="0"
                                     Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>

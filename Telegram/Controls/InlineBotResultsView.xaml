@@ -66,7 +66,7 @@
     </UserControl.Resources>
 
     <Grid x:Name="Root"
-          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+          Background="{ThemeResource PageSubHeaderBackgroundBrush2}">
         <Grid x:Name="LayoutRoot">
             <ListView x:Name="ScrollingHost"
                       ItemsSource="{x:Bind ViewModel.InlineBotResults, Mode=OneWay}"
@@ -80,16 +80,16 @@
                     <common:LengthGridViewTrigger ItemLength="96" />
                 </common:FluidGridView.Triggers>
                 <ListView.Header>
-                    <controls:BadgeButton x:Name="SwitchPm"
-                                          Click="{x:Bind ViewModel.ActivateInlineBot}"
-                                          Content="{x:Bind ViewModel.InlineBotResults.ButtonText, Mode=OneWay}"
-                                          Visibility="{x:Bind ViewModel.InlineBotResults.ButtonText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                                          Style="{StaticResource AccentTextButtonStyle}"
-                                          HorizontalContentAlignment="Center"
-                                          FontWeight="SemiBold"
-                                          Padding="12,3,12,5"
-                                          Margin="4"
-                                          Height="32" />
+                    <controls:SettingsButton x:Name="SwitchPm"
+                                             Click="{x:Bind ViewModel.ActivateInlineBot}"
+                                             Content="{x:Bind ViewModel.InlineBotResults.ButtonText, Mode=OneWay}"
+                                             Visibility="{x:Bind ViewModel.InlineBotResults.ButtonText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                             Style="{StaticResource AccentTextButtonStyle}"
+                                             HorizontalContentAlignment="Center"
+                                             FontWeight="SemiBold"
+                                             Padding="12,3,12,5"
+                                             Margin="4"
+                                             Height="32" />
                 </ListView.Header>
             </ListView>
         </Grid>

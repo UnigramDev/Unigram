@@ -1,4 +1,12 @@
-﻿using System.Numerics;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System.Numerics;
+using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
 using Windows.Foundation;
@@ -20,17 +28,17 @@ namespace Telegram.Services.Calls
 
         public VoipVideoOutput(UIElement element, bool mirrored)
         {
-            _sink = CreateSink(element, mirrored);
+            _sink = CreateSink(element, mirrored: mirrored);
             _sink.FrameReceived += OnFrameReceived;
         }
 
-        public static VoipVideoOutputSink CreateSink(UIElement element, bool mirrored)
+        public static VoipVideoOutputSink CreateSink(UIElement element, bool mirrored = false, bool uniformToFill = false)
         {
             var visual = BootStrapper.Current.Compositor.CreateSpriteVisual();
             visual.RelativeSizeAdjustment = Vector2.One;
             ElementCompositionPreview.SetElementChildVisual(element, visual);
 
-            return new VoipVideoOutputSink(visual, mirrored);
+            return new VoipVideoOutputSink(PlaceholderHelper.Foreground.Device, visual, mirrored, uniformToFill);
         }
 
         public void Stop()

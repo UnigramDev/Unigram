@@ -43,18 +43,16 @@
 
                     <controls:HeaderedControl x:Name="Create"
                                               Margin="0,0,0,2">
-                        <controls:BadgeButton Click="{x:Bind ViewModel.Create}"
-                                              Content="{CustomResource DiscussionCreateGroup}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                                              Glyph="&#xE716;" />
+                        <controls:SettingsButton Click="{x:Bind ViewModel.Create}"
+                                                 Content="{CustomResource DiscussionCreateGroup}"
+                                                 Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                                 Glyph="&#xE716;" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                    <cells:ProfileCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
@@ -66,11 +64,10 @@
                     <controls:HeaderedControl x:Name="LayoutRoot"
                                               Footer="{CustomResource DiscussionChannelHelp2}"
                                               Margin="0,-14,0,0">
-                        <controls:BadgeButton x:Name="Unlink"
-                                              Content="{CustomResource DiscussionUnlinkGroup}"
-                                              Click="{x:Bind ViewModel.Unlink}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xF166;" />
+                        <controls:SettingsButton x:Name="Unlink"
+                                                 Content="{CustomResource DiscussionUnlinkGroup}"
+                                                 Click="{x:Bind ViewModel.Unlink}"
+                                                 Glyph="&#xF166;" />
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl x:Name="JoinToSendMessages"

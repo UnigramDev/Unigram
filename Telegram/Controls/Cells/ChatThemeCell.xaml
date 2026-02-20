@@ -33,6 +33,24 @@
                    RadiusX="12"
                    RadiusY="12"
                    Grid.Row="1" />
+        <Grid x:Name="UsedTheme"
+              HorizontalAlignment="Stretch"
+              Margin="8,0,20,12"
+              Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <controls:ProfilePicture x:Name="UsedThemePhoto"
+                                     Size="20"
+                                     Margin="2" />
+            <TextBlock Text="&#xEADB;"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="20"
+                       Margin="2"
+                       HorizontalAlignment="Right"
+                       Grid.Column="1" />
+        </Grid>
 
         <TextBlock x:Name="NoTheme"
                    Text="{CustomResource ChatNoTheme}"
@@ -51,5 +69,17 @@
                    TextAlignment="Center"
                    Margin="0,0,0,8"
                    Grid.Row="2" />
+
+        <controls:AnimatedImage x:Name="Animated"
+                                Width="48"
+                                Height="48"
+                                FrameSize="48,48"
+                                DecodeFrameType="Logical"
+                                AutoPlay="False"
+                                LoopCount="1"
+                                LoopCompleted="Animated_LoopCompleted"
+                                Margin="0,-24,0,8"
+                                Visibility="Visible"
+                                Grid.Row="2" />
     </Grid>
 </UserControl>

@@ -34,19 +34,29 @@
                                     <RowDefinition />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <RichTextBlock Style="{StaticResource BaseRichTextBlockStyle}"
-                                               FontFamily="{StaticResource EmojiThemeFontFamily}"
-                                               Margin="24,12,24,2">
-                                    <Paragraph>
-                                        <Span />
-                                        <Run />
-                                    </Paragraph>
-                                </RichTextBlock>
-                                <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                           TextAlignment="Right"
-                                           VerticalAlignment="Bottom"
-                                           Margin="24,12,24,2"/>
-                                
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <RichTextBlock Style="{StaticResource BaseRichTextBlockStyle}"
+                                                   FontFamily="{StaticResource EmojiThemeFontFamily}"
+                                                   TextWrapping="Wrap"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   MaxLines="1"
+                                                   Margin="24,12,4,2">
+                                        <Paragraph>
+                                            <Span />
+                                            <Run />
+                                        </Paragraph>
+                                    </RichTextBlock>
+                                    <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                               TextAlignment="Right"
+                                               VerticalAlignment="Bottom"
+                                               Margin="4,12,24,2"
+                                               Grid.Column="1" />
+                                </Grid>
+
                                 <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
                                                     ItemsSource="{x:Bind Items}"
                                                     ElementPrepared="OnElementPrepared"
@@ -80,7 +90,8 @@
         </muxc:ItemsRepeaterScrollHost>
 
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
-                                    Background="{ThemeResource ContentDialogBackground}"
+                                    Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    BottomInset="0"
                                     Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>

@@ -1,11 +1,11 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -20,10 +21,11 @@ using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Telegram.ViewModels.Users;
+using Telegram.Views.Popups;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI.Composition;
-using Windows.UI.Input;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -33,8 +35,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
-using VirtualKey = Windows.System.VirtualKey;
-using VirtualKeyModifiers = Windows.System.VirtualKeyModifiers;
 
 namespace Telegram.Controls.Gallery
 {
@@ -61,10 +61,8 @@ namespace Telegram.Controls.Gallery
 
         private bool _unloaded;
 
-        private static readonly ConcurrentDictionary<int, double> _knownPositions = new();
-        private long? _initialPosition;
-
-        public long InitialPosition
+        private double? _initialPosition;
+        public double InitialPosition
         {
             get => _initialPosition ?? 0;
             set => _initialPosition = value > 0 ? value : null;
@@ -89,7 +87,7 @@ namespace Telegram.Controls.Gallery
             _inactivityTimer.Interval = TimeSpan.FromSeconds(1.5);
             _inactivityTimer.Start();
 
-            ScrollingHost.AddHandler(PointerReleasedEvent, new PointerEventHandler(OnPointerReleased), true);
+            ScrollingHost.AddHandler(TappedEvent, new TappedEventHandler(OnTapped), true);
         }
 
         private void OnTick(object sender, object e)
@@ -98,14 +96,66 @@ namespace Telegram.Controls.Gallery
             ShowHideTransport(false);
         }
 
-        protected override void OnPointerMoved(PointerRoutedEventArgs e)
+        protected override void OnPointerExited(PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse && IsLoaded && !SafeArea.Contains(e))
+            {
+                _inactivityTimer.Stop();
+                ShowHideTransport(false);
+            }
+
+            try
+            {
+                base.OnPointerExited(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
+        protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
             _inactivityTimer.Stop();
             ShowHideTransport(true);
 
-            base.OnPointerMoved(e);
+            try
+            {
+                base.OnPointerPressed(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
 
-            if (e.OriginalSource is FrameworkElement element)
+        protected override void OnPointerMoved(PointerRoutedEventArgs e)
+        {
+            _inactivityTimer.Stop();
+
+            try
+            {
+                base.OnPointerMoved(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+
+            var point = e.GetCurrentPoint(this);
+            if (ActualWidth - point.Position.X < 1)
+            {
+                ShowHideTransport(false);
+                return;
+            }
+
+            ShowHideTransport(true);
+
+            if (_transportEntered)
+            {
+                return;
+            }
+            else if (e.OriginalSource is FrameworkElement element)
             {
                 var button = element.GetParentOrSelf<ButtonBase>();
                 if (button is not null and not FileButton)
@@ -126,28 +176,34 @@ namespace Telegram.Controls.Gallery
             //}
         }
 
-        private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
+        private void OnTapped(object sender, TappedRoutedEventArgs e)
         {
-            var point = e.GetCurrentPoint((UIElement)_current ?? this);
-            if (point.Properties.PointerUpdateKind != PointerUpdateKind.LeftButtonReleased || !_areInteractionsEnabled)
+            if (!_areInteractionsEnabled)
             {
                 return;
             }
 
-            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            if (e.PointerDeviceType != PointerDeviceType.Mouse)
             {
                 _inactivityTimer.Stop();
                 ShowHideTransport(true);
             }
             else
             {
-                if (_current != null
-                    && point.Position.X >= 0
-                    && point.Position.Y >= 0
-                    && point.Position.X <= _current.ActualWidth
-                    && point.Position.Y <= _current.ActualHeight)
+                var container = GetElement(CarouselDirection.None);
+                var point = e.GetPosition(container);
+
+                if ((_current != null || container.IsTextSelectionEnabled)
+                    && point.X >= 0
+                    && point.Y >= 0
+                    && point.X <= container.ActualWidth
+                    && point.Y <= container.ActualHeight)
                 {
-                    Controls.TogglePlaybackState();
+                    if (_current != null)
+                    {
+                        Controls.TogglePlaybackState();
+                    }
+
                     return;
                 }
 
@@ -164,12 +220,23 @@ namespace Telegram.Controls.Gallery
             }
         }
 
+        private void Controls_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            _transportEntered = true;
+        }
+
+        private void Controls_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            _transportEntered = false;
+        }
+
         private bool _transportCollapsed = false;
         private bool _transportFocused = false;
+        private bool _transportEntered = false;
 
         private void ShowHideTransport(bool show)
         {
-            if (show != _transportCollapsed || (_transportFocused && !show))
+            if (show != _transportCollapsed || _unloaded || (_transportFocused && !show))
             {
                 return;
             }
@@ -188,6 +255,15 @@ namespace Telegram.Controls.Gallery
             _transportCollapsed = !show;
             BottomPanel.IsHitTestVisible = false;
             BottomPanel.Visibility = Visibility.Visible;
+
+            if (show)
+            {
+                Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
+            }
+            else
+            {
+                Window.Current.CoreWindow.PointerCursor = null;
+            }
 
             var parent = ElementComposition.GetElementVisual(BottomPanel);
             var next = ElementComposition.GetElementVisual(NextButton);
@@ -257,9 +333,9 @@ namespace Telegram.Controls.Gallery
             });
         }
 
-        public void OpenFile(GalleryMedia item, File file)
+        public void OpenFile(GalleryMedia item, File file, bool force = false)
         {
-            Play(CurrentElement, item);
+            Play(CurrentElement, item, force: force);
         }
 
         public void OpenItem(GalleryMedia item)
@@ -336,7 +412,7 @@ namespace Telegram.Controls.Gallery
             return ShowAsync(navigationService.XamlRoot, viewModel, closing);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null, long timestamp = 0, VideoPlayerBase player = null)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null, double timestamp = 0, VideoPlayerBase player = null)
         {
             var popup = new GalleryWindow
             {
@@ -348,7 +424,7 @@ namespace Telegram.Controls.Gallery
 
         private Task<ContentDialogResult> ShowAsyncInternal(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null, VideoPlayerBase player = null)
         {
-            if (closing != null && !SettingsService.Current.FullScreenGallery)
+            if (closing != null && closing.IsConnected() && !SettingsService.Current.FullScreenGallery)
             {
                 _closing = new WeakReference<FrameworkElement>(closing);
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", closing);
@@ -516,8 +592,8 @@ namespace Telegram.Controls.Gallery
 
             batch.End();
 
-            Unload();
             Dispose();
+            Unload();
         }
 
         private void Preview_ImageOpened(object sender, RoutedEventArgs e)
@@ -641,7 +717,7 @@ namespace Telegram.Controls.Gallery
 
         private GalleryContent _current;
 
-        private void Play(GalleryContent content, GalleryMedia item, VideoPlayerBase player = null)
+        private void Play(GalleryContent content, GalleryMedia item, VideoPlayerBase player = null, bool force = false)
         {
             if (_unloaded)
             {
@@ -651,12 +727,12 @@ namespace Telegram.Controls.Gallery
             var position = 0d;
             var file = item.File;
 
-            if (_initialPosition is long initialPosition)
+            if (_initialPosition is double initialPosition)
             {
                 _initialPosition = null;
                 position = initialPosition;
             }
-            else if (_knownPositions.TryRemove(file.Id, out double knownPosition))
+            else if (ViewModel.Settings.Video.TryGetPosition(file, out double knownPosition))
             {
                 position = knownPosition;
             }
@@ -669,8 +745,10 @@ namespace Telegram.Controls.Gallery
             else
             {
                 _current = content;
-                _current.Play(item, position, Controls);
+                _current.Play(item, position, Controls, force);
             }
+
+            ViewModel.PlaybackStarted(item);
         }
 
         private void Dispose()
@@ -680,18 +758,28 @@ namespace Telegram.Controls.Gallery
 
             if (_current != null)
             {
-                _current.Stop(out int fileId, out double position);
-                _current = null;
+                _current.Stop(out var item, out double position);
 
-                if (fileId != 0)
+                if (item is GalleryMessage message)
                 {
-                    _knownPositions[fileId] = position;
+                    ViewModel?.Settings.Video.SetPosition(item.File, position);
+                    ViewModel?.Aggregator.Publish(new UpdateMessageContentOpened(message.ChatId, message.Id));
                 }
+
+                _current = null;
             }
+
+            ViewModel?.PlaybackStopped();
         }
 
-        private void Load(object parameter)
+        public void UpdateAdvertisement(VideoMessageAdvertisement advertisement)
         {
+            Sponsored.UpdateAdvertisement(advertisement);
+        }
+
+        private void Load(GalleryViewModelBase parameter)
+        {
+            parameter.Delegate = this;
             DataContext = parameter;
             Bindings.Update();
 
@@ -717,7 +805,12 @@ namespace Telegram.Controls.Gallery
 
             _unloaded = true;
 
-            ViewModel?.Aggregator.Unsubscribe(this);
+            if (ViewModel != null)
+            {
+                ViewModel.Delegate = null;
+                ViewModel.Aggregator.Unsubscribe(this);
+                ViewModel.PlaybackStopped();
+            }
 
             DataContext = null;
             Bindings.StopTracking();
@@ -727,47 +820,71 @@ namespace Telegram.Controls.Gallery
             Element0.Unload();
             Element1.Unload();
             Element2.Unload();
+
+            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
         }
 
         private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs args)
         {
-            if (args.Key is VirtualKey.Space /*&& args.Modifiers == VirtualKeyModifiers.None*/)
+            var focused = FocusManagerEx.TryGetFocusedElement();
+            if (focused is Slider or TextBox or RichEditBox)
+            {
+                return;
+            }
+
+            var modifiers = WindowContext.KeyModifiers();
+            var keyCode = (int)args.Key;
+
+            if (args.Key is VirtualKey.Space && modifiers == VirtualKeyModifiers.None)
             {
                 Controls.TogglePlaybackState();
                 args.Handled = true;
             }
-        }
-
-        private void OnProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
-        {
-            var keyCode = (int)args.Key;
-
-            if (args.Key is VirtualKey.Left or VirtualKey.GamepadLeftShoulder && args.Modifiers == VirtualKeyModifiers.None)
+            else if (args.Key is VirtualKey.Left or VirtualKey.GamepadLeftShoulder && modifiers == VirtualKeyModifiers.None)
             {
-                ChangeView(CarouselDirection.Previous, false);
+                ChangeView(CarouselDirection.Previous);
                 args.Handled = true;
             }
-            else if (args.Key is VirtualKey.Right or VirtualKey.GamepadRightShoulder && args.Modifiers == VirtualKeyModifiers.None)
+            else if (args.Key is VirtualKey.Right or VirtualKey.GamepadRightShoulder && modifiers == VirtualKeyModifiers.None)
             {
-                ChangeView(CarouselDirection.Next, false);
+                ChangeView(CarouselDirection.Next);
                 args.Handled = true;
             }
-            else if (args.Key is VirtualKey.R && args.Modifiers == VirtualKeyModifiers.Control)
+            else if (args.Key is VirtualKey.R && modifiers == VirtualKeyModifiers.Control)
             {
                 args.Handled = true;
                 Rotate_Click(null, null);
             }
-            else if (args.Key is VirtualKey.C && args.Modifiers == VirtualKeyModifiers.Control)
+            else if (args.Key is VirtualKey.C && modifiers == VirtualKeyModifiers.Control)
             {
-                ViewModel?.Copy();
+                var container = GetElement(CarouselDirection.None);
+                if (container.IsTextSelectionEnabled && container.IsTextSelected)
+                {
+                    container.CopySelectedText();
+                }
+                else
+                {
+                    ViewModel?.Copy();
+                }
+
                 args.Handled = true;
             }
-            else if (args.Key is VirtualKey.S && args.Modifiers == VirtualKeyModifiers.Control)
+            else if (args.Key is VirtualKey.A && modifiers == VirtualKeyModifiers.Control)
+            {
+                var container = GetElement(CarouselDirection.None);
+                if (container.IsTextSelectionEnabled)
+                {
+                    container.SelectAllText();
+                }
+
+                args.Handled = true;
+            }
+            else if (args.Key is VirtualKey.S && modifiers == VirtualKeyModifiers.Control)
             {
                 ViewModel?.Save();
                 args.Handled = true;
             }
-            else if (args.Key is VirtualKey.F11 || (args.Key is VirtualKey.F && args.Modifiers == VirtualKeyModifiers.Control))
+            else if (args.Key is VirtualKey.F11 || (args.Key is VirtualKey.F && modifiers == VirtualKeyModifiers.Control))
             {
                 FullScreen_Click(null, null);
                 args.Handled = true;
@@ -785,7 +902,7 @@ namespace Telegram.Controls.Gallery
 
         private void LayoutRoot_ViewChanging(object sender, CarouselViewChangingEventArgs e)
         {
-            ChangeView(e.Direction);
+            TryChangeView(e.Direction);
         }
 
         private void LayoutRoot_ViewChanged(object sender, CarouselViewChangedEventArgs e)
@@ -798,12 +915,12 @@ namespace Telegram.Controls.Gallery
 
         private void PrevButton_Click(object sender, RoutedEventArgs e)
         {
-            ChangeView(CarouselDirection.Previous, false);
+            ChangeView(CarouselDirection.Previous);
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            ChangeView(CarouselDirection.Next, false);
+            ChangeView(CarouselDirection.Next);
         }
 
         public GalleryContent CurrentElement => LayoutRoot.CurrentElement as GalleryContent;
@@ -830,23 +947,15 @@ namespace Telegram.Controls.Gallery
             //Apply(Element0, finalSize);
             //Apply(Element1, finalSize);
 
-            if (_layout != null)
-            {
-                _layout.Offset = new Vector3(0, 0, 0);
-            }
+            _layout?.Offset = new Vector3(0, 0, 0);
 
             return base.ArrangeOverride(finalSize);
         }
 
-        private bool ChangeView(CarouselDirection direction, bool disableAnimation)
+        private bool ChangeView(CarouselDirection direction)
         {
-            if (ChangeView(direction))
+            if (TryChangeView(direction))
             {
-                if (disableAnimation)
-                {
-                    return true;
-                }
-
                 LayoutRoot.ChangeView(direction);
                 return true;
             }
@@ -854,7 +963,7 @@ namespace Telegram.Controls.Gallery
             return false;
         }
 
-        private bool ChangeView(CarouselDirection direction)
+        private bool TryChangeView(CarouselDirection direction)
         {
             var viewModel = ViewModel;
             if (viewModel == null || LayoutRoot.IsScrolling)
@@ -987,6 +1096,50 @@ namespace Telegram.Controls.Gallery
 
             var flyout = new MenuFlyout();
 
+            var container = GetElement(CarouselDirection.None);
+            if (container.IsTextSelectionEnabled && args != null)
+            {
+                if (container.IsTextSelected)
+                {
+                    flyout.CreateFlyoutItem(container.CopySelectedText, Strings.Copy, Icons.Copy, VirtualKey.C, VirtualKeyModifiers.Control);
+
+                    var translate = ViewModel.ClientService.Session.Resolve<ITranslateService>();
+                    if (translate.CanTranslateText(container.SelectedText))
+                    {
+                        void handler()
+                        {
+                            var language = LanguageIdentification.IdentifyLanguage(container.SelectedText);
+                            var popup = new TranslatePopup(translate, container.SelectedText, language, SettingsService.Current.Translate.To, true);
+
+                            ViewModel.ShowPopup(popup, requestedTheme: ElementTheme.Dark);
+                        }
+
+                        flyout.CreateFlyoutItem(handler, Strings.TranslateMessage, Icons.Translate);
+                    }
+                }
+                else
+                {
+                    var translate = ViewModel.ClientService.Session.Resolve<ITranslateService>();
+                    if (translate.CanTranslateText(container.RecognizedText))
+                    {
+                        void handler()
+                        {
+                            var language = LanguageIdentification.IdentifyLanguage(container.RecognizedText);
+                            var popup = new TranslatePopup(translate, container.RecognizedText, language, SettingsService.Current.Translate.To, true);
+
+                            ViewModel.ShowPopup(popup, requestedTheme: ElementTheme.Dark);
+                        }
+
+                        flyout.CreateFlyoutItem(handler, Strings.TranslateMessage, Icons.Translate);
+                    }
+                }
+
+                flyout.CreateFlyoutItem(container.SelectAllText, Strings.SelectAll, key: VirtualKey.A, modifiers: VirtualKeyModifiers.Control);
+
+                flyout.ShowAt(element, args, FlyoutShowMode.Transient);
+                return;
+            }
+
             PopulateContextRequested(flyout, viewModel, item);
 
             if (args != null)
@@ -1003,7 +1156,7 @@ namespace Telegram.Controls.Gallery
         {
             flyout.CreateFlyoutItem(() => item.CanBeViewed, viewModel.View, Strings.ShowInChat, Icons.ChatEmpty);
             flyout.CreateFlyoutItem(() => item.CanBeShared, viewModel.Forward, Strings.Forward, Icons.Share);
-            flyout.CreateFlyoutItem(() => item.CanBeCopied, viewModel.Copy, Strings.Copy, Icons.DocumentCopy, VirtualKey.C);
+            flyout.CreateFlyoutItem(() => item.CanBeCopied, viewModel.Copy, Strings.Copy, Icons.Copy, VirtualKey.C);
             flyout.CreateFlyoutItem(() => item.CanBeSaved, viewModel.Save, Strings.SaveAs, Icons.SaveAs, VirtualKey.S);
 
             if (viewModel is UserPhotosViewModel userPhotos && userPhotos.CanDelete && userPhotos.SelectedIndex > 0)
@@ -1015,7 +1168,7 @@ namespace Telegram.Controls.Gallery
                 flyout.CreateFlyoutItem(() => viewModel.CanDelete, chatPhotos.SetAsMain, Strings.SetAsMain, Icons.PersonCircle);
             }
 
-            flyout.CreateFlyoutItem(() => viewModel.CanOpenWith, viewModel.OpenWith, Strings.OpenInExternalApp, Icons.OpenIn);
+            flyout.CreateFlyoutItem(() => viewModel.CanOpenWith, viewModel.OpenWith, Strings.OpenWith, Icons.OpenWith);
             flyout.CreateFlyoutItem(() => viewModel.CanDelete, viewModel.Delete, Strings.Delete, Icons.Delete, destructive: true);
         }
 
@@ -1130,6 +1283,37 @@ namespace Telegram.Controls.Gallery
             {
                 applicationView.TryEnterFullScreenMode();
             }
+        }
+
+        private void Recognize_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsService.Current.ToolTip.Complete("TextRecognizer");
+
+            var container = GetElement(CarouselDirection.None);
+            container.RecognizeText();
+        }
+
+        private bool _recognizeLoaded;
+
+        private void Recognize_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_recognizeLoaded)
+            {
+                return;
+            }
+
+            _recognizeLoaded = true;
+
+            if (SettingsService.Current.ToolTip.Increment("TextRecognizer"))
+            {
+                ToastPopup.Show(Recognize, Strings.ScanTextFirstTime, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.Top, dismissAfter: TimeSpan.FromSeconds(3));
+            }
+        }
+
+        private void ScrollingHost_PanStarting(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var container = GetElement(CarouselDirection.None);
+            e.Cancel = container.IsTextSelectionEnabled;
         }
     }
 }

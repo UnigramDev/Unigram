@@ -199,38 +199,20 @@
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
                         <selectors:StickerSetTemplateSelector.GroupTemplate>
                             <DataTemplate>
-                                <Border>
-                                    <controls:ProfilePicture Width="24"
-                                                             Height="24" />
-                                </Border>
+                                <Grid>
+                                    <controls:ProfilePicture Size="24" />
+                                </Grid>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.GroupTemplate>
-                        <selectors:StickerSetTemplateSelector.RecentsTemplate>
+                        <selectors:StickerSetTemplateSelector.IconTemplate>
                             <DataTemplate>
-                                <Border Background="Transparent">
-                                    <FontIcon Glyph="&#xE911;"
-                                              FontFamily="{StaticResource TelegramThemeFontFamily}" />
-                                </Border>
+                                <Grid Background="Transparent">
+                                    <FontIcon FontFamily="{StaticResource TelegramThemeFontFamily}" />
+                                </Grid>
                             </DataTemplate>
-                        </selectors:StickerSetTemplateSelector.RecentsTemplate>
-                        <selectors:StickerSetTemplateSelector.FavedTemplate>
-                            <DataTemplate>
-                                <Border Background="Transparent">
-                                    <FontIcon Glyph="&#xE907;"
-                                              Style="{StaticResource DefaultFontIconStyle}" />
-                                </Border>
-                            </DataTemplate>
-                        </selectors:StickerSetTemplateSelector.FavedTemplate>
+                        </selectors:StickerSetTemplateSelector.IconTemplate>
                     </selectors:StickerSetTemplateSelector>
                 </GridView.ItemTemplateSelector>
-                <GridView.Footer>
-                    <StackPanel Orientation="Horizontal">
-                        <controls:GlyphButton Click="Settings_Click"
-                                              Width="40"
-                                              Height="40"
-                                              Glyph="&#xE713;" />
-                    </StackPanel>
-                </GridView.Footer>
                 <GridView.ItemContainerTransitions>
                     <TransitionCollection />
                 </GridView.ItemContainerTransitions>

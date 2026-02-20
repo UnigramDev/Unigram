@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Premium.Popups;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Premium
@@ -105,7 +107,7 @@ namespace Telegram.ViewModels.Premium
 
             _stickers = await ClientService.SendAsync(new GetPremiumStickerExamples()) as Stickers;
 
-            var businessFeatures = await ClientService.SendAsync(new GetBusinessFeatures()) as BusinessFeatures;
+            var businessFeatures = await ClientService.SendAsync(new GetBusinessFeatures(null)) as BusinessFeatures;
             if (businessFeatures == null)
             {
                 return;
@@ -131,9 +133,9 @@ namespace Telegram.ViewModels.Premium
         public async Task<bool> OpenAsync(PremiumFeature feature)
         {
             var popup = new FeaturesPopup(ClientService, Option?.PaymentOption, Features, BusinessFeatures, Limits, _animations, _stickers, feature);
-            await ShowPopupAsync(popup);
 
-            if (popup.ShouldPurchase && !ClientService.IsPremium)
+            var confirm = await ShowPopupAsync(popup);
+            if (confirm == ContentDialogResult.Primary && !ClientService.IsPremium)
             {
                 Purchase();
                 return false;

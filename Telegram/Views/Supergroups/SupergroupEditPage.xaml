@@ -39,21 +39,19 @@
                               Width="96"
                               Margin="0,0,12,0">
                             <controls:ProfilePicture x:Name="Photo"
-                                                     Height="96"
-                                                     Width="96" />
+                                                     Size="96" />
                         </Grid>
 
                         <TextBox x:Name="TitleLabel"
                                  Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                 MaxLength="{StaticResource ChannelTitleMaxLength}"
+                                 MaxLength="{StaticResource ChatTitleMaxLength}"
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                     </Grid>
-                    <controls:BadgeButton x:Name="SetNewPhoto"
-                                          Content="{CustomResource ChatSetNewPhoto}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9FE;">
+                    <controls:SettingsButton x:Name="SetNewPhoto"
+                                             Content="{CustomResource ChatSetNewPhoto}"
+                                             Glyph="&#xE9FE;">
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedLeft">
                                 <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
@@ -72,11 +70,11 @@
                                 </MenuFlyoutItem>
                             </MenuFlyout>
                         </Button.Flyout>
-                    </controls:BadgeButton>
+                    </controls:SettingsButton>
                     <TextBox x:Name="About"
                              Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                             MaxLength="{StaticResource ChannelAboutMaxLength}"
+                             MaxLength="{StaticResource ChatAboutMaxLength}"
                              PlaceholderText="{CustomResource DescriptionOptionalPlaceholder}"
                              TextWrapping="Wrap"
                              AcceptsReturn="True"
@@ -85,39 +83,34 @@
 
                 <controls:HeaderedControl x:Name="ChatBasicPanel"
                                           Footer="{x:Bind ConvertHistory(ViewModel.IsAllHistoryAvailable), Mode=OneWay}">
-                    <controls:BadgeButton x:Name="ChatType"
-                                          Content="{CustomResource GroupType}"
-                                          Click="{x:Bind ViewModel.EditType}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          IsChevronVisible="True" />
+                    <controls:SettingsButton x:Name="ChatType"
+                                             Content="{CustomResource GroupType}"
+                                             Click="{x:Bind ViewModel.EditType}"
+                                             IsChevronVisible="True" />
 
-                    <controls:BadgeButton x:Name="ChatLinked"
-                                          Content="{CustomResource Discussion}"
-                                          Click="{x:Bind ViewModel.EditLinkedChat}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          IsChevronVisible="True" />
+                    <controls:SettingsButton x:Name="ChatLinked"
+                                             Content="{CustomResource Discussion}"
+                                             Click="{x:Bind ViewModel.EditLinkedChat}"
+                                             IsChevronVisible="True" />
 
-                    <controls:BadgeButton x:Name="ChatHistory"
-                                          Content="{CustomResource ChatHistory}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE8BD;">
-                        <controls:BadgeButton.Badge>
+                    <controls:SettingsButton x:Name="ChatHistory"
+                                             Content="{CustomResource ChatHistory}"
+                                             Glyph="&#xE8BD;">
+                        <controls:SettingsButton.Badge>
                             <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.AllHistoryAvailableOptions}"
-                                                       SelectedIndex="{x:Bind ViewModel.IsAllHistoryAvailable, Mode=TwoWay}"
-                                                       DisplayMemberPath="Text" />
-                        </controls:BadgeButton.Badge>
-                    </controls:BadgeButton>
+                                                       SelectedIndex="{x:Bind ViewModel.IsAllHistoryAvailable, Mode=TwoWay}" />
+                        </controls:SettingsButton.Badge>
+                    </controls:SettingsButton>
 
-                    <controls:BadgeButton x:Name="ChannelColor"
-                                          Content="{CustomResource ChangeChannelNameColor2}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="{x:Bind ViewModel.EditColor}"
-                                          Glyph="&#xE2B1;"
-                                          IsChevronVisible="True">
-                        <controls:BadgeButton.Badge>
+                    <controls:SettingsButton x:Name="ChannelColor"
+                                             Content="{CustomResource ChangeChannelNameColor2}"
+                                             Click="{x:Bind ViewModel.EditColor}"
+                                             Glyph="&#xE2B1;"
+                                             IsChevronVisible="True">
+                        <controls:SettingsButton.Badge>
                             <controls:ProfileColorBadge x:Name="ProfileColor" />
-                        </controls:BadgeButton.Badge>
-                    </controls:BadgeButton>
+                        </controls:SettingsButton.Badge>
+                    </controls:SettingsButton>
 
                     <Grid x:Name="ChannelAutoTranslate"
                           BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
@@ -126,132 +119,121 @@
                                                IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
                                                IsChecked="{x:Bind ViewModel.HasAutomaticTranslation, Mode=OneWay}"
                                                Content="{CustomResource ChannelAutotranslation}"
-                                               Style="{StaticResource SettingsCheckBoxStyle}" />
+                                               Style="{StaticResource SettingsCheckBoxStyle}"
+                                               CornerRadius="4" />
                         <TextBlock x:Name="ChannelAutoTranslateLock"
                                    x:Load="{x:Bind ViewModel.HasAutomaticTransationLock, Mode=OneWay}"
                                    Text="&#xEA25;"
                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    FontSize="20"
-                                   Padding="20,12,0,0"
+                                   Padding="20,14,0,0"
                                    IsHitTestVisible="False" />
                     </Grid>
 
-                    <controls:BadgeButton x:Name="GroupTopics"
-                                          Content="{CustomResource Topics}"
-                                          Click="{x:Bind ViewModel.Topics}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEA67;"
-                                          IsChevronVisible="True" />
+                    <controls:SettingsButton x:Name="GroupTopics"
+                                             Content="{CustomResource Topics}"
+                                             Click="{x:Bind ViewModel.Topics}"
+                                             Glyph="&#xEA67;"
+                                             IsChevronVisible="True" />
 
-                    <controls:BadgeButton x:Name="ChannelFeedbackGroup"
-                                          Content="{CustomResource PostSuggestions}"
-                                          Click="{x:Bind ViewModel.FeedbackGroup}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE992;"
-                                          IsChevronVisible="True">
-                        <controls:BadgeButton.Badge>
+                    <controls:SettingsButton x:Name="ChannelDirectMessagesGroup"
+                                             Content="{CustomResource PostSuggestions}"
+                                             Click="{x:Bind ViewModel.DirectMessagesGroup}"
+                                             Glyph="&#xE992;"
+                                             IsChevronVisible="True">
+                        <controls:SettingsButton.Badge>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <controls:PremiumStarCount x:Name="ChannelFeedbackGroupStars"
+                                <controls:PremiumStarCount x:Name="ChannelDirectMessagesGroupStars"
                                                            Visibility="Collapsed"
                                                            Margin="8,-4,4,-6"
                                                            Width="20" />
-                                <TextBlock x:Name="ChannelFeedbackGroupStarCount"
+                                <TextBlock x:Name="ChannelDirectMessagesGroupStarCount"
                                            VerticalAlignment="Center"
                                            Grid.Column="1" />
                             </Grid>
-                        </controls:BadgeButton.Badge>
-                    </controls:BadgeButton>
+                        </controls:SettingsButton.Badge>
+                    </controls:SettingsButton>
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl x:Name="ChannelFeedbackGroupRoot"
+                <controls:HeaderedControl x:Name="ChannelDirectMessagesGroupRoot"
                                           Visibility="Collapsed">
-                    <Button Click="{x:Bind ViewModel.OpenFeedbackGroup}"
+                    <Button Click="{x:Bind ViewModel.OpenDirectMessagesGroup}"
                             Style="{StaticResource EmptyButtonStyle}"
                             AutomationProperties.Name="{CustomResource ProfileChannel}">
-                        <cells:ChatCell x:Name="ChannelFeedbackGroupCell"
+                        <cells:ChatCell x:Name="ChannelDirectMessagesGroupCell"
                                         Stroke="{ThemeResource ChatLastMessageStateBrush}" />
                     </Button>
                 </controls:HeaderedControl>
 
 
                 <controls:HeaderedControl x:Name="GroupMembersPanel">
-                    <controls:BadgeButton x:Name="Reactions"
-                                          Content="{CustomResource Reactions}"
-                                          Click="{x:Bind ViewModel.Reactions}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xE987;" />
+                    <controls:SettingsButton x:Name="Reactions"
+                                             Content="{CustomResource Reactions}"
+                                             Click="{x:Bind ViewModel.Reactions}"
+                                             IsChevronVisible="True"
+                                             Glyph="&#xE987;" />
 
-                    <controls:BadgeButton x:Name="InviteLinks"
-                                          Content="{CustomResource InviteLinks}"
-                                          Click="{x:Bind ViewModel.InviteLinks}"
-                                          Badge="{x:Bind ViewModel.InviteLinksCount, Mode=OneWay}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xE9F8;" />
+                    <controls:SettingsButton x:Name="InviteLinks"
+                                             Content="{CustomResource InviteLinks}"
+                                             Click="{x:Bind ViewModel.InviteLinks}"
+                                             Badge="{x:Bind ViewModel.InviteLinksCount, Mode=OneWay}"
+                                             IsChevronVisible="True"
+                                             Glyph="&#xE9F8;" />
 
-                    <controls:BadgeButton x:Name="Permissions"
-                                          Content="{CustomResource ChannelPermissions}"
-                                          Click="{x:Bind ViewModel.Kicked}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xE192;" />
+                    <controls:SettingsButton x:Name="Permissions"
+                                             Content="{CustomResource ChannelPermissions}"
+                                             Click="{x:Bind ViewModel.Kicked}"
+                                             IsChevronVisible="True"
+                                             Glyph="&#xE192;" />
 
-                    <controls:BadgeButton x:Name="Admins"
-                                          Content="{CustomResource ChannelAdministrators}"
-                                          Click="{x:Bind ViewModel.Admins}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xE983;" />
+                    <controls:SettingsButton x:Name="Admins"
+                                             Content="{CustomResource ChannelAdministrators}"
+                                             Click="{x:Bind ViewModel.Admins}"
+                                             IsChevronVisible="True"
+                                             Glyph="&#xE983;" />
 
-                    <controls:BadgeButton x:Name="Members"
-                                          Content="{CustomResource ChannelMembers}"
-                                          Click="{x:Bind ViewModel.Members}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xE716;" />
+                    <controls:SettingsButton x:Name="Members"
+                                             Content="{CustomResource ChannelMembers}"
+                                             Click="{x:Bind ViewModel.Members}"
+                                             IsChevronVisible="True"
+                                             Glyph="&#xE716;" />
 
-                    <controls:BadgeButton x:Name="Blacklist"
-                                          Content="{CustomResource ChannelBlacklist}"
-                                          Click="{x:Bind ViewModel.Banned}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xF166;" />
+                    <controls:SettingsButton x:Name="Blacklist"
+                                             Content="{CustomResource ChannelBlacklist}"
+                                             Click="{x:Bind ViewModel.Banned}"
+                                             IsChevronVisible="True"
+                                             Glyph="&#xF166;" />
 
-                    <controls:BadgeButton x:Name="Statistics"
-                                          Visibility="Collapsed"
-                                          Content="{CustomResource Statistics}"
-                                          Click="{x:Bind ViewModel.Statistics}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xE9D9;" />
+                    <controls:SettingsButton x:Name="Statistics"
+                                             Visibility="Collapsed"
+                                             Content="{CustomResource Statistics}"
+                                             Click="{x:Bind ViewModel.Statistics}"
+                                             IsChevronVisible="True"
+                                             Glyph="&#xE9D9;" />
 
-                    <controls:BadgeButton x:Name="EventLog"
-                                          Content="{CustomResource EventLog}"
-                                          Click="{x:Bind ViewModel.EventLog}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xE984;" />
+                    <controls:SettingsButton x:Name="EventLog"
+                                             Content="{CustomResource EventLog}"
+                                             Click="{x:Bind ViewModel.EventLog}"
+                                             IsChevronVisible="True"
+                                             Glyph="&#xE984;" />
 
-                    <controls:BadgeButton x:Name="AffiliatePrograms"
-                                          Content="{CustomResource ChannelAffiliatePrograms}"
-                                          Click="{x:Bind ViewModel.AffiliatePrograms}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xEAA6;" />
+                    <controls:SettingsButton x:Name="AffiliatePrograms"
+                                             Content="{CustomResource ChannelAffiliatePrograms}"
+                                             Click="{x:Bind ViewModel.AffiliatePrograms}"
+                                             IsChevronVisible="True"
+                                             Glyph="&#xEAA6;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="DeletePanel">
-                    <controls:BadgeButton x:Name="Delete"
-                                          Click="{x:Bind ViewModel.Delete}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Foreground="{ThemeResource DangerButtonBackground}"
-                                          Glyph="&#xE74D;" />
+                    <controls:SettingsButton x:Name="Delete"
+                                             Click="{x:Bind ViewModel.Delete}"
+                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Glyph="&#xE74D;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

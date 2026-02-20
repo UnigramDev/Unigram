@@ -57,4 +57,35 @@ namespace winrt::Telegram::Native::implementation
 
         return old_seed;
     }
+
+    float LokiRng::Random(uint32_t seed0, uint32_t seed1, uint32_t seed2)
+    {
+        uint32_t seed = ((uint32_t)seed0) * 1099087573U;
+        uint32_t seedb = ((uint32_t)seed1) * 1099087573U;
+        uint32_t seedc = ((uint32_t)seed2) * 1099087573U;
+
+        // Round 1: Randomise seed
+        uint32_t z1 = tausStep(seed, 13, 19, 12, 429496729U);
+        uint32_t z2 = tausStep(seed, 2, 25, 4, 4294967288U);
+        uint32_t z3 = tausStep(seed, 3, 11, 17, 429496280U);
+        uint32_t z4 = (1664525 * seed + 1013904223U);
+
+        // Round 2: Randomise seed again using second seed
+        uint32_t r1 = (z1 ^ z2 ^ z3 ^ z4 ^ seedb);
+
+        z1 = tausStep(r1, 13, 19, 12, 429496729U);
+        z2 = tausStep(r1, 2, 25, 4, 4294967288U);
+        z3 = tausStep(r1, 3, 11, 17, 429496280U);
+        z4 = (1664525 * r1 + 1013904223U);
+
+        // Round 3: Randomise seed again using third seed
+        r1 = (z1 ^ z2 ^ z3 ^ z4 ^ seedc);
+
+        z1 = tausStep(r1, 13, 19, 12, 429496729U);
+        z2 = tausStep(r1, 2, 25, 4, 4294967288U);
+        z3 = tausStep(r1, 3, 11, 17, 429496280U);
+        z4 = (1664525 * r1 + 1013904223U);
+
+        return (z1 ^ z2 ^ z3 ^ z4) * 2.3283064365387e-10f;
+    }
 }

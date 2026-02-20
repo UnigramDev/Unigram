@@ -22,6 +22,10 @@
                              Color="#545a68" />
             <SolidColorBrush x:Key="PlaceholderBackgroundBrush"
                              Color="#262a2d" />
+
+            <media:SolidGaussianBrush x:Key="MessageServiceBackgroundBrush"
+                                      FallbackColor="#667A8A96"
+                                      TintColor="#78787878" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <x:String x:Key="BreadcrumbBarChevronLeftToRight">&#xE0E3;</x:String>
@@ -42,6 +46,10 @@
                              Color="#c2c2c2" />
             <SolidColorBrush x:Key="PlaceholderBackgroundBrush"
                              Color="#f6f6f6" />
+
+            <media:SolidGaussianBrush x:Key="MessageServiceBackgroundBrush"
+                                      FallbackColor="#667A8A96"
+                                      TintColor="#34000000" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -65,9 +73,6 @@
     <!--<x:Double x:Key="MessageFontSize">15</x:Double>-->
 
     <Color x:Key="MessageServiceBackgroundColor">#667A8A96</Color>
-
-    <media:SolidGaussianBrush x:Key="MessageServiceBackgroundBrush"
-                              FallbackColor="#667A8A96" />
 
     <SolidColorBrush x:Key="MessageServiceForegroundBrush"
                      Color="#FFFFFFFF" />
@@ -99,7 +104,7 @@
                 Value="Transparent" />
         <!--<Setter Property="Foreground" Value="{ThemeResource MessageMediaForegroundBrush}" />-->
         <Setter Property="BorderBrush"
-                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                Value="{ThemeResource TextFillColorPrimaryBrush}" />
         <Setter Property="BorderThickness"
                 Value="0" />
         <Setter Property="Padding"
@@ -221,7 +226,7 @@
                 Value="Transparent" />
         <!--<Setter Property="Foreground" Value="{ThemeResource MessageMediaForegroundBrush}" />-->
         <Setter Property="BorderBrush"
-                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                Value="{ThemeResource TextFillColorPrimaryBrush}" />
         <Setter Property="BorderThickness"
                 Value="0" />
         <Setter Property="Padding"
@@ -356,7 +361,7 @@
         <Setter Property="Foreground"
                 Value="#FFFFFF" />
         <Setter Property="BorderBrush"
-                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                Value="{ThemeResource TextFillColorPrimaryBrush}" />
         <Setter Property="BorderThickness"
                 Value="0" />
         <Setter Property="Padding"
@@ -494,7 +499,7 @@
         <Setter Property="Foreground"
                 Value="#FFFFFF" />
         <Setter Property="BorderBrush"
-                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                Value="{ThemeResource TextFillColorPrimaryBrush}" />
         <Setter Property="BorderThickness"
                 Value="0" />
         <Setter Property="Padding"

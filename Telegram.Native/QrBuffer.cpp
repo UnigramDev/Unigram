@@ -21,10 +21,11 @@ namespace winrt::Telegram::Native::implementation
         return ReplaceElements(data) * pixel;
     }
 
-    winrt::Telegram::Native::QrBuffer QrBuffer::FromString(hstring text) {
+    winrt::Telegram::Native::QrBuffer QrBuffer::FromString(hstring text, int minVersion, int maxVersion) {
         auto data = QrData();
         const auto utf8 = winrt::to_string(text);
-        const auto qr = QrCode::encodeText(utf8.c_str(), QrCode::Ecc::MEDIUM);
+        const auto segs = QrSegment::makeSegments(utf8.c_str());
+        const auto qr = QrCode::encodeSegments(segs, QrCode::Ecc::MEDIUM, minVersion, maxVersion);
         data.size = qr.getSize();
 
         data.values.reserve(data.size * data.size);

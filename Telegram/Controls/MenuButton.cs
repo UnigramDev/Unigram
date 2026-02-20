@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Numerics;
 using Telegram.Navigation;
 using Windows.UI;
@@ -106,12 +107,14 @@ namespace Telegram.Controls
             _shape3 = shape3;
             _visual = visual1;
 
+            // TODO: Name
             var layoutRoot = GetTemplateChild("LayoutRoot") as UIElement;
             if (layoutRoot != null)
             {
                 ElementCompositionPreview.SetElementChildVisual(layoutRoot, visual1);
             }
 
+            // TODO: Name
             var presenter = GetTemplateChild("Presenter") as UIElement;
             if (presenter != null)
             {

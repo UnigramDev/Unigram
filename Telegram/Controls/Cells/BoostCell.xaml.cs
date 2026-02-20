@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Services;
@@ -54,20 +55,20 @@ namespace Telegram.Controls.Cells
                 {
                     case ChatBoostSourcePremium:
                     case ChatBoostSourceGiftCode:
-                        Photo.SetUser(clientService, user, 36);
+                        Photo.Source = ProfilePictureSource.User(clientService, user);
                         break;
                     case ChatBoostSourceGiveaway giveaway:
                         if (giveaway.IsUnclaimed)
                         {
-                            Photo.Source = PlaceholderImage.GetGlyph(Icons.PersonDeleteFilled);
+                            Photo.Source = ProfilePictureSourceText.GetGlyph(Icons.PersonDeleteFilled);
                         }
                         else if (giveaway.UserId == 0)
                         {
-                            Photo.Source = PlaceholderImage.GetGlyph(Icons.PersonQuestionMarkFilled);
+                            Photo.Source = ProfilePictureSourceText.GetGlyph(Icons.PersonQuestionMarkFilled);
                         }
                         else
                         {
-                            Photo.SetUser(clientService, user, 36);
+                            Photo.Source = ProfilePictureSource.User(clientService, user);
                         }
                         break;
                 }

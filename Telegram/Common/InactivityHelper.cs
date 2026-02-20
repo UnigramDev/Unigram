@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Threading;
 using Telegram.Native;
@@ -15,7 +16,7 @@ namespace Telegram.Common
         private static Timer _timer;
         private static int _timeout = 60 * 1000;
 
-        private static int _lastTime = int.MinValue;
+        private static uint _lastTime = uint.MinValue;
 
         public static void Initialize(int timeout)
         {
@@ -34,9 +35,9 @@ namespace Telegram.Common
                         _timer = new Timer(OnTick, null, 0, 1000);
                     }
                 }
-                else if (_timer != null)
+                else
                 {
-                    _timer.Dispose();
+                    _timer?.Dispose();
                     _timer = null;
                 }
             }

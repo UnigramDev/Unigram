@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Threading.Tasks;
 using Telegram.Navigation.Services;
@@ -43,11 +44,11 @@ namespace Telegram.Common
             }
         }
 
-        public static void NavigateToWebApp(this INavigationService service, User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, WebAppOpenMode openMode = null, Chat sourceChat = null, InternalLinkType sourceLink = null)
+        public static void NavigateToWebApp(this INavigationService service, User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, WebAppOpenMode openMode = null, Chat sourceChat = null, InternalLinkType sourceLink = null, string buttonText = null)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToWebApp(botUser, url, launchId, menuBot, openMode, sourceChat, sourceLink);
+                serviceEx.NavigateToWebApp(botUser, url, launchId, menuBot, openMode, sourceChat, sourceLink, buttonText);
             }
         }
 
@@ -91,19 +92,19 @@ namespace Telegram.Common
             }
         }
 
-        public static void NavigateToSender(this INavigationService service, MessageSender sender, NavigationTransitionInfo infoOverride = null)
+        public static void NavigateToSender(this INavigationService service, MessageSender sender, NavigationState state = null, NavigationTransitionInfo infoOverride = null)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToSender(sender, infoOverride);
+                serviceEx.NavigateToSender(sender, state, infoOverride);
             }
         }
 
-        public static void NavigateToUser(this INavigationService service, long userId, bool toChat = false)
+        public static void NavigateToUser(this INavigationService service, long userId, bool toChat = false, NavigationState state = null)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToUser(userId, toChat);
+                serviceEx.NavigateToUser(userId, toChat, state);
             }
         }
 
@@ -120,10 +121,7 @@ namespace Telegram.Common
             if (service.Content is UIElement element)
             {
                 var mainPage = element.GetParent<MainPage>();
-                if (mainPage != null)
-                {
-                    mainPage.ShowTopicList(chat);
-                }
+                mainPage?.ShowTopicList(chat);
             }
         }
 
@@ -167,14 +165,22 @@ namespace Telegram.Common
             }
         }
 
-        public static Task<PasswordState> NavigateToPasswordAsync(this INavigationService service)
+        public static Task<PasswordState> NavigateToPasswordSetupAsync(this INavigationService service)
         {
             if (service is TLNavigationService serviceEx)
             {
-                return serviceEx.NavigateToPasswordAsync();
+                return serviceEx.NavigateToPasswordSetupAsync();
             }
 
             return Task.FromResult<PasswordState>(null);
+        }
+
+        public static void NavigateToPasswordSetup(this INavigationService service)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                _ = serviceEx.NavigateToPasswordSetupAsync();
+            }
         }
 
         public static void NavigateToPassword(this INavigationService service)
@@ -183,6 +189,16 @@ namespace Telegram.Common
             {
                 _ = serviceEx.NavigateToPasswordAsync();
             }
+        }
+
+        public static Task<PasswordState> NavigateToPasswordAsync(this INavigationService service)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                return serviceEx.NavigateToPasswordAsync();
+            }
+
+            return Task.FromResult<PasswordState>(null);
         }
 
         public static void ShowLimitReached(this INavigationService service, PremiumLimitType limit)
@@ -209,6 +225,14 @@ namespace Telegram.Common
             }
 
             return Task.CompletedTask;
+        }
+
+        public static void ShowPromo(this INavigationService service, PremiumFeature feature, PremiumSource source = null)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.ShowPromo(feature, source);
+            }
         }
 
         public static void RemoveChatFromStack(this INavigationService service, long target)
@@ -252,9 +276,9 @@ namespace Telegram.Common
             return currentChat.ChatId == chatId && currentChat.MessageTopic.AreTheSame(topic);
         }
 
-        public static ChatMessageTopic GetChatFromBackStack(this INavigationService service, bool currentPageOnly = false, Type currentPageType = null)
+        public static ChatMessageTopic GetChatFromBackStack(this INavigationService service, bool currentPageOnly = false, params Type[] currentPageType)
         {
-            if (service.CurrentPageType == typeof(ChatPage) || service.CurrentPageType == currentPageType)
+            if (service.CurrentPageType == typeof(ChatPage) || Array.IndexOf(currentPageType, service.CurrentPageType) != -1)
             {
                 if (TryGetChatFromParameter(service, service.CurrentPageParam, out ChatMessageTopic chatId))
                 {
@@ -320,6 +344,29 @@ namespace Telegram.Common
         }
 
         public static void ReplaceChatInBackStack(this INavigationService service, long oldChatId, long newChatId)
+        {
+            for (int i = service.Frame.BackStackDepth - 1; i >= 0; i--)
+            {
+                var item = service.Frame.BackStack[i];
+
+                if (service.TryGetChatFromParameter(item.Parameter, out ChatMessageTopic chatId))
+                {
+                    if (chatId.ChatId == oldChatId)
+                    {
+                        if (item.Parameter is string cacheKey && service.CacheKeyToParameter.ContainsKey(cacheKey))
+                        {
+                            service.CacheKeyToParameter[cacheKey] = newChatId;
+                        }
+                        else
+                        {
+                            service.Frame.BackStack[i] = new PageStackEntry(item.SourcePageType, newChatId, item.NavigationTransitionInfo);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void ReplaceChatInBackStack(this INavigationService service, long oldChatId, ChatMessageTopic newChatId)
         {
             for (int i = service.Frame.BackStackDepth - 1; i >= 0; i--)
             {

@@ -1,0 +1,40 @@
+namespace Telegram.Native.Calls
+{
+    [version(1.0)]
+    [uuid(7825C870-2A9F-43BE-B1AB-4D8DE9F214CB)]
+    interface VoipCallServerType
+    {
+
+    };
+
+    runtimeclass VoipCallServerTypeTelegramReflector : VoipCallServerType
+    {
+        VoipCallServerTypeTelegramReflector(String peerTag, Boolean isTcp);
+
+        String PeerTag{ get; };
+        Boolean IsTcp{ get; };
+    }
+
+    runtimeclass VoipCallServerTypeWebrtc : VoipCallServerType
+    {
+        VoipCallServerTypeWebrtc(String username, String password, Boolean supportsTurn, Boolean supportsStun);
+
+        String Username{ get; };
+        String Password{ get; };
+        Boolean SupportsTurn{ get; };
+        Boolean SupportsStun{ get; };
+    }
+
+
+    [default_interface]
+    runtimeclass VoipCallServer
+    {
+        VoipCallServer(Int64 id, String ipAddress, String ipv6Address, Int32 port, VoipCallServerType type);
+
+        Int64 Id{ get; };
+        String IpAddress{ get; };
+        String Ipv6Address{ get; };
+        Int32 Port{ get; };
+        VoipCallServerType Type{ get; };
+    }
+}

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace Telegram.Services
             await UpdateAsync(false);
         }
 
-        public static async Task<bool> LaunchAsync(INavigationService navigation, bool checkAvailability)
+        public static async Task<bool> LaunchAsync(bool checkAvailability)
         {
             if (_disabled || !_updateLock.Wait(0))
             {
@@ -103,30 +104,34 @@ namespace Telegram.Services
 
                     Logger.Info($"Dispatching for version {update.Version}");
 
-                    // Terminate notify icon to make the update process smoother
-                    _ = NotifyIcon.ExitAsync();
-
-                    // If package manager fails, we fall back on App Installer
-                    await navigation.Dispatcher.DispatchAsync(async () =>
+                    var navigation = WindowContext.Main?.GetNavigationService();
+                    if (navigation != null)
                     {
-                        // Try to install the update first using the package manager
-                        var installed = await InstallUpdateAsync(navigation, update.File);
-                        if (installed is false)
+                        // Terminate notify icon to make the update process smoother
+                        _ = BridgeApplicationContext.ExitAsync();
+
+                        await navigation.Dispatcher.DispatchAsync(async () =>
                         {
-                            // But only if App Installer is available
-                            var result = checkAvailability
-                                    ? await Launcher.QueryFileSupportAsync(update.File)
-                                    : LaunchQuerySupportStatus.Available;
-
-                            Logger.Info($"QueryFileSupportAsync: {result}");
-
-                            if (result == LaunchQuerySupportStatus.Available)
+                            // Try to install the update first using the package manager
+                            // If package manager fails, we fall back on App Installer
+                            var installed = await InstallUpdateAsync(navigation, update.File);
+                            if (installed is false)
                             {
-                                await Launcher.LaunchFileAsync(update.File);
-                                await BootStrapper.ConsolidateAsync();
+                                // But only if App Installer is available
+                                var result = checkAvailability
+                                        ? await Launcher.QueryFileSupportAsync(update.File)
+                                        : LaunchQuerySupportStatus.Available;
+
+                                Logger.Info($"QueryFileSupportAsync: {result}");
+
+                                if (result == LaunchQuerySupportStatus.Available)
+                                {
+                                    await Launcher.LaunchFileAsync(update.File);
+                                    await BootStrapper.ConsolidateAsync();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
 
                     _updateLock.Release();
                     return true;
@@ -134,7 +139,7 @@ namespace Telegram.Services
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                Logger.Exception(ex);
             }
 
             _updateLock.Release();
@@ -178,7 +183,7 @@ namespace Telegram.Services
                 if (result?.ExtendedErrorCode is not null)
                     Logger.Info(result.ErrorText);
 
-                Logger.Error(ex);
+                Logger.Exception(ex);
                 return false;
             }
             finally
@@ -353,7 +358,7 @@ namespace Telegram.Services
                     else if (set.Document.Local.IsDownloadingCompleted)
                     {
                         // Delete the file from chat cache as it isn't needed anymore
-                        _clientService.Send(new DeleteFileW(set.Document.Id));
+                        _clientService.Send(new DeleteFile(set.Document.Id));
                     }
                 }
             }

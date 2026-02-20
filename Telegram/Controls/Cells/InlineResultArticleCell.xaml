@@ -30,6 +30,11 @@
                                      HorizontalAlignment="Center"
                                      VerticalAlignment="Center"
                                      Shape="None" />
+            <controls:ImageView x:Name="Image"
+                                Width="48"
+                                Height="48"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
         </Grid>
         <TextBlock x:Name="Title"
                    Style="{StaticResource BaseTextBlockStyle}"

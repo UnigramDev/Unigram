@@ -24,17 +24,15 @@
                 <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/Passcode.tgs" />
 
                 <controls:HeaderedControl Footer="{CustomResource ChangePasscodeInfo}">
-                    <controls:BadgeButton Click="{x:Bind ViewModel.Toggle}"
-                                          Content="{CustomResource DisablePasscode}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Foreground="{ThemeResource DangerButtonBackground}"
-                                          Glyph="&#xE9A6;" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.Toggle}"
+                                             Content="{CustomResource DisablePasscode}"
+                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Glyph="&#xE9A6;" />
 
-                    <controls:BadgeButton Click="{x:Bind ViewModel.Edit}"
-                                          IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
-                                          Content="{CustomResource ChangePasscode}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE98C;" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.Edit}"
+                                             IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
+                                             Content="{CustomResource ChangePasscode}"
+                                             Glyph="&#xE98C;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Footer="{CustomResource AutoLockInfo}"
@@ -45,15 +43,13 @@
                               Content="{CustomResource UnlockWindowsHello}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <controls:BadgeButton Content="{CustomResource AutoLock}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE916;">
-                        <controls:BadgeButton.Badge>
+                    <controls:SettingsButton Content="{CustomResource AutoLock}"
+                                             Glyph="&#xE916;">
+                        <controls:SettingsButton.Badge>
                             <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.AutolockTimeoutOptions}"
-                                                       SelectedIndex="{x:Bind ViewModel.AutolockTimeout, Mode=TwoWay}"
-                                                       DisplayMemberPath="Text" />
-                        </controls:BadgeButton.Badge>
-                    </controls:BadgeButton>
+                                                       SelectedIndex="{x:Bind ViewModel.AutolockTimeout, Mode=TwoWay}" />
+                        </controls:SettingsButton.Badge>
+                    </controls:SettingsButton>
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

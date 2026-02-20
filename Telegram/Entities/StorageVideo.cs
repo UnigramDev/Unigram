@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Threading.Tasks;
 using Telegram.Converters;
@@ -11,7 +12,6 @@ using Telegram.Native;
 using Windows.Foundation;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
-using static Telegram.Services.GenerationService;
 
 namespace Telegram.Entities
 {
@@ -158,7 +158,7 @@ namespace Telegram.Entities
             int originalWidth = this.originalWidth;
             int originalHeight = this.originalHeight;
 
-            if (_editState is BitmapEditState state && state.Rectangle is Rect rectangle)
+            if (_editState is ImageGeneration state && state.Rectangle is Rect rectangle)
             {
                 originalWidth = (int)rectangle.Width;
                 originalHeight = (int)rectangle.Height;
@@ -225,7 +225,7 @@ namespace Telegram.Entities
             int originalWidth = Width;
             int originalHeight = Height;
 
-            if (_editState is BitmapEditState state && state.Rectangle is Rect rectangle)
+            if (_editState is ImageGeneration state && state.Rectangle is Rect rectangle)
             {
                 originalWidth = (int)rectangle.Width;
                 originalHeight = (int)rectangle.Height;
@@ -388,9 +388,9 @@ namespace Telegram.Entities
             }
         }
 
-        public VideoConversion GetConversion()
+        public VideoGeneration GetGeneration()
         {
-            var conversion = new VideoConversion();
+            var conversion = new VideoGeneration();
             conversion.Mute = IsMuted;
 
             var state = _editState;

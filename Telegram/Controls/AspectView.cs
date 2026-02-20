@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Td.Api;
@@ -51,6 +52,8 @@ namespace Telegram.Controls
 
     public partial class AspectView : Grid
     {
+        public Size ActualConstraint { get; set; } = Size.Empty;
+
         #region Constraint
 
         public object Constraint
@@ -124,297 +127,258 @@ namespace Telegram.Controls
             var height = 0.0;
 
             var constraint = Constraint;
-            if (constraint is MessageViewModel viewModel)
-            {
-                //ttl = viewModel.SelfDestructTime > 0;
-                constraint = viewModel.Content;
 
-                if (viewModel.MediaAlbumId != 0 && Tag is true)
-                {
-                    return base.MeasureOverride(availableSize);
-                }
-            }
-            else if (constraint is Message message)
+            switch (constraint)
             {
-                //ttl = message.SelfDestructTime > 0;
-                constraint = message.Content;
-
-                if (message.MediaAlbumId != 0 && Tag is true)
-                {
-                    return base.MeasureOverride(availableSize);
-                }
-            }
-            else if (Constraint is ViewModels.Chats.ChartViewData)
-            {
-                width = 640;
-                height = 420;
-            }
-            else if (Constraint is Size size)
-            {
-                width = size.Width;
-                height = size.Height;
-            }
-            else if (Constraint is MaximumSize maximumSize)
-            {
-                width = maximumSize.Width;
-                height = maximumSize.Height;
+                case MessageViewModel viewModel:
+                    constraint = viewModel.Content;
+                    break;
+                case Message message:
+                    constraint = message.Content;
+                    break;
+                case ViewModels.Chats.ChartViewData:
+                    width = 640;
+                    height = 420;
+                    break;
+                case Size size:
+                    width = size.Width;
+                    height = size.Height;
+                    break;
+                case MaximumSize maximumSize:
+                    width = maximumSize.Width;
+                    height = maximumSize.Height;
+                    break;
             }
 
             #region MessageContent
 
-            if (constraint is MessageAnimation animationMessage)
+            switch (constraint)
             {
-                constraint = animationMessage.Animation;
-            }
-            else if (constraint is MessageInvoice invoiceMessage)
-            {
-                if (invoiceMessage.PaidMedia is PaidMediaPhoto paidMediaPhoto)
-                {
+                case MessageAnimation animationMessage:
+                    constraint = animationMessage.Animation;
+                    break;
+                case MessageInvoice invoiceMessage:
+                    if (invoiceMessage.PaidMedia is PaidMediaPhoto invoicePaidMediaPhoto)
+                    {
+                        constraint = invoicePaidMediaPhoto.Photo;
+                    }
+                    else if (invoiceMessage.PaidMedia is PaidMediaVideo invoicePaidMediaVideo)
+                    {
+                        constraint = invoicePaidMediaVideo.Video;
+                    }
+                    else if (invoiceMessage.PaidMedia is PaidMediaPreview invoicePaidMediaPreview)
+                    {
+                        width = invoicePaidMediaPreview.Width;
+                        height = invoicePaidMediaPreview.Height;
+                    }
+                    else
+                    {
+                        constraint = invoiceMessage.ProductInfo.Photo;
+                    }
+                    break;
+                case MessageGame gameMessage:
+                    if (gameMessage.Game.Animation != null)
+                    {
+                        constraint = gameMessage.Game.Animation;
+                    }
+                    else if (gameMessage.Game.Photo != null)
+                    {
+                        constraint = gameMessage.Game.Photo;
+                    }
+                    break;
+                case MessageLocation locationMessage:
+                    constraint = locationMessage.Location;
+                    break;
+                case MessagePhoto photoMessage:
+                    constraint = photoMessage.Photo;
+                    break;
+                case MessageSticker stickerMessage:
+                    constraint = stickerMessage.Sticker;
+                    break;
+                case MessageAnimatedEmoji animatedEmojiMessage:
+                    if (animatedEmojiMessage.AnimatedEmoji.Sticker != null)
+                    {
+                        constraint = animatedEmojiMessage.AnimatedEmoji.Sticker;
+                    }
+                    else
+                    {
+                        width = animatedEmojiMessage.AnimatedEmoji.StickerWidth;
+                        height = animatedEmojiMessage.AnimatedEmoji.StickerHeight;
+                    }
+                    break;
+                case MessageText textMessage:
+                    switch (textMessage?.LinkPreview?.Type)
+                    {
+                        case LinkPreviewTypeBackground:
+                            width = 900;
+                            height = 1600;
+                            break;
+                        case LinkPreviewTypeAnimation previewAnimation:
+                            constraint = previewAnimation.Animation;
+                            break;
+                        case LinkPreviewTypeDocument previewDocument:
+                            constraint = previewDocument.Document;
+                            break;
+                        case LinkPreviewTypeEmbeddedAnimationPlayer previewEmbeddedAnimationPlayer:
+                            width = previewEmbeddedAnimationPlayer.Width;
+                            height = previewEmbeddedAnimationPlayer.Height;
+                            break;
+                        case LinkPreviewTypeEmbeddedVideoPlayer previewEmbeddedVideoPlayer:
+                            width = previewEmbeddedVideoPlayer.Width;
+                            height = previewEmbeddedVideoPlayer.Height;
+                            break;
+                        case LinkPreviewTypePhoto previewPhoto:
+                            constraint = previewPhoto.Photo;
+                            break;
+                        case LinkPreviewTypeSticker previewSticker:
+                            constraint = previewSticker.Sticker;
+                            break;
+                        case LinkPreviewTypeVideo previewVideo:
+                            constraint = previewVideo.Video;
+                            break;
+                        case LinkPreviewTypeVideoNote videoNote:
+                            constraint = videoNote.VideoNote;
+                            break;
+                        case LinkPreviewTypeApp app:
+                            constraint = app.Photo;
+                            break;
+                        case LinkPreviewTypeArticle article:
+                            constraint = article.Photo;
+                            break;
+                        case LinkPreviewTypeChannelBoost channelBoost:
+                            constraint = channelBoost.Photo;
+                            break;
+                        case LinkPreviewTypeChat chat:
+                            constraint = chat.Photo;
+                            break;
+                        case LinkPreviewTypeSupergroupBoost supergroupBoost:
+                            constraint = supergroupBoost.Photo;
+                            break;
+                        case LinkPreviewTypeUser user:
+                            constraint = user.Photo;
+                            break;
+                        case LinkPreviewTypeVideoChat videoChat:
+                            constraint = videoChat.Photo;
+                            break;
+                        case LinkPreviewTypeWebApp webApp:
+                            constraint = webApp.Photo;
+                            break;
+                    }
+                    break;
+                case MessageVenue venueMessage:
+                    constraint = venueMessage.Venue;
+                    break;
+                case MessageVideo videoMessage:
+                    constraint = videoMessage.Video;
+                    break;
+                case MessageVideoNote videoNoteMessage:
+                    constraint = videoNoteMessage.VideoNote;
+                    break;
+                case MessageChatChangePhoto chatChangePhoto:
+                    constraint = chatChangePhoto.Photo;
+                    break;
+                case PaidMediaPhoto paidMediaPhoto:
                     constraint = paidMediaPhoto.Photo;
-                }
-                else if (invoiceMessage.PaidMedia is PaidMediaVideo paidMediaVideo)
-                {
+                    break;
+                case PaidMediaVideo paidMediaVideo:
                     constraint = paidMediaVideo.Video;
-                }
-                else if (invoiceMessage.PaidMedia is PaidMediaPreview paidMediaPreview)
-                {
+                    break;
+                case PaidMediaPreview paidMediaPreview:
                     width = paidMediaPreview.Width;
                     height = paidMediaPreview.Height;
-                }
-                else
-                {
-                    constraint = invoiceMessage.ProductInfo.Photo;
-                }
-            }
-            else if (constraint is MessageGame gameMessage)
-            {
-                if (gameMessage.Game.Animation != null)
-                {
-                    constraint = gameMessage.Game.Animation;
-                }
-                else if (gameMessage.Game.Photo != null)
-                {
-                    constraint = gameMessage.Game.Photo;
-                }
-            }
-            else if (constraint is MessageLocation locationMessage)
-            {
-                constraint = locationMessage.Location;
-            }
-            else if (constraint is MessagePhoto photoMessage)
-            {
-                constraint = photoMessage.Photo;
-            }
-            else if (constraint is MessageSticker stickerMessage)
-            {
-                constraint = stickerMessage.Sticker;
-            }
-            else if (constraint is MessageText textMessage)
-            {
-                if (textMessage?.LinkPreview?.Type is LinkPreviewTypeBackground)
-                {
-                    width = 900;
-                    height = 1600;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeAnimation previewAnimation)
-                {
-                    constraint = previewAnimation.Animation;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeDocument previewDocument)
-                {
-                    constraint = previewDocument.Document;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeEmbeddedAnimationPlayer previewEmbeddedAnimationPlayer)
-                {
-                    width = previewEmbeddedAnimationPlayer.Width;
-                    height = previewEmbeddedAnimationPlayer.Height;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeEmbeddedVideoPlayer previewEmbeddedVideoPlayer)
-                {
-                    width = previewEmbeddedVideoPlayer.Width;
-                    height = previewEmbeddedVideoPlayer.Height;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypePhoto previewPhoto)
-                {
-                    constraint = previewPhoto.Photo;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeSticker previewSticker)
-                {
-                    constraint = previewSticker.Sticker;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeVideo previewVideo)
-                {
-                    constraint = previewVideo.Video;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeVideoNote videoNote)
-                {
-                    constraint = videoNote.VideoNote;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeApp app)
-                {
-                    constraint = app.Photo;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeArticle article)
-                {
-                    constraint = article.Photo;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeChannelBoost channelBoost)
-                {
-                    constraint = channelBoost.Photo;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeChat chat)
-                {
-                    constraint = chat.Photo;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeSupergroupBoost supergroupBoost)
-                {
-                    constraint = supergroupBoost.Photo;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeUser user)
-                {
-                    constraint = user.Photo;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeVideoChat videoChat)
-                {
-                    constraint = videoChat.Photo;
-                }
-                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeWebApp webApp)
-                {
-                    constraint = webApp.Photo;
-                }
-            }
-            else if (constraint is MessageVenue venueMessage)
-            {
-                constraint = venueMessage.Venue;
-            }
-            else if (constraint is MessageVideo videoMessage)
-            {
-                constraint = videoMessage.Video;
-            }
-            else if (constraint is MessageVideoNote videoNoteMessage)
-            {
-                constraint = videoNoteMessage.VideoNote;
-            }
-            else if (constraint is MessageChatChangePhoto chatChangePhoto)
-            {
-                constraint = chatChangePhoto.Photo;
-            }
-            else if (constraint is PaidMediaPhoto paidMediaPhoto)
-            {
-                constraint = paidMediaPhoto.Photo;
-            }
-            else if (constraint is PaidMediaVideo paidMediaVideo)
-            {
-                constraint = paidMediaVideo.Video;
-            }
-            else if (constraint is PaidMediaPreview paidMediaPreview)
-            {
-                width = paidMediaPreview.Width;
-                height = paidMediaPreview.Height;
-            }
-            else if (constraint is MessageAsyncStory asyncStory)
-            {
-                width = 720;
-                height = 1280;
+                    break;
+                case MessageAsyncStory asyncStory:
+                    width = 720;
+                    height = 1280;
+                    break;
             }
 
             #endregion
 
             #region InlineQueryResult
 
-            if (constraint is InlineQueryResultAnimation animationResult)
+            switch (constraint)
             {
-                constraint = animationResult.Animation;
-            }
-            else if (constraint is InlineQueryResultLocation locationResult)
-            {
-                constraint = locationResult.Location;
-            }
-            else if (constraint is InlineQueryResultPhoto photoResult)
-            {
-                constraint = photoResult.Photo;
-            }
-            else if (constraint is InlineQueryResultSticker stickerResult)
-            {
-                constraint = stickerResult.Sticker;
-            }
-            else if (constraint is InlineQueryResultVideo videoResult)
-            {
-                constraint = videoResult.Video;
+                case InlineQueryResultAnimation animationResult:
+                    constraint = animationResult.Animation;
+                    break;
+                case InlineQueryResultLocation locationResult:
+                    constraint = locationResult.Location;
+                    break;
+                case InlineQueryResultPhoto photoResult:
+                    constraint = photoResult.Photo;
+                    break;
+                case InlineQueryResultSticker stickerResult:
+                    constraint = stickerResult.Sticker;
+                    break;
+                case InlineQueryResultVideo videoResult:
+                    constraint = videoResult.Video;
+                    break;
             }
 
             #endregion
 
-            if (constraint is Animation animation)
+            switch (constraint)
             {
-                width = animation.Width;
-                height = animation.Height;
-            }
-            else if (constraint is Document document)
-            {
-                width = document.Thumbnail?.Width ?? width;
-                height = document.Thumbnail?.Height ?? height;
-            }
-            else if (constraint is Location location)
-            {
-                width = 320;
-                height = 200;
-            }
-            else if (constraint is Photo photo)
-            {
-                var size = photo.Sizes.Count > 0 ? photo.Sizes[^1] : null;
-                if (size != null)
-                {
-                    width = size.Width;
-                    height = size.Height;
-                }
-            }
-            else if (constraint is ChatPhoto chatPhoto)
-            {
-                var size = chatPhoto.Sizes.Count > 0 ? chatPhoto.Sizes[^1] : null;
-                if (size != null)
-                {
-                    width = size.Width;
-                    height = size.Height;
-                }
-            }
-            else if (constraint is Sticker sticker)
-            {
-                width = sticker.Width;
-                height = sticker.Height;
-            }
-            else if (constraint is Venue venue)
-            {
-                width = 320;
-                height = 200;
-            }
-            else if (constraint is Video video)
-            {
-                width = video.Width;
-                height = video.Height;
-            }
-            else if (constraint is VideoNote videoNote)
-            {
-                width = 224;
-                height = 224;
-            }
+                case Animation animation:
+                    width = animation.Width;
+                    height = animation.Height;
+                    break;
+                case Document document:
+                    width = document.Thumbnail?.Width ?? width;
+                    height = document.Thumbnail?.Height ?? height;
+                    break;
+                case Location location:
+                    width = 320;
+                    height = 200;
+                    break;
+                case Photo photo:
+                    var size = photo.Sizes.Count > 0 ? photo.Sizes[^1] : null;
+                    if (size != null)
+                    {
+                        width = size.Width;
+                        height = size.Height;
+                    }
+                    break;
+                case ChatPhoto chatPhoto:
+                    var chatSize = chatPhoto.Sizes.Count > 0 ? chatPhoto.Sizes[^1] : null;
+                    if (chatSize != null)
+                    {
+                        width = chatSize.Width;
+                        height = chatSize.Height;
+                    }
+                    break;
+                case Sticker sticker:
+                    width = sticker.Width;
+                    height = sticker.Height;
+                    break;
+                case Venue venue:
+                    width = 320;
+                    height = 200;
+                    break;
+                case Video video:
+                    width = video.Width;
+                    height = video.Height;
+                    break;
+                case VideoNote videoNote:
+                    width = 224;
+                    height = 224;
+                    break;
 
-            if (constraint is PhotoSize photoSize)
-            {
-                width = photoSize.Width;
-                height = photoSize.Height;
-            }
+                case PhotoSize photoSize:
+                    width = photoSize.Width;
+                    height = photoSize.Height;
+                    break;
 
-            if (constraint is PageBlockMap map)
-            {
-                width = map.Width;
-                height = map.Height;
-            }
+                case PageBlockMap map:
+                    width = map.Width;
+                    height = map.Height;
+                    break;
 
-            if (constraint is Background wallpaper)
-            {
-                width = 900;
-                height = 1600;
+                case Background wallpaper:
+                    width = 900;
+                    height = 1600;
+                    break;
             }
 
             if (width == 0 && height == 0)
@@ -422,6 +386,8 @@ namespace Telegram.Controls
                 width = int.MaxValue;
                 height = int.MaxValue;
             }
+
+            ActualConstraint = new Size(width, height);
 
             var rotate = RotationAngle
                 is RotationAngle.Angle90

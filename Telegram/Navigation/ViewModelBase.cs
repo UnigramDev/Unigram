@@ -1,11 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Navigation.Services;
@@ -89,7 +89,7 @@ namespace Telegram.Navigation
 
         public IEventAggregator Aggregator => _aggregator;
 
-        public int SessionId => _clientService.SessionId;
+        public ISession Session => _clientService.Session;
 
         public bool IsPremium => _clientService.IsPremium;
         public bool IsPremiumAvailable => _clientService.IsPremiumAvailable;
@@ -113,9 +113,12 @@ namespace Telegram.Navigation
 
         public virtual IDispatcherContext Dispatcher { get; set; }
 
-        public virtual IDictionary<string, object> SessionState { get; set; }
-
         #region Popups
+
+        public void HidePopup(Type popupType)
+        {
+            NavigationService.HidePopup(popupType);
+        }
 
         public Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default)
         {
@@ -185,6 +188,11 @@ namespace Telegram.Navigation
         public ToastPopup ShowToast(string text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             return ToastPopup.Show(XamlRoot, ClientEx.ParseMarkdown(text), icon, requestedTheme, dismissAfter);
+        }
+
+        public void ShowToast(Error error)
+        {
+            ToastPopup.ShowError(XamlRoot, error);
         }
 
         #endregion

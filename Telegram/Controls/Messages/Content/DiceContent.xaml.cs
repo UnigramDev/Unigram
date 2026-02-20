@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using System;
 using Telegram.Common;
@@ -170,10 +171,10 @@ namespace Telegram.Controls.Messages.Content
                 if (regular.Sticker.StickerValue.Local.CanBeDownloaded && !regular.Sticker.StickerValue.Local.IsDownloadingActive)
                 {
                     // Unsubscribe all tokens
-                    UpdateManager.Unsubscribe(this, ref _part2Token, true);
-                    UpdateManager.Unsubscribe(this, ref _part3Token, true);
-                    UpdateManager.Unsubscribe(this, ref _part4Token, true);
-                    UpdateManager.Unsubscribe(this, ref _part5Token, true);
+                    UpdateManager.Unsubscribe(this, ref _part2Token);
+                    UpdateManager.Unsubscribe(this, ref _part3Token);
+                    UpdateManager.Unsubscribe(this, ref _part4Token);
+                    UpdateManager.Unsubscribe(this, ref _part5Token);
 
                     UpdateManager.Subscribe(this, message, regular.Sticker.StickerValue, ref _part1Token, UpdateFile, true);
                     message.ClientService.DownloadFile(regular.Sticker.StickerValue.Id, 1);

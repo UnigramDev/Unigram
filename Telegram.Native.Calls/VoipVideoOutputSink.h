@@ -7,7 +7,6 @@
 #include "api/video/video_sink_interface.h"
 #include "api/video/video_frame.h"
 
-using namespace winrt::Telegram::Td::Api;
 using namespace winrt::Windows::Foundation::Collections;
 using namespace winrt::Windows::UI::Composition;
 
@@ -15,7 +14,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 {
     struct VoipVideoOutputSink : VoipVideoOutputSinkT<VoipVideoOutputSink>
     {
-        VoipVideoOutputSink(SpriteVisual visual, bool mirrored);
+        VoipVideoOutputSink(CompositionGraphicsDevice const& device, SpriteVisual const& visual, bool mirrored, bool uniformToFill);
 
         void Stop();
 

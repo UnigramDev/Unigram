@@ -5,11 +5,8 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       Title="Mute for..."
-                       PrimaryButtonText="OK"
-                       SecondaryButtonText="Cancel"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       Padding="24,24,24,0">
 
     <Grid Padding="4,0">
         <Grid.ColumnDefinitions>

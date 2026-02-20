@@ -1,13 +1,15 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
+using Telegram.Controls.Drawers;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -66,7 +68,7 @@ namespace Telegram.Views.Supergroups.Popups
             }
             else
             {
-                Emoji.DataContext = EmojiDrawerViewModel.Create(clientService.SessionId, EmojiDrawerMode.Topics);
+                Emoji.DataContext = EmojiDrawerViewModel.Create(clientService.Session, EmojiDrawerMode.Topics);
                 Emoji.ViewModel.Update();
                 Emoji.ItemClick += OnItemClick;
 
@@ -97,9 +99,9 @@ namespace Telegram.Views.Supergroups.Popups
         }
 
         public string SelectedName => NameLabel.Text;
-        public ForumTopicIcon SelectedIcon => new ForumTopicIcon(ForumTopicCell.ServerSupportedColors[_colorIndex % ForumTopicCell.ServerSupportedColors.Length].ToValue(), _customEmojiId);
+        public ForumTopicIcon SelectedIcon => new(ForumTopicCell.ServerSupportedColors[_colorIndex % ForumTopicCell.ServerSupportedColors.Length].ToValue(), _customEmojiId);
 
-        private void OnItemClick(object sender, ItemClickEventArgs e)
+        private void OnItemClick(object sender, EmojiDrawerItemClickEventArgs e)
         {
             if (e.ClickedItem is StickerViewModel sticker && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
@@ -118,12 +120,9 @@ namespace Telegram.Views.Supergroups.Popups
             if (string.IsNullOrEmpty(NameLabel.Text))
             {
                 VisualUtilities.ShakeView(NameLabel);
+                NameLabel.Focus(FocusState.Keyboard);
                 args.Cancel = true;
             }
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void NameLabel_TextChanged(object sender, TextChangedEventArgs e)

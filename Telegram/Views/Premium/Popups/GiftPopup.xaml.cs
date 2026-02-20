@@ -1,26 +1,30 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using Telegram.Collections;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
+using Telegram.Views.Popups;
 using Telegram.Views.Stars.Popups;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Views.Premium.Popups
 {
@@ -28,24 +32,26 @@ namespace Telegram.Views.Premium.Popups
     {
         All,
         Mine,
-        Limited,
-        InStock,
-        Resale,
-        StarCount
+        Collectibles
     }
 
-    public partial class GiftGroup : KeyedList<GiftGroupType, AvailableGift>
+    public partial class GiftGroup
     {
         public GiftGroup(GiftGroupType key, IEnumerable<AvailableGift> source)
-            : base(key, source)
         {
-            if (key == GiftGroupType.StarCount)
-            {
-                StarCount = this[0].Gift.StarCount;
-            }
+            Type = key;
+            ItemsSource = source.ToList();
         }
 
-        public long StarCount { get; }
+        public GiftGroup(GiftGroupType key, ObservableCollection<ReceivedGift> source)
+        {
+            Type = key;
+            ItemsSource = source;
+        }
+
+        public GiftGroupType Type { get; }
+
+        public object ItemsSource { get; }
     }
 
     public sealed partial class GiftPopup : ContentPopup
@@ -54,6 +60,7 @@ namespace Telegram.Views.Premium.Popups
         private readonly INavigationService _navigationService;
 
         private readonly MessageSender _receiverId;
+        private readonly Chat _chat;
 
         private readonly DiffObservableCollection<AvailableGift> _gifts = new(Constants.DiffOptions);
 
@@ -65,22 +72,35 @@ namespace Telegram.Views.Premium.Popups
             _navigationService = navigationService;
 
             _receiverId = new MessageSenderUser(user.Id);
+            clientService.TryGetChatFromUser(user.Id, out _chat);
 
-            Photo.SetUser(clientService, user, 96);
+            Photo.Source = ProfilePictureSource.User(clientService, user);
 
-            TextBlockHelper.SetMarkdown(PremiumInfo, string.Format(Strings.Gift2PremiumInfo, user.FirstName));
+            if (user.Id != clientService.Options.MyId)
+            {
+                TextBlockHelper.SetMarkdown(PremiumInfo, string.Format(Strings.Gift2PremiumInfo, user.FirstName));
 
-            StarsTitle.Text = Strings.Gift2Stars;
-            TextBlockHelper.SetMarkdown(StarsInfo, string.Format(Strings.Gift2StarsInfo, user.FirstName));
+                StarsTitle.Text = Strings.Gift2Stars;
+                TextBlockHelper.SetMarkdown(StarsInfo, string.Format(Strings.Gift2StarsInfo, user.FirstName));
 
-            AddLink(PremiumInfo, Strings.Gift2PremiumInfoLink, PremiumInfoLink_Click);
-            AddLink(StarsInfo, Strings.Gift2StarsInfoLink, StarsInfoLink_Click);
+                AddLink(PremiumInfo, Strings.Gift2PremiumInfoLink, PremiumInfoLink_Click);
+                AddLink(StarsInfo, Strings.Gift2StarsInfoLink, StarsInfoLink_Click);
+
+                InitializeOptions(clientService);
+            }
+            else
+            {
+                PremiumTitle.Visibility = Visibility.Collapsed;
+                PremiumInfo.Visibility = Visibility.Collapsed;
+
+                StarsTitle.Text = Strings.Gift2StarsSelf;
+                TextBlockHelper.SetMarkdown(StarsInfo, Strings.Gift2StarsSelfInfo1 + "\n\n" + Strings.Gift2StarsSelfInfo2);
+            }
 
             ScrollingHost.ItemsSource = _gifts;
 
-            InitializeOptions(clientService);
             InitializeGifts(clientService, fullInfo.Birthdate?.Day == DateTime.Today.Day
-                    && fullInfo.Birthdate?.Month == DateTime.Today.Month);
+                    && fullInfo.Birthdate?.Month == DateTime.Today.Month, user.Id == clientService.Options.MyId);
         }
 
         public GiftPopup(IClientService clientService, INavigationService navigationService, Chat chat)
@@ -91,8 +111,12 @@ namespace Telegram.Views.Premium.Popups
             _navigationService = navigationService;
 
             _receiverId = chat.ToMessageSender();
+            _chat = chat;
 
-            Photo.SetChat(clientService, chat, 96);
+            Photo.Source = ProfilePictureSource.Chat(clientService, chat);
+
+            PremiumTitle.Visibility = Visibility.Collapsed;
+            PremiumInfo.Visibility = Visibility.Collapsed;
 
             StarsTitle.Text = Strings.Gift2StarsChannel;
             TextBlockHelper.SetMarkdown(StarsInfo, string.Format(Strings.Gift2StarsChannelInfo, chat.Title));
@@ -101,7 +125,7 @@ namespace Telegram.Views.Premium.Popups
 
             ScrollingHost.ItemsSource = _gifts;
 
-            InitializeGifts(clientService, false);
+            InitializeGifts(clientService, false, false);
         }
 
         private void AddLink(TextBlock block, string text, TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> handler)
@@ -144,8 +168,10 @@ namespace Telegram.Views.Premium.Popups
             }
         }
 
-        private async void InitializeGifts(IClientService clientService, bool birthday)
+        private async void InitializeGifts(IClientService clientService, bool birthday, bool self)
         {
+            var navigation = new ObservableCollection<GiftGroup>();
+
             var response = await clientService.SendAsync(new GetAvailableGifts());
             if (response is AvailableGifts gifts)
             {
@@ -166,57 +192,156 @@ namespace Telegram.Views.Premium.Popups
 
                 all.AddRange(remaining);
 
-                var navigation = new List<GiftGroup>();
                 navigation.Add(new GiftGroup(GiftGroupType.All, all));
-
-                if (all.Any(x => x.Gift.TotalCount > 0))
-                {
-                    navigation.Add(new GiftGroup(GiftGroupType.Limited, all.Where(x => x.Gift.TotalCount > 0)));
-                }
-
-                if (all.Any(x => x.Gift.RemainingCount > 0 || x.Gift.TotalCount == 0))
-                {
-                    navigation.Add(new GiftGroup(GiftGroupType.InStock, all.Where(x => x.Gift.RemainingCount > 0 || x.Gift.TotalCount == 0)));
-                }
 
                 if (all.Any(x => x.MinResaleStarCount > 0))
                 {
-                    navigation.Add(new GiftGroup(GiftGroupType.Resale, all.Where(x => x.MinResaleStarCount > 0)));
-                }
-
-                var groups = all
-                    .GroupBy(x => x.Gift.StarCount)
-                    .OrderBy(x => x.Key);
-
-                foreach (var group in groups)
-                {
-                    navigation.Add(new GiftGroup(GiftGroupType.StarCount, group));
+                    navigation.Add(new GiftGroup(GiftGroupType.Collectibles, all.Where(x => x.MinResaleStarCount > 0)));
                 }
 
                 Navigation.ItemsSource = navigation;
                 Navigation.SelectedIndex = 0;
             }
+
+            if (self)
+            {
+                return;
+            }
+
+            response = await _clientService.SendAsync(new GetReceivedGifts(_clientService.MyId, 0, false, false, true, true, true, false, false, true, false, string.Empty, 50));
+            if (response is ReceivedGifts receivedGifts && receivedGifts.Gifts.Count > 0)
+            {
+                var transferable = new List<ReceivedGift>();
+                var now = DateTime.Now.ToTimestamp();
+
+                foreach (var gift in receivedGifts.Gifts)
+                {
+                    if (gift.Gift is SentGiftUpgraded upgraded && gift.CanBeTransferred && gift.NextTransferDate < now)
+                    {
+                        transferable.Add(gift);
+                    }
+                }
+
+                if (transferable.Count > 0)
+                {
+                    navigation.Insert(Math.Min(navigation.Count, 1), new GiftGroup(GiftGroupType.Mine, new ReceivedGiftsCollection(_clientService, transferable, receivedGifts.NextOffset)));
+                }
+            }
+        }
+
+        public partial class ReceivedGiftsCollection : ObservableCollection<ReceivedGift>, ISupportIncrementalLoading
+        {
+            private readonly IClientService _clientService;
+
+            private string _nextOffset;
+
+            public ReceivedGiftsCollection(IClientService clientService, IList<ReceivedGift> gifts, string nextOffset)
+                : base(gifts)
+            {
+                _clientService = clientService;
+                _nextOffset = string.IsNullOrEmpty(nextOffset) ? null : nextOffset;
+            }
+
+            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            {
+                return AsyncInfo.Run(async token =>
+                {
+                    var totalCount = 0u;
+                    var now = DateTime.Now.ToTimestamp();
+
+                    var response = await _clientService.SendAsync(new GetReceivedGifts(_clientService.MyId, 0, false, false, true, true, true, false, false, true, false, _nextOffset, 50));
+                    if (response is ReceivedGifts gifts)
+                    {
+                        foreach (var gift in gifts.Gifts)
+                        {
+                            if (gift.Gift is SentGiftUpgraded && gift.CanBeTransferred && gift.NextTransferDate < now)
+                            {
+                                Add(gift);
+                            }
+
+                            totalCount++;
+                        }
+
+                        _nextOffset = string.IsNullOrEmpty(gifts.NextOffset) ? null : gifts.NextOffset;
+                    }
+
+                    return new LoadMoreItemsResult
+                    {
+                        Count = totalCount
+                    };
+                });
+            }
+
+            public bool HasMoreItems => _nextOffset != null;
         }
 
         private async void OnItemClick(object sender, ItemClickEventArgs e)
         {
             ContentDialogResult confirm = ContentDialogResult.Primary;
+
+            if (e.ClickedItem is AvailableGift available)
+            {
+                if (available is AvailableGift { Gift.UserLimits.RemainingCount: 0, MinResaleStarCount: 0 })
+                {
+                    ToastPopup.Show(XamlRoot, Locale.Declension(Strings.R.Gift2PerUserLimit, available.Gift.UserLimits.TotalCount), new DelayedFileSource(_clientService, available.Gift.Sticker));
+                    return;
+                }
+                else if (available.Gift.NextSendDate > _clientService.UnixTime)
+                {
+                    var response = await _clientService.SendAsync(new CanSendGift(available.Gift.Id));
+                    if (response is CanSendGiftResultFail fail)
+                    {
+                        _navigationService.ShowPopup(fail.Reason, Strings.GiftLocked, Strings.OK);
+                        return;
+                    }
+                }
+            }
+            else if (e.ClickedItem is ReceivedGift receivedGift)
+            {
+                confirm = await TransferGiftPopup.ShowAsync(XamlRoot, _clientService, receivedGift, _chat, false);
+
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    Hide();
+
+                    var response = await _clientService.SendAsync(new TransferGift(receivedGift.ReceivedGiftId, _receiverId, receivedGift.TransferStarCount));
+                    if (response is Ok && receivedGift.Gift is SentGiftUpgraded upgraded)
+                    {
+                        ToastPopup.Show(XamlRoot, string.Format(Strings.Gift2TransferredText, upgraded.Gift.ToName(), _chat.Title));
+                    }
+                    else if (response is Error error)
+                    {
+                        ToastPopup.ShowError(XamlRoot, error);
+                    }
+                }
+
+                return;
+            }
+
             Hide();
 
-            if (e.ClickedItem is AvailableGift gift)
+            if (e.ClickedItem is AvailableGift availableGift)
             {
-                if (gift.Gift.RemainingCount > 0 || gift.Gift.TotalCount == 0)
+                if (availableGift.Gift.UserLimits != null && availableGift.Gift.UserLimits.RemainingCount == 0 && availableGift.MinResaleStarCount == 0)
                 {
-                    await _clientService.SendAsync(new CreatePrivateChat(_clientService.Options.MyId, false));
-                    confirm = await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, gift.Gift, _receiverId));
+                    ToastPopup.Show(XamlRoot, Locale.Declension(Strings.R.Gift2PerUserLimit, availableGift.Gift.UserLimits.TotalCount), new DelayedFileSource(_clientService, availableGift.Gift.Sticker));
                 }
-                else if (gift.MinResaleStarCount > 0)
+                else if (availableGift.Gift.IsPremium && !_clientService.IsPremium)
                 {
-                    confirm = await _navigationService.ShowPopupAsync(new ResoldGiftsPopup(_clientService, _navigationService, gift, _receiverId));
+                    await _navigationService.ShowPopupAsync(new Views.Premium.Popups.PromoPopup(_clientService, availableGift));
+                    confirm = ContentDialogResult.None;
+                }
+                else if (availableGift.Gift.OverallLimits == null || availableGift.Gift.OverallLimits.RemainingCount > 0)
+                {
+                    confirm = await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, availableGift.Gift, _receiverId));
+                }
+                else if (availableGift.MinResaleStarCount > 0)
+                {
+                    confirm = await _navigationService.ShowPopupAsync(new ResoldGiftsPopup(_clientService, _navigationService, availableGift, _receiverId));
                 }
                 else
                 {
-                    await _navigationService.ShowPopupAsync(new ReceivedGiftPopup(_clientService, _navigationService, gift.Gift));
+                    await _navigationService.ShowPopupAsync(new ReceivedGiftPopup(_clientService, _navigationService, availableGift.Gift));
                     confirm = ContentDialogResult.None;
                 }
             }
@@ -237,9 +362,16 @@ namespace Telegram.Views.Premium.Popups
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is ReceivedGiftCell receivedGiftCell && args.Item is AvailableGift gift)
+            else if (args.ItemContainer.ContentTemplateRoot is ReceivedGiftCell receivedGiftCell)
             {
-                receivedGiftCell.UpdateGift(_clientService, gift);
+                if (args.Item is AvailableGift availableGift)
+                {
+                    receivedGiftCell.UpdateGift(_clientService, availableGift);
+                }
+                else if (args.Item is ReceivedGift receivedGift)
+                {
+                    receivedGiftCell.UpdateGift(_clientService, receivedGift, true);
+                }
             }
             else if (args.ItemContainer.ContentTemplateRoot is PremiumGiftCell premiumGiftCell && args.Item is PremiumGiftPaymentOption option)
             {
@@ -253,40 +385,35 @@ namespace Telegram.Views.Premium.Popups
         {
             if (Navigation.SelectedItem is GiftGroup group)
             {
-                _gifts.ReplaceDiff(group);
-                return;
-
-                ScrollingHost.ItemContainerTransitions.Clear();
-
-                var diffResult = DiffUtil.CalculateDiff(_gifts, group, _gifts.DefaultDiffHandler, _gifts.DefaultOptions);
-                if (diffResult.MovedItems.Count == 0)
+                if (group.ItemsSource is List<AvailableGift> groupSource)
                 {
-                    ScrollingHost.ItemContainerTransitions.Add(new AddDeleteThemeTransition());
+                    if (ScrollingHost.ItemsSource is DiffObservableCollection<AvailableGift>)
+                    {
+                        _gifts.ReplaceDiff(groupSource);
+                    }
+                    else
+                    {
+                        _gifts.Clear();
+                        _gifts.AddRange(groupSource);
+
+                        ScrollingHost.ItemsSource = _gifts;
+                    }
                 }
-
-                ScrollingHost.ItemContainerTransitions.Add(new RepositionThemeTransition());
-
-                _gifts.ReplaceDiff(diffResult);
+                else
+                {
+                    ScrollingHost.ItemsSource = group.ItemsSource;
+                }
             }
         }
 
-        public static Visibility ConvertGiftGroupStartCountVisibility(GiftGroupType type)
-        {
-            return type == GiftGroupType.StarCount
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-        }
-
-        public static string ConvertGiftGroupStarCountText(GiftGroupType type, long starCount)
+        public static string ConvertGiftGroupStarCountText(GiftGroupType type)
         {
             return type switch
             {
                 GiftGroupType.All => Strings.Gift2TabAll,
                 GiftGroupType.Mine => Strings.Gift2TabMine,
-                GiftGroupType.Limited => Strings.Gift2TabLimited,
-                GiftGroupType.InStock => Strings.Gift2TabInStock,
-                GiftGroupType.Resale => Strings.Gift2TabResale,
-                _ => starCount.ToString("N0")
+                GiftGroupType.Collectibles => Strings.Gift2TabCollectibles,
+                _ => "???"
             };
         }
     }

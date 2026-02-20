@@ -1,11 +1,19 @@
-﻿using Microsoft.UI.Xaml.Controls;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Entities;
 using Telegram.Navigation;
 using Telegram.Services;
 using Windows.System;
@@ -16,58 +24,6 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Tabbed
 {
-    public record NavigateToHistoryEntryParameters
-    {
-        public NavigateToHistoryEntryParameters(int entryId)
-        {
-            EntryId = entryId;
-        }
-
-        [JsonProperty("entryId")]
-        public int EntryId { get; init; }
-    }
-
-    public record HistoryEntry
-    {
-        [JsonProperty("id")]
-        public int Id { get; init; }
-
-        [JsonProperty("title")]
-        public string Title { get; init; }
-
-        [JsonProperty("url")]
-        public string Url { get; init; }
-
-        [JsonIgnore]
-        public string DocumentTitle
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(Title))
-                {
-                    return Title;
-                }
-
-                return Url;
-            }
-        }
-
-        [JsonIgnore]
-        public string FaviconUri { get; init; }
-
-        [JsonIgnore]
-        public int Index { get; set; }
-    }
-
-    public record NavigationHistory
-    {
-        [JsonProperty("currentIndex")]
-        public int CurrentIndex { get; init; }
-
-        [JsonProperty("entries")]
-        public IReadOnlyList<HistoryEntry> Entries { get; init; }
-    }
-
     public sealed partial class WebBrowserPage : UserControl
     {
         public static TabViewItem Create(IClientService clientService, string url)
@@ -164,7 +120,7 @@ namespace Telegram.Views.Tabbed
             {
                 try
                 {
-                    await Navigation.CoreWebView2.CallDevToolsProtocolMethodAsync("Page.navigateToHistoryEntry", JsonConvert.SerializeObject(new NavigateToHistoryEntryParameters(entry.Id)));
+                    await Navigation.CoreWebView2.CallDevToolsProtocolMethodAsync("Page.navigateToHistoryEntry", JsonSerializer.Serialize(new NavigateToHistoryEntryParameters(entry.Id), NavigationJsonContext.Default.NavigateToHistoryEntryParameters));
                 }
                 catch
                 {
@@ -178,7 +134,7 @@ namespace Telegram.Views.Tabbed
             try
             {
                 var response = await Navigation.CoreWebView2.CallDevToolsProtocolMethodAsync("Page.getNavigationHistory", "{}");
-                var history = JsonConvert.DeserializeObject<NavigationHistory>(response);
+                var history = JsonSerializer.Deserialize(response, NavigationJsonContext.Default.NavigationHistory);
                 var entries = new List<HistoryEntry>(history.Entries);
 
                 static string GetFaviconForUri(Uri uri)

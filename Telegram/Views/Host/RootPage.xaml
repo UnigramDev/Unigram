@@ -3,17 +3,14 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
       xmlns:icons="using:Telegram.Assets.Icons"
       xmlns:controls="using:Telegram.Controls"
+      xmlns:converters="using:Telegram.Converters"
       xmlns:services="using:Telegram.Services"
       xmlns:settings="using:Telegram.Views.Settings"
-      xmlns:converters="using:Telegram.Converters"
-      muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
       mc:Ignorable="d"
       d:DesignHeight="300"
-      d:DesignWidth="400"
-      ProcessKeyboardAccelerators="OnProcessKeyboardAccelerators">
+      d:DesignWidth="400">
 
     <Page.Resources>
         <Style x:Key="NavigationViewExpanderStyle"
@@ -92,18 +89,16 @@
         </Style>
 
         <DataTemplate x:Name="SessionItemTemplate"
-                      x:DataType="services:ISessionService">
+                      x:DataType="services:ISession">
             <Grid Margin="0,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePicture Width="28"
-                                         Height="28"
+                <controls:ProfilePicture Size="28"
                                          Margin="10,0,10,0" />
                 <Rectangle x:Name="SelectionIndicator"
-                           Visibility="{x:Bind IsActive, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                            HorizontalAlignment="Left"
                            Margin="4,0,0,0"
                            Width="3"
@@ -171,8 +166,7 @@
                           DragItemsStarting="OnDragItemsStarting"
                           DragItemsCompleted="OnDragItemsCompleted"
                           ChoosingItemContainer="OnChoosingItemContainer"
-                          ContainerContentChanging="OnContainerContentChanging"
-                          Margin="0,48,0,0">
+                          ContainerContentChanging="OnContainerContentChanging">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem"
                                BasedOn="{StaticResource DefaultListViewItemStyle}">
@@ -182,69 +176,69 @@
                                     Value="0" />
                         </Style>
                     </ListView.ItemContainerStyle>
+                    <ListView.Header>
+                        <Button x:Name="Accounts"
+                                Visibility="Collapsed"
+                                Click="Expand_Click"
+                                Background="Transparent"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Margin="0,32,0,-40"
+                                AutomationProperties.AccessibilityView="Raw"
+                                IsTabStop="False"
+                                Width="240">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </Button.Template>
+                            <Grid Background="Transparent"
+                                  Padding="12,0,12,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox x:Name="Expanded"
+                                          MinWidth="0"
+                                          IsEnabled="False"
+                                          IsHitTestVisible="False"
+                                          Style="{StaticResource NavigationViewExpanderStyle}"
+                                          Grid.Column="2" />
+
+                                <controls:ProfilePicture x:Name="Photo"
+                                                         Margin="0,0,12,0"
+                                                         Size="48" />
+
+                                <Grid x:Name="Info"
+                                      Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock x:Name="NameLabel"
+                                               TextWrapping="NoWrap"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Bottom"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                               Grid.Column="1" />
+                                    <TextBlock x:Name="PhoneLabel"
+                                               VerticalAlignment="Top"
+                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               Grid.Column="1"
+                                               Grid.Row="1"
+                                               MaxLines="1" />
+                                </Grid>
+                            </Grid>
+                        </Button>
+                    </ListView.Header>
                 </ListView>
             </SplitView.Pane>
         </SplitView>
-
-        <Button x:Name="Accounts"
-                Visibility="Collapsed"
-                Click="Expand_Click"
-                Background="Transparent"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Margin="0,32,0,0"
-                AutomationProperties.AccessibilityView="Raw"
-                IsTabStop="False"
-                Width="240">
-            <Button.Template>
-                <ControlTemplate>
-                    <ContentPresenter />
-                </ControlTemplate>
-            </Button.Template>
-            <Grid Background="Transparent"
-                  Padding="12,0,12,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <CheckBox x:Name="Expanded"
-                          MinWidth="0"
-                          IsEnabled="False"
-                          IsHitTestVisible="False"
-                          Style="{StaticResource NavigationViewExpanderStyle}"
-                          Grid.Column="2" />
-
-                <controls:ProfilePicture x:Name="Photo"
-                                         Margin="0,0,12,0"
-                                         Width="48"
-                                         Height="48" />
-
-                <Grid x:Name="Info"
-                      Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-
-                    <TextBlock x:Name="NameLabel"
-                               TextWrapping="NoWrap"
-                               TextTrimming="CharacterEllipsis"
-                               VerticalAlignment="Bottom"
-                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                               Grid.Column="1" />
-                    <TextBlock x:Name="PhoneLabel"
-                               VerticalAlignment="Top"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
-                               TextTrimming="CharacterEllipsis"
-                               TextWrapping="NoWrap"
-                               Grid.Column="1"
-                               Grid.Row="1"
-                               MaxLines="1" />
-                </Grid>
-            </Grid>
-        </Button>
 
         <Border x:Name="Transition"
                 ActualThemeChanged="Theme_ActualThemeChanged" />

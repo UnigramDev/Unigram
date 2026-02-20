@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,24 +20,20 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class IdenticonPopup : ContentPopup
     {
-        public IdenticonPopup(int sessionId, Chat chat)
+        public IdenticonPopup(IClientService clientService, Chat chat)
         {
             InitializeComponent();
             Title = Strings.EncryptionKey;
 
-            PrimaryButtonText = Strings.Close;
-
             if (chat.Type is ChatTypeSecret secret)
             {
-                var service = TypeResolver.Current.Resolve<IClientService>(sessionId);
-
-                var secretChat = service.GetSecretChat(secret.SecretChatId);
+                var secretChat = clientService.GetSecretChat(secret.SecretChatId);
                 if (secretChat == null)
                 {
                     return;
                 }
 
-                var user = service.GetUser(secret.UserId);
+                var user = clientService.GetUser(secret.UserId);
                 if (user == null)
                 {
                     return;
@@ -58,10 +55,10 @@ namespace Telegram.Views.Popups
 
             var layers = new GeometryGroup[]
             {
-                new GeometryGroup(),
-                new GeometryGroup(),
-                new GeometryGroup(),
-                new GeometryGroup()
+                new(),
+                new(),
+                new(),
+                new()
             };
 
             int bitPointer = 0;

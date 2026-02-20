@@ -1,12 +1,14 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Controls.Media;
+using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -26,7 +28,7 @@ namespace Telegram.Controls.Cells
             InitializeComponent();
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
             if (_expirationTimer != null)
             {
@@ -233,7 +235,7 @@ namespace Telegram.Controls.Cells
             SubtitleText.Text = Locale.Declension(Strings.R.InviteLinkCount, inviteLinkCount.InviteLinkCount);
             StatusText.Text = string.Empty;
 
-            Photo.SetUser(clientService, user, 36);
+            Photo.Source = ProfilePictureSource.User(clientService, user);
             Identity.SetStatus(clientService, user);
         }
 

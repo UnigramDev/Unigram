@@ -1,16 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.ComponentModel;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.ViewModels.Profile;
 using Telegram.Views.Chats;
 using Telegram.Views.Profile;
 using Windows.UI.Composition;
@@ -84,7 +84,7 @@ namespace Telegram.Views
         {
             ViewModel.PropertyChanged += OnPropertyChanged;
 
-            if (ViewModel.SelectedItem is ProfileTabItem tab)
+            if (ViewModel.SelectedItem is RevenueTabItem tab)
             {
                 MediaFrame.Navigate(tab.Type, null, new SuppressNavigationTransitionInfo());
             }
@@ -102,7 +102,7 @@ namespace Telegram.Views
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("SharedCount") && ViewModel.SelectedItem is ProfileTabItem tab)
+            if (e.PropertyName.Equals("SharedCount") && ViewModel.SelectedItem is RevenueTabItem tab)
             {
                 MediaFrame.Navigate(tab.Type, null, new SuppressNavigationTransitionInfo());
             }
@@ -227,7 +227,7 @@ namespace Telegram.Views
 
         private void Header_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is ProfileTabItem page && page.Type != MediaFrame.Content?.GetType())
+            if (e.ClickedItem is RevenueTabItem page && page.Type != MediaFrame.Content?.GetType())
             {
                 MediaFrame.Navigate(page.Type, null, new SuppressNavigationTransitionInfo());
             }

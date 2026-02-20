@@ -1,4 +1,11 @@
-﻿using System;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +18,6 @@ using Telegram.Views.Business.Popups;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using TimeZone = Telegram.Td.Api.TimeZone;
 
 namespace Telegram.ViewModels.Business
 {
@@ -343,7 +349,7 @@ namespace Telegram.ViewModels.Business
             }
         }
 
-        public override void Continue()
+        protected override void ContinueImpl(NavigatingEventArgs args)
         {
             throw new NotImplementedException();
         }

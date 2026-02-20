@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,7 @@ namespace Telegram.Controls
         private bool _started;
         private bool _startedFall;
 
-        private readonly Random _random = new Random();
+        private readonly Random _random = new();
 
         public ConfettiView()
         {
@@ -154,10 +155,7 @@ namespace Telegram.Controls
                 }
 
                 //invalidate();
-                if (Canvas != null)
-                {
-                    Canvas.Paused = false;
-                }
+                Canvas?.Paused = false;
             }
         }
 
@@ -178,7 +176,7 @@ namespace Telegram.Controls
 
         private Particle CreateParticle(bool falling)
         {
-            Particle particle = new Particle(this)
+            Particle particle = new(this)
             {
                 colorType = (byte)NextInt(_colors.Length),
                 type = (byte)NextInt(2),

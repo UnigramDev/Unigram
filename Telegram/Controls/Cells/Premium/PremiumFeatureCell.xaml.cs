@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Services;
 using Telegram.Streams;
@@ -48,8 +49,8 @@ namespace Telegram.Controls.Cells.Premium
             }
             else
             {
-                FrameOutside.Margin = new Thickness(0, 0, 0, 0);
-                FrameInside.Margin = new Thickness(0, 0, 0, 0);
+                FrameOutside.Margin = new Thickness(0);
+                FrameInside.Margin = new Thickness(0);
 
                 Canvas.SetTop(FrameScreen, 28);
                 Canvas.SetTop(Player, 28);
@@ -142,6 +143,10 @@ namespace Telegram.Controls.Cells.Premium
                     titleValue = Strings.PremiumPreviewEffects;
                     subtitleValue = Strings.PremiumPreviewEffectsDescription;
                     break;
+                case PremiumFeatureChecklists:
+                    titleValue = Strings.PremiumPreviewTodo;
+                    subtitleValue = Strings.PremiumPreviewTodoDescription;
+                    break;
             }
 
             Title.Text = titleValue;
@@ -181,8 +186,8 @@ namespace Telegram.Controls.Cells.Premium
             }
             else
             {
-                FrameOutside.Margin = new Thickness(0, 0, 0, 0);
-                FrameInside.Margin = new Thickness(0, 0, 0, 0);
+                FrameOutside.Margin = new Thickness(0);
+                FrameInside.Margin = new Thickness(0);
 
                 Canvas.SetTop(FrameScreen, 28);
                 Canvas.SetTop(Player, 28);

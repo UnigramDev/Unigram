@@ -68,7 +68,10 @@
                                            Grid.Column="1" />
                             </Grid>
                             <TextBlock x:Name="Subtitle"
-                                       Style="{StaticResource DisabledCaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
                                        Typography.NumeralAlignment="Tabular" />
                         </StackPanel>
                     </Grid>

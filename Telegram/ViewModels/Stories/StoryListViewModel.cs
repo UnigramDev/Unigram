@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -36,8 +37,8 @@ namespace Telegram.ViewModels.Stories
         public StoryListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, StoryList storyList)
             : base(clientService, settingsService, aggregator)
         {
-            _storageService = TypeResolver.Current.Resolve<IStorageService>(clientService.SessionId);
-            _translateService = TypeResolver.Current.Resolve<ITranslateService>(clientService.SessionId);
+            _storageService = Session.Resolve<IStorageService>();
+            _translateService = Session.Resolve<ITranslateService>();
 
             Items = new ItemsCollection(clientService, aggregator, this, storyList);
         }
@@ -45,10 +46,37 @@ namespace Telegram.ViewModels.Stories
         public StoryListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, params ActiveStoriesViewModel[] items)
             : base(clientService, settingsService, aggregator)
         {
-            _storageService = TypeResolver.Current.Resolve<IStorageService>(clientService.SessionId);
-            _translateService = TypeResolver.Current.Resolve<ITranslateService>(clientService.SessionId);
+            _storageService = Session.Resolve<IStorageService>();
+            _translateService = Session.Resolve<ITranslateService>();
 
             Items = new ObservableCollection<ActiveStoriesViewModel>(items);
+        }
+
+        public static StoryListViewModel Create(INavigationService navigationService, ActiveStoriesViewModel activeStories)
+        {
+            return new StoryListViewModel(activeStories.ClientService, activeStories.Settings, activeStories.Aggregator, activeStories)
+            {
+                NavigationService = navigationService
+            };
+        }
+
+        public void UpdateSelectedItem()
+        {
+            foreach (var activeStories in Items)
+            {
+                StoryViewModel selected = null;
+
+                foreach (var story in activeStories.Items)
+                {
+                    if (story.Id > activeStories.MaxReadStoryId)
+                    {
+                        selected = story;
+                        break;
+                    }
+                }
+
+                activeStories.SelectedItem = selected ?? activeStories.Items.FirstOrDefault();
+            }
         }
 
         public ITranslateService TranslateService => _translateService;
@@ -120,7 +148,14 @@ namespace Telegram.ViewModels.Stories
 
         public void HideProfile(ActiveStoriesViewModel activeStories)
         {
-            ClientService.Send(new SetChatActiveStoriesList(activeStories.ChatId, new StoryListArchive()));
+            if (activeStories.CanBeArchived)
+            {
+                ClientService.Send(new SetChatActiveStoriesList(activeStories.ChatId, new StoryListArchive()));
+            }
+            else
+            {
+                ClientService.Send(new RemoveTopChat(new TopChatCategoryUsers(), activeStories.ChatId));
+            }
 
             if (ClientService.TryGetUser(activeStories.Chat, out User user))
             {
@@ -148,7 +183,7 @@ namespace Telegram.ViewModels.Stories
 
         public Task ShareStoryAsync(StoryViewModel story)
         {
-            return ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationShareStory(story.ChatId, story.StoryId), requestedTheme: ElementTheme.Dark);
+            return ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationShareStory(story.PosterChatId, story.Id), requestedTheme: ElementTheme.Dark);
         }
 
         public Task TranslateStoryAsync(StoryViewModel story)
@@ -170,20 +205,20 @@ namespace Telegram.ViewModels.Stories
             var confirm = await ShowPopupAsync(message, title, Strings.Delete, Strings.Cancel, destructive: true);
             if (confirm == ContentDialogResult.Primary)
             {
-                ClientService.Send(new DeleteStory(story.ChatId, story.StoryId));
+                ClientService.Send(new DeleteStory(story.PosterChatId, story.Id));
             }
         }
 
         public void ArchiveStory(StoryViewModel story)
         {
-            ClientService.Send(new ToggleStoryIsPostedToChatPage(story.ChatId, story.StoryId, !story.IsPostedToChatPage));
+            ClientService.Send(new ToggleStoryIsPostedToChatPage(story.PosterChatId, story.Id, !story.IsPostedToChatPage));
 
             ShowToast(story.IsPostedToChatPage ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
         public async Task ReportStoryAsync(StoryViewModel story)
         {
-            await ShowPopupAsync(new ReportStoryPopup(ClientService, NavigationService, story.ChatId, story.StoryId, null, string.Empty)
+            await ShowPopupAsync(new ReportStoryPopup(ClientService, NavigationService, story.PosterChatId, story.Id, null, string.Empty)
             {
                 RequestedTheme = ElementTheme.Dark
             });
@@ -208,10 +243,9 @@ namespace Telegram.ViewModels.Stories
 
         public void OpenStory(ActiveStoriesViewModel activeStories, Rect origin, Func<ActiveStoriesViewModel, Rect> closing)
         {
-            var items = Items.ToArray();
-
-            var viewModel = new StoryListViewModel(ClientService, Settings, Aggregator, items);
+            var viewModel = new StoryListViewModel(ClientService, Settings, Aggregator, Items.ToArray());
             viewModel.NavigationService = NavigationService;
+            viewModel.UpdateSelectedItem();
 
             var window = new StoriesWindow();
             window.Update(viewModel, activeStories, StoryOpenOrigin.ProfilePhoto, origin, closing);
@@ -287,8 +321,6 @@ namespace Telegram.ViewModels.Stories
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
             {
-                Logger.Info(Count);
-
                 var token = _token;
                 var totalCount = 0u;
 
@@ -322,8 +354,6 @@ namespace Telegram.ViewModels.Stories
                         }
                     }
 
-                    Logger.Info(string.Format("Received {0} items, added {1}", chats.ChatIds.Count, totalCount));
-
                     IsEmpty = Count == 0;
 
                     _hasMoreItems = chats.TotalCount >= 0;
@@ -354,8 +384,6 @@ namespace Telegram.ViewModels.Stories
 
             public void Handle(UpdateChatActiveStories update)
             {
-                Logger.Info(string.Format("{0}, {1}", update.ActiveStories.ChatId, update.ActiveStories.Order));
-
                 if ((update.ActiveStories.List is StoryListMain && _storyList is StoryListMain) || (update.ActiveStories.List is StoryListArchive && _storyList is StoryListArchive))
                 {
                     _viewModel.BeginOnUIThread(() => UpdateChatOrder(update.ActiveStories, update.ActiveStories.Order));

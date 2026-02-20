@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Controls;
@@ -58,7 +59,7 @@ namespace Telegram.Views.Stories.Popups
             else
             {
                 Subtitle.Text = Strings.StealthModePremiumHint;
-                PurchaseCommand.Content = Strings.UnlockStealthMode;
+                PrimaryButtonText = Strings.UnlockStealthMode;
             }
 
             Closing += OnClosing;
@@ -79,7 +80,7 @@ namespace Telegram.Views.Stories.Popups
             if (_clientService.StealthMode.CooldownUntilDate == 0)
             {
                 _cooldownTimer.Stop();
-                PurchaseCommand.Content = _opening
+                PrimaryButtonText = _opening
                     ? Strings.EnableStealthModeAndOpenStory
                     : Strings.EnableStealthMode;
             }
@@ -88,7 +89,7 @@ namespace Telegram.Views.Stories.Popups
                 var untilDate = Converters.Formatter.ToLocalTime(_clientService.StealthMode.CooldownUntilDate);
                 var timeLeft = untilDate - DateTime.Now;
 
-                PurchaseCommand.Content = string.Format(Strings.AvailableIn, timeLeft.ToString("h\\:mm\\:ss"));
+                PrimaryButtonText = string.Format(Strings.AvailableIn, timeLeft.ToString("h\\:mm\\:ss"));
             }
         }
 
@@ -134,10 +135,11 @@ namespace Telegram.Views.Stories.Popups
             args.Handled = true;
         }
 
-        private void PurchaseCommand_Click(object sender, RoutedEventArgs e)
+        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (_clientService.StealthMode.CooldownUntilDate > 0)
             {
+                args.Cancel = true;
                 return;
             }
 
@@ -150,8 +152,6 @@ namespace Telegram.Views.Stories.Popups
             {
                 ShouldPurchase = true;
             }
-
-            Hide();
         }
     }
 }

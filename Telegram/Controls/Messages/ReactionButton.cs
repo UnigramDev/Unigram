@@ -1,23 +1,37 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using Microsoft.Graphics.Canvas.Geometry;
 using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Views;
 using Telegram.Converters;
+using Telegram.Native.Controls;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.Views.Popups;
 using Windows.Foundation;
-using Windows.System;
+using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Core;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -85,6 +99,7 @@ namespace Telegram.Controls.Messages
         protected MessageViewModel _message;
         protected MessageReaction _reaction;
         private ReactionType _reactionType;
+        private bool _chosen;
 
         private UnreadReaction _unread;
 
@@ -123,7 +138,9 @@ namespace Telegram.Controls.Messages
             _message = message;
             _reaction = reaction;
 
-            UpdateInteraction(message, reaction, recycled);
+            UpdateInteraction(message, reaction, recycled, _chosen != reaction.IsChosen);
+
+            _chosen = reaction.IsChosen;
 
             if (reaction.Type.AreTheSame(_reactionType))
             {
@@ -146,26 +163,21 @@ namespace Telegram.Controls.Messages
                 Icon.Source = new ReactionFileSource(message.ClientService, reaction.Type)
                 {
                     UseCenterAnimation = true,
-                    IsUnique = true
+                    IsAnimated = false
                 };
             }
         }
 
-        protected virtual void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)
+        protected virtual void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled, bool chosen)
         {
             IsChecked = interaction.IsChosen;
 
             if (interaction.TotalCount > interaction.RecentSenderIds.Count)
             {
-                Count ??= GetTemplateChild(nameof(Count)) as AnimatedTextBlock;
                 Count.Visibility = Visibility.Visible;
+                Count.SetText(Formatter.ShortNumber(interaction.TotalCount), recycled && chosen);
 
-                Count.Text = Formatter.ShortNumber(interaction.TotalCount);
-
-                if (RecentChoosers != null)
-                {
-                    RecentChoosers.Visibility = Visibility.Collapsed;
-                }
+                RecentChoosers?.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -181,14 +193,10 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    destination.Clear();
-                    destination.AddRange(origin);
+                    destination.ReplaceWith(origin);
                 }
 
-                if (Count != null)
-                {
-                    Count.Visibility = Visibility.Collapsed;
-                }
+                Count?.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -202,25 +210,16 @@ namespace Telegram.Controls.Messages
 
         private void RecentChoosers_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
         {
-            if (_message.ClientService.TryGetUser(sender, out Td.Api.User user))
-            {
-                photo.SetUser(_message.ClientService, user, 20);
-            }
-            else if (_message.ClientService.TryGetChat(sender, out Chat chat))
-            {
-                photo.SetChat(_message.ClientService, chat, 20);
-            }
-            else
-            {
-                photo.Clear();
-            }
+            photo.Source = ProfilePictureSource.MessageSender(_message.ClientService, sender);
         }
 
         protected override void OnApplyTemplate()
         {
+            Count = GetTemplateChild(nameof(Count)) as AnimatedTextBlock;
             Overlay = GetTemplateChild(nameof(Overlay)) as Popup;
             Icon = GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
             Icon.Ready += OnReady;
+            Icon.LoopCompleted += OnLoopCompleted;
 
             if (_reaction != null)
             {
@@ -237,52 +236,258 @@ namespace Telegram.Controls.Messages
             SetUnread(_unread);
         }
 
+        private void OnLoopCompleted(object sender, AnimatedImageLoopCompletedEventArgs e)
+        {
+            this.BeginOnUIThread(OnLoopCompleted);
+        }
+
+        private void OnLoopCompleted()
+        {
+            if (Icon?.Source is ReactionFileSource reaction && Icon.Source.IsAnimated && IsConnected)
+            {
+                Icon.Source = reaction.Clone(false);
+            }
+        }
+
         protected override void OnToggle()
         {
             //base.OnToggle();
         }
 
-        public virtual void OnContextRequested(ContextRequestedEventArgs args)
+        public virtual async void OnContextRequested(ContextRequestedEventArgs args)
         {
             var message = _message;
-            if (message == null || message.IsChannelPost)
+            if (message == null || (message.IsChannelPost && _reactionType is not ReactionTypeCustomEmoji))
             {
                 return;
             }
 
             var flyout = new MenuFlyout();
-            var popup = new InteractionsView(message.ClientService, message.ChatId, message.Id, _reactionType)
+            if (!message.IsChannelPost)
             {
-                Width = 264,
-                Height = 48 * _reaction.TotalCount,
-                MinHeight = 48,
-                MaxHeight = 360
-            };
-
-            void handler(InteractionsView sender, ItemClickEventArgs e)
-            {
-                sender.ItemClick -= handler;
-                flyout.Hide();
-
-                if (e.ClickedItem is AddedReaction addedReaction)
+                var popup = new InteractionsView(message.ClientService, message.ChatId, message.Id, _reactionType)
                 {
-                    message.Delegate.NavigationService.NavigateToSender(addedReaction.SenderId);
-                }
-                else if (e.ClickedItem is MessageViewer messageViewer)
+                    Width = 264,
+                    Height = 48 * _reaction.TotalCount,
+                    MinHeight = 48,
+                    MaxHeight = 360
+                };
+
+                void handler(InteractionsView sender, ItemClickEventArgs e)
                 {
-                    message.Delegate.NavigationService.NavigateToUser(messageViewer.UserId);
+                    sender.ItemClick -= handler;
+                    flyout.Hide();
+
+                    if (e.ClickedItem is AddedReaction addedReaction)
+                    {
+                        message.Delegate.NavigationService.NavigateToSender(addedReaction.SenderId, state: new NavigationState { { "report_reactions", new ReportMessageReactions(message.ChatId, message.Id, addedReaction.SenderId) } });
+                    }
+                    else if (e.ClickedItem is MessageViewer messageViewer)
+                    {
+                        message.Delegate.NavigationService.NavigateToUser(messageViewer.UserId);
+                    }
                 }
+
+                popup.ItemClick += handler;
+
+                flyout.Items.Add(new MenuFlyoutContent
+                {
+                    Content = popup,
+                    Padding = new Thickness(0)
+                });
             }
 
-            popup.ItemClick += handler;
-
-            flyout.Items.Add(new MenuFlyoutContent
+            if (_reactionType is ReactionTypeCustomEmoji customEmoji)
             {
-                Content = popup,
-                Padding = new Thickness(0)
-            });
+                var grid = new Grid
+                {
+                    // Approximate height for two lines of text
+                    //Height = 46,
+                    Width = 264 - 4 - 4,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
 
-            flyout.ShowAt(this, args);
+                ShowSkeleton(grid);
+
+                var button = new Button
+                {
+                    Content = grid,
+                    Style = BootStrapper.Current.Resources["ListEmptyButtonStyle"] as Style,
+                    CornerRadius = new CornerRadius(4),
+                    IsEnabled = false
+                };
+
+                var block = new RichTextBlock
+                {
+                    IsTextSelectionEnabled = false,
+                    FontSize = 12,
+                    TextTrimming = TextTrimming.CharacterEllipsis,
+                    Margin = new Thickness(11, 3, 11, 5),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add("\n");
+                block.Blocks.Add(paragraph);
+                grid.Children.Add(block);
+
+                void click(object sender, RoutedEventArgs e)
+                {
+                    button.Click -= click;
+                    flyout.Hide();
+
+                    ShowCustomEmoji();
+                }
+
+                button.Click += click;
+
+                var content = new MenuFlyoutContent
+                {
+                    Content = button,
+                    Padding = new Thickness(4, 2, 4, 2)
+                };
+
+                flyout.CreateFlyoutSeparator();
+                flyout.Items.Add(content);
+
+                flyout.ShowAt(this, args);
+
+                var function = _message.ClientService.GetCustomEmojiStickerSets(new[] { customEmoji.CustomEmojiId });
+
+                await Task.WhenAll(function, Task.Delay(250));
+
+                var response = await function;
+                if (response is StickerSets stickerSets)
+                {
+                    button.IsEnabled = true;
+
+                    if (stickerSets.Sets.Count != 1)
+                    {
+                        TextBlockHelper.SetMarkdown(block, paragraph.Inlines, Locale.Declension(Strings.R.MessageContainsReactionsPacks, stickerSets.Sets.Count));
+                    }
+                    else
+                    {
+                        var player = new CustomEmojiIcon();
+                        player.LoopCount = 0;
+                        player.Source = DelayedFileSource.FromStickerSetInfo(_message.ClientService, stickerSets.Sets[0]);
+
+                        player.HorizontalAlignment = HorizontalAlignment.Left;
+                        player.FlowDirection = FlowDirection.LeftToRight;
+                        player.Margin = new Thickness(0, 0, 0, -4);
+                        player.Width = 16;
+                        player.Height = 16;
+                        player.FrameSize = new Size(16, 16);
+
+                        var inline = new InlineUIContainer();
+                        inline.Child = player;
+
+                        var text = Strings.MessageContainsReactionPack;
+                        var index = text.IndexOf("{0}");
+
+                        var prefix = text.Substring(0, index);
+                        var suffix = text.Substring(index + 3);
+
+                        paragraph.Inlines.Clear();
+                        paragraph.Inlines.Add(prefix);
+                        paragraph.Inlines.Add(inline);
+                        paragraph.Inlines.Add($" {stickerSets.Sets[0].Title}", FontWeights.SemiBold);
+                        paragraph.Inlines.Add(suffix);
+                    }
+
+                    var visual = ElementCompositionPreview.GetElementChildVisual(grid);
+                    var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
+                    animation.InsertKeyFrame(0, 1);
+                    animation.InsertKeyFrame(1, 0);
+
+                    visual.StartAnimation("Opacity", animation);
+                }
+            }
+            else
+            {
+                flyout.ShowAt(this, args);
+            }
+        }
+
+        private void ShowSkeleton(UIElement element)
+        {
+            var size = new Vector2(264, 48);
+            var itemHeight = 6 + 36 + 6;
+
+            var shapes = new List<CanvasGeometry>();
+
+            shapes.Add(CanvasGeometry.CreateRoundedRectangle(null, 8, 6, 220, 14, 4, 4));
+            shapes.Add(CanvasGeometry.CreateRoundedRectangle(null, 8, 6 + 16, 180, 14, 4, 4));
+
+            var compositor = BootStrapper.Current.Compositor;
+
+            var geometries = shapes.ToArray();
+            var path = compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreateGroup(null, geometries, CanvasFilledRegionDetermination.Winding)));
+
+            var transparent = Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF);
+            var foregroundColor = Color.FromArgb(0x0F, 0xFF, 0xFF, 0xFF);
+            var backgroundColor = Color.FromArgb(0x0F, 0xFF, 0xFF, 0xFF);
+
+            var lookup = ThemeService.GetLookup(ActualTheme);
+            if (lookup.TryGet("MenuFlyoutItemBackgroundPointerOver", out Color color))
+            {
+                foregroundColor = color;
+                backgroundColor = color;
+            }
+
+            var gradient = compositor.CreateLinearGradientBrush();
+            gradient.StartPoint = new Vector2(0, 0);
+            gradient.EndPoint = new Vector2(1, 0);
+            gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.0f, transparent));
+            gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.5f, foregroundColor));
+            gradient.ColorStops.Add(compositor.CreateColorGradientStop(1.0f, transparent));
+
+            var background = compositor.CreateRectangleGeometry();
+            background.Size = size;
+            var backgroundShape = compositor.CreateSpriteShape(background);
+            backgroundShape.FillBrush = compositor.CreateColorBrush(backgroundColor);
+
+            var foreground = compositor.CreateRectangleGeometry();
+            foreground.Size = size;
+            var foregroundShape = compositor.CreateSpriteShape(foreground);
+            foregroundShape.FillBrush = gradient;
+
+            var clip = compositor.CreateGeometricClip(path);
+            var visual = compositor.CreateShapeVisual();
+            visual.Clip = clip;
+            visual.Shapes.Add(backgroundShape);
+            visual.Shapes.Add(foregroundShape);
+            visual.RelativeSizeAdjustment = Vector2.One;
+
+            var animation = compositor.CreateVector2KeyFrameAnimation();
+            animation.InsertKeyFrame(0, new Vector2(-size.X, 0));
+            animation.InsertKeyFrame(1, new Vector2(size.X, 0));
+            animation.IterationBehavior = AnimationIterationBehavior.Forever;
+            animation.Duration = TimeSpan.FromSeconds(1);
+
+            foregroundShape.StartAnimation("Offset", animation);
+
+            ElementCompositionPreview.SetElementChildVisual(element, visual);
+        }
+
+        private async void ShowCustomEmoji()
+        {
+            if (_reactionType is not ReactionTypeCustomEmoji customEmoji)
+            {
+                return;
+            }
+
+            var response = await _message.ClientService.SendAsync(new GetCustomEmojiStickers(new[] { customEmoji.CustomEmojiId }));
+            if (response is Stickers stickers)
+            {
+                var sets = new HashSet<long>();
+
+                foreach (var sticker in stickers.StickersValue)
+                {
+                    sets.Add(sticker.SetId);
+                }
+
+                await StickersPopup.ShowAsync(_message.Delegate.NavigationService, sets);
+            }
         }
 
         private void OnClick(object sender, RoutedEventArgs e)
@@ -323,7 +528,7 @@ namespace Telegram.Controls.Messages
                 if (response is EmojiReaction reaction && reaction.AroundAnimation != null)
                 {
                     var around = await _message.ClientService.DownloadFileAsync(reaction.AroundAnimation.StickerValue, 32);
-                    if (around.Local.IsDownloadingCompleted && this.IsConnected())
+                    if (around.Local.IsDownloadingCompleted && IsConnected)
                     {
                         _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Animate(around, true));
                     }
@@ -338,7 +543,7 @@ namespace Telegram.Controls.Messages
                     var next = random.Next(0, stickers.StickersValue.Count);
 
                     var around = await _message.ClientService.DownloadFileAsync(stickers.StickersValue[next].StickerValue, 32);
-                    if (around.Local.IsDownloadingCompleted && this.IsConnected())
+                    if (around.Local.IsDownloadingCompleted && IsConnected)
                     {
                         _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Animate(around, true));
                     }
@@ -350,7 +555,7 @@ namespace Telegram.Controls.Messages
                 var next = random.Next(1, 6);
 
                 var around = TdExtensions.GetLocalFile($"Assets\\Animations\\PaidReactionAround{next}.tgs");
-                if (around.Local.IsDownloadingCompleted && this.IsConnected())
+                if (around.Local.IsDownloadingCompleted && IsConnected)
                 {
                     _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Animate(around, false));
                 }
@@ -359,6 +564,11 @@ namespace Telegram.Controls.Messages
 
         protected void Animate(File around, bool cache)
         {
+            if (Icon?.Source is ReactionFileSource reaction && !Icon.Source.IsAnimated)
+            {
+                Icon.Source = reaction.Clone(true);
+            }
+
             Icon?.Play();
 
             var popup = Overlay;

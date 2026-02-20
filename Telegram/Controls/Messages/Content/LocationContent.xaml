@@ -16,9 +16,12 @@
                 <ControlTemplate TargetType="local:LocationContent">
                     <StackPanel>
                         <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                            <controls:ImageView x:Name="Texture"
-                                                MaxWidth="320"
-                                                MaxHeight="200" />
+                            <HyperlinkButton x:Name="Button"
+                                             Style="{StaticResource EmptyHyperlinkButtonStyle}">
+                                <controls:ImageView x:Name="Texture"
+                                                    MaxWidth="320"
+                                                    MaxHeight="200" />
+                            </HyperlinkButton>
                             <Canvas Width="40"
                                     Height="47.691"
                                     Margin="0,-36,0,0"
@@ -32,8 +35,7 @@
                                 <Border Height="40"
                                         Width="40">
                                     <controls:ProfilePicture x:Name="PinPhoto"
-                                                             Width="32"
-                                                             Height="32"
+                                                             Size="32"
                                                              IsHitTestVisible="False"
                                                              Margin="4,3,4,4"
                                                              VerticalAlignment="Top" />

@@ -3,12 +3,13 @@ import "RemoteMediaStateUpdatedEventArgs.idl";
 import "SignalingDataEmittedEventArgs.idl";
 import "VoipVideoCapture.idl";
 import "VoipDescriptor.idl";
+import "VoipCallProtocol.idl";
 
 namespace Telegram.Native.Calls
 {
     runtimeclass VoipManager
     {
-        static Telegram.Td.Api.CallProtocol Protocol{ get; };
+        static VoipCallProtocol Protocol{ get; };
 
         VoipManager();
         void Start(VoipDescriptor descriptor);

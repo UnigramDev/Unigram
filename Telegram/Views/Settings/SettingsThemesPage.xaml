@@ -11,6 +11,14 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
@@ -202,22 +210,20 @@
                                           Visibility="{x:Bind ViewModel.AreCustomThemesAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="services:ThemeInfoBase">
-                            <RadioButton Style="{StaticResource SettingsRadioButtonStyle}"
-                                         Click="Switch_Click"
-                                         Content="{x:Bind Name}"
-                                         Tag="{x:Bind}"
-                                         GroupName="Theme"
-                                         ContextRequested="Theme_ContextRequested"
-                                         DataContextChanged="Theme_DataContextChanged" />
+                            <controls:SettingsRadioButton Click="Switch_Click"
+                                                          Content="{x:Bind Name}"
+                                                          Tag="{x:Bind}"
+                                                          GroupName="Theme"
+                                                          ContextRequested="Theme_ContextRequested"
+                                                          DataContextChanged="Theme_DataContextChanged" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
-                    <controls:BadgeButton Content="{CustomResource CreateNewTheme}"
-                                          Click="{x:Bind ViewModel.NewTheme}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE90E;" />
+                    <controls:SettingsButton Content="{CustomResource CreateNewTheme}"
+                                             Click="{x:Bind ViewModel.NewTheme}"
+                                             Glyph="&#xE90E;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

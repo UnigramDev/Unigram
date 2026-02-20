@@ -9,5 +9,9 @@ namespace Telegram.Native
         Int32 PixelHeight { get; };
 
         Windows.UI.Xaml.Media.Imaging.WriteableBitmap Source { get; };
+
+        static void Clear(Windows.Storage.Streams.IBuffer buffer);
+
+        static void SourceOver(Windows.Storage.Streams.IBuffer destination, Windows.Storage.Streams.IBuffer source, Int32 width, Int32 height);
     }
 }

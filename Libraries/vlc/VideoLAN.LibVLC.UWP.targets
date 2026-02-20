@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <VlcUWPX64Enabled Condition="'$(VlcUWPX64Enabled)' == '' AND ('$(Platform)' == 'x64' OR '$(Platform)' == 'AnyCPU')">true</VlcUWPX64Enabled>
+    <VlcUWPX86Enabled Condition="'$(VlcUWPX86Enabled)' == '' AND ('$(Platform)' == 'x86' OR '$(Platform)' == 'AnyCPU')">true</VlcUWPX86Enabled>
+    <VlcUWPARMEnabled Condition="'$(VlcUWPARMEnabled)' == '' AND ('$(Platform)' == 'ARM64')">true</VlcUWPARMEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- If no VlcWindows[...]IncludeFiles was declared previously, include all plugins by default by specifying ** (escaped, so %2A%2A) -->
+    <VlcUWPX64IncludeFiles Condition="'@(VlcUWPX64IncludeFiles)'==''" Include="libvlc.%2A;libvlccore.%2A;hrtfs\%2A%2A;locale\%2A%2A;lua\%2A%2A;plugins\%2A%2A" />
+    <VlcUWPX86IncludeFiles Condition="'@(VlcUWPX86IncludeFiles)'==''" Include="libvlc.%2A;libvlccore.%2A;hrtfs\%2A%2A;locale\%2A%2A;lua\%2A%2A;plugins\%2A%2A" />
+    <VlcUWPARMIncludeFiles Condition="'@(VlcUWPARMIncludeFiles)'==''" Include="libvlc.%2A;libvlccore.%2A;hrtfs\%2A%2A;locale\%2A%2A;lua\%2A%2A;plugins\%2A%2A" />
+  </ItemGroup>
+  
+  <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\win10-x64\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)..\win10-x64\sdk\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libvlc.lib;libvlccore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup Condition="'$(Platform)'=='ARM64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\win10-arm64\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)..\win10-arm64\sdk\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libvlc.lib;libvlccore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  
+  <Target Name="CollectVlcFilesToCopyUWP" BeforeTargets="BeforeBuild">
+    <!-- We need a target in order to make batching work -->
+    <!-- Some useful links to understand how it works:
+      http://sedotech.com/Resources#Batching (4 parts of excellent explanation of Batching. Link 2 is dead, but can be found in parts 3 and above)
+      http://sedodream.com/2010/10/21/MSBuildFilterListTake2.aspx
+    -->
+
+    <!-- First, transform the escaped, relative, platform-independant file path into real path, relative to 32/64 folders -->
+
+    <!-- x64 -->
+    <ItemGroup Condition="'$(VlcUWPX64Enabled)' == 'true'">
+      <!-- Expand selectors and compute absolute paths for include, exclude and MainLibraries -->
+      <VlcUWPX64IncludeFilesFullPath Include="$([MSBuild]::Unescape($(MSBuildThisFileDirectory)..\build\win10-x64\%(VlcUWPX64IncludeFiles.Identity)))" />
+      <VlcUWPX64ExcludeFilesFullPath Include="$([MSBuild]::Unescape($(MSBuildThisFileDirectory)..\build\win10-x64\%(VlcUWPX64ExcludeFiles.Identity)))" 
+        Condition="'%(VlcUWPX64ExcludeFiles.Identity)'!=''" />
+
+      <!-- We have gathered all the full path of what should be copied and what should be skipped, let's include that as Content that gets copied -->
+      <Content Include="@(VlcUWPX64IncludeFilesFullPath)" Exclude="@(VlcUWPX64ExcludeFilesFullPath)">
+        <Link>$([MSBuild]::MakeRelative($(MSBuildThisFileDirectory)..\build\win10-x64\, %(FullPath)))</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <!-- x86 -->
+    <ItemGroup Condition="'$(VlcUWPX86Enabled)' == 'true'">
+      <!-- Expand selectors and compute absolute paths for include, exclude and MainLibraries -->
+      <VlcUWPX86IncludeFilesFullPath Include="$([MSBuild]::Unescape($(MSBuildThisFileDirectory)..\build\win10-x86\%(VlcUWPX86IncludeFiles.Identity)))" />
+      <VlcUWPX86ExcludeFilesFullPath Include="$([MSBuild]::Unescape($(MSBuildThisFileDirectory)..\build\win10-x86\%(VlcUWPX86ExcludeFiles.Identity)))" Condition="'%(VlcWindowsX86ExcludeFiles.Identity)'!=''" />
+
+      <!-- We have gathered all the full path of what should be copied and what should be skipped, let's include that as Content that gets copied -->
+      <Content Include="@(VlcUWPX86IncludeFilesFullPath)" Exclude="@(VlcUWPX86ExcludeFilesFullPath)">
+        <Link>$([MSBuild]::MakeRelative($(MSBuildThisFileDirectory)..\build\win10-x86\, %(FullPath)))</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+     <!-- ARM -->
+    <ItemGroup Condition="'$(VlcUWPARMEnabled)' == 'true'">
+      <!-- Expand selectors and compute absolute paths for include, exclude and MainLibraries -->
+      <VlcUWPARMIncludeFilesFullPath Include="$([MSBuild]::Unescape($(MSBuildThisFileDirectory)..\build\win10-arm64\%(VlcUWPARMIncludeFiles.Identity)))" />
+      <VlcUWPARMExcludeFilesFullPath Include="$([MSBuild]::Unescape($(MSBuildThisFileDirectory)..\build\win10-arm64\%(VlcUWPARMExcludeFiles.Identity)))" Condition="'%(VlcWindowsARMExcludeFiles.Identity)'!=''" />
+
+      <!-- We have gathered all the full path of what should be copied and what should be skipped, let's include that as Content that gets copied -->
+      <Content Include="@(VlcUWPARMIncludeFilesFullPath)" Exclude="@(VlcUWPARMExcludeFilesFullPath)">
+        <Link>$([MSBuild]::MakeRelative($(MSBuildThisFileDirectory)..\build\win10-arm64\, %(FullPath)))</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+  </Target>
+</Project>

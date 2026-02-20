@@ -1,18 +1,23 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Td.Api;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
+using Windows.UI.Xaml;
 using Path = System.IO.Path;
 using SAP = Windows.Storage.AccessCache.StorageApplicationPermissions;
 
@@ -58,6 +63,10 @@ namespace Telegram.Services
         Task OpenFileAsync(File file);
 
         Task OpenFileWithAsync(File file);
+
+        Task CopyFilePathAsync(XamlRoot xamlRoot, File file);
+
+        Task SaveFilesAsync(IEnumerable<File> files);
 
         Task OpenFolderAsync(File file);
 
@@ -167,6 +176,59 @@ namespace Telegram.Services
             catch { }
         }
 
+        public async Task CopyFilePathAsync(XamlRoot xamlRoot, File file)
+        {
+            var cached = await _clientService.GetPermanentFileAsync(file);
+            if (cached == null)
+            {
+                return;
+            }
+
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(cached.Path);
+            ClipboardEx.TrySetContent(dataPackage);
+
+            ToastPopup.Show(xamlRoot, Strings.PathCopied, ToastPopupIcon.Copied);
+        }
+
+        public async Task SaveFilesAsync(IEnumerable<File> files)
+        {
+            try
+            {
+                var picker = new FolderPicker();
+
+                var folder = await picker.PickSingleFolderAsync();
+                if (folder == null)
+                {
+                    return;
+                }
+
+                var options = new FolderLauncherOptions();
+
+                foreach (var file in files)
+                {
+                    // When saving a file as, we always want to retrieve the cached copy
+                    var cached = await _clientService.GetFileAsync(file);
+                    if (cached == null)
+                    {
+                        return;
+                    }
+
+                    var response = await _clientService.SendAsync(new GetSuggestedFileName(file.Id, string.Empty));
+                    if (response is not Text text)
+                    {
+                        return;
+                    }
+
+                    var destination = await cached.CopyAsync(folder, text.TextValue, NameCollisionOption.GenerateUniqueName);
+                    options.ItemsToSelect.Add(destination);
+                }
+
+                await Launcher.LaunchFolderAsync(folder, options);
+            }
+            catch { }
+        }
+
         public async Task OpenFolderAsync(File file)
         {
             // When opening a file, we always want to retrieve the permanent copy
@@ -250,6 +312,10 @@ namespace Telegram.Services
             {
                 var downloads = await Future.GetDefaultFolderAsync();
                 if (downloads == null || Extensions.IsRelativePath(downloads.Path, folder.Path, out _))
+                {
+                    Future.Remove(Future.DownloadFolder);
+                }
+                else if (Extensions.IsRelativePath(ApplicationData.Current.LocalFolder.Path, folder.Path, out _))
                 {
                     Future.Remove(Future.DownloadFolder);
                 }
@@ -516,7 +582,14 @@ namespace Telegram.Services
                     // - ArgumentException
                     // - FileNotFoundException
 
-                    SAP.FutureAccessList.Clear();
+                    try
+                    {
+                        SAP.FutureAccessList.Clear();
+                    }
+                    catch
+                    {
+                        // All the remote procedure calls must be wrapped in a try-catch block
+                    }
                 }
             }
         }

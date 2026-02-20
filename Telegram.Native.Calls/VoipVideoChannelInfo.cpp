@@ -6,7 +6,7 @@
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-    VoipVideoChannelInfo::VoipVideoChannelInfo(int32_t audioSource, MessageSender participantId, hstring endpointId, IVector<GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality)
+    VoipVideoChannelInfo::VoipVideoChannelInfo(int32_t audioSource, int64_t participantId, hstring endpointId, IVector<VoipVideoSourceGroup> sourceGroups, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality)
         : m_audioSource(audioSource)
         , m_participantId(participantId)
         , m_endpointId(endpointId)
@@ -21,7 +21,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         return m_audioSource;
     }
 
-    MessageSender VoipVideoChannelInfo::ParticipantId()
+    int64_t VoipVideoChannelInfo::ParticipantId()
     {
         return m_participantId;
     }
@@ -31,7 +31,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         return m_endpointId;
     }
 
-    IVector<GroupCallVideoSourceGroup> VoipVideoChannelInfo::SourceGroups()
+    IVector<VoipVideoSourceGroup> VoipVideoChannelInfo::SourceGroups()
     {
         return m_sourceGroups;
     }

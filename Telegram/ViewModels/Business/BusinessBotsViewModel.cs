@@ -1,4 +1,11 @@
-﻿using Rg.DiffUtils;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Rg.DiffUtils;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -589,27 +596,27 @@ namespace Telegram.ViewModels.Business
 
         public override bool HasChanged => !_cached.AreTheSame(GetSettings());
 
-        public override async void Continue()
+        protected override async void ContinueImpl(NavigatingEventArgs args)
         {
-            _completed = true;
-
             var settings = GetSettings();
             if (settings.AreTheSame(_cached))
             {
-                NavigationService.GoBack();
+                _completed = true;
+                NavigationService.GoBack(args);
                 return;
             }
 
             var response = await ClientService.SendAsync(settings == null
-                ? new DeleteBusinessConnectedBot()
+                ? new DeleteBusinessConnectedBot(_cached.BotUserId)
                 : new SetBusinessConnectedBot(settings));
             if (response is Ok)
             {
-                NavigationService.GoBack();
+                _completed = true;
+                NavigationService.GoBack(args);
             }
-            else
+            else if (response is Error error)
             {
-                // TODO
+                ShowToast(error);
             }
         }
 

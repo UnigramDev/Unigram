@@ -1,13 +1,13 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Messages;
@@ -16,6 +16,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 
 namespace Telegram.ViewModels
 {
@@ -33,6 +34,8 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateForumTopicReadOutbox>(Handle)
                 .Subscribe<UpdateChatReadInbox>(Handle)
                 .Subscribe<UpdateChatDraftMessage>(Handle)
+                .Subscribe<UpdateForumTopicDraftMessage>(Handle)
+                .Subscribe<UpdateDirectMessagesChatDraftMessage>(Handle)
                 .Subscribe<UpdateChatDefaultDisableNotification>(Handle)
                 .Subscribe<UpdateChatMessageSender>(Handle)
                 .Subscribe<UpdateChatActionBar>(Handle)
@@ -44,6 +47,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatLastMessage>(Handle)
                 .Subscribe<UpdateChatBusinessBotManageBar>(Handle)
                 .Subscribe<UpdateNewMessage>(Handle)
+                .Subscribe<UpdatePendingTextMessage>(Handle)
                 .Subscribe<UpdateDeleteMessages>(Handle)
                 .Subscribe<UpdateMessageContent>(Handle)
                 .Subscribe<UpdateMessageContentOpened>(Handle)
@@ -55,8 +59,10 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateMessageSendFailed>(Handle)
                 .Subscribe<UpdateMessageSendSucceeded>(Handle)
                 .Subscribe<UpdateMessageTranslatedText>(Handle)
+                .Subscribe<UpdateMessageSummarizedText>(Handle)
                 .Subscribe<UpdateMessageFactCheck>(Handle)
                 .Subscribe<UpdateMessageEffect>(Handle)
+                .Subscribe<UpdateMessageSuggestedPostInfo>(Handle)
                 .Subscribe<UpdateAnimatedEmojiMessageClicked>(Handle)
                 .Subscribe<UpdateUser>(Handle)
                 .Subscribe<UpdateUserFullInfo>(Handle)
@@ -78,7 +84,16 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateSpeechRecognitionTrial>(Handle)
                 .Subscribe<UpdateSavedMessagesTags>(Handle)
                 .Subscribe<UpdateGreetingSticker>(Handle)
-                .Subscribe<UpdateQuickReplyShortcut>(Handle);
+                .Subscribe<UpdateQuickReplyShortcut>(Handle)
+                .Subscribe<UpdateForumTopicInfo>(Handle);
+        }
+
+        public void Handle(UpdateForumTopicInfo update)
+        {
+            if (_chat?.Id == update.Info.ChatId)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateServiceWithForumTopic(update.Info.ForumTopicId, service => service.UpdateMessageTopic()));
+            }
         }
 
         public void Handle(UpdateQuickReplyShortcut update)
@@ -129,7 +144,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateChatAction update)
         {
-            if (update.ChatId == _chat?.Id && update.MessageThreadId == OutgoingThreadId && Type is DialogType.History or DialogType.Thread)
+            if (update.ChatId == _chat?.Id && update.TopicId.AreTheSame(TopicId) && Type is DialogType.History or DialogType.Thread)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatActions(_chat, ClientService.GetChatActions(update.ChatId)));
             }
@@ -241,7 +256,7 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypeSupergroup super && super.SupergroupId == update.Supergroup.Id)
             {
-                if (IsFeedbackGroup)
+                if (IsDirectMessagesGroup)
                 {
                     UpdateEmptyState(update.Supergroup);
                 }
@@ -394,8 +409,11 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                SetText(string.Format("@{0} {1}", username, update.Query), focus: true);
-                ResolveInlineBot(username, update.Query);
+                BeginOnUIThread(() =>
+                {
+                    SetText(string.Format("@{0} {1}", username, update.Query), focus: true);
+                    ResolveInlineBot(username, update.Query);
+                });
             }
         }
 
@@ -504,7 +522,7 @@ namespace Telegram.ViewModels
         }
         public void Handle(UpdateForumTopicReadOutbox update)
         {
-            if (update.ChatId == _chat?.Id && update.MessageThreadId == _forumTopic?.Info.MessageThreadId)
+            if (update.ChatId == _chat?.Id && update.ForumTopicId == _forumTopic?.Info.ForumTopicId)
             {
                 BeginOnUIThread(() =>
                 {
@@ -529,7 +547,35 @@ namespace Telegram.ViewModels
             if (update.ChatId == _chat?.Id)
             {
                 var header = _composerHeader;
-                if (header?.EditingMessage != null)
+                if (header?.Editing != null || header?.SuggestedPostInfo != null)
+                {
+                    return;
+                }
+
+                BeginOnUIThread(() => ShowDraftMessage(_chat, false));
+            }
+        }
+
+        public void Handle(UpdateForumTopicDraftMessage update)
+        {
+            if (update.ChatId == _chat?.Id && TopicId.IsForum(update.ForumTopicId))
+            {
+                var header = _composerHeader;
+                if (header?.Editing != null || header?.SuggestedPostInfo != null)
+                {
+                    return;
+                }
+
+                BeginOnUIThread(() => ShowDraftMessage(_chat, false));
+            }
+        }
+
+        public void Handle(UpdateDirectMessagesChatDraftMessage update)
+        {
+            if (update.ChatId == _chat?.Id && TopicId.IsDirectMessagesChat(update.TopicId))
+            {
+                var header = _composerHeader;
+                if (header?.Editing != null || header?.SuggestedPostInfo != null)
                 {
                     return;
                 }
@@ -560,7 +606,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id && update.LastMessage == null)
             {
-                IsFirstSliceLoaded = null;
+                this.BeginOnUIThread(() => IsNewestSliceLoaded = null);
             }
 
             if (update.ChatId == _chat?.Id && _chat.Type is ChatTypePrivate privata)
@@ -586,7 +632,7 @@ namespace Telegram.ViewModels
                 {
                     BeginOnUIThread(() => Delegate?.UpdateChatLastMessage(_chat));
                 }
-                else if (IsFeedbackGroup && ClientService.TryGetSupergroup(_chat, out Supergroup supergroup))
+                else if (IsDirectMessagesGroup && ClientService.TryGetSupergroup(_chat, out Supergroup supergroup))
                 {
                     UpdateEmptyState(supergroup);
                 }
@@ -673,11 +719,7 @@ namespace Telegram.ViewModels
             }
             else if (Type == DialogType.Thread)
             {
-                return message.SchedulingState == null && message.TopicId.AreTheSame(Topic);
-            }
-            else if (Type == DialogType.SavedMessagesTopic)
-            {
-                return message.SchedulingState == null && message.TopicId.AreTheSame(Topic);
+                return message.SchedulingState == null && message.TopicId.AreTheSame(TopicId);
             }
             else if (Type == DialogType.Pinned)
             {
@@ -697,16 +739,142 @@ namespace Telegram.ViewModels
 
                 BeginOnUIThread(() =>
                 {
-                    InsertMessage(message);
+                    DialogPendingTextMessage pending = null;
 
-                    if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
+                    if (_chat.Type is ChatTypePrivate privata && update.Message.SenderId.IsUser(privata.UserId))
                     {
-                        if (NavigationService.Window.ActivationMode != CoreWindowActivationMode.Deactivated)
+                        ulong lastUpdate = 0;
+
+                        foreach (var item in _pendingTextMessages.Values)
                         {
-                            _notificationsService.PlaySound();
+                            if (item.LastUpdate > lastUpdate)
+                            {
+                                lastUpdate = item.LastUpdate;
+                                pending = item;
+                            }
                         }
+
+                        foreach (var item in _pendingTextMessages.Values)
+                        {
+                            if (item.DraftId != pending?.DraftId)
+                            {
+                                item.Stop();
+
+                                item.Updated -= PendingTextMessage_Updated;
+                                item.Completed -= PendingTextMessage_Completed;
+
+                                if (Items.TryGetValue(item.DraftId, out MessageViewModel old))
+                                {
+                                    Items.Remove(old);
+                                }
+                            }
+                        }
+
+                        _pendingTextMessages.Clear();
+                    }
+
+                    if (pending != null && Items.ContainsKey(long.MaxValue))
+                    {
+                        pending.Update(update.Message);
+                    }
+                    else
+                    {
+                        InsertMessage(message);
+                    }
+
+                    if (!update.Message.IsOutgoing)
+                    {
+                        PlaySound(false);
                     }
                 });
+            }
+        }
+
+        public void Handle(UpdatePendingTextMessage update)
+        {
+            if (_chat?.Id == update.ChatId && (TopicId == null || TopicId.IsForum(update.ForumTopicId)) && ClientService.TryGetUser(Chat, out User user))
+            {
+                var topicId = new MessageTopicForum(update.ForumTopicId);
+                var content = new MessageText(update.Text, null, null);
+                var message = CreateMessage(new Message(long.MaxValue, new MessageSenderUser(user.Id), update.ChatId, null, null, false, false, false, false, false, false, false, false, false, DateTime.Now.ToTimestamp(), 0, null, null, null, null, null, null, null, topicId, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, 0, null, string.Empty, content, null));
+                message.GeneratedContentUnread = true;
+                message.IsInitial = false;
+
+                BeginOnUIThread(() =>
+                {
+                    if (_pendingTextMessages.TryGetValue(update.DraftId, out DialogPendingTextMessage pending))
+                    {
+                        pending.Update(update);
+                    }
+                    else
+                    {
+                        pending = new DialogPendingTextMessage(update, message);
+                        pending.Updated += PendingTextMessage_Updated;
+                        pending.Completed += PendingTextMessage_Completed;
+
+                        _pendingTextMessages[update.DraftId] = pending;
+                    }
+
+                    if (Items.TryGetValue(long.MaxValue, out MessageViewModel already))
+                    {
+                        return;
+                    }
+
+                    InsertMessage(message);
+                });
+            }
+        }
+
+        private void PendingTextMessage_Updated(DialogPendingTextMessage sender, MessageViewModel message)
+        {
+            if (Items.TryGetValue(long.MaxValue, out MessageViewModel already))
+            {
+                already.Replace(message);
+                Delegate?.UpdateBubbleWithMessageId(long.MaxValue, bubble => bubble.UpdateMessageContent(already));
+            }
+        }
+
+        private void PendingTextMessage_Completed(DialogPendingTextMessage sender, Message completed)
+        {
+            _pendingTextMessages.Remove(sender.DraftId);
+
+            sender.Updated -= PendingTextMessage_Updated;
+            sender.Completed -= PendingTextMessage_Completed;
+
+            if (completed != null)
+            {
+                Handle(long.MaxValue, message =>
+                {
+                    message.Replace(completed);
+                    message.IsInitial = true;
+                    message.GeneratedContentUnread = true;
+
+                    if (message.Content is MessagePaidMedia paidMedia)
+                    {
+                        message.Content = new MessagePaidAlbum(paidMedia);
+                    }
+
+                    InsertMessage(message, long.MaxValue);
+
+                    return true;
+                },
+                (bubble, message) =>
+                {
+                    if (bubble.Parent is MessageSelector selector)
+                    {
+                        selector.PrepareForItemOverride(message, true);
+                    }
+
+                    bubble.UpdateMessage(message);
+                    Delegate?.ViewVisibleMessages();
+                }, newMessageId: completed.Id);
+            }
+            else
+            {
+                if (Items.TryGetValue(sender.DraftId, out MessageViewModel already))
+                {
+                    Items.Remove(already);
+                }
             }
         }
 
@@ -716,92 +884,87 @@ namespace Telegram.ViewModels
             {
                 var table = update.MessageIds.ToHashSet();
 
-                BeginOnUIThread(async () =>
+                BeginOnUIThread(() =>
                 {
-                    using (await _loadMoreLock.WaitAsync())
+                    List<MessageViewModel> toBeDeleted = null;
+
+                    for (int i = 0; i < Items.Count; i++)
                     {
-                        List<MessageViewModel> toBeDeleted = null;
-
-                        for (int i = 0; i < Items.Count; i++)
+                        var message = Items[i];
+                        if (message.MediaAlbumId != 0 && message.Content is MessageAlbum album)
                         {
-                            var message = Items[i];
-                            if (message.MediaAlbumId != 0 && message.Content is MessageAlbum album)
+                            var found = false;
+                            var invalidated = true;
+
+                            for (int k = 0; k < album.Messages.Count; k++)
                             {
-                                var found = false;
-                                var invalidated = true;
-
-                                for (int k = 0; k < album.Messages.Count; k++)
+                                if (table.Contains(album.Messages[k].Id))
                                 {
-                                    if (table.Contains(album.Messages[k].Id))
+                                    album.Messages.RemoveAt(k);
+                                    k--;
+
+                                    if (album.Messages.Count > 0)
                                     {
-                                        album.Messages.RemoveAt(k);
-                                        k--;
-
-                                        if (album.Messages.Count > 0)
-                                        {
-                                            message.UpdateWith(album.Messages[0]);
-                                            album.Invalidate();
-                                        }
-                                        else
-                                        {
-                                            invalidated = false;
-
-                                            _groupedMessages.TryRemove(message.MediaAlbumId, out _);
-
-                                            toBeDeleted ??= new();
-                                            toBeDeleted.Add(message);
-                                        }
-
-                                        found = true;
-                                        //break;
+                                        message.UpdateAlbum(album.Messages[0]);
+                                        album.Invalidate();
                                     }
-                                }
-
-                                if (found)
-                                {
-                                    if (invalidated)
+                                    else
                                     {
-                                        Handle(new UpdateMessageContent(message.ChatId, message.Id, album));
+                                        invalidated = false;
+
+                                        _groupedMessages.TryRemove(message.MediaAlbumId, out _);
+
+                                        toBeDeleted ??= new();
+                                        toBeDeleted.Add(message);
                                     }
 
-                                    continue;
+                                    found = true;
+                                    //break;
                                 }
                             }
 
-                            if (table.Contains(message.Id))
+                            if (found)
                             {
-                                toBeDeleted ??= new();
-                                toBeDeleted.Add(message);
-                            }
-                            else if (message.ReplyTo is MessageReplyToMessage replyToMessage && table.Contains(replyToMessage.MessageId))
-                            {
-                                message.ReplyToItem = null;
-                                message.ReplyToState = MessageReplyToState.Deleted;
+                                if (invalidated)
+                                {
+                                    Handle(new UpdateMessageContent(message.ChatId, message.Id, album));
+                                }
 
-                                Handle(message, bubble => bubble.UpdateMessageReply(message), service => service.UpdateMessage(message));
-                            }
-
-                            if (i >= 0 && i == Items.Count - 1 && Items[i].Content is MessageHeaderUnread)
-                            {
-                                toBeDeleted ??= new();
-                                toBeDeleted.Add(message);
+                                continue;
                             }
                         }
 
-                        if (toBeDeleted != null)
+                        if (table.Contains(message.Id))
                         {
-                            //Delegate?.UpdateDeleteMessages(_chat, toBeDeleted);
-
-                            foreach (var item in toBeDeleted)
-                            {
-                                Items.Remove(item);
-                            }
+                            toBeDeleted ??= new();
+                            toBeDeleted.Add(message);
                         }
-
-                        if (Items.Count > 0 && Items[^1].Content is MessageHeaderUnread)
+                        else if (message.ReplyTo is MessageReplyToMessage replyToMessage && table.Contains(replyToMessage.MessageId))
                         {
-                            Items.RemoveAt(Items.Count - 1);
+                            message.ReplyToItem = null;
+                            message.ReplyToState = MessageReplyToState.Deleted;
+
+                            Handle(message, bubble => bubble.UpdateMessageReply(message), service => service.UpdateMessage(message));
                         }
+
+                        if (i >= 0 && i == Items.Count - 1 && Items[i].Content is MessageHeaderUnread)
+                        {
+                            toBeDeleted ??= new();
+                            toBeDeleted.Add(message);
+                        }
+                    }
+
+                    if (toBeDeleted != null)
+                    {
+                        foreach (var item in toBeDeleted)
+                        {
+                            Items.Remove(item);
+                        }
+                    }
+
+                    if (Items.Count > 0 && Items[^1].Content is MessageHeaderUnread)
+                    {
+                        Items.RemoveAt(Items.Count - 1);
                     }
 
                     foreach (var id in update.MessageIds)
@@ -838,9 +1001,8 @@ namespace Telegram.ViewModels
 
                         if (update.NewContent is MessageExpiredPhoto or MessageExpiredVideo or MessageExpiredVideoNote or MessageExpiredVoiceNote)
                         {
-                            // Probably not the best way
-                            Items.Remove(message);
-                            InsertMessageInOrder(Items, message);
+                            // Probably not the best way but replacing content template is not supported
+                            InsertMessageInOrder(message, 0, true);
                         }
                     }
                 }, (bubble, message, reply) =>
@@ -854,7 +1016,12 @@ namespace Telegram.ViewModels
                         bubble.UpdateMessageContent(message);
                         Delegate?.ViewVisibleMessages();
                     }
+                }, (service, message) =>
+                {
+                    service.UpdateMessage(message);
                 });
+
+                PinnedMessages.UpdateMessageContent(update.MessageId, update.NewContent);
 
                 //BeginOnUIThread(() =>
                 //{
@@ -904,7 +1071,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                _mentions.RemoveMessage(update.MessageId);
+                Mentions.RemoveMessage(update.MessageId);
 
                 Handle(update.MessageId, message =>
                 {
@@ -920,7 +1087,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                _reactions.RemoveMessage(update.MessageId);
+                Reactions.RemoveMessage(update.MessageId);
 
                 Handle(update.MessageId, message =>
                 {
@@ -987,8 +1154,13 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    _hasLoadedLastPinnedMessage = false;
-                    BeginOnUIThread(() => LoadPinnedMessagesSliceAsync(update.MessageId));
+                    BeginOnUIThread(() =>
+                    {
+                        if (TryGetFirstVisibleMessageId(out long firstVisibleId))
+                        {
+                            PinnedMessages.LoadSlice(firstVisibleId);
+                        }
+                    });
 
                     Handle(update.MessageId, message =>
                     {
@@ -1007,9 +1179,23 @@ namespace Telegram.ViewModels
                 Handle(update.OldMessageId, message =>
                 {
                     message.Replace(update.Message);
+                    message.IsInitial = true;
+                    message.GeneratedContentUnread = true;
+
+                    if (message.Content is MessagePaidMedia paidMedia)
+                    {
+                        message.Content = new MessagePaidAlbum(paidMedia);
+                    }
+
+                    InsertMessage(message, update.OldMessageId);
+
                     return true;
                 },
-                (bubble, message) => bubble.UpdateMessage(message));
+                (bubble, message) =>
+                {
+                    bubble.UpdateMessage(message);
+                    Delegate?.ViewVisibleMessages();
+                }, newMessageId: update.Message.Id);
             }
         }
 
@@ -1029,6 +1215,7 @@ namespace Telegram.ViewModels
                 Handle(update.OldMessageId, message =>
                 {
                     message.Replace(update.Message);
+                    message.IsInitial = true;
                     message.GeneratedContentUnread = true;
 
                     if (message.Content is MessagePaidMedia paidMedia)
@@ -1036,17 +1223,33 @@ namespace Telegram.ViewModels
                         message.Content = new MessagePaidAlbum(paidMedia);
                     }
 
-                    return true; //MoveMessageInOrder(Items, message);
+                    InsertMessage(message, update.OldMessageId);
+
+                    return true;
                 },
                 (bubble, message) =>
                 {
+                    if (bubble.Parent is MessageSelector selector)
+                    {
+                        selector.PrepareForItemOverride(message, true);
+                    }
+
                     bubble.UpdateMessage(message);
                     Delegate?.ViewVisibleMessages();
                 }, newMessageId: update.Message.Id);
+            }
+        }
 
-                if (Settings.Notifications.InAppSounds)
+        private void PlaySound(bool sent)
+        {
+            if (Settings.Notifications.InAppSounds)
+            {
+                var muted = ClientService.Notifications.IsMuted(Chat);
+                var listeners = AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged);
+
+                if (NavigationService.Window.ActivationMode != CoreWindowActivationMode.Deactivated && (listeners || !muted))
                 {
-                    _notificationsService.PlaySound();
+                    _notificationsService.PlaySound(sent || !listeners);
                 }
             }
         }
@@ -1058,9 +1261,39 @@ namespace Telegram.ViewModels
                 Handle(update.MessageId, message =>
                 {
                     message.TranslatedText = update.TranslatedText;
-                    return true;
                 },
-                (bubble, message) => bubble.UpdateMessageText(message));
+                (bubble, message, reply) =>
+                {
+                    if (reply)
+                    {
+                        bubble.UpdateMessageReply(message);
+                    }
+                    else
+                    {
+                        bubble.UpdateMessageTextLayout(message);
+                    }
+                }, null);
+            }
+        }
+
+        public void Handle(UpdateMessageSummarizedText update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                Handle(update.MessageId, message =>
+                {
+                    message.SummarizedText = update.SummarizedText;
+                },
+                (bubble, message, reply) =>
+                {
+                    if (reply)
+                    {
+                        return;
+                    }
+
+                    bubble.UpdateMessageTextLayout(message);
+                    Delegate?.UpdateMessageSummary(message);
+                }, null);
             }
         }
 
@@ -1081,6 +1314,21 @@ namespace Telegram.ViewModels
                 }
 
                 hashSet.Clear();
+            }
+        }
+
+        public void Handle(UpdateMessageSuggestedPostInfo update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                Handle(update.MessageId, message =>
+                {
+                    message.SuggestedPostInfo = update.SuggestedPostInfo;
+                    message.ReplyMarkup = update.SuggestedPostInfo.ToReplyMarkup(message.IsOutgoing);
+
+                    return true;
+                },
+                (bubble, message) => bubble.UpdateMessageSuggestedPostInfo(message));
             }
         }
 
@@ -1135,7 +1383,7 @@ namespace Telegram.ViewModels
                                 Items.UpdateMessageSendSucceeded(messageId, child.Id, message);
                             }
 
-                            message.UpdateWith(album.Messages[0]);
+                            message.UpdateAlbum(album.Messages[0]);
                             album.Invalidate();
 
                             if (action1 != null)
@@ -1179,11 +1427,16 @@ namespace Telegram.ViewModels
                         Items.UpdateMessageSendSucceeded(messageId, message);
                         Delegate?.UpdateMessageSendSucceeded(messageId, message);
                     }
+
+                    if (newMessageId.HasValue)
+                    {
+                        PlaySound(true);
+                    }
                 }
             });
         }
 
-        private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel, bool> action)
+        private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel, bool> action1, Action<MessageService, MessageViewModel> action2)
         {
             BeginOnUIThread(() =>
             {
@@ -1195,23 +1448,33 @@ namespace Telegram.ViewModels
                         {
                             update(child);
 
-                            message.UpdateWith(album.Messages[0]);
+                            message.UpdateAlbum(album.Messages[0]);
                             album.Invalidate();
 
-                            Delegate?.UpdateBubbleWithMediaAlbumId(message.MediaAlbumId, bubble => action(bubble, albumMessage, false));
+                            Delegate?.UpdateBubbleWithMediaAlbumId(message.MediaAlbumId, bubble => action1(bubble, albumMessage, false));
                         }
                     }
                     else
                     {
                         update(message);
-                        Delegate?.UpdateBubbleWithMessageId(messageId, bubble => action(bubble, message, false));
+                        Delegate?.UpdateContainerWithMessageId(message.Id, container =>
+                        {
+                            if (container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
+                            {
+                                action1(bubble, message, false);
+                            }
+                            else if (action2 != null && container.ContentTemplateRoot is MessageService service)
+                            {
+                                action2.Invoke(service, message);
+                            }
+                        });
                     }
                 }
 
                 Delegate?.UpdateBubbleWithReplyToMessageId(messageId, (bubble, reply) =>
                 {
                     update(reply.ReplyToItem as MessageViewModel);
-                    action(bubble, reply, true);
+                    action1(bubble, reply, true);
                 });
             });
         }
@@ -1231,122 +1494,110 @@ namespace Telegram.ViewModels
             });
         }
 
-        private async void InsertMessage(MessageViewModel message)
+        private void InsertMessage(MessageViewModel message, long oldMessageId = 0)
         {
-            using (await _loadMoreLock.WaitAsync())
+            if (IsNewestSliceLoaded == true || Type == DialogType.ScheduledMessages)
             {
-                if (IsFirstSliceLoaded == true || Type == DialogType.ScheduledMessages)
+                if (IsTranslating)
                 {
-                    if (IsTranslating)
-                    {
-                        _translateService.Translate(message, Settings.Translate.To);
-                    }
-
-                    var result = new List<MessageViewModel> { message };
-                    ProcessMessages(_chat, result);
-
-                    if (result.Count > 0)
-                    {
-                        InsertMessageInOrder(Items, result[0]);
-                    }
-                }
-                else if (message.IsOutgoing && message.SendingState is MessageSendingStatePending)
-                {
-                    if (_composerHeader == null)
-                    {
-                        ComposerHeader = null;
-                    }
-
-                    goto LoadMessage;
+                    _translateService.Translate(message, Settings.Translate.To);
                 }
 
-                return;
+                var result = new List<MessageViewModel> { message };
+                ProcessMessages(_chat, result, true);
+
+                if (result.Count > 0)
+                {
+                    InsertMessageInOrder(result[0], oldMessageId);
+                }
             }
+            else if (message.IsOutgoing && message.SendingState is MessageSendingStatePending)
+            {
+                if (_composerHeader == null)
+                {
+                    ComposerHeader = null;
+                }
 
-        LoadMessage:
-            await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Top);
+                _ = LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Top);
+            }
         }
 
-        public static int InsertMessageInOrder(IList<MessageViewModel> messages, MessageViewModel message)
+        public void InsertMessageInOrder(MessageViewModel message, long oldMessageId = 0, bool force = false)
         {
-            var oldIndex = -1;
-
-            if (messages.Count == 0)
+            var newIndex = NextIndexOf(message, oldMessageId, out int oldIndex);
+            if (newIndex != -1)
             {
-                oldIndex = 0;
-            }
-
-            for (var i = messages.Count - 1; i >= 0; i--)
-            {
-                if (messages[i].Id == 0)
+                if (oldIndex != -1)
                 {
-                    if (messages[i].Date < message.Date)
-                    {
-                        oldIndex = i + 1;
-                        break;
-                    }
-
-                    continue;
+                    // We can't use Move because ListView seems to mess up a lot with this operationg
+                    Items.RemoveAt(oldIndex);
+                    Items.Insert(newIndex, message);
                 }
-
-                if (messages[i].Id == message.Id)
+                else
                 {
-                    oldIndex = -1;
-                    break;
-                }
-                if (messages[i].Id < message.Id)
-                {
-                    oldIndex = i + 1;
-                    break;
+                    Items.Insert(newIndex, message);
                 }
             }
-
-            if (oldIndex != -1)
+            else if (force && oldIndex != -1)
             {
-                messages.Insert(oldIndex, message);
+                Items.RemoveAt(oldIndex);
+                Items.Insert(oldIndex, message);
             }
-
-            return oldIndex;
         }
 
-        public static bool MoveMessageInOrder(MvxObservableCollection<MessageViewModel> messages, MessageViewModel message)
+        private int NextIndexOf(MessageViewModel message, long oldMessageId, out int oldIndex)
         {
-            var newIndex = -1;
-            var oldIndex = -1;
+            oldIndex = -1;
+            var newIndex = Items.Count;
 
-            for (var i = messages.Count - 1; i >= 0; i--)
+            var oldIndexNeeded = Items.ContainsKey(oldMessageId != 0 ? oldMessageId : message.Id);
+            var newIndexNeeded = true;
+
+            for (int i = Items.Count - 1; i >= 0; i--)
             {
-                if (messages[i].Id == 0)
+                var item = Items[i];
+                if (item.Id == 0)
                 {
-                    if (messages[i].Date < message.Date && newIndex == -1)
+                    if (item.Date <= message.Date)
                     {
-                        newIndex = i;
-                        break;
+                        newIndex = i + 1;
+                        newIndexNeeded = false;
                     }
-
-                    continue;
+                    else
+                    {
+                        continue;
+                    }
                 }
 
-                if (messages[i].Id == message.Id)
+                if (item.Id < message.Id && newIndexNeeded)
+                {
+                    newIndex = i + 1;
+                    newIndexNeeded = false;
+                }
+
+                if (item.Id == message.Id && oldIndexNeeded)
                 {
                     oldIndex = i;
+                    oldIndexNeeded = false;
+                }
+
+                if (!newIndexNeeded && !oldIndexNeeded)
+                {
                     break;
                 }
-                if (messages[i].Id < message.Id && newIndex == -1)
-                {
-                    newIndex = i;
-                }
             }
 
-            if (newIndex > oldIndex)
+            if (oldIndex != -1 && oldIndex < newIndex)
             {
-                newIndex = Math.Min(newIndex, messages.Count - 1);
-                messages.RemoveAt(oldIndex);
-                messages.Insert(newIndex, message);
-                return false;
+                newIndex--;
             }
 
-            return true;
+            if (newIndex == oldIndex)
+            {
+                return -1;
+            }
+
+            return newIndex;
         }
 
         public void UpdateQuery(string query)

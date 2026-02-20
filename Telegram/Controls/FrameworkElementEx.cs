@@ -1,12 +1,12 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Controls
 {
@@ -19,89 +19,25 @@ namespace Telegram.Controls
         {
             return Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(element) != null;
         }
-    }
 
-    // TODO: would be great to find a way to have this as a template.
-
-    public partial class ControlEx : Control
-    {
-        private bool _loaded;
-        private bool _unloaded;
-
-        public bool IsConnected => _loaded;
-        public bool IsDisconnected => _unloaded;
-
-        private event RoutedEventHandler _connected;
-        public event RoutedEventHandler Connected
+        public static DependencyObject GetParent(this FrameworkElement element)
         {
-            add
+            try
             {
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded += OnChanged;
-                    Unloaded += OnChanged;
-                }
-
-                _connected += value;
+                // element.Parent seems to throw E_FAIL at times
+                return element.Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(element);
             }
-            remove
+            catch
             {
-                _connected -= value;
-
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded -= OnChanged;
-                    Unloaded -= OnChanged;
-                }
-            }
-        }
-
-        private event RoutedEventHandler _disconnected;
-        public event RoutedEventHandler Disconnected
-        {
-            add
-            {
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded += OnChanged;
-                    Unloaded += OnChanged;
-                }
-
-                _disconnected += value;
-            }
-            remove
-            {
-                _disconnected -= value;
-
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded -= OnChanged;
-                    Unloaded -= OnChanged;
-                }
-            }
-        }
-
-        private void OnChanged(object sender, RoutedEventArgs e)
-        {
-            // TODO: unfortunately FrameworkElement.Parent returns null
-            // whenever the control is a DataTemplate root or similar,
-            // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
-
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
-            if (parent != null && !_loaded)
-            {
-                _loaded = true;
-                _unloaded = false;
-                _connected?.Invoke(this, e);
-            }
-            else if (parent == null && _loaded)
-            {
-                _loaded = false;
-                _unloaded = true;
-                _disconnected?.Invoke(sender, e);
+                return null;
             }
         }
     }
+
+    // TODO: move all to C++ if it makes sense
+    // It's reasonable to have a custom class for ChatListListViewItem with holding embedded
+    // GridEx is quite an hot path too
+    // ToggleButtonEx is inherited by ReactionButton
 
     public partial class UserControlEx : UserControl
     {
@@ -167,7 +103,7 @@ namespace Telegram.Controls
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
 
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            var parent = this.GetParent();
             if (parent != null && !_loaded)
             {
                 _loaded = true;
@@ -247,7 +183,7 @@ namespace Telegram.Controls
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
 
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            var parent = this.GetParent();
             if (parent != null && !_loaded)
             {
                 _loaded = true;
@@ -327,167 +263,7 @@ namespace Telegram.Controls
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
 
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
-            if (parent != null && !_loaded)
-            {
-                _loaded = true;
-                _unloaded = false;
-                _connected?.Invoke(this, e);
-            }
-            else if (parent == null && _loaded)
-            {
-                _loaded = false;
-                _unloaded = true;
-                _disconnected?.Invoke(sender, e);
-            }
-        }
-    }
-
-    public partial class GridEx : Grid
-    {
-        private bool _loaded;
-        private bool _unloaded;
-
-        public bool IsConnected => _loaded;
-        public bool IsDisconnected => _unloaded;
-
-        private event RoutedEventHandler _connected;
-        public event RoutedEventHandler Connected
-        {
-            add
-            {
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded += OnChanged;
-                    Unloaded += OnChanged;
-                }
-
-                _connected += value;
-            }
-            remove
-            {
-                _connected -= value;
-
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded -= OnChanged;
-                    Unloaded -= OnChanged;
-                }
-            }
-        }
-
-        private event RoutedEventHandler _disconnected;
-        public event RoutedEventHandler Disconnected
-        {
-            add
-            {
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded += OnChanged;
-                    Unloaded += OnChanged;
-                }
-
-                _disconnected += value;
-            }
-            remove
-            {
-                _disconnected -= value;
-
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded -= OnChanged;
-                    Unloaded -= OnChanged;
-                }
-            }
-        }
-
-        private void OnChanged(object sender, RoutedEventArgs e)
-        {
-            // TODO: unfortunately FrameworkElement.Parent returns null
-            // whenever the control is a DataTemplate root or similar,
-            // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
-
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
-            if (parent != null && !_loaded)
-            {
-                _loaded = true;
-                _unloaded = false;
-                _connected?.Invoke(this, e);
-            }
-            else if (parent == null && _loaded)
-            {
-                _loaded = false;
-                _unloaded = true;
-                _disconnected?.Invoke(sender, e);
-            }
-        }
-    }
-
-    public partial class ToggleButtonEx : ToggleButton
-    {
-        private bool _loaded;
-        private bool _unloaded;
-
-        public bool IsConnected => _loaded;
-        public bool IsDisconnected => _unloaded;
-
-        private event RoutedEventHandler _connected;
-        public event RoutedEventHandler Connected
-        {
-            add
-            {
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded += OnChanged;
-                    Unloaded += OnChanged;
-                }
-
-                _connected += value;
-            }
-            remove
-            {
-                _connected -= value;
-
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded -= OnChanged;
-                    Unloaded -= OnChanged;
-                }
-            }
-        }
-
-        private event RoutedEventHandler _disconnected;
-        public event RoutedEventHandler Disconnected
-        {
-            add
-            {
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded += OnChanged;
-                    Unloaded += OnChanged;
-                }
-
-                _disconnected += value;
-            }
-            remove
-            {
-                _disconnected -= value;
-
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded -= OnChanged;
-                    Unloaded -= OnChanged;
-                }
-            }
-        }
-
-        private void OnChanged(object sender, RoutedEventArgs e)
-        {
-            // TODO: unfortunately FrameworkElement.Parent returns null
-            // whenever the control is a DataTemplate root or similar,
-            // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
-
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            var parent = this.GetParent();
             if (parent != null && !_loaded)
             {
                 _loaded = true;
@@ -567,7 +343,7 @@ namespace Telegram.Controls
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
 
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            var parent = this.GetParent();
             if (parent != null && !_loaded)
             {
                 _loaded = true;
@@ -647,87 +423,7 @@ namespace Telegram.Controls
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
 
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
-            if (parent != null && !_loaded)
-            {
-                _loaded = true;
-                _unloaded = false;
-                _connected?.Invoke(this, e);
-            }
-            else if (parent == null && _loaded)
-            {
-                _loaded = false;
-                _unloaded = true;
-                _disconnected?.Invoke(sender, e);
-            }
-        }
-    }
-
-    public partial class HyperlinkButtonEx : HyperlinkButton
-    {
-        private bool _loaded;
-        private bool _unloaded;
-
-        public bool IsConnected => _loaded;
-        public bool IsDisconnected => _unloaded;
-
-        private event RoutedEventHandler _connected;
-        public event RoutedEventHandler Connected
-        {
-            add
-            {
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded += OnChanged;
-                    Unloaded += OnChanged;
-                }
-
-                _connected += value;
-            }
-            remove
-            {
-                _connected -= value;
-
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded -= OnChanged;
-                    Unloaded -= OnChanged;
-                }
-            }
-        }
-
-        private event RoutedEventHandler _disconnected;
-        public event RoutedEventHandler Disconnected
-        {
-            add
-            {
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded += OnChanged;
-                    Unloaded += OnChanged;
-                }
-
-                _disconnected += value;
-            }
-            remove
-            {
-                _disconnected -= value;
-
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded -= OnChanged;
-                    Unloaded -= OnChanged;
-                }
-            }
-        }
-
-        private void OnChanged(object sender, RoutedEventArgs e)
-        {
-            // TODO: unfortunately FrameworkElement.Parent returns null
-            // whenever the control is a DataTemplate root or similar,
-            // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
-
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            var parent = this.GetParent();
             if (parent != null && !_loaded)
             {
                 _loaded = true;

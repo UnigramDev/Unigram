@@ -22,8 +22,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <controls:ProfilePicture x:Name="Photo"
-                                     Width="96"
-                                     Height="96"
+                                     Size="96"
                                      Margin="0,24,0,8" />
             <TextBlock Text="{CustomResource GroupCallCreatedLinkTitle}"
                        Style="{StaticResource PopupTextBlockStyle}"

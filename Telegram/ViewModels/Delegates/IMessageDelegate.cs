@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Navigation.Services;
@@ -17,7 +18,8 @@ namespace Telegram.ViewModels.Delegates
     {
         bool IsDialog { get; }
         bool IsForum { get; }
-        bool IsFeedbackGroup { get; }
+        bool IsDirectMessagesGroup { get; }
+        bool IsSavedMessagesTab { get; }
         bool IsTranslating { get; }
 
         INavigationService NavigationService { get; }
@@ -39,9 +41,11 @@ namespace Telegram.ViewModels.Delegates
         void DownloadFile(MessageViewModel message, File file);
 
         void ForwardMessage(MessageViewModel message);
+        void SummarizeMessage(MessageViewModel message);
 
         void OpenReply(MessageViewModel message);
         void OpenThread(MessageViewModel message);
+        void OpenSender(MessageViewModel message);
 
         void OpenFile(File file);
         void OpenWebPage(MessageViewModel message);
@@ -49,8 +53,8 @@ namespace Telegram.ViewModels.Delegates
         void OpenLocation(Location location, string title);
         void OpenGame(MessageViewModel message);
         void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button);
-        void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0);
-        void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, int timestamp = 0);
+        void OpenMedia(MessageViewModel message, FrameworkElement target, double timestamp = 0);
+        void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, double timestamp = 0);
         void PlayMessage(MessageViewModel message);
         bool RecognizeSpeech(MessageViewModel message);
 
@@ -71,6 +75,9 @@ namespace Telegram.ViewModels.Delegates
         void OpenBankCardNumber(string number);
 
         void SendBotCommand(string command);
+        void SendMessage(InputMessageContent content);
+
+        void HideSponsoredMessage(MessageViewModel message);
 
         string GetAdminTitle(MessageViewModel message);
         bool IsAdministrator(MessageSender memberId);

@@ -4,18 +4,103 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
-                       mc:Ignorable="d">
+                       xmlns:common="using:Telegram.Common"
+                       mc:Ignorable="d"
+                       Padding="0,24,0,24"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
 
-    <StackPanel>
-        <TextBlock x:Name="MessageLabel"
-                   Style="{StaticResource BodyTextBlockStyle}" />
-        <CheckBox x:Name="CheckBox1"
-                  Margin="0,16,0,0">
-            <TextBlock x:Name="CheckLabel1" />
-        </CheckBox>
-        <CheckBox x:Name="CheckBox2"
-                  Visibility="Collapsed">
-            <TextBlock x:Name="CheckLabel2" />
-        </CheckBox>
-    </StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Button x:Name="AliasRoot"
+                Click="Alias_Click"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                AutomationProperties.Name="{CustomResource SelectAccount}"
+                ToolTipService.ToolTip="{CustomResource SelectAccount}"
+                Style="{StaticResource ListEmptyButtonStyle}"
+                CornerRadius="14"
+                Margin="8,-12,0,0"
+                Visibility="Collapsed">
+            <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                  BorderThickness="1"
+                  CornerRadius="14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePicture x:Name="Alias"
+                                         Size="28" />
+
+                <Grid Width="20"
+                      Height="20"
+                      Margin="4,0,8,0"
+                      Grid.Column="2">
+                    <TextBlock Text="&#xE0E4;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Top"
+                               Grid.Column="2" />
+                    <TextBlock Text="&#xE0E5;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Bottom"
+                               Grid.Column="2" />
+                </Grid>
+            </Grid>
+        </Button>
+
+        <StackPanel Margin="0,0,0,12">
+            <controls:ProfilePicture x:Name="Photo"
+                                     Size="96" />
+
+            <TextBlock x:Name="Title"
+                       Style="{StaticResource PopupTextBlockStyle}"
+                       TextAlignment="Center"
+                       TextTrimming="CharacterEllipsis"
+                       TextWrapping="NoWrap"
+                       Margin="12,8,12,0" />
+
+            <TextBlock x:Name="Subtitle"
+                       TextAlignment="Center"
+                       TextTrimming="CharacterEllipsis"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       Grid.Column="1"
+                       Grid.Row="2" />
+        </StackPanel>
+
+        <controls:PopupInfo x:Name="Application"
+                            common:TextBlockHelper.IsLink="False"
+                            Glyph="&#xE975;"
+                            Background="Transparent"
+                            Margin="12,0"
+                            Grid.Row="1" />
+        <controls:PopupInfo x:Name="Location"
+                            common:TextBlockHelper.IsLink="False"
+                            Glyph="&#xE1C4;"
+                            Background="Transparent"
+                            Margin="12,0"
+                            Grid.Row="2" />
+        <TextBlock Text="{CustomResource BotAuthInfo}"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   Margin="24,0,0,0"
+                   Grid.Row="3" />
+
+        <StackPanel x:Name="AllowMessagesRoot"
+                    Grid.Row="4">
+            <CheckBox x:Name="AllowMessages"
+                      Content="{CustomResource BotAuthAllowMessages}"
+                      Margin="24,16,0,0" />
+            <TextBlock x:Name="AllowMessagesInfo"
+                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                       Margin="24,4,0,0" />
+        </StackPanel>
+    </Grid>
 </controls:ContentPopup>

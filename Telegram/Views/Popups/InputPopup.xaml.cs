@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.ComponentModel;
@@ -263,7 +264,7 @@ namespace Telegram.Views.Popups
             }
             else
             {
-                HeaderText.Text = Header;
+                TextBlockHelper.SetMarkdown(HeaderText, Header);
                 HeaderText.Visibility = Visibility.Visible;
             }
 
@@ -273,7 +274,7 @@ namespace Telegram.Views.Popups
             }
             else
             {
-                FooterText.Text = Footer;
+                TextBlockHelper.SetMarkdown(FooterText, Footer);
                 FooterText.Visibility = Visibility.Visible;
             }
 
@@ -373,10 +374,6 @@ namespace Telegram.Views.Popups
                     args.Cancel = true;
                 }
             }
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void Label_KeyDown(object sender, KeyRoutedEventArgs e)

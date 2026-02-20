@@ -1,12 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells.Premium;
 using Telegram.Services;
@@ -37,15 +37,7 @@ namespace Telegram.Views.Business.Popups
             ScrollingHost.ItemsSource = features;
             ScrollingHost.SelectedItem = selectedFeature;
 
-            PurchaseCommand.Content = PromoPopup.GetPaymentString(clientService.IsPremium, option);
-        }
-
-        public bool ShouldPurchase { get; private set; }
-
-        private void Purchase_Click(object sender, RoutedEventArgs e)
-        {
-            ShouldPurchase = true;
-            Hide();
+            PrimaryButtonText = PromoPopup.GetPaymentString(clientService.IsPremium, option);
         }
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
@@ -64,11 +56,6 @@ namespace Telegram.Views.Business.Popups
             {
                 upgradedStoriesCell.UpdateFeature(_clientService);
             }
-        }
-
-        private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
-        {
-            VisualUtilities.DropShadow(PurchaseShadow);
         }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)

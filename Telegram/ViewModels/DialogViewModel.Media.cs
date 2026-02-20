@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +49,7 @@ namespace Telegram.ViewModels
 
         private async Task<ContentDialogResult> ShowPaidMessageConfirmationAsync(int messageCount, long starCount)
         {
-            Settings.Chats.TryGet(Chat.Id, 0, Services.ChatSetting.PaidMessageStarCount, out long savedMessageStarCount);
+            Settings.Chats.TryGet(Chat.Id, null, Services.ChatSetting.PaidMessageStarCount, out long savedMessageStarCount);
 
             if (starCount != 0 && starCount != savedMessageStarCount)
             {
@@ -79,7 +80,7 @@ namespace Telegram.ViewModels
                 var confirm = await ShowPopupAsync(popup);
                 if (confirm == ContentDialogResult.Primary && popup.IsChecked is true)
                 {
-                    Settings.Chats[Chat.Id, 0, Services.ChatSetting.PaidMessageStarCount] = starCount;
+                    Settings.Chats[Chat.Id, null, Services.ChatSetting.PaidMessageStarCount] = starCount;
                 }
 
                 return confirm;
@@ -91,9 +92,9 @@ namespace Telegram.ViewModels
         public override async Task<MessageSendOptions> PickMessageSendOptionsAsync(int messageCount = 1, SchedulingState schedule = SchedulingState.Auto, bool? disableNotification = null, bool reorder = false)
         {
             var chat = _chat;
-            if (chat == null || ComposerHeader?.EditingMessage != null)
+            if (chat == null || ComposerHeader?.Editing != null)
             {
-                return new MessageSendOptions(FeedbackChatTopicId, false, false, false, false, 0, false, null, 0, 0, false);
+                return new MessageSendOptions(ComposerHeader?.SuggestedPostInfo, false, false, 0, false, null, 0, 0, false);
             }
 
             var paidMessageStarCount = 0L;
@@ -104,7 +105,7 @@ namespace Telegram.ViewModels
             }
             else if (ClientService.TryGetSupergroup(Chat, out Supergroup supergroup))
             {
-                if (IsFeedbackChatAdministrator)
+                if (supergroup.IsAdministeredDirectMessagesGroup)
                 {
                     paidMessageStarCount = 0;
                 }
@@ -124,21 +125,17 @@ namespace Telegram.ViewModels
             if (schedule == SchedulingState.Schedule || (Type == DialogType.ScheduledMessages && schedule == SchedulingState.Auto))
             {
                 var user = ClientService.GetUser(chat);
-                var popup = new ScheduleMessagePopup(user, ClientService.IsSavedMessages(chat));
+                var popup = new ScheduleMessagePopup(ClientService, NavigationService, user, ClientService.IsSavedMessages(chat));
 
                 var confirm = await ShowPopupAsync(popup);
-                if (confirm != ContentDialogResult.Primary)
-                {
-                    return null;
-                }
 
-                if (popup.IsUntilOnline)
+                if (popup.SchedulingState != null)
                 {
-                    schedulingState = new MessageSchedulingStateSendWhenOnline();
+                    schedulingState = popup.SchedulingState;
                 }
                 else
                 {
-                    schedulingState = new MessageSchedulingStateSendAtDate(popup.Value.ToTimestamp());
+                    return null;
                 }
             }
             else if (schedule == SchedulingState.WhenOnline)
@@ -146,7 +143,7 @@ namespace Telegram.ViewModels
                 schedulingState = new MessageSchedulingStateSendWhenOnline();
             }
 
-            return new MessageSendOptions(FeedbackChatTopicId, disableNotification ?? false, false, false, false, messageCount * paidMessageStarCount, Settings.Stickers.DynamicPackOrder && reorder, schedulingState, 0, 0, false);
+            return new MessageSendOptions(ComposerHeader?.SuggestedPostInfo, disableNotification ?? false, false, messageCount * paidMessageStarCount, Settings.Stickers.DynamicPackOrder && reorder, schedulingState, 0, 0, false);
         }
 
         protected override void ContinueSendMessage(MessageSendOptions options)
@@ -204,9 +201,9 @@ namespace Telegram.ViewModels
                         photo.IsScreenshot = true;
 
                         var header = _composerHeader;
-                        if (header?.EditingMessage != null)
+                        if (header?.Editing != null)
                         {
-                            await EditMediaAsync(photo);
+                            await EditMediaAsync(photo, true);
                         }
                         else
                         {
@@ -222,7 +219,7 @@ namespace Telegram.ViewModels
                             if (captionElements.Count > 0)
                             {
                                 var resultCaption = string.Join(Environment.NewLine, captionElements);
-                                caption = new FormattedText(resultCaption, Array.Empty<TextEntity>())
+                                caption = resultCaption.AsFormattedText()
                                     .Substring(0, ClientService.Options.MessageCaptionLengthMax);
                             }
 
@@ -240,7 +237,15 @@ namespace Telegram.ViewModels
                         files.Add(file);
                     }
 
-                    SendFileExecute(files);
+                    var header = _composerHeader;
+                    if (header?.Editing != null && files.Count > 0)
+                    {
+                        await EditMediaAsync(files[0], header.Editing.Message?.Content is not MessageDocument and not MessageAudio);
+                    }
+                    else
+                    {
+                        SendFileExecute(files);
+                    }
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
                 {
@@ -296,7 +301,7 @@ namespace Telegram.ViewModels
         public async void EditDocument()
         {
             var header = _composerHeader;
-            if (header?.EditingMessage == null)
+            if (header?.Editing == null)
             {
                 return;
             }
@@ -314,13 +319,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var media = await StorageMedia.CreateAsync(file, false);
-                if (media == null)
-                {
-                    return;
-                }
-
-                await EditMediaAsync(media);
+                await EditMediaAsync(file, false);
             }
             catch { }
         }
@@ -328,7 +327,7 @@ namespace Telegram.ViewModels
         public async void EditMedia()
         {
             var header = _composerHeader;
-            if (header?.EditingMessage == null)
+            if (header?.Editing == null)
             {
                 return;
             }
@@ -346,7 +345,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                await EditMediaAsync(file);
+                await EditMediaAsync(file, true);
             }
             catch { }
         }
@@ -354,12 +353,12 @@ namespace Telegram.ViewModels
         public async void EditCurrent()
         {
             var header = _composerHeader;
-            if (header?.EditingMessage == null)
+            if (header?.Editing == null)
             {
                 return;
             }
 
-            var file = header.EditingMessage.GetFile();
+            var file = header.Editing.Message.GetFile();
             if (file == null || !file.Local.IsDownloadingCompleted)
             {
                 return;
@@ -371,19 +370,19 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            await EditMediaAsync(cached);
+            await EditMediaAsync(cached, true);
         }
 
-        public async Task EditMediaAsync(StorageFile file)
+        public async Task EditMediaAsync(StorageFile file, bool mediaSelected)
         {
             var storage = await StorageMedia.CreateAsync(file);
             if (storage != null)
             {
-                await EditMediaAsync(storage);
+                await EditMediaAsync(storage, mediaSelected);
             }
         }
 
-        public async Task EditMediaAsync(StorageMedia storage)
+        public async Task EditMediaAsync(StorageMedia storage, bool mediaSelected)
         {
             var chat = _chat;
             if (chat == null)
@@ -392,20 +391,19 @@ namespace Telegram.ViewModels
             }
 
             var header = _composerHeader;
-            if (header?.EditingMessage == null)
+            if (header?.Editing == null)
             {
                 return;
             }
 
             var linkPreview = GetLinkPreviewOptions();
-            var formattedText = GetFormattedText(true);
+            var formattedText = GetFormattedText(true, false);
 
-            var mediaSelected = header.EditingMessage.Content is not MessageDocument;
             var permissions = ClientService.GetPermissions(chat, out _);
 
             var items = new[] { storage };
             var popup = new SendFilesPopup(this, items, mediaSelected, permissions, false, false, false, true);
-            popup.ShowCaptionAboveMedia = header.EditingMessage.ShowCaptionAboveMedia();
+            popup.ShowCaptionAboveMedia = header.Editing.Message.ShowCaptionAboveMedia();
             popup.Caption = formattedText
                 .Substring(0, ClientService.Options.MessageCaptionLengthMax);
 
@@ -425,18 +423,18 @@ namespace Telegram.ViewModels
             var hasSpoiler = popup.SendWithSpoiler && !popup.IsFilesSelected;
             var highQuality = popup.SendHighQuality && !popup.IsFilesSelected;
 
-            Task<BaseObject> request = null;
-            if (popup.IsFilesSelected)
+            Task<Object> request = null;
+            if (storage is StoragePhoto photo && !popup.IsFilesSelected)
             {
-                request = MessageFactory.CreateDocumentAsync(storage, popup.Caption, false, storage.IsScreenshot);
+                request = MessageFactory.CreatePhotoAsync(photo, popup.Caption, highQuality, captionAboveMedia, hasSpoiler, storage.Ttl, 0);
             }
-            else if (storage is StoragePhoto photo)
+            else if (storage is StorageVideo video && !popup.IsFilesSelected)
             {
-                request = MessageFactory.CreatePhotoAsync(photo, popup.Caption, highQuality, captionAboveMedia, hasSpoiler, storage.Ttl, 0, storage.IsEdited ? storage.EditState : null);
+                request = MessageFactory.CreateVideoAsync(video, popup.Caption, video.IsMuted, captionAboveMedia, hasSpoiler, storage.Ttl, 0);
             }
-            else if (storage is StorageVideo video)
+            else
             {
-                request = MessageFactory.CreateVideoAsync(video, popup.Caption, video.IsMuted, captionAboveMedia, hasSpoiler, storage.Ttl, 0, video.GetConversion());
+                request = MessageFactory.CreateDocumentAsync(storage, popup.Caption, false);
             }
 
             if (request == null)
@@ -447,7 +445,11 @@ namespace Telegram.ViewModels
             var factory = await request;
             if (factory is InputMessageContent input)
             {
-                header.EditingMessageMedia = input;
+                if (header.Editing != null)
+                {
+                    header.Editing = new MessageComposerEditing(header.Editing.Message, input);
+                }
+
                 await BeforeSendMessageAsync(popup.Caption, linkPreview);
             }
         }

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Threading;
 using Windows.UI.Xaml;
@@ -19,8 +20,6 @@ namespace Telegram.Common
 
         private readonly Action<T> _update;
         private readonly Func<T, bool> _canUpdate;
-
-        private CancellationToken _cancellationToken;
 
         private T _lastValue;
         private T _value;
@@ -69,32 +68,18 @@ namespace Telegram.Common
         {
             _backgroundTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
-            if (_cancellationToken.IsCancellationRequested)
-            {
-                _lastValue = default;
-            }
-            else
-            {
-                _value = _lastValue;
-                _update(_lastValue);
-                _lastValue = default;
-            }
+            _value = _lastValue;
+            _update(_lastValue);
+            _lastValue = default;
         }
 
         private void OnTick(object sender, object e)
         {
             _timer.Stop();
 
-            if (_cancellationToken.IsCancellationRequested)
-            {
-                _lastValue = default;
-            }
-            else
-            {
-                _value = _lastValue;
-                _update(_lastValue);
-                _lastValue = default;
-            }
+            _value = _lastValue;
+            _update(_lastValue);
+            _lastValue = default;
         }
 
         public T Value
@@ -103,27 +88,22 @@ namespace Telegram.Common
             set => _value = value;
         }
 
-        public void Set(T value, CancellationToken cancellationToken = default)
+        public void Set(T value)
         {
             _timer?.Stop();
             _backgroundTimer?.Change(Timeout.Infinite, Timeout.Infinite);
 
             if (_canUpdate(value))
             {
-                _cancellationToken = cancellationToken;
-
                 _lastValue = value;
                 _timer?.Start();
                 _backgroundTimer?.Change(_interval, TimeSpan.Zero);
             }
             else
             {
-                _cancellationToken = default;
-
                 _value = value;
                 _lastValue = default;
             }
         }
     }
-
 }

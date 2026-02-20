@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
-using Telegram.Converters;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Telegram.Views.Calls;
 using Telegram.Views.Calls.Popups;
 using Windows.ApplicationModel.Calls;
@@ -26,12 +25,20 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Services.Calls
 {
+    public enum VoipGroupCallStreamState
+    {
+        Unknown,
+        NotAvailable,
+        Available
+    }
+
     public partial class VoipGroupCall : VoipCallBase
     {
         private readonly IViewService _viewService;
 
         private readonly Chat _chat;
         private readonly string _inviteHash;
+        private readonly bool _isLiveStory;
 
         private InputGroupCall _inputGroupCall;
         private IList<long> _inviteUserIds;
@@ -43,8 +50,6 @@ namespace Telegram.Services.Calls
         private TaskCompletionSource<MessageSenders> _availableAliasesTask;
 
         private GroupCallParticipant _currentUser;
-
-        private TimeSpan _timeDifference;
 
         private readonly object _managerLock = new();
 
@@ -59,6 +64,20 @@ namespace Telegram.Services.Calls
 
         private readonly MediaDeviceTracker _devices = new();
 
+        private readonly List<PaidReactor> _topDonors = new();
+        private readonly object _topDonorsLock = new();
+
+        private long _totalStarCount;
+
+        private readonly List<GroupCallMessage> _messages = new();
+        private readonly List<GroupCallMessage> _pinnedMessages = new();
+        private readonly object _messagesLock = new();
+
+        private Timer _pinnedMessagesTimer;
+
+        private GroupCallParticipant _streamer;
+        private readonly object _streamerLock = new();
+
         private VoipCallCoordinator _coordinator;
         private VoipPhoneCall _systemCall;
 
@@ -66,27 +85,34 @@ namespace Telegram.Services.Calls
         private bool _isConnected;
         private bool _isClosed;
 
-        private int _availableStreamsCount = 0;
+        private VoipGroupCallStreamState _streamState;
+        private readonly object _streamStateLock = new();
 
-        public VoipGroupCall(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, XamlRoot xamlRoot, Chat chat, GroupCall groupCall, MessageSender alias, string inviteHash)
+        public VoipGroupCall(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, XamlRoot xamlRoot, Chat chat, GroupCall groupCall, MessageSender alias, string inviteHash, bool isLiveStory)
             : base(clientService, settingsService, aggregator)
         {
             Duration = groupCall.Duration;
             IsVideoRecorded = groupCall.IsVideoRecorded;
             RecordDuration = groupCall.RecordDuration;
             CanToggleMuteNewParticipants = groupCall.CanToggleMuteNewParticipants;
+            CanSendMessages = groupCall.CanSendMessages;
+            AreMessagesAllowed = groupCall.AreMessagesAllowed;
+            CanToggleAreMessagesAllowed = groupCall.CanToggleAreMessagesAllowed;
+            CanDeleteMessages = groupCall.CanDeleteMessages;
             MuteNewParticipants = groupCall.MuteNewParticipants;
             CanEnableVideo2 = groupCall.CanEnableVideo;
             IsMyVideoPaused = groupCall.IsMyVideoPaused;
             IsMyVideoEnabled = groupCall.IsMyVideoEnabled;
             RecentSpeakers = groupCall.RecentSpeakers;
             LoadedAllParticipants = groupCall.LoadedAllParticipants;
+            MessageSenderId = groupCall.MessageSenderId;
             HasHiddenListeners = groupCall.HasHiddenListeners;
             ParticipantCount = groupCall.ParticipantCount;
             CanBeManaged = groupCall.CanBeManaged;
             NeedRejoin = groupCall.NeedRejoin;
             IsJoined = groupCall.IsJoined;
             IsRtmpStream = groupCall.IsRtmpStream;
+            IsLiveStory = groupCall.IsLiveStory;
             IsActive = groupCall.IsActive;
             EnabledStartNotification = groupCall.EnabledStartNotification;
             ScheduledStartDate = groupCall.ScheduledStartDate;
@@ -94,14 +120,13 @@ namespace Telegram.Services.Calls
             IsOwned = groupCall.IsOwned;
             IsVideoChat = groupCall.IsVideoChat;
             InviteLink = groupCall.InviteLink;
+            PaidMessageStarCount = groupCall.PaidMessageStarCount;
+            UniqueId = groupCall.UniqueId;
             Id = groupCall.Id;
-
-            var unix = ClientService.SendAsync(new GetOption("unix_time")).Result as OptionValueInteger;
-
-            _timeDifference = DateTime.Now - Formatter.ToLocalTime(unix.Value);
 
             _chat = chat;
             _inviteHash = inviteHash ?? string.Empty;
+            _isLiveStory = isLiveStory;
 
             _isScheduled = groupCall.ScheduledStartDate > 0;
 
@@ -119,13 +144,28 @@ namespace Telegram.Services.Calls
             _manager.NetworkStateUpdated += OnNetworkStateUpdated;
             _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
             _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
-            _manager.BroadcastPartRequested += OnBroadcastPartRequested;
+            _manager.AudioBroadcastPartRequested += OnAudioBroadcastPartRequested;
+            _manager.VideoBroadcastPartRequested += OnVideoBroadcastPartRequested;
             _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
 
-            _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
+            if (!_isLiveStory)
+            {
+                InitializeSystemCallAsync(groupCall.Id, groupCall.Title).Wait();
+                CreateWindow(false);
 
-            InitializeSystemCallAsync(groupCall.Id, groupCall.Title).Wait();
-            CreateWindow(false);
+                _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
+            }
+            else
+            {
+                Aggregator.Subscribe<UpdateGroupCall>(this, Handle, EventType.GroupCall, Id)
+                    .Subscribe<UpdateGroupCallParticipant>(Handle)
+                    .Subscribe<UpdateGroupCallVerificationState>(Handle)
+                    .Subscribe<UpdateGroupCallMessageSendFailed>(Handle)
+                    .Subscribe<UpdateGroupCallMessagesDeleted>(Handle)
+                    .Subscribe<UpdateNewGroupCallMessage>(Handle)
+                    .Subscribe<UpdateNewGroupCallPaidReaction>(Handle)
+                    .Subscribe<UpdateLiveStoryTopDonors>(Handle);
+            }
 
             if (groupCall.ScheduledStartDate > 0)
             {
@@ -166,10 +206,6 @@ namespace Telegram.Services.Calls
             //InviteLink = groupCall.InviteLink;
             //Id = groupCall.Id;
 
-            var unix = ClientService.SendAsync(new GetOption("unix_time")).Result as OptionValueInteger;
-
-            _timeDifference = DateTime.Now - Formatter.ToLocalTime(unix.Value);
-
             _inputGroupCall = inputGroupCall;
 
             _inputGroupCallTask = new TaskCompletionSource<InputGroupCall>();
@@ -191,7 +227,8 @@ namespace Telegram.Services.Calls
             _manager.NetworkStateUpdated += OnNetworkStateUpdated;
             _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
             _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
-            _manager.BroadcastPartRequested += OnBroadcastPartRequested;
+            _manager.AudioBroadcastPartRequested += OnAudioBroadcastPartRequested;
+            _manager.VideoBroadcastPartRequested += OnVideoBroadcastPartRequested;
             _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
             _manager.SetEncryptDecrypt(EncryptData, DecryptData);
 
@@ -204,7 +241,7 @@ namespace Telegram.Services.Calls
         }
 
         public VoipGroupCall(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, XamlRoot xamlRoot, IList<long> userIds)
-    : base(clientService, settingsService, aggregator)
+            : base(clientService, settingsService, aggregator)
         {
             //Duration = groupCall.Duration;
             //IsVideoRecorded = groupCall.IsVideoRecorded;
@@ -231,10 +268,6 @@ namespace Telegram.Services.Calls
             //InviteLink = groupCall.InviteLink;
             //Id = groupCall.Id;
 
-            var unix = ClientService.SendAsync(new GetOption("unix_time")).Result as OptionValueInteger;
-
-            _timeDifference = DateTime.Now - Formatter.ToLocalTime(unix.Value);
-
             _inviteUserIds = userIds;
             _inputGroupCallTask = new TaskCompletionSource<InputGroupCall>();
 
@@ -254,7 +287,8 @@ namespace Telegram.Services.Calls
             _manager.NetworkStateUpdated += OnNetworkStateUpdated;
             _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
             _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
-            _manager.BroadcastPartRequested += OnBroadcastPartRequested;
+            _manager.AudioBroadcastPartRequested += OnAudioBroadcastPartRequested;
+            _manager.VideoBroadcastPartRequested += OnVideoBroadcastPartRequested;
             _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
             _manager.SetEncryptDecrypt(EncryptData, DecryptData);
 
@@ -268,10 +302,55 @@ namespace Telegram.Services.Calls
 
         public VoipGroupCallVerificationStateChangedEventArgs VerificationState { get; private set; }
 
-        private IList<byte> EncryptData(GroupCallDataChannel dataChannel, IList<byte> data, int unencryptedPrefixSize)
+        public IReadOnlyList<GroupCallMessage> Messages
+        {
+            get
+            {
+                lock (_messagesLock)
+                {
+                    return [.. _messages];
+                }
+            }
+        }
+
+        public IReadOnlyList<GroupCallMessage> PinnedMessages
+        {
+            get
+            {
+                lock (_messagesLock)
+                {
+                    return [.. _pinnedMessages];
+                }
+            }
+        }
+
+        public VoipGroupCallStreamState StreamState
+        {
+            get
+            {
+                lock (_streamStateLock)
+                {
+                    return _streamState;
+                }
+            }
+        }
+
+        public GroupCallParticipant Streamer
+        {
+            get
+            {
+                lock (_streamerLock)
+                {
+                    return _streamer;
+                }
+            }
+        }
+
+        private IList<byte> EncryptData(VoipDataChannel dataChannel, IList<byte> data, int unencryptedPrefixSize)
         {
             Data response = null;
-            ClientService.Send(new EncryptGroupCallData(Id, null, data, unencryptedPrefixSize), result =>
+            // TODO: optimize IList<byte> => byte[]
+            ClientService.Send(new EncryptGroupCallData(Id, null, data.ToArray(), unencryptedPrefixSize), result =>
             {
                 response = result as Data;
                 _encryptMutex.Release();
@@ -281,10 +360,11 @@ namespace Telegram.Services.Calls
             return response?.DataValue ?? Array.Empty<byte>();
         }
 
-        private IList<byte> DecryptData(MessageSender participantId, IList<byte> data)
+        private IList<byte> DecryptData(long userId, IList<byte> data)
         {
             Data response = null;
-            ClientService.Send(new DecryptGroupCallData(Id, participantId, new GroupCallDataChannelMain(), data), result =>
+            // TODO: optimize IList<byte> => byte[]
+            ClientService.Send(new DecryptGroupCallData(Id, new MessageSenderUser(userId), new GroupCallDataChannelMain(), data.ToArray()), result =>
             {
                 response = result as Data;
                 _decryptMutex.Release();
@@ -294,16 +374,23 @@ namespace Telegram.Services.Calls
             return response?.DataValue ?? Array.Empty<byte>();
         }
 
-        private readonly Semaphore _encryptMutex = new Semaphore(0, 1);
-        private readonly Semaphore _decryptMutex = new Semaphore(0, 1);
+        private readonly Semaphore _encryptMutex = new(0, 1);
+        private readonly Semaphore _decryptMutex = new(0, 1);
 
         public event TypedEventHandler<VoipGroupCall, VoipGroupCallNetworkStateChangedEventArgs> NetworkStateChanged;
         public event TypedEventHandler<VoipGroupCall, VoipGroupCallJoinedStateChangedEventArgs> JoinedStateChanged;
 
         public event TypedEventHandler<VoipGroupCall, VoipGroupCallVerificationStateChangedEventArgs> VerificationStateChanged;
 
-        public event EventHandler AvailableStreamsChanged;
-        public int AvailableStreamsCount => _availableStreamsCount;
+        public event TypedEventHandler<VoipGroupCall, VoipGroupCallMessagesChangedEventArgs> MessagesChanged;
+        public event TypedEventHandler<VoipGroupCall, VoipGroupCallMessagesChangedEventArgs> PinnedMessagesChanged;
+        public event TypedEventHandler<VoipGroupCall, VoipGroupCallReactionsChangedEventArgs> ReactionsChanged;
+        public event TypedEventHandler<VoipGroupCall, VoipGroupCallTopDonorsChangedEventArgs> TopDonorsChanged;
+        public event TypedEventHandler<VoipGroupCall, VoipGroupCallTotalStarCountChangedEventArgs> TotalStarCountChanged;
+
+        public event TypedEventHandler<VoipGroupCall, VoipGroupCallStreamStateChangedEventArgs> StreamStateChanged;
+
+        public event TypedEventHandler<VoipGroupCall, VoipGroupCallStreamerChangedEventArgs> StreamerChanged;
 
         private GroupCallParticipantsCollection _participants;
         public GroupCallParticipantsCollection Participants
@@ -369,13 +456,20 @@ namespace Telegram.Services.Calls
                     _systemCall.TryNotifyCallActive();
                     _systemCall.EndRequested += OnEndRequested;
                 }
+                else
+                {
+                    Logger.Error(status);
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Error(ex);
+
+                _coordinator?.MuteStateChanged += OnMuteStateChanged;
                 _coordinator = null;
+
                 _systemCall = null;
             }
-
             WatchDog.TrackEvent("VoipGroupCall", new Properties
             {
                 { "Requested", _systemCall != null },
@@ -440,6 +534,8 @@ namespace Telegram.Services.Calls
                     ? new JoinGroupCall(_inputGroupCall, joinParameters)
                     : _inviteUserIds != null
                     ? new CreateGroupCall(joinParameters)
+                    : _isLiveStory
+                    ? new JoinLiveStory(Id, joinParameters)
                     : new JoinVideoChat(Id, alias, joinParameters, _inviteHash);
 
                 var response = await ClientService.SendAsync(request);
@@ -448,12 +544,11 @@ namespace Telegram.Services.Calls
                     Id = info.GroupCallId;
                     response = new Text(info.JoinPayload);
 
-                    var groupCall = await ClientService.SendAsync(new GetGroupCall(info.GroupCallId));
-                    if (groupCall is GroupCall call)
+                    if (ClientService.TryGetGroupCall(info.GroupCallId, out GroupCall groupCall))
                     {
-                        _inputGroupCall ??= new InputGroupCallLink(call.InviteLink);
+                        _inputGroupCall ??= new InputGroupCallLink(groupCall.InviteLink);
                         _inputGroupCallTask.TrySetResult(_inputGroupCall);
-                        Update(call, out _);
+                        Update(groupCall, out _);
                     }
 
                     if (_inviteUserIds != null)
@@ -485,7 +580,32 @@ namespace Telegram.Services.Calls
 
                     RejoinScreenSharing();
                 }
+
+                if (IsLiveStory && !IsRtmpStream)
+                {
+                    InitializeStreamer();
+                }
             });
+        }
+
+        private async void InitializeStreamer()
+        {
+            GroupCallParticipant streamerChanged = null;
+
+            var response = await ClientService.SendAsync(new GetLiveStoryStreamer(Id));
+            if (response is GroupCallParticipant participant)
+            {
+                lock (_streamerLock)
+                {
+                    _streamer = participant;
+                    streamerChanged = participant;
+                }
+            }
+
+            if (streamerChanged != null)
+            {
+                StreamerChanged?.Invoke(this, new VoipGroupCallStreamerChangedEventArgs(streamerChanged));
+            }
         }
 
         #region Capturing
@@ -656,56 +776,79 @@ namespace Telegram.Services.Calls
         {
             if (IsRtmpStream)
             {
-                var response = await ClientService.SendAsync(new GetVideoChatStreams(Id));
-                if (response is VideoChatStreams streams && streams.Streams.Count > 0)
+                var streamStateChanged = VoipGroupCallStreamState.Unknown;
+
+                var response = await ClientService.SendAsync(new GetGroupCallStreams(Id));
+                if (response is GroupCallStreams streams && streams.Streams.Count > 0)
                 {
                     args.Deferral(streams.Streams[0].TimeOffset);
 
-                    if (_availableStreamsCount == 0)
+                    lock (_streamStateLock)
                     {
-                        _availableStreamsCount = 1;
-                        AvailableStreamsChanged?.Invoke(this, EventArgs.Empty);
+                        if (_streamState != VoipGroupCallStreamState.Available)
+                        {
+                            _streamState = VoipGroupCallStreamState.Available;
+                            streamStateChanged = VoipGroupCallStreamState.Available;
+                        }
                     }
                 }
                 else
                 {
                     args.Deferral(0);
 
-                    if (_availableStreamsCount > 0)
+                    lock (_streamStateLock)
                     {
-                        _availableStreamsCount = 0;
-                        AvailableStreamsChanged?.Invoke(this, EventArgs.Empty);
+                        if (_streamState != VoipGroupCallStreamState.NotAvailable)
+                        {
+                            _streamState = VoipGroupCallStreamState.NotAvailable;
+                            streamStateChanged = VoipGroupCallStreamState.NotAvailable;
+                        }
                     }
+                }
+
+                if (streamStateChanged != VoipGroupCallStreamState.Unknown)
+                {
+                    StreamStateChanged?.Invoke(this, new VoipGroupCallStreamStateChangedEventArgs(streamStateChanged));
                 }
             }
             else
             {
-                var now = DateTime.Now + _timeDifference;
-                var stamp = now.ToTimestampMilliseconds();
-
-                args.Deferral(stamp);
+                args.Deferral(ClientService.UnixTimeMilliseconds);
             }
         }
 
-        private async void OnBroadcastPartRequested(VoipGroupManager sender, BroadcastPartRequestedEventArgs args)
+        private async void OnAudioBroadcastPartRequested(VoipGroupManager sender, AudioBroadcastPartRequestedEventArgs args)
         {
-            var now = DateTime.Now + _timeDifference;
-            var stamp = now.ToTimestampMilliseconds();
-
-            var time = args.Time;
-            if (time == 0)
+            var response = await ClientService.SendAsync(new GetGroupCallStreamSegment(Id, args.Time, args.Scale, 0, null));
+            if (response is Data data)
             {
-                time = stamp;
+                args.Deferral(args.Time, ClientService.UnixTimeMilliseconds, data.DataValue);
             }
+            else
+            {
+                args.Deferral(args.Time, ClientService.UnixTimeMilliseconds, null);
+            }
+        }
 
-            var test = args.VideoQuality;
+        private async void OnVideoBroadcastPartRequested(VoipGroupManager sender, VideoBroadcastPartRequestedEventArgs args)
+        {
+            GroupCallVideoQuality videoQuality = args.VideoQuality switch
+            {
+                VoipVideoChannelQuality.Thumbnail => new GroupCallVideoQualityThumbnail(),
+                VoipVideoChannelQuality.Medium => new GroupCallVideoQualityMedium(),
+                VoipVideoChannelQuality.Full => new GroupCallVideoQualityFull(),
+                _ => null
+            };
 
-            var response = await ClientService.SendAsync(new GetVideoChatStreamSegment(Id, time, args.Scale, args.ChannelId, args.VideoQuality));
-
-            now = DateTime.Now + _timeDifference;
-            stamp = now.ToTimestamp();
-
-            args.Deferral(time, stamp, response as Data);
+            var response = await ClientService.SendAsync(new GetGroupCallStreamSegment(Id, args.Time, args.Scale, args.ChannelId, videoQuality));
+            if (response is Data data)
+            {
+                args.Deferral(args.Time, ClientService.UnixTimeMilliseconds, data.DataValue);
+            }
+            else
+            {
+                args.Deferral(args.Time, ClientService.UnixTimeMilliseconds, null);
+            }
         }
 
         private async void OnMediaChannelDescriptionsRequested(VoipGroupManager sender, MediaChannelDescriptionsRequestedEventArgs args)
@@ -715,17 +858,21 @@ namespace Telegram.Services.Calls
             var participants = Participants;
             if (participants == null)
             {
-                args.Deferral(Array.Empty<GroupCallParticipant>());
+                args.Deferral(Array.Empty<VoipMediaChannelDescription>());
             }
 
             var knownSources = participants.ToDictionary();
-            var result = new List<GroupCallParticipant>(args.AudioSourceIds.Count);
+            var result = new List<VoipMediaChannelDescription>(args.AudioSourceIds.Count);
 
             foreach (var ssrc in args.AudioSourceIds)
             {
                 if (knownSources.TryGetValue((int)ssrc, out GroupCallParticipant participant))
                 {
-                    result.Add(participant);
+                    result.Add(new VoipMediaChannelDescription
+                    {
+                        AudioSource = participant.AudioSourceId,
+                        UserId = participant.ParticipantId.ToId()
+                    });
                 }
                 else
                 {
@@ -749,7 +896,11 @@ namespace Telegram.Services.Calls
                 {
                     if (knownSources.TryGetValue((int)ssrc, out GroupCallParticipant participant))
                     {
-                        result.Add(participant);
+                        result.Add(new VoipMediaChannelDescription
+                        {
+                            AudioSource = participant.AudioSourceId,
+                            UserId = participant.ParticipantId.ToId()
+                        });
                     }
                 }
             }
@@ -868,7 +1019,7 @@ namespace Telegram.Services.Calls
         {
             if (ScheduledStartDate > 0)
             {
-                ThreadPool.QueueUserWorkItem(state => Aggregator.Publish(new UpdateGroupCall(new GroupCall(Id, Title, InviteLink, ScheduledStartDate, EnabledStartNotification, IsActive, IsVideoChat, IsRtmpStream, false, false, IsOwned, CanBeManaged, ParticipantCount, HasHiddenListeners, LoadedAllParticipants, RecentSpeakers, IsMyVideoEnabled, IsMyVideoPaused, CanEnableVideo2, MuteNewParticipants, CanToggleMuteNewParticipants, RecordDuration, IsVideoRecorded, Duration))));
+                ThreadPool.QueueUserWorkItem(state => Aggregator.Publish(new UpdateGroupCall(new GroupCall(Id, UniqueId, Title, InviteLink, PaidMessageStarCount, ScheduledStartDate, EnabledStartNotification, IsActive, IsVideoChat, IsLiveStory, IsRtmpStream, false, false, IsOwned, CanBeManaged, ParticipantCount, HasHiddenListeners, LoadedAllParticipants, MessageSenderId, RecentSpeakers, IsMyVideoEnabled, IsMyVideoPaused, CanEnableVideo2, MuteNewParticipants, CanToggleMuteNewParticipants, CanSendMessages, AreMessagesAllowed, CanToggleAreMessagesAllowed, CanDeleteMessages, RecordDuration, IsVideoRecorded, Duration))));
             }
             else if (end)
             {
@@ -904,7 +1055,8 @@ namespace Telegram.Services.Calls
                 _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
                 _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
                 _manager.BroadcastTimeRequested -= OnBroadcastTimeRequested;
-                _manager.BroadcastPartRequested -= OnBroadcastPartRequested;
+                _manager.AudioBroadcastPartRequested -= OnAudioBroadcastPartRequested;
+                _manager.VideoBroadcastPartRequested -= OnVideoBroadcastPartRequested;
                 _manager.MediaChannelDescriptionsRequested -= OnMediaChannelDescriptionsRequested;
 
                 _manager.SetEncryptDecrypt(null, null);
@@ -1027,16 +1179,110 @@ namespace Telegram.Services.Calls
             get => _manager?.IsNoiseSuppressionEnabled ?? false;
             set
             {
-                if (_manager != null)
-                {
-                    _manager.IsNoiseSuppressionEnabled = value;
-                }
+                _manager?.IsNoiseSuppressionEnabled = value;
 
                 Settings.VoIP.IsNoiseSuppressionEnabled = value;
             }
         }
 
+        private double _volumeLevel = 1;
+        public double VolumeLevel
+        {
+            get => _volumeLevel;
+            set => _manager?.SetVolume(1, _volumeLevel = value);
+        }
+
         public bool IsClosed => _isClosed;
+
+        public void Handle(UpdateGroupCall update)
+        {
+            Update(update.GroupCall, out bool closed);
+
+            if (closed)
+            {
+                Aggregator.Unsubscribe(this);
+            }
+        }
+
+        public void Handle(UpdateGroupCallParticipant update)
+        {
+            UpdateParticipant(update.Participant);
+        }
+
+        public void Handle(UpdateGroupCallVerificationState update)
+        {
+            UpdateVerificationState(update.Generation, update.Emojis);
+        }
+
+        public void Handle(UpdateGroupCallMessageSendFailed update)
+        {
+            Logger.Info(update);
+        }
+
+        public void Handle(UpdateGroupCallMessagesDeleted update)
+        {
+            UpdateMessagesDeleted(update.MessageIds);
+        }
+
+        public void Handle(UpdateNewGroupCallMessage update)
+        {
+            UpdateNewMessage(update.Message);
+        }
+
+        public void Handle(UpdateNewGroupCallPaidReaction update)
+        {
+            ReactionsChanged?.Invoke(this, new VoipGroupCallReactionsChangedEventArgs(update.SenderId, update.StarCount));
+        }
+
+        public void Handle(UpdateLiveStoryTopDonors update)
+        {
+            var topDonorsChanged = default(List<PaidReactor>);
+            var totalStarCountChanged = -1L;
+
+            lock (_topDonorsLock)
+            {
+                var prevSorted = _topDonors.Where(x => x.IsTop).OrderByDescending(x => x.StarCount).ToList();
+                var nextSorted = update.Donors.TopDonors.Where(x => x.IsTop).OrderByDescending(x => x.StarCount).ToList();
+
+                if (prevSorted.Count == nextSorted.Count)
+                {
+                    for (int i = 0; i < prevSorted.Count; i++)
+                    {
+                        if (!prevSorted[i].SenderId.AreTheSame(nextSorted[i].SenderId))
+                        {
+                            topDonorsChanged = nextSorted;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    topDonorsChanged = nextSorted;
+                }
+
+                if (topDonorsChanged != null)
+                {
+                    _topDonors.Clear();
+                    _topDonors.AddRange(nextSorted);
+                }
+
+                if (_totalStarCount != update.Donors.TotalStarCount)
+                {
+                    _totalStarCount = update.Donors.TotalStarCount;
+                    totalStarCountChanged = update.Donors.TotalStarCount;
+                }
+            }
+
+            if (topDonorsChanged != null)
+            {
+                TopDonorsChanged?.Invoke(this, new VoipGroupCallTopDonorsChangedEventArgs(topDonorsChanged));
+            }
+
+            if (totalStarCountChanged != -1)
+            {
+                TotalStarCountChanged?.Invoke(this, new VoipGroupCallTotalStarCountChangedEventArgs(totalStarCountChanged));
+            }
+        }
 
         public void Update(GroupCall call, out bool closed)
         {
@@ -1049,6 +1295,9 @@ namespace Telegram.Services.Calls
             IsVideoRecorded = call.IsVideoRecorded;
             RecordDuration = call.RecordDuration;
             CanToggleMuteNewParticipants = call.CanToggleMuteNewParticipants;
+            CanSendMessages = call.CanSendMessages;
+            AreMessagesAllowed = call.AreMessagesAllowed;
+            CanToggleAreMessagesAllowed = call.AreMessagesAllowed;
             MuteNewParticipants = call.MuteNewParticipants;
             CanEnableVideo2 = call.CanEnableVideo;
             IsMyVideoPaused = call.IsMyVideoPaused;
@@ -1064,7 +1313,10 @@ namespace Telegram.Services.Calls
             IsActive = call.IsActive;
             EnabledStartNotification = call.EnabledStartNotification;
             ScheduledStartDate = call.ScheduledStartDate;
+            MessageSenderId = call.MessageSenderId;
+            PaidMessageStarCount = call.PaidMessageStarCount;
             Title = call.Title;
+            UniqueId = call.UniqueId;
             Id = call.Id;
 
             if (call.IsJoined || call.NeedRejoin || _isScheduled != (call.ScheduledStartDate > 0))
@@ -1091,7 +1343,7 @@ namespace Telegram.Services.Calls
             RaisePropertyChanged(nameof(Call));
         }
 
-        public void Update(GroupCallParticipant participant)
+        public void UpdateParticipant(GroupCallParticipant participant)
         {
             Participants?.Update(participant);
 
@@ -1134,17 +1386,218 @@ namespace Telegram.Services.Calls
             if (participant.IsMutedForCurrentUser)
             {
                 manager.SetVolume(participant.AudioSourceId, 0);
+                manager.SetVolume(participant.ScreenSharingAudioSourceId, 0);
             }
             else
             {
                 manager.SetVolume(participant.AudioSourceId, participant.VolumeLevel / 10000d);
+                manager.SetVolume(participant.ScreenSharingAudioSourceId, participant.VolumeLevel / 10000d);
             }
         }
 
-        public void Update(int generation, IList<string> emojis)
+        public void UpdateVerificationState(int generation, IList<string> emojis)
         {
             VerificationState = new VoipGroupCallVerificationStateChangedEventArgs(generation, emojis);
             VerificationStateChanged?.Invoke(this, new VoipGroupCallVerificationStateChangedEventArgs(generation, emojis));
+        }
+
+        public void UpdateMessagesDeleted(IList<int> messageIds)
+        {
+            var hash = messageIds.ToHashSet();
+
+            var deleted = default(List<GroupCallMessage>);
+            var added = default(List<GroupCallMessage>);
+            var removed = default(List<GroupCallMessage>);
+
+            lock (_messagesLock)
+            {
+                for (int i = 0; i < _messages.Count; i++)
+                {
+                    var message = _messages[i];
+                    if (hash.Contains(message.MessageId))
+                    {
+                        deleted ??= [];
+                        deleted.Add(message);
+
+                        _messages.Remove(message);
+                        UpdatePinnedMessagesLocked(message, true, out var addedTemp, out var removedTemp);
+
+                        if (removedTemp != null)
+                        {
+                            removed ??= [];
+                            removed.Add(removedTemp);
+                        }
+
+                        if (addedTemp != null)
+                        {
+                            added ??= [];
+                            added.Add(addedTemp);
+                        }
+
+                        i--;
+                    }
+                }
+            }
+
+            if (deleted != null)
+            {
+                foreach (var message in deleted)
+                {
+                    MessagesChanged?.Invoke(this, new VoipGroupCallMessagesChangedEventArgs(message, true));
+                }
+            }
+
+            if (removed != null)
+            {
+                foreach (var message in removed)
+                {
+                    PinnedMessagesChanged?.Invoke(this, new VoipGroupCallMessagesChangedEventArgs(message, true));
+                }
+            }
+
+            if (added != null)
+            {
+                foreach (var message in added)
+                {
+                    PinnedMessagesChanged?.Invoke(this, new VoipGroupCallMessagesChangedEventArgs(message, false));
+                }
+            }
+        }
+
+        public void UpdateNewMessage(GroupCallMessage message)
+        {
+            GroupCallMessage added;
+            GroupCallMessage removed;
+
+            lock (_messagesLock)
+            {
+                UpdatePinnedMessagesLocked(message, false, out added, out removed);
+
+                _messages.Add(message);
+            }
+
+            MessagesChanged?.Invoke(this, new VoipGroupCallMessagesChangedEventArgs(message, false));
+
+            if (removed != null)
+            {
+                PinnedMessagesChanged?.Invoke(this, new VoipGroupCallMessagesChangedEventArgs(removed, true));
+            }
+
+            if (added != null)
+            {
+                PinnedMessagesChanged?.Invoke(this, new VoipGroupCallMessagesChangedEventArgs(added, false));
+            }
+        }
+
+        private void UpdatePinnedMessagesLocked(GroupCallMessage message, bool expired, out GroupCallMessage added, out GroupCallMessage removed)
+        {
+            added = null;
+            removed = null;
+
+            var now = ClientService.UnixTime;
+
+            if (expired)
+            {
+                _pinnedMessages.Remove(message);
+                removed = message;
+
+                var prev = _messages.FirstOrDefault(x => x.SenderId.AreTheSame(message.SenderId));
+                if (prev != null)
+                {
+                    var expiration = GetExpiration(prev.Date, prev.PaidMessageStarCount);
+                    if (expiration > now)
+                    {
+                        _pinnedMessages.Add(prev);
+                        added = prev;
+                    }
+                }
+            }
+            else
+            {
+                var prev = _pinnedMessages.FirstOrDefault(x => x.SenderId.AreTheSame(message.SenderId));
+                var prevExpiration = prev != null ? GetExpiration(prev.Date, prev.PaidMessageStarCount) : now;
+
+                var expiration = GetExpiration(message.Date, message.PaidMessageStarCount);
+                if (expiration > prevExpiration && expiration > now)
+                {
+                    if (prev != null)
+                    {
+                        _pinnedMessages.Remove(prev);
+                        removed = prev;
+                    }
+
+                    _pinnedMessages.Add(message);
+                    added = message;
+                }
+            }
+
+            if (_pinnedMessages.Empty())
+            {
+                _pinnedMessagesTimer?.Dispose();
+                _pinnedMessagesTimer = null;
+            }
+            else if (_pinnedMessagesTimer == null)
+            {
+                _pinnedMessagesTimer = new Timer(OnPinnedMessagesTick);
+                _pinnedMessagesTimer.Change(1000, 1000);
+            }
+        }
+
+        private void OnPinnedMessagesTick(object state)
+        {
+            var now = ClientService.UnixTime;
+
+            var deleted = default(List<GroupCallMessage>);
+
+            lock (_messagesLock)
+            {
+                for (int i = 0; i < _pinnedMessages.Count; i++)
+                {
+                    var message = _pinnedMessages[i];
+                    var expiration = GetExpiration(message.Date, message.PaidMessageStarCount);
+
+                    if (expiration < now)
+                    {
+                        deleted ??= [];
+                        deleted.Add(message);
+
+                        _pinnedMessages.Remove(message);
+                        i--;
+                    }
+                }
+
+                if (_pinnedMessages.Empty())
+                {
+                    _pinnedMessagesTimer?.Dispose();
+                    _pinnedMessagesTimer = null;
+                }
+            }
+
+            if (deleted != null)
+            {
+                foreach (var message in deleted)
+                {
+                    PinnedMessagesChanged?.Invoke(this, new VoipGroupCallMessagesChangedEventArgs(message, true));
+                }
+            }
+        }
+
+        private long GetExpiration(int date, long starCount)
+        {
+            if (ClientService.TryGetGroupCallMessageLevel(starCount, out GroupCallMessageLevel level))
+            {
+                if (level.PinDuration > 0)
+                {
+                    return date + level.PinDuration;
+                }
+            }
+
+            return 0;
+        }
+
+        public void SendMessage(FormattedText text, long paidMessageStarCount = 0)
+        {
+            ClientService.Send(new SendGroupCallMessage(Id, text, paidMessageStarCount));
         }
 
         public string GetTitle()
@@ -1190,6 +1643,24 @@ namespace Telegram.Services.Calls
         public bool CanToggleMuteNewParticipants { get; private set; }
 
         /// <summary>
+        /// True, if users can send messages to the group call.
+        /// </summary>
+        public bool CanSendMessages { get; private set; }
+
+        /// <summary>
+        /// True, if users can send messages to the group call.
+        /// </summary>
+        public bool AreMessagesAllowed { get; private set; }
+
+        /// <summary>
+        /// True, if the current user can enable or disable sending messages in the group
+        /// call.
+        /// </summary>
+        public bool CanToggleAreMessagesAllowed { get; private set; }
+
+        public bool CanDeleteMessages { get; private set; }
+
+        /// <summary>
         /// True, if only group call administrators can unmute new participants.
         /// </summary>
         public bool MuteNewParticipants { get; private set; }
@@ -1218,6 +1689,8 @@ namespace Telegram.Services.Calls
         /// True, if all group call participants are loaded.
         /// </summary>
         public bool LoadedAllParticipants { get; private set; }
+
+        public MessageSender MessageSenderId { get; private set; }
 
         /// <summary>
         /// True, if group call participants, which are muted, aren't returned in participant
@@ -1285,15 +1758,21 @@ namespace Telegram.Services.Calls
         /// </summary>
         public bool IsVideoChat { get; private set; }
 
+        public bool IsLiveStory { get; private set; }
+
         /// <summary>
         /// Invite link for the group call; for group calls that aren't bound to a chat.
         /// </summary>
         public string InviteLink { get; private set; }
 
+        public long PaidMessageStarCount { get; private set; }
+
         /// <summary>
         /// Group call identifier.
         /// </summary>
         public int Id { get; private set; }
+
+        public long UniqueId { get; private set; }
 
         public InputGroupCall InputId => _inputGroupCall;
 
@@ -1315,7 +1794,7 @@ namespace Telegram.Services.Calls
             }
             else
             {
-                var service = TypeResolver.Current.Resolve<IViewService>(int.MaxValue);
+                var service = ClientService.Session.Resolve<IViewService>();
                 var options = new ViewServiceOptions
                 {
                     Width = 720,

@@ -1,41 +1,37 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
-using Telegram.Common;
+
 using Telegram.Controls;
+using Telegram.Native.Controls;
+using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Popups
 {
     public sealed partial class ZoomableMediaPopup : GridEx
     {
-        private ApplicationView _applicationView;
+        public ViewModelBase ViewModel => DataContext as ViewModelBase;
 
-        private long _fileToken;
-        private long _thumbnailToken;
+        private ApplicationView _applicationView;
 
         private object _lastItem;
 
         public ZoomableMediaPopup()
         {
             InitializeComponent();
-
-            // TODO: WinUI - These handlers are no longer needed and can be removed
-            Connected += OnLoaded;
-            Disconnected += OnUnloaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        // TODO: WinUI - These handlers are no longer needed and can be removed
+        protected override void OnLoaded()
         {
             _applicationView = ApplicationView.GetForCurrentView();
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
@@ -43,7 +39,8 @@ namespace Telegram.Views.Popups
             OnVisibleBoundsChanged(_applicationView, null);
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        // TODO: WinUI - These handlers are no longer needed and can be removed
+        protected override void OnUnloaded()
         {
             _lastItem = null;
 
@@ -52,10 +49,6 @@ namespace Telegram.Views.Popups
                 _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
             }
         }
-
-        public Action<int> DownloadFile { get; set; }
-
-        public Func<int> SessionId { get; set; }
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
@@ -83,12 +76,16 @@ namespace Telegram.Views.Popups
             Aspect.MaxHeight = 224;
             Aspect.Constraint = sticker;
 
-            if (sticker.Thumbnail != null)
+            Thumbnail.Opacity = 0;
+            Texture.Source = null;
+            Container.Child = new AnimatedImage
             {
-                UpdateThumbnail(sticker.Thumbnail.File, true);
-            }
-
-            UpdateFile(sticker, sticker.StickerValue, true);
+                AutoPlay = true,
+                FrameSize = new Size(224, 224),
+                DecodeFrameType = DecodePixelType.Logical,
+                IsCachingEnabled = true,
+                Source = new DelayedFileSource(ViewModel.ClientService, sticker.StickerValue)
+            };
         }
 
         public void SetAnimation(Animation animation)
@@ -96,126 +93,50 @@ namespace Telegram.Views.Popups
             _lastItem = animation;
 
             Title.Text = string.Empty;
-            Aspect.MaxWidth = 320;
+            Aspect.MaxWidth = 420;
             Aspect.MaxHeight = 420;
             Aspect.Constraint = animation;
 
-            if (animation.Thumbnail is { Format: ThumbnailFormatJpeg })
+            Thumbnail.Opacity = 0;
+            Texture.Source = null;
+            Container.Child = new AnimatedImage
             {
-                UpdateThumbnail(animation.Thumbnail.File, true);
-            }
-
-            UpdateFile(animation, animation.AnimationValue, true);
+                AutoPlay = true,
+                FrameSize = new Size(420, 420),
+                DecodeFrameType = DecodePixelType.Logical,
+                IsCachingEnabled = false,
+                Source = new DelayedFileSource(ViewModel.ClientService, animation.AnimationValue)
+            };
         }
 
-        private void UpdateFile(object target, File file)
+        public void SetPhoto(Photo photo)
         {
-            if (_lastItem is Sticker sticker && file.Local.IsDownloadingCompleted)
-            {
-                if (sticker.StickerValue.Id == file.Id)
-                {
-                    UpdateFile(sticker, file, false);
-                }
-                else if (sticker.Thumbnail?.File.Id == file.Id)
-                {
-                    UpdateThumbnail(file, false);
-                }
-            }
-            else if (_lastItem is Animation animation && file.Local.IsDownloadingCompleted)
-            {
-                if (animation.AnimationValue.Id == file.Id)
-                {
-                    UpdateFile(animation, file, false);
-                }
-            }
-        }
+            _lastItem = photo;
 
-        private void UpdateFile(Sticker sticker, File file, bool download)
-        {
-            if (file.Local.IsDownloadingCompleted)
-            {
-                UpdateManager.Unsubscribe(this, ref _fileToken, true);
+            Title.Text = string.Empty;
+            Aspect.MaxWidth = 420;
+            Aspect.MaxHeight = 420;
+            Aspect.Constraint = photo;
 
-                Thumbnail.Opacity = 0;
-                Texture.Source = null;
-                Container.Child = new AnimatedImage
-                {
-                    AutoPlay = true,
-                    FrameSize = new Size(224, 224),
-                    DecodeFrameType = DecodePixelType.Logical,
-                    IsCachingEnabled = true,
-                    Source = new LocalFileSource(sticker.StickerValue)
-                };
+            Thumbnail.Opacity = 0;
+
+            var big = photo.GetBig();
+            var small = photo.GetSmall();
+
+            var content = new ImageView();
+
+            if (big.Photo.Id != small.Photo.Id)
+            {
+                Texture.SetSource(ViewModel.ClientService, small.Photo, photo.Minithumbnail);
+                content.SetSource(ViewModel.ClientService, big.Photo);
             }
             else
             {
-                Thumbnail.Opacity = 1;
                 Texture.Source = null;
-                Container.Child = new Border();
-
-                UpdateManager.Subscribe(this, SessionId(), file, ref _fileToken, UpdateFile, true);
-
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && download)
-                {
-                    DownloadFile?.Invoke(file.Id);
-                }
+                content.SetSource(ViewModel.ClientService, big.Photo, photo.Minithumbnail);
             }
-        }
 
-        private void UpdateFile(Animation animation, File file, bool download)
-        {
-            if (file.Local.IsDownloadingCompleted)
-            {
-                UpdateManager.Unsubscribe(this, ref _fileToken, true);
-
-                Thumbnail.Opacity = 0;
-                Texture.Source = null;
-                Container.Child = new AnimatedImage
-                {
-                    AutoPlay = true,
-                    FrameSize = new Size(0, 0),
-                    DecodeFrameType = DecodePixelType.Physical,
-                    IsCachingEnabled = false,
-                    Source = new LocalFileSource(file)
-                };
-            }
-            else
-            {
-                Thumbnail.Opacity = 1;
-                Texture.Source = null;
-                Container.Child = new Border();
-
-                UpdateManager.Subscribe(this, SessionId(), file, ref _fileToken, UpdateFile, true);
-
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && download)
-                {
-                    DownloadFile?.Invoke(file.Id);
-                }
-            }
-        }
-
-        private void UpdateThumbnail(object target, File file)
-        {
-            UpdateThumbnail(file, false);
-        }
-
-        private void UpdateThumbnail(File file, bool download)
-        {
-            if (file.Local.IsDownloadingCompleted)
-            {
-                Thumbnail.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
-            }
-            else
-            {
-                Thumbnail.Source = null;
-
-                UpdateManager.Subscribe(this, SessionId(), file, ref _thumbnailToken, UpdateThumbnail, true);
-
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && download)
-                {
-                    DownloadFile?.Invoke(file.Id);
-                }
-            }
+            Container.Child = content;
         }
     }
 }

@@ -44,8 +44,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Grid Background="{ThemeResource MenuFlyoutItemBackgroundPointerOver}"
-                              CornerRadius="{TemplateBinding CornerRadius}"
+                        <Grid CornerRadius="{TemplateBinding CornerRadius}"
                               Margin="{TemplateBinding Padding}"
                               AutomationProperties.AccessibilityView="Raw">
                             <VisualStateManager.VisualStateGroups>
@@ -81,6 +80,8 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
 
+                            <Border Background="{TemplateBinding Foreground}"
+                                    Opacity="0.2" />
                             <Border x:Name="ContentPresenter" />
 
                             <TextBlock x:Name="Icon"

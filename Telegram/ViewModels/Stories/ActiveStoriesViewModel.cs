@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,7 +25,6 @@ namespace Telegram.ViewModels.Stories
 
     public partial class ActiveStoriesViewModel : ComposeViewModel
     {
-        private readonly IClientService _clientService;
         private readonly long _chatId;
 
         private readonly ChatActiveStories _activeStories;
@@ -39,7 +39,6 @@ namespace Telegram.ViewModels.Stories
         public ActiveStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ChatActiveStories activeStories, Chat chat)
             : base(clientService, settingsService, aggregator)
         {
-            _clientService = clientService;
             _chatId = activeStories.ChatId;
 
             _activeStories = activeStories;
@@ -57,10 +56,9 @@ namespace Telegram.ViewModels.Stories
         public ActiveStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, StoryViewModel selectedItem, ObservableCollection<StoryViewModel> stories)
             : base(clientService, settingsService, aggregator)
         {
-            _clientService = clientService;
-            _chatId = selectedItem.ChatId;
+            _chatId = selectedItem.PosterChatId;
 
-            Chat = clientService.GetChat(selectedItem.ChatId);
+            Chat = clientService.GetChat(selectedItem.PosterChatId);
             IsMyStory = Chat.Type is ChatTypePrivate privata && privata.UserId == clientService.Options.MyId;
 
             _messageDelegate = new ChatMessageDelegate(this, Chat);
@@ -69,16 +67,17 @@ namespace Telegram.ViewModels.Stories
             SelectedItem = selectedItem;
         }
 
-        public ActiveStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, StoryViewModel selectedItem)
+        public ActiveStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, Story story)
             : base(clientService, settingsService, aggregator)
         {
-            _clientService = clientService;
-            _chatId = selectedItem.ChatId;
+            _chatId = story.PosterChatId;
 
-            Chat = clientService.GetChat(selectedItem.ChatId);
+            Chat = clientService.GetChat(story.PosterChatId);
             IsMyStory = Chat.Type is ChatTypePrivate privata && privata.UserId == clientService.Options.MyId;
 
             _messageDelegate = new ChatMessageDelegate(this, Chat);
+
+            var selectedItem = new StoryViewModel(clientService, story);
 
             Items = new ObservableCollection<StoryViewModel> { selectedItem };
             SelectedItem = selectedItem;
@@ -91,6 +90,13 @@ namespace Telegram.ViewModels.Stories
         public override Chat Chat { get; set; }
 
         public long Order => _activeStories?.Order ?? 0;
+
+        public long MaxReadStoryId => _activeStories?.MaxReadStoryId ?? 0;
+
+        /// <summary>
+        /// True, if the stories are shown in the main story list and can be archived; otherwise, the stories can be hidden from the main story list -only by calling removeTopChat with topChatCategoryUsers and the chat_id. Stories of the current user can't be archived nor hidden using removeTopChat
+        /// </summary>
+        public bool CanBeArchived => _activeStories?.CanBeArchived ?? true;
 
         public StoryList List => _activeStories?.List;
 
@@ -122,14 +128,16 @@ namespace Telegram.ViewModels.Stories
             var next = new List<StoryViewModel>();
             var selected = default(StoryViewModel);
 
-            SelectedItem = null;
-
             foreach (var story in activeStories.Stories)
             {
                 _stories.TryGetValue(story.StoryId, out var item);
-                item ??= new StoryViewModel(_clientService, activeStories.ChatId, story);
+                item ??= new StoryViewModel(ClientService, activeStories.ChatId, story);
 
-                if (story.StoryId > activeStories.MaxReadStoryId)
+                if (story.IsLive)
+                {
+                    selected = item;
+                }
+                else if (story.StoryId > activeStories.MaxReadStoryId)
                 {
                     selected ??= item;
                 }
@@ -148,19 +156,20 @@ namespace Telegram.ViewModels.Stories
 
             foreach (var item in next)
             {
-                _stories[item.StoryId] = item;
+                _stories[item.Id] = item;
                 Items.Add(item);
             }
 
-            SelectedItem = selected ?? Items.LastOrDefault();
-
-            if (SelectedItem != null)
+            var selectedItem = selected ?? Items.FirstOrDefault();
+            if (selectedItem != null)
             {
-                await SelectedItem.LoadAsync();
+                await selectedItem.LoadAsync();
             }
 
             _task?.TrySetResult(true);
         }
+
+        public override MessageTopic TopicId { get; set; }
 
         public override long ThreadId => 0;
 
@@ -178,7 +187,7 @@ namespace Telegram.ViewModels.Stories
 
         protected override InputMessageReplyTo GetReply(bool clear, bool notify = true)
         {
-            return new InputMessageReplyToStory(ChatId, SelectedItem.StoryId);
+            return new InputMessageReplyToStory(ChatId, SelectedItem.Id);
         }
 
         public override FormattedText GetFormattedText(bool clear, bool parseMarkdown)
@@ -193,7 +202,7 @@ namespace Telegram.ViewModels.Stories
 
         public override Task<MessageSendOptions> PickMessageSendOptionsAsync(int messageCount = 1, SchedulingState schedule = SchedulingState.Auto, bool? silent = null, bool reorder = false)
         {
-            return Task.FromResult(new MessageSendOptions(0, silent ?? false, false, false, false, 0, Settings.Stickers.DynamicPackOrder && reorder, null, 0, 0, false));
+            return Task.FromResult(new MessageSendOptions(null, silent ?? false, false, 0, Settings.Stickers.DynamicPackOrder && reorder, null, 0, 0, false));
         }
 
         public void Handle(UpdateStory update)

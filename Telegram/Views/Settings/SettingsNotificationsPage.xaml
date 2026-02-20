@@ -365,8 +365,9 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
-                    <Grid>
-                        <chats:ChatBackgroundControl x:Name="BackgroundControl" />
+                    <Grid BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+                        <chats:ChatBackgroundControl x:Name="BackgroundControl"
+                                                     CornerRadius="4" />
                         <Grid Padding="12,8">
                             <Grid HorizontalAlignment="Right"
                                   Width="364"
@@ -573,12 +574,12 @@
                 <controls:HeaderedControl ItemsSource="{x:Bind ViewModel.Scopes}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="settings:SettingsNotificationsScope">
-                            <controls:BadgeButton Badge="{x:Bind ExceptionsCount, Mode=OneWay}"
-                                                  Content="{x:Bind Title}"
-                                                  Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                                  Glyph="{x:Bind Glyph}"
-                                                  Click="{x:Bind Exceptions}"
-                                                  IsChevronVisible="True" />
+                            <controls:SettingsButton Description="{x:Bind ExceptionsCount, Mode=OneWay}"
+                                                     Content="{x:Bind Title}"
+                                                     Glyph="{x:Bind Glyph}"
+                                                     Click="{x:Bind Exceptions}"
+                                                     IsChevronVisible="True"
+                                                     CornerRadius="4" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </controls:HeaderedControl>
@@ -626,11 +627,10 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Footer="{CustomResource UndoAllCustom}">
-                    <controls:BadgeButton Content="{CustomResource ResetAllNotifications}"
-                                          Foreground="{ThemeResource DangerButtonBackground}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEA09;"
-                                          Click="{x:Bind ViewModel.Reset}" />
+                    <controls:SettingsButton Content="{CustomResource ResetAllNotifications}"
+                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Glyph="&#xEA09;"
+                                             Click="{x:Bind ViewModel.Reset}" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

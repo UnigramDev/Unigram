@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Globalization;
 using Windows.UI;
@@ -323,7 +324,7 @@ namespace Telegram.Common
 
         public static HSL ToHSL(this Color rgb)
         {
-            HSL hsl = new HSL();
+            HSL hsl = new();
 
             float r = rgb.R / 255.0f;
             float g = rgb.G / 255.0f;
@@ -458,6 +459,30 @@ namespace Telegram.Common
             }
 
             return Color.FromArgb(color.A, (byte)red, (byte)green, (byte)blue);
+        }
+
+        public static Color WithSatuation(this Color color, float saturation, float value)
+        {
+            var hsv = color.ToHSV();
+            if (hsv.S > .1f && hsv.S < .9f)
+            {
+                // otherwise, saturation would reveal some random hue there
+                hsv.S = Math.Clamp(hsv.S + saturation, 0, 1);
+            }
+            hsv.V = Math.Clamp(hsv.V + value, 0, 1);
+            return hsv.ToRGB(color.A);
+        }
+
+        public static Color Darken(this Color color, float satuation = 0.05f, float value = -0.1f)
+        {
+            // OLD: .WithBrightness(-0.2f)
+            return color.WithSatuation(satuation, value);
+        }
+
+        public static Color Lighten(this Color color, float satuation = -0.05f, float value = 0.1f)
+        {
+            // OLD: .WithBrightness(0.2f)
+            return color.WithSatuation(satuation, value);
         }
     }
 }

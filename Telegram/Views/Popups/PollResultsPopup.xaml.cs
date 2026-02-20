@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.Generic;
 using Telegram.Collections;
 using Telegram.Common;
@@ -68,8 +69,9 @@ namespace Telegram.Views.Popups
             else if (item is PollResultViewModel option)
             {
                 var content = args.Element as Grid;
-                var header = content.Children[0] as RichTextBlock;
-                var footer = content.Children[1] as TextBlock;
+                var panel = content.Children[0] as Grid;
+                var header = panel.Children[0] as RichTextBlock;
+                var footer = panel.Children[1] as TextBlock;
 
                 var paragraph = header.Blocks[0] as Paragraph;
                 var span = paragraph.Inlines[0] as Span;

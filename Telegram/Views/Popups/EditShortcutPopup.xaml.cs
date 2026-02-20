@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Controls;
 using Telegram.Services;
 using Windows.UI.Xaml;
@@ -35,22 +36,18 @@ namespace Telegram.Views.Popups
 
         private void OnProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
         {
-            if (TextField.FocusState != FocusState.Unfocused && _shortcutsService.TryGetShortcut(args, out Shortcut shortcut))
-            {
-                args.Handled = true;
+            //if (TextField.FocusState != FocusState.Unfocused && _shortcutsService.TryGetShortcut(args, out Shortcut shortcut))
+            //{
+            //    args.Handled = true;
 
-                Shortcut = shortcut;
-                TextField.Text = shortcut.ToString();
-            }
+            //    Shortcut = shortcut;
+            //    TextField.Text = shortcut.ToString();
+            //}
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             args.Cancel = Shortcut == null;
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void TextField_Loaded(object sender, RoutedEventArgs e)

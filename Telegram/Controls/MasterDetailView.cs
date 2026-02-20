@@ -1,29 +1,24 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
+
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Numerics;
-using Telegram.Assets.Icons;
-using Telegram.Collections;
 using Telegram.Common;
-using Telegram.Composition;
 using Telegram.Controls.Chats;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Views;
-using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Controls
@@ -35,29 +30,26 @@ namespace Telegram.Controls
         Background
     }
 
-    public sealed partial class MasterDetailView : ContentControl, IDisposable
+    public sealed partial class MasterDetailView : ContentControl, INotifyPropertyChanged, IDisposable
     {
         private MasterDetailPanel AdaptivePanel;
+        private ContentControl MasterFrame;
         private Frame DetailFrame;
         private Grid DetailHeaderPresenter2;
+        private Grid DetailRoot;
         private Grid DetailPresenter;
-        private BreadcrumbBar DetailHeaderPresenter;
+        private TextBlock DetailHeaderPresenter;
         private BackButton BackButton;
         private Border DetailHeaderBackground;
         private ChatBackgroundControl BackgroundPart;
         private ContentControl DetailAction;
+        private ContentControl BannerPresenter;
         private Border BorderPart;
         private Border MaterialPart;
-
-        private Border GoBackIcon;
-        private Border GoBackGlyph;
 
         public ViewModelBase ViewModel { get; private set; }
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
-
-        private readonly MvxObservableCollection<NavigationStackItem> _backStack = new();
-        private readonly NavigationStackItem _currentPage = new(null, null, null, HostedNavigationMode.Child);
 
         private long _titleToken;
 
@@ -68,18 +60,18 @@ namespace Telegram.Controls
             DefaultStyleKey = typeof(MasterDetailView);
 
             Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
         }
 
         #region Initialize
 
         public void Initialize(string key, Frame parent, ViewModelBase viewModel)
         {
-            var service = WindowContext.Current.NavigationServices.GetByFrameId(key + viewModel.SessionId) as NavigationService;
+            var service = WindowContext.Current.NavigationServices.GetByFrameId(key + viewModel.Session.Id) as NavigationService;
             if (service == null)
             {
-                service = BootStrapper.Current.NavigationServiceFactory(viewModel.NavigationService.Window, BootStrapper.BackButton.Ignore, viewModel.SessionId, key + viewModel.SessionId, false) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(viewModel.Session, viewModel.NavigationService.Window, BootStrapper.BackButton.Ignore, key + viewModel.Session.Id, false) as NavigationService;
                 service.Frame.DataContext = new object();
+                service.Frame.CacheSize = 5;
                 service.FrameFacade.BackRequested += OnBackRequested;
                 service.BackStackChanged += OnBackStackChanged;
                 service.Navigated += OnNavigated;
@@ -116,10 +108,15 @@ namespace Telegram.Controls
                 AdaptivePanel.ViewStateChanged -= OnViewStateChanged;
             }
 
-            if (DetailHeaderPresenter != null)
+            if (DetailFrame?.Content is HostedPage hosted)
             {
-                DetailHeaderPresenter.ItemsSource = null;
-                DetailHeaderPresenter.ItemClicked -= DetailHeaderPresenter_ItemClicked;
+                hosted.UnregisterPropertyChangedCallback(HostedPage.TitleProperty, _titleToken);
+
+                var scrollingHost = hosted.FindName("ScrollingHost");
+                if (scrollingHost is ListViewBase list)
+                {
+                    list.Loaded -= SetScrollingHost;
+                }
             }
 
             NavigationService = null;
@@ -159,7 +156,13 @@ namespace Telegram.Controls
             // but if it is 0 it means that the control is not loaded, and the event shouldn't be handled
             if (CanGoBack && ActualWidth > 0 /*&& type == BackStackType.Navigation*/)
             {
-                DetailFrame.GoBack();
+                NavigationTransitionInfo transitionInfoOverride = null;
+                if (CurrentState == MasterDetailState.Minimal && DetailFrame.BackStackDepth == 1)
+                {
+                    transitionInfoOverride = new SuppressNavigationTransitionInfo();
+                }
+
+                DetailFrame.GoBack(transitionInfoOverride);
                 args.Handled = true;
             }
             else if (ParentFrame.Content is INavigablePage masterPage /*&& type == BackStackType.Hamburger*/)
@@ -181,8 +184,6 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            OnLoaded2(sender, e);
-
             if (CurrentState != MasterDetailState.Minimal)
             {
                 OnViewStateChanged();
@@ -320,31 +321,32 @@ namespace Telegram.Controls
             VisualStateManager.GoToState(this, "ResetState", false);
 
             DetailHeaderPresenter2 = GetTemplateChild(nameof(DetailHeaderPresenter2)) as Grid;
+            DetailRoot = GetTemplateChild(nameof(DetailRoot)) as Grid;
             DetailPresenter = GetTemplateChild(nameof(DetailPresenter)) as Grid;
-            DetailHeaderPresenter = GetTemplateChild(nameof(DetailHeaderPresenter)) as BreadcrumbBar;
+            DetailHeaderPresenter = GetTemplateChild(nameof(DetailHeaderPresenter)) as TextBlock;
             BackButton = GetTemplateChild(nameof(BackButton)) as BackButton;
             DetailHeaderBackground = GetTemplateChild(nameof(DetailHeaderBackground)) as Border;
             DetailAction = GetTemplateChild(nameof(DetailAction)) as ContentControl;
+            BannerPresenter = GetTemplateChild(nameof(BannerPresenter)) as ContentControl;
             BackgroundPart = GetTemplateChild(nameof(BackgroundPart)) as ChatBackgroundControl;
             BorderPart = GetTemplateChild(nameof(BorderPart)) as Border;
             MaterialPart = GetTemplateChild(nameof(MaterialPart)) as Border;
-            GoBackIcon = GetTemplateChild(nameof(GoBackIcon)) as Border;
-            GoBackGlyph = GetTemplateChild(nameof(GoBackGlyph)) as Border;
+            MasterFrame = GetTemplateChild(nameof(MasterFrame)) as ContentControl;
             AdaptivePanel = GetTemplateChild(nameof(AdaptivePanel)) as MasterDetailPanel;
             AdaptivePanel.ViewStateChanged += OnViewStateChanged;
             AdaptivePanel.HasMaster = HasMaster;
 
-            DetailHeaderPresenter.ItemsSource = _backStack;
-            DetailHeaderPresenter.ItemClicked += DetailHeaderPresenter_ItemClicked;
+            BannerPresenter.Visibility = _bannerCollapsed
+                ? Visibility.Collapsed
+                : Visibility.Visible;
 
+            BackgroundPart.SizeChanged += BackgroundPart_SizeChanged;
             BackgroundPart.Update(ViewModel.ClientService, ViewModel.Aggregator);
             BackgroundPart.Visibility = _backgroundType == BackgroundKind.Background ? Visibility.Visible : Visibility.Collapsed;
             BorderPart.Visibility = _backgroundType != BackgroundKind.None ? Visibility.Visible : Visibility.Collapsed;
             MaterialPart.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
             DetailHeaderPresenter.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
             BackButton.Visibility = _backgroundType == BackgroundKind.Material && _showDetailHeader ? Visibility.Visible : Visibility.Collapsed;
-
-            InitializeGoBack();
 
             _templateApplied = true;
 
@@ -386,11 +388,11 @@ namespace Telegram.Controls
                         });
                     }
 
-                    if (HasMaster)
+                    if (HasMaster && !NavigationService.IsNavigating)
                     {
-                        if (DetailFrame.CurrentSourcePageType == null)
+                        if (NavigationService.CurrentPageType == null)
                         {
-                            DetailFrame.Navigate(BlankPageType);
+                            NavigationService.Navigate(BlankPageType);
                         }
                         else
                         {
@@ -407,18 +409,96 @@ namespace Telegram.Controls
             }
         }
 
-        private void DetailHeaderPresenter_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
-        {
-            var index = args.Index + 1;
-            var count = _backStack.Count - 1;
+        private bool _bannerCollapsed = true;
 
-            while (count - index > 0)
+        public event EventHandler BannerCollapsed;
+
+        public void ShowHideBanner(bool show)
+        {
+            if (_bannerCollapsed != show)
             {
-                NavigationService.RemoveFromBackStack(DetailFrame.BackStackDepth - 1);
-                count--;
+                return;
             }
 
-            NavigationService.GoBack();
+            if (BannerPresenter == null)
+            {
+                _bannerCollapsed = !show;
+                return;
+            }
+
+            _bannerCollapsed = !show;
+            BannerPresenter.Visibility = Visibility.Visible;
+
+            var banner = ElementComposition.GetElementVisual(BannerPresenter);
+            var detail = ElementComposition.GetElementVisual(DetailRoot);
+            var master = ElementComposition.GetElementVisual(MasterFrame);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(BannerPresenter, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(DetailRoot, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(MasterFrame, true);
+
+            var batch = banner.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (DetailFrame?.Content is IChatPage chatPage)
+                {
+                    chatPage.CompleteBannerAnimation();
+                }
+
+                detail.Properties.InsertVector3("Translation", Vector3.Zero);
+                master.Properties.InsertVector3("Translation", Vector3.Zero);
+
+                DetailRoot.Margin = new Thickness(0);
+                MasterFrame.Margin = new Thickness(0);
+
+                if (_bannerCollapsed)
+                {
+                    BannerPresenter.Visibility = Visibility.Collapsed;
+                    BannerCollapsed?.Invoke(this, EventArgs.Empty);
+                }
+            };
+
+            var translate = banner.Compositor.CreateScalarKeyFrameAnimation();
+            translate.InsertKeyFrame(show ? 0 : 1, -40);
+            translate.InsertKeyFrame(show ? 1 : 0, 0);
+            translate.Duration = Constants.FastAnimation;
+
+            banner.StartAnimation("Translation.Y", translate);
+
+            if (CurrentState == MasterDetailState.Minimal && DetailFrame?.CurrentSourcePageType == BlankPageType)
+            {
+                translate.InsertKeyFrame(show ? 0 : 1, -48);
+
+                MasterFrame.Margin = new Thickness(0, 0, 0, -48);
+                master.StartAnimation("Translation.Y", translate);
+            }
+            else
+            {
+                var detailVisual = ElementComposition.GetElementVisual(DetailPresenter);
+                detailVisual.Clip = detailVisual.Compositor.CreateInsetClip(0, -40, 0, 0);
+
+                if (DetailFrame.Content is IChatPage chatPage)
+                {
+                    chatPage.StartBannerAnimation(translate);
+                }
+                else
+                {
+                    DetailRoot.Margin = new Thickness(0, 0, 0, -40);
+                    detail.StartAnimation("Translation.Y", translate);
+                }
+            }
+
+            batch.End();
+        }
+
+        private void BackgroundPart_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var newSize = e.NewSize.ToVector2();
+            var visual = ElementComposition.GetElementVisual(BackgroundPart);
+            var geometry = visual.Compositor.CreateRoundedRectangleGeometry();
+            geometry.Size = new Vector2(newSize.X + 9, newSize.Y + 9);
+            geometry.CornerRadius = new Vector2(9);
+            visual.Clip = visual.Compositor.CreateGeometricClip(geometry);
         }
 
         private void OnNavigating(object sender, NavigatingEventArgs e)
@@ -443,6 +523,11 @@ namespace Telegram.Controls
                 return;
             }
 
+            if (HasMaster && !NavigationService.CanGoBack && NavigationService.CurrentPageType != BlankPageType)
+            {
+                NavigationService.InsertToBackStack(0, BlankPageType);
+            }
+
             if (e.Content is HostedPage hosted)
             {
                 DetailFooter = hosted.Action;
@@ -453,12 +538,11 @@ namespace Telegram.Controls
 
                     if (string.IsNullOrEmpty(hosted.Title))
                     {
-                        _backStack.Clear();
+                        DetailHeaderPresenter.Text = string.Empty;
                     }
                     else
                     {
-                        _currentPage.Title = hosted.Title;
-                        _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && e.Parameter == null)));
+                        DetailHeaderPresenter.Text = hosted.Title;
                     }
 
                     if (e.NavigationMode == NavigationMode.Back)
@@ -479,10 +563,8 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    _backStack.Clear();
+                    DetailHeaderPresenter.Text = string.Empty;
                     ShowHideDetailHeader(false, false);
-
-                    SetParent(hosted);
                 }
             }
             else
@@ -490,7 +572,7 @@ namespace Telegram.Controls
                 DetailHeader = null;
                 DetailFooter = null;
 
-                _backStack.Clear();
+                DetailHeaderPresenter.Text = string.Empty;
                 ShowHideDetailHeader(false, false);
             }
 
@@ -623,10 +705,6 @@ namespace Telegram.Controls
             {
                 SetScrollingHost(scroll);
             }
-            else
-            {
-                SetParent(hosted);
-            }
         }
 
         private void SetScrollingHost(object sender, RoutedEventArgs e)
@@ -653,89 +731,30 @@ namespace Telegram.Controls
             animation.SetReferenceParameter("scrollViewer", properties);
 
             _properties.StartAnimation("Translation", animation);
-
-            SetParent(scroller.ContentTemplateRoot);
-        }
-
-        private UIElement _lastParent;
-
-        private void SetParent(UIElement parent)
-        {
-            return;
-
-            if (_lastParent != null)
-            {
-                ElementCompositionPreview.SetElementChildVisual(_lastParent, null);
-            }
-
-            if (parent is ChatPage or null)
-            {
-                return;
-            }
-
-            //if (parent is ChatPage page && !SettingsService.Current.SwipeToShare)
-            //{
-            //    var view = page.GetChild<ChatHistoryView>();
-            //    var scroll = view.GetScrollViewer();
-            //    parent = scroll.ContentTemplateRoot;
-            //}
-
-            ElementCompositionPreview.SetElementChildVisual(_lastParent = parent, _container);
         }
 
         private void OnTitleChanged(DependencyObject sender, DependencyProperty dp)
         {
-            if (sender is HostedPage hosted)
+            if (sender is HostedPage hosted && !string.IsNullOrEmpty(hosted.Title))
             {
-                if (string.IsNullOrEmpty(hosted.Title))
-                {
-                    _backStack.Clear();
-                }
-                else if (_backStack.Count > 0)
-                {
-                    _currentPage.Title = hosted.Title;
-                }
-                else
-                {
-                    _currentPage.Title = hosted.Title;
-                    _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && NavigationService.CurrentPageParam == null)));
-                }
+                DetailHeaderPresenter.Text = hosted.Title;
+            }
+            else
+            {
+                DetailHeaderPresenter.Text = string.Empty;
             }
         }
 
         private void OnBackStackChanged(object sender, EventArgs e)
         {
-            if (DetailFrame.Content is HostedPage hosted)
+            if (DetailFrame.Content is HostedPage hosted && hosted.ShowHeader && !string.IsNullOrEmpty(hosted.Title))
             {
-                _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && NavigationService.CurrentPageParam == null)));
+                DetailHeaderPresenter.Text = hosted.Title;
             }
-            else if (_backStack.Count > 0)
+            else
             {
-                _backStack.Clear();
+                DetailHeaderPresenter.Text = string.Empty;
             }
-        }
-
-        private IEnumerable<NavigationStackItem> BuildBackStack(bool root)
-        {
-            if (root)
-            {
-                yield return _currentPage;
-                yield break;
-            }
-
-            var index = NavigationService.BackStack.FindLastIndex(x => x.Mode != HostedNavigationMode.Child);
-            var k = Math.Max(index, 0);
-
-            for (int i = k; i < NavigationService.BackStack.Count; i++)
-            {
-                var item = NavigationService.BackStack[i];
-                if (item.Title != null)
-                {
-                    yield return item;
-                }
-            }
-
-            yield return _currentPage;
         }
 
         private void OnViewStateChanged(object sender, EventArgs e)
@@ -760,6 +779,7 @@ namespace Telegram.Controls
             {
                 _prevState = CurrentState;
                 ViewStateChanged?.Invoke(this, EventArgs.Empty);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentState)));
             }
 
             UpdateMasterVisibility();
@@ -770,309 +790,6 @@ namespace Telegram.Controls
         private bool _isMinimal = false;
         private bool IsMinimal =>
             AdaptivePanel?.CurrentState == MasterDetailState.Minimal;
-
-        #region Icon
-
-        // This should be held in memory, or animation will stop
-        private CompositionPropertySet _props;
-
-        private IAnimatedVisual _previous;
-        private IAnimatedVisualSource2 _source;
-
-        private void InitializeGoBack()
-        {
-            var visual = GetVisual(BootStrapper.Current.Compositor, out var source, out _props);
-            var container = visual.RootVisual.Compositor.CreateContainerVisual();
-
-            _source = source;
-            _previous = visual;
-
-            _previous.RootVisual.Scale = new Vector3(72f / 512f, 72f / 512f, 1);
-            _previous.RootVisual.RotationAngleInDegrees = -90;
-            _previous.RootVisual.Offset = new Vector3(0, 72, 0);
-            _previous.RootVisual.CenterPoint = new Vector3(0);
-
-            ElementCompositionPreview.SetIsTranslationEnabled(GoBackIcon, true);
-            ElementCompositionPreview.SetElementChildVisual(GoBackIcon, visual.RootVisual);
-
-            ElementCompositionPreview.SetIsTranslationEnabled(GoBackGlyph, true);
-        }
-
-        private IAnimatedVisual GetVisual(Compositor compositor, out IAnimatedVisualSource2 source, out CompositionPropertySet properties)
-        {
-            source = new UserAvatarMask();
-
-            if (source == null)
-            {
-                properties = null;
-                return null;
-            }
-
-            var visual = source.TryCreateAnimatedVisual(compositor, out _);
-            if (visual == null)
-            {
-                properties = null;
-                return null;
-            }
-
-            properties = compositor.CreatePropertySet();
-            properties.InsertScalar("Progress", 1.0F);
-
-            var progressAnimation = compositor.CreateExpressionAnimation("_.Progress");
-            progressAnimation.SetReferenceParameter("_", properties);
-            visual.RootVisual.Properties.InsertScalar("Progress", 1.0F);
-            visual.RootVisual.Properties.StartAnimation("Progress", progressAnimation);
-
-            return visual;
-        }
-
-        #endregion
-
-        #region Swipe
-
-        public bool CanGoNext { get; set; } = true;
-        public bool CanGoPrev { get; set; } = true;
-
-        private SpriteVisual _hitTest;
-        private ContainerVisual _container;
-        private Visual _visual;
-        private ContainerVisual _indicator;
-
-        private bool _hasInitialLoadedEventFired;
-        private WeakInteractionTrackerOwner _trackerOwner;
-        private InteractionTracker _tracker;
-        private VisualInteractionSource _interactionSource;
-
-        private void OnLoaded2(object sender, RoutedEventArgs e)
-        {
-            return;
-
-            if (!_hasInitialLoadedEventFired)
-            {
-                _hasInitialLoadedEventFired = true;
-
-                _visual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
-
-                _hitTest = _visual.Compositor.CreateSpriteVisual();
-                _hitTest.Brush = _visual.Compositor.CreateColorBrush(Colors.Transparent);
-                _hitTest.RelativeSizeAdjustment = Vector2.One;
-
-                _container = _visual.Compositor.CreateContainerVisual();
-                _container.Children.InsertAtBottom(_hitTest);
-                _container.RelativeSizeAdjustment = Vector2.One;
-
-                ConfigureInteractionTracker();
-                ConfigureAnimations(null);
-            }
-
-            if (_trackerOwner != null)
-            {
-                _trackerOwner.ValuesChanged += OnValuesChanged;
-                _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
-                _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
-                _trackerOwner.IdleStateEntered += OnIdleStateEntered;
-                _trackerOwner.CustomAnimationStateEntered += OnCustomAnimationStateEntered;
-            }
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            if (_trackerOwner != null)
-            {
-                _trackerOwner.ValuesChanged -= OnValuesChanged;
-                _trackerOwner.InertiaStateEntered -= OnInertiaStateEntered;
-                _trackerOwner.InteractingStateEntered -= OnInteractingStateEntered;
-                _trackerOwner.IdleStateEntered -= OnIdleStateEntered;
-                _trackerOwner.CustomAnimationStateEntered -= OnCustomAnimationStateEntered;
-            }
-        }
-
-        private void ConfigureInteractionTracker()
-        {
-            _interactionSource = VisualInteractionSource.Create(_hitTest);
-
-            //Configure for x-direction panning
-            _interactionSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
-            _interactionSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
-            _interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
-            _interactionSource.IsPositionXRailsEnabled = true;
-
-            _trackerOwner = new WeakInteractionTrackerOwner();
-
-            //Create tracker and associate interaction source
-            _tracker = InteractionTracker.CreateWithOwner(_visual.Compositor, _trackerOwner);
-            _tracker.InteractionSources.Add(_interactionSource);
-
-            _tracker.MaxPosition = new Vector3(72);
-            _tracker.MinPosition = new Vector3(-72);
-
-            _tracker.Properties.InsertBoolean("FromAnimation", false);
-            _tracker.Properties.InsertBoolean("CanGoNext", CanGoNext);
-            _tracker.Properties.InsertBoolean("CanGoPrev", CanGoPrev);
-
-            //ConfigureAnimations(_visual, null);
-            ConfigureRestingPoints();
-        }
-
-        private void ConfigureRestingPoints()
-        {
-            var neutralX = InteractionTrackerInertiaRestingValue.Create(_visual.Compositor);
-            neutralX.Condition = _visual.Compositor.CreateExpressionAnimation("true");
-            neutralX.RestingValue = _visual.Compositor.CreateExpressionAnimation("0");
-
-            _tracker.ConfigurePositionXInertiaModifiers(new InteractionTrackerInertiaModifier[] { neutralX });
-        }
-
-        public void ConfigureAnimations(InteractionTracker tracker)
-        {
-            ConfigureAnimations(tracker, false);
-        }
-
-        private void ConfigureAnimations(InteractionTracker tracker, bool interacting)
-        {
-            if (tracker == null)
-            {
-                tracker = _tracker;
-
-                if (interacting)
-                {
-                    _tracker.Properties.InsertBoolean("FromAnimation", /*_fromAnimation =*/ false);
-                }
-
-                _tracker.Properties.InsertBoolean("CanGoNext", CanGoNext);
-                _tracker.Properties.InsertBoolean("CanGoPrev", CanGoPrev);
-                _tracker.MaxPosition = new Vector3(CanGoNext ? 72 : 0);
-                _tracker.MinPosition = new Vector3(CanGoPrev ? -72 : 0);
-            }
-
-            // This should be enough: tracker.FromAnimation ? -tracker.Position.X : Clamp(-tracker.Position.X, -72, 72)
-            var offsetExp = _visual.Compositor.CreateExpressionAnimation("1 - (Clamp(-tracker.Position.X, -72, 72) / 72)");
-            offsetExp.SetReferenceParameter("tracker", tracker);
-
-            _props.StartAnimation("Progress", offsetExp);
-
-            var progressExp = _visual.Compositor.CreateExpressionAnimation("(Clamp(-tracker.Position.X, -72, 72) / 72)");
-            progressExp.SetReferenceParameter("tracker", tracker);
-
-            var translateExp = _visual.Compositor.CreateExpressionAnimation("-(1 - (Clamp(-tracker.Position.X, -72, 72) / 72)) * 42");
-            translateExp.SetReferenceParameter("tracker", tracker);
-
-            var visual = ElementCompositionPreview.GetElementVisual(GoBackGlyph);
-
-            visual.StartAnimation("Translation.X", translateExp);
-            visual.StartAnimation("Scale.X", progressExp);
-            visual.StartAnimation("Scale.Y", progressExp);
-            visual.CenterPoint = new Vector3(21, 21, 0);
-        }
-
-        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
-            {
-                try
-                {
-                    _interactionSource.TryRedirectForManipulation(e.GetCurrentPoint(this));
-                }
-                catch { }
-            }
-        }
-
-        private void OnValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
-        {
-            return;
-
-            if (_indicator == null && (_tracker.Position.X > 0.0001f || _tracker.Position.X < -0.0001f) /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
-            {
-                var sprite = _visual.Compositor.CreateSpriteVisual();
-                sprite.Size = new Vector2(30, 30);
-                sprite.CenterPoint = new Vector3(15);
-
-                var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/ArrowLeft.png"));
-                void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
-                {
-                    s.LoadCompleted -= handler;
-                    sprite.Brush = _visual.Compositor.CreateSurfaceBrush(s);
-                }
-
-                surface.LoadCompleted += handler;
-
-                var ellipse = _visual.Compositor.CreateEllipseGeometry();
-                ellipse.Radius = new Vector2(15);
-
-                var ellipseShape = _visual.Compositor.CreateSpriteShape(ellipse);
-                ellipseShape.FillBrush = _visual.Compositor.CreateColorBrush((Windows.UI.Color)App.Current.Resources["MessageServiceBackgroundColor"]);
-                ellipseShape.Offset = new Vector2(15);
-
-                var shape = _visual.Compositor.CreateShapeVisual();
-                shape.Shapes.Add(ellipseShape);
-                shape.Size = new Vector2(30, 30);
-
-                _indicator = _visual.Compositor.CreateContainerVisual();
-                _indicator.Children.InsertAtBottom(shape);
-                _indicator.Children.InsertAtTop(sprite);
-                _indicator.Size = new Vector2(30, 30);
-                _indicator.CenterPoint = new Vector3(15);
-                _indicator.Scale = new Vector3();
-
-                _container.Children.InsertAtTop(_indicator);
-            }
-
-            var offset = (_tracker.Position.X > 0 && !CanGoNext) || (_tracker.Position.X <= 0 && !CanGoPrev) ? 0 : Math.Clamp(Math.Abs(_tracker.Position.X), 0, 72);
-
-            var abs = Math.Abs(offset);
-            var percent = /*_fromAnimation ? 0 :*/ abs / 72f;
-
-            var width = ActualSize.X;
-            var height = ActualSize.Y;
-
-            if (_indicator != null)
-            {
-                _indicator.Offset = new Vector3(_tracker.Position.X > 0 ? width - percent * 60 : -30 + percent * 55, (height - 30) / 2, 0);
-                _indicator.Scale = new Vector3(_tracker.Position.X > 0 ? 0.8f + percent * 0.2f : -(0.8f + percent * 0.2f), 0.8f + percent * 0.2f, 1);
-                _indicator.Opacity = percent;
-            }
-        }
-
-        private void OnInertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
-        {
-            var position = _tracker.Position;
-            if (position.X >= 72 && CanGoNext || position.X <= -72 && CanGoPrev)
-            {
-                //sender.TryUpdatePosition(sender.Position);
-
-                var direction = position.X <= -72 && CanGoPrev
-                    ? CarouselDirection.Previous
-                    : CarouselDirection.Next;
-
-                //ChangeView(direction, null);
-
-                if (direction == CarouselDirection.Previous)
-                {
-                    NavigationService.GoBack();
-                }
-                else
-                {
-                    NavigationService.GoForward();
-                }
-            }
-        }
-
-        private void OnIdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
-        {
-            ConfigureAnimations(null, false);
-        }
-
-        private void OnInteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
-        {
-            ConfigureAnimations(null, true);
-        }
-
-        private void OnCustomAnimationStateEntered(InteractionTracker sender, InteractionTrackerCustomAnimationStateEnteredArgs args)
-        {
-            _tracker.Properties.InsertBoolean("FromAnimation", /*_fromAnimation =*/ true);
-        }
-
-        #endregion
 
         #region Public methods
 
@@ -1101,6 +818,7 @@ namespace Telegram.Controls
         }
 
         public event EventHandler ViewStateChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -1122,10 +840,7 @@ namespace Telegram.Controls
             get => AdaptivePanel?.AllowCompact ?? true;
             set
             {
-                if (AdaptivePanel != null)
-                {
-                    AdaptivePanel.AllowCompact = value;
-                }
+                AdaptivePanel?.AllowCompact = value;
             }
         }
 

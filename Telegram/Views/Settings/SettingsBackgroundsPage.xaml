@@ -43,23 +43,21 @@
             </GridView.ItemsPanel>
             <GridView.Header>
                 <controls:HeaderedControl Margin="-20,64,-20,8">
-                    <controls:BadgeButton Content="{CustomResource SelectFromGallery}"
-                                          Click="{x:Bind ViewModel.ChangeToLocal}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEB9F;" />
+                    <controls:SettingsButton Content="{CustomResource SelectFromGallery}"
+                                             Click="{x:Bind ViewModel.ChangeToLocal}"
+                                             Glyph="&#xEB9F;" />
 
-                    <controls:BadgeButton Content="{CustomResource SetColor}"
-                                          Click="{x:Bind ViewModel.ChangeToColor}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE2B1;" />
+                    <controls:SettingsButton Content="{CustomResource SetColor}"
+                                             Click="{x:Bind ViewModel.ChangeToColor}"
+                                             Glyph="&#xE2B1;" />
                 </controls:HeaderedControl>
             </GridView.Header>
             <GridView.Footer>
                 <controls:HeaderedControl Footer="{CustomResource ResetChatBackgroundsInfo}"
                                           Margin="-24,0,-24,32">
-                    <controls:BadgeButton Content="{CustomResource ResetChatBackgrounds}"
-                                          Click="{x:Bind ViewModel.Reset}"
-                                          Foreground="{ThemeResource DangerButtonBackground}" />
+                    <controls:SettingsButton Content="{CustomResource ResetChatBackgrounds}"
+                                             Click="{x:Bind ViewModel.Reset}"
+                                             Foreground="{ThemeResource DangerButtonBackground}" />
                 </controls:HeaderedControl>
             </GridView.Footer>
             <GridView.ItemContainerStyle>

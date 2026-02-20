@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -68,10 +69,10 @@ namespace Telegram.Controls
             ChatId = chat.Id;
             UserId = 0;
 
-            Photo.SetChat(clientService, chat, 28);
+            Photo.Source = ProfilePictureSource.Chat(clientService, chat);
             Title.Text = clientService.GetTitle(chat);
 
-            Background = clientService.GetAccentBrush(chat.AccentColorId);
+            Background = clientService.GetAccentBrush(chat);
         }
 
         public void SetUser(IClientService clientService, User user)
@@ -92,10 +93,10 @@ namespace Telegram.Controls
             UserId = user.Id;
             ChatId = 0;
 
-            Photo.SetUser(clientService, user, 28);
+            Photo.Source = ProfilePictureSource.User(clientService, user);
             Title.Text = user.FullName();
 
-            Background = clientService.GetAccentBrush(user.AccentColorId);
+            Background = clientService.GetAccentBrush(user);
         }
     }
 }

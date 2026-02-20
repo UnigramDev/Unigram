@@ -1,18 +1,20 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Common;
-using Telegram.Controls;
+
+using System;
+using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Profile
 {
@@ -23,46 +25,64 @@ namespace Telegram.Views.Profile
             InitializeComponent();
         }
 
-        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (args.InRecycleQueue)
+            base.OnNavigatedTo(e);
+
+            if (!IsProfile)
             {
-                return;
+                ScrollingHost.Padding = new Thickness(12, 0, 4, 8);
             }
-            else if (args.ItemContainer.ContentTemplateRoot is Grid content && args.Item is MessageWithOwner message)
+
+            if (ViewModel.Animations.Empty())
             {
-                AutomationProperties.SetName(args.ItemContainer, Automation.GetSummaryWithName(message, true));
-
-                var photo = content.Children[0] as ImageView;
-
-                // TODO: justified because of Photo_Click
-                photo.Tag = message;
-
-                if (message.Content is MessageAnimation animation)
-                {
-                    if (animation.Animation.Thumbnail is { Format: ThumbnailFormatJpeg })
-                    {
-                        photo.SetSource(ViewModel.ClientService, animation.Animation.Thumbnail.File);
-                    }
-                    else if (animation.Animation.Minithumbnail != null)
-                    {
-                        var bitmap = new BitmapImage();
-                        PlaceholderHelper.GetBlurred(bitmap, animation.Animation.Minithumbnail.Data);
-                        photo.Source = bitmap;
-                    }
-                }
-
-                args.Handled = true;
+                ScrollingHost.ItemContainerTransitions.Add(new EntranceThemeTransition { IsStaggeringEnabled = false });
             }
         }
 
-        private void Photo_Click(object sender, RoutedEventArgs e)
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            var element = sender as FrameworkElement;
-            var message = element.Tag as MessageWithOwner;
+            try
+            {
+                if (args.InRecycleQueue || ViewModel == null)
+                {
+                    return;
+                }
+                else if (args.ItemContainer.ContentTemplateRoot is SharedMediaCell cell)
+                {
+                    if (args.Item is MessageWithOwner message)
+                    {
+                        cell.UpdateMessage(message, true);
+                    }
+                    else
+                    {
+                        cell.Hide();
+                    }
 
-            var viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.Topic, message, true);
-            ViewModel.NavigationService.ShowGallery(viewModel, element);
+                    args.Handled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+        }
+
+        private async void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is MessageWithOwner message)
+            {
+                var response = await ViewModel.ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id));
+                if (response is not MessageProperties properties)
+                {
+                    return;
+                }
+
+                var element = ScrollingHost.ContainerFromItem(e.ClickedItem);
+
+                var viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.Topic, message, properties, true);
+                ViewModel.NavigationService.ShowGallery(viewModel, element as SelectorItem);
+            }
         }
     }
 }

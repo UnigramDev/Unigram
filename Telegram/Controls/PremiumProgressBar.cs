@@ -1,17 +1,22 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Native.Composition;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
@@ -19,17 +24,18 @@ namespace Telegram.Controls
     public partial class PremiumProgressBar : RangeBase
     {
         private AnimatedTextBlock ValueText;
+        private TextBlock MaximumLabel;
         private Grid ValueRoot;
+        private Canvas ThumbRoot;
         private Grid Thumb;
+        private Path Arrow;
 
-        private Path NextArrow;
-        private Path CoreArrow;
-        private Path PrevArrow;
+        private DirectRectangleClip2 _thumbClip;
+        private DirectRectangleClip2 _valueClip;
 
-        private DirectRectangleClip _thumbClip;
-
-        private Visual _valueRoot;
+        private Visual _thumbRoot;
         private Visual _thumb;
+        private Visual _arrow;
 
         private HorizontalAlignment _arrowAlignment;
         private double _prevValue = 0;
@@ -39,49 +45,143 @@ namespace Telegram.Controls
             DefaultStyleKey = typeof(PremiumProgressBar);
         }
 
+        private void UpdateText()
+        {
+            ValueText.Text = Formatter.ShortRating(Value, false);
+        }
+
         protected override void OnApplyTemplate()
         {
             ValueText = GetTemplateChild(nameof(ValueText)) as AnimatedTextBlock;
+            MaximumLabel = GetTemplateChild(nameof(MaximumLabel)) as TextBlock;
             ValueRoot = GetTemplateChild(nameof(ValueRoot)) as Grid;
+            ThumbRoot = GetTemplateChild(nameof(ThumbRoot)) as Canvas;
             Thumb = GetTemplateChild(nameof(Thumb)) as Grid;
+            Arrow = GetTemplateChild(nameof(Arrow)) as Path;
 
-            NextArrow = GetTemplateChild(nameof(NextArrow)) as Path;
-            CoreArrow = GetTemplateChild(nameof(CoreArrow)) as Path;
-            PrevArrow = GetTemplateChild(nameof(PrevArrow)) as Path;
+            ElementCompositionPreview.SetIsTranslationEnabled(Arrow, true);
 
-            ElementCompositionPreview.SetIsTranslationEnabled(NextArrow, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(CoreArrow, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(PrevArrow, true);
-
-            var next = ElementComposition.GetElementVisual(NextArrow);
-            var core = ElementComposition.GetElementVisual(CoreArrow);
-            var prev = ElementComposition.GetElementVisual(PrevArrow);
-
-            next.Opacity =
-                core.Opacity = 0;
-
-            _valueRoot = ElementComposition.GetElementVisual(ValueRoot);
+            _thumbRoot = ElementComposition.GetElementVisual(ThumbRoot);
             _thumb = ElementComposition.GetElementVisual(Thumb);
+            _arrow = ElementComposition.GetElementVisual(Arrow);
 
-            _thumbClip = CompositionDevice.CreateRectangleClip(Thumb.Children[0]);
-            _thumbClip.Set(20, 20, 20, 0);
+            var radius1 = new Vector2(20);
+            var radius2 = new Vector2(4);
 
-            ValueRoot.SizeChanged += OnSizeChanged;
+            _thumbRoot.CenterPoint = new Vector3(0, 46, 0);
+
+            _thumbClip = CompositionDevice.CreateRectangleClip2(Thumb.Children[0]);
+            _thumbClip.Set(radius1);
+
+            _valueClip = CompositionDevice.CreateRectangleClip2(ValueRoot);
+            _valueClip.Set(radius2);
+
             Thumb.SizeChanged += OnSizeChanged;
 
-            ValueText.Text = Value.ToString("F0");
+            UpdateText();
+
+            MaximumLabel.Text = "/" + Formatter.ShortRating(Maximum, false);
 
             OnValueChanged(_prevValue, Value);
             base.OnApplyTemplate();
         }
 
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        enum PointerState
         {
-            UpdateClip();
+            Released = 0,
+            Moved = 1,
+            Pressed = 2
+        }
+
+        enum TransitionState
+        {
+            None = 0,
+            Entrance = 1,
+            Exit = 2
+        }
+
+        private PointerState _animateState;
+
+        private double _animateTo;
+        private TransitionState _transition;
+
+        private bool _animating;
+
+        private double _oldValue;
+        private double _newValue;
+        private float _angle;
+
+        private EventHandler<object> _rendering;
+
+        public void Animate(long to, TimeSpan? delay = null)
+        {
+            _animateTo = (double)to;
+
+            var anim = new DoubleAnimation();
+            anim.From = Value;
+            anim.To = to;
+            anim.Duration = TimeSpan.FromMilliseconds(333);
+            anim.EnableDependentAnimation = true;
+            anim.EasingFunction = new Windows.UI.Xaml.Media.Animation.CubicEase
+            {
+                EasingMode = EasingMode.EaseInOut
+            };
+
+            Storyboard.SetTarget(anim, this);
+            Storyboard.SetTargetProperty(anim, "Value");
+
+            _animating = true;
+            _transition = delay == null ? TransitionState.None : delay == TimeSpan.Zero ? TransitionState.Exit : TransitionState.Entrance;
+
+            _oldValue = Value;
+            _newValue = Value;
+
+            var storyboard = new Storyboard();
+            storyboard.BeginTime = delay;
+            storyboard.Children.Add(anim);
+            storyboard.Begin();
+        }
+
+        private void OnRendering(object sender, object e)
+        {
+            var progress = Math.Max((float)Math.Abs(_oldValue - _newValue), 1);
+            progress = MathF.Log(progress, (float)Math.Abs(Maximum - Minimum) / 16);
+            progress = progress * MathF.Pow(progress, 2);
+
+            var bend = 24 * Math.Clamp(progress, 0, 10);
+            var angle = _oldValue < _newValue ? bend : -bend;
+
+            if (Math.Abs(_angle - angle) > .01f)
+            {
+                angle = MathFEx.Lerp(_angle, angle, .1f);
+            }
+
+            _thumbRoot.RotationAngleInDegrees = angle;
+
+            _oldValue = _newValue;
+            _angle = angle;
+
+            if (angle.AlmostEqualsToZero(1e-2f))
+            {
+                _thumbRoot.RotationAngleInDegrees = 0;
+                _rendering = null;
+
+                Windows.UI.Xaml.Media.CompositionTarget.Rendering -= OnRendering;
+            }
+        }
+
+        protected override void OnMaximumChanged(double oldMaximum, double newMaximum)
+        {
+            MaximumLabel?.Text = "/" + Formatter.ShortRating(Maximum, false);
+
+            base.OnMaximumChanged(oldMaximum, newMaximum);
         }
 
         protected override void OnValueChanged(double oldValue, double newValue)
         {
+            _newValue = newValue;
+            _animateState = PointerState.Released;
+
             base.OnValueChanged(oldValue, newValue);
 
             if (ValueText == null)
@@ -89,192 +189,18 @@ namespace Telegram.Controls
                 return;
             }
 
-            ValueText.Text = newValue.ToString("F0");
+            UpdateText();
             UpdateClip();
 
-            if (_valueRoot.Clip is not InsetClip clip)
+            if (_rendering == null && _animating)
             {
-                _valueRoot.Clip = clip = _valueRoot.Compositor.CreateInsetClip();
+                Windows.UI.Xaml.Media.CompositionTarget.Rendering += _rendering = new EventHandler<object>(OnRendering);
             }
-
-            var next = ElementComposition.GetElementVisual(NextArrow);
-            var core = ElementComposition.GetElementVisual(CoreArrow);
-            var prev = ElementComposition.GetElementVisual(PrevArrow);
-
-            var half = Thumb.ActualSize.X / 2;
-            var duration = TimeSpan.FromSeconds(0.333 * 1);
-
-            if (_prevValue == Minimum && false)
-            {
-                var animScale = _thumb.Compositor.CreateVector3KeyFrameAnimation();
-                animScale.InsertKeyFrame(0, Vector3.Zero);
-                animScale.InsertKeyFrame(1, Vector3.One);
-                animScale.Duration = duration;
-
-                //var animCenter = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                //animCenter.InsertKeyFrame(0, 0);
-                //animCenter.InsertKeyFrame(1, Thumb.ActualSize.X / 2);
-                //animCenter.Duration = duration;
-
-                _thumb.StartAnimation("Scale", animScale);
-                //_thumb.StartAnimation("CenterPoint.X", animCenter);
-            }
-
-            var animAngle = _thumb.Compositor.CreateSpringScalarAnimation();
-            animAngle.InitialValue = _prevValue < Value ? -20 : 20;
-            animAngle.FinalValue = 0;
-            animAngle.Period = duration / 4;
-
-            var animOffset = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-            animOffset.InsertKeyFrame(0, GetOffset(_prevValue, out float prevWidth, out _));
-            animOffset.InsertKeyFrame(1, GetOffset(Value, out float nextWidth, out var alignment));
-            animOffset.Duration = duration;
-
-            var animClip = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-            animClip.InsertKeyFrame(0, ValueRoot.ActualSize.X - prevWidth);
-            animClip.InsertKeyFrame(1, ValueRoot.ActualSize.X - nextWidth);
-            animClip.Duration = duration / 2;
-
-            _thumb.StartAnimation("Offset.X", animOffset);
-            _thumb.StartAnimation("RotationAngleInDegrees", animAngle);
-            clip.StartAnimation("RightInset", animClip);
-
-            if ((_arrowAlignment == HorizontalAlignment.Left && alignment == HorizontalAlignment.Center) || (_arrowAlignment == HorizontalAlignment.Center && alignment == HorizontalAlignment.Left))
-            {
-                var show = alignment == HorizontalAlignment.Center;
-
-                var animCore = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                animCore.InsertKeyFrame(show ? 0 : 1, -half + 2);
-                animCore.InsertKeyFrame(show ? 1 : 0, 0);
-                animCore.Duration = duration;
-
-                var animPrev = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                animPrev.InsertKeyFrame(show ? 0 : 1, 0);
-                animPrev.InsertKeyFrame(show ? 1 : 0, half - 2);
-                animPrev.Duration = duration;
-
-                var fadeCore = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                fadeCore.InsertKeyFrame(show ? 0 : 1, 0);
-                fadeCore.InsertKeyFrame(show ? 1 : 0, 1);
-                fadeCore.Duration = duration / 2;
-
-                var fadePrev = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                fadePrev.InsertKeyFrame(show ? 0 : 1, 1);
-                fadePrev.InsertKeyFrame(show ? 1 : 0, 0);
-                fadePrev.Duration = duration;
-
-                _thumbClip.AnimateBottomLeft(_thumb.Compositor, show ? 0 : 20, show ? 20 : 0, duration.TotalMilliseconds / 1000 + 0.1);
-
-                core.StartAnimation("Translation.X", animCore);
-                prev.StartAnimation("Translation.X", animPrev);
-                core.StartAnimation("Opacity", fadeCore);
-                prev.StartAnimation("Opacity", fadePrev);
-                next.Opacity = 0;
-            }
-            else if ((_arrowAlignment == HorizontalAlignment.Right && alignment == HorizontalAlignment.Center) || (_arrowAlignment == HorizontalAlignment.Center && alignment == HorizontalAlignment.Right))
-            {
-                var show = alignment == HorizontalAlignment.Center;
-
-                var animCore = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                animCore.InsertKeyFrame(show ? 0 : 1, half - 2);
-                animCore.InsertKeyFrame(show ? 1 : 0, 0);
-                animCore.Duration = duration;
-
-                var animNext = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                animNext.InsertKeyFrame(show ? 0 : 1, 0);
-                animNext.InsertKeyFrame(show ? 1 : 0, -half + 2);
-                animNext.Duration = duration;
-
-                var fadeCore = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                fadeCore.InsertKeyFrame(show ? 0 : 1, 0);
-                fadeCore.InsertKeyFrame(show ? 1 : 0, 1);
-                fadeCore.Duration = duration / 2;
-
-                var fadeNext = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                fadeNext.InsertKeyFrame(show ? 0 : 1, 1);
-                fadeNext.InsertKeyFrame(show ? 1 : 0, 0);
-                fadeNext.Duration = duration;
-
-                _thumbClip.AnimateBottomRight(_thumb.Compositor, show ? 0 : 20, show ? 20 : 0, duration.TotalMilliseconds / 1000 + 0.1);
-
-                core.StartAnimation("Translation.X", animCore);
-                next.StartAnimation("Translation.X", animNext);
-                core.StartAnimation("Opacity", fadeCore);
-                next.StartAnimation("Opacity", fadeNext);
-                prev.Opacity = 0;
-            }
-            else if ((_arrowAlignment == HorizontalAlignment.Right && alignment == HorizontalAlignment.Left) || (_arrowAlignment == HorizontalAlignment.Left && alignment == HorizontalAlignment.Right))
-            {
-                var show = alignment == HorizontalAlignment.Left;
-
-                var animCore = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                animCore.InsertKeyFrame(show ? 0 : 1, half - 2);
-                animCore.InsertKeyFrame(show ? 1 : 0, -half + 2);
-                animCore.Duration = duration;
-
-                var animPrev = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                animPrev.InsertKeyFrame(show ? 0 : 1, half * 2 - 2);
-                animPrev.InsertKeyFrame(show ? 1 : 0, 0);
-                animPrev.Duration = duration;
-
-                var animNext = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                animNext.InsertKeyFrame(show ? 0 : 1, 0);
-                animNext.InsertKeyFrame(show ? 1 : 0, -half * 2 + 2);
-                animNext.Duration = duration;
-
-                var fadeCore = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                fadeCore.InsertKeyFrame(0.0f, 0);
-                fadeCore.InsertKeyFrame(0.5f, 1);
-                fadeCore.InsertKeyFrame(1.0f, 0);
-                fadeCore.Duration = duration / 2;
-
-                var fadePrev = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                fadePrev.InsertKeyFrame(show ? 0 : 1, 0);
-                fadePrev.InsertKeyFrame(show ? 1 : 0, 1);
-                fadePrev.Duration = duration;
-
-                var fadeNext = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-                fadeNext.InsertKeyFrame(show ? 0 : 1, 1);
-                fadeNext.InsertKeyFrame(show ? 1 : 0, 0);
-                fadeNext.Duration = duration;
-
-                _thumbClip.AnimateBottomLeft(_thumb.Compositor, show ? 20 : 0, show ? 0 : 20, duration.TotalMilliseconds / 1000 + 0.1);
-                _thumbClip.AnimateBottomRight(_thumb.Compositor, show ? 0 : 20, show ? 20 : 0, duration.TotalMilliseconds / 1000 + 0.1);
-
-                core.StartAnimation("Translation.X", animCore);
-                prev.StartAnimation("Translation.X", animPrev);
-                next.StartAnimation("Translation.X", animNext);
-                core.StartAnimation("Opacity", fadeCore);
-                prev.StartAnimation("Opacity", fadePrev);
-                next.StartAnimation("Opacity", fadeNext);
-            }
-
-            _arrowAlignment = alignment;
-            _prevValue = Value;
         }
 
-        private int _prevvv = 0;
-
-        private float GetOffset(double value, out float width, out HorizontalAlignment alignment)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            width = ActualSize.X * (float)((value - Minimum) / (Maximum - Minimum));
-            var center = Thumb.ActualSize.X / 2;
-
-            if (width < center || value == Minimum)
-            {
-                alignment = HorizontalAlignment.Left;
-                return 0;
-                //_thumb.Offset = new Vector3(width, 0, 0);
-            }
-            else if (width > ActualWidth - center || value == Maximum)
-            {
-                alignment = HorizontalAlignment.Right;
-                return ActualSize.X - center * 2;
-                //_thumb.Offset = new Vector3(width - center * 2, 0, 0);
-            }
-
-            alignment = HorizontalAlignment.Center;
-            return width - center;
+            UpdateClip();
         }
 
         private void UpdateClip()
@@ -284,41 +210,190 @@ namespace Telegram.Controls
                 return;
             }
 
-            _thumbClip.SetInset(0, 0, (float)Math.Truncate(Thumb.ActualWidth), 40);
+            var thumbWidth = 0; // ValueRoot.ActualSize.Y;
 
             var value = (float)((Value - Minimum) / (Maximum - Minimum));
-            var width = ActualSize.X * (float.IsNaN(value) ? 0 : value);
-            var center = Thumb.ActualSize.X / 2;
+            var clipWidth = (ValueRoot.ActualSize.X - (thumbWidth)) * (float.IsNaN(value) ? 0 : value);
 
-            if (width < center)
+            var radius = new Vector2(thumbWidth / 2);
+
+            if (Minimum < 0)
             {
-                _thumb.Offset = new Vector3(0, 0, 0);
-                //_thumb.Offset = new Vector3(width, 0, 0);
-            }
-            else if (width > ActualWidth - center)
-            {
-                _thumb.Offset = new Vector3(ActualSize.X - center * 2, 0, 0);
-                //_thumb.Offset = new Vector3(width - center * 2, 0, 0);
+                _valueClip.SetInset(clipWidth + thumbWidth, 0, ValueRoot.ActualSize.X, ValueRoot.ActualSize.Y);
             }
             else
             {
-                _thumb.Offset = new Vector3(width - center, 0, 0);
+                _valueClip.SetInset(0, 0, clipWidth + thumbWidth, ValueRoot.ActualSize.Y);
             }
 
-            if (_valueRoot.Clip is not InsetClip clip)
+            _thumbRoot.Offset = new Vector3(clipWidth + radius.X, 0, 0);
+
+            var center = Thumb.ActualSize.X / 2;
+
+            var width = (ValueRoot.ActualSize.X - (thumbWidth)) * (float)((Value - Minimum) / (Maximum - Minimum));
+            width += thumbWidth / 2;
+
+            var toWidth = (ValueRoot.ActualSize.X - (thumbWidth)) * (float)((_animateTo - Minimum) / (Maximum - Minimum));
+            toWidth += thumbWidth / 2;
+
+            var radiusLeft = 20f;
+            var radiusRight = 20f;
+
+            bool shouldClampLeft = false;
+            bool shouldClampRight = false;
+
+            if (_transition == TransitionState.Entrance)
             {
-                _valueRoot.Clip = clip = _valueRoot.Compositor.CreateInsetClip();
+                shouldClampLeft = width < center - 12 && toWidth < center - 12;
+                shouldClampRight = width > ValueRoot.ActualSize.X - center + 12 && toWidth > ValueRoot.ActualSize.X - center + 20;
+            }
+            else if (_transition == TransitionState.None)
+            {
+                shouldClampLeft = width < center - 12 || Value == Minimum;
+                shouldClampRight = width > ValueRoot.ActualSize.X - center + 12 || Value == Maximum;
             }
 
-            clip.RightInset = ValueRoot.ActualSize.X - width;
+            if (shouldClampLeft)
+            {
+                radiusLeft = width - center + 12;
 
-            //if (alignment == _arrowAlignment)
-            //{
-            //    return;
-            //}
+                _thumb.Offset = new Vector3(-width - 12, 0, 0);
+                _arrow.Properties.InsertVector3("Translation", new Vector3(radiusLeft, 0, 0));
+            }
+            else if (shouldClampRight)
+            {
+                radiusRight = ValueRoot.ActualSize.X - width - Thumb.ActualSize.X + center + 12;
 
-            _thumb.Clip ??= _thumb.Compositor.CreateInsetClip();
-            _thumb.CenterPoint = new Vector3(Thumb.ActualSize.X / 2, Thumb.ActualSize.Y, 0);
+                _thumb.Offset = new Vector3((ValueRoot.ActualSize.X - width - Thumb.ActualSize.X + 12), 0, 0);
+                _arrow.Properties.InsertVector3("Translation", new Vector3(-radiusRight, 0, 0));
+            }
+            else
+            {
+                _thumb.Offset = new Vector3(-Thumb.ActualSize.X / 2, 0, 0);
+                _arrow.Properties.InsertVector3("Translation", new Vector3());
+            }
+
+            Arrow.Fill = GetArrowFill(value);
+
+            Vector2 CalculateRadius(float diff)
+            {
+                diff = center + diff - Arrow.ActualSize.X / 2;
+                diff = Math.Min(diff + 2, 20);
+                diff = Math.Max(diff, 8);
+                return new Vector2(diff, 20);
+            }
+
+            _thumbClip.SetInset(0, 0, Thumb.ActualSize.X, 40);
+
+            _thumbClip.BottomLeft = CalculateRadius(radiusLeft);
+            _thumbClip.BottomRight = CalculateRadius(radiusRight);
+
+            float CalculateRadius2(float diff)
+            {
+                diff = center + diff - Arrow.ActualSize.X / 2;
+                diff = Math.Min(diff + 2, 20);
+                diff = Math.Max(diff, 2);
+                return diff;
+            }
+
+            if ((center + radiusLeft - Arrow.ActualSize.X / 2) <= 6)
+            {
+                _arrowCentered = false;
+                CreatePathGeometry(CalculateRadius2(radiusLeft), 0);
+            }
+            else if ((center + radiusRight - Arrow.ActualSize.X / 2) <= 6)
+            {
+                _arrowCentered = false;
+                CreatePathGeometry(0, CalculateRadius2(radiusRight));
+            }
+            else if (!_arrowCentered)
+            {
+                _arrowCentered = true;
+                CreatePathGeometry(0, 0);
+            }
+        }
+
+        private SolidColorBrush GetArrowFill(double amount)
+        {
+            return Background switch
+            {
+                SolidColorBrush solid => solid,
+                LinearGradientBrush linear => new SolidColorBrush(ColorsHelper.Mix(linear.GradientStops[0].Color, linear.GradientStops[^1].Color, amount)),
+                _ => null
+            };
+        }
+
+        private bool _arrowCentered = true;
+
+        public void CreatePathGeometry(double radiusLeft, double radiusRight)
+        {
+            if (Arrow.Data is not PathGeometry pathGeometry)
+            {
+                return;
+            }
+
+            var pathFigure = new PathFigure();
+            pathFigure.IsClosed = true;
+
+            if (radiusLeft != 0)
+            {
+                pathFigure.StartPoint = new Point(6 - radiusLeft, -1);
+            }
+            else
+            {
+                pathFigure.StartPoint = new Point(0, 0);
+                pathFigure.Segments.Add(new LineSegment { Point = new Point(0, 2) });
+
+                pathFigure.Segments.Add(new BezierSegment
+                {
+                    Point1 = new Point(0.923074, 2),
+                    Point2 = new Point(1.80816, 2.36679),
+                    Point3 = new Point(2.46094, 3.01953)
+                });
+            }
+
+            pathFigure.Segments.Add(new LineSegment { Point = new Point(6.76172, 7.32031) });
+
+            pathFigure.Segments.Add(new BezierSegment
+            {
+                Point1 = new Point(7.23956, 7.79815),
+                Point2 = new Point(8, 8),
+                Point3 = new Point(8.5, 7.99512)
+            });
+
+            pathFigure.Segments.Add(new BezierSegment
+            {
+                Point1 = new Point(9, 8),
+                Point2 = new Point(9.76044, 7.79815),
+                Point3 = new Point(10.2383, 7.32031)
+            });
+
+            if (radiusRight != 0)
+            {
+                pathFigure.Segments.Add(new LineSegment { Point = new Point(17 - (6 - radiusRight), -1) });
+            }
+            else
+            {
+                pathFigure.Segments.Add(new LineSegment { Point = new Point(14.5391, 3.01953) });
+
+                pathFigure.Segments.Add(new BezierSegment
+                {
+                    Point1 = new Point(15.1918, 2.36679),
+                    Point2 = new Point(16.0769, 2),
+                    Point3 = new Point(17, 2)
+                });
+
+                pathFigure.Segments.Add(new LineSegment { Point = new Point(17, 0) });
+                pathFigure.Segments.Add(new LineSegment { Point = new Point(17, 0) });
+            }
+
+            var measure = new PathFigure();
+            measure.StartPoint = new Point(0, 0);
+            measure.Segments.Add(new LineSegment { Point = new Point(17, 8) });
+
+            pathGeometry.Figures.Clear();
+            pathGeometry.Figures.Add(pathFigure);
+            pathGeometry.Figures.Add(measure);
         }
 
         #region MinimumText
@@ -344,6 +419,32 @@ namespace Telegram.Controls
 
         public static readonly DependencyProperty MaximumTextProperty =
             DependencyProperty.Register("MaximumText", typeof(string), typeof(PremiumProgressBar), new PropertyMetadata(string.Empty));
+
+        #endregion
+
+        #region MaximumVisibility
+
+        public Visibility MaximumVisibility
+        {
+            get { return (Visibility)GetValue(MaximumVisibilityProperty); }
+            set { SetValue(MaximumVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty MaximumVisibilityProperty =
+            DependencyProperty.Register("MaximumVisibility", typeof(Visibility), typeof(PremiumProgressBar), new PropertyMetadata(Visibility.Visible));
+
+        #endregion
+
+        #region ValueVisibility
+
+        public Visibility ValueVisibility
+        {
+            get { return (Visibility)GetValue(ValueVisibilityProperty); }
+            set { SetValue(ValueVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty ValueVisibilityProperty =
+            DependencyProperty.Register("ValueVisibility", typeof(Visibility), typeof(PremiumProgressBar), new PropertyMetadata(Visibility.Visible));
 
         #endregion
 

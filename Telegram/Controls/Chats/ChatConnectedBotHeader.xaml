@@ -24,8 +24,7 @@
                 Grid.ColumnSpan="4" />
 
         <controls:ProfilePicture x:Name="Photo"
-                                 Width="36"
-                                 Height="36"
+                                 Size="36"
                                  Margin="12,0" />
 
         <StackPanel VerticalAlignment="Center"
@@ -36,7 +35,7 @@
                        Style="{StaticResource InfoCaptionTextBlockStyle}" />
         </StackPanel>
 
-        <controls:BadgeButton x:Name="ToggleButton"
+        <controls:SettingsButton x:Name="ToggleButton"
                               Click="Toggle_Click"
                               Background="{StaticResource AccentButtonBackground}"
                               Content="{CustomResource VoipChatJoin}"

@@ -1,16 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using Telegram.Controls;
 using Telegram.Controls.Drawers;
 using Telegram.Navigation;
-using Windows.Foundation;
-using Windows.System;
+using Telegram.Services;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -240,7 +240,7 @@ namespace Telegram.Common
 
                 if (key.HasValue)
                 {
-                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
+                    flyoutItem.KeyboardAcceleratorTextOverride = ShortcutsService.GetStringRepresentation(key.Value, modifiers);
                 }
 
                 items.Add(flyoutItem);
@@ -287,7 +287,7 @@ namespace Telegram.Common
 
                 if (key.HasValue)
                 {
-                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
+                    flyoutItem.KeyboardAcceleratorTextOverride = ShortcutsService.GetStringRepresentation(key.Value, modifiers);
                 }
 
                 items.Add(flyoutItem);
@@ -321,7 +321,7 @@ namespace Telegram.Common
 
                 if (key.HasValue)
                 {
-                    flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
+                    flyoutItem.KeyboardAcceleratorTextOverride = ShortcutsService.GetStringRepresentation(key.Value, modifiers);
                 }
 
                 flyout.Items.Add(flyoutItem);
@@ -366,7 +366,7 @@ namespace Telegram.Common
 
             if (key.HasValue)
             {
-                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
+                flyoutItem.KeyboardAcceleratorTextOverride = ShortcutsService.GetStringRepresentation(key.Value, modifiers);
             }
 
             items.Add(flyoutItem);
@@ -406,7 +406,7 @@ namespace Telegram.Common
 
             if (key.HasValue)
             {
-                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
+                flyoutItem.KeyboardAcceleratorTextOverride = ShortcutsService.GetStringRepresentation(key.Value, modifiers);
             }
 
             items.Add(flyoutItem);
@@ -451,7 +451,7 @@ namespace Telegram.Common
 
             if (key.HasValue)
             {
-                flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
+                flyoutItem.KeyboardAcceleratorTextOverride = ShortcutsService.GetStringRepresentation(key.Value, modifiers);
             }
 
             items.Add(flyoutItem);

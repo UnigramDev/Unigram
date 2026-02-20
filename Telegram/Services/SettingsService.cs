@@ -1,17 +1,20 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Services.Settings;
+using Telegram.Td.Api;
 using Windows.Storage;
 using Windows.System.Profile;
+using AutoDownloadSettings = Telegram.Services.Settings.AutoDownloadSettings;
 
 #if !ENABLE_CALLS
 
@@ -45,7 +48,9 @@ namespace Telegram.Services
         AppearanceSettings Appearance { get; }
         PasscodeLockSettings PasscodeLock { get; }
         PlaybackSettings Playback { get; }
+        VideoSettings Video { get; }
         VoIPSettings VoIP { get; }
+        ToolTipSettings ToolTip { get; }
         TranslateSettings Translate { get; }
 
         DiagnosticsSettings Diagnostics { get; }
@@ -65,7 +70,6 @@ namespace Telegram.Services
         bool IsSecretPreviewsEnabled { get; set; }
         bool AutoPlayAnimations { get; set; }
         bool AutoPlayVideos { get; set; }
-        bool IsSendGrouped { get; set; }
         bool IsAccountsSelectorExpanded { get; set; }
         bool IsAllAccountsNotifications { get; set; }
         bool AreSmoothTransitionsEnabled { get; set; }
@@ -73,6 +77,8 @@ namespace Telegram.Services
 
         bool UseSystemProxy { get; set; }
         int LastProxyId { get; set; }
+        int EnabledProxyId { get; set; }
+        bool MigratedProxy { get; set; }
 
         int[] AccountsSelectorOrder { get; set; }
 
@@ -87,6 +93,8 @@ namespace Telegram.Services
         bool SwipeToReply { get; set; }
         bool FullScreenGallery { get; set; }
         bool UseSystemSpellChecker { get; set; }
+
+        bool SendLargePhotos { get; set; }
 
         bool IsStreamingEnabled { get; set; }
         double VolumeLevel { get; set; }
@@ -107,6 +115,8 @@ namespace Telegram.Services
         long GetChatPinnedMessage(long chatId);
 
         void Clear();
+
+        void Initialize();
     }
 
     public enum DistanceUnits
@@ -131,14 +141,12 @@ namespace Telegram.Services
             _container = container ?? ApplicationData.Current.LocalSettings;
         }
 
-
-
         public bool AddOrUpdateValue(string key, object value)
         {
             return AddOrUpdateValue(_container, key, value);
         }
 
-        protected bool AddOrUpdateValue<T>(ref T storage, string key, T value)
+        public bool AddOrUpdateValue<T>(ref T storage, string key, T value)
         {
             storage = value;
             return AddOrUpdateValue(_container, key, value);
@@ -306,13 +314,19 @@ namespace Telegram.Services
         private static PlaybackSettings _playback;
         public PlaybackSettings Playback => _playback ??= new PlaybackSettings(_local);
 
+        private static VideoSettings _video;
+        public VideoSettings Video => _video ??= new VideoSettings(_own);
+
         private static VoIPSettings _voip;
         public VoIPSettings VoIP => _voip ??= new VoIPSettings();
+
+        private static ToolTipSettings _toolTip;
+        public ToolTipSettings ToolTip => _toolTip ??= new ToolTipSettings();
 
         private static int? _verbosityLevel;
         public int VerbosityLevel
         {
-            get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", Constants.DEBUG ? 4 : 2);
+            get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", ApiInfo.IsPackagedRelease ? 4 : 2);
             set => AddOrUpdateValue(ref _verbosityLevel, _local, "VerbosityLevel", value);
         }
 
@@ -449,7 +463,7 @@ namespace Telegram.Services
         private static bool? _useSystemProxy;
         public bool UseSystemProxy
         {
-            get => _useSystemProxy ??= GetValueOrDefault(_own, "UseSystemProxy", false);
+            get => _useSystemProxy ??= GetValueOrDefault(_own, "UseSystemProxy", true);
             set => AddOrUpdateValue(ref _useSystemProxy, _own, "UseSystemProxy", value);
         }
 
@@ -463,7 +477,7 @@ namespace Telegram.Services
         private static bool? _useLeftTabsForChats;
         public bool UseLeftTabsForChats
         {
-            get => _useLeftTabsForChats ??= GetValueOrDefault(_local, "IsLeftTabsEnabled", false);
+            get => _useLeftTabsForChats ??= GetValueOrDefault(_local, "IsLeftTabsEnabled", true);
             set => AddOrUpdateValue(ref _useLeftTabsForChats, _local, "IsLeftTabsEnabled", value);
         }
 
@@ -579,11 +593,11 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _isPowerSavingEnabled, "IsPowerSavingEnabled", value);
         }
 
-        private bool? _isSendGrouped;
-        public bool IsSendGrouped
+        private bool? _sendLargePhotos;
+        public bool SendLargePhotos
         {
-            get => _isSendGrouped ??= GetValueOrDefault("IsSendGrouped", true);
-            set => AddOrUpdateValue(ref _isSendGrouped, "IsSendGrouped", value);
+            get => _sendLargePhotos ??= Diagnostics.GetValueOrDefault("SendLargePhotos", false);
+            set => Diagnostics.AddOrUpdateValue(ref _sendLargePhotos, "SendLargePhotos", value);
         }
 
         private bool? _isStreamingEnabled;
@@ -693,11 +707,61 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _installBetaUpdates, _local, "InstallBetaUpdates", value);
         }
 
+        private static int? _enabledProxyId;
+        public int EnabledProxyId
+        {
+            get => _enabledProxyId ??= GetValueOrDefault("EnabledProxyId", 0);
+            set => AddOrUpdateValue(ref _enabledProxyId, _local, "EnabledProxyId", value);
+        }
+
+        private static bool? _migratedProxy;
+        public bool MigratedProxy
+        {
+            get => _migratedProxy ??= GetValueOrDefault("MigratedProxy", false);
+            set => AddOrUpdateValue(ref _migratedProxy, _local, "MigratedProxy", value);
+        }
+
         private int? _useLessData;
         public VoipDataSaving UseLessData
         {
             get => (VoipDataSaving)(_useLessData ??= GetValueOrDefault("UseLessData", 0));
             set => AddOrUpdateValue(ref _useLessData, "UseLessData", (int)value);
+        }
+
+        private static int? _reportsCount;
+        public int ReportsCount
+        {
+            get => _reportsCount ??= GetValueOrDefault("ReportsCount", 100);
+            set => AddOrUpdateValue(ref _reportsCount, "ReportsCount", value);
+        }
+
+        private static long? _reportsDate;
+        public DateTime ReportsDate
+        {
+            get => DateTime.FromFileTimeUtc(_reportsDate ??= GetValueOrDefault("ReportsDate", DateTime.Now.ToFileTimeUtc()));
+            set => AddOrUpdateValue(ref _reportsDate, "ReportsDate", value.ToFileTimeUtc());
+        }
+
+        private static string _anonymousUserId;
+        public string AnonymousUserId
+        {
+            get
+            {
+                if (_anonymousUserId != null)
+                {
+                    return _anonymousUserId;
+                }
+
+                var value = GetValueOrDefault<string>("AnonymousUserId", null);
+                if (value == null)
+                {
+                    value = Guid.NewGuid().ToString();
+                    AddOrUpdateValue("AnonymousUserId", value);
+                }
+
+                return _anonymousUserId = value;
+            }
+            set => AddOrUpdateValue(ref _anonymousUserId, "AnonymousUserId", value);
         }
 
         public void SetChatPinnedMessage(long chatId, long messageId)
@@ -729,6 +793,26 @@ namespace Telegram.Services
 
             UseTestDC = useTestDC;
         }
+
+        public void Initialize()
+        {
+            if (Diagnostics.LastUpdateVersion < Constants.BuildNumber)
+            {
+                var updateCount = Diagnostics.UpdateCount;
+
+                Diagnostics.LastUpdateVersion = Constants.BuildNumber;
+                Diagnostics.UpdateCount++;
+
+                if (updateCount > 0)
+                {
+                    if (!_local.Values.ContainsKey("IsLeftTabsEnabled"))
+                    {
+                        _local.Values["IsLeftTabsEnabled"] = false;
+                        _useLeftTabsForChats = false;
+                    }
+                }
+            }
+        }
     }
 
     public partial class ChatSettingsBase : SettingsServiceBase
@@ -738,15 +822,15 @@ namespace Telegram.Services
         {
         }
 
-        public object this[long chatId, long threadId, ChatSetting key]
+        public object this[long chatId, MessageTopic topicId, ChatSetting key]
         {
             //get => GetValueOrDefault<object>(chatId + key, null);
-            set => AddOrUpdateValue(ConvertToKey(chatId, threadId, key), value);
+            set => AddOrUpdateValue(ConvertToKey(chatId, topicId, key), value);
         }
 
-        public bool TryRemove<T>(long chatId, long threadId, ChatSetting key, out T value)
+        public bool TryRemove<T>(long chatId, MessageTopic topicId, ChatSetting key, out T value)
         {
-            var setting = ConvertToKey(chatId, threadId, key);
+            var setting = ConvertToKey(chatId, topicId, key);
             if (_container.Values.TryGet(setting, out value))
             {
                 _container.Values.Remove(setting);
@@ -757,15 +841,15 @@ namespace Telegram.Services
             return false;
         }
 
-        public bool TryGet<T>(long chatId, long threadId, ChatSetting key, out T value)
+        public bool TryGet<T>(long chatId, MessageTopic topicId, ChatSetting key, out T value)
         {
-            var setting = ConvertToKey(chatId, threadId, key);
+            var setting = ConvertToKey(chatId, topicId, key);
             return _container.Values.TryGet(setting, out value);
         }
 
-        public T GetValueOrDefault<T>(long chatId, long threadId, ChatSetting key, T defaultValue)
+        public T GetValueOrDefault<T>(long chatId, MessageTopic topicId, ChatSetting key, T defaultValue)
         {
-            var setting = ConvertToKey(chatId, threadId, key);
+            var setting = ConvertToKey(chatId, topicId, key);
             if (_container.Values.TryGet(setting, out T value))
             {
                 return value;
@@ -774,25 +858,27 @@ namespace Telegram.Services
             return defaultValue;
         }
 
-        public void Clear(long chatId, long threadId)
+        public void Clear(long chatId, MessageTopic topicId)
         {
-            var setting1 = ConvertToKey(chatId, threadId, ChatSetting.ReadInboxMaxId);
-            var setting2 = ConvertToKey(chatId, threadId, ChatSetting.Index);
-            var setting3 = ConvertToKey(chatId, threadId, ChatSetting.Pixel);
+            var setting1 = ConvertToKey(chatId, topicId, ChatSetting.ReadInboxMaxId);
+            var setting2 = ConvertToKey(chatId, topicId, ChatSetting.Index);
+            var setting3 = ConvertToKey(chatId, topicId, ChatSetting.Pixel);
 
             _container.Values.Remove(setting1);
             _container.Values.Remove(setting2);
             _container.Values.Remove(setting3);
         }
 
-        private string ConvertToKey(long chatId, long threadId, ChatSetting setting)
+        private string ConvertToKey(long chatId, MessageTopic topicId, ChatSetting setting)
         {
-            if (threadId != 0)
+            return topicId switch
             {
-                return $"{chatId}{threadId}{setting}";
-            }
-
-            return $"{chatId}{setting}";
+                MessageTopicDirectMessages directMesages => $"{chatId}{directMesages.DirectMessagesChatTopicId}{setting}",
+                MessageTopicForum forum => $"{chatId}{forum.ForumTopicId << 20}{setting}",
+                MessageTopicSavedMessages savedMessages => $"{chatId}{savedMessages.SavedMessagesTopicId}{setting}",
+                MessageTopicThread thread => $"{chatId}{thread.MessageThreadId}{setting}",
+                _ => $"{chatId}{setting}"
+            };
         }
     }
 

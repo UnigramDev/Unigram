@@ -1,11 +1,14 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System.ComponentModel;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Payments;
 using Windows.UI.Xaml.Controls;
@@ -18,10 +21,10 @@ namespace Telegram.Views.Payments
 
         public SavedCredentials Credentials { get; private set; }
 
-        public PaymentCredentialsPopup(int sessionId, PaymentFormTypeRegular paymentForm)
+        public PaymentCredentialsPopup(ISession session, PaymentFormTypeRegular paymentForm)
         {
             InitializeComponent();
-            DataContext = TypeResolver.Current.Resolve<PaymentCredentialsViewModel>(sessionId);
+            DataContext = session.Resolve<PaymentCredentialsViewModel>();
 
             Title = Strings.PaymentCardInfo;
 
@@ -38,10 +41,10 @@ namespace Telegram.Views.Payments
             }
         }
 
-        public PaymentCredentialsPopup(int sessionId, PaymentFormTypeRegular paymentForm, PaymentOption paymentOption)
+        public PaymentCredentialsPopup(ISession session, PaymentFormTypeRegular paymentForm, PaymentOption paymentOption)
         {
             InitializeComponent();
-            DataContext = TypeResolver.Current.Resolve<PaymentCredentialsViewModel>(sessionId);
+            DataContext = session.Resolve<PaymentCredentialsViewModel>();
 
             Title = Strings.PaymentCardInfo;
 
@@ -67,7 +70,7 @@ namespace Telegram.Views.Payments
             ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 
-        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {

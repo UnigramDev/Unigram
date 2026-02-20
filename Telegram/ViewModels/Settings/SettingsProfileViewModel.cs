@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -212,14 +213,22 @@ namespace Telegram.ViewModels.Settings
                 var confirm = await ShowPopupAsync(popup);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    ClientService.Send(new SetBirthdate(popup.Value));
+                    var response = await ClientService.SendAsync(new SetBirthdate(popup.Value));
+                    if (response is Error error)
+                    {
+                        ShowToast(error);
+                    }
                 }
             }
         }
 
-        public void RemoveBirthdate()
+        public async void RemoveBirthdate()
         {
-            ClientService.Send(new SetBirthdate(null));
+            var response = await ClientService.SendAsync(new SetBirthdate(null));
+            if (response is Error error)
+            {
+                ShowToast(error);
+            }
         }
 
         public async void ChangePhoneNumber()

@@ -1,10 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
+using System.Collections.Generic;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
 
@@ -29,6 +31,28 @@ namespace Telegram.Common
             }
 
             return linear;
+        }
+
+        public static Color CalculateColor(IList<Color> colors, float offset)
+        {
+            offset = Math.Clamp(offset, 0, 1);
+
+            if (colors.Count == 1)
+            {
+                return colors[0];
+            }
+
+            var segmentSize = 1.0f / (colors.Count - 1);
+
+            var segmentIndex = (int)(offset / segmentSize);
+            if (segmentIndex >= colors.Count - 1)
+            {
+                return colors[colors.Count - 1];
+            }
+
+            var segmentOffset = (offset - segmentIndex * segmentSize) / segmentSize;
+
+            return Mix(colors[segmentIndex], colors[segmentIndex + 1], segmentOffset);
         }
 
         public static Color Mix(Color x, Color y, double amount)

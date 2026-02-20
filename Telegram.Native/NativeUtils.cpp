@@ -7,15 +7,12 @@
 #include "Helpers/COMHelper.h"
 #include "Helpers/LibraryHelper.h"
 #include "InternalsRT/CoreWindowHelpers.h"
-#include "DebugUtils.h"
 
 #include "FatalError.h"
 
 #include <roerrorapi.h>
+#include <detours.h>
 
-#include <winrt/Windows.Data.Xml.Dom.h>
-#include <winrt/Windows.UI.Notifications.h>
-#include <winrt/Windows.ApplicationModel.Core.h>
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Foundation.Collections.h>
 
@@ -25,7 +22,6 @@ BOOL
     _Out_ LPWSTR pwszKLID
     );
 
-using namespace winrt::Windows::Data::Xml::Dom;
 using namespace winrt::Windows::UI::Notifications;
 using namespace winrt::Windows::ApplicationModel::Core;
 using namespace winrt::Windows::Foundation::Collections;
@@ -33,23 +29,266 @@ using namespace winrt::Windows::Foundation::Collections;
 namespace winrt::Telegram::Native::implementation
 {
     FatalErrorCallback NativeUtils::Callback;
+    LogCallback NativeUtils::s_logCallback;
 
     void NativeUtils::SetFatalErrorCallback(FatalErrorCallback callback)
     {
+        // TODO: td_set_log_message_callback
+        //Client::SetLogMessageCallback(0, &NativeUtils::LogMessageCallback);
         Callback = callback;
+
+        auto tdjson = GetModuleHandle(L"tdjson.dll");
+        if (tdjson)
+        {
+            auto td_set_log_message_callback = reinterpret_cast<PFN_td_set_log_message_callback>(GetProcAddress(tdjson, "td_set_log_message_callback"));
+            if (td_set_log_message_callback)
+            {
+                td_set_log_message_callback(0, &NativeUtils::LogMessageCallback);
+            }
+        }
     }
 
-    winrt::Windows::Foundation::Collections::IVector<winrt::Telegram::Native::FatalErrorFrame> NativeUtils::GetStowedException()
+    void NativeUtils::SetLogCallback(LogCallback callback)
+    {
+        s_logCallback = callback;
+    }
+
+    void NativeUtils::Log(int32_t level, hstring message, hstring member, hstring filePath, int32_t line)
+    {
+        if (s_logCallback)
+        {
+            s_logCallback(level, message, member, filePath, line);
+        }
+    }
+
+    inline bool Contains(const hstring& message, std::wstring_view text)
+    {
+        return std::wstring_view{ message }.find(text) != std::wstring_view::npos;
+    }
+
+    inline bool Contains(const std::wstring& message, std::wstring_view text)
+    {
+        return message.find(text) != std::wstring::npos;
+    }
+
+    inline bool Contains(const std::string& message, std::string_view text)
+    {
+        return message.find(text) != std::string::npos;
+    }
+
+    inline bool IsDatabaseBrokenError(const std::string& message)
+    {
+        return Contains(message, "Wrong key or database is corrupted")
+            || Contains(message, "SQL logic error or missing database")
+            || Contains(message, "database disk image is malformed")
+            || Contains(message, "file is encrypted or is not a database")
+            || Contains(message, "unsupported file format")
+            || Contains(message, "attempt to write a readonly database for database")
+            || Contains(message, "file is not a database for database")
+            || Contains(message, "Can't open database");
+    }
+
+    inline bool IsDiskFullError(const std::string& message)
+    {
+        return Contains(message, "There is not enough space on the disk")
+            || Contains(message, ": 112 :")
+            || Contains(message, "database or disk is full")
+            || Contains(message, "out of memory for database");
+    }
+
+    inline bool IsDiskError(const std::string& message)
+    {
+        return Contains(message, "I/O error")
+            || Contains(message, "Structure needs cleaning");
+    }
+
+    inline bool IsBinlogError(const std::string& message)
+    {
+        return Contains(message, "Failed to rename binlog")
+            || Contains(message, "Can't rename")
+            || Contains(message, "Failed to unlink old binlog")
+            || Contains(message, "td.binlog")
+            || Contains(message, ": 8 :")
+            || Contains(message, ": 1392 :");
+    }
+
+    inline bool IsOutOfMemoryError(const std::string& message)
+    {
+        return Contains(message, "zlib deflate init failed")
+            || Contains(message, "zlib inflate init failed")
+            || Contains(message, "out of memory")
+            || Contains(message, ": 1450 :");
+    }
+
+    void NativeUtils::LogMessageCallback(int verbosity_level, const char* msg)
+    {
+        std::string message = msg;
+        if (NativeUtils::Callback)
+        {
+            if (IsDatabaseBrokenError(message))
+            {
+                return;
+            }
+            else if (IsDiskFullError(message))
+            {
+                return;
+            }
+            else if (IsDiskError(message))
+            {
+                return;
+            }
+            else if (IsBinlogError(message))
+            {
+                return;
+            }
+            else if (IsOutOfMemoryError(message))
+            {
+                return;
+            }
+
+            int bracketCount = 0;
+            size_t start = std::string::npos, end = std::string::npos;
+
+            for (size_t i = 0; i < message.length(); ++i)
+            {
+                if (message[i] == '[')
+                {
+                    bracketCount++;
+                    if (bracketCount == 3)
+                    {
+                        start = i;
+                    }
+                }
+                if (message[i] == ']' && bracketCount == 3)
+                {
+                    end = i;
+                    break;
+                }
+            }
+
+            if (start != std::string::npos && end != std::string::npos)
+            {
+                message.erase(start, end - start + 1);
+            }
+
+            NativeUtils::Callback(NativeUtils::GetBackTrace(L"TdException", winrt::to_hstring(message)));
+        }
+    }
+
+    IXamlDirectObject NativeUtils::AddRunToCollection(XamlDirect direct, IXamlDirectObject inlines, hstring text, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize, bool transparent)
+    {
+        auto run = direct.CreateInstance(XamlTypeIndex::Run);
+        direct.SetStringProperty(run, XamlPropertyIndex::Run_Text, text);
+        direct.SetEnumProperty(run, XamlPropertyIndex::Run_FlowDirection, (uint32_t)direction);
+
+        if ((style & TextStyle::Bold) != TextStyle::None)
+        {
+            direct.SetObjectProperty(run, XamlPropertyIndex::TextElement_FontWeight, winrt::box_value(FontWeights::SemiBold()));
+        }
+
+        if ((style & TextStyle::Italic) != TextStyle::None)
+        {
+            direct.SetEnumProperty(run, XamlPropertyIndex::TextElement_FontStyle, (uint32_t)FontStyle::Italic);
+        }
+
+        auto decorations = TextDecorations::None;
+        if ((style & TextStyle::Underline) != TextStyle::None)
+        {
+            decorations |= TextDecorations::Underline;
+        }
+        if ((style & TextStyle::Strikethrough) != TextStyle::None)
+        {
+            decorations |= TextDecorations::Strikethrough;
+        }
+
+        if (decorations != TextDecorations::None)
+        {
+            direct.SetEnumProperty(run, XamlPropertyIndex::TextElement_TextDecorations, (uint32_t)decorations);
+        }
+
+        if (fontFamily)
+        {
+            direct.SetObjectProperty(run, XamlPropertyIndex::TextElement_FontFamily, fontFamily);
+        }
+
+        if (fontSize > 0)
+        {
+            direct.SetDoubleProperty(run, XamlPropertyIndex::TextElement_FontSize, fontSize);
+        }
+
+        // TODO: removed once fixed by Microsoft
+        if (transparent)
+        {
+            direct.SetObjectProperty(run, XamlPropertyIndex::TextElement_Foreground, nullptr);
+        }
+
+        direct.AddToCollection(inlines, run);
+        return run;
+    }
+
+    IXamlDirectObject NativeUtils::AddRunToCollection(XamlDirect direct, IXamlDirectObject inlines, hstring text, int32_t offset, int32_t length, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize, bool transparent)
+    {
+        std::wstring wstr = text.c_str();
+        auto run = direct.CreateInstance(XamlTypeIndex::Run);
+        direct.SetStringProperty(run, XamlPropertyIndex::Run_Text, hstring(wstr.substr(offset, length)));
+        direct.SetEnumProperty(run, XamlPropertyIndex::Run_FlowDirection, (uint32_t)direction);
+
+        if ((style & TextStyle::Bold) != TextStyle::None)
+        {
+            direct.SetObjectProperty(run, XamlPropertyIndex::TextElement_FontWeight, winrt::box_value(FontWeights::SemiBold()));
+        }
+
+        if ((style & TextStyle::Italic) != TextStyle::None)
+        {
+            direct.SetEnumProperty(run, XamlPropertyIndex::TextElement_FontStyle, (uint32_t)FontStyle::Italic);
+        }
+
+        auto decorations = TextDecorations::None;
+        if ((style & TextStyle::Underline) != TextStyle::None)
+        {
+            decorations |= TextDecorations::Underline;
+        }
+        if ((style & TextStyle::Strikethrough) != TextStyle::None)
+        {
+            decorations |= TextDecorations::Strikethrough;
+        }
+
+        if (decorations != TextDecorations::None)
+        {
+            direct.SetEnumProperty(run, XamlPropertyIndex::TextElement_TextDecorations, (uint32_t)decorations);
+        }
+
+        if (fontFamily)
+        {
+            direct.SetObjectProperty(run, XamlPropertyIndex::TextElement_FontFamily, fontFamily);
+        }
+
+        if (fontSize > 0)
+        {
+            direct.SetDoubleProperty(run, XamlPropertyIndex::TextElement_FontSize, fontSize);
+        }
+
+        // TODO: removed once fixed by Microsoft
+        if (transparent)
+        {
+            direct.SetObjectProperty(run, XamlPropertyIndex::TextElement_Foreground, nullptr);
+        }
+
+        direct.AddToCollection(inlines, run);
+        return run;
+    }
+
+    winrt::Telegram::Native::FatalError NativeUtils::GetStowedException()
     {
         HRESULT result;
 
-        IRestrictedErrorInfo* info;
+        winrt::com_ptr<IRestrictedErrorInfo> info;
         //winrt::com_ptr<ILanguageExceptionErrorInfo2> info2;
         //winrt::com_ptr<IUnknown> language;
         winrt::com_ptr<IRestrictedErrorInfoContext> context;
         STOWED_EXCEPTION_INFORMATION_V2* stowed;
 
-        CleanupIfFailed(result, GetRestrictedErrorInfo(&info));
+        CleanupIfFailed(result, GetRestrictedErrorInfo(info.put()));
         //CleanupIfFailed(result, info->QueryInterface(info2.put()));
         //CleanupIfFailed(result, info2->GetLanguageException(language.put()));
 
@@ -64,6 +303,16 @@ namespace winrt::Telegram::Native::implementation
             return nullptr;
         }
 
+        CleanupIfFailed(result, SetRestrictedErrorInfo(info.get()));
+
+        // TODO: Currently unused, we still propagate the managed exception and we get details from there
+        // Would be fine to use this method, but strings are a little messed up:
+        // "description" contains the exception message
+        // "restrictedDescription" contains the exception message + stack trace
+        //HRESULT error;
+        //BSTR description, restrictedDescription, capabilitySid;
+        //info->GetErrorDetails(&description, &error, &restrictedDescription, &capabilitySid);
+
         CleanupIfFailed(result, info->QueryInterface(context.put()));
 
         if (context == nullptr)
@@ -72,6 +321,16 @@ namespace winrt::Telegram::Native::implementation
         }
 
         CleanupIfFailed(result, context->GetContext(&stowed));
+
+        return GetStowedException2(stowed);
+
+    Cleanup:
+        return nullptr;
+    }
+
+    winrt::Telegram::Native::FatalError NativeUtils::GetStowedException2(STOWED_EXCEPTION_INFORMATION_V2* stowed)
+    {
+        HRESULT result;
 
         if (stowed != nullptr && stowed->ExceptionForm == 1 && stowed->Header.Signature == 'SE02')
         {
@@ -111,7 +370,14 @@ namespace winrt::Telegram::Native::implementation
 
             if (frames.Size())
             {
-                return frames;
+                auto error = winrt::Telegram::Native::FatalError(L"", L"", L"", frames);
+
+                if (stowed->NestedExceptionType == STOWED_EXCEPTION_NESTED_TYPE_STOWED)
+                {
+                    error.InnerException(GetStowedException2((STOWED_EXCEPTION_INFORMATION_V2*)stowed->NestedException));
+                }
+
+                return error;
             }
         }
 
@@ -120,7 +386,7 @@ namespace winrt::Telegram::Native::implementation
     }
 
     // From http://davidpritchard.org/archives/907
-    winrt::Telegram::Native::FatalError NativeUtils::GetBackTrace(DWORD code)
+    winrt::Telegram::Native::FatalError NativeUtils::GetBackTrace(hstring type, hstring message)
     {
         constexpr uint32_t TRACE_MAX_STACK_FRAMES = 99;
         void* stack[TRACE_MAX_STACK_FRAMES];
@@ -130,14 +396,6 @@ namespace winrt::Telegram::Native::implementation
         auto frames = winrt::single_threaded_vector<FatalErrorFrame>();
 
         std::wstring trace;
-        std::wstring description;
-
-        if (code != 0)
-        {
-            const wchar_t* message = GetExceptionMessage(code);
-            description += wstrprintf(L"Unhandled exception: %s\n", message);
-        }
-
         bool skipping = false;
 
         for (int i = 0; i < numFrames; ++i)
@@ -162,24 +420,32 @@ namespace winrt::Telegram::Native::implementation
                     moduleFilename = moduleFilename.substr(moduleFilenamePos + 1);
                 }
 
-                if (moduleFilename.rfind(L"Telegram", 0) != 0)
-                {
-                    skipping = true;
-                    continue;
-                }
-
-                if (skipping)
-                {
-                    skipping = false;
-                    trace += L"    ...\n";
-                }
-
                 trace += wstrprintf(L"   at %s+0x%08lx\n", moduleFilename.c_str(), (uint32_t)((unsigned char*)pointer - moduleBase));
                 frames.Append({ (intptr_t)pointer, (intptr_t)moduleBase });
             }
         }
 
-        auto error = winrt::make_self<FatalError>(code, hstring(description), hstring(trace), frames);
+        if (type.empty())
+        {
+            if (Contains(trace, L"libvlc.dll") || Contains(trace, L"libvlccore.dll"))
+            {
+                type = L"VLCException";
+            }
+            else if (Contains(trace, L"Telegram.Native.Calls.dll"))
+            {
+                type = L"VoipException";
+            }
+            else if (Contains(trace, L"Telegram.Td.dll"))
+            {
+                type = L"TdException";
+            }
+            else
+            {
+                type = L"NativeException";
+            }
+        }
+
+        auto error = winrt::make_self<FatalError>(type, message, hstring(trace), frames);
         return error.as<winrt::Telegram::Native::FatalError>();
     }
 
@@ -310,7 +576,7 @@ namespace winrt::Telegram::Native::implementation
         return uli.QuadPart / 10000;
     }
 
-    int32_t NativeUtils::GetLastInputTime()
+    uint32_t NativeUtils::GetLastInputTime()
     {
         typedef BOOL(WINAPI* pGetLastInputInfo)(_Out_ PLASTINPUTINFO);
 
@@ -646,6 +912,13 @@ namespace winrt::Telegram::Native::implementation
 
     void NativeUtils::Crash()
     {
+        std::thread([]() {
+            int x = 1;
+            int y = 0;
+            int z = x / y;
+            }).detach();
+        return;
+
         int32_t* ciao = nullptr;
         *ciao = 42;
     }

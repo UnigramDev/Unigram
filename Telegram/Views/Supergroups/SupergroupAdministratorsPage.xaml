@@ -29,19 +29,17 @@
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl x:Name="HeaderPanel"
                                               Margin="0,0,0,32">
-                        <controls:BadgeButton x:Name="EventLog"
-                                              Content="{CustomResource EventLog}"
-                                              Click="{x:Bind ViewModel.EventLog}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              IsChevronVisible="True"
-                                              Glyph="&#xE984;" />
+                        <controls:SettingsButton x:Name="EventLog"
+                                                 Content="{CustomResource EventLog}"
+                                                 Click="{x:Bind ViewModel.EventLog}"
+                                                 IsChevronVisible="True"
+                                                 Glyph="&#xE984;" />
 
-                        <controls:BadgeButton x:Name="AddNew"
-                                              Visibility="Collapsed"
-                                              Content="{CustomResource ChannelAddAdmin}"
-                                              Click="{x:Bind ViewModel.Add}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xE983;" />
+                        <controls:SettingsButton x:Name="AddNew"
+                                                 Visibility="Collapsed"
+                                                 Content="{CustomResource ChannelAddAdmin}"
+                                                 Click="{x:Bind ViewModel.Add}"
+                                                 Glyph="&#xE983;" />
 
                         <controls:FauxCheckBox x:Name="AntiSpam"
                                                Content="{CustomResource ChannelAntiSpam}"
@@ -53,8 +51,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                    <cells:ProfileCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>

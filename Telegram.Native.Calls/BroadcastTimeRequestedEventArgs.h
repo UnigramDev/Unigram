@@ -2,10 +2,6 @@
 
 #include "BroadcastTimeRequestedEventArgs.g.h"
 
-#include <winrt/Telegram.Td.Api.h>
-
-using namespace winrt::Telegram::Td::Api;
-
 namespace winrt::Telegram::Native::Calls::implementation
 {
     struct BroadcastTimeRequestedEventArgs : BroadcastTimeRequestedEventArgsT<BroadcastTimeRequestedEventArgs>

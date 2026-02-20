@@ -1,9 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,7 +13,6 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Controls;
 using Telegram.Navigation;
-using Telegram.Views;
 using Telegram.Views.Host;
 using Windows.Storage;
 using Windows.UI.Xaml.Media;
@@ -20,157 +21,262 @@ namespace Telegram.Services
 {
     public interface ILifetimeService
     {
-        void Update();
+        ISession Create(bool update = true, bool test = false);
+        void Destroy(ISession item);
 
-        ISessionService Create(bool update = true, bool test = false);
-        ISessionService Remove(ISessionService item);
-        ISessionService Remove(ISessionService item, ISessionService active);
+        int Count { get; }
 
-        void Destroy(ISessionService item);
+        IList<ISession> GetItemsForMenu(bool show, out long hash);
 
-        bool ShouldClose(ISessionService item);
+        IList<ISession> Items { get; }
+        ISession ActiveItem { get; set; }
+        ISession PreviousItem { get; set; }
 
-        bool Contains(string phoneNumber);
-
-        void Register(ISessionService item);
-        void Unregister(ISessionService item);
-
-        MvxObservableCollection<ISessionService> Items { get; }
-        ISessionService ActiveItem { get; set; }
-        ISessionService PreviousItem { get; set; }
+        IEnumerable<T> ResolveAll<T>();
+        bool TryResolve<T>(int session, out T result);
     }
 
-    public partial class LifetimeService : BindableBase, ILifetimeService
+    public partial class LifetimeService : ILifetimeService
     {
-        private readonly Dictionary<int, ISessionService> _sessions = new Dictionary<int, ISessionService>();
+        private static readonly LifetimeService _instance = new();
+
+        private readonly ReaderWriterDictionary<int, ISession> _sessions = new();
+        private readonly IPasscodeService _passcode;
+        private readonly ILocaleService _locale;
+        private readonly IPlaybackService _playback;
+        private readonly IShortcutsService _shortcuts;
+        private readonly IProxyService _proxy;
+        private readonly VoipCoordinator _voip;
+
+        public IPasscodeService Passcode => _passcode;
+        public ILocaleService Locale => _locale;
+        public IPlaybackService Playback => _playback;
+        public IShortcutsService Shortcuts => _shortcuts;
+        public IProxyService Proxy => _proxy;
+        public VoipCoordinator Voip => _voip;
 
         public LifetimeService()
         {
-            Items = new MvxObservableCollection<ISessionService>();
+            _passcode = new PasscodeService(SettingsService.Current.PasscodeLock);
+            _playback = new PlaybackService(SettingsService.Current);
+            _shortcuts = new ShortcutsService();
+            _proxy = new ProxyService(this);
+            _voip = new VoipCoordinator();
+            _locale = LocaleService.Current;
+
+            var sessions = GetSessionsToInitialize(out int nextId)
+                .OrderByDescending(s => s.IsActive)
+                .ThenByDescending(s => s.IsPrevious)
+                .ToList();
+
+            for (int i = 0; i < sessions.Count; i++)
+            {
+                var available = sessions[i];
+                var session = Build(available.Id, i == 0);
+
+                _activeItem ??= session;
+            }
+
+            _activeItem ??= Build(nextId, true);
+            _proxy.Migrate(_activeItem.Id);
         }
 
-        public void Register(ISessionService item)
+        public static void Initialize()
         {
-            _sessions[item.Id] = item;
+            Logger.Info(Current.Count);
         }
 
-        public void Unregister(ISessionService item)
+        public static LifetimeService Current => _instance;
+
+        public int Count => _sessions.Count;
+
+        private ISession Build(int id, bool active)
         {
-            _sessions[item.Id] = null;
+            var session = new SessionImpl(this, _locale, _passcode, _shortcuts, _proxy, id, active);
+            _sessions[id] = session;
+            return session;
         }
 
-        public void Update()
+        record AvailableSession(int Id, bool IsActive, bool IsPrevious);
+
+        private IList<AvailableSession> GetSessionsToInitialize(out int nextId)
         {
-            Items.ReplaceWith(TypeResolver.Current.GetSessions());
-            ActiveItem = Items.FirstOrDefault(x => x.IsActive) ?? Items.FirstOrDefault();
+            var folders = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
+
+            var toBeDeleted = new HashSet<string>();
+            var toBeInitialized = new List<AvailableSession>();
+
+            var maxId = -1;
+
+            foreach (var folder in folders)
+            {
+                if (int.TryParse(Path.GetFileName(folder), out int sessionId))
+                {
+                    maxId = Math.Max(maxId, sessionId);
+
+                    var container = ApplicationData.Current.LocalSettings.CreateContainer($"{sessionId}", ApplicationDataCreateDisposition.Always);
+                    if (container.Values.ContainsKey("UserId"))
+                    {
+                        toBeInitialized.Add(new AvailableSession(
+                            sessionId,
+                            sessionId == SettingsService.Current.ActiveSession,
+                            sessionId == SettingsService.Current.PreviousSession));
+                    }
+                    else
+                    {
+                        toBeDeleted.Add(folder);
+                    }
+                }
+            }
+
+            // We delete unauthorized sessions only if there's some active one.
+            // This is just to remember proxy settings for the user in case they restart the app.
+            if (toBeInitialized.Count > 0 && toBeDeleted.Count > 0)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    foreach (var path in toBeDeleted)
+                    {
+                        try
+                        {
+                            Directory.Delete(path, true);
+                        }
+                        catch
+                        {
+                            // Directory or files might be locked
+                        }
+                    }
+                });
+            }
+
+            if (toBeInitialized.Count == 0 && toBeDeleted.Count == 1)
+            {
+                nextId = Math.Max(0, maxId);
+            }
+            else
+            {
+                nextId = Math.Max(0, maxId + 1);
+            }
+
+            return toBeInitialized;
         }
 
-        private void Update(ISessionService session)
+        public IList<ISession> Items => _sessions.Values;
+
+        public IList<ISession> GetItemsForMenu(bool show, out long hash)
         {
-            Items.ReplaceWith(TypeResolver.Current.GetSessions());
-            ActiveItem = session;
+            IList<ISession> sessions = null;
+            hash = 0;
+
+            if (show)
+            {
+                foreach (var session in _sessions.OrderBy(x => { int index = Array.IndexOf(SettingsService.Current.AccountsSelectorOrder, x.Id); return index < 0 ? x.Id : index; }))
+                {
+                    hash = ((hash * 20261) + 0x80000000L + session.UserId) % 0x80000000L;
+
+                    sessions ??= [];
+                    sessions.Add(session);
+                }
+            }
+
+            return sessions ?? Array.Empty<ISession>();
         }
 
-        public MvxObservableCollection<ISessionService> Items { get; }
-
-        private ISessionService _previousItem;
-        public ISessionService PreviousItem
+        private ISession _previousItem;
+        public ISession PreviousItem
         {
             get => _previousItem;
             set => _previousItem = value;
         }
 
-        private ISessionService _activeItem;
-        public ISessionService ActiveItem
+        private ISession _activeItem;
+        public ISession ActiveItem
         {
             get => _activeItem;
             set
             {
-                if (_activeItem == value)
+                if (_activeItem == value || !IsValidSession(value))
                 {
                     return;
                 }
 
-                if (_activeItem != null)
-                {
-                    _activeItem.IsActive = false;
-                    _previousItem = _activeItem;
-                    SettingsService.Current.PreviousSession = _activeItem.Id;
-                }
+                _activeItem.IsActive = false;
+                _previousItem = _activeItem;
+                SettingsService.Current.PreviousSession = _activeItem.Id;
 
-                if (value != null)
-                {
-                    value.IsActive = true;
-                    SettingsService.Current.ActiveSession = value.Id;
-                }
-
-                //Set(ref _activeItem, value);
                 _activeItem = value;
+                _activeItem.IsActive = true;
+                SettingsService.Current.ActiveSession = value.Id;
             }
         }
 
-        public ISessionService Create(bool update = true, bool test = false)
+        private bool IsValidSession(ISession session)
+        {
+            if (_sessions.TryGetValue(session.Id, out var active))
+            {
+                return active == session;
+            }
+
+            return false;
+        }
+
+        public ISession Create(bool update = true, bool test = false)
         {
             var app = BootStrapper.Current as App;
-            var sessions = TypeResolver.Current.GetSessions().ToList();
+            var sessions = _sessions.Values;
             var id = sessions.Count > 0 ? sessions.Max(x => x.Id) + 1 : 0;
 
             var settings = ApplicationData.Current.LocalSettings.CreateContainer($"{id}", ApplicationDataCreateDisposition.Always);
             settings.Values["UseTestDC"] = test;
 
-            var container = TypeResolver.Current.Build(id);
-            var session = container.Resolve<ISessionService>();
+            var session = Build(id, update);
+
             if (update)
             {
-                Update(session);
+                ActiveItem = session;
             }
 
             return session;
         }
 
-        public ISessionService Remove(ISessionService item)
+        public async void Destroy(ISession item)
         {
-            return Remove(item, _previousItem ?? Create());
-        }
+            Logger.Info(item.Id);
 
-        public ISessionService Remove(ISessionService item, ISessionService active)
-        {
-            TypeResolver.Current.Destroy(item.Id);
-            active ??= _previousItem ?? Create();
-            Update(active);
-
-            item.Aggregator.Unsubscribe(item);
-            //WindowContext.Unsubscribe(item);
-
-            WindowContext.Current.NavigationServices.RemoveByFrameId($"{item.Id}");
-            WindowContext.Current.NavigationServices.RemoveByFrameId($"Main{item.Id}");
-
-            return active;
-        }
-
-        public async void Destroy(ISessionService item)
-        {
-            ISessionService replace = null;
-            if (item.IsActive)
+            bool unlock = false;
+            if (Count == 1)
             {
-                ActiveItem = replace = _previousItem ?? Items.FirstOrDefault(x => x.Id != item.Id) ?? Create(false);
+                _passcode.Reset();
+                unlock = true;
             }
 
-            TypeResolver.Current.Destroy(item.Id);
-            Update();
+            ISession? replace = null;
+            if (item.IsActive)
+            {
+                var previous = _previousItem == item ? null : _previousItem;
+                var active = previous ?? Items.FirstOrDefault(x => x != item) ?? Create(false);
+
+                ActiveItem = replace = active;
+            }
+
+            _sessions.Remove(item.Id);
 
             item.Aggregator.Unsubscribe(item);
-            //WindowContext.Unsubscribe(item);
 
             await WindowContext.ForEachAsync(window =>
             {
-                if (window.Content is RootPage root && replace != null)
-                {
-                    root.Switch(replace);
-                }
-
                 if (window.IsInMainView)
                 {
+                    if (unlock)
+                    {
+                        window.Unlock();
+                    }
+
+                    if (window.Content is RootPage root && replace != null)
+                    {
+                        root.Switch(replace);
+                    }
+
                     window.NavigationServices.RemoveByFrameId($"{item.Id}");
                     window.NavigationServices.RemoveByFrameId($"Main{item.Id}");
 
@@ -201,28 +307,31 @@ namespace Telegram.Services
             });
         }
 
-        public bool ShouldClose(ISessionService item)
+        public IEnumerable<T> ResolveAll<T>()
         {
-            return true;
-        }
-
-        public bool Contains(string phoneNumber)
-        {
-            foreach (var session in Items)
+            foreach (var container in _sessions)
             {
-                var user = session.ClientService.GetUser(session.UserId);
-                if (user == null)
+                if (container != null)
                 {
-                    continue;
-                }
-
-                if (user.PhoneNumber.Contains(phoneNumber) || phoneNumber.Contains(user.PhoneNumber))
-                {
-                    return true;
+                    var service = container.Resolve<T>();
+                    if (service != null)
+                    {
+                        yield return service;
+                    }
                 }
             }
+        }
 
-            return false;
+        public bool TryResolve<T>(int session, out T result)
+        {
+            result = default;
+
+            if (_sessions.TryGetValue(session, out ISession container))
+            {
+                result = container.Resolve<T>();
+            }
+
+            return result != null;
         }
     }
 }

@@ -12,8 +12,8 @@ namespace Telegram.Native.Calls
 {
     delegate void EmitJsonPayloadDelegate(Int32 ssrc, String payload);
 
-    delegate Windows.Foundation.Collections.IVector<byte> EncryptGroupCallDataDelegate(Telegram.Td.Api.GroupCallDataChannel dataChannel, Windows.Foundation.Collections.IVector<byte> data, Int32 unencryptedPrefixSize);
-    delegate Windows.Foundation.Collections.IVector<byte> DecryptGroupCallDataDelegate(Telegram.Td.Api.MessageSender participantId, Windows.Foundation.Collections.IVector<byte> data);
+    delegate Windows.Foundation.Collections.IVector<byte> EncryptGroupCallDataDelegate(VoipDataChannel dataChannel, Windows.Foundation.Collections.IVector<byte> data, Int32 unencryptedPrefixSize);
+    delegate Windows.Foundation.Collections.IVector<byte> DecryptGroupCallDataDelegate(Int64 userId, Windows.Foundation.Collections.IVector<byte> data);
 
     [default_interface]
     runtimeclass VoipGroupManager
@@ -46,7 +46,8 @@ namespace Telegram.Native.Calls
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IVector<VoipGroupParticipant > > AudioLevelsUpdated;
 
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, BroadcastTimeRequestedEventArgs> BroadcastTimeRequested;
-        event Windows.Foundation.TypedEventHandler<VoipGroupManager, BroadcastPartRequestedEventArgs> BroadcastPartRequested;
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, AudioBroadcastPartRequestedEventArgs> AudioBroadcastPartRequested;
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, VideoBroadcastPartRequestedEventArgs> VideoBroadcastPartRequested;
 
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, MediaChannelDescriptionsRequestedEventArgs> MediaChannelDescriptionsRequested;
     }

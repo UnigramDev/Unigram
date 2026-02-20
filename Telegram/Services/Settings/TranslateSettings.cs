@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using Windows.Storage;
@@ -21,7 +22,7 @@ namespace Telegram.Services.Settings
         private bool? _messages;
         public bool Messages
         {
-            get => _messages ??= GetValueOrDefault("IsTranslateEnabled", false);
+            get => _messages ??= GetValueOrDefault("IsTranslateEnabled", true);
             set => AddOrUpdateValue(ref _messages, "IsTranslateEnabled", value);
         }
 
@@ -50,7 +51,7 @@ namespace Telegram.Services.Settings
             set
             {
                 _doNot = value;
-                AddOrUpdateValue("DoNotTranslate", value?.Count > 0 ? string.Join(';', value) : null);
+                AddOrUpdateValue("DoNotTranslate", value?.Count > 0 ? string.Join(';', value) : string.Empty);
             }
         }
 
@@ -59,7 +60,17 @@ namespace Telegram.Services.Settings
             var value = GetValueOrDefault<string>("DoNotTranslate", null);
             if (value == null)
             {
-                return new HashSet<string>();
+                // Maintain the previous behavior for old users
+                if (SettingsService.Current.Diagnostics.UpdateCount > 1)
+                {
+                    AddOrUpdateValue("DoNotTranslate", string.Empty);
+                    return new HashSet<string>();
+                }
+
+                return new HashSet<string>
+                {
+                    LocaleService.Current.Id
+                };
             }
 
             var split = value.Split(';', StringSplitOptions.RemoveEmptyEntries);

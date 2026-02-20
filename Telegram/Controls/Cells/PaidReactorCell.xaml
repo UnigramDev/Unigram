@@ -15,9 +15,26 @@
     </Grid.RowDefinitions>
     <Grid>
         <controls:ProfilePicture x:Name="Photo"
-                                 Width="48"
-                                 Height="48"
+                                 Size="48"
                                  Margin="0,0,0,4" />
+        <Path x:Name="CrownBackground"
+              Data="M8.25297 1.8409C8.65077 1.39357 9.34936 1.39349 9.74711 1.8409L12.4082 4.83406C12.7454 5.2134 13.3137 5.28039 13.7295 4.98934L16.3789 3.13484C16.9444 2.73917 17.6989 3.25278 17.5381 3.92391L15.6748 11.6876C15.2719 13.3661 13.8375 14.597 12.1172 14.7403L9.83012 14.9307C9.27769 14.9768 8.72239 14.9768 8.16996 14.9307L5.88187 14.7403C4.16184 14.5968 2.72812 13.3659 2.32523 11.6876L0.461952 3.92391C0.30112 3.2527 1.0556 2.73897 1.62113 3.13484L4.27055 4.98934C4.68634 5.28039 5.25464 5.2134 5.59184 4.83406L8.25297 1.8409Z"
+              Fill="#FFFFFF"
+              Stroke="{ThemeResource ContentDialogTopOverlaySolid}"
+              StrokeThickness="2"
+              Width="18"
+              Height="18"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Top"
+              Margin="0,-10,0,0"
+              Visibility="Collapsed" />
+        <TextBlock x:Name="Crown"
+                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                   FontSize="18"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top"
+                   Margin="0,-10,0,0"
+                   Visibility="Collapsed" />
         <controls:BadgeControl x:Name="Badge"
                                Background="#F0B302"
                                FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"

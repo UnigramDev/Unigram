@@ -1,11 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Newtonsoft.Json;
+
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -16,7 +17,6 @@ using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
-using static Telegram.Services.GenerationService;
 
 namespace Telegram.Services
 {
@@ -114,35 +114,37 @@ namespace Telegram.Services
                 var duration = media.EditState.TrimStopTime - media.EditState.TrimStartTime;
                 var seconds = duration.TotalSeconds;
 
-                var conversion = new VideoConversion();
-                conversion.Mute = true;
-                conversion.TrimStartTime = media.EditState.TrimStartTime;
-                conversion.TrimStopTime = media.EditState.TrimStartTime + TimeSpan.FromSeconds(Math.Min(seconds, 9.9));
-                conversion.Transcode = true;
-                conversion.Transform = true;
+                var generation = new VideoGeneration();
+                generation.Mute = true;
+                generation.TrimStartTime = media.EditState.TrimStartTime;
+                generation.TrimStopTime = media.EditState.TrimStartTime + TimeSpan.FromSeconds(Math.Min(seconds, 9.9));
+                generation.Transcode = true;
+                generation.Transform = true;
                 //conversion.Rotation = file.EditState.Rotation;
-                conversion.OutputSize = new Size(640, 640);
+                generation.OutputSize = new Size(640, 640);
                 //conversion.Mirror = transform.Mirror;
-                conversion.VideoBitrate = 1000000;
-                conversion.AudioBitrate = 1000000;
-                conversion.CropRectangle = new Rect(
+                generation.VideoBitrate = 1000000;
+                generation.AudioBitrate = 1000000;
+                generation.CropRectangle = new Rect(
                     media.EditState.Rectangle.X * props.Width,
                     media.EditState.Rectangle.Y * props.Height,
                     media.EditState.Rectangle.Width * props.Width,
                     media.EditState.Rectangle.Height * props.Height);
 
-                var rectangle = conversion.CropRectangle;
-                rectangle.Width = Math.Min(conversion.CropRectangle.Width, conversion.CropRectangle.Height);
+                var rectangle = generation.CropRectangle;
+                rectangle.Width = Math.Min(generation.CropRectangle.Width, generation.CropRectangle.Height);
                 rectangle.Height = rectangle.Width;
 
-                conversion.CropRectangle = rectangle;
+                generation.CropRectangle = rectangle;
 
-                var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
+                var serialized = JsonSerializer.Serialize(generation, GenerationJsonContext.Default.VideoGeneration);
+                var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, serialized);
                 inputPhoto = new InputChatPhotoAnimation(generated, 0);
             }
             else if (file is StoragePhoto photo)
             {
-                var generated = await photo.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(photo.EditState));
+                var serialized = JsonSerializer.Serialize(photo.EditState, GenerationJsonContext.Default.ImageGeneration);
+                var generated = await photo.File.ToGeneratedAsync(ConversionType.Compress, serialized);
                 inputPhoto = new InputChatPhotoStatic(generated);
             }
 

@@ -5,10 +5,7 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       Title="UserRestrictionsUntil"
-                       PrimaryButtonText="OK"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
 
     <StackPanel>
         <CalendarDatePicker x:Name="Date"

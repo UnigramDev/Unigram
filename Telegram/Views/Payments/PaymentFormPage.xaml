@@ -3,14 +3,11 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
       xmlns:common="using:Telegram.Common"
       xmlns:controls="using:Telegram.Controls"
       xmlns:payments="using:Telegram.Controls.Payments"
       xmlns:converters="using:Telegram.Converters"
-      xmlns:local="using:Telegram.Views"
-      mc:Ignorable="d"
-      muxc:BackdropMaterial.ApplyToRootOrPageBackground="True">
+      mc:Ignorable="d">
 
     <UserControl.Resources>
         <Style x:Key="SendButtonStyle"
@@ -211,7 +208,7 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel Margin="-12,-4,-12,0">
+            <StackPanel Margin="-12,-4,-12,60">
                 <controls:HeaderedControl Background="{ThemeResource SettingsItemBackground}">
                     <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                           Padding="12,8"
@@ -249,116 +246,119 @@
                         </StackPanel>
                     </Grid>
 
-                    <payments:LabeledPricesPanel Currency="{x:Bind ViewModel.Invoice.Currency, Mode=OneWay}"
-                                                 Prices="{x:Bind ViewModel.Invoice.PriceParts, Mode=OneWay}" />
-                    <payments:LabeledPricesPanel Currency="{x:Bind ViewModel.Invoice.Currency, Mode=OneWay}"
-                                                 Prices="{x:Bind ViewModel.Shipping.PriceParts, Mode=OneWay}" />
-
-                    <Grid Visibility="{x:Bind ViewModel.HasSuggestedTipAmounts, Mode=OneWay}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                    <Grid BorderBrush="{ThemeResource SettingsItemBorderBrush}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock Text="{CustomResource PaymentTipOptional}"
-                                   Style="{StaticResource InfoBodyTextBlockStyle}"
-                                   Margin="12,4,0,4" />
-                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                   TextAlignment="Right"
-                                   Margin="8,4,12,4"
-                                   Grid.Column="1">
+                        <payments:LabeledPricesPanel Currency="{x:Bind ViewModel.Invoice.Currency, Mode=OneWay}"
+                                                     Prices="{x:Bind ViewModel.Invoice.PriceParts, Mode=OneWay}"/>
+                        <payments:LabeledPricesPanel Currency="{x:Bind ViewModel.Invoice.Currency, Mode=OneWay}"
+                                                     Prices="{x:Bind ViewModel.Shipping.PriceParts, Mode=OneWay}"
+                                                     Grid.Row="1" />
+
+                        <Grid Visibility="{x:Bind ViewModel.HasSuggestedTipAmounts, Mode=OneWay}"
+                              Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{CustomResource PaymentTipOptional}"
+                                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                                       Margin="12,4,0,4" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                       TextAlignment="Right"
+                                       Margin="8,4,12,4"
+                                       Grid.Column="1">
                             <Hyperlink Click="{x:Bind ViewModel.ChooseTipAmount}">
                                 <Run Text="{x:Bind converters:Formatter.FormatAmount(ViewModel.TipAmount, ViewModel.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}" />
                             </Hyperlink>
-                        </TextBlock>
+                            </TextBlock>
 
-                        <ListView ItemsSource="{x:Bind ViewModel.Invoice.SuggestedTipAmounts, Mode=OneWay}"
-                                  SelectedItem="{x:Bind ViewModel.TipAmountSelection, Mode=TwoWay}"
-                                  ContainerContentChanging="SuggestedTipAmounts_ContainerContentChanging"
-                                  Padding="12,0,4,0"
-                                  Grid.Row="1"
-                                  Grid.ColumnSpan="2">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock />
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <ItemsStackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="MinHeight"
-                                            Value="0" />
-                                    <Setter Property="MinWidth"
-                                            Value="0" />
-                                    <Setter Property="Margin"
-                                            Value="0,0,8,0" />
-                                    <Setter Property="Padding"
-                                            Value="8,4,8,4" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                        </ListView>
-                    </Grid>
+                            <ListView ItemsSource="{x:Bind ViewModel.Invoice.SuggestedTipAmounts, Mode=OneWay}"
+                                      SelectedItem="{x:Bind ViewModel.TipAmountSelection, Mode=TwoWay}"
+                                      ContainerContentChanging="SuggestedTipAmounts_ContainerContentChanging"
+                                      Padding="12,0,4,0"
+                                      Grid.Row="1"
+                                      Grid.ColumnSpan="2">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock />
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsStackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="MinHeight"
+                                                Value="0" />
+                                        <Setter Property="MinWidth"
+                                                Value="0" />
+                                        <Setter Property="Margin"
+                                                Value="0,0,8,0" />
+                                        <Setter Property="Padding"
+                                                Value="8,4,8,4" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                            </ListView>
+                        </Grid>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{CustomResource PaymentTransactionTotal}"
-                                   Style="{StaticResource BaseTextBlockStyle}"
-                                   Margin="12,4,0,8" />
-                        <TextBlock Text="{x:Bind converters:Formatter.FormatAmount(ViewModel.TotalAmount, ViewModel.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"
-                                   Style="{StaticResource BaseTextBlockStyle}"
-                                   TextAlignment="Right"
-                                   Margin="8,4,12,8"
-                                   Grid.Column="1" />
+                        <Grid Grid.Row="3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{CustomResource PaymentTransactionTotal}"
+                                       Style="{StaticResource BaseTextBlockStyle}"
+                                       Margin="12,4,0,8" />
+                            <TextBlock Text="{x:Bind converters:Formatter.FormatAmount(ViewModel.TotalAmount, ViewModel.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"
+                                       Style="{StaticResource BaseTextBlockStyle}"
+                                       TextAlignment="Right"
+                                       Margin="8,4,12,8"
+                                       Grid.Column="1" />
+                        </Grid>
                     </Grid>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
-                    <controls:BadgeButton Click="{x:Bind ViewModel.ChooseCredentials}"
-                                          Content="{x:Bind ViewModel.Credentials.Title, Mode=OneWay, FallbackValue=Empty}"
-                                          Badge="{CustomResource PaymentCheckoutMethod}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.ChooseCredentials}"
+                                             Content="{x:Bind ViewModel.Credentials.Title, Mode=OneWay, FallbackValue=Empty}"
+                                             Description="{CustomResource PaymentCheckoutMethod}" />
 
-                    <controls:BadgeButton Click="{x:Bind ViewModel.ChooseAddress}"
-                                          Content="{x:Bind ConvertAddress(ViewModel.Info.ShippingAddress), Mode=OneWay, FallbackValue=Empty}"
-                                          Visibility="{x:Bind ViewModel.Invoice.NeedShippingAddress, Mode=OneWay, FallbackValue=Collapsed}"
-                                          Badge="{CustomResource PaymentShippingAddress}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.ChooseAddress}"
+                                             Content="{x:Bind ConvertAddress(ViewModel.Info.ShippingAddress), Mode=OneWay, FallbackValue=Empty}"
+                                             Visibility="{x:Bind ViewModel.Invoice.NeedShippingAddress, Mode=OneWay, FallbackValue=Collapsed}"
+                                             Description="{CustomResource PaymentShippingAddress}" />
 
-                    <controls:BadgeButton Click="{x:Bind ViewModel.ChooseShipping}"
-                                          Content="{x:Bind ViewModel.Shipping.Title, Mode=OneWay, FallbackValue=Empty}"
-                                          Visibility="{x:Bind ViewModel.Invoice.IsFlexible, Mode=OneWay, FallbackValue=Collapsed}"
-                                          Badge="{CustomResource PaymentCheckoutShippingMethod}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.ChooseShipping}"
+                                             Content="{x:Bind ViewModel.Shipping.Title, Mode=OneWay, FallbackValue=Empty}"
+                                             Visibility="{x:Bind ViewModel.Invoice.IsFlexible, Mode=OneWay, FallbackValue=Collapsed}"
+                                             Description="{CustomResource PaymentCheckoutShippingMethod}" />
 
-                    <controls:BadgeButton Click="{x:Bind ViewModel.ChooseAddress}"
-                                          Content="{x:Bind ViewModel.Info.Name, Mode=OneWay, FallbackValue=Empty}"
-                                          Visibility="{x:Bind ViewModel.Invoice.NeedName, Mode=OneWay, FallbackValue=Collapsed}"
-                                          Badge="{CustomResource PaymentCheckoutName}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.ChooseAddress}"
+                                             Content="{x:Bind ViewModel.Info.Name, Mode=OneWay, FallbackValue=Empty}"
+                                             Visibility="{x:Bind ViewModel.Invoice.NeedName, Mode=OneWay, FallbackValue=Collapsed}"
+                                             Description="{CustomResource PaymentCheckoutName}" />
 
-                    <controls:BadgeButton Click="{x:Bind ViewModel.ChooseAddress}"
-                                          Content="{x:Bind converters:Formatter.PhoneNumber(ViewModel.Info.PhoneNumber), Mode=OneWay, FallbackValue=Empty}"
-                                          Visibility="{x:Bind ViewModel.Invoice.NeedPhoneNumber, Mode=OneWay, FallbackValue=Collapsed}"
-                                          Badge="{CustomResource PaymentCheckoutPhoneNumber}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.ChooseAddress}"
+                                             Content="{x:Bind converters:Formatter.PhoneNumber(ViewModel.Info.PhoneNumber), Mode=OneWay, FallbackValue=Empty}"
+                                             Visibility="{x:Bind ViewModel.Invoice.NeedPhoneNumber, Mode=OneWay, FallbackValue=Collapsed}"
+                                             Description="{CustomResource PaymentCheckoutPhoneNumber}" />
 
-                    <controls:BadgeButton Click="{x:Bind ViewModel.ChooseAddress}"
-                                          Content="{x:Bind ViewModel.Info.EmailAddress, Mode=OneWay, FallbackValue=Empty}"
-                                          Visibility="{x:Bind ViewModel.Invoice.NeedEmailAddress, Mode=OneWay, FallbackValue=Collapsed}"
-                                          Badge="{CustomResource PaymentCheckoutEmail}"
-                                          Style="{StaticResource SubtitleBadgeButtonStyle}" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.ChooseAddress}"
+                                             Content="{x:Bind ViewModel.Info.EmailAddress, Mode=OneWay, FallbackValue=Empty}"
+                                             Visibility="{x:Bind ViewModel.Invoice.NeedEmailAddress, Mode=OneWay, FallbackValue=Collapsed}"
+                                             Description="{CustomResource PaymentCheckoutEmail}" />
                 </controls:HeaderedControl>
-
             </StackPanel>
         </ScrollViewer>
 
@@ -372,15 +372,15 @@
                        Fill="#2ca5e0"
                        RadiusX="18"
                        RadiusY="18" />
-            <controls:BadgeButton x:Name="BuyCommand"
-                                  Command="{x:Bind ViewModel.SendCommand}"
-                                  Content="{x:Bind ConvertPay(ViewModel.IsReceipt, ViewModel.TotalAmount, ViewModel.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"
-                                  Style="{StaticResource StartButtonStyle}"
-                                  FontWeight="SemiBold"
-                                  Padding="16,3,16,5"
-                                  CornerRadius="18"
-                                  Margin="0"
-                                  Height="36" />
+            <Button x:Name="BuyCommand"
+                    Command="{x:Bind ViewModel.SendCommand}"
+                    Content="{x:Bind ConvertPay(ViewModel.IsReceipt, ViewModel.TotalAmount, ViewModel.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"
+                    Style="{StaticResource StartButtonStyle}"
+                    FontWeight="SemiBold"
+                    Padding="16,3,16,5"
+                    CornerRadius="18"
+                    Margin="0"
+                    Height="36" />
         </Grid>
     </Grid>
 </Page>

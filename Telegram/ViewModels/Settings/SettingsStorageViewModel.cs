@@ -1,19 +1,23 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Settings;
+using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -28,6 +32,16 @@ namespace Telegram.ViewModels.Settings
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            var chats = new List<StorageStatisticsByChat>(10);
+
+            for (int i = 0; i < 10; i++)
+            {
+                chats.Add(new StorageStatisticsByChat(0, 0, 0, null));
+            }
+
+            _statistics = new StorageStatistics(0, 0, chats);
+            RaisePropertyChanged(nameof(Statistics));
+
             IsLoading = true;
 
             ClientService.Send(new GetStorageStatisticsFast(), result =>
@@ -38,7 +52,7 @@ namespace Telegram.ViewModels.Settings
                 }
             });
 
-            ClientService.Send(new GetStorageStatistics(int.MaxValue), result =>
+            ClientService.Send(new GetStorageStatistics(25), result =>
             {
                 if (result is StorageStatistics stats)
                 {
@@ -92,6 +106,34 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _totalStatistics, value);
         }
 
+        private IList<StorageChartItem> _itemsView;
+        public IList<StorageChartItem> ItemsView
+        {
+            get => _itemsView;
+            set => Set(ref _itemsView, value);
+        }
+
+        private ulong _systemFreeSpace;
+        public ulong SystemFreeSpace
+        {
+            get => _systemFreeSpace;
+            set => Set(ref _systemFreeSpace, value);
+        }
+
+        private ulong _systemCapacity;
+        public ulong SystemCapacity
+        {
+            get => _systemCapacity;
+            set => Set(ref _systemCapacity, value);
+        }
+
+        private long _totalBytes = -1;
+        public long TotalBytes
+        {
+            get => _totalBytes;
+            set => Set(ref _totalBytes, value);
+        }
+
         private bool _taskCompleted;
         public bool TaskCompleted
         {
@@ -99,15 +141,31 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _taskCompleted, value);
         }
 
-        public void ClearCache()
+        public async void ClearCache()
         {
-            var statistics = _totalStatistics;
-            if (statistics == null)
+            var confirm = await ShowPopupAsync(Strings.StorageUsageInfo, Strings.ClearCache, Strings.ClearCache, Strings.Cancel, destructive: true);
+            if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            Clear(statistics);
+            var types = ItemsView.Where(x => x.IsVisible).SelectMany(x => x.Types).ToList();
+            if (types == null || types.Empty())
+            {
+                return;
+            }
+
+            IsLoading = true;
+            TaskCompleted = false;
+
+            var response = await ClientService.SendAsync(new OptimizeStorage(long.MaxValue, 0, int.MaxValue, 0, types, Array.Empty<long>(), Array.Empty<long>(), false, 25));
+            if (response is StorageStatistics statistics)
+            {
+                Statistics = statistics;
+            }
+
+            IsLoading = false;
+            TaskCompleted = true;
         }
 
         public async void Clear(StorageStatisticsByChat byChat)
@@ -161,6 +219,15 @@ namespace Telegram.ViewModels.Settings
             var result = new StorageStatisticsByChat();
             result.ByFileType = new List<StorageStatisticsByFileType>();
 
+            StorageChartItem photo = null;
+            StorageChartItem video = null;
+            StorageChartItem document = null;
+            StorageChartItem audio = null;
+            StorageChartItem voice = null;
+            StorageChartItem stickers = null;
+            StorageChartItem stories = null;
+            StorageChartItem local = null;
+
             for (int i = 0; i < value.ByChat.Count; i++)
             {
                 var chat = value.ByChat[i];
@@ -170,31 +237,65 @@ namespace Telegram.ViewModels.Settings
 
                 for (int j = 0; j < chat.ByFileType.Count; j++)
                 {
-                    var type = chat.ByFileType[j];
+                    var fileType = chat.ByFileType[j];
 
-                    if (type.FileType is FileTypeProfilePhoto or FileTypeWallpaper)
+                    switch (fileType.FileType)
                     {
-                        result.Count -= type.Count;
-                        result.Size -= type.Size;
+                        case FileTypePhoto:
+                            photo = new StorageChartItem(fileType);
+                            break;
+                        case FileTypeVideo:
+                        case FileTypeAnimation:
+                            video = video?.Add(fileType) ?? new StorageChartItem(fileType);
+                            break;
+                        case FileTypeDocument:
+                            document = new StorageChartItem(fileType);
+                            break;
+                        case FileTypeAudio:
+                            audio = new StorageChartItem(fileType);
+                            break;
+                        case FileTypeVideoNote:
+                        case FileTypeVoiceNote:
+                            voice = voice?.Add(fileType) ?? new StorageChartItem(fileType);
+                            break;
+                        case FileTypeSticker:
+                            stickers = new StorageChartItem(fileType);
+                            break;
+                        case FileTypePhotoStory:
+                        case FileTypeVideoStory:
+                            stories = stories?.Add(fileType) ?? new StorageChartItem(fileType);
+                            break;
+                        case FileTypeProfilePhoto:
+                        case FileTypeWallpaper:
+                            break;
+                        default:
+                            local = local?.Add(fileType) ?? new StorageChartItem(fileType);
+                            break;
+                    }
 
-                        chat.Count -= type.Count;
-                        chat.Size -= type.Size;
+                    if (fileType.FileType is FileTypeProfilePhoto or FileTypeWallpaper)
+                    {
+                        result.Count -= fileType.Count;
+                        result.Size -= fileType.Size;
 
-                        chat.ByFileType.Remove(type);
+                        chat.Count -= fileType.Count;
+                        chat.Size -= fileType.Size;
+
+                        chat.ByFileType.Remove(fileType);
                         j--;
 
                         continue;
                     }
 
-                    var already = result.ByFileType.FirstOrDefault(x => x.FileType.TypeEquals(type.FileType));
+                    var already = result.ByFileType.FirstOrDefault(x => x.FileType.TypeEquals(fileType.FileType));
                     if (already == null)
                     {
-                        already = new StorageStatisticsByFileType(type.FileType, 0, 0);
+                        already = new StorageStatisticsByFileType(fileType.FileType, 0, 0);
                         result.ByFileType.Add(already);
                     }
 
-                    already.Count += type.Count;
-                    already.Size += type.Size;
+                    already.Count += fileType.Count;
+                    already.Size += fileType.Size;
                 }
 
                 if (chat.ChatId == 0 || chat.ByFileType.Empty())
@@ -204,10 +305,70 @@ namespace Telegram.ViewModels.Settings
                 }
             }
 
+            ItemsView = new[]
+            {
+                photo,
+                video,
+                document,
+                audio,
+                voice,
+                stickers,
+                stories,
+                local
+            }.Where(x => x != null).OrderByDescending(x => x.TotalBytes).ToList();
+
+            LoadSystem();
+
             TotalStatistics = result;
             IsLoading = false;
 
             return value;
+        }
+
+        private async void LoadSystem()
+        {
+            var info = await GetSystemTotalBytes();
+            SystemFreeSpace = info.FreeSpace;
+            SystemCapacity = info.Capacity;
+
+            TotalBytes = ItemsView.Where(x => x.IsVisible).Sum(x => x.TotalBytes);
+        }
+
+        private async Task<(ulong FreeSpace, ulong Capacity)> GetSystemTotalBytes()
+        {
+            const String c_freeSpace = "System.FreeSpace";
+            const String c_capacity = "System.Capacity";
+
+            try
+            {
+                var retrieveProperties = await ApplicationData.Current.LocalFolder.Properties.RetrievePropertiesAsync(new[] { c_freeSpace, c_capacity });
+                var freeSpace = (ulong)retrieveProperties[c_freeSpace];
+                var capacity = (ulong)retrieveProperties[c_capacity];
+
+                return (freeSpace, capacity);
+            }
+            catch
+            {
+                return (0, 0);
+            }
+        }
+
+        public async void ClearDatabase()
+        {
+            if (StatisticsFast == null)
+            {
+                return;
+            }
+
+            var size = string.Format(Strings.LocalDatabaseClearText2, FileSizeConverter.Convert(StatisticsFast.DatabaseSize, true));
+
+            var confirm = await ShowPopupAsync(Strings.LocalDatabaseClearText + "\n\n" + size + "\n\n" + Strings.LocalDatabaseClearText3, Strings.LocalDatabaseClearTextTitle, Strings.CacheClear, Strings.Cancel, destructive: true);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            ClientService.Delete(true);
         }
     }
 }

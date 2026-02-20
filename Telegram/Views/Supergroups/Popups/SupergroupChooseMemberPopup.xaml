@@ -6,7 +6,8 @@
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:cells="using:Telegram.Controls.Cells"
                        mc:Ignorable="d"
-                       VerticalContentAlignment="Stretch">
+                       VerticalContentAlignment="Stretch"
+                       IsDismissButtonVisible="True">
 
     <ContentDialog.Resources>
         <CollectionViewSource x:Name="SearchResults"
@@ -79,7 +80,7 @@
                     <GroupStyle.HeaderContainerStyle>
                         <Style TargetType="ListViewHeaderItem">
                             <Setter Property="Background"
-                                    Value="{ThemeResource ContentDialogBackground}" />
+                                    Value="{ThemeResource ContentDialogTopOverlaySolid}" />
                             <Setter Property="FontFamily"
                                     Value="{ThemeResource ContentControlThemeFontFamily}" />
                             <Setter Property="FontSize"
@@ -133,9 +134,10 @@
             </ListView.Footer>
         </controls:TextListView>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                     ScrollingHost="{x:Bind SearchHost}"
-                                    Margin="-24,2,-24,-24"
+                                    Margin="-24,0,-24,-24"
+                                    BottomInset="0"
                                     Grid.Row="1" />
 
         <Grid x:Name="ContentPanel"
@@ -168,9 +170,9 @@
                 </ListView.Footer>
             </controls:TextListView>
 
-            <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+            <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                         ScrollingHost="{x:Bind ScrollingHost}"
-                                        Margin="0,2,0,0" />
+                                        BottomInset="0" />
         </Grid>
     </Grid>
 </controls:ContentPopup>

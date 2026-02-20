@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using Telegram.Td.Api;
@@ -16,12 +17,12 @@ namespace Telegram.ViewModels.Delegates
         void SetSelectedItems(IList<object> topics);
 
         void UpdateForumTopicLastMessage(ForumTopic topic);
-        void UpdateFeedbackChatTopicLastMessage(FeedbackChatTopic topic);
+        void UpdateDirectMessagesChatTopicLastMessage(DirectMessagesChatTopic topic);
 
-        void HandleForumTopic(long messageThreadId, Action<IForumTopicDelegate, ForumTopic> action);
+        void HandleForumTopic(int forumTopicId, Action<IForumTopicDelegate, ForumTopic> action);
         void HandleForumTopic(ForumTopic topic, Action<IForumTopicDelegate, ForumTopic> action);
 
-        void HandleFeedbackChatTopic(long topicId, Action<IFeedbackTopicDelegate, FeedbackChatTopic> action);
-        void HandleFeedbackChatTopic(FeedbackChatTopic topic, Action<IFeedbackTopicDelegate, FeedbackChatTopic> action);
+        void HandleDirectMessagesChatTopic(long topicId, Action<IDirectMessagesTopicDelegate, DirectMessagesChatTopic> action);
+        void HandleDirectMessagesChatTopic(DirectMessagesChatTopic topic, Action<IDirectMessagesTopicDelegate, DirectMessagesChatTopic> action);
     }
 }

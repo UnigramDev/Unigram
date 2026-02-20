@@ -2,27 +2,26 @@
 
 #include "VoipVideoChannelInfo.g.h"
 
-using namespace winrt::Telegram::Td::Api;
 using namespace winrt::Windows::Foundation::Collections;
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
     struct VoipVideoChannelInfo : VoipVideoChannelInfoT<VoipVideoChannelInfo>
     {
-        VoipVideoChannelInfo(int32_t audioSource, MessageSender participantId, hstring endpointId, IVector<GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality);
+        VoipVideoChannelInfo(int32_t audioSource, int64_t participantId, hstring endpointId, IVector<VoipVideoSourceGroup> sourceGroups, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality);
 
         int32_t AudioSource();
-        MessageSender ParticipantId();
+        int64_t ParticipantId();
         hstring EndpointId();
-        IVector<GroupCallVideoSourceGroup> SourceGroups();
+        IVector<VoipVideoSourceGroup> SourceGroups();
         VoipVideoChannelQuality MinQuality();
         VoipVideoChannelQuality MaxQuality();
 
     private:
         int32_t m_audioSource;
-        MessageSender m_participantId;
+        int64_t m_participantId;
         hstring m_endpointId;
-        IVector<GroupCallVideoSourceGroup> m_sourceGroups;
+        IVector<VoipVideoSourceGroup> m_sourceGroups;
         VoipVideoChannelQuality m_minQuality;
         VoipVideoChannelQuality m_maxQuality;
     };

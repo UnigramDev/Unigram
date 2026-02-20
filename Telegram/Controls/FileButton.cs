@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
@@ -57,12 +58,6 @@ namespace Telegram.Controls
         public FileButton()
         {
             DefaultStyleKey = typeof(FileButton);
-            Connected += OnConnected;
-        }
-
-        private void OnConnected(object sender, RoutedEventArgs e)
-        {
-            // Used to enable FrameworkElementEx
         }
 
         public MessageContentState State => _state;
@@ -88,10 +83,7 @@ namespace Telegram.Controls
 
             _label = ContentPresenter1;
 
-            if (ProgressBar != null)
-            {
-                ProgressBar.Value = _progress;
-            }
+            ProgressBar?.Value = _progress;
         }
 
         #region ProgressVisibility
@@ -138,6 +130,11 @@ namespace Telegram.Controls
 
         public void SetGlyph(int fileId, MessageContentState state)
         {
+            if (IsDisconnected)
+            {
+                return;
+            }
+
             if (fileId != _fileId)
             {
                 _state = MessageContentState.None;

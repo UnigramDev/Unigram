@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Td.Api;
@@ -109,9 +110,16 @@ namespace Telegram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            return content is MessageText text
-                && text.LinkPreview != null
-                && text.LinkPreview.HasThumbnail();
+            if (content is MessageText text)
+            {
+                return text.LinkPreview != null && text.LinkPreview.HasThumbnail();
+            }
+            else if (content is MessageSponsored sponsored)
+            {
+                return sponsored.Sponsor.Photo != null;
+            }
+
+            return false;
         }
 
         private Thumbnail GetContent(MessageViewModel message)
@@ -120,6 +128,10 @@ namespace Telegram.Controls.Messages.Content
             if (content is MessageText text)
             {
                 return text.LinkPreview?.GetThumbnail();
+            }
+            else if (content is MessageSponsored sponsored)
+            {
+                return sponsored.Sponsor.Photo?.GetThumbnail();
             }
 
             return null;

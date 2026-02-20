@@ -8,7 +8,7 @@ LONG WINAPI Filter(EXCEPTION_POINTERS* exceptionInfo)
 {
     if (NativeUtils::Callback)
     {
-        NativeUtils::Callback(NativeUtils::GetBackTrace(exceptionInfo->ExceptionRecord->ExceptionCode));
+        NativeUtils::Callback(NativeUtils::GetBackTrace(winrt::hstring(), GetExceptionMessage(exceptionInfo->ExceptionRecord->ExceptionCode)));
     }
 
     // This code would allow the app to continue running,

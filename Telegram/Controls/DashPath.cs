@@ -1,18 +1,19 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using Telegram.Navigation;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
@@ -29,11 +30,11 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (Stripe1 != null && Stripe2 != null)
+            if (Stripe1 != default && Stripe2 != default)
             {
                 UpdateDoubleStripe(finalSize);
             }
-            else if (Stripe1 != null && Stripe2 == null)
+            else if (Stripe1 != default && Stripe2 == default)
             {
                 UpdateSingleStripe(finalSize);
             }
@@ -53,7 +54,7 @@ namespace Telegram.Controls
             var y = 0f;
 
             var count = (int)Math.Ceiling(finalSize.Height / (h + w));
-            if (count == _count || Stripe1 is not SolidColorBrush brush1 || Stripe2 is not SolidColorBrush brush2)
+            if (count == _count)
             {
                 return;
             }
@@ -79,12 +80,12 @@ namespace Telegram.Controls
 
             var shape1 = BootStrapper.Current.Compositor.CreateSpriteShape(geometry);
             shape1.StrokeThickness = 0;
-            shape1.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush1.Color);
+            shape1.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(Stripe1);
             shape1.Offset = new Vector2(0, h * 4);
 
             var shape2 = BootStrapper.Current.Compositor.CreateSpriteShape(geometry);
             shape2.StrokeThickness = 0;
-            shape2.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush2.Color);
+            shape2.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(Stripe2);
             shape2.Offset = new Vector2(0, h * 2);
 
             _visual.Shapes.Clear();
@@ -102,7 +103,7 @@ namespace Telegram.Controls
             var y = 3.5f;
 
             var count = (int)Math.Ceiling(finalSize.Height / (h + w));
-            if (count == _count || Stripe1 is not SolidColorBrush brush)
+            if (count == _count)
             {
                 return;
             }
@@ -127,7 +128,7 @@ namespace Telegram.Controls
             var geometry = BootStrapper.Current.Compositor.CreatePathGeometry(new CompositionPath(result));
             var shape = BootStrapper.Current.Compositor.CreateSpriteShape(geometry);
             shape.StrokeThickness = 0;
-            shape.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush.Color);
+            shape.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(Stripe1);
 
             _visual.Shapes.Clear();
             _visual.Shapes.Add(shape);
@@ -138,29 +139,25 @@ namespace Telegram.Controls
 
         #region Stripe1
 
-        public Brush Stripe1
+        private Color _stripe1;
+        public Color Stripe1
         {
-            get { return (Brush)GetValue(Stripe1Property); }
-            set { SetValue(Stripe1Property, value); }
-        }
-
-        public static readonly DependencyProperty Stripe1Property =
-            DependencyProperty.Register("Stripe1", typeof(Brush), typeof(DashPath), new PropertyMetadata(null, OnStripe1Changed));
-
-        private static void OnStripe1Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((DashPath)d).OnStripe1Changed((Brush)e.NewValue);
-        }
-
-        private void OnStripe1Changed(Brush newValue)
-        {
-            if (_visual.Shapes.Count > 0 && _visual.Shapes[0] is CompositionSpriteShape shape && newValue is SolidColorBrush brush)
+            get => _stripe1;
+            set
             {
-                shape.FillBrush = shape.Compositor.CreateColorBrush(brush.Color);
-            }
-            else
-            {
-                InvalidateArrange();
+                if (_stripe1 != value)
+                {
+                    _stripe1 = value;
+
+                    if (_visual.Shapes.Count > 0 && _visual.Shapes[0] is CompositionSpriteShape shape)
+                    {
+                        shape.FillBrush = shape.Compositor.CreateColorBrush(value);
+                    }
+                    else
+                    {
+                        InvalidateArrange();
+                    }
+                }
             }
         }
 
@@ -168,29 +165,25 @@ namespace Telegram.Controls
 
         #region Stripe2
 
-        public Brush Stripe2
+        private Color _stripe2;
+        public Color Stripe2
         {
-            get { return (Brush)GetValue(Stripe2Property); }
-            set { SetValue(Stripe2Property, value); }
-        }
-
-        public static readonly DependencyProperty Stripe2Property =
-            DependencyProperty.Register("Stripe2", typeof(Brush), typeof(DashPath), new PropertyMetadata(null, OnStripe2Changed));
-
-        private static void OnStripe2Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((DashPath)d).OnStripe2Changed((Brush)e.NewValue);
-        }
-
-        private void OnStripe2Changed(Brush newValue)
-        {
-            if (_visual.Shapes.Count > 1 && _visual.Shapes[1] is CompositionSpriteShape shape && newValue is SolidColorBrush brush)
+            get => _stripe2;
+            set
             {
-                shape.FillBrush = shape.Compositor.CreateColorBrush(brush.Color);
-            }
-            else
-            {
-                InvalidateArrange();
+                if (_stripe2 != value)
+                {
+                    _stripe2 = value;
+
+                    if (_visual.Shapes.Count > 1 && _visual.Shapes[1] is CompositionSpriteShape shape)
+                    {
+                        shape.FillBrush = shape.Compositor.CreateColorBrush(value);
+                    }
+                    else
+                    {
+                        InvalidateArrange();
+                    }
+                }
             }
         }
 

@@ -1,13 +1,15 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Telegram.Common;
+using Telegram.Services;
 using Telegram.Views;
 using Telegram.Views.Authorization;
 using Windows.UI.Xaml.Controls;
@@ -93,6 +95,12 @@ namespace Telegram.Navigation.Services
             }
         }
 
+        public event EventHandler<ShortcutInvokedEventArgs> ShortcutInvoked;
+        public void RaiseShortcutInvoked(ShortcutInvokedEventArgs args)
+        {
+            ShortcutInvoked?.Invoke(this, args);
+        }
+
         #region state
 
         private string GetFrameStateKey() => string.Format("{0}-PageState", FrameId);
@@ -162,9 +170,10 @@ namespace Telegram.Navigation.Services
         {
             Logger.Info($"CanGoBack {CanGoBack}");
 
-            NavigationModeHint = NavigationMode.Back;
             if (CanGoBack)
             {
+                NavigationModeHint = NavigationMode.Back;
+
                 if (infoOverride == null)
                 {
                     Frame.GoBack();
@@ -252,9 +261,9 @@ namespace Telegram.Navigation.Services
         {
             Logger.Info($"CanGoForward {CanGoForward}");
 
-            NavigationModeHint = NavigationMode.Forward;
             if (CanGoForward)
             {
+                NavigationModeHint = NavigationMode.Forward;
                 Frame.GoForward();
             }
         }
@@ -306,10 +315,16 @@ namespace Telegram.Navigation.Services
             NavigationModeHint = NavigationMode.New;
             Navigated?.Invoke(Frame, args);
 
-            if (Frame.BackStack.Count > 0 && _authorizationTypes.Contains(Frame.BackStack[Frame.BackStack.Count - 1].SourcePageType))
+            static void RemoveEntry(IList<PageStackEntry> stack)
             {
-                Frame.BackStack.RemoveAt(Frame.BackStack.Count - 1);
+                if (stack.Count > 0 && _authorizationTypes.Contains(stack[^1].SourcePageType))
+                {
+                    stack.RemoveAt(stack.Count - 1);
+                }
             }
+
+            RemoveEntry(Frame.BackStack);
+            RemoveEntry(Frame.ForwardStack);
         }
 
         public event EventHandler<NavigatingEventArgs> Navigating;
@@ -336,5 +351,18 @@ namespace Telegram.Navigation.Services
 
             e.Cancel = args.Cancel;
         }
+    }
+
+    public class ShortcutInvokedEventArgs : HandledEventArgs
+    {
+        public ShortcutInvokedEventArgs(InvokedShortcut shortcut, VirtualKeyModifiers modifiers)
+        {
+            Shortcut = shortcut;
+            Modifiers = modifiers;
+        }
+
+        public InvokedShortcut Shortcut { get; }
+
+        public VirtualKeyModifiers Modifiers { get; }
     }
 }

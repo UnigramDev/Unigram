@@ -39,10 +39,9 @@
                     </ListView.Header>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Background="{ThemeResource SettingsItemBackground}"
-                                  BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+                            <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="56" />
+                                    <ColumnDefinition Width="58" />
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
@@ -53,11 +52,16 @@
                                 <TextBlock FontSize="20"
                                            HorizontalAlignment="Left"
                                            VerticalAlignment="Center"
-                                           Margin="20,0,0,0"
+                                           Margin="18,0,0,0"
                                            AutomationProperties.AccessibilityView="Raw"
-                                           FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           Grid.RowSpan="2" />
 
                                 <RichTextBlock Style="{StaticResource BodyRichTextBlockStyle}"
+                                               TextWrapping="Wrap"
+                                               TextTrimming="CharacterEllipsis"
+                                               IsTextSelectionEnabled="False"
+                                               MaxLines="1"
                                                Margin="0,11,12,12"
                                                Grid.Column="1">
                                     <Paragraph />
@@ -67,14 +71,14 @@
                                            Grid.Column="1"
                                            Grid.Row="1" />
 
-                                <controls:BadgeButton Content="{CustomResource Add}"
-                                                      Style="{StaticResource PillButtonStyle}"
-                                                      Click="AddRecommended_Click"
-                                                      HorizontalAlignment="Right"
-                                                      VerticalAlignment="Center"
-                                                      Margin="0,0,12,0"
-                                                      Grid.Column="2"
-                                                      Grid.RowSpan="2" />
+                                <Button Content="{CustomResource Add}"
+                                        Style="{StaticResource AccentButtonStyle}"
+                                        Click="AddRecommended_Click"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,12,0"
+                                        Grid.Column="2"
+                                        Grid.RowSpan="2" />
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -106,10 +110,9 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Background="{ThemeResource SettingsItemBackground}"
-                          BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+                    <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="56" />
+                            <ColumnDefinition Width="58" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
@@ -118,7 +121,7 @@
                         <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Center"
-                                   Margin="20,0,0,0"
+                                   Margin="18,0,0,0"
                                    AutomationProperties.AccessibilityView="Raw"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />
 
@@ -128,6 +131,9 @@
                                        Padding="0,11,12,12"
                                        VerticalAlignment="Center"
                                        IsTextSelectionEnabled="False"
+                                       TextWrapping="Wrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       MaxLines="1"
                                        Grid.Column="1">
                             <Paragraph />
                         </RichTextBlock>
@@ -155,13 +161,13 @@
                         <Ellipse Fill="Red"
                                  Width="12"
                                  Height="12"
-                                 Margin="0,0,8,0"
+                                 Margin="0,0,18,0"
                                  Grid.Column="4" />
 
                         <TextBlock Text="&#xE9F6;"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Center"
-                                   Margin="-6,0,6,0"
+                                   Margin="-4,0,16,0"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    FontSize="16"
                                    Grid.Column="4" />
@@ -172,11 +178,10 @@
                 <controls:SettingsPanel IsFooter="True">
                     <controls:HeaderedControl Visibility="{x:Bind ViewModel.CanCreateNew, Mode=OneWay}"
                                               Margin="0,-14,0,0">
-                        <controls:BadgeButton Content="{CustomResource CreateNewFilter}"
-                                              Click="{x:Bind ViewModel.Create}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              IsChevronVisible="True"
-                                              Glyph="&#xE98A;" />
+                        <controls:SettingsButton Content="{CustomResource CreateNewFilter}"
+                                                 Click="{x:Bind ViewModel.Create}"
+                                                 IsChevronVisible="True"
+                                                 Glyph="&#xE98A;" />
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl Footer="{x:Bind ConvertShowTagsFooter(ViewModel.IsPremium), Mode=OneWay}">
@@ -186,21 +191,25 @@
                                                    IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
                                                    IsChecked="{x:Bind ViewModel.ShowTags, Mode=OneWay}"
                                                    Content="{CustomResource FolderShowTags}"
-                                                   Style="{StaticResource SettingsCheckBoxStyle}" />
+                                                   Style="{StaticResource SettingsCheckBoxStyle}"
+                                                   CornerRadius="4" />
                             <TextBlock x:Name="ShowTagsLock"
                                        x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                        Text="&#xEA25;"
                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        FontSize="20"
-                                       Padding="20,12,0,0"
+                                       Padding="20,14,0,0"
                                        IsHitTestVisible="False" />
                         </Grid>
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl Header="{CustomResource TabsView}"
                                               Footer="{CustomResource TabsViewInfo}"
-                                              Background="{ThemeResource SettingsItemBackground}">
+                                              Background="{ThemeResource SettingsItemBackground}"
+                                              BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                              BorderThickness="1"
+                                              CornerRadius="4">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                       HorizontalScrollMode="Auto"
                                       VerticalScrollBarVisibility="Disabled"

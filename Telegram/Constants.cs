@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Rg.DiffUtils;
 using System;
 using Telegram.Td.Api;
@@ -18,10 +19,13 @@ namespace Telegram
 
         public static readonly string AppChannel;
 
+        public static readonly string AppReportsId;
+
         public static readonly string AppCenterId;
-        public static readonly string BingMapsApiKey;
 
         public static readonly ushort BuildNumber;
+
+        public static readonly string TextRecognizerModelKey;
 
         public static readonly Size SecretSize = new(320, 200);
 
@@ -29,8 +33,8 @@ namespace Telegram
         public const int HoldingThrottle = 500;
         public const int AnimatedThrottle = 200;
 
-        public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov", ".m4v" };
-        public static readonly string[] PhotoTypes = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+        public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".heic", ".heif", ".mp4", ".mov", ".m4v" };
+        public static readonly string[] PhotoTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".heic", ".heif" };
         public static readonly string[] VideoTypes = new[] { ".mp4", ".mov", ".m4v" };
 
         public const int ImageStandardQuality = 1280;
@@ -48,8 +52,18 @@ namespace Telegram
 
         public const string DefaultDeviceId = "";
 
+        public const string WebAppHostName = "windows";
+
+        public const string StakeDice = "\U0001F3B2";
+        public const double ToncoinMin = 1000000000.0;
+
         public const int FontSize = 14;
         public const int CaptionFontSize = 12;
+
+        public const float BubbleElevation = 8.0f;
+
+        public const int HistoryLimit = 24;
+        public const int HistoryOffset = -12;
 
         public static readonly string[] TelegramHosts = new string[]
         {
@@ -67,7 +81,7 @@ namespace Telegram
             DetectMoves = true
         };
 
-        public static MessageSendOptions PreviewOnly = new(0, false, false, false, false, 0, false, null, 0, 0, true);
+        public static MessageSendOptions PreviewOnly = new(null, false, false, 0, false, null, 0, 0, true);
 
 #if DEBUG
         // We use properties in debug so that the duration is re-evaluated

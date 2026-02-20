@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Linq;
 using Telegram.Common;
@@ -13,17 +14,18 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
+using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Popups
 {
     public sealed partial class ChooseNameColorView : UserControl
     {
         private IClientService _clientService;
+        private MessageSender _sender;
 
         public ChooseNameColorView()
         {
@@ -37,6 +39,7 @@ namespace Telegram.Views.Popups
             //Title = Strings.UserColorTitle;
 
             _clientService = clientService;
+            _sender = sender;
 
             var colors = clientService.GetAvailableAccentColors();
             List.ItemsSource = colors;
@@ -45,17 +48,19 @@ namespace Telegram.Views.Popups
 
             var customEmojiId = 0L;
             var accentColorId = 0;
+            var upgradedGift = default(UpgradedGiftColors);
 
             if (clientService.TryGetUser(sender, out User user))
             {
                 customEmojiId = user.BackgroundCustomEmojiId;
                 accentColorId = user.AccentColorId;
+                upgradedGift = user.UpgradedGiftColors;
 
                 var linkPreview = new LinkPreview
                 {
                     SiteName = Strings.AppName,
                     Title = Strings.UserColorPreviewLinkTitle,
-                    Description = new FormattedText(Strings.UserColorPreviewLinkDescription, Array.Empty<TextEntity>())
+                    Description = Strings.UserColorPreviewLinkDescription.AsFormattedText()
                 };
 
                 Message1.Mockup(clientService, Strings.UserColorPreview, sender, Strings.UserColorPreviewReply, linkPreview, false, DateTime.Now);
@@ -70,12 +75,13 @@ namespace Telegram.Views.Popups
             {
                 customEmojiId = chat.BackgroundCustomEmojiId;
                 accentColorId = chat.AccentColorId;
+                upgradedGift = chat.UpgradedGiftColors;
 
                 var linkPreview = new LinkPreview
                 {
                     SiteName = Strings.AppName,
                     Title = Strings.ChannelColorPreviewLinkTitle,
-                    Description = new FormattedText(Strings.ChannelColorPreviewLinkDescription, Array.Empty<TextEntity>())
+                    Description = Strings.ChannelColorPreviewLinkDescription.AsFormattedText()
                 };
 
                 Message1.Mockup(clientService, Strings.ChannelColorPreview, sender, Strings.ChannelColorPreviewReply, linkPreview, false, DateTime.Now);
@@ -84,13 +90,12 @@ namespace Telegram.Views.Popups
                 NameColor.Footer = Strings.ChannelReplyInfo;
                 PrimaryButtonText = Strings.ChannelColorApply;
 
-                BackgroundControl.UpdateChat(clientService, chat.Background, clientService.GetChatTheme(chat.ThemeName));
+                BackgroundControl.UpdateChat(clientService, chat.Background, chat.Theme);
             }
 
-            var accent = colors.FirstOrDefault(x => x.Id == accentColorId);
-            accent ??= colors.FirstOrDefault();
+            var accent = upgradedGift == null ? colors.FirstOrDefault(x => x.Id == accentColorId) ?? colors.FirstOrDefault() : null;
 
-            if (customEmojiId != 0)
+            if (customEmojiId != 0 && upgradedGift == null)
             {
                 Badge.Badge = null;
                 Badge.Glyph = string.Empty;
@@ -111,6 +116,8 @@ namespace Telegram.Views.Popups
             SelectedAccentColor = accent;
 
             List.SelectedItem = accent;
+
+            Message1.UpdateMockup(_clientService, customEmojiId, accent?.Id ?? 0, upgradedGift);
         }
 
         #region Recycle
@@ -159,8 +166,9 @@ namespace Telegram.Views.Popups
             if (List.SelectedItem is NameColor accent)
             {
                 SelectedAccentColor = accent;
+                SelectedGiftColors = null;
 
-                Message1.UpdateMockup(_clientService, SelectedCustomEmojiId, accent.Id);
+                Message1.UpdateMockup(_clientService, SelectedCustomEmojiId, accent.Id, null);
                 Animated.ReplacementColor = new SolidColorBrush(accent.LightThemeColors[0]);
             }
         }
@@ -178,9 +186,12 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            SelectedCustomEmojiId = customEmoji.CustomEmojiId;
+            // TODO: restore SelectedAccentColor
 
-            Message1.UpdateMockup(_clientService, SelectedCustomEmojiId, SelectedAccentColor.Id);
+            SelectedCustomEmojiId = customEmoji.CustomEmojiId;
+            SelectedGiftColors = null;
+
+            Message1.UpdateMockup(_clientService, SelectedCustomEmojiId, SelectedAccentColor?.Id ?? 0, null);
 
             if (customEmoji.CustomEmojiId != 0)
             {
@@ -258,25 +269,61 @@ namespace Telegram.Views.Popups
 
         #endregion
 
+        #region SelectedGiftColors
+
+        public UpgradedGift SelectedGiftColors
+        {
+            get { return (UpgradedGift)GetValue(SelectedGiftColorsProperty); }
+            set { SetValue(SelectedGiftColorsProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectedGiftColorsProperty =
+            DependencyProperty.Register("SelectedGiftColors", typeof(UpgradedGift), typeof(ChooseNameColorView), new PropertyMetadata(null, OnSelectedGiftColorsChanged));
+
+        private static void OnSelectedGiftColorsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ChooseNameColorView)d).OnSelectedGiftColorsChanged(e.NewValue as UpgradedGift);
+        }
+
+        private void OnSelectedGiftColorsChanged(UpgradedGift upgradedGift)
+        {
+            if (upgradedGift == null)
+            {
+                return;
+            }
+
+            SelectedAccentColor = null;
+            SelectedCustomEmojiId = 0;
+            List.SelectedItem = null;
+
+            Message1.UpdateMockup(_clientService, 0, 0, upgradedGift.Colors);
+            Animated.ReplacementColor = new SolidColorBrush(upgradedGift.Colors.LightThemeAccentColor.ToColor());
+
+            Animated.Source = null;
+            Badge.Badge = Strings.UserReplyIconOff;
+        }
+
+        #endregion
+
         #region ChatTheme
 
-        public ChatTheme ChatTheme
+        public ChatThemeViewModel ChatTheme
         {
-            get { return (ChatTheme)GetValue(ChatThemeProperty); }
+            get { return (ChatThemeViewModel)GetValue(ChatThemeProperty); }
             set { SetValue(ChatThemeProperty, value); }
         }
 
         public static readonly DependencyProperty ChatThemeProperty =
-            DependencyProperty.Register("ChatTheme", typeof(ChatTheme), typeof(ChooseNameColorView), new PropertyMetadata(null, OnChatThemeChanged));
+            DependencyProperty.Register("ChatTheme", typeof(ChatThemeViewModel), typeof(ChooseNameColorView), new PropertyMetadata(null, OnChatThemeChanged));
 
         private static void OnChatThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ChooseNameColorView)d).OnChatThemeChanged(e.NewValue as ChatTheme, e.OldValue as ChatTheme);
+            ((ChooseNameColorView)d).OnChatThemeChanged(e.NewValue as ChatThemeViewModel, e.OldValue as ChatThemeViewModel);
         }
 
-        private void OnChatThemeChanged(ChatTheme newValue, ChatTheme oldValue)
+        private void OnChatThemeChanged(ChatThemeViewModel newValue, ChatThemeViewModel oldValue)
         {
-            BackgroundControl.UpdateChat(_clientService, null, newValue);
+            BackgroundControl.UpdateChat(_clientService, null, newValue.Type);
         }
 
         #endregion

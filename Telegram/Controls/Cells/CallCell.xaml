@@ -31,8 +31,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <controls:ProfilePicture x:Name="Photo"
-                                     Width="36"
-                                     Height="36"
+                                     Size="36"
                                      VerticalAlignment="Top"
                                      Grid.RowSpan="2" />
 

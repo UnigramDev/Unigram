@@ -25,8 +25,7 @@
                 </Grid.RowDefinitions>
                 <Grid HorizontalAlignment="Center">
                     <controls:ProfilePicture x:Name="Photo1"
-                                             Width="64"
-                                             Height="64"
+                                             Size="64"
                                              Margin="0,0,0,8" />
                 </Grid>
 
@@ -62,8 +61,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <controls:ProfilePicture x:Name="Photo"
-                                             Width="28"
-                                             Height="28" />
+                                             Size="28" />
 
                     <TextBlock x:Name="TitleText"
                                Style="{StaticResource BodyTextBlockStyle}"
@@ -105,24 +103,14 @@
             </Grid>
         </StackPanel>
 
-        <Grid x:Name="PurchasePanel"
-              VerticalAlignment="Bottom"
-              HorizontalAlignment="Stretch"
-              Margin="0,8,0,0"
-              Grid.Row="1">
-            <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Click="Purchase_Click"
-                                  Content="{CustomResource CopyLink}"
-                                  Style="{StaticResource AccentButtonStyle}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  Padding="12,3,12,5"
-                                  FontWeight="SemiBold"
-                                  CornerRadius="4"
-                                  BorderThickness="1"
-                                  Margin="0"
-                                  Height="32" />
-        </Grid>
+        <Button x:Name="PurchaseCommand"
+                Click="Purchase_Click"
+                Content="{CustomResource CopyLink}"
+                Style="{StaticResource AccentButtonStyle}"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Stretch"
+                Margin="0,8,0,0"
+                Grid.Row="1" />
 
         <TextBlock x:Name="Usage"
                    Style="{StaticResource InfoCaptionTextBlockStyle}"

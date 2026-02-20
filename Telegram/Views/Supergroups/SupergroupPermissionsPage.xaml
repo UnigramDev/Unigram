@@ -34,8 +34,7 @@
                                 Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                    <cells:ProfileCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Header>
@@ -47,16 +46,19 @@
 
                         <controls:SettingsExpander>
                             <controls:SettingsExpander.Header>
-                                <CheckBox IsChecked="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}"
-                                          Style="{StaticResource SettingsCheckBoxStyle}"
-                                          Background="Transparent"
-                                          CornerRadius="0">
-                                    <TextBlock>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="44" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox IsChecked="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}"
+                                              Margin="8,-11,0,-12" />
+                                    <TextBlock Grid.Column="1">
                                         <Run Text="{CustomResource UserRestrictionsSendMedia}" />
                                         <Run Text="{x:Bind ConvertCanSendCount(ViewModel.CanSendCount), Mode=OneWay}"
                                              FontWeight="SemiBold" />
                                     </TextBlock>
-                                </CheckBox>
+                                </Grid>
 
                             </controls:SettingsExpander.Header>
                             <StackPanel>
@@ -235,10 +237,10 @@
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl>
-                        <controls:BadgeButton x:Name="Blacklist"
-                                              Content="{CustomResource ChannelBlacklist}"
-                                              Click="{x:Bind ViewModel.Banned}"
-                                              IsChevronVisible="True" />
+                        <controls:SettingsButton x:Name="Blacklist"
+                                                 Content="{CustomResource ChannelBlacklist}"
+                                                 Click="{x:Bind ViewModel.Banned}"
+                                                 IsChevronVisible="True" />
                     </controls:HeaderedControl>
 
                     <Grid HorizontalAlignment="Left"
@@ -265,10 +267,9 @@
                                               Header="{CustomResource NotificationsExceptions}"
                                               Margin="0,-16,0,-30"
                                               Visibility="Collapsed">
-                        <controls:BadgeButton Content="{CustomResource ChannelAddException}"
-                                              Click="{x:Bind ViewModel.AddRestricted}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xF166;" />
+                        <controls:SettingsButton Content="{CustomResource ChannelAddException}"
+                                                 Click="{x:Bind ViewModel.AddRestricted}"
+                                                 Glyph="&#xF166;" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Header>

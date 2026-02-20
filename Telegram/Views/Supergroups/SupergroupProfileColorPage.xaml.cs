@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Threading.Tasks;
 using Telegram.Controls;
@@ -131,7 +132,7 @@ namespace Telegram.Views.Supergroups
         {
             if (List.SelectedItem is ChatThemeViewModel chatTheme)
             {
-                BackgroundControl?.UpdateChat(ViewModel.ClientService, null, chatTheme);
+                BackgroundControl?.UpdateChat(ViewModel.ClientService, null, chatTheme.Type);
             }
         }
 
@@ -181,13 +182,19 @@ namespace Telegram.Views.Supergroups
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.InRecycleQueue)
+            if (args.ItemContainer.ContentTemplateRoot is not ChatThemeCell content)
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is ChatThemeCell content && args.Item is ChatThemeViewModel theme)
+
+            if (args.InRecycleQueue)
             {
-                content.Update(theme);
+                content.Recycle();
+                return;
+            }
+            else if (args.Item is ChatThemeViewModel theme)
+            {
+                content.Update(args.ItemContainer, theme);
                 args.Handled = true;
             }
         }

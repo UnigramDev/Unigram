@@ -9,9 +9,6 @@
 #include <unknwn.h>
 #include <winrt/base.h>
 
-#include <winrt/Microsoft.Graphics.Canvas.UI.Composition.h>
-#include <winrt/Microsoft.Graphics.Canvas.UI.Xaml.h>
-#include <winrt/Microsoft.Graphics.Canvas.h>
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include <winrt/Windows.Data.Json.h>
 #include <winrt/Windows.Foundation.Collections.h>

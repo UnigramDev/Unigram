@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Services;
 using Windows.System;
@@ -223,7 +224,7 @@ namespace Telegram.Common
 
         public static bool AreSmoothTransitionsEnabled
         {
-            get => SettingsService.Current.AreSmoothTransitionsEnabled && !m_isPowerSavingMode;
+            get => SettingsService.Current.AreSmoothTransitionsEnabled && m_uiSettings.AnimationsEnabled && !m_isPowerSavingMode;
             set
             {
                 SettingsService.Current.AreSmoothTransitionsEnabled = value;

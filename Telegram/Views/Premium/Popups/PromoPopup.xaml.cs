@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Text.RegularExpressions;
 using Telegram.Common;
@@ -35,6 +36,36 @@ namespace Telegram.Views.Premium.Popups
 
         private readonly StickerSet _stickerSet;
         private readonly string _giftCode;
+
+        public PromoPopup(IClientService clientService, AvailableGift gift)
+        {
+            InitializeComponent();
+
+            Animated.Visibility = Visibility.Collapsed;
+            Identity.Visibility = Visibility.Visible;
+
+            Identity.Source = DelayedFileSource.FromSticker(clientService, gift.Gift.Sticker);
+
+            var paragraph = new Paragraph();
+            paragraph.Inlines.Add(Strings.Gift2PremiumTitle);
+
+            ChatTitle.Blocks.Add(paragraph);
+
+            if (gift.Gift.UserLimits != null)
+            {
+                TextBlockHelper.SetMarkdown(ChatSubtitle, Locale.Declension(Strings.R.Gift2PremiumSubtitleMany, gift.Gift.UserLimits.TotalCount));
+            }
+            else
+            {
+                TextBlockHelper.SetMarkdown(ChatSubtitle, Strings.Gift2PremiumSubtitle);
+            }
+
+            ChatTitle.Visibility = Visibility.Visible;
+            ChatSubtitle.Visibility = Visibility.Visible;
+
+            PremiumTitle.Visibility = Visibility.Collapsed;
+            PremiumSubtitle.Visibility = Visibility.Collapsed;
+        }
 
         public PromoPopup(IClientService clientService, Chat chat, StickerSet stickerSet)
         {
@@ -77,7 +108,7 @@ namespace Telegram.Views.Premium.Popups
                 var hyperlink = new Hyperlink();
                 hyperlink.Click += StickerSet_Click;
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
-                hyperlink.Inlines.Add($" {stickerSet.Name}");
+                hyperlink.Inlines.Add($" {stickerSet.Title}");
 
                 var text = string.Format(Strings.TelegramPremiumUserStatusDialogTitle, title, "{0}");
                 var index = text.IndexOf("{0}");
@@ -143,7 +174,7 @@ namespace Telegram.Views.Premium.Popups
 
             var gifter = clientService.GetUser(giftedPremium.GifterUserId);
             var receiver = clientService.GetUser(giftedPremium.ReceiverUserId);
-            var monthCount = Locale.Declension(Strings.R.Gift2Months, giftedPremium.MonthCount);
+            var monthCount = Formatter.PremiumDuration(giftedPremium.DayCount);
 
             if (giftedPremium.ReceiverUserId == 0)
             {
@@ -221,7 +252,7 @@ namespace Telegram.Views.Premium.Popups
 
             var gifter = clientService.GetMessageSender(giftCode.CreatorId ?? senderId);
             //var receiver = clientService.GetUser(giftedPremium.ReceiverUserId);
-            var monthCount = Locale.Declension(Strings.R.Gift2Months, giftCode.MonthCount);
+            var monthCount = Formatter.PremiumDuration(giftCode.DayCount);
 
             if (gifter == null)
             {
@@ -306,7 +337,7 @@ namespace Telegram.Views.Premium.Popups
             }
         }
 
-        private readonly Color[] _gradient = new Color[]
+        public static readonly Color[] Gradient = new Color[]
         {
             Color.FromArgb(0xFF, 0xef, 0x69, 0x22),
             Color.FromArgb(0xFF, 0xe9, 0x5a, 0x2c),
@@ -459,6 +490,12 @@ namespace Telegram.Views.Premium.Popups
                     subtitleValue = Strings.PremiumPreviewEffectsDescription;
                     badge = true;
                     break;
+                case PremiumFeatureChecklists:
+                    iconValue = Icons.CheckmarkSquareFilled;
+                    titleValue = Strings.PremiumPreviewTodo;
+                    subtitleValue = Strings.PremiumPreviewTodoDescription;
+                    badge = true;
+                    break;
             }
 
             var title = content.FindName("Title") as TextBlock;
@@ -467,16 +504,14 @@ namespace Telegram.Views.Premium.Popups
             var iconPanel = content.FindName("IconPanel") as Border;
             var badgeControl = content.FindName("Badge") as BadgeControl;
 
-            var index = Math.Min(args.ItemIndex, _gradient.Length - 1);
-
             title.Text = titleValue;
             subtitle.Text = subtitleValue;
             icon.Text = iconValue;
-            iconPanel.Background = new SolidColorBrush(_gradient[index]);
+            iconPanel.Background = new SolidColorBrush(ColorsHelper.CalculateColor(Gradient, (float)args.ItemIndex / (sender.Items.Count - 1)));
 
             if (badge)
             {
-                badgeControl.Background = new SolidColorBrush(_gradient[index]);
+                badgeControl.Background = iconPanel.Background;
                 badgeControl.Visibility = Windows.UI.Xaml.Visibility.Visible;
             }
             else
@@ -497,8 +532,13 @@ namespace Telegram.Views.Premium.Popups
             return premium ? Strings.TelegramPremiumSubscribedSubtitle : Strings.TelegramPremiumSubtitle;
         }
 
-        public string ConvertPurchase(bool premium, PremiumStatePaymentOption option)
+        public string ConvertPurchase(bool canPurchase, bool premium, PremiumStatePaymentOption option)
         {
+            if (!canPurchase)
+            {
+                return string.Empty;
+            }
+
             if (_giftCode != null)
             {
                 return Strings.GiftPremiumActivateForFree;

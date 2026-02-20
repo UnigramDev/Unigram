@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -22,16 +23,14 @@ namespace Telegram.ViewModels.Authorization
 {
     public partial class AuthorizationViewModel : ViewModelBase, IDelegable<ISignInDelegate>, IHandle
     {
-        private readonly ISessionService _sessionService;
         private readonly ILifetimeService _lifetimeService;
         private readonly INotificationsService _notificationsService;
 
         public ISignInDelegate Delegate { get; set; }
 
-        public AuthorizationViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ISessionService sessionService, ILifetimeService lifecycleService, INotificationsService notificationsService)
+        public AuthorizationViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILifetimeService lifecycleService, INotificationsService notificationsService)
             : base(clientService, settingsService, aggregator)
         {
-            _sessionService = sessionService;
             _lifetimeService = lifecycleService;
             _notificationsService = notificationsService;
 
@@ -59,6 +58,7 @@ namespace Telegram.ViewModels.Authorization
             {
                 LocaleService.Current.Changed += OnLocaleChanged;
                 Handle(new UpdateOption(OptionsService.R.SuggestedLanguagePackId, new OptionValueString(ClientService.Options.SuggestedLanguagePackId)));
+                Handle(new UpdateOption(OptionsService.R.CanUseLoginPasskey, new OptionValueBoolean(ClientService.Options.CanUseLoginPasskey)));
 
                 IsLoading = false;
 
@@ -68,8 +68,8 @@ namespace Telegram.ViewModels.Authorization
                 {
                     if (result is JsonValueObject json)
                     {
-                        var camera = json.GetNamedBoolean("qr_login_camera", false);
-                        var code = json.GetNamedString("qr_login_code", "disabled");
+                        var camera = json.GetNamedBoolean("qr_login_camera", true);
+                        var code = json.GetNamedString("qr_login_code", "primary");
 
                         if (camera && Enum.TryParse(code, true, out QrCodeMode mode))
                         {
@@ -87,7 +87,15 @@ namespace Telegram.ViewModels.Authorization
                                     }
                                 }
 
-                                ClientService.Send(new RequestQrCodeAuthentication(userIds));
+                                // If auth state is not WaitPhoneNumber we force a log out to avoid AUTH_TOKEN_ALREADY_ACCEPTED
+                                if (authState is not AuthorizationStateWaitPhoneNumber)
+                                {
+                                    Session.RequestQrCodeAuthentication(userIds);
+                                }
+                                else
+                                {
+                                    ClientService.Send(new RequestQrCodeAuthentication(userIds));
+                                }
                             }
 
                             return;
@@ -145,6 +153,10 @@ namespace Telegram.ViewModels.Authorization
                 {
                     BeginOnUIThread(() => ContinueOnThisLanguageText = null);
                 }
+            }
+            else if (update.Name == OptionsService.R.CanUseLoginPasskey)
+            {
+                BeginOnUIThread(() => RaisePropertyChanged(nameof(CanUseLoginPasskey)));
             }
         }
 
@@ -210,7 +222,7 @@ namespace Telegram.ViewModels.Authorization
         {
             if (ClientService.AuthorizationState is AuthorizationStateWaitPhoneNumber)
             {
-                ClientService.Send(new RequestQrCodeAuthentication());
+                ClientService.Send(new RequestQrCodeAuthentication(null));
             }
         }
 
@@ -254,10 +266,10 @@ namespace Telegram.ViewModels.Authorization
             IsLoading = true;
 
             var function = new SetAuthenticationPhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false, false, false, null, Array.Empty<string>()));
-            Task<BaseObject> request;
+            Task<Object> request;
             if (ClientService.AuthorizationState is AuthorizationStateWaitOtherDeviceConfirmation)
             {
-                request = _sessionService.SetAuthenticationPhoneNumberAsync(function);
+                request = Session.SetAuthenticationPhoneNumberAsync(function);
             }
             else
             {
@@ -311,6 +323,18 @@ namespace Telegram.ViewModels.Authorization
             ShowPopupAsync(new SettingsProxyPopup());
         }
 
+        public async void LoginWithPasskey()
+        {
+            var response = await BridgeApplicationContext.CheckAuthenticationPasskeyAsync(ClientService);
+            if (response is Error { Code: not -2147023673 and not -2146893770 } error)
+            {
+                await ShowPopupAsync(error.Message, Strings.AppName, Strings.OK);
+            }
+        }
+
+        public bool CanUseLoginPasskey => ClientService.Options.CanUseLoginPasskey
+            && BridgeApplicationContext.IsPasskeySupported();
+
         #region Strings
 
         public Resources S { get; } = new();
@@ -326,6 +350,7 @@ namespace Telegram.ViewModels.Authorization
             public string LoginWithQrCodeStep2 => Strings.LoginWithQrCodeStep2;
             public string LoginWithQrCodeStep3 => Strings.LoginWithQrCodeStep3;
             public string LoginWithQrCodeSkip => Strings.LoginWithQrCodeSkip;
+            public string LoginWithPasskey => Strings.LoginWithPasskey;
             public string ProxySettings => Strings.ProxySettings;
 
             private readonly string[] _keys = new[]
@@ -339,6 +364,7 @@ namespace Telegram.ViewModels.Authorization
                 nameof(Strings.LoginWithQrCodeStep2),
                 nameof(Strings.LoginWithQrCodeStep3),
                 nameof(Strings.LoginWithQrCodeSkip),
+                nameof(Strings.LoginWithPasskey),
                 nameof(Strings.ProxySettings)
             };
 

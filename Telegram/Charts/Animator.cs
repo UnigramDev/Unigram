@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,10 @@ namespace Telegram.Charts
 {
     public partial class AnimatorLoopThread
     {
-        public static object DrawLock = new object();
+        public static object DrawLock = new();
 
-        protected readonly List<Animator> _animators = new List<Animator>();
-        protected readonly object _animatorsLock = new object();
+        protected readonly List<Animator> _animators = new();
+        protected readonly object _animatorsLock = new();
 
         private readonly Timer _timer;
         private bool _looping = true;
@@ -73,10 +74,10 @@ namespace Telegram.Charts
 
     public abstract class Animator
     {
-        protected readonly List<AnimatorUpdateListener> _listeners = new List<AnimatorUpdateListener>();
-        protected readonly List<AnimatorUpdateListener> _updateListeners = new List<AnimatorUpdateListener>();
+        protected readonly List<AnimatorUpdateListener> _listeners = new();
+        protected readonly List<AnimatorUpdateListener> _updateListeners = new();
 
-        protected readonly object _listenersLock = new object();
+        protected readonly object _listenersLock = new();
 
         protected readonly Action<Animator, bool> _listener;
 
@@ -124,7 +125,7 @@ namespace Telegram.Charts
 
     public partial class AnimatorSet : Animator
     {
-        private readonly List<Animator> _animators = new List<Animator>();
+        private readonly List<Animator> _animators = new();
 
         public AnimatorSet()
             : base()

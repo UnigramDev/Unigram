@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Threading.Tasks;
 using Telegram.Navigation;
@@ -62,7 +63,14 @@ namespace Telegram.Controls
                 OnBackRequested(new BackRequestedRoutedEventArgs());
             }
 
-            base.OnPointerPressed(e);
+            try
+            {
+                base.OnPointerPressed(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
@@ -105,7 +113,7 @@ namespace Telegram.Controls
                 host.PopupClosed();
             }
 
-            WindowContext.Current.UpdateTitleBar();
+            window.UpdateTitleBar();
         }
 
         public async Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot)
@@ -206,6 +214,16 @@ namespace Telegram.Controls
             Focus(FocusState.Programmatic);
         }
 
+        public void PopupOpened()
+        {
+            UnmaskTitleAndStatusBar(WindowContext.Current);
+        }
+
+        public void PopupClosed()
+        {
+            MaskTitleAndStatusBar(WindowContext.Current);
+        }
+
         private void PopupHost_Opened(object sender, object e)
         {
             MaskTitleAndStatusBar(WindowContext.Current);
@@ -299,8 +317,8 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            Container = (Border)GetTemplateChild("Container");
-            BackgroundElement = (Border)GetTemplateChild("BackgroundElement");
+            Container = GetTemplateChild(nameof(Container)) as Border;
+            BackgroundElement = GetTemplateChild(nameof(BackgroundElement)) as Border;
 
             if (_applicationView != null)
             {

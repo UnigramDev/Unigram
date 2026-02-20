@@ -1,14 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
+using Windows.UI.Composition;
 
 namespace Telegram.Views
 {
@@ -56,7 +58,7 @@ namespace Telegram.Views
 
         public void Activate(INavigationService navigationService)
         {
-            var viewModel = TypeResolver.Current.Resolve<DialogPinnedViewModel, IDialogDelegate>(View, navigationService.SessionId);
+            var viewModel = navigationService.Session.Resolve<DialogPinnedViewModel, IDialogDelegate>(View);
             viewModel.NavigationService = navigationService;
             DataContext = viewModel;
             View.Activate(viewModel);
@@ -70,6 +72,16 @@ namespace Telegram.Views
         public void PopupClosed()
         {
             View.PopupClosed();
+        }
+
+        public void StartBannerAnimation(ScalarKeyFrameAnimation translate)
+        {
+            View.StartBannerAnimation(translate);
+        }
+
+        public void CompleteBannerAnimation()
+        {
+            View.CompleteBannerAnimation();
         }
     }
 }

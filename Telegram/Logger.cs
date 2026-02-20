@@ -1,15 +1,17 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
+using Telegram.Native;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -47,14 +49,19 @@ namespace Telegram
             Log(LogLevel.Error, message, member, filePath, line);
         }
 
-        public static void Error(Exception exception, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Error(object message, Exception exception, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        {
+            Log(LogLevel.Error, message + "\n" + exception, member, filePath, line);
+        }
+
+        public static void Exception(Exception exception, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(LogLevel.Error, Environment.StackTrace, member, filePath, line);
 
-#if !DEBUG
-            var report = WatchDog.BuildReport(exception);
-            //Microsoft.AppCenter.Crashes.Crashes.TrackError(exception, attachments: Microsoft.AppCenter.Crashes.ErrorAttachmentLog.AttachmentWithText(report, "crash.txt"));
-#endif
+            if (Constants.RELEASE)
+            {
+                WatchDog.TrackError(exception);
+            }
         }
 
         public static void Info(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
@@ -74,6 +81,16 @@ namespace Telegram
         [SuppressUnmanagedCodeSecurity]
         [DllImport("kernel32.dll")]
         private unsafe static extern void GetSystemTimeAsFileTime(long* pSystemTimeAsFileTime);
+
+        static Logger()
+        {
+            NativeUtils.SetLogCallback(LogCallback);
+        }
+
+        private static void LogCallback(int level, string message, string member, string filePath, int line)
+        {
+            Log((LogLevel)level, message, member, filePath, line);
+        }
 
         private static unsafe void Log(LogLevel level, object message, string member, string filePath, int line)
         {

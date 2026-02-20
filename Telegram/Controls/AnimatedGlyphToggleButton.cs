@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Numerics;
 using Telegram.Common;
 using Windows.UI.Composition;
@@ -18,8 +19,8 @@ namespace Telegram.Controls
 {
     public partial class AnimatedGlyphToggleButton : ToggleButton
     {
-        private FrameworkElement _label1;
-        private FrameworkElement _label2;
+        private FrameworkElement ContentPresenter1;
+        private FrameworkElement ContentPresenter2;
 
         private Visual _visual1;
         private Visual _visual2;
@@ -49,19 +50,21 @@ namespace Telegram.Controls
                 return;
             }
 
-            _label1 = _label = GetTemplateChild("ContentPresenter1") as FrameworkElement;
-            _label2 = GetTemplateChild("ContentPresenter2") as FrameworkElement;
+            ContentPresenter1 = GetTemplateChild(nameof(ContentPresenter1)) as FrameworkElement;
+            ContentPresenter2 = GetTemplateChild(nameof(ContentPresenter2)) as FrameworkElement;
 
-            if (_label1 != null && _label2 != null)
+            _label = ContentPresenter1;
+
+            if (ContentPresenter1 != null && ContentPresenter2 != null)
             {
-                _visual1 = _visual = ElementComposition.GetElementVisual(_label1);
-                _visual2 = ElementComposition.GetElementVisual(_label2);
+                _visual1 = _visual = ElementComposition.GetElementVisual(ContentPresenter1);
+                _visual2 = ElementComposition.GetElementVisual(ContentPresenter2);
 
-                if (_label2 is TextBlock text2)
+                if (ContentPresenter2 is TextBlock text2)
                 {
                     text2.Text = string.Empty;
                 }
-                else if (_label2 is ContentPresenter presenter2)
+                else if (ContentPresenter2 is ContentPresenter presenter2)
                 {
                     presenter2.Content = new object();
                 }
@@ -70,11 +73,11 @@ namespace Telegram.Controls
                 _visual2.Scale = new Vector3();
                 _visual2.CenterPoint = new Vector3(10);
 
-                if (_label1 is TextBlock text1)
+                if (ContentPresenter1 is TextBlock text1)
                 {
                     text1.Text = (IsChecked == true ? CheckedGlyph : Glyph) ?? string.Empty;
                 }
-                else if (_label1 is ContentPresenter presenter1)
+                else if (ContentPresenter1 is ContentPresenter presenter1)
                 {
                     presenter1.Content = (IsChecked == true ? CheckedContent : Content) ?? new object();
                 }
@@ -114,8 +117,8 @@ namespace Telegram.Controls
             var visualShow = _visual == _visual1 ? _visual2 : _visual1;
             var visualHide = _visual == _visual1 ? _visual1 : _visual2;
 
-            var labelShow = _visual == _visual1 ? _label2 : _label1;
-            var labelHide = _visual == _visual1 ? _label1 : _label2;
+            var labelShow = _visual == _visual1 ? ContentPresenter2 : ContentPresenter1;
+            var labelHide = _visual == _visual1 ? ContentPresenter1 : ContentPresenter2;
 
             if (labelShow is TextBlock textShow && newValue is string glyph)
             {
@@ -128,8 +131,8 @@ namespace Telegram.Controls
 
             await this.UpdateLayoutAsync();
 
-            _visual1.CenterPoint = new Vector3(_label1.ActualSize / 2f, 0);
-            _visual2.CenterPoint = new Vector3(_label2.ActualSize / 2f, 0);
+            _visual1.CenterPoint = new Vector3(ContentPresenter1.ActualSize / 2f, 0);
+            _visual2.CenterPoint = new Vector3(ContentPresenter2.ActualSize / 2f, 0);
 
             var hide1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
             hide1.InsertKeyFrame(0, new Vector3(1));

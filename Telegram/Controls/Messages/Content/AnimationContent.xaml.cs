@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Controls.Media;
@@ -13,7 +14,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -24,6 +25,8 @@ namespace Telegram.Controls.Messages.Content
 
         private long _fileToken;
         private long _thumbnailToken;
+
+        private ThumbnailController _thumbnailController;
 
         public AnimationContent(MessageViewModel message)
         {
@@ -37,7 +40,7 @@ namespace Telegram.Controls.Messages.Content
         private AutomaticDragHelper ButtonDrag;
 
         private AspectView LayoutRoot;
-        private Image Texture;
+        private ImageBrush ThumbnailTexture;
         private FileButton Button;
         private AnimatedImage Player;
         private Border Overlay;
@@ -47,7 +50,7 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
-            Texture = GetTemplateChild(nameof(Texture)) as Image;
+            ThumbnailTexture = LayoutRoot.Background as ImageBrush;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
             Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
@@ -80,7 +83,6 @@ namespace Telegram.Controls.Messages.Content
             }
 
             LayoutRoot.Constraint = isSecret ? Constants.SecretSize : message;
-            Texture.Source = null;
 
             UpdateThumbnail(message, animation, animation.Thumbnail?.File, true, isSecret);
 
@@ -195,47 +197,53 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(MessageViewModel message, Animation animation, File file, bool download, bool isSecret)
         {
-            BitmapImage source = null;
-            Image brush = Texture;
+            _thumbnailController ??= new ThumbnailController(ThumbnailTexture);
 
             if (animation.Thumbnail is { Format: ThumbnailFormatJpeg })
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    source = new BitmapImage();
-                    PlaceholderHelper.GetBlurred(source, file.Local.Path, isSecret ? 15 : 3);
+                    _thumbnailController.Blur(file.Local.Path, isSecret ? 15 : 3, HashCode.Combine(message.ChatId, message.Id));
                 }
-                else if (download)
+                else
                 {
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    if (download)
                     {
-                        if (animation.Minithumbnail != null)
+                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {
-                            source = new BitmapImage();
-                            PlaceholderHelper.GetBlurred(source, animation.Minithumbnail.Data, isSecret ? 15 : 3);
+                            message.ClientService.DownloadFile(file.Id, 1);
                         }
 
-                        message.ClientService.DownloadFile(file.Id, 1);
+                        UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
                     }
 
-                    UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
+                    if (animation.Minithumbnail != null)
+                    {
+                        _thumbnailController.Blur(animation.Minithumbnail.Data, isSecret ? 15 : 3, HashCode.Combine(message.ChatId, message.Id));
+                    }
+                    else
+                    {
+                        _thumbnailController.Recycle();
+                    }
                 }
             }
             else if (animation.Minithumbnail != null)
             {
-                source = new BitmapImage();
-                PlaceholderHelper.GetBlurred(source, animation.Minithumbnail.Data, isSecret ? 15 : 3);
+                _thumbnailController.Blur(animation.Minithumbnail.Data, isSecret ? 15 : 3, HashCode.Combine(message.ChatId, message.Id));
             }
-
-            brush.Source = source;
+            else
+            {
+                _thumbnailController.Recycle();
+            }
         }
 
         public void Recycle()
         {
             _message = null;
+            _thumbnailController?.Recycle();
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
-            UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
+            UpdateManager.Unsubscribe(this, ref _thumbnailToken);
 
             if (_templateApplied)
             {
@@ -256,6 +264,10 @@ namespace Telegram.Controls.Messages.Content
             else if (content is MessageText text && text.LinkPreview != null && !primary)
             {
                 return text.LinkPreview.Type is LinkPreviewTypeAnimation;
+            }
+            else if (content is MessageSponsored { Content: MessageAnimation } && !primary)
+            {
+                return true;
             }
 
             return false;
@@ -285,6 +297,10 @@ namespace Telegram.Controls.Messages.Content
             else if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeAnimation previewAnimation)
             {
                 return previewAnimation.Animation;
+            }
+            else if (content is MessageSponsored { Content: MessageAnimation sponsored })
+            {
+                return sponsored.Animation;
             }
 
             return null;

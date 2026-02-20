@@ -1,0 +1,12 @@
+namespace Telegram.Native
+{
+    [default_interface]
+    runtimeclass FreeformGradientSurface
+    {
+        Windows.Foundation.Collections.IVector<Windows.UI.Color> Colors;
+
+        Windows.UI.Composition.CompositionSurfaceBrush Brush{ get; };
+        void Next();
+        void Stop();
+    }
+}

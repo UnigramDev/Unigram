@@ -7,11 +7,6 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:business="using:Telegram.ViewModels.Business"
                        mc:Ignorable="d"
-                       Title="TITLE"
-                       PrimaryButtonText="Button1"
-                       SecondaryButtonText="Button2"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
                        Padding="0,24,0,0">
 
     <Grid>
@@ -60,7 +55,7 @@
             </ListView.Footer>
         </ListView>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                     ScrollingHost="{x:Bind ScrollingHost}" />
     </Grid>
 </controls:ContentPopup>

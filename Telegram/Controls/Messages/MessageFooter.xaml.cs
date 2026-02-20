@@ -1,18 +1,21 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Converters;
+using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -49,12 +52,9 @@ namespace Telegram.Controls.Messages
         public MessageFooter()
         {
             DefaultStyleKey = typeof(MessageFooter);
-
-            Connected += OnLoaded;
-            Disconnected += OnUnloaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded()
         {
             _strokeBrush?.Register();
 
@@ -64,7 +64,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
             _strokeBrush?.Unregister();
         }
@@ -98,10 +98,7 @@ namespace Telegram.Controls.Messages
 
         private void UpdateLabel()
         {
-            if (Label != null)
-            {
-                Label.Text = _effectGlyph + _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + _dateLabel;
-            }
+            Label?.Text = _effectGlyph + _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + _dateLabel;
         }
 
         public void UpdateMessage(MessageViewModel message)
@@ -283,7 +280,26 @@ namespace Telegram.Controls.Messages
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
-                _dateLabel = Formatter.Time(sendAtDate.SendDate);
+                if (sendAtDate.RepeatPeriod != 0)
+                {
+                    var repeat = sendAtDate.RepeatPeriod switch
+                    {
+                        86400 => Strings.MessageScheduledRepeatDaily,
+                        7 * 86400 => Strings.MessageScheduledRepeatWeekly,
+                        14 * 86400 => Strings.MessageScheduledRepeatBiweekly,
+                        30 * 86400 => Strings.MessageScheduledRepeatMonthly,
+                        91 * 86400 => Locale.Declension(Strings.R.MessageScheduledRepeatMonthlyMany, 3),
+                        182 * 86400 => Locale.Declension(Strings.R.MessageScheduledRepeatMonthlyMany, 6),
+                        365 * 86400 => Strings.MessageScheduledRepeatYearly,
+                        _ => string.Empty
+                    };
+
+                    _dateLabel = string.Format(Strings.formatDateAtTime, repeat, Formatter.Time(sendAtDate.SendDate));
+                }
+                else
+                {
+                    _dateLabel = Formatter.Time(sendAtDate.SendDate);
+                }
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed sendWhenVideoProcessed)
             {
@@ -321,6 +337,7 @@ namespace Telegram.Controls.Messages
             _dateLabel = Formatter.Time(date);
             UpdateLabel();
             UpdateTicks(outgoing, outgoing ? MessageTicksState.Read : MessageTicksState.None);
+            UpdateMessageOutgoing(outgoing);
         }
 
         public void UpdateMessageInteractionInfo(MessageViewModel message)
@@ -434,9 +451,10 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            if (message.IsOutgoing && !message.IsChannelPost && !message.IsSaved)
+            var outgoing = (message.IsOutgoing && !message.IsChannelPost) || (message.IsSaved && message.ForwardInfo?.Source is { IsOutgoing: true });
+            if (outgoing)
             {
-                var maxId = message.Topic?.LastReadOutboxMessageId ?? message.Chat.LastReadOutboxMessageId;
+                var maxId = message.LastReadOutboxMessageId;
                 var messageHash = message.ChatId ^ message.Id;
 
                 if (message.SendingState is MessageSendingStateFailed)
@@ -517,7 +535,7 @@ namespace Telegram.Controls.Messages
 
                 text = string.Format(Strings.formatDateAtTime, date, time);
             }
-            if (message.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed sendWhenVideoProcessed)
+            else if (message.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed sendWhenVideoProcessed)
             {
                 text = Strings.VideoConversionTimeInfo;
             }

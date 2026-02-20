@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Chats;
@@ -15,15 +16,64 @@ using Telegram.ViewModels.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Profile
 {
     public partial class ProfileTabPage : PageEx, INavigablePage
     {
-        public ProfileViewModel ViewModel => DataContext as ProfileViewModel;
+        public MediaTabsViewModelBase ViewModel
+        {
+            get
+            {
+                try
+                {
+                    return DataContext as MediaTabsViewModelBase;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+        public bool IsProfile { get; private set; }
 
         public ProfileTabPage()
         {
+            Connected += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            ScrollingHost.ItemsSource = _itemsSource;
+        }
+
+        private object _itemsSource;
+        public object ItemsSource
+        {
+            get => ScrollingHost.ItemsSource;
+            set
+            {
+                if (IsConnected)
+                {
+                    ScrollingHost.ItemsSource = value;
+                }
+                else
+                {
+                    _itemsSource = value;
+                }
+            }
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            IsProfile = DataContext is ProfileViewModel;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ScrollingHost.ItemsSource = null;
         }
 
         public void OnBackRequested(BackRequestedRoutedEventArgs args)
@@ -77,7 +127,7 @@ namespace Telegram.Views.Profile
             else
             {
                 var properties = await message.ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
-                if (properties == null)
+                if (properties == null || ViewModel == null)
                 {
                     return;
                 }
@@ -95,8 +145,9 @@ namespace Telegram.Views.Profile
                 }
 
                 flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.SelectMessage, message, Strings.Select, Icons.CheckmarkCircle);
+                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.CopyMessagePath, message, Strings.CopyAsPath, Icons.CopyAsPath);
                 flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.SaveMessageMedia, message, Strings.SaveAs, Icons.SaveAs);
-                flyout.CreateFlyoutItem(MessageOpenMedia_Loaded, ViewModel.OpenMessageWith, message, Strings.OpenWith, Icons.OpenIn);
+                flyout.CreateFlyoutItem(MessageOpenMedia_Loaded, ViewModel.OpenMessageWith, message, Strings.OpenWith, Icons.OpenWith);
                 flyout.CreateFlyoutItem(MessageOpenFolder_Loaded, ViewModel.OpenMessageFolder, message, Strings.ShowInFolder, Icons.FolderOpen);
             }
 
@@ -189,17 +240,17 @@ namespace Telegram.Views.Profile
             {
                 if (sender is ListView)
                 {
-                    args.ItemContainer = new TableAccessibleChatListViewItem(ViewModel.ClientService);
+                    args.ItemContainer = new TableAccessibleChatListViewItem(sender);
                 }
                 else
                 {
-                    args.ItemContainer = new ChatGridViewItem(ViewModel.ClientService);
+                    args.ItemContainer = new ChatGridViewItem(sender);
                 }
 
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
 
-                if (args.Item is MessageWithOwner)
+                if (args.Item is MessageWithOwner or null)
                 {
                     args.ItemContainer.ContextRequested += Message_ContextRequested;
                 }
@@ -217,5 +268,14 @@ namespace Telegram.Views.Profile
 
         private ListViewBase _scrollingHost;
         public ListViewBase ScrollingHost => _scrollingHost ??= FindName(nameof(ScrollingHost)) as ListViewBase;
+
+        private FrameworkElement _header;
+        public FrameworkElement Header => _header ??= FindName(nameof(Header)) as FrameworkElement;
+
+        public virtual double HeaderHeight
+        {
+            get => Header.Height;
+            set => Header.Height = value;
+        }
     }
 }

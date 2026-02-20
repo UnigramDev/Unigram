@@ -1,0 +1,9 @@
+namespace Telegram.Native.Media
+{
+    [default_interface]
+    runtimeclass AsyncMediaPlayerBufferingEventArgs 
+    {
+        AsyncMediaPlayerBufferingEventArgs(Single cache);
+        Single Cache;
+    }
+}

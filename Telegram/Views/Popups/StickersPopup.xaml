@@ -12,7 +12,10 @@
                        ContentMaxHeight="500"
                        Padding="0,24,0,0"
                        Closing="OnClosing"
-                       IsDismissButtonVisible="True">
+                       IsDismissButtonVisible="True"
+                       PrimaryButtonText="{x:Bind ConvertIsInstalled(ViewModel.IsInstalled, ViewModel.IsArchived, ViewModel.StickerType), Mode=OneWay}"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       ButtonsLayout="Vertical">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -84,16 +87,16 @@
                                            Style="{StaticResource InfoBodyTextBlockStyle}"
                                            Grid.Row="1" />
 
-                                <controls:BadgeButton Content="{CustomResource Add}"
-                                                      Visibility="{x:Bind IsInstalled, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                                      Style="{StaticResource PillButtonStyle}"
-                                                      HorizontalAlignment="Right"
-                                                      VerticalAlignment="Center"
-                                                      Padding="12,1,12,2"
-                                                      CornerRadius="12"
-                                                      Margin="0,-6"
-                                                      Grid.RowSpan="2"
-                                                      Grid.Column="1" />
+                                <controls:SettingsButton Content="{CustomResource Add}"
+                                                         Visibility="{x:Bind IsInstalled, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                                         Style="{StaticResource PillButtonStyle}"
+                                                         HorizontalAlignment="Right"
+                                                         VerticalAlignment="Center"
+                                                         Padding="12,1,12,2"
+                                                         CornerRadius="12"
+                                                         Margin="0,-6"
+                                                         Grid.RowSpan="2"
+                                                         Grid.Column="1" />
                             </Grid>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
@@ -149,8 +152,9 @@
             </GridView.ItemsPanel>
         </GridView>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                     ScrollingHost="{x:Bind ScrollingHost}"
+                                    BottomInset="0"
                                     Grid.Row="1" />
 
         <controls:MoreButton x:Name="MoreButton"
@@ -159,12 +163,5 @@
                              VerticalAlignment="Top"
                              Margin="0,-24,40,0"
                              CornerRadius="20" />
-
-        <Button x:Name="Action"
-                Click="Action_Click"
-                Content="{x:Bind ConvertIsInstalled(ViewModel.IsInstalled, ViewModel.IsArchived, ViewModel.StickerType), Mode=OneWay}"
-                HorizontalAlignment="Stretch"
-                Margin="24,0,24,24"
-                Grid.Row="2" />
     </Grid>
 </controls:ContentPopup>

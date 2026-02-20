@@ -1,16 +1,17 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System;
 using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -18,6 +19,8 @@ namespace Telegram.Controls.Messages.Content
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
+
+        private ThumbnailController _thumbnailController;
 
         public InvoicePreviewContent(MessageViewModel message)
         {
@@ -29,6 +32,7 @@ namespace Telegram.Controls.Messages.Content
         #region InitializeComponent
 
         private AspectView LayoutRoot;
+        private ImageBrush ThumbnailTexture;
         private Border Overlay;
         private TextBlock Subtitle;
         private FileButton Button;
@@ -37,6 +41,7 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
+            ThumbnailTexture = LayoutRoot.Background as ImageBrush;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
@@ -64,7 +69,6 @@ namespace Telegram.Controls.Messages.Content
             }
 
             LayoutRoot.Constraint = message;
-            LayoutRoot.Background = null;
 
             if (preview.Duration > 0)
             {
@@ -94,37 +98,22 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(MessageViewModel message, Minithumbnail minithumbnail)
         {
-            BitmapImage source = null;
-            ImageBrush brush;
-
-            if (LayoutRoot.Background is ImageBrush existing)
-            {
-                brush = existing;
-            }
-            else
-            {
-                brush = new ImageBrush
-                {
-                    Stretch = Stretch.UniformToFill,
-                    AlignmentX = AlignmentX.Center,
-                    AlignmentY = AlignmentY.Center
-                };
-
-                LayoutRoot.Background = brush;
-            }
+            _thumbnailController ??= new ThumbnailController(ThumbnailTexture);
 
             if (minithumbnail != null)
             {
-                source = new BitmapImage();
-                PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
+                _thumbnailController.Blur(minithumbnail.Data, 3, HashCode.Combine(message.ChatId, message.Id));
             }
-
-            brush.ImageSource = source;
+            else
+            {
+                _thumbnailController.Recycle();
+            }
         }
 
         public void Recycle()
         {
             _message = null;
+            _thumbnailController?.Recycle();
         }
 
         public bool IsValid(MessageContent content, bool primary)

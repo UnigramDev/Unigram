@@ -89,7 +89,7 @@
             <TextBlock x:Name="OverlayGlyph"
                        Text="&#xEA18;"
                        TextAlignment="Center"
-                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                       Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                        FontSize="24"
                        Margin="0,4,0,0" />

@@ -9,7 +9,8 @@
                        Opened="OnOpened"
                        Closed="OnClosed"
                        PrimaryButtonClick="OnPrimaryButtonClick"
-                       mc:Ignorable="d">
+                       mc:Ignorable="d"
+                       Padding="0,24,0,0">
 
     <controls:ContentPopup.Resources>
         <Style TargetType="TextBox"
@@ -28,9 +29,10 @@
     </controls:ContentPopup.Resources>
 
     <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel>
+            <StackPanel Padding="24,0,24,24">
                 <StackPanel Visibility="{x:Bind ViewModel.Invoice.NeedShippingAddress}">
                     <TextBlock Text="{CustomResource PaymentShippingAddress}"
                                Style="{StaticResource BaseTextBlockStyle}"
@@ -51,7 +53,6 @@
                     <ComboBox x:Name="FieldCountry"
                               ItemsSource="{x:Bind entities:Country.All}"
                               SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
-                              DisplayMemberPath="DisplayName"
                               PlaceholderText="{CustomResource PaymentShippingCountry}" />
                     <TextBox x:Name="FieldPostcode"
                              Text="{x:Bind ViewModel.Info.ShippingAddress.PostalCode, Mode=TwoWay}"
@@ -92,5 +93,9 @@
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
+
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    ScrollingHost="{x:Bind ScrollingHost}"
+                                    BottomInset="0" />
     </Grid>
 </controls:ContentPopup>

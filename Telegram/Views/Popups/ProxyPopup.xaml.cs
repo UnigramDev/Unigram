@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
@@ -59,9 +60,11 @@ namespace Telegram.Views.Popups
             }
         }
 
-        public string Server => FieldServer.Text ?? string.Empty;
+        public Proxy Proxy => new Proxy(Server, Port, Type);
 
-        public int Port
+        private string Server => FieldServer.Text ?? string.Empty;
+
+        private int Port
         {
             get
             {
@@ -70,7 +73,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        public ProxyType Type
+        private ProxyType Type
         {
             get
             {
@@ -115,11 +118,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
-
-        private async void Share_Click(object sender, RoutedEventArgs e)
+        private void Share_Click(object sender, RoutedEventArgs e)
         {
             var builder = new List<string>();
             if (Server != null)
@@ -147,31 +146,19 @@ namespace Telegram.Views.Popups
 
         private void Type_Toggled(object sender, RoutedEventArgs e)
         {
-            if (TypeSocksPanel != null)
-            {
-                TypeSocksPanel.Visibility = TypeSocks.IsChecked == true || TypeHttp.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            }
+            TypeSocksPanel?.Visibility = TypeSocks.IsChecked == true || TypeHttp.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
 
-            if (TypeProtoPanel != null)
-            {
-                TypeProtoPanel.Visibility = TypeProto.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            }
+            TypeProtoPanel?.Visibility = TypeProto.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
 
-            if (TypeHttpPanel != null)
-            {
-                TypeHttpPanel.Visibility = TypeHttp.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            }
+            TypeHttpPanel?.Visibility = TypeHttp.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
 
-            if (FieldPanel != null)
-            {
-                FieldPanel.Text = TypeSocks.IsChecked == true
-                    ? Strings.UseProxyInfo
-                    : TypeProto.IsChecked == true
-                    ? Strings.UseProxyTelegramInfo + Environment.NewLine + Environment.NewLine + Strings.UseProxyTelegramInfo2
-                    : TypeHttp.IsChecked == true
-                    ? Strings.TransparentTcpConnectionInfo + Environment.NewLine + Environment.NewLine + Strings.TransparentTcpConnectionInfo2
-                    : string.Empty;
-            }
+            FieldPanel?.Text = TypeSocks.IsChecked == true
+                ? Strings.UseProxyInfo
+                : TypeProto.IsChecked == true
+                ? Strings.UseProxyTelegramInfo + Environment.NewLine + Environment.NewLine + Strings.UseProxyTelegramInfo2
+                : TypeHttp.IsChecked == true
+                ? Strings.TransparentTcpConnectionInfo + Environment.NewLine + Environment.NewLine + Strings.TransparentTcpConnectionInfo2
+                : string.Empty;
         }
     }
 }

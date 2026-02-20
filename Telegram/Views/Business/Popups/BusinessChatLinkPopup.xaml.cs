@@ -1,5 +1,13 @@
-﻿using Telegram.Common;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
@@ -31,7 +39,7 @@ namespace Telegram.Views.Business.Popups
 
             LinkButton.Text = chatLink.Link.Replace("https://", string.Empty);
 
-            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(viewModel.SessionId);
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(viewModel.Session);
             CaptionInput.DataContext = viewModel;
             CaptionInput.CustomEmoji = CustomEmoji;
             CaptionInput.SetText(chatLink.Text);
@@ -44,7 +52,7 @@ namespace Telegram.Views.Business.Popups
             EmojiFlyout.ShowAt(CaptionPanel, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
         }
 
-        private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
+        private void Emoji_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)
         {
             if (e.ClickedItem is EmojiData emoji)
             {
@@ -67,7 +75,7 @@ namespace Telegram.Views.Business.Popups
         {
             var flyout = new MenuFlyout();
 
-            flyout.CreateFlyoutItem(_viewModel.Copy, _chatLink, Strings.Copy, Icons.DocumentCopy);
+            flyout.CreateFlyoutItem(_viewModel.Copy, _chatLink, Strings.Copy, Icons.Copy);
             //flyout.CreateFlyoutItem(_viewModel.Share, _chatLink, Strings.ShareFile, Icons.Share);
             flyout.CreateFlyoutItem(_viewModel.Rename, _chatLink, Strings.Rename, Icons.Edit);
             flyout.CreateFlyoutItem(_viewModel.Delete, _chatLink, Strings.Delete, Icons.Delete, destructive: true);

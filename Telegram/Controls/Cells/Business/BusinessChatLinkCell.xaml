@@ -42,21 +42,23 @@
                Grid.Column="1" />
 
 
-    <RichTextBlock x:Name="BriefText"
-                   Style="{StaticResource InfoBodyRichTextBlockStyle}"
-                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                   IsTextSelectionEnabled="False"
-                   TextTrimming="CharacterEllipsis"
-                   TextWrapping="Wrap"
-                   VerticalAlignment="Top"
-                   MaxLines="1"
-                   Grid.Row="1"
-                   Grid.Column="1"
-                   Grid.ColumnSpan="2">
+    <controls:FormattedTextBlock x:Name="BriefText"
+                                 Style="{StaticResource InfoBodyFormattedTextBlockStyle}"
+                                 EmojiStyle="{StaticResource InfoCustomEmojiStyle}"
+                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                 IsTextSelectionEnabled="False"
+                                 TextTrimming="CharacterEllipsis"
+                                 TextWrapping="Wrap"
+                                 VerticalAlignment="Top"
+                                 MaxLines="1"
+                                 AutoFontSize="False"
+                                 Grid.Row="1"
+                                 Grid.Column="1"
+                                 Grid.ColumnSpan="2">
         <Paragraph>
             <Span x:Name="BriefLabel" />
         </Paragraph>
-    </RichTextBlock>
+    </controls:FormattedTextBlock>
 
     <TextBlock x:Name="ViewCountLabel"
                VerticalAlignment="Bottom"

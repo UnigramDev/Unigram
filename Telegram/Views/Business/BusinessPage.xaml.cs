@@ -1,10 +1,17 @@
-﻿using Telegram.Common;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
-using Windows.UI;
+using Telegram.Views.Premium.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -43,30 +50,6 @@ namespace Telegram.Views.Business
             args.IsContainerPrepared = true;
         }
 
-        private readonly Color[] _gradient = new Color[]
-        {
-            Color.FromArgb(0xFF, 0xef, 0x69, 0x22), //
-            Color.FromArgb(0xFF, 0xe9, 0x5a, 0x2c),
-            Color.FromArgb(0xFF, 0xe7, 0x4e, 0x33),
-            Color.FromArgb(0xFF, 0xe5, 0x49, 0x37), //
-            Color.FromArgb(0xFF, 0xe3, 0x43, 0x3c),
-            Color.FromArgb(0xFF, 0xdb, 0x37, 0x4b),
-            Color.FromArgb(0xFF, 0xcb, 0x3e, 0x6d), //
-            Color.FromArgb(0xFF, 0xbc, 0x43, 0x95),
-            Color.FromArgb(0xFF, 0xab, 0x4a, 0xc4),
-            Color.FromArgb(0xFF, 0xa3, 0x4c, 0xd7), //
-            Color.FromArgb(0xFF, 0x9b, 0x4f, 0xed),
-            Color.FromArgb(0xFF, 0x89, 0x58, 0xff),
-            Color.FromArgb(0xFF, 0x67, 0x6b, 0xff), //
-            Color.FromArgb(0xFF, 0x61, 0x72, 0xff),
-            Color.FromArgb(0xFF, 0x5b, 0x79, 0xff),
-            Color.FromArgb(0xFF, 0x44, 0x92, 0xff),
-            Color.FromArgb(0xFF, 0x42, 0x9b, 0xd5), //
-            Color.FromArgb(0xFF, 0x41, 0xa6, 0xa5),
-            Color.FromArgb(0xFF, 0x3e, 0xb2, 0x6d),
-            Color.FromArgb(0xFF, 0x3d, 0xbd, 0x4a), //
-        };
-
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -76,8 +59,6 @@ namespace Telegram.Views.Business
 
             var feature = args.Item as BusinessFeature;
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
-            var badge = false;
 
             var iconValue = string.Empty;
             var titleValue = string.Empty;
@@ -145,16 +126,10 @@ namespace Telegram.Views.Business
             var iconPanel = content.FindName("IconPanel") as Border;
             var badgeControl = content.FindName("Badge") as BadgeControl;
 
-            var item = (double)args.ItemIndex;
-            var total = sender.Items.Count - 1;
-            var length = _gradient.Length - 1;
-
-            var index = (int)(item / total * length);
-
             title.Text = titleValue;
             subtitle.Text = subtitleValue;
             icon.Text = iconValue;
-            iconPanel.Background = new SolidColorBrush(_gradient[index]);
+            iconPanel.Background = new SolidColorBrush(ColorsHelper.CalculateColor(PromoPopup.Gradient, (float)args.ItemIndex / (sender.Items.Count - 1)));
 
             //if (badge)
             //{

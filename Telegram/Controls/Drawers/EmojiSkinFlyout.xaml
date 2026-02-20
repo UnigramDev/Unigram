@@ -1,0 +1,161 @@
+﻿<Grid x:Class="Telegram.Controls.Drawers.EmojiSkinFlyout"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      d:DesignHeight="300"
+      d:DesignWidth="400"
+      Margin="0,-2">
+
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <GridView x:Name="ScrollingHost1"
+              IsItemClickEnabled="True"
+              ChoosingItemContainer="OnChoosingItemContainer"
+              ContainerContentChanging="OnContainerContentChanging"
+              ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+              ScrollViewer.HorizontalScrollMode="Auto"
+              ScrollViewer.VerticalScrollBarVisibility="Disabled"
+              ScrollViewer.VerticalScrollMode="Disabled"
+              Style="{StaticResource ZoomableListViewStyle}"
+              Padding="0,0,4,0">
+        <GridView.ItemsPanel>
+            <ItemsPanelTemplate>
+                <ItemsStackPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </GridView.ItemsPanel>
+        <GridView.ItemContainerStyle>
+            <Style TargetType="GridViewItem"
+                   BasedOn="{StaticResource ZoomableListViewItemStyle}">
+                <Setter Property="MinWidth"
+                        Value="0" />
+                <Setter Property="MinHeight"
+                        Value="0" />
+                <Setter Property="Padding"
+                        Value="0" />
+            </Style>
+        </GridView.ItemContainerStyle>
+        <GridView.ItemTemplate>
+            <DataTemplate>
+                <Grid Width="36"
+                      Height="36">
+                    <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               FontSize="20"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center" />
+                    <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               FontSize="20"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Grid>
+            </DataTemplate>
+        </GridView.ItemTemplate>
+        <GridView.ItemContainerTransitions>
+            <TransitionCollection />
+        </GridView.ItemContainerTransitions>
+    </GridView>
+
+    <Grid x:Name="DoubleRoot"
+          Visibility="Collapsed"
+          Grid.Row="1">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <GridView x:Name="ScrollingHost2"
+                  IsItemClickEnabled="True"
+                  ChoosingItemContainer="OnChoosingItemContainer"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                  ScrollViewer.HorizontalScrollMode="Auto"
+                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                  ScrollViewer.VerticalScrollMode="Disabled"
+                  Style="{StaticResource ZoomableListViewStyle}"
+                  Padding="0,0,4,0">
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem"
+                       BasedOn="{StaticResource ZoomableListViewItemStyle}">
+                    <Setter Property="MinWidth"
+                            Value="0" />
+                    <Setter Property="MinHeight"
+                            Value="0" />
+                    <Setter Property="Padding"
+                            Value="0" />
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Width="36"
+                          Height="36">
+                        <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                   FontSize="20"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Center" />
+                        <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                   FontSize="20"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+            <GridView.ItemContainerTransitions>
+                <TransitionCollection />
+            </GridView.ItemContainerTransitions>
+        </GridView>
+
+        <MenuFlyoutSeparator Padding="0"
+                             Grid.Row="1" />
+
+        <Grid HorizontalAlignment="Center"
+              Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Button Click="Default_Click"
+                    Style="{StaticResource ListEmptyButtonStyle}"
+                    CornerRadius="4"
+                    Margin="0,4,2,4">
+                <Grid Width="36"
+                      Height="36">
+                    <TextBlock x:Name="Default"
+                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               FontSize="20"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Grid>
+            </Button>
+
+            <Button Click="Outline_Click"
+                    Style="{StaticResource ListEmptyButtonStyle}"
+                    CornerRadius="4"
+                    Margin="2,4,0,4"
+                    Grid.Column="1">
+                <Grid Width="36"
+                      Height="36">
+                    <TextBlock x:Name="Outline1"
+                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               FontSize="20"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="Outline2"
+                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               FontSize="20"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Grid>
+            </Button>
+        </Grid>
+    </Grid>
+</Grid>

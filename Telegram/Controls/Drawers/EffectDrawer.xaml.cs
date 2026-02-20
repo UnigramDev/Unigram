@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
@@ -11,8 +12,10 @@ using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Drawers
 {
@@ -29,6 +32,7 @@ namespace Telegram.Controls.Drawers
         private long _selectedSetId;
 
         private bool _isActive;
+        private bool _paused;
 
         public EffectDrawer()
         {
@@ -39,10 +43,8 @@ namespace Telegram.Controls.Drawers
             _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
 
             _zoomer = new ZoomableListHandler(List);
-            _zoomer.Opening = UnloadVisibleItems;
-            _zoomer.Closing = ThrottleVisibleItems;
-            _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
-            _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
+            _zoomer.Opening = _handler.Suspend;
+            _zoomer.Closing = _handler.Resume;
 
             //var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldStickers.TextChanged += new TextChangedEventHandler(handler));
             //debouncer.Invoked += async (s, args) =>
@@ -69,7 +71,7 @@ namespace Telegram.Controls.Drawers
         public void Activate()
         {
             _isActive = true;
-            _handler.ThrottleVisibleItems();
+            _handler.Resume();
 
             SearchField.SetType(ViewModel.ClientService, EmojiSearchType.Default);
             ViewModel.Update();
@@ -115,9 +117,7 @@ namespace Telegram.Controls.Drawers
             {
                 if (effect.IsPremium && !ViewModel.IsPremium)
                 {
-                    var navigationService = WindowContext.GetNavigationService(this);
-
-                    ToastPopup.ShowPromo(navigationService, Strings.AnimatedEffectPremium, Strings.OptionPremiumRequiredButton, null);
+                    ToastPopup.ShowFeaturePromo(WindowContext.GetNavigationService(this), new PremiumFeatureMessageEffects());
                 }
                 else
                 {
@@ -183,14 +183,15 @@ namespace Telegram.Controls.Drawers
 
             _itemIdToContent[effect] = content;
 
+            var animation = content.Children[0] as AnimatedImage;
+            var locked = content.Children[1] as Border;
+
             if (effect?.Type is MessageEffectTypeEmojiReaction emojiReaction)
             {
-                var animation = content.Children[0] as AnimatedImage;
                 animation.Source = new DelayedFileSource(ViewModel.ClientService, emojiReaction.SelectAnimation);
             }
             else if (effect?.Type is MessageEffectTypePremiumSticker premiumSticker)
             {
-                var animation = content.Children[0] as AnimatedImage;
                 animation.Source = new DelayedFileSource(ViewModel.ClientService, premiumSticker.Sticker);
 
                 var emoji = content.Children[2] as TextBlock;
@@ -201,14 +202,22 @@ namespace Telegram.Controls.Drawers
             }
             else
             {
-                var animation = content.Children[0] as AnimatedImage;
                 animation.Source = null;
             }
 
-            var locked = content.Children[1] as Border;
-            locked.Visibility = effect.IsPremium && !ViewModel.IsPremium
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            if (effect.IsPremium && !ViewModel.IsPremium)
+            {
+                var brush = new SolidColorBrush(Colors.White);
+                animation.DominantColor = brush;
+                locked.Background = brush;
+                locked.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                animation.DominantColor = null;
+                locked.Background = null;
+                locked.Visibility = Visibility.Collapsed;
+            }
 
             args.Handled = true;
         }
@@ -235,7 +244,7 @@ namespace Telegram.Controls.Drawers
                     return;
                 }
 
-                photo.SetChat(ViewModel.ClientService, chat, 24);
+                photo.Source = ProfilePictureSource.Chat(ViewModel.ClientService, chat);
                 args.Handled = true;
             }
             else if (args.Item is StickerSetViewModel sticker)

@@ -3,7 +3,30 @@
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-    BroadcastPartRequestedEventArgs::BroadcastPartRequestedEventArgs(int32_t scale, int64_t time, int32_t channelId, GroupCallVideoQuality videoQuality, BroadcastPartRequestedDeferral deferral)
+    AudioBroadcastPartRequestedEventArgs::AudioBroadcastPartRequestedEventArgs(int32_t scale, int64_t time, BroadcastPartRequestedDeferral deferral)
+        : m_scale(scale)
+        , m_time(time)
+        , m_deferral(deferral)
+    {
+
+    }
+
+    int32_t AudioBroadcastPartRequestedEventArgs::Scale()
+    {
+        return m_scale;
+    }
+
+    int64_t AudioBroadcastPartRequestedEventArgs::Time()
+    {
+        return m_time;
+    }
+
+    BroadcastPartRequestedDeferral AudioBroadcastPartRequestedEventArgs::Deferral()
+    {
+        return m_deferral;
+    }
+
+    VideoBroadcastPartRequestedEventArgs::VideoBroadcastPartRequestedEventArgs(int32_t scale, int64_t time, int32_t channelId, VoipVideoChannelQuality videoQuality, BroadcastPartRequestedDeferral deferral)
         : m_scale(scale)
         , m_time(time)
         , m_channelId(channelId)
@@ -13,27 +36,27 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     }
 
-    int32_t BroadcastPartRequestedEventArgs::Scale()
+    int32_t VideoBroadcastPartRequestedEventArgs::Scale()
     {
         return m_scale;
     }
 
-    int64_t BroadcastPartRequestedEventArgs::Time()
+    int64_t VideoBroadcastPartRequestedEventArgs::Time()
     {
         return m_time;
     }
 
-    int32_t BroadcastPartRequestedEventArgs::ChannelId()
+    int32_t VideoBroadcastPartRequestedEventArgs::ChannelId()
     {
         return m_channelId;
     }
 
-    GroupCallVideoQuality BroadcastPartRequestedEventArgs::VideoQuality()
+    VoipVideoChannelQuality VideoBroadcastPartRequestedEventArgs::VideoQuality()
     {
         return m_videoQuality;
     }
 
-    BroadcastPartRequestedDeferral BroadcastPartRequestedEventArgs::Deferral()
+    BroadcastPartRequestedDeferral VideoBroadcastPartRequestedEventArgs::Deferral()
     {
         return m_deferral;
     }

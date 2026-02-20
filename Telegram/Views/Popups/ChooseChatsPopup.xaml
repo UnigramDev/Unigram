@@ -9,9 +9,11 @@
                        xmlns:messages="using:Telegram.Controls.Messages"
                        xmlns:views="using:Telegram.Controls.Views"
                        xmlns:viewModels="using:Telegram.ViewModels"
+                       xmlns:chats="using:Telegram.Controls.Chats"
                        mc:Ignorable="d"
                        PrimaryButtonText="OK"
                        PrimaryButtonClick="OnPrimaryButtonClick"
+                       SecondaryButtonClick="OnSecondaryButtonClick"
                        IsPrimaryButtonEnabled="{x:Bind ConvertButtonEnabled(ViewModel.AllowEmptySelection, ViewModel.SelectedItems.Count), Mode=OneWay}"
                        SecondaryButtonText="Cancel"
                        VerticalContentAlignment="Stretch"
@@ -19,7 +21,7 @@
                        Loaded="OnLoaded"
                        Unloaded="OnUnloaded">
 
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -93,7 +95,7 @@
                 ToolTipService.ToolTip="{CustomResource SelectAccount}"
                 Style="{StaticResource ListEmptyButtonStyle}"
                 CornerRadius="14"
-                Margin="0,-52,-16,0"
+                Margin="0,-12,-16,0"
                 Visibility="Collapsed">
             <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -105,8 +107,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture x:Name="Photo"
-                                         Width="28"
-                                         Height="28"
+                                         Size="28"
                                          Grid.Column="2" />
 
                 <Grid Width="20"
@@ -162,7 +163,7 @@
                                    DataContext="{x:Bind ViewModel.SearchChats}"
                                    AreTabsVisible="False"
                                    ItemClick="ListView_ItemClick"
-                                   Margin="12,0" />
+                                   PaddingImpl="12,0" />
 
             <Grid x:Name="ChatListPanel">
                 <Grid.RowDefinitions>
@@ -176,11 +177,12 @@
                                      SelectedItem="{x:Bind ViewModel.SelectedFolder, Mode=TwoWay}"
                                      ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                                      FocusFollowsSingleSelection="True"
-                                     Padding="12,0"
+                                     Padding="20,0"
                                      Height="40">
                     <controls:TopNavView.ItemTemplate>
                         <DataTemplate x:DataType="viewModels:ChatFolderViewModel">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal"
+                                        Height="20">
                                 <RichTextBlock cells:ChatFolderCell.Title="{x:Bind Name, Mode=OneWay}"
                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                VerticalAlignment="Bottom"
@@ -192,16 +194,11 @@
                                                        IsUnmuted="{x:Bind IsUnmuted, Mode=OneWay}"
                                                        Visibility="{x:Bind ShowCount, Mode=OneWay}"
                                                        VerticalAlignment="Bottom"
-                                                       Margin="4,0,0,0" />
+                                                       FontWeight="Normal"
+                                                       Margin="4,0,-4,0" />
                             </StackPanel>
                         </DataTemplate>
                     </controls:TopNavView.ItemTemplate>
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"
-                                        Padding="12,0" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
                 </controls:TopNavView>
 
                 <ListView x:Name="ChatsPanel"
@@ -215,7 +212,7 @@
                           Grid.Row="1">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <cells:ChatShareCell SelectionStroke="{ThemeResource ContentDialogBackground}"
+                            <cells:ChatShareCell SelectionStroke="{ThemeResource ContentDialogTopOverlaySolid}"
                                                  Stroke="{ThemeResource ChatLastMessageStateBrush}" />
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -239,14 +236,15 @@
                 </ListView>
 
                 <controls:ScrollViewerScrim x:Name="Scrim"
-                                            Background="{ThemeResource ContentDialogBackground}"
+                                            Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                             ScrollingHost="{x:Bind ChatsPanel}"
+                                            BottomInset="0"
                                             Grid.Row="1" />
             </Grid>
         </Grid>
 
         <Grid x:Name="CommentPanel"
-              Background="{ThemeResource TextControlBackground}"
+              Background="{ThemeResource ContentDialogBackground}"
               Visibility="Collapsed"
               Margin="-24,0"
               Grid.Row="3">
@@ -255,11 +253,10 @@
                         Placement="Top"
                         ShowMode="Transient">
                     <Flyout.FlyoutPresenterStyle>
-                        <Style TargetType="FlyoutPresenter">
+                        <Style TargetType="FlyoutPresenter"
+                               BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
                             <Setter Property="Padding"
                                     Value="0" />
-                            <Setter Property="CornerRadius"
-                                    Value="8" />
                         </Style>
                     </Flyout.FlyoutPresenterStyle>
                     <drawers:EmojiDrawer x:Name="EmojiPanel"
@@ -303,15 +300,13 @@
                                   FontSize="24"
                                   Grid.Column="1" />
 
-            <controls:GlyphButton x:Name="Send"
+            <chats:ChatSendButton x:Name="Send"
                                   Click="Send_Click"
                                   ContextRequested="Send_ContextRequested"
                                   AutomationProperties.Name="{CustomResource Send}"
                                   ToolTipService.ToolTip="{CustomResource Send}"
                                   Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                   VerticalAlignment="Bottom"
-                                  FontSize="24"
-                                  Glyph="&#xE919;"
                                   Margin="-8,0,0,0"
                                   Grid.Column="2" />
         </Grid>

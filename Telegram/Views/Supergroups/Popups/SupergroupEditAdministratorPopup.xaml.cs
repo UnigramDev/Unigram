@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Td.Api;
@@ -19,10 +20,19 @@ namespace Telegram.Views.Supergroups.Popups
 
         public MessageSender MemberId { get; }
 
+        public ChatAdministratorRights DefaultRights { get; }
+
         public SupergroupEditMemberArgs(long chatId, MessageSender memberId)
         {
             ChatId = chatId;
             MemberId = memberId;
+        }
+
+        public SupergroupEditMemberArgs(long chatId, MessageSender memberId, ChatAdministratorRights defaultRights)
+        {
+            ChatId = chatId;
+            MemberId = memberId;
+            DefaultRights = defaultRights;
         }
     }
 
@@ -84,8 +94,10 @@ namespace Telegram.Views.Supergroups.Popups
                 CanDeleteStories.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 DeleteMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 BanUsers.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                ManageDirectMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 AddUsers.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 PinMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited && !chat.Permissions.CanPinMessages;
+                ManageTopics.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 ManageVideoChats.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 AddAdmins.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 IsAnonymous.IsEnabled = canBeEdited;
@@ -93,6 +105,9 @@ namespace Telegram.Views.Supergroups.Popups
             }
             else
             {
+                ChangeInfo.IsEnabled = !chat.Permissions.CanChangeInfo;
+                PinMessages.IsEnabled = !chat.Permissions.CanPinMessages;
+
                 PrimaryButtonText = Strings.Done;
                 Dismiss.Visibility = Visibility.Collapsed;
                 PermissionsFooter.Visibility = Visibility.Collapsed;
@@ -109,12 +124,17 @@ namespace Telegram.Views.Supergroups.Popups
                 {
                     CanManageMessagesRoot.Visibility = Visibility.Visible;
                     DeleteMessages.Visibility = Visibility.Collapsed;
+
+                    EditRankHeader.Visibility = Visibility.Collapsed;
+                    EditRankField.Visibility = Visibility.Collapsed;
+                    EditRankFooter.Visibility = Visibility.Collapsed;
                 }
 
                 ChangeInfo.Content = group.IsChannel ? Strings.EditAdminChangeChannelInfo : Strings.EditAdminChangeGroupInfo;
-                BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                ManageDirectMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
                 PinMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
                 IsAnonymous.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                ManageTopics.Visibility = ViewModel.IsForum ? Visibility.Visible : Visibility.Collapsed;
                 AddUsers.Content = chat.Permissions.CanInviteUsers ? Strings.EditAdminAddUsersViaLink : Strings.EditAdminAddUsers;
             }
             else

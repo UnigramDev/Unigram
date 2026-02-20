@@ -1,13 +1,17 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Native;
+using Telegram.Services;
+using Telegram.Td;
+using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
@@ -38,31 +42,24 @@ namespace Telegram.Views
 
         #endregion
 
+        private void Exception_Click(object sender, RoutedEventArgs e)
+        {
+            ElementCompositionPreview.GetElementVisual(null);
+        }
+
         private void Crash_Click(object sender, RoutedEventArgs e)
         {
             NativeUtils.Crash();
-            return;
-
-            ElementCompositionPreview.GetElementVisual(null);
-            return;
-
-            if (sender is FrameworkElement element)
-            {
-                element.SizeChanged += (s, args) =>
-                {
-                    element.Height++;
-                };
-
-                element.Height = element.ActualHeight + 1;
-            }
         }
 
-        private void Bridge_Click(object sender, RoutedEventArgs e)
+        private void Logger_Click(object sender, RoutedEventArgs e)
         {
-            ElementCompositionPreview.GetElementVisual(null);
-            return;
+            Client.Execute(new AddLogMessage(0, "This should produce a stack trace"));
+        }
 
-            NotifyIcon.Debug("Message received");
+        private void Anonymous_Click(object sender, RoutedEventArgs e)
+        {
+            MessageHelper.CopyText(XamlRoot, SettingsService.Current.AnonymousUserId);
         }
     }
 }

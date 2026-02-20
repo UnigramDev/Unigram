@@ -1,10 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System.Linq;
+
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -71,51 +71,6 @@ namespace Telegram.Views.Supergroups.Popups
             }
 
             args.Handled = true;
-        }
-
-        private void Grid_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-            var content = sender as Grid;
-            var stickerSet = args.NewValue as StickerSetInfo;
-
-            var title = content.Children[1] as TextBlock;
-            var subtitle = content.Children[2] as TextBlock;
-            var photo = content.Children[0] as Image;
-
-            if (stickerSet == null)
-            {
-                title.Text = Strings.ChooseStickerSetNotFound;
-                subtitle.Text = Strings.ChooseStickerSetNotFoundInfo;
-                photo.Source = null;
-                return;
-            }
-
-            title.Text = stickerSet.Title;
-            subtitle.Text = Locale.Declension(Strings.R.Stickers, stickerSet.Size);
-
-            var cover = stickerSet.Thumbnail ?? stickerSet.Covers.FirstOrDefault()?.Thumbnail;
-            if (cover == null)
-            {
-                return;
-            }
-
-            var file = cover.File;
-            if (file.Local.IsDownloadingCompleted)
-            {
-                if (cover.Format is ThumbnailFormatTgs)
-                {
-                    photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
-                }
-                else if (cover.Format is ThumbnailFormatWebp)
-                {
-                    photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 48);
-                }
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                photo.Source = null;
-                ViewModel.ClientService.DownloadFile(file.Id, 1);
-            }
         }
 
         #endregion

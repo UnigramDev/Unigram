@@ -1,15 +1,17 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
@@ -17,15 +19,17 @@ using Windows.UI.Xaml;
 
 namespace Telegram.ViewModels.Gallery
 {
-    public abstract class GalleryViewModelBase : ViewModelBase
+    public abstract class GalleryViewModelBase : ViewModelBase, IDelegable<IGalleryDelegate>
     {
         private readonly IStorageService _storageService;
 
         protected int _additionalPhotos;
         protected bool _hasProtectedContent;
 
+        public IGalleryDelegate Delegate { get; set; }
+
         public GalleryViewModelBase(IClientService clientService, IStorageService storageService, IEventAggregator aggregator)
-            : base(clientService, null, aggregator)
+            : base(clientService, clientService.Session.Resolve<ISettingsService>(), aggregator)
         {
             _storageService = storageService;
             //Aggregator.Subscribe(this);
@@ -227,17 +231,19 @@ namespace Telegram.ViewModels.Gallery
         {
             if (_selectedItem is GalleryMessage message)
             {
-                await ShowPopupAsync(new ChooseChatsPopup { RequestedTheme = ElementTheme.Dark }, new ChooseChatsConfigurationShareMessage(message.ChatId, message.Id));
+                var response = await ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id));
+                if (response is MessageProperties properties && properties.CanBeForwarded)
+                {
+                    ShowPopup(new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessages(new MessageToShare(message.Message, properties)), ElementTheme.Dark);
+                }
             }
             else
             {
                 var input = _selectedItem?.ToInput();
-                if (input == null)
+                if (input != null)
                 {
-                    return;
+                    ShowPopup(new ChooseChatsPopup(), new ChooseChatsConfigurationPostMessage(input), ElementTheme.Dark);
                 }
-
-                await ShowPopupAsync(new ChooseChatsPopup { RequestedTheme = ElementTheme.Dark }, new ChooseChatsConfigurationPostMessage(input));
             }
         }
 
@@ -307,6 +313,26 @@ namespace Telegram.ViewModels.Gallery
             }
 
             ClientService.Send(new OpenMessageContent(message.ChatId, message.Id));
+        }
+
+        public virtual void PlaybackStarted(GalleryMedia item)
+        {
+
+        }
+
+        public virtual void PlaybackStopped()
+        {
+
+        }
+
+        public virtual void AdvertisementDisplayed()
+        {
+
+        }
+
+        public virtual void HideAdvertisement()
+        {
+
         }
     }
 }

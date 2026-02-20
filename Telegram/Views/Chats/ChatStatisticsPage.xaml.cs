@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Linq;
 using System.Text;
@@ -119,17 +120,7 @@ namespace Telegram.Views.Chats
                     }
                     else if (message.Content is MessageAudio audio)
                     {
-                        var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
-                        var titloe = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
-
-                        if (performer == null || titloe == null)
-                        {
-                            title.Text = Strings.AttachMusic;
-                        }
-                        else
-                        {
-                            title.Text = $"\uD83C\uDFB5 {performer} - {titloe}";
-                        }
+                        title.Text = audio.Audio.GetTitle();
                     }
                     else if (message.Content is MessageDocument document)
                     {
@@ -169,6 +160,10 @@ namespace Telegram.Views.Chats
                     else if (message.Content is MessagePoll poll)
                     {
                         title.Text = "\uD83D\uDCCA " + poll.Poll.Question.Text;
+                    }
+                    else if (message.Content is MessageChecklist checklist)
+                    {
+                        title.Text = "\u2611 " + checklist.List.Title.Text;
                     }
                     else if (message.Content is MessageCall call)
                     {
@@ -249,7 +244,7 @@ namespace Telegram.Views.Chats
 
                     title.Text = user.FullName();
                     subtitle.Text = stringBuilder.ToString();
-                    photo.SetUser(ViewModel.ClientService, user, 36);
+                    photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
 
                     button.CommandParameter = senderInfo.UserId;
                     button.Command = ViewModel.OpenProfileCommand;
@@ -290,7 +285,7 @@ namespace Telegram.Views.Chats
 
                     title.Text = user.FullName();
                     subtitle.Text = stringBuilder.ToString();
-                    photo.SetUser(ViewModel.ClientService, user, 36);
+                    photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
 
                     button.CommandParameter = adminInfo.UserId;
                     button.Command = ViewModel.OpenProfileCommand;
@@ -313,7 +308,7 @@ namespace Telegram.Views.Chats
                     }
 
                     title.Text = user.FullName();
-                    photo.SetUser(ViewModel.ClientService, user, 36);
+                    photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
 
                     button.CommandParameter = inviterInfo.UserId;
                     button.Command = ViewModel.OpenProfileCommand;

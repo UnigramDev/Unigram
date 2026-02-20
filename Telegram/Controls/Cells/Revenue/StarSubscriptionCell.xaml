@@ -20,8 +20,7 @@
     </Grid.ColumnDefinitions>
     <controls:ProfilePicture x:Name="Photo"
                              VerticalAlignment="Top"
-                             Width="36"
-                             Height="36"
+                             Size="36"
                              Margin="0,0,8,0"
                              Grid.RowSpan="2" />
 

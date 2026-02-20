@@ -7,9 +7,7 @@
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="400"
-      Padding="12,8,0,12"
-      Background="{ThemeResource SettingsItemBackground}"
-      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+      Padding="12,8,0,12">
 
     <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
@@ -22,9 +20,8 @@
     </Grid.ColumnDefinitions>
     <controls:ProfilePicture x:Name="Photo"
                              VerticalAlignment="Top"
-                             Width="36"
-                             Height="36"
-                             Margin="0,0,8,0"
+                             Size="36"
+                             Margin="0,0,10,0"
                              Grid.RowSpan="3" />
     <TextBlock x:Name="Domain"
                TextTrimming="CharacterEllipsis"
@@ -37,7 +34,7 @@
                Grid.Row="1" />
     <TextBlock x:Name="Subtitle"
                TextTrimming="CharacterEllipsis"
-               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+               Style="{StaticResource InfoBodyTextBlockStyle}"
                Grid.Column="1"
                Grid.Row="2" />
 </Grid>

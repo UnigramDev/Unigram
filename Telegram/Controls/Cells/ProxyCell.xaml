@@ -15,16 +15,12 @@
                     <VisualState x:Name="Connected" />
                     <VisualState x:Name="Available">
                         <VisualState.Setters>
-                            <Setter Target="EnabledLabel.Foreground"
-                                    Value="{ThemeResource MessageCallForegroundBrush}" />
                             <Setter Target="StatusLabel.Foreground"
                                     Value="{ThemeResource MessageCallForegroundBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Unavailable">
                         <VisualState.Setters>
-                            <Setter Target="EnabledLabel.Foreground"
-                                    Value="{ThemeResource MessageCallMissedForegroundBrush}" />
                             <Setter Target="StatusLabel.Foreground"
                                     Value="{ThemeResource MessageCallMissedForegroundBrush}" />
                         </VisualState.Setters>
@@ -46,16 +42,6 @@
                        TextWrapping="NoWrap"
                        TextTrimming="CharacterEllipsis"
                        Grid.ColumnSpan="2" />
-
-            <TextBlock x:Name="EnabledLabel"
-                       Visibility="Collapsed"
-                       Text="&#xEA20;"
-                       FontSize="16"
-                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                       VerticalAlignment="Bottom"
-                       Margin="0,0,4,0"
-                       Grid.Row="1" />
 
             <TextBlock x:Name="StatusLabel"
                        TextWrapping="NoWrap"

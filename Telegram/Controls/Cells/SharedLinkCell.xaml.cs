@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
@@ -23,8 +24,6 @@ namespace Telegram.Controls.Cells
         private MessageWithOwner _message;
         private INavigationService _navigationService;
 
-        private long _thumbnailToken;
-
         public SharedLinkCell()
         {
             InitializeComponent();
@@ -34,8 +33,6 @@ namespace Telegram.Controls.Cells
         {
             _navigationService = navigationService;
             _message = message;
-
-            UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
 
             var caption = message.GetCaption();
             if (caption == null)
@@ -53,6 +50,7 @@ namespace Telegram.Controls.Cells
             string webPageLink = null;
             bool webPageCached = false;
             Thumbnail webPageThumbnail = null;
+            Minithumbnail webPageMinithumbnail = null;
 
             var linkPreview = text?.LinkPreview;
             if (linkPreview != null)
@@ -68,6 +66,7 @@ namespace Telegram.Controls.Cells
                 webPageLink = linkPreview.Url;
                 webPageCached = linkPreview.InstantViewVersion != 0;
                 webPageThumbnail = linkPreview.GetThumbnail();
+                webPageMinithumbnail = linkPreview.GetMinithumbnail();
             }
 
             if (caption.Entities.Count > 0)
@@ -164,7 +163,7 @@ namespace Telegram.Controls.Cells
                             }
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         //FileLog.e(e);
                     }
@@ -231,8 +230,7 @@ namespace Telegram.Controls.Cells
 
             if (webPageThumbnail != null)
             {
-                UpdateManager.Subscribe(this, message, webPageThumbnail.File, ref _thumbnailToken, UpdateFile, true);
-                UpdateThumbnail(webPageThumbnail.File);
+                Photo.Source = new ProfilePictureSourcePhoto(message.ClientService, message.Id, webPageThumbnail.File, webPageMinithumbnail);
             }
 
             for (int i = 0; i < links.Count; i++)
@@ -240,7 +238,7 @@ namespace Telegram.Controls.Cells
                 var link = links[i];
                 if (MessageHelper.TryCreateUri(link, out Uri uri))
                 {
-                    Photo.Source ??= PlaceholderImage.GetNameForChat(uri.Host, uri.GetHashCode());
+                    Photo.Source ??= ProfilePictureSourceText.GetNameForChat(uri.Host, uri.GetHashCode());
 
                     var textBlock = new RichTextBlock { TextWrapping = TextWrapping.NoWrap, TextTrimming = TextTrimming.CharacterEllipsis, IsTextSelectionEnabled = false };
                     var paragraph = new Paragraph();
@@ -264,7 +262,7 @@ namespace Telegram.Controls.Cells
                     textBlock.Blocks.Add(paragraph);
                     textBlock.ContextRequested += Paragraph_ContextRequested;
 
-                    MessageHelper.SetEntityData(hyperlink, link);
+                    MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(null, link));
 
                     Extensions.SetToolTip(hyperlink, link);
                     SetRow(textBlock, i);
@@ -272,23 +270,6 @@ namespace Telegram.Controls.Cells
                     LinksPanel.RowDefinitions.Add(1, GridUnitType.Auto);
                     LinksPanel.Children.Add(textBlock);
                 }
-            }
-        }
-
-        private void UpdateFile(object target, File file)
-        {
-            UpdateThumbnail(file);
-        }
-
-        private void UpdateThumbnail(File file)
-        {
-            if (file.Local.IsDownloadingCompleted)
-            {
-                Photo.Source = UriEx.ToBitmap(file.Local.Path);
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                _message.ClientService.DownloadFile(file.Id, 1);
             }
         }
 
@@ -302,7 +283,7 @@ namespace Telegram.Controls.Cells
             _navigationService.NavigateToInstant(link);
         }
 
-        private async void Hyperlink_Click(Hyperlink sender, Uri uri)
+        private void Hyperlink_Click(Hyperlink sender, Uri uri)
         {
             MessageHelper.OpenUrl(_message.ClientService, _navigationService, uri.ToString());
         }

@@ -1,9 +1,9 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="using:Telegram.Controls.Messages.Content"
-                    xmlns:controls="using:Telegram.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:local="using:Telegram.Controls.Messages.Content"
                     mc:Ignorable="d">
 
     <Style TargetType="local:PhotoContent">
@@ -20,8 +20,12 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PhotoContent">
-                    <controls:AspectView x:Name="LayoutRoot"
-                                         Background="Black">
+                    <controls:AspectView x:Name="LayoutRoot">
+                        <controls:AspectView.Background>
+                            <ImageBrush x:Name="ThumbnailTexture"
+                                        AlignmentX="Center"
+                                        AlignmentY="Center" />
+                        </controls:AspectView.Background>
                         <Border>
                             <Border.Background>
                                 <ImageBrush x:Name="Texture"
@@ -33,7 +37,7 @@
                         <controls:AnimatedImage x:Name="Particles"
                                                 IsViewportAware="True"
                                                 FrameSize="0,0"
-                                                FitToSize="True"
+                                                ResizeMode="Fill"
                                                 DecodeFrameType="Logical"
                                                 Stretch="UniformToFill" />
 

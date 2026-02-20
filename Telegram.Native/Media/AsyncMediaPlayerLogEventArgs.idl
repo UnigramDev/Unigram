@@ -1,0 +1,21 @@
+namespace Telegram.Native.Media
+{
+    enum AsyncMediaPlayerLogLevel
+    {
+        Debug = 0,
+        Notice = 2,
+        Warning = 3,
+        Error = 4
+    };
+
+    [default_interface]
+    runtimeclass AsyncMediaPlayerLogEventArgs 
+    {
+        AsyncMediaPlayerLogEventArgs(AsyncMediaPlayerLogLevel level, String message, String modulo, String sourceFile, UInt32 sourceLine);
+        AsyncMediaPlayerLogLevel Level{ get; };
+        String Message{ get; };
+        String Module{ get; };
+        String SourceFile{ get; };
+        UInt32 SourceLine{ get; };
+    }
+}

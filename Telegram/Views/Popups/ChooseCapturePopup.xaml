@@ -10,8 +10,6 @@
                        ContentMaxWidth="568"
                        ContentMaxHeight="420"
                        HorizontalContentAlignment="Stretch"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
                        Padding="0"
                        RequestedTheme="Dark">
 
@@ -62,12 +60,10 @@
             </GridView.ItemContainerStyle>
         </GridView>
 
-        <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
-                                    Background="{ThemeResource ContentDialogBackground}"
-                                    TopInset="0"
-                                    Margin="0,0,0,-2" />
-
-        <Grid Margin="24,0,24,20"
+        <Grid Background="{ThemeResource ContentDialogBackground}"
+              BorderBrush="{ThemeResource ContentDialogSeparatorBorderBrush}"
+              BorderThickness="0,1,0,0"
+              Padding="24"
               ColumnSpacing="8"
               Grid.Row="1">
             <Grid.ColumnDefinitions>

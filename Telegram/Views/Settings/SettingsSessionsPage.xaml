@@ -80,11 +80,10 @@
                                                    Background="Transparent" />
                             </Button>
 
-                            <controls:BadgeButton Content="{CustomResource TerminateAllSessions}"
-                                                  Click="{x:Bind ViewModel.TerminateOthers}"
-                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                  Foreground="{ThemeResource DangerButtonBackground}"
-                                                  Glyph="&#xE98B;" />
+                            <controls:SettingsButton Content="{CustomResource TerminateAllSessions}"
+                                                     Click="{x:Bind ViewModel.TerminateOthers}"
+                                                     Foreground="{ThemeResource DangerButtonBackground}"
+                                                     Glyph="&#xE98B;" />
                         </controls:HeaderedControl>
                     </StackPanel>
                 </controls:SettingsPanel>
@@ -99,13 +98,12 @@
                     <controls:SettingsFooter Text="{CustomResource SessionsListInfo}" />
 
                     <controls:HeaderedControl Header="{CustomResource TerminateOldSessionHeader}">
-                        <controls:BadgeButton Content="{CustomResource IfInactiveFor}">
-                            <controls:BadgeButton.Badge>
+                        <controls:SettingsButton Content="{CustomResource IfInactiveFor}">
+                            <controls:SettingsButton.Badge>
                                 <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.SessionTtlOptions}"
-                                                           SelectedIndex="{x:Bind ViewModel.SessionTtl, Mode=TwoWay}"
-                                                           DisplayMemberPath="Text" />
-                            </controls:BadgeButton.Badge>
-                        </controls:BadgeButton>
+                                                           SelectedIndex="{x:Bind ViewModel.SessionTtl, Mode=TwoWay}" />
+                            </controls:SettingsButton.Badge>
+                        </controls:SettingsButton>
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Footer>

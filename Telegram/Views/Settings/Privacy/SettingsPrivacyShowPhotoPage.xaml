@@ -16,9 +16,10 @@
     </Page.Transitions>
 
     <local:HostedPage.Action>
-        <Button Content="{CustomResource Save}"
-                Click="{x:Bind ViewModel.Save}"
-                Style="{StaticResource AccentButtonStyle}" />
+        <Button Content="{CustomResource Done}"
+                Click="{x:Bind ViewModel.Continue}"
+                Style="{StaticResource AccentButtonStyle}"
+                Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
     </local:HostedPage.Action>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
@@ -46,27 +47,24 @@
 
                 <controls:HeaderedControl Header="{CustomResource AddExceptions}"
                                           Footer="{CustomResource PrivacyProfilePhotoInfo2}">
-                    <controls:BadgeButton Content="{CustomResource AlwaysAllow}"
-                                          Click="{x:Bind ViewModel.Always}"
-                                          Visibility="{x:Bind ConvertAlways(ViewModel.SelectedItem), Mode=OneWay}"
-                                          Badge="{x:Bind ViewModel.AllowedBadge, Mode=OneWay}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xF164;" />
+                    <controls:SettingsButton Content="{CustomResource AlwaysAllow}"
+                                             Click="{x:Bind ViewModel.Always}"
+                                             Visibility="{x:Bind ConvertAlways(ViewModel.SelectedItem), Mode=OneWay}"
+                                             Badge="{x:Bind ViewModel.AllowedBadge, Mode=OneWay}"
+                                             Glyph="&#xF164;" />
 
-                    <controls:BadgeButton Content="{CustomResource NeverAllow}"
-                                          Click="{x:Bind ViewModel.Never}"
-                                          Visibility="{x:Bind ConvertNever(ViewModel.SelectedItem), Mode=OneWay}"
-                                          Badge="{x:Bind ViewModel.RestrictedBadge, Mode=OneWay}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xF166;" />
+                    <controls:SettingsButton Content="{CustomResource NeverAllow}"
+                                             Click="{x:Bind ViewModel.Never}"
+                                             Visibility="{x:Bind ConvertNever(ViewModel.SelectedItem), Mode=OneWay}"
+                                             Badge="{x:Bind ViewModel.RestrictedBadge, Mode=OneWay}"
+                                             Glyph="&#xF166;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Visibility="{x:Bind ConvertAlways(ViewModel.SelectedItem), Mode=OneWay}"
                                           Footer="{CustomResource PhotoForRestDescription}">
-                    <controls:BadgeButton x:Name="UpdatePhoto"
-                                          Content="{CustomResource SetPhotoForRest}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9FD;">
+                    <controls:SettingsButton x:Name="UpdatePhoto"
+                                             Content="{CustomResource SetPhotoForRest}"
+                                             Glyph="&#xE9FD;">
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedLeft">
                                 <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
@@ -85,21 +83,19 @@
                                 </MenuFlyoutItem>
                             </MenuFlyout>
                         </Button.Flyout>
-                    </controls:BadgeButton>
+                    </controls:SettingsButton>
 
                     <controls:ProfilePicture x:Name="RemovePhotoPhoto"
-                                             Width="28"
-                                             Height="28"
+                                             Size="28"
                                              HorizontalAlignment="Left"
                                              Margin="16,0,0,-44"
                                              Canvas.ZIndex="1" />
 
-                    <controls:BadgeButton x:Name="RemovePhoto"
-                                          Content="{CustomResource RemovePublicPhoto}"
-                                          Click="{x:Bind ViewModel.RemovePhoto}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Foreground="{ThemeResource DangerButtonBackground}"
-                                          Glyph="&#xE74D;" />
+                    <controls:SettingsButton x:Name="RemovePhoto"
+                                             Content="{CustomResource RemovePublicPhoto}"
+                                             Click="{x:Bind ViewModel.RemovePhoto}"
+                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Glyph="&#xE74D;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

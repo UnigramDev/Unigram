@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -351,7 +352,7 @@ namespace Telegram.ViewModels.Payments
                     }
                     else if (choose.SelectedIndex is PaymentOption paymentOption)
                     {
-                        var option = new PaymentCredentialsPopup(SessionId, regular, paymentOption);
+                        var option = new PaymentCredentialsPopup(Session, regular, paymentOption);
 
                         var confirm2 = await ShowPopupAsync(option);
                         if (confirm2 == ContentDialogResult.Primary && option.Credentials != null)
@@ -365,7 +366,7 @@ namespace Telegram.ViewModels.Payments
                 }
             }
 
-            var popup = new PaymentCredentialsPopup(SessionId, regular);
+            var popup = new PaymentCredentialsPopup(Session, regular);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.Credentials != null)
@@ -382,7 +383,7 @@ namespace Telegram.ViewModels.Payments
                 return;
             }
 
-            var popup = new PaymentAddressPopup(SessionId, _inputInvoice, regular.Invoice, _info);
+            var popup = new PaymentAddressPopup(Session, _inputInvoice, regular.Invoice, _info);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.ValidatedInfo != null)

@@ -6,8 +6,7 @@
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
                        Padding="0,24,0,0"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
 
     <Grid>
         <ScrollViewer x:Name="ScrollingHost"
@@ -93,7 +92,6 @@
                     <TextBlock Text="{CustomResource LimitByPeriod}" />
                     <ComboBox x:Name="LimitByPeriod"
                               SelectionChanged="LimitByPeriod_SelectionChanged"
-                              DisplayMemberPath="Text"
                               HorizontalAlignment="Stretch"
                               Margin="0,8" />
 
@@ -109,7 +107,6 @@
                     <TextBlock Text="{CustomResource LimitNumberOfUses}" />
                     <ComboBox x:Name="LimitNumberOfUses"
                               SelectionChanged="LimitNumberOfUses_SelectionChanged"
-                              DisplayMemberPath="Text"
                               HorizontalAlignment="Stretch"
                               Margin="0,8" />
                     <TextBlock Text="{CustomResource UsesLimitHelp}"
@@ -120,6 +117,7 @@
         </ScrollViewer>
 
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
-                                    Background="{ThemeResource ContentDialogBackground}" />
+                                    Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    BottomInset="0" />
     </Grid>
 </controls:ContentPopup>

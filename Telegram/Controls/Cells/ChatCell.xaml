@@ -70,15 +70,15 @@
                             <controls:ActiveStoriesSegments x:Name="Segments"
                                                             Width="48"
                                                             Height="48"
-                                                            IsClickEnabled="False">
+                                                            InteractionMode="Auto"
+                                                            IsLiveBadgeVisible="False">
                                 <controls:ProfilePicture x:Name="Photo"
-                                                         Width="48"
-                                                         Height="48" />
+                                                         Size="48" />
                             </controls:ActiveStoriesSegments>
 
                             <Border x:Name="OnlineBadge"
                                     x:Load="False"
-                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
                                     UseLayoutRounding="False"
                                     Width="12"
                                     Height="12"
@@ -93,9 +93,58 @@
                                         CornerRadius="4" />
                             </Border>
 
+                            <Grid x:Name="AutoDeleteBadge"
+                                  x:Load="False"
+                                  Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                  Width="22"
+                                  Height="22"
+                                  CornerRadius="12"
+                                  Margin="0,0,-2,-2"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Bottom">
+                                <TextBlock Text="&#xEAD5;"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           FontSize="20"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="#FFFFFF" />
+
+                                <TextBlock x:Name="AutoDeleteLabel"
+                                           TextLineBounds="Tight"
+                                           TextAlignment="Center"
+                                           OpticalMarginAlignment="TrimSideBearings"
+                                           FontSize="9"
+                                           FontWeight="SemiBold"
+                                           Padding="4,0,4,0"
+                                           VerticalAlignment="Center"
+                                           Foreground="#FFFFFF" />
+                            </Grid>
+
+                            <Border x:Name="LiveBadge"
+                                    x:Load="False"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Bottom"
+                                    Background="#FF2C55"
+                                    BorderBrush="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                                    BorderThickness="2"
+                                    CornerRadius="8"
+                                    Height="16"
+                                    MinWidth="16"
+                                    Margin="0,0,0,-2">
+                                <TextBlock Foreground="#FFFFFF"
+                                           Text="{CustomResource LiveStoryBadge}"
+                                           TextLineBounds="Tight"
+                                           TextAlignment="Center"
+                                           OpticalMarginAlignment="TrimSideBearings"
+                                           FontSize="9"
+                                           Padding="4,0,4,0"
+                                           VerticalAlignment="Center"
+                                           Typography.NumeralAlignment="Tabular" />
+                            </Border>
+
                             <Border x:Name="CompactBadgeRoot"
                                     x:Load="False"
-                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
                                     CornerRadius="10"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom"
@@ -139,7 +188,7 @@
                                                        VerticalAlignment="Bottom"
                                                        Margin="4,0,0,0"
                                                        Grid.Column="2" />
-                                <controls:BadgeControl x:Name="FeedbackGroup"
+                                <controls:BadgeControl x:Name="DirectMessagesGroup"
                                                        x:Load="False"
                                                        Text="{CustomResource MonoforumSpan}"
                                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
@@ -159,7 +208,7 @@
 
                             <TextBlock x:Name="TimeLabel"
                                        Text="11:10"
-                                       FontFamily="Segoe UI, ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                        Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
                                        Margin="0,0,8,3"
@@ -177,14 +226,16 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <RichTextBlock x:Name="BriefText"
-                                           Style="{StaticResource InfoBodyRichTextBlockStyle}"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
-                                           IsTextSelectionEnabled="False"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap"
-                                           VerticalAlignment="Top"
-                                           MaxLines="1">
+                            <controls:FormattedTextBlock x:Name="BriefText"
+                                                         Style="{StaticResource InfoBodyFormattedTextBlockStyle}"
+                                                         EmojiStyle="{StaticResource InfoCustomEmojiStyle}"
+                                                         FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                                         IsTextSelectionEnabled="False"
+                                                         TextTrimming="CharacterEllipsis"
+                                                         TextWrapping="Wrap"
+                                                         VerticalAlignment="Top"
+                                                         AutoFontSize="False"
+                                                         MaxLines="1">
                                 <Paragraph>
                                     <Run x:Name="FromLabel"
                                          Foreground="{ThemeResource ChatFromLabelBrush}" /><Run x:Name="DraftLabel"
@@ -206,7 +257,7 @@
                                         </Border>
                                     </InlineUIContainer><Span x:Name="BriefLabel" />
                                 </Paragraph>
-                            </RichTextBlock>
+                            </controls:FormattedTextBlock>
                             <chats:ChatActionIndicator x:Name="ChatActionIndicator"
                                                        Visibility="Collapsed"
                                                        Fill="{ThemeResource PageHeaderHighlightBrush}"
@@ -260,19 +311,18 @@
                                                    Margin="4,2,0,0"
                                                    Visibility="Collapsed"
                                                    Grid.Column="2" />
-                            <controls:BadgeButton x:Name="BotOpen"
-                                                  Glyph="{CustomResource BotOpen}"
-                                                  Content="{CustomResource BotOpen}"
-                                                  Style="{StaticResource SmallPillButtonStyle}"
-                                                  HorizontalAlignment="Right"
-                                                  VerticalAlignment="Top"
-                                                  Margin="4,0,0,0"
-                                                  Padding="8,5,8,7"
-                                                  CornerRadius="10"
-                                                  Height="20"
-                                                  Visibility="Collapsed"
-                                                  Grid.Column="1"
-                                                  Grid.ColumnSpan="2" />
+                            <Button x:Name="BotOpen"
+                                    Content="{CustomResource BotOpen}"
+                                    Style="{StaticResource SmallPillButtonStyle}"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Margin="4,0,0,0"
+                                    Padding="8,5,8,7"
+                                    CornerRadius="10"
+                                    Height="20"
+                                    Visibility="Collapsed"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="2" />
                         </Grid>
 
                         <StackPanel x:Name="Folders"
@@ -283,7 +333,7 @@
 
                         <Rectangle x:Name="DropVisual"
                                    x:Load="False"
-                                   Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                   Stroke="{ThemeResource TextFillColorPrimaryBrush}"
                                    StrokeThickness="2"
                                    RadiusX="4"
                                    RadiusY="4"

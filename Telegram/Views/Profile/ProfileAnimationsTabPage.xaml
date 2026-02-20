@@ -5,14 +5,15 @@
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:common="using:Telegram.Common"
                       xmlns:controls="using:Telegram.Controls"
-                      xmlns:messages="using:Telegram.Controls.Messages"
-                      xmlns:selectors="using:Telegram.Selectors"
+                      xmlns:cells="using:Telegram.Controls.Cells"
                       xmlns:local="using:Telegram.Views.Profile"
-                      mc:Ignorable="d">
+                      mc:Ignorable="d"
+                      ItemsSource="{x:Bind ViewModel.Animations.ItemsView, Mode=OneWay}">
 
     <Grid>
         <controls:SelectGridView x:Name="ScrollingHost"
-                                 ItemsSource="{x:Bind ViewModel.Animations, Mode=OneWay}"
+                                 IsItemClickEnabled="True"
+                                 ItemClick="OnItemClick"
                                  SelectionMode="None"
                                  ChoosingItemContainer="OnChoosingItemContainer"
                                  ContainerContentChanging="OnContainerContentChanging"
@@ -56,44 +57,14 @@
                 </Style>
             </GridView.ItemContainerStyle>
             <GridView.Header>
-                <Border Height="{x:Bind ViewModel.HeaderHeight, Mode=OneWay}" />
+                <Border x:Name="Header" />
             </GridView.Header>
             <GridView.Footer>
                 <Border Height="60" />
             </GridView.Footer>
             <GridView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Background="{ThemeResource SettingsItemBackground}">
-                        <controls:ImageView Click="Photo_Click"
-                                            Stretch="UniformToFill" />
-
-                        <!--<controls:BadgeControl Text="00:08"
-                                               Background="{ThemeResource MessageOverlayBackgroundBrush}"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Bottom"
-                                               Margin="4" />-->
-
-                        <Border x:Name="Overlay"
-                                Visibility="Collapsed"
-                                Background="{ThemeResource MessageOverlayBackgroundBrush}"
-                                CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                Padding="6,1,6,3"
-                                Margin="4">
-                            <TextBlock x:Name="Subtitle"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="White"
-                                       TextAlignment="Right"
-                                       TextWrapping="NoWrap"
-                                       Typography.NumeralAlignment="Tabular" />
-                        </Border>
-
-                        <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="2">
-                        </Border>
-                    </Grid>
+                    <cells:SharedMediaCell />
                 </DataTemplate>
             </GridView.ItemTemplate>
             <GridView.ItemsPanel>

@@ -1,19 +1,20 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
+using Telegram.Native.Controls;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -30,11 +31,9 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(PollContent);
-
-            Disconnected += OnUnloaded;
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
             _timeoutTimer?.Stop();
             _timeoutTimer = null;
@@ -42,8 +41,7 @@ namespace Telegram.Controls.Messages.Content
 
         #region InitializeComponent
 
-        private RichTextBlock QuestionText;
-        private Paragraph Question;
+        private FormattedTextBlock QuestionText;
         private TextBlock Type;
         private RecentUserHeads RecentVoters;
         private StackPanel TimeoutLabel;
@@ -58,8 +56,7 @@ namespace Telegram.Controls.Messages.Content
 
         protected override void OnApplyTemplate()
         {
-            QuestionText = GetTemplateChild(nameof(QuestionText)) as RichTextBlock;
-            Question = GetTemplateChild(nameof(Question)) as Paragraph;
+            QuestionText = GetTemplateChild(nameof(QuestionText)) as FormattedTextBlock;
             Type = GetTemplateChild(nameof(Type)) as TextBlock;
             RecentVoters = GetTemplateChild(nameof(RecentVoters)) as RecentUserHeads;
             TimeoutLabel = GetTemplateChild(nameof(TimeoutLabel)) as StackPanel;
@@ -71,6 +68,7 @@ namespace Telegram.Controls.Messages.Content
             Submit = GetTemplateChild(nameof(Submit)) as Button;
             View = GetTemplateChild(nameof(View)) as Button;
 
+            QuestionText.TextEntityClick += QuestionText_TextEntityClick;
             RecentVoters.RecentUserHeadChanged += RecentVoters_RecentUserHeadChanged;
             Explanation.Click += Explanation_Click;
             Submit.Click += Submit_Click;
@@ -132,7 +130,7 @@ namespace Telegram.Controls.Messages.Content
                 TimeoutLabel.Visibility = Visibility.Collapsed;
             }
 
-            CustomEmojiIcon.Add(QuestionText, Question.Inlines, message.ClientService, poll.Poll.Question);
+            QuestionText.SetText(message.ClientService, poll.Poll.Question);
 
             Votes.Text = poll.Poll.TotalVoterCount > 0
                 ? Locale.Declension(poll.Poll.Type is PollTypeQuiz ? Strings.R.Answer : Strings.R.Vote, poll.Poll.TotalVoterCount)
@@ -184,14 +182,14 @@ namespace Telegram.Controls.Messages.Content
             {
                 if (i < Options.Children.Count)
                 {
-                    var button = Options.Children[i] as PollOptionControl;
+                    var button = Options.Children[i] as PollOptionContent;
                     button.Click -= Option_Click;
                     button.Checked -= Option_Toggled;
                     button.Unchecked -= Option_Toggled;
 
                     if (i < poll.Poll.Options.Count)
                     {
-                        button.UpdatePollOption(message.ClientService, poll.Poll, poll.Poll.Options[i]);
+                        button.UpdatePollOption(message, poll.Poll, poll.Poll.Options[i]);
 
                         if (poll.Poll.Type is PollTypeRegular regular && regular.AllowMultipleAnswers)
                         {
@@ -210,8 +208,8 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else
                 {
-                    var button = new PollOptionControl();
-                    button.UpdatePollOption(message.ClientService, poll.Poll, poll.Poll.Options[i]);
+                    var button = new PollOptionContent();
+                    button.UpdatePollOption(message, poll.Poll, poll.Poll.Options[i]);
 
                     if (poll.Poll.Type is PollTypeRegular regular && regular.AllowMultipleAnswers)
                     {
@@ -236,25 +234,18 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                destination.Clear();
-                destination.AddRange(origin);
+                destination.ReplaceWith(origin);
             }
+        }
+
+        private void QuestionText_TextEntityClick(object sender, TextEntityClickEventArgs e)
+        {
+            MessageBubble.TextEntityClick(_message, QuestionText, e);
         }
 
         private void RecentVoters_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
         {
-            if (_message.ClientService.TryGetUser(sender, out User user))
-            {
-                photo.SetUser(_message.ClientService, user, 18);
-            }
-            else if (_message.ClientService.TryGetChat(sender, out Chat chat))
-            {
-                photo.SetChat(_message.ClientService, chat, 18);
-            }
-            else
-            {
-                photo.Clear();
-            }
+            photo.Source = ProfilePictureSource.MessageSender(_message.ClientService, sender);
         }
 
         private void TimeoutTimer_Tick(object sender, object e)
@@ -309,13 +300,13 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            var button = sender as PollOptionControl;
+            var button = sender as PollOptionContent;
             if (button.IsChecked == null)
             {
                 return;
             }
 
-            var option = button.Tag as PollOption;
+            var option = button.Option as PollOption;
             if (option == null)
             {
                 return;
@@ -338,9 +329,9 @@ namespace Telegram.Controls.Messages.Content
         {
             Submit.IsEnabled = false;
 
-            foreach (PollOptionControl button in Options.Children)
+            foreach (PollOptionContent button in Options.Children)
             {
-                if (button.IsChecked == true && button.Tag is PollOption)
+                if (button.IsChecked == true && button.Option is PollOption)
                 {
                     Submit.IsEnabled = true;
                 }
@@ -353,7 +344,7 @@ namespace Telegram.Controls.Messages.Content
 
             for (int i = 0; i < Options.Children.Count; i++)
             {
-                var button = Options.Children[i] as PollOptionControl;
+                var button = Options.Children[i] as PollOptionContent;
                 if (button != null && button.IsChecked == true)
                 {
                     options ??= new();

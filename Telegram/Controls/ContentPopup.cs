@@ -1,10 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System;
 using System.Numerics;
+using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Composition;
@@ -24,11 +27,15 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
-using VirtualKey = Windows.System.VirtualKey;
-using VirtualKeyModifiers = Windows.System.VirtualKeyModifiers;
 
 namespace Telegram.Controls
 {
+    public enum ContentPopupButtonsLayout
+    {
+        Horizontal,
+        Vertical
+    }
+
     public partial class ContentPopup : ContentDialogEx
     {
         private ContentDialogResult _result;
@@ -39,17 +46,24 @@ namespace Telegram.Controls
         private Border BorderElement;
         private Border ContentElement;
         private Grid CommandSpace;
+        private Grid PrimaryRoot;
+        private Button PrimaryButton;
+        private Microsoft.UI.Xaml.Controls.ProgressRing PrimaryButtonPending;
 
         private Button DismissButton;
 
         private Rectangle Smoke;
+
+        private long _primaryTextToken;
+        private long _secondaryTextToken;
+        private long _closeTextToken;
 
         public ContentPopup()
         {
             DefaultStyleKey = typeof(ContentPopup);
             DefaultButton = ContentDialogButton.Primary;
 
-            if (Window.Current.Content is FrameworkElement element)
+            if (WindowContext.Current.Content is FrameworkElement element)
             {
                 var app = BootStrapper.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
                 var frame = element.RequestedTheme;
@@ -64,6 +78,10 @@ namespace Telegram.Controls
             Disconnected += OnUnloaded;
 
             CloseButtonClick += OnCloseButtonClick;
+
+            this.RegisterPropertyChangedCallback(PrimaryButtonTextProperty, OnButtonTextChanged, ref _primaryTextToken);
+            this.RegisterPropertyChangedCallback(SecondaryButtonTextProperty, OnButtonTextChanged, ref _secondaryTextToken);
+            this.RegisterPropertyChangedCallback(CloseButtonTextProperty, OnButtonTextChanged, ref _closeTextToken);
         }
 
         private void OnCloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -168,6 +186,10 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            this.RegisterPropertyChangedCallback(PrimaryButtonTextProperty, OnButtonTextChanged, ref _primaryTextToken);
+            this.RegisterPropertyChangedCallback(SecondaryButtonTextProperty, OnButtonTextChanged, ref _secondaryTextToken);
+            this.RegisterPropertyChangedCallback(CloseButtonTextProperty, OnButtonTextChanged, ref _closeTextToken);
+
             try
             {
                 if (XamlRoot.Content is IPopupHost host)
@@ -223,6 +245,10 @@ namespace Telegram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            this.UnregisterPropertyChangedCallback(PrimaryButtonTextProperty, ref _primaryTextToken);
+            this.UnregisterPropertyChangedCallback(SecondaryButtonTextProperty, ref _secondaryTextToken);
+            this.UnregisterPropertyChangedCallback(CloseButtonTextProperty, ref _closeTextToken);
+
             try
             {
                 if (XamlRoot.Content is IPopupHost host)
@@ -243,7 +269,7 @@ namespace Telegram.Controls
             {
                 // TODO: should the if be simplified to focused is null or not Control?
 
-                var focused = FocusManager.GetFocusedElement();
+                var focused = FocusManagerEx.TryGetFocusedElement();
                 if (focused is null or (not TextBox and not RichEditBox and not Button and not MenuFlyoutItem))
                 {
                     Hide(ContentDialogResult.Primary);
@@ -263,12 +289,19 @@ namespace Telegram.Controls
 
             VisualStateManager.GoToState(this, IsPrimaryButtonSplit ? "PrimaryAsSplitButton" : "NoSplitButton", false);
 
-            var button = GetTemplateChild("PrimaryButton") as Button;
-            if (button != null && FocusPrimaryButton)
+            // TODO: Name
+            PrimaryRoot = GetTemplateChild(nameof(PrimaryRoot)) as Grid;
+            PrimaryButton = GetTemplateChild(nameof(PrimaryButton)) as Button;
+            PrimaryButtonPending = GetTemplateChild(nameof(PrimaryButtonPending)) as Microsoft.UI.Xaml.Controls.ProgressRing;
+
+            PrimaryRoot?.CreateInsetClip();
+
+            if (PrimaryButton != null && FocusPrimaryButton)
             {
-                button.Loaded += PrimaryButton_Loaded;
+                PrimaryButton.Loaded += PrimaryButton_Loaded;
             }
 
+            // TODO: Name
             var rectangle = GetTemplateChild("LightDismiss") as Rectangle;
             if (rectangle != null)
             {
@@ -299,6 +332,22 @@ namespace Telegram.Controls
                 LayoutRoot.ProcessKeyboardAccelerators += OnProcessKeyboardAccelerators;
                 ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
             }
+
+            this.RegisterPropertyChangedCallback(PrimaryButtonTextProperty, OnButtonTextChanged, ref _primaryTextToken);
+            this.RegisterPropertyChangedCallback(SecondaryButtonTextProperty, OnButtonTextChanged, ref _secondaryTextToken);
+            this.RegisterPropertyChangedCallback(CloseButtonTextProperty, OnButtonTextChanged, ref _closeTextToken);
+
+            CalculateButtonsVisualState();
+        }
+
+        private void OnButtonTextChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (dp == PrimaryButtonTextProperty)
+            {
+                PrimaryButtonContent = PrimaryButtonText;
+            }
+
+            CalculateButtonsVisualState();
         }
 
         private void DismissButton_Click(object sender, RoutedEventArgs e)
@@ -355,6 +404,7 @@ namespace Telegram.Controls
 
             if (result == ContentDialogResult.Primary)
             {
+                // TODO: Name
                 var button = GetTemplateChild("PrimaryButton") as Button;
                 if (button != null)
                 {
@@ -369,6 +419,7 @@ namespace Telegram.Controls
             }
             else if (result == ContentDialogResult.Secondary)
             {
+                // TODO: Name
                 var button = GetTemplateChild("SecondaryButton") as Button;
                 if (button != null)
                 {
@@ -414,12 +465,15 @@ namespace Telegram.Controls
         private static void OnDismissButtonVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as ContentPopup;
-            if (sender?.DismissButton != null)
+            if (sender?.DismissButton == null)
             {
-                sender.DismissButton.Visibility = (bool)e.NewValue
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                sender.DismissButton = sender.GetTemplateChild(nameof(sender.DismissButton)) as Button;
+                sender.DismissButton?.Click += sender.DismissButton_Click;
             }
+
+            sender.DismissButton?.Visibility = (bool)e.NewValue
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         #endregion
@@ -438,23 +492,81 @@ namespace Telegram.Controls
         private static void OnDismissButtonRequestedThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as ContentPopup;
-            if (sender?.DismissButton != null)
+            if (sender?.DismissButton == null)
             {
-                if (sender.DismissButton == null)
-                {
-                    sender.DismissButton = sender.GetTemplateChild(nameof(sender.DismissButton)) as Button;
-
-                    if (sender.DismissButton != null)
-                    {
-                        sender.DismissButton.RequestedTheme = sender.DismissButtonRequestedTheme;
-                        sender.DismissButton.Click += sender.DismissButton_Click;
-                    }
-                }
-                else
-                {
-                    sender.DismissButton.RequestedTheme = (ElementTheme)e.NewValue;
-                }
+                sender.DismissButton = sender.GetTemplateChild(nameof(sender.DismissButton)) as Button;
+                sender.DismissButton?.Click += sender.DismissButton_Click;
             }
+
+            sender?.DismissButton?.RequestedTheme = (ElementTheme)e.NewValue;
+        }
+
+        #endregion
+
+        #region PrimaryButtonContent
+
+        public object PrimaryButtonContent
+        {
+            get { return (object)GetValue(PrimaryButtonContentProperty); }
+            set { SetValue(PrimaryButtonContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty PrimaryButtonContentProperty =
+            DependencyProperty.Register(nameof(PrimaryButtonContent), typeof(object), typeof(ContentPopup), new PropertyMetadata(null));
+
+        #endregion
+
+        #region IsPrimaryButtonPending
+
+
+        public bool IsPrimaryButtonPending
+        {
+            get { return (bool)GetValue(IsPrimaryButtonPendingProperty); }
+            set { SetValue(IsPrimaryButtonPendingProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsPrimaryButtonPendingProperty =
+            DependencyProperty.Register(nameof(IsPrimaryButtonPending), typeof(bool), typeof(ContentPopup), new PropertyMetadata(false, OnIsPrimaryButtonPendingChanged));
+
+        private static void OnIsPrimaryButtonPendingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ContentPopup)d).OnIsPrimaryButtonPendingChanged((bool)e.NewValue);
+        }
+
+        private bool _primaryButtonPendingCollapsed = true;
+
+        private void OnIsPrimaryButtonPendingChanged(bool show)
+        {
+            var contentTemplateRoot = PrimaryButton?.ContentTemplateRoot;
+            if (contentTemplateRoot == null || PrimaryButtonPending == null)
+            {
+                return;
+            }
+
+            if (_primaryButtonPendingCollapsed != show)
+            {
+                return;
+            }
+
+            _primaryButtonPendingCollapsed = !show;
+            PrimaryButtonPending.Visibility = Visibility.Visible;
+
+            var visual1 = ElementComposition.GetElementVisual(contentTemplateRoot);
+            var visual2 = ElementComposition.GetElementVisual(PrimaryButtonPending);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(contentTemplateRoot, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(PrimaryButtonPending, true);
+
+            var translate1 = visual1.Compositor.CreateScalarKeyFrameAnimation();
+            translate1.InsertKeyFrame(0, show ? 0 : 32);
+            translate1.InsertKeyFrame(1, show ? -32 : 0);
+
+            var translate2 = visual1.Compositor.CreateScalarKeyFrameAnimation();
+            translate2.InsertKeyFrame(0, show ? 32 : 0);
+            translate2.InsertKeyFrame(1, show ? 0 : -32);
+
+            visual1.StartAnimation("Translation.Y", translate1);
+            visual2.StartAnimation("Translation.Y", translate2);
         }
 
         #endregion
@@ -537,6 +649,76 @@ namespace Telegram.Controls
 
         #endregion
 
+        #region ButtonsLayout
+
+        public ContentPopupButtonsLayout ButtonsLayout
+        {
+            get { return (ContentPopupButtonsLayout)GetValue(ButtonsLayoutProperty); }
+            set { SetValue(ButtonsLayoutProperty, value); }
+        }
+
+        public static readonly DependencyProperty ButtonsLayoutProperty =
+            DependencyProperty.Register("ButtonsLayout", typeof(ContentPopupButtonsLayout), typeof(ContentPopup), new PropertyMetadata(ContentPopupButtonsLayout.Horizontal, OnButtonsLayoutChanged));
+
+        private static void OnButtonsLayoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ContentPopup)d).CalculateButtonsVisualState();
+        }
+
+        #endregion
+
+        private void CalculateButtonsVisualState()
+        {
+            var primary = !string.IsNullOrEmpty(PrimaryButtonText);
+            var secondary = !string.IsNullOrEmpty(SecondaryButtonText);
+            var close = !string.IsNullOrEmpty(CloseButtonText);
+
+            var builder = new StringBuilder();
+
+            if (primary && secondary && close)
+            {
+                builder.Append("ButtonsAllVisible");
+            }
+            else
+            {
+                if (primary)
+                {
+                    builder.Append("Primary");
+                }
+
+                if (secondary)
+                {
+                    if (builder.Length > 0)
+                    {
+                        builder.Append("And");
+                    }
+
+                    builder.Append("Secondary");
+                }
+
+                if (close)
+                {
+                    if (builder.Length > 0)
+                    {
+                        builder.Append("And");
+                    }
+
+                    builder.Append("Close");
+                }
+
+                if (builder.Length > 0)
+                {
+                    builder.Append(ButtonsLayout == ContentPopupButtonsLayout.Vertical ? "Vertical" : "Horizontal");
+                }
+                else
+                {
+                    builder.Append("ButtonsNoneVisible");
+                }
+            }
+
+            VisualStateManager.GoToState(this, builder.ToString(), false);
+        }
+
         // TODO: terrible naming, this is used to prevent NavigatedFrom logic on temporary hide
         public bool IsFinalized { get; set; } = true;
 
@@ -598,6 +780,35 @@ namespace Telegram.Controls
         private static void OnBlockedClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             args.Cancel = sender.Tag != null;
+        }
+
+        [ThreadStatic]
+        private static TaskCompletionSource<ContentDialog> _currentDialogShowRequest;
+
+        public async Task<ContentDialogResult> ShowQueuedAsync(XamlRoot xamlRoot)
+        {
+            while (_currentDialogShowRequest != null)
+            {
+                await _currentDialogShowRequest.Task;
+            }
+
+            var dialog = this;
+            Logger.Info(dialog.GetType().Name);
+
+            if (dialog is ContentPopup popup)
+            {
+                popup.OnCreate();
+            }
+
+            dialog.XamlRoot = xamlRoot;
+
+            var request = _currentDialogShowRequest = new TaskCompletionSource<ContentDialog>();
+            var result = await dialog.ShowAsync();
+            _currentDialogShowRequest = null;
+            request.SetResult(dialog);
+
+            Logger.Info(dialog.GetType().Name + ", closed");
+            return result;
         }
     }
 }

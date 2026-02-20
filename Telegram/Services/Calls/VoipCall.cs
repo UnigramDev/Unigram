@@ -1,12 +1,19 @@
-﻿using System;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Telegram.Views.Calls;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Calls;
@@ -216,14 +223,14 @@ namespace Telegram.Services.Calls
                 if (_manager != null && _manager.IsMuted != (value == VoipAudioState.Muted))
                 {
                     _manager.IsMuted = value == VoipAudioState.Muted;
-                    MediaStateChanged?.Invoke(this, new VoipCallMediaStateChangedEventArgs(value, _videoState, IsScreenSharing));
-
                     _coordinator?.TryNotifyMutedChanged(value == VoipAudioState.Muted);
                 }
                 else
                 {
                     _coordinator?.TryNotifyMutedChanged(true);
                 }
+
+                MediaStateChanged?.Invoke(this, new VoipCallMediaStateChangedEventArgs(value, _videoState, IsScreenSharing));
             }
         }
 
@@ -332,17 +339,17 @@ namespace Telegram.Services.Calls
             try
             {
                 _systemCall?.TryShowAppUI();
-
-                // NotifyCallActive causes the main app window to be focused
-                // We call it immediately, so that the focus can move to the call window.
-                _systemCall?.NotifyCallActive();
             }
             catch
             {
                 // All the remote procedure calls must be wrapped in a try-catch block
             }
 
-            ClientService.Send(new AcceptCall(Id, VoipManager.Protocol));
+            // NotifyCallActive causes the main app window to be focused
+            // We call it immediately, so that the focus can move to the call window.
+            _systemCall?.TryNotifyCallActive();
+
+            ClientService.Send(new AcceptCall(Id, VoipManager.Protocol.ToTd()));
 
             // TODO: consider delivering a fake update to speed up initialization
         }
@@ -518,7 +525,8 @@ namespace Telegram.Services.Calls
 
         private void OnSignalingDataEmitted(VoipManager sender, SignalingDataEmittedEventArgs args)
         {
-            ClientService.Send(new SendCallSignalingData(Id, args.Data));
+            // TODO: Optimize IList<byte> to byte[]
+            ClientService.Send(new SendCallSignalingData(Id, args.Data.ToArray()));
         }
 
         private void OnDeviceChanged(object sender, MediaDeviceChangedEventArgs e)
@@ -596,7 +604,7 @@ namespace Telegram.Services.Calls
                 CustomParameters = ready.CustomParameters,
                 InitializationTimeout = call_packet_timeout_ms / 1000.0,
                 ReceiveTimeout = call_connect_timeout_ms / 1000.0,
-                Servers = ready.Servers,
+                Servers = ready.Servers.ToCalls(),
                 EncryptionKey = ready.EncryptionKey,
                 IsOutgoing = IsOutgoing,
                 EnableP2p = ready.Protocol.UdpP2p && ready.AllowP2p,
@@ -617,7 +625,11 @@ namespace Telegram.Services.Calls
             lock (_managerLock)
             {
                 _manager = manager;
-                _audioState = manager.IsMuted ? VoipAudioState.Muted : VoipAudioState.Active;
+
+                if (_manager.IsMuted != (_audioState == VoipAudioState.Muted))
+                {
+                    _manager.IsMuted = _audioState == VoipAudioState.Muted;
+                }
 
                 while (_signalingData.TryDequeue(out var data))
                 {
@@ -659,7 +671,7 @@ namespace Telegram.Services.Calls
 
         private void CreateWindow(bool newOutgoingCall)
         {
-            var service = TypeResolver.Current.Resolve<IViewService>(int.MaxValue);
+            var service = ClientService.Session.Resolve<IViewService>();
             var options = new ViewServiceOptions
             {
                 Width = newOutgoingCall ? 720 : 320,
@@ -830,7 +842,7 @@ namespace Telegram.Services.Calls
                             user.FullName(),
                             Strings.AppName,
                             VoipPhoneCallMedia.Audio | VoipPhoneCallMedia.Video);
-                        //_systemCall.TryNotifyCallActive();
+                        _systemCall.TryNotifyCallActive();
                     }
                     else
                     {
@@ -862,10 +874,18 @@ namespace Telegram.Services.Calls
 
                     _systemCall.EndRequested += OnEndRequested;
                 }
+                else
+                {
+                    Logger.Error(status);
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Error(ex);
+
+                _coordinator?.MuteStateChanged -= OnMuteStateChanged;
                 _coordinator = null;
+
                 _systemCall = null;
             }
 

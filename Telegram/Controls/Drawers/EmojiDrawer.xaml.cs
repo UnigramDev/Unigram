@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,9 @@ using System.Numerics;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Cells;
+using Telegram.Controls.Media;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Streams;
@@ -47,19 +50,26 @@ namespace Telegram.Controls.Drawers
         }
     }
 
+    public partial class EmojiDrawerItemClickEventArgs : EventArgs
+    {
+        public EmojiDrawerItemClickEventArgs(object clickedItem)
+        {
+            ClickedItem = clickedItem;
+        }
+
+        public Sticker Sticker { get; }
+
+        public object ClickedItem { get; }
+    }
+
     public partial class EmojiDrawer : UserControl, IDrawer
     {
         public EmojiDrawerViewModel ViewModel => DataContext as EmojiDrawerViewModel;
 
-        public event ItemClickEventHandler ItemClick;
-        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> ItemContextRequested;
-
-        private bool _needUpdate;
+        public event EventHandler<EmojiDrawerItemClickEventArgs> ItemClick;
+        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<StickerViewModel>> ItemContextRequested;
 
         private EmojiDrawerMode _mode;
-
-        private EmojiSkinTone _selected;
-        private bool _expanded;
 
         private bool _isActive;
 
@@ -92,10 +102,8 @@ namespace Telegram.Controls.Drawers
             _toolbarHandler = new AnimatedListHandler(Toolbar2, AnimatedListType.Emoji);
 
             _zoomer = new ZoomableListHandler(List);
-            _zoomer.Opening = UnloadVisibleItems;
-            _zoomer.Closing = ThrottleVisibleItems;
-            _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
-            _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
+            _zoomer.Opening = _handler.Suspend;
+            _zoomer.Closing = _handler.Resume;
 
             _typeToItemHashSetMapping.Add("EmojiSkinTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("EmojiTemplate", new HashSet<SelectorItem>());
@@ -146,9 +154,16 @@ namespace Telegram.Controls.Drawers
                 }
                 else if (ViewModel != null)
                 {
-                    List.ItemsSource = new SearchEmojiCollection(ViewModel.ClientService, SearchField.Text, _selected, _mode);
+                    List.ItemsSource = new SearchEmojiCollection(ViewModel.ClientService, SearchField.Text, _mode);
                 }
             };
+        }
+
+        public void HideNavigation()
+        {
+            ToolbarContainer.Visibility = Visibility.Collapsed;
+            SearchField.Visibility = Visibility.Collapsed;
+            List.Padding = new Thickness(8, 8, 0, 0);
         }
 
         public void UpdateTopicIcon(string name, int color)
@@ -179,7 +194,7 @@ namespace Telegram.Controls.Drawers
         public void Activate(Chat chat, EmojiSearchType type = EmojiSearchType.Default)
         {
             _isActive = true;
-            _handler.ThrottleVisibleItems();
+            _handler.Resume();
             _toolbarHandler.ThrottleVisibleItems();
 
             if (ViewModel.IsPremium)
@@ -190,6 +205,7 @@ namespace Telegram.Controls.Drawers
                     EmojiDrawerMode.UserPhoto => EmojiSearchType.ChatPhoto,
                     EmojiDrawerMode.EmojiStatus => EmojiSearchType.EmojiStatus,
                     EmojiDrawerMode.ChatEmojiStatus => EmojiSearchType.EmojiStatus,
+                    EmojiDrawerMode.Reactions => EmojiSearchType.Combined,
                     _ => EmojiSearchType.Default
                 });
             }
@@ -260,34 +276,7 @@ namespace Telegram.Controls.Drawers
                 return;
             }
 
-            var microsoft = string.Equals(SettingsService.Current.Appearance.EmojiSet, "microsoft");
-            var tone = SettingsService.Current.Stickers.SkinTone;
-
-            if (Toolbar.ItemsSource is List<EmojiGroup> groups)
-            {
-                if (groups.Count == Emoji.GroupsCount && microsoft)
-                {
-                    _needUpdate = true;
-                }
-                else if (groups.Count == Emoji.GroupsCount - 1 && !microsoft)
-                {
-                    _needUpdate = true;
-                }
-            }
-            else
-            {
-                _needUpdate = true;
-            }
-
-            if (_needUpdate)
-            {
-                //var items = Emoji.Get(tone, !microsoft);
-                //EmojiCollection.Source = items;
-                //Toolbar.ItemsSource = items;
-            }
-
-            _needUpdate = false;
-            UpdateSkinTone(tone, false, false);
+            UpdateToolbar();
         }
 
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -345,14 +334,35 @@ namespace Telegram.Controls.Drawers
             List.ScrollIntoView(e.ClickedItem, ScrollIntoViewAlignment.Leading);
         }
 
+        public void InsertEmoji(EmojiSkinData emoji)
+        {
+            SettingsService.Current.Emoji.SetEmojiSkinTone(emoji);
+            SettingsService.Current.Emoji.AddRecentEmoji(emoji);
+            ItemClick?.Invoke(this, new EmojiDrawerItemClickEventArgs(emoji));
+        }
+
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is EmojiData data)
             {
-                _needUpdate = true;
+                if (data is EmojiSkinData skin && !SettingsService.Current.Emoji.HasSkinTone(skin))
+                {
+                    var container = ScrollingHost.ContainerFromItem(e.ClickedItem);
+                    if (container != null)
+                    {
+                        var flyout = new Flyout
+                        {
+                            FlyoutPresenterStyle = BootStrapper.Current.Resources["CommandFlyoutPresenterStyle"] as Style,
+                        };
 
-                SettingsService.Current.Emoji.AddRecentEmoji(data.Value);
-                ItemClick?.Invoke(this, e);
+                        flyout.Content = new EmojiSkinFlyout(this, flyout, skin);
+                        flyout.ShowAt(container as UIElement, FlyoutPlacementMode.Top);
+                        return;
+                    }
+                }
+
+                SettingsService.Current.Emoji.AddRecentEmoji(data);
+                ItemClick?.Invoke(this, new EmojiDrawerItemClickEventArgs(e.ClickedItem));
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
@@ -381,10 +391,10 @@ namespace Telegram.Controls.Drawers
                 {
                     if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
                     {
-                        SettingsService.Current.Emoji.AddRecentEmoji($"{sticker.Emoji};{customEmoji.CustomEmojiId}");
+                        SettingsService.Current.Emoji.AddRecentEmoji(sticker.Emoji, customEmoji.CustomEmojiId);
                     }
 
-                    ItemClick?.Invoke(this, e);
+                    ItemClick?.Invoke(this, new EmojiDrawerItemClickEventArgs(e.ClickedItem));
                 }
             }
         }
@@ -394,38 +404,6 @@ namespace Telegram.Controls.Drawers
             if (e.Category.Source is EmojiCategorySourceSearch search)
             {
                 List.ItemsSource = await Emoji.SearchAsync(ViewModel.ClientService, search.Emojis);
-            }
-        }
-
-        private void SkinTone_Click(object sender, RoutedEventArgs e)
-        {
-            if (!_expanded)
-            {
-                UpdateSkinTone(SettingsService.Current.Stickers.SkinTone, true, true);
-                return;
-            }
-
-            var radio = sender as RadioButton;
-            if (radio.Content is int value && ViewModel.Items.Count > 0)
-            {
-                if (ViewModel.Items[0] is RecentEmoji recent)
-                {
-                    foreach (var item in recent.Stickers.OfType<EmojiSkinData>())
-                    {
-                        item.SetValue((EmojiSkinTone)value);
-                    }
-                }
-
-                foreach (var group in ViewModel.StandardSets)
-                {
-                    foreach (var item in group.Stickers.OfType<EmojiSkinData>())
-                    {
-                        item.SetValue((EmojiSkinTone)value);
-                    }
-                }
-
-                SettingsService.Current.Stickers.SkinTone = (EmojiSkinTone)value;
-                UpdateSkinTone((EmojiSkinTone)value, false, true);
             }
         }
 
@@ -443,7 +421,7 @@ namespace Telegram.Controls.Drawers
                 return;
             }
 
-            var collapsed = !(_expanded || Toolbar.SelectedItem != null);
+            var collapsed = Toolbar.SelectedItem == null;
             if (collapsed != _emojiCollapsed || collapse)
             {
                 _emojiCollapsed = collapsed;
@@ -464,7 +442,7 @@ namespace Telegram.Controls.Drawers
 
                 pill.Clip = toolbar.Compositor.CreateGeometricClip(ellipse);
                 toolbar.Clip = clip;
-                Toolbar3.Width = 144 + 36;
+                Toolbar3.Width = 144;
 
                 var animClip = toolbar.Compositor.CreateScalarKeyFrameAnimation();
                 animClip.InsertKeyFrame(show ? 1 : 0, 0);
@@ -488,7 +466,7 @@ namespace Telegram.Controls.Drawers
                     panel.Properties.InsertVector3("Translation", Vector3.Zero);
 
                     toolbar.Clip = null;
-                    Toolbar3.Width = show ? 144 + 36 : 32 + 36;
+                    Toolbar3.Width = show ? 144 : 32;
                 };
 
                 clip.StartAnimation("RightInset", animClip);
@@ -500,83 +478,9 @@ namespace Telegram.Controls.Drawers
             }
         }
 
-        private void UpdateSkinTone(EmojiSkinTone selected, bool expand, bool animated)
-        {
-            Canvas.SetZIndex(SkinDefault, (int)selected == 0 ? 6 : 5);
-            Canvas.SetZIndex(SkinFitz12, (int)selected == 1 ? 6 : 4);
-            Canvas.SetZIndex(SkinFitz3, (int)selected == 2 ? 6 : 3);
-            Canvas.SetZIndex(SkinFitz4, (int)selected == 3 ? 6 : 2);
-            Canvas.SetZIndex(SkinFitz5, (int)selected == 4 ? 6 : 1);
-            Canvas.SetZIndex(SkinFitz6, (int)selected == 5 ? 6 : 0);
-
-            Grid.SetColumn(SkinDefault, expand ? (int)selected < 0 ? 0 : (int)selected > 0 ? 1 : 0 : 0);
-            Grid.SetColumn(SkinFitz12, expand ? (int)selected < 1 ? 1 : (int)selected > 1 ? 2 : 0 : 0);
-            Grid.SetColumn(SkinFitz3, expand ? (int)selected < 2 ? 2 : (int)selected > 2 ? 3 : 0 : 0);
-            Grid.SetColumn(SkinFitz4, expand ? (int)selected < 3 ? 3 : (int)selected > 3 ? 4 : 0 : 0);
-            Grid.SetColumn(SkinFitz5, expand ? (int)selected < 4 ? 4 : (int)selected > 4 ? 5 : 0 : 0);
-            Grid.SetColumn(SkinFitz6, expand ? (int)selected < 5 ? 5 : (int)selected > 5 ? 5 : 0 : 0);
-            Grid.SetColumn(Toolbar, expand ? 6 : 1);
-            Grid.SetColumn(ToolbarPill, expand ? 6 : 1);
-
-            SkinDefault.IsEnabled = expand || selected == EmojiSkinTone.Default;
-            SkinFitz12.IsEnabled = expand || selected == EmojiSkinTone.Fitz12;
-            SkinFitz3.IsEnabled = expand || selected == EmojiSkinTone.Fitz3;
-            SkinFitz4.IsEnabled = expand || selected == EmojiSkinTone.Fitz4;
-            SkinFitz5.IsEnabled = expand || selected == EmojiSkinTone.Fitz5;
-            SkinFitz6.IsEnabled = expand || selected == EmojiSkinTone.Fitz6;
-
-            SkinDefault.IsChecked = selected == EmojiSkinTone.Default;
-            SkinFitz12.IsChecked = selected == EmojiSkinTone.Fitz12;
-            SkinFitz3.IsChecked = selected == EmojiSkinTone.Fitz3;
-            SkinFitz4.IsChecked = selected == EmojiSkinTone.Fitz4;
-            SkinFitz5.IsChecked = selected == EmojiSkinTone.Fitz5;
-            SkinFitz6.IsChecked = selected == EmojiSkinTone.Fitz6;
-
-            if (_expanded == expand || !animated)
-            {
-                _selected = selected;
-                _expanded = expand;
-                return;
-            }
-
-            var elements = new UIElement[] { SkinDefault, SkinFitz12, SkinFitz3, SkinFitz4, SkinFitz5, SkinFitz6, Toolbar };
-
-            for (int i = 0; i < elements.Length; i++)
-            {
-                var child = VisualTreeHelper.GetChild(elements[i], 0) as UIElement;
-                if (child == null)
-                {
-                    continue;
-                }
-
-                var visual = ElementComposition.GetElementVisual(child);
-
-                var from = i;
-                if (elements[i] == Toolbar)
-                {
-                    from--;
-                }
-                else
-                {
-                    from = (int)_selected < i ? i : (int)_selected > i ? i + 1 : 0;
-                }
-
-                var anim = visual.Compositor.CreateScalarKeyFrameAnimation();
-                anim.InsertKeyFrame(0, expand ? from * -40 : from * 40);
-                anim.InsertKeyFrame(1, 0);
-
-                visual.StartAnimation("Offset.X", anim);
-            }
-
-            _selected = selected;
-            _expanded = expand;
-
-            UpdateToolbar();
-        }
-
         #region Recycle
 
-        private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
+        private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new();
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
@@ -712,7 +616,7 @@ namespace Telegram.Controls.Drawers
                         animation.Source = null;
                     }
 
-                    if (_mode == EmojiDrawerMode.Reactions && args.ItemIndex > 5 && args.ItemIndex < 8 * 6)
+                    if (false && _mode == EmojiDrawerMode.Reactions && args.ItemIndex > 5 && args.ItemIndex < 8 * 6)
                     {
                         var x1 = 4;
                         var y1 = 0;
@@ -768,14 +672,19 @@ namespace Telegram.Controls.Drawers
                 Automation.SetToolTip(args.ItemContainer, sticker.Title);
 
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
-                if (content == null || sticker == null || (sticker.Thumbnail == null && sticker.Covers == null))
+                if (content?.Children[0] is FontIcon icon)
                 {
-                    return;
+                    icon.Glyph = sticker.Name switch
+                    {
+                        "tg/recentlyUsed" => Icons.EmojiRecents,
+                        "tg/collectibles" => Icons.Diamond,
+                        _ => string.Empty
+                    };
                 }
-
-                var animation = content.Children[0] as AnimatedImage;
-                animation.Source = DelayedFileSource.FromStickerSetInfo(ViewModel.ClientService, sticker);
+                else if (content?.Children[0] is AnimatedImage animated)
+                {
+                    animated.Source = DelayedFileSource.FromStickerSetInfo(ViewModel.ClientService, sticker);
+                }
 
                 args.Handled = true;
             }
@@ -783,13 +692,21 @@ namespace Telegram.Controls.Drawers
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var sticker = List.ItemFromContainer(sender) as StickerViewModel;
-            if (sticker == null)
+            var item = List.ItemFromContainer(sender);
+            if (item is StickerViewModel sticker)
             {
-                return;
+                ItemContextRequested?.Invoke(sender, new ItemContextRequestedEventArgs<StickerViewModel>(sticker, args));
             }
+            else if (item is EmojiSkinData emoji)
+            {
+                var flyout = new Flyout
+                {
+                    FlyoutPresenterStyle = BootStrapper.Current.Resources["CommandFlyoutPresenterStyle"] as Style,
+                };
 
-            ItemContextRequested?.Invoke(sender, new ItemContextRequestedEventArgs<Sticker>(sticker, args));
+                flyout.Content = new EmojiSkinFlyout(this, flyout, emoji);
+                flyout.ShowAt(sender, FlyoutPlacementMode.Top);
+            }
         }
 
         private void Player_Ready(object sender, System.EventArgs e)

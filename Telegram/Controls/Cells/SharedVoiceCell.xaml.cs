@@ -1,56 +1,78 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Converters;
+using Telegram.Native.Controls;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
     public sealed partial class SharedVoiceCell : GridEx
     {
-        private IPlaybackService _playbackService;
         private MessageWithOwner _message;
         public MessageWithOwner Message => _message;
 
         private long _fileToken;
+        private long _thumbnailToken;
 
         public SharedVoiceCell()
         {
             InitializeComponent();
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
-            if (_playbackService != null)
-            {
-                _playbackService.SourceChanged -= OnPlaybackStateChanged;
-                _playbackService.StateChanged -= OnPlaybackStateChanged;
-                _playbackService.PositionChanged -= OnPositionChanged;
-            }
+            LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
         }
 
-        public void UpdateMessage(IPlaybackService playbackService, MessageWithOwner message)
+        private bool _hidden;
+
+        public void Hide()
         {
-            _playbackService = playbackService;
-            _message = message;
-
-            _playbackService.SourceChanged -= OnPlaybackStateChanged;
-
-            var voiceNote = GetContent(message.Content);
-            if (voiceNote == null)
+            if (_hidden)
             {
                 return;
             }
 
-            _playbackService.SourceChanged += OnPlaybackStateChanged;
+            _hidden = true;
+            ButtonRoot.Opacity = 0;
+            TextRoot.Opacity = 0;
+        }
+
+        public void UpdateMessage(MessageWithOwner message)
+        {
+            if (_hidden)
+            {
+                _hidden = false;
+                ButtonRoot.Opacity = 1;
+                TextRoot.Opacity = 1;
+            }
+
+            _message = message;
+
+            LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
+
+            var file = message.GetFile();
+            if (file == null)
+            {
+                return;
+            }
+
+            LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
 
             if (message.ClientService.TryGetUser(message.SenderId, out User user))
             {
@@ -65,21 +87,32 @@ namespace Telegram.Controls.Cells
                 Title.Text = string.Empty;
             }
 
-            UpdateManager.Subscribe(this, message, voiceNote.Voice, ref _fileToken, UpdateFile);
-            UpdateFile(message, voiceNote.Voice);
+            if (message.Content is MessageVideoNote videoNote && videoNote.VideoNote.Thumbnail != null)
+            {
+                UpdateManager.Subscribe(this, message, videoNote.VideoNote.Thumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);
+                UpdateThumbnail(message, videoNote.VideoNote.Thumbnail, videoNote.VideoNote.Thumbnail.File);
+            }
+            else
+            {
+                Texture.Background = null;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+            }
+
+            UpdateManager.Subscribe(this, message, file, ref _fileToken, UpdateFile);
+            UpdateFile(message, file);
         }
 
         #region Playback
 
         private void OnPlaybackStateChanged(IPlaybackService sender, object args)
         {
-            var voiceNote = GetContent(_message?.Content);
-            if (voiceNote == null)
+            var file = _message?.GetFile();
+            if (file == null)
             {
                 return;
             }
 
-            this.BeginOnUIThread(() => UpdateFile(_message, voiceNote.Voice));
+            this.BeginOnUIThread(() => UpdateFile(_message, file));
         }
 
         private void OnPositionChanged(IPlaybackService sender, PlaybackPositionChangedEventArgs args)
@@ -98,7 +131,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            if (message.AreTheSame(_playbackService.CurrentItem) /*&& !_pressed*/)
+            if (message.AreTheSame(LifetimeService.Current.Playback.CurrentItem) /*&& !_pressed*/)
             {
                 Subtitle.Text = FormatTime(position) + " / " + FormatTime(duration);
             }
@@ -125,109 +158,135 @@ namespace Telegram.Controls.Cells
 
         private void UpdateFile(MessageWithOwner message, File file)
         {
-            _playbackService.StateChanged -= OnPlaybackStateChanged;
-            _playbackService.PositionChanged -= OnPositionChanged;
+            LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
 
-            var voiceNote = GetContent(message.Content);
-            if (voiceNote == null)
+            if (message.AreTheSame(LifetimeService.Current.Playback.CurrentItem))
             {
-                return;
-            }
-
-            if (voiceNote.Voice.Id != file.Id)
-            {
-                return;
-            }
-
-            var size = Math.Max(file.Size, file.ExpectedSize);
-            if (file.Local.IsDownloadingActive)
-            {
-                //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(file.Id, MessageContentState.Downloading);
-                Button.Progress = (double)file.Local.DownloadedSize / size;
-
-                Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
-            }
-            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed || (message.SendingState is MessageSendingStatePending && !file.Remote.IsUploadingCompleted))
-            {
-                //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(file.Id, MessageContentState.Uploading);
-                Button.Progress = (double)file.Remote.UploadedSize / size;
-
-                Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
-            {
-                //Button.Glyph = Icons.Download;
-                Button.SetGlyph(file.Id, MessageContentState.Download);
-                Button.Progress = 0;
-
-                Subtitle.Text = voiceNote.GetDuration() + ", " + FileSizeConverter.Convert(size);
-
-                //if (message.Delegate.CanBeDownloaded(message))
-                //{
-                //    _message.ClientService.DownloadFile(file.Id, 32);
-                //}
-            }
-            else
-            {
-                if (message.AreTheSame(_playbackService.CurrentItem))
-                {
-                    if (_playbackService.PlaybackState == PlaybackState.Paused)
-                    {
-                        //Button.Glyph = Icons.Play;
-                        Button.SetGlyph(file.Id, MessageContentState.Play);
-                    }
-                    else
-                    {
-                        //Button.Glyph = Icons.Pause;
-                        Button.SetGlyph(file.Id, MessageContentState.Pause);
-                    }
-
-                    UpdatePosition(_playbackService.Position, _playbackService.Duration);
-
-                    _playbackService.StateChanged += OnPlaybackStateChanged;
-                    _playbackService.PositionChanged += OnPositionChanged;
-                }
-                else
+                if (LifetimeService.Current.Playback.PlaybackState == PlaybackState.Paused)
                 {
                     //Button.Glyph = Icons.Play;
                     Button.SetGlyph(file.Id, MessageContentState.Play);
-                    Button.Progress = 1;
-
-                    Subtitle.Text = voiceNote.GetDuration();
+                }
+                else
+                {
+                    //Button.Glyph = Icons.Pause;
+                    Button.SetGlyph(file.Id, MessageContentState.Pause);
                 }
 
+                UpdatePosition(LifetimeService.Current.Playback.Position, LifetimeService.Current.Playback.Duration);
+
+                LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
+                LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
+            }
+            else
+            {
+                //Button.Glyph = Icons.Play;
+                Button.SetGlyph(file.Id, MessageContentState.Play);
                 Button.Progress = 1;
+
+                if (TryGetVoiceNote(message.Content, out VoiceNote voiceNote))
+                {
+                    Subtitle.Text = string.Format("{0} {1} {2}", voiceNote.GetDuration(), Icons.Bullet, Formatter.DateAt(message.Date));
+                }
+                else if (TryGetVideoNote(message.Content, out VideoNote videoNote))
+                {
+                    Subtitle.Text = string.Format("{0} {1} {2}", videoNote.GetDuration(), Icons.Bullet, Formatter.DateAt(message.Date));
+                }
+            }
+
+            Button.Progress = 1;
+        }
+
+        private void UpdateThumbnail(object target, File file)
+        {
+            if (TryGetVideoNote(_message?.Content, out VideoNote videoNote))
+            {
+                UpdateThumbnail(_message, videoNote.Thumbnail, file);
             }
         }
 
-        private VoiceNote GetContent(MessageContent content)
+        private void UpdateThumbnail(MessageWithOwner message, Thumbnail thumbnail, File file)
+        {
+            if (thumbnail?.File.Id != file.Id)
+            {
+                return;
+            }
+
+            if (file.Local.IsDownloadingCompleted)
+            {
+                double ratioX = (double)48 / thumbnail.Width;
+                double ratioY = (double)48 / thumbnail.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                var width = (int)(thumbnail.Width * ratio);
+                var height = (int)(thumbnail.Height * ratio);
+
+                try
+                {
+                    Texture.Background = new ImageBrush { ImageSource = UriEx.ToBitmap(file.Local.Path, width, height), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                    Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
+                }
+                catch
+                {
+                    Texture.Background = null;
+                    Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                }
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            {
+                message.ClientService.DownloadFile(file.Id, 1);
+
+                Texture.Background = null;
+                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+            }
+        }
+
+        private bool TryGetVoiceNote(MessageContent content, out VoiceNote voice)
         {
             if (content is MessageVoiceNote voiceNote)
             {
-                return voiceNote.VoiceNote;
+                voice = voiceNote.VoiceNote;
+                return true;
             }
             else if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeVoiceNote previewVoiceNote)
             {
-                return previewVoiceNote.VoiceNote;
+                voice = previewVoiceNote.VoiceNote;
+                return true;
             }
 
-            return null;
+            voice = null;
+            return false;
+        }
+
+        private bool TryGetVideoNote(MessageContent content, out VideoNote video)
+        {
+            if (content is MessageVideoNote videoNote)
+            {
+                video = videoNote.VideoNote;
+                return true;
+            }
+            else if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeVideoNote previewVideoNote)
+            {
+                video = previewVideoNote.VideoNote;
+                return true;
+            }
+
+            video = null;
+            return false;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var voiceNote = GetContent(_message?.Content);
-            if (voiceNote == null)
+            var file = _message?.GetFile();
+            if (file == null)
             {
                 return;
             }
 
-            var file = voiceNote.Voice;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ClientService.Send(new CancelDownloadFile(file.Id, false));
+                _message.ClientService.CancelDownloadFile(file, false);
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
@@ -235,25 +294,32 @@ namespace Telegram.Controls.Cells
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                //_clientService.DownloadFile(file.Id, 32);
-                _playbackService.Play(_message);
+                if (_message.Content is MessageAudio)
+                {
+                    LifetimeService.Current.Playback.Play(XamlRoot, _message);
+
+                }
+                else
+                {
+                    _message.ClientService.DownloadFile(file.Id, 32);
+                }
             }
             else
             {
-                if (_message.AreTheSame(_playbackService.CurrentItem))
+                if (_message.AreTheSame(LifetimeService.Current.Playback.CurrentItem))
                 {
-                    if (_playbackService.PlaybackState == PlaybackState.Paused)
+                    if (LifetimeService.Current.Playback.PlaybackState == PlaybackState.Paused)
                     {
-                        _playbackService.Play();
+                        LifetimeService.Current.Playback.Play();
                     }
                     else
                     {
-                        _playbackService.Pause();
+                        LifetimeService.Current.Playback.Pause();
                     }
                 }
                 else
                 {
-                    _playbackService.Play(_message);
+                    LifetimeService.Current.Playback.Play(XamlRoot, _message);
                 }
             }
         }

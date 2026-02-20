@@ -6,11 +6,6 @@
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     mc:Ignorable="d"
-                    Title="TITLE"
-                    PrimaryButtonText="Button1"
-                    SecondaryButtonText="Button2"
-                    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
                     Padding="24,24,24,12">
 
     <Grid>
@@ -33,12 +28,5 @@
                               Height="240"
                               Padding="0,0"
                               Grid.Row="1" />
-
-        <HyperlinkButton x:Name="Accent"
-                         Content="Use system accent color"
-                         Click="System_Click"
-                         HorizontalAlignment="Left"
-                         Margin="-12,0,0,-12"
-                         Grid.Row="2" />
     </Grid>
 </local:ContentPopup>

@@ -11,7 +11,9 @@
                        xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                        mc:Ignorable="d"
                        IsDismissButtonVisible="True"
-                       Padding="0,24,0,0">
+                       Padding="0,24,0,0"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       ButtonsLayout="Vertical">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -29,7 +31,7 @@
                       Visibility="Collapsed"
                       Grid.Row="1">
                     <Grid x:Name="PrevLimitRoot"
-                          Background="{ThemeResource ControlFillColorDefaultBrush}"
+                          Background="{ThemeResource ControlAltFillColorTertiaryBrush}"
                           Padding="8,4">
                         <TextBlock x:Name="PrevLimit"
                                    Style="{StaticResource InfoBodyTextBlockStyle}"
@@ -43,11 +45,19 @@
                     <Grid x:Name="NextPanel"
                           Background="{StaticResource PremiumLinearGradientBrush}"
                           Padding="8,4">
+                        <TextBlock x:Name="PrevLimitAbove"
+                                   Foreground="#FFFFFF"
+                                   FontWeight="SemiBold"
+                                   TextAlignment="Right" />
                         <TextBlock x:Name="NextLimit"
                                    Foreground="#FFFFFF"
                                    FontWeight="SemiBold"
                                    TextAlignment="Left" />
                     </Grid>
+
+                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4" />
                 </Grid>
 
                 <Button x:Name="ResaleButton"
@@ -75,7 +85,7 @@
                                     <controls:FormattedTextBlock x:Name="Text"
                                                                  Foreground="#FFFFFF"
                                                                  TextAlignment="Center"
-                                                                 TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                                                 Style="{StaticResource CaptionFormattedTextBlockStyle}"
                                                                  FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                                                  AutoFontSize="False"
                                                                  IsTextSelectionEnabled="False"
@@ -106,10 +116,24 @@
                                                        Style="{StaticResource SubtitleTextBlockStyle}"
                                                        FontSize="16" />
 
+                                            <Border x:Name="Publisher"
+                                                    Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                                    CornerRadius="12"
+                                                    HorizontalAlignment="Center"
+                                                    Padding="8,2,8,3"
+                                                    Margin="0,4,0,4"
+                                                    Visibility="Collapsed">
+                                                <TextBlock x:Name="PublisherLabel"
+                                                           Foreground="#DDFFFFFF"
+                                                           TextAlignment="Center"
+                                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                                           TextWrapping="NoWrap" />
+                                            </Border>
+
                                             <controls:FormattedTextBlock x:Name="Subtitle"
                                                                          Foreground="#FFFFFF"
                                                                          TextAlignment="Center"
-                                                                         TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                                                         Style="{StaticResource CaptionFormattedTextBlockStyle}"
                                                                          FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                                                          AutoFontSize="False"
                                                                          IsTextSelectionEnabled="False"
@@ -118,15 +142,15 @@
 
                                             <Border x:Name="View"
                                                     Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                                    CornerRadius="12"
+                                                    CornerRadius="14"
                                                     HorizontalAlignment="Center"
-                                                    Padding="12,4,12,4"
+                                                    Padding="12,3,12,5"
                                                     Margin="0,0,0,12">
                                                 <TextBlock x:Name="ViewLabel"
                                                            Text="{CustomResource BoostingReceivedGiftOpenBtn}"
                                                            Foreground="#FFFFFF"
                                                            TextAlignment="Center"
-                                                           Style="{StaticResource CaptionTextBlockStyle}" />
+                                                           Style="{StaticResource BaseTextBlockStyle}" />
                                             </Border>
                                         </StackPanel>
                                     </messages:MessageService>
@@ -160,7 +184,7 @@
                 </Grid>
 
                 <Grid x:Name="CaptionPanel"
-                      Background="{ThemeResource TextControlBackground}">
+                      Background="{ThemeResource ContentDialogBackground}">
                     <controls:CaptionTextBox x:Name="CaptionInput"
                                              TextChanged="OnTextChanged"
                                              InputScope="Chat"
@@ -176,7 +200,8 @@
                                     Placement="Top"
                                     ShowMode="Transient">
                                 <Flyout.FlyoutPresenterStyle>
-                                    <Style TargetType="FlyoutPresenter">
+                                    <Style TargetType="FlyoutPresenter"
+                                           BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
                                         <Setter Property="Padding"
                                                 Value="0" />
                                     </Style>
@@ -246,34 +271,7 @@
         </ScrollViewer>
 
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
-                                    Background="{ThemeResource ContentDialogBackground}"
-                                    TopInset="0" />
-
-        <Grid x:Name="PurchasePanel"
-              VerticalAlignment="Bottom"
-              HorizontalAlignment="Stretch"
-              Margin="24,0,24,24"
-              Grid.Row="1">
-            <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Click="Purchase_Click"
-                                  Style="{StaticResource AccentButtonStyle}"
-                                  FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  FontWeight="SemiBold"
-                                  BorderThickness="1"
-                                  Height="32">
-                <Grid>
-                    <TextBlock x:Name="PurchaseText"
-                               VerticalAlignment="Center"
-                               Margin="0,3,0,5" />
-                    <muxc:ProgressRing x:Name="PurchaseRing"
-                                       Visibility="Collapsed"
-                                       Foreground="#FFFFFF"
-                                       Width="20"
-                                       Height="20" />
-                </Grid>
-            </controls:BadgeButton>
-        </Grid>
+                                    Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    BottomInset="0" />
     </Grid>
 </controls:ContentPopup>

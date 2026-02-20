@@ -1,0 +1,13 @@
+namespace Telegram.Native.Calls
+{
+    [default_interface]
+    runtimeclass VoipCallProtocol
+    {
+        VoipCallProtocol(Boolean udpP2p, Boolean udpReflector, Int32 minLayer, Int32 maxLayer, IVector<String> libraryVersions);
+        Boolean UdpP2p{ get; };
+        Boolean UdpReflector{ get; };
+        Int32 MinLayer{ get; };
+        Int32 MaxLayer{ get; };
+        IVector<String> LibraryVersions{ get; };
+    }
+}

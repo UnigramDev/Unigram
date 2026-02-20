@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
@@ -72,7 +73,7 @@ namespace Telegram.ViewModels
             }
 
             _activated = true;
-            CanUpdateQuery(string.Empty);
+            CanUpdateQuery(string.Empty, default);
         }
 
         public ChooseChatsOptions Options
@@ -90,7 +91,7 @@ namespace Telegram.ViewModels
 
         public FlatteningCollection Items { get; }
 
-        private readonly DebouncedProperty<string> _query;
+        private readonly DebouncedPropertyWithToken<string> _query;
         public string Query
         {
             get => _query;
@@ -116,10 +117,9 @@ namespace Telegram.ViewModels
             set => Set(ref _isTopChatsVisible, value);
         }
 
-        public async void UpdateQuery(string value)
+        public async void UpdateQuery(string value, CancellationToken token)
         {
             var query = value ?? string.Empty;
-            var token = _cancellation.Token;
 
             _query.Value = query;
 
@@ -128,7 +128,7 @@ namespace Telegram.ViewModels
             await LoadMessagesAsync(query, token);
         }
 
-        private bool CanUpdateQuery(string value)
+        private bool CanUpdateQuery(string value, CancellationToken token)
         {
             if (string.Equals(value, _prevQuery))
             {
@@ -137,11 +137,11 @@ namespace Telegram.ViewModels
 
             var clearOnline = _prevQuery == null || string.IsNullOrWhiteSpace(value) || (!value.StartsWith(_prevQuery) && !_prevQuery.StartsWith(value));
 
-            UpdateQueryOffline(_prevQuery = value, clearOnline);
+            UpdateQueryOffline(_prevQuery = value, clearOnline, token);
             return value.Length > 0;
         }
 
-        private async void UpdateQueryOffline(string value, bool clearOnline)
+        private async void UpdateQueryOffline(string value, bool clearOnline, CancellationToken token)
         {
             //if (clearOnline)
             {
@@ -154,7 +154,6 @@ namespace Telegram.ViewModels
             _tracker.Clear();
 
             var query = value ?? string.Empty;
-            var token = _cancellation.Token;
 
             await LoadRecentAsync(query, token);
             await LoadSimilarAsync(query, token);
@@ -342,12 +341,46 @@ namespace Telegram.ViewModels
             }
         }
 
-        private async void ReplaceDiff<T>(DiffObservableCollection<T> destination, IEnumerable<T> source)
+        private void ReplaceDiff<T>(DiffObservableCollection<T> destination, IList<T> source)
         {
-            using (await _diffLock.WaitAsync())
+            if (destination.Empty())
             {
-                var diff = await Task.Run(() => DiffUtil.CalculateDiff(destination, source, destination.DefaultDiffHandler, destination.DefaultOptions));
-                destination.ReplaceDiff(diff);
+                destination.AddRange(source);
+                return;
+            }
+            else if (source.Empty())
+            {
+                destination.ClearIfNotEmpty();
+                return;
+            }
+
+            var recycledItems = Math.Min(destination.Count, source.Count);
+            var changedItems = Math.Max(destination.Count, source.Count);
+
+            if (destination.Count > source.Count)
+            {
+                for (int i = recycledItems; i < changedItems; i++)
+                {
+                    destination.RemoveAt(recycledItems);
+                }
+            }
+            else if (source.Count > destination.Count)
+            {
+                for (int i = recycledItems; i < changedItems; i++)
+                {
+                    destination.Insert(i, source[i]);
+                }
+            }
+
+            for (int i = 0; i < recycledItems; i++)
+            {
+                var oldItem = destination[i];
+                var newItem = source[i];
+
+                if (destination.DefaultDiffHandler == null || !destination.DefaultDiffHandler.CompareItems(oldItem, newItem))
+                {
+                    destination[i] = newItem;
+                }
             }
         }
 

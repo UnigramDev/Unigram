@@ -6,11 +6,7 @@
                        xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       Title="TITLE"
-                       PrimaryButtonText="Button1"
-                       SecondaryButtonText="Button2"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
 
     <StackPanel>
         <TextBlock x:Name="HeaderText"

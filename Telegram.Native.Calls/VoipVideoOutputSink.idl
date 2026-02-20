@@ -5,7 +5,7 @@ namespace Telegram.Native.Calls
     [default_interface]
     runtimeclass VoipVideoOutputSink
     {
-        VoipVideoOutputSink(Windows.UI.Composition.SpriteVisual visual, Boolean mirrored);
+        VoipVideoOutputSink(Windows.UI.Composition.CompositionGraphicsDevice device, Windows.UI.Composition.SpriteVisual visual, Boolean mirrored, Boolean uniformToFill);
 
         void Stop();
 

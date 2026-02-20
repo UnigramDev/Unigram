@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Td.Api;
@@ -12,7 +13,6 @@ using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -70,11 +70,11 @@ namespace Telegram.Controls.Messages.Content
 
             if (message.ClientService.TryGetUser(contact.Contact.UserId, out User user))
             {
-                Photo.SetUser(message.ClientService, user, 48);
+                Photo.Source = ProfilePictureSource.User(message.ClientService, user);
             }
             else
             {
-                Photo.Source = PlaceholderImage.GetNameForUser(contact.Contact.FirstName, contact.Contact.LastName);
+                Photo.Source = ProfilePictureSourceText.GetNameForUser(contact.Contact.FirstName, contact.Contact.LastName);
             }
 
             Title.Text = contact.Contact.GetFullName();

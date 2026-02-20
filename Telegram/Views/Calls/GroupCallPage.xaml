@@ -6,6 +6,10 @@
                 xmlns:common="using:Telegram.Common"
                 xmlns:controls="using:Telegram.Controls"
                 xmlns:calls="using:Telegram.Controls.Calls"
+                xmlns:cells="using:Telegram.Controls.Cells"
+                xmlns:chats="using:Telegram.Controls.Chats"
+                xmlns:drawers="using:Telegram.Controls.Drawers"
+                xmlns:messages="using:Telegram.Controls.Messages"
                 xmlns:local="using:Telegram.Views.Calls"
                 mc:Ignorable="d"
                 d:DesignWidth="320"
@@ -25,9 +29,9 @@
             <Setter Property="Background"
                     Value="Transparent" />
             <Setter Property="Foreground"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
             <Setter Property="BorderBrush"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
             <Setter Property="BorderThickness"
                     Value="0" />
             <Setter Property="Padding"
@@ -61,6 +65,9 @@
                     <ControlTemplate TargetType="controls:GlyphButton">
                         <Grid Background="{TemplateBinding Background}"
                               CornerRadius="{TemplateBinding CornerRadius}">
+                            <Grid.BackgroundTransition>
+                                <BrushTransition />
+                            </Grid.BackgroundTransition>
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
@@ -110,6 +117,125 @@
                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                            AutomationProperties.AccessibilityView="Raw"
                                            Text="{TemplateBinding Glyph}" />
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CallAnimatedGlyphButtonStyle"
+               TargetType="controls:AnimatedGlyphButton">
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="Foreground"
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
+            <Setter Property="BorderBrush"
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Padding"
+                    Value="0" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalAlignment"
+                    Value="Top" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center" />
+            <Setter Property="FontFamily"
+                    Value="{StaticResource SymbolThemeFontFamily}" />
+            <Setter Property="FontSize"
+                    Value="{StaticResource GlyphLargeFontSize}" />
+            <Setter Property="FontWeight"
+                    Value="Normal" />
+            <Setter Property="Height"
+                    Value="48" />
+            <Setter Property="Width"
+                    Value="48" />
+            <Setter Property="UseSystemFocusVisuals"
+                    Value="True" />
+            <Setter Property="FocusVisualMargin"
+                    Value="-3" />
+            <Setter Property="CornerRadius"
+                    Value="24" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:AnimatedGlyphButton">
+                        <Grid Background="{TemplateBinding Background}"
+                              CornerRadius="{TemplateBinding CornerRadius}">
+                            <Grid.BackgroundTransition>
+                                <BrushTransition />
+                            </Grid.BackgroundTransition>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter1">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter2">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter1">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlHighlightBaseMediumBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter2">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlHighlightBaseMediumBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter1">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter2">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid x:Name="RootGrid">
+                                <TextBlock x:Name="ContentPresenter1"
+                                           Margin="{TemplateBinding Padding}"
+                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                           AutomationProperties.AccessibilityView="Raw" />
+                                <TextBlock x:Name="ContentPresenter2"
+                                           Margin="{TemplateBinding Padding}"
+                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                           AutomationProperties.AccessibilityView="Raw" />
                             </Grid>
                         </Grid>
                     </ControlTemplate>
@@ -254,8 +380,7 @@
                                     CornerRadius="18"
                                     Margin="0,0,12,0"
                                     Grid.RowSpan="2" />
-                            <controls:ProfilePicture Width="36"
-                                                     Height="36"
+                            <controls:ProfilePicture Size="36"
                                                      Margin="0,0,12,0"
                                                      Grid.RowSpan="2" />
 
@@ -309,6 +434,162 @@
                 </ListView.ItemContainerStyle>
             </controls:TableListView>
 
+            <Grid Canvas.ZIndex="2">
+
+                <ListView x:Name="MessagesHost"
+                          Loaded="MessagesHost_Loaded"
+                          ContainerContentChanging="MessagesHost_ContainerContentChanging"
+                          SelectionMode="None"
+                          Padding="0,0,0,72">
+                    <ListView.Template>
+                        <ControlTemplate TargetType="ListView">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{TemplateBinding CornerRadius}">
+                                <ScrollViewer x:Name="ScrollViewer"
+                                              Background="{x:Null}"
+                                              TabNavigation="{TemplateBinding TabNavigation}"
+                                              HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                              HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                              IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
+                                              VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                              VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                              IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
+                                              IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                              IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                              ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
+                                              IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                              BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                                              CanContentRenderOutsideBounds="{TemplateBinding ScrollViewer.CanContentRenderOutsideBounds}"
+                                              AutomationProperties.AccessibilityView="Raw">
+                                    <ItemsPresenter Header="{TemplateBinding Header}"
+                                                    HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                                    HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                                                    Footer="{TemplateBinding Footer}"
+                                                    FooterTemplate="{TemplateBinding FooterTemplate}"
+                                                    FooterTransitions="{TemplateBinding FooterTransitions}"
+                                                    Padding="{TemplateBinding Padding}" />
+                                </ScrollViewer>
+                            </Border>
+                        </ControlTemplate>
+                    </ListView.Template>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel VerticalAlignment="Bottom"
+                                             ItemsUpdatingScrollMode="KeepLastItemInView"
+                                             MaxWidth="320" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem"
+                               BasedOn="{StaticResource DefaultListViewItemStyle}">
+                            <Setter Property="HorizontalAlignment"
+                                    Value="Center" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <cells:GroupCallMessageCell />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.Footer>
+                        <StackPanel SizeChanged="MessageRoot_SizeChanged"
+                                    Margin="24,0">
+                            <Border x:Name="MessageReactionsPlaceholder"
+                                    Visibility="Collapsed" />
+                            <Border x:Name="MessagePlaceholder"
+                                    Visibility="Collapsed" />
+                        </StackPanel>
+                    </ListView.Footer>
+                </ListView>
+
+                <StackPanel x:Name="MessageRoot"
+                            VerticalAlignment="Bottom"
+                            Margin="24,0,24,72"
+                            MaxWidth="320">
+                    <messages:ReactionsMenuFlyout x:Name="MessageReactions"
+                                                  ItemClick="MessageReactions_ItemClick"
+                                                  SizeChanged="MessageReactions_SizeChanged"
+                                                  HorizontalAlignment="Center"
+                                                  Visibility="Collapsed"
+                                                  Margin="0,-36,0,-28" />
+
+                    <Grid x:Name="MessagePanel"
+                          SizeChanged="MessagePanel_SizeChanged"
+                          Visibility="Collapsed"
+                          Margin="0,4,0,0">
+                        <FlyoutBase.AttachedFlyout>
+                            <Flyout x:Name="EmojiFlyout"
+                                    Placement="Top"
+                                    ShowMode="Transient">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="FlyoutPresenter"
+                                           BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
+                                        <Setter Property="Padding"
+                                                Value="0" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+                                <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                                     ItemClick="Emoji_ItemClick"
+                                                     Width="300"
+                                                     Height="360" />
+                            </Flyout>
+                        </FlyoutBase.AttachedFlyout>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Canvas SizeChanged="MessagePill_SizeChanged"
+                                Grid.ColumnSpan="3">
+                            <Path x:Name="MessagePill"
+                                  Fill="{ThemeResource MenuFlyoutPresenterBackground}" />
+                        </Canvas>
+                        <controls:FormattedTextBox x:Name="MessageField"
+                                                   TextChanged="MessageField_TextChanged"
+                                                   Accept="MessageField_Accept"
+                                                   GotFocus="MessageField_GotFocus"
+                                                   LostFocus="MessageField_LostFocus"
+                                                   PlaceholderText="{CustomResource VoipMessage}"
+                                                   Style="{StaticResource DefaultChatTextBoxStyle}"
+                                                   Background="Transparent"
+                                                   BorderThickness="0"
+                                                   Height="0"
+                                                   MinHeight="0"
+                                                   Padding="16,0,0,0" />
+                        <messages:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                    IsHitTestVisible="False"
+                                                    Margin="14,11,0,0" />
+
+                        <controls:GlyphButton Click="Emoji_Click"
+                                              Glyph="&#xE76E;"
+                                              AutomationProperties.Name="{CustomResource Emoji}"
+                                              AllowFocusOnInteraction="False"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Bottom"
+                                              Width="48"
+                                              Height="48"
+                                              FontSize="24"
+                                              Grid.Column="1" />
+
+                        <chats:ChatSendButton x:Name="SendMessage"
+                                              Click="Send_Click"
+                                              AutomationProperties.Name="{CustomResource Send}"
+                                              ToolTipService.ToolTip="{CustomResource Send}"
+                                              Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                              AllowFocusOnInteraction="False"
+                                              VerticalAlignment="Bottom"
+                                              Width="48"
+                                              Height="48"
+                                              Margin="-8,0,0,0"
+                                              CornerRadius="4,20,20,4"
+                                              Grid.Column="2" />
+
+                    </Grid>
+                </StackPanel>
+            </Grid>
+
             <Rectangle x:Name="BottomShadow"
                        Height="72"
                        VerticalAlignment="Bottom"
@@ -348,42 +629,29 @@
 
         <StackPanel x:Name="BottomPanel"
                     Grid.Row="3">
-            <Grid x:Name="BottomRoot"
-                  HorizontalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="24" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Border x:Name="BottomBackground"
-                        CornerRadius="8"
-                        Margin="-4,-8"
-                        Grid.ColumnSpan="5"
-                        Grid.RowSpan="4" />
-
-                <controls:GlyphButton x:Name="Settings"
-                                      Click="Menu_ContextRequested"
-                                      Glyph="&#xE9E9;"
+            <local:BottomPanel x:Name="BottomRoot"
+                               HorizontalAlignment="Center"
+                               ColumnSpacing="12">
+                <local:BottomPanel.ChildrenTransitions>
+                    <TransitionCollection>
+                        <RepositionThemeTransition />
+                        <AddDeleteThemeTransition />
+                    </TransitionCollection>
+                </local:BottomPanel.ChildrenTransitions>
+                <controls:GlyphButton x:Name="Screen"
+                                      Click="Screen_Click"
+                                      Glyph="&#xE956;"
                                       Background="#663e3f41"
                                       Foreground="#FFFFFF"
-                                      Content="{CustomResource Settings}"
-                                      Style="{StaticResource CallGlyphButtonStyle}"
-                                      Grid.Row="1" />
-                <TextBlock x:Name="SettingsInfo"
-                           Text="{CustomResource Settings}"
+                                      Content="{CustomResource VoipChatShare}"
+                                      Style="{StaticResource CallGlyphButtonStyle}" />
+                <TextBlock x:Name="ScreenInfo"
+                           Text="{CustomResource VoipChatShare}"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            TextAlignment="Center"
                            VerticalAlignment="Top"
                            Margin="0,4,0,0"
-                           Grid.Row="2" />
+                           Grid.Row="1" />
 
                 <controls:GlyphButton x:Name="Video"
                                       Click="Video_Click"
@@ -392,90 +660,86 @@
                                       Foreground="#FFFFFF"
                                       Content="{CustomResource ChatVideo}"
                                       Style="{StaticResource CallGlyphButtonStyle}"
-                                      Grid.Row="1" />
+                                      Grid.Column="1" />
                 <TextBlock x:Name="VideoInfo"
                            Text="{CustomResource ChatVideo}"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            TextAlignment="Center"
                            VerticalAlignment="Top"
                            Margin="0,4,0,0"
-                           Grid.Row="2" />
+                           Grid.Column="1"
+                           Grid.Row="1" />
 
-                <controls:GlyphButton x:Name="Screen"
-                                      Visibility="Collapsed"
-                                      Click="Screen_Click"
-                                      Glyph="&#xE956;"
-                                      Background="#663e3f41"
-                                      Foreground="#FFFFFF"
-                                      Content="{CustomResource VoipChatShare}"
-                                      Style="{StaticResource CallGlyphButtonStyle}"
-                                      Grid.Row="1" />
-                <TextBlock x:Name="ScreenInfo"
-                           Visibility="Collapsed"
-                           Text="{CustomResource VoipChatShare}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           TextAlignment="Center"
-                           VerticalAlignment="Top"
-                           Margin="0,4,0,0"
-                           Grid.Row="2" />
-
-                <Border x:Name="AudioBlob"
-                        Width="300"
-                        Height="300"
-                        Margin="-102,-102,-102,-102"
-                        VerticalAlignment="Top"
-                        IsHitTestVisible="False"
-                        Canvas.ZIndex="1"
-                        Grid.Column="1"
-                        Grid.RowSpan="3" />
-
-                <controls:GlyphButton x:Name="Audio"
-                                      Click="Audio_Click"
-                                      Glyph="&#xE720;"
-                                      Content="{CustomResource VoipUnmute}"
-                                      VerticalAlignment="Top"
-                                      Width="96"
-                                      Height="96"
-                                      CornerRadius="48"
-                                      Margin="48,0,48,0"
-                                      Canvas.ZIndex="2"
-                                      Grid.Column="1"
-                                      Grid.RowSpan="3"
-                                      Opacity="0" />
-                <controls:AnimatedImage x:Name="Lottie"
-                                        Width="96"
-                                        Height="96"
-                                        FrameSize="96,96"
-                                        DecodeFrameType="Logical"
-                                        VerticalAlignment="Top"
-                                        Margin="48,0,48,0"
-                                        IsHitTestVisible="False"
-                                        LoopCount="1"
-                                        IsCachingEnabled="False"
-                                        AutoPlay="False"
-                                        Grid.Column="1"
-                                        Grid.RowSpan="3"
-                                        Canvas.ZIndex="3" />
+                <Grid x:Name="AudioRoot"
+                      VerticalAlignment="Top"
+                      Grid.Column="2"
+                      Canvas.ZIndex="0">
+                    <Border x:Name="AudioBlob"
+                            Width="150"
+                            Height="150"
+                            Margin="-51,-51,-51,-51"
+                            VerticalAlignment="Top"
+                            IsHitTestVisible="False" />
+                    <controls:GlyphButton x:Name="Audio"
+                                          Click="Audio_Click"
+                                          Glyph="&#xE720;"
+                                          Content="{CustomResource VoipUnmute}"
+                                          Width="48"
+                                          Height="48"
+                                          CornerRadius="24"
+                                          Opacity="0" />
+                    <controls:AnimatedImage x:Name="Lottie"
+                                            Width="48"
+                                            Height="48"
+                                            FrameSize="48,48"
+                                            DecodeFrameType="Logical"
+                                            IsHitTestVisible="False"
+                                            LoopCount="1"
+                                            IsCachingEnabled="False"
+                                            AutoPlay="False" />
+                    <controls:ProgressRingIndeterminate x:Name="Indeterminate"
+                                                        x:Load="False"
+                                                        Fill="Transparent"
+                                                        StrokeThickness="4"
+                                                        Width="48"
+                                                        Height="48" />
+                </Grid>
 
                 <TextBlock x:Name="AudioInfo"
                            Text="{CustomResource VoipGroupLeave}"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            TextAlignment="Center"
                            VerticalAlignment="Top"
-                           Margin="0,8,0,24"
-                           Grid.Column="1"
-                           Grid.Row="3"
+                           Margin="0,4,0,12"
+                           Grid.Column="2"
+                           Grid.Row="1"
                            Canvas.ZIndex="3" />
+
+                <controls:AnimatedGlyphButton x:Name="Message"
+                                              Click="Message_Click"
+                                              Glyph="&#xEAE1;"
+                                              Background="#663e3f41"
+                                              Foreground="#FFFFFF"
+                                              Content="{CustomResource VoipMessage}"
+                                              Style="{StaticResource CallAnimatedGlyphButtonStyle}"
+                                              Grid.Column="3" />
+                <TextBlock x:Name="MessageInfo"
+                           Text="{CustomResource VoipMessage}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           TextAlignment="Center"
+                           VerticalAlignment="Top"
+                           Margin="0,4,0,0"
+                           Grid.Row="1"
+                           Grid.Column="3" />
 
                 <controls:GlyphButton x:Name="Leave"
                                       Click="Leave_Click"
-                                      Glyph="&#xE711;"
+                                      Glyph="&#xEAE3;"
                                       Background="#66FF0000"
                                       Foreground="#FFFFFF"
                                       Content="{CustomResource VoipGroupLeave}"
                                       Style="{StaticResource CallGlyphButtonStyle}"
-                                      Grid.Column="4"
-                                      Grid.Row="1" />
+                                      Grid.Column="4" />
                 <TextBlock x:Name="LeaveInfo"
                            Text="{CustomResource VoipGroupLeave}"
                            Style="{StaticResource CaptionTextBlockStyle}"
@@ -483,9 +747,8 @@
                            VerticalAlignment="Top"
                            Margin="0,4,0,0"
                            Grid.Column="4"
-                           Grid.Row="2" />
-
-            </Grid>
+                           Grid.Row="1" />
+            </local:BottomPanel>
         </StackPanel>
     </Grid>
 </local:WindowEx>

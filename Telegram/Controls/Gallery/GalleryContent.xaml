@@ -5,9 +5,14 @@
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                      xmlns:controls="using:Telegram.Controls"
                      mc:Ignorable="d"
-                     Background="Transparent"
                      d:DesignHeight="300"
                      d:DesignWidth="400">
+    <controls:AspectView.Background>
+        <ImageBrush x:Name="ThumbnailTexture"
+                    Stretch="UniformToFill"
+                    AlignmentX="Center"
+                    AlignmentY="Center" />
+    </controls:AspectView.Background>
 
     <Image x:Name="Texture"
            Stretch="UniformToFill" />
@@ -17,7 +22,7 @@
         <TextBlock x:Name="DocumentName"
                    Margin="0,0,0,80" />
     </StackPanel>
-    
+
     <controls:FileButton x:Name="Button"
                          Click="Button_Click"
                          ManipulationMode="System"
@@ -25,5 +30,8 @@
 
     <Border x:Name="Panel"
             IsHitTestVisible="False" />
+
+    <controls:ImageTextSelection x:Name="Selection"
+                                 Visibility="Collapsed" />
 
 </controls:AspectView>

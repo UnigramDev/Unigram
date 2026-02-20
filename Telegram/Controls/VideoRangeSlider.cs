@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Windows.UI.Xaml;
@@ -76,12 +77,12 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            BackgroundMinimum = GetTemplateChild("BackgroundMinimum") as FrameworkElement;
-            BackgroundMaximum = GetTemplateChild("BackgroundMaximum") as FrameworkElement;
-            MiddleThumb1 = GetTemplateChild("MiddleThumb1") as FrameworkElement;
-            MinimumThumb = GetTemplateChild("MinimumThumb") as FrameworkElement;
-            MaximumThumb = GetTemplateChild("MaximumThumb") as FrameworkElement;
-            MiddleThumb2 = GetTemplateChild("MiddleThumb2") as FrameworkElement;
+            BackgroundMinimum = GetTemplateChild(nameof(BackgroundMinimum)) as FrameworkElement;
+            BackgroundMaximum = GetTemplateChild(nameof(BackgroundMaximum)) as FrameworkElement;
+            MiddleThumb1 = GetTemplateChild(nameof(MiddleThumb1)) as FrameworkElement;
+            MinimumThumb = GetTemplateChild(nameof(MinimumThumb)) as FrameworkElement;
+            MaximumThumb = GetTemplateChild(nameof(MaximumThumb)) as FrameworkElement;
+            MiddleThumb2 = GetTemplateChild(nameof(MiddleThumb2)) as FrameworkElement;
 
             ToolTipService.SetToolTip(MiddleThumb2, _toolTip = new());
         }

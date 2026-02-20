@@ -1,36 +1,51 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LibVLCSharp.Shared;
+
+using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
+using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Controls.Stories.Widgets;
+using Telegram.Converters;
+using Telegram.Native;
+using Telegram.Native.Calls;
+using Telegram.Native.Composition;
+using Telegram.Native.Media;
 using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Services.Calls;
 using Telegram.Streams;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Telegram.ViewModels.Stories;
+using Telegram.Views.Popups;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Stories
 {
@@ -50,9 +65,12 @@ namespace Telegram.Controls.Stories
         Video,
     }
 
-    public sealed partial class StoryContent : UserControl
+    // TODO: Live story no stream state
+    public sealed partial class StoryContent : UserControlEx
     {
         private volatile bool _unloaded;
+
+        private readonly LayerVisual _messagesVisual;
 
         public StoryContent()
         {
@@ -63,8 +81,10 @@ namespace Telegram.Controls.Stories
             _timer = new StoryContentPhotoTimer();
             _timer.Tick += OnTick;
 
+            _messagesVisual = CompositionDevice.GetElementLayerVisual(MessagesHost);
+
             SizeChanged += OnSizeChanged;
-            Unloaded += OnUnloaded;
+            Disconnected += OnUnloaded;
         }
 
         private void OnTick(object sender, EventArgs e)
@@ -83,11 +103,35 @@ namespace Telegram.Controls.Stories
 
             if (_player != null)
             {
-                _player.ESSelected -= OnESSelected;
-                _player.Vout -= OnVout;
+                _player.VideoOut -= OnVout;
                 _player.Buffering -= OnBuffering;
                 _player.EndReached -= OnEndReached;
                 _player.Close();
+            }
+
+            DiscardGroupCall();
+        }
+
+        private void DiscardGroupCall()
+        {
+            if (_unifiedVideo != null)
+            {
+                _unifiedVideo.FrameReceived -= OnFrameReceived;
+                _unifiedVideo.Stop();
+                _unifiedVideo = null;
+            }
+
+            if (_call != null)
+            {
+                _call.NetworkStateChanged -= OnNetworkStateChanged;
+                _call.MessagesChanged -= OnMessagesChanged;
+                _call.PinnedMessagesChanged -= OnPinnedMessagesChanged;
+                _call.ReactionsChanged -= OnReactionsChanged;
+                _call.TopDonorsChanged -= OnTopDonorsChanged;
+                _call.StreamerChanged -= OnStreamerChanged;
+                _call.PropertyChanged -= OnPropertyChanged;
+                _call.Discard();
+                _call = null;
             }
         }
 
@@ -177,8 +221,17 @@ namespace Telegram.Controls.Stories
                         Identity.SetStatus(activeStories.ClientService, user);
                     }
 
-                    PhotoMini.SetUser(activeStories.ClientService, user, 48);
-                    Photo.SetUser(activeStories.ClientService, user, 32);
+                    PhotoMini.Source = ProfilePictureSource.User(activeStories.ClientService, user);
+                    Photo.Source = ProfilePictureSource.User(activeStories.ClientService, user);
+
+                    if (activeStories.SelectedItem?.Content is StoryContentLive && user.ProfilePhoto != null)
+                    {
+                        BackgroundPhoto.SetSource(activeStories.ClientService, user.ProfilePhoto.Big, user.ProfilePhoto.Minithumbnail, blurRadius: 15);
+                    }
+                    else
+                    {
+                        BackgroundPhoto.Clear();
+                    }
                 }
                 else
                 {
@@ -187,8 +240,17 @@ namespace Telegram.Controls.Stories
 
                     Identity.SetStatus(activeStories.ClientService, chat);
 
-                    PhotoMini.SetChat(activeStories.ClientService, chat, 48);
-                    Photo.SetChat(activeStories.ClientService, chat, 32);
+                    PhotoMini.Source = ProfilePictureSource.Chat(activeStories.ClientService, chat);
+                    Photo.Source = ProfilePictureSource.Chat(activeStories.ClientService, chat);
+
+                    if (activeStories.SelectedItem?.Content is StoryContentLive && chat.Photo != null)
+                    {
+                        BackgroundPhoto.SetSource(activeStories.ClientService, chat.Photo.Big, chat.Photo.Minithumbnail, blurRadius: 15);
+                    }
+                    else
+                    {
+                        BackgroundPhoto.Clear();
+                    }
                 }
 
                 if (activeStories.Item != null)
@@ -196,11 +258,11 @@ namespace Telegram.Controls.Stories
                     SegmentsInactive.UpdateActiveStories(activeStories.Item, 48, true);
                 }
 
-                Video?.Clear();
+                _player?.Context.Clear();
             }
 
             var story = activeStories.SelectedItem;
-            if (story != null && story.StoryId != _storyId)
+            if (story != null && story.Id != _storyId)
             {
                 _timer.Stop();
                 _state = StoryPauseSource.None;
@@ -256,9 +318,9 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
-            if (open && (story.StoryId != _storyId || !_open))
+            if (open && (story.Id != _storyId || !_open))
             {
-                if (story.ChatId != _openedChatId || story.StoryId != _openedStoryId)
+                if (story.PosterChatId != _openedChatId || story.Id != _openedStoryId)
                 {
                     _viewModel.ClientService.Send(new CloseStory(_openedChatId, _openedStoryId));
                     _openedChatId = 0;
@@ -273,7 +335,7 @@ namespace Telegram.Controls.Stories
             }
 
             _open = open;
-            _storyId = story.StoryId;
+            _storyId = story.Id;
         }
 
         public void UpdateQuality()
@@ -287,9 +349,21 @@ namespace Telegram.Controls.Stories
 
         private void Update(StoryViewModel story)
         {
-            Subtitle.Text = story.Date != 0
-                ? Locale.FormatRelativeShort(story.Date)
-                : string.Format("{0}/{1}", 1 + ViewModel.Items.IndexOf(story), ViewModel.Items.Count);
+            if (story.Content is StoryContentLive && story.GroupCall != null)
+            {
+                MessagesRoot.Visibility = Visibility.Visible;
+                LiveBadge.Visibility = Visibility.Visible;
+                Subtitle.Text = Locale.Declension(Strings.R.LiveStoryWatching, story.GroupCall.ParticipantCount);
+
+            }
+            else
+            {
+                MessagesRoot.Visibility = Visibility.Collapsed;
+                LiveBadge.Visibility = Visibility.Collapsed;
+                Subtitle.Text = story.Date != 0
+                    ? Locale.FormatRelativeShort(story.Date)
+                    : string.Format("{0}/{1}", 1 + ViewModel.Items.IndexOf(story), ViewModel.Items.Count);
+            }
 
             switch (story.PrivacySettings)
             {
@@ -321,10 +395,7 @@ namespace Telegram.Controls.Stories
                 }
 
                 var thumbnail = photoContent.Photo.GetSmall();
-                if (thumbnail != null /*&& (file == null || !file.Photo.Local.IsDownloadingCompleted)*/)
-                {
-                    UpdateThumbnail(story, thumbnail.Photo, photoContent.Photo.Minithumbnail, true);
-                }
+                UpdateThumbnail(story, thumbnail?.Photo, photoContent.Photo.Minithumbnail, true);
 
                 Mute.Visibility = Visibility.Collapsed;
                 MutePlaceholder.Visibility = Visibility.Collapsed;
@@ -334,11 +405,7 @@ namespace Telegram.Controls.Stories
                 var video = SelectVideoFile(videoContent);
 
                 var thumbnail = video.Thumbnail;
-                if (thumbnail != null /*&& (file == null || !file.Photo.Local.IsDownloadingCompleted)*/)
-                {
-                    UpdateThumbnail(story, thumbnail.File, video.Minithumbnail, true);
-                }
-
+                UpdateThumbnail(story, thumbnail?.File, video.Minithumbnail, true);
                 UpdateVideo(story, /*video.AlternativeVideo?.Video ??*/ video.Video, true);
 
                 Mute.Visibility = Visibility.Visible;
@@ -348,6 +415,11 @@ namespace Telegram.Controls.Stories
 
                 Mute.IsEnabled = !video.IsAnimation;
                 Mute.IsChecked = !video.IsAnimation && !_viewModel.Settings.VolumeMuted;
+            }
+            else if (story.Content is StoryContentLive)
+            {
+                Mute.Visibility = Visibility.Collapsed;
+                MutePlaceholder.Visibility = Visibility.Collapsed;
             }
 
             if (string.IsNullOrEmpty(story.Caption?.Text))
@@ -576,6 +648,25 @@ namespace Telegram.Controls.Stories
 
                     var window = element.GetParent<StoriesWindow>();
                     var result = await window?.ShowActionAsync(target, text, TeachingTipPlacementMode.Top);
+
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        try
+                        {
+                            Location location = area.Type switch
+                            {
+                                StoryAreaTypeLocation typeLocation => typeLocation.Location,
+                                StoryAreaTypeVenue typeVenue => typeVenue.Venue.Location,
+                                _ => null
+                            };
+
+                            await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "https://www.google.com/maps/search/?api=1&query={0},{1}", location.Latitude, location.Longitude)));
+                        }
+                        catch
+                        {
+                            // All the remote procedure calls must be wrapped in a try-catch block
+                        }
+                    }
                 }
                 else if (area.Type is StoryAreaTypeMessage typeMessage)
                 {
@@ -688,9 +779,8 @@ namespace Telegram.Controls.Stories
 
             visual.StartAnimation("Scale", scale);
 
-            var device = ElementComposition.GetSharedDevice();
-            var rect1 = CanvasGeometry.CreateRoundedRectangle(device, 0, 0, ActualSize.X, ActualSize.Y, 8, 8);
-            var rect2 = CanvasGeometry.CreateRoundedRectangle(device, 0, 0, ActualSize.X, ActualSize.Y, 8 * 2.5f, 8 * 2.5f);
+            var rect1 = CanvasGeometry.CreateRoundedRectangle(null, 0, 0, ActualSize.X, ActualSize.Y, 8, 8);
+            var rect2 = CanvasGeometry.CreateRoundedRectangle(null, 0, 0, ActualSize.X, ActualSize.Y, 8 * 2.5f, 8 * 2.5f);
 
             var geometry1 = compositor.CreatePathGeometry(new CompositionPath(rect1));
             var clip1 = compositor.CreateGeometricClip(geometry1);
@@ -703,47 +793,73 @@ namespace Telegram.Controls.Stories
             root.Clip = clip1;
         }
 
-        private void Play(RemoteFileStream stream)
+        private void Play(StoryVideo stream)
         {
-            if (_player != null && !_unloaded && stream != null)
+            if (_player == null || Video == null)
             {
-                _player.Play(stream);
+                InitializeVideo();
+            }
+
+            if (_player != null && !_unloaded && _viewModel != null && stream != null)
+            {
+                _player.Play(new RemoteFileSource(_viewModel.ClientService, stream.Video));
             }
         }
+
+        private VoipGroupCall _call;
+        private ObservableCollection<GroupCallMessage> _messages;
+        private SortedObservableCollection<GroupCallMessage> _pinnedMessages;
+        private Dictionary<MessageSender, int> _topDonors;
 
         private void Activate(StoryViewModel story)
         {
             CollapseCaption();
+            DiscardGroupCall();
 
             if (story.Content is StoryContentVideo videoContent && !_unloaded)
             {
                 var video = SelectVideoFile(videoContent);
-                var stream = new RemoteFileStream(story.ClientService, video.Video);
 
                 Progress.Update(_viewModel.Items.IndexOf(_viewModel.SelectedItem), _viewModel.Items.Count, video.Duration);
+                Play(video);
+            }
+            else if (story.Content is StoryContentLive live && story.ClientService.TryGetGroupCall(live.GroupCallId, out GroupCall groupCall) && !_unloaded)
+            {
+                _timer.Stop();
+                Progress.Update(-1, 1, 0);
 
-                if (_player != null)
+                Suspend(StoryPauseSource.Live);
+
+                _call = new VoipGroupCall(ViewModel.ClientService, ViewModel.Settings, ViewModel.Aggregator, XamlRoot, ViewModel.Chat, groupCall, null, null, true);
+                _call.NetworkStateChanged += OnNetworkStateChanged;
+                _call.MessagesChanged += OnMessagesChanged;
+                _call.PinnedMessagesChanged += OnPinnedMessagesChanged;
+                _call.ReactionsChanged += OnReactionsChanged;
+                _call.TopDonorsChanged += OnTopDonorsChanged;
+                _call.StreamerChanged += OnStreamerChanged;
+                _call.PropertyChanged += OnPropertyChanged;
+
+                if (_call.IsRtmpStream)
                 {
-                    _mediaStream = stream;
-                    Play(_mediaStream);
-                }
-                else if (Video != null)
-                {
-                    if (Video.IsConnected)
-                    {
-                        _mediaStream = stream;
-                        Video_Initialized(Video, new LibVLCSharp.Platforms.Windows.InitializedEventArgs(Video.SwapChainOptions));
-                    }
-                    else
-                    {
-                        // TODO: dispose
-                    }
+                    _call.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(LayoutRoot, uniformToFill: true));
+                    _unifiedVideo.FrameReceived += OnFrameReceived;
                 }
                 else
                 {
-                    _mediaStream = stream;
-                    FindName(nameof(Video));
+                    UpdateStreamer(_call.Streamer);
                 }
+
+                story.GroupCall = _call;
+
+                _topDonors = new Dictionary<MessageSender, int>(new MessageSenderEqualityComparer());
+
+                _messages = new ObservableCollection<GroupCallMessage>(_call.Messages);
+                MessagesHost.ItemsSource = _messages;
+
+                _pinnedMessages = new SortedObservableCollection<GroupCallMessage>(_call.PinnedMessages, new GroupCallMessageComparer());
+                PinnedMessagesHost.ItemsSource = _pinnedMessages;
+
+                ShowSkeleton();
             }
             else if (!_loading && !_unloaded)
             {
@@ -753,16 +869,171 @@ namespace Telegram.Controls.Stories
             }
         }
 
+        private void OnFrameReceived(VoipVideoOutputSink sender, FrameReceivedEventArgs args)
+        {
+            _unifiedVideo?.FrameReceived -= OnFrameReceived;
+
+            this.BeginOnUIThread(HideSkeleton);
+        }
+
+        private VoipVideoOutputSink _unifiedVideo;
+
+        private void OnNetworkStateChanged(VoipGroupCall sender, VoipGroupCallNetworkStateChangedEventArgs args)
+        {
+            // TODO
+        }
+
+        private void OnMessagesChanged(VoipGroupCall sender, VoipGroupCallMessagesChangedEventArgs args)
+        {
+            this.BeginOnUIThread(() => UpdateMessages(args.Message, args.Deleted));
+        }
+
+        private void OnPinnedMessagesChanged(VoipGroupCall sender, VoipGroupCallMessagesChangedEventArgs args)
+        {
+            this.BeginOnUIThread(() => UpdatePinnedMessages(args.Message, args.Deleted));
+        }
+
+        private void OnReactionsChanged(VoipGroupCall sender, VoipGroupCallReactionsChangedEventArgs args)
+        {
+            this.BeginOnUIThread(() => ReactionsHost.Add(sender.ClientService, args.SenderId, args.StarCount));
+        }
+
+        private void OnTopDonorsChanged(VoipGroupCall sender, VoipGroupCallTopDonorsChangedEventArgs args)
+        {
+            this.BeginOnUIThread(() => UpdateTopDonors(args.Donors));
+        }
+
+        private void OnStreamerChanged(VoipGroupCall sender, VoipGroupCallStreamerChangedEventArgs args)
+        {
+            this.BeginOnUIThread(() => UpdateStreamer(args.Streamer));
+        }
+
+        private void UpdateStreamer(GroupCallParticipant participant)
+        {
+            if (_unifiedVideo != null)
+            {
+                _unifiedVideo.FrameReceived -= OnFrameReceived;
+                _unifiedVideo.Stop();
+                _unifiedVideo = null;
+            }
+
+            if (participant?.VideoInfo != null)
+            {
+                var channelInfo = new VoipVideoChannelInfo(participant.AudioSourceId, participant.ParticipantId.ToId(), participant.VideoInfo.EndpointId, participant.VideoInfo.SourceGroups.ToCalls(), VoipVideoChannelQuality.Full, VoipVideoChannelQuality.Full);
+
+                _call.SetRequestedVideoChannels([channelInfo]);
+                _call.AddIncomingVideoOutput(channelInfo.EndpointId, _unifiedVideo = VoipVideoOutput.CreateSink(LayoutRoot, uniformToFill: true));
+
+                _unifiedVideo.FrameReceived += OnFrameReceived;
+            }
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is VoipGroupCall groupCall && e.PropertyName == nameof(Call))
+            {
+                this.BeginOnUIThread(() =>
+                {
+                    Subtitle.Text = Locale.Declension(Strings.R.LiveStoryWatching, groupCall.ParticipantCount);
+                });
+            }
+        }
+
+        private void UpdateMessages(GroupCallMessage message, bool expired)
+        {
+            if (expired)
+            {
+                _messages.Remove(message);
+            }
+            else
+            {
+                _messages.Add(message);
+
+                //if (message.PaidMessageStarCount > 0)
+                //{
+                //    ReactionsHost.Add(ViewModel.ClientService, message.SenderId, message.PaidMessageStarCount);
+                //}
+            }
+        }
+
+        private void UpdatePinnedMessages(GroupCallMessage message, bool expired)
+        {
+            if (expired)
+            {
+                _pinnedMessages.Remove(message);
+            }
+            else
+            {
+                _pinnedMessages.Add(message);
+            }
+        }
+
+        private void UpdateTopDonors(IList<PaidReactor> donors)
+        {
+            var diff = new Dictionary<MessageSender, int>(_topDonors.Count + donors.Count, new MessageSenderEqualityComparer());
+
+            foreach (var donor in _topDonors)
+            {
+                diff[donor.Key] = 0;
+            }
+
+            for (int i = 0; i < donors.Count; i++)
+            {
+                var donor = donors[i].SenderId;
+                var newPosition = i + 1;
+
+                if (_topDonors.TryGetValue(donor, out int oldPosition))
+                {
+                    if (oldPosition == newPosition)
+                    {
+                        diff.Remove(donor);
+                    }
+                    else
+                    {
+                        diff[donor] = newPosition;
+                    }
+                }
+                else
+                {
+                    diff[donor] = newPosition;
+                }
+            }
+
+            _topDonors.Clear();
+
+            for (int i = 0; i < donors.Count; i++)
+            {
+                _topDonors[donors[i].SenderId] = i + 1;
+            }
+
+            MessagesHost.ForEach<LiveStoryMessageCell, GroupCallMessage>((content, message) =>
+            {
+                if (diff.TryGetValue(message.SenderId, out int position))
+                {
+                    content.Update(ViewModel.ClientService, message, position);
+                }
+            });
+
+            PinnedMessagesHost.ForEach<LiveStoryPinnedMessageCell, GroupCallMessage>((content, message) =>
+            {
+                if (diff.TryGetValue(message.SenderId, out int position))
+                {
+                    content.Update(ViewModel.ClientService, message, position);
+                }
+            });
+        }
+
         private void Deactivate(StoryViewModel story)
         {
             _player?.Stop();
 
             //UnloadVideo();
+            DiscardGroupCall();
             CollapseCaption();
 
-            if (_openedChatId == story.ChatId && _openedStoryId == story.StoryId)
+            if (_openedChatId == story.PosterChatId && _openedStoryId == story.Id)
             {
-                _viewModel.ClientService.Send(new CloseStory(story.ChatId, story.StoryId));
+                _viewModel.ClientService.Send(new CloseStory(story.PosterChatId, story.Id));
                 _openedChatId = 0;
                 _openedStoryId = 0;
             }
@@ -780,7 +1051,7 @@ namespace Telegram.Controls.Stories
 
 
 
-
+        private ThumbnailController _thumbnailController;
 
         private long _fileToken;
         private long _thumbnailToken;
@@ -812,38 +1083,19 @@ namespace Telegram.Controls.Stories
 
         private void UpdateThumbnail(StoryViewModel story, File file, Minithumbnail minithumbnail, bool download)
         {
-            if (file.Id == _thumbnailId && download)
+            if (file?.Id == _thumbnailId && download)
             {
                 return;
             }
 
-            _thumbnailId = file.Id;
-
-            BitmapImage source = null;
-            ImageBrush brush;
-
-            if (LayoutRoot.Background is ImageBrush existing)
-            {
-                brush = existing;
-            }
-            else
-            {
-                brush = new ImageBrush
-                {
-                    Stretch = Stretch.UniformToFill,
-                    AlignmentX = AlignmentX.Center,
-                    AlignmentY = AlignmentY.Center
-                };
-
-                LayoutRoot.Background = brush;
-            }
+            _thumbnailId = file?.Id ?? 0;
+            _thumbnailController ??= new ThumbnailController(ThumbnailTexture);
 
             if (file != null)
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    source = new BitmapImage();
-                    PlaceholderHelper.GetBlurred(source, file.Local.Path, 3);
+                    _thumbnailController.Blur(file.Local.Path, 3, 0);
                 }
                 else
                 {
@@ -859,18 +1111,22 @@ namespace Telegram.Controls.Stories
 
                     if (minithumbnail != null)
                     {
-                        source = new BitmapImage();
-                        PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
+                        _thumbnailController.Blur(minithumbnail.Data, 3, 0);
+                    }
+                    else
+                    {
+                        _thumbnailController.Recycle();
                     }
                 }
             }
             else if (minithumbnail != null)
             {
-                source = new BitmapImage();
-                PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
+                _thumbnailController.Blur(minithumbnail.Data, 3, 0);
             }
-
-            brush.ImageSource = source;
+            else
+            {
+                _thumbnailController.Recycle();
+            }
         }
 
         private void UpdatePhoto(StoryViewModel story, File file, bool download)
@@ -880,7 +1136,7 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
+            UpdateManager.Unsubscribe(this, ref _fileToken);
 
             _fileId = file.Id;
             Logger.Info();
@@ -889,7 +1145,7 @@ namespace Telegram.Controls.Stories
 
             if (_type == StoryType.Photo)
             {
-                Video?.Clear();
+                _player?.Context.Clear();
             }
 
             if (file.Local.IsDownloadingCompleted)
@@ -905,7 +1161,6 @@ namespace Telegram.Controls.Stories
             }
             else if (download)
             {
-                _loading = true;
                 ShowSkeleton();
 
                 //VideoPanel.Opacity = 0;
@@ -923,8 +1178,6 @@ namespace Telegram.Controls.Stories
             _type = StoryType.Photo;
         }
 
-        private RemoteFileStream _mediaStream;
-
         private StoryType _type;
 
         private int _fileId;
@@ -937,7 +1190,7 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
+            UpdateManager.Unsubscribe(this, ref _fileToken);
 
             _fileId = file.Id;
             //Player.Source = null;
@@ -970,12 +1223,12 @@ namespace Telegram.Controls.Stories
             {
                 if (_type == StoryType.Photo && Video != null)
                 {
-                    Video.Clear();
+                    _player?.Context.Clear();
                 }
             }
             else
             {
-                Video?.Clear();
+                _player?.Context.Clear();
             }
 
             story.ClientService.DownloadFile(file.Id, 32, 0, video.PreloadPrefixSize);
@@ -983,28 +1236,40 @@ namespace Telegram.Controls.Stories
             _type = StoryType.Video;
         }
 
+        private bool _hidden = false;
+
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            var active = ElementComposition.GetElementVisual(ActiveRoot);
-            var opacity = active.Compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(0, 1);
-            opacity.InsertKeyFrame(1, 0);
+            var point = e.GetCurrentPoint(this);
+            if (point.Properties.IsLeftButtonPressed)
+            {
+                _hidden = true;
 
-            active.StartAnimation("Opacity", opacity);
+                var active = ElementComposition.GetElementVisual(ActiveRoot);
+                var opacity = active.Compositor.CreateScalarKeyFrameAnimation();
+                opacity.InsertKeyFrame(0, 1);
+                opacity.InsertKeyFrame(1, 0);
 
-            Suspend(StoryPauseSource.Interaction);
+                active.StartAnimation("Opacity", opacity);
+
+                Suspend(StoryPauseSource.Interaction);
+            }
         }
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            var active = ElementComposition.GetElementVisual(ActiveRoot);
-            var opacity = active.Compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(0, 0);
-            opacity.InsertKeyFrame(1, 1);
+            if (_hidden)
+            {
+                _hidden = false;
+                var active = ElementComposition.GetElementVisual(ActiveRoot);
+                var opacity = active.Compositor.CreateScalarKeyFrameAnimation();
+                opacity.InsertKeyFrame(0, 0);
+                opacity.InsertKeyFrame(1, 1);
 
-            active.StartAnimation("Opacity", opacity);
+                active.StartAnimation("Opacity", opacity);
 
-            Resume(StoryPauseSource.Interaction);
+                Resume(StoryPauseSource.Interaction);
+            }
         }
 
         private void MoreButton_Click(object sender, RoutedEventArgs e)
@@ -1014,6 +1279,8 @@ namespace Telegram.Controls.Stories
 
         private void ShowSkeleton()
         {
+            _loading = true;
+
             if (ActualSize.X == 0 || ActualSize.Y == 0)
             {
                 return;
@@ -1059,26 +1326,31 @@ namespace Telegram.Controls.Stories
             ElementCompositionPreview.SetElementChildVisual(ActiveRoot, visual);
         }
 
+        private void HideSkeleton()
+        {
+            _loading = false;
+            ElementCompositionPreview.SetElementChildVisual(ActiveRoot, BootStrapper.Current.Compositor.CreateSpriteVisual());
+        }
+
         private bool _loading;
 
         private void Texture_ImageOpened(object sender, RoutedEventArgs e)
         {
             Logger.Debug("ImageOpened " + _viewModel.ChatId);
 
-            _loading = false;
-            ElementCompositionPreview.SetElementChildVisual(ActiveRoot, BootStrapper.Current.Compositor.CreateSpriteVisual());
+            HideSkeleton();
 
-            Video?.Clear();
+            _player?.Context.Clear();
 
             if (_open)
             {
                 _timer.Stop();
                 _timer.Start();
 
-                if (_viewModel?.SelectedItem != null && _viewModel.SelectedItem.ChatId != _openedChatId && _viewModel.SelectedItem.StoryId != _openedStoryId)
+                if (_viewModel?.SelectedItem != null && _viewModel.SelectedItem.PosterChatId != _openedChatId && _viewModel.SelectedItem.Id != _openedStoryId)
                 {
-                    _openedChatId = _viewModel.SelectedItem.ChatId;
-                    _openedStoryId = _viewModel.SelectedItem.StoryId;
+                    _openedChatId = _viewModel.SelectedItem.PosterChatId;
+                    _openedStoryId = _viewModel.SelectedItem.Id;
                     _viewModel.ClientService.Send(new OpenStory(_openedChatId, _openedStoryId));
                 }
             }
@@ -1224,7 +1496,7 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        private void Video_Initialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
+        private void InitializeVideo()
         {
             if (_unloaded)
             {
@@ -1233,121 +1505,54 @@ namespace Telegram.Controls.Stories
 
             Logger.Info();
 
-            _player = new AsyncMediaPlayer(e.SwapChainOptions);
-            _player.ESSelected += OnESSelected;
-            _player.Vout += OnVout;
+            FindName(nameof(Video));
+
+            var options = new AsyncMediaPlayerOptions
+            {
+                CreateSwapChain = true,
+                Mute = _viewModel.Settings.VolumeMuted,
+                Volume = 1,
+                Debug = SettingsService.Current.VerbosityLevel >= 4,
+            };
+
+            _player = new AsyncMediaPlayer(options);
+            _player.VideoOut += OnVout;
             _player.Buffering += OnBuffering;
             _player.EndReached += OnEndReached;
 
-            if (_mediaStream != null)
-            {
-                Play(_mediaStream);
-            }
+            _player.Context.Attach(Video, true);
         }
 
-        private void OnVout(AsyncMediaPlayer sender, EventArgs e)
+        private void OnVout(AsyncMediaPlayer sender, object e)
         {
-            _loading = false;
-            ElementCompositionPreview.SetElementChildVisual(ActiveRoot, BootStrapper.Current.Compositor.CreateSpriteVisual());
+            HideSkeleton();
 
             Texture1.Source = null;
             Texture2.Source = null;
         }
 
-        private void OnESSelected(AsyncMediaPlayer sender, MediaPlayerESSelectedEventArgs e)
-        {
-            if (e.Type == TrackType.Video && e.Id != -1)
-            {
-                //UpdateStretch();
-            }
-            else if (e.Type == TrackType.Audio && e.Id != -1)
-            {
-                _player.Mute = _viewModel.Settings.VolumeMuted;
-            }
-        }
-
-        private void UpdateStretch()
-        {
-            //var videoTrack = GetVideoTrack(_player);
-            //if (videoTrack is not VideoTrack track)
-            //{
-            //    return;
-            //}
-
-            //var trackWidth = track.Width;
-            //var trackHeight = track.Height;
-
-            //if (trackWidth == 0 || trackHeight == 0)
-            //{
-            //    _player.Scale(0);
-            //}
-            //else
-            //{
-            //    if (track.SarNum != track.SarDen)
-            //    {
-            //        trackWidth = trackWidth * track.SarNum / track.SarDen;
-            //    }
-
-            //    var width = (Video.ActualSize.X * XamlRoot.RasterizationScale) / trackWidth;
-            //    var height = (Video.ActualSize.Y * XamlRoot.RasterizationScale) / trackHeight;
-
-            //    _player.Scale((float)Math.Max(width, height));
-            //}
-        }
-
-        private VideoTrack? GetVideoTrack(MediaPlayer mediaPlayer)
-        {
-            if (mediaPlayer == null)
-            {
-                return null;
-            }
-            var selectedVideoTrack = mediaPlayer.VideoTrack;
-            if (selectedVideoTrack == -1)
-            {
-                return null;
-            }
-
-            try
-            {
-                var media = mediaPlayer.Media;
-                MediaTrack? videoTrack = null;
-                if (media != null)
-                {
-                    videoTrack = media.Tracks?.FirstOrDefault(t => t.Id == selectedVideoTrack);
-                    media.Dispose();
-                }
-                return videoTrack == null ? (VideoTrack?)null : ((MediaTrack)videoTrack).Data.Video;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        private void OnEndReached(AsyncMediaPlayer sender, EventArgs e)
+        private void OnEndReached(AsyncMediaPlayer sender, object e)
         {
             Completed?.Invoke(this, EventArgs.Empty);
         }
 
-        private void OnBuffering(AsyncMediaPlayer sender, MediaPlayerBufferingEventArgs e)
+        private void OnBuffering(AsyncMediaPlayer sender, AsyncMediaPlayerBufferingEventArgs e)
         {
             //Logger.Debug(e.Cache);
 
             if (e.Cache == 100 && _loading)
             {
-                _loading = false;
-                ElementCompositionPreview.SetElementChildVisual(ActiveRoot, BootStrapper.Current.Compositor.CreateSpriteVisual());
+                HideSkeleton();
 
-                if (_viewModel?.SelectedItem != null && _viewModel.SelectedItem.ChatId != _openedChatId && _viewModel.SelectedItem.StoryId != _openedStoryId)
+                if (_viewModel?.SelectedItem != null && _viewModel.SelectedItem.PosterChatId != _openedChatId && _viewModel.SelectedItem.Id != _openedStoryId)
                 {
-                    _openedChatId = _viewModel.SelectedItem.ChatId;
-                    _openedStoryId = _viewModel.SelectedItem.StoryId;
+                    _openedChatId = _viewModel.SelectedItem.PosterChatId;
+                    _openedStoryId = _viewModel.SelectedItem.Id;
                     _viewModel.ClientService.Send(new OpenStory(_openedChatId, _openedStoryId));
                 }
             }
             else if (e.Cache < 100 && !_loading)
             {
-                _loading = true;
                 ShowSkeleton();
             }
         }
@@ -1463,10 +1668,7 @@ namespace Telegram.Controls.Stories
         {
             _viewModel.Settings.VolumeMuted = Mute.IsChecked is false;
 
-            if (_player != null)
-            {
-                _player.Mute = _viewModel.Settings.VolumeMuted;
-            }
+            _player?.Mute = _viewModel.Settings.VolumeMuted;
         }
 
         private void Caption_Click(object sender, RoutedEventArgs e)
@@ -1561,29 +1763,29 @@ namespace Telegram.Controls.Stories
         {
             if (story.ClientService.TryGetUser(story.Chat, out User user) && user.HasActiveUsername(out string username))
             {
-                MessageHelper.CopyLink(story.ClientService, XamlRoot, new InternalLinkTypeStory(username, story.StoryId));
+                MessageHelper.CopyLink(story.ClientService, XamlRoot, new InternalLinkTypeStory(username, story.Id));
             }
         }
 
         private void Caption_TextEntityClick(object sender, TextEntityClickEventArgs e)
         {
-            if (e.Type is TextEntityTypeBotCommand && e.Data is string command)
+            if (e.Type is TextEntityTypeBotCommand && e.Text is string command)
             {
                 ViewModel.Delegate.SendBotCommand(command);
             }
             else if (e.Type is TextEntityTypeEmailAddress)
             {
-                ViewModel.Delegate.OpenUrl("mailto:" + e.Data, false);
+                ViewModel.Delegate.OpenUrl("mailto:" + e.Text, false);
             }
             else if (e.Type is TextEntityTypePhoneNumber)
             {
-                ViewModel.Delegate.OpenUrl("tel:" + e.Data, false);
+                ViewModel.Delegate.OpenUrl("tel:" + e.Text, false);
             }
-            else if (e.Type is TextEntityTypeHashtag or TextEntityTypeCashtag && e.Data is string hashtag)
+            else if (e.Type is TextEntityTypeHashtag or TextEntityTypeCashtag && e.Text is string hashtag)
             {
                 ViewModel.Delegate.OpenHashtag(hashtag);
             }
-            else if (e.Type is TextEntityTypeMention && e.Data is string username)
+            else if (e.Type is TextEntityTypeMention && e.Text is string username)
             {
                 ViewModel.Delegate.OpenUsername(username);
             }
@@ -1595,11 +1797,11 @@ namespace Telegram.Controls.Stories
             {
                 ViewModel.Delegate.OpenUrl(textUrl.Url, true);
             }
-            else if (e.Type is TextEntityTypeUrl && e.Data is string url)
+            else if (e.Type is TextEntityTypeUrl && e.Text is string url)
             {
                 ViewModel.Delegate.OpenUrl(url, false);
             }
-            else if (e.Type is TextEntityTypeBankCardNumber && e.Data is string cardNumber)
+            else if (e.Type is TextEntityTypeBankCardNumber && e.Text is string cardNumber)
             {
                 ViewModel.Delegate.OpenBankCardNumber(cardNumber);
             }
@@ -1607,14 +1809,254 @@ namespace Telegram.Controls.Stories
             {
                 // Never happens here
             }
-            else if (e.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode && e.Data is string code)
+        }
+
+        private void MessagesHost_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
             {
-                MessageHelper.CopyText(XamlRoot, code);
+                args.ItemContainer = new ListViewItem
+                {
+                    Style = sender.ItemContainerStyle,
+                    ContentTemplate = sender.ItemTemplate
+                };
+
+                args.ItemContainer.ContextRequested += MessagesHost_ContextRequested;
             }
-            else if (e.Type is TextEntityTypeSpoiler)
+
+            args.IsContainerPrepared = true;
+        }
+
+        private void MessagesHost_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+            var message = MessagesHost.ItemFromContainer(sender) as GroupCallMessage;
+
+            var textBlock = new TextBlock();
+            textBlock.Text = Formatter.SentDate(message.Date);
+            textBlock.FontSize = 12;
+
+            var placeholder = new MenuFlyoutContent();
+            placeholder.Content = textBlock;
+            placeholder.FontSize = 12;
+            placeholder.Padding = new Thickness(12, 4, 12, 4);
+            placeholder.HorizontalAlignment = HorizontalAlignment.Left;
+
+            flyout.Items.Add(placeholder);
+            flyout.CreateFlyoutSeparator();
+            flyout.CreateFlyoutItem(OpenMessage, message, Strings.OpenProfile, Icons.PersonCircle);
+            flyout.CreateFlyoutItem(CopyMessage, message, Strings.Copy, Icons.Copy);
+
+            var translate = ViewModel.Session.Resolve<ITranslateService>();
+            if (translate.CanTranslateText(message.Text.Text))
             {
-                Caption.IgnoreSpoilers = true;
+                flyout.CreateFlyoutItem(TranslateMessage, message, Strings.TranslateMessage, Icons.Translate);
             }
+
+            if (message.CanBeDeleted)
+            {
+                flyout.CreateFlyoutItem(DeleteMessage, message, Strings.Delete, Icons.Delete, destructive: true);
+            }
+
+            flyout.ShowAt(sender, args);
+        }
+
+        private void OpenMessage(GroupCallMessage message)
+        {
+            ViewModel.NavigationService.NavigateToSender(message.SenderId);
+        }
+
+        private void CopyMessage(GroupCallMessage message)
+        {
+            MessageHelper.CopyText(XamlRoot, message.Text);
+        }
+
+        private void TranslateMessage(GroupCallMessage message)
+        {
+            var language = LanguageIdentification.IdentifyLanguage(message.Text.Text);
+            var translate = ViewModel.Session.Resolve<ITranslateService>();
+
+            var popup = new TranslatePopup(translate, message.Text.Text, language, ViewModel.Settings.Translate.To, false)
+            {
+                RequestedTheme = ElementTheme.Dark
+            };
+
+            ViewModel.ShowPopup(popup);
+        }
+
+        public async void DeleteMessage(GroupCallMessage message)
+        {
+            if (ViewModel.SelectedItem?.Content is not StoryContentLive live || !ViewModel.ClientService.TryGetGroupCall(live.GroupCallId, out GroupCall groupCall))
+            {
+                return;
+            }
+
+            var popup = new DeleteMessagesPopup(ViewModel.ClientService, groupCall, message);
+            popup.RequestedTheme = ElementTheme.Dark;
+
+            var confirm = await ViewModel.ShowPopupAsync(popup);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                if (popup.DeleteAll.Any())
+                {
+                    ViewModel.ClientService.Send(new DeleteGroupCallMessagesBySender(_call.Id, message.SenderId, popup.ReportSpam.Any()));
+                }
+                else
+                {
+                    ViewModel.ClientService.Send(new DeleteGroupCallMessages(_call.Id, [message.MessageId], popup.ReportSpam.Any()));
+                }
+
+                if (popup.BanUser.Any())
+                {
+                    if (ViewModel.Chat.Type is ChatTypePrivate)
+                    {
+                        ViewModel.ClientService.Send(new SetMessageSenderBlockList(message.SenderId, new BlockListMain()));
+                    }
+                    else
+                    {
+                        ViewModel.ClientService.Send(new SetChatMemberStatus(ViewModel.ChatId, message.SenderId, new ChatMemberStatusBanned()));
+                    }
+                }
+            }
+        }
+
+        private void MessagesHost_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is LiveStoryMessageCell content && args.Item is GroupCallMessage message)
+            {
+                _topDonors.TryGetValue(message.SenderId, out int position);
+                content.Update(_call.ClientService, message, position);
+            }
+        }
+
+        private void MessagesHost_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var layerVisual = _messagesVisual;
+            if (layerVisual == null)
+            {
+                return;
+            }
+
+            var compositor = layerVisual.Compositor;
+
+            var alphaMask = new AlphaMaskEffect
+            {
+                Name = "AlphaMask",
+                Source = new CompositionEffectSourceParameter("source"),
+                AlphaMask = new CompositionEffectSourceParameter("mask")
+            };
+
+            var next = e.NewSize.ToVector2();
+            var top = 24 / next.Y;
+            var bottom = (next.Y - 8) / next.Y;
+
+            var gradientBrush = compositor.CreateLinearGradientBrush();
+            gradientBrush.StartPoint = new(0, 0);
+            gradientBrush.EndPoint = new(0, 1);
+            gradientBrush.MappingMode = CompositionMappingMode.Relative;
+            //gradientBrush.ExtendMode = CompositionGradientExtendMode.Clamp;
+
+            gradientBrush.ColorStops.Add(compositor.CreateColorGradientStop(0, Colors.Transparent));
+            gradientBrush.ColorStops.Add(compositor.CreateColorGradientStop(top, Colors.White));
+            gradientBrush.ColorStops.Add(compositor.CreateColorGradientStop(bottom, Colors.White));
+            gradientBrush.ColorStops.Add(compositor.CreateColorGradientStop(1, Colors.Transparent));
+
+            var effectFactory = compositor.CreateEffectFactory(alphaMask);
+            var effectBrush = effectFactory.CreateBrush();
+            effectBrush.SetSourceParameter("mask", gradientBrush);
+            layerVisual.Effect = effectBrush;
+        }
+
+        private void PinnedMessagesHost_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is LiveStoryPinnedMessageCell content && args.Item is GroupCallMessage message)
+            {
+                _topDonors.TryGetValue(message.SenderId, out int position);
+                content.Update(_call.ClientService, message, position);
+            }
+        }
+
+        private void ReactionsHost_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var visual = ElementComposition.GetElementVisual(MessagesHost);
+            ElementCompositionPreview.SetIsTranslationEnabled(MessagesHost, true);
+
+            var prev = e.PreviousSize.ToVector2();
+            var next = e.NewSize.ToVector2();
+
+            var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
+            animation.InsertKeyFrame(0, next.Y - prev.Y);
+            animation.InsertKeyFrame(1, 0);
+
+            visual.StartAnimation("Translation.Y", animation);
+        }
+
+        private async void PinnedMessage_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not LiveStoryPinnedMessageCell pinnedContent || pinnedContent.Message == null)
+            {
+                return;
+            }
+
+            await MessagesHost.ScrollToItem2(pinnedContent.Message, VerticalAlignment.Center);
+
+            var container = MessagesHost.ContainerFromItem(pinnedContent.Message) as SelectorItem;
+            if (container?.ContentTemplateRoot is LiveStoryMessageCell content)
+            {
+                content.Highlight();
+            }
+        }
+
+        private bool _messagesCollapsed;
+
+        public void ShowHideMessages(bool show)
+        {
+            if (_messagesCollapsed != show)
+            {
+                return;
+            }
+
+            _messagesCollapsed = !show;
+            MessagesHost.Visibility = Visibility.Visible;
+            MessagesShadow.Visibility = Visibility.Visible;
+
+            var visual = ElementComposition.GetElementVisual(MessagesHost);
+            var shadow = ElementComposition.GetElementVisual(MessagesShadow);
+            ElementCompositionPreview.SetIsTranslationEnabled(MessagesHost, true);
+
+            var compositor = visual.Compositor;
+
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (_messagesCollapsed)
+                {
+                    MessagesHost.Visibility = Visibility.Collapsed;
+                    MessagesShadow.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var translation = compositor.CreateScalarKeyFrameAnimation();
+            translation.InsertKeyFrame(0, show ? MessagesShadow.ActualSize.Y : 0);
+            translation.InsertKeyFrame(1, show ? 0 : MessagesShadow.ActualSize.Y);
+
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, show ? 0 : 1);
+            opacity.InsertKeyFrame(1, show ? 1 : 0);
+
+            visual.StartAnimation("Translation.Y", translation);
+            visual.StartAnimation("Opacity", opacity);
+            shadow.StartAnimation("Opacity", opacity);
+
+            batch.End();
         }
     }
 

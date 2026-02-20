@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace Telegram.Views.Stars.Popups
 
         private List<PaidReactor> _reactors;
         private PaidReactor _self;
-        private int _count;
+        private long _count;
 
         private bool _loaded;
 
@@ -54,7 +55,7 @@ namespace Telegram.Views.Stars.Popups
             {
                 TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.StarsReactionText, chat.Title));
 
-                StarCountSlider.Initialize(_starCount = 50, clientService.Options.PaidReactionStarCountMax);
+                StarCountSlider.Initialize(_starCount = 50, 1, clientService.Options.PaidReactionStarCountMax);
 
                 _reactors = new List<PaidReactor>(message.InteractionInfo?.Reactions?.PaidReactors ?? Array.Empty<PaidReactor>());
 
@@ -91,7 +92,7 @@ namespace Telegram.Views.Stars.Popups
             hyperlink.Click += Buy_Click;
 
             var content = new TextBlock();
-            content.Inlines.Add(string.Format(Strings.Gift2MessageStarsInfo.Replace("\u2B50", Icons.Premium + "\u200A"), _clientService.OwnedStarCount.ToValue()));
+            content.Inlines.Add(string.Format(Strings.Gift2MessageStarsInfo.ReplaceStar(Icons.Premium), _clientService.OwnedStarCount.ToValue()));
             content.Inlines.Add(new LineBreak());
             content.Inlines.Add(hyperlink);
             content.HorizontalTextAlignment = TextAlignment.Center;
@@ -133,10 +134,7 @@ namespace Telegram.Views.Stars.Popups
 
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
-            if (_balance != null)
-            {
-                _balance.IsOpen = false;
-            }
+            _balance?.IsOpen = false;
         }
 
         private void StarCountSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -150,7 +148,8 @@ namespace Telegram.Views.Stars.Popups
 
             if (PurchaseText != null)
             {
-                PurchaseText.Text = string.Format(Strings.StarsReactionSend, StarCount.ToString("N0")).Replace("\u2B50", Icons.Premium);
+                PurchaseText.Text = string.Format(Strings.StarsReactionSend.ReplaceStar(Icons.Premium), StarCount.ToString("N0"));
+                AutomationProperties.SetName(PurchaseCommand, PurchaseText.Text);
             }
         }
 
@@ -258,11 +257,11 @@ namespace Telegram.Views.Stars.Popups
 
             if (_clientService.TryGetUser(senderId, out User senderUser))
             {
-                Photo.SetUser(_clientService, senderUser, 28);
+                Photo.Source = ProfilePictureSource.User(_clientService, senderUser);
             }
             else if (_clientService.TryGetChat(senderId, out Chat senderChat))
             {
-                Photo.SetChat(_clientService, senderChat, 28);
+                Photo.Source = ProfilePictureSource.Chat(_clientService, senderChat);
             }
         }
 
@@ -298,8 +297,7 @@ namespace Telegram.Views.Stars.Popups
                 foreach (var messageSender in senders.Senders)
                 {
                     var picture = new ProfilePicture();
-                    picture.Width = 36;
-                    picture.Height = 36;
+                    picture.Size = 36;
                     picture.Margin = new Thickness(-4, -2, 0, -2);
 
                     var item = new MenuFlyoutProfile();
@@ -311,14 +309,14 @@ namespace Telegram.Views.Stars.Popups
 
                     if (_clientService.TryGetUser(messageSender, out User senderUser))
                     {
-                        picture.SetUser(_clientService, senderUser, 36);
+                        picture.Source = ProfilePictureSource.User(_clientService, senderUser);
 
                         item.Text = senderUser.FullName();
                         item.Info = Strings.VoipGroupPersonalAccount;
                     }
                     else if (_clientService.TryGetChat(messageSender, out Chat senderChat))
                     {
-                        picture.SetChat(_clientService, senderChat, 36);
+                        picture.Source = ProfilePictureSource.Chat(_clientService, senderChat);
 
                         item.Text = senderChat.Title;
 
@@ -420,7 +418,7 @@ namespace Telegram.Views.Stars.Popups
         private void UpdateButton(IClientService clientService, PaidReactor item, int index)
         {
             var button = GetOrCreateButton(item, index);
-            button.UpdateCell(clientService, item);
+            button.UpdateCell(clientService, item, index + 1, false);
             //button.SetReaction(message, item);
 
             //if (animate)
@@ -525,11 +523,11 @@ namespace Telegram.Views.Stars.Popups
             this.stops = stops.ToArray();
         }
 
-        public void setValue(int value)
+        public void setValue(long value)
         {
             setValue(value, false);
         }
-        public void setValue(int value, bool byScroll)
+        public void setValue(long value, bool byScroll)
         {
             this.progress = getProgress(value);
             if (!byScroll)
@@ -551,15 +549,20 @@ namespace Telegram.Views.Stars.Popups
 
         public int getValue(double progress)
         {
-            if (progress <= 0f) return stops[0];
-            if (progress >= 1f) return stops[stops.Length - 1];
-            double scaledProgress = progress * (stops.Length - 1);
-            int index = (int)scaledProgress;
-            double localProgress = scaledProgress - index;
-            return (int)Math.Round(stops[index] + localProgress * (stops[index + 1] - stops[index]));
+            if (stops.Length > 1)
+            {
+                if (progress <= 0f) return stops[0];
+                if (progress >= 1f) return stops[stops.Length - 1];
+                double scaledProgress = progress * (stops.Length - 1);
+                int index = (int)scaledProgress;
+                double localProgress = scaledProgress - index;
+                return (int)Math.Round(stops[index] + localProgress * (stops[index + 1] - stops[index]));
+            }
+
+            return stops[0];
         }
 
-        public float getProgress(int value)
+        public float getProgress(long value)
         {
             for (int i = 1; i < stops.Length; ++i)
             {

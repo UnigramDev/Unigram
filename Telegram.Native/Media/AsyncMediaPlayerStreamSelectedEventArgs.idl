@@ -1,0 +1,20 @@
+namespace Telegram.Native.Media
+{
+    enum AsyncMediaPlayerStreamType
+    {
+        Unknown = -1,
+        Audio = 0,
+        Video = 1,
+        Text = 2
+    };
+
+    [default_interface]
+    runtimeclass AsyncMediaPlayerStreamSelectedEventArgs 
+    {
+        AsyncMediaPlayerStreamSelectedEventArgs(Int32 id, AsyncMediaPlayerStreamType type, Int32 width, Int32 height);
+        Int32 Id{ get; };
+        AsyncMediaPlayerStreamType Type{ get; };
+        Int32 Width{ get; };
+        Int32 Height{ get; };
+    }
+}

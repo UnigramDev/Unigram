@@ -1,30 +1,32 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Td.Api;
 
 namespace Telegram.Services
 {
-    public partial class FeedbackChatTopicService
+    public partial class DirectMessagesChatTopicService
     {
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
 
         private readonly long _chatId;
 
-        private readonly Dictionary<long, FeedbackChatTopic> _topics = new();
+        private readonly ReaderWriterDictionary<long, DirectMessagesChatTopic> _topics = new(100);
 
         private readonly SortedSet<OrderedItem> _order = new();
         private bool _haveFullList;
 
-        public FeedbackChatTopicService(IClientService clientService, IEventAggregator aggregator, long chatId)
+        public DirectMessagesChatTopicService(IClientService clientService, IEventAggregator aggregator, long chatId)
         {
             _clientService = clientService;
             _aggregator = aggregator;
@@ -32,11 +34,10 @@ namespace Telegram.Services
             _chatId = chatId;
         }
 
-        public void UpdateFeedbackChatTopic(FeedbackChatTopic newTopic)
+        public void UpdateDirectMessagesChatTopic(DirectMessagesChatTopic newTopic)
         {
-            if (_topics.TryGetValue(newTopic.Id, out FeedbackChatTopic topic))
+            if (_topics.TryGetValue(newTopic.Id, out DirectMessagesChatTopic topic))
             {
-                topic.DraftMessage = newTopic.DraftMessage;
                 topic.LastMessage = newTopic.LastMessage;
                 topic.IsMarkedAsUnread = newTopic.IsMarkedAsUnread;
 
@@ -45,7 +46,12 @@ namespace Telegram.Services
 
                 if (topic.UnreadReactionCount != newTopic.UnreadReactionCount)
                 {
-                    _aggregator.Publish(new UpdateFeedbackChatTopicUnreadReactionCount(_chatId, topic.Id, topic.UnreadReactionCount = newTopic.UnreadReactionCount));
+                    _aggregator.Publish(new UpdateDirectMessagesChatTopicUnreadReactionCount(_chatId, topic.Id, topic.UnreadReactionCount = newTopic.UnreadReactionCount));
+                }
+
+                if (topic.DraftMessage?.Date != newTopic.DraftMessage?.Date)
+                {
+                    _aggregator.Publish(new UpdateDirectMessagesChatDraftMessage(_chatId, topic.Id, topic.DraftMessage = newTopic.DraftMessage));
                 }
 
                 if (topic.Order != newTopic.Order)
@@ -60,26 +66,26 @@ namespace Telegram.Services
             }
         }
 
-        private void UpdateLastReadOutboxMessageId(FeedbackChatTopic topic, long lastReadOutboxMessageId)
+        private void UpdateLastReadOutboxMessageId(DirectMessagesChatTopic topic, long lastReadOutboxMessageId)
         {
             if (topic.LastReadOutboxMessageId < lastReadOutboxMessageId)
             {
                 topic.LastReadOutboxMessageId = lastReadOutboxMessageId;
-                _aggregator.Publish(new UpdateFeedbackChatTopicReadOutbox(_chatId, topic.Id, lastReadOutboxMessageId));
+                _aggregator.Publish(new UpdateDirectMessagesChatTopicReadOutbox(_chatId, topic.Id, lastReadOutboxMessageId));
             }
         }
 
-        private void UpdateLastReadInboxMessageId(FeedbackChatTopic topic, long lastReadInboxMessageId, long unreadCount)
+        private void UpdateLastReadInboxMessageId(DirectMessagesChatTopic topic, long lastReadInboxMessageId, long unreadCount)
         {
             if (topic.LastReadInboxMessageId < lastReadInboxMessageId || topic.UnreadCount != unreadCount)
             {
                 topic.LastReadInboxMessageId = lastReadInboxMessageId;
                 topic.UnreadCount = unreadCount;
-                _aggregator.Publish(new UpdateFeedbackChatTopicReadInbox(_chatId, topic.Id, lastReadInboxMessageId, unreadCount));
+                _aggregator.Publish(new UpdateDirectMessagesChatTopicReadInbox(_chatId, topic.Id, lastReadInboxMessageId, unreadCount));
             }
         }
 
-        private void UpdateTopicOrder(FeedbackChatTopic topic, long order, bool publish)
+        private void UpdateTopicOrder(DirectMessagesChatTopic topic, long order, bool publish)
         {
             Monitor.Enter(_order);
 
@@ -96,18 +102,17 @@ namespace Telegram.Services
 
             if (publish)
             {
-                _aggregator.Publish(new UpdateFeedbackChatTopicLastMessage(_chatId, topic));
+                _aggregator.Publish(new UpdateDirectMessagesChatTopicLastMessage(_chatId, topic));
             }
         }
 
-        public IEnumerable<FeedbackChatTopic> GetTopics(IEnumerable<long> ids)
+        public IEnumerable<DirectMessagesChatTopic> GetTopics(IEnumerable<long> ids)
         {
             foreach (var id in ids)
             {
                 if (id == long.MaxValue)
                 {
-                    // TODO: translate
-                    yield return new FeedbackChatTopic(_chatId, 0, null, long.MaxValue, false, 0, 0, 0, 0, null, null);
+                    yield return new DirectMessagesChatTopic(_chatId, 0, null, long.MaxValue, true, false, 0, 0, 0, 0, null, null);
                 }
 
                 var topic = GetTopic(id);
@@ -118,9 +123,9 @@ namespace Telegram.Services
             }
         }
 
-        public FeedbackChatTopic GetTopic(long id)
+        public DirectMessagesChatTopic GetTopic(long id)
         {
-            if (_topics.TryGetValue(id, out FeedbackChatTopic value))
+            if (_topics.TryGetValue(id, out DirectMessagesChatTopic value))
             {
                 return value;
             }
@@ -128,12 +133,12 @@ namespace Telegram.Services
             return null;
         }
 
-        public Task<Topics> GetFeedbackChatTopicsAsync(int offset, int limit)
+        public Task<Topics> GetDirectMessagesChatTopicsAsync(int offset, int limit)
         {
-            return GetFeedbackChatTopicsAsyncImpl(offset, limit, false);
+            return GetDirectMessagesChatTopicsAsyncImpl(offset, limit, false);
         }
 
-        private async Task<Topics> GetFeedbackChatTopicsAsyncImpl(int offset, int limit, bool reentrancy)
+        private async Task<Topics> GetDirectMessagesChatTopicsAsyncImpl(int offset, int limit, bool reentrancy)
         {
             Monitor.Enter(_order);
 
@@ -149,7 +154,7 @@ namespace Telegram.Services
             {
                 Monitor.Exit(_order);
 
-                var response = await _clientService.SendAsync(new LoadFeedbackChatTopics(_chatId, count - sorted.Count));
+                var response = await _clientService.SendAsync(new LoadDirectMessagesChatTopics(_chatId, count - sorted.Count));
                 if (response is Error error)
                 {
                     if (error.Code is 404 or 400)
@@ -163,7 +168,7 @@ namespace Telegram.Services
                 }
 
                 // Chats have already been received through updates, let's retry request
-                return await GetFeedbackChatTopicsAsyncImpl(offset, limit, true);
+                return await GetDirectMessagesChatTopicsAsyncImpl(offset, limit, true);
             }
 #endif
 
@@ -196,9 +201,9 @@ namespace Telegram.Services
 
 namespace Telegram.Td.Api
 {
-    public sealed partial class UpdateFeedbackChatTopicLastMessage
+    public sealed partial class UpdateDirectMessagesChatTopicLastMessage
     {
-        public UpdateFeedbackChatTopicLastMessage(long chatId, long topicId, long order, Message lastMessage)
+        public UpdateDirectMessagesChatTopicLastMessage(long chatId, long topicId, long order, Message lastMessage)
         {
             ChatId = chatId;
             TopicId = topicId;
@@ -206,7 +211,7 @@ namespace Telegram.Td.Api
             LastMessage = lastMessage;
         }
 
-        public UpdateFeedbackChatTopicLastMessage(long chatId, FeedbackChatTopic topic)
+        public UpdateDirectMessagesChatTopicLastMessage(long chatId, DirectMessagesChatTopic topic)
         {
             ChatId = chatId;
             TopicId = topic.Id;
@@ -223,9 +228,9 @@ namespace Telegram.Td.Api
         public Message LastMessage { get; set; }
     }
 
-    public sealed partial class UpdateFeedbackChatTopicPosition
+    public sealed partial class UpdateDirectMessagesChatTopicPosition
     {
-        public UpdateFeedbackChatTopicPosition(long chatId, long topicId, long order)
+        public UpdateDirectMessagesChatTopicPosition(long chatId, long topicId, long order)
         {
             ChatId = chatId;
             TopicId = topicId;
@@ -239,9 +244,9 @@ namespace Telegram.Td.Api
         public long Order { get; set; }
     }
 
-    public sealed partial class UpdateFeedbackChatTopicReadInbox
+    public sealed partial class UpdateDirectMessagesChatTopicReadInbox
     {
-        public UpdateFeedbackChatTopicReadInbox(long chatId, long topicId, long lastReadInboxMessageId, long unreadCount)
+        public UpdateDirectMessagesChatTopicReadInbox(long chatId, long topicId, long lastReadInboxMessageId, long unreadCount)
         {
             ChatId = chatId;
             TopicId = topicId;
@@ -257,9 +262,9 @@ namespace Telegram.Td.Api
         public long UnreadCount { get; set; }
     }
 
-    public sealed partial class UpdateFeedbackChatTopicReadOutbox
+    public sealed partial class UpdateDirectMessagesChatTopicReadOutbox
     {
-        public UpdateFeedbackChatTopicReadOutbox(long chatId, long topicId, long lastReadOutboxMessageId)
+        public UpdateDirectMessagesChatTopicReadOutbox(long chatId, long topicId, long lastReadOutboxMessageId)
         {
             ChatId = chatId;
             TopicId = topicId;
@@ -273,9 +278,9 @@ namespace Telegram.Td.Api
         public long LastReadOutboxMessageId { get; set; }
     }
 
-    public sealed partial class UpdateFeedbackChatTopicUnreadReactionCount
+    public sealed partial class UpdateDirectMessagesChatTopicUnreadReactionCount
     {
-        public UpdateFeedbackChatTopicUnreadReactionCount(long chatId, long topicId, long unreadReactionCount)
+        public UpdateDirectMessagesChatTopicUnreadReactionCount(long chatId, long topicId, long unreadReactionCount)
         {
             ChatId = chatId;
             TopicId = topicId;
@@ -289,9 +294,9 @@ namespace Telegram.Td.Api
         public long UnreadReactionCount { get; set; }
     }
 
-    public sealed partial class UpdateFeedbackChatTopicUnreadMentionCount
+    public sealed partial class UpdateDirectMessagesChatTopicUnreadMentionCount
     {
-        public UpdateFeedbackChatTopicUnreadMentionCount(long chatId, long topicId, long unreadMentionCount)
+        public UpdateDirectMessagesChatTopicUnreadMentionCount(long chatId, long topicId, long unreadMentionCount)
         {
             ChatId = chatId;
             TopicId = topicId;
@@ -303,5 +308,21 @@ namespace Telegram.Td.Api
         public long TopicId { get; set; }
 
         public long UnreadMentionCount { get; set; }
+    }
+
+    public sealed partial class UpdateDirectMessagesChatDraftMessage
+    {
+        public UpdateDirectMessagesChatDraftMessage(long chatId, long topicId, DraftMessage draftMessage)
+        {
+            ChatId = chatId;
+            TopicId = topicId;
+            DraftMessage = draftMessage;
+        }
+
+        public long ChatId { get; set; }
+
+        public long TopicId { get; set; }
+
+        public DraftMessage DraftMessage { get; set; }
     }
 }

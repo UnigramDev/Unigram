@@ -1,4 +1,11 @@
-﻿using System;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.Devices.Enumeration;
@@ -60,6 +67,15 @@ namespace Telegram.Common
                 _watcher.Removed -= OnRemoved;
 
                 _watcher.Stop();
+
+                if (_class == MediaDeviceClass.AudioInput)
+                {
+                    MediaDevice.DefaultAudioCaptureDeviceChanged += OnDefaultAudioCaptureDeviceChanged;
+                }
+                else if (_class == MediaDeviceClass.AudioOutput)
+                {
+                    MediaDevice.DefaultAudioRenderDeviceChanged += OnDefaultAudioRenderDeviceChanged;
+                }
             }
             catch
             {
@@ -69,7 +85,7 @@ namespace Telegram.Common
 
         private void OnDefaultAudioCaptureDeviceChanged(object sender, DefaultAudioCaptureDeviceChangedEventArgs args)
         {
-            if (args.Role == AudioDeviceRole.Communications)
+            if (args.Role == AudioDeviceRole.Default)
             {
                 OnDefaultDeviceChanged(args.Id);
             }
@@ -77,7 +93,7 @@ namespace Telegram.Common
 
         private void OnDefaultAudioRenderDeviceChanged(object sender, DefaultAudioRenderDeviceChangedEventArgs args)
         {
-            if (args.Role == AudioDeviceRole.Communications)
+            if (args.Role == AudioDeviceRole.Default)
             {
                 OnDefaultDeviceChanged(args.Id);
             }
@@ -190,8 +206,8 @@ namespace Telegram.Common
             {
                 return deviceClass switch
                 {
-                    MediaDeviceClass.AudioInput => new MediaDeviceId(MediaDevice.GetDefaultAudioCaptureId(AudioDeviceRole.Communications), true),
-                    MediaDeviceClass.AudioOutput => new MediaDeviceId(MediaDevice.GetDefaultAudioRenderId(AudioDeviceRole.Communications), true),
+                    MediaDeviceClass.AudioInput => new MediaDeviceId(MediaDevice.GetDefaultAudioCaptureId(AudioDeviceRole.Default), true),
+                    MediaDeviceClass.AudioOutput => new MediaDeviceId(MediaDevice.GetDefaultAudioRenderId(AudioDeviceRole.Default), true),
                     _ => new MediaDeviceId(Constants.DefaultDeviceId, true)
                 };
             }

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -16,14 +17,14 @@ namespace Telegram.Common.Chats
         private readonly Chat _chat;
         private readonly double _delay;
 
-        private long _threadId;
+        private MessageTopic _topicId;
 
         private DateTime? _lastTypingTime;
 
-        public OutputChatActionManager(IClientService clientService, Chat chat, long threadId = 0, double delay = 4.0)
+        public OutputChatActionManager(IClientService clientService, Chat chat, MessageTopic topicId, double delay = 4.0)
         {
             _chat = chat;
-            _threadId = threadId;
+            _topicId = topicId;
             _delay = delay;
             _clientService = clientService;
         }
@@ -47,7 +48,7 @@ namespace Telegram.Common.Chats
             }
 
             _lastTypingTime = DateTime.Now;
-            _clientService.Send(new SendChatAction(chat.Id, _threadId, string.Empty, action));
+            _clientService.Send(new SendChatAction(chat.Id, _topicId, action));
         }
 
         public void CancelTyping()
@@ -64,7 +65,7 @@ namespace Telegram.Common.Chats
             }
 
             _lastTypingTime = null;
-            _clientService.Send(new SendChatAction(chat.Id, _threadId, string.Empty, new ChatActionCancel()));
+            _clientService.Send(new SendChatAction(chat.Id, _topicId, new ChatActionCancel()));
         }
     }
 }

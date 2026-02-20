@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Globalization;
@@ -11,6 +12,7 @@ using System.Numerics;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.UI.Composition;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -51,7 +53,7 @@ namespace Telegram.Controls.Cells
                     Title.Text = user.FirstName;
                 }
 
-                Photo.SetUser(activeStories.ClientService, user, 40);
+                Photo.Source = ProfilePictureSource.User(activeStories.ClientService, user);
 
             }
             else
@@ -59,11 +61,8 @@ namespace Telegram.Controls.Cells
                 _automationName = string.Format(Strings.AccDescrStoryBy, chat.Title);
                 Title.Text = chat.Title;
 
-                Photo.SetChat(activeStories.ClientService, chat, 40);
+                Photo.Source = ProfilePictureSource.Chat(activeStories.ClientService, chat);
             }
-
-            Segments.UpdateActiveStories(activeStories.Item, 48, true);
-            SegmentsSmall.UpdateActiveStories(activeStories.Item, 48, false);
         }
 
         public ChatActiveStories Trigger
@@ -72,6 +71,10 @@ namespace Telegram.Controls.Cells
             {
                 Segments.UpdateActiveStories(value, 48, true);
                 SegmentsSmall.UpdateActiveStories(value, 48, false);
+
+                LiveBadge.Visibility = Segments.HasLiveBadge
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
             }
         }
 
@@ -89,11 +92,12 @@ namespace Telegram.Controls.Cells
             var gradient = ElementComposition.GetElementVisual(SegmentsRoot);
             var cross1 = ElementComposition.GetElementVisual(Segments);
             var cross2 = ElementComposition.GetElementVisual(SegmentsSmall);
+            var live = ElementComposition.GetElementVisual(LiveBadge);
 
             var included = index >= f && index <= l;
             var clamp = Math.Clamp(index, f, l);
 
-            var prevX = 72 * index + 10f - (12 * clamp) /* + 14 */;
+            var prevX = 72 * index + 6f - (12 * clamp) /* + 14 */;
             var nextX = 0;
 
             var diffX = prevX - nextX;
@@ -120,16 +124,14 @@ namespace Telegram.Controls.Cells
             visual.StartAnimation("Scale.X", visualScale);
             visual.StartAnimation("Scale.Y", visualScale);
 
-            var device = ElementComposition.GetSharedDevice();
-
             if (index >= f && index < l)
             {
                 // TODO: replace this with an ellipse in the UI
-                var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, 48, 48);
-                var elli1 = CanvasGeometry.CreateEllipse(device, 48 + 72 * 0, 24, 22, 22);
-                var elli2 = CanvasGeometry.CreateEllipse(device, 48 + 72 * 1, 24, 22, 22);
-                var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
-                var group2 = CanvasGeometry.CreateGroup(device, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
+                var rect1 = CanvasGeometry.CreateRectangle(null, 0, 0, 48, 48);
+                var elli1 = CanvasGeometry.CreateEllipse(null, 48 + 72 * 0, 24, 22, 22);
+                var elli2 = CanvasGeometry.CreateEllipse(null, 48 + 72 * 1, 24, 22, 22);
+                var group1 = CanvasGeometry.CreateGroup(null, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
+                var group2 = CanvasGeometry.CreateGroup(null, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
                 var geometry1 = compositor.CreatePathGeometry(new CompositionPath(group1));
                 var clip1 = compositor.CreateGeometricClip(geometry1);
@@ -154,11 +156,11 @@ namespace Telegram.Controls.Cells
             if (index > f && index <= l)
             {
                 // TODO: replace this with an ellipse in the UI
-                var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, 48, 48);
-                var elli1 = CanvasGeometry.CreateEllipse(device, -0 + -72 * 0, 24, 22, 22);
-                var elli2 = CanvasGeometry.CreateEllipse(device, -0 + -72 * 1, 24, 22, 22);
-                var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
-                var group2 = CanvasGeometry.CreateGroup(device, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
+                var rect1 = CanvasGeometry.CreateRectangle(null, 0, 0, 48, 48);
+                var elli1 = CanvasGeometry.CreateEllipse(null, -0 + -72 * 0, 24, 22, 22);
+                var elli2 = CanvasGeometry.CreateEllipse(null, -0 + -72 * 1, 24, 22, 22);
+                var group1 = CanvasGeometry.CreateGroup(null, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
+                var group2 = CanvasGeometry.CreateGroup(null, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
                 var geometry1 = compositor.CreatePathGeometry(new CompositionPath(group1));
                 var clip1 = compositor.CreateGeometricClip(geometry1);
@@ -197,6 +199,7 @@ namespace Telegram.Controls.Cells
             visualScale3.SetReferenceParameter("_", tracker);
 
             title.StartAnimation("Opacity", visualScale2);
+            live.StartAnimation("Opacity", visualScale2);
             cross1.StartAnimation("Opacity", visualScale2);
             cross2.StartAnimation("Opacity", visualScale3);
 
@@ -252,6 +255,7 @@ namespace Telegram.Controls.Cells
             var gradient = ElementComposition.GetElementVisual(SegmentsRoot);
             var cross1 = ElementComposition.GetElementVisual(Segments);
             var cross2 = ElementComposition.GetElementVisual(SegmentsSmall);
+            var live = ElementComposition.GetElementVisual(LiveBadge);
 
             ElementCompositionPreview.SetIsTranslationEnabled(container, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Title, true);
@@ -269,11 +273,13 @@ namespace Telegram.Controls.Cells
             photo.CenterPoint = new Vector3(24);
 
             title.StopAnimation("Opacity");
+            live.StopAnimation("Opacity");
             cross1.StopAnimation("Opacity");
             cross2.StopAnimation("Opacity");
             ciccio.StopAnimation("Opacity");
 
             title.Opacity = 1;
+            live.Opacity = 1;
             cross1.Opacity = 1;
             cross2.Opacity = 0;
             ciccio.Opacity = 1;

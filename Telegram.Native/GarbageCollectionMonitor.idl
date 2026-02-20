@@ -1,0 +1,14 @@
+namespace Telegram.Native
+{
+    delegate void CollectCallback();
+
+    [default_interface]
+    runtimeclass GarbageCollectionMonitor 
+    {
+        static void Initialize(CollectCallback collectCallback, Boolean disableGcCollect, Boolean disablePressure);
+        static void StartMonitoring(Windows.UI.Core.CoreWindow window);
+        static void StopMonitoring(Windows.UI.Core.CoreWindow window);
+        static void DisconnectUnusedReferenceSources();
+        static String Debug();
+    }
+}

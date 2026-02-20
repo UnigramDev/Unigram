@@ -6,11 +6,11 @@
                       xmlns:controls="using:Telegram.Controls"
                       xmlns:cells="using:Telegram.Controls.Cells"
                       xmlns:local="using:Telegram.Views.Profile"
-                      mc:Ignorable="d">
+                      mc:Ignorable="d"
+                      ItemsSource="{x:Bind ViewModel.MembersTab.Members, Mode=OneWay}">
 
     <Grid>
         <controls:TableListView x:Name="ScrollingHost"
-                                ItemsSource="{x:Bind ViewModel.MembersTab.Members, Mode=OneWay}"
                                 ItemClick="ListView_ItemClick"
                                 IsItemClickEnabled="True"
                                 ChoosingItemContainer="OnChoosingItemContainer"
@@ -34,7 +34,7 @@
             </ListView.Template>
             <ListView.Header>
                 <StackPanel>
-                    <Border Height="{x:Bind ViewModel.HeaderHeight, Mode=OneWay}" />
+                    <Border x:Name="Header" />
 
                     <Grid MaxWidth="1000"
                           Margin="24,0">
@@ -55,12 +55,27 @@
                                               HorizontalAlignment="Left"
                                               VerticalAlignment="Center" />
                     </Grid>
+
+                    <controls:HeaderedControl x:Name="AddNewPanel"
+                                              Visibility="Collapsed"
+                                              Margin="0,2,0,2"
+                                              Padding="0">
+                        <controls:SettingsButton x:Name="AddNew"
+                                                 Content="{CustomResource AddSubscriber}"
+                                                 Click="{x:Bind ViewModel.MembersTab.Add}"
+                                                 Glyph="&#xE8FA;" />
+                    </controls:HeaderedControl>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                    <cells:ProfileCell>
+                        <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
+                                   MaxLines="1" />
+                    </cells:ProfileCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>

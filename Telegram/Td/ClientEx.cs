@@ -1,13 +1,14 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -17,31 +18,6 @@ namespace Telegram.Td
 {
     static class ClientEx
     {
-        public static void Send(this Client client, Function function, Action<BaseObject> handler)
-        {
-            if (handler == null)
-            {
-                client.Send(function, null);
-            }
-            else
-            {
-                client.Send(function, new TdHandler(handler));
-            }
-        }
-
-        public static void Send(this Client client, Function function)
-        {
-            client.Send(function, null);
-        }
-
-        public static Task<BaseObject> SendAsync(this Client client, Function function, Action<BaseObject> closure)
-        {
-            var tsc = new TdCompletionSource(closure);
-            client.Send(function, tsc);
-
-            return tsc.Task;
-        }
-
         public static bool SearchByPrefix(string input, string query)
         {
             var result = Client.Execute(new SearchStringsByPrefix(new[] { input }, query, 1, true));
@@ -55,7 +31,7 @@ namespace Telegram.Td
 
         public static FormattedText ParseMarkdown(string text)
         {
-            return ParseMarkdown(new FormattedText(text, Array.Empty<TextEntity>()));
+            return ParseMarkdown(new FormattedText(text, null));
         }
 
         public static FormattedText ParseMarkdown(string text, IList<TextEntity> entities)
@@ -76,7 +52,7 @@ namespace Telegram.Td
 
         public static FormattedText GetMarkdownText(string text)
         {
-            return GetMarkdownText(new FormattedText(text, Array.Empty<TextEntity>()));
+            return GetMarkdownText(new FormattedText(text, null));
         }
 
         public static FormattedText GetMarkdownText(string text, IList<TextEntity> entities)
@@ -103,7 +79,7 @@ namespace Telegram.Td
                 return entities.Entities;
             }
 
-            return Array.Empty<TextEntity>();
+            return [];
         }
 
         public static FormattedText MergeEntities(FormattedText text, IList<TextEntity> entities)
@@ -138,7 +114,22 @@ namespace Telegram.Td
             return -1;
         }
 
-        public static FormattedText Format(string format, params FormattedText[] args)
+        public static FormattedText CustomEmoji(string emoji, long customEmojiId)
+        {
+            return new FormattedText(emoji, new[] { new TextEntity(0, 2, new TextEntityTypeCustomEmoji(customEmojiId)) });
+        }
+
+        public static FormattedText CustomEmoji(long customEmojiId)
+        {
+            return new FormattedText("\U0001F642", new[] { new TextEntity(0, 2, new TextEntityTypeCustomEmoji(customEmojiId)) });
+        }
+
+        public static FormattedText CustomEmoji(string glyph)
+        {
+            return new FormattedText(glyph, new[] { new TextEntity(0, 1, new TextEntityTypeCustomEmoji(-1)) });
+        }
+
+        public static FormattedText Format(string format, params object[] args)
         {
             // TODO: doesn't support more than 10 parameters but I'm lazy
 
@@ -167,17 +158,27 @@ namespace Telegram.Td
                     {
                         if (argument < args.Length)
                         {
-                            var text = args[argument];
-
                             builder.Remove(index, i - index + 1);
-                            builder.Insert(index, text.Text);
 
-                            foreach (var entity in text.Entities)
+                            var arg = args[argument];
+                            if (arg is FormattedText text)
                             {
-                                entities.Add(new TextEntity(entity.Offset + index, entity.Length, entity.Type));
-                            }
+                                builder.Insert(index, text.Text);
 
-                            i = index + text.Text.Length - 1;
+                                foreach (var entity in text.Entities)
+                                {
+                                    entities.Add(new TextEntity(entity.Offset + index, entity.Length, entity.Type));
+                                }
+
+                                i = index + text.Text.Length - 1;
+                            }
+                            else
+                            {
+                                var value = arg.ToString();
+
+                                builder.Insert(index, value);
+                                i = index + value.Length - 1;
+                            }
                         }
                     }
 
@@ -215,7 +216,39 @@ namespace Telegram.Td
                 return new SolidColorBrush(accent.LightThemeColors[0]);
             }
 
-            return PlaceholderImage.GetBrush(id);
+            return ProfilePictureSourceText.GetBrush(id);
+        }
+
+        public static SolidColorBrush GetAccentBrush(this IClientService clientService, Chat chat)
+        {
+            if (chat.UpgradedGiftColors != null)
+            {
+                return new SolidColorBrush(chat.UpgradedGiftColors.LightThemeAccentColor.ToColor());
+            }
+
+            var accent = clientService.GetAccentColor(chat.AccentColorId);
+            if (accent != null)
+            {
+                return new SolidColorBrush(accent.LightThemeColors[0]);
+            }
+
+            return ProfilePictureSourceText.GetBrush(chat.AccentColorId);
+        }
+
+        public static SolidColorBrush GetAccentBrush(this IClientService clientService, User user)
+        {
+            if (user.UpgradedGiftColors != null)
+            {
+                return new SolidColorBrush(user.UpgradedGiftColors.LightThemeAccentColor.ToColor());
+            }
+
+            var accent = clientService.GetAccentColor(user.AccentColorId);
+            if (accent != null)
+            {
+                return new SolidColorBrush(accent.LightThemeColors[0]);
+            }
+
+            return ProfilePictureSourceText.GetBrush(user.AccentColorId);
         }
     }
 }

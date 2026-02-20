@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Views
 {
@@ -186,7 +186,30 @@ namespace Telegram.Controls.Views
                 if (args.Item is AddedReaction addedReaction)
                 {
                     cell.UpdateAddedReaction(_clientService, args, OnContainerContentChanging);
-                    animated.Source = new ReactionFileSource(_clientService, addedReaction.Type);
+
+                    if (_reactionType == null)
+                    {
+                        using (animated.BeginBatchUpdate())
+                        {
+                            var custom = addedReaction.Type is ReactionTypeCustomEmoji;
+                            var size = custom ? 20 : 40;
+
+                            animated.Width = animated.Height = size;
+                            animated.Margin = new Thickness(0, 0, custom ? 12 : 2, 0);
+                            animated.FrameSize = new Size(size, size);
+                            animated.LoopCount = custom ? 3 : 1;
+                            animated.IsViewportAware = custom;
+
+                            animated.Source = new ReactionFileSource(_clientService, addedReaction.Type)
+                            {
+                                UseCenterAnimation = true
+                            };
+                        }
+                    }
+                    else
+                    {
+                        animated.Source = null;
+                    }
                 }
                 else if (args.Item is MessageViewer messageViewer)
                 {
@@ -198,7 +221,7 @@ namespace Telegram.Controls.Views
 
                 if (args.ItemIndex == 0 && args.Phase == 2)
                 {
-                    var element = FocusManager.GetFocusedElement();
+                    var element = FocusManagerEx.TryGetFocusedElement();
                     if (element is MenuFlyoutContent flyout)
                     {
                         args.ItemContainer.Focus(flyout.FocusState);

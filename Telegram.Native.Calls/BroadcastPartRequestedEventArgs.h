@@ -1,28 +1,39 @@
 ﻿#pragma once
 
-#include "BroadcastPartRequestedEventArgs.g.h"
-
-#include <winrt/Telegram.Td.Api.h>
-
-using namespace winrt::Telegram::Td::Api;
+#include "AudioBroadcastPartRequestedEventArgs.g.h"
+#include "VideoBroadcastPartRequestedEventArgs.g.h"
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-    struct BroadcastPartRequestedEventArgs : BroadcastPartRequestedEventArgsT<BroadcastPartRequestedEventArgs>
+    struct AudioBroadcastPartRequestedEventArgs : AudioBroadcastPartRequestedEventArgsT<AudioBroadcastPartRequestedEventArgs>
     {
-        BroadcastPartRequestedEventArgs(int32_t scale, int64_t time, int32_t channelId, GroupCallVideoQuality videoQuality, BroadcastPartRequestedDeferral deferral);
+        AudioBroadcastPartRequestedEventArgs(int32_t scale, int64_t time, BroadcastPartRequestedDeferral deferral);
+
+        int32_t Scale();
+        int64_t Time();
+        BroadcastPartRequestedDeferral Deferral();
+
+    private:
+        int32_t m_scale;
+        int64_t m_time;
+        BroadcastPartRequestedDeferral m_deferral;
+    };
+
+    struct VideoBroadcastPartRequestedEventArgs : VideoBroadcastPartRequestedEventArgsT<VideoBroadcastPartRequestedEventArgs>
+    {
+        VideoBroadcastPartRequestedEventArgs(int32_t scale, int64_t time, int32_t channelId, VoipVideoChannelQuality videoQuality, BroadcastPartRequestedDeferral deferral);
 
         int32_t Scale();
         int64_t Time();
         int32_t ChannelId();
-        GroupCallVideoQuality VideoQuality();
+        VoipVideoChannelQuality VideoQuality();
         BroadcastPartRequestedDeferral Deferral();
 
     private:
         int32_t m_scale;
         int64_t m_time;
         int32_t m_channelId;
-        GroupCallVideoQuality m_videoQuality;
+        VoipVideoChannelQuality m_videoQuality;
         BroadcastPartRequestedDeferral m_deferral;
     };
 }

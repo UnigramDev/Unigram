@@ -2,7 +2,15 @@
 
 #include <Windows.h>
 #include <dwmapi.h>
-#include "dcomp.local.h"
+
+#pragma push_macro("WINAPI_FAMILY")
+#undef WINAPI_FAMILY
+#define WINAPI_FAMILY WINAPI_FAMILY_DESKTOP_APP
+#define IUnknown ::IUnknown
+#include <UIAnimation.h>
+#include <dcomp.h>
+#pragma pop_macro("WINAPI_FAMILY")
+#undef IUnknown
 
 enum THUMBNAIL_TYPE
 {

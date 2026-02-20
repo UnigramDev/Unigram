@@ -1,4 +1,11 @@
-﻿using SQLitePCL;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using SQLitePCL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,17 +55,21 @@ namespace Telegram.Common
         private void BindParameter(sqlite3_stmt stmt, int index, object value)
         {
             int result;
-            if (value is string)
+            if (value is string stringValue)
             {
-                result = raw.sqlite3_bind_text(stmt, index, (string)value);
+                result = raw.sqlite3_bind_text(stmt, index, stringValue);
             }
-            else if (value is int)
+            else if (value is int intValue)
             {
-                result = raw.sqlite3_bind_int(stmt, index, (int)value);
+                result = raw.sqlite3_bind_int(stmt, index, intValue);
             }
-            else if (value is long)
+            else if (value is long longValue)
             {
-                result = raw.sqlite3_bind_int64(stmt, index, (long)value);
+                result = raw.sqlite3_bind_int64(stmt, index, longValue);
+            }
+            else if (value == null)
+            {
+                result = raw.sqlite3_bind_null(stmt, index);
             }
             else
             {
@@ -88,6 +99,8 @@ namespace Telegram.Common
                     return raw.sqlite3_column_int64(stmt, index);
                 case raw.SQLITE_TEXT:
                     return raw.sqlite3_column_text(stmt, index).utf8_to_string();
+                case raw.SQLITE_NULL:
+                    return null;
             }
             Logger.Error($"Attempt to get unsupported column value {columnType}.");
             return null;
@@ -173,7 +186,7 @@ namespace Telegram.Common
                 args.AddRange(excludeValues);
             }
             var limitClause = limit != null ? $" LIMIT {limit}" : string.Empty;
-            var orderClause = orderList != null && orderList.Length > 0 ? $" ORDER BY {string.Join(",", orderList)} ASC" : string.Empty;
+            var orderClause = orderList != null && orderList.Length > 0 ? $" ORDER BY {string.Join(",", orderList)} DESC" : string.Empty;
             var query = $"SELECT * FROM {tableName} WHERE {whereClause}{orderClause}{limitClause};";
             return ExecuteSelectionSqlQuery(query, args);
         }
@@ -181,7 +194,7 @@ namespace Telegram.Common
         public IList<object[]> Select(string tableName, int? limit = null, string[] orderList = null)
         {
             var limitClause = limit != null ? $" LIMIT {limit}" : string.Empty;
-            var orderClause = orderList != null && orderList.Length > 0 ? $" ORDER BY {string.Join(",", orderList)} ASC" : string.Empty;
+            var orderClause = orderList != null && orderList.Length > 0 ? $" ORDER BY {string.Join(",", orderList)} DESC" : string.Empty;
             var query = $"SELECT * FROM {tableName}{orderClause}{limitClause};";
             return ExecuteSelectionSqlQuery(query);
         }
@@ -195,10 +208,46 @@ namespace Telegram.Common
             ExecuteNonSelectionSqlQuery($"INSERT INTO {tableName}({columnsClause}) VALUES {valuesClause};", valuesArray);
         }
 
+        public void Update(string tableName, string[] columnNames, object[] values, string whereColumnName, object whereValue)
+        {
+            if (columnNames.Length != values.Length)
+            {
+                throw new ArgumentException("Column names and values must have the same length");
+            }
+
+            var setClause = string.Join(", ", columnNames.Select(col => $"{col} = ?"));
+            var query = $"UPDATE {tableName} SET {setClause} WHERE {whereColumnName} = ?;";
+
+            var args = new List<object>(values);
+            args.Add(whereValue);
+
+            ExecuteNonSelectionSqlQuery(query, args);
+        }
+
         public void Delete(string tableName, string columnName, params object[] values)
         {
             var whereMask = $"{columnName} IN ({BuildBindingMask(values.Length)})";
             ExecuteNonSelectionSqlQuery($"DELETE FROM {tableName} WHERE {whereMask};", values);
+        }
+
+        public long ExecuteScalarQuery(string query, IList<object> args = null)
+        {
+            var result = ExecuteSelectionSqlQuery(query, args);
+            if (result.Count > 0 && result[0].Length > 0)
+            {
+                return (long)result[0][0];
+            }
+            return 0;
+        }
+
+        public List<object[]> ExecuteSelectionQuery(string query, IList<object> args = null)
+        {
+            return ExecuteSelectionSqlQuery(query, args);
+        }
+
+        public int GetLastInsertRowId()
+        {
+            return (int)raw.sqlite3_last_insert_rowid(_db);
         }
 
         private StorageException ToStorageException(int result, string message)

@@ -7,7 +7,9 @@
                        mc:Ignorable="d"
                        Opened="OnOpened"
                        Padding="24,24,24,0"
-                       IsDismissButtonVisible="True">
+                       IsDismissButtonVisible="True"
+                       ButtonsLayout="Vertical"
+                       SecondaryButtonStyle="{StaticResource PremiumButtonStyle}">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -41,27 +43,18 @@
                        TextAlignment="Center"
                        TextTrimming="CharacterEllipsis"
                        Style="{StaticResource BodyTextBlockStyle}"
+                       Margin="0,0,0,24"
                        Grid.Column="1"
                        Grid.Row="2" />
 
-            <Grid x:Name="ChangePanel"
-                  VerticalAlignment="Bottom"
-                  HorizontalAlignment="Stretch"
-                  Margin="0,24,0,24"
-                  Grid.Row="1">
-                <controls:BadgeButton x:Name="ChangeCommand"
-                                      Click="Change_Click"
-                                      Style="{StaticResource AccentButtonStyle}"
-                                      HorizontalAlignment="Stretch"
-                                      HorizontalContentAlignment="Center"
-                                      Typography.NumeralAlignment="Tabular"
-                                      FontWeight="SemiBold"
-                                      Padding="16,3,16,5"
-                                      BorderThickness="0,0,0,1"
-                                      CornerRadius="4"
-                                      Margin="0"
-                                      Height="32" />
-            </Grid>
+            <Button x:Name="ChangeCommand"
+                    Click="Change_Click"
+                    Visibility="Collapsed"
+                    Style="{StaticResource AccentButtonStyle}"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,0,0,24"
+                    Grid.Row="1" />
         </StackPanel>
 
         <StackPanel x:Name="SubscribeRoot"
@@ -97,37 +90,9 @@
                        TextAlignment="Center"
                        TextTrimming="CharacterEllipsis"
                        Style="{StaticResource BodyTextBlockStyle}"
+                       Margin="0,0,0,24"
                        Grid.Column="1"
                        Grid.Row="2" />
-
-            <Grid x:Name="PurchasePanel"
-                  VerticalAlignment="Bottom"
-                  HorizontalAlignment="Stretch"
-                  Margin="0,24,0,24"
-                  Grid.Row="1">
-                <Rectangle x:Name="PurchaseShadow"
-                           Loaded="PurchaseShadow_Loaded"
-                           HorizontalAlignment="Stretch"
-                           VerticalAlignment="Stretch"
-                           Fill="White"
-                           Margin="0"
-                           RadiusX="4"
-                           RadiusY="4">
-                </Rectangle>
-                <Border Background="{StaticResource PremiumLinearGradientBrush}"
-                        CornerRadius="4"
-                        Height="32" />
-                <controls:BadgeButton x:Name="PurchaseCommand"
-                                      Click="Purchase_Click"
-                                      Style="{StaticResource StartButtonStyle}"
-                                      HorizontalAlignment="Stretch"
-                                      HorizontalContentAlignment="Center"
-                                      FontWeight="SemiBold"
-                                      Padding="16,3,16,5"
-                                      CornerRadius="4"
-                                      Margin="0"
-                                      Height="32" />
-            </Grid>
         </StackPanel>
     </Grid>
 </controls:ContentPopup>

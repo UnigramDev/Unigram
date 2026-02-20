@@ -3,6 +3,9 @@ import "FatalError.idl";
 namespace Telegram.Native
 {
     delegate void FatalErrorCallback(FatalError error);
+    delegate void CollectCallback(Int32 generation, Int32 mode);
+
+    delegate void LogCallback(Int32 level, String message, String member, String filePath, Int32 line);
 
     enum TextDirectionality
     {
@@ -10,6 +13,23 @@ namespace Telegram.Native
         LeftToRight,
         RightToLeft
     };
+
+    [flags]
+    enum TextStyle
+    {
+        None = 0,
+        Bold = 1,
+        Italic = 2,
+        Monospace = 4,
+        Strikethrough = 8,
+        Underline = 16,
+        Spoiler = 32,
+        Mention = 64,
+        Url = 128,
+        Emoji = 256,
+        Quote = 512,
+    };
+
 
     [default_interface]
     runtimeclass NativeUtils
@@ -21,7 +41,10 @@ namespace Telegram.Native
         static void CleanDirectory(String path, Int32 days);
         static void Delete(String path);
 
-        static Int32 GetLastInputTime();
+        static UInt32 GetLastInputTime();
+
+        static Windows.UI.Xaml.Core.Direct.IXamlDirectObject AddRunToCollection(Windows.UI.Xaml.Core.Direct.XamlDirect direct, Windows.UI.Xaml.Core.Direct.IXamlDirectObject inlines, String text, Windows.UI.Xaml.FlowDirection direction, TextStyle style, Windows.UI.Xaml.Media.FontFamily fontFamily, Double fontSize, Boolean transparent);
+        static Windows.UI.Xaml.Core.Direct.IXamlDirectObject AddRunToCollection(Windows.UI.Xaml.Core.Direct.XamlDirect direct, Windows.UI.Xaml.Core.Direct.IXamlDirectObject inlines, String text, Int32 offset, Int32 length, Windows.UI.Xaml.FlowDirection direction, TextStyle style, Windows.UI.Xaml.Media.FontFamily fontFamily, Double fontSize, Boolean transparent);
 
         //[DefaultOverload]
         static TextDirectionality GetDirectionality(String value);
@@ -51,8 +74,11 @@ namespace Telegram.Native
         static Int32 GetScaleForCurrentView();
 
         static void SetFatalErrorCallback(FatalErrorCallback action);
-        static Windows.Foundation.Collections.IVector<FatalErrorFrame> GetStowedException();
-        static FatalError GetBackTrace(UInt64 code);
+        static void SetLogCallback(LogCallback callback);
+        static void Log(Int32 level, String message, String member, String filePath, Int32 line);
+
+        static FatalError GetStowedException();
+        static FatalError GetBackTrace(String type, String message);
 
         static String GetLogMessage(Int64 format, Int64 args);
 

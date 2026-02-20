@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -20,7 +21,7 @@ namespace Telegram.Collections
         private readonly IClientService _clientService;
         private readonly string _query;
 
-        private readonly List<long> _users = new List<long>();
+        private readonly List<long> _users = new();
 
         private readonly KeyedList<string, object> _local;
         private readonly KeyedList<string, object> _remote;

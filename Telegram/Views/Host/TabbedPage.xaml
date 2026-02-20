@@ -35,9 +35,9 @@
                                 <Setter Property="Background"
                                         Value="Transparent" />
                                 <Setter Property="Foreground"
-                                        Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                                        Value="{ThemeResource TextFillColorPrimaryBrush}" />
                                 <Setter Property="BorderBrush"
-                                        Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                                        Value="{ThemeResource TextFillColorPrimaryBrush}" />
                                 <Setter Property="BorderThickness"
                                         Value="0" />
                                 <Setter Property="Padding"

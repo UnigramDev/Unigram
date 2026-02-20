@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
@@ -46,7 +47,7 @@ namespace Telegram.Views.Popups
             var navigationService = WindowContext.GetNavigationService(sender.XamlRoot);
             if (navigationService != null)
             {
-                var clientService = TypeResolver.Current.Resolve<IClientService>(navigationService.SessionId);
+                var clientService = navigationService.Session.Resolve<IClientService>();
 
                 Hide();
                 MessageHelper.OpenUrl(clientService, navigationService, _state.AppealLink);

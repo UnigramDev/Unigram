@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace Telegram.Services
         /// <param name="size">Anchor size for newly created view</param>        
         /// <returns><see cref="ViewLifetimeControl"/> object that is associated to newly created view. Use it to subscribe to <code>Released</code> event to close window manually.
         /// It won't not be called before all previously started async operations on <see cref="CoreDispatcher"/> complete. <remarks>DO NOT call operations on Dispatcher after this</remarks></returns>
-        Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default, int session = 0, string id = "0");
+        Task<ViewLifetimeControl> OpenAsync(ISession session, Type page, object parameter = null, string title = null, Size size = default, string id = "0");
 
         Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions options);
     }
@@ -98,7 +99,7 @@ namespace Telegram.Services
                 catch (Exception ex)
                 {
                     // This can happen, but it's unclear when
-                    Logger.Error(ex);
+                    Logger.Exception(ex);
 
                     // All the remote procedure calls must be wrapped in a try-catch block
                     return Task.FromResult<ViewLifetimeControl>(null);
@@ -116,7 +117,7 @@ namespace Telegram.Services
 
             await CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
-                if (Window.Current.Content is RootPage root)
+                if (WindowContext.Current.Content is RootPage root)
                 {
                     root.PresentContent(options.Content(null));
                     await ApplicationViewSwitcher.TryShowAsStandaloneAsync(ApplicationView.GetForCurrentView().Id);
@@ -189,8 +190,7 @@ namespace Telegram.Services
             }
         }
 
-        public async Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null,
-            Size size = default, int session = 0, string id = "0")
+        public async Task<ViewLifetimeControl> OpenAsync(ISession session, Type page, object parameter = null, string title = null, Size size = default, string id = "0")
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
 
@@ -238,7 +238,7 @@ namespace Telegram.Services
                     newAppView.Title = title;
                     newWindow.PersistedId = "Floating";
 
-                    var nav = BootStrapper.Current.NavigationServiceFactory(newWindow, BootStrapper.BackButton.Ignore, session, id, false);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(session, newWindow, BootStrapper.BackButton.Ignore, id, false);
                     nav.Navigate(page, parameter);
 
                     var control = ViewLifetimeControl.GetForCurrentView();

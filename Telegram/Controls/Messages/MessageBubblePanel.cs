@@ -1,12 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
-using Telegram.Native;
 using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -48,12 +48,12 @@ namespace Telegram.Controls.Messages
             UIElement third;
 
             var first = Children[0];
-            if (first is MessageFactCheck)
+            if (first is MessageFactCheck or MessageSummary)
             {
                 text = Children[1] as FormattedTextBlock;
                 media = Children[2] as FrameworkElement;
                 third = Children[3];
-                factCheck = first as MessageFactCheck;
+                factCheck = first;
             }
             else
             {
@@ -130,10 +130,7 @@ namespace Telegram.Controls.Messages
             var finalWidth = Math.Max(Math.Max(reactionsWidth, footer.DesiredSize.Width), width);
             var finalHeight = text.DesiredSize.Height + media.DesiredSize.Height + reactionsHeight + margin.Height;
 
-            if (Reply != null)
-            {
-                Reply.ContentWidth = finalWidth;
-            }
+            Reply?.ContentWidth = finalWidth;
 
             return new Size(finalWidth, finalHeight);
         }
@@ -146,16 +143,16 @@ namespace Telegram.Controls.Messages
             UIElement third;
 
             var first = Children[0];
-            if (first is MessageFactCheck)
+            if (first is MessageFactCheck or MessageSummary)
             {
                 text = Children[1] as FormattedTextBlock;
                 media = Children[2] as FrameworkElement;
                 third = Children[3];
-                factCheck = first as MessageFactCheck;
+                factCheck = first;
             }
             else
             {
-                text = Children[0] as FormattedTextBlock;
+                text = first as FormattedTextBlock;
                 media = Children[1] as FrameworkElement;
                 third = Children[2];
                 factCheck = null;
@@ -244,7 +241,7 @@ namespace Telegram.Controls.Messages
                 }
 
                 var width = text.DesiredSize.Width;
-                var bounds = ContentEnd(text.Text, availableWidth, fontSize * BootStrapper.Current.TextScaleFactor);
+                var bounds = ContentEnd(text, fontSize * BootStrapper.Current.TextScaleFactor);
 
                 var diff = width - bounds;
                 if (diff < footerWidth /*|| _placeholderVertical*/)
@@ -263,20 +260,20 @@ namespace Telegram.Controls.Messages
             return new Size(marginLeft, marginBottom);
         }
 
-        private float ContentEnd(StyledText caption, double availableWidth, double fontSize)
+        private float ContentEnd(FormattedTextBlock textBlock, double fontSize)
         {
-            if (caption?.Paragraphs.Count == 0 || string.IsNullOrEmpty(caption?.Text))
+            if (textBlock.Text?.Paragraphs.Count == 0 || string.IsNullOrEmpty(textBlock.Text?.Text))
             {
                 return 0;
             }
 
-            var paragraph = caption.Paragraphs[^1];
+            var paragraph = textBlock.Text.Paragraphs[^1];
 
-            var text = caption.Text.Substring(paragraph.Offset, paragraph.Length);
-            var entities = paragraph.Entities;
+            var text = textBlock.Text.Text.Substring(paragraph.Offset, paragraph.Length);
+            var entities = paragraph.Parts;
 
             var block = Children[0] is FormattedTextBlock formatted ? formatted : Children[1] as FormattedTextBlock;
-            var width = availableWidth - block.Margin.Left - block.Margin.Right;
+            var width = textBlock.LastAvailableWidth;
 
             if (width <= 0)
             {
@@ -287,7 +284,7 @@ namespace Telegram.Controls.Messages
             {
                 // TODO: this condition will be true whenever the message has more than a paragraph.
 
-                var bounds = PlaceholderImageHelper.Current.ContentEnd(text, entities, fontSize, width);
+                var bounds = PlaceholderHelper.Foreground.ContentEnd(text, entities, fontSize, width);
                 if (bounds.Y < block.DesiredSize.Height)
                 {
                     return bounds.X;

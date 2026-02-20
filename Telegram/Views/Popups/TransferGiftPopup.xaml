@@ -36,8 +36,7 @@
                        VerticalAlignment="Center"
                        Grid.Column="1" />
             <controls:ProfilePicture x:Name="Photo2"
-                                     Width="64"
-                                     Height="64"
+                                     Size="64"
                                      Margin="0,0,0,8"
                                      Grid.Column="2" />
         </Grid>

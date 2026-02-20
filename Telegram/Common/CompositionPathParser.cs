@@ -1,15 +1,18 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Globalization;
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Windows.UI;
@@ -17,20 +20,46 @@ using Windows.UI.Composition;
 
 namespace Telegram.Common
 {
-    public partial class CompositionPathParser
+    public static class CompositionPathParser
     {
         public static CompositionPath Parse(string data)
         {
-            var reader = new PathDataReader(data);
+            if (string.IsNullOrWhiteSpace(data))
+                return null;
 
-            var segments = reader.read();
-            if (segments != null)
-            {
-                using var builder = new CanvasPathBuilder(null);
-                renderPath(segments, builder);
 
-                return new CompositionPath(CanvasGeometry.CreatePath(builder));
-            }
+
+            //var segments = ParseSegments(data);
+            //if (segments?.Count > 0)
+            //{
+            //    using var builder = new CanvasPathBuilder(null);
+            //    RenderPath(segments, builder);
+            //    return new CompositionPath(CanvasGeometry.CreatePath(builder));
+            //}
+
+            using var builder = new CanvasPathBuilder(null);
+            ParseAndRender(data, builder);
+            return new CompositionPath(CanvasGeometry.CreatePath(builder));
+
+            return null;
+        }
+
+        public static CanvasGeometry Parse(ICanvasResourceCreator resourceCreator, string data)
+        {
+            if (string.IsNullOrWhiteSpace(data))
+                return null;
+
+            //var segments = ParseSegments(data);
+            //if (segments?.Count > 0)
+            //{
+            //    using var builder = new CanvasPathBuilder(resourceCreator);
+            //    RenderPath(segments, builder);
+            //    return CanvasGeometry.CreatePath(builder);
+            //}
+
+            using var builder = new CanvasPathBuilder(resourceCreator);
+            ParseAndRender(data, builder);
+            return CanvasGeometry.CreatePath(builder);
 
             return null;
         }
@@ -88,15 +117,9 @@ namespace Telegram.Common
 
         public static CompositionAnimation ParseThumbnail(float width, float height, IList<ClosedVectorPath> contours, out ShapeVisual visual, bool animated = true)
         {
-            CompositionPath path;
-            if (contours?.Count > 0)
-            {
-                path = Parse(contours);
-            }
-            else
-            {
-                path = new CompositionPath(CanvasGeometry.CreateRoundedRectangle(null, 0, 0, width, height, 80, 80));
-            }
+            CompositionPath path = contours?.Count > 0
+                ? new CompositionPath(Parse(null, contours))
+                : new CompositionPath(CanvasGeometry.CreateRoundedRectangle(null, 0, 0, width, height, 80, 80));
 
             return CreateThumbnail(width, height, path, out visual, animated);
         }
@@ -110,7 +133,6 @@ namespace Telegram.Common
         public static CompositionAnimation CreateThumbnail(float width, float height, CompositionPath path, out ShapeVisual visual, bool animated = true)
         {
             var backgroundColor = Color.FromArgb(0x33, 0x7A, 0x8A, 0x96);
-
             var compositor = BootStrapper.Current.Compositor;
 
             var background = compositor.CreatePathGeometry(path);
@@ -124,723 +146,693 @@ namespace Telegram.Common
             visual.ViewBox.Size = new Vector2(width, height);
             visual.ViewBox.Stretch = CompositionStretch.Uniform;
 
-            if (animated)
-            {
-                var transparent = Color.FromArgb(0x00, 0x7A, 0x8A, 0x96);
-                var foregroundColor = Color.FromArgb(0x33, 0x7A, 0x8A, 0x96);
+            return animated ? CreateAnimation(compositor, background, visual, width) : null;
+        }
 
-                var gradient = compositor.CreateLinearGradientBrush();
-                gradient.StartPoint = new Vector2(0, 0);
-                gradient.EndPoint = new Vector2(1, 0);
-                gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.0f, transparent));
-                gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.5f, foregroundColor));
-                gradient.ColorStops.Add(compositor.CreateColorGradientStop(1.0f, transparent));
+        private static CompositionAnimation CreateAnimation(Compositor compositor, CompositionPathGeometry background, ShapeVisual visual, float width)
+        {
+            var transparent = Color.FromArgb(0x00, 0x7A, 0x8A, 0x96);
+            var foregroundColor = Color.FromArgb(0x33, 0x7A, 0x8A, 0x96);
 
-                var foregroundShape = compositor.CreateSpriteShape(background);
-                foregroundShape.FillBrush = gradient;
+            var gradient = compositor.CreateLinearGradientBrush();
+            gradient.StartPoint = Vector2.Zero;
+            gradient.EndPoint = Vector2.UnitX;
 
-                visual.Shapes.Add(foregroundShape);
+            gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.0f, transparent));
+            gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.5f, foregroundColor));
+            gradient.ColorStops.Add(compositor.CreateColorGradientStop(1.0f, transparent));
 
-                var animation = compositor.CreateVector2KeyFrameAnimation();
-                animation.InsertKeyFrame(0, new Vector2(-width, 0));
-                animation.InsertKeyFrame(1, new Vector2(width, 0));
-                animation.IterationBehavior = AnimationIterationBehavior.Forever;
-                animation.Duration = TimeSpan.FromSeconds(1);
+            var foregroundShape = compositor.CreateSpriteShape(background);
+            foregroundShape.FillBrush = gradient;
+            visual.Shapes.Add(foregroundShape);
 
-                gradient.StartAnimation("Offset", animation);
+            var animation = compositor.CreateVector2KeyFrameAnimation();
+            animation.InsertKeyFrame(0, new Vector2(-width, 0));
+            animation.InsertKeyFrame(1, new Vector2(width, 0));
+            animation.IterationBehavior = AnimationIterationBehavior.Forever;
+            animation.Duration = TimeSpan.FromSeconds(1);
 
-                return animation;
-            }
-
-            return null;
+            gradient.StartAnimation("Offset", animation);
+            return animation;
         }
 
 
-        public struct PathSegment
+        private const int MaxSegmentsStackAlloc = 256;
+        private const int MaxDataStackAlloc = 1024;
+
+        public static void ParseAndRender(string data, CanvasPathBuilder builder)
         {
-            public enum SegmentType
+            ParseAndRender(data.AsSpan(), builder);
+        }
+
+        public static void ParseAndRender(ReadOnlySpan<char> path, CanvasPathBuilder builder)
+        {
+            Span<PathSegment> segmentBuffer = stackalloc PathSegment[MaxSegmentsStackAlloc];
+            Span<float> dataBuffer = stackalloc float[MaxDataStackAlloc];
+
+            var reader = new PathDataReader(path, segmentBuffer, dataBuffer);
+            var renderer = new PathRenderer(builder, dataBuffer);
+
+            while (reader.TryReadSegment(out var segments, out var data))
             {
-                M,
-                L,
-                C,
-                Q,
-                A,
-                z,
-                H,
-                V,
-                S,
-                T,
-                m,
-                l,
-                c,
-                q,
-                a,
-                h,
-                v,
-                s,
-                t,
-                E,
-                e
+                for (int i = 0; i < segments.Length; i++)
+                {
+                    renderer.RenderSegment(segments[i].Type, segments[i].GetData(data));
+                }
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public readonly struct PathSegment
+        {
+            public enum SegmentType : byte
+            {
+                M, L, C, Q, A, z, H, V, S, T,
+                m, l, c, q, a, h, v, s, t,
+                E, e
             }
 
-            public SegmentType type;
-            public float[] data;
+            public readonly SegmentType Type;
+            public readonly int DataOffset;
+            public readonly int DataLength;
 
-            public PathSegment(SegmentType type = SegmentType.M, float[] data = null)
+            public PathSegment(SegmentType type, int dataOffset, int dataLength)
             {
-                this.type = type;
-                this.data = data ?? Array.Empty<float>();
+                Type = type;
+                DataOffset = dataOffset;
+                DataLength = dataLength;
             }
 
-            public bool isAbsolute()
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public bool IsAbsolute() => Type switch
+            {
+                SegmentType.M or SegmentType.L or SegmentType.H or SegmentType.V or
+                SegmentType.C or SegmentType.S or SegmentType.Q or SegmentType.T or
+                SegmentType.A or SegmentType.E => true,
+                _ => false
+            };
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public ReadOnlySpan<float> GetData(ReadOnlySpan<float> dataBuffer)
+            {
+                return dataBuffer.Slice(DataOffset, DataLength);
+            }
+        }
+
+        private ref struct PathRenderer
+        {
+            private readonly CanvasPathBuilder _builder;
+            private readonly Span<float> _dataBuffer;
+            private Vector2? _currentPoint;
+            private Vector2? _cubicPoint;
+            private Vector2? _initialPoint;
+
+            public PathRenderer(CanvasPathBuilder builder, Span<float> dataBuffer)
+            {
+                _builder = builder;
+                _dataBuffer = dataBuffer;
+                _currentPoint = null;
+                _cubicPoint = null;
+                _initialPoint = null;
+            }
+
+            public void RenderSegment(PathSegment.SegmentType type, ReadOnlySpan<float> data)
             {
                 switch (type)
                 {
-                    case SegmentType.M:
-                    case SegmentType.L:
-                    case SegmentType.H:
-                    case SegmentType.V:
-                    case SegmentType.C:
-                    case SegmentType.S:
-                    case SegmentType.Q:
-                    case SegmentType.T:
-                    case SegmentType.A:
-                    case SegmentType.E:
-                        return true;
-                    default:
-                        return false;
+                    case PathSegment.SegmentType.M:
+                        MoveTo(data[0], data[1]);
+                        data = data[2..];
+                        while (data.Length >= 2)
+                        {
+                            LineTo(data[0], data[1]);
+                            data = data[2..];
+                        }
+                        break;
+
+                    case PathSegment.SegmentType.m:
+                        MoveToRelative(data[0], data[1]);
+                        data = data[2..];
+                        while (data.Length >= 2)
+                        {
+                            LineToRelative(data[0], data[1]);
+                            data = data[2..];
+                        }
+                        break;
+
+                    case PathSegment.SegmentType.L:
+                        while (data.Length >= 2)
+                        {
+                            LineTo(data[0], data[1]);
+                            data = data[2..];
+                        }
+                        break;
+
+                    case PathSegment.SegmentType.l:
+                        while (data.Length >= 2)
+                        {
+                            LineToRelative(data[0], data[1]);
+                            data = data[2..];
+                        }
+                        break;
+
+                    case PathSegment.SegmentType.H:
+                        HorizontalLineTo(data[0]);
+                        break;
+
+                    case PathSegment.SegmentType.h:
+                        HorizontalLineToRelative(data[0]);
+                        break;
+
+                    case PathSegment.SegmentType.V:
+                        VerticalLineTo(data[0]);
+                        break;
+
+                    case PathSegment.SegmentType.v:
+                        VerticalLineToRelative(data[0]);
+                        break;
+
+                    case PathSegment.SegmentType.C:
+                        while (data.Length >= 6)
+                        {
+                            CubicBezierTo(data[0], data[1], data[2], data[3], data[4], data[5]);
+                            data = data[6..];
+                        }
+                        break;
+
+                    case PathSegment.SegmentType.c:
+                        while (data.Length >= 6)
+                        {
+                            CubicBezierToRelative(data[0], data[1], data[2], data[3], data[4], data[5]);
+                            data = data[6..];
+                        }
+                        break;
+
+                    case PathSegment.SegmentType.S:
+                        while (data.Length >= 4)
+                        {
+                            SmoothCubicBezierTo(data[0], data[1], data[2], data[3]);
+                            data = data[4..];
+                        }
+                        break;
+
+                    case PathSegment.SegmentType.s:
+                        while (data.Length >= 4)
+                        {
+                            SmoothCubicBezierToRelative(data[0], data[1], data[2], data[3]);
+                            data = data[4..];
+                        }
+                        break;
+
+                    case PathSegment.SegmentType.z:
+                        ClosePath();
+                        break;
                 }
             }
 
-            public override bool Equals(object obj)
-            {
-                if (obj is PathSegment rhs)
-                {
-                    return type == rhs.type && data.SequenceEqual(rhs.data);
-                }
+            #region Movement Commands
 
-                return base.Equals(obj);
-            }
-
-            //    public static func == (lhs: PathSegment, rhs: PathSegment) -> Bool {
-            //return lhs.type == rhs.type && lhs.data == rhs.data
-            //}
-        }
-
-        private static void renderPath(IList<PathSegment> segments, CanvasPathBuilder builder)
-        {
-            Vector2? currentPoint = null;
-            Vector2? cubicPoint = null;
-            Vector2? quadrPoint = null;
-            Vector2? initialPoint = null;
-
-            void M(float x, float y)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void MoveTo(float x, float y)
             {
                 var point = new Vector2(x, y);
-                builder.BeginFigure(point);
-                //context.move(to: point);
-                setInitPoint(point);
+                _builder.BeginFigure(point);
+                SetInitialPoint(point);
             }
 
-            void m(float x, float y)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void MoveToRelative(float x, float y)
             {
-                if (currentPoint is Vector2 cur)
+                if (_currentPoint is Vector2 current)
                 {
-                    var next = new Vector2(x + cur.X, y + cur.Y);
-                    builder.BeginFigure(next);
-                    //context.move(to: next);
-                    setInitPoint(next);
+                    var next = new Vector2(x + current.X, y + current.Y);
+                    _builder.BeginFigure(next);
+                    SetInitialPoint(next);
                 }
                 else
                 {
-                    M(x, y: y);
+                    MoveTo(x, y);
                 }
             }
 
-            void L(float x, float y)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void LineTo(float x, float y)
             {
-                lineTo(new Vector2(x, y));
+                var point = new Vector2(x, y);
+                _builder.AddLine(point);
+                SetCurrentPoint(point);
             }
 
-            void l(float x, float y)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void LineToRelative(float x, float y)
             {
-                if (currentPoint is Vector2 cur)
+                if (_currentPoint is Vector2 current)
                 {
-                    lineTo(new Vector2(x + cur.X, y + cur.Y));
+                    LineTo(x + current.X, y + current.Y);
                 }
                 else
                 {
-                    L(x, y: y);
+                    LineTo(x, y);
                 }
             }
 
-            void H(float x)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void HorizontalLineTo(float x)
             {
-                if (currentPoint is Vector2 cur)
+                if (_currentPoint is Vector2 current)
                 {
-                    lineTo(new Vector2(x, cur.Y));
+                    LineTo(x, current.Y);
                 }
             }
 
-            void h(float x)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void HorizontalLineToRelative(float x)
             {
-                if (currentPoint is Vector2 cur)
+                if (_currentPoint is Vector2 current)
                 {
-                    lineTo(new Vector2(x + cur.X, cur.Y));
+                    LineTo(x + current.X, current.Y);
                 }
             }
 
-            void V(float y)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void VerticalLineTo(float y)
             {
-                if (currentPoint is Vector2 cur)
+                if (_currentPoint is Vector2 current)
                 {
-                    lineTo(new Vector2(cur.X, y));
+                    LineTo(current.X, y);
                 }
             }
 
-            void v(float y)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void VerticalLineToRelative(float y)
             {
-                if (currentPoint is Vector2 cur)
+                if (_currentPoint is Vector2 current)
                 {
-                    lineTo(new Vector2(cur.X, y + cur.Y));
+                    LineTo(current.X, y + current.Y);
                 }
             }
 
-            void lineTo(Vector2 p)
-            {
-                builder.AddLine(p);
-                //context.addLine(to: p);
-                setPoint(p);
-            }
+            #endregion
 
-            void c(float x1, float y1, float x2, float y2, float x, float y)
-            {
-                if (currentPoint is Vector2 cur)
-                {
-                    var endPoint = new Vector2(x + cur.X, y + cur.Y);
-                    var controlPoint1 = new Vector2(x1 + cur.X, y1 + cur.Y);
-                    var controlPoint2 = new Vector2(x2 + cur.X, y2 + cur.Y);
-                    builder.AddCubicBezier(controlPoint1, controlPoint2, endPoint);
-                    //context.addCurve(to: endPoint, control1: controlPoint1, control2: controlPoint2);
-                    setCubicPoint(endPoint, cubic: controlPoint2);
-                }
-            }
+            #region Curve Commands
 
-            void C(float x1, float y1, float x2, float y2, float x, float y)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void CubicBezierTo(float x1, float y1, float x2, float y2, float x, float y)
             {
                 var endPoint = new Vector2(x, y);
                 var controlPoint1 = new Vector2(x1, y1);
                 var controlPoint2 = new Vector2(x2, y2);
-                builder.AddCubicBezier(controlPoint1, controlPoint2, endPoint);
-                //context.addCurve(to: endPoint, control1: controlPoint1, control2: controlPoint2);
-                setCubicPoint(endPoint, cubic: controlPoint2);
+                _builder.AddCubicBezier(controlPoint1, controlPoint2, endPoint);
+                SetCubicPoint(endPoint, controlPoint2);
             }
 
-            void s(float x2, float y2, float x, float y)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void CubicBezierToRelative(float x1, float y1, float x2, float y2, float x, float y)
             {
-                if (currentPoint is Vector2 cur)
+                if (_currentPoint is Vector2 current)
                 {
-                    var nextCubic = new Vector2(x2 + cur.X, y2 + cur.Y);
-                    var next = new Vector2(x + cur.X, y + cur.Y);
-                    Vector2 xy1;
-                    if (cubicPoint is Vector2 curCubicVal)
-                    {
-                        xy1 = new Vector2((2 * cur.X) - curCubicVal.X, (2 * cur.Y) - curCubicVal.Y);
-                    }
-                    else
-                    {
-                        xy1 = cur;
-                    }
-                    builder.AddCubicBezier(xy1, nextCubic, next);
-                    //context.addCurve(to: next, control1: xy1, control2: nextCubic);
-                    setCubicPoint(next, cubic: nextCubic);
+                    var endPoint = new Vector2(x + current.X, y + current.Y);
+                    var controlPoint1 = new Vector2(x1 + current.X, y1 + current.Y);
+                    var controlPoint2 = new Vector2(x2 + current.X, y2 + current.Y);
+                    _builder.AddCubicBezier(controlPoint1, controlPoint2, endPoint);
+                    SetCubicPoint(endPoint, controlPoint2);
                 }
             }
 
-            void S(float x2, float y2, float x, float y)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void SmoothCubicBezierTo(float x2, float y2, float x, float y)
             {
-                if (currentPoint is Vector2 cur)
+                if (_currentPoint is Vector2 current)
                 {
                     var nextCubic = new Vector2(x2, y2);
                     var next = new Vector2(x, y);
-                    Vector2 xy1;
-                    if (cubicPoint is Vector2 curCubicVal)
-                    {
-                        xy1 = new Vector2((2 * cur.X) - curCubicVal.X, (2 * cur.Y) - curCubicVal.Y);
-                    }
-                    else
-                    {
-                        xy1 = cur;
-                    }
-                    builder.AddCubicBezier(xy1, nextCubic, next);
-                    //context.addCurve(to: next, control1: xy1, control2: nextCubic);
-                    setCubicPoint(next, cubic: nextCubic);
+                    var controlPoint1 = _cubicPoint is Vector2 cubic
+                        ? new Vector2(2 * current.X - cubic.X, 2 * current.Y - cubic.Y)
+                        : current;
+
+                    _builder.AddCubicBezier(controlPoint1, nextCubic, next);
+                    SetCubicPoint(next, nextCubic);
                 }
             }
 
-            void z()
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void SmoothCubicBezierToRelative(float x2, float y2, float x, float y)
             {
-                builder.EndFigure(CanvasFigureLoop.Closed);
-                //context.fillPath();
-            }
-
-            void setQuadrPoint(Vector2 p, Vector2 quadr)
-            {
-                currentPoint = p;
-                quadrPoint = quadr;
-                cubicPoint = null;
-            }
-
-            void setCubicPoint(Vector2 p, Vector2 cubic)
-            {
-                currentPoint = p;
-                cubicPoint = cubic;
-                quadrPoint = null;
-            }
-
-            void setInitPoint(Vector2 p)
-            {
-                setPoint(p);
-                initialPoint = p;
-            }
-
-            void setPoint(Vector2 p)
-            {
-                currentPoint = p;
-                cubicPoint = null;
-                quadrPoint = null;
-            }
-
-            foreach (var segment in segments)
-            {
-                var data = segment.data.AsSpan();
-                switch (segment.type)
+                if (_currentPoint is Vector2 current)
                 {
-                    case PathSegment.SegmentType.M:
-                        M(data[0], data[1]);
-                        data = data.Slice(2);
-                        //data.removeSubrange(Range(uncheckedBounds: (lower: 0, upper: 2)));
-                        while (data.Length >= 2)
-                        {
-                            L(data[0], data[1]);
-                            data = data.Slice(2);
-                            //data.removeSubrange((0.. < 2));
-                        }
-                        break;
-                    case PathSegment.SegmentType.m:
-                        m(data[0], data[1]);
-                        data = data.Slice(2);
-                        //data.removeSubrange((0.. < 2));
-                        while (data.Length >= 2)
-                        {
-                            l(data[0], data[1]);
-                            data = data.Slice(2);
-                            //data.removeSubrange((0.. < 2));
-                        }
-                        break;
-                    case PathSegment.SegmentType.L:
-                        while (data.Length >= 2)
-                        {
-                            L(data[0], data[1]);
-                            data = data.Slice(2);
-                            //data.removeSubrange((0.. < 2));
-                        }
-                        break;
-                    case PathSegment.SegmentType.l:
-                        while (data.Length >= 2)
-                        {
-                            l(data[0], data[1]);
-                            data = data.Slice(2);
-                            //data.removeSubrange((0.. < 2));
-                        }
-                        break;
-                    case PathSegment.SegmentType.H:
-                        H(data[0]);
-                        break;
-                    case PathSegment.SegmentType.h:
-                        h(data[0]);
-                        break;
-                    case PathSegment.SegmentType.V:
-                        V(data[0]);
-                        break;
-                    case PathSegment.SegmentType.v:
-                        v(data[0]);
-                        break;
-                    case PathSegment.SegmentType.C:
-                        while (data.Length >= 6)
-                        {
-                            C(data[0], data[1], data[2], data[3], data[4], data[5]);
-                            data = data.Slice(6);
-                            //data.removeSubrange((0.. < 6));
-                        }
-                        break;
-                    case PathSegment.SegmentType.c:
-                        while (data.Length >= 6)
-                        {
-                            c(data[0], data[1], data[2], data[3], data[4], data[5]);
-                            data = data.Slice(6);
-                            //data.removeSubrange((0.. < 6));
-                        }
-                        break;
-                    case PathSegment.SegmentType.S:
-                        while (data.Length >= 4)
-                        {
-                            S(data[0], data[1], data[2], data[3]);
-                            data = data.Slice(4);
-                            //data.removeSubrange((0.. < 4));
-                        }
-                        break;
-                    case PathSegment.SegmentType.s:
-                        while (data.Length >= 4)
-                        {
-                            s(data[0], y2: data[1], x: data[2], y: data[3]);
-                            data = data.Slice(4);
-                            //data.removeSubrange((0.. < 4));
-                        }
-                        break;
-                    case PathSegment.SegmentType.z:
-                        z();
-                        break;
-                    default:
-                        //print("unknown");
-                        break;
+                    var nextCubic = new Vector2(x2 + current.X, y2 + current.Y);
+                    var next = new Vector2(x + current.X, y + current.Y);
+                    var controlPoint1 = _cubicPoint is Vector2 cubic
+                        ? new Vector2(2 * current.X - cubic.X, 2 * current.Y - cubic.Y)
+                        : current;
+
+                    _builder.AddCubicBezier(controlPoint1, nextCubic, next);
+                    SetCubicPoint(next, nextCubic);
                 }
+            }
+
+            #endregion
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void ClosePath()
+            {
+                _builder.EndFigure(CanvasFigureLoop.Closed);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void SetCubicPoint(Vector2 point, Vector2 cubic)
+            {
+                _currentPoint = point;
+                _cubicPoint = cubic;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void SetInitialPoint(Vector2 point)
+            {
+                SetCurrentPoint(point);
+                _initialPoint = point;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void SetCurrentPoint(Vector2 point)
+            {
+                _currentPoint = point;
+                _cubicPoint = null;
             }
         }
 
-        private class PathDataReader
+        private ref struct PathDataReader
         {
-            private readonly string input;
-            private char? current;
-            private char? previous;
-            private readonly CharEnumerator iterator;
+            private readonly ReadOnlySpan<char> _input;
+            private readonly Span<PathSegment> _segmentBuffer;
+            private readonly Span<float> _dataBuffer;
+            private int _segmentCount;
+            private int _dataOffset;
+            private int _position;
 
-            private static readonly char[] spaces = new[] { '\n', '\r', '\t', ' ', ',' };
-
-            public PathDataReader(string input)
+            public PathDataReader(ReadOnlySpan<char> input, Span<PathSegment> segmentBuffer, Span<float> dataBuffer)
             {
-                this.input = input;
-                iterator = input.GetEnumerator();
+                _input = input;
+                _segmentBuffer = segmentBuffer;
+                _dataBuffer = dataBuffer;
+                _position = 0;
             }
 
-            public IList<PathSegment> read()
+            public bool TryReadSegment(out ReadOnlySpan<PathSegment> segments, out ReadOnlySpan<float> data)
             {
-                readNext();
-                var segments = new List<PathSegment>();
-
-                for (var array = readSegments(); array != null; array = readSegments())
+                if (TryReadSegmentGroup(_segmentBuffer[_segmentCount..], _dataBuffer[_dataOffset..], out int segmentsRead, out int dataRead))
                 {
-                    segments.AddRange(array);
+                    segments = _segmentBuffer.Slice(_segmentCount, segmentsRead);
+                    data = _dataBuffer.Slice(_dataOffset, dataRead);
+
+                    _segmentCount += segmentsRead;
+                    _dataOffset += dataRead;
+
+                    if (_segmentCount > MaxSegmentsStackAlloc - 32 || _dataOffset > MaxDataStackAlloc - 128)
+                    {
+                        _segmentCount = 0;
+                        _dataOffset = 0;
+                    }
+
+                    return true;
                 }
 
-                return segments;
+                segments = ReadOnlySpan<PathSegment>.Empty;
+                data = ReadOnlySpan<float>.Empty;
+                return false;
             }
 
-            private IEnumerable<PathSegment> readSegments()
+            public bool TryReadSegmentGroup(Span<PathSegment> segmentBuffer, Span<float> dataBuffer,
+                out int segmentsWritten, out int dataWritten)
             {
-                var segmentType = readSegmentType();
-                if (segmentType is PathSegment.SegmentType type)
+                segmentsWritten = 0;
+                dataWritten = 0;
+
+                if (!TryReadSegmentType(out var type))
+                    return false;
+
+                int argCount = GetArgumentCount(type);
+
+                if (argCount == 0)
                 {
-                    var argCount = getArgCount(type);
-                    if (argCount == 0)
+                    segmentBuffer[0] = new PathSegment(type, 0, 0);
+                    segmentsWritten = 1;
+                    return true;
+                }
+
+                int dataStart = 0;
+                int floatCount = type is PathSegment.SegmentType.A or PathSegment.SegmentType.a
+                    ? ReadArcData(dataBuffer)
+                    : ReadNumericData(dataBuffer);
+
+                if (floatCount == 0)
+                    return false;
+
+                segmentsWritten = CreateSegments(type, dataBuffer.Slice(0, floatCount),
+                    segmentBuffer, argCount);
+                dataWritten = floatCount;
+
+                return segmentsWritten > 0;
+            }
+
+            private int CreateSegments(PathSegment.SegmentType type, ReadOnlySpan<float> data,
+                Span<PathSegment> output, int argCount)
+            {
+                int segmentCount = 0;
+                bool isFirstSegment = true;
+
+                for (int i = 0; i < data.Length; i += argCount)
+                {
+                    if (i + argCount > data.Length)
+                        break;
+
+                    var currentType = type;
+                    if (!isFirstSegment)
                     {
-                        return new[] { new PathSegment(type) };
+                        currentType = type switch
+                        {
+                            PathSegment.SegmentType.M => PathSegment.SegmentType.L,
+                            PathSegment.SegmentType.m => PathSegment.SegmentType.l,
+                            _ => type
+                        };
                     }
-                    var result = new List<PathSegment>();
-                    IList<float> data;
-                    if (type == PathSegment.SegmentType.a || type == PathSegment.SegmentType.A)
+
+                    output[segmentCount] = new PathSegment(currentType, i, argCount);
+                    segmentCount++;
+                    isFirstSegment = false;
+                }
+
+                return segmentCount;
+            }
+
+            private int ReadNumericData(Span<float> output)
+            {
+                int count = 0;
+
+                while (count < output.Length)
+                {
+                    SkipWhitespace();
+                    if (TryReadNumber(out float value))
                     {
-                        data = readDataOfASegment();
+                        output[count++] = value;
                     }
                     else
                     {
-                        data = readData();
+                        break;
                     }
-                    var index = 0;
-                    var isFirstSegment = true;
-                    while (index < data.Count)
-                    {
-                        var end = index + argCount;
-                        if (end > data.Count)
-                        {
-                            break;
-                        }
-                        var currentType = type;
-                        if (type == PathSegment.SegmentType.M && !isFirstSegment)
-                        {
-                            currentType = PathSegment.SegmentType.L;
-                        }
-                        if (type == PathSegment.SegmentType.m && !isFirstSegment)
-                        {
-                            currentType = PathSegment.SegmentType.l;
-                        }
-                        result.Add(new PathSegment(currentType, data.Skip(index).Take(end).ToArray()));
-                        //result.Add(new PathSegment(currentType, data: Array(data[index.. < end])));
-                        isFirstSegment = false;
-                        index = end;
-                    }
-                    return result;
                 }
-                return null;
+
+                return count;
             }
 
-            private IList<float> readData()
+            private int ReadArcData(Span<float> output)
             {
-                var data = new List<float>();
-                while (true)
+                int count = 0;
+                const int arcArgCount = 7;
+
+                while (count < output.Length)
                 {
-                    skipSpaces();
-                    var value = readNum();
-                    if (value is float floatValue)
+                    SkipWhitespace();
+                    int argPosition = count % arcArgCount;
+
+                    bool success = argPosition is 3 or 4
+                        ? TryReadFlag(out output[count])
+                        : TryReadNumber(out output[count]);
+
+                    if (success)
                     {
-                        data.Add(floatValue);
+                        count++;
                     }
                     else
                     {
-                        return data;
-                    }
-                }
-            }
-
-            private IList<float> readDataOfASegment()
-            {
-                var argCount = getArgCount(PathSegment.SegmentType.A);
-                var data = new List<float>();
-                var index = 0;
-                while (true)
-                {
-                    skipSpaces();
-                    float? value;
-                    var indexMod = index % argCount;
-                    if (indexMod == 3 || indexMod == 4)
-                    {
-                        value = readFlag();
-                    }
-                    else
-                    {
-                        value = readNum();
-                    }
-                    if (value is float floatValue)
-                    {
-                        data.Add(floatValue);
-                    }
-                    else
-                    {
-                        return data;
-                    }
-                    index += 1;
-                }
-
-                return data;
-            }
-
-            private void skipSpaces()
-            {
-                var currentCharacter = current;
-                for (var character = currentCharacter; spaces.Contains(character.Value); character = currentCharacter)
-                {
-                    currentCharacter = readNext();
-                }
-            }
-
-            private float? readFlag()
-            {
-                if (current is char ch)
-                {
-                    readNext();
-                    switch (ch)
-                    {
-                        case '0':
-                            return 0;
-                        case '1':
-                            return 1;
-                        default:
-                            return null;
-                    }
-
-                }
-
-                return null;
-            }
-
-            private float? readNum()
-            {
-                if (current is char ch)
-                {
-                    if (ch >= '0' && ch <= '9' || ch == '.' || ch == '-')
-                    {
-                        var chars = $"{ch}";
-                        var hasDot = ch == '.';
-
-                        for (var chj = readDigit(ref hasDot); chj != null; chj = readDigit(ref hasDot))
-                        {
-                            chars += chj;
-                        }
-
-                        if (float.TryParse(chars, out float result))
-                        {
-                            return result;
-                        }
+                        break;
                     }
                 }
 
-                return null;
+                return count;
             }
 
-            private char? readDigit(ref bool hasDot)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private bool TryReadSegmentType(out PathSegment.SegmentType type)
             {
-                var ch = readNext();
-                if (ch != null)
+                SkipWhitespace();
+
+                if (_position < _input.Length)
                 {
-                    if ((ch >= '0' && ch <= '9') || ch == 'e' || (previous == 'e' && ch == '-'))
+                    char ch = _input[_position];
+                    if (TryGetSegmentType(ch, out type))
                     {
-                        return ch;
+                        _position++;
+                        return true;
+                    }
+                }
+
+                type = default;
+                return false;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private static bool TryGetSegmentType(char ch, out PathSegment.SegmentType type)
+            {
+                type = ch switch
+                {
+                    'M' => PathSegment.SegmentType.M,
+                    'm' => PathSegment.SegmentType.m,
+                    'L' => PathSegment.SegmentType.L,
+                    'l' => PathSegment.SegmentType.l,
+                    'C' => PathSegment.SegmentType.C,
+                    'c' => PathSegment.SegmentType.c,
+                    'Q' => PathSegment.SegmentType.Q,
+                    'q' => PathSegment.SegmentType.q,
+                    'A' => PathSegment.SegmentType.A,
+                    'a' => PathSegment.SegmentType.a,
+                    'z' or 'Z' => PathSegment.SegmentType.z,
+                    'H' => PathSegment.SegmentType.H,
+                    'h' => PathSegment.SegmentType.h,
+                    'V' => PathSegment.SegmentType.V,
+                    'v' => PathSegment.SegmentType.v,
+                    'S' => PathSegment.SegmentType.S,
+                    's' => PathSegment.SegmentType.s,
+                    'T' => PathSegment.SegmentType.T,
+                    't' => PathSegment.SegmentType.t,
+                    'E' => PathSegment.SegmentType.E,
+                    'e' => PathSegment.SegmentType.e,
+                    _ => default
+                };
+
+                return ch is 'M' or 'm' or 'L' or 'l' or 'C' or 'c' or 'Q' or 'q' or
+                       'A' or 'a' or 'z' or 'Z' or 'H' or 'h' or 'V' or 'v' or
+                       'S' or 's' or 'T' or 't' or 'E' or 'e';
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private static int GetArgumentCount(PathSegment.SegmentType type) => type switch
+            {
+                PathSegment.SegmentType.H or PathSegment.SegmentType.h or
+                PathSegment.SegmentType.V or PathSegment.SegmentType.v => 1,
+                PathSegment.SegmentType.M or PathSegment.SegmentType.m or
+                PathSegment.SegmentType.L or PathSegment.SegmentType.l or
+                PathSegment.SegmentType.T or PathSegment.SegmentType.t => 2,
+                PathSegment.SegmentType.S or PathSegment.SegmentType.s or
+                PathSegment.SegmentType.Q or PathSegment.SegmentType.q => 4,
+                PathSegment.SegmentType.C or PathSegment.SegmentType.c => 6,
+                PathSegment.SegmentType.A or PathSegment.SegmentType.a => 7,
+                _ => 0
+            };
+
+            private bool TryReadNumber(out float value)
+            {
+                if (_position >= _input.Length)
+                {
+                    value = 0;
+                    return false;
+                }
+
+                int start = _position;
+                char ch = _input[_position];
+
+                if (!(char.IsDigit(ch) || ch == '.' || ch == '-'))
+                {
+                    value = 0;
+                    return false;
+                }
+
+                bool hasDot = ch == '.';
+                _position++;
+
+                while (_position < _input.Length)
+                {
+                    ch = _input[_position];
+                    if (char.IsDigit(ch) || ch == 'e' || ch == 'E')
+                    {
+                        _position++;
                     }
                     else if (ch == '.' && !hasDot)
                     {
                         hasDot = true;
-                        return ch;
+                        _position++;
+                    }
+                    else if (ch == '-' && _position > start &&
+                             (_input[_position - 1] == 'e' || _input[_position - 1] == 'E'))
+                    {
+                        _position++;
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
-                return null;
+
+                ReadOnlySpan<char> numberSpan = _input.Slice(start, _position - start);
+
+#if NET6_0_OR_GREATER
+            return float.TryParse(numberSpan, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+#else
+                // Fallback for older frameworks
+                return float.TryParse(numberSpan.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+#endif
             }
 
-            private bool isNum(char ch, ref bool hasDot)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private bool TryReadFlag(out float value)
             {
-                switch (ch)
+                if (_position < _input.Length)
                 {
-                    case char value when value >= '0' && value <= '9':
+                    char ch = _input[_position];
+                    _position++;
+
+                    if (ch == '0')
+                    {
+                        value = 0f;
                         return true;
-                    case '.':
-                        if (hasDot)
-                        {
-                            return false;
-                        }
-                        hasDot = true;
-                        break;
-                    default:
+                    }
+                    if (ch == '1')
+                    {
+                        value = 1f;
                         return true;
+                    }
                 }
+
+                value = 0;
                 return false;
             }
 
-            private char? readNext()
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void SkipWhitespace()
             {
-                previous = current;
-                if (iterator.MoveNext())
+                while (_position < _input.Length)
                 {
-                    current = iterator.Current;
-                }
-                else
-                {
-                    current = null;
-                }
-                return current;
-            }
-
-            private PathSegment.SegmentType? readSegmentType()
-            {
-                while (true)
-                {
-                    var type = getPathSegmentType();
-                    if (type != null)
+                    char ch = _input[_position];
+                    if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == ',')
                     {
-                        readNext();
-                        return type;
+                        _position++;
                     }
-                    if (readNext() == null)
+                    else
                     {
-                        return null;
+                        break;
                     }
-                }
-            }
-
-            private PathSegment.SegmentType? getPathSegmentType()
-            {
-                if (current is char ch)
-                {
-                    switch (ch)
-                    {
-                        case 'M':
-                            return PathSegment.SegmentType.M;
-                        case 'm':
-                            return PathSegment.SegmentType.m;
-                        case 'L':
-                            return PathSegment.SegmentType.L;
-                        case 'l':
-                            return PathSegment.SegmentType.l;
-                        case 'C':
-                            return PathSegment.SegmentType.C;
-                        case 'c':
-                            return PathSegment.SegmentType.c;
-                        case 'Q':
-                            return PathSegment.SegmentType.Q;
-                        case 'q':
-                            return PathSegment.SegmentType.q;
-                        case 'A':
-                            return PathSegment.SegmentType.A;
-                        case 'a':
-                            return PathSegment.SegmentType.a;
-                        case 'z':
-                        case 'Z':
-                            return PathSegment.SegmentType.z;
-                        case 'H':
-                            return PathSegment.SegmentType.H;
-                        case 'h':
-                            return PathSegment.SegmentType.h;
-                        case 'V':
-                            return PathSegment.SegmentType.V;
-                        case 'v':
-                            return PathSegment.SegmentType.v;
-                        case 'S':
-                            return PathSegment.SegmentType.S;
-                        case 's':
-                            return PathSegment.SegmentType.s;
-                        case 'T':
-                            return PathSegment.SegmentType.T;
-                        case 't':
-                            return PathSegment.SegmentType.t;
-                        default:
-                            break;
-
-                    }
-                }
-
-                return null;
-            }
-
-            private int getArgCount(PathSegment.SegmentType segment)
-            {
-                switch (segment)
-                {
-                    case PathSegment.SegmentType.H:
-                    case PathSegment.SegmentType.h:
-                    case PathSegment.SegmentType.V:
-                    case PathSegment.SegmentType.v:
-                        return 1;
-                    case PathSegment.SegmentType.M:
-                    case PathSegment.SegmentType.m:
-                    case PathSegment.SegmentType.L:
-                    case PathSegment.SegmentType.l:
-                    case PathSegment.SegmentType.T:
-                    case PathSegment.SegmentType.t:
-                        return 2;
-                    case PathSegment.SegmentType.S:
-                    case PathSegment.SegmentType.s:
-                    case PathSegment.SegmentType.Q:
-                    case PathSegment.SegmentType.q:
-                        return 4;
-                    case PathSegment.SegmentType.C:
-                    case PathSegment.SegmentType.c:
-                        return 6;
-                    case PathSegment.SegmentType.A:
-                    case PathSegment.SegmentType.a:
-                        return 7;
-                    default:
-                        return 0;
                 }
             }
         }
-
     }
 }

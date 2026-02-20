@@ -23,8 +23,7 @@
                              Width="64"
                              CornerRadius="32">
                 <controls:ProfilePicture Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}"
-                                         Height="64"
-                                         Width="64" />
+                                         Size="64" />
             </HyperlinkButton>
 
             <TextBlock Text="{CustomResource NewGroup}"
@@ -47,7 +46,7 @@
                             ShowMode="Transient">
                         <Flyout.FlyoutPresenterStyle>
                             <Style TargetType="FlyoutPresenter"
-                                   BasedOn="{StaticResource DefaultFlyoutPresenterStyle}">
+                                   BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
                                 <Setter Property="Padding"
                                         Value="0" />
                             </Style>
@@ -72,7 +71,6 @@
 
         <ComboBox ItemsSource="{x:Bind ViewModel.TtlOptions}"
                   SelectedIndex="{x:Bind ViewModel.Ttl, Mode=TwoWay}"
-                  DisplayMemberPath="Text"
                   Header="{CustomResource AutoDeleteMessages}"
                   HorizontalAlignment="Stretch" />
     </StackPanel>

@@ -26,16 +26,29 @@
                 BorderThickness="1"
                 CornerRadius="4"
                 Grid.RowSpan="2" />
+        <Border x:Name="PremiumRoot"
+                x:Load="False"
+                BorderThickness="2"
+                CornerRadius="4"
+                Grid.RowSpan="2">
+            <Border.BorderBrush>
+                <LinearGradientBrush EndPoint="1,1">
+                    <GradientStop Color="#FFD58F25" />
+                    <GradientStop Color="#FFC8851D"
+                                  Offset="1" />
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+        </Border>
         <controls:PatternBackground x:Name="Pattern"
-                                    ScaleXY="0.6"
                                     BorderBrush="{ThemeResource SettingsItemBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4"
-                                    Grid.RowSpan="2" />
+                                    Grid.RowSpan="2">
+            <Border Width="88" />
+        </controls:PatternBackground>
 
         <controls:ProfilePicture x:Name="Photo"
-                                 Width="24"
-                                 Height="24"
+                                 Size="24"
                                  HorizontalAlignment="Left"
                                  VerticalAlignment="Top"
                                  Margin="4" />
@@ -66,7 +79,6 @@
 
         <Border x:Name="Hidden"
                 x:Load="False"
-                Background="{ThemeResource MessageServiceBackgroundBrush}"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 CornerRadius="18">
@@ -88,6 +100,14 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
+            <controls:AnimatedImage x:Name="StarCountParticles"
+                                    IsViewportAware="True"
+                                    FrameSize="0,0"
+                                    ResizeMode="Fill"
+                                    DecodeFrameType="Logical"
+                                    Stretch="UniformToFill"
+                                    Grid.ColumnSpan="2" />
+
             <controls:PremiumStarCount Width="18"
                                        VerticalAlignment="Top"
                                        HorizontalAlignment="Left"
@@ -105,21 +125,22 @@
 
         <Grid x:Name="ResaleStarCountRoot"
               x:Load="False"
-              Background="{ThemeResource MessageServiceBackgroundBrush}"
               HorizontalAlignment="Center"
               VerticalAlignment="Bottom"
               Height="24"
               CornerRadius="12"
               Margin="0,0,0,12"
+              Padding="8,0"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <controls:PremiumStarCount Width="18"
+            <controls:PremiumStarCount x:Name="ResaleStar"
+                                       Width="18"
                                        VerticalAlignment="Top"
                                        HorizontalAlignment="Left"
-                                       Margin="8,-1,4,0">
+                                       Margin="0,-1,4,0">
                 <controls:PremiumStarCount.Template>
                     <ControlTemplate TargetType="controls:PremiumStarCount">
                         <Viewbox>
@@ -141,7 +162,7 @@
                        FontWeight="SemiBold"
                        Typography.NumeralAlignment="Tabular"
                        VerticalAlignment="Center"
-                       Margin="0,1,8,2"
+                       Margin="0,1,0,2"
                        Grid.Column="1" />
         </Grid>
 
@@ -221,7 +242,9 @@
             <Path x:Name="RibbonPath"
                   Data="M59.6569 31.1569L30.8431 2.34315C29.3429 0.842855 27.308 0 25.1863 0H2.82843C1.04662 0 0.154282 2.15428 1.41421 3.41421L58.5858 60.5858C59.8457 61.8457 62 60.9534 62 59.1716V36.8137C62 34.692 61.1571 32.6571 59.6569 31.1569Z">
                 <Path.Fill>
-                    <LinearGradientBrush x:Name="RibbonGradient">
+                    <LinearGradientBrush x:Name="RibbonGradient"
+                                         StartPoint="0,0"
+                                         EndPoint="1,1">
                         <GradientStop x:Name="RibbonTop"
                                       Color="#6ED2FF"
                                       Offset="0" />

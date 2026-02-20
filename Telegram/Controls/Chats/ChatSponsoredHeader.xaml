@@ -88,16 +88,16 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                       Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                        FontWeight="SemiBold"
                        Margin="16,0,0,0"
                        VerticalAlignment="Bottom">
-                <Run Text="Ad"
+                <Run Text="{CustomResource SponsoredMessageAd}"
                      Foreground="{ThemeResource SystemColorControlAccentBrush}" />
                 <Run x:Name="TitleText" />
             </TextBlock>
 
-            <controls:BadgeButton Click="About_Click"
+            <controls:SettingsButton Click="About_Click"
                                   Style="{StaticResource SmallButtonStyle}"
                                   Glyph="{CustomResource BotAdWhat}"
                                   HorizontalAlignment="Left"
@@ -112,8 +112,8 @@
         </Grid>
 
         <controls:FormattedTextBlock x:Name="MessageText"
-                                     TextStyle="{StaticResource CaptionRichTextBlockStyle}"
-                                     Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                     Style="{StaticResource CaptionFormattedTextBlockStyle}"
+                                     Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                      AutoFontSize="False"
                                      IsTextSelectionEnabled="False"
                                      Margin="16,0,0,4"

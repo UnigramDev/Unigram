@@ -6,11 +6,7 @@
                        xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       Title="TITLE"
-                       PrimaryButtonText="Button1"
-                       SecondaryButtonText="Button2"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
 
     <StackPanel>
         <TextBlock x:Name="MessageLabel"
@@ -36,7 +32,8 @@
                     Content="{CustomResource Remove}"
                     Style="{StaticResource DangerButtonStyle}"
                     HorizontalAlignment="Stretch"
-                    Margin="0,24,2,-56" />
+                    VerticalAlignment="Bottom"
+                    Margin="0,24,4,-81" />
         </Grid>
     </StackPanel>
 </controls:ContentPopup>

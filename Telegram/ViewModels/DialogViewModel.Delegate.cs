@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ using Telegram.Controls.Messages.Content;
 using Telegram.Controls.Stories;
 using Telegram.Converters;
 using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
@@ -23,7 +25,6 @@ using Telegram.Views;
 using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.UI.Xaml;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.ViewModels
 {
@@ -117,19 +118,19 @@ namespace Telegram.ViewModels
                     if (message.ForwardInfo?.Origin is MessageOriginUser or MessageOriginChat && message.ForwardInfo?.Source != null)
                     {
                         chatId = message.ForwardInfo.Source.ChatId;
-                        messageTopic = new MessageTopicForum(message.ForwardInfo.Source.MessageId);
+                        messageTopic = new MessageTopicThread(message.ForwardInfo.Source.MessageId);
                     }
                     else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
                     {
                         chatId = fromChannel.ChatId;
-                        messageTopic = new MessageTopicForum(fromChannel.MessageId);
+                        messageTopic = new MessageTopicThread(fromChannel.MessageId);
                     }
 
-                    if (messageTopic is MessageTopicForum messageTopicForum)
+                    if (messageTopic is MessageTopicThread messageTopicThread)
                     {
-                        await ClientService.SendAsync(new GetMessage(chatId, messageTopicForum.ForumTopicId));
+                        await ClientService.SendAsync(new GetMessage(chatId, messageTopicThread.MessageThreadId));
 
-                        var response = await ClientService.SendAsync(new GetMessageThread(chatId, messageTopicForum.ForumTopicId));
+                        var response = await ClientService.SendAsync(new GetMessageThread(chatId, messageTopicThread.MessageThreadId));
                         if (response is not MessageThreadInfo)
                         {
                             return;
@@ -137,7 +138,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                NavigationService.NavigateToChat(chatId, messageId, topic: messageTopic, state: new NavigationState { { "highlight", replyToMessage.Quote } });
+                NavigationService.NavigateToChat(chatId, messageId, topic: messageTopic, state: new NavigationState { { "highlight", replyToMessage.Quote }, { "checklist_task_id", replyToMessage.ChecklistTaskId } });
             }
             else if (replyToMessage.Origin != null && replyToMessage.MessageId == 0)
             {
@@ -147,7 +148,7 @@ namespace Telegram.ViewModels
             }
             else if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
             {
-                await LoadMessageSliceAsync(message.Id, replyToMessage.MessageId, highlight: replyToMessage.Quote);
+                await LoadMessageSliceAsync(message.Id, replyToMessage.MessageId, highlight: replyToMessage.Quote, checklistTaskId: replyToMessage.ChecklistTaskId);
             }
         }
 
@@ -189,7 +190,7 @@ namespace Telegram.ViewModels
             var response = await ClientService.SendAsync(new GetMessageThread(chatId, threadId));
             if (response is MessageThreadInfo)
             {
-                NavigationService.NavigateToChat(chatId, messageId, topic: new MessageTopicForum(threadId));
+                NavigationService.NavigateToChat(chatId, messageId, topic: new MessageTopicThread(threadId));
             }
         }
 
@@ -382,15 +383,15 @@ namespace Telegram.ViewModels
             _messageDelegate.OpenUrl(url, untrust, source);
         }
 
-        public async void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
+        public async void OpenMedia(MessageViewModel message, FrameworkElement target, double timestamp = 0)
         {
             if (message.Content is MessageAudio or MessageVoiceNote)
             {
-                _playbackService.Play(message, Topic);
+                LifetimeService.Current.Playback.Play(XamlRoot, message, TopicId);
 
                 if (timestamp > 0)
                 {
-                    _playbackService.Seek(TimeSpan.FromSeconds(timestamp));
+                    LifetimeService.Current.Playback.Seek(TimeSpan.FromSeconds(timestamp));
                 }
             }
             else if (message.Content is MessagePoll poll)
@@ -425,11 +426,8 @@ namespace Telegram.ViewModels
                 var point = transform.TransformPoint(new Point());
                 var origin = new Rect(point.X, point.Y, target.ActualWidth, target.ActualHeight);
 
-                var storyViewModel = new StoryViewModel(ClientService, story.Story);
-                var activeStories = new ActiveStoriesViewModel(ClientService, Settings, Aggregator, storyViewModel);
-
-                var viewModel = new StoryListViewModel(ClientService, Settings, Aggregator, activeStories);
-                viewModel.NavigationService = NavigationService;
+                var activeStories = new ActiveStoriesViewModel(ClientService, Settings, Aggregator, story.Story);
+                var viewModel = StoryListViewModel.Create(NavigationService, activeStories);
 
                 var window = new StoriesWindow();
                 window.Update(viewModel, activeStories, StoryOpenOrigin.Card, origin, GetOrigin);
@@ -465,13 +463,19 @@ namespace Telegram.ViewModels
                             };
                         }
 
-                        if (IsSingle(message.Content))
+                        var properties = await ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
+                        if (properties == null && Type != DialogType.EventLog)
                         {
-                            viewModel = new StandaloneGalleryViewModel(ClientService, _storageService, Aggregator, new GalleryMessage(ClientService, message));
+                            return;
+                        }
+
+                        if (Type == DialogType.EventLog || IsSingle(message.Content))
+                        {
+                            viewModel = new StandaloneGalleryViewModel(ClientService, _storageService, Aggregator, new GalleryMessage(ClientService, message, properties));
                         }
                         else
                         {
-                            viewModel = new ChatGalleryViewModel(ClientService, _storageService, Aggregator, message.ChatId, Topic, message);
+                            viewModel = new ChatGalleryViewModel(ClientService, _storageService, Aggregator, message.ChatId, TopicId, message, properties);
                         }
                     }
 
@@ -482,7 +486,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, int timestamp = 0)
+        public void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, double timestamp = 0)
         {
             if (message.Content is MessagePaidAlbum album)
             {
@@ -521,7 +525,7 @@ namespace Telegram.ViewModels
 
         public void PlayMessage(MessageViewModel message)
         {
-            _playbackService.Play(message, Topic);
+            LifetimeService.Current.Playback.Play(XamlRoot, message, TopicId);
         }
 
         public bool RecognizeSpeech(MessageViewModel message)
@@ -596,9 +600,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void SendBotCommand(string command)
+        public void SendBotCommand(string command)
         {
-            await SendMessageAsync(null, new InputMessageText(new FormattedText(command, Array.Empty<TextEntity>()), null, false), new MessageSendOptions
+            _ = SendMessageAsync(null, new InputMessageText(command.AsFormattedText(false), null, false), new MessageSendOptions
             {
                 SendingId = int.MaxValue
             });

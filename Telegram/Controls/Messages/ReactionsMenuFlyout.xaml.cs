@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,6 @@ using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Stars.Popups;
 using Windows.Foundation;
-using Windows.System;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -32,16 +32,15 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Messages
 {
     public sealed partial class ReactionsMenuFlyout : UserControl
     {
         private readonly AvailableReactions _reactions;
-        private readonly EmojiDrawerViewModel _viewModel;
+        private EmojiDrawerViewModel _viewModel;
 
-        private readonly IClientService _clientService;
+        private IClientService _clientService;
 
         private readonly MessageViewModel _message;
         private readonly IReactionsDelegate _bubble;
@@ -53,6 +52,11 @@ namespace Telegram.Controls.Messages
 
         private MenuFlyoutPresenter _presenter;
         private Popup _popup;
+
+        public ReactionsMenuFlyout()
+        {
+            InitializeComponent();
+        }
 
         public static ReactionsMenuFlyout ShowAt(AvailableReactions reactions, MessageViewModel message, IReactionsDelegate bubble, MenuFlyout flyout)
         {
@@ -66,7 +70,7 @@ namespace Telegram.Controls.Messages
             _bubble = bubble;
             _flyout = flyout;
 
-            _viewModel = EmojiDrawerViewModel.Create(message.ClientService.SessionId, EmojiDrawerMode.Reactions);
+            _viewModel = EmojiDrawerViewModel.Create(message.ClientService.Session, EmojiDrawerMode.Reactions);
 
             InitializeComponent();
             Initialize(reactions, message.ClientService, flyout);
@@ -84,7 +88,7 @@ namespace Telegram.Controls.Messages
             _reserved = reserved;
             _flyout = flyout;
 
-            _viewModel = EmojiDrawerViewModel.Create(story.ClientService.SessionId, EmojiDrawerMode.Reactions);
+            _viewModel = EmojiDrawerViewModel.Create(story.ClientService.Session, EmojiDrawerMode.Reactions);
 
             InitializeComponent();
             Initialize(reactions, story.ClientService, flyout);
@@ -94,6 +98,11 @@ namespace Telegram.Controls.Messages
         {
             var first = flyout.Items[0];
             var presenter = first.GetParent<MenuFlyoutPresenter>();
+            if (presenter == null)
+            {
+                return;
+            }
+
             flyout.Closed += Flyout_Closed;
 
             presenter.PreviewKeyDown += Presenter_PreviewKeyDown;
@@ -195,10 +204,9 @@ namespace Telegram.Controls.Messages
 
             LayoutRoot.Padding = new Thickness(16, 40, 16, 32);
 
-            var device = ElementComposition.GetSharedDevice();
-            var rect1 = CanvasGeometry.CreateRectangle(device, Math.Min(width - actualWidth, 0), 0, Math.Max(width + 16 + 16 + Math.Max(0, padding), actualWidth), 860);
-            var elli1 = CanvasGeometry.CreateRoundedRectangle(device, width - actualWidth + 18 + 16, height + height + 5, presenter.ActualSize.X, 860, 8, 8);
-            var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
+            var rect1 = CanvasGeometry.CreateRectangle(null, Math.Min(width - actualWidth, 0), 0, Math.Max(width + 16 + 16 + Math.Max(0, padding), actualWidth), 860);
+            var elli1 = CanvasGeometry.CreateRoundedRectangle(null, width - actualWidth + 18 + 16, height + height + 5, presenter.ActualSize.X, 860, 8, 8);
+            var group1 = CanvasGeometry.CreateGroup(null, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
             var rootVisual = ElementComposition.GetElementVisual(LayoutRoot);
             var compositor = rootVisual.Compositor;
@@ -225,7 +233,7 @@ namespace Telegram.Controls.Messages
             _popup.RequestedTheme = presenter.ActualTheme;
             _popup.ShouldConstrainToRootBounds = false;
             _popup.AllowFocusOnInteraction = false;
-            _popup.XamlRoot = flyout.XamlRoot;
+            _popup.XamlRoot = presenter.XamlRoot;
             _popup.IsOpen = true;
 
             var visualPill = ElementComposition.GetElementVisual(Pill);
@@ -323,12 +331,12 @@ namespace Telegram.Controls.Messages
                 var button = new HyperlinkButton();
                 button.Width = 28;
                 button.Height = 28;
-                button.Background = new SolidColorBrush(Colors.Red);
+                button.Background = new SolidColorBrush(Colors.Transparent);
                 button.CornerRadius = new CornerRadius(14);
                 button.Margin = new Thickness(2, 0, 2, 0);
                 button.Content = visible;
                 button.Style = BootStrapper.Current.Resources["EmptyHyperlinkButtonStyle"] as Style;
-                button.Tag = item.Item1.Type;
+                button.Tag = item.Item1;
                 button.Click += Reaction_Click;
 
                 if (item.Item1.Type is ReactionTypeEmoji emoji)
@@ -364,7 +372,7 @@ namespace Telegram.Controls.Messages
             _reserved = reserved;
             _flyout = flyout;
 
-            _viewModel = EmojiDrawerViewModel.Create(clientService.SessionId, EmojiDrawerMode.Reactions);
+            _viewModel = EmojiDrawerViewModel.Create(clientService.Session, EmojiDrawerMode.Reactions);
             _clientService = clientService;
 
             InitializeComponent();
@@ -488,10 +496,10 @@ namespace Telegram.Controls.Messages
 
             LayoutRoot.Padding = new Thickness(16, 40, 16, 32);
 
-            var device = ElementComposition.GetSharedDevice();
-            var rect1 = CanvasGeometry.CreateRectangle(device, Math.Min(width - actualWidth, 0), 0, Math.Max(width + 16 + 16 + Math.Max(0, padding), actualWidth), 860);
-            var elli1 = CanvasGeometry.CreateRoundedRectangle(device, width - actualWidth + 18 + 16, height + height + 5, presenter.ActualSize.X, 860, 8, 8);
-            var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
+            //var device = ElementComposition.GetSharedDevice();
+            var rect1 = CanvasGeometry.CreateRectangle(null, Math.Min(width - actualWidth, 0), 0, Math.Max(width + 16 + 16 + Math.Max(0, padding), actualWidth), 860);
+            var elli1 = CanvasGeometry.CreateRoundedRectangle(null, width - actualWidth + 18 + 16, height + height + 5, presenter.ActualSize.X, 860, 8, 8);
+            var group1 = CanvasGeometry.CreateGroup(null, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
             var rootVisual = ElementComposition.GetElementVisual(LayoutRoot);
             var compositor = rootVisual.Compositor;
@@ -615,7 +623,7 @@ namespace Telegram.Controls.Messages
                 var button = new HyperlinkButton();
                 button.Width = 28;
                 button.Height = 28;
-                button.Background = new SolidColorBrush(Colors.Red);
+                button.Background = new SolidColorBrush(Colors.Transparent);
                 button.CornerRadius = new CornerRadius(14);
                 button.Margin = new Thickness(2, 0, 2, 0);
                 button.Content = visible;
@@ -639,9 +647,266 @@ namespace Telegram.Controls.Messages
             Presenter.ColumnDefinitions.Add(1, GridUnitType.Auto);
         }
 
+        public async void Initialize(IClientService clientService)
+        {
+            var empty = Array.Empty<AvailableReaction>();
+            var reactions = clientService.ActiveReactions
+                .Select(x => new AvailableReaction(new ReactionTypeEmoji(x), false))
+                .ToList();
+
+            var viewModel = EmojiDrawerViewModel.Create(clientService.Session, EmojiDrawerMode.Reactions);
+            _ = viewModel.UpdateReactions(new AvailableReactions(reactions, empty, empty, true, false, null));
+
+            _viewModel = viewModel;
+            _clientService = clientService;
+            _popup = new Popup();
+
+            Presenter.PreviewKeyDown += OnPreviewKeyDown;
+
+            static void SetAutomation(UIElement element, int index, int count)
+            {
+                if (ApiInfo.IsWindows11 && false)
+                {
+                    AutomationProperties.SetAutomationControlType(element, AutomationControlType.ListItem);
+                }
+                else
+                {
+                    AutomationProperties.SetPositionInSet(element, index + 1);
+                    AutomationProperties.SetSizeOfSet(element, count);
+                }
+            }
+
+            var sum = reactions.Count;
+
+            var select = true || sum > 7;
+            var count = select ? 7 : sum;
+
+            var itemSize = 28;
+            var itemPadding = 4;
+
+            var itemTotal = itemSize + itemPadding;
+
+            var presenter = this;
+
+            var actualWidth = presenter.ActualSize.X + 18 + 12 + 18;
+            var width = Math.Max(36 + 4, 8 + (count * itemTotal));
+
+            var padding = actualWidth - width;
+            var index = 0;
+
+            Presenter.Padding = new Thickness(4, 0, 0, 0);
+
+            Shadow.Width = width;
+            Pill.Width = width;
+            Presenter.Width = width;
+
+            var height = 40;
+            var haheight = 20;
+
+            Pill.VerticalAlignment = VerticalAlignment.Top;
+            Pill.Height = Shadow.Height = height + 20;
+            Pill.Margin = Shadow.Margin = new Thickness(0, 0, 0, -20);
+
+            if (select)
+            {
+                SetAutomation(Expand, count - 1, count);
+                Expand.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Expand.Visibility = Visibility.Collapsed;
+            }
+
+            var figure = new PathFigure();
+            if (count > 1)
+            {
+                figure.StartPoint = new Point(haheight, 0);
+                figure.Segments.Add(new LineSegment { Point = new Point(width - haheight, 0) });
+                figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight, height), Size = new Size(haheight, haheight), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+
+                //figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight - 14, height), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+
+                figure.Segments.Add(new LineSegment { Point = new Point(haheight, height) });
+                figure.Segments.Add(new ArcSegment { Point = new Point(haheight, 0), Size = new Size(haheight, haheight), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+            }
+            else
+            {
+                figure.StartPoint = new Point(20, 40);
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(31.0457, 40), Point2 = new Point(40, 31.0457), Point3 = new Point(40, 20) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(40, 8.9543), Point2 = new Point(31.0457, 0), Point3 = new Point(20, 0) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(8.9543, 0), Point2 = new Point(0, 8.9543), Point3 = new Point(0, 20) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(0, 26.3285), Point2 = new Point(2.93929, 31.9704), Point3 = new Point(7.52717, 35.6352) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(6.57139, 36.832), Point2 = new Point(6, 38.3493), Point3 = new Point(6, 40) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(6, 43.866), Point2 = new Point(9.13401, 47), Point3 = new Point(13, 47) });
+                figure.Segments.Add(new BezierSegment { Point1 = new Point(16.866, 47), Point2 = new Point(20, 43.866), Point3 = new Point(20, 40) });
+            }
+
+            var path = new PathGeometry();
+            path.Figures.Add(figure);
+
+            var data = new GeometryGroup();
+            data.FillRule = FillRule.Nonzero;
+            data.Children.Add(path);
+            //data.Children.Add(new EllipseGeometry { Center = new Point(width - haheight - 8 + 5, height + 20 - 7), RadiusX = 3.5f, RadiusY = 3.5f });
+
+            Pill.Data = data;
+
+            LayoutRoot.Padding = new Thickness(16, 40, 16, 32);
+
+            var rect1 = CanvasGeometry.CreateRectangle(null, Math.Min(width - actualWidth, 0), 0, Math.Max(width + 16 + 16 + Math.Max(0, padding), actualWidth), 860);
+            var elli1 = CanvasGeometry.CreateRoundedRectangle(null, width - actualWidth + 18 + 16, height + height + 5, presenter.ActualSize.X, 860, 8, 8);
+            var group1 = CanvasGeometry.CreateGroup(null, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
+
+            var rootVisual = ElementComposition.GetElementVisual(LayoutRoot);
+            var compositor = rootVisual.Compositor;
+            rootVisual.Clip = null;//rootVisual.Compositor.CreateGeometricClip(rootVisual.Compositor.CreatePathGeometry(new CompositionPath(group1)));
+
+            var pillShadow = compositor.CreateDropShadow();
+            pillShadow.BlurRadius = 16f;
+            pillShadow.Opacity = 0.14f;
+            pillShadow.Color = Colors.Black;
+            pillShadow.Mask = Pill.GetAlphaMask();
+
+            var pillReceiver = compositor.CreateSpriteVisual();
+            pillReceiver.Shadow = pillShadow;
+            pillReceiver.Size = new Vector2(width, height + 20);
+            pillReceiver.Offset = new Vector3(0, 8, 0);
+
+            ElementCompositionPreview.SetElementChildVisual(Shadow, pillReceiver);
+
+            var visualPill = ElementComposition.GetElementVisual(Pill);
+            visualPill.CenterPoint = new Vector3(height / 2, height / 2, 0);
+            visualPill.CenterPoint = new Vector3(width - height / 2, height / 2, 0);
+
+            var visualExpand = ElementComposition.GetElementVisual(Expand);
+            visualExpand.CenterPoint = new Vector3(32 / 2f, 24 / 2f, 0);
+
+            var clip = compositor.CreateRoundedRectangleGeometry();
+            clip.CornerRadius = new Vector2(height / 2);
+
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
+            var scalePill = compositor.CreateSpringVector3Animation();
+            scalePill.InitialValue = Vector3.Zero;
+            scalePill.FinalValue = Vector3.One;
+            scalePill.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            scalePill.DampingRatio = 0.7f;
+
+            var translation = compositor.CreateScalarKeyFrameAnimation();
+            translation.InsertKeyFrame(0, 0);
+            translation.InsertKeyFrame(1, 16);
+
+            var opacity = compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, 0);
+            opacity.InsertKeyFrame(1, 0.14f);
+
+            visualPill.StartAnimation("Scale", scalePill);
+            visualExpand.StartAnimation("Scale", scalePill);
+
+            translation.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            translation.DelayTime = TimeSpan.FromMilliseconds(150 + 100);
+            opacity.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            opacity.DelayTime = TimeSpan.FromMilliseconds(150 + 100);
+
+            pillShadow.StartAnimation("BlurRadius", translation);
+            pillShadow.StartAnimation("Opacity", opacity);
+
+            var resize = compositor.CreateVector2KeyFrameAnimation();
+            resize.InsertKeyFrame(0, new Vector2(height, height));
+            resize.InsertKeyFrame(1, new Vector2(width, height));
+            resize.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            resize.DelayTime = TimeSpan.FromMilliseconds(100);
+            resize.Duration = Constants.FastAnimation;
+
+            var move = compositor.CreateVector2KeyFrameAnimation();
+            move.InsertKeyFrame(0, new Vector2(width - height, 40));
+            move.InsertKeyFrame(1, new Vector2(0, 40));
+            move.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            move.DelayTime = TimeSpan.FromMilliseconds(100);
+            move.Duration = Constants.FastAnimation;
+
+            var viewVisual = ElementComposition.GetElementVisual(Presenter);
+            viewVisual.CenterPoint = new Vector3(height / 2, height / 2, 0);
+            viewVisual.CenterPoint = new Vector3(width - height / 2, height / 2, 0);
+            viewVisual.StartAnimation("Scale", scalePill);
+
+            batch.End();
+
+            Presenter.ColumnDefinitions.Clear();
+
+            for (int i = 0; i < Presenter.Children.Count - 2; i++)
+            {
+                Presenter.Children.RemoveAt(i);
+                i--;
+            }
+
+            foreach (var reaction in reactions.Take(count - 1))
+            {
+                static AnimatedImage Create(double size, bool auto)
+                {
+                    var animated = new AnimatedImage();
+                    animated.AutoPlay = auto;
+                    animated.LimitFps = !auto;
+                    animated.LoopCount = auto ? 1 : 0;
+                    animated.FrameSize = new Size(size, size);
+                    animated.DecodeFrameType = DecodePixelType.Logical;
+                    animated.Width = size;
+                    animated.Height = size;
+
+                    return animated;
+                }
+
+                var visible = Create(28, true);
+                var preload = Create(32, false);
+
+                if (reaction.Type is not ReactionTypeEmoji emoji)
+                {
+                    continue;
+                }
+
+                var response = await clientService.SendAsync(new GetEmojiReaction(emoji.Emoji));
+                if (response is not EmojiReaction item)
+                {
+                    continue;
+                }
+
+                visible.Source = new DelayedFileSource(clientService, item.SelectAnimation);
+                preload.Source = new DelayedFileSource(clientService, item.SelectAnimation.StickerValue);
+
+                preload.LoopCompleted += (s, args) => args.Cancel = true;
+                preload.Opacity = 0;
+                preload.Play();
+
+                var button = new HyperlinkButton();
+                button.Width = 28;
+                button.Height = 28;
+                button.Background = new SolidColorBrush(Colors.Transparent);
+                button.CornerRadius = new CornerRadius(14);
+                button.Margin = new Thickness(2, 0, 2, 0);
+                button.Content = visible;
+                button.Style = BootStrapper.Current.Resources["EmptyHyperlinkButtonStyle"] as Style;
+                button.Tag = reaction;
+                button.Click += Reaction_Click;
+
+                AutomationProperties.SetName(button, item.Emoji);
+
+                SetAutomation(button, index, count);
+
+                Grid.SetColumn(preload, index);
+                Grid.SetColumn(button, index);
+
+                Presenter.ColumnDefinitions.Add(1, GridUnitType.Auto);
+                Presenter.Children.Insert(index, button);
+                Preloader.Children.Add(preload);
+                index++;
+            }
+
+            Presenter.ColumnDefinitions.Add(1, GridUnitType.Auto);
+        }
+
         private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key is VirtualKey.Tab)
+            if (e.Key is VirtualKey.Tab && _presenter != null)
             {
                 e.Handled = true;
                 _presenter.Focus(FocusState.Keyboard);
@@ -660,7 +925,7 @@ namespace Telegram.Controls.Messages
                     return;
                 }
             }
-            else if (e.Key is VirtualKey.Up or VirtualKey.Down)
+            else if (e.Key is VirtualKey.Up or VirtualKey.Down && _flyout != null)
             {
                 e.Handled = true;
 
@@ -714,11 +979,11 @@ namespace Telegram.Controls.Messages
 
         private void Reaction_Click(object sender, RoutedEventArgs e)
         {
-            _flyout.Hide();
+            _flyout?.Hide();
 
             if (sender is HyperlinkButton button)
             {
-                if (button.Tag is ReactionType reaction)
+                if (button.Tag is AvailableReaction reaction)
                 {
                     if (_story != null)
                     {
@@ -727,6 +992,10 @@ namespace Telegram.Controls.Messages
                     else if (_message != null)
                     {
                         MessageToggleReaction(reaction);
+                    }
+                    else
+                    {
+                        ItemClick?.Invoke(this, reaction);
                     }
                 }
                 else if (button.Tag is MessageEffect effect)
@@ -738,15 +1007,23 @@ namespace Telegram.Controls.Messages
 
         public event EventHandler<MessageEffect> Selected;
 
-        private async void StoryToggleReaction(ReactionType reaction)
+        public event EventHandler<AvailableReaction> ItemClick;
+
+        private async void StoryToggleReaction(AvailableReaction reaction)
         {
-            if (_story.ChosenReactionType != null && _story.ChosenReactionType.AreTheSame(reaction))
+            if (reaction.NeedsPremium && !_story.ClientService.IsPremium)
             {
-                _story.ClientService.Send(new SetStoryReaction(_story.ChatId, _story.StoryId, null, true));
+                ToastPopup.ShowFeaturePromo(WindowContext.GetNavigationService(this), new PremiumFeatureUniqueReactions());
+                return;
+            }
+
+            if (_story.ChosenReactionType != null && _story.ChosenReactionType.AreTheSame(reaction.Type))
+            {
+                _story.ClientService.Send(new SetStoryReaction(_story.PosterChatId, _story.Id, null, true));
             }
             else
             {
-                await _story.ClientService.SendAsync(new SetStoryReaction(_story.ChatId, _story.StoryId, reaction, true));
+                await _story.ClientService.SendAsync(new SetStoryReaction(_story.PosterChatId, _story.Id, reaction.Type, true));
 
                 if (_reserved != null && _reserved.IsLoaded)
                 {
@@ -755,18 +1032,38 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private async void MessageToggleReaction(ReactionType reaction)
+        private async void MessageToggleReaction(AvailableReaction reaction)
         {
-            if (reaction is not ReactionTypePaid && _message.InteractionInfo?.Reactions != null && _message.InteractionInfo.Reactions.IsChosen(reaction))
+            var message = _message;
+            if (message.Content is MessageAlbum album)
             {
-                _message.ClientService.Send(new RemoveMessageReaction(_message.ChatId, _message.Id, reaction));
+                message = album.Messages[0];
+            }
+
+            if (reaction.NeedsPremium && !message.ClientService.IsPremium)
+            {
+                if (_reactions != null && _reactions.AreTags)
+                {
+                    WindowContext.GetNavigationService(this).ShowPromo(new PremiumFeatureSavedMessagesTags());
+                }
+                else
+                {
+                    ToastPopup.ShowFeaturePromo(WindowContext.GetNavigationService(this), new PremiumFeatureUniqueReactions());
+                }
+
+                return;
+            }
+
+            if (reaction.Type is not ReactionTypePaid && message.InteractionInfo?.Reactions != null && message.InteractionInfo.Reactions.IsChosen(reaction.Type))
+            {
+                message.ClientService.Send(new RemoveMessageReaction(message.ChatId, message.Id, reaction.Type));
             }
             else
             {
-                BaseObject added;
-                if (reaction is ReactionTypePaid)
+                Object added;
+                if (reaction.Type is ReactionTypePaid)
                 {
-                    var popup = new ReactPopup(_message.ClientService, _message);
+                    var popup = new ReactPopup(message.ClientService, message);
 
                     var confirm = await popup.ShowQueuedAsync(XamlRoot);
                     if (confirm != ContentDialogResult.Primary)
@@ -774,17 +1071,17 @@ namespace Telegram.Controls.Messages
                         return;
                     }
 
-                    _message.ClientService.Send(new SetPaidMessageReactionType(_message.ChatId, _message.Id, popup.Type));
-                    added = await PaidReactionService.AddPendingAsync(XamlRoot, _message, popup.StarCount, popup.Type);
+                    message.ClientService.Send(new SetPaidMessageReactionType(message.ChatId, message.Id, popup.Type));
+                    added = await PaidReactionService.AddPendingAsync(XamlRoot, message, popup.StarCount, popup.Type);
                 }
                 else
                 {
-                    added = await _message.ClientService.SendAsync(new AddMessageReaction(_message.ChatId, _message.Id, reaction, false, true));
+                    added = await message.ClientService.SendAsync(new AddMessageReaction(message.ChatId, message.Id, reaction.Type, false, true));
                 }
 
                 if (added is Ok && _bubble != null && _bubble.IsLoaded)
                 {
-                    var unread = new UnreadReaction(reaction, null, false);
+                    var unread = new UnreadReaction(reaction.Type, null, false);
 
                     _message.UnreadReactions.Add(unread);
                     _bubble.UpdateMessageReactions(_message, true);
@@ -795,14 +1092,17 @@ namespace Telegram.Controls.Messages
 
         private void Expand_Click(object sender, RoutedEventArgs e)
         {
-            _flyout.Closed -= Flyout_Closed;
+            if (_flyout != null)
+            {
+                _flyout.Closed -= Flyout_Closed;
+            }
 
             if (_story != null)
             {
                 var flyout = EmojiMenuFlyout.ShowAt(this, _story, _reserved, _reactions, _viewModel);
                 flyout.Loaded += (s, args) =>
                 {
-                    _flyout.Hide();
+                    _flyout?.Hide();
                 };
                 flyout.Opened += (s, args) =>
                 {
@@ -814,7 +1114,25 @@ namespace Telegram.Controls.Messages
                 var flyout = EmojiMenuFlyout.ShowAt(this, _message, _bubble, _reactions, _viewModel);
                 flyout.Loaded += (s, args) =>
                 {
-                    _flyout.Hide();
+                    _flyout?.Hide();
+                };
+                flyout.Opened += (s, args) =>
+                {
+                    _popup.IsOpen = false;
+                };
+            }
+            else if (ItemClick != null)
+            {
+                var empty = Array.Empty<AvailableReaction>();
+                var reactions = _viewModel.ClientService.ActiveReactions
+                    .Select(x => new AvailableReaction(new ReactionTypeEmoji(x), false))
+                    .ToList();
+
+                var flyout = EmojiMenuFlyout.ShowAt(_clientService, EmojiDrawerMode.Reactions, this, EmojiFlyoutAlignment.Top, _viewModel);
+                flyout.ItemClick += ItemClick;
+                flyout.Loaded += (s, args) =>
+                {
+                    _flyout?.Hide();
                 };
                 flyout.Opened += (s, args) =>
                 {
@@ -827,7 +1145,7 @@ namespace Telegram.Controls.Messages
                 flyout.Selected += Selected;
                 flyout.Loaded += (s, args) =>
                 {
-                    _flyout.Hide();
+                    _flyout?.Hide();
                 };
                 flyout.Opened += (s, args) =>
                 {

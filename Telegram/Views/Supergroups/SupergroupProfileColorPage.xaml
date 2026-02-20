@@ -40,9 +40,10 @@
 
                 <controls:HeaderedControl x:Name="EmojiStatusRoot"
                                           Footer="{CustomResource ChannelEmojiStatusInfo}">
-                    <Grid>
-                        <controls:BadgeButton x:Name="EmojiStatus"
-                                              Click="EmojiStatus_Click">
+                    <Grid BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+                        <controls:SettingsButton x:Name="EmojiStatus"
+                                                 Click="EmojiStatus_Click"
+                                                 CornerRadius="4">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
@@ -60,7 +61,7 @@
                                                        Margin="4,0,0,0"
                                                        Grid.Column="1" />
                             </Grid>
-                        </controls:BadgeButton>
+                        </controls:SettingsButton>
                         <controls:CustomEmojiIcon x:Name="AnimatedStatus"
                                                   FrameSize="20,20"
                                                   DecodeFrameType="Logical"
@@ -75,9 +76,10 @@
                 <controls:HeaderedControl x:Name="EmojiPackRoot"
                                           Visibility="Collapsed"
                                           Footer="{CustomResource GroupEmojiPackInfo}">
-                    <Grid>
-                        <controls:BadgeButton x:Name="EmojiPack"
-                                              Click="EmojiPack_Click">
+                    <Grid BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+                        <controls:SettingsButton x:Name="EmojiPack"
+                                                 Click="EmojiPack_Click"
+                                                 CornerRadius="4">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
@@ -95,7 +97,7 @@
                                                        Margin="4,0,0,0"
                                                        Grid.Column="1" />
                             </Grid>
-                        </controls:BadgeButton>
+                        </controls:SettingsButton>
                         <controls:CustomEmojiIcon x:Name="EmojiPackAnimated"
                                                   FrameSize="20,20"
                                                   DecodeFrameType="Logical"
@@ -110,10 +112,11 @@
                 <controls:HeaderedControl x:Name="StickerPackRoot"
                                           Visibility="Collapsed"
                                           Footer="{CustomResource GroupStickersInfo}">
-                    <Grid>
-                        <controls:BadgeButton x:Name="StickerPack"
-                                              Content="{CustomResource GroupStickers}"
-                                              Click="StickerPack_Click" />
+                    <Grid BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+                        <controls:SettingsButton x:Name="StickerPack"
+                                                 Content="{CustomResource GroupStickers}"
+                                                 Click="StickerPack_Click"
+                                                 CornerRadius="4" />
                         <controls:AnimatedImage x:Name="StickerPackAnimated"
                                                 FrameSize="20,20"
                                                 DecodeFrameType="Logical"
@@ -136,9 +139,10 @@
                                           Footer="{CustomResource ChannelWallpaper2Info}">
                     <Grid x:Name="WallpaperPreview"
                           x:Load="False"
-                          CornerRadius="4,4,0,0">
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                          CornerRadius="4">
                         <chats:ChatBackgroundControl x:Name="BackgroundControl"
-                                                     CornerRadius="4,4,0,0" />
+                                                     CornerRadius="4" />
                         <StackPanel Padding="0,10">
                             <messages:MessageBubble x:Name="Message1"
                                                     HorizontalAlignment="Left" />
@@ -191,9 +195,8 @@
                         </GridView.Footer>
                     </GridView>
 
-                    <controls:BadgeButton Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9E7;"
-                                          IsChevronVisible="True">
+                    <controls:SettingsButton Glyph="&#xE9E7;"
+                                             IsChevronVisible="True">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -211,7 +214,7 @@
                                                    Margin="4,0,0,0"
                                                    Grid.Column="1" />
                         </Grid>
-                    </controls:BadgeButton>
+                    </controls:SettingsButton>
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

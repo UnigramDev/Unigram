@@ -9,7 +9,6 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
                        Padding="0,20,0,0">
 
     <Grid>
@@ -59,9 +58,9 @@
             </ListView.ItemTemplate>
         </controls:TextListView>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                     ScrollingHost="{x:Bind ScrollingHost}"
-                                    Margin="0,2,0,0"
+                                    BottomInset="0"
                                     Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>

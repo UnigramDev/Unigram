@@ -1,16 +1,16 @@
 ﻿//
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
-using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
@@ -21,8 +21,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls.Views
 {
@@ -33,7 +31,9 @@ namespace Telegram.Controls.Views
         Horizontal
     }
 
-    public sealed partial class ForumView : UserControl, ITopicListDelegate
+    public partial record ForumViewItemClickEventArgs(object ClickedItem, bool FromSelection);
+
+    public sealed partial class ForumView : UserControl, ITopicListDelegate, IAutomationNameProvider
     {
         public TopicListViewModel ViewModel
         {
@@ -77,10 +77,8 @@ namespace Telegram.Controls.Views
             {
                 ScrollingHost.Margin = new Thickness(0, 40, 0, 0);
 
-                // TODO: theming
-                BackgroundRoot.Background = BootStrapper.Current.Resources["PageSubHeaderBackgroundBrush2"] as Brush;
-                BackgroundRoot.CornerRadius = new CornerRadius(0);
-                BackgroundRoot.BorderThickness = new Thickness(0, 0, 1, 0);
+                BackgroundRoot.Visibility = Visibility.Collapsed;
+                VerticalBackgroundRoot.Visibility = Visibility.Visible;
                 Header.Visibility = Visibility.Collapsed;
 
                 Width = 72;
@@ -119,10 +117,38 @@ namespace Telegram.Controls.Views
             visual.Clip.StartAnimation(property, animation);
         }
 
+        public void Scroll(int offset, bool navigate)
+        {
+            int index;
+            if (offset == int.MaxValue)
+            {
+                index = ViewModel.Items.Count - 1;
+            }
+            else if (offset == int.MinValue)
+            {
+                index = 0;
+            }
+            else
+            {
+                index = ScrollingHost.SelectedIndex + offset;
+            }
+
+            if (index >= 0 && index < ViewModel.Items.Count)
+            {
+                if (navigate)
+                {
+                    ItemClick?.Invoke(this, new ForumViewItemClickEventArgs(ViewModel.Items[index], false));
+                }
+            }
+            else if (index < 0 && offset == -1 && !navigate)
+            {
+                Search_Click(null, null);
+            }
+        }
+
         public void UpdateChat(Chat chat)
         {
             UpdateChatTitle(chat);
-            UpdateChatPhoto(chat);
             UpdateChatEmojiStatus(chat);
 
             if (ViewModel.ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
@@ -143,25 +169,12 @@ namespace Telegram.Controls.Views
             }
         }
 
-        public void UpdateChatPhoto(Chat chat)
-        {
-            if (chat != null)
-            {
-                Photo.SetChat(ViewModel.ClientService, chat, 36);
-            }
-        }
-
         public void UpdateChatEmojiStatus(Chat chat)
         {
             if (chat != null)
             {
                 Identity.SetStatus(ViewModel.ClientService, chat, BotVerified);
             }
-        }
-
-        private void Segments_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void Profile_Click(object sender, RoutedEventArgs e)
@@ -171,7 +184,7 @@ namespace Telegram.Controls.Views
 
         private void Options_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Profile.Padding = new Thickness(60, 0, e.NewSize.Width, 0);
+            Profile.Padding = new Thickness(52, 0, e.NewSize.Width, 0);
         }
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
@@ -248,9 +261,9 @@ namespace Telegram.Controls.Views
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             var forumTopic = args.Item as ForumTopic;
-            var feedbackChatTopic = args.Item as FeedbackChatTopic;
+            var directMessagesChatTopic = args.Item as DirectMessagesChatTopic;
 
-            var topicId = forumTopic?.Info.MessageThreadId ?? feedbackChatTopic.Id;
+            var topicId = forumTopic?.Info.ForumTopicId ?? directMessagesChatTopic.Id;
 
             if (args.InRecycleQueue)
             {
@@ -269,9 +282,9 @@ namespace Telegram.Controls.Views
             {
                 forumTopicCell.UpdateForumTopic(ViewModel, forumTopic);
             }
-            else if (feedbackChatTopic != null && args.ItemContainer.ContentTemplateRoot is IFeedbackTopicDelegate feedbackTopicCell)
+            else if (directMessagesChatTopic != null && args.ItemContainer.ContentTemplateRoot is IDirectMessagesTopicDelegate feedbackTopicCell)
             {
-                feedbackTopicCell.UpdateFeedbackChatTopic(ViewModel, feedbackChatTopic);
+                feedbackTopicCell.UpdateDirectMessagesChatTopic(ViewModel, directMessagesChatTopic);
             }
 
             args.Handled = true;
@@ -296,12 +309,12 @@ namespace Telegram.Controls.Views
             return false;
         }
 
-        private bool TryGetTopicAndCell(long topicId, out FeedbackChatTopic topic, out IFeedbackTopicDelegate cell)
+        private bool TryGetTopicAndCell(long topicId, out DirectMessagesChatTopic topic, out IDirectMessagesTopicDelegate cell)
         {
             if (_itemToSelector.TryGetValue(topicId, out SelectorItem container))
             {
-                topic = ScrollingHost.ItemFromContainer(container) as FeedbackChatTopic;
-                cell = container.ContentTemplateRoot as IFeedbackTopicDelegate;
+                topic = ScrollingHost.ItemFromContainer(container) as DirectMessagesChatTopic;
+                cell = container.ContentTemplateRoot as IDirectMessagesTopicDelegate;
                 return topic != null && cell != null;
             }
 
@@ -312,7 +325,7 @@ namespace Telegram.Controls.Views
 
         private bool TryGetCell(ForumTopic topic, out IForumTopicDelegate cell)
         {
-            if (_itemToSelector.TryGetValue(topic.Info.MessageThreadId, out SelectorItem container))
+            if (_itemToSelector.TryGetValue(topic.Info.ForumTopicId, out SelectorItem container))
             {
                 cell = container.ContentTemplateRoot as IForumTopicDelegate;
                 return cell != null;
@@ -322,11 +335,11 @@ namespace Telegram.Controls.Views
             return false;
         }
 
-        private bool TryGetCell(FeedbackChatTopic topic, out IFeedbackTopicDelegate cell)
+        private bool TryGetCell(DirectMessagesChatTopic topic, out IDirectMessagesTopicDelegate cell)
         {
             if (_itemToSelector.TryGetValue(topic.Id, out SelectorItem container))
             {
-                cell = container.ContentTemplateRoot as IFeedbackTopicDelegate;
+                cell = container.ContentTemplateRoot as IDirectMessagesTopicDelegate;
                 return cell != null;
             }
 
@@ -345,9 +358,9 @@ namespace Telegram.Controls.Views
             });
         }
 
-        public void HandleForumTopic(long messageThreadId, Action<IForumTopicDelegate, ForumTopic> action)
+        public void HandleForumTopic(int forumTopicId, Action<IForumTopicDelegate, ForumTopic> action)
         {
-            if (TryGetTopicAndCell(messageThreadId, out ForumTopic chat, out IForumTopicDelegate cell))
+            if (TryGetTopicAndCell(forumTopicId, out ForumTopic chat, out IForumTopicDelegate cell))
             {
                 action(cell, chat);
             }
@@ -363,28 +376,28 @@ namespace Telegram.Controls.Views
 
         #endregion
 
-        #region FeedbackChatTopic
+        #region DirectMessagesChatTopic
 
-        public void UpdateFeedbackChatTopicLastMessage(FeedbackChatTopic topic)
+        public void UpdateDirectMessagesChatTopicLastMessage(DirectMessagesChatTopic topic)
         {
-            HandleFeedbackChatTopic(topic, (chatView, chat) =>
+            HandleDirectMessagesChatTopic(topic, (chatView, chat) =>
             {
-                chatView.UpdateFeedbackChatTopicReadInbox(chat);
-                chatView.UpdateFeedbackChatTopicLastMessage(chat);
+                chatView.UpdateDirectMessagesChatTopicReadInbox(chat);
+                chatView.UpdateDirectMessagesChatTopicLastMessage(chat);
             });
         }
 
-        public void HandleFeedbackChatTopic(long topicId, Action<IFeedbackTopicDelegate, FeedbackChatTopic> action)
+        public void HandleDirectMessagesChatTopic(long topicId, Action<IDirectMessagesTopicDelegate, DirectMessagesChatTopic> action)
         {
-            if (TryGetTopicAndCell(topicId, out FeedbackChatTopic chat, out IFeedbackTopicDelegate cell))
+            if (TryGetTopicAndCell(topicId, out DirectMessagesChatTopic chat, out IDirectMessagesTopicDelegate cell))
             {
                 action(cell, chat);
             }
         }
 
-        public void HandleFeedbackChatTopic(FeedbackChatTopic topic, Action<IFeedbackTopicDelegate, FeedbackChatTopic> action)
+        public void HandleDirectMessagesChatTopic(DirectMessagesChatTopic topic, Action<IDirectMessagesTopicDelegate, DirectMessagesChatTopic> action)
         {
-            if (TryGetCell(topic, out IFeedbackTopicDelegate cell))
+            if (TryGetCell(topic, out IDirectMessagesTopicDelegate cell))
             {
                 action(cell, topic);
             }
@@ -396,7 +409,7 @@ namespace Telegram.Controls.Views
         {
             await System.Threading.Tasks.Task.Delay(100);
 
-            if (ViewModel.SelectionMode != ListViewSelectionMode.Multiple)
+            if (ViewModel?.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 try
                 {
@@ -491,13 +504,13 @@ namespace Telegram.Controls.Views
 
                 if (compare.IsPinned)
                 {
-                    var pinned = items.Where(x => x.IsPinned).Select(x => x.Info.MessageThreadId).ToArray();
+                    var pinned = items.Where(x => x.IsPinned).Select(x => x.Info.ForumTopicId).ToArray();
 
                     ViewModel.ClientService.SetPinnedForumTopics(ViewModel.Chat.Id, pinned);
                 }
                 else
                 {
-                    items.Handle(topic.Info.MessageThreadId, topic.Order);
+                    items.Handle(topic.Info.ForumTopicId, topic.Order);
                 }
             }
         }
@@ -509,9 +522,19 @@ namespace Telegram.Controls.Views
             var viewModel = ViewModel;
             var chat = viewModel?.Chat;
 
-            if (viewModel == null || !viewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
+            if (viewModel == null || chat == null)
             {
                 return;
+            }
+
+            var canManage = false;
+            if (viewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                canManage = supergroup.CanManageTopics();
+            }
+            else if (chat.Type is ChatTypePrivate)
+            {
+                canManage = true;
             }
 
             var flyout = new MenuFlyout();
@@ -519,7 +542,6 @@ namespace Telegram.Controls.Views
             var topic = ScrollingHost.ItemFromContainer(sender);
             if (topic is ForumTopic forumTopic)
             {
-                var canManage = supergroup.CanManageTopics();
                 if (canManage)
                 {
                     //Telegram.Td.Api.ToggleForumTopicIsPinned // CanManageTopics
@@ -529,7 +551,7 @@ namespace Telegram.Controls.Views
                 var muted = ViewModel.ClientService.Notifications.IsMuted(chat, forumTopic);
                 flyout.CreateFlyoutItem(viewModel.NotifyTopic, forumTopic, muted ? Strings.Unmute : Strings.Mute, forumTopic.IsPinned ? Icons.Alert : Icons.AlertOff);
 
-                if (canManage)
+                if (canManage && chat.Type is ChatTypeSupergroup)
                 {
                     //Telegram.Td.Api.ToggleGeneralForumTopicIsHidden // CanManageTopics
                     //Telegram.Td.Api.ToggleForumTopicIsClosed // CanManageTopics
@@ -549,7 +571,7 @@ namespace Telegram.Controls.Views
                     flyout.CreateFlyoutItem(viewModel.DeleteTopic, forumTopic, Strings.Delete, Icons.Delete, destructive: true);
                 }
 
-                if (viewModel.SelectionMode != ListViewSelectionMode.Multiple)
+                if (viewModel.SelectionMode != ListViewSelectionMode.Multiple && chat.Type is ChatTypeSupergroup)
                 {
                     flyout.CreateFlyoutSeparator();
                     flyout.CreateFlyoutItem(viewModel.OpenTopic, forumTopic, Strings.OpenInNewWindow, Icons.WindowNew);
@@ -557,9 +579,9 @@ namespace Telegram.Controls.Views
                     flyout.CreateFlyoutItem(viewModel.SelectTopic, forumTopic, Strings.Select, Icons.CheckmarkCircle);
                 }
             }
-            else if (topic is FeedbackChatTopic feedbackChatTopic && ViewModel.Chat.IsFeedbackChatAdministrator(ViewModel.ClientService))
+            else if (topic is DirectMessagesChatTopic directMessagesChatTopic && supergroup.IsAdministeredDirectMessagesGroup)
             {
-                flyout.CreateFlyoutItem(viewModel.ClearTopic, feedbackChatTopic, Strings.ClearHistory, Icons.Broom);
+                flyout.CreateFlyoutItem(viewModel.ClearTopic, directMessagesChatTopic, Strings.ClearHistory, Icons.Broom);
             }
 
             flyout.ShowAt(sender, args);
@@ -581,16 +603,51 @@ namespace Telegram.Controls.Views
 
         #endregion
 
-        public event ItemClickEventHandler ItemClick
+        public event EventHandler<ForumViewItemClickEventArgs> ItemClick;
+
+        public string GetAutomationName()
         {
-            add
+            if (Title == null || Subtitle == null || ChatActionLabel == null)
             {
-                ScrollingHost.ItemClick += value;
+                return string.Empty;
             }
-            remove
+
+            var result = Title.Text.TrimEnd('.', ',');
+            var identity = Identity.CurrentType switch
             {
-                ScrollingHost.ItemClick -= value;
+                IdentityIconType.Fake => Strings.FakeMessage,
+                IdentityIconType.Scam => Strings.ScamMessage,
+                IdentityIconType.Premium => Strings.AccDescrPremium,
+                IdentityIconType.Verified => Strings.AccDescrVerified,
+                _ => null
+            };
+
+            if (identity != null)
+            {
+                result += ", " + identity;
             }
+
+            if (ChatActionLabel.Text.Length > 0)
+            {
+                result += ", " + ChatActionLabel.Text;
+            }
+            else if (Subtitle.Text.Length > 0)
+            {
+                result += ", " + Subtitle.Text;
+            }
+
+            return result;
+        }
+
+        private void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            ItemClick?.Invoke(this, new ForumViewItemClickEventArgs(e.ClickedItem, true));
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            var mainPage = this.GetParent<MainPage>();
+            mainPage?.HideTopicList();
         }
     }
 }

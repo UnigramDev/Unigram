@@ -1,22 +1,19 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using Telegram.Collections;
 using Telegram.Common;
-using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views.Popups;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Chats
 {
@@ -38,7 +35,7 @@ namespace Telegram.ViewModels.Chats
 
             if (!string.IsNullOrEmpty(query) || from != null)
             {
-                Search(query, from, null, null);
+                Search(query, from, null);
             }
         }
 
@@ -47,7 +44,7 @@ namespace Telegram.ViewModels.Chats
         private ICollection _autocomplete;
         public ICollection Autocomplete
         {
-            get => _autocomplete;
+            get => _autocomplete ?? Items;
             set => Set(ref _autocomplete, value);
         }
 
@@ -93,13 +90,6 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        private SearchMessagesFilter _filter;
-        public SearchMessagesFilter Filter
-        {
-            get => _filter;
-            set => Set(ref _filter, value);
-        }
-
         private ReactionType _savedMessagesTag;
         public ReactionType SavedMessagesTag
         {
@@ -125,31 +115,6 @@ namespace Telegram.ViewModels.Chats
                 {
                     Dialog.UpdateSavedMessagesTag(_savedMessagesTag, value, _savedMessagesTag);
                 }
-            }
-        }
-
-        public ICollection Filters
-        {
-            get
-            {
-                return new List<ChatSearchMediaFilter>
-                {
-                    new ChatSearchMediaFilter(new SearchMessagesFilterPhoto(), Icons.Image, Strings.AutoDownloadPhotos),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterVideo(), Icons.Play, Strings.AutoDownloadVideos),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterDocument(), Icons.Document, Strings.AutoDownloadFiles),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterUrl(), Icons.Link, Strings.SharedLinks),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterAudio(), Icons.MusicNote, Strings.SharedAudioFiles),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterVoiceNote(), Icons.MicOn, Strings.AudioAutodownload),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterVideoNote(), "\uE612", Strings.VideoMessagesAutodownload),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterAnimation(), Icons.Gif, Strings.AccDescrGIFs)
-                    //new SearchMessagesFilterCall(),
-                    //new SearchMessagesFilterChatPhoto(),
-                    //new SearchMessagesFilterMention(),
-                    //new SearchMessagesFilterMissedCall(),
-                    //new SearchMessagesFilterPhotoAndVideo(),
-                    //new SearchMessagesFilterUnreadMention(),
-                    //new SearchMessagesFilterVoiceAndVideoNote(),
-                };
             }
         }
 
@@ -197,24 +162,24 @@ namespace Telegram.ViewModels.Chats
         public SearchChatMessagesCollection Items
         {
             get => _items;
-            set => Set(ref _items, value);
+            set
+            {
+                if (Set(ref _items, value) && _autocomplete == null)
+                {
+                    RaisePropertyChanged(nameof(Autocomplete));
+                }
+            }
         }
 
         #endregion
 
-        public async void ShowResults()
+        public void SetSelectedItem(Message message)
         {
-            var popup = new SearchChatResultsPopup(Items);
-
-            var confirm = await ShowPopupAsync(popup);
-            if (confirm == ContentDialogResult.Primary && popup.SelectedItem != null)
-            {
-                SelectedItem = popup.SelectedItem;
-                await Dialog.LoadMessageSliceAsync(null, popup.SelectedItem.Id);
-            }
+            SelectedItem = message;
+            _ = Dialog.LoadMessageSliceAsync(null, message.Id);
         }
 
-        public async void Search(string query, MessageSender from, SearchMessagesFilter filter, ReactionType savedMessagesTag)
+        public async void Search(string query, MessageSender from, ReactionType savedMessagesTag)
         {
             static bool FromEquals(MessageSender x, MessageSender y)
             {
@@ -234,14 +199,13 @@ namespace Telegram.ViewModels.Chats
             {
                 await Dialog.LoadEventLogSliceAsync(query);
             }
-            else if (string.Equals(_query, query) && FromEquals(_from, from) && _filter?.GetType() == filter?.GetType() && _savedMessagesTag.AreTheSame(savedMessagesTag) && PreviousCanExecute())
+            else if (string.Equals(_query, query) && FromEquals(_from, from) && _savedMessagesTag.AreTheSame(savedMessagesTag) && PreviousCanExecute())
             {
                 PreviousExecute();
             }
             else
             {
                 From = from;
-                Filter = filter;
                 Query = query;
                 SavedMessagesTag = savedMessagesTag;
 
@@ -254,7 +218,7 @@ namespace Telegram.ViewModels.Chats
                 Items = null;
                 SelectedItem = null;
 
-                if (string.IsNullOrEmpty(query) && from == null && filter == null)
+                if (string.IsNullOrEmpty(query) && from == null)
                 {
                     return;
                 }
@@ -267,7 +231,7 @@ namespace Telegram.ViewModels.Chats
                 //    fromMessageId = _dialog.Items[panel.LastVisibleIndex].Id;
                 //}
 
-                var collection = new SearchChatMessagesCollection(ClientService, chat.Id, _dialog.Topic, query, from, fromMessageId, filter, savedMessagesTag);
+                var collection = new SearchChatMessagesCollection(ClientService, chat.Id, _dialog.TopicId, query, from, fromMessageId, null, savedMessagesTag);
 
                 var result = await collection.LoadMoreItemsAsync(100);
                 if (result.Count > 0)
@@ -369,20 +333,6 @@ namespace Telegram.ViewModels.Chats
             SavedMessagesTag = null;
             Items = null;
             SelectedItem = null;
-        }
-    }
-
-    public partial class ChatSearchMediaFilter
-    {
-        public SearchMessagesFilter Filter { get; private set; }
-        public string Glyph { get; private set; }
-        public string Text { get; private set; }
-
-        public ChatSearchMediaFilter(SearchMessagesFilter filter, string glyph, string text)
-        {
-            Filter = filter;
-            Glyph = glyph;
-            Text = text;
         }
     }
 }

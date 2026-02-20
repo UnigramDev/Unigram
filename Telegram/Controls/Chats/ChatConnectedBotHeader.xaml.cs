@@ -1,14 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Composition;
+using Telegram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Chats
 {
@@ -17,16 +22,21 @@ namespace Telegram.Controls.Chats
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         private Chat _chat;
-        private UIElement _parent;
+
+        private ChatView _chatView;
 
         public ChatConnectedBotHeader()
         {
             InitializeComponent();
+
+            _collapsed = new SlidePanel.SlideState(this, false, 48);
         }
 
-        public void InitializeParent(UIElement parent)
+        public float AnimatedHeight => _collapsed ? 0 : 48;
+
+        public void InitializeParent(ChatView chatView)
         {
-            ElementCompositionPreview.SetIsTranslationEnabled(_parent = parent, true);
+            _chatView = chatView;
         }
 
         public void UpdateChatBusinessBotManageBar(Chat chat, BusinessBotManageBar manageBar)
@@ -37,7 +47,7 @@ namespace Telegram.Controls.Chats
             {
                 ShowHide(true);
 
-                Photo.SetUser(ViewModel.ClientService, user, 36);
+                Photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
                 Title.Text = user.FullName();
                 Subtitle.Text = manageBar.IsBotPaused
                     ? Strings.BizBotStatusStopped
@@ -59,7 +69,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private bool _collapsed = true;
+        private SlidePanel.SlideState _collapsed;
 
         public void ShowHide(bool show)
         {
@@ -68,39 +78,8 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            _collapsed = !show;
-            Visibility = Visibility.Visible;
-
-            var parent = ElementComposition.GetElementVisual(_parent);
-            var visual = ElementComposition.GetElementVisual(this);
-            visual.Clip = visual.Compositor.CreateInsetClip();
-
-            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                visual.Clip = null;
-                parent.Properties.InsertVector3("Translation", Vector3.Zero);
-
-                if (_collapsed)
-                {
-                    Visibility = Visibility.Collapsed;
-                }
-            };
-
-            var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
-            clip.InsertKeyFrame(show ? 0 : 1, 48);
-            clip.InsertKeyFrame(show ? 1 : 0, 0);
-            clip.Duration = Constants.FastAnimation;
-
-            var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -48, 0));
-            offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = Constants.FastAnimation;
-
-            visual.Clip.StartAnimation("TopInset", clip);
-            parent.StartAnimation("Translation", offset);
-
-            batch.End();
+            _collapsed.IsVisible = show;
+            _chatView.UpdateMessagesHeaderPadding();
         }
 
         public IEnumerable<UIElement> GetAnimatableVisuals()

@@ -42,18 +42,15 @@
                                                        Text="{CustomResource ChannelAffiliateProgramText}" />
 
                             <controls:HeaderedControl>
-                                <controls:BadgeButton Content="{CustomResource ChannelAffiliateProgramFeature1Title}"
-                                                      Badge="{CustomResource ChannelAffiliateProgramFeature1}"
-                                                      Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                                      Glyph="&#xE9F9;" />
-                                <controls:BadgeButton Content="{CustomResource ChannelAffiliateProgramFeature2Title}"
-                                                      Badge="{CustomResource ChannelAffiliateProgramFeature2}"
-                                                      Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                                      Glyph="&#xE9A7;" />
-                                <controls:BadgeButton Content="{CustomResource ChannelAffiliateProgramFeature3Title}"
-                                                      Badge="{CustomResource ChannelAffiliateProgramFeature3}"
-                                                      Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                                      Glyph="&#xEAA7;" />
+                                <controls:SettingsButton Content="{CustomResource ChannelAffiliateProgramFeature1Title}"
+                                                         Description="{CustomResource ChannelAffiliateProgramFeature1}"
+                                                         Glyph="&#xE9F9;" />
+                                <controls:SettingsButton Content="{CustomResource ChannelAffiliateProgramFeature2Title}"
+                                                         Description="{CustomResource ChannelAffiliateProgramFeature2}"
+                                                         Glyph="&#xE9A7;" />
+                                <controls:SettingsButton Content="{CustomResource ChannelAffiliateProgramFeature3Title}"
+                                                         Description="{CustomResource ChannelAffiliateProgramFeature3}"
+                                                         Glyph="&#xEAA7;" />
                             </controls:HeaderedControl>
 
                             <Border Visibility="{x:Bind ViewModel.Programs.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"

@@ -1,12 +1,14 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Numerics;
 using System.Text;
+using Telegram.Common;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -17,6 +19,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -38,6 +41,11 @@ namespace Telegram.Controls.Messages
             new Vector4(99, 34, 15, 0.4f),
         };
 
+        private SpriteVisual _modelVisual;
+        private AnimatedImage ModelAnimated;
+
+        private bool _templateApplied;
+
         public MessageReplyPattern()
         {
             DefaultStyleKey = typeof(MessageReplyPattern);
@@ -45,8 +53,15 @@ namespace Telegram.Controls.Messages
 
         protected override void OnApplyTemplate()
         {
+            // TODO: Name
             var animated = GetTemplateChild("Animated") as AnimatedImage;
             var layoutRoot = GetTemplateChild("LayoutRoot") as Border;
+
+            var hasModel = Model != null;
+            if (hasModel)
+            {
+                ModelAnimated = GetTemplateChild(nameof(ModelAnimated)) as AnimatedImage;
+            }
 
             var visual = ElementComposition.GetElementVisual(animated);
             var compositor = visual.Compositor;
@@ -81,9 +96,17 @@ namespace Telegram.Controls.Messages
                 redirect.Brush = surfaceBrush;
 
                 container.Children.InsertAtTop(redirect);
+
+                if (i == 4)
+                {
+                    _modelVisual = redirect;
+                    _modelVisual.IsVisible = !hasModel;
+                }
             }
 
             ElementCompositionPreview.SetElementChildVisual(layoutRoot, container);
+
+            _templateApplied = true;
         }
 
         #region Source
@@ -96,6 +119,34 @@ namespace Telegram.Controls.Messages
 
         public static readonly DependencyProperty SourceProperty =
             DependencyProperty.Register("Source", typeof(AnimatedImageSource), typeof(MessageReplyPattern), new PropertyMetadata(null));
+
+        #endregion
+
+        #region Model
+
+        public AnimatedImageSource Model
+        {
+            get { return (AnimatedImageSource)GetValue(ModelProperty); }
+            set { SetValue(ModelProperty, value); }
+        }
+
+        public static readonly DependencyProperty ModelProperty =
+            DependencyProperty.Register("Model", typeof(AnimatedImageSource), typeof(MessageReplyPattern), new PropertyMetadata(null, OnModelChanged));
+
+        private static void OnModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((MessageReplyPattern)d).OnModelChanged(e.NewValue as AnimatedImageSource);
+        }
+
+        private void OnModelChanged(AnimatedImageSource newValue)
+        {
+            _modelVisual?.IsVisible = newValue == null;
+
+            if (newValue != null && _templateApplied && ModelAnimated == null)
+            {
+                ModelAnimated = GetTemplateChild(nameof(ModelAnimated)) as AnimatedImage;
+            }
+        }
 
         #endregion
     }
@@ -171,8 +222,8 @@ namespace Telegram.Controls.Messages
 
         private Grid LayoutRoot;
         private Rectangle BackgroundOverlay;
-        private RichTextBlock Label;
-        private Run TitleLabel;
+        private FormattedTextBlock Label;
+        private TextBlock TitleLabel;
         private Run ServiceLabel;
         private Span MessageLabel;
         private DashPath AccentDash;
@@ -188,13 +239,19 @@ namespace Telegram.Controls.Messages
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
             BackgroundOverlay = GetTemplateChild(nameof(BackgroundOverlay)) as Rectangle;
-            Label = GetTemplateChild(nameof(Label)) as RichTextBlock;
-            TitleLabel = GetTemplateChild(nameof(TitleLabel)) as Run;
+            Label = GetTemplateChild(nameof(Label)) as FormattedTextBlock;
+            TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
             ServiceLabel = GetTemplateChild(nameof(ServiceLabel)) as Run;
             MessageLabel = GetTemplateChild(nameof(MessageLabel)) as Span;
             AccentDash = GetTemplateChild(nameof(AccentDash)) as DashPath;
             Pattern = GetTemplateChild(nameof(Pattern)) as MessageReplyPattern;
             Quote = GetTemplateChild(nameof(Quote)) as TextBlock;
+
+            BindingOperations.SetBinding(ServiceLabel, Run.ForegroundProperty, new Binding
+            {
+                Path = new PropertyPath("SubtleBrush"),
+                Source = this
+            });
 
             BackgroundOverlay.Margin = new Thickness(0, 0, -Padding.Right, 0);
 
@@ -208,9 +265,9 @@ namespace Telegram.Controls.Messages
             {
                 UpdateMessage(_message, _loading, _title);
             }
-            else if (Message != null)
+            else if (_composerHeader != null)
             {
-                OnMessageChanged(Message as MessageComposerHeader);
+                UpdateComposerHeader(_composerHeader);
             }
         }
 
@@ -227,13 +284,12 @@ namespace Telegram.Controls.Messages
 
         protected override void HideThumbnail()
         {
-            if (ThumbRoot != null)
-            {
-                ThumbRoot.Visibility = Visibility.Collapsed;
-            }
+            _thumbnailController?.Recycle();
+
+            ThumbRoot?.Visibility = Visibility.Collapsed;
         }
 
-        protected override void ShowThumbnail(CornerRadius radius = default)
+        protected override ImageBrush ShowThumbnail(CornerRadius radius = default)
         {
             if (ThumbRoot == null)
             {
@@ -245,103 +301,134 @@ namespace Telegram.Controls.Messages
             ThumbRoot.Visibility = Visibility.Visible;
             ThumbRoot.CornerRadius =
                 ThumbEllipse.CornerRadius = radius == default ? _defaultRadius : radius;
+
+            return ThumbImage;
         }
 
-        protected override void SetThumbnail(ImageSource value)
+        protected override void SetText(MessageViewModel message, bool outgoing, MessageSender messageSender, string title, string service, FormattedText text, bool quote, bool white)
         {
-            if (ThumbImage != null)
+            if (TitleLabel == null)
             {
-                ThumbImage.ImageSource = value;
+                return;
             }
-        }
 
-        protected override void SetText(IClientService clientService, bool outgoing, MessageSender messageSender, string title, string service, FormattedText text, bool quote, bool white)
-        {
-            if (TitleLabel != null)
+            TitleLabel.Text = title ?? string.Empty;
+            ServiceLabel.Text = service ?? string.Empty;
+
+            var textz = message?.TranslatedText switch
             {
-                TitleLabel.Text = title ?? string.Empty;
-                ServiceLabel.Text = service ?? string.Empty;
+                MessageTranslateResultText translated => message.Delegate.IsTranslating
+                    ? translated.Text
+                    : message.Text,
+                _ => message?.Text
+            };
 
-                if (!string.IsNullOrEmpty(text?.Text) && !string.IsNullOrEmpty(service))
+            if (!string.IsNullOrEmpty(text?.Text ?? textz?.Text) && !string.IsNullOrEmpty(service))
+            {
+                ServiceLabel.Text += ", ";
+            }
+
+            _quote = quote;
+            Quote.Visibility = quote
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            Label.MaxLines = quote ? 5 : 1;
+
+            var (accent, giftColors, customEmojiId) = outgoing ? (null, null, 0) : message?.ClientService.GetMessageSender(messageSender) switch
+            {
+                User user => (message.ClientService.GetAccentColor(user.AccentColorId), user.UpgradedGiftColors, user.BackgroundCustomEmojiId),
+                Chat chat => (message.ClientService.GetAccentColor(chat.AccentColorId), chat.UpgradedGiftColors, chat.BackgroundCustomEmojiId),
+                _ => (null, null, 0)
+            };
+
+            if (white && !_light)
+            {
+                Foreground =
+                    Background =
+                    SubtleBrush =
+                    HeaderBrush =
+                    BorderBrush = new SolidColorBrush(Colors.White);
+
+                AccentDash.Stripe1 = default;
+                AccentDash.Stripe2 = default;
+
+                Margin = new Thickness(-8, -2, -8, -4);
+            }
+            else if ((_accent != accent || _light) && !white)
+            {
+                ClearValue(ForegroundProperty);
+                ClearValue(SubtleBrushProperty);
+
+                if (giftColors != null)
                 {
-                    ServiceLabel.Text += ", ";
+                    Background =
+                        HeaderBrush = new SolidColorBrush(giftColors.LightThemeAccentColor.ToColor());
+
+                    BorderBrush = new SolidColorBrush(giftColors.LightThemeColors[0].ToColor());
+
+                    AccentDash.Stripe1 = giftColors.LightThemeColors.Count > 1
+                        ? giftColors.LightThemeColors[1].ToColor()
+                        : default;
+                    AccentDash.Stripe2 = giftColors.LightThemeColors.Count > 2
+                        ? giftColors.LightThemeColors[2].ToColor()
+                        : default;
                 }
-
-                _quote = quote;
-                Quote.Visibility = quote
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-
-                var sender = clientService?.GetMessageSender(messageSender);
-                var accent = outgoing ? null : sender switch
+                else if (accent != null)
                 {
-                    User user => clientService.GetAccentColor(user.AccentColorId),
-                    Chat chat => clientService.GetAccentColor(chat.AccentColorId),
-                    _ => null
-                };
-
-                var customEmojiId = sender switch
-                {
-                    User user2 => user2.BackgroundCustomEmojiId,
-                    Chat chat2 => chat2.BackgroundCustomEmojiId,
-                    _ => 0
-                };
-
-                if (white && !_light)
-                {
-                    Foreground =
-                        SubtleBrush =
+                    Background =
                         HeaderBrush =
-                        BorderBrush = new SolidColorBrush(Colors.White);
+                        BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
 
-                    AccentDash.Stripe1 = null;
-                    AccentDash.Stripe2 = null;
-
-                    Margin = new Thickness(-8, -2, -8, -4);
-                }
-                else if ((_accent != accent || _light) && !white)
-                {
-                    ClearValue(ForegroundProperty);
-                    ClearValue(SubtleBrushProperty);
-
-                    if (accent != null)
-                    {
-                        HeaderBrush =
-                            BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
-
-                        AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
-                            ? new SolidColorBrush(accent.LightThemeColors[1])
-                            : null;
-                        AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
-                            ? new SolidColorBrush(accent.LightThemeColors[2])
-                            : null;
-                    }
-                    else
-                    {
-                        ClearValue(HeaderBrushProperty);
-                        ClearValue(BorderBrushProperty);
-
-                        AccentDash.Stripe1 = null;
-                        AccentDash.Stripe2 = null;
-                    }
-
-                    Margin = new Thickness(0, 4, 0, 4);
-                }
-
-                if (customEmojiId != 0)
-                {
-                    Pattern.Source = new CustomEmojiFileSource(clientService, customEmojiId);
+                    AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
+                        ? accent.LightThemeColors[1]
+                        : default;
+                    AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
+                        ? accent.LightThemeColors[2]
+                        : default;
                 }
                 else
                 {
-                    Pattern.Source = null;
+                    ClearValue(BackgroundProperty);
+                    ClearValue(HeaderBrushProperty);
+                    ClearValue(BorderBrushProperty);
+
+                    AccentDash.Stripe1 = default;
+                    AccentDash.Stripe2 = default;
                 }
 
-                _accent = white ? null : accent;
-                _light = white;
-
-                CustomEmojiIcon.Add(Label, MessageLabel.Inlines, clientService, text, "MessageCustomEmojiStyle");
+                Margin = new Thickness(0, 4, 0, 4);
             }
+
+            if (giftColors != null)
+            {
+                Pattern.Source = new CustomEmojiFileSource(message.ClientService, giftColors.SymbolCustomEmojiId);
+                Pattern.Model = new CustomEmojiFileSource(message.ClientService, giftColors.ModelCustomEmojiId);
+            }
+            else if (customEmojiId != 0)
+            {
+                Pattern.Source = new CustomEmojiFileSource(message.ClientService, customEmojiId);
+                Pattern.Model = null;
+            }
+            else
+            {
+                Pattern.Source = null;
+                Pattern.Model = null;
+            }
+
+            _accent = white ? null : accent;
+            _light = white;
+
+            if (text != null)
+            {
+                Label.SetText(message?.ClientService, text);
+            }
+            else
+            {
+                Label.SetText(message?.ClientService, textz);
+            }
+
+            Label.SetQuery(string.Empty);
         }
 
         #endregion
@@ -370,26 +457,56 @@ namespace Telegram.Controls.Messages
             return base.ArrangeOverride(finalSize);
         }
 
-        public void UpdateMockup(IClientService clientService, long customEmojiId, int color)
+        public void UpdateMockup(IClientService clientService, long customEmojiId, int color, UpgradedGiftColors upgradedGift)
         {
             if (Pattern != null)
             {
-                Pattern.Source = new CustomEmojiFileSource(clientService, customEmojiId);
+                if (upgradedGift != null)
+                {
+                    Pattern.Source = new CustomEmojiFileSource(clientService, upgradedGift.SymbolCustomEmojiId);
+                    Pattern.Model = new CustomEmojiFileSource(clientService, upgradedGift.ModelCustomEmojiId);
+                }
+                else
+                {
+                    Pattern.Source = new CustomEmojiFileSource(clientService, customEmojiId);
+                    Pattern.Model = null;
+                }
             }
 
-            var accent = clientService.GetAccentColor(color);
-
-            HeaderBrush =
-                BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
-
-            if (AccentDash != null)
+            if (upgradedGift != null)
             {
-                AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
-                    ? new SolidColorBrush(accent.LightThemeColors[1])
-                    : null;
-                AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
-                    ? new SolidColorBrush(accent.LightThemeColors[2])
-                    : null;
+                Background =
+                    HeaderBrush = new SolidColorBrush(upgradedGift.LightThemeAccentColor.ToColor());
+
+                BorderBrush = new SolidColorBrush(upgradedGift.LightThemeColors[0].ToColor());
+
+                if (AccentDash != null)
+                {
+                    AccentDash.Stripe1 = upgradedGift.LightThemeColors.Count > 1
+                        ? upgradedGift.LightThemeColors[1].ToColor()
+                        : default;
+                    AccentDash.Stripe2 = upgradedGift.LightThemeColors.Count > 2
+                        ? upgradedGift.LightThemeColors[2].ToColor()
+                        : default;
+                }
+            }
+            else
+            {
+                var accent = clientService.GetAccentColor(color);
+
+                Background =
+                    HeaderBrush =
+                    BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
+
+                if (AccentDash != null)
+                {
+                    AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
+                        ? accent.LightThemeColors[1]
+                        : default;
+                    AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
+                        ? accent.LightThemeColors[2]
+                        : default;
+                }
             }
         }
     }

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Services;
@@ -22,7 +23,7 @@ namespace Telegram.Views.Settings
         public SettingsProfilePage()
         {
             InitializeComponent();
-            Title = Strings.EditInformation;
+            Title = Strings.AccountSettings;
         }
 
         private async void LogOut_Click(object sender, RoutedEventArgs e)
@@ -34,7 +35,7 @@ namespace Telegram.Views.Settings
 
         public void UpdateUser(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
-            Photo.SetUser(ViewModel.ClientService, user, 96);
+            Photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
 
             if (SettingsService.Current.Diagnostics.HidePhoneNumber)
             {

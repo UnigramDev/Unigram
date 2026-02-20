@@ -1,9 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System.Collections.Generic;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -49,8 +51,8 @@ namespace Telegram.Controls.Messages.Content
 
             LayoutRoot.Constraint = message;
 
-            var linkPreview = GetContent(message);
-            if (linkPreview?.Type is not LinkPreviewTypeStickerSet stickerSet || !_templateApplied)
+            var stickers = GetContent(message);
+            if (stickers == null || !_templateApplied)
             {
                 return;
             }
@@ -59,7 +61,7 @@ namespace Telegram.Controls.Messages.Content
             LayoutRoot.ColumnDefinitions.Clear();
             LayoutRoot.RowDefinitions.Clear();
 
-            if (stickerSet.Stickers.Count > 1)
+            if (stickers.Count > 1)
             {
                 LayoutRoot.ColumnDefinitions.Add(new ColumnDefinition());
                 LayoutRoot.ColumnDefinitions.Add(new ColumnDefinition());
@@ -68,16 +70,16 @@ namespace Telegram.Controls.Messages.Content
                 LayoutRoot.RowDefinitions.Add(new RowDefinition());
             }
 
-            for (int i = 0; i < stickerSet.Stickers.Count; i++)
+            for (int i = 0; i < stickers.Count; i++)
             {
-                var size = stickerSet.Stickers.Count > 1 ? 20 : 44;
+                var size = stickers.Count > 1 ? 20 : 44;
                 var animated = new AnimatedImage
                 {
                     Width = size,
                     Height = size,
                     FrameSize = new Size(size, size),
                     DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
-                    Source = new DelayedFileSource(message.ClientService, stickerSet.Stickers[i]),
+                    Source = new DelayedFileSource(message.ClientService, stickers[i]),
                     AutoPlay = false,
                     IsViewportAware = true
                 };
@@ -98,18 +100,25 @@ namespace Telegram.Controls.Messages.Content
         {
             if (content is MessageText text && text.LinkPreview != null && !primary)
             {
-                return text.LinkPreview.Type is LinkPreviewTypeStickerSet;
+                return text.LinkPreview.Type is LinkPreviewTypeStickerSet or LinkPreviewTypeGiftCollection;
             }
 
             return false;
         }
 
-        private LinkPreview GetContent(MessageViewModel message)
+        private IList<Sticker> GetContent(MessageViewModel message)
         {
             var content = message?.GeneratedContent ?? message?.Content;
-            if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeStickerSet)
+            if (content is MessageText text)
             {
-                return text.LinkPreview;
+                if (text.LinkPreview?.Type is LinkPreviewTypeStickerSet stickerSet)
+                {
+                    return stickerSet.Stickers;
+                }
+                else if (text.LinkPreview?.Type is LinkPreviewTypeGiftCollection giftCollection)
+                {
+                    return giftCollection.Icons;
+                }
             }
 
             return null;

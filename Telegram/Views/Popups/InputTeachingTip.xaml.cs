@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Runtime.InteropServices;
@@ -330,10 +331,6 @@ namespace Telegram.Views.Popups
 
             _tsc.TrySetResult(ContentDialogResult.Primary);
             IsOpen = false;
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void Label_KeyDown(object sender, KeyRoutedEventArgs e)

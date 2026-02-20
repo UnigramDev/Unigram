@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              Padding="0">
 
-    <Grid Background="{ThemeResource ContentDialogBackground}">
+    <Grid Background="{ThemeResource ContentDialogTopOverlaySolid}">
         <ListView x:Name="ScrollingHost"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
@@ -73,7 +73,7 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                     ScrollingHost="{x:Bind ScrollingHost}" />
     </Grid>
 </UserControl>

@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using RLottie;
 using System;
 using System.Collections.Generic;
@@ -55,7 +56,7 @@ namespace Telegram.Streams
         public StickerFormat Format { get; protected set; }
 
         public abstract void SeekCallback(long offset);
-        public abstract void ReadCallback(long count);
+        public abstract void ReadCallback(long count, long buffer, out long bytesRead);
 
         public abstract string FilePath { get; }
         public abstract long FileSize { get; }
@@ -66,11 +67,15 @@ namespace Telegram.Streams
 
         public bool IsUnique { get; set; }
 
+        public bool IsAnimated { get; set; } = true;
+
+        public double SeekToSeconds { get; set; } = 0;
+
         public override bool Equals(object obj)
         {
             if (obj is AnimatedImageSource y && !y.IsUnique && !IsUnique)
             {
-                return y.Id == Id;
+                return y.Id == Id && y.IsAnimated == IsAnimated;
             }
 
             return base.Equals(obj);
@@ -83,7 +88,7 @@ namespace Telegram.Streams
                 return base.GetHashCode();
             }
 
-            return Id.GetHashCode();
+            return HashCode.Combine(Id, IsAnimated);
         }
     }
 

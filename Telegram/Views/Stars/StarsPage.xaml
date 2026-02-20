@@ -38,8 +38,12 @@
                                                        Source="ms-appx:///Assets/Animations/YourStars.tgs"
                                                        LoopCount="1" />
 
-                            <controls:HeaderedControl Background="{ThemeResource SettingsItemBackground}">
-                                <StackPanel Padding="12,4,12,8">
+                            <controls:HeaderedControl>
+                                <StackPanel Background="{ThemeResource SettingsItemBackground}"
+                                            BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            Padding="12,4,12,8">
                                     <StackPanel Orientation="Horizontal"
                                                 HorizontalAlignment="Center">
                                         <controls:PremiumStarCount Width="34"
@@ -73,12 +77,11 @@
                             </controls:HeaderedControl>
 
                             <controls:HeaderedControl>
-                                <controls:BadgeButton Click="Affiliate_Click"
-                                                      Content="{CustomResource UserAffiliateProgramRowTitle}"
-                                                      Badge="{CustomResource UserAffiliateProgramRowText}"
-                                                      Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                                      Glyph="&#xE9B5;"
-                                                      IsChevronVisible="True" />
+                                <controls:SettingsButton Click="Affiliate_Click"
+                                                         Content="{CustomResource UserAffiliateProgramRowTitle}"
+                                                         Description="{CustomResource UserAffiliateProgramRowText}"
+                                                         Glyph="&#xE9B5;"
+                                                         IsChevronVisible="True" />
                             </controls:HeaderedControl>
 
                             <TextBlock Text="{CustomResource StarMySubscriptions}"
@@ -91,8 +94,7 @@
                     </ListView.Header>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <revenue:StarSubscriptionCell Background="{ThemeResource SettingsItemBackground}"
-                                                          BorderBrush="{ThemeResource SettingsItemBorderBrush}" />
+                            <revenue:StarSubscriptionCell />
                         </DataTemplate>
                     </ListView.ItemTemplate>
                     <ListView.Template>
@@ -139,8 +141,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <revenue:StarTransactionCell Background="{ThemeResource SettingsItemBackground}"
-                                                 BorderBrush="{ThemeResource SettingsItemBorderBrush}" />
+                    <revenue:StarTransactionCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </controls:TableListView>

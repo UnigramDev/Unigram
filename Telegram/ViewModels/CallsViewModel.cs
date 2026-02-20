@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,11 +13,15 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Calls.Popups;
+using Telegram.Views.Popups;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
@@ -145,18 +150,43 @@ namespace Telegram.ViewModels
 
         #endregion
 
-        public async void CreateLink()
+        private static async void CreateLink(IClientService clientService, INavigationService navigation)
         {
-            var response = await ClientService.SendAsync(new CreateGroupCall(null));
-            if (response is GroupCallInfo info)
+            var response = await clientService.SendAsync(new CreateGroupCall(null));
+            if (response is GroupCallInfo info && clientService.TryGetGroupCall(info.GroupCallId, out GroupCall groupCall))
             {
-                response = await ClientService.SendAsync(new GetGroupCall(info.GroupCallId));
-
-                if (response is GroupCall groupCall)
-                {
-                    NavigationService.ShowPopup(new ShareGroupCallPopup(ClientService, NavigationService, groupCall));
-                }
+                navigation.ShowPopup(new ShareGroupCallPopup(clientService, navigation, groupCall));
             }
+        }
+
+        public static void NewCall(IClientService clientService, INavigationService navigation)
+        {
+            var popup = new ChooseChatsPopup();
+            var button = new SettingsButton
+            {
+                Content = Strings.GroupCallCreateLink,
+                Glyph = Icons.LinkAdd,
+                Style = BootStrapper.Current.Resources["GlyphBadgeButtonPopupStyle"] as Style,
+                Margin = new Thickness(12, 0, 12, 0),
+            };
+
+            void handler(object sender, RoutedEventArgs e)
+            {
+                button.Click -= handler;
+                popup.Hide();
+
+                CreateLink(clientService, navigation);
+            }
+
+            button.Click += handler;
+            popup.Header = button;
+
+            navigation.ShowPopup(popup, new ChooseChatsConfigurationCreateGroupCall());
+        }
+
+        public void NewCall()
+        {
+            NewCall(ClientService, NavigationService);
         }
     }
 

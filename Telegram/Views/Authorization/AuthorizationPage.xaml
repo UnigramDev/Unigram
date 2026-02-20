@@ -90,11 +90,21 @@
                         Style="{StaticResource AccentTextButtonStyle}"
                         HorizontalAlignment="Center" />
 
-                <Button Click="{x:Bind ViewModel.ContinueOnThisLanguage}"
-                        Content="{x:Bind ViewModel.ContinueOnThisLanguageText, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.ContinueOnThisLanguageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                        Style="{StaticResource AccentTextButtonStyle}"
-                        HorizontalAlignment="Center" />
+                <StackPanel Height="64"
+                            VerticalAlignment="Bottom"
+                            Margin="0,0,0,-64">
+                    <Button Click="{x:Bind ViewModel.LoginWithPasskey}"
+                            Content="{x:Bind ViewModel.S.LoginWithPasskey}"
+                            Visibility="{x:Bind ViewModel.CanUseLoginPasskey, Mode=OneWay}"
+                            Style="{StaticResource AccentTextButtonStyle}"
+                            HorizontalAlignment="Center" />
+
+                    <Button Click="{x:Bind ViewModel.ContinueOnThisLanguage}"
+                            Content="{x:Bind ViewModel.ContinueOnThisLanguageText, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.ContinueOnThisLanguageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                            Style="{StaticResource AccentTextButtonStyle}"
+                            HorizontalAlignment="Center" />
+                </StackPanel>
             </StackPanel>
         </StackPanel>
 
@@ -194,11 +204,21 @@
                         Style="{StaticResource AccentTextButtonStyle}"
                         HorizontalAlignment="Center" />
 
-                <Button Click="{x:Bind ViewModel.ContinueOnThisLanguage}"
-                        Content="{x:Bind ViewModel.ContinueOnThisLanguageText, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.ContinueOnThisLanguageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                        Style="{StaticResource AccentTextButtonStyle}"
-                        HorizontalAlignment="Center" />
+                <StackPanel Height="64"
+                            VerticalAlignment="Bottom"
+                            Margin="0,0,0,-64">
+                    <Button Click="{x:Bind ViewModel.LoginWithPasskey}"
+                            Content="{x:Bind ViewModel.S.LoginWithPasskey}"
+                            Visibility="{x:Bind ViewModel.CanUseLoginPasskey, Mode=OneWay}"
+                            Style="{StaticResource AccentTextButtonStyle}"
+                            HorizontalAlignment="Center" />
+
+                    <Button Click="{x:Bind ViewModel.ContinueOnThisLanguage}"
+                            Content="{x:Bind ViewModel.ContinueOnThisLanguageText, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.ContinueOnThisLanguageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                            Style="{StaticResource AccentTextButtonStyle}"
+                            HorizontalAlignment="Center" />
+                </StackPanel>
             </StackPanel>
 
         </StackPanel>

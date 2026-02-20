@@ -4,30 +4,20 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:controls="using:Telegram.Controls"
-                  xmlns:td="using:Telegram.Td.Api"
                   xmlns:local="using:Telegram.Views"
                   mc:Ignorable="d"
                   NavigationMode="Root">
 
-    <Page.Resources>
-        <CollectionViewSource x:Name="ItemsSource"
-                              Source="{x:Bind ViewModel.Items}"
-                              IsSourceGrouped="True" />
-    </Page.Resources>
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
-                                ItemsSource="{x:Bind ItemsSource.View}"
+                                ItemsSource="{x:Bind ViewModel.Items}"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
-                                ItemClick="List_ItemClick"
-                                IsItemClickEnabled="True"
-                                SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}">
+                                SelectionMode="None">
             <ListView.Header>
-                <controls:SettingsPanel IsHeader="True"
-                                        Margin="0,0,0,-32">
+                <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl Header="{CustomResource TranslateMessages}"
-                                              Footer="{x:Bind ConvertTranslateInfo(ViewModel.TranslateMessages), Mode=OneWay}">
+                                              Footer="{CustomResource TranslateMessagesInfo1}">
                         <CheckBox IsChecked="{x:Bind ViewModel.TranslateMessages, Mode=TwoWay}"
                                   Content="{CustomResource ShowTranslateButton}"
                                   Style="{StaticResource SettingsCheckBoxStyle}" />
@@ -38,28 +28,50 @@
                                                    IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
                                                    IsChecked="{x:Bind ViewModel.TranslateChats, Mode=OneWay}"
                                                    Content="{CustomResource ShowTranslateChatButton}"
-                                                   Style="{StaticResource SettingsCheckBoxStyle}" />
+                                                   Style="{StaticResource SettingsCheckBoxStyle}"
+                                                   CornerRadius="4" />
                             <TextBlock x:Name="TranslateChatsLock"
                                        x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                        Text="&#xEA25;"
                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        FontSize="20"
-                                       Padding="20,12,0,0"
+                                       Padding="20,14,0,0"
                                        IsHitTestVisible="False" />
                         </Grid>
 
-                        <controls:BadgeButton Content="{CustomResource DoNotTranslate}"
-                                              Badge="{x:Bind ViewModel.DoNotTranslate, Mode=OneWay}"
-                                              Click="{x:Bind ViewModel.ChangeDoNotTranslate}"
-                                              Visibility="{x:Bind ConvertDoNotTranslate(ViewModel.TranslateMessages, ViewModel.TranslateChats), Mode=OneWay}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xE98B;" />
+                        <controls:SettingsButton Content="{CustomResource DoNotTranslate}"
+                                                 Badge="{x:Bind ViewModel.DoNotTranslate, Mode=OneWay}"
+                                                 Click="{x:Bind ViewModel.ChangeDoNotTranslate}"
+                                                 Visibility="{x:Bind ConvertDoNotTranslate(ViewModel.TranslateMessages, ViewModel.TranslateChats), Mode=OneWay}"
+                                                 Glyph="&#xE98B;" />
                     </controls:HeaderedControl>
 
-                    <TextBlock Text="{CustomResource Language}"
-                               Style="{StaticResource BaseTextBlockStyle}"
-                               Margin="24,16,24,6" />
+                    <StackPanel>
+                        <TextBlock Text="{CustomResource Language}"
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   Margin="24,16,24,8" />
+
+                        <Grid HorizontalAlignment="Left"
+                              Margin="24,0,24,2"
+                              Width="280">
+                            <TextBox x:Name="SearchField"
+                                     Text="{x:Bind ViewModel.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     PlaceholderText="{CustomResource Search}"
+                                     PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                     Padding="34,5,6,6"
+                                     InputScope="Search" />
+
+                            <controls:GlyphButton Glyph="&#xE721;"
+                                                  FontSize="16"
+                                                  Width="36"
+                                                  Height="32"
+                                                  IsTabStop="False"
+                                                  AutomationProperties.AccessibilityView="Raw"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Center" />
+                        </Grid>
+                    </StackPanel>
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.GroupStyle>
@@ -88,27 +100,37 @@
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>
             </ListView.GroupStyle>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="controls:TableListViewItem">
+                    <Setter Property="Background"
+                            Value="Transparent" />
+                    <Setter Property="BorderBrush"
+                            Value="Transparent" />
+                    <Setter Property="BorderThickness"
+                            Value="0" />
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="td:LanguagePackInfo">
-                    <Grid Padding="12,6"
-                          Background="{ThemeResource SettingsItemBackground}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="{x:Bind NativeName}"
-                                   VerticalAlignment="Bottom"
-                                   Style="{StaticResource BaseTextBlockStyle}"
-                                   TextWrapping="NoWrap"
-                                   TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Name}"
-                                   Style="{StaticResource InfoBodyTextBlockStyle}"
-                                   VerticalAlignment="Top"
-                                   TextWrapping="NoWrap"
-                                   TextTrimming="CharacterEllipsis"
-                                   Grid.Row="1" />
-                    </Grid>
+                <DataTemplate>
+                    <controls:SettingsRadioButton GroupName="Languages"
+                                                  CornerRadius="4"
+                                                  BorderThickness="1">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock VerticalAlignment="Bottom"
+                                       Style="{StaticResource BaseTextBlockStyle}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Style="{StaticResource InfoBodyTextBlockStyle}"
+                                       VerticalAlignment="Top"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       Grid.Row="1" />
+                        </Grid>
+                    </controls:SettingsRadioButton>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <!--<ListView.Header>

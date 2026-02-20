@@ -1,11 +1,13 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 
 namespace Telegram.Collections
 {
@@ -17,8 +19,9 @@ namespace Telegram.Collections
     public partial class SynchronizedList<T> : MvxObservableCollection<T>, ISynchronizedList
     {
         private ObservableCollection<T> _source;
+        private bool _reverse;
 
-        public void UpdateSource(ObservableCollection<T> source)
+        public void UpdateSource(ObservableCollection<T> source, bool reverse)
         {
             if (_source != null)
             {
@@ -26,11 +29,12 @@ namespace Telegram.Collections
             }
 
             _source = source;
+            _reverse = reverse;
 
             if (_source != null)
             {
                 _source.CollectionChanged += OnCollectionChanged;
-                ReplaceWith(_source);
+                ReplaceWith(reverse ? _source.Reverse() : _source);
             }
             else
             {
@@ -56,13 +60,13 @@ namespace Telegram.Collections
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    InsertRange(e.NewStartingIndex, e.NewItems);
+                    InsertRange(_reverse ? _source.Count - e.NewStartingIndex - e.NewItems.Count : e.NewStartingIndex, e.NewItems);
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    RemoveRange(e.OldStartingIndex, e.OldItems.Count);
+                    RemoveRange(_reverse ? _source.Count - e.OldStartingIndex : e.OldStartingIndex, e.OldItems.Count);
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    ReplaceWith(_source);
+                    ReplaceWith(_reverse ? _source.Reverse() : _source);
                     break;
             }
         }

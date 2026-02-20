@@ -1,11 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -57,28 +59,28 @@ namespace Telegram.Views.Popups
             Closed += OnClosed;
         }
 
-        public DateTime Value
+        public MessageSchedulingState SchedulingState { get; private set; }
+
+        private DateTime GetDateTime(bool utc)
         {
-            get
+            if (utc)
             {
-                if (Date.Date is DateTimeOffset date)
+                if (Date.Date is DateTimeOffset dateUtc)
                 {
-                    return date.Add(Time.Time).UtcDateTime;
+                    return dateUtc.Add(Time.Time).UtcDateTime;
                 }
-
-                return DateTime.MinValue;
             }
-        }
 
-        public bool IsUntilOnline { get; private set; }
+            if (Date.Date is DateTimeOffset date)
+            {
+                return date.Add(Time.Time).DateTime;
+            }
+
+            return DateTime.MinValue;
+        }
 
         private void OnActionButtonClick(TeachingTip sender, object args)
         {
-            if (IsUntilOnline)
-            {
-                return;
-            }
-
             if (Date.Date == null || Date.Date < DateTime.Today)
             {
                 VisualUtilities.ShakeView(Date);
@@ -90,17 +92,56 @@ namespace Telegram.Views.Popups
                 return;
             }
 
+            SchedulingState = new MessageSchedulingStateSendAtDate(GetDateTime(true).ToTimestamp(), _repeat);
+
             _tsc.TrySetResult(ContentDialogResult.Primary);
             IsOpen = false;
         }
 
         private void Online_Click(object sender, RoutedEventArgs e)
         {
-            IsUntilOnline = true;
+            SchedulingState = new MessageSchedulingStateSendWhenOnline();
 
             _tsc.TrySetResult(ContentDialogResult.Primary);
             IsOpen = false;
         }
+
+        private int _repeat;
+        public int Repeat
+        {
+            get => Array.IndexOf(_repeatIndexer, _repeat);
+            set
+            {
+                if (value >= 0 && value < _repeatIndexer.Length && _repeat != _repeatIndexer[value])
+                {
+                    _repeat = _repeatIndexer[value];
+                }
+            }
+        }
+
+        private readonly int[] _repeatIndexer = new[]
+        {
+            0,
+            86400,
+            7 * 86400,
+            14 * 86400,
+            30 * 86400,
+            91 * 86400,
+            182 * 86400,
+            365 * 86400
+        };
+
+        public List<SettingsOptionItem<int>> RepeatOptions { get; } = new()
+        {
+            new SettingsOptionItem<int>(0, Strings.MessageScheduledRepeatOptionNever),
+            new SettingsOptionItem<int>(86400, Strings.MessageScheduledRepeatOptionDaily),
+            new SettingsOptionItem<int>(7 * 86400, Strings.MessageScheduledRepeatOptionWeekly),
+            new SettingsOptionItem<int>(14 * 86400, Strings.MessageScheduledRepeatOptionBiweekly),
+            new SettingsOptionItem<int>(30 * 86400, Strings.MessageScheduledRepeatOptionMonthly),
+            new SettingsOptionItem<int>(91 * 86400, Strings.MessageScheduledRepeatOption3Monthly),
+            new SettingsOptionItem<int>(182 * 86400, Strings.MessageScheduledRepeatOption6Monthly),
+            new SettingsOptionItem<int>(365 * 86400, Strings.MessageScheduledRepeatOptionYearly),
+        };
 
         private void OnClosed(TeachingTip sender, TeachingTipClosedEventArgs args)
         {

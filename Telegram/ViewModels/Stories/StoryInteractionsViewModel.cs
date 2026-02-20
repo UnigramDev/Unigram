@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -192,7 +193,7 @@ namespace Telegram.ViewModels
             var totalCount = 0u;
             var token = _nextToken = new CancellationTokenSource();
 
-            var response = await ClientService.SendAsync(new GetStoryInteractions(_story.StoryId, Query ?? string.Empty, OnlyContacts > 0, false, SortBy == StoryInteractionsSortBy.Reaction, _nextOffset, 50));
+            var response = await ClientService.SendAsync(new GetStoryInteractions(_story.Id, Query ?? string.Empty, OnlyContacts > 0, false, SortBy == StoryInteractionsSortBy.Reaction, _nextOffset, 50));
             if (response is StoryInteractions interactions && !token.IsCancellationRequested)
             {
                 _nextOffset = interactions.NextOffset;

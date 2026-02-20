@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -124,7 +125,7 @@ namespace Telegram.Views
                     void handler(object sender, RoutedEventArgs e)
                     {
                         scrollingHost.Loaded -= handler;
-                        scrollingHost.ChangeView(null, scrollViewerPosition.ScrollPosition, null, true);
+                        scrollingHost.TryChangeView(null, scrollViewerPosition.ScrollPosition, null, true);
                     }
 
                     scrollingHost.Loaded += handler;

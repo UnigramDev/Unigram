@@ -1,15 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
@@ -23,71 +24,83 @@ namespace Telegram.Views.Popups
 
             _clientService = clientService;
 
-            Photo.SetChat(clientService, info, 96);
+            Photo.Source = ProfilePictureSource.Chat(clientService, info);
 
-            Identity.SetStatus(info);
+            Identity.SetStatus(clientService, info, BotVerified);
 
             Title.Text = info.Title;
-            Subtitle.Text = ConvertCount(info.MemberCount, info.Type is InviteLinkChatTypeChannel);
+
+            if (info.CreatesJoinRequest)
+            {
+                Subtitle.Text = Locale.Declension(info.Type is InviteLinkChatTypeChannel ? Strings.R.Subscribers : Strings.R.Members, info.MemberCount);
+            }
+            else
+            {
+                Subtitle.Text = (info.Type is InviteLinkChatTypeChannel ? info.IsPublic ? Strings.ChannelPublic : Strings.ChannelPrivate : info.IsPublic ? Strings.MegaPublic : Strings.MegaPrivate).ToLower();
+            }
+
+            if (string.IsNullOrEmpty(info.Description))
+            {
+                Description.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Description.Text = info.Description;
+            }
 
             PrimaryButtonText = info.CreatesJoinRequest ? Strings.RequestToJoin2 : Strings.ChannelJoin2;
             SecondaryButtonText = Strings.Cancel;
 
-            if (info.MemberUserIds.Count > 0)
-            {
-                FooterPanel.Visibility = ConvertMoreVisibility(info.MemberCount, info.MemberUserIds.Count);
-                Footer.Text = string.Format("+{0}", info.MemberCount - info.MemberUserIds.Count);
+            Participants.ItemSize = 36;
+            Participants.ItemOverlap = 16;
 
-                Members.Visibility = Visibility.Visible;
-                Members.ItemsSource = clientService.GetUsers(info.MemberUserIds);
+            if (info.CreatesJoinRequest)
+            {
+                Participants.Visibility = Visibility.Collapsed;
+                TextBlockHelper.SetMarkdown(JoinRequestInfo, Strings.RequestToJoinChannelDescription);
             }
             else
             {
-                Members.Visibility = Visibility.Collapsed;
-            }
+                var participantIds = info.MemberUserIds.Select(x => (MessageSender)new MessageSenderUser(x)).ToList();
+                if (participantIds.Count == 1 && info.MemberCount == 1)
+                {
+                    var participant1 = clientService.GetTitle(participantIds[0]);
 
-            JoinRequestInfo.Visibility = info.CreatesJoinRequest
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+                    Participants.Items.ReplaceDiff(participantIds);
+                    TextBlockHelper.SetMarkdown(JoinRequestInfo, string.Format(Strings.GroupJoinLinkText2One, participant1));
+                }
+                else if (participantIds.Count == 2 && info.MemberCount == 2)
+                {
+                    var participant1 = clientService.GetTitle(participantIds[0]);
+                    var participant2 = clientService.GetTitle(participantIds[1]);
+
+                    Participants.Items.ReplaceDiff(participantIds);
+                    TextBlockHelper.SetMarkdown(JoinRequestInfo, string.Format(Strings.GroupJoinLinkText2Two, participant1, participant2));
+                }
+                else if (participantIds.Count >= 2 && info.MemberCount >= 3)
+                {
+                    var participant1 = clientService.GetTitle(participantIds[0]);
+                    var participant2 = clientService.GetTitle(participantIds[1]);
+
+                    Participants.Items.ReplaceDiff(participantIds);
+                    TextBlockHelper.SetMarkdown(JoinRequestInfo, Locale.Declension(Strings.R.GroupJoinLinkText2Many, info.MemberCount - 2, participant1, participant2));
+                }
+                else if (info.MemberCount > 0)
+                {
+                    Participants.Visibility = Visibility.Collapsed;
+                    TextBlockHelper.SetMarkdown(JoinRequestInfo, Locale.Declension(Strings.R.GroupJoinLinkText2Unknown, info.MemberCount));
+                }
+                else
+                {
+                    Participants.Visibility = Visibility.Collapsed;
+                    JoinRequestInfo.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
-        public string ConvertCount(int total, bool broadcast)
+        private void Participants_RecentUserHeadChanged(ProfilePicture sender, MessageSender messageSender)
         {
-            return Locale.Declension(broadcast ? Strings.R.Subscribers : Strings.R.Members, total);
-        }
-
-        public Visibility ConvertMoreVisibility(int total, int count)
-        {
-            return total - count > 0 ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
-            var content = args.ItemContainer.ContentTemplateRoot as StackPanel;
-            var user = args.Item as User;
-
-            if (args.Phase == 0)
-            {
-                var title = content.Children[1] as TextBlock;
-                title.Text = user.FullName();
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(_clientService, user, 48);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-            }
-
-            args.Handled = true;
+            sender.Source = ProfilePictureSource.MessageSender(_clientService, messageSender);
         }
     }
 }

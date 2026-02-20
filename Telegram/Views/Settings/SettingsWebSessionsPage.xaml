@@ -26,11 +26,10 @@
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl Footer="{CustomResource ClearOtherWebSessionsHelp}">
-                        <controls:BadgeButton Content="{CustomResource TerminateAllWebSessions}"
-                                              Click="{x:Bind ViewModel.TerminateOthers}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Foreground="{ThemeResource DangerButtonBackground}"
-                                              Glyph="&#xE98B;" />
+                        <controls:SettingsButton Content="{CustomResource TerminateAllWebSessions}"
+                                                 Click="{x:Bind ViewModel.TerminateOthers}"
+                                                 Foreground="{ThemeResource DangerButtonBackground}"
+                                                 Glyph="&#xE98B;" />
                     </controls:HeaderedControl>
 
                     <TextBlock Text="{CustomResource OtherWebSessions}"

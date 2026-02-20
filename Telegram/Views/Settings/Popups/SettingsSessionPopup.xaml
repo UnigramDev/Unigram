@@ -41,6 +41,7 @@
                        Style="{StaticResource PopupTextBlockStyle}"
                        TextAlignment="Center"
                        TextTrimming="CharacterEllipsis"
+                       TextWrapping="NoWrap"
                        Margin="12,12,12,0" />
 
             <TextBlock x:Name="Subtitle"
@@ -51,53 +52,48 @@
                        Grid.Row="2" />
         </StackPanel>
 
-        <controls:BadgeButton x:Name="Application"
-                              Content="{CustomResource Application}"
-                              Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                              Glyph="&#xE975;"
-                              Background="Transparent"
-                              Grid.Row="1" />
-        <controls:BadgeButton x:Name="Location"
-                              Content="{CustomResource Location}"
-                              Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                              Glyph="&#xE1C4;"
-                              Background="Transparent"
-                              Grid.Row="2" />
-        <controls:BadgeButton x:Name="Address"
-                              Content="{CustomResource IpAddress}"
-                              Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                              Glyph="&#xE774;"
-                              Background="Transparent"
-                              Grid.Row="3" />
+        <controls:SettingsButton x:Name="Application"
+                                 Description="{CustomResource Application}"
+                                 Glyph="&#xE975;"
+                                 Background="Transparent"
+                                 Grid.Row="1" />
+        <controls:SettingsButton x:Name="Location"
+                                 Description="{CustomResource Location}"
+                                 Glyph="&#xE1C4;"
+                                 Background="Transparent"
+                                 Grid.Row="2" />
+        <controls:SettingsButton x:Name="Address"
+                                 Description="{CustomResource IpAddress}"
+                                 Glyph="&#xE774;"
+                                 Background="Transparent"
+                                 Grid.Row="3" />
 
-        <controls:BadgeButton x:Name="AcceptCallsPanel"
-                              Click="AcceptCallsPanel_Click"
-                              Content="{CustomResource AcceptCalls}"
-                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                              Glyph="&#xE717;"
-                              Background="Transparent"
-                              Margin="0,0,12,0"
-                              Grid.Row="4">
-            <controls:BadgeButton.Badge>
+        <controls:SettingsButton x:Name="AcceptCallsPanel"
+                                 Click="AcceptCallsPanel_Click"
+                                 Content="{CustomResource AcceptCalls}"
+                                 Glyph="&#xE717;"
+                                 Background="Transparent"
+                                 Margin="0,0,12,0"
+                                 Grid.Row="4">
+            <controls:SettingsButton.Badge>
                 <CheckBox x:Name="AcceptCalls"
                           MinWidth="0"
                           Padding="0" />
-            </controls:BadgeButton.Badge>
-        </controls:BadgeButton>
+            </controls:SettingsButton.Badge>
+        </controls:SettingsButton>
 
-        <controls:BadgeButton x:Name="AcceptSecretChatsPanel"
-                              Click="AcceptSecretChatsPanel_Click"
-                              Content="{CustomResource AcceptSecretChats}"
-                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                              Glyph="&#xE72E;"
-                              Background="Transparent"
-                              Margin="0,0,12,0"
-                              Grid.Row="5">
-            <controls:BadgeButton.Badge>
+        <controls:SettingsButton x:Name="AcceptSecretChatsPanel"
+                                 Click="AcceptSecretChatsPanel_Click"
+                                 Content="{CustomResource AcceptSecretChats}"
+                                 Glyph="&#xE72E;"
+                                 Background="Transparent"
+                                 Margin="0,0,12,0"
+                                 Grid.Row="5">
+            <controls:SettingsButton.Badge>
                 <CheckBox x:Name="AcceptSecretChats"
                           MinWidth="0"
                           Padding="0" />
-            </controls:BadgeButton.Badge>
-        </controls:BadgeButton>
+            </controls:SettingsButton.Badge>
+        </controls:SettingsButton>
     </Grid>
 </controls:ContentPopup>

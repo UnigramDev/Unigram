@@ -1,16 +1,14 @@
-//
+﻿//
 // Copyright Fela Ameghino 2015-2023
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Win32;
-using System;
+using System.Buffers.Text;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Runtime.InteropServices;
+using System.Text;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
@@ -18,234 +16,39 @@ using Windows.Storage;
 
 namespace Telegram.Stub
 {
-    class BridgeApplicationContext : ApplicationContext
+    class BridgeApplicationContext
     {
-        private AppServiceConnection _connection = null;
-
-        private MenuItem _openMenuItem;
-        private MenuItem _exitMenuItem;
-        private NotifyIcon _notifyIcon = null;
+        private AppServiceConnection? _connection = null;
+        private readonly NotifyIcon _notifyIcon;
 
         private bool _closeRequested = true;
         private int _processId;
 
-        //private InterceptKeys _intercept;
-
-        public BridgeApplicationContext()
+        public BridgeApplicationContext(NotifyIcon notifyIcon)
         {
-            //_intercept = new InterceptKeys();
-
             SystemEvents.SessionEnded += OnSessionEnded;
 
-            _openMenuItem = new MenuItem("Open Unigram", new EventHandler(OpenApp));
-            _exitMenuItem = new MenuItem("Quit Unigram", new EventHandler(Exit));
-            _openMenuItem.DefaultItem = true;
-
-            _notifyIcon = new NotifyIcon();
-            _notifyIcon.Click += OpenApp;
-            _notifyIcon.Icon = Properties.Resources.Default;
-            _notifyIcon.ContextMenu = new ContextMenu(new MenuItem[] { _openMenuItem, _exitMenuItem });
-#if DEBUG
-            _notifyIcon.Text = "Telegram";
-#else
-            _notifyIcon.Text = "Unigram";
-#endif
-
-            _notifyIcon.Visible = true;
+            _notifyIcon = notifyIcon;
+            _notifyIcon.Click += OnClick;
+            _notifyIcon.Exit += OnExit;
 
             try
             {
                 var local = ApplicationData.Current.LocalSettings;
                 if (local.Values.TryGet("IsLaunchMinimized", out bool minimized) && !minimized)
                 {
-                    OpenApp(null, null);
+                    OnClick(null, EventArgs.Empty);
                 }
                 else
                 {
                     Connect();
                 }
-
-                if (local.Values.ContainsKey("AddLocalhostExemption"))
-                {
-                    // Already registered
-                }
-                else
-                {
-                    AddLocalhostExemption();
-                    local.Values.Add("AddLocalhostExemption", true);
-                }
-
-                //if (local.Values.ContainsKey("MigratedV2"))
-                //{
-                //    // Already migrated
-                //}
-                //else if (Migrate())
-                //{
-                //    local.Values.Add("MigratedV2", true);
-                //}
             }
             catch
             {
                 // Can happen
             }
         }
-
-        private bool Migrate()
-        {
-            var destination = ApplicationData.Current.LocalFolder.Path;
-            var source = destination.Replace(Package.Current.Id.FamilyName, "TelegramFZ-LLC.Unigram_1vfw5zm9jmzqy");
-
-            var migrated = false;
-
-            if (Directory.Exists(source))
-            {
-                try
-                {
-                    var confirm = MessageBox.Show("A previous installation of the app has been found. Do you want to migrate your accounts to this app?\n\nWARNING: secret chats will not be migrated.", "Unigram", MessageBoxButtons.YesNoCancel);
-                    if (confirm != DialogResult.Yes)
-                    {
-                        return confirm == DialogResult.No;
-                    }
-
-                    _closeRequested = false;
-
-                    _connection.RequestReceived -= OnRequestReceived;
-                    _connection.ServiceClosed -= OnServiceClosed;
-
-                    var current = Process.GetCurrentProcess();
-
-                    foreach (var process in Process.GetProcesses())
-                    {
-                        if (process.Id == current.Id)
-                        {
-                            continue;
-                        }
-
-                        try
-                        {
-                            if (process.MainModule.FileName.Contains("1vfw5zm9jmzqy") || process.MainModule.FileName.Contains("3epzvh0nk91te"))
-                            {
-                                process.Kill();
-                            }
-                        }
-                        catch
-                        {
-                            // It's not always possible to access MainModule
-                        }
-                    }
-
-                    var accounts = Directory.GetDirectories(source);
-
-                    foreach (var folder in accounts)
-                    {
-                        void Migrate(string binlog)
-                        {
-                            var binlogSource = Path.Combine(folder, binlog);
-                            var binlogDestination = binlogSource.Replace("TelegramFZ-LLC.Unigram_1vfw5zm9jmzqy", Package.Current.Id.FamilyName);
-
-                            if (File.Exists(binlogSource))
-                            {
-                                var directorty = Path.GetFileName(binlogDestination);
-
-                                var session = Path.GetFileName(folder);
-                                var container = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
-
-                                container.Values["UserId"] = 1L;
-                                container.Values["UseTestDC"] = binlog == "td_test.binlog";
-
-                                Directory.CreateDirectory(directorty);
-                                File.Copy(binlogSource, binlogDestination, true);
-                            }
-                        }
-
-                        Migrate("td.binlog");
-                        Migrate("td_test.binlog");
-                    }
-
-                    migrated = true;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-                finally
-                {
-                    OpenApp(null, null);
-                }
-            }
-
-            return migrated;
-        }
-
-        /*[DllImport("..\\Telegram.Diagnostics.dll")]
-        public static extern int start(uint pid, uint framework);
-
-        private void LaunchLayoutCycleMonitor(uint pid)
-        {
-            var process = Process.GetCurrentProcess();
-            var fullPath = process.MainModule.FileName;
-
-            var path = Path.GetDirectoryName(fullPath);
-            path = Path.GetDirectoryName(path);
-            path = Path.Combine(path, "Telegram.Diagnostics.dll");
-
-            AllowAppContainerAccess(path);
-
-            //if (!AllowAppContainerAccess(path))
-            //{
-            //    MessageBox.Show("AllowAppContainerAccess");
-            //    return;
-            //}
-
-            var hr = start(pid, 1);
-
-            var exception = Marshal.GetExceptionForHR(hr);
-            if (exception != null)
-            {
-                MessageBox.Show(exception.ToString());
-            }
-            else
-            {
-                MessageBox.Show("All good");
-            }
-        }
-
-        [DllImport("Advapi32.dll", SetLastError = true)]
-        private static extern bool ConvertStringSecurityDescriptorToSecurityDescriptor(string StringSecurityDescriptor, uint StringSDRevision, out IntPtr SecurityDescriptor, out UIntPtr SecurityDescriptorSize);
-
-        [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetSecurityDescriptorDacl(IntPtr pSecurityDescriptor, [MarshalAs(UnmanagedType.Bool)] out bool bDaclPresent, ref IntPtr pDacl, [MarshalAs(UnmanagedType.Bool)] out bool bDaclDefaulted);
-
-        [DllImport("advapi32.dll")]
-        public static extern int SetNamedSecurityInfo(
-                    String pObjectName,
-                    int ObjectType,
-                    int SecurityInfo,
-                    IntPtr psidOwner,
-                    IntPtr psidGroup,
-                    IntPtr pDacl,
-                    IntPtr pSacl);
-
-        private bool AllowAppContainerAccess(string path)
-        {
-            var success = ConvertStringSecurityDescriptorToSecurityDescriptor("D:(A;;GRGX;;;S-1-15-2-1)(A;;GRGX;;;S-1-15-2-2)", 1, out IntPtr sd, out UIntPtr sd_length);
-            if (success)
-            {
-                IntPtr dacl = IntPtr.Zero;
-                success = GetSecurityDescriptorDacl(sd, out bool present, ref dacl, out bool defaulted);
-
-                if (success)
-                {
-                    var result = SetNamedSecurityInfo(path, 1, 4, IntPtr.Zero, IntPtr.Zero, dacl, IntPtr.Zero);
-                    success = result == 0;
-                }
-
-                Marshal.FreeHGlobal(sd);
-            }
-
-            return success;
-        }*/
 
         private void OnSessionEnded(object sender, SessionEndedEventArgs e)
         {
@@ -270,18 +73,10 @@ namespace Telegram.Stub
             }
 
             _notifyIcon.Dispose();
-            Application.Exit();
         }
 
-        private async void OpenApp(object sender, EventArgs e)
+        private async void OnClick(object? sender, EventArgs e)
         {
-            // There's a bug (I guess?) in NotifyIcon that causes Click handler
-            // to be fired if user opens the context menu and then dismisses it.
-            if (e is MouseEventArgs args && args.Button == MouseButtons.Right)
-            {
-                return;
-            }
-
             try
             {
                 var appListEntries = await Package.Current.GetAppListEntriesAsync();
@@ -292,7 +87,7 @@ namespace Telegram.Stub
             Connect();
         }
 
-        private async void Exit(object sender, EventArgs e)
+        private async void OnExit(object? sender, EventArgs e)
         {
             _closeRequested = false;
 
@@ -317,7 +112,6 @@ namespace Telegram.Stub
             }
 
             _notifyIcon.Dispose();
-            Application.Exit();
         }
 
         private async void Connect()
@@ -392,6 +186,9 @@ namespace Telegram.Stub
         //[DllImport("user32.dll", SetLastError = true)]
         //static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
         private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             Logger.Info();
@@ -404,21 +201,21 @@ namespace Telegram.Stub
                 Logger.Info("ProcessId");
 
                 _processId = processId;
-                response.Add("ProcessId", Process.GetCurrentProcess().Id);
+                response.Add("ProcessId", Environment.ProcessId);
             }
 
-            if (args.Request.Message.TryGet("OpenText", out string openText))
+            if (args.Request.Message.TryGet("OpenText", out string? openText))
             {
                 Logger.Info("OpenText");
 
-                _openMenuItem.Text = openText;
+                _notifyIcon?.UpdateOpenText(openText);
             }
 
-            if (args.Request.Message.TryGet("ExitText", out string exitText))
+            if (args.Request.Message.TryGet("ExitText", out string? exitText))
             {
                 Logger.Info("ExitText");
 
-                _exitMenuItem.Text = exitText;
+                _notifyIcon?.UpdateExitText(exitText);
             }
 
             if (args.Request.Message.TryGetValue("FlashWindow", out object flash))
@@ -444,18 +241,12 @@ namespace Telegram.Stub
 
                 if (unreadCount > 0 || unreadUnmutedCount > 0)
                 {
-                    _notifyIcon.Icon = unreadUnmutedCount > 0 ? Properties.Resources.Unmuted : Properties.Resources.Muted;
+                    _notifyIcon?.Icon = unreadUnmutedCount > 0 ? NotifyIconIcon.Unmuted : NotifyIconIcon.Muted;
                 }
                 else
                 {
-                    _notifyIcon.Icon = Properties.Resources.Default;
+                    _notifyIcon?.Icon = NotifyIconIcon.Default;
                 }
-            }
-
-            if (args.Request.Message.ContainsKey("LoopbackExempt"))
-            {
-                Logger.Info("LoopbackExempt");
-                AddLocalhostExemption();
             }
 
             if (args.Request.Message.ContainsKey("CloseRequested"))
@@ -469,15 +260,102 @@ namespace Telegram.Stub
                 Logger.Info("Exit");
                 _closeRequested = false;
 
-                _connection.RequestReceived -= OnRequestReceived;
-                _connection.ServiceClosed -= OnServiceClosed;
+                _connection?.RequestReceived -= OnRequestReceived;
+                _connection?.ServiceClosed -= OnServiceClosed;
             }
 
-            if (args.Request.Message.TryGet("Debug", out string debug))
+            if (args.Request.Message.ContainsKey("IsPasskeySupported"))
             {
-                Logger.Info("Debug");
-                _ = Task.Run(() => MessageBox.Show(debug));
-                response.Add("Debug", debug);
+                Logger.Info("IsPasskeySupported");
+
+                response.Add("Result", Passkeys.IsSupported());
+            }
+
+            if (args.Request.Message.TryGet("MakeCredential", out string? makeCredential))
+            {
+                Logger.Info("MakeCredential");
+
+                IntPtr hWnd;
+                if (args.Request.Message.TryGet("WindowId", out long windowId))
+                {
+                    hWnd = new IntPtr(windowId);
+                }
+                else
+                {
+                    hWnd = GetForegroundWindow();
+                }
+
+                var data = Passkeys.DeserializeRegisterData(makeCredential);
+                if (data != null)
+                {
+                    var result = Passkeys.MakeCredential(hWnd, data);
+                    if (result is Passkeys.RegisterResult register)
+                    {
+                        response.Add("Result", 0);
+                        response.Add("ClientData", register.ClientDataJson);
+                        response.Add("AttestationObject", register.AttestationObject);
+                    }
+                    else if (result is Exception exception)
+                    {
+                        response.Add("Result", exception.HResult);
+                        response.Add("Message", exception.Message);
+                    }
+                    else
+                    {
+                        response.Add("Result", -1);
+                        response.Add("Message", "Unknown error");
+                    }
+                }
+                else
+                {
+                    response.Add("Result", -1);
+                    response.Add("Message", "Failed to deserialize parameters");
+                }
+            }
+
+            if (args.Request.Message.TryGet("GetAssertion", out string? getAssertion))
+            {
+                Logger.Info("GetAssertion");
+
+                IntPtr hWnd;
+                if (args.Request.Message.TryGet("WindowId", out long windowId))
+                {
+                    hWnd = new IntPtr(windowId);
+                }
+                else
+                {
+                    hWnd = GetForegroundWindow();
+                }
+
+                var data = Passkeys.DeserializeLoginData(getAssertion);
+                if (data != null)
+                {
+                    var result = Passkeys.GetAssertion(hWnd, data);
+                    if (result is Passkeys.LoginResult login)
+                    {
+                        response.Add("Result", 0);
+                        response.Add("CredentialId", Base64Url.EncodeToString(login.CredentialId));
+                        response.Add("ClientData", login.ClientDataJson);
+                        response.Add("AuthenticatorData", login.AuthenticatorData);
+                        response.Add("Signature", login.Signature);
+                        response.Add("UserHandle", login.UserHandle);
+                    }
+                    else if (result is Exception exception)
+                    {
+                        response.Add("Result", exception.HResult);
+                        response.Add("Message", exception.Message);
+                    }
+                    else
+                    {
+                        response.Add("Result", -1);
+                        response.Add("Message", "Unknown error");
+                    }
+                }
+                else
+                {
+                    response.Add("Result", -1);
+                    response.Add("Message", "Failed to deserialize parameters");
+                }
             }
 
             try
@@ -504,9 +382,8 @@ namespace Telegram.Stub
             {
                 Logger.Info("Exit");
 
-                _connection.Dispose();
-                _notifyIcon.Dispose();
-                Application.Exit();
+                _connection?.Dispose();
+                _notifyIcon?.Dispose();
             }
         }
 
@@ -514,9 +391,10 @@ namespace Telegram.Stub
         {
             Logger.Info("_closeRequested: " + _closeRequested);
 
-            _connection.RequestReceived -= OnRequestReceived;
-            _connection.ServiceClosed -= OnServiceClosed;
-            _connection.Dispose();
+            sender.RequestReceived -= OnRequestReceived;
+            sender.ServiceClosed -= OnServiceClosed;
+            sender.Dispose();
+
             _connection = null;
 
             if (_closeRequested)
@@ -527,32 +405,7 @@ namespace Telegram.Stub
             else
             {
                 _notifyIcon.Dispose();
-                Application.Exit();
             }
-        }
-
-        private static void AddLocalhostExemption()
-        {
-            var familyName = Package.Current.Id.FamilyName;
-            var info = new ProcessStartInfo
-            {
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                FileName = "CheckNetIsolation.exe",
-                WindowStyle = ProcessWindowStyle.Hidden,
-                Arguments = "LoopbackExempt -a -n=" + familyName
-            };
-
-            try
-            {
-                Process process = Process.Start(info);
-                process.WaitForExit();
-                process.Dispose();
-            }
-            catch { }
         }
     }
 }

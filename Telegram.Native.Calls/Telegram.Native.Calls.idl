@@ -43,12 +43,31 @@ namespace Telegram.Native.Calls
         Generic = 2
     };
 
+    enum VoipVideoChannelQuality
+    {
+        Thumbnail = 0,
+        Medium = 1,
+        Full = 2
+    };
+
+    enum VoipDataChannel
+    {
+        Main = 0,
+        ScreenSharing = 1
+    };
+
     struct VoipGroupParticipant
     {
         Int32 AudioSource;
         Single Level;
         Boolean IsSpeaking;
         Boolean IsMuted;
+    };
+
+    struct VoipMediaChannelDescription
+    {
+        Int32 AudioSource;
+        Int64 UserId;
     };
 
 } // namespace Telegram.Native.Calls

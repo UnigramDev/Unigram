@@ -5,11 +5,13 @@ namespace Telegram.Native
     [default_interface]
     runtimeclass CachedVideoAnimation : Windows.Foundation.IClosable
     {
-		static CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, Int32 width, Int32 height, Boolean precache);
+		static CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, Int32 width, Int32 height, Boolean fit, Boolean precache, Boolean limitFps);
 
-        void RenderSync(Windows.Storage.Streams.IBuffer bitmap, out Int32 seconds, out Boolean completed);
+        void RenderSync(Windows.Storage.Streams.IBuffer bitmap, out Double seconds, out Boolean completed);
         void Stop();
         void Cache();
+
+        void Seek(Double seconds);
 
         Double FrameRate{ get; };
         Int32 TotalFrame{ get; };
@@ -18,5 +20,6 @@ namespace Telegram.Native
 
         Int32 PixelWidth{ get; };
         Int32 PixelHeight{ get; };
+        Int32 Rotation{ get; };
     }
 }

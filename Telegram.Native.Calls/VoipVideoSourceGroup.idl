@@ -1,0 +1,11 @@
+namespace Telegram.Native.Calls
+{
+    [default_interface]
+    runtimeclass VoipVideoSourceGroup 
+    {
+        VoipVideoSourceGroup(String semantics, IVector<Int32> sourceIds);
+
+        String Semantics;
+        IVector<Int32> SourceIds;
+    }
+}

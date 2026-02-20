@@ -1,14 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using Telegram.Composition;
 using Telegram.Controls.Media;
+using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -21,70 +23,129 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class ChatShareCell : GridEx, IMultipleElement
+    public sealed partial class ChatShareCell : ControlEx, IMultipleElement
     {
         private bool _selected;
 
         public ChatShareCell()
         {
-            InitializeComponent();
+            DefaultStyleKey = typeof(ChatShareCell);
+        }
 
-            Connected += OnLoaded;
-            Disconnected += OnUnloaded;
+        #region InitializeComponent
+
+        private Grid PhotoPanel;
+        private Rectangle SelectionOutline;
+        private ProfilePicture Photo;
+        private CustomEmojiIcon BotVerified;
+        private TextBlock TitleLabel;
+        private IdentityIcon Identity;
+
+        // Deferred
+        private Border OnlineBadge;
+
+        private bool _templateApplied;
+
+        protected override void OnApplyTemplate()
+        {
+            PhotoPanel = GetTemplateChild(nameof(PhotoPanel)) as Grid;
+            SelectionOutline = GetTemplateChild(nameof(SelectionOutline)) as Rectangle;
+            Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+            BotVerified = GetTemplateChild(nameof(BotVerified)) as CustomEmojiIcon;
+            TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
+            Identity = GetTemplateChild(nameof(Identity)) as IdentityIcon;
 
             _selectionPhoto = ElementComposition.GetElementVisual(Photo);
             _selectionOutline = ElementComposition.GetElementVisual(SelectionOutline);
             _selectionPhoto.CenterPoint = new Vector3(18);
             _selectionOutline.CenterPoint = new Vector3(18);
             _selectionOutline.Opacity = 0;
+
+            if (_visual != null)
+            {
+                ElementCompositionPreview.SetElementChildVisual(PhotoPanel, _visual);
+
+                if (_selected)
+                {
+                    _selected = false;
+                    UpdateState(true, false, false);
+                }
+            }
+
+            _templateApplied = true;
+
+            if (_useProperties)
+            {
+                Photo.Source = _photoSource;
+                SelectionOutline.RadiusX = Photo.ComputedShape == ProfilePictureShape.Superellipse ? 9 : 18;
+                SelectionOutline.RadiusY = Photo.ComputedShape == ProfilePictureShape.Superellipse ? 9 : 18;
+                TitleLabel.Text = _title ?? string.Empty;
+
+                _photoSource = null;
+                _title = null;
+            }
         }
+
+        #endregion
+
+        private bool _useProperties;
 
         public string Glyph
         {
             set
             {
-                Photo.Source = PlaceholderImage.GetGlyph(value, long.MinValue);
-                SelectionOutline.RadiusX = 18;
-                SelectionOutline.RadiusY = 18;
+                PhotoSource = ProfilePictureSourceText.GetGlyph(value, long.MinValue);
             }
         }
 
-        public object PhotoSource
+        private ProfilePictureSource _photoSource;
+        public ProfilePictureSource PhotoSource
         {
             set
             {
-                Photo.Source = value;
-                SelectionOutline.RadiusX = 18;
-                SelectionOutline.RadiusY = 18;
+                if (_templateApplied)
+                {
+                    Photo.Source = value;
+                    SelectionOutline.RadiusX = Photo.ComputedShape == ProfilePictureShape.Superellipse ? 9 : 18;
+                    SelectionOutline.RadiusY = Photo.ComputedShape == ProfilePictureShape.Superellipse ? 9 : 18;
+                }
+                else
+                {
+                    _photoSource = value;
+                    _useProperties = true;
+                }
             }
         }
 
-        public ProfilePictureShape PhotoShape
-        {
-            set
-            {
-                Photo.Shape = value;
-                SelectionOutline.RadiusX = value == ProfilePictureShape.Superellipse ? 9 : 18;
-                SelectionOutline.RadiusY = value == ProfilePictureShape.Superellipse ? 9 : 18;
-            }
-        }
-
+        private string _title;
         public string Title
         {
-            get => TitleLabel.Text;
-            set => TitleLabel.Text = value;
+            get => TitleLabel?.Text;
+            set
+            {
+                if (_templateApplied)
+                {
+                    TitleLabel.Text = value;
+                }
+                else
+                {
+                    _title = value;
+                    _useProperties = true;
+                }
+            }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded()
         {
             _strokeBrush?.Register();
             _selectionStrokeBrush?.Register();
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
             _strokeBrush?.Unregister();
             _selectionStrokeBrush?.Unregister();
@@ -116,11 +177,11 @@ namespace Telegram.Controls.Cells
             }
             else if (args.Phase == 2)
             {
-                Photo.SetChat(clientService, chat, 36);
+                Photo.Source = ProfilePictureSource.Chat(clientService, chat);
                 Identity.SetStatus(clientService, chat, BotVerified);
 
-                SelectionOutline.RadiusX = Photo.Shape == ProfilePictureShape.Superellipse ? 9 : 18;
-                SelectionOutline.RadiusY = Photo.Shape == ProfilePictureShape.Superellipse ? 9 : 18;
+                SelectionOutline.RadiusX = Photo.ComputedShape == ProfilePictureShape.Superellipse ? 9 : 18;
+                SelectionOutline.RadiusY = Photo.ComputedShape == ProfilePictureShape.Superellipse ? 9 : 18;
             }
 
             if (args.Phase < 2)
@@ -148,7 +209,7 @@ namespace Telegram.Controls.Cells
             }
             else if (args.Phase == 2)
             {
-                Photo.SetUser(clientService, user, 36);
+                Photo.Source = ProfilePictureSource.User(clientService, user);
                 Identity.SetStatus(clientService, user, BotVerified);
 
                 SelectionOutline.RadiusX = 18;
@@ -190,17 +251,17 @@ namespace Telegram.Controls.Cells
             {
                 if (clientService.TryGetUser(messageSender, out User user))
                 {
-                    Photo.SetUser(clientService, user, 36);
+                    Photo.Source = ProfilePictureSource.User(clientService, user);
                     Identity.SetStatus(clientService, user, BotVerified);
                 }
                 else if (clientService.TryGetChat(messageSender, out Chat chat))
                 {
-                    Photo.SetChat(clientService, chat, 36);
+                    Photo.Source = ProfilePictureSource.Chat(clientService, chat);
                     Identity.SetStatus(clientService, chat, BotVerified);
                 }
 
-                SelectionOutline.RadiusX = Photo.Shape == ProfilePictureShape.Superellipse ? 9 : 18;
-                SelectionOutline.RadiusY = Photo.Shape == ProfilePictureShape.Superellipse ? 9 : 18;
+                SelectionOutline.RadiusX = Photo.ComputedShape == ProfilePictureShape.Superellipse ? 9 : 18;
+                SelectionOutline.RadiusY = Photo.ComputedShape == ProfilePictureShape.Superellipse ? 9 : 18;
             }
 
             if (args.Phase < 2)
@@ -237,11 +298,11 @@ namespace Telegram.Controls.Cells
             }
             else if (args.Phase == 2)
             {
-                Photo.SetChat(clientService, chat, 36);
+                Photo.Source = ProfilePictureSource.Chat(clientService, chat);
                 Identity.SetStatus(clientService, chat, BotVerified);
 
-                SelectionOutline.RadiusX = Photo.Shape == ProfilePictureShape.Superellipse ? 9 : 18;
-                SelectionOutline.RadiusY = Photo.Shape == ProfilePictureShape.Superellipse ? 9 : 18;
+                SelectionOutline.RadiusX = Photo.ComputedShape == ProfilePictureShape.Superellipse ? 9 : 18;
+                SelectionOutline.RadiusY = Photo.ComputedShape == ProfilePictureShape.Superellipse ? 9 : 18;
             }
 
             if (args.Phase < 2)
@@ -254,7 +315,7 @@ namespace Telegram.Controls.Cells
 
         public void UpdateChatFolder(FolderFlag folder)
         {
-            Photo.Source = PlaceholderImage.GetGlyph(MainPage.GetFolderIcon(folder.Flag), (int)folder.Flag);
+            Photo.Source = ProfilePictureSourceText.GetGlyph(MainPage.GetFolderIcon(folder.Flag), (int)folder.Flag);
             Identity.ClearStatus(BotVerified);
 
             SelectionOutline.RadiusX = 18;
@@ -349,8 +410,8 @@ namespace Telegram.Controls.Cells
 
         #region Selection Animation
 
-        private readonly Visual _selectionOutline;
-        private readonly Visual _selectionPhoto;
+        private Visual _selectionOutline;
+        private Visual _selectionPhoto;
 
         private CompositionPathGeometry _polygon;
         private ShapeVisual _visual;
@@ -410,7 +471,10 @@ namespace Telegram.Controls.Cells
             visual.CenterPoint = new Vector3(8);
             visual.Scale = new Vector3(0);
 
-            ElementCompositionPreview.SetElementChildVisual(PhotoPanel, visual);
+            if (PhotoPanel != null)
+            {
+                ElementCompositionPreview.SetElementChildVisual(PhotoPanel, visual);
+            }
 
             _polygon = polygon;
             _visual = visual;
@@ -426,6 +490,12 @@ namespace Telegram.Controls.Cells
             if (_visual == null)
             {
                 InitializeSelection();
+            }
+
+            if (_selectionPhoto == null)
+            {
+                _selected = selected;
+                return;
             }
 
             if (animate)

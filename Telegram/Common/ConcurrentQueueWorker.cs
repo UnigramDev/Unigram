@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -75,7 +76,7 @@ namespace Telegram.Common
         private readonly ConcurrentStack<Action> taskQueue = new();
         private int _concurrentCount = 0;
 
-        public void Enqueue(Action task)
+        public void Run(Action task)
         {
             taskQueue.Push(task);
 
@@ -84,16 +85,33 @@ namespace Telegram.Common
                 return;
             }
 
-            _ = Task.Run(() =>
+            ThreadPool.UnsafeQueueUserWorkItem(static state =>
             {
-                while (taskQueue.TryPop(out Action nextTaskAction))
+                var self = (LifoActionWorker)state!;
+                try
                 {
-                    taskQueue.Clear();
-                    nextTaskAction();
-                }
+                    do
+                    {
+                        while (self.taskQueue.TryPop(out var next))
+                        {
+                            next();
+                        }
 
-                Interlocked.Exchange(ref _concurrentCount, 0);
-            });
+                        Interlocked.Exchange(ref self._concurrentCount, 0);
+
+                        if (self.taskQueue.IsEmpty)
+                        {
+                            return;
+                        }
+
+                    } while (0 == Interlocked.Exchange(ref self._concurrentCount, 1));
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                    Interlocked.Exchange(ref self._concurrentCount, 0);
+                }
+            }, this);
         }
     }
 
@@ -111,15 +129,33 @@ namespace Telegram.Common
                 return;
             }
 
-            _ = Task.Run(() =>
+            ThreadPool.UnsafeQueueUserWorkItem(static state =>
             {
-                while (taskQueue.TryDequeue(out Action nextTaskAction))
+                var self = (FifoActionWorker)state!;
+                try
                 {
-                    nextTaskAction();
-                }
+                    do
+                    {
+                        while (self.taskQueue.TryDequeue(out var next))
+                        {
+                            next();
+                        }
 
-                Interlocked.Exchange(ref _concurrentCount, 0);
-            });
+                        Interlocked.Exchange(ref self._concurrentCount, 0);
+
+                        if (self.taskQueue.IsEmpty)
+                        {
+                            return;
+                        }
+
+                    } while (0 == Interlocked.Exchange(ref self._concurrentCount, 1));
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                    Interlocked.Exchange(ref self._concurrentCount, 0);
+                }
+            }, this);
         }
     }
 }

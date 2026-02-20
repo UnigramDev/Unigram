@@ -5,8 +5,6 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
                        Padding="24,20,24,24"
                        IsDismissButtonVisible="True">
 
@@ -35,23 +33,13 @@
             <controls:ChatPill x:Name="Pill"
                                HorizontalAlignment="Center" />
 
-            <Grid VerticalAlignment="Bottom"
-                  HorizontalAlignment="Stretch"
-                  Margin="0,24,0,0"
-                  Grid.Row="1">
-                <controls:BadgeButton x:Name="LearnCommand"
-                                      Click="Learn_Click"
-                                      Style="{StaticResource AccentButtonStyle}"
-                                      HorizontalAlignment="Stretch"
-                                      HorizontalContentAlignment="Center"
-                                      Typography.NumeralAlignment="Tabular"
-                                      FontWeight="SemiBold"
-                                      Padding="16,3,16,5"
-                                      BorderThickness="0,0,0,1"
-                                      CornerRadius="4"
-                                      Margin="0"
-                                      Height="32" />
-            </Grid>
+            <Button x:Name="LearnCommand"
+                    Click="Learn_Click"
+                    Style="{StaticResource AccentButtonStyle}"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,24,0,0"
+                    Grid.Row="1" />
         </StackPanel>
     </Grid>
 </controls:ContentPopup>

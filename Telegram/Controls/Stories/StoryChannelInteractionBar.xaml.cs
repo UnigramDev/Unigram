@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using RLottie;
 using System;
 using System.Threading.Tasks;
@@ -44,7 +45,7 @@ namespace Telegram.Controls.Stories
         {
             _viewModel = story;
 
-            if (story.ClientService.TryGetUser(story.ChatId, out User user) && user.Type is UserTypeBot)
+            if (story.ClientService.TryGetUser(story.PosterChatId, out User user) && user.Type is UserTypeBot)
             {
                 Visibility = Visibility.Collapsed;
             }
@@ -146,14 +147,7 @@ namespace Telegram.Controls.Stories
 
         private void Viewers_RecentUserHeadChanged(ProfilePicture sender, MessageSender messageSender)
         {
-            if (ViewModel.ClientService.TryGetUser(messageSender, out User user))
-            {
-                sender.SetUser(ViewModel.ClientService, user, 28);
-            }
-            else if (ViewModel.ClientService.TryGetChat(messageSender, out Chat chat))
-            {
-                sender.SetChat(ViewModel.ClientService, chat, 28);
-            }
+            sender.Source = ProfilePictureSource.MessageSender(ViewModel.ClientService, messageSender);
         }
 
         private void ReactButton_Click(object sender, RoutedEventArgs e)
@@ -166,11 +160,11 @@ namespace Telegram.Controls.Stories
 
             if (story.ChosenReactionType == null)
             {
-                story.ClientService.Send(new SetStoryReaction(story.ChatId, story.StoryId, new ReactionTypeEmoji("\u2764\uFE0F"), false));
+                story.ClientService.Send(new SetStoryReaction(story.PosterChatId, story.Id, new ReactionTypeEmoji("\u2764\uFE0F"), false));
             }
             else
             {
-                story.ClientService.Send(new SetStoryReaction(story.ChatId, story.StoryId, null, false));
+                story.ClientService.Send(new SetStoryReaction(story.PosterChatId, story.Id, null, false));
             }
         }
     }
@@ -191,7 +185,7 @@ namespace Telegram.Controls.Stories
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
+            UpdateManager.Unsubscribe(this, ref _fileToken);
         }
 
         private StoryViewModel _story;
@@ -238,15 +232,18 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
-            var recycled = story.StoryId == _story?.StoryId
-                && story.ChatId == _story?.ChatId
+            var recycled = story.Id == _story?.Id
+                && story.PosterChatId == _story?.PosterChatId
                 && interaction.AreTheSame(_interaction);
 
             _story = story;
             _interaction = interaction;
             _reaction = value;
 
-            UpdateInteraction(story, interaction, recycled);
+            if (story.InteractionInfo != null)
+            {
+                UpdateInteraction(story, interaction, recycled);
+            }
 
             var around = value?.AroundAnimation?.StickerValue;
             if (around != null && around.Local.CanBeDownloaded && !around.Local.IsDownloadingActive && !around.Local.IsDownloadingCompleted)
@@ -290,8 +287,8 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
-            var recycled = story.StoryId == _story?.StoryId
-                && story.ChatId == _story?.ChatId
+            var recycled = story.Id == _story?.Id
+                && story.PosterChatId == _story?.PosterChatId
                 && interaction.AreTheSame(_interaction);
 
             _story = story;
@@ -409,12 +406,12 @@ namespace Telegram.Controls.Stories
             var chosen = story.ChosenReactionType != null;
             if (chosen && _defaultValue != null)
             {
-                _story.ClientService.Send(new SetStoryReaction(_story.ChatId, _story.StoryId, null, false));
+                _story.ClientService.Send(new SetStoryReaction(_story.PosterChatId, _story.Id, null, false));
                 SetReaction(_story, new ReactionTypeEmoji(_defaultValue.Emoji), _defaultValue, _defaultValue);
             }
             else
             {
-                _story.ClientService.Send(new SetStoryReaction(_story.ChatId, _story.StoryId, _interaction, false));
+                _story.ClientService.Send(new SetStoryReaction(_story.PosterChatId, _story.Id, _interaction, false));
                 Animate();
             }
 

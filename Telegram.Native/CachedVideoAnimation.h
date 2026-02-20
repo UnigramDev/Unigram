@@ -4,6 +4,10 @@
 
 #include <stack>
 #include <mutex>
+#include <thread>
+#include <condition_variable>
+#include <memory>
+#include <map>
 
 #include <winrt/Windows.UI.Xaml.Media.Imaging.h>
 
@@ -29,8 +33,6 @@ namespace winrt::Telegram::Native::implementation
 
         void Close()
         {
-            std::lock_guard const guard(s_locks[m_cacheKey]);
-
             if (m_decompressBuffer)
             {
                 delete[] m_decompressBuffer;
@@ -42,13 +44,21 @@ namespace winrt::Telegram::Native::implementation
                 m_animation->Close();
                 m_animation = nullptr;
             }
+
+            if (m_cacheHandle)
+            {
+                CloseHandle(m_cacheHandle);
+                m_cacheHandle = INVALID_HANDLE_VALUE;
+            }
         }
 
-        static winrt::Telegram::Native::CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool precache);
+        static winrt::Telegram::Native::CachedVideoAnimation LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool fit, bool precache, bool limitFps);
 
-        void RenderSync(IBuffer bitmap, int32_t& seconds, bool& completed);
+        void RenderSync(IBuffer bitmap, double& seconds, bool& completed);
         void Stop();
         void Cache();
+
+        void Seek(double seconds);
 
         double FrameRate();
 
@@ -68,23 +78,40 @@ namespace winrt::Telegram::Native::implementation
             return m_pixelHeight;
         }
 
+        int Rotation()
+        {
+            if (m_animation)
+            {
+                return m_animation->Rotation();
+            }
+
+            return 0;
+        }
+
     private:
-        bool Load(IVideoAnimationSource file, int32_t width, int32_t height);
-        void RenderSync(uint8_t* pixels, int32_t& seconds, bool& completed, bool* rendered);
+        bool Load(IVideoAnimationSource file, int32_t width, int32_t height, bool fit, bool limitFps);
+        void RenderSync(uint8_t* pixels, double& seconds, bool& completed, bool* rendered);
+
+        HANDLE GetCacheHandle();
+        void CloseCacheHandle();
 
         bool ReadHeader(HANDLE precacheFile);
 
         static void CompressThreadProc();
+
+        // Performance-optimized lock management
+        static std::mutex& GetLockForKey(const std::string& key);
+
+        static std::mutex s_init_mutex;
+        static std::map<std::string, std::unique_ptr<std::mutex>> s_locks;
 
         static std::mutex s_compressLock;
         static bool s_compressStarted;
         static std::thread s_compressWorker;
         static WorkQueue s_compressQueue;
 
-        bool m_caching;
-        bool m_readyToCache;
-
-        static std::map<std::string, std::mutex> s_locks;
+        bool m_caching = false;
+        bool m_readyToCache = false;
 
         IVideoAnimationSource m_file{ nullptr };
         winrt::com_ptr<VideoAnimation> m_animation;
@@ -96,9 +123,10 @@ namespace winrt::Telegram::Native::implementation
         bool m_precache = false;
         winrt::hstring m_path;
         std::wstring m_cacheFile;
+        HANDLE m_cacheHandle = INVALID_HANDLE_VALUE;
         std::string m_data;
         std::string m_cacheKey;
-        uint8_t* m_decompressBuffer = nullptr;
+        uint8_t* m_decompressBuffer = nullptr;  // Raw pointer for performance
         uint32_t m_maxFrameSize = 0;
         uint32_t m_imageSize = 0;
         std::vector<uint32_t> m_fileOffsets;
@@ -113,11 +141,10 @@ namespace winrt::Telegram::Native::implementation
         size_t h;
 
         WorkItem(winrt::weak_ref<CachedVideoAnimation> animation, size_t w, size_t h)
-            : animation(animation),
-            w(w),
-            h(h)
+            : animation(animation)
+            , w(w)
+            , h(h)
         {
-
         }
     };
 
@@ -133,17 +160,7 @@ namespace winrt::Telegram::Native::implementation
             std::unique_lock<std::mutex> lock(work_mutex);
 
             bool was_empty = work.empty();
-            work.push(item);
-
-            //while (CACHE_QUEUE_SIZE < work.size())
-            //{
-            //	WorkItem tmp = std::move(work.front());
-            //	work.pop();
-
-            //	if (auto animation{ tmp.animation.get() }) {
-            //		animation->IsCaching(false);
-            //	}
-            //}
+            work.push(std::move(item));
 
             lock.unlock();
 
@@ -167,7 +184,7 @@ namespace winrt::Telegram::Native::implementation
 
             WorkItem tmp = std::move(work.top());
             work.pop();
-            return std::make_optional<WorkItem>(tmp);
+            return std::make_optional<WorkItem>(std::move(tmp));
         }
     };
 

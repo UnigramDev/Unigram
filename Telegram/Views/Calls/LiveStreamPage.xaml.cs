@@ -1,10 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
+
 using System;
 using Telegram.Common;
 using Telegram.Controls;
@@ -20,6 +20,7 @@ using Telegram.Views.Popups;
 using Windows.Devices.Input;
 using Windows.System.Display;
 using Windows.UI.Composition;
+using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -30,7 +31,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Calls
 {
-    public sealed partial class LiveStreamPage : WindowEx, IToastHost, IPopupHost
+    public sealed partial class LiveStreamPage : WindowEx, IPopupHost
     {
         private readonly VoipGroupCall _call;
 
@@ -62,9 +63,9 @@ namespace Telegram.Views.Calls
             _call = call;
             _call.NetworkStateChanged += OnNetworkStateChanged;
             _call.JoinedStateChanged += OnJoinedStateChanged;
-            _call.AvailableStreamsChanged += OnAvailableStreamsChanged;
+            _call.StreamStateChanged += OnStreamStateChanged;
             _call.PropertyChanged += OnPropertyChanged;
-            _call.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport, false));
+            _call.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport));
 
             Window.Current.SetTitleBar(TitleArea);
 
@@ -73,25 +74,8 @@ namespace Telegram.Views.Calls
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedGlyph, true);
             //ViewportAspect.Constraint = new Size(16, 9);
 
-            OnAvailableStreamsChanged();
+            OnStreamStateChanged(_call.StreamState);
             OnPropertyChanged();
-        }
-
-        public void ToastOpened(TeachingTip toast)
-        {
-            Resources.Remove("TeachingTip");
-            Resources.Add("TeachingTip", toast);
-        }
-
-        public void ToastClosed(TeachingTip toast)
-        {
-            if (Resources.TryGetValue("TeachingTip", out object cached))
-            {
-                if (cached == toast)
-                {
-                    Resources.Remove("TeachingTip");
-                }
-            }
         }
 
         public void PopupOpened()
@@ -108,7 +92,14 @@ namespace Telegram.Views.Calls
             _inactivityTimer.Stop();
             ShowHideTransport(true);
 
-            base.OnPointerMoved(e);
+            try
+            {
+                base.OnPointerMoved(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
 
             if (e.OriginalSource is FrameworkElement element)
             {
@@ -130,7 +121,14 @@ namespace Telegram.Views.Calls
                 ShowHideTransport(true);
             }
 
-            base.OnPointerReleased(e);
+            try
+            {
+                base.OnPointerReleased(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         private bool _transportCollapsed = false;
@@ -193,14 +191,14 @@ namespace Telegram.Views.Calls
             _inactivityTimer.Start();
         }
 
-        private void OnAvailableStreamsChanged(object sender, EventArgs e)
+        private void OnStreamStateChanged(VoipGroupCall sender, VoipGroupCallStreamStateChangedEventArgs args)
         {
-            this.BeginOnUIThread(OnAvailableStreamsChanged);
+            this.BeginOnUIThread(() => OnStreamStateChanged(args.StreamState));
         }
 
-        private void OnAvailableStreamsChanged()
+        private void OnStreamStateChanged(VoipGroupCallStreamState streamState)
         {
-            if (_call.AvailableStreamsCount > 0 || !_call.IsConnected)
+            if (streamState != VoipGroupCallStreamState.NotAvailable || !_call.IsConnected)
             {
                 _transportUnavailable = false;
                 _inactivityTimer.Start();
@@ -255,7 +253,7 @@ namespace Telegram.Views.Calls
 
             _call.NetworkStateChanged -= OnNetworkStateChanged;
             _call.JoinedStateChanged -= OnJoinedStateChanged;
-            _call.AvailableStreamsChanged -= OnAvailableStreamsChanged;
+            _call.StreamStateChanged -= OnStreamStateChanged;
             _call.PropertyChanged -= OnPropertyChanged;
         }
 
@@ -332,7 +330,7 @@ namespace Telegram.Views.Calls
 
         private void OnNetworkStateChanged(VoipGroupCall sender, VoipGroupCallNetworkStateChangedEventArgs args)
         {
-            this.BeginOnUIThread(() => OnAvailableStreamsChanged());
+            this.BeginOnUIThread(() => OnStreamStateChanged(sender.StreamState));
         }
 
         private void OnJoinedStateChanged(VoipGroupCall sender, VoipGroupCallJoinedStateChangedEventArgs args)
@@ -389,6 +387,30 @@ namespace Telegram.Views.Calls
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
+
+            var slider = new MenuFlyoutSlider
+            {
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3),
+                TextValueConverter = new TextValueProvider(newValue => string.Format("{0:P0}", newValue / 100)),
+                IconValueConverter = new IconValueProvider(newValue => newValue switch
+                {
+                    double n when n > 66 => Icons.Speaker3,
+                    double n when n > 33 => Icons.Speaker2,
+                    double n when n > 0 => Icons.Speaker1,
+                    _ => Icons.SpeakerOff
+                }),
+                FontWeight = FontWeights.SemiBold,
+                Value = _call.VolumeLevel * 100d,
+                Minimum = 0,
+                Maximum = 200
+            };
+
+            slider.ValueChanged += (s, args) =>
+            {
+                _call.VolumeLevel = args.NewValue / 100d;
+            };
+
+            flyout.Items.Add(slider);
 
             if (_call.CanBeManaged)
             {
@@ -460,6 +482,8 @@ namespace Telegram.Views.Calls
                 }
             }
 
+            flyout.CreateFlyoutItem(ShareInviteLink, Strings.VoipGroupShareInviteLink, Icons.Link);
+
             if (_call.CanBeManaged)
             {
                 flyout.CreateFlyoutSeparator();
@@ -527,9 +551,9 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private async void ShareInviteLink()
+        private void ShareInviteLink()
         {
-            await this.ShowPopupAsync(_call.ClientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationGroupCall(_call.Id));
+            this.ShowPopup(_call.ClientService.Session, new ChooseChatsPopup(), new ChooseChatsConfigurationGroupCall(_call.Id, true));
         }
 
         private readonly ScrollViewer _scrollingHost;

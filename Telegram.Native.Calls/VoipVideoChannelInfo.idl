@@ -1,21 +1,17 @@
+import "Telegram.Native.Calls.idl";
+import "VoipVideoSourceGroup.idl";
+
 namespace Telegram.Native.Calls
 {
-    enum VoipVideoChannelQuality
-    {
-        Thumbnail = 0,
-        Medium = 1,
-        Full = 2
-    };
-
     [default_interface]
     runtimeclass VoipVideoChannelInfo
     {
-        VoipVideoChannelInfo(Int32 audioSource, Telegram.Td.Api.MessageSender participantId, String endpointId, IVector<Telegram.Td.Api.GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality);
+        VoipVideoChannelInfo(Int32 audioSource, Int64 participantId, String endpointId, IVector<VoipVideoSourceGroup> sourceGroups, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality);
 
         Int32 AudioSource{ get; };
-        Telegram.Td.Api.MessageSender ParticipantId{ get; };
+        Int64 ParticipantId{ get; };
         String EndpointId{ get; };
-        IVector<Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups{ get; };
+        IVector<VoipVideoSourceGroup> SourceGroups{ get; };
         VoipVideoChannelQuality MinQuality{ get; };
         VoipVideoChannelQuality MaxQuality{ get; };
     }

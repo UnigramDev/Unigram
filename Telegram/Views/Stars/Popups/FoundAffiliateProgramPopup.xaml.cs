@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -58,7 +59,7 @@ namespace Telegram.Views.Stars.Popups
 
                 TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.ChannelAffiliateProgramJoinText, botUser.FirstName, percent, duration));
 
-                Photo1.SetUser(clientService, botUser, 64);
+                Photo1.Source = ProfilePictureSource.User(clientService, botUser);
 
                 MonthlyUsers.Content = userTypeBot.ActiveUserCount;
             }
@@ -110,8 +111,7 @@ namespace Telegram.Views.Stars.Popups
             foreach (var type in _items)
             {
                 var picture = new ProfilePicture();
-                picture.Width = 36;
-                picture.Height = 36;
+                picture.Size = 36;
                 picture.Margin = new Thickness(-4, -2, 0, -2);
 
                 var item = new MenuFlyoutProfile();
@@ -123,7 +123,7 @@ namespace Telegram.Views.Stars.Popups
 
                 if (_clientService.TryGetUser(type, out User senderUser))
                 {
-                    picture.SetUser(_clientService, senderUser, 36);
+                    picture.Source = ProfilePictureSource.User(_clientService, senderUser);
 
                     item.Text = senderUser.FullName();
                     item.Info = senderUser.Type is UserTypeRegular
@@ -132,7 +132,7 @@ namespace Telegram.Views.Stars.Popups
                 }
                 else if (_clientService.TryGetChat(type, out Chat senderChat))
                 {
-                    picture.SetChat(_clientService, senderChat, 36);
+                    picture.Source = ProfilePictureSource.Chat(_clientService, senderChat);
 
                     item.Text = senderChat.Title;
                     item.Info = Strings.DiscussChannel;
@@ -155,16 +155,16 @@ namespace Telegram.Views.Stars.Popups
 
             if (_clientService.TryGetUser(type, out User senderUser))
             {
-                Photo2.SetUser(_clientService, senderUser, 64);
+                Photo2.Source = ProfilePictureSource.User(_clientService, senderUser);
 
-                Photo.SetUser(_clientService, senderUser, 28);
+                Photo.Source = ProfilePictureSource.User(_clientService, senderUser);
                 TitleText.Text = senderUser.FullName();
             }
             else if (_clientService.TryGetChat(type, out Chat senderChat))
             {
-                Photo2.SetChat(_clientService, senderChat, 64);
+                Photo2.Source = ProfilePictureSource.Chat(_clientService, senderChat);
 
-                Photo.SetChat(_clientService, senderChat, 28);
+                Photo.Source = ProfilePictureSource.Chat(_clientService, senderChat);
                 TitleText.Text = senderChat.Title;
             }
         }
@@ -224,7 +224,7 @@ namespace Telegram.Views.Stars.Popups
                 Hide();
 
                 var popup = new ConnectedAffiliateProgramPopup(_clientService, _navigationService, program, _selectedType);
-                var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(_clientService.SessionId);
+                var aggregator = _clientService.Session.Resolve<IEventAggregator>();
 
                 aggregator.Publish(new UpdateChatAffiliatePrograms(_selectedType));
 

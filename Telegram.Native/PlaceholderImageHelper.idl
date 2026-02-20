@@ -1,36 +1,70 @@
 import "SurfaceImage.idl";
 import "TextFormat.idl";
+import "ChatBackgroundPattern.idl";
+import "FreeformGradientSurface.idl";
+import "NativeUtils.idl";
 
 namespace Telegram.Native
 {
-	[default_interface]
-	runtimeclass PlaceholderImageHelper
-	{
-		static PlaceholderImageHelper Current{ get; };
+    struct MaxLinesMetrics
+    {
+        Double X;
+        Double Y;
+        Double Width;
+        Double Height;
+        Double TruncatedHeight;
+        Int32 TruncatedOffset;
+    };
 
-		static void WriteBytes(Windows.Foundation.Collections.IVector<byte> hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
-		static Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Int32 pixelWidth, out Int32 pixelHeight);
-		static Boolean IsWebP(String fileName, out Int32 pixelWidth, out Int32 pixelHeight);
+    struct TextStylePart
+    {
+        Int32 Offset;
+        Int32 Length;
+        TextStyle Type;
+    };
 
-		void Encode(Windows.Storage.Streams.IBuffer source, Windows.Storage.Streams.IRandomAccessStream destination, Int32 width, Int32 height);
+    [default_interface]
+    runtimeclass PlaceholderImageHelper : Windows.Foundation.IClosable
+    {
+        PlaceholderImageHelper(Windows.UI.Xaml.Window window);
+        void HandleDeviceLost();
 
-		Windows.Foundation.IAsyncAction DrawSvgAsync(String path, Windows.UI.Color foreground, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, Double dpi);
-		void DrawSvg(String path, Windows.UI.Color foreground, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, Double dpi, out Windows.Foundation.Size size);
+        Windows.UI.Composition.CompositionGraphicsDevice Device{ get; };
 
-		[default_overload]
-		void DrawThumbnailPlaceholder(String fileName, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
-		void DrawThumbnailPlaceholder(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
-		void DrawThumbnailPlaceholder(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount, Windows.Storage.Streams.IBuffer randomAccessStream);
+        static void WriteBytes(Windows.Foundation.Collections.IVector<byte> hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+        static Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Int32 pixelWidth, out Int32 pixelHeight);
+        static Boolean IsWebP(String fileName, out Int32 pixelWidth, out Int32 pixelHeight);
 
-		SurfaceImage Create(Int32 pixelWidth, Int32 pixelHeight);
-		void Invalidate(SurfaceImage imageSource, Windows.Storage.Streams.IBuffer buffer);
+        Windows.Foundation.Collections.IVector<String> GetSystemFontFamilies(Windows.Foundation.Collections.IVector<String> localeNames);
 
-		TextFormat CreateTextFormat2(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width);
+        FreeformGradientSurface CreateFreeformGradient(Windows.Foundation.Collections.IVector<Windows.UI.Color> colors);
 
-		Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width);
-		Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> LineMetrics(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width, Boolean rtl);
-		Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> RangeMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width, Boolean rtl);
-		Int32 TrimMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width, Double height, Boolean rtl);
-		//Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> EntityMetrics(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width, Boolean rtl);
-	}
+        Windows.UI.Composition.CompositionEffectBrush GetTail(Single topLeftRadius, Single topRightRadius, Single bottomRightRadius, Single bottomLeftRadius);
+        //Windows.UI.Composition.CompositionPath GetOutline(Windows.Foundation.Collections.IVector<Telegram.Td.Api.ClosedVectorPath> contours);
+        Windows.UI.Composition.CompositionPath GetEllipticalClip(Single width, Single height, Single radius, Single x, Single y);
+        Windows.UI.Composition.CompositionPath GetReplyMarkupClip(Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> > buttons, Single bottomRightRadius, Single bottomLeftRadius);
+        Windows.UI.Composition.CompositionPath GetVoiceNoteClip(Windows.Foundation.Collections.IVector<byte> waveform, Double waveformWidth);
+        Windows.UI.Composition.CompositionPath GetRoundedPolygon(Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> > shapes);
+
+        void Encode(Windows.Storage.Streams.IBuffer source, Windows.Storage.Streams.IRandomAccessStream destination, Int32 width, Int32 height, Int32 rotation);
+
+        Windows.Foundation.IAsyncOperation<ChatBackgroundPattern> DrawSvgAsync(Windows.UI.Composition.Compositor compositor, String path, Single intensity, Boolean negative, Double dpi);
+        ChatBackgroundPattern DrawSvg(Windows.UI.Composition.Compositor compositor, String path, Single intensity, Boolean negative, Double dpi);
+
+        [default_overload]
+        Windows.Graphics.Imaging.SoftwareBitmap DrawBlurred(String fileName, Single blurAmount);
+        Windows.Graphics.Imaging.SoftwareBitmap DrawBlurred(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount);
+
+        SurfaceImage Create(Int32 pixelWidth, Int32 pixelHeight);
+        void Invalidate(SurfaceImage imageSource, Windows.Storage.Streams.IBuffer buffer);
+
+        TextFormat CreateTextFormat2(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width);
+
+        Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width);
+        Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> LineMetrics(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl);
+        Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> RangeMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl, Boolean wrap);
+        Windows.Foundation.Rect LayoutMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl);
+        MaxLinesMetrics MaxLines(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl, Int32 maxLines);
+        //Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> EntityMetrics(String text, Windows.Foundation.Collections.IVector<TextStylePart> entities, Double fontSize, Double width, Boolean rtl);
+    }
 } // namespace Telegram.Native

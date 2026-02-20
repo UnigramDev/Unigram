@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
@@ -22,7 +23,7 @@ namespace Telegram.Charts
 
     public abstract class StackLinearChartView<T> : BaseChartView<StackLinearChartData, T> where T : StackLinearViewData
     {
-        private Vector2 mapPoints = new Vector2();
+        private Vector2 mapPoints = new();
 
         public StackLinearChartView()
         {
@@ -467,11 +468,8 @@ namespace Telegram.Charts
                 clip.Dispose();
                 //canvas.restore();
 
-                if (ovalPath != null)
-                {
-                    ovalPath.Dispose();
-                    ovalPath = null;
-                }
+                ovalPath?.Dispose();
+                ovalPath = null;
             }
         }
 

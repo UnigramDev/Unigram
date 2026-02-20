@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,7 +15,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings.Privacy;
-using Telegram.Views;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.LoginEmail;
@@ -36,6 +36,7 @@ namespace Telegram.ViewModels.Settings
         private readonly SettingsPrivacyShowPhotoViewModel _showPhotoRules;
         private readonly SettingsPrivacyShowStatusViewModel _showStatusRules;
         private readonly SettingsPrivacyShowBioViewModel _showBioRules;
+        private readonly SettingsPrivacyShowProfileAudioViewModel _showProfileAudioRules;
         private readonly SettingsPrivacyShowBirthdateViewModel _showBirthdateRules;
         private readonly SettingsPrivacyAutosaveGiftsViewModel _autosaveGiftsRules;
         private readonly SettingsPrivacyAllowCallsViewModel _allowCallsRules;
@@ -48,23 +49,25 @@ namespace Telegram.ViewModels.Settings
         {
             _passcodeService = passcodeService;
 
-            _showForwardedRules = TypeResolver.Current.Resolve<SettingsPrivacyShowForwardedViewModel>(SessionId);
-            _showPhoneRules = TypeResolver.Current.Resolve<SettingsPrivacyShowPhoneViewModel>(SessionId);
-            _showPhotoRules = TypeResolver.Current.Resolve<SettingsPrivacyShowPhotoViewModel>(SessionId);
-            _showStatusRules = TypeResolver.Current.Resolve<SettingsPrivacyShowStatusViewModel>(SessionId);
-            _showBioRules = TypeResolver.Current.Resolve<SettingsPrivacyShowBioViewModel>(SessionId);
-            _showBirthdateRules = TypeResolver.Current.Resolve<SettingsPrivacyShowBirthdateViewModel>(SessionId);
-            _autosaveGiftsRules = TypeResolver.Current.Resolve<SettingsPrivacyAutosaveGiftsViewModel>(SessionId);
-            _allowCallsRules = TypeResolver.Current.Resolve<SettingsPrivacyAllowCallsViewModel>(SessionId);
-            _allowChatInvitesRules = TypeResolver.Current.Resolve<SettingsPrivacyAllowChatInvitesViewModel>(SessionId);
-            _allowPrivateVoiceAndVideoNoteMessages = TypeResolver.Current.Resolve<SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel>(SessionId);
-            _newChatRules = TypeResolver.Current.Resolve<SettingsPrivacyNewChatViewModel>(SessionId);
+            _showForwardedRules = Session.Resolve<SettingsPrivacyShowForwardedViewModel>();
+            _showPhoneRules = Session.Resolve<SettingsPrivacyShowPhoneViewModel>();
+            _showPhotoRules = Session.Resolve<SettingsPrivacyShowPhotoViewModel>();
+            _showStatusRules = Session.Resolve<SettingsPrivacyShowStatusViewModel>();
+            _showBioRules = Session.Resolve<SettingsPrivacyShowBioViewModel>();
+            _showProfileAudioRules = Session.Resolve<SettingsPrivacyShowProfileAudioViewModel>();
+            _showBirthdateRules = Session.Resolve<SettingsPrivacyShowBirthdateViewModel>();
+            _autosaveGiftsRules = Session.Resolve<SettingsPrivacyAutosaveGiftsViewModel>();
+            _allowCallsRules = Session.Resolve<SettingsPrivacyAllowCallsViewModel>();
+            _allowChatInvitesRules = Session.Resolve<SettingsPrivacyAllowChatInvitesViewModel>();
+            _allowPrivateVoiceAndVideoNoteMessages = Session.Resolve<SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel>();
+            _newChatRules = Session.Resolve<SettingsPrivacyNewChatViewModel>();
 
             Children.Add(_showForwardedRules);
             Children.Add(_showPhotoRules);
             Children.Add(_showPhoneRules);
             Children.Add(_showStatusRules);
             Children.Add(_showBioRules);
+            Children.Add(_showProfileAudioRules);
             Children.Add(_showBirthdateRules);
             Children.Add(_autosaveGiftsRules);
             Children.Add(_allowCallsRules);
@@ -121,9 +124,18 @@ namespace Telegram.ViewModels.Settings
                 {
                     BeginOnUIThread(() =>
                     {
-                        HasEmailAddress = passwordState.LoginEmailAddressPattern.Length > 0;
                         HasPassword = passwordState.HasPassword;
+                        HasEmailAddress = passwordState.LoginEmailAddressPattern.Length > 0;
+                        EmailAddressPattern = UpdateEmailAddressPattern(passwordState.LoginEmailAddressPattern);
                     });
+                }
+            });
+
+            ClientService.Send(new GetLoginPasskeys(), result =>
+            {
+                if (result is Passkeys passkeys)
+                {
+                    BeginOnUIThread(() => HasPasskeys = passkeys.PasskeysValue.Count > 0);
                 }
             });
 
@@ -147,6 +159,11 @@ namespace Telegram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
+        public override void NavigatingFrom(NavigatingEventArgs args)
+        {
+            // Do nothing
+        }
+
         public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateOption>(this, Handle);
@@ -159,6 +176,7 @@ namespace Telegram.ViewModels.Settings
         public SettingsPrivacyShowPhotoViewModel ShowPhotoRules => _showPhotoRules;
         public SettingsPrivacyShowStatusViewModel ShowStatusRules => _showStatusRules;
         public SettingsPrivacyShowBioViewModel ShowBioRules => _showBioRules;
+        public SettingsPrivacyShowProfileAudioViewModel ShowProfileAudioRules => _showProfileAudioRules;
         public SettingsPrivacyShowBirthdateViewModel ShowBirthdateRules => _showBirthdateRules;
         public SettingsPrivacyAutosaveGiftsViewModel AutosaveGiftsRules => _autosaveGiftsRules;
         public SettingsPrivacyAllowCallsViewModel AllowCallsRules => _allowCallsRules;
@@ -207,6 +225,13 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _blockedUsers, value);
         }
 
+        private bool _hasPasskeys;
+        public bool HasPasskeys
+        {
+            get => _hasPasskeys;
+            set => Set(ref _hasPasskeys, value);
+        }
+
         private bool _hasPassword;
         public bool HasPassword
         {
@@ -219,6 +244,33 @@ namespace Telegram.ViewModels.Settings
         {
             get => _hasEmailAddress;
             set => Set(ref _hasEmailAddress, value);
+        }
+
+        private FormattedText _emailAddressPattern;
+        public FormattedText EmailAddressPattern
+        {
+            get => _emailAddressPattern;
+            set => Set(ref _emailAddressPattern, value);
+        }
+
+        private FormattedText UpdateEmailAddressPattern(string pattern)
+        {
+            pattern ??= string.Empty;
+
+            var first = pattern.IndexOf('*');
+            var last = pattern.LastIndexOf('*');
+
+            if (first != -1 && last != -1)
+            {
+                var formatted = new FormattedText(pattern, new[]
+                {
+                    new TextEntity(first, last - first + 1, new TextEntityTypeSpoiler())
+                });
+
+                return formatted;
+            }
+
+            return pattern.AsFormattedText();
         }
 
         private bool _hasPasscode;
@@ -308,8 +360,41 @@ namespace Telegram.ViewModels.Settings
             NavigationService.NavigateToPasscode();
         }
 
+        public async void Passkeys()
+        {
+            if (HasPasskeys)
+            {
+                NavigationService.Navigate(typeof(SettingsPasskeysPage));
+            }
+            else
+            {
+                if (!BridgeApplicationContext.IsPasskeySupported())
+                {
+                    ShowPopup(Strings.PasskeyNotSupportedText, Strings.AppName, Strings.OK);
+                    return;
+                }
+
+                var confirm = await ShowPopupAsync(new SettingsPasskeysIntroPopup());
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var response = await BridgeApplicationContext.AddLoginPasskeyAsync(ClientService);
+                    if (response is Passkey passkey)
+                    {
+                        HasPasskeys = true;
+                        NavigationService.Navigate(typeof(SettingsPasskeysPage));
+                        ShowToast(string.Format("**{0}**\n{1}", Strings.PasskeyAddedTitle, string.Format(Strings.PasskeyAddedText, passkey.Name)));
+                    }
+                    else if (response is Error { Code: not -2147023673 and not -2146893770 } error)
+                    {
+                        ShowToast(error);
+                    }
+                }
+            }
+        }
+
         public async void Password()
         {
+            // TODO: Maybe use NavigationService.NavigateToPasswordAsync
             var response = await ClientService.SendAsync(new GetPasswordState());
             if (response is PasswordState passwordState)
             {
@@ -328,7 +413,7 @@ namespace Telegram.ViewModels.Settings
 
                         if (ContentDialogResult.Primary == await ShowPopupAsync(emailCode))
                         {
-                            await ShowPopupAsync(new SettingsPasswordDonePopup());
+                            ShowPopup(new SettingsPasswordDonePopup());
                         }
                     }
                 }
@@ -338,16 +423,15 @@ namespace Telegram.ViewModels.Settings
 
                     if (ContentDialogResult.Primary == await ShowPopupAsync(emailCode))
                     {
-                        await ShowPopupAsync(new SettingsPasswordDonePopup());
+                        ShowPopup(new SettingsPasswordDonePopup());
                     }
                 }
                 else
                 {
-                    passwordState = await NavigationService.NavigateToPasswordAsync();
+                    passwordState = await NavigationService.NavigateToPasswordSetupAsync();
                 }
 
                 HasPassword = passwordState?.HasPassword ?? false;
-                HasEmailAddress = passwordState?.LoginEmailAddressPattern.Length > 0;
             }
         }
 
@@ -361,7 +445,27 @@ namespace Telegram.ViewModels.Settings
             var response = await ClientService.SendAsync(new GetPasswordState());
             if (response is PasswordState passwordState && passwordState.LoginEmailAddressPattern.Length > 0)
             {
-                var confirm = await ShowPopupAsync(Strings.EmailLoginChangeMessage, passwordState.LoginEmailAddressPattern, Strings.ChangeEmail, Strings.Cancel);
+                var block = new FormattedTextBlock
+                {
+                    IsTextSelectionEnabled = false,
+                    TextWrapping = TextWrapping.NoWrap,
+                    TextTrimming = TextTrimming.CharacterEllipsis,
+                    MaxLines = 1,
+                    FontSize = 20,
+                    AutoFontSize = false
+                };
+
+                block.SetText(ClientService, EmailAddressPattern);
+
+                var popup = new MessagePopup
+                {
+                    Title = block,
+                    Message = Strings.EmailLoginChangeMessage,
+                    PrimaryButtonText = Strings.ChangeEmail,
+                    SecondaryButtonText = Strings.Cancel
+                };
+
+                var confirm = await ShowPopupAsync(popup);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var address = new SettingsLoginEmailAddressPopup(ClientService);
@@ -369,19 +473,20 @@ namespace Telegram.ViewModels.Settings
                     var coconfirm = await ShowPopupAsync(address);
                     if (coconfirm == ContentDialogResult.Primary)
                     {
-                        await ShowPopupAsync(new SettingsLoginEmailCodePopup(ClientService, address.CodeInfo));
+                        ShowPopup(new SettingsLoginEmailCodePopup(ClientService, address.CodeInfo));
                     }
                 }
             }
             else
             {
                 HasEmailAddress = false;
+                EmailAddressPattern = UpdateEmailAddressPattern(string.Empty);
             }
         }
 
         public void ArchiveSettings()
         {
-            ShowPopupAsync(new SettingsArchivePopup(ClientService));
+            ShowPopup(new SettingsArchivePopup(ClientService));
         }
 
         public async void ClearPayments()
@@ -401,12 +506,12 @@ namespace Telegram.ViewModels.Settings
             checkPayment.Checked += toggle;
             checkPayment.Unchecked += toggle;
 
-            stack.Margin = new Thickness(12, 16, 12, 0);
             stack.Children.Add(checkShipping);
             stack.Children.Add(checkPayment);
 
             dialog.Title = Strings.PrivacyPayments;
             dialog.Content = stack;
+            dialog.Padding = new Thickness(24, 24, 24, 18);
             dialog.PrimaryButtonText = Strings.ClearButton;
             dialog.SecondaryButtonText = Strings.Cancel;
 
@@ -461,6 +566,11 @@ namespace Telegram.ViewModels.Settings
         public void OpenBirthdate()
         {
             NavigationService.Navigate(typeof(SettingsPrivacyShowBirthdatePage));
+        }
+
+        public void OpenProfileAudio()
+        {
+            NavigationService.Navigate(typeof(SettingsPrivacyShowProfileAudioPage));
         }
 
         public void OpenGifts()

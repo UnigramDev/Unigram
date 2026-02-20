@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Numerics;
@@ -259,10 +260,7 @@ namespace Telegram.Controls.Cells
             }
             else
             {
-                if (_pausedVisual != null)
-                {
-                    _pausedVisual.Brush = null;
-                }
+                _pausedVisual?.Brush = null;
 
                 OverlayRoot.Visibility = Visibility.Collapsed;
                 Scrim.Visibility = Visibility.Visible;
@@ -277,12 +275,10 @@ namespace Telegram.Controls.Cells
             if (_needArrange)
             {
                 _visual.Size = finalSize.ToVector2();
+                _visual.CenterPoint = new Vector3(_visual.Size / 2, 0);
             }
 
-            if (_pausedVisual != null)
-            {
-                _pausedVisual.Size = finalSize.ToVector2();
-            }
+            _pausedVisual?.Size = finalSize.ToVector2();
 
             return base.ArrangeOverride(finalSize);
         }
@@ -304,6 +300,11 @@ namespace Telegram.Controls.Cells
             var pattern = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
 
             pattern.Invoke();
+        }
+
+        public void StartAnimation(ExpressionAnimation factor)
+        {
+            _visual.StartAnimation("Scale", factor);
         }
     }
 }

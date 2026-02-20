@@ -1,12 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,12 +19,14 @@ using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Data.Json;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -32,28 +34,33 @@ using Windows.UI.Core;
 using Windows.UI.Core.Preview;
 using Windows.UI.StartScreen;
 using Windows.UI.ViewManagement;
-using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Views
 {
-    public sealed partial class WebAppPage : UserControlEx, IToastHost, IPopupHost
+    public partial record WebAppAgeVerificationCompletedEventArgs(bool Passed, double Age);
+
+    public sealed partial class WebAppPage : UserControlEx, IPopupHost
     {
         private readonly IClientService _clientService;
-        private readonly IViewService _viewService;
-        private readonly INavigationService _navigationService;
+        private readonly SecondaryNavigationService _navigationService;
         private readonly IEventAggregator _aggregator;
+
+        private WebAppStorage _deviceStorage;
+        private WebAppStorage _secureStorage;
 
         private readonly Chat _sourceChat;
         private readonly User _botUser;
         private readonly AttachmentMenuBot _menuBot;
 
         private readonly InternalLinkType _sourceLink;
+        private readonly string _buttonText;
 
         private readonly long _launchId;
 
@@ -65,21 +72,21 @@ namespace Telegram.Views
         private bool _blockingAction;
         private bool _closeNeedConfirmation;
 
+        private bool _sentData;
+
         private bool _settingsVisible;
 
         private CompositionAnimation _placeholderShimmer;
         private ShapeVisual _placeholderVisual;
 
         // TODO: constructor should take a function and URL should be loaded asynchronously
-        public WebAppPage(IClientService clientService, User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null, InternalLinkType sourceLink = null)
+        public WebAppPage(IClientService clientService, INavigationService navigationService, User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null, InternalLinkType sourceLink = null, string buttonText = null)
         {
-            RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
             _clientService = clientService;
-            _viewService = TypeResolver.Current.Resolve<IViewService>(clientService.SessionId);
-            _navigationService = new SecondaryNavigationService(clientService, _viewService, WindowContext.Current);
-            _aggregator = TypeResolver.Current.Resolve<IEventAggregator>(clientService.SessionId);
+            _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, WindowContext.Current);
+            _aggregator = clientService.Session.Resolve<IEventAggregator>();
 
             _aggregator.Subscribe<UpdateWebAppMessageSent>(this, Handle)
                 .Subscribe<UpdatePaymentCompleted>(Handle);
@@ -89,9 +96,10 @@ namespace Telegram.Views
             _menuBot = menuBot;
             _sourceChat = sourceChat;
             _sourceLink = sourceLink != null ? new InternalLinkTypeMainWebApp(botUser.ActiveUsername(), string.Empty, new WebAppOpenModeFullSize()) : null;
+            _buttonText = buttonText;
 
             TitleText.Text = botUser.FullName();
-            Photo.SetUser(clientService, botUser, 24);
+            Photo.Source = ProfilePictureSource.User(clientService, botUser);
 
             View.Navigate(url);
 
@@ -104,10 +112,14 @@ namespace Telegram.Views
             Window.Current.Activated += OnActivated;
 
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
             ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
 
             LoadPlaceholder();
         }
+
+        private bool _ageVerificationRaised;
+        public event EventHandler<WebAppAgeVerificationCompletedEventArgs> AgeVerificationCompleted;
 
         private async void LoadPlaceholder()
         {
@@ -168,22 +180,20 @@ namespace Telegram.Views
             return false;
         }
 
-        public WebAppPage(IClientService clientService, User botUser, string url, string title, long gameChatId = 0, long gameMessageId = 0)
+        public WebAppPage(IClientService clientService, INavigationService navigationService, User botUser, string url, string title, long gameChatId = 0, long gameMessageId = 0)
         {
-            RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
             _clientService = clientService;
-            _viewService = TypeResolver.Current.Resolve<IViewService>(clientService.SessionId);
-            _navigationService = new SecondaryNavigationService(clientService, _viewService, WindowContext.Current);
-            _aggregator = TypeResolver.Current.Resolve<IEventAggregator>(clientService.SessionId);
+            _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, WindowContext.Current);
+            _aggregator = clientService.Session.Resolve<IEventAggregator>();
 
             _botUser = botUser;
             _gameChatId = gameChatId;
             _gameMessageId = gameMessageId;
 
             TitleText.Text = title;
-            Photo.SetUser(clientService, botUser, 24);
+            Photo.Source = ProfilePictureSource.User(clientService, botUser);
 
             View.Navigate(url);
 
@@ -199,23 +209,6 @@ namespace Telegram.Views
         }
 
         #region IToastHost
-
-        public void ToastOpened(TeachingTip toast)
-        {
-            Resources.Remove("TeachingTip");
-            Resources.Add("TeachingTip", toast);
-        }
-
-        public void ToastClosed(TeachingTip toast)
-        {
-            if (Resources.TryGetValue("TeachingTip", out object cached))
-            {
-                if (cached == toast)
-                {
-                    Resources.Remove("TeachingTip");
-                }
-            }
-        }
 
         public void PopupOpened()
         {
@@ -240,7 +233,7 @@ namespace Telegram.Views
 
         private void Handle(UpdatePaymentCompleted update)
         {
-            PostEvent("invoice_closed", "{ slug: \"" + update.Slug + "\", status: " + update.Status + "}");
+            PostEvent("invoice_closed", "slug", update.Slug, "status", update.Status);
         }
 
         private bool _closed;
@@ -293,7 +286,7 @@ namespace Telegram.Views
 
         private void OnActivated(object sender, WindowActivatedEventArgs e)
         {
-            PostEvent("visibility_changed", "{ is_visible: " + (e.WindowActivationState != CoreWindowActivationState.Deactivated ? "true" : "false") + " }");
+            PostEvent("visibility_changed", "is_visible", e.WindowActivationState != CoreWindowActivationState.Deactivated);
         }
 
         private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
@@ -316,12 +309,22 @@ namespace Telegram.Views
             }
         }
 
+        private void OnConsolidated(ApplicationView sender, ApplicationViewConsolidatedEventArgs args)
+        {
+            if (_ageVerificationRaised)
+            {
+                return;
+            }
+
+            AgeVerificationCompleted?.Invoke(this, new WebAppAgeVerificationCompletedEventArgs(false, 0));
+        }
+
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
             if (_fullscreen != sender.IsFullScreenMode)
             {
                 _fullscreen = sender.IsFullScreenMode;
-                PostEvent("fullscreen_changed", "{ is_fullscreen: \"" + (_fullscreen ? "true" : "false") + "\" }");
+                PostEvent("fullscreen_changed", "is_fullscreen", _fullscreen);
             }
         }
 
@@ -591,15 +594,61 @@ namespace Telegram.Views
             }
             else if (eventName == "web_app_start_accelerometer")
             {
-                PostEvent("accelerometer_failed", "{ error: \"UNSUPPORTED\" }");
+                PostEvent("accelerometer_failed", "error", "UNSUPPORTED");
             }
             else if (eventName == "web_app_start_device_orientation")
             {
-                PostEvent("device_orientation_failed", "{ error: \"UNSUPPORTED\" }");
+                PostEvent("device_orientation_failed", "error", "UNSUPPORTED");
             }
             else if (eventName == "web_app_start_gyroscope")
             {
-                PostEvent("gyroscope_failed", "{ error: \"UNSUPPORTED\" }");
+                PostEvent("gyroscope_failed", "error", "UNSUPPORTED");
+            }
+            else if (eventName == "web_app_verify_age")
+            {
+                ProcessVerifyAge(eventData);
+            }
+            else if (eventName == "web_app_device_storage_save_key")
+            {
+                if (_botUser == null) return;
+                if (_deviceStorage == null) _deviceStorage = new WebAppStorage(_clientService, _botUser.Id, false);
+                SetStorageKey(_deviceStorage, eventData, "device_storage_key_saved", "device_storage_failed");
+            }
+            else if (eventName == "web_app_device_storage_get_key")
+            {
+                if (_botUser == null) return;
+                if (_deviceStorage == null) _deviceStorage = new WebAppStorage(_clientService, _botUser.Id, false);
+                GetStorageKey(_deviceStorage, eventData, "device_storage_key_received", "device_storage_failed");
+            }
+            else if (eventName == "web_app_device_storage_clear")
+            {
+                if (_botUser == null) return;
+                if (_deviceStorage == null) _deviceStorage = new WebAppStorage(_clientService, _botUser.Id, false);
+                ClearStorageKey(_deviceStorage, eventData, "device_storage_cleared", "device_storage_failed");
+            }
+            else if (eventName == "web_app_secure_storage_save_key")
+            {
+                if (_botUser == null) return;
+                if (_secureStorage == null) _secureStorage = new WebAppStorage(_clientService, _botUser.Id, true);
+                SetStorageKey(_secureStorage, eventData, "secure_storage_key_saved", "secure_storage_failed");
+            }
+            else if (eventName == "web_app_secure_storage_get_key")
+            {
+                if (_botUser == null) return;
+                if (_secureStorage == null) _secureStorage = new WebAppStorage(_clientService, _botUser.Id, true);
+                GetStorageKey(_secureStorage, eventData, "secure_storage_key_received", "secure_storage_failed");
+            }
+            else if (eventName == "web_app_secure_storage_clear")
+            {
+                if (_botUser == null) return;
+                if (_secureStorage == null) _secureStorage = new WebAppStorage(_clientService, _botUser.Id, true);
+                ClearStorageKey(_secureStorage, eventData, "secure_storage_cleared", "secure_storage_cleared");
+            }
+            else if (eventName == "web_app_secure_storage_restore_key")
+            {
+                if (_botUser == null) return;
+                if (_secureStorage == null) _secureStorage = new WebAppStorage(_clientService, _botUser.Id, true);
+                RestoreStorageKey(_secureStorage, eventData, "secure_storage_key_restored", "secure_storage_cleared");
             }
             // Games
             else if (eventName == "share_game")
@@ -612,6 +661,222 @@ namespace Telegram.Views
             }
         }
 
+        private void ProcessVerifyAge(JsonObject eventData)
+        {
+            var passed = eventData.GetNamedBoolean("passed", false);
+            var age = eventData.GetNamedNumber("age", 0);
+            // gender, string
+            // genderProbability, double
+
+            _ageVerificationRaised = true;
+            AgeVerificationCompleted?.Invoke(this, new WebAppAgeVerificationCompletedEventArgs(passed, age));
+
+            _navigationService.Switch();
+        }
+
+        private async void SetStorageKey(WebAppStorage storage, JsonObject eventData, String eventSuccess, String eventFail)
+        {
+            if (storage == null || _botUser == null) return;
+            String req_id = "";
+            try
+            {
+                req_id = eventData.GetNamedString("req_id");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                return;
+            }
+            String key;
+            try
+            {
+                key = eventData.GetNamedString("key");
+            }
+            catch (Exception)
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", "KEY_INVALID");
+                return;
+            }
+            if (string.IsNullOrEmpty(key))
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", "KEY_INVALID");
+                return;
+            }
+            String value;
+            try
+            {
+                var valueData = eventData.GetNamedValue("value");
+                if (valueData.ValueType == JsonValueType.String)
+                {
+                    value = valueData.GetString();
+                }
+                else if (valueData.ValueType == JsonValueType.Null)
+                {
+                    value = null;
+                }
+                else
+                {
+                    PostEvent(eventFail, "req_id", req_id, "error", "VALUE_INVALID");
+                    return;
+                }
+            }
+            catch (Exception)
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", "VALUE_INVALID");
+                return;
+            }
+            try
+            {
+                await storage.SetKeyAsync(key, value);
+            }
+            catch (InvalidOperationException e)
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", e.Message);
+                return;
+            }
+
+            PostEvent(eventSuccess, "req_id", req_id);
+        }
+
+        private async void GetStorageKey(WebAppStorage storage, JsonObject eventData, String eventSuccess, String eventFail)
+        {
+            if (storage == null || _botUser == null) return;
+            String req_id = "";
+            try
+            {
+                req_id = eventData.GetNamedString("req_id");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                return;
+            }
+            String key;
+            try
+            {
+                key = eventData.GetNamedString("key");
+            }
+            catch (Exception)
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", "KEY_INVALID");
+                return;
+            }
+            if (string.IsNullOrEmpty(key))
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", "KEY_INVALID");
+                return;
+            }
+            try
+            {
+                (String value, Boolean canRestore) = await storage.GetKeyAsync(key);
+                if (storage.Secured && value == null)
+                {
+                    PostEvent(eventSuccess, "req_id", req_id, "value", value, "can_restore", canRestore);
+                }
+                else
+                {
+                    PostEvent(eventSuccess, "req_id", req_id, "value", value);
+                }
+            }
+            catch (InvalidOperationException e)
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", e.Message);
+            }
+        }
+
+        private async void RestoreStorageKey(WebAppStorage storage, JsonObject eventData, String eventSuccess, String eventFail)
+        {
+            if (storage == null || _botUser == null) return;
+            String req_id = "";
+            try
+            {
+                req_id = eventData.GetNamedString("req_id");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                return;
+            }
+            String key;
+            try
+            {
+                key = eventData.GetNamedString("key");
+            }
+            catch (Exception)
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", "KEY_INVALID");
+                return;
+            }
+            if (string.IsNullOrEmpty(key))
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", "KEY_INVALID");
+                return;
+            }
+            List<WebAppStorageConfig> storages;
+            try
+            {
+                storages = await storage.GetStoragesWithKeyAsync(key);
+            }
+            catch (Exception e)
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", e.Message);
+                return;
+            }
+            if (storages.Empty())
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", "RESTORE_UNAVAILABLE");
+                return;
+            }
+
+            var popup = new WebAppRestorePopup(_clientService, _botUser, storages);
+
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
+            if (confirm != ContentDialogResult.Primary || popup.SelectedItem == null)
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", "RESTORE_CANCELLED");
+            }
+
+            (String Value, bool) restoredValue;
+            try
+            {
+                await storage.RestoreFromAsync(popup.SelectedItem.StorageId);
+                restoredValue = await storage.GetKeyAsync(key);
+            }
+            catch (Exception e)
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", e.Message);
+                return;
+            }
+
+            PostEvent(eventSuccess, "req_id", req_id, "value", restoredValue.Value);
+        }
+
+        private async void ClearStorageKey(WebAppStorage storage, JsonObject eventData, String eventSuccess, String eventFail)
+        {
+            if (storage == null || _botUser == null) return;
+            String req_id = "";
+            try
+            {
+                req_id = eventData.GetNamedString("req_id");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                return;
+            }
+            try
+            {
+                await storage.ClearAsync();
+            }
+            catch (InvalidOperationException e)
+            {
+                PostEvent(eventFail, "req_id", req_id, "error", e.Message);
+                return;
+            }
+
+            PostEvent(eventSuccess, "req_id", req_id);
+        }
+
         private async void ProcessSendPreparedMessage(JsonObject eventData)
         {
             var preparedMessageId = eventData.GetNamedString("id", string.Empty);
@@ -619,17 +884,18 @@ namespace Telegram.Views
             var response = await _clientService.SendAsync(new GetPreparedInlineMessage(_botUser.Id, preparedMessageId));
             if (response is PreparedInlineMessage prepared)
             {
-                var response2 = await _clientService.SendAsync(new SendInlineQueryResultMessage(_clientService.Options.MyId, 0, null, Constants.PreviewOnly, prepared.InlineQueryId, prepared.Result.GetId(), false));
+                // TODO: is this correct?
+                var response2 = await _clientService.SendAsync(new SendInlineQueryResultMessage(_clientService.Options.MyId, null, null, Constants.PreviewOnly, prepared.InlineQueryId, prepared.Result.GetId(), false));
                 if (response2 is not Message message)
                 {
-                    PostEvent("prepared_message_failed", "{ error: \"UNKNOWN_ERROR\" }");
+                    PostEvent("prepared_message_failed", "error", "UNKNOWN_ERROR");
                     return;
                 }
 
                 var confirm2 = await _navigationService.ShowPopupAsync(new SendPreparedMessagePopup(_clientService, _navigationService, message, _botUser));
                 if (confirm2 != ContentDialogResult.Primary)
                 {
-                    PostEvent("prepared_message_failed", "{ error: \"USER_DECLINED\" }");
+                    PostEvent("prepared_message_failed", "error", "USER_DECLINED");
                     return;
                 }
 
@@ -640,12 +906,12 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    PostEvent("prepared_message_failed", "{ error: \"USER_DECLINED\" }");
+                    PostEvent("prepared_message_failed", "error", "USER_DECLINED");
                 }
             }
             else
             {
-                PostEvent("prepared_message_failed", "{ error: \"USER_DECLINED\" }");
+                PostEvent("prepared_message_failed", "error", "USER_DECLINED");
             }
         }
 
@@ -677,20 +943,20 @@ namespace Telegram.Views
 
             if (string.IsNullOrEmpty(customEmoji) || !long.TryParse(customEmoji, out long customEmojiId))
             {
-                PostEvent("emoji_status_failed", "{ error: \"SUGGESTED_EMOJI_INVALID\" }");
+                PostEvent("emoji_status_failed", "error", "SUGGESTED_EMOJI_INVALID");
                 return;
             }
 
             if (expirationDate != 0 && expirationDate < DateTime.Now.ToTimestamp())
             {
-                PostEvent("emoji_status_failed", "{ error: \"EXPIRATION_DATE_INVALID\" }");
+                PostEvent("emoji_status_failed", "error", "EXPIRATION_DATE_INVALID");
                 return;
             }
 
             var response = await _clientService.SendAsync(new GetCustomEmojiStickers(new[] { customEmojiId }));
             if (response is not Stickers stickers || stickers.StickersValue.Count != 1)
             {
-                PostEvent("emoji_status_failed", "{ error: \"SUGGESTED_EMOJI_INVALID\" }");
+                PostEvent("emoji_status_failed", "error", "SUGGESTED_EMOJI_INVALID");
                 return;
             }
 
@@ -703,11 +969,11 @@ namespace Telegram.Views
             }
             else if (confirm == ContentDialogResult.Secondary)
             {
-                PostEvent("emoji_status_failed", "{ error: \"SERVER_ERROR\" }");
+                PostEvent("emoji_status_failed", "error", "SERVER_ERROR");
             }
             else
             {
-                PostEvent("emoji_status_failed", "{ error: \"USER_DECLINED\" }");
+                PostEvent("emoji_status_failed", "error", "USER_DECLINED");
             }
         }
 
@@ -715,15 +981,15 @@ namespace Telegram.Views
         {
             if (_botUser.Type is not UserTypeBot { HasMainWebApp: true })
             {
-                PostEvent("home_screen_checked", "{ status: \"unsupported\" }");
+                PostEvent("home_screen_checked", "status", "unsupported");
             }
             else if (SecondaryTile.Exists("web_app_" + _clientService.SessionId + "_" + _botUser.Id))
             {
-                PostEvent("home_screen_checked", "{ status: \"added\" }");
+                PostEvent("home_screen_checked", "status", "added");
             }
             else
             {
-                PostEvent("home_screen_checked", "{ status: \"missed\" }");
+                PostEvent("home_screen_checked", "status", "missed");
             }
         }
 
@@ -732,14 +998,14 @@ namespace Telegram.Views
             MenuItemAddToStartMenu();
         }
 
-        private async void ProcessShareGame(bool withMyScore)
+        private void ProcessShareGame(bool withMyScore)
         {
-            await this.ShowPopupAsync(_clientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessage(_gameChatId, _gameMessageId, withMyScore));
+            this.ShowPopup(_clientService.Session, new ChooseChatsPopup(), new ChooseChatsConfigurationShareGame(_gameChatId, _gameMessageId, withMyScore));
         }
 
-        private async void ProcessShareToStory(JsonObject eventData)
+        private void ProcessShareToStory(JsonObject eventData)
         {
-            await MessagePopup.ShowAsync(XamlRoot, Strings.WebAppShareStoryNotSupported, Strings.AppName, Strings.OK);
+            _ = MessagePopup.ShowAsync(XamlRoot, Strings.WebAppShareStoryNotSupported, Strings.AppName, Strings.OK);
         }
 
         private async void RequestClipboardText(JsonObject eventData)
@@ -750,15 +1016,15 @@ namespace Telegram.Views
                 return;
             }
 
-            var clipboard = Clipboard.GetContent();
-            if (clipboard.Contains(StandardDataFormats.Text) && _menuBot != null)
+            var clipboard = ClipboardEx.TryGetContent();
+            if (clipboard != null && clipboard.Contains(StandardDataFormats.Text) && _menuBot != null)
             {
                 var text = await clipboard.GetTextAsync();
-                PostEvent("clipboard_text_received", "{ req_id: \"" + requestId + "\", data: \"" + text + "\" }");
+                PostEvent("clipboard_text_received", "req_id", requestId, "data", text);
             }
             else
             {
-                PostEvent("clipboard_text_received", "{ req_id: \"" + requestId + "\" }");
+                PostEvent("clipboard_text_received", "req_id", requestId);
             }
         }
 
@@ -781,11 +1047,11 @@ namespace Telegram.Views
             var response = await _clientService.SendAsync(new SendWebAppCustomRequest(_botUser.Id, method, parameters.Stringify()));
             if (response is CustomRequestResult result)
             {
-                PostEvent("custom_method_invoked", "{ req_id: \"" + requestId + "\", result: " + result.Result + " }");
+                PostEvent("custom_method_invoked", "req_id", requestId, "result", result.Result);
             }
             else if (response is Error error)
             {
-                PostEvent("custom_method_invoked", "{ req_id: \"" + requestId + "\", error: " + error.Message + " }");
+                PostEvent("custom_method_invoked", "req_id", requestId, "error", error.Message);
             }
         }
 
@@ -891,7 +1157,7 @@ namespace Telegram.Views
         {
             if (_blockingAction)
             {
-                PostEvent("phone_requested", "{ status: \"cancelled\" }");
+                PostEvent("phone_requested", "status", "cancelled");
                 return;
             }
 
@@ -904,7 +1170,7 @@ namespace Telegram.Views
                 if (chat == null)
                 {
                     _blockingAction = false;
-                    PostEvent("phone_requested", "{ status: \"cancelled\" }");
+                    PostEvent("phone_requested", "status", "cancelled");
 
                     return;
                 }
@@ -914,15 +1180,15 @@ namespace Telegram.Views
                     await _clientService.SendAsync(new SetMessageSenderBlockList(new MessageSenderUser(_botUser.Id), null));
                 }
 
-                await _clientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id))));
+                await _clientService.SendAsync(new SendMessage(chat.Id, null, null, null, new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id))));
 
                 _blockingAction = false;
-                PostEvent("phone_requested", "{ status: \"sent\" }");
+                PostEvent("phone_requested", "status", "sent");
             }
             else
             {
                 _blockingAction = false;
-                PostEvent("phone_requested", "{ status: \"cancelled\" }");
+                PostEvent("phone_requested", "status", "cancelled");
             }
         }
 
@@ -930,7 +1196,7 @@ namespace Telegram.Views
         {
             if (_blockingAction)
             {
-                PostEvent("write_access_requested", "{ status: \"cancelled\" }");
+                PostEvent("write_access_requested", "status", "cancelled");
                 return;
             }
 
@@ -940,7 +1206,7 @@ namespace Telegram.Views
             if (request is Ok)
             {
                 _blockingAction = false;
-                PostEvent("write_access_requested", "{ status: \"allowed\" }");
+                PostEvent("write_access_requested", "status", "allowed");
 
                 return;
             }
@@ -951,12 +1217,12 @@ namespace Telegram.Views
                 await _clientService.SendAsync(new AllowBotToSendMessages(_botUser.Id));
 
                 _blockingAction = false;
-                PostEvent("write_access_requested", "{ status: \"allowed\" }");
+                PostEvent("write_access_requested", "status", "allowed");
             }
             else
             {
                 _blockingAction = false;
-                PostEvent("write_access_requested", "{ status: \"cancelled\" }");
+                PostEvent("write_access_requested", "status", "cancelled");
             }
         }
 
@@ -1013,7 +1279,7 @@ namespace Telegram.Views
             {
                 if (sender is Button button && button.CommandParameter is string id)
                 {
-                    PostEvent("popup_closed", "{ button_id: \"" + id + "\" }");
+                    PostEvent("popup_closed", "button_id", id);
                     button.Click -= click;
                 }
 
@@ -1113,7 +1379,7 @@ namespace Telegram.Views
 
         private void PostViewportChanged()
         {
-            PostEvent("viewport_changed", "{ height: " + View.ActualHeight + ", is_state_stable: true, is_expanded: true }");
+            PostEvent("viewport_changed", "height", View.ActualHeight, "is_state_stable", true, "is_expanded", true);
         }
 
         private void ProcessBackButtonMessage(JsonObject eventData)
@@ -1201,8 +1467,12 @@ namespace Telegram.Views
             var text = eventData.GetNamedString("text", string.Empty); // text on the button(trim(text) should be non-empty, if empty, the button can be hidden);
             var color = eventData.GetNamedString("color", string.Empty); // background color of the button(by default button_colorfrom the theme);
             var text_color = eventData.GetNamedString("text_color", string.Empty); // text color on the button(by default button_text_colorfrom the theme).
+            var icon_custom_emoji_id = eventData.GetNamedString("icon_custom_emoji_id", string.Empty);
 
-            if (is_visible && !string.IsNullOrEmpty(text.Trim()))
+            var hasIcon = long.TryParse(icon_custom_emoji_id, out long customEmojiId);
+            var hasText = !string.IsNullOrEmpty(text.Trim());
+
+            if (is_visible && (hasIcon || hasText))
             {
                 void SetColor(DependencyObject element, string value, DependencyProperty property)
                 {
@@ -1221,7 +1491,44 @@ namespace Telegram.Views
                 SetColor(MainButton, text_color, ForegroundProperty);
                 SetColor(MainProgress, text_color, Microsoft.UI.Xaml.Controls.ProgressRing.ForegroundProperty);
 
-                MainButton.Content = text;
+                if (hasIcon)
+                {
+                    var player = new CustomEmojiIcon();
+                    player.Width = 20;
+                    player.Height = 20;
+                    player.FrameSize = new Size(20, 20);
+                    player.Source = new CustomEmojiFileSource(_clientService, customEmojiId);
+                    player.HorizontalAlignment = HorizontalAlignment.Left;
+                    player.FlowDirection = FlowDirection.LeftToRight;
+                    player.IsHitTestVisible = false;
+                    player.Margin = new Thickness(0, -2, 0, -6);
+
+                    var inline = new InlineUIContainer();
+                    inline.Child = player;
+
+                    // If the Span starts with a InlineUIContainer the RichTextBlock bugs and shows ellipsis
+                    var paragraph = new Paragraph();
+                    paragraph.Inlines.Add(Icons.ZWNJ);
+                    paragraph.Inlines.Add(inline);
+                    paragraph.Inlines.Add(Icons.ZWNJ);
+
+                    if (hasText)
+                    {
+                        paragraph.Inlines.Add(Icons.Space);
+                        paragraph.Inlines.Add(text);
+                    }
+
+                    var textBlock = new RichTextBlock();
+                    textBlock.IsTextSelectionEnabled = false;
+                    textBlock.Blocks.Add(paragraph);
+
+                    MainButton.Content = textBlock;
+                }
+                else
+                {
+                    MainButton.Content = text;
+                }
+
                 MainButton.IsEnabled = is_active || is_progress_visible;
 
                 ShowHideProgress(is_progress_visible, MainButton, MainProgress, ref _mainProgressCollapsed);
@@ -1244,8 +1551,12 @@ namespace Telegram.Views
             var color = eventData.GetNamedString("color", string.Empty); // background color of the button(by default button_colorfrom the theme);
             var text_color = eventData.GetNamedString("text_color", string.Empty); // text color on the button(by default button_text_colorfrom the theme).
             var position = eventData.GetNamedString("position", "left");
+            var icon_custom_emoji_id = eventData.GetNamedString("icon_custom_emoji_id", string.Empty);
 
-            if (is_visible && !string.IsNullOrEmpty(text.Trim()))
+            var hasIcon = long.TryParse(icon_custom_emoji_id, out long customEmojiId);
+            var hasText = !string.IsNullOrEmpty(text.Trim());
+
+            if (is_visible && (hasIcon || hasText))
             {
                 void SetColor(DependencyObject element, string value, DependencyProperty property)
                 {
@@ -1264,7 +1575,44 @@ namespace Telegram.Views
                 SetColor(SecondaryButton, text_color, ForegroundProperty);
                 SetColor(SecondaryProgress, text_color, Microsoft.UI.Xaml.Controls.ProgressRing.ForegroundProperty);
 
-                SecondaryButton.Content = text;
+                if (hasIcon)
+                {
+                    var player = new CustomEmojiIcon();
+                    player.Width = 20;
+                    player.Height = 20;
+                    player.FrameSize = new Size(20, 20);
+                    player.Source = new CustomEmojiFileSource(_clientService, customEmojiId);
+                    player.HorizontalAlignment = HorizontalAlignment.Left;
+                    player.FlowDirection = FlowDirection.LeftToRight;
+                    player.IsHitTestVisible = false;
+                    player.Margin = new Thickness(0, -2, 0, -6);
+
+                    var inline = new InlineUIContainer();
+                    inline.Child = player;
+
+                    // If the Span starts with a InlineUIContainer the RichTextBlock bugs and shows ellipsis
+                    var paragraph = new Paragraph();
+                    paragraph.Inlines.Add(Icons.ZWNJ);
+                    paragraph.Inlines.Add(inline);
+                    paragraph.Inlines.Add(Icons.ZWNJ);
+
+                    if (hasText)
+                    {
+                        paragraph.Inlines.Add(Icons.Space);
+                        paragraph.Inlines.Add(text);
+                    }
+
+                    var textBlock = new RichTextBlock();
+                    textBlock.IsTextSelectionEnabled = false;
+                    textBlock.Blocks.Add(paragraph);
+
+                    SecondaryButton.Content = textBlock;
+                }
+                else
+                {
+                    SecondaryButton.Content = text;
+                }
+
                 SecondaryButton.IsEnabled = is_active || is_progress_visible;
 
                 ShowHideProgress(is_progress_visible, SecondaryButton, SecondaryProgress, ref _secondaryProgressCollapsed);
@@ -1603,11 +1951,6 @@ namespace Telegram.Views
         private async void SwitchInlineQueryMessage(JsonObject eventData)
         {
             var query = eventData.GetNamedString("query", string.Empty);
-            if (string.IsNullOrEmpty(query))
-            {
-                return;
-            }
-
             var types = eventData.GetNamedArray("chat_types", null);
             var values = new HashSet<string>();
 
@@ -1649,25 +1992,55 @@ namespace Telegram.Views
             Close();
         }
 
-        private void SendDataMessage(JsonObject eventData)
+        private async void SendDataMessage(JsonObject eventData)
         {
             var data = eventData.GetNamedString("data");
-            if (string.IsNullOrEmpty(data))
+            if (string.IsNullOrEmpty(data) || string.IsNullOrEmpty(_buttonText) || _sentData)
             {
                 return;
             }
 
-            /*if (!_context
-        || _context->fromSwitch
-        || _context->fromBotApp
-        || _context->fromMainMenu
-        || _context->action.history->peer != _bot
-        || _lastShownQueryId) {
-        return;
-        }*/
+            _sentData = true;
+
+            await _clientService.SendAsync(new SendWebAppData(_botUser.Id, _buttonText, data));
+
+            _closeNeedConfirmation = false;
+            Close();
         }
 
-        private void PostEvent(string eventName, string eventData = "null")
+        private void PostEvent(string eventName, params object[] eventData)
+        {
+            if (eventData.Length % 2 == 0)
+            {
+                var data = new JsonObject();
+
+                for (int i = 0; i < eventData.Length; i += 2)
+                {
+                    if (eventData[i] is string key)
+                    {
+                        data[key] = eventData[i + 1] switch
+                        {
+                            string stringValue => Windows.Data.Json.JsonValue.CreateStringValue(stringValue),
+                            double numberValue => Windows.Data.Json.JsonValue.CreateNumberValue(numberValue),
+                            bool booleanValue => Windows.Data.Json.JsonValue.CreateBooleanValue(booleanValue),
+                            _ => Windows.Data.Json.JsonValue.CreateNullValue(),
+                        };
+                    }
+                }
+
+                PostEventImpl(eventName, data.Stringify());
+            }
+            else if (eventData.Length > 0)
+            {
+                PostEventImpl(eventName, string.Join(' ', eventData));
+            }
+            else
+            {
+                PostEventImpl(eventName, "null");
+            }
+        }
+
+        private void PostEventImpl(string eventName, string eventData = "null")
         {
             Logger.Info(string.Format("{0}: {1}", eventName, eventData));
             View.InvokeScript($"window.Telegram.WebView.receiveEvent('{eventName}', {eventData});");
@@ -1923,7 +2296,7 @@ namespace Telegram.Views
         private void PostThemeChanged()
         {
             var theme = ClientEx.GetThemeParametersJsonString(Theme.Current.Parameters);
-            PostEvent("theme_changed", "{\"theme_params\": " + theme + "}");
+            PostEvent("theme_changed", "theme_params", theme);
         }
 
         private void HideButton_Click(object sender, RoutedEventArgs e)
@@ -1934,17 +2307,25 @@ namespace Telegram.Views
 
     public partial class SecondaryNavigationService : TLNavigationService
     {
-        public SecondaryNavigationService(IClientService clientService, IViewService viewService, WindowContext window)
-            : base(clientService, viewService, window, null, string.Empty)
+        private readonly INavigationService _source;
+
+        public SecondaryNavigationService(ISession session, INavigationService source, WindowContext window)
+            : base(session, window, null, string.Empty)
         {
+            _source = source;
         }
 
         public override bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true)
         {
-            WindowContext.Main.Dispatcher.Dispatch(() => WindowContext.Main.GetNavigationService().Navigate(page, parameter, state, infoOverride, navigationStackEnabled));
-            _ = ApplicationViewSwitcher.SwitchAsync(WindowContext.Main.Id);
+            _source.Dispatcher.Dispatch(() => _source.Navigate(page, parameter, state, infoOverride, navigationStackEnabled));
+            _ = ApplicationViewSwitcher.SwitchAsync(_source.Window.Id);
 
             return true;
+        }
+
+        public void Switch()
+        {
+            _ = ApplicationViewSwitcher.SwitchAsync(_source.Window.Id);
         }
     }
 }

@@ -46,8 +46,8 @@
                         <controls:AspectView x:Name="MapPresenter"
                                              CornerRadius="4"
                                              Margin="12,12,12,0">
-                            <Image x:Name="Map"
-                                   ImageOpened="Map_ImageOpened" />
+                            <controls:ImageView x:Name="Map"
+                                                ImageOpened="Map_ImageOpened" />
                             <Border x:Name="MapShimmer"
                                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                     BorderThickness="1"
@@ -94,7 +94,7 @@
                                              Glyph="&#xE9F0;"
                                              Title="{CustomResource SendLocation}"
                                              Address="{CustomResource Loading}"
-                                             SelectionStroke="{ThemeResource ContentDialogBackground}"
+                                             SelectionStroke="{ThemeResource ContentDialogTopOverlaySolid}"
                                              Margin="12,6" />
                         </Button>
 
@@ -110,7 +110,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:VenueCell SelectionStroke="{ThemeResource ContentDialogBackground}" />
+                    <cells:VenueCell SelectionStroke="{ThemeResource ContentDialogTopOverlaySolid}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
@@ -151,8 +151,9 @@
             </ListView.Footer>
         </ListView>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                     ScrollingHost="{x:Bind ScrollingHost}"
+                                    BottomInset="0"
                                     Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>

@@ -1,10 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Linq;
+using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
@@ -65,9 +67,9 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateChatTitle(Chat chat)
         {
-            if (chat.Id == ViewModel.FeedbackChatId)
+            if (chat.Id == ViewModel.DirectMessagesChatId)
             {
-                ChannelFeedbackGroupCell.UpdateChatTitle(chat);
+                ChannelDirectMessagesGroupCell.UpdateChatTitle(chat);
             }
             else
             {
@@ -77,13 +79,13 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateChatPhoto(Chat chat)
         {
-            if (chat.Id == ViewModel.FeedbackChatId)
+            if (chat.Id == ViewModel.DirectMessagesChatId)
             {
-                ChannelFeedbackGroupCell.UpdateChatPhoto(chat);
+                ChannelDirectMessagesGroupCell.UpdateChatPhoto(chat);
             }
             else
             {
-                Photo.SetChat(ViewModel.ClientService, chat, 96);
+                Photo.Source = ProfilePictureSource.Chat(ViewModel.ClientService, chat);
             }
         }
 
@@ -125,34 +127,36 @@ namespace Telegram.Views.Supergroups
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
-                if (ViewModel.ClientService.TryGetChat(fullInfo.FeedbackChatId, out Chat feedbackChat))
+                if (ViewModel.ClientService.TryGetChat(fullInfo.DirectMessagesChatId, out Chat directMessagesChat))
                 {
-                    var price = ViewModel.ClientService.PaidMessageStarCount(feedbackChat);
+                    var price = ViewModel.ClientService.PaidMessageStarCount(directMessagesChat);
                     if (price > 0)
                     {
-                        ChannelFeedbackGroupStars.Visibility = Visibility.Visible;
-                        ChannelFeedbackGroupStarCount.Text = price.ToString("N0");
+                        ChannelDirectMessagesGroupStars.Visibility = Visibility.Visible;
+                        ChannelDirectMessagesGroupStarCount.Text = price.ToString("N0");
                     }
                     else
                     {
-                        ChannelFeedbackGroupStars.Visibility = Visibility.Collapsed;
-                        ChannelFeedbackGroupStarCount.Text = Strings.PostSuggestionsFree;
+                        ChannelDirectMessagesGroupStars.Visibility = Visibility.Collapsed;
+                        ChannelDirectMessagesGroupStarCount.Text = Strings.PostSuggestionsFree;
                     }
 
-                    ChannelFeedbackGroupRoot.Visibility = Visibility.Visible;
-                    ChannelFeedbackGroupCell.UpdateChat(ViewModel.ClientService, feedbackChat, new ChatListFolder(int.MaxValue));
+                    ChannelDirectMessagesGroupRoot.Visibility = Visibility.Visible;
+                    ChannelDirectMessagesGroupCell.UpdateChat(ViewModel.ClientService, directMessagesChat, new ChatListFolder(int.MaxValue));
                 }
                 else
                 {
-                    ChannelFeedbackGroupStars.Visibility = Visibility.Collapsed;
-                    ChannelFeedbackGroupStarCount.Text = Strings.PostSuggestionsOff;
+                    ChannelDirectMessagesGroupStars.Visibility = Visibility.Collapsed;
+                    ChannelDirectMessagesGroupStarCount.Text = Strings.PostSuggestionsOff;
                 }
             }
             else
             {
-                ChannelFeedbackGroupRoot.Visibility = Visibility.Collapsed;
-                ChannelFeedbackGroupStars.Visibility = Visibility.Collapsed;
-                ChannelFeedbackGroupStarCount.Text = string.Empty;
+                ChannelDirectMessagesGroupRoot.Visibility = Visibility.Collapsed;
+                ChannelDirectMessagesGroupStars.Visibility = Visibility.Collapsed;
+                ChannelDirectMessagesGroupStarCount.Text = string.Empty;
+
+                ChatLinked.Badge = group.HasLinkedChat ? string.Empty : Strings.DiscussionInfoShort;
             }
 
             TitleLabel.PlaceholderText = group.IsChannel ? Strings.EnterChannelName : Strings.GroupName;
@@ -169,7 +173,7 @@ namespace Telegram.Views.Supergroups
             ViewModel.HasAutomaticTranslation = group.HasAutomaticTranslation;
 
             var canChangeInfo = group.CanChangeInfo(chat);
-            var canInviteUsers = group.CanInviteUsers();
+            var canInviteUsers = group.CanInviteUsers(chat);
             var canRestrictMembers = group.CanRestrictMembers();
             var canPostMessages = group.CanPostMessages();
             var hasActiveUsername = group.HasActiveUsername();
@@ -194,6 +198,10 @@ namespace Telegram.Views.Supergroups
                         ? Strings.TypePrivateGroupRestrictedForwards
                         : Strings.TypePrivateGroup;
 
+            ChatType.Visibility = group.Status is ChatMemberStatusCreator
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
             ChatHistory.Visibility = canChangeInfo && !hasActiveUsername && !group.IsChannel && !group.HasLinkedChat
                 ? Visibility.Visible
                 : Visibility.Collapsed;
@@ -210,7 +218,7 @@ namespace Telegram.Views.Supergroups
                 ? Strings.TopicsEnabled
                 : Strings.TopicsDisabled;
 
-            ChannelFeedbackGroup.Visibility = group.Status is ChatMemberStatusCreator && group.IsChannel
+            ChannelDirectMessagesGroup.Visibility = group.Status is ChatMemberStatusCreator && group.IsChannel
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
@@ -231,10 +239,9 @@ namespace Telegram.Views.Supergroups
                 ChannelColor.Visibility = Visibility.Collapsed;
             }
 
-            ChatLinked.Visibility = group.IsChannel ? Visibility.Visible : group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
+            ChatLinked.Visibility = group.Status is ChatMemberStatusCreator ? group.IsChannel ? Visibility.Visible : group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed : Visibility.Collapsed;
             ChatLinked.Content = group.IsChannel ? Strings.Discussion : Strings.LinkedChannel;
             ChatLinked.Glyph = group.IsChannel ? Icons.ChatEmpty : Icons.Megaphone;
-            ChatLinked.Badge = group.HasLinkedChat ? string.Empty : Strings.DiscussionInfoShort;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
             Permissions.Visibility = group.IsChannel || !canRestrictMembers ? Visibility.Collapsed : Visibility.Visible;
@@ -279,7 +286,7 @@ namespace Telegram.Views.Supergroups
             ViewModel.IsAllHistoryAvailable = 1;
 
             var canChangeInfo = group.CanChangeInfo(chat);
-            var canInviteUsers = group.CanInviteUsers();
+            var canInviteUsers = group.CanInviteUsers(chat);
 
             TitleLabel.IsReadOnly = !canChangeInfo;
             About.IsReadOnly = !canChangeInfo;

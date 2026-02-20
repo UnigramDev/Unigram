@@ -1,9 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System.Linq;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
@@ -11,11 +13,39 @@ using Telegram.Views.Supergroups.Popups;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public partial class SupergroupAdministratorsViewModel : SupergroupMembersViewModelBase
+    public partial class SupergroupAdministratorsViewModel : SupergroupMembersViewModelBase, IHandle
     {
         public SupergroupAdministratorsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new SupergroupMembersFilterAdministrators(), query => new SupergroupMembersFilterAdministrators())
         {
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateChatMember>(this, Handle);
+        }
+
+        private void Handle(UpdateChatMember update)
+        {
+            if (update.ChatId == _chat.Id)
+            {
+                var item = Members.Source.FirstOrDefault(x => x.MemberId.AreTheSame(update.NewChatMember.MemberId));
+                if (item != null)
+                {
+                    if (update.NewChatMember.Status is ChatMemberStatusAdministrator or ChatMemberStatusCreator)
+                    {
+                        item.Status = update.NewChatMember.Status;
+                    }
+                    else
+                    {
+                        Members.Source.Remove(item);
+                    }
+                }
+                else if (update.NewChatMember.Status is ChatMemberStatusAdministrator or ChatMemberStatusCreator)
+                {
+                    Members.Source.Insert(0, update.NewChatMember);
+                }
+            }
         }
 
         private bool _isAggressiveAntiSpamEnabled;
@@ -133,18 +163,18 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            var index = Members.IndexOf(member);
+            var index = Members.Source.IndexOf(member);
             if (index == -1)
             {
                 return;
             }
 
-            Members.Remove(member);
+            Members.Source.Remove(member);
 
             var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusMember()));
             if (response is Error)
             {
-                Members.Insert(index, member);
+                Members.Source.Insert(index, member);
             }
         }
 

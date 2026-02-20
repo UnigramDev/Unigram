@@ -23,7 +23,7 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="22"
-                       FontFamily="{ThemeResource EmojiOnlyThemeFontFamily}" />
+                       FontFamily="{ThemeResource EmojiThemeFontFamily}" />
         </DataTemplate>
 
         <DataTemplate x:Key="EmojiSkinTemplate"
@@ -33,7 +33,7 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="22"
-                       FontFamily="{ThemeResource EmojiOnlyThemeFontFamily}" />
+                       FontFamily="{ThemeResource EmojiThemeFontFamily}" />
         </DataTemplate>
 
         <DataTemplate x:Key="ItemTemplate">
@@ -62,95 +62,6 @@
                            TextWrapping="NoWrap" />
             </Grid>
         </DataTemplate>
-
-        <Style x:Key="SkinToneRadioButtonStyle"
-               TargetType="ButtonBase">
-            <Setter Property="Background"
-                    Value="Transparent" />
-            <Setter Property="BorderBrush"
-                    Value="Transparent" />
-            <Setter Property="BorderThickness"
-                    Value="0" />
-            <Setter Property="Padding"
-                    Value="0" />
-            <Setter Property="Margin"
-                    Value="0,0,-4,0" />
-            <Setter Property="HorizontalAlignment"
-                    Value="Stretch" />
-            <Setter Property="VerticalAlignment"
-                    Value="Stretch" />
-            <Setter Property="FontSize"
-                    Value="{ThemeResource ControlContentThemeFontSize}" />
-            <Setter Property="UseSystemFocusVisuals"
-                    Value="True" />
-            <Setter Property="HorizontalContentAlignment"
-                    Value="Stretch" />
-            <Setter Property="VerticalContentAlignment"
-                    Value="Stretch" />
-            <Setter Property="Height"
-                    Value="40" />
-            <Setter Property="Width"
-                    Value="40" />
-            <Setter Property="MinHeight"
-                    Value="40" />
-            <Setter Property="MinWidth"
-                    Value="40" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ButtonBase">
-                        <Border>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                           Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                           Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled" />
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="CheckStates">
-                                    <VisualState x:Name="Checked">
-                                        <VisualState.Setters>
-                                            <Setter Target="OuterEllipse.BorderThickness"
-                                                    Value="0" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="Unchecked" />
-                                    <VisualState x:Name="Indeterminate" />
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-
-                            <Grid x:Name="RootGrid"
-                                  Background="Transparent"
-                                  CornerRadius="{StaticResource GlyphButtonCornerRadius}"
-                                  Margin="{StaticResource GlyphButtonPadding}">
-                                <Border x:Name="OuterEllipse"
-                                        Background="{TemplateBinding Background}"
-                                        BorderThickness="2"
-                                        CornerRadius="8"
-                                        Width="16"
-                                        Height="16" />
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
     </UserControl.Resources>
 
     <Grid>
@@ -246,7 +157,7 @@
                                            TextWrapping="NoWrap"
                                            Style="{StaticResource InfoBodyTextBlockStyle}" />
 
-                                <controls:BadgeButton Content="{CustomResource Add}"
+                                <controls:SettingsButton Content="{CustomResource Add}"
                                                       Visibility="{Binding IsInstalled, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                                       Style="{StaticResource PillButtonStyle}"
                                                       HorizontalAlignment="Right"
@@ -328,63 +239,12 @@
                       Padding="4,0,0,0"
                       Grid.Row="0">
                 <GridView.Header>
-                    <Grid x:Name="Toolbar3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <RadioButton x:Name="SkinDefault"
-                                     Click="SkinTone_Click"
-                                     GroupName="SkinTone"
-                                     Background="#ffc83d"
-                                     Style="{StaticResource SkinToneRadioButtonStyle}">
-                            <common:EmojiSkinTone>Default</common:EmojiSkinTone>
-                        </RadioButton>
-                        <RadioButton x:Name="SkinFitz12"
-                                     Click="SkinTone_Click"
-                                     GroupName="SkinTone"
-                                     Background="#f7d7c4"
-                                     Style="{StaticResource SkinToneRadioButtonStyle}">
-                            <common:EmojiSkinTone>Fitz12</common:EmojiSkinTone>
-                        </RadioButton>
-                        <RadioButton x:Name="SkinFitz3"
-                                     Click="SkinTone_Click"
-                                     GroupName="SkinTone"
-                                     Background="#d8b094"
-                                     Style="{StaticResource SkinToneRadioButtonStyle}">
-                            <common:EmojiSkinTone>Fitz3</common:EmojiSkinTone>
-                        </RadioButton>
-                        <RadioButton x:Name="SkinFitz4"
-                                     Click="SkinTone_Click"
-                                     GroupName="SkinTone"
-                                     Background="#bb9167"
-                                     Style="{StaticResource SkinToneRadioButtonStyle}">
-                            <common:EmojiSkinTone>Fitz4</common:EmojiSkinTone>
-                        </RadioButton>
-                        <RadioButton x:Name="SkinFitz5"
-                                     Click="SkinTone_Click"
-                                     GroupName="SkinTone"
-                                     Background="#8e562e"
-                                     Style="{StaticResource SkinToneRadioButtonStyle}">
-                            <common:EmojiSkinTone>Fitz5</common:EmojiSkinTone>
-                        </RadioButton>
-                        <RadioButton x:Name="SkinFitz6"
-                                     Click="SkinTone_Click"
-                                     GroupName="SkinTone"
-                                     Background="#613d30"
-                                     Style="{StaticResource SkinToneRadioButtonStyle}">
-                            <common:EmojiSkinTone>Fitz6</common:EmojiSkinTone>
-                        </RadioButton>
+                    <Grid x:Name="Toolbar3"
+                          Margin="0,0,4,0">
                         <Border x:Name="ToolbarPill"
-                                Background="{ThemeResource ControlFillColorDefaultBrush}"
+                                Background="{ThemeResource ControlAltFillColorTertiaryBrush}"
                                 CornerRadius="4"
-                                Height="32"
-                                Grid.Column="1" />
+                                Height="32" />
                         <GridView x:Name="Toolbar"
                                   ItemsSource="{x:Bind ViewModel.StandardSets}"
                                   Height="32"
@@ -397,8 +257,7 @@
                                   ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                   ScrollViewer.VerticalScrollMode="Disabled"
-                                  Padding="0"
-                                  Grid.Row="1">
+                                  Padding="0">
                             <GridView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <ItemsStackPanel Orientation="Horizontal"
@@ -489,22 +348,13 @@
                                 <controls:ProfilePicture Margin="6" />
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.GroupTemplate>
-                        <selectors:StickerSetTemplateSelector.RecentsTemplate>
+                        <selectors:StickerSetTemplateSelector.IconTemplate>
                             <DataTemplate>
-                                <Border Background="Transparent">
-                                    <FontIcon Glyph="&#xE911;"
-                                              FontFamily="{StaticResource TelegramThemeFontFamily}" />
-                                </Border>
+                                <Grid Background="Transparent">
+                                    <FontIcon FontFamily="{StaticResource TelegramThemeFontFamily}" />
+                                </Grid>
                             </DataTemplate>
-                        </selectors:StickerSetTemplateSelector.RecentsTemplate>
-                        <selectors:StickerSetTemplateSelector.FavedTemplate>
-                            <DataTemplate>
-                                <Border Background="Transparent">
-                                    <FontIcon Glyph="&#xE734;"
-                                              Style="{StaticResource DefaultFontIconStyle}" />
-                                </Border>
-                            </DataTemplate>
-                        </selectors:StickerSetTemplateSelector.FavedTemplate>
+                        </selectors:StickerSetTemplateSelector.IconTemplate>
                     </selectors:StickerSetTemplateSelector>
                 </GridView.ItemTemplateSelector>
                 <!--<GridView.Footer>

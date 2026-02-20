@@ -13,6 +13,8 @@
                 Value="{ThemeResource MessageHeaderForegroundBrush}" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource MessageHeaderBorderBrush}" />
+        <Setter Property="Background"
+                Value="{ThemeResource MessageHeaderBorderBrush}" />
         <Setter Property="Margin"
                 Value="0,8,0,6" />
         <Setter Property="IsTabStop"
@@ -38,7 +40,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Rectangle x:Name="BackgroundOverlay"
-                                   Fill="{TemplateBinding BorderBrush}"
+                                   Fill="{TemplateBinding Background}"
                                    Opacity="0.1"
                                    Grid.ColumnSpan="2" />
                         <Rectangle Fill="{TemplateBinding BorderBrush}"

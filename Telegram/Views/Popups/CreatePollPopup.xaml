@@ -8,12 +8,6 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       Background="{ThemeResource PageBackgroundDarkBrush}"
-                       Title="TITLE"
-                       PrimaryButtonText="Button1"
-                       SecondaryButtonText="Button2"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
                        DefaultButton="None"
                        Padding="0,16,0,0">
 
@@ -23,7 +17,8 @@
                 Placement="Top"
                 ShowMode="Transient">
             <Flyout.FlyoutPresenterStyle>
-                <Style TargetType="FlyoutPresenter">
+                <Style TargetType="FlyoutPresenter"
+                       BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
                     <Setter Property="Padding"
                             Value="0" />
                 </Style>
@@ -49,6 +44,9 @@
                                                CustomEmoji="{x:Bind CustomEmoji}"
                                                PlaceholderText="{CustomResource QuestionHint}"
                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                               GotFocus="QuestionText_GotFocus"
+                                               LostFocus="QuestionText_LostFocus"
+                                               AllowedEntities="CustomEmoji"
                                                AcceptsReturn="True"
                                                TextWrapping="Wrap"
                                                MaxLength="255" />
@@ -57,7 +55,9 @@
                                                 IsHitTestVisible="False"
                                                 Margin="10,4,-2,-2" />
 
-                    <controls:GlyphButton Click="Emoji_Click"
+                    <controls:GlyphButton x:Name="QuestionEmoji"
+                                          Click="Emoji_Click"
+                                          Tag="{x:Bind QuestionText}"
                                           Glyph="&#xE76E;"
                                           AutomationProperties.Name="{CustomResource Emoji}"
                                           IsTabStop="False"
@@ -94,14 +94,16 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <controls:FormattedTextBox PlaceholderText="{CustomResource OptionHint}"
+                                    <controls:FormattedTextBox x:Name="Text"
+                                                               PlaceholderText="{CustomResource OptionHint}"
                                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                               AllowedEntities="CustomEmoji"
                                                                MaxLength="100"
                                                                Loaded="Option_Loaded"
                                                                PreviewKeyDown="Option_PreviewKeyDown"
                                                                TextChanged="Option_TextChanged"
-                                                               GotFocus="Question_GotFocus"
-                                                               LostFocus="Question_LostFocus"
+                                                               GotFocus="Option_GotFocus"
+                                                               LostFocus="Option_LostFocus"
                                                                Grid.ColumnSpan="3" />
 
                                     <messages:CustomEmojiCanvas x:Name="CustomEmoji"
@@ -109,7 +111,8 @@
                                                                 Margin="10,4,-2,-2"
                                                                 Grid.ColumnSpan="3" />
 
-                                    <controls:GlyphButton Click="Emoji_Click"
+                                    <controls:GlyphButton Tag="{x:Bind Text}"
+                                                          Click="Emoji_Click"
                                                           Glyph="&#xE76E;"
                                                           AutomationProperties.Name="{CustomResource Emoji}"
                                                           IsTabStop="False"
@@ -179,7 +182,8 @@
             </StackPanel>
         </ScrollViewer>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource PageBackgroundDarkBrush}"
-                                    ScrollingHost="{x:Bind ScrollingHost}" />
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    ScrollingHost="{x:Bind ScrollingHost}"
+                                    BottomInset="0" />
     </Grid>
 </controls:ContentPopup>

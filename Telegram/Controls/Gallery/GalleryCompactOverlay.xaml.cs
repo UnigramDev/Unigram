@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -22,17 +23,26 @@ namespace Telegram.Controls.Gallery
     public sealed partial class GalleryCompactOverlay : UserControlEx
     {
         private AppWindow _window;
+        private bool _disposed;
 
         private GalleryViewModelBase _viewModel;
         private VideoPlayerBase _player;
 
         private static volatile GalleryCompactOverlay _current;
+        private static readonly object _lock = new();
 
         public GalleryCompactOverlay(AppWindow window, GalleryViewModelBase viewModel, GalleryMedia media, VideoPlayerBase player)
         {
             InitializeComponent();
 
             _window = window;
+            _disposed = false;
+
+            // Subscribe to window lifecycle events
+            if (_window != null)
+            {
+                _window.Closed += OnWindowClosed;
+            }
 
             _viewModel = viewModel;
             _player = player;
@@ -53,6 +63,43 @@ namespace Telegram.Controls.Gallery
             visual.Opacity = 0;
         }
 
+        private void OnWindowClosed(AppWindow sender, AppWindowClosedEventArgs args)
+        {
+            Logger.Info("Window closed externally");
+            CleanupWindow();
+        }
+
+        private void CleanupWindow()
+        {
+            lock (_lock)
+            {
+                if (_window != null)
+                {
+                    try
+                    {
+                        _window.Closed -= OnWindowClosed;
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // Window already disposed, ignore
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error("Error unsubscribing from window events", ex);
+                    }
+
+                    _window = null;
+                }
+
+                _disposed = true;
+
+                if (_current == this)
+                {
+                    _current = null;
+                }
+            }
+        }
+
         private void OnTreeUpdated(VideoPlayerBase sender, EventArgs args)
         {
             // Hopefully this is always triggered after Unloaded/Loaded
@@ -69,24 +116,35 @@ namespace Telegram.Controls.Gallery
             Controls.Unload();
 
             _player = null;
-            _window = null;
-
-            if (_current == this)
-            {
-                _current = null;
-            }
+            CleanupWindow();
         }
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
         {
             ShowHideTransport(true);
-            base.OnPointerEntered(e);
+
+            try
+            {
+                base.OnPointerEntered(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         protected override void OnPointerExited(PointerRoutedEventArgs e)
         {
             ShowHideTransport(false);
-            base.OnPointerExited(e);
+
+            try
+            {
+                base.OnPointerExited(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         private bool _transportCollapsed = true;
@@ -120,16 +178,21 @@ namespace Telegram.Controls.Gallery
         {
             Logger.Info();
 
-            // TODO: WinUI - Rewrite
-            var window = _window;
-            if (window == null || _current == null)
+            AppWindow window;
+            lock (_lock)
             {
-                // Button was already pressed
-                return;
-            }
+                window = _window;
+                if (window == null || _current == null || _disposed)
+                {
+                    Logger.Info("Button was already pressed or window disposed");
+                    return;
+                }
 
-            _window = null;
-            _current = null;
+                // Clear references immediately to prevent double-processing
+                _window = null;
+                _current = null;
+                _disposed = true;
+            }
 
             _player.IsUnloadedExpected = true;
             Presenter.Children.RemoveAt(0);
@@ -143,14 +206,28 @@ namespace Telegram.Controls.Gallery
                     await ApplicationViewSwitcher.TryShowAsStandaloneAsync(nextId);
                     await ApplicationViewSwitcher.SwitchAsync(nextId, prevId);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.Error("Error switching application views", ex);
                     // All the remote procedure calls must be wrapped in a try-catch block
                 }
             }
 
-            _ = GalleryWindow.ShowAsync(WindowContext.Current.Content.XamlRoot, _viewModel, null, 0, _player);
-            _ = window.CloseAsync();
+            _ = GalleryWindow.ShowAsync(WindowContext.Current.XamlRoot, _viewModel, null, 0, _player);
+
+            // Close the window with proper error handling
+            try
+            {
+                _ = window.CloseAsync();
+            }
+            catch (ObjectDisposedException)
+            {
+                Logger.Info("Window already disposed during compact click");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error closing window during compact click", ex);
+            }
         }
 
         private void Play(GalleryViewModelBase viewModel, VideoPlayerBase player)
@@ -167,49 +244,148 @@ namespace Telegram.Controls.Gallery
 
         private void PauseImpl()
         {
-            _player?.Pause();
+            try
+            {
+                _player?.Pause();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error pausing player", ex);
+            }
         }
 
         private void Close()
         {
             Logger.Info("Closing");
 
-            _ = _window.CloseAsync();
+            AppWindow window;
+            lock (_lock)
+            {
+                window = _window;
+                if (window == null || _disposed)
+                {
+                    Logger.Info("Window already null or disposed");
+                    return;
+                }
+
+                // Clear reference first to prevent multiple close attempts
+                _window = null;
+                _disposed = true;
+            }
+
+            try
+            {
+                _ = window.CloseAsync();
+            }
+            catch (ObjectDisposedException)
+            {
+                Logger.Info("Window already disposed during close");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error closing window", ex);
+            }
         }
 
         public static void Pause()
         {
-            if (_current != null && _current.Dispatcher.HasThreadAccess)
+            GalleryCompactOverlay current;
+            lock (_lock)
             {
-                _current.PauseImpl();
+                current = _current;
             }
-            else if (_current != null)
+
+            if (current != null && current.Dispatcher.HasThreadAccess)
             {
-                _current.BeginOnUIThread(Pause);
+                current.PauseImpl();
+            }
+            else if (current != null)
+            {
+                try
+                {
+                    current.BeginOnUIThread(() => Pause());
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Error scheduling pause on UI thread", ex);
+                }
             }
         }
 
         public static async void CreateOrUpdate(GalleryViewModelBase viewModel, GalleryMedia item, VideoPlayerBase player)
         {
-            // TODO: there is a problem when creating the overlay from a secondary window
-            // as the AppWindow will be destroyed as soon as the secondary window gets closed.
-            if (_current?.Dispatcher.HasThreadAccess == true)
-            {
-                Logger.Info("Exists on the current thread");
+            GalleryCompactOverlay currentToClose = null;
+            bool shouldCreate = false;
 
-                _current.Play(viewModel, player);
+            // Determine action under lock
+            lock (_lock)
+            {
+                if (_current?.Dispatcher.HasThreadAccess == true && !_current._disposed)
+                {
+                    Logger.Info("Exists on the current thread");
+                    try
+                    {
+                        _current.Play(viewModel, player);
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error("Error updating existing overlay", ex);
+                        // Fall through to create new one
+                        currentToClose = _current;
+                        _current = null;
+                        shouldCreate = true;
+                    }
+                }
+                else
+                {
+                    Logger.Info("Does not exist, or different thread, or disposed - will create new");
+                    currentToClose = _current;
+                    _current = null;
+                    shouldCreate = true;
+                }
             }
-            else
-            {
-                Logger.Info("Does not exist, or different thread, create");
 
-                _current?.BeginOnUIThread(_current.Close);
-                _current = null;
+            // Close existing window if needed (outside lock to avoid deadlock)
+            if (currentToClose != null)
+            {
+                try
+                {
+                    if (currentToClose.Dispatcher.HasThreadAccess)
+                    {
+                        currentToClose.Close();
+                    }
+                    else
+                    {
+                        currentToClose.BeginOnUIThread(() => currentToClose.Close());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Error closing existing overlay", ex);
+                }
+            }
+
+            if (!shouldCreate)
+            {
+                return;
+            }
+
+            try
+            {
+                // TODO: there is a problem when creating the overlay from a secondary window
+                // as the AppWindow will be destroyed as soon as the secondary window gets closed.
 
                 // Reset the state so that hopefully the window gets the right size/position
                 AppWindow.ClearPersistedState("Gallery");
 
                 var appWindow = await AppWindow.TryCreateAsync();
+                if (appWindow == null)
+                {
+                    Logger.Error("Failed to create AppWindow");
+                    return;
+                }
+
                 appWindow.PersistedStateId = "Gallery";
                 appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
                 appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
@@ -236,7 +412,35 @@ namespace Telegram.Controls.Gallery
                         // Double call because at times it fails
                         appWindow.Presenter.RequestPresentation(AppWindowPresentationKind.CompactOverlay);
                     }
+                    else
+                    {
+                        Logger.Error("Failed to switch to CompactOverlay presentation");
+                        try
+                        {
+                            await appWindow.CloseAsync();
+                        }
+                        catch (Exception closeEx)
+                        {
+                            Logger.Error("Error closing window after failed presentation switch", closeEx);
+                        }
+                    }
                 }
+                else
+                {
+                    Logger.Error("CompactOverlay presentation not supported");
+                    try
+                    {
+                        await appWindow.CloseAsync();
+                    }
+                    catch (Exception closeEx)
+                    {
+                        Logger.Error("Error closing window after unsupported presentation", closeEx);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error creating new overlay window", ex);
             }
         }
     }

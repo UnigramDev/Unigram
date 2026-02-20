@@ -13,42 +13,34 @@
                        IsDismissButtonVisible="True"
                        Padding="0,24,0,0">
 
-    <StackPanel>
-        <Grid>
-            <chats:ChatBackgroundControl x:Name="BackgroundControl" />
+    <Grid>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <StackPanel>
+                <Grid>
+                    <chats:ChatBackgroundControl x:Name="BackgroundControl" />
+                    <StackPanel Padding="12,8"
+                                Spacing="8">
+                        <messages:MessageService>
+                            <TextBlock Text="{CustomResource BotShareMessagePreview}"
+                                       Foreground="#FFFFFF"
+                                       FontSize="12" />
+                        </messages:MessageService>
 
-            <StackPanel Padding="12,8"
-                        Spacing="8">
-                <messages:MessageService>
-                    <TextBlock Text="{CustomResource BotShareMessagePreview}"
-                               Foreground="#FFFFFF"
-                               FontSize="12" />
-                </messages:MessageService>
+                        <messages:MessageBubble x:Name="Message"
+                                                HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Grid>
 
-                <messages:MessageBubble x:Name="Message"
-                                        HorizontalAlignment="Left" />
+                <TextBlock x:Name="CaptionInfo"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="24,8,24,24" />
             </StackPanel>
-        </Grid>
+        </ScrollViewer>
 
-        <TextBlock x:Name="CaptionInfo"
-                   Style="{StaticResource InfoCaptionTextBlockStyle}"
-                   Margin="24,8,24,24" />
-
-        <Grid x:Name="PurchasePanel"
-              VerticalAlignment="Bottom"
-              HorizontalAlignment="Stretch"
-              Margin="24,0,24,24"
-              Grid.Row="1">
-            <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Click="Purchase_Click"
-                                  Content="{CustomResource BotShareMessageShare}"
-                                  Style="{StaticResource AccentButtonStyle}"
-                                  FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  FontWeight="SemiBold"
-                                  BorderThickness="1"
-                                  Height="32" />
-        </Grid>
-    </StackPanel>
+        <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
+                                    Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    BottomInset="0" />
+    </Grid>
 </controls:ContentPopup>

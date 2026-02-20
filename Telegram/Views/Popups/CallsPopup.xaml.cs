@@ -1,8 +1,14 @@
-﻿using Telegram.Common;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
-using Telegram.Navigation;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -66,36 +72,13 @@ namespace Telegram.Views.Popups
 
         private void NewCall_Click(object sender, RoutedEventArgs e)
         {
-            var popup = new ChooseChatsPopup();
-            var button = new BadgeButton
-            {
-                Content = Strings.GroupCallCreateLink,
-                Glyph = Icons.LinkAdd,
-                Style = BootStrapper.Current.Resources["GlyphBadgeButtonPopupStyle"] as Style,
-                Margin = new Thickness(12, 0, 12, 0),
-            };
-
-            void handler(object sender, RoutedEventArgs e)
-            {
-                button.Click -= handler;
-                popup.Hide();
-
-                ViewModel.CreateLink();
-            }
-
-            button.Click += handler;
-            popup.Header = button;
-
             Hide();
-            ViewModel.NavigationService.ShowPopup(popup, new ChooseChatsConfigurationCreateGroupCall());
+            ViewModel.NewCall();
         }
 
         private void ScrollingHeader_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (EmptyState != null)
-            {
-                EmptyState.Margin = new Thickness(0, e.NewSize.Height - 36, 0, 0);
-            }
+            EmptyState?.Margin = new Thickness(0, e.NewSize.Height - 36, 0, 0);
         }
 
         private void EmptyState_Loaded(object sender, RoutedEventArgs e)

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -30,12 +31,12 @@ using Windows.UI.Xaml.Controls;
 namespace Telegram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
-    public partial class DiceView : Control, IPlayerView
+    public partial class DiceView : Control, IPlayerView, IAnimation
     {
-        private CanvasControl _canvas;
+        private CanvasControl Canvas;
         private CanvasBitmap[] _bitmaps;
 
-        private Grid _layoutRoot;
+        private Grid LayoutRoot;
 
         private bool _hideThumbnail = true;
 
@@ -70,11 +71,11 @@ namespace Telegram.Controls
 
         private readonly bool[] _isLoopingEnabled = new bool[_parts];
 
-        private SizeInt32 _frameSize = new SizeInt32 { Width = 256, Height = 256 };
+        private SizeInt32 _frameSize = new() { Width = 256, Height = 256 };
 
-        private readonly LoopThread _thread;
+        private static readonly AnimationScheduler _scheduler = new();
         private readonly CompositionVSync _vsync;
-        private readonly object _subscribeLock = new object();
+        private readonly object _subscribeLock = new();
         private bool _subscribed;
         private bool _unsubscribe;
 
@@ -88,7 +89,6 @@ namespace Telegram.Controls
         public DiceView(bool fullFps)
         {
             _limitFps = !fullFps;
-            _thread = fullFps ? LoopThread.Chats : LoopThreadPool.Stickers.Get();
             _vsync = new CompositionVSync(fullFps ? 60 : 30);
 
             DefaultStyleKey = typeof(DiceView);
@@ -96,20 +96,20 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            var canvas = GetTemplateChild("Canvas") as CanvasControl;
+            var canvas = GetTemplateChild(nameof(Canvas)) as CanvasControl;
             if (canvas == null)
             {
                 return;
             }
 
-            _canvas = canvas;
-            _canvas.CreateResources += OnCreateResources;
-            _canvas.Draw += OnDraw;
+            Canvas = canvas;
+            Canvas.CreateResources += OnCreateResources;
+            Canvas.Draw += OnDraw;
 
-            _layoutRoot = GetTemplateChild("LayoutRoot") as Grid;
-            _layoutRoot.Loading += OnLoading;
-            _layoutRoot.Loaded += OnLoaded;
-            _layoutRoot.Unloaded += OnUnloaded;
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
+            LayoutRoot.Loading += OnLoading;
+            LayoutRoot.Loaded += OnLoaded;
+            LayoutRoot.Unloaded += OnUnloaded;
 
             SetValue(_previousState, _previous);
 
@@ -118,19 +118,19 @@ namespace Telegram.Controls
 
         private bool Load()
         {
-            if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
+            if (_unloaded && LayoutRoot != null && LayoutRoot.IsLoaded)
             {
-                while (_layoutRoot.Children.Count > 0)
+                while (LayoutRoot.Children.Count > 0)
                 {
-                    _layoutRoot.Children.Remove(_layoutRoot.Children[0]);
+                    LayoutRoot.Children.Remove(LayoutRoot.Children[0]);
                 }
 
-                _canvas = new CanvasControl();
-                _canvas.CreateResources += OnCreateResources;
-                _canvas.Draw += OnDraw;
-                _canvas.Unloaded += OnUnloaded;
+                Canvas = new CanvasControl();
+                Canvas.CreateResources += OnCreateResources;
+                Canvas.Draw += OnDraw;
+                Canvas.Unloaded += OnUnloaded;
 
-                _layoutRoot.Children.Add(_canvas);
+                LayoutRoot.Children.Add(Canvas);
 
                 _unloaded = false;
                 SetValue(_previousState, _previous);
@@ -162,12 +162,12 @@ namespace Telegram.Controls
             _unloaded = true;
             Subscribe(false);
 
-            if (_canvas != null)
+            if (Canvas != null)
             {
-                _canvas.CreateResources -= OnCreateResources;
-                _canvas.Draw -= OnDraw;
-                _canvas.RemoveFromVisualTree();
-                _canvas = null;
+                Canvas.CreateResources -= OnCreateResources;
+                Canvas.Draw -= OnDraw;
+                Canvas.RemoveFromVisualTree();
+                Canvas = null;
             }
 
             _valueState = null;
@@ -179,7 +179,9 @@ namespace Telegram.Controls
             _animations = null;
         }
 
-        private void OnTick(object sender, EventArgs args)
+        public double FrameRate => _limitFps ? 30 : 60;
+
+        public void RenderNextFrame()
         {
             try
             {
@@ -190,14 +192,14 @@ namespace Telegram.Controls
                 lock (_subscribeLock)
                 {
                     _unsubscribe = true;
-                    _thread.Tick -= OnTick;
+                    _scheduler.Unsubscribe(this);
                 }
             }
         }
 
         private void OnInvalidate(object sender, EventArgs e)
         {
-            _canvas?.Invalidate();
+            Canvas?.Invalidate();
         }
 
         private void OnCreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
@@ -250,7 +252,7 @@ namespace Telegram.Controls
         public void Invalidate()
         {
             var animations = _animations;
-            if (animations == null || _canvas == null || _bitmaps == null)
+            if (animations == null || Canvas == null || _bitmaps == null)
             {
                 return;
             }
@@ -278,7 +280,7 @@ namespace Telegram.Controls
                     if (animations[i] != null)
                     {
                         var buffer = ArrayPool<byte>.Shared.Rent(256 * 256 * 4);
-                        _bitmaps[i] = CanvasBitmap.CreateFromBytes(_canvas, buffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+                        _bitmaps[i] = CanvasBitmap.CreateFromBytes(Canvas, buffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
                         ArrayPool<byte>.Shared.Return(buffer);
                     }
                     else
@@ -311,11 +313,13 @@ namespace Telegram.Controls
                     }
                     else if (i == 1)
                     {
+                        Completed?.Invoke(this, null);
+
                         lock (_subscribeLock)
                         {
                             _subscribed = false;
                             _unsubscribe = true;
-                            _thread.Tick -= OnTick;
+                            _scheduler.Unsubscribe(this);
                         }
                     }
                 }
@@ -334,7 +338,7 @@ namespace Telegram.Controls
 
         public async void SetValue(DiceStickers state, int newValue)
         {
-            var canvas = _canvas;
+            var canvas = Canvas;
             if (canvas == null && !Load())
             {
                 _previous = newValue;
@@ -432,7 +436,7 @@ namespace Telegram.Controls
 
                 // Invalidate to render the first frame
                 Invalidate();
-                _canvas?.Invalidate();
+                Canvas?.Invalidate();
             }
         }
 
@@ -517,7 +521,7 @@ namespace Telegram.Controls
         {
             Load();
 
-            var canvas = _canvas;
+            var canvas = Canvas;
             if (canvas == null)
             {
                 _shouldPlay = true;
@@ -545,7 +549,7 @@ namespace Telegram.Controls
 
         public void Pause()
         {
-            var canvas = _canvas;
+            var canvas = Canvas;
             if (canvas == null)
             {
                 //_source = newValue;
@@ -567,12 +571,12 @@ namespace Telegram.Controls
                 }
 
                 _subscribed = subscribe;
-                _thread.Tick -= OnTick;
+                _scheduler.Unsubscribe(this);
                 _vsync.Rendering -= OnInvalidate;
 
                 if (subscribe)
                 {
-                    _thread.Tick += OnTick;
+                    _scheduler.Subscribe(this);
                     _vsync.Rendering += OnInvalidate;
                 }
             }
@@ -623,6 +627,8 @@ namespace Telegram.Controls
         #endregion
 
         public event EventHandler<int> IndexChanged;
+
+        public event EventHandler Completed;
 
         public event EventHandler FirstFrameRendered;
 

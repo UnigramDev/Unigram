@@ -1,9 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -13,7 +15,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Telegram.Views.Settings;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -27,9 +28,9 @@ namespace Telegram.ViewModels.Settings
         {
             Scopes = new MvxObservableCollection<SettingsNotificationsScope>
             {
-                new SettingsNotificationsScope(clientService, new NotificationSettingsScopePrivateChats(), Strings.NotificationsPrivateChats, Icons.Person),
-                new SettingsNotificationsScope(clientService, new NotificationSettingsScopeGroupChats(), Strings.NotificationsGroups, Icons.People),
-                new SettingsNotificationsScope(clientService, new NotificationSettingsScopeChannelChats(), Strings.NotificationsChannels, Icons.Megaphone),
+                new(clientService, new NotificationSettingsScopePrivateChats(), Strings.NotificationsPrivateChats, Icons.Person),
+                new(clientService, new NotificationSettingsScopeGroupChats(), Strings.NotificationsGroups, Icons.People),
+                new(clientService, new NotificationSettingsScopeChannelChats(), Strings.NotificationsChannels, Icons.Megaphone),
             };
 
             foreach (var scope in Scopes)
@@ -171,7 +172,7 @@ namespace Telegram.ViewModels.Settings
             RaisePropertyChanged();
         }
 
-        public bool IsAllAccountsAvailable => TypeResolver.Current.GetSessions().Count() > 1;
+        public bool IsAllAccountsAvailable => LifetimeService.Current.Count > 1;
 
         public bool IsAllAccountsNotifications
         {
@@ -378,7 +379,29 @@ namespace Telegram.ViewModels.Settings
             var chats = await ClientService.SendAsync(new GetChatNotificationSettingsExceptions(_scope, false)) as Telegram.Td.Api.Chats;
             if (chats?.ChatIds.Count > 0)
             {
-                ExceptionsCount = string.Format("{0}, {1}", Alert ? Strings.NotificationsOn : Strings.NotificationsOff, Locale.Declension(Strings.R.Exception, chats.ChatIds.Count));
+                static int Count(IClientService clientService, IList<long> chatIds)
+                {
+                    var count = 0;
+
+                    foreach (var chat in clientService.GetChats(chatIds))
+                    {
+                        if (clientService.TryGetUser(chat.Id, out User user))
+                        {
+                            if (user.Type is not UserTypeDeleted)
+                            {
+                                count++;
+                            }
+                        }
+                        else
+                        {
+                            count++;
+                        }
+                    }
+
+                    return count;
+                }
+
+                ExceptionsCount = string.Format("{0}, {1}", Alert ? Strings.NotificationsOn : Strings.NotificationsOff, Locale.Declension(Strings.R.Exception, Count(ClientService, chats.ChatIds)));
             }
         }
 

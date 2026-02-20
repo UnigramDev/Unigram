@@ -11,16 +11,15 @@
              Padding="0">
 
     <controls:HeaderedControl x:Name="NameColor">
-        <Grid x:Name="Preview">
-            <chats:ChatBackgroundControl x:Name="BackgroundControl" />
+        <Grid x:Name="Preview"
+              BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+            <chats:ChatBackgroundControl x:Name="BackgroundControl"
+                                         CornerRadius="4" />
             <StackPanel Padding="0,10">
                 <messages:MessageBubble x:Name="Message1"
                                         HorizontalAlignment="Left"
                                         Margin="8,0,12,0" />
             </StackPanel>
-
-            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="0,0,0,1" />
         </Grid>
 
         <GridView x:Name="List"
@@ -135,9 +134,11 @@
             </GridView.Footer>
         </GridView>
 
-        <Grid Grid.Row="2">
-            <controls:BadgeButton x:Name="Badge"
-                                  Click="Badge_Click">
+        <Grid BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+              Grid.Row="2">
+            <controls:SettingsButton x:Name="Badge"
+                                     Click="Badge_Click"
+                                     CornerRadius="4">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -154,7 +155,7 @@
                                            Margin="4,0,0,0"
                                            Grid.Column="1" />
                 </Grid>
-            </controls:BadgeButton>
+            </controls:SettingsButton>
             <controls:AnimatedImage x:Name="Animated"
                                     FrameSize="20,20"
                                     DecodeFrameType="Logical"

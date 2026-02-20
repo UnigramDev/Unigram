@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -32,7 +32,7 @@ namespace Telegram.Navigation
         /// If a developer overrides this method, the developer can resolve DataContext or unwrap DataContext 
         /// available for the Page object when using a MVVM pattern that relies on a wrapped/porxy around ViewModels
         /// </summary>
-        public virtual ViewModelBase ViewModelForPage(UIElement page, int sessionId) => null;
+        public virtual ViewModelBase ViewModelForPage(UIElement page, ISession session) => null;
 
         public static new BootStrapper Current { get; private set; }
 
@@ -216,7 +216,7 @@ namespace Telegram.Navigation
             Logger.Info();
 
             // sometimes activate requires a frame to be built
-            if (Window.Current.Content == null /*&& e is not ShareTargetActivatedEventArgs*/)
+            if (WindowContext.Current?.Content == null /*&& e is not ShareTargetActivatedEventArgs*/)
             {
                 Logger.Info("Calling", member: nameof(InternalActivated));
                 InitializeFrame(e);
@@ -260,7 +260,7 @@ namespace Telegram.Navigation
 
             PrelaunchActivated = e.PrelaunchActivated;
 
-            if (e.PreviousExecutionState != ApplicationExecutionState.Running || Window.Current.Content == null)
+            if (e.PreviousExecutionState != ApplicationExecutionState.Running || WindowContext.Current.Content == null)
             {
                 try
                 {
@@ -346,16 +346,34 @@ namespace Telegram.Navigation
 
         #endregion
 
+        public bool RaiseShortcutInvoked(InvokedShortcut shortcut, VirtualKeyModifiers modifiers)
+        {
+            var args = new ShortcutInvokedEventArgs(shortcut, modifiers);
+
+            foreach (var frame in WindowContext.Current.NavigationServices.Select(x => x.FrameFacade).Reverse())
+            {
+                frame.RaiseShortcutInvoked(args);
+
+                if (args.Handled)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public void RaiseBackRequested()
         {
             var handled = false;
             RaiseBackRequested(null, VirtualKey.GoBack, ref handled);
         }
 
-        public void RaiseBackRequested(XamlRoot xamlRoot, VirtualKey key)
+        public bool RaiseBackRequested(XamlRoot xamlRoot, VirtualKey key)
         {
             var handled = false;
             RaiseBackRequested(xamlRoot, key, ref handled);
+            return handled;
         }
 
         /// <summary>
@@ -369,12 +387,6 @@ namespace Telegram.Navigation
             Logger.Info();
 
             var args = new BackRequestedRoutedEventArgs(key);
-            BackRequested?.Invoke(null, args);
-            if (handled = args.Handled)
-            {
-                return;
-            }
-
             var popups = xamlRoot == null
                 ? VisualTreeHelper.GetOpenPopups(Window.Current)
                 : VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot);
@@ -408,9 +420,10 @@ namespace Telegram.Navigation
                 }
                 else if (key == VirtualKey.Escape)
                 {
+                    // TODO: what is this for? I have no clue anymore
                     if (popup.Child is not Grid)
                     {
-                        handled = args.Handled = true;
+                        //handled = args.Handled = true;
                         return;
                     }
                 }
@@ -429,37 +442,33 @@ namespace Telegram.Navigation
             if (NavigationService?.CanGoBack ?? false)
             {
                 NavigationService?.GoBack();
+                handled = true;
             }
         }
 
-        // this event precedes the in-frame event by the same name
-        public static event EventHandler<HandledEventArgs> BackRequested;
-
-        public void RaiseForwardRequested()
+        public bool RaiseForwardRequested()
         {
             Logger.Info();
 
             var args = new HandledEventArgs();
-            ForwardRequested?.Invoke(null, args);
-            if (args.Handled)
-            {
-                return;
-            }
 
             foreach (var frame in WindowContext.Current.NavigationServices.Select(x => x.FrameFacade))
             {
                 frame.RaiseForwardRequested(args);
                 if (args.Handled)
                 {
-                    return;
+                    return true;
                 }
             }
 
-            NavigationService?.GoForward();
-        }
+            if (NavigationService?.CanGoForward ?? false)
+            {
+                NavigationService?.GoForward();
+                return true;
+            }
 
-        // this event precedes the in-frame event by the same name
-        public static event EventHandler<HandledEventArgs> ForwardRequested;
+            return false;
+        }
 
         #region overrides
 
@@ -543,21 +552,21 @@ namespace Telegram.Navigation
         /// A developer should call this when creating a new/secondary frame.
         /// The shell back button should only be setup one time.
         /// </summary>
-        public INavigationService NavigationServiceFactory(WindowContext window, BackButton backButton, int session, string id, bool root)
+        public INavigationService NavigationServiceFactory(ISession session, WindowContext window, BackButton backButton, string id, bool root)
         {
             Logger.Info($"{nameof(backButton)}: {backButton}");
 
-            return NavigationServiceFactory(window, backButton, new Frame(), session, id, root);
+            return NavigationServiceFactory(session, window, backButton, new Frame(), id, root);
         }
 
         /// <summary>
         /// Creates the NavigationService instance for given Frame.
         /// </summary>
-        protected virtual INavigationService CreateNavigationService(WindowContext window, Frame frame, int session, string id, bool root)
+        protected virtual INavigationService CreateNavigationService(ISession session, WindowContext window, Frame frame, string id, bool root)
         {
             Logger.Info($"Frame: {frame}");
 
-            return new NavigationService(window, frame, session, id);
+            return new NavigationService(session, window, frame, id);
         }
 
         /// <summary>
@@ -567,7 +576,7 @@ namespace Telegram.Navigation
         /// A developer should call this when creating a new/secondary frame.
         /// The shell back button should only be setup one time.
         /// </summary>
-        public INavigationService NavigationServiceFactory(WindowContext window, BackButton backButton, Frame frame, int session, string id, bool root)
+        public INavigationService NavigationServiceFactory(ISession session, WindowContext window, BackButton backButton, Frame frame, string id, bool root)
         {
             Logger.Info($"{nameof(backButton)}: {backButton} {nameof(frame)}: {frame}");
 
@@ -582,7 +591,7 @@ namespace Telegram.Navigation
                 }
             }
 
-            var navigationService = CreateNavigationService(window, frame, session, id, root);
+            var navigationService = CreateNavigationService(session, window, frame, id, root);
             navigationService.FrameFacade.BackButtonHandling = backButton;
             WindowContext.Current.NavigationServices.Add(navigationService);
 
@@ -771,7 +780,7 @@ namespace Telegram.Navigation
 
     public interface INavigatingPage : INavigablePage
     {
-        void OnBackRequesting(HandledEventArgs args);
+        void OnBackRequesting(BackRequestedRoutedEventArgs args);
     }
 
     public interface ISearchablePage

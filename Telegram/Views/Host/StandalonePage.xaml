@@ -5,11 +5,10 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
       xmlns:controls="using:Telegram.Controls"
-      muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
+      xmlns:navigation="using:Telegram.Navigation.Services"
       mc:Ignorable="d"
       Loaded="OnLoaded"
-      Unloaded="OnUnloaded"
-      ProcessKeyboardAccelerators="OnProcessKeyboardAccelerators">
+      Unloaded="OnUnloaded">
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
@@ -88,6 +87,13 @@
         </Grid>
 
         <controls:MasterDetailView x:Name="MasterDetail"
-                                   Grid.Row="2" />
+                                   Grid.Row="2">
+            <controls:MasterDetailView.Banner>
+                <Grid SizeChanged="Banner_SizeChanged">
+                    <controls:PlaybackHeader x:Name="Playback"
+                                             x:Load="False" />
+                </Grid>
+            </controls:MasterDetailView.Banner>
+        </controls:MasterDetailView>
     </Grid>
 </Page>

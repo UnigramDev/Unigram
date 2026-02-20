@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
@@ -27,7 +28,7 @@ namespace Telegram.Charts
         bool isEmpty;
         int currentSelection = -1;
 
-        Rect rectF = new Rect();
+        Rect rectF = new();
 
         //TextPaint textPaint;
 
@@ -99,13 +100,10 @@ namespace Telegram.Charts
 
             transitionAlpha = (int)(transitionAlpha * emptyDataAlpha);
             float sc = 0.4f + emptyDataAlpha * 0.6f;
-            if (canvas != null)
-            {
-                canvas.Transform = Matrix3x2.CreateScale(
-                    new Vector2(sc, sc),
-                    new Vector2(chartArea.centerX(), chartArea.centerY())
-                );
-            }
+            canvas?.Transform = Matrix3x2.CreateScale(
+                new Vector2(sc, sc),
+                new Vector2(chartArea.centerX(), chartArea.centerY())
+            );
 
             int radius = (int)((chartArea.Width > chartArea.Height ? chartArea.Height : chartArea.Width) * 0.45f);
             rectF = CreateRect(
@@ -162,13 +160,10 @@ namespace Telegram.Charts
                 if (lines[i].selectionA > 0f)
                 {
                     float ai = INTERPOLATOR.getInterpolation(lines[i].selectionA);
-                    if (canvas != null)
-                    {
-                        canvas.Transform = Matrix3x2.CreateTranslation(
-                            MathF.Cos(MathFEx.ToRadians(textAngle)) * 8 * ai,
-                            MathF.Sin(MathFEx.ToRadians(textAngle)) * 8 * ai
-                        );
-                    }
+                    canvas?.Transform = Matrix3x2.CreateTranslation(
+                        MathF.Cos(MathFEx.ToRadians(textAngle)) * 8 * ai,
+                        MathF.Sin(MathFEx.ToRadians(textAngle)) * 8 * ai
+                    );
                 }
 
                 //lines[i].paint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -630,10 +625,10 @@ namespace Telegram.Charts
             }
             float startPercentage = pickerDelegate.pickerStart;
             float endPercentage = pickerDelegate.pickerEnd;
-            updateCharValues(startPercentage, endPercentage, force);
+            UpdateCharValues(startPercentage, endPercentage, force);
         }
 
-        private void updateCharValues(float startPercentage, float endPercentage, bool force)
+        private void UpdateCharValues(float startPercentage, float endPercentage, bool force)
         {
             if (values == null)
             {
@@ -738,7 +733,7 @@ namespace Telegram.Charts
 
             if (force)
             {
-                updateCharValues(start, end, false);
+                UpdateCharValues(start, end, false);
             }
             else
             {

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation;
@@ -26,7 +27,7 @@ namespace Telegram.Views.Payments
 
             VisualUtilities.DropShadow(BuyShadow);
 
-            WindowContext.Current.SetTitleBar(TitlePanel, true);
+            WindowContext.Current.SetTitleBar(TitleBar, true);
         }
 
         private string ConvertTitle(bool receipt, bool test)
@@ -118,7 +119,7 @@ namespace Telegram.Views.Payments
 
         public async void Close()
         {
-            if (XamlRoot?.Content is RootPage root)
+            if (XamlRoot?.Content is WindowControl { Content: RootPage root })
             {
                 root.PresentContent(null);
                 return;

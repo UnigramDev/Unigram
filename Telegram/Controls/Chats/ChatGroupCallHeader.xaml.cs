@@ -1,24 +1,23 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Composition;
+using Telegram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Chats
@@ -29,12 +28,14 @@ namespace Telegram.Controls.Chats
 
         private readonly DispatcherTimer _scheduledTimer;
 
-        private UIElement _parent;
+        private ChatView _chatView;
         private GroupCall _call;
 
         public ChatGroupCallHeader()
         {
             InitializeComponent();
+
+            _collapsed = new SlidePanel.SlideState(this, false, 40);
 
             _scheduledTimer = new DispatcherTimer();
             _scheduledTimer.Tick += OnTick;
@@ -53,25 +54,16 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        public void InitializeParent(UIElement parent)
+        public float AnimatedHeight => _collapsed ? 0 : 40;
+
+        public void InitializeParent(ChatView chatView)
         {
-            ElementCompositionPreview.SetIsTranslationEnabled(_parent = parent, true);
+            _chatView = chatView;
         }
 
         private void RecentUsers_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
         {
-            if (ViewModel.ClientService.TryGetUser(sender, out User user))
-            {
-                photo.SetUser(ViewModel.ClientService, user, 28);
-            }
-            else if (ViewModel.ClientService.TryGetChat(sender, out Chat chat))
-            {
-                photo.SetChat(ViewModel.ClientService, chat, 28);
-            }
-            else
-            {
-                photo.Clear();
-            }
+            photo.Source = ProfilePictureSource.MessageSender(ViewModel.ClientService, sender);
         }
 
         public bool UpdateGroupCall(Chat chat, GroupCall call)
@@ -136,8 +128,7 @@ namespace Telegram.Controls.Chats
                     }
                     else
                     {
-                        RecentUsers.Items.Clear();
-                        RecentUsers.Items.AddRange(call.RecentSpeakers.Select(x => x.ParticipantId));
+                        RecentUsers.Items.ReplaceWith(call.RecentSpeakers.Select(x => x.ParticipantId));
                     }
                 }
             }
@@ -151,7 +142,7 @@ namespace Telegram.Controls.Chats
             return visible;
         }
 
-        private bool _collapsed = true;
+        private SlidePanel.SlideState _collapsed;
 
         public void ShowHide(bool show)
         {
@@ -160,39 +151,8 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            _collapsed = !show;
-            Visibility = Visibility.Visible;
-
-            var parent = ElementComposition.GetElementVisual(_parent);
-            var visual = ElementComposition.GetElementVisual(this);
-            visual.Clip = visual.Compositor.CreateInsetClip();
-
-            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                visual.Clip = null;
-                parent.Properties.InsertVector3("Translation", Vector3.Zero);
-
-                if (_collapsed)
-                {
-                    Visibility = Visibility.Collapsed;
-                }
-            };
-
-            var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
-            clip.InsertKeyFrame(show ? 0 : 1, 40);
-            clip.InsertKeyFrame(show ? 1 : 0, 0);
-            clip.Duration = Constants.FastAnimation;
-
-            var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -40, 0));
-            offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = Constants.FastAnimation;
-
-            visual.Clip.StartAnimation("TopInset", clip);
-            parent.StartAnimation("Translation", offset);
-
-            batch.End();
+            _collapsed.IsVisible = show;
+            _chatView.UpdateMessagesHeaderPadding();
         }
 
         public IEnumerable<UIElement> GetAnimatableVisuals()

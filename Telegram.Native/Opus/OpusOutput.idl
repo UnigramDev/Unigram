@@ -7,5 +7,6 @@ namespace Telegram.Native.Opus
         OpusOutput(String fileName);
         Boolean IsValid{ get; };
         void Transcode(String fileName);
+        void WriteFrame(Windows.Media.AudioFrame frame);
     }
 }

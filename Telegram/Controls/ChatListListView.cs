@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -59,6 +60,124 @@ namespace Telegram.Controls
 
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
             RegisterPropertyChangedCallback(SelectionModeProperty, OnSelectionModeChanged);
+            RegisterPropertyChangedCallback(ItemsSourceProperty, OnItemsSourceChanged);
+        }
+
+        private ChatListViewModel.ItemsCollection _itemsSource;
+
+        private void OnItemsSourceChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (IsConnected)
+            {
+                _itemsSource?.Moved -= OnCollectionChanged;
+                _itemsSource = ItemsSource as ChatListViewModel.ItemsCollection;
+                _itemsSource?.Moved += OnCollectionChanged;
+            }
+        }
+
+        private async void OnCollectionChanged(object sender, ChatListMovedEventArgs args)
+        {
+            var panel = ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null || !PowerSavingPolicy.AreSmoothTransitionsEnabled || !IsChangeVisible(args.OldIndex, args.NewIndex, panel))
+            {
+                return;
+            }
+
+            // Snapshot before await because args are recycled
+            var oldIndex = args.OldIndex;
+            var newIndex = args.NewIndex;
+
+            int start, end, direction;
+            float offset;
+            SelectorItem targetContainer;
+
+            if (oldIndex == -1)
+            {
+                await panel.UpdateLayoutAsync();
+
+                targetContainer = ContainerFromIndex(newIndex) as SelectorItem;
+                if (targetContainer == null) return;
+
+                offset = targetContainer.ActualSize.Y;
+                start = newIndex + 1;
+                end = panel.LastCacheIndex + 1;
+                direction = -1;
+            }
+            else if (newIndex == -1)
+            {
+                targetContainer = ContainerFromIndex(oldIndex) as SelectorItem;
+                if (targetContainer == null) return;
+
+                offset = targetContainer.ActualSize.Y;
+                start = oldIndex + 1;
+                end = panel.LastCacheIndex + 1;
+                direction = 1;
+            }
+            else
+            {
+                await panel.UpdateLayoutAsync();
+
+                targetContainer = ContainerFromIndex(newIndex) as SelectorItem;
+                if (targetContainer == null) return;
+
+                offset = targetContainer.ActualSize.Y;
+                direction = newIndex > oldIndex ? 1 : -1;
+                start = Math.Max(Math.Min(newIndex + 1, oldIndex), panel.FirstCacheIndex);
+                end = Math.Min(Math.Max(newIndex, oldIndex + 1), panel.LastCacheIndex);
+            }
+
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
+            if (newIndex != -1)
+            {
+                var visual = ElementComposition.GetElementVisual(targetContainer);
+                ElementCompositionPreview.SetIsTranslationEnabled(targetContainer, true);
+
+                var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
+                animation.InsertKeyFrame(0, targetContainer.ActualSize.Y);
+                animation.InsertKeyFrame(1, 0);
+
+                visual.Clip ??= visual.Compositor.CreateInsetClip();
+                visual.Clip.StartAnimation("BottomInset", animation);
+
+                if (direction > 0)
+                {
+                    visual.StartAnimation("Translation.Y", animation);
+                }
+            }
+
+            for (int i = start; i < end; i++)
+            {
+                if (ContainerFromIndex(i) is SelectorItem container)
+                {
+                    var visual = ElementComposition.GetElementVisual(container);
+                    ElementCompositionPreview.SetIsTranslationEnabled(container, true);
+
+                    var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
+                    animation.InsertKeyFrame(0, offset * direction);
+                    animation.InsertKeyFrame(1, 0);
+
+                    visual.StartAnimation("Translation.Y", animation);
+                }
+            }
+
+            batch.End();
+
+            static bool IsChangeVisible(int oldIndex, int newIndex, ItemsStackPanel panel)
+            {
+                if (oldIndex == -1)
+                {
+                    return newIndex >= panel.FirstVisibleIndex && newIndex <= panel.LastVisibleIndex;
+                }
+                else if (newIndex == -1)
+                {
+                    return oldIndex >= panel.FirstVisibleIndex && oldIndex <= panel.LastVisibleIndex;
+                }
+                else
+                {
+                    return (oldIndex >= panel.FirstVisibleIndex) || (newIndex >= panel.FirstVisibleIndex && newIndex <= panel.LastVisibleIndex);
+                }
+            }
         }
 
         protected override void OnApplyTemplate()
@@ -100,6 +219,36 @@ namespace Telegram.Controls
             return false;
         }
 
+        private ImplicitAnimationCollection _implicitAnimations;
+
+        private ImplicitAnimationCollection EnsureImplicitAnimations()
+        {
+            if (_implicitAnimations == null && PowerSavingPolicy.AreSmoothTransitionsEnabled)
+            {
+                var compositor = BootStrapper.Current.Compositor;
+
+                var offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
+                offsetAnimation.Target = nameof(Visual.Offset);
+                offsetAnimation.InsertExpressionKeyFrame(1.0f, "this.FinalValue");
+                //offsetAnimation.Duration = Constants.FastAnimation;
+
+                //var rotationAnimation = compositor.CreateScalarKeyFrameAnimation();
+                //rotationAnimation.Target = nameof(Visual.RotationAngle);
+                //rotationAnimation.InsertKeyFrame(.5f, 0.160f);
+                //rotationAnimation.InsertKeyFrame(1f, 0f);
+                //rotationAnimation.Duration = TimeSpan.FromSeconds(400);
+
+                //var animationGroup = compositor.CreateAnimationGroup();
+                //animationGroup.Add(offsetAnimation);
+                //animationGroup.Add(rotationAnimation);
+
+                _implicitAnimations = compositor.CreateImplicitAnimationCollection();
+                _implicitAnimations[nameof(Visual.Offset)] = offsetAnimation;
+            }
+
+            return _implicitAnimations;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.Item is not Chat chat)
@@ -107,22 +256,23 @@ namespace Telegram.Controls
                 return;
             }
 
+            var visual = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
+
             if (args.InRecycleQueue)
             {
                 _itemToSelector.Remove(chat.Id);
-                return;
+                //visual.ImplicitAnimations = null;
             }
-
-            if (args.Phase == 0)
+            else if (args.Phase == 0)
             {
                 _itemToSelector[chat.Id] = args.ItemContainer;
+                //visual.ImplicitAnimations ??= EnsureImplicitAnimations();
 
                 args.RegisterUpdateCallback(2, OnContainerContentChanging);
                 args.ItemContainer.ContentTemplateRoot.Opacity = 0;
 
                 VisualStateManager.GoToState(args.ItemContainer, "DataPlaceholder", false);
             }
-
             else if (args.ItemContainer.ContentTemplateRoot is ChatCell content)
             {
                 content.UpdateViewState(chat, _viewState == MasterDetailState.Compact, false);
@@ -233,17 +383,14 @@ namespace Telegram.Controls
         private SpriteVisual _redirect;
         private ContainerVisual _indicator;
 
-        private bool _hasInitialLoadedEventFired;
         private WeakInteractionTrackerOwner _trackerOwner;
         private InteractionTracker _tracker;
         private VisualInteractionSource _interactionSource;
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (!_hasInitialLoadedEventFired)
+            if (_trackerOwner == null)
             {
-                _hasInitialLoadedEventFired = true;
-
                 _visual = ElementComposition.GetElementVisual(ScrollViewer.ContentTemplateRoot);
 
                 _redirect = _visual.Compositor.CreateSpriteVisual();
@@ -260,15 +407,21 @@ namespace Telegram.Controls
                 ElementCompositionPreview.SetElementChildVisual(Ghost, _redirect);
                 ElementCompositionPreview.SetElementChildVisual(this, _container);
                 ConfigureInteractionTracker();
+            }
 
-                if (_trackerOwner != null)
-                {
-                    _trackerOwner.ValuesChanged += OnValuesChanged;
-                    _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
-                    _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
-                    _trackerOwner.IdleStateEntered += OnIdleStateEntered;
-                    _trackerOwner.CustomAnimationStateEntered += OnCustomAnimationStateEntered;
-                }
+            if (_trackerOwner != null)
+            {
+                _trackerOwner.ValuesChanged += OnValuesChanged;
+                _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered += OnIdleStateEntered;
+                _trackerOwner.CustomAnimationStateEntered += OnCustomAnimationStateEntered;
+            }
+
+            if (_itemsSource == null)
+            {
+                _itemsSource = ItemsSource as ChatListViewModel.ItemsCollection;
+                _itemsSource?.Moved += OnCollectionChanged;
             }
         }
 
@@ -285,7 +438,11 @@ namespace Telegram.Controls
                 _trackerOwner.CustomAnimationStateEntered -= OnCustomAnimationStateEntered;
             }
 
-            _hasInitialLoadedEventFired = false;
+            if (_itemsSource != null)
+            {
+                _itemsSource.Moved -= OnCollectionChanged;
+                _itemsSource = null;
+            }
         }
 
         private void ConfigureInteractionTracker()
@@ -528,10 +685,20 @@ namespace Telegram.Controls
         {
             Logger.Info(args.HoldingState);
 
-            if (args.HoldingState == HoldingState.Started && args.Position.X is >= 8 and <= 56 && args.Position.Y is >= 8 and <= 56 && ContentTemplateRoot is ChatCell cell)
+            if (args.HoldingState == HoldingState.Started && args.Position.X is >= 8 and <= 56 && args.Position.Y is >= 8 and <= 56 && ContentTemplateRoot is ChatCell chatCell)
             {
                 ReleasePointerCaptures();
-                cell.ShowPreview(args);
+                chatCell.ShowPreview(args.Position);
+            }
+            else if (args.HoldingState == HoldingState.Started && args.Position.X is >= 8 and <= 56 && args.Position.Y is >= 8 and <= 56 && ContentTemplateRoot is ForumTopicCell forumTopicCell)
+            {
+                ReleasePointerCaptures();
+                forumTopicCell.ShowPreview(args.Position);
+            }
+            else if (args.HoldingState == HoldingState.Started && args.Position.X is >= 8 and <= 56 && args.Position.Y is >= 8 and <= 56 && ContentTemplateRoot is ForumTopicVerticalCell forumTopicVerticalCell)
+            {
+                ReleasePointerCaptures();
+                forumTopicVerticalCell.ShowPreview(args.Position);
             }
         }
 

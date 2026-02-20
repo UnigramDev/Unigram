@@ -1,10 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
+using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
 
@@ -20,7 +22,7 @@ namespace Telegram.ViewModels.Gallery
             : base(clientService)
         {
             _video = video;
-            _caption = caption ?? new FormattedText(string.Empty, Array.Empty<TextEntity>());
+            _caption = caption ?? string.Empty.AsFormattedText();
             _protect = protect;
 
             File = _video.VideoValue;
@@ -29,6 +31,8 @@ namespace Telegram.ViewModels.Gallery
             {
                 Thumbnail = _video.Thumbnail.File;
             }
+
+            Minithumbnail = _video.Minithumbnail;
         }
 
         public override object Constraint => _video;

@@ -40,15 +40,13 @@
                     <controls:HeaderedControl x:Name="Subheader"
                                               Header="{CustomResource ChannelTypeHeader}"
                                               Footer="{x:Bind ConvertFooter(ViewModel.IsPublic), Mode=OneWay}">
-                        <RadioButton x:Name="Public"
-                                     Content="{CustomResource ChannelPublic}"
-                                     IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}"
-                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                        <controls:SettingsRadioButton x:Name="Public"
+                                                      Content="{CustomResource ChannelPublic}"
+                                                      IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}" />
 
-                        <RadioButton x:Name="Private"
-                                     Content="{CustomResource ChannelPrivate}"
-                                     IsChecked="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                        <controls:SettingsRadioButton x:Name="Private"
+                                                      Content="{CustomResource ChannelPrivate}"
+                                                      IsChecked="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" />
                     </controls:HeaderedControl>
 
                     <Grid Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -102,9 +100,7 @@
                     <cells:UsernameInfoCell Value="{x:Bind Value, Mode=OneWay}"
                                             DisplayValue="{x:Bind DisplayValue, Mode=OneWay}"
                                             IsActive="{x:Bind IsActive, Mode=OneWay}"
-                                            Padding="12,6"
-                                            Background="{ThemeResource SettingsItemBackground}"
-                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                            Padding="12,6" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
@@ -114,10 +110,9 @@
                                              Text="{CustomResource UsernamesChannelHelp}" />
 
                     <controls:HeaderedControl Footer="{CustomResource ManageInviteLinksHelp}">
-                        <controls:BadgeButton Click="{x:Bind ViewModel.InviteLinks}"
-                                              Content="{CustomResource ManageInviteLinks}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xE9F8;" />
+                        <controls:SettingsButton Click="{x:Bind ViewModel.InviteLinks}"
+                                                 Content="{CustomResource ManageInviteLinks}"
+                                                 Glyph="&#xE9F8;" />
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl x:Name="JoinToSendMessages"

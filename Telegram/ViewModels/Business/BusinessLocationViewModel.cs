@@ -1,4 +1,11 @@
-﻿using System.Threading.Tasks;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System.Threading.Tasks;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -60,7 +67,7 @@ namespace Telegram.ViewModels.Business
 
         public async void ChangeMap()
         {
-            var popup = new SendLocationPopup(SessionId);
+            var popup = new SendLocationPopup(Session);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
@@ -88,7 +95,7 @@ namespace Telegram.ViewModels.Business
 
         public override bool HasChanged => !_cached.AreTheSame(GetSettings());
 
-        public override async void Continue()
+        protected override async void ContinueImpl(NavigatingEventArgs args)
         {
             var settings = GetSettings();
             if (settings != null)
@@ -100,22 +107,22 @@ namespace Telegram.ViewModels.Business
                 }
             }
 
-            _completed = true;
-
             if (settings.AreTheSame(_cached))
             {
-                NavigationService.GoBack();
+                _completed = true;
+                NavigationService.GoBack(args);
                 return;
             }
 
             var response = await ClientService.SendAsync(new SetBusinessLocation(settings));
             if (response is Ok)
             {
-                NavigationService.GoBack();
+                _completed = true;
+                NavigationService.GoBack(args);
             }
-            else
+            else if (response is Error error)
             {
-                // TODO
+                ShowToast(error);
             }
         }
 

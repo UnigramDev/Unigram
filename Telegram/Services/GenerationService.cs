@@ -1,14 +1,17 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Newtonsoft.Json;
+
 using System;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Numerics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Entities;
@@ -244,15 +247,15 @@ namespace Telegram.Services
 
                 if (args.Length > 3)
                 {
-                    var editState = JsonConvert.DeserializeObject<BitmapEditState>(args[2]);
-                    var rectangle = editState.Rectangle;
+                    var generation = JsonSerializer.Deserialize(args[2], GenerationJsonContext.Default.ImageGeneration);
+                    var rectangle = generation.Rectangle;
 
-                    await ImageHelper.CropAsync(file, temp, rectangle, maxSize, editState.MinimumSize, rotation: editState.Rotation, flip: editState.Flip, bestQuality: true);
+                    await ImageHelper.CropAsync(file, temp, rectangle, maxSize, generation.MinimumSize, rotation: generation.Rotation, flip: generation.Flip, bestQuality: true);
 
-                    var drawing = editState.Strokes;
+                    var drawing = generation.Strokes;
                     if (drawing != null && drawing.Count > 0)
                     {
-                        await ImageHelper.DrawStrokesAsync(temp, drawing, rectangle, editState.Rotation, editState.Flip);
+                        await ImageHelper.DrawStrokesAsync(temp, drawing, rectangle, generation.Rotation, generation.Flip);
                     }
                 }
                 else
@@ -308,7 +311,7 @@ namespace Telegram.Services
 
                 if (args.Length > 3)
                 {
-                    var rect = JsonConvert.DeserializeObject<Rect>(args[2]);
+                    var rect = JsonSerializer.Deserialize(args[2], GenerationJsonContext.Default.Rect);
                     await ImageHelper.CropAsync(file, temp, rect, 90);
                 }
                 else
@@ -364,14 +367,14 @@ namespace Telegram.Services
         {
             try
             {
-                var conversion = JsonConvert.DeserializeObject<VideoConversion>(args[2]);
-                if (conversion.Mute || conversion.Transcode)
+                var generation = JsonSerializer.Deserialize(args[2], GenerationJsonContext.Default.VideoGeneration);
+                if (generation.Mute || generation.Transcode)
                 {
                     var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                     var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                     var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
-                    if (profile.Audio == null && conversion.Mute && conversion.TrimStartTime == null && conversion.TrimStopTime == null)
+                    if (profile.Audio == null && generation.Mute && generation.TrimStartTime == null && generation.TrimStopTime == null)
                     {
                         await CopyAsync(update, args);
                         return;
@@ -380,60 +383,75 @@ namespace Telegram.Services
                     //profile.Video.Height = conversion.Height;
                     //profile.Video.Bitrate = conversion.Bitrate;
 
-                    if (conversion.Mute)
+                    if (generation.Mute)
                     {
                         profile.Audio = null;
                     }
 
                     var transcoder = new MediaTranscoder();
+                    //var clip = await MediaClip.CreateFromFileAsync(file);
+                    //var composition = new MediaComposition();
+                    //composition.Clips.Add(clip);
 
-                    if (conversion.TrimStartTime is TimeSpan trimStart)
+                    if (generation.TrimStartTime is TimeSpan trimStart)
                     {
                         transcoder.TrimStartTime = trimStart;
+                        //clip.TrimTimeFromStart = trimStart;
                     }
-                    if (conversion.TrimStopTime is TimeSpan trimStop)
+                    if (generation.TrimStopTime is TimeSpan trimStop)
                     {
                         transcoder.TrimStopTime = trimStop;
+                        //clip.TrimTimeFromEnd = trimStop;
                     }
 
-                    if (conversion.Transform)
+                    if (generation.Transform)
                     {
-                        var crop = conversion.CropRectangle;
+                        var crop = generation.CropRectangle;
                         var empty = crop == default || (crop.Width == 0 && crop.Height == 0);
 
                         var transform = new VideoTransformEffectDefinition();
-                        transform.Rotation = conversion.Rotation;
-                        transform.OutputSize = conversion.OutputSize;
-                        transform.Mirror = conversion.Mirror;
-                        transform.CropRectangle = empty ? Rect.Empty : conversion.CropRectangle;
+                        transform.Rotation = (MediaRotation)generation.Rotation;
+                        transform.Mirror = (MediaMirroringOptions)generation.Flip;
+                        transform.OutputSize = generation.OutputSize;
+                        transform.CropRectangle = empty ? Rect.Empty : generation.CropRectangle;
 
-                        if (conversion.VideoBitrate != 0)
+                        if (generation.VideoBitrate != 0)
                         {
-                            profile.Video.Bitrate = conversion.VideoBitrate;
+                            profile.Video.Bitrate = generation.VideoBitrate;
                         }
 
-                        if (conversion.AudioBitrate != 0 && profile.Audio != null)
+                        if (generation.AudioBitrate != 0 && profile.Audio != null)
                         {
-                            profile.Audio.Bitrate = conversion.AudioBitrate;
+                            profile.Audio.Bitrate = generation.AudioBitrate;
                         }
 
-                        profile.Video.Width = (uint)conversion.OutputSize.Width;
-                        profile.Video.Height = (uint)conversion.OutputSize.Height;
+                        profile.Video.Width = (uint)generation.OutputSize.Width;
+                        profile.Video.Height = (uint)generation.OutputSize.Height;
 
                         transcoder.AddVideoEffect(transform.ActivatableClassId, true, transform.Properties);
+                        //clip.VideoEffectDefinitions.Add(transform);
                     }
 
                     var prepare = await transcoder.PrepareFileTranscodeAsync(file, temp, profile);
                     if (prepare.CanTranscode)
                     {
                         var progress = prepare.TranscodeAsync();
-                        progress.Progress = (result, delta) =>
+                        //var progress = composition.RenderToFileAsync(temp, MediaTrimmingPreference.Precise, profile);
+                        progress.Progress = (info, delta) =>
                         {
                             _clientService.Send(new SetFileGenerationProgress(update.GenerationId, 100, (int)delta));
                         };
-                        progress.Completed = (result, delta) =>
+                        progress.Completed = (info, status) =>
                         {
-                            _clientService.Send(new FinishFileGeneration(update.GenerationId, prepare.FailureReason == TranscodeFailureReason.None ? null : new Error(500, prepare.FailureReason.ToString())));
+                            //var results = info.GetResults();
+                            //if (results != TranscodeFailureReason.None || status != AsyncStatus.Completed)
+                            //{
+                            //    _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, results.ToString())));
+                            //}
+                            //else
+                            {
+                                _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
+                            }
                         };
                     }
                     else
@@ -458,55 +476,29 @@ namespace Telegram.Services
         {
             try
             {
-                var conversion = JsonConvert.DeserializeObject<VideoConversion>(args[2]);
-                //if (conversion.Transcode)
+                var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
+                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+
+                var generation = JsonSerializer.Deserialize(args[2], GenerationJsonContext.Default.VideoGeneration);
+
+                if (args.Length > 3)
                 {
-                    var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                    var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                    var rectangle = generation.CropRectangle;
 
-                    var props = await file.Properties.GetVideoPropertiesAsync();
+                    await ImageHelper.CropAsync(file, temp, rectangle, 320, 0, rotation: generation.Rotation, flip: generation.Flip, bestQuality: false);
 
-                    double originalWidth = props.GetWidth();
-                    double originalHeight = props.GetHeight();
-
-                    if (conversion.Transform && !conversion.CropRectangle.IsEmpty)
-                    {
-                        file = await ImageHelper.CropAsync(file, temp, conversion.CropRectangle, trimStart: conversion.TrimStartTime);
-                        originalWidth = conversion.CropRectangle.Width;
-                        originalHeight = conversion.CropRectangle.Height;
-                    }
-
-                    using (var fileStream = await ImageHelper.OpenReadAsync(file))
-                    using (var outputStream = await temp.OpenAsync(FileAccessMode.ReadWrite))
-                    {
-                        var decoder = await BitmapDecoder.CreateAsync(fileStream);
-
-                        double ratioX = 320d / originalWidth;
-                        double ratioY = 320d / originalHeight;
-                        double ratio = Math.Min(ratioX, ratioY);
-
-                        uint width = (uint)(originalWidth * ratio);
-                        uint height = (uint)(originalHeight * ratio);
-
-                        var transform = new BitmapTransform();
-                        transform.ScaledWidth = width;
-                        transform.ScaledHeight = height;
-                        transform.InterpolationMode = BitmapInterpolationMode.Linear;
-                        transform.Flip = conversion.Mirror == MediaMirroringOptions.Horizontal ? BitmapFlip.Horizontal : BitmapFlip.None;
-
-                        var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-
-                        var propertySet = new BitmapPropertySet();
-                        var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
-                        propertySet.Add("ImageQuality", qualityValue);
-
-                        var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);
-                        encoder.SetSoftwareBitmap(pixelData);
-                        await encoder.FlushAsync();
-
-                        _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
-                    }
+                    //var drawing = generation.Strokes;
+                    //if (drawing != null && drawing.Count > 0)
+                    //{
+                    //    await ImageHelper.DrawStrokesAsync(temp, drawing, rectangle, generation.Rotation, generation.Flip);
+                    //}
                 }
+                else
+                {
+                    await ImageHelper.ScaleAsync(BitmapEncoder.JpegEncoderId, file, temp, 320, true, generation.TrimStartTime);
+                }
+
+                _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
             }
             catch (Exception ex)
             {
@@ -586,39 +578,52 @@ namespace Telegram.Services
 
             //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
+    }
 
-        public partial class VideoConversion
+    [JsonSourceGenerationOptions(IgnoreReadOnlyProperties = true, NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals, Converters = new[] { typeof(Vector2Converter) })]
+    [JsonSerializable(typeof(ImageGeneration))]
+    [JsonSerializable(typeof(VideoGeneration))]
+    public partial class GenerationJsonContext : JsonSerializerContext
+    {
+    }
+
+    public class Vector2Converter : JsonConverter<Vector2>
+    {
+        public override Vector2 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            public bool Transcode { get; set; }
-            public bool Mute { get; set; }
-            public uint Width { get; set; }
-            public uint Height { get; set; }
-            public uint VideoBitrate { get; set; }
-            public uint AudioBitrate { get; set; }
+            float x = 0, y = 0;
 
-            public TimeSpan? TrimStartTime { get; set; }
-            public TimeSpan? TrimStopTime { get; set; }
+            if (reader.TokenType != JsonTokenType.StartObject)
+                throw new JsonException();
 
-            public bool Transform { get; set; }
-            public MediaRotation Rotation { get; set; }
-            public Size OutputSize { get; set; }
-            public MediaMirroringOptions Mirror { get; set; }
-            public Rect CropRectangle { get; set; }
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.EndObject)
+                    return new Vector2(x, y);
+
+                if (reader.TokenType == JsonTokenType.PropertyName)
+                {
+                    string propName = reader.GetString()!;
+                    reader.Read();
+
+                    switch (propName)
+                    {
+                        case "X": x = reader.GetSingle(); break;
+                        case "Y": y = reader.GetSingle(); break;
+                        default: reader.Skip(); break;
+                    }
+                }
+            }
+
+            throw new JsonException();
         }
 
-        public partial class ChatPhotoConversion
+        public override void Write(Utf8JsonWriter writer, Vector2 value, JsonSerializerOptions options)
         {
-            public int StickerFileId { get; set; }
-
-            public int StickerFileType { get; set; }
-
-            public string BackgroundUrl { get; set; }
-
-            public float Scale { get; set; } = 1;
-
-            public float OffsetX { get; set; } = 0;
-
-            public float OffsetY { get; set; } = 0;
+            writer.WriteStartObject();
+            writer.WriteNumber("X", value.X);
+            writer.WriteNumber("Y", value.Y);
+            writer.WriteEndObject();
         }
     }
 }

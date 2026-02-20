@@ -9,13 +9,12 @@
                       xmlns:messages="using:Telegram.Controls.Messages"
                       xmlns:local="using:Telegram.Views.Profile"
                       mc:Ignorable="d"
-                      d:DesignHeight="300"
-                      d:DesignWidth="400">
+                      ItemsSource="{x:Bind ViewModel.Voice.ItemsView, Mode=OneWay}">
 
     <Grid>
         <controls:TableListView x:Name="ScrollingHost"
-                                ItemsSource="{x:Bind ViewModel.Voice, Mode=OneWay}"
                                 SelectionMode="None"
+                                ItemContainerStyle="{StaticResource ExtendedTableListViewItemStyle}"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging">
             <common:SelectedItemsBinder.Attached>
@@ -40,9 +39,11 @@
             </ListView.Template>
             <ListView.Header>
                 <StackPanel>
-                    <Border Height="{x:Bind ViewModel.HeaderHeight, Mode=OneWay}"/>
+                    <Border x:Name="Header" />
 
-                    <Grid MaxWidth="1000"
+                    <Grid x:Name="SearchRoot"
+                          x:Load="False"
+                          MaxWidth="1000"
                           Margin="24,0">
                         <TextBox x:Name="Search"
                                  Text="{x:Bind ViewModel.Voice.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

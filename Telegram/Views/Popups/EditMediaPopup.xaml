@@ -101,8 +101,8 @@
 
                 <controls:GlyphToggleButton x:Name="Proportions"
                                             Click="Proportions_Click"
-                                            Glyph="&#xE90A;"
-                                            CheckedGlyph="&#xE90A;"
+                                            Glyph="&#xEA89;"
+                                            CheckedGlyph="&#xEA89;"
                                             CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                                             FontFamily="{StaticResource TelegramThemeFontFamily}"
                                             AutomationProperties.Name="{CustomResource AccDescrAspectRatio}"

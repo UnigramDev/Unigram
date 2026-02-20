@@ -5,7 +5,8 @@
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  Loaded="OnLoaded">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -49,55 +50,55 @@
                                            Content="{CustomResource BusinessLocationMap}"
                                            Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <HyperlinkButton Click="{x:Bind ViewModel.ChangeMap}"
-                                     Visibility="{x:Bind ViewModel.IsLocationValid, Mode=OneWay}"
-                                     Style="{StaticResource EmptyHyperlinkButtonStyle}">
-                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                              CornerRadius="0,0,4,4">
-                            <Border Height="200">
-                                <Border.Background>
-                                    <ImageBrush ImageSource="{x:Bind ConvertLocation(ViewModel.IsLocationValid, ViewModel.Location), Mode=OneWay}"
-                                                Stretch="UniformToFill"
-                                                AlignmentX="Center"
-                                                AlignmentY="Center" />
-                                </Border.Background>
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                          Visibility="{x:Bind ViewModel.IsLocationValid, Mode=OneWay}"
+                          CornerRadius="0,0,4,4">
+                        <Border Width="200"
+                                Height="200"
+                                CornerRadius="100"
+                                Margin="12">
+                            <HyperlinkButton Click="{x:Bind ViewModel.ChangeMap}"
+                                             Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                                             CornerRadius="100">
+                                <controls:ImageView x:Name="Map"
+                                                    CornerRadius="100" />
+                            </HyperlinkButton>
+                        </Border>
+                        <Canvas Width="40"
+                                Height="47.691"
+                                Margin="0,-36,0,0"
+                                VerticalAlignment="Center"
+                                IsHitTestVisible="False">
+                            <Path Width="40"
+                                  Height="47.691"
+                                  Data="F1M20,47.691C20,47.691 0,33.847 0,20 0,8.955 8.955,0 20,0 31.044,0 40,8.955 40,20 40,33.847 20,47.691 20,47.691"
+                                  Fill="{ThemeResource MessageHeaderForegroundBrush}"
+                                  StrokeThickness="0" />
+                            <Border Height="40"
+                                    Width="40">
+                                <controls:ProfilePicture x:Name="PinPhoto"
+                                                         Size="32"
+                                                         IsHitTestVisible="False"
+                                                         Margin="4,3,4,4"
+                                                         VerticalAlignment="Top" />
                             </Border>
-                            <Canvas Width="40"
-                                    Height="47.691"
-                                    Margin="0,-36,0,0"
-                                    VerticalAlignment="Center"
-                                    IsHitTestVisible="False">
-                                <Path Width="40"
-                                      Height="47.691"
-                                      Data="F1M20,47.691C20,47.691 0,33.847 0,20 0,8.955 8.955,0 20,0 31.044,0 40,8.955 40,20 40,33.847 20,47.691 20,47.691"
-                                      Fill="{ThemeResource MessageHeaderForegroundBrush}"
-                                      StrokeThickness="0" />
-                                <Border Height="40"
-                                        Width="40">
-                                    <controls:ProfilePicture x:Name="PinPhoto"
-                                                             Width="32"
-                                                             Height="32"
-                                                             IsHitTestVisible="False"
-                                                             Margin="4,3,4,4"
-                                                             VerticalAlignment="Top" />
-                                </Border>
-                                <Path x:Name="PinDot"
-                                      Canvas.Left="13"
-                                      Canvas.Top="13"
-                                      Width="14"
-                                      Height="14"
-                                      Data="F1M7,0C3.135,0 0,3.136 0,7 0,10.865 3.135,14 7,14 10.865,14 14,10.865 14,7 14,3.136 10.865,0 7,0"
-                                      Fill="White"
-                                      StrokeThickness="0" />
-                            </Canvas>
-                        </Grid>
-                    </HyperlinkButton>
+                            <Path x:Name="PinDot"
+                                  Canvas.Left="13"
+                                  Canvas.Top="13"
+                                  Width="14"
+                                  Height="14"
+                                  Data="F1M7,0C3.135,0 0,3.136 0,7 0,10.865 3.135,14 7,14 10.865,14 14,10.865 14,7 14,3.136 10.865,0 7,0"
+                                  Fill="White"
+                                  StrokeThickness="0" />
+                        </Canvas>
+                    </Grid>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Visibility="{x:Bind ConvertClear(ViewModel.Address, ViewModel.IsLocationValid), Mode=OneWay}">
-                    <controls:BadgeButton Click="{x:Bind ViewModel.Clear}"
-                                          Content="{CustomResource BusinessLocationClear}"
-                                          Foreground="{ThemeResource DangerButtonBackground}" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.Clear}"
+                                             Content="{CustomResource BusinessLocationClear}"
+                                             Foreground="{ThemeResource DangerButtonBackground}" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

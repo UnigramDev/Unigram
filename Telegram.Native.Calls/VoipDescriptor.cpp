@@ -64,12 +64,12 @@ namespace winrt::Telegram::Native::Calls::implementation
         m_persistentState = value;
     }
 
-    winrt::Windows::Foundation::Collections::IVector<Telegram::Td::Api::CallServer> VoipDescriptor::Servers()
+    winrt::Windows::Foundation::Collections::IVector<winrt::Telegram::Native::Calls::VoipCallServer> VoipDescriptor::Servers()
     {
         return m_servers;
     }
 
-    void VoipDescriptor::Servers(winrt::Windows::Foundation::Collections::IVector<Telegram::Td::Api::CallServer> value)
+    void VoipDescriptor::Servers(winrt::Windows::Foundation::Collections::IVector<winrt::Telegram::Native::Calls::VoipCallServer> value)
     {
         m_servers = value;
     }

@@ -63,7 +63,7 @@
                                            MinHeight="32"
                                            Margin="0,0,-16,0">
                     <controls:SettingsExpander.Header>
-                        <Grid Margin="0,0,-12,0">
+                        <Grid Margin="-12,-11,0,-12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
@@ -99,7 +99,7 @@
                                            MinHeight="32"
                                            Margin="0,0,-16,0">
                     <controls:SettingsExpander.Header>
-                        <Grid Margin="0,0,-12,0">
+                        <Grid Margin="-12,-11,0,-12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
@@ -135,7 +135,7 @@
                                            MinHeight="32"
                                            Margin="0,0,-16,0">
                     <controls:SettingsExpander.Header>
-                        <Grid Margin="0,0,-12,0">
+                        <Grid Margin="-12,-11,0,-12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
@@ -165,11 +165,6 @@
                     </StackPanel>
                 </controls:SettingsExpander>
 
-                <Button x:Name="PermissionsToggle"
-                        Click="PermissionsToggle_Click"
-                        Style="{StaticResource AccentTextButtonStyle}"
-                        Margin="-12,0,0,0" />
-
                 <StackPanel x:Name="PermissionsPanel"
                             Visibility="Collapsed">
                     <controls:AnimatedTextBlock x:Name="PermissionsHeader"
@@ -185,7 +180,8 @@
                                                Margin="0,0,-16,0">
                         <controls:SettingsExpander.Header>
                             <CheckBox x:Name="CanSendMediaMessages"
-                                      IsChecked="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}">
+                                      IsChecked="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}"
+                                      Margin="-12,-11,0,-12">
                                 <TextBlock>
                                 <Run Text="{CustomResource UserRestrictionsSendMedia}" />
                                 <Run Text="{x:Bind ConvertCanSendCount(ViewModel.CanSendCount), Mode=OneWay}"
@@ -245,6 +241,11 @@
                               IsChecked="{x:Bind ViewModel.CanChangeInfo, Mode=TwoWay}"
                               Content="{CustomResource UserRestrictionsChangeInfo}" />
                 </StackPanel>
+
+                <Button x:Name="PermissionsToggle"
+                        Click="PermissionsToggle_Click"
+                        Style="{StaticResource AccentTextButtonStyle}"
+                        Margin="-12,8,0,-8" />
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

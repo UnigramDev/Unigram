@@ -57,6 +57,16 @@
                                 <VisualState x:Name="CheckedDisabled" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="Header"
+                                x:Load="False"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Stretch" />
+
                         <Border x:Name="Icon"
                                 Canvas.ZIndex="1"
                                 AutomationProperties.AccessibilityView="Raw"
@@ -64,7 +74,8 @@
                                 VerticalAlignment="Center"
                                 Margin="12,0,0,3"
                                 Width="24"
-                                Height="24" />
+                                Height="24"
+                                Grid.Row="1" />
 
                         <ContentPresenter x:Name="Presenter"
                                           Control.IsTemplateFocusTarget="True"
@@ -72,7 +83,14 @@
                                           Padding="{TemplateBinding Padding}"
                                           HorizontalContentAlignment="Stretch"
                                           VerticalContentAlignment="Stretch"
+                                          Grid.Row="1"
                                           Grid.Column="1" />
+
+                        <Border x:Name="Footer"
+                                x:Load="False"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Stretch"
+                                Grid.Row="2" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

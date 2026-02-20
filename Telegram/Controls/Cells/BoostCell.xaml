@@ -28,15 +28,14 @@
                Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" />
 
     <controls:ActiveStoriesSegments x:Name="Segments"
-                                    IsClickEnabled="False"
+                                    InteractionMode="Disabled"
                                     IsEnabled="False"
                                     Width="36"
                                     Height="36"
                                     Margin="0,0,8,0"
                                     Grid.RowSpan="2">
         <controls:ProfilePicture x:Name="Photo"
-                                 Width="36"
-                                 Height="36" />
+                                 Size="36" />
     </controls:ActiveStoriesSegments>
 
     <Grid x:Name="TitlePanel"

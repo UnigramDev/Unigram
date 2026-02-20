@@ -1,4 +1,11 @@
-﻿using System.Runtime.CompilerServices;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -60,12 +67,12 @@ namespace Telegram.ViewModels.Business
                 var confirm = await ShowPopupAsync(message, Strings.UnsavedChanges, Strings.ChatThemeSaveDialogApply, Strings.ChatThemeSaveDialogDiscard);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    Continue();
+                    ContinueImpl(args);
                 }
                 else if (confirm == ContentDialogResult.Secondary)
                 {
                     _completed = true;
-                    NavigationService.GoBack();
+                    NavigationService.GoBack(args);
                 }
             }
         }
@@ -84,6 +91,11 @@ namespace Telegram.ViewModels.Business
             return false;
         }
 
-        public abstract void Continue();
+        public void Continue()
+        {
+            ContinueImpl(null);
+        }
+
+        protected abstract void ContinueImpl(NavigatingEventArgs args);
     }
 }

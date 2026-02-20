@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -38,19 +39,19 @@ namespace Telegram.Common
             }
             else if (token != 0)
             {
-                EventAggregator.Current.Unsubscribe(sender, token, false);
+                EventAggregator.Current.Unsubscribe(sender, token);
             }
 
-            EventAggregator.Current.Subscribe(sender, token = value, handler, false);
+            EventAggregator.Current.Subscribe(sender, token = value, handler);
         }
 
         #endregion
 
-        public static void Unsubscribe(object sender, ref long token, bool completionOnly = false)
+        public static void Unsubscribe(object sender, ref long token)
         {
             if (token != 0)
             {
-                EventAggregator.Current.Unsubscribe(sender, token, false);
+                EventAggregator.Current.Unsubscribe(sender, token);
                 token = 0;
             }
         }

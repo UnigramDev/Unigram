@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using Telegram.Controls;
 using Telegram.Converters;
@@ -93,73 +94,6 @@ namespace Telegram.Views.Supergroups
 
             popup.IsOpen = true;
         }
-
-        #region Recycle
-
-        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
-            if (args.Item is string username)
-            {
-                var active = ViewModel.Usernames != null
-                    && ViewModel.Usernames.ActiveUsernames.Contains(username);
-
-                var badge = content.Children[0] as Border;
-                var title = content.Children[1] as TextBlock;
-                var subtitle = content.Children[2] as TextBlock;
-                var handle = content.Children[3] as TextBlock;
-
-                badge.Style = BootStrapper.Current.Resources[active ? "AccentCaptionBorderStyle" : "InfoCaptionBorderStyle"] as Style;
-                subtitle.Style = BootStrapper.Current.Resources[active ? "AccentCaptionTextBlockStyle" : "InfoCaptionTextBlockStyle"] as Style;
-
-                title.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, username, true);
-                subtitle.Text = active
-                    ? Strings.UsernameProfileLinkActive
-                    : Strings.UsernameProfileLinkInactive;
-
-                handle.Visibility = active ? Visibility.Visible : Visibility.Collapsed;
-            }
-            else if (args.Item is Chat chat)
-            {
-                if (args.Phase == 0)
-                {
-                    var title = content.Children[1] as TextBlock;
-                    title.Text = ViewModel.ClientService.GetTitle(chat);
-                }
-                else if (args.Phase == 1)
-                {
-                    if (chat.Type is ChatTypeSupergroup super)
-                    {
-                        var supergroup = ViewModel.ClientService.GetSupergroup(super.SupergroupId);
-                        if (supergroup != null)
-                        {
-                            var subtitle = content.Children[2] as TextBlock;
-                            subtitle.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, supergroup.ActiveUsername(), true);
-                        }
-                    }
-                }
-                else if (args.Phase == 2)
-                {
-                    var photo = content.Children[0] as ProfilePicture;
-                    photo.SetChat(ViewModel.ClientService, chat, 36);
-                }
-
-                if (args.Phase < 2)
-                {
-                    args.RegisterUpdateCallback(OnContainerContentChanging);
-                }
-            }
-
-            args.Handled = true;
-        }
-
-        #endregion
 
         #region Delegate
 

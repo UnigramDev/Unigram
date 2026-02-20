@@ -1,4 +1,11 @@
-﻿using Microsoft.Graphics.Canvas.Geometry;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Numerics;
@@ -35,7 +42,7 @@ namespace Telegram.Views.Calls
         Remote,
     }
 
-    public sealed partial class VoipPage : WindowEx, IToastHost, IPopupHost
+    public sealed partial class VoipPage : WindowEx, IPopupHost
     {
         private static readonly int[] _pendingGradient = new[] { 0x568FD6, 0x626ED5, 0xA667D5, 0x7664DA };
         private static readonly int[] _readyGradient = new[] { 0xACBD65, 0x459F8D, 0x53A4D1, 0x3E917A };
@@ -115,7 +122,7 @@ namespace Telegram.Views.Calls
             if (call.ClientService.TryGetUser(call.UserId, out User user))
             {
                 Title.Text = user.FullName();
-                Photo.SetUser(call.ClientService, user, 280);
+                Photo.Source = ProfilePictureSource.User(call.ClientService, user);
 
                 RemoteAudioOff.Text = string.Format(Strings.VoipUserMicrophoneIsOff, user.FirstName);
                 RemoteBatteryOff.Text = string.Format(Strings.VoipUserBatteryIsLow, user.FirstName);
@@ -133,23 +140,6 @@ namespace Telegram.Views.Calls
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
         }
 
-        public void ToastOpened(TeachingTip toast)
-        {
-            Resources.Remove("TeachingTip");
-            Resources.Add("TeachingTip", toast);
-        }
-
-        public void ToastClosed(TeachingTip toast)
-        {
-            if (Resources.TryGetValue("TeachingTip", out object cached))
-            {
-                if (cached == toast)
-                {
-                    Resources.Remove("TeachingTip");
-                }
-            }
-        }
-
         public void PopupOpened()
         {
             Window.Current.SetTitleBar(null);
@@ -162,11 +152,10 @@ namespace Telegram.Views.Calls
 
         private void InitializeBlob()
         {
-            var device = ElementComposition.GetSharedDevice();
-            var outerClip = CanvasGeometry.CreateRectangle(device, 0, 0, 280, 280);
-            var innerClip = CanvasGeometry.CreateEllipse(device, 140, 140, 63, 63);
+            var outerClip = CanvasGeometry.CreateRectangle(null, 0, 0, 280, 280);
+            var innerClip = CanvasGeometry.CreateEllipse(null, 140, 140, 63, 63);
             var blob = ElementComposition.GetElementVisual(Blob);
-            var geometry = blob.Compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreateGroup(device, new[] { outerClip, innerClip }, CanvasFilledRegionDetermination.Alternate)));
+            var geometry = blob.Compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreateGroup(null, new[] { outerClip, innerClip }, CanvasFilledRegionDetermination.Alternate)));
 
             blob.Clip = blob.Compositor.CreateGeometricClip(geometry);
         }
@@ -1383,7 +1372,7 @@ namespace Telegram.Views.Calls
         {
             try
             {
-                if (XamlRoot.Content is RootPage root)
+                if (XamlRoot.Content is WindowControl { Content: RootPage root })
                 {
                     root.PresentContent(null);
                     return;

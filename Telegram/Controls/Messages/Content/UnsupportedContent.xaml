@@ -16,9 +16,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:UnsupportedContent">
                     <Grid>
-                        <controls:BadgeButton x:Name="Button"
-                                              Style="{StaticResource InstantViewButtonStyle}"
-                                              Margin="0,12,0,4" />
+                        <controls:ButtonEx x:Name="Button"
+                                           Style="{StaticResource InstantViewButtonStyle}"
+                                           Margin="0,12,0,4" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

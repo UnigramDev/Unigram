@@ -4,6 +4,7 @@
                          xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                          xmlns:media="using:Microsoft.UI.Xaml.Media"
                          xmlns:common="using:Telegram.Common"
+                         xmlns:controls="using:Telegram.Controls"
                          xmlns:converters="using:Telegram.Converters"
                          xmlns:navigation="using:Telegram.Navigation"
                          xmlns:themes="using:Telegram.Themes">
@@ -17,12 +18,17 @@
 
                     <StaticResource x:Key="SettingsItemBorderBrush"
                                     ResourceKey="CardStrokeColorDefaultBrush" />
+                    <StaticResource x:Key="SettingsItemBorderBrushPointerOver"
+                                    ResourceKey="ControlElevationBorderBrush" />
+                    <StaticResource x:Key="SettingsItemBorderBrushPressed"
+                                    ResourceKey="ControlStrokeColorDefault" />
                     <StaticResource x:Key="SettingsItemBackground"
                                     ResourceKey="CardBackgroundFillColorDefaultBrush" />
                     <StaticResource x:Key="SettingsItemBackgroundPointerOver"
                                     ResourceKey="ControlFillColorSecondaryBrush" />
                     <StaticResource x:Key="SettingsItemBackgroundPressed"
                                     ResourceKey="ControlFillColorTertiaryBrush" />
+
                     <StaticResource x:Key="SettingsPageBackground"
                                     ResourceKey="SystemControlTransparentBrush" />
 
@@ -38,7 +44,7 @@
                                         TintColor="#202020"
                                         TintLuminosityOpacity="0.96"
                                         TintOpacity="0.5"
-                                        BackgroundSource="Backdrop"  />
+                                        BackgroundSource="Backdrop" />
 
                     <LinearGradientBrush x:Key="SystemGradientColorCriticalBrush"
                                          StartPoint="0,0"
@@ -57,12 +63,17 @@
 
                     <StaticResource x:Key="SettingsItemBorderBrush"
                                     ResourceKey="CardStrokeColorDefaultBrush" />
+                    <StaticResource x:Key="SettingsItemBorderBrushPointerOver"
+                                    ResourceKey="ControlElevationBorderBrush" />
+                    <StaticResource x:Key="SettingsItemBorderBrushPressed"
+                                    ResourceKey="ControlStrokeColorDefault" />
                     <StaticResource x:Key="SettingsItemBackground"
                                     ResourceKey="CardBackgroundFillColorDefaultBrush" />
                     <StaticResource x:Key="SettingsItemBackgroundPointerOver"
                                     ResourceKey="ControlFillColorSecondaryBrush" />
                     <StaticResource x:Key="SettingsItemBackgroundPressed"
                                     ResourceKey="ControlFillColorTertiaryBrush" />
+                    
                     <StaticResource x:Key="SettingsPageBackground"
                                     ResourceKey="SystemControlTransparentBrush" />
 
@@ -188,6 +199,23 @@
                         Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
             </Style>
 
+            <Style x:Key="CaptionFormattedTextBlockStyle"
+                   TargetType="controls:FormattedTextBlock">
+                <Setter Property="FontFamily"
+                        Value="{ThemeResource EmojiThemeFontFamily}" />
+                <Setter Property="FontSize"
+                        Value="12" />
+                <Setter Property="FontWeight"
+                        Value="Normal" />
+            </Style>
+
+            <Style x:Key="InfoCaptionFormattedTextBlockStyle"
+                   TargetType="controls:FormattedTextBlock"
+                   BasedOn="{StaticResource CaptionFormattedTextBlockStyle}">
+                <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+            </Style>
+
             <Style TargetType="PivotItem">
                 <Setter Property="Margin"
                         Value="0" />
@@ -200,19 +228,17 @@
             <x:Double x:Key="TelegramLightMediaMaxWidth">180</x:Double>
             <x:Double x:Key="TelegramLightMediaMaxHeight">180</x:Double>
 
-            <x:Double x:Key="TelegramMediaMaxWidth">420</x:Double>
-            <x:Double x:Key="TelegramMediaMaxHeight">420</x:Double>
+            <x:Double x:Key="TelegramMediaMaxWidth">432</x:Double>
+            <x:Double x:Key="TelegramMediaMaxHeight">432</x:Double>
 
             <x:Double x:Key="TelegramMediaMinWidth">96</x:Double>
             <x:Double x:Key="TelegramMediaMinHeight">96</x:Double>
 
-            <x:Int32 x:Key="ChatTitleMaxLength">255</x:Int32>
-            <x:Int32 x:Key="ChannelTitleMaxLength">255</x:Int32>
-            <x:Int32 x:Key="ChannelAboutMaxLength">255</x:Int32>
-            <x:Int32 x:Key="UserFirstNameMaxLength">255</x:Int32>
-            <x:Int32 x:Key="UserLastNameMaxLength">255</x:Int32>
+            <x:Int32 x:Key="ChatTitleMaxLength">128</x:Int32>
+            <x:Int32 x:Key="ChatAboutMaxLength">255</x:Int32>
+            <x:Int32 x:Key="UserFirstNameMaxLength">64</x:Int32>
+            <x:Int32 x:Key="UserLastNameMaxLength">64</x:Int32>
 
-            <converters:FileTypeToStringConverter x:Key="FileTypeToStringConverter" />
             <converters:MessageTtlConverter x:Key="MessageTtlConverter" />
             <converters:BooleanNegationConverter x:Key="BooleanNegationConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -291,6 +317,17 @@
                         Value="CharacterEllipsis" />
             </Style>
 
+            <Style x:Key="ReplyBodyFormattedTextBlockStyle"
+                   TargetType="controls:FormattedTextBlock"
+                   BasedOn="{StaticResource CaptionFormattedTextBlockStyle}">
+                <Setter Property="TextWrapping"
+                        Value="NoWrap" />
+                <Setter Property="MaxLines"
+                        Value="1" />
+                <Setter Property="TextTrimming"
+                        Value="CharacterEllipsis" />
+            </Style>
+
             <Style x:Key="DisabledBodyTextBlockStyle"
                    TargetType="TextBlock"
                    BasedOn="{StaticResource BodyTextBlockStyle}">
@@ -339,6 +376,16 @@
                    BasedOn="{StaticResource BodyRichTextBlockStyle}">
                 <Setter Property="Foreground"
                         Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+            </Style>
+
+            <Style x:Key="InfoBodyFormattedTextBlockStyle"
+                   TargetType="controls:FormattedTextBlock">
+                <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                <Setter Property="IconForeground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                <Setter Property="FontWeight"
+                        Value="Normal" />
             </Style>
 
             <Style x:Key="InfoCaptionTextBlockStyle"
@@ -467,7 +514,7 @@
                 <ResourceDictionary Source="ms-appx:///Themes/TeachingTip_themeresources.xaml" />
                 <ResourceDictionary Source="ms-appx:///Themes/CheckBox_themeresources.xaml" />
                 <ResourceDictionary Source="ms-appx:///Themes/RadioButton_themeresources.xaml" />
-                <ResourceDictionary Source="ms-appx:///Themes/ScrollBar_themeresources_v1.xaml" />
+                <!--<ResourceDictionary Source="ms-appx:///Themes/ScrollBar_themeresources_v1.xaml" />-->
                 <ResourceDictionary Source="ms-appx:///Themes/BadgeButton_themeresources.xaml" />
                 <ResourceDictionary Source="ms-appx:///Themes/TextBox_themeresources.xaml" />
                 <themes:Messages />

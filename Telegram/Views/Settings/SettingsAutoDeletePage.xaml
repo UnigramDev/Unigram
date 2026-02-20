@@ -41,19 +41,18 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="settings:SettingsAutoDeleteItem">
-                                    <controls:FauxRadioButton Content="{x:Bind Text}"
-                                                              IsFaux="True"
-                                                              IsChecked="{x:Bind IsChecked, Mode=OneWay}"
-                                                              Click="OnChecked"
-                                                              Style="{StaticResource SettingsRadioButtonStyle}" />
+                                    <controls:SettingsRadioButton Content="{x:Bind Text}"
+                                                                  IsFaux="True"
+                                                                  IsChecked="{x:Bind IsChecked, Mode=OneWay}"
+                                                                  Click="OnChecked"
+                                                                  MinHeight="46" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </controls:HeaderedControl>
                     </Border>
-                    <controls:BadgeButton Click="{x:Bind ViewModel.SetCustomTime}"
-                                          Content="{CustomResource SetCustomTime}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE916;" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.SetCustomTime}"
+                                             Content="{CustomResource SetCustomTime}"
+                                             Glyph="&#xE916;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

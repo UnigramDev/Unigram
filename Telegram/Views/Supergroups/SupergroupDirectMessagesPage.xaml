@@ -1,0 +1,70 @@
+﻿<local:HostedPage x:Class="Telegram.Views.Supergroups.SupergroupDirectMessagesPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:local="using:Telegram.Views"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <local:HostedPage.Action>
+        <Button Content="{CustomResource Done}"
+                Click="{x:Bind ViewModel.Continue}"
+                Style="{StaticResource AccentButtonStyle}"
+                Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
+    </local:HostedPage.Action>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <controls:SettingsHeadline Text="{CustomResource PostSuggestionsInfo}"
+                                           Source="ms-appx:///Assets/Animations/SupergroupDirectMessages.tgs" />
+
+                <controls:HeaderedControl>
+                    <controls:FauxCheckBox IsChecked="{x:Bind ViewModel.IsEnabled, Mode=TwoWay}"
+                                           Content="{CustomResource AllowPostSuggestions}"
+                                           Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Visibility="{x:Bind ViewModel.IsEnabled, Mode=OneWay}"
+                                          Header="{CustomResource PriceForEachSuggestion}"
+                                          Footer="{x:Bind ConvertPriceFee(ViewModel.PaidMessageStarCount), Mode=OneWay}">
+                    <Grid x:Name="PriceTicks"
+                          Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                          Padding="12,6,12,6">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <controls:AnimatedTextBlock Text="{x:Bind ConvertPriceValue(ViewModel.PaidMessageStarCount), Mode=OneWay}"
+                                                    TextAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Margin="0,0,0,-4"
+                                                    Grid.ColumnSpan="4" />
+
+                        <Slider x:Name="Price"
+                                Value="{x:Bind ViewModel.PaidMessageStarCount, Mode=TwoWay}"
+                                Maximum="10000"
+                                Minimum="0"
+                                SmallChange="1"
+                                LargeChange="1"
+                                StepFrequency="1"
+                                IsThumbToolTipEnabled="False"
+                                Grid.Row="1" />
+                    </Grid>
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

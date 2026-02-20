@@ -11,6 +11,7 @@
 extern "C"
 {
 #include <libavformat/avformat.h>
+#include <libavutil/display.h>
 #include <libavutil/eval.h>
 #include <libswscale/swscale.h>
 #include <libavutil/imgutils.h>
@@ -48,6 +49,74 @@ namespace winrt::Telegram::Native::implementation
         PARAM_NUM_COUNT = 11,
     };
 
+    class FrameDropper
+    {
+    private:
+        double source_fps;
+        double target_fps;
+        double effective_fps;
+        int preferred_divisor;
+        bool use_clean_division;
+        int64_t frame_count = 0;
+        int64_t frames_displayed = 0;
+
+    public:
+        FrameDropper(double src_fps, double tgt_fps = 30.0, double tolerance = 0.9)
+            : source_fps(src_fps)
+            , target_fps(tgt_fps)
+        {
+            if (source_fps <= target_fps)
+            {
+                preferred_divisor = 1;
+                effective_fps = source_fps;
+                use_clean_division = true;
+                return;
+            }
+
+            preferred_divisor = (int)std::round(source_fps / target_fps);
+            effective_fps = source_fps / preferred_divisor;
+
+            if (effective_fps < target_fps * tolerance)
+            {
+                use_clean_division = false;
+            }
+            else
+            {
+                use_clean_division = true;
+            }
+        }
+
+        double frame_rate()
+        {
+            return effective_fps;
+        }
+
+        bool should_display_frame()
+        {
+            if (source_fps <= target_fps)
+            {
+                return true;
+            }
+
+            frame_count++;
+
+            if (use_clean_division)
+            {
+                return (frame_count % preferred_divisor) == 0;
+            }
+            else
+            {
+                int64_t expected = (frame_count * target_fps) / source_fps;
+                if (frames_displayed < expected)
+                {
+                    frames_displayed++;
+                    return true;
+                }
+                return false;
+            }
+        }
+    };
+
     struct VideoAnimation : VideoAnimationT<VideoAnimation>
     {
     public:
@@ -58,15 +127,39 @@ namespace winrt::Telegram::Native::implementation
 
         void Close()
         {
-            // Flush the decoder by sending NULL to avcodec_send_packet
-            if (has_decoded_frames && video_dec_ctx && frame && avcodec_send_packet(video_dec_ctx, NULL) >= 0)
+            if (closed)
             {
-                // Receive and process the remaining frames
-                while (avcodec_receive_frame(video_dec_ctx, frame) >= 0)
+                return;
+            }
+
+            closed = true;
+
+            if (has_decoded_frames && video_dec_ctx && frame)
+            {
+                int ret = avcodec_send_packet(video_dec_ctx, NULL);
+                if (ret >= 0 || ret == AVERROR_EOF)
                 {
-                    // Process the remaining decoded frames
-                    // ...
+                    while (true)
+                    {
+                        ret = avcodec_receive_frame(video_dec_ctx, frame);
+                        if (ret < 0)
+                            break;
+                        av_frame_unref(frame);
+                    }
                 }
+            }
+
+            // Free in correct order
+            if (frame)
+            {
+                av_frame_free(&frame);
+                frame = nullptr;
+            }
+
+            if (pkt)
+            {
+                av_packet_free(&pkt);
+                pkt = nullptr;
             }
 
             if (video_dec_ctx)
@@ -74,22 +167,14 @@ namespace winrt::Telegram::Native::implementation
                 avcodec_free_context(&video_dec_ctx);
                 video_dec_ctx = nullptr;
             }
+
             if (fmt_ctx)
             {
                 avformat_close_input(&fmt_ctx);
                 fmt_ctx = nullptr;
             }
-            if (frame)
-            {
-                av_frame_free(&frame);
-                frame = nullptr;
-            }
-            if (pkt)
-            {
-                av_packet_free(&pkt);
-                pkt = nullptr;
-            }
-            if (ioContext != nullptr)
+
+            if (ioContext)
             {
                 if (ioContext->buffer)
                 {
@@ -98,23 +183,24 @@ namespace winrt::Telegram::Native::implementation
                 avio_context_free(&ioContext);
                 ioContext = nullptr;
             }
-            if (sws_ctx != nullptr)
+
+            if (sws_ctx)
             {
                 sws_freeContext(sws_ctx);
                 sws_ctx = nullptr;
             }
-            if (dst_data != nullptr)
+
+            if (dst_data)
             {
-                free(dst_data);
+                av_free(dst_data);
                 dst_data = nullptr;
             }
+
             if (fd != INVALID_HANDLE_VALUE)
             {
                 CloseHandle(fd);
                 fd = INVALID_HANDLE_VALUE;
             }
-
-            //av_packet_unref(&orig_pkt);
 
             video_stream_idx = -1;
             video_stream = nullptr;
@@ -131,8 +217,8 @@ namespace winrt::Telegram::Native::implementation
 
         IRandomAccessStream GetAlbumCover();
 
-        int RenderSync(IBuffer buffer, int32_t width, int32_t height, bool preview, int32_t& seconds);
-        int RenderSync(uint8_t* pixels, int32_t width, int32_t height, bool preview, int32_t& seconds, bool& completed);
+        int RenderSync(IBuffer buffer, int32_t width, int32_t height, bool preview, double& seconds);
+        int RenderSync(uint8_t* pixels, int32_t width, int32_t height, bool preview, double& seconds, bool& completed);
 
         int PixelWidth()
         {
@@ -187,8 +273,7 @@ namespace winrt::Telegram::Native::implementation
         }
 
     private:
-        void decode_frame(uint8_t* pixels, int32_t width, int32_t height);
-        static void requestFd(VideoAnimation* info);
+        int decode_frame(uint8_t* pixels, int32_t width, int32_t height);
         static int readCallback(void* opaque, uint8_t* buf, int buf_size);
         static int64_t seekCallback(void* opaque, int64_t offset, int whence);
 
@@ -207,6 +292,7 @@ namespace winrt::Telegram::Native::implementation
         AVCodecContext* video_dec_ctx = nullptr;
         AVFrame* frame = nullptr;
         bool has_decoded_frames = false;
+        bool closed = false;
         AVPacket* pkt;
         //AVPacket orig_pkt;
         bool stopped = false;
@@ -221,8 +307,7 @@ namespace winrt::Telegram::Native::implementation
         HANDLE fd = INVALID_HANDLE_VALUE;
         //int64_t last_seek_p = 0;
 
-        bool limitFps;
-        double prevFrame = -1;
+        FrameDropper dropper{ 0 };
 
         int32_t pixelWidth = 0;
         int32_t pixelHeight = 0;

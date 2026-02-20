@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.Generic;
 using Telegram.Services.Settings;
 using Windows.UI;
@@ -14,7 +15,7 @@ namespace Telegram.Services
     {
         public static Dictionary<TelegramThemeType, Dictionary<AccentShade, Color>> Accents => _accent;
 
-        protected static readonly Dictionary<TelegramThemeType, Dictionary<AccentShade, Color>> _accent = new Dictionary<TelegramThemeType, Dictionary<AccentShade, Color>>
+        protected static readonly Dictionary<TelegramThemeType, Dictionary<AccentShade, Color>> _accent = new()
         {
             {
                 TelegramThemeType.Tinted, new Dictionary<AccentShade, Color>
@@ -54,7 +55,7 @@ namespace Telegram.Services
             }
         };
 
-        protected static readonly Dictionary<TelegramThemeType, Dictionary<string, Color>> _map = new Dictionary<TelegramThemeType, Dictionary<string, Color>>
+        protected static readonly Dictionary<TelegramThemeType, Dictionary<string, Color>> _map = new()
         {
             {
                 TelegramThemeType.Tinted, new Dictionary<string, Color>
@@ -67,7 +68,8 @@ namespace Telegram.Services
                     { "ApplicationPageBackgroundThemeBrush", Color.FromArgb(0xFF, 0x1C, 0x27, 0x33) },
                     { "PageHeaderBackgroundBrush", Color.FromArgb(0xFF, 0x1C, 0x27, 0x33) },
                     { "PageSubHeaderBackgroundBrush", Color.FromArgb(0xFF, 0x1C, 0x27, 0x33) },
-                    { "ContentDialogBackground", Color.FromArgb(0xFF, 0x1C, 0x27, 0x33) },
+                    { "ContentDialogBackground", Color.FromArgb(0xFF, 0x17, 0x1B, 0x21) },
+                    { "ContentDialogTopOverlaySolid", Color.FromArgb(0xFF, 0x1C, 0x27, 0x33) },
                     { "SolidBackgroundFillColorBaseBrush", Color.FromArgb(0xFF, 0x1C, 0x27, 0x33) },
                     { "TelegramSeparatorMediumBrush", Color.FromArgb(0xFF, 0x10, 0x17, 0x1E) },
                     { "SystemControlDisabledChromeDisabledLowBrush", Color.FromArgb(0xFF, 0x7D, 0x8E, 0x98) },
@@ -166,7 +168,7 @@ namespace Telegram.Services
 
     public partial class ThemeService
     {
-        private static readonly Dictionary<string, object> _defaultLight = new Dictionary<string, object>
+        private static readonly Dictionary<string, object> _defaultLight = new()
         {
             { "MessageReactionBackgroundOutgoing", Color.FromArgb(0xFF, 0xD5, 0xF1, 0xC9) },
             { "MessageReactionForegroundOutgoing", Color.FromArgb(0xFF, 0x45, 0xA3, 0x2D) },
@@ -1240,6 +1242,7 @@ namespace Telegram.Services
             { "ContentDialogForeground", Color.FromArgb(0xE4, 0x00, 0x00, 0x00) },
             { "ContentDialogSmokeFill", Color.FromArgb(0x4D, 0xFF, 0xFF, 0xFF) },
             { "ContentDialogTopOverlay", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
+            { "ContentDialogTopOverlaySolid", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
             { "ContentDialogSeparatorBorderBrush", Color.FromArgb(0x0F, 0x00, 0x00, 0x00) },
             { "DatePickerSpacerFill", Color.FromArgb(0x0F, 0x00, 0x00, 0x00) },
             { "DatePickerSpacerFillDisabled", Color.FromArgb(0x37, 0x00, 0x00, 0x00) },
@@ -1764,7 +1767,7 @@ namespace Telegram.Services
             { "ToolTipBackgroundBrush", Acrylic.Color(Color.FromArgb(0xFF, 0xFC, 0xFC, 0xFC), Color.FromArgb(0xFF, 0xF9, 0xF9, 0xF9), 0.0, 0.85) },
         };
 
-        private static readonly Dictionary<string, object> _defaultDark = new Dictionary<string, object>
+        private static readonly Dictionary<string, object> _defaultDark = new()
         {
             { "MessageReactionBackgroundOutgoing", Color.FromArgb(0xFF, 0x2B, 0x41, 0x53) },
             { "MessageReactionForegroundOutgoing", Color.FromArgb(0xFF, 0x7A, 0xC3, 0xF4) },
@@ -1778,7 +1781,7 @@ namespace Telegram.Services
 
             { "ApplicationPageBackgroundThemeBrush", Color.FromArgb(0xFF, 0x17, 0x17, 0x17) },
             { "ChatPageBackgroundBrush", Color.FromArgb(0xFF, 0x17, 0x17, 0x17) },
-            { "ContentDialogBackground", Color.FromArgb(0xFF, 0x20, 0x20, 0x20) },
+            { "ContentDialogBackground", Color.FromArgb(0xFF, 0x15, 0x15, 0x15) },
             { "PageHeaderForegroundBrush", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
             { "PageHeaderHighlightBrush", AccentShade.Default },
             { "PageHeaderDisabledBrush", Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF) },
@@ -2835,6 +2838,7 @@ namespace Telegram.Services
             { "ContentDialogForeground", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
             { "ContentDialogSmokeFill", Color.FromArgb(0x33, 0x2C, 0x2C, 0x2C) },
             { "ContentDialogTopOverlay", Color.FromArgb(0x0D, 0xFF, 0xFF, 0xFF) },
+            { "ContentDialogTopOverlaySolid", Color.FromArgb(0xFF, 0x20, 0x20, 0x20) },
             { "ContentDialogSeparatorBorderBrush", Color.FromArgb(0x19, 0x00, 0x00, 0x00) },
             { "DatePickerSpacerFill", Color.FromArgb(0x15, 0xFF, 0xFF, 0xFF) },
             { "DatePickerSpacerFillDisabled", Color.FromArgb(0x28, 0xFF, 0xFF, 0xFF) },

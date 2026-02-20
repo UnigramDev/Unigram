@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
+using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Messages
@@ -43,6 +45,19 @@ namespace Telegram.Controls.Messages
                         player.IsHitTestVisible = false;
 
                         Children.Add(player);
+                    }
+
+                    if (positions[i].FontSize == 9) // 12 * 0.75
+                    {
+                        player.Width = 16;
+                        player.Height = 16;
+                        player.FrameSize = new Size(16, 16);
+                    }
+                    else
+                    {
+                        player.Width = 20;
+                        player.Height = 20;
+                        player.FrameSize = new Size(20, 20);
                     }
 
                     player.Source = new CustomEmojiFileSource(clientService, positions[i].CustomEmojiId);
@@ -117,5 +132,7 @@ namespace Telegram.Controls.Messages
         public int X { get; set; }
 
         public int Y { get; set; }
+
+        public float FontSize { get; set; }
     }
 }

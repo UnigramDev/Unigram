@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -129,7 +130,7 @@ namespace Telegram.ViewModels.Supergroups
             set => Set(ref _inviteLinksCount, value);
         }
 
-        public long FeedbackChatId { get; private set; }
+        public long DirectMessagesChatId { get; private set; }
 
         #region Initialize
 
@@ -160,7 +161,7 @@ namespace Telegram.ViewModels.Supergroups
                 }
                 else
                 {
-                    FeedbackChatId = cache.FeedbackChatId;
+                    DirectMessagesChatId = cache.DirectMessagesChatId;
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup basic)
@@ -351,9 +352,18 @@ namespace Telegram.ViewModels.Supergroups
                     supergroup = await ClientService.SendAsync(new GetSupergroup(super.SupergroupId)) as Supergroup;
                     fullInfo = await ClientService.SendAsync(new GetSupergroupFullInfo(super.SupergroupId)) as SupergroupFullInfo;
                 }
-                else if (response is Error)
+                else if (response is Error error)
                 {
-                    // TODO:
+                    if (error.MessageEquals(ErrorType.CHANNELS_TOO_MUCH))
+                    {
+                        NavigationService.ShowLimitReached(new PremiumLimitTypeSupergroupCount());
+                    }
+                    else
+                    {
+                        AlertsService.ShowAddUserAlert(XamlRoot, error.Message, false);
+                    }
+
+                    return;
                 }
             }
 
@@ -417,19 +427,19 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public void FeedbackGroup()
+        public void DirectMessagesGroup()
         {
             if (_chat is Chat chat)
             {
-                NavigationService.Navigate(typeof(SupergroupFeedbackGroupPage), chat.Id);
+                NavigationService.Navigate(typeof(SupergroupDirectMessagesPage), chat.Id);
             }
         }
 
-        public void OpenFeedbackGroup()
+        public void OpenDirectMessagesGroup()
         {
             if (_chat is Chat chat && ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
             {
-                NavigationService.NavigateToChat(fullInfo.FeedbackChatId);
+                NavigationService.NavigateToChat(fullInfo.DirectMessagesChatId);
             }
         }
 

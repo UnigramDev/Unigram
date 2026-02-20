@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -26,7 +27,7 @@ namespace Telegram.ViewModels.Users
 
         private readonly IProfilePhotoService _profilePhotoService;
 
-        private bool _discardChanges;
+        private bool _confirmed;
 
         public UserEditViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IProfilePhotoService profilePhotoService)
             : base(clientService, settingsService, aggregator)
@@ -35,6 +36,15 @@ namespace Telegram.ViewModels.Users
 
             SendCommand = new RelayCommand(Send, CanSend);
         }
+
+        private string _title;
+        public string Title
+        {
+            get => _title;
+            set => Set(ref _title, value);
+        }
+
+        private string _originalFirstName = string.Empty;
 
         private string _firstName = string.Empty;
         public string FirstName
@@ -62,11 +72,20 @@ namespace Telegram.ViewModels.Users
             }
         }
 
+        private string _originalDescription = string.Empty;
+
         private string _description = string.Empty;
         public string Description
         {
             get => _description;
             set => Set(ref _description, value);
+        }
+
+        private FormattedText _note;
+        public FormattedText Note
+        {
+            get => _note;
+            set => Set(ref _note, value);
         }
 
         private bool _sharePhoneNumber;
@@ -99,38 +118,48 @@ namespace Telegram.ViewModels.Users
 
                 if (user.Type is UserTypeBot)
                 {
-                    var response = await ClientService.SendAsync(new GetBotName(userId, string.Empty));
-                    if (response is Text text)
-                    {
-                        FirstName = text.TextValue;
-                    }
+                    Title = Strings.ChannelEdit;
+
+                    _originalFirstName = user.FirstName;
+                    FirstName = user.FirstName;
                 }
                 else
                 {
+                    Title = Strings.EditContact;
+
                     FirstName = user.FirstName;
                     LastName = user.LastName;
                 }
 
-                if (ClientService.TryGetUserFull(user.Id, out UserFullInfo userFull))
-                {
-                    if (user.Type is UserTypeBot)
-                    {
-                        var response = await ClientService.SendAsync(new GetBotInfoShortDescription(userId, string.Empty));
-                        if (response is Text text)
-                        {
-                            Description = text.TextValue;
-                        }
-                    }
-                }
-
+                ClientService.TryGetUserFull(user.Id, out UserFullInfo userFull);
                 Delegate?.UpdateUser(null, user, userFull, false, false);
 
                 ClientService.Send(new GetUserFullInfo(user.Id));
 
                 if (user.Type is UserTypeBot)
                 {
-                    var response = await ClientService.GetStarTransactionsAsync(new MessageSenderUser(userId), string.Empty, null, string.Empty, 1);
-                    if (response is StarTransactions transactions)
+                    if (userFull != null)
+                    {
+                        _originalDescription = userFull.BotInfo.ShortDescription;
+                        Description = userFull.BotInfo.ShortDescription;
+                    }
+
+                    var response = await ClientService.SendAsync(new GetBotName(userId, string.Empty));
+                    if (response is Text text1)
+                    {
+                        _originalFirstName = text1.TextValue;
+                        FirstName = text1.TextValue;
+                    }
+
+                    var response1 = await ClientService.SendAsync(new GetBotInfoShortDescription(userId, string.Empty));
+                    if (response1 is Text text2)
+                    {
+                        _originalDescription = text2.TextValue;
+                        Description = text2.TextValue;
+                    }
+
+                    var response2 = await ClientService.GetStarTransactionsAsync(new MessageSenderUser(userId), string.Empty, null, string.Empty, 1);
+                    if (response2 is StarTransactions transactions)
                     {
                         StarCount = transactions.StarAmount;
                     }
@@ -140,7 +169,7 @@ namespace Telegram.ViewModels.Users
 
         public override async void NavigatingFrom(NavigatingEventArgs args)
         {
-            if (_discardChanges || args.NavigationMode != NavigationMode.Back)
+            if (_confirmed || args.NavigationMode != NavigationMode.Back)
             {
                 return;
             }
@@ -149,19 +178,19 @@ namespace Telegram.ViewModels.Users
             {
                 if (user.Type is UserTypeBot userTypeBot && userTypeBot.CanBeEdited)
                 {
-                    if (user.FirstName != _firstName || userFull.BotInfo?.ShortDescription != _description)
+                    if (_originalFirstName != _firstName || _originalDescription != _description)
                     {
                         args.Cancel = true;
 
                         var confirm = await ShowPopupAsync(Strings.BotSettingsChangedAlert, Strings.UnsavedChanges, Strings.ApplyTheme, Strings.Discard);
                         if (confirm == ContentDialogResult.Primary)
                         {
-                            Send();
+                            Continue(args);
                         }
                         else
                         {
-                            _discardChanges = true;
-                            NavigationService.GoBack();
+                            _confirmed = true;
+                            NavigationService.GoBack(args);
                         }
                     }
                 }
@@ -206,8 +235,11 @@ namespace Telegram.ViewModels.Users
         public RelayCommand SendCommand { get; }
         private void Send()
         {
-            _discardChanges = true;
+            Continue(null);
+        }
 
+        private void Continue(NavigatingEventArgs args)
+        {
             if (ClientService.TryGetUser(_userId, out User user) && ClientService.TryGetUserFull(user.Id, out UserFullInfo userFull))
             {
                 if (user.Type is UserTypeBot userTypeBot && userTypeBot.CanBeEdited)
@@ -224,11 +256,12 @@ namespace Telegram.ViewModels.Users
                 }
                 else
                 {
-                    ClientService.Send(new AddContact(new Contact(user.PhoneNumber, _firstName, _lastName, string.Empty, user.Id),
+                    ClientService.Send(new AddContact(user.Id, new ImportedContact(user.PhoneNumber, _firstName, _lastName, _note),
                         userFull.NeedPhoneNumberPrivacyException && SharePhoneNumber));
                 }
 
-                NavigationService.GoBack();
+                _confirmed = true;
+                NavigationService.GoBack(args);
             }
         }
 
@@ -237,6 +270,22 @@ namespace Telegram.ViewModels.Users
             return _firstName.Length > 0
                 && _firstName.Length <= 64
                 && _lastName.Length <= 64;
+        }
+
+        public async void SuggestBirthday()
+        {
+            if (ClientService.TryGetUser(_userId, out User user))
+            {
+                var popup = new SettingsBirthdatePopup(user);
+
+                var confirm = await ShowPopupAsync(popup);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    ClientService.Send(new SuggestUserBirthdate(user.Id, popup.Value));
+
+                    NavigationService.NavigateToUser(user.Id, true);
+                }
+            }
         }
 
         public async void SetPhoto()

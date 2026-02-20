@@ -9,11 +9,7 @@
                        xmlns:chats="using:Telegram.Controls.Chats"
                        xmlns:messages="using:Telegram.Controls.Messages"
                        mc:Ignorable="d"
-                       TitleTemplate="{x:Null}"
-                       PrimaryButtonText="Button1"
-                       SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
                        Padding="0,6,0,24">
 
     <ContentDialog.Resources>
@@ -68,8 +64,7 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <controls:ProfilePicture x:Name="Photo"
-                                                                 Width="{ThemeResource ChatPhotoSize}"
-                                                                 Height="{ThemeResource ChatPhotoSize}"
+                                                                 Size="36"
                                                                  Margin="12,0" />
 
                                         <StackPanel Orientation="Vertical"

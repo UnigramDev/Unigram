@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Linq;
 using Telegram.Collections;
 using Telegram.Common;
@@ -16,7 +17,7 @@ namespace Telegram.ViewModels.Chats
 {
     public partial class ChatPhotosViewModel : GalleryViewModelBase
     {
-        private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+        private readonly DisposableMutex _loadMoreLock = new();
         private readonly Chat _chat;
 
         public ChatPhotosViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, Chat chat, ChatPhoto photo)
@@ -72,7 +73,7 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        protected override async void LoadPrevious()
+        protected override void LoadPrevious()
         {
             //using (await _loadMoreLock.WaitAsync())
             //{
@@ -109,7 +110,7 @@ namespace Telegram.ViewModels.Chats
             //}
         }
 
-        protected override async void LoadNext()
+        protected override void LoadNext()
         {
             //using (await _loadMoreLock.WaitAsync())
             //{

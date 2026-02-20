@@ -1,16 +1,17 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -18,7 +19,6 @@ using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
-using Telegram.Views;
 using Windows.UI.Xaml;
 
 namespace Telegram.ViewModels
@@ -47,7 +47,9 @@ namespace Telegram.ViewModels
 
         public bool IsForum => _viewModel is DialogViewModel { IsForum: true };
 
-        public bool IsFeedbackGroup => _viewModel is DialogViewModel { IsFeedbackGroup: true };
+        public bool IsDirectMessagesGroup => _viewModel is DialogViewModel { IsDirectMessagesGroup: true };
+
+        public bool IsSavedMessagesTab => _viewModel is DialogViewModel { IsSavedMessagesTab: true };
 
         public override INavigationService NavigationService
         {
@@ -64,6 +66,8 @@ namespace Telegram.ViewModels
         public virtual ReactionType SavedMessagesTag { get; set; }
 
 
+
+        private static readonly string _executableExtensions = "ad ade adp ahk app application appref-ms asp aspx asx bas bat bin cab cdxml cer cfg cgi chi chm cmd cnt com conf cpl crt csh der diagcab dll drv eml exe fon fxp gadget grp hlp hpj hta htt inf ini ins inx isp isu its jar jnlp job js jse jsp key ksh lexe library-ms lnk local lua mad maf mag mam manifest maq mar mas mat mau mav maw mcf mda mdb mde mdt mdw mdz mht mhtml mjs mmc mof msc msg msh msh1 msh2 msh1xml msh2xml mshxml msi msp mst ops osd paf pcd phar php php3 php4 php5 php7 phps php-s pht phtml pif pl plg pm pod prf prg ps1 ps2 ps1xml ps2xml psc1 psc2 psd1 psm1 pssc pst py py3 pyc pyd pyi pyo pyw pyzw pyz rb reg rgs scf scr sct search-ms settingcontent-ms sh shb shs slk sys swf t tmp u3p url vb vbe vbp vbs vbscript vdx vsmacros vsd vsdm vsdx vss vssm vssx vst vstm vstx vsw vsx vtx website wlua ws wsc wsf wsh xbap xll xlsb xlsm xnk xs";
 
         public virtual bool CanBeDownloaded(object content, File file)
         {
@@ -83,6 +87,12 @@ namespace Telegram.ViewModels
             }
             else if (content is Document document)
             {
+                var extension = System.IO.Path.GetExtension(document.FileName);
+                if (_executableExtensions.Contains(extension.TrimStart('.')))
+                {
+                    return false;
+                }
+
                 return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), document.DocumentValue.Size);
             }
             else if (content is Photo photo)
@@ -145,8 +155,7 @@ namespace Telegram.ViewModels
 
         public void OpenFile(File file)
         {
-            // TODO: I don't like retrieving services this way
-            var service = TypeResolver.Current.Resolve<IStorageService>(ClientService.SessionId);
+            var service = ClientService.Session.Resolve<IStorageService>();
             if (service != null)
             {
                 _ = service.OpenFileAsync(file);
@@ -250,7 +259,17 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
+        public virtual void HideSponsoredMessage(MessageViewModel message) { }
+
+        /// <summary>
+        /// Only available when created through DialogViewModel
+        /// </summary>
         public virtual void ForwardMessage(MessageViewModel message) { }
+
+        /// <summary>
+        /// Only available when created through DialogViewModel
+        /// </summary>
+        public virtual void SummarizeMessage(MessageViewModel message) { }
 
         /// <summary>
         /// Only available when created through DialogViewModel
@@ -267,6 +286,45 @@ namespace Telegram.ViewModels
         /// </summary>
         public virtual void OpenThread(MessageViewModel message) { }
 
+        public virtual void OpenSender(MessageViewModel message)
+        {
+            if (message.IsSaved || message.IsVerificationCode)
+            {
+                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser)
+                {
+                    OpenUser(fromUser.SenderUserId);
+                }
+                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
+                {
+                    OpenChat(fromChat.SenderChatId, true);
+                }
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
+                {
+                    // TODO: verify if this is sufficient
+                    OpenChat(fromChannel.ChatId);
+                }
+                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
+                {
+                    ToastPopup.Show(XamlRoot, Strings.HidAccount);
+                }
+            }
+            else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
+            {
+                if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                {
+                    OpenChat(senderChat.Id);
+                }
+                else
+                {
+                    OpenChat(senderChat.Id, true);
+                }
+            }
+            else if (message.SenderId is MessageSenderUser senderUser)
+            {
+                OpenUser(senderUser.UserId);
+            }
+        }
+
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
@@ -281,16 +339,14 @@ namespace Telegram.ViewModels
         {
             try
             {
-                var options = new Windows.System.LauncherOptions();
-                options.FallbackUri = new Uri(string.Format(CultureInfo.InvariantCulture, "https://www.google.com/maps/search/?api=1&query={0},{1}", location.Latitude, location.Longitude));
-
                 if (title != null)
                 {
-                    await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}_{2}", location.Latitude, location.Longitude, WebUtility.UrlEncode(title))), options);
+                    // TODO: is title supported?
+                    await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "https://www.google.com/maps/search/?api=1&query={0},{1}", location.Latitude, location.Longitude)));
                 }
                 else
                 {
-                    await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}", location.Latitude, location.Longitude)), options);
+                    await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "https://www.google.com/maps/search/?api=1&query={0},{1}", location.Latitude, location.Longitude)));
                 }
             }
             catch
@@ -351,17 +407,20 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0) { }
+        public virtual void OpenMedia(MessageViewModel message, FrameworkElement target, double timestamp = 0) { }
 
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, int timestamp = 0) { }
+        public virtual void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, double timestamp = 0) { }
 
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual void PlayMessage(MessageViewModel message) { }
+        public virtual void PlayMessage(MessageViewModel message)
+        {
+            LifetimeService.Current.Playback.Play(XamlRoot, message);
+        }
 
         /// <summary>
         /// Only available when created through DialogViewModel
@@ -372,6 +431,11 @@ namespace Telegram.ViewModels
         /// Only available when created through DialogViewModel
         /// </summary>
         public virtual void SendBotCommand(string command) { }
+
+        /// <summary>
+        /// Only available when created through DialogViewModel
+        /// </summary>
+        public virtual void SendMessage(InputMessageContent content) { }
 
 
 
@@ -450,7 +514,11 @@ namespace Telegram.ViewModels
             }
         }
 
+        public override void HideSponsoredMessage(MessageViewModel message) => _viewModel.HideSponsoredMessage(message);
+
         public override void ForwardMessage(MessageViewModel message) => _viewModel.ForwardMessage(message);
+
+        public override void SummarizeMessage(MessageViewModel message) => _viewModel.SummarizeMessage(message);
 
         public override void ViewVisibleMessages() => _viewModel.ViewVisibleMessages();
 
@@ -487,9 +555,9 @@ namespace Telegram.ViewModels
             //}
         }
 
-        public override void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0) => _viewModel.OpenMedia(message, target, timestamp);
+        public override void OpenMedia(MessageViewModel message, FrameworkElement target, double timestamp = 0) => _viewModel.OpenMedia(message, target, timestamp);
 
-        public override void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, int timestamp = 0)
+        public override void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, double timestamp = 0)
         {
             _viewModel.OpenPaidMedia(message, media, target, timestamp);
         }
@@ -501,6 +569,8 @@ namespace Telegram.ViewModels
 
 
         public override void SendBotCommand(string command) => _viewModel.SendBotCommand(command);
+
+        public override void SendMessage(InputMessageContent content) => _viewModel.SendContent(content);
 
 
         public override bool IsTranslating => _viewModel.IsTranslating;
@@ -533,7 +603,7 @@ namespace Telegram.ViewModels
             return !Settings.AutoDownload.Disabled;
         }
 
-        public override void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
+        public override void OpenMedia(MessageViewModel message, FrameworkElement target, double timestamp = 0)
         {
             var content = target.Tag as GalleryMedia;
             content ??= _viewModel.Gallery.Items.FirstOrDefault();

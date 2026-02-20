@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
@@ -91,6 +92,33 @@ namespace Telegram.Views.Settings
             }
 
             args.IsContainerPrepared = true;
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is RadioButton content && args.Item is ProxyViewModel proxy)
+            {
+                content.Checked -= RadioButton_Checked;
+
+                // Justified because Checked
+                content.Tag = proxy;
+                content.IsChecked = proxy.IsEnabled;
+
+                content.Checked += RadioButton_Checked;
+            }
+
+        }
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is RadioButton { Tag: ProxyViewModel proxy })
+            {
+                ViewModel.Enable(proxy);
+            }
         }
 
         #endregion

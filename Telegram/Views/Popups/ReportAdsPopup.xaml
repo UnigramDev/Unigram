@@ -82,7 +82,8 @@
             </controls:TextListView>
 
             <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
-                                        Background="{ThemeResource ContentDialogBackground}"
+                                        Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                        BottomInset="0"
                                         Grid.Row="1" />
         </Grid>
     </Grid>

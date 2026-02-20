@@ -10,11 +10,16 @@
                     mc:Ignorable="d">
 
     <DataTemplate x:Key="FolderPickerTemplate">
-        <cells:ChatShareCell SelectionStroke="{ThemeResource ContentDialogBackground}"
+        <cells:ChatShareCell SelectionStroke="{ThemeResource ContentDialogTopOverlaySolid}"
                              Stroke="{ThemeResource ChatLastMessageStateBrush}" />
     </DataTemplate>
 
     <selectors:AutocompleteTemplateSelector x:Name="AutocompleteTemplate">
+        <selectors:AutocompleteTemplateSelector.MessageTemplate>
+            <DataTemplate>
+                <cells:ChatCell />
+            </DataTemplate>
+        </selectors:AutocompleteTemplateSelector.MessageTemplate>
         <selectors:AutocompleteTemplateSelector.MentionTemplate>
             <DataTemplate>
                 <Grid Padding="12,6">
@@ -22,8 +27,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture Width="32"
-                                             Height="32"
+                    <controls:ProfilePicture Size="32"
                                              Margin="0,0,12,0"
                                              Grid.RowSpan="2" />
                     <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
@@ -41,8 +45,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture Width="32"
-                                             Height="32"
+                    <controls:ProfilePicture Size="32"
                                              Margin="0,0,12,0"
                                              Grid.RowSpan="2" />
                     <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Controls;
@@ -40,12 +41,12 @@ namespace Telegram.Views.Stars.Popups
 
             var chat = clientService.GetChat(subscription.ChatId);
 
-            FromPhoto.SetChat(clientService, chat, 24);
+            FromPhoto.Source = ProfilePictureSource.Chat(clientService, chat);
             FromPhoto.Visibility = Visibility.Visible;
             FromTitle.Text = chat.Title;
             FromHeader.Text = Strings.StarsSubscriptionChannel;
 
-            Photo.SetChat(clientService, chat, 96);
+            Photo.Source = ProfilePictureSource.Chat(clientService, chat);
             Title.Text = Strings.StarsSubscriptionTitle;
 
             StarCount.Text = string.Format(Strings.PricePerMonthMe, subscription.Pricing.StarCount.ToString("N0"));
@@ -110,23 +111,6 @@ namespace Telegram.Views.Stars.Popups
         private void SettingsFooter_Click(object sender, TextUrlClickEventArgs e)
         {
             MessageHelper.OpenUrl(null, null, Strings.StarsTOSLink);
-        }
-
-        private void UpdateFile(object target, File file)
-        {
-            UpdateThumbnail(file);
-        }
-
-        private void UpdateThumbnail(File file)
-        {
-            if (file.Local.IsDownloadingCompleted)
-            {
-                Photo.Source = UriEx.ToBitmap(file.Local.Path);
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                _clientService.DownloadFile(file.Id, 1);
-            }
         }
     }
 }

@@ -1,14 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -19,6 +21,8 @@ namespace Telegram.Views.Profile
 {
     public sealed partial class ProfileSavedChatsTabPage : ProfileTabPage, ISavedMessagesChatsDelegate
     {
+        public new ProfileViewModel ViewModel => DataContext as ProfileViewModel;
+
         public ProfileSavedChatsTabPage()
         {
             InitializeComponent();
@@ -29,18 +33,12 @@ namespace Telegram.Views.Profile
 
         private void OnConnected(object sender, RoutedEventArgs e)
         {
-            if (ViewModel != null)
-            {
-                ViewModel.SavedChatsTab.Delegate = this;
-            }
+            ViewModel?.SavedChatsTab.Delegate = this;
         }
 
         private void OnDisconnected(object sender, RoutedEventArgs e)
         {
-            if (ViewModel != null)
-            {
-                ViewModel.SavedChatsTab.Delegate = null;
-            }
+            ViewModel?.SavedChatsTab.Delegate = null;
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -70,12 +68,9 @@ namespace Telegram.Views.Profile
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is Grid content && args.Item is SavedMessagesTopic savedMessagesTopic)
+            else if (args.ItemContainer.ContentTemplateRoot is ChatCell content && args.Item is SavedMessagesTopic savedMessagesTopic)
             {
-                if (content.Children[0] is ChatCell cell)
-                {
-                    cell.UpdateSavedMessagesTopic(ViewModel.ClientService, savedMessagesTopic);
-                }
+                content.UpdateSavedMessagesTopic(ViewModel.ClientService, savedMessagesTopic);
             }
         }
 
@@ -109,12 +104,9 @@ namespace Telegram.Views.Profile
                 }
 
                 var container = ScrollingHost.ContainerFromItem(topic) as SelectorItem;
-                if (container?.ContentTemplateRoot is Grid content)
+                if (container?.ContentTemplateRoot is ChatCell cell)
                 {
-                    if (content.Children[0] is ChatCell cell)
-                    {
-                        cell.UpdateSavedMessagesTopic(clientService, topic);
-                    }
+                    cell.UpdateSavedMessagesTopic(clientService, topic);
                 }
             });
         }

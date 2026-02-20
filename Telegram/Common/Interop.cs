@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -18,11 +19,12 @@ namespace Telegram.Common
 {
 #if NET9_0_OR_GREATER
     [GeneratedComInterface]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 #else
     [ComImport]
+    [InterfaceType(ComInterfaceType.InterfaceIsIInspectable)]
 #endif
     [Guid("F26DA89E-683D-4C67-AEA7-BA29B2217A70")]
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public partial interface ICompositionVisualSurfacePartner
     {
 #if NET9_0_OR_GREATER
@@ -51,11 +53,12 @@ namespace Telegram.Common
 
 #if NET9_0_OR_GREATER
     [GeneratedComInterface]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 #else
     [ComImport]
+    [InterfaceType(ComInterfaceType.InterfaceIsIInspectable)]
 #endif
     [Guid("0764019b-52c1-41f9-b6f2-9cc205973692")]
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public partial interface IInternalCoreWindowPhone
     {
 #if NET9_0_OR_GREATER
@@ -72,6 +75,20 @@ namespace Telegram.Common
 #else
         object NavigationClient { [return: MarshalAs(UnmanagedType.IUnknown)] get; [param: MarshalAs(UnmanagedType.IUnknown)] set; }
 #endif
+    }
+
+#if NET9_0_OR_GREATER
+    [GeneratedComInterface]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+#else
+    [ComImport]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+#endif
+    [Guid("45D64A29-A63E-4CB6-B498-5781D298CB4F")]
+    public partial interface ICoreWindowInterop
+    {
+        IntPtr WindowHandle { get; }
+        void MessageHandled(bool value);
     }
 
 #if NET9_0_OR_GREATER

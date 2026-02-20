@@ -7,47 +7,53 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       Title="TITLE"
-                       PrimaryButtonText="Button1"
-                       SecondaryButtonText="Button2"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
 
-    <StackPanel>
-        <TextBlock Text="{CustomResource TelegramTones}"
-                   Style="{StaticResource BaseTextBlockStyle}"
-                   Margin="0,8,0,4" />
+    <Grid>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <StackPanel>
+                <TextBlock Text="{CustomResource TelegramTones}"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Margin="0,0,0,4" />
 
-        <ItemsControl ItemsSource="{x:Bind ViewModel.Items}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:NotificationSoundViewModel">
-                    <RadioButton Content="{x:Bind Title}"
-                                 IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
-                                 GroupName="NotificationSound" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                <ItemsControl ItemsSource="{x:Bind ViewModel.Items}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:NotificationSoundViewModel">
+                            <RadioButton Content="{x:Bind Title}"
+                                         IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
+                                         GroupName="NotificationSound" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-        <HyperlinkButton Click="{x:Bind ViewModel.Upload}"
-                         Visibility="{x:Bind ViewModel.CanUploadMore, Mode=OneWay}"
-                         Margin="-12,0">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="&#xE99D;"
-                           FontFamily="{StaticResource SymbolThemeFontFamily}"
-                           FontSize="20" />
-                <TextBlock Text="{CustomResource UploadSound}"
-                           Margin="8,0,0,0" />
+                <HyperlinkButton Click="{x:Bind ViewModel.Upload}"
+                                 Visibility="{x:Bind ViewModel.CanUploadMore, Mode=OneWay}"
+                                 Margin="-12,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE99D;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="20" />
+                        <TextBlock Text="{CustomResource UploadSound}"
+                                   Margin="8,0,0,0" />
+                    </StackPanel>
+                </HyperlinkButton>
+
+                <TextBlock Text="{CustomResource SystemTones}"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Margin="0,16,0,4" />
+                <RadioButton x:Name="NoSound"
+                             Content="{CustomResource NoSound}"
+                             GroupName="NotificationSound" />
+                <RadioButton x:Name="SoundDefault"
+                             Content="{CustomResource SoundDefault}"
+                             GroupName="NotificationSound" />
             </StackPanel>
-        </HyperlinkButton>
+        </ScrollViewer>
 
-        <TextBlock Text="{CustomResource SystemTones}"
-                   Style="{StaticResource BaseTextBlockStyle}"
-                   Margin="0,16,0,4" />
-        <RadioButton x:Name="NoSound"
-                     Content="{CustomResource NoSound}"
-                     GroupName="NotificationSound" />
-        <RadioButton x:Name="SoundDefault"
-                     Content="{CustomResource SoundDefault}"
-                     GroupName="NotificationSound" />
-    </StackPanel>
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    ScrollingHost="{x:Bind ScrollingHost}"
+                                    BottomInset="0" />
+    </Grid>
 </controls:ContentPopup>

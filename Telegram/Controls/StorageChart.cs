@@ -1,13 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -23,7 +26,7 @@ namespace Telegram.Controls
         private const float MIN_TRIM = 0.0001f;
         private const float PAD_TRIM = 0.03f;
 
-        private const float THICKNESS = 6;
+        private const float THICKNESS = 8;
 
         private readonly ShapeVisual _visual;
 
@@ -45,12 +48,15 @@ namespace Telegram.Controls
         {
             _visual.Size = finalSize.ToVector2();
 
-            var width = Math.Max(THICKNESS, Math.Min((float)finalSize.Width, (float)finalSize.Height));
-
-            foreach (var ellipse in _geometries)
+            if (_geometries != null)
             {
-                ellipse.Radius = new Vector2(width / 2 - THICKNESS / 2);
-                ellipse.Center = new Vector2(width / 2);
+                var width = Math.Max(THICKNESS, Math.Min((float)finalSize.Width, (float)finalSize.Height));
+
+                foreach (var ellipse in _geometries)
+                {
+                    ellipse.Radius = new Vector2(width / 2 - THICKNESS / 2);
+                    ellipse.Center = new Vector2(width / 2);
+                }
             }
 
             return base.ArrangeOverride(finalSize);
@@ -68,7 +74,18 @@ namespace Telegram.Controls
             _items = items;
             _visual.Shapes.Clear();
 
-            _values = items.Select(x => (float)x.Size).ToArray();
+            if (items == null)
+            {
+                _values = null;
+                _visible = null;
+
+                _geometries = null;
+                _shapes = null;
+
+                return;
+            }
+
+            _values = items.Select(x => (float)x.TotalBytes).ToArray();
             _visible = new bool[_values.Length];
 
             _geometries = new CompositionEllipseGeometry[_values.Length];
@@ -101,6 +118,11 @@ namespace Telegram.Controls
 
         public void Update(int index, bool v)
         {
+            if (_items == null || _items.Empty())
+            {
+                return;
+            }
+
             var (prev, prevOne) = Snapshot();
 
             _visible[index] = v;
@@ -122,10 +144,10 @@ namespace Telegram.Controls
                 var nextValue = next[i] / next.Sum();
 
                 var prevOffset = prevStart;
-                var prevEnd = prevValue - PAD_TRIM;
+                var prevEnd = prevValue == 1 ? 1 : prevValue - PAD_TRIM;
 
                 var nextOffset = nextStart;
-                var nextEnd = nextValue - PAD_TRIM;
+                var nextEnd = nextValue == 1 ? 1 : nextValue - PAD_TRIM;
 
                 if (nextOne == i)
                 {
@@ -169,9 +191,21 @@ namespace Telegram.Controls
             var sum = p.Sum();
             var min = MIN_TRIM + PAD_TRIM;
 
-            for (int i = 0; i < p.Length; i++)
+            if (sum == 0)
             {
-                p[i] = p[i] / sum;
+                p[0] = 1;
+
+                for (int i = 1; i < p.Length; i++)
+                {
+                    p[i] = 0;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < p.Length; i++)
+                {
+                    p[i] = p[i] / sum;
+                }
             }
 
             var shrink = 0f;
@@ -230,7 +264,13 @@ namespace Telegram.Controls
     {
         public string Name { get; set; }
 
-        public long Size { get; set; }
+        public string Glyph { get; set; }
+
+        public long TotalBytes { get; set; }
+
+        public long SentBytes { get; set; }
+
+        public long ReceivedBytes { get; set; }
 
         public Color Stroke { get; set; }
 
@@ -246,42 +286,83 @@ namespace Telegram.Controls
                 statistics.FileType
             };
 
-            Size = statistics.Size;
+            TotalBytes = statistics.Size;
 
-            switch (statistics.FileType)
+            Initialize(statistics.FileType, false);
+        }
+
+        public StorageChartItem(NetworkStatisticsEntryFile statistics)
+        {
+            _types = new List<FileType>(1)
+            {
+                statistics.FileType
+            };
+
+            SentBytes = statistics.SentBytes;
+            ReceivedBytes = statistics.ReceivedBytes;
+            TotalBytes = statistics.SentBytes + statistics.ReceivedBytes;
+
+            Initialize(statistics.FileType, true);
+        }
+
+        public StorageChartItem(FileType fileType)
+        {
+            _types = new List<FileType>(1)
+            {
+                fileType
+            };
+
+            SentBytes = 0;
+            ReceivedBytes = 0;
+            TotalBytes = 0;
+
+            Initialize(fileType, true);
+        }
+
+        private void Initialize(FileType fileType, bool network)
+        {
+            switch (fileType)
             {
                 case FileTypePhoto:
                     Name = Strings.LocalPhotoCache;
+                    Glyph = Icons.ImageFilled;
                     Stroke = Color.FromArgb(0xFF, 0x32, 0x7F, 0xE5);
                     break;
                 case FileTypeVideo:
                     Name = Strings.LocalVideoCache;
+                    Glyph = Icons.VideoFilled;
                     Stroke = Color.FromArgb(0xFF, 0xDE, 0xBA, 0x08);
                     break;
                 case FileTypeDocument:
                     Name = Strings.LocalDocumentCache;
+                    Glyph = Icons.DocumentFilled;
                     Stroke = Color.FromArgb(0xFF, 0x61, 0xC7, 0x52);
                     break;
                 case FileTypeAudio:
                     Name = Strings.LocalMusicCache;
+                    Glyph = Icons.PlayCircleFilled;
                     Stroke = Color.FromArgb(0xFF, 0x7F, 0x79, 0xF3);
                     break;
                 case FileTypeVideoNote:
                 case FileTypeVoiceNote:
                     Name = Strings.LocalAudioCache;
+                    Glyph = Icons.MicOnFilled;
                     Stroke = Color.FromArgb(0xFF, 0xE0, 0x53, 0x56);
                     break;
                 case FileTypeSticker:
                     Name = Strings.AccDescrStickers;
+                    Glyph = Icons.StickerFilled;
                     Stroke = Color.FromArgb(0xFF, 0x8F, 0xCF, 0x39);
                     break;
                 case FileTypePhotoStory:
                 case FileTypeVideoStory:
                     Name = Strings.LocalStoriesCache;
+                    Glyph = Icons.Stories; // Not the right icon but currently not used
                     Stroke = Color.FromArgb(0xFF, 0x7F, 0x79, 0xF3);
                     break;
                 default:
-                    Name = Strings.LocalCache;
+                    Name = network ? Strings.MessagesOverview : Strings.LocalCache;
+                    Glyph = Icons.ChatEmptyFilled;
                     Stroke = Color.FromArgb(0xFF, 0x58, 0xA8, 0xED);
                     break;
             }
@@ -290,7 +371,16 @@ namespace Telegram.Controls
         public StorageChartItem Add(StorageStatisticsByFileType statistics)
         {
             _types.Add(statistics.FileType);
-            Size += statistics.Size;
+            TotalBytes += statistics.Size;
+            return this;
+        }
+
+        public StorageChartItem Add(NetworkStatisticsEntryFile statistics)
+        {
+            _types.Add(statistics.FileType);
+            SentBytes += statistics.SentBytes;
+            ReceivedBytes += statistics.ReceivedBytes;
+            TotalBytes += statistics.SentBytes + statistics.ReceivedBytes;
             return this;
         }
     }

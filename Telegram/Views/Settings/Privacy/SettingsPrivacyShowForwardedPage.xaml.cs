@@ -1,13 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Numerics;
 using Telegram.Common;
-using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Settings;
@@ -71,15 +71,12 @@ namespace Telegram.Views.Settings.Privacy
                     : new MessageOriginUser(user.Id);
 
                 var forwardInfo = new MessageForwardInfo(origin, 0, null, string.Empty);
-                var content = new MessageText(new FormattedText(Strings.PrivacyForwardsMessageLine, Array.Empty<TextEntity>()), null, null);
+                var content = new MessageText(Strings.PrivacyForwardsMessageLine.AsFormattedText(), null, null);
 
-                var message = new Message(0, new MessageSenderUser(user.Id), 0, null, null, false, false, false, false, false, false, false, DateTime.Now.ToTimestamp(), 0, forwardInfo, null, null, Array.Empty<UnreadReaction>(), null, null, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, content, null);
+                var message = new Message(0, new MessageSenderUser(user.Id), 0, null, null, false, false, false, false, false, false, false, false, false, DateTime.Now.ToTimestamp(), 0, forwardInfo, null, null, Array.Empty<UnreadReaction>(), null, null, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, 0, null, string.Empty, content, null);
 
-                var playback = TypeResolver.Current.Playback;
-                var settings = TypeResolver.Current.Resolve<ISettingsService>(ViewModel.ClientService.SessionId);
-
-                var delegato = new ChatMessageDelegate(ViewModel.ClientService, settings, chat);
-                var viewModel = new MessageViewModel(ViewModel.ClientService, playback, delegato, chat, null, message, true);
+                var delegato = new ChatMessageDelegate(ViewModel.ClientService, ViewModel.Settings, chat);
+                var viewModel = new MessageViewModel(ViewModel.ClientService, delegato, chat, null, null, message, true);
 
                 MessagePreview.UpdateMessage(viewModel);
             }

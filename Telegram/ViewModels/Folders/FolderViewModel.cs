@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Telegram.Collection;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Media;
@@ -175,12 +175,12 @@ namespace Telegram.ViewModels.Folders
                 var confirm = await ShowPopupAsync(message, title, primary, Strings.PassportDiscard);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    Continue();
+                    ContinueImpl(args);
                 }
                 else if (confirm == ContentDialogResult.Secondary)
                 {
                     _completed = true;
-                    NavigationService.GoBack();
+                    NavigationService.GoBack(args);
                 }
             }
         }
@@ -227,7 +227,7 @@ namespace Telegram.ViewModels.Folders
 
         public bool HasCustomEmoji => Title?.Entities?.Count > 0;
 
-        public ChatFolderName Name => new ChatFolderName(Title, AnimateCustomEmoji);
+        public ChatFolderName Name => new(Title, AnimateCustomEmoji);
 
         private bool _isShareable;
         public bool IsShareable
@@ -281,13 +281,10 @@ namespace Telegram.ViewModels.Folders
                     Links.ReplaceWith(links.InviteLinks);
                     Exclude.Clear();
                     Exclude.SynchronizeHead();
-
-                    IsShareable = true;
                 }
                 else
                 {
                     Links.Clear();
-                    IsShareable = false;
                 }
             }
         }
@@ -395,17 +392,26 @@ namespace Telegram.ViewModels.Folders
             return false;
         }
 
-        public async void Continue()
+        public void Continue()
+        {
+            ContinueImpl(null);
+        }
+
+        private async void ContinueImpl(NavigatingEventArgs args)
         {
             var response = await SendAsync();
             if (response is ChatFolderInfo)
             {
                 _completed = true;
-                NavigationService.GoBack();
+                NavigationService.GoBack(args);
+            }
+            else if (response is Error error)
+            {
+                ShowToast(error);
             }
         }
 
-        public Task<BaseObject> SendAsync()
+        public Task<Object> SendAsync()
         {
             Function function;
             if (Id is int id)
@@ -565,7 +571,7 @@ namespace Telegram.ViewModels.Folders
                 }
                 else if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
                 {
-                    if (supergroup.CanInviteUsers())
+                    if (supergroup.CanInviteUsers(chat))
                     {
                         continue;
                     }
@@ -576,7 +582,7 @@ namespace Telegram.ViewModels.Folders
                 }
                 else if (ClientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
                 {
-                    if (basicGroup.CanInviteUsers())
+                    if (basicGroup.CanInviteUsers(chat))
                     {
                         continue;
                     }
@@ -589,9 +595,15 @@ namespace Telegram.ViewModels.Folders
             if (shareableItems.Count > 0)
             {
                 var response = await ClientService.SendAsync(new CreateChatFolderInviteLink(Id.Value, string.Empty, shareableItems));
-                if (response is ChatFolderInviteLink link)
+                if (response is ChatFolderInviteLink inviteLink)
                 {
-                    OpenLink(link);
+                    Links.Insert(0, inviteLink);
+                    Exclude.Clear();
+                    Exclude.SynchronizeHead();
+
+                    IsShareable = true;
+
+                    OpenLink(inviteLink);
                 }
                 else if (response is Error error)
                 {

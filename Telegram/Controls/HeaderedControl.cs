@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -122,14 +123,20 @@ namespace Telegram.Controls
         public event EventHandler<TextUrlClickEventArgs> Click;
 
         // Used by TextBlockHelper
-        public void OnClick(string url)
+        public bool OnClick(string url)
         {
-            Click?.Invoke(this, new TextUrlClickEventArgs(url));
+            if (Click != null)
+            {
+                Click.Invoke(this, new TextUrlClickEventArgs(url));
+                return true;
+            }
+
+            return false;
         }
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            if (ContentRoot == null)
+            if (ContentRoot == null || ItemsSource != null)
             {
                 return base.MeasureOverride(availableSize);
             }
@@ -146,7 +153,7 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (ContentRoot == null)
+            if (ContentRoot == null || ItemsSource != null)
             {
                 return base.ArrangeOverride(finalSize);
             }
@@ -181,21 +188,42 @@ namespace Telegram.Controls
                 {
                     switch (child)
                     {
+                        //case ContentPresenter presenter:
+                        //    presenter.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
+                        //    presenter.CornerRadius = new CornerRadius(0, 0, last ? 4 : 0, last ? 4 : 0);
+                        //    break;
+                        //case Control control:
+                        //    control.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
+                        //    control.CornerRadius = new CornerRadius(0, 0, last ? 4 : 0, last ? 4 : 0);
+                        //    break;
+                        //case Grid grid:
+                        //    grid.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
+                        //    grid.CornerRadius = new CornerRadius(0, 0, last ? 4 : 0, last ? 4 : 0);
+                        //    break;
+                        //case Border border:
+                        //    border.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
+                        //    border.CornerRadius = new CornerRadius(0, 0, last ? 4 : 0, last ? 4 : 0);
+                        //    break;
+
                         case ContentPresenter presenter:
-                            presenter.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
-                            presenter.CornerRadius = new CornerRadius(0, 0, last ? 4 : 0, last ? 4 : 0);
+                            presenter.BorderThickness = new Thickness(1);
+                            presenter.CornerRadius = new CornerRadius(4);
+                            presenter.Margin = new Thickness(0, 0, 0, last ? 0 : 3);
                             break;
                         case Control control:
-                            control.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
-                            control.CornerRadius = new CornerRadius(0, 0, last ? 4 : 0, last ? 4 : 0);
+                            control.BorderThickness = new Thickness(1);
+                            control.CornerRadius = new CornerRadius(4);
+                            control.Margin = new Thickness(0, 0, 0, last ? 0 : 3);
                             break;
                         case Grid grid:
-                            grid.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
-                            grid.CornerRadius = new CornerRadius(0, 0, last ? 4 : 0, last ? 4 : 0);
+                            grid.BorderThickness = new Thickness(1);
+                            grid.CornerRadius = new CornerRadius(4);
+                            grid.Margin = new Thickness(0, 0, 0, last ? 0 : 3);
                             break;
                         case Border border:
-                            border.BorderThickness = new Thickness(0, 0, 0, last ? 0 : 1);
-                            border.CornerRadius = new CornerRadius(0, 0, last ? 4 : 0, last ? 4 : 0);
+                            border.BorderThickness = new Thickness(1);
+                            border.CornerRadius = new CornerRadius(4);
+                            border.Margin = new Thickness(0, 0, 0, last ? 0 : 3);
                             break;
                     }
 
@@ -204,24 +232,24 @@ namespace Telegram.Controls
                 }
             }
 
-            if (first != null)
-            {
-                switch (first)
-                {
-                    case ContentPresenter presenter:
-                        presenter.CornerRadius = new CornerRadius(4, 4, presenter.CornerRadius.BottomRight, presenter.CornerRadius.BottomLeft);
-                        break;
-                    case Control control:
-                        control.CornerRadius = new CornerRadius(4, 4, control.CornerRadius.BottomRight, control.CornerRadius.BottomLeft);
-                        break;
-                    case Grid grid:
-                        grid.CornerRadius = new CornerRadius(4, 4, grid.CornerRadius.BottomRight, grid.CornerRadius.BottomLeft);
-                        break;
-                    case Border border:
-                        border.CornerRadius = new CornerRadius(4, 4, border.CornerRadius.BottomRight, border.CornerRadius.BottomLeft);
-                        break;
-                }
-            }
+            //if (first != null)
+            //{
+            //    switch (first)
+            //    {
+            //        case ContentPresenter presenter:
+            //            presenter.CornerRadius = new CornerRadius(4, 4, presenter.CornerRadius.BottomRight, presenter.CornerRadius.BottomLeft);
+            //            break;
+            //        case Control control:
+            //            control.CornerRadius = new CornerRadius(4, 4, control.CornerRadius.BottomRight, control.CornerRadius.BottomLeft);
+            //            break;
+            //        case Grid grid:
+            //            grid.CornerRadius = new CornerRadius(4, 4, grid.CornerRadius.BottomRight, grid.CornerRadius.BottomLeft);
+            //            break;
+            //        case Border border:
+            //            border.CornerRadius = new CornerRadius(4, 4, border.CornerRadius.BottomRight, border.CornerRadius.BottomLeft);
+            //            break;
+            //    }
+            //}
 
             return base.MeasureOverride(availableSize);
         }

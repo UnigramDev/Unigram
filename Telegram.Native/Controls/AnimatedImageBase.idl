@@ -1,0 +1,23 @@
+namespace Telegram.Native.Controls
+{
+    [default_interface]
+    unsealed runtimeclass AnimatedImageBase : Windows.UI.Xaml.Controls.Control
+    {
+        AnimatedImageBase();
+
+        Boolean IsConnected{ get; };
+        Boolean IsDisconnected{ get; };
+
+        overridable void OnLoaded();
+        overridable void OnUnloaded();
+
+        overridable void OnSizeChanged(Windows.UI.Xaml.SizeChangedEventArgs e);
+
+        overridable void OnRasterizationScaleChanged(Double rasterizationScale);
+
+        overridable void OnViewportChanged(Boolean visible);
+
+        void RegisterViewportChanged();
+        void UnregisterViewportChanged();
+    }
+}

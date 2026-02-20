@@ -1,0 +1,13 @@
+import "AI/RecognizedLine.idl";
+
+namespace Telegram.Native.AI
+{
+    [default_interface]
+    runtimeclass RecognizedText
+    {
+        RecognizedText(Windows.Foundation.Collections.IVector<RecognizedLine> lines, Single textAngle);
+        
+        Windows.Foundation.Collections.IVector<RecognizedLine> Lines{ get; };
+        Single TextAngle{ get; };
+    }
+}

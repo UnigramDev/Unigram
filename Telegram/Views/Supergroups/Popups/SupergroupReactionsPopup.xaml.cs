@@ -1,15 +1,17 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Drawers;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
@@ -58,7 +60,7 @@ namespace Telegram.Views.Supergroups.Popups
 
         public override void OnNavigatedTo(object parameter)
         {
-            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.SessionId, EmojiDrawerMode.Reactions);
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.Session, EmojiDrawerMode.Reactions);
             CaptionInput.CustomEmoji = CustomEmoji;
 
             if (ViewModel.AllowCustomEmoji)
@@ -200,7 +202,7 @@ namespace Telegram.Views.Supergroups.Popups
             EmojiFlyout.ShowAt(CaptionInput, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
         }
 
-        private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
+        private void Emoji_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)
         {
             if (e.ClickedItem is StickerViewModel sticker)
             {
@@ -211,9 +213,13 @@ namespace Telegram.Views.Supergroups.Popups
 
         private void ToggleEmoji(StickerViewModel sticker)
         {
-            var reaction = sticker.ToReactionType();
+            var reaction = sticker.Reaction;
+            if (reaction == null)
+            {
+                return;
+            }
 
-            var already = ViewModel.Items.FirstOrDefault(x => x.AreTheSame(reaction));
+            var already = ViewModel.Items.FirstOrDefault(x => x.AreTheSame(reaction.Type));
             if (already != null)
             {
                 ViewModel.Items.Remove(already);

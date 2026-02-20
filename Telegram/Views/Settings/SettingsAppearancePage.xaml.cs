@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Linq;
 using Telegram.Common;
@@ -18,7 +19,6 @@ using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
@@ -34,21 +34,11 @@ namespace Telegram.Views.Settings
             Title = Strings.Appearance;
 
             Preview.CreateInsetClip();
-
-            _valueChanged = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.TypingTimeout,
-                handler => ScalingSlider.ValueChanged += new RangeBaseValueChangedEventHandler(handler),
-                handler => ScalingSlider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
-            _valueChanged.Invoked += Slider_ValueChanged;
-
-            ScalingSlider.AddHandler(PointerPressedEvent, new PointerEventHandler(Slider_PointerPressed), true);
-            ScalingSlider.AddHandler(PointerReleasedEvent, new PointerEventHandler(Slider_PointerReleased), true);
-            ScalingSlider.AddHandler(PointerCanceledEvent, new PointerEventHandler(Slider_PointerCanceled), true);
-            ScalingSlider.AddHandler(PointerCaptureLostEvent, new PointerEventHandler(Slider_PointerCaptureLost), true);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (Theme.Current.Update(ActualTheme, null, null))
+            if (Theme.Current.Update(ActualTheme, null, null, null, null))
             {
                 var forDarkTheme = Frame.ActualTheme == ElementTheme.Dark;
                 var background = ViewModel.ClientService.GetDefaultBackground(forDarkTheme);
@@ -76,8 +66,6 @@ namespace Telegram.Views.Settings
                 Message1.Mockup(ViewModel.ClientService, Strings.FontSizePreviewLine1, user, Strings.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
                 Message2.Mockup(Strings.FontSizePreviewLine2, true, DateTime.Now);
             }
-
-            ScalingSlider.Value = ViewModel.Scaling;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -112,21 +100,14 @@ namespace Telegram.Views.Settings
         {
             if (e.PropertyName == nameof(ViewModel.FontSize) || e.PropertyName == nameof(ViewModel.BubbleRadius))
             {
-                Message1.UpdateMockup();
-                Message2.UpdateMockup();
-            }
-            else if (e.PropertyName == nameof(ViewModel.UseDefaultScaling))
-            {
-                if (ViewModel.UseDefaultScaling)
-                {
-                    ScalingSlider.Value = ViewModel.Scaling;
-                }
+                Message1.UpdateMockup(false, true, true);
+                Message2.UpdateMockup(true, true, true);
             }
         }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (List.SelectedItem is ChatThemeViewModel chatTheme)
+            if (List.SelectedItem is ChatThemeViewModel chatTheme && ViewModel.SelectionChanged)
             {
                 // Speed up background preview by manually applying it
                 if (ActualTheme == ElementTheme.Light)
@@ -179,52 +160,24 @@ namespace Telegram.Views.Settings
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.InRecycleQueue)
+            if (args.ItemContainer.ContentTemplateRoot is not ChatThemeCell content)
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is ChatThemeCell content && args.Item is ChatThemeViewModel theme)
+
+            if (args.InRecycleQueue)
             {
-                content.Update(theme);
+                content.Recycle();
+                return;
+            }
+            else if (args.Item is ChatThemeViewModel theme)
+            {
+                content.Update(args.ItemContainer, theme);
                 args.Handled = true;
             }
         }
 
         #endregion
-
-        private readonly EventDebouncer<RangeBaseValueChangedEventArgs> _valueChanged;
-        private bool _scrubbing;
-
-        private void Slider_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            _scrubbing = true;
-        }
-
-        private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
-        {
-            _scrubbing = false;
-            ViewModel.Scaling = (int)ScalingSlider.Value;
-        }
-
-        private void Slider_PointerCanceled(object sender, PointerRoutedEventArgs e)
-        {
-            _scrubbing = false;
-        }
-
-        private void Slider_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
-        {
-            _scrubbing = false;
-        }
-
-        private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
-        {
-            if (_scrubbing)
-            {
-                return;
-            }
-
-            ViewModel.Scaling = (int)e.NewValue;
-        }
 
         private bool _compact;
 
@@ -240,9 +193,6 @@ namespace Telegram.Views.Settings
 
             Grid.SetColumnSpan(TextSizeHeader, compact ? 2 : 1);
             Grid.SetColumnSpan(BubbleRadiusHeader, compact ? 2 : 1);
-
-            Grid.SetRow(ScalingSlider, compact ? 1 : 0);
-            Grid.SetColumn(ScalingSlider, compact ? 0 : 2);
 
             Grid.SetRow(FontSizeSlider, compact ? 1 : 0);
             Grid.SetColumn(FontSizeSlider, compact ? 0 : 2);
@@ -263,13 +213,12 @@ namespace Telegram.Views.Settings
             var clientService = ViewModel.ClientService;
             var senderId = new MessageSenderUser(clientService.Options.MyId);
 
-            var message = new Message(0, senderId, 0, null, null, false, false, false, false, false, false, false, 0, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, null, null);
+            var message = new Message(0, senderId, 0, null, null, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, null, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, 0, null, string.Empty, null, null);
 
-            var playback = TypeResolver.Current.Playback;
-            var settings = TypeResolver.Current.Resolve<ISettingsService>(clientService.SessionId);
+            var settings = clientService.Session.Resolve<ISettingsService>();
 
             var delegato = new ChatMessageDelegate(clientService, settings, null);
-            var viewModel = new MessageViewModel(clientService, playback, delegato, null, null, message, true);
+            var viewModel = new MessageViewModel(clientService, delegato, null, null, null, message, true);
 
             Reaction.SetReaction(viewModel, new MessageReaction(reaction, 1, false, senderId, new MessageSender[] { }));
 
@@ -286,7 +235,7 @@ namespace Telegram.Views.Settings
                 .Select(x => new AvailableReaction(new ReactionTypeEmoji(x), false))
                 .ToList();
 
-            var viewModel = EmojiDrawerViewModel.Create(ViewModel.ClientService.SessionId, EmojiDrawerMode.Reactions);
+            var viewModel = EmojiDrawerViewModel.Create(ViewModel.ClientService.Session, EmojiDrawerMode.Reactions);
             _ = viewModel.UpdateReactions(new AvailableReactions(reactions, empty, empty, true, false, null));
 
             var flyout = EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.Reactions, Reaction, EmojiFlyoutAlignment.TopRight, viewModel);

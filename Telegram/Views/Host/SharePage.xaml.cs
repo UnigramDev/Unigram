@@ -1,5 +1,11 @@
-﻿using System;
-using System.Linq;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -8,7 +14,7 @@ using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
@@ -18,13 +24,13 @@ namespace Telegram.Views.Host
     {
         private readonly WindowContext _window;
 
-        public SharePage(WindowContext window, int sessionId)
+        public SharePage(WindowContext window, ISession session)
         {
             InitializeComponent();
 
             _window = window;
 
-            Background.Update(TypeResolver.Current.Resolve<IClientService>(sessionId));
+            Background.Update(session.Resolve<IClientService>());
 
             StateLabel.Text = Constants.RELEASE
                 ? Strings.AppDisplayName
@@ -34,56 +40,15 @@ namespace Telegram.Views.Host
         public async void Activate(ShareTargetActivatedEventArgs args, INavigationService navigationService, AuthorizationState state)
         {
             WatchDog.TrackEvent("ShareTarget");
-            App.ShareOperation = args.ShareOperation;
 
             if (state is AuthorizationStateReady)
             {
-                var package = new DataPackage();
-
-                try
-                {
-                    var operation = args.ShareOperation.Data;
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.ApplicationLink))
-                    {
-                        package.SetApplicationLink(await operation.GetApplicationLinkAsync());
-                    }
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.Bitmap))
-                    {
-                        package.SetBitmap(await operation.GetBitmapAsync());
-                    }
-                    //if (operation.Contains(StandardDataFormats.Html))
-                    //{
-                    //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
-                    //}
-                    //if (operation.Contains(StandardDataFormats.Rtf))
-                    //{
-                    //    package.SetRtf(await operation.GetRtfAsync());
-                    //}
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.StorageItems))
-                    {
-                        package.SetStorageItems(await operation.GetStorageItemsAsync());
-                    }
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.Text))
-                    {
-                        package.SetText(await operation.GetTextAsync());
-                    }
-                    //if (operation.Contains(StandardDataFormats.Uri))
-                    //{
-                    //    package.SetUri(await operation.GetUriAsync());
-                    //}
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.WebLink))
-                    {
-                        package.SetWebLink(await operation.GetWebLinkAsync());
-                    }
-                }
-                catch { }
-
                 var popup = new ChooseChatsPopup();
                 popup.IsSmokeEnabled = false;
                 popup.Closed += OnClosed;
                 popup.AccountClick += OnAccountClick;
 
-                navigationService.ShowPopup(popup, new ChooseChatsConfigurationDataPackage(package.GetView()));
+                navigationService.ShowPopup(popup, new ChooseChatsConfigurationShareOperation(args.ShareOperation));
             }
             else
             {
@@ -101,29 +66,28 @@ namespace Telegram.Views.Host
             }
         }
 
-        private void ShowPopup(ISessionService session, DataPackageView package)
+        private void ShowPopup(ISession session, ShareOperation shareOperation)
         {
             var popup = new ChooseChatsPopup();
             popup.IsSmokeEnabled = false;
             popup.Closed += OnClosed;
             popup.AccountClick += OnAccountClick;
 
-            var clientService = session.ClientService;
-            var service = new TLNavigationService(clientService, null, _window, null, "Share");
+            var service = new TLNavigationService(session, _window, null, "Share");
 
-            service.ShowPopup(popup, new ChooseChatsConfigurationDataPackage(package));
+            service.ShowPopup(popup, new ChooseChatsConfigurationShareOperation(shareOperation));
         }
 
         private void OnAccountClick(object sender, EventArgs e)
         {
             foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
             {
-                if (popup.Child is ChooseChatsPopup chooseChats && chooseChats.ViewModel.Configuration is ChooseChatsConfigurationDataPackage package)
+                if (popup.Child is ChooseChatsPopup chooseChats && chooseChats.ViewModel.Configuration is ChooseChatsConfigurationShareOperation shareOperation)
                 {
                     chooseChats.Closed -= OnClosed;
                     chooseChats.Hide();
 
-                    ShowPopup(sender as ISessionService, package.Package);
+                    ShowPopup(sender as ISession, shareOperation.ShareOperation);
                 }
             }
         }
@@ -132,10 +96,9 @@ namespace Telegram.Views.Host
         {
             sender.Closed -= OnClosed;
 
-            if (args.Result != ContentDialogResult.Primary)
+            if (args.Result != ContentDialogResult.Primary && sender is ChooseChatsPopup chooseChats && chooseChats.ViewModel.Configuration is ChooseChatsConfigurationShareOperation shareOperation)
             {
-                App.ShareOperation?.TryReportCompleted();
-                App.ShareOperation = null;
+                shareOperation.ShareOperation.TryReportCompleted();
             }
         }
     }

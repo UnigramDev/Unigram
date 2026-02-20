@@ -1,14 +1,12 @@
-//
+﻿//
 // Copyright Fela Ameghino 2015-2023
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
-using System.IO;
-using System.Threading;
-using System.Windows.Forms;
-using Windows.Storage;
+
+using System.Diagnostics;
+using Windows.ApplicationModel;
 
 namespace Telegram.Stub
 {
@@ -20,37 +18,49 @@ namespace Telegram.Stub
         const string MUTEX_NAME = "UnigramBridgeMutexV2";
 #endif
 
-        static readonly Mutex _mutex = new Mutex(true, MUTEX_NAME);
+        private static readonly Mutex _mutex = new Mutex(true, MUTEX_NAME);
 
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
+        private static NotifyIcon? _context;
+
         [STAThread]
-        static void Main()
+        public static void Main(string[] args)
         {
+            AddLoopbackExemption();
+
+            if (args.Contains("/LoopbackExempt"))
+            {
+                return;
+            }
+
             if (_mutex.WaitOne(0, true))
             {
-                Application.ThreadException += OnThreadException;
-                AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new BridgeApplicationContext());
-
+                _context = new NotifyIcon();
                 _mutex.ReleaseMutex();
             }
         }
 
-        private static void OnThreadException(object sender, ThreadExceptionEventArgs e)
+        private static void AddLoopbackExemption()
         {
-            File.WriteAllText(ApplicationData.Current.LocalFolder.Path + "\\stub.txt", e.Exception.ToString());
-            Application.Exit();
-        }
+            var familyName = Package.Current.Id.FamilyName;
+            var info = new ProcessStartInfo
+            {
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                FileName = "CheckNetIsolation.exe",
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = "LoopbackExempt -a -n=" + familyName
+            };
 
-        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            File.WriteAllText(ApplicationData.Current.LocalFolder.Path + "\\stub.txt", e.ExceptionObject.ToString());
-            Application.Exit();
+            try
+            {
+                Process? process = Process.Start(info);
+                process?.WaitForExit();
+                process?.Dispose();
+            }
+            catch { }
         }
     }
 }

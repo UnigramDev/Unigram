@@ -1,14 +1,14 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Navigation;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -23,11 +23,11 @@ namespace Telegram.Controls
     {
         private readonly Dictionary<uint, Point> m_pointerPositions;
 
-        private FrameworkElement _layoutRoot;
-        private FrameworkElement _container;
+        private FrameworkElement LayoutRoot;
+        private FrameworkElement Container;
 
-        private FrameworkElement _thumb;
-        private Ellipse _thumbDrop;
+        private FrameworkElement Thumb;
+        private Ellipse ThumbDrop;
 
         private Visual _thumbVisual;
 
@@ -60,18 +60,18 @@ namespace Telegram.Controls
             _value = new Vector2(value.X, value.Y);
             _current = _value;
 
-            if (_layoutRoot == null || _layoutRoot.ActualWidth == 0)
+            if (LayoutRoot == null || LayoutRoot.ActualWidth == 0)
             {
                 return;
             }
 
-            var w = _layoutRoot.ActualSize.X;
+            var w = LayoutRoot.ActualSize.X;
             var weight = 1 + _current.Y * 19;
 
             _thumbVisual.Offset = new Vector3(_current.X * w, 0, 0);
 
-            _thumbDrop.StrokeThickness = 20 - weight * 2 / 2;
-            _thumbDrop.Fill = new SolidColorBrush(ColorForValue(_current.X));
+            ThumbDrop.StrokeThickness = 20 - weight * 2 / 2;
+            ThumbDrop.Fill = new SolidColorBrush(ColorForValue(_current.X));
         }
 
         public Vector2 GetDefault()
@@ -96,20 +96,20 @@ namespace Telegram.Controls
                 });
             }
 
-            _layoutRoot = (FrameworkElement)GetTemplateChild("LayoutRoot");
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as FrameworkElement;
 
-            _container = (FrameworkElement)GetTemplateChild("Container");
-            _container.PointerPressed += Thumb_PointerPressed;
-            _container.PointerMoved += Thumb_PointerMoved;
-            _container.PointerReleased += Thumb_PointerReleased;
+            Container = GetTemplateChild(nameof(Container)) as FrameworkElement;
+            Container.PointerPressed += Thumb_PointerPressed;
+            Container.PointerMoved += Thumb_PointerMoved;
+            Container.PointerReleased += Thumb_PointerReleased;
 
-            _thumb = (FrameworkElement)GetTemplateChild("Thumb");
+            Thumb = GetTemplateChild(nameof(Thumb)) as FrameworkElement;
 
-            _thumbVisual = ElementComposition.GetElementVisual(_thumb);
+            _thumbVisual = ElementComposition.GetElementVisual(Thumb);
             _thumbVisual.CenterPoint = new Vector3(24);
             _thumbVisual.Scale = new Vector3(0.5f);
 
-            _thumbDrop = (Ellipse)GetTemplateChild("ThumbDrop");
+            ThumbDrop = GetTemplateChild(nameof(ThumbDrop)) as Ellipse;
 
             Background = gradient;
             SetDefault(_value);
@@ -121,7 +121,7 @@ namespace Telegram.Controls
         {
             ((UIElement)sender).CapturePointer(e.Pointer);
 
-            var pointer = e.GetCurrentPoint(_container);
+            var pointer = e.GetCurrentPoint(Container);
             m_pointerPositions[pointer.PointerId] = pointer.Position;
 
             _current = new Vector2(_value.X, 0);
@@ -132,7 +132,7 @@ namespace Telegram.Controls
 
         private void Thumb_PointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
-            var pointer = e.GetCurrentPoint(_container);
+            var pointer = e.GetCurrentPoint(Container);
             m_pointerPositions.Remove(pointer.PointerId);
 
             ((UIElement)sender).ReleasePointerCapture(e.Pointer);
@@ -148,7 +148,7 @@ namespace Telegram.Controls
         {
             if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out _))
             {
-                UpdateThumb(e.GetCurrentPoint(_container).Position.ToVector2());
+                UpdateThumb(e.GetCurrentPoint(Container).Position.ToVector2());
                 e.Handled = true;
             }
         }
@@ -160,12 +160,12 @@ namespace Telegram.Controls
 
         private void UpdateThumb(Vector2 position, bool animate = false, bool zoom = true)
         {
-            if (_layoutRoot == null)
+            if (LayoutRoot == null)
             {
                 return;
             }
 
-            var w = _layoutRoot.ActualSize.X;
+            var w = LayoutRoot.ActualSize.X;
             var h = 180f;
 
             var offsetX = position.X / w;
@@ -188,8 +188,8 @@ namespace Telegram.Controls
 
             var weight = 1 + _current.Y * 19;
 
-            _thumbDrop.StrokeThickness = 20 - weight * 2 / 2;
-            _thumbDrop.Fill = new SolidColorBrush(ColorForValue(_current.X));
+            ThumbDrop.StrokeThickness = 20 - weight * 2 / 2;
+            ThumbDrop.Fill = new SolidColorBrush(ColorForValue(_current.X));
 
             if (animate)
             {
@@ -213,14 +213,14 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    _container.Height = 200;
-                    _container.Margin = new Thickness(0, -180, 0, 0);
+                    Container.Height = 200;
+                    Container.Margin = new Thickness(0, -180, 0, 0);
 
                     var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                     batch.Completed += (s, args) =>
                     {
-                        _container.Height = zoom ? 200 : 20;
-                        _container.Margin = new Thickness(0, zoom ? -180 : 0, 0, 0);
+                        Container.Height = zoom ? 200 : 20;
+                        Container.Margin = new Thickness(0, zoom ? -180 : 0, 0, 0);
                     };
 
                     var scale = BootStrapper.Current.Compositor.CreateSpringVector3Animation();

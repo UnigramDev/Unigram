@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Threading;
 using Telegram.Collections;
@@ -13,7 +14,6 @@ using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
-using Windows.System;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -202,10 +202,6 @@ namespace Telegram.Controls
                 return;
             }
 
-            Document.GetText(TextGetOptions.NoHidden, out string text);
-
-            var query = text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length));
-
             void ClearAutocomplete()
             {
                 _emojiQuery = null;
@@ -217,35 +213,32 @@ namespace Telegram.Controls
 
             void SetAutocomplete(IAutocompleteCollection autocomplete)
             {
-                if (View != null)
-                {
-                    View.Autocomplete = autocomplete;
-                }
+                View?.Autocomplete = autocomplete;
             }
 
-            if (AutocompleteEntityFinder.TrySearch(query, out AutocompleteEntity entity, out string result, out int index))
+            var selection = Document.Selection.GetClone();
+            var entity = AutocompleteEntityFinder.Search(selection, out string result, out int index);
+
+            if (entity == AutocompleteEntity.Username && viewModel is ComposeViewModel compose)
             {
-                if (entity == AutocompleteEntity.Username && viewModel is ComposeViewModel compose)
+                if (compose.Chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup { IsChannel: false })
                 {
-                    if (compose.Chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup { IsChannel: false })
-                    {
-                        ClearAutocomplete();
-                        SetAutocomplete(new ChatTextBox.UsernameCollection(viewModel.ClientService, compose.Chat.Id, compose.ThreadId, result, false, true, false));
-                        return;
-                    }
-                }
-                else if (entity == AutocompleteEntity.Sticker)
-                {
-                    ShowOrUpdateEmojiFlyout(index, new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, result, ChatId));
-                    SetAutocomplete(null);
+                    ClearAutocomplete();
+                    SetAutocomplete(new ChatTextBox.UsernameCollection(viewModel.ClientService, compose.Chat.Id, compose.TopicId, result, false, true, false));
                     return;
                 }
-                else if (entity == AutocompleteEntity.Emoji)
-                {
-                    ShowOrUpdateEmojiFlyout(index, new ChatTextBox.EmojiCollection(ViewModel.ClientService, result, ChatId));
-                    SetAutocomplete(null);
-                    return;
-                }
+            }
+            else if (entity == AutocompleteEntity.Sticker)
+            {
+                ShowOrUpdateEmojiFlyout(index, new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, result, ChatId));
+                SetAutocomplete(null);
+                return;
+            }
+            else if (entity == AutocompleteEntity.Emoji)
+            {
+                ShowOrUpdateEmojiFlyout(index, new ChatTextBox.EmojiCollection(ViewModel.ClientService, result, ChatId));
+                SetAutocomplete(null);
+                return;
             }
 
             ClearAutocomplete();

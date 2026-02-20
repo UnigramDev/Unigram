@@ -1,12 +1,14 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -31,7 +33,6 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(AudioContent);
-            Disconnected += OnUnloaded;
         }
 
         public AudioContent()
@@ -80,21 +81,18 @@ namespace Telegram.Controls.Messages.Content
 
         #endregion
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
-            if (_message != null)
-            {
-                _message.PlaybackService.SourceChanged -= OnPlaybackStateChanged;
-                _message.PlaybackService.StateChanged -= OnPlaybackStateChanged;
-                _message.PlaybackService.PositionChanged -= OnPositionChanged;
-            }
+            LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
         }
 
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
 
-            message.PlaybackService.SourceChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
 
             var audio = GetContent(message);
             if (audio == null || !_templateApplied)
@@ -102,9 +100,9 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            message.PlaybackService.SourceChanged += OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
 
-            if (string.IsNullOrEmpty(audio.Performer) || string.IsNullOrEmpty(audio.Title))
+            if (string.IsNullOrEmpty(audio.Title))
             {
                 var index = audio.FileName.LastIndexOf('.');
                 if (index > 0)
@@ -120,7 +118,15 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                Title.Text = $"{audio.Performer} - {audio.Title}";
+                if (string.IsNullOrEmpty(audio.Performer))
+                {
+                    Title.Text = audio.Title;
+                }
+                else
+                {
+                    Title.Text = $"{audio.Title} - {audio.Performer}";
+                }
+
                 TitleTrim.Text = string.Empty;
             }
 
@@ -157,7 +163,7 @@ namespace Telegram.Controls.Messages.Content
                 var audio = GetContent(_message);
                 if (audio == null)
                 {
-                    Recycle(sender);
+                    Recycle();
                     return;
                 }
 
@@ -181,7 +187,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            if (message.AreTheSame(message.PlaybackService.CurrentItem) /*&& !_pressed*/)
+            if (message.AreTheSame(LifetimeService.Current.Playback.CurrentItem) /*&& !_pressed*/)
             {
                 Subtitle.Text = FormatTime(position) + " / " + FormatTime(duration);
             }
@@ -203,6 +209,11 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFile(object target, File file)
         {
+            if (_message.AreTheSame(LifetimeService.Current.Playback.CurrentItem))
+            {
+                return;
+            }
+
             UpdateFile(_message, file);
         }
 
@@ -214,8 +225,8 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            message.PlaybackService.StateChanged -= OnPlaybackStateChanged;
-            message.PlaybackService.PositionChanged -= OnPositionChanged;
+            LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
 
             if (audio.AudioValue.Id != file.Id)
             {
@@ -297,9 +308,9 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdatePlayback(MessageViewModel message, Audio audio, File file)
         {
-            if (message.AreTheSame(message.PlaybackService.CurrentItem))
+            if (message.AreTheSame(LifetimeService.Current.Playback.CurrentItem))
             {
-                if (message.PlaybackService.PlaybackState == PlaybackState.Paused)
+                if (LifetimeService.Current.Playback.PlaybackState == PlaybackState.Paused)
                 {
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                 }
@@ -308,10 +319,12 @@ namespace Telegram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Pause);
                 }
 
-                UpdatePosition(message.PlaybackService.Position, message.PlaybackService.Duration);
+                DownloadPanel.Visibility = Visibility.Collapsed;
 
-                message.PlaybackService.StateChanged += OnPlaybackStateChanged;
-                message.PlaybackService.PositionChanged += OnPositionChanged;
+                UpdatePosition(LifetimeService.Current.Playback.Position, LifetimeService.Current.Playback.Duration);
+
+                LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
+                LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
             }
             else
             {
@@ -380,22 +393,14 @@ namespace Telegram.Controls.Messages.Content
 
         public void Recycle()
         {
-            Recycle(_message?.PlaybackService);
-        }
-
-        private void Recycle(object sender)
-        {
-            if (sender is IPlaybackService playback)
-            {
-                playback.SourceChanged -= OnPlaybackStateChanged;
-                playback.StateChanged -= OnPlaybackStateChanged;
-                playback.PositionChanged -= OnPositionChanged;
-            }
+            LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
 
             _message = null;
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
-            UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
+            UpdateManager.Unsubscribe(this, ref _thumbnailToken);
         }
 
         public bool IsValid(MessageContent content, bool primary)
@@ -462,15 +467,15 @@ namespace Telegram.Controls.Messages.Content
                     _message.ClientService.Send(new CancelPreliminaryUploadFile(file.Id));
                 }
             }
-            else if (_message.AreTheSame(_message.PlaybackService.CurrentItem))
+            else if (_message.AreTheSame(LifetimeService.Current.Playback.CurrentItem))
             {
-                if (_message.PlaybackService.PlaybackState == PlaybackState.Paused)
+                if (LifetimeService.Current.Playback.PlaybackState == PlaybackState.Paused)
                 {
-                    _message.PlaybackService.Play();
+                    LifetimeService.Current.Playback.Play();
                 }
                 else
                 {
-                    _message.PlaybackService.Pause();
+                    LifetimeService.Current.Playback.Pause();
                 }
             }
             else
@@ -521,15 +526,15 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                if (_message.AreTheSame(_message.PlaybackService.CurrentItem))
+                if (_message.AreTheSame(LifetimeService.Current.Playback.CurrentItem))
                 {
-                    if (_message.PlaybackService.PlaybackState == PlaybackState.Paused)
+                    if (LifetimeService.Current.Playback.PlaybackState == PlaybackState.Paused)
                     {
-                        _message.PlaybackService.Play();
+                        LifetimeService.Current.Playback.Play();
                     }
                     else
                     {
-                        _message.PlaybackService.Pause();
+                        LifetimeService.Current.Playback.Pause();
                     }
                 }
                 else

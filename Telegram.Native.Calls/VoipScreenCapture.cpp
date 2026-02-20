@@ -17,12 +17,18 @@ namespace winrt::Telegram::Native::Calls::implementation
             tgcalls::StaticThreads::getThreads(),
             "GraphicsCaptureItem", true,
             std::make_shared<tgcalls::UwpContext>(item));
-        m_impl->setOnFatalError([this] {
-            m_failed = true;
-            m_fatalErrorOccurred(*this, nullptr);
+        m_impl->setOnFatalError([weakThis{ get_weak() }] {
+            if (auto strongThis = weakThis.get())
+            {
+                strongThis->m_failed = true;
+                strongThis->m_fatalErrorOccurred(*strongThis, nullptr);
+            }
             });
-        m_impl->setOnPause([this](bool paused) {
-            m_paused(*this, paused);
+        m_impl->setOnPause([weakThis{ get_weak() }](bool paused) {
+            if (auto strongThis = weakThis.get())
+            {
+                strongThis->m_paused(*strongThis, paused);
+            }
             });
     }
 

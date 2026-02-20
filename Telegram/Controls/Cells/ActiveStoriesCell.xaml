@@ -24,10 +24,11 @@
                   Width="48"
                   Height="48">
                 <controls:ProfilePicture x:Name="Photo"
-                                         Width="40"
-                                         Height="40" />
+                                         Size="40"
+                                         Shape="Ellipse" />
                 <Grid x:Name="SegmentsRoot">
                     <controls:ActiveStoriesSegments x:Name="SegmentsSmall"
+                                                    IsLiveBadgeVisible="False"
                                                     IsEnabled="False"
                                                     IsHitTestVisible="False"
                                                     IsTabStop="False"
@@ -35,6 +36,7 @@
                                                     Height="48"
                                                     Canvas.ZIndex="1" />
                     <controls:ActiveStoriesSegments x:Name="Segments"
+                                                    IsLiveBadgeVisible="False"
                                                     IsEnabled="False"
                                                     IsHitTestVisible="False"
                                                     IsTabStop="False"
@@ -42,6 +44,27 @@
                                                     Height="48" />
                 </Grid>
             </Grid>
+        </Border>
+
+        <Border x:Name="LiveBadge"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Background="#FF2C55"
+                BorderBrush="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                BorderThickness="2"
+                CornerRadius="8"
+                Height="16"
+                MinWidth="16"
+                Margin="0,0,0,-2">
+            <TextBlock Foreground="#FFFFFF"
+                       Text="{CustomResource LiveStoryBadge}"
+                       TextLineBounds="Tight"
+                       TextAlignment="Center"
+                       OpticalMarginAlignment="TrimSideBearings"
+                       FontSize="9"
+                       Padding="4,0,4,0"
+                       VerticalAlignment="Center"
+                       Typography.NumeralAlignment="Tabular" />
         </Border>
 
         <TextBlock x:Name="Title"

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation.Services;
@@ -20,18 +21,17 @@ namespace Telegram.ViewModels.Settings.Privacy
         {
         }
 
-        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            ClientService.Send(new GetReadDatePrivacySettings(), result =>
+            var response = await ClientService.SendAsync(new GetReadDatePrivacySettings());
+            if (response is ReadDatePrivacySettings settings)
             {
-                if (result is ReadDatePrivacySettings settings)
-                {
-                    _previousHideReadDate = !settings.ShowReadDate;
-                    BeginOnUIThread(() => HideReadDate = !settings.ShowReadDate);
-                }
-            });
+                _previousHideReadDate = !settings.ShowReadDate;
+                HideReadDate = !settings.ShowReadDate;
+                RaisePropertyChanged(nameof(HasChanged));
+            }
 
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            await base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         private bool? _previousHideReadDate;
@@ -40,7 +40,7 @@ namespace Telegram.ViewModels.Settings.Privacy
         public bool HideReadDate
         {
             get => _hideReadDate;
-            set => Set(ref _hideReadDate, value);
+            set => Invalidate(ref _hideReadDate, value);
         }
 
         public void SubscribeToPremium()
@@ -48,14 +48,16 @@ namespace Telegram.ViewModels.Settings.Privacy
             NavigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureAdvancedChatManagement()));
         }
 
-        public override void Save()
+        public override bool HasChanged => _previousHideReadDate != null && (base.HasChanged || _previousHideReadDate != HideReadDate);
+
+        protected override void ContinueImpl(NavigatingEventArgs args)
         {
             if (_previousHideReadDate.HasValue && _previousHideReadDate != HideReadDate)
             {
                 ClientService.Send(new SetReadDatePrivacySettings(new ReadDatePrivacySettings(!HideReadDate)));
             }
 
-            base.Save();
+            base.ContinueImpl(args);
         }
     }
 }

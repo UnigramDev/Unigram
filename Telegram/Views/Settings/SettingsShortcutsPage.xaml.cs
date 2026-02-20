@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.UI.Xaml.Controls;
 using Telegram.Controls;
 using Telegram.Services;
@@ -22,7 +23,7 @@ namespace Telegram.Views.Settings
 
         private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
-            var button = args.Element as BadgeButton;
+            var button = args.Element as SettingsButton;
             var info = sender.ItemsSourceView.GetAt(args.Index) as ShortcutInfo;
             //var info = button.DataContext as ShortcutInfo;
 

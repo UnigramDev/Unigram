@@ -11,16 +11,73 @@
              d:DesignWidth="400">
 
     <UserControl.Resources>
+        <Style TargetType="controls:PlaybackSlider">
+            <Setter Property="UseSystemFocusVisuals"
+                    Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:PlaybackSlider">
+                        <Grid Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="PointerOver"
+                                                          To="Normal">
+                                            <Storyboard>
+                                                <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                                                 Storyboard.TargetName="ProgressBarIndicatorTransform"
+                                                                 Storyboard.TargetProperty="ScaleY"
+                                                                 To="0.3333333333333333" />
+                                                <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                                                 Storyboard.TargetName="ProgressBarIndicatorTransform"
+                                                                 Storyboard.TargetProperty="TranslateY"
+                                                                 To="4" />
+                                            </Storyboard>
+                                        </VisualTransition>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                                             Storyboard.TargetName="ProgressBarIndicatorTransform"
+                                                             Storyboard.TargetProperty="ScaleY"
+                                                             To="1.0" />
+                                            <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                                             Storyboard.TargetName="ProgressBarIndicatorTransform"
+                                                             Storyboard.TargetProperty="TranslateY"
+                                                             To="0" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid x:Name="LayoutRoot"
+                                  Background="{ThemeResource SystemControlBackgroundBaseLowBrush}">
+                                <Grid.RenderTransform>
+                                    <CompositeTransform x:Name="ProgressBarIndicatorTransform"
+                                                        ScaleX="1.0"
+                                                        ScaleY="0.3333333333333333"
+                                                        TranslateX="0"
+                                                        TranslateY="4" />
+                                </Grid.RenderTransform>
+                                <Border x:Name="ProgressBarIndicator"
+                                        Background="{ThemeResource SystemControlHighlightAccentBrush}" />
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="ThreeStateToggleStyle"
                TargetType="controls:GlyphToggleButton">
             <Setter Property="Background"
                     Value="Transparent" />
             <Setter Property="UncheckedForeground"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
             <Setter Property="CheckedForeground"
                     Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}" />
             <Setter Property="BorderBrush"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
             <Setter Property="BorderThickness"
                     Value="0" />
             <Setter Property="Padding"
@@ -253,81 +310,14 @@
     </UserControl.Resources>
 
     <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush2}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-
         <Button x:Name="ViewButton"
                 Click="View_Click"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Center"
                 Padding="54,0,96,0"
                 Background="Transparent"
-                Style="{StaticResource EmptyButtonStyle}"
-                AutomationProperties.Name="{CustomResource AccDescrOpenChat}"
-                Grid.ColumnSpan="10">
-            <FlyoutBase.AttachedFlyout>
-                <Flyout Placement="BottomEdgeAlignedLeft"
-                        Opened="Flyout_Opened">
-                    <Flyout.FlyoutPresenterStyle>
-                        <Style TargetType="FlyoutPresenter">
-                            <Setter Property="MaxWidth"
-                                    Value="360" />
-                            <Setter Property="MaxHeight"
-                                    Value="500" />
-                            <Setter Property="Padding"
-                                    Value="0" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="FlyoutPresenter">
-                                        <Border Background="{TemplateBinding Background}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                CornerRadius="8">
-                                            <ContentPresenter Content="{TemplateBinding Content}"
-                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                              Margin="{TemplateBinding Padding}"
-                                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </Flyout.FlyoutPresenterStyle>
-                    <ListView x:Name="Items"
-                              IsItemClickEnabled="True"
-                              ItemClick="Items_ItemClick"
-                              SelectionMode="None"
-                              ContainerContentChanging="Items_ContainerContentChanging"
-                              Padding="0,6,0,6">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <cells:SharedAudioCell Background="Transparent"
-                                                       BorderBrush="Transparent" />
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem"
-                                   BasedOn="{StaticResource DefaultListViewItemStyle}">
-                                <Setter Property="HorizontalContentAlignment"
-                                        Value="Stretch" />
-                                <Setter Property="Padding"
-                                        Value="0" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                    </ListView>
-                </Flyout>
-            </FlyoutBase.AttachedFlyout>
+                Style="{StaticResource ListEmptyButtonStyle}"
+                AutomationProperties.Name="{CustomResource AccDescrOpenChat}">
             <Grid Margin="0,-2,0,0">
                 <TextBlock x:Name="Label1"
                            TextTrimming="CharacterEllipsis"
@@ -351,95 +341,117 @@
             </Grid>
         </Button>
 
-        <controls:PlaybackNextButton x:Name="PreviousButton"
-                                     Click="Previous_Click"
-                                     IsPrevious="True"
-                                     Glyph="&#xE892;"
-                                     Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+        <Grid x:Name="LeftButtons"
+              SizeChanged="Buttons_SizeChanged"
+              HorizontalAlignment="Left"
+              Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <controls:PlaybackNextButton x:Name="PreviousButton"
+                                         Click="Previous_Click"
+                                         IsPrevious="True"
+                                         Glyph="&#xE892;"
+                                         Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                         Width="40"
+                                         Height="40"
+                                         Margin="0,0,-4,0"
+                                         AutomationProperties.Name="{CustomResource AccDescrPrevious}"
+                                         ToolTipService.ToolTip="{CustomResource AccDescrPrevious}" />
+            <controls:AnimatedGlyphButton x:Name="PlaybackButton"
+                                          Click="Toggle_Click"
+                                          Glyph="&#xE768;"
+                                          Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                          Width="48"
+                                          Height="40"
+                                          Grid.Column="1" />
+            <controls:PlaybackNextButton x:Name="NextButton"
+                                         Click="Next_Click"
+                                         IsPrevious="False"
+                                         Glyph="&#xE893;"
+                                         Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                         Width="40"
+                                         Height="40"
+                                         Margin="-4,0,0,0"
+                                         Grid.Column="2"
+                                         AutomationProperties.Name="{CustomResource Next}"
+                                         ToolTipService.ToolTip="{CustomResource Next}" />
+        </Grid>
+
+        <Grid x:Name="RightButtons"
+              SizeChanged="Buttons_SizeChanged"
+              HorizontalAlignment="Right"
+              Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <controls:GlyphButton x:Name="VolumeButton"
+                                  Click="VolumeButton_Click"
+                                  Glyph="&#xE74F;"
+                                  Width="40"
+                                  Height="40"
+                                  Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                  AutomationProperties.Name="{CustomResource VoipGroupVolume}"
+                                  ToolTipService.ToolTip="{CustomResource VoipGroupVolume}" />
+
+            <TextBlock x:Name="SpeedText"
+                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                       TextAlignment="Center"
+                       Typography.NumeralAlignment="Tabular"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontSize="10"
+                       Margin="0,5,0,6"
+                       Grid.Column="1" />
+
+            <controls:SettingsButton x:Name="SpeedButton"
+                                     Click="Speed_Click"
+                                     Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                     Glyph="&#xEA13;"
                                      Width="40"
                                      Height="40"
-                                     Margin="0,0,-4,0"
-                                     AutomationProperties.Name="{CustomResource AccDescrPrevious}"
-                                     ToolTipService.ToolTip="{CustomResource AccDescrPrevious}" />
-        <controls:AnimatedGlyphButton x:Name="PlaybackButton"
-                                      Click="Toggle_Click"
-                                      Glyph="&#xE768;"
-                                      Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                      Width="48"
-                                      Height="40"
-                                      Grid.Column="1" />
-        <controls:PlaybackNextButton x:Name="NextButton"
-                                     Click="Next_Click"
-                                     IsPrevious="False"
-                                     Glyph="&#xE893;"
-                                     Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                     Width="40"
-                                     Height="40"
-                                     Margin="-4,0,0,0"
-                                     Grid.Column="2"
-                                     AutomationProperties.Name="{CustomResource Next}"
-                                     ToolTipService.ToolTip="{CustomResource Next}" />
+                                     MinHeight="40"
+                                     Padding="8"
+                                     Grid.Column="1"
+                                     AutomationProperties.Name="{CustomResource Speed}"
+                                     ToolTipService.ToolTip="{CustomResource Speed}"
+                                     Style="{StaticResource DefaultGlyphButtonStyle}"
+                                     Visibility="Collapsed" />
 
-        <controls:GlyphButton x:Name="VolumeButton"
-                              Click="VolumeButton_Click"
-                              Glyph="&#xE74F;"
-                              Width="40"
-                              Height="40"
-                              Grid.Column="4"
-                              Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                              AutomationProperties.Name="{CustomResource VoipGroupVolume}"
-                              ToolTipService.ToolTip="{CustomResource VoipGroupVolume}" />
+            <controls:GlyphToggleButton x:Name="RepeatButton"
+                                        Click="Repeat_Click"
+                                        UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                        CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                        Glyph="&#xEA14;"
+                                        CheckedGlyph="&#xEA14;"
+                                        IndeterminateGlyph="&#xEA15;"
+                                        Width="40"
+                                        Height="40"
+                                        Grid.Column="2"
+                                        IsOneWay="False"
+                                        IsThreeState="True"
+                                        Style="{StaticResource ThreeStateToggleStyle}" />
+            <controls:GlyphToggleButton x:Name="ShuffleButton"
+                                        Click="Shuffle_Click"
+                                        UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                        CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                        Glyph="&#xE8CB;"
+                                        CheckedGlyph="&#xE8CB;"
+                                        Width="40"
+                                        Height="40"
+                                        Grid.Column="3"
+                                        IsOneWay="False"
+                                        AutomationProperties.Name="{CustomResource ReverseOrder}"
+                                        ToolTipService.ToolTip="{CustomResource ReverseOrder}" />
 
-        <TextBlock x:Name="SpeedText"
-                   Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                   TextAlignment="Center"
-                   Typography.NumeralAlignment="Tabular"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   FontSize="10"
-                   Margin="0,5,0,6"
-                   Grid.Column="5" />
-
-        <controls:BadgeButton x:Name="SpeedButton"
-                              Click="Speed_Click"
-                              Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                              Glyph="&#xEA13;"
-                              Width="40"
-                              Height="40"
-                              Padding="8"
-                              Grid.Column="5"
-                              AutomationProperties.Name="{CustomResource Speed}"
-                              ToolTipService.ToolTip="{CustomResource Speed}"
-                              Style="{StaticResource DefaultGlyphButtonStyle}"
-                              Visibility="Collapsed" />
-
-        <controls:GlyphToggleButton x:Name="RepeatButton"
-                                    Click="Repeat_Click"
-                                    UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                                    CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                    Glyph="&#xEA14;"
-                                    CheckedGlyph="&#xEA14;"
-                                    IndeterminateGlyph="&#xEA15;"
-                                    Width="40"
-                                    Height="40"
-                                    Grid.Column="6"
-                                    IsOneWay="False"
-                                    IsThreeState="True"
-                                    Style="{StaticResource ThreeStateToggleStyle}" />
-        <controls:GlyphToggleButton x:Name="ShuffleButton"
-                                    Click="Shuffle_Click"
-                                    UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                                    CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                    Glyph="&#xE8CB;"
-                                    CheckedGlyph="&#xE8CB;"
-                                    Width="40"
-                                    Height="40"
-                                    Grid.Column="7"
-                                    IsOneWay="False"
-                                    AutomationProperties.Name="{CustomResource ReverseOrder}"
-                                    ToolTipService.ToolTip="{CustomResource ReverseOrder}" />
-
-        <!--<controls:GlyphToggleButton
+            <!--<controls:GlyphToggleButton
             x:Name="ShuffleButton"
             Click="Shuffle_Click"
             UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
@@ -451,17 +463,17 @@
             Grid.Column="5"
             AutomationProperties.Name="{CustomResource Shuffle}"
             ToolTipService.ToolTip="{CustomResource Shuffle}"/>-->
-        <controls:GlyphButton Click="Clear_Click"
-                              Glyph="&#xE711;"
-                              Width="40"
-                              Height="40"
-                              Grid.Column="8"
-                              AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
-                              ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}" />
+            <controls:GlyphButton Click="Clear_Click"
+                                  Glyph="&#xE711;"
+                                  Width="48"
+                                  Height="40"
+                                  Grid.Column="4"
+                                  AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
+                                  ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}" />
+        </Grid>
 
         <controls:PlaybackSlider x:Name="Slider"
                                  Height="6"
-                                 VerticalAlignment="Bottom"
-                                 Grid.ColumnSpan="9" />
+                                 VerticalAlignment="Bottom" />
     </Grid>
 </UserControl>

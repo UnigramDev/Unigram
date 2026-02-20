@@ -30,19 +30,6 @@
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-    inline static std::string hexStr(IVector<uint8_t> data)
-    {
-        std::stringstream ss;
-        ss << std::hex;
-
-        for (const uint8_t& x : data)
-        {
-            ss << std::setw(2) << std::setfill('0') << (int)x;
-        }
-
-        return ss.str();
-    }
-
     void VoipManager::Start(VoipDescriptor descriptor)
     {
         auto logPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path();
@@ -103,9 +90,9 @@ namespace winrt::Telegram::Native::Calls::implementation
         auto rtc = std::vector<tgcalls::RtcServer>();
         auto ids = std::vector<long>();
 
-        for (const CallServer& x : descriptor.Servers())
+        for (const VoipCallServer& x : descriptor.Servers())
         {
-            if (auto webRtc = x.Type().try_as<CallServerTypeWebrtc>())
+            if (auto webRtc = x.Type().try_as<VoipCallServerTypeWebrtc>())
             {
                 const auto host = winrt::to_string(x.IpAddress());
                 const auto hostv6 = winrt::to_string(x.Ipv6Address());
@@ -143,7 +130,7 @@ namespace winrt::Telegram::Native::Calls::implementation
                     pushTurn(hostv6);
                 }
             }
-            else if (auto reflector = x.Type().try_as<CallServerTypeTelegramReflector>())
+            else if (auto reflector = x.Type().try_as<VoipCallServerTypeTelegramReflector>())
             {
                 ids.push_back(x.Id());
             }
@@ -151,9 +138,9 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         std::sort(ids.begin(), ids.end());
 
-        for (const CallServer& x : descriptor.Servers())
+        for (const VoipCallServer& x : descriptor.Servers())
         {
-            if (auto reflector = x.Type().try_as<CallServerTypeTelegramReflector>())
+            if (auto reflector = x.Type().try_as<VoipCallServerTypeTelegramReflector>())
             {
                 const auto reflectorId = std::find(ids.begin(), ids.end(), x.Id()) - ids.begin();
                 const auto host = winrt::to_string(x.IpAddress());
@@ -163,7 +150,7 @@ namespace winrt::Telegram::Native::Calls::implementation
                 server.host = host;
                 server.port = port;
                 server.login = "reflector";
-                server.password = hexStr(reflector.PeerTag());
+                server.password = winrt::to_string(reflector.PeerTag());
                 server.isTurn = true;
                 server.isTcp = reflector.IsTcp();
                 rtc.push_back(server);

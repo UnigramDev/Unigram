@@ -9,10 +9,12 @@ namespace Telegram.Native
     [default_interface]
     runtimeclass FatalError 
     {
-        FatalError(Int32 resultCode, String message, String stackTrace, Windows.Foundation.Collections.IVector<FatalErrorFrame> frames);
-        Int32 ResultCode { get; };
-        String Message { get; };
-        String StackTrace { get; };
-        Windows.Foundation.Collections.IVector<FatalErrorFrame> Frames { get; };
+        FatalError(String type, String message, String stackTrace, Windows.Foundation.Collections.IVector<FatalErrorFrame> frames);
+        String Type;
+        String Message;
+        String StackTrace;
+        Windows.Foundation.Collections.IVector<FatalErrorFrame> Frames{ get; };
+
+        FatalError InnerException;
     }
 }

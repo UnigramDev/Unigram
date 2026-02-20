@@ -1,9 +1,11 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -19,20 +21,20 @@ namespace Telegram.Streams
         {
             _emoji = emoji;
 
-            DownloadFile(null, null);
+            DownloadFile(null, DelayedFileDownload.Loaded, null);
         }
 
         public override long Id => _emoji.GetHashCode();
 
-        public override async void DownloadFile(object sender, UpdateHandler<File> handler)
+        public override async void DownloadFile(object sender, DelayedFileDownload download, UpdateHandler<File> handler)
         {
-            if (_file != null && _file.Local.IsDownloadingCompleted)
+            if (_file != null && _file.Local.IsDownloadingCompleted && download != DelayedFileDownload.Unloaded)
             {
                 handler?.Invoke(sender, _file);
             }
             else
             {
-                if (_file == null)
+                if (_file == null && download != DelayedFileDownload.Unloaded)
                 {
                     var response = await _clientService.SendAsync(new GetAnimatedEmoji(_emoji));
                     if (response is AnimatedEmoji emoji)
@@ -51,7 +53,7 @@ namespace Telegram.Streams
                 {
                     return;
                 }
-                else if (_file.Local.IsDownloadingCompleted)
+                else if (_file.Local.IsDownloadingCompleted && download != DelayedFileDownload.Unloaded)
                 {
                     handler?.Invoke(sender, _file);
                     return;
@@ -64,7 +66,7 @@ namespace Telegram.Streams
 
                 if (_file.Local.CanBeDownloaded /*&& !_file.Local.IsDownloadingActive*/)
                 {
-                    _clientService.DownloadFile(_file.Id, 16);
+                    _clientService.DownloadFile(_file.Id, download == DelayedFileDownload.Playing ? 16 : 15);
                 }
             }
         }
@@ -73,7 +75,7 @@ namespace Telegram.Streams
         {
             if (obj is CustomEmojiFileSource y && !y.IsUnique && !IsUnique)
             {
-                return y.Id == Id;
+                return y.Id == Id && y.IsAnimated == IsAnimated;
             }
 
             return base.Equals(obj);
@@ -86,7 +88,7 @@ namespace Telegram.Streams
                 return base.GetHashCode();
             }
 
-            return _emoji.GetHashCode();
+            return HashCode.Combine(_emoji, IsAnimated);
         }
     }
 }

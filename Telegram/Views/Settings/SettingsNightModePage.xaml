@@ -60,32 +60,32 @@
                               Click="UpdateTheme_Click"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <controls:BadgeButton Content="{CustomResource AutoNightFrom}"
-                                          Badge="{x:Bind ConvertTimeSpan(ViewModel.From), Mode=OneWay}"
-                                          Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
+                    <controls:SettingsButton Content="{CustomResource AutoNightFrom}"
+                                             Badge="{x:Bind ConvertTimeSpan(ViewModel.From), Mode=OneWay}"
+                                             Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
                         <Button.Flyout>
                             <TimePickerFlyout x:Name="FromPicker"
                                               Time="{x:Bind ViewModel.From, Mode=TwoWay}"
                                               TimePicked="UpdateTheme_Picked"
                                               Placement="BottomEdgeAlignedLeft" />
                         </Button.Flyout>
-                    </controls:BadgeButton>
+                    </controls:SettingsButton>
 
-                    <controls:BadgeButton Content="{CustomResource AutoNightTo}"
-                                          Badge="{x:Bind ConvertTimeSpan(ViewModel.To), Mode=OneWay}"
-                                          Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
+                    <controls:SettingsButton Content="{CustomResource AutoNightTo}"
+                                             Badge="{x:Bind ConvertTimeSpan(ViewModel.To), Mode=OneWay}"
+                                             Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
                         <Button.Flyout>
                             <TimePickerFlyout x:Name="ToPicker"
                                               Time="{x:Bind ViewModel.To, Mode=TwoWay}"
                                               TimePicked="UpdateTheme_Picked"
                                               Placement="BottomEdgeAlignedLeft" />
                         </Button.Flyout>
-                    </controls:BadgeButton>
+                    </controls:SettingsButton>
 
-                    <controls:BadgeButton Content="{CustomResource AutoNightUpdateLocation}"
-                                          Click="{x:Bind ViewModel.UpdateLocation}"
-                                          Badge="{x:Bind ViewModel.Town, Mode=OneWay}"
-                                          Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <controls:SettingsButton Content="{CustomResource AutoNightUpdateLocation}"
+                                             Click="{x:Bind ViewModel.UpdateLocation}"
+                                             Badge="{x:Bind ViewModel.Town, Mode=OneWay}"
+                                             Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource AutoNightPreferred}"

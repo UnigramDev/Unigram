@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Windows.Foundation;
 using Windows.UI.Input;
@@ -31,9 +32,9 @@ namespace Telegram.Charts
         public long startTapTime;
         ValueAnimator moveToAnimator;
 
-        public Rect leftPickerArea = new Rect();
-        public Rect rightPickerArea = new Rect();
-        public Rect middlePickerArea = new Rect();
+        public Rect leftPickerArea = new();
+        public Rect rightPickerArea = new();
+        public Rect middlePickerArea = new();
 
 
         public float pickerStart = 0.7f;

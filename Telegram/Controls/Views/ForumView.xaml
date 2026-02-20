@@ -130,8 +130,7 @@
                                 <controls:ProfilePicture x:Name="Photo"
                                                          HorizontalAlignment="Center"
                                                          VerticalAlignment="Center"
-                                                         Width="20"
-                                                         Height="20" />
+                                                         Size="20" />
                             </Grid>
 
                             <TextBlock x:Name="TitleLabel"
@@ -150,11 +149,6 @@
                                   Background="Transparent"
                                   VerticalAlignment="Center"
                                   Grid.Column="2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
                                 <Border x:Name="UnreadMentionsBadge"
                                         Background="{ThemeResource ChatUnreadBadgeBrush}"
                                         Width="16"
@@ -163,8 +157,7 @@
                                         VerticalAlignment="Top"
                                         HorizontalAlignment="Right"
                                         Margin="4,2,0,0"
-                                        Visibility="Collapsed"
-                                        Grid.Column="1">
+                                        Visibility="Collapsed">
                                     <TextBlock x:Name="UnreadMentionsLabel"
                                                Text="&#xE986;"
                                                FontSize="12"
@@ -178,13 +171,12 @@
                                                        VerticalAlignment="Top"
                                                        HorizontalAlignment="Right"
                                                        Margin="4,2,0,0"
-                                                       Visibility="Collapsed"
-                                                       Grid.Column="2" />
+                                                       Visibility="Collapsed" />
                             </Grid>
 
                             <Rectangle x:Name="DropVisual"
                                        x:Load="False"
-                                       Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                       Stroke="{ThemeResource TextFillColorPrimaryBrush}"
                                        StrokeThickness="2"
                                        RadiusX="4"
                                        RadiusY="4"
@@ -204,14 +196,10 @@
             <ItemsStackPanel Orientation="Vertical" />
         </ItemsPanelTemplate>
         <ItemsPanelTemplate x:Name="HorizontalPanelTemplate">
-            <ItemsStackPanel Orientation="Horizontal" />
+            <ItemsStackPanel Orientation="Horizontal"
+                             VerticalAlignment="Bottom"
+                             Margin="0,0,0,2" />
         </ItemsPanelTemplate>
-
-        <Style x:Name="VerticalBackgroundStyle"
-               TargetType="Border">
-            <Setter Property="Background"
-                    Value="{ThemeResource PageSubHeaderBackgroundBrush2}" />
-        </Style>
 
         <Style x:Name="VerticalListViewItemStyle"
                TargetType="controls:TopNavViewItem">
@@ -359,8 +347,8 @@
                                            Width="3"
                                            Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
                                            Opacity="0"
-                                           RadiusX="3"
-                                           RadiusY="3" />
+                                           RadiusX="1.5"
+                                           RadiusY="1.5" />
                             </Grid>
                         </Grid>
                     </ControlTemplate>
@@ -379,33 +367,44 @@
                 BorderBrush="{ThemeResource SettingsItemBorderBrush}"
                 CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
                 BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
+                BackgroundSizing="OuterBorderEdge"
+                Grid.RowSpan="2" />
+        <Border x:Name="VerticalBackgroundRoot"
+                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                BorderThickness="0,0,1,0"
                 BackgroundSizing="InnerBorderEdge"
+                Visibility="Collapsed"
                 Grid.RowSpan="2" />
 
         <Grid x:Name="Header"
               Height="{StaticResource NavigationViewTopPaneHeight}"
               Canvas.ZIndex="3">
             <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                    CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
                     BorderThickness="0,0,0,1" />
             <Grid x:Name="HeaderLeft"
                   HorizontalAlignment="Left"
                   Padding="0,0,12,0"
                   Canvas.ZIndex="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="36" />
                 </Grid.ColumnDefinitions>
-                <controls:ActiveStoriesSegments x:Name="Segments"
-                                                Click="Segments_Click"
-                                                Width="36"
-                                                Height="36"
-                                                HorizontalAlignment="Center"
-                                                AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                                                Grid.Column="1">
-                    <controls:ProfilePicture x:Name="Photo"
-                                             Width="36"
-                                             Height="36" />
-                </controls:ActiveStoriesSegments>
+                <controls:BackButton x:Name="BackButton"
+                                     Click="BackButton_Click"
+                                     IsClickHandled="True"
+                                     RenderTransformOrigin="0.5,0.5"
+                                     Width="48"
+                                     Height="48"
+                                     Margin="4,0,-8,0"
+                                     CornerRadius="20"
+                                     Glyph="&#xe93e;">
+                    <Button.RenderTransform>
+                        <ScaleTransform ScaleX="0.8"
+                                        ScaleY="0.8" />
+                    </Button.RenderTransform>
+                </controls:BackButton>
             </Grid>
 
             <local:ChatHeaderButton x:Name="Profile"
@@ -416,8 +415,8 @@
                                     HorizontalContentAlignment="Stretch"
                                     VerticalContentAlignment="Stretch"
                                     BorderThickness="0"
-                                    CornerRadius="0"
-                                    Padding="60,0,0,0">
+                                    CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
+                                    Padding="52,0,0,0">
                 <Grid Background="Transparent"
                       VerticalAlignment="Center"
                       Margin="0,-2,0,2">
@@ -512,6 +511,7 @@
                              ContainerContentChanging="OnContainerContentChanging"
                              DragItemsStarting="OnDragItemsStarting"
                              DragItemsCompleted="OnDragItemsCompleted"
+                             ItemClick="OnItemClick"
                              AllowDrop="True"
                              CanDragItems="True"
                              CanReorderItems="False"

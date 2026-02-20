@@ -6,6 +6,7 @@
              xmlns:controls="using:Telegram.Controls"
              xmlns:cells="using:Telegram.Controls.Cells"
              xmlns:selectors="using:Telegram.Selectors"
+             xmlns:viewModels="using:Telegram.ViewModels"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="400">
@@ -23,6 +24,40 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <DataTemplate x:Key="HeaderTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                           FontFamily="{StaticResource EmojiThemeFontFamily}"
+                           Margin="12,12,0,4" />
+
+                <controls:GlyphButton Click="ClearRecentChats_Click"
+                                      AllowFocusOnInteraction="False"
+                                      VerticalAlignment="Bottom"
+                                      Margin="0,0,0,-6"
+                                      Glyph="&#xE711;"
+                                      FontSize="12"
+                                      Width="48"
+                                      Height="32"
+                                      Grid.Column="1" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Name="ProfileTemplate">
+            <cells:ProfileCell>
+                <controls:BadgeControl />
+            </cells:ProfileCell>
+        </DataTemplate>
+
+        <DataTemplate x:Name="MessageTemplate">
+            <cells:ChatCell Stroke="{ThemeResource ChatLastMessageStateBrush}"
+                            SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            Margin="4,0" />
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid x:Name="DialogsSearchPanel">
@@ -32,16 +67,116 @@
         </Grid.RowDefinitions>
         <!-- TODO: Hide in forward popup -->
         <controls:TopNavView x:Name="ChatFolders"
+                             ItemsSource="{x:Bind ViewModel.Tabs}"
                              SelectedIndex="{x:Bind ViewModel.SelectedTab, Mode=TwoWay}"
+                             SelectionChanged="ChatFolders_SelectionChanged"
                              ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                              FocusFollowsSingleSelection="True"
                              SingleSelectionFollowsFocus="False"
                              Height="40"
+                             Padding="8,0,8,0"
                              BorderBrush="{ThemeResource SettingsItemBorderBrush}"
                              BorderThickness="0,0,0,0">
-            <controls:TopNavViewItem Content="{CustomResource FilterChats}" />
-            <controls:TopNavViewItem Content="{CustomResource FilterChannels}" />
-            <controls:TopNavViewItem Content="{CustomResource AppsTab}" />
+            <controls:TopNavView.ItemContainerStyle>
+                <Style TargetType="controls:TopNavViewItem">
+                    <Setter Property="HorizontalAlignment"
+                            Value="Stretch" />
+                    <Setter Property="VerticalAlignment"
+                            Value="Stretch" />
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Center" />
+                    <Setter Property="VerticalContentAlignment"
+                            Value="Center" />
+                    <Setter Property="UseSystemFocusVisuals"
+                            Value="True" />
+                    <Setter Property="FocusVisualMargin"
+                            Value="-3,5" />
+                    <Setter Property="CornerRadius"
+                            Value="12" />
+                    <Setter Property="Foreground"
+                            Value="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="controls:TopNavViewItem">
+                                <Grid x:Name="ContentBorder"
+                                      Background="Transparent">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal" />
+                                            <VisualState x:Name="PointerOver" />
+                                            <VisualState x:Name="Pressed" />
+                                            <VisualState x:Name="Selected">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Foreground"
+                                                            Value="{ThemeResource AccentButtonBackground}" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="PointerOverSelected">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Foreground"
+                                                            Value="{ThemeResource AccentButtonBackground}" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="PressedSelected">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Foreground"
+                                                            Value="{ThemeResource AccentButtonBackground}" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                    <ContentPresenter x:Name="ContentPresenter"
+                                                      Grid.Column="1"
+                                                      Margin="12,0,12,0"
+                                                      TextWrapping="NoWrap"
+                                                      Foreground="{TemplateBinding Foreground}"
+                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                      Content="{TemplateBinding Content}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                      VerticalAlignment="Center"
+                                                      AutomationProperties.AccessibilityView="Raw"
+                                                      Canvas.ZIndex="1" />
+                                    <Grid x:Name="SelectionIndicatorGrid"
+                                          Margin="4,4,4,0"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Center"
+                                          Height="24"
+                                          Opacity="0.15">
+                                        <Rectangle x:Name="SelectionIndicator"
+                                                   Fill="{ThemeResource AccentButtonBackground}"
+                                                   Opacity="0"
+                                                   RadiusX="12"
+                                                   RadiusY="12" />
+                                    </Grid>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </controls:TopNavView.ItemContainerStyle>
+            <controls:TopNavView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:SearchChatsTabItem">
+                    <Grid Height="20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{x:Bind Text}"
+                                   VerticalAlignment="Bottom"
+                                   FontWeight="SemiBold" />
+                        <controls:BadgeControl x:Name="Badge"
+                                               x:Load="{x:Bind IsNew}"
+                                               Text="NEW"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Bottom"
+                                               Margin="4,0,0,0"
+                                               CornerRadius="4"
+                                               Grid.Column="1" />
+                    </Grid>
+                </DataTemplate>
+            </controls:TopNavView.ItemTemplate>
         </controls:TopNavView>
 
         <!--<ListView x:Load="False"
@@ -83,156 +218,181 @@
                                     </ListView.ItemContainerTransitions>
                                 </ListView>-->
 
-        <ListView x:Name="ScrollingHost"
-                  ItemsSource="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
-                  IsItemClickEnabled="True"
-                  SelectionMode="Single"
-                  ItemClick="OnItemClick"
-                  ChoosingItemContainer="OnChoosingItemContainer"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  Grid.Row="1">
-            <ListView.Header>
-                <StackPanel Visibility="{x:Bind ViewModel.IsTopChatsVisible, Mode=OneWay}">
-                    <controls:TextListView x:Name="TopChats"
-                                           SelectionMode="None"
-                                           IsItemClickEnabled="True"
-                                           ItemClick="OnItemClick"
-                                           ChoosingItemContainer="TopChats_ChoosingItemContainer"
-                                           ContainerContentChanging="TopChats_ContainerContentChanging"
-                                           ItemsSource="{x:Bind ViewModel.TopChats}"
-                                           Style="{StaticResource HorizontalListViewStyle}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Width="72"
-                                            Padding="0,12"
-                                            Background="Transparent">
-                                    <Grid Width="48"
-                                          Height="48"
-                                          Margin="12,0">
-                                        <controls:ProfilePicture Width="48"
-                                                                 Height="48" />
-                                        <controls:BadgeControl VerticalAlignment="Top"
-                                                               HorizontalAlignment="Right" />
-                                        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                                Width="13"
-                                                Height="13"
-                                                CornerRadius="6.5"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Bottom"
-                                                Margin="0,0,1,1">
-                                            <Border Background="{ThemeResource ChatOnlineBadgeBrush}"
-                                                    Width="9"
-                                                    Height="9"
-                                                    CornerRadius="4.5" />
-                                        </Border>
-                                    </Grid>
-
-                                    <TextBlock Margin="0,4,0,0"
-                                               TextAlignment="Center"
-                                               TextWrapping="NoWrap"
-                                               TextTrimming="CharacterEllipsis"
-                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                               Style="{StaticResource CaptionTextBlockStyle}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem"
-                                   BasedOn="{StaticResource DefaultListViewItemStyle}">
-                                <Setter Property="MinWidth"
-                                        Value="0" />
-                                <Setter Property="Padding"
-                                        Value="0" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.ItemContainerTransitions>
-                            <TransitionCollection />
-                        </ListView.ItemContainerTransitions>
-                    </controls:TextListView>
-                </StackPanel>
-            </ListView.Header>
-            <ListView.ItemTemplateSelector>
-                <selectors:SearchTemplateSelector>
-                    <selectors:SearchTemplateSelector.HeaderTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
-                                           FontFamily="{StaticResource EmojiThemeFontFamily}"
-                                           Margin="12,12,0,4" />
-
-                                <controls:GlyphButton Click="ClearRecentChats_Click"
-                                                      AllowFocusOnInteraction="False"
-                                                      VerticalAlignment="Bottom"
-                                                      Margin="0,0,0,-6"
-                                                      Glyph="&#xE711;"
-                                                      FontSize="12"
-                                                      Width="48"
-                                                      Height="32"
-                                                      Grid.Column="1" />
-                            </Grid>
-                        </DataTemplate>
-                    </selectors:SearchTemplateSelector.HeaderTemplate>
-                    <selectors:SearchTemplateSelector.ChatTemplate>
-                        <DataTemplate>
-                            <cells:ProfileCell />
-                        </DataTemplate>
-                    </selectors:SearchTemplateSelector.ChatTemplate>
-                    <selectors:SearchTemplateSelector.MessageTemplate>
-                        <DataTemplate>
-                            <cells:ChatCell Stroke="{ThemeResource ChatLastMessageStateBrush}"
-                                            SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                            Margin="4,0" />
-                        </DataTemplate>
-                    </selectors:SearchTemplateSelector.MessageTemplate>
-                </selectors:SearchTemplateSelector>
-            </ListView.ItemTemplateSelector>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem"
-                       BasedOn="{StaticResource DefaultListViewItemStyle}">
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection />
-            </ListView.ItemContainerTransitions>
-        </ListView>
-
-        <Grid x:Name="EmptyState"
-              x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
-              VerticalAlignment="Center"
-              Margin="0,-96,0,0"
+        <Grid x:Name="SearchRoot"
               Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/EmptyContacts.tgs"
-                                    IsCachingEnabled="False"
-                                    AutoPlay="True"
-                                    FrameSize="140,140"
-                                    DecodeFrameType="Logical"
-                                    LoopCount="1"
-                                    Width="140"
-                                    Height="140"
-                                    Margin="0,0,0,12" />
+            <Grid.Resources>
+                <x:Boolean x:Key="ListViewItemSelectionIndicatorVisualEnabled">False</x:Boolean>
+            </Grid.Resources>
+            <ListView x:Name="ItemsHost"
+                      ItemsSource="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
+                      IsItemClickEnabled="True"
+                      SelectionMode="Single"
+                      ItemClick="OnItemClick"
+                      ChoosingItemContainer="OnChoosingItemContainer"
+                      ContainerContentChanging="OnContainerContentChanging">
+                <ListView.Header>
+                    <StackPanel Visibility="{x:Bind ViewModel.IsTopChatsVisible, Mode=OneWay}">
+                        <controls:TextListView x:Name="TopChats"
+                                               SelectionMode="None"
+                                               IsItemClickEnabled="True"
+                                               ItemClick="OnItemClick"
+                                               ChoosingItemContainer="TopChats_ChoosingItemContainer"
+                                               ContainerContentChanging="TopChats_ContainerContentChanging"
+                                               ItemsSource="{x:Bind ViewModel.TopChats}"
+                                               Style="{StaticResource HorizontalListViewStyle}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Width="72"
+                                                Padding="0,12"
+                                                Background="Transparent">
+                                        <Grid Width="48"
+                                              Height="48"
+                                              Margin="12,0">
+                                            <controls:ProfilePicture Size="48" />
+                                            <controls:BadgeControl VerticalAlignment="Top"
+                                                                   HorizontalAlignment="Right" />
+                                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                    Width="13"
+                                                    Height="13"
+                                                    CornerRadius="6.5"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Bottom"
+                                                    Margin="0,0,1,1">
+                                                <Border Background="{ThemeResource ChatOnlineBadgeBrush}"
+                                                        Width="9"
+                                                        Height="9"
+                                                        CornerRadius="4.5" />
+                                            </Border>
+                                        </Grid>
 
-            <TextBlock Text="{CustomResource NoResult}"
-                       Style="{StaticResource PopupTextBlockStyle}"
-                       TextAlignment="Center"
-                       VerticalAlignment="Top"
-                       Margin="0,0,0,8"
-                       Grid.Row="1" />
+                                        <TextBlock Margin="0,4,0,0"
+                                                   TextAlignment="Center"
+                                                   TextWrapping="NoWrap"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                   Style="{StaticResource CaptionTextBlockStyle}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem"
+                                       BasedOn="{StaticResource DefaultListViewItemStyle}">
+                                    <Setter Property="MinWidth"
+                                            Value="0" />
+                                    <Setter Property="Padding"
+                                            Value="0" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection />
+                            </ListView.ItemContainerTransitions>
+                        </controls:TextListView>
+                    </StackPanel>
+                </ListView.Header>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem"
+                           BasedOn="{StaticResource DefaultListViewItemStyle}">
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection />
+                </ListView.ItemContainerTransitions>
+            </ListView>
 
-            <TextBlock Loaded="EmptyState_Loaded"
-                       Style="{StaticResource BodyTextBlockStyle}"
-                       TextAlignment="Center"
-                       Grid.Row="2" />
+            <Grid x:Name="EmptyState"
+                  x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
+                  VerticalAlignment="Center"
+                  Margin="0,-96,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <controls:AnimatedImage Source="ms-appx:///Assets/Animations/EmptyContacts.tgs"
+                                        IsCachingEnabled="False"
+                                        AutoPlay="True"
+                                        FrameSize="140,140"
+                                        DecodeFrameType="Logical"
+                                        LoopCount="1"
+                                        Width="140"
+                                        Height="140"
+                                        Margin="0,0,0,12" />
+
+                <TextBlock Text="{CustomResource NoResult}"
+                           Style="{StaticResource PopupTextBlockStyle}"
+                           TextAlignment="Center"
+                           VerticalAlignment="Top"
+                           Margin="0,0,0,8"
+                           Grid.Row="1" />
+
+                <TextBlock Loaded="EmptyState_Loaded"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           TextAlignment="Center"
+                           Grid.Row="2" />
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="MediaRoot"
+              Visibility="Collapsed"
+              Grid.Row="1">
+            <ScrollViewer x:Name="ScrollingHost"
+                          SizeChanged="OnSizeChanged"
+                          ViewChanged="OnViewChanged">
+                <Frame x:Name="MediaFrame"
+                       Navigating="OnNavigating"
+                       Navigated="OnNavigated" />
+            </ScrollViewer>
+
+            <Grid x:Name="ManagePanel"
+                  Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                  VerticalAlignment="Bottom"
+                  Visibility="Collapsed"
+                  Margin="24,0,24,8"
+                  CornerRadius="15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="15"
+                        Grid.ColumnSpan="5" />
+
+                <controls:GlyphButton x:Name="ButtonManage"
+                                      Glyph="&#xE711;"
+                                      Click="{x:Bind ViewModel.UnselectMessages}"
+                                      CornerRadius="13,4,4,13" />
+
+                <controls:AnimatedTextBlock x:Name="ManageCount"
+                                            Text="{x:Bind ConvertSelection(ViewModel.SelectedItems.Count), Mode=OneWay}"
+                                            TextStyle="{StaticResource BaseTextBlockStyle}"
+                                            VerticalAlignment="Center"
+                                            Margin="0,-2,0,0"
+                                            Grid.Column="1" />
+
+                <controls:GlyphButton x:Name="ButtonForward"
+                                      Glyph="&#xE72D;"
+                                      Content="{CustomResource Forward}"
+                                      Click="{x:Bind ViewModel.ForwardSelectedMessages}"
+                                      IsEnabled="{x:Bind ViewModel.CanForwardSelectedMessages, Mode=OneWay}"
+                                      Style="{StaticResource GlyphButtonWithLabelStyle}"
+                                      Grid.Column="3" />
+
+                <controls:GlyphButton x:Name="ButtonDelete"
+                                      Glyph="&#xE74D;"
+                                      Content="{CustomResource Delete}"
+                                      Foreground="#df3f40"
+                                      Click="{x:Bind ViewModel.DeleteSelectedMessages}"
+                                      IsEnabled="{x:Bind ViewModel.CanDeleteSelectedMessages, Mode=OneWay}"
+                                      Style="{StaticResource GlyphButtonWithLabelStyle}"
+                                      CornerRadius="4,13,13,4"
+                                      Grid.Column="4" />
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

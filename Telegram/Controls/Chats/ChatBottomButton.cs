@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Numerics;
 using Telegram.Common;
 using Windows.UI.Composition;
@@ -17,8 +18,8 @@ namespace Telegram.Controls.Chats
     /// </summary>
     public partial class ChatBottomButton : Button
     {
-        private ContentPresenter _label1;
-        private ContentPresenter _label2;
+        private ContentPresenter ContentPresenter1;
+        private ContentPresenter ContentPresenter2;
 
         private Visual _visual1;
         private Visual _visual2;
@@ -33,21 +34,23 @@ namespace Telegram.Controls.Chats
 
         protected override void OnApplyTemplate()
         {
-            _label1 = _label = GetTemplateChild("ContentPresenter1") as ContentPresenter;
-            _label2 = GetTemplateChild("ContentPresenter2") as ContentPresenter;
+            ContentPresenter1 = GetTemplateChild(nameof(ContentPresenter1)) as ContentPresenter;
+            ContentPresenter2 = GetTemplateChild(nameof(ContentPresenter2)) as ContentPresenter;
 
-            if (_label1 != null && _label2 != null)
+            _label = ContentPresenter1;
+
+            if (ContentPresenter1 != null && ContentPresenter2 != null)
             {
-                _visual1 = _visual = ElementComposition.GetElementVisual(_label1);
-                _visual2 = ElementComposition.GetElementVisual(_label2);
+                _visual1 = _visual = ElementComposition.GetElementVisual(ContentPresenter1);
+                _visual2 = ElementComposition.GetElementVisual(ContentPresenter2);
 
-                _label2.Content = new object();
+                ContentPresenter2.Content = new object();
 
                 _visual2.Opacity = 0;
                 _visual2.Scale = new Vector3();
                 _visual2.CenterPoint = new Vector3(10);
 
-                _label1.Content = Content ?? new object();
+                ContentPresenter1.Content = Content ?? new object();
 
                 _visual1.Opacity = 1;
                 _visual1.Scale = new Vector3(1);
@@ -67,15 +70,15 @@ namespace Telegram.Controls.Chats
             var visualShow = _visual == _visual1 ? _visual2 : _visual1;
             var visualHide = _visual == _visual1 ? _visual1 : _visual2;
 
-            var labelShow = _visual == _visual1 ? _label2 : _label1;
-            var labelHide = _visual == _visual1 ? _label1 : _label2;
+            var labelShow = _visual == _visual1 ? ContentPresenter2 : ContentPresenter1;
+            var labelHide = _visual == _visual1 ? ContentPresenter1 : ContentPresenter2;
 
             labelShow.Content = newContent ?? new object();
 
             await this.UpdateLayoutAsync();
 
-            _visual1.CenterPoint = new Vector3(_label1.ActualSize / 2f, 0);
-            _visual2.CenterPoint = new Vector3(_label2.ActualSize / 2f, 0);
+            _visual1.CenterPoint = new Vector3(ContentPresenter1.ActualSize / 2f, 0);
+            _visual2.CenterPoint = new Vector3(ContentPresenter2.ActualSize / 2f, 0);
 
             var hide1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
             hide1.InsertKeyFrame(0, new Vector3(1));

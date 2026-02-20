@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Rg.DiffUtils;
 using System;
 using System.Collections.Concurrent;
@@ -78,14 +79,14 @@ namespace Telegram.ViewModels
                 {
                     if (update.CompleteDate != 0 && update.CompleteDate != fileDownload.CompleteDate)
                     {
-                        var first = Items.FirstOrDefault(x => x.IsFirst && x.CompleteDate != 0);
+                        var first = Items.Source.FirstOrDefault(x => x.IsFirst && x.CompleteDate != 0);
 
-                        var next = Items.IndexOf(first);
-                        var prev = Items.IndexOf(fileDownload);
+                        var next = Items.Source.IndexOf(first);
+                        var prev = Items.Source.IndexOf(fileDownload);
 
                         if (prev == 0 && next > 1)
                         {
-                            Items[1].IsFirst = true;
+                            Items.Source[1].IsFirst = true;
                         }
 
                         // If the future position is after the current(supposedly
@@ -98,14 +99,11 @@ namespace Telegram.ViewModels
 
                         if (next != prev)
                         {
-                            Items.Remove(fileDownload);
-                            Items.Insert(next >= 0 ? next : Items.Count, fileDownload);
+                            Items.Source.Remove(fileDownload);
+                            Items.Source.Insert(next >= 0 ? next : Items.Count, fileDownload);
                         }
 
-                        if (first != null)
-                        {
-                            first.IsFirst = false;
-                        }
+                        first?.IsFirst = false;
 
                         fileDownload.IsFirst = true;
                     }

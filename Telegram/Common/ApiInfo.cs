@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Native;
 using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
@@ -41,6 +42,16 @@ namespace Telegram.Common
         private static bool? _isVoipSupported;
         public static bool IsVoipSupported => _isVoipSupported ??= ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
 
+        private static bool? _canCreateRectangleClip;
+        public static bool CanCreateRectangleClip => _canCreateRectangleClip ??= ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateRectangleClip");
+
+        // We only enable shadows on Windows 11 for three reasons:
+        // First: they look terrible on Windows 10
+        // Second: they are way more optimized on Windows 11 (they use a nine-grid instead of dynamically casted shadows)
+        // Third: there seems to be no way to create a custom shadow that only casts below messages without overlaps
+        private static bool? _canCreateThemeShadow;
+        public static bool CanCreateThemeShadow => IsWindows11 && (_canCreateThemeShadow ??= ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"));
+
         private static bool? _canAnimatePaths;
         public static bool CanAnimatePaths => _canAnimatePaths ??= IsBuildOrGreater(19043);
 
@@ -65,7 +76,7 @@ namespace Telegram.Common
         public static NavigationCacheMode NavigationCacheMode => IsXbox
                 ? NavigationCacheMode.Disabled
                 : Constants.DEBUG
-                ? NavigationCacheMode.Required
-                : NavigationCacheMode.Required;
+                ? NavigationCacheMode.Enabled
+                : NavigationCacheMode.Enabled;
     }
 }

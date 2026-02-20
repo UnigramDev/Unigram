@@ -33,10 +33,9 @@
                     <controls:HeaderedControl x:Name="CreateRoot"
                                               x:Load="{x:Bind ViewModel.CanCreateMore, Mode=OneWay}"
                                               Margin="0,0,0,2">
-                        <controls:BadgeButton Click="{x:Bind ViewModel.Create}"
-                                              Content="{CustomResource BusinessLinksAdd}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xEA85;" />
+                        <controls:SettingsButton Click="{x:Bind ViewModel.Create}"
+                                                 Content="{CustomResource BusinessLinksAdd}"
+                                                 Glyph="&#xEA85;" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Header>

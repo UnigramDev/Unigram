@@ -15,8 +15,7 @@
                         VerticalAlignment="Stretch"
                         Loaded="OnLoaded"
                         Unloaded="OnUnloaded"
-                        PreviewKeyDown="OnPreviewKeyDown"
-                        ProcessKeyboardAccelerators="OnProcessKeyboardAccelerators">
+                        PreviewKeyDown="OnPreviewKeyDown">
 
     <Grid RequestedTheme="Dark">
         <Grid>
@@ -29,6 +28,7 @@
             <controls:ZoomViewer x:Name="ScrollingHost"
                                  MinZoomFactor="1"
                                  MaxZoomFactor="4"
+                                 PanStarting="ScrollingHost_PanStarting"
                                  ViewChanged="ScrollingHost_ViewChanged">
                 <controls:CarouselViewer x:Name="LayoutRoot"
                                          Background="Transparent"
@@ -50,6 +50,11 @@
                 </controls:CarouselViewer>
             </controls:ZoomViewer>
         </Grid>
+        <Border x:Name="SafeArea"
+                Background="Transparent"
+                VerticalAlignment="Top"
+                Margin="0,-40,0,0"
+                Height="48" />
         <Border x:Name="TitleBar"
                 Background="Transparent"
                 VerticalAlignment="Top"
@@ -68,6 +73,14 @@
                               Margin="0,-40,0,0"
                               Width="48"
                               Height="40" />
+
+        <local:GallerySponsoredContent x:Name="Sponsored"
+                                       Stroke="{ThemeResource AccentButtonBackground}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Top"
+                                       Visibility="Collapsed"
+                                       MaxWidth="320"
+                                       Margin="0,0,0,12" />
 
         <local:GalleryBottomPanel x:Name="BottomPanel"
                                   GotFocus="Transport_GotFocus"
@@ -104,36 +117,47 @@
                                       FontSize="{StaticResource GlyphMediumFontSize}"
                                       TabIndex="1" />
 
+                <controls:GlyphButton x:Name="Recognize"
+                                      x:Load="{x:Bind ViewModel.SelectedItem.CanRecognizeText, Mode=OneWay}"
+                                      Click="Recognize_Click"
+                                      Loaded="Recognize_Loaded"
+                                      AutomationProperties.Name="{CustomResource AccDescrScanText}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrScanText}"
+                                      Glyph="&#xEAD6;"
+                                      TabIndex="2" />
+
                 <controls:GlyphButton x:Name="ZoomOut"
                                       Click="ZoomOut_Click"
                                       AutomationProperties.Name="{CustomResource MediaZoomOut}"
                                       ToolTipService.ToolTip="{CustomResource MediaZoomOut}"
                                       Glyph="&#xE96A;"
-                                      TabIndex="2" />
+                                      TabIndex="3" />
 
                 <controls:GlyphButton x:Name="ZoomIn"
                                       Click="ZoomIn_Click"
                                       AutomationProperties.Name="{CustomResource MediaZoomIn}"
                                       ToolTipService.ToolTip="{CustomResource MediaZoomIn}"
                                       Glyph="&#xE969;"
-                                      TabIndex="3" />
+                                      TabIndex="4" />
 
                 <controls:GlyphButton x:Name="Rotate"
                                       Click="Rotate_Click"
                                       AutomationProperties.Name="{CustomResource AccDescrRotate}"
                                       ToolTipService.ToolTip="{CustomResource AccDescrRotate}"
                                       Glyph="&#xEA5B;"
-                                      TabIndex="4" />
+                                      TabIndex="5" />
 
                 <controls:MoreButton Click="Menu_ContextRequested"
                                      HorizontalAlignment="Right"
-                                     TabIndex="5" />
+                                     TabIndex="6" />
             </StackPanel>
 
             <StackPanel Padding="12"
                         MinWidth="320">
                 <local:GalleryTransportControls x:Name="Controls"
                                                 TabIndex="0"
+                                                PointerEntered="Controls_PointerEntered"
+                                                PointerExited="Controls_PointerExited"
                                                 FullScreenClick="FullScreen_Click"
                                                 CompactClick="Compact_Click"
                                                 MaxWidth="396"

@@ -1,14 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services.Settings;
 using Telegram.Td;
@@ -73,16 +75,23 @@ namespace Telegram.Services
         {
             var result = new List<ThemeInfoBase>();
 
-            var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("themes", CreationCollisionOption.OpenIfExists);
-            var files = await folder.GetFilesAsync();
-
-            foreach (var file in files)
+            try
             {
-                try
+                var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("themes", CreationCollisionOption.OpenIfExists);
+                var files = await folder.GetFilesAsync();
+
+                foreach (var file in files)
                 {
-                    result.Add(await DeserializeAsync(file));
+                    try
+                    {
+                        result.Add(await DeserializeAsync(file));
+                    }
+                    catch { }
                 }
-                catch { }
+            }
+            catch
+            {
+                // GetFilesAsync seems to throw at times
             }
 
             return result;
@@ -244,7 +253,7 @@ namespace Telegram.Services
 
             SetTheme(preparing, true);
 
-            if (navigation.XamlRoot.Content is Views.Host.RootPage root)
+            if (navigation.XamlRoot.Content is WindowControl { Content: Views.Host.RootPage root })
             {
                 root.ShowEditor(preparing);
             }

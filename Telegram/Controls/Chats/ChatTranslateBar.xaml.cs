@@ -1,17 +1,21 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Composition;
+using Telegram.Views;
+using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -24,21 +28,24 @@ namespace Telegram.Controls.Chats
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        private UIElement _parent;
+        private ChatView _chatView;
 
         public ChatTranslateBar()
         {
             InitializeComponent();
+
+            _collapsed = new SlidePanel.SlideState(this, false, 32);
 
             ElementCompositionPreview.SetIsTranslationEnabled(Icon, true);
             ElementCompositionPreview.SetIsTranslationEnabled(TranslateTo, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ShowOriginal, true);
         }
 
-        public void InitializeParent(UIElement parent)
+        public float AnimatedHeight => _collapsed ? 0 : 32;
+
+        public void InitializeParent(ChatView chatView)
         {
-            _parent = parent;
-            ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
+            _chatView = chatView;
         }
 
         public void UpdateChatIsTranslatable(Chat chat, string language)
@@ -57,10 +64,13 @@ namespace Telegram.Controls.Chats
                     : Visibility.Visible;
             }
 
-            ShowHide(canTranslate);
+            if (language != null || !chat.IsTranslatable)
+            {
+                ShowHide(canTranslate);
+            }
         }
 
-        private bool _collapsed = true;
+        private SlidePanel.SlideState _collapsed;
 
         private void ShowHide(bool show)
         {
@@ -74,39 +84,8 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            _collapsed = !show;
-            Visibility = Visibility.Visible;
-
-            var parent = ElementComposition.GetElementVisual(_parent);
-            var visual = ElementComposition.GetElementVisual(this);
-            visual.Clip = visual.Compositor.CreateInsetClip();
-
-            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                visual.Clip = null;
-                parent.Properties.InsertVector3("Translation", Vector3.Zero);
-
-                if (_collapsed)
-                {
-                    Visibility = Visibility.Collapsed;
-                }
-            };
-
-            var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
-            clip.InsertKeyFrame(show ? 0 : 1, 32);
-            clip.InsertKeyFrame(show ? 1 : 0, 0);
-            clip.Duration = Constants.FastAnimation;
-
-            var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -32, 0));
-            offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = Constants.FastAnimation;
-
-            visual.Clip.StartAnimation("TopInset", clip);
-            parent.StartAnimation("Translation", offset);
-
-            batch.End();
+            _collapsed.IsVisible = show;
+            _chatView.UpdateMessagesHeaderPadding();
         }
 
         public IEnumerable<UIElement> GetAnimatableVisuals()
@@ -140,6 +119,68 @@ namespace Telegram.Controls.Chats
             flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(ViewModel.StopTranslate, string.Format(Strings.DoNotTranslateLanguage, languageName), Icons.HandRight);
             flyout.CreateFlyoutItem(ViewModel.HideTranslate, Strings.Hide, Icons.DismissCircle);
+
+            var grid = new Grid
+            {
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+
+            var button = new Button
+            {
+                Content = grid,
+                Style = BootStrapper.Current.Resources["ListEmptyButtonStyle"] as Style,
+                CornerRadius = new CornerRadius(4),
+            };
+
+            var block = new FormattedTextBlock
+            {
+                FontSize = 12,
+                IsTextSelectionEnabled = false,
+                IsHitTestVisible = false,
+                AutoFontSize = false,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+                Margin = new Thickness(11, 3, 11, 5),
+                VerticalAlignment = VerticalAlignment.Center,
+                HyperlinkStyle = Windows.UI.Xaml.Documents.UnderlineStyle.None,
+                EmojiStyle = BootStrapper.Current.Resources["MessageCustomEmojiStyle"] as Style
+            };
+
+            grid.Children.Add(block);
+
+            void click(object sender, RoutedEventArgs e)
+            {
+                button.Click -= click;
+                flyout.Hide();
+
+                ViewModel.ShowPopup(new CocoonAboutPopup());
+            }
+
+            button.Click += click;
+
+            var content = new MenuFlyoutContent
+            {
+                Content = button,
+                Padding = new Thickness(4, 2, 4, 2)
+            };
+
+            flyout.CreateFlyoutSeparator();
+            flyout.Items.Add(content);
+
+            var markdown = ClientEx.ParseMarkdown(Strings.CocoonPoweredBy);
+
+            var index = markdown.Text.IndexOf("\uD83E\uDD5A");
+            if (index >= 0)
+            {
+                markdown.Entities.Add(new TextEntity(index, 2, new TextEntityTypeCustomEmoji(5197252827247841976)));
+            }
+
+            var link = ClientEx.ParseMarkdown(Strings.CocoonPoweredByLink);
+            if (link.Entities.Count == 1)
+            {
+                link.Entities.Add(new TextEntity(link.Entities[0].Offset, link.Entities[0].Length, new TextEntityTypeTextUrl()));
+            }
+
+            block.SetText(ViewModel.ClientService, FormattedText.Join(" ", markdown, link));
 
             flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }

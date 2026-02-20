@@ -167,6 +167,13 @@
                         <controls:TopNavViewItem Content="{CustomResource AccDescrGIFs}" />
                         <controls:TopNavViewItem Content="{CustomResource AccDescrStickers}" />
                     </controls:TopNavView>
+
+                    <controls:GlyphButton x:Name="Settings"
+                                          Click="Settings_Click"
+                                          HorizontalAlignment="Right"
+                                          Width="40"
+                                          Height="40"
+                                          Glyph="&#xE713;" />
                 </Grid>
             </Grid>
         </Grid>

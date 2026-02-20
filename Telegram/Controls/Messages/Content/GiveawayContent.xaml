@@ -62,10 +62,10 @@
                                    TextAlignment="Center"
                                    Style="{StaticResource BodyTextBlockStyle}" />
 
-                        <controls:BadgeButton x:Name="Button"
-                                              Content="{CustomResource BoostingHowItWork}"
-                                              Style="{StaticResource InstantViewButtonStyle}"
-                                              Margin="0,12,0,4" />
+                        <controls:ButtonEx x:Name="Button"
+                                           Content="{CustomResource BoostingHowItWork}"
+                                           Style="{StaticResource InstantViewButtonStyle}"
+                                           Margin="0,12,0,4" />
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>

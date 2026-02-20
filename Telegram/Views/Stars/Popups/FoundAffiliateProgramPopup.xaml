@@ -31,8 +31,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <controls:ProfilePicture x:Name="Photo1"
-                                             Width="64"
-                                             Height="64"
+                                             Size="64"
                                              Margin="0,0,0,8" />
                     <TextBlock Text="&#xE0E3;"
                                FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -40,8 +39,7 @@
                                VerticalAlignment="Center"
                                Grid.Column="1" />
                     <controls:ProfilePicture x:Name="Photo2"
-                                             Width="64"
-                                             Height="64"
+                                             Size="64"
                                              Margin="0,0,0,8"
                                              Grid.Column="2" />
                 </Grid>
@@ -100,8 +98,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <controls:ProfilePicture x:Name="Photo"
-                                             Width="28"
-                                             Height="28" />
+                                             Size="28" />
 
                     <TextBlock x:Name="TitleText"
                                Style="{StaticResource BodyTextBlockStyle}"
@@ -132,34 +129,24 @@
             </Button>
         </StackPanel>
 
-        <Grid x:Name="PurchasePanel"
-              VerticalAlignment="Bottom"
-              HorizontalAlignment="Stretch"
-              Margin="0,16,0,0"
-              Grid.Row="1">
-            <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Click="Purchase_Click"
-                                  Style="{StaticResource AccentButtonStyle}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  FontWeight="SemiBold"
-                                  CornerRadius="4"
-                                  BorderThickness="1"
-                                  Margin="0"
-                                  Height="32">
-                <Grid>
-                    <TextBlock x:Name="PurchaseText"
-                               Text="{CustomResource ChannelAffiliateProgramJoinButton}"
-                               VerticalAlignment="Center"
-                               Margin="0,3,0,5" />
-                    <muxc:ProgressRing x:Name="PurchaseRing"
-                                       Visibility="Collapsed"
-                                       Foreground="#FFFFFF"
-                                       Width="20"
-                                       Height="20" />
-                </Grid>
-            </controls:BadgeButton>
-        </Grid>
+        <Button x:Name="PurchaseCommand"
+                Click="Purchase_Click"
+                Style="{StaticResource AccentButtonStyle}"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Stretch"
+                Margin="0,16,0,0"
+                Grid.Row="1">
+            <Grid>
+                <TextBlock x:Name="PurchaseText"
+                           Text="{CustomResource ChannelAffiliateProgramJoinButton}"
+                           VerticalAlignment="Center" />
+                <muxc:ProgressRing x:Name="PurchaseRing"
+                                   Visibility="Collapsed"
+                                   Foreground="#FFFFFF"
+                                   Width="20"
+                                   Height="20" />
+            </Grid>
+        </Button>
 
         <controls:SettingsFooter x:Name="Terms"
                                  IsLink="True"

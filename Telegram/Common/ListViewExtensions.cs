@@ -1,14 +1,14 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Common
 {
@@ -156,19 +156,42 @@ namespace Telegram.Common
                     scrollViewer.UpdateLayout();
                 }
             }
-            try
+
+            scrollViewer.ViewChanged += viewChanged;
+            if (scrollViewer.TryChangeView(horizontalOffset, verticalOffset, null, disableAnimation))
             {
-                scrollViewer.ViewChanged += viewChanged;
-                if (scrollViewer.ChangeView(horizontalOffset, verticalOffset, null, disableAnimation))
+                await tcs.Task;
+            }
+            scrollViewer.ViewChanged -= viewChanged;
+            scrollViewer.LayoutUpdated -= layoutUpdated;
+        }
+
+        public static async Task WaitForViewChangedAsync(this ScrollViewer scrollViewer, bool updateLayout)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+
+            void layoutUpdated(object s1, object e1)
+            {
+                tcs.TrySetResult(true);
+            }
+
+            void viewChanged(object s, ScrollViewerViewChangedEventArgs e)
+            {
+                if (e.IsIntermediate)
                 {
-                    await tcs.Task;
+                    return;
+                }
+
+                scrollViewer.LayoutUpdated += layoutUpdated;
+
+                if (updateLayout)
+                {
+                    scrollViewer.UpdateLayout();
                 }
             }
-            finally
-            {
-                scrollViewer.ViewChanged -= viewChanged;
-                scrollViewer.LayoutUpdated -= layoutUpdated;
-            }
+
+            scrollViewer.ViewChanged += viewChanged;
+            await tcs.Task;
         }
 
         public static ScrollViewer GetScrollViewer(this ListViewBase listViewBase)
@@ -186,19 +209,16 @@ namespace Telegram.Common
             var scrollViewer = listViewBase.GetScrollViewer();
             if (scrollViewer != null)
             {
-                return scrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor, disableAnimation);
+                return scrollViewer.TryChangeView(horizontalOffset, verticalOffset, zoomFactor, disableAnimation);
             }
 
             return false;
         }
 
-        public static void SetVerticalPadding(this ScrollViewer scrollViewer, double padding)
+        public static void SetVerticalPadding(this ScrollViewer scrollViewer, double top, double bottom)
         {
-            var scrollBar = scrollViewer.GetChild<ScrollBar>(x => x.Orientation == Orientation.Vertical);
-            if (scrollBar != null)
-            {
-                scrollBar.Margin = new Thickness(0, padding, 0, 0);
-            }
+            var scrollBar = scrollViewer?.GetLastChild<ScrollBar>(x => x.Orientation == Orientation.Vertical);
+            scrollBar?.Margin = new Thickness(0, top, 0, bottom);
         }
 
         public static void ScrollToTop(this ListViewBase listViewBase)
@@ -206,11 +226,11 @@ namespace Telegram.Common
             var scrollViewer = GetScrollViewer(listViewBase);
             if (scrollViewer != null && scrollViewer.HorizontalScrollMode != ScrollMode.Disabled)
             {
-                scrollViewer?.ChangeView(0, null, null);
+                scrollViewer?.TryChangeView(0, null, null);
             }
             else
             {
-                scrollViewer?.ChangeView(null, 0, null);
+                scrollViewer?.TryChangeView(null, 0, null);
             }
         }
     }

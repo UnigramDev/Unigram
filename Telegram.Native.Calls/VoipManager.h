@@ -15,10 +15,7 @@
 //using namespace winrt::Windows::Foundation;
 //using namespace winrt::Windows::Foundation::Collections;
 
-#include <winrt/Telegram.Td.Api.h>
 #include <mutex>
-
-using namespace winrt::Telegram::Td::Api;
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
@@ -28,7 +25,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     struct VoipManager : VoipManagerT<VoipManager>
     {
-        static CallProtocol Protocol()
+        static winrt::Telegram::Native::Calls::VoipCallProtocol Protocol()
         {
             auto minLayer = 92;
             auto maxLayer = tgcalls::Meta::MaxLayer();
@@ -48,7 +45,7 @@ namespace winrt::Telegram::Native::Calls::implementation
                 args.Append(winrt::to_hstring(x));
             }
 
-            return CallProtocol(true, true, minLayer, maxLayer, args);
+            return winrt::Telegram::Native::Calls::VoipCallProtocol(true, true, minLayer, maxLayer, args);
         }
 
         VoipManager() = default;

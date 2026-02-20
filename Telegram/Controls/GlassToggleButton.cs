@@ -1,4 +1,11 @@
-﻿using Microsoft.Graphics.Canvas;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Geometry;
 using System.Numerics;
@@ -110,14 +117,13 @@ namespace Telegram.Controls
             //var back = compositor.CreateEllipseGeometry();
             //var fore = compositor.CreateEllipseGeometry();
 
-            var device = ElementComposition.GetSharedDevice();
-            var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, 48, 48);
+            var rect1 = CanvasGeometry.CreateRectangle(null, 0, 0, 48, 48);
 
-            var elli1 = CanvasGeometry.CreateCircle(device, 24, 24, 24);
-            var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, elli1 }, CanvasFilledRegionDetermination.Alternate);
+            var elli1 = CanvasGeometry.CreateCircle(null, 24, 24, 24);
+            var group1 = CanvasGeometry.CreateGroup(null, new[] { elli1, elli1 }, CanvasFilledRegionDetermination.Alternate);
 
-            var elli2 = CanvasGeometry.CreateCircle(device, 24, 24, 0);
-            var group2 = CanvasGeometry.CreateGroup(device, new[] { elli2, elli1 }, CanvasFilledRegionDetermination.Alternate);
+            var elli2 = CanvasGeometry.CreateCircle(null, 24, 24, 0);
+            var group2 = CanvasGeometry.CreateGroup(null, new[] { elli2, elli1 }, CanvasFilledRegionDetermination.Alternate);
 
             var back = compositor.CreateEllipseGeometry();
             var fore = compositor.CreatePathGeometry(new CompositionPath(group2));

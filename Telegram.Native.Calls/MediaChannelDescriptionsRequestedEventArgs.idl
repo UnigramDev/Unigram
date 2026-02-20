@@ -1,6 +1,8 @@
+import "Telegram.Native.Calls.idl";
+
 namespace Telegram.Native.Calls
 {
-    delegate void MediaChannelDescriptionsRequestedDeferral(Windows.Foundation.Collections.IVector<Telegram.Td.Api.GroupCallParticipant> participants);
+    delegate void MediaChannelDescriptionsRequestedDeferral(Windows.Foundation.Collections.IVector<VoipMediaChannelDescription> participants);
 
     [default_interface]
     runtimeclass MediaChannelDescriptionsRequestedEventArgs

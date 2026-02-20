@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Geometry;
 using Rg.DiffUtils;
 using System;
@@ -36,6 +37,14 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Stars.Popups
 {
+    public interface IResoldGiftsPopup
+    {
+        void UpdateAttributes();
+        void UpdateItems(GiftsForResale gifts, bool updateFilters);
+
+        ResourceDictionary Resources { get; }
+    }
+
     public partial class ResoldGiftFilter
     {
         public ResoldGiftFilter(UpgradedGiftModelCount model)
@@ -89,31 +98,31 @@ namespace Telegram.Views.Stars.Popups
         private readonly HashSet<long> _selected = new();
 
         private readonly IClientService _clientService;
-        private readonly ResoldGiftsPopup _popup;
+        private readonly IResoldGiftsPopup _popup;
         private readonly Microsoft.UI.Xaml.Controls.DropDownButton _sender;
 
         private MenuFlyout _flyout;
         private IList<long> _prev;
 
-        public ResoldGiftFilterManager(IClientService clientService, ResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IList<UpgradedGiftModelCount> models)
+        public ResoldGiftFilterManager(IClientService clientService, IResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IList<UpgradedGiftModelCount> models)
             : this(clientService, popup, sender, models.Select(x => new ResoldGiftFilter(x)))
         {
-            _attributeType = new UpgradedGiftAttributeIdModel(0);
+            _attributeType = new UpgradedGiftAttributeIdModel(-1);
         }
 
-        public ResoldGiftFilterManager(IClientService clientService, ResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IList<UpgradedGiftBackdropCount> backdrops)
+        public ResoldGiftFilterManager(IClientService clientService, IResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IList<UpgradedGiftBackdropCount> backdrops)
             : this(clientService, popup, sender, backdrops.Select(x => new ResoldGiftFilter(x)))
         {
-            _attributeType = new UpgradedGiftAttributeIdBackdrop(0);
+            _attributeType = new UpgradedGiftAttributeIdBackdrop(-1);
         }
 
-        public ResoldGiftFilterManager(IClientService clientService, ResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IList<UpgradedGiftSymbolCount> symbols)
+        public ResoldGiftFilterManager(IClientService clientService, IResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IList<UpgradedGiftSymbolCount> symbols)
             : this(clientService, popup, sender, symbols.Select(x => new ResoldGiftFilter(x)))
         {
-            _attributeType = new UpgradedGiftAttributeIdSymbol(0);
+            _attributeType = new UpgradedGiftAttributeIdSymbol(-1);
         }
 
-        public ResoldGiftFilterManager(IClientService clientService, ResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IEnumerable<ResoldGiftFilter> items)
+        public ResoldGiftFilterManager(IClientService clientService, IResoldGiftsPopup popup, Microsoft.UI.Xaml.Controls.DropDownButton sender, IEnumerable<ResoldGiftFilter> items)
         {
             _clientService = clientService;
             _popup = popup;
@@ -165,11 +174,14 @@ namespace Telegram.Views.Stars.Popups
 
         public IEnumerable<UpgradedGiftAttributeId> GetAttributes()
         {
-            foreach (var id in _selected)
+            if (_selected.Count < _items.Count)
             {
-                if (_map.TryGetValue(id, out var item))
+                foreach (var id in _selected)
                 {
-                    yield return item.Attribute;
+                    if (_map.TryGetValue(id, out var item))
+                    {
+                        yield return item.Attribute;
+                    }
                 }
             }
         }
@@ -182,7 +194,7 @@ namespace Telegram.Views.Stars.Popups
 
             if (_selected.Count < _items.Count)
             {
-                next.Add(0);
+                next.Add(-1);
             }
 
             foreach (var item in _items)
@@ -202,7 +214,7 @@ namespace Telegram.Views.Stars.Popups
             {
                 if (step.Status == DiffStatus.Add)
                 {
-                    if (step.Items[0].NewValue == 0)
+                    if (step.Items[0].NewValue == -1)
                     {
                         var toggle = new ToggleMenuFlyoutItem();
                         toggle.Text = Strings.SelectAll;
@@ -349,16 +361,17 @@ namespace Telegram.Views.Stars.Popups
     public partial class ResoldGiftsCollection : ObservableCollection<GiftForResale>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
-        private readonly ResoldGiftsPopup _popup;
+        private readonly IResoldGiftsPopup _popup;
         private readonly long _giftId;
 
         private readonly GiftForResaleOrder _order = new GiftForResaleOrderPrice();
+        private readonly bool _forCrafting;
         private readonly IList<UpgradedGiftAttributeId> _attributes = Array.Empty<UpgradedGiftAttributeId>();
 
         private string _nextOffset = string.Empty;
         private bool _hasMoreItems = true;
 
-        public ResoldGiftsCollection(IClientService clientService, ResoldGiftsPopup popup, long giftId, GiftForResaleOrder order, IList<UpgradedGiftAttributeId> attributes)
+        public ResoldGiftsCollection(IClientService clientService, IResoldGiftsPopup popup, long giftId, GiftForResaleOrder order, IList<UpgradedGiftAttributeId> attributes)
         {
             _clientService = clientService;
             _popup = popup;
@@ -367,7 +380,7 @@ namespace Telegram.Views.Stars.Popups
             _attributes = attributes;
         }
 
-        public ResoldGiftsCollection(IClientService clientService, ResoldGiftsPopup popup, long giftId)
+        public ResoldGiftsCollection(IClientService clientService, IResoldGiftsPopup popup, long giftId)
         {
             _clientService = clientService;
             _popup = popup;
@@ -385,7 +398,7 @@ namespace Telegram.Views.Stars.Popups
         {
             var totalCount = 0u;
 
-            var response = await _clientService.SendAsync(new SearchGiftsForResale(_giftId, _order, _attributes, _nextOffset, 24));
+            var response = await _clientService.SendAsync(new SearchGiftsForResale(_giftId, _order, _forCrafting, _attributes, _nextOffset, 24));
             if (response is GiftsForResale gifts)
             {
                 foreach (var gift in gifts.Gifts)
@@ -399,6 +412,11 @@ namespace Telegram.Views.Stars.Popups
                 _nextOffset = gifts.NextOffset;
                 _hasMoreItems = gifts.NextOffset.Length > 0;
             }
+            else
+            {
+                _nextOffset = string.Empty;
+                _hasMoreItems = false;
+            }
 
             return new LoadMoreItemsResult
             {
@@ -406,18 +424,18 @@ namespace Telegram.Views.Stars.Popups
             };
         }
 
-
         public bool HasMoreItems => _hasMoreItems;
 
         public GiftForResaleOrder Order => _order;
     }
 
-    public sealed partial class ResoldGiftsPopup : ContentPopup
+    public sealed partial class ResoldGiftsPopup : ContentPopup, IResoldGiftsPopup
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
 
-        private readonly AvailableGift _gift;
+        private readonly long _giftId;
+        private readonly int _resaleCount;
         private readonly MessageSender _receiverId;
 
         private ResoldGiftsCollection _gifts;
@@ -433,7 +451,8 @@ namespace Telegram.Views.Stars.Popups
             _clientService = clientService;
             _navigationService = navigationService;
 
-            _gift = gift;
+            _giftId = gift.Gift.Id;
+            _resaleCount = gift.ResaleCount;
             _receiverId = receiverId;
 
             Title = gift.Title;
@@ -442,7 +461,40 @@ namespace Telegram.Views.Stars.Popups
             _gifts = new ResoldGiftsCollection(clientService, this, gift.Gift.Id);
             ScrollingHost.ItemsSource = _gifts;
 
-            if (_gift.ResaleCount >= 18)
+            if (_resaleCount >= 18)
+            {
+                OrderIcon.Text = Icons.DollarArrowUp16;
+                OrderText.Text = Strings.ResellGiftFilterSortPriceShort;
+                ModelButton.Content = Strings.Gift2ResaleFilterModel;
+                BackdropButton.Content = Strings.Gift2ResaleFilterBackdrop;
+                SymbolButton.Content = Strings.Gift2ResaleFilterSymbol;
+            }
+            else
+            {
+                FiltersRoot.Visibility = Visibility.Collapsed;
+            }
+
+            Opened += OnOpened;
+        }
+
+        public ResoldGiftsPopup(IClientService clientService, INavigationService navigationService, UpgradedGift gift, UpgradedGiftValueInfo valueInfo, MessageSender receiverId)
+        {
+            InitializeComponent();
+
+            _clientService = clientService;
+            _navigationService = navigationService;
+
+            _giftId = gift.RegularGiftId;
+            _resaleCount = valueInfo.TelegramListedGiftCount;
+            _receiverId = receiverId;
+
+            Title = gift.Title;
+            Subtitle.Text = Locale.Declension(Strings.R.Gift2ResaleCount, valueInfo.TelegramListedGiftCount);
+
+            _gifts = new ResoldGiftsCollection(clientService, this, gift.RegularGiftId);
+            ScrollingHost.ItemsSource = _gifts;
+
+            if (valueInfo.TelegramListedGiftCount >= 18)
             {
                 OrderIcon.Text = Icons.DollarArrowUp16;
                 OrderText.Text = Strings.ResellGiftFilterSortPriceShort;
@@ -515,7 +567,7 @@ namespace Telegram.Views.Stars.Popups
             var itemHeight = 136 + 4;
             var itemWidth = (size.X - 4) / 3;
 
-            var rows = Math.Min(_gift.ResaleCount / 3, Math.Ceiling(size.Y / itemHeight));
+            var rows = Math.Min(_resaleCount / 3, Math.Ceiling(size.Y / itemHeight));
             var shapes = new List<CanvasGeometry>();
 
             for (int i = 0; i < rows; i++)
@@ -583,7 +635,7 @@ namespace Telegram.Views.Stars.Popups
             {
                 Hide(ContentDialogResult.Primary);
 
-                var receivedGift = new ReceivedGift(gift.ReceivedGiftId, null, null, false, false, false, false, false, false, 0, new SentGiftUpgraded(gift.Gift), 0, 0, 0, 0, 0, 0);
+                var receivedGift = new ReceivedGift(gift.ReceivedGiftId, null, null, 0, false, false, false, false, false, false, 0, new SentGiftUpgraded(gift.Gift), Array.Empty<int>(), 0, 0, false, 0, 0, 0, 0, 0, string.Empty, 0);
 
                 var confirm = await _navigationService.ShowPopupAsync(new ReceivedGiftPopup(_clientService, _navigationService, receivedGift, gift.Gift.OwnerId, _receiverId));
                 if (confirm == ContentDialogResult.Primary && _receiverId == null)
@@ -659,7 +711,7 @@ namespace Telegram.Views.Stars.Popups
 
         public void UpdateItems(GiftForResaleOrder order, IList<UpgradedGiftAttributeId> attributes)
         {
-            _gifts = new ResoldGiftsCollection(_clientService, this, _gift.Gift.Id, order, attributes);
+            _gifts = new ResoldGiftsCollection(_clientService, this, _giftId, order, attributes);
             ScrollingHost.ItemsSource = _gifts;
             ShowHideSkeleton();
         }

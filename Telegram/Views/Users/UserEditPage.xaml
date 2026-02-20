@@ -4,8 +4,11 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:controls="using:Telegram.Controls"
+                  xmlns:drawers="using:Telegram.Controls.Drawers"
+                  xmlns:messages="using:Telegram.Controls.Messages"
                   xmlns:local="using:Telegram.Views"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  Title="{x:Bind ViewModel.Title, Mode=OneWay}">
 
     <local:HostedPage.Action>
         <Button Content="{CustomResource Save}"
@@ -36,15 +39,14 @@
                               Margin="0,0,12,0"
                               Grid.RowSpan="2">
                             <controls:ProfilePicture x:Name="Photo"
-                                                     Height="96"
-                                                     Width="96" />
+                                                     Size="96" />
                         </Grid>
 
                         <TextBox x:Name="FirstName"
                                  Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  PlaceholderText="{CustomResource FirstNameSmall}"
                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                 MaxLength="{StaticResource ChannelTitleMaxLength}"
+                                 MaxLength="{StaticResource UserFirstNameMaxLength}"
                                  VerticalAlignment="Bottom"
                                  Margin="0,0,0,2"
                                  Grid.Column="1" />
@@ -53,17 +55,16 @@
                                  Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  PlaceholderText="{CustomResource LastNameSmall}"
                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                 MaxLength="{StaticResource ChannelTitleMaxLength}"
+                                 MaxLength="{StaticResource UserLastNameMaxLength}"
                                  VerticalAlignment="Top"
                                  Margin="0,2,0,0"
                                  Grid.Column="1"
                                  Grid.Row="1" />
                     </Grid>
-                    <controls:BadgeButton x:Name="BotPhoto"
-                                          x:Load="False"
-                                          Content="{CustomResource ChatSetNewPhoto}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9FE;">
+                    <controls:SettingsButton x:Name="BotPhoto"
+                                             x:Load="False"
+                                             Content="{CustomResource ChatSetNewPhoto}"
+                                             Glyph="&#xE9FE;">
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedLeft">
                                 <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
@@ -82,7 +83,7 @@
                                 </MenuFlyoutItem>
                             </MenuFlyout>
                         </Button.Flyout>
-                    </controls:BadgeButton>
+                    </controls:SettingsButton>
                     <TextBox x:Name="About"
                              x:Load="False"
                              Text="{x:Bind ViewModel.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -95,22 +96,19 @@
 
                 <controls:HeaderedControl x:Name="UsernamePanel"
                                           x:Load="False">
-                    <controls:BadgeButton x:Name="Username"
-                                          Click="{x:Bind ViewModel.ChangeUsername}"
-                                          Content="{CustomResource Username}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9F8;" />
-                    <controls:BadgeButton x:Name="AffiliateProgram"
-                                          Content="{CustomResource AffiliateProgramBot}"
-                                          Click="{x:Bind ViewModel.OpenAffiliate}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEAA6;" />
-                    <controls:BadgeButton x:Name="Stars"
-                                          Click="{x:Bind ViewModel.ShowBalance}"
-                                          Content="{CustomResource StarsBalance}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEA8D;">
-                        <controls:BadgeButton.Badge>
+                    <controls:SettingsButton x:Name="Username"
+                                             Click="{x:Bind ViewModel.ChangeUsername}"
+                                             Content="{CustomResource Username}"
+                                             Glyph="&#xE9F8;" />
+                    <controls:SettingsButton x:Name="AffiliateProgram"
+                                             Content="{CustomResource AffiliateProgramBot}"
+                                             Click="{x:Bind ViewModel.OpenAffiliate}"
+                                             Glyph="&#xEAA6;" />
+                    <controls:SettingsButton x:Name="Stars"
+                                             Click="{x:Bind ViewModel.ShowBalance}"
+                                             Content="{CustomResource StarsBalance}"
+                                             Glyph="&#xEA8D;">
+                        <controls:SettingsButton.Badge>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
@@ -120,33 +118,82 @@
                                 <TextBlock Text="{x:Bind ConvertStarCount(ViewModel.StarCount), Mode=OneWay}"
                                            Grid.Column="1" />
                             </Grid>
-                        </controls:BadgeButton.Badge>
-                    </controls:BadgeButton>
+                        </controls:SettingsButton.Badge>
+                    </controls:SettingsButton>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="BotPanel2"
                                           x:Load="False">
-                    <controls:BadgeButton Click="{x:Bind ViewModel.VerifyAccounts}"
-                                          Content="{CustomResource BotVerifyAccounts}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEA8B;" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.VerifyAccounts}"
+                                             Content="{CustomResource BotVerifyAccounts}"
+                                             Glyph="&#xEA8B;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="BotPanel"
                                           x:Load="False"
                                           Footer="{CustomResource BotManageInfo}">
-                    <controls:BadgeButton Click="{x:Bind ViewModel.EditDescription}"
-                                          Content="{CustomResource BotEditIntro}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEA0A;" />
-                    <controls:BadgeButton Click="{x:Bind ViewModel.EditCommands}"
-                                          Content="{CustomResource BotEditCommands}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEA0B;" />
-                    <controls:BadgeButton Click="{x:Bind ViewModel.EditSettings}"
-                                          Content="{CustomResource BotChangeSettings}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE99A;" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.EditDescription}"
+                                             Content="{CustomResource BotEditIntro}"
+                                             Glyph="&#xEA0A;" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.EditCommands}"
+                                             Content="{CustomResource BotEditCommands}"
+                                             Glyph="&#xEA0B;" />
+                    <controls:SettingsButton Click="{x:Bind ViewModel.EditSettings}"
+                                             Content="{CustomResource BotChangeSettings}"
+                                             Glyph="&#xE99A;" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl x:Name="NotePanel"
+                                          x:Load="False"
+                                          Footer="{CustomResource AddNotesInfo}">
+                    <Grid>
+                        <FlyoutBase.AttachedFlyout>
+                            <Flyout x:Name="EmojiFlyout"
+                                    Placement="Top"
+                                    ShowMode="Transient">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="FlyoutPresenter"
+                                           BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
+                                        <Setter Property="Padding"
+                                                Value="0" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+                                <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                                     ItemClick="Emoji_ItemClick"
+                                                     Width="300"
+                                                     Height="360" />
+                            </Flyout>
+                        </FlyoutBase.AttachedFlyout>
+                        <controls:CaptionTextBox x:Name="NoteField"
+                                                 TextChanged="NoteField_TextChanged"
+                                                 PlaceholderText="{CustomResource AddNotes}"
+                                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                 Padding="58,11,6,12"
+                                                 Height="44"
+                                                 MaxLength="12"
+                                                 AcceptsReturn="False" />
+
+                        <messages:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                    IsHitTestVisible="False"
+                                                    Margin="58,10,0,0" />
+
+                        <controls:GlyphButton Click="Emoji_Click"
+                                              Glyph="&#xE76E;"
+                                              AutomationProperties.Name="{CustomResource Emoji}"
+                                              AllowFocusOnInteraction="False"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Bottom"
+                                              FontSize="24"
+                                              Height="44"
+                                              Grid.Column="1" />
+
+                        <TextBlock Text="&#xEADF;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="20"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   Margin="20,0,0,0" />
+                    </Grid>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="SharePhonePanel"
@@ -158,10 +205,14 @@
 
                 <controls:HeaderedControl x:Name="PhotoPanel"
                                           x:Load="False">
-                    <controls:BadgeButton x:Name="SuggestPhoto"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9FE;"
-                                          Visibility="Collapsed">
+                    <controls:SettingsButton x:Name="SuggestBirthday"
+                                             Click="{x:Bind ViewModel.SuggestBirthday}"
+                                             Content="{CustomResource UserSuggestBirthday}"
+                                             Glyph="&#xEAE0;"
+                                             Visibility="Collapsed" />
+                    <controls:SettingsButton x:Name="SuggestPhoto"
+                                             Glyph="&#xE9FE;"
+                                             Visibility="Collapsed">
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedLeft">
                                 <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
@@ -180,10 +231,9 @@
                                 </MenuFlyoutItem>
                             </MenuFlyout>
                         </Button.Flyout>
-                    </controls:BadgeButton>
-                    <controls:BadgeButton x:Name="PersonalPhoto"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9FD;">
+                    </controls:SettingsButton>
+                    <controls:SettingsButton x:Name="PersonalPhoto"
+                                             Glyph="&#xE9FD;">
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedLeft">
                                 <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
@@ -202,20 +252,19 @@
                                 </MenuFlyoutItem>
                             </MenuFlyout>
                         </Button.Flyout>
-                    </controls:BadgeButton>
+                    </controls:SettingsButton>
 
                     <controls:ProfilePicture x:Name="ResetPhotoPhoto"
-                                             Width="28"
-                                             Height="28"
+                                             Size="28"
                                              HorizontalAlignment="Left"
                                              Margin="16,0,0,-44"
                                              Canvas.ZIndex="1" />
 
-                    <controls:BadgeButton x:Name="ResetPhoto"
-                                          Click="{x:Bind ViewModel.ResetPhoto}"
-                                          Content="{CustomResource ResetToOriginalPhoto}"
-                                          Foreground="{ThemeResource DangerButtonBackground}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                    <controls:SettingsButton x:Name="ResetPhoto"
+                                             Click="{x:Bind ViewModel.ResetPhoto}"
+                                             Content="{CustomResource ResetToOriginalPhoto}"
+                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             IsGlyphVisible="True" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

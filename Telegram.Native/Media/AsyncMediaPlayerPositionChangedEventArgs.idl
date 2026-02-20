@@ -1,0 +1,9 @@
+namespace Telegram.Native.Media
+{
+    [default_interface]
+    runtimeclass AsyncMediaPlayerPositionChangedEventArgs 
+    {
+        AsyncMediaPlayerPositionChangedEventArgs(Double position);
+        Double Position;
+    }
+}

@@ -7,20 +7,19 @@
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
                        Padding="0"
-                       IsDismissButtonVisible="True">
+                       IsDismissButtonVisible="True"
+                       PrimaryButtonText="{x:Bind ConvertPurchase(ViewModel.CanPurchase, ViewModel.IsPremium, ViewModel.Option), Mode=OneWay, FallbackValue=Empty}"
+                       PrimaryButtonStyle="{StaticResource PremiumButtonStyle}"
+                       ButtonsLayout="Vertical">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Features}"
                   ItemClick="OnItemClick"
                   IsItemClickEnabled="True"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
-                  Padding="12,0">
+                  Padding="12,0,12,0">
             <ListView.Header>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -88,7 +87,7 @@
                             <TextBlock x:Name="Link"
                                        TextTrimming="CharacterEllipsis" />
                         </Button>
-                        <TextBlock Text="&#xE8C8;"
+                        <TextBlock Text="&#xEAC9;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    FontSize="20"
                                    Foreground="{ThemeResource AccentButtonBackground}"
@@ -135,7 +134,7 @@
                                                Text="NEW"
                                                HorizontalAlignment="Left"
                                                VerticalAlignment="Bottom"
-                                               Margin="4,-4,0,4"
+                                               Margin="4,-4,0,0"
                                                CornerRadius="4"
                                                Grid.Column="2" />
 
@@ -169,29 +168,8 @@
             </ListView.Footer>
         </ListView>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                    ScrollingHost="{x:Bind ScrollingHost}" />
-
-        <Grid x:Name="PurchasePanel"
-              x:Load="{x:Bind ViewModel.CanPurchase, Mode=OneWay}"
-              VerticalAlignment="Bottom"
-              HorizontalAlignment="Stretch"
-              Margin="24,0,24,24"
-              Grid.Row="1">
-            <Border Background="{StaticResource PremiumLinearGradientBrush}"
-                    CornerRadius="4"
-                    Height="32" />
-            <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Click="Purchase_Click"
-                                  Content="{x:Bind ConvertPurchase(ViewModel.IsPremium, ViewModel.Option), Mode=OneWay, FallbackValue=Empty}"
-                                  Style="{StaticResource StartButtonStyle}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  FontWeight="SemiBold"
-                                  Padding="16,3,16,5"
-                                  CornerRadius="4"
-                                  Margin="0"
-                                  Height="32" />
-        </Grid>
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    ScrollingHost="{x:Bind ScrollingHost}"
+                                    BottomInset="0" />
     </Grid>
 </controls:ContentPopup>

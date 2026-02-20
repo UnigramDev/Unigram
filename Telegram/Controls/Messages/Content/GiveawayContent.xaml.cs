@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Text;
 using Telegram.Common;
 using Telegram.Converters;
@@ -37,7 +38,7 @@ namespace Telegram.Controls.Messages.Content
         private StackPanel ParticipantsPanel;
         private TextBlock FromLabel;
         private TextBlock WinnersLabel;
-        private BadgeButton Button;
+        private ButtonEx Button;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -49,7 +50,7 @@ namespace Telegram.Controls.Messages.Content
             ParticipantsPanel = GetTemplateChild(nameof(ParticipantsPanel)) as StackPanel;
             FromLabel = GetTemplateChild(nameof(FromLabel)) as TextBlock;
             WinnersLabel = GetTemplateChild(nameof(WinnersLabel)) as TextBlock;
-            Button = GetTemplateChild(nameof(Button)) as BadgeButton;
+            Button = GetTemplateChild(nameof(Button)) as ButtonEx;
 
             Button.Click += Button_Click;
 

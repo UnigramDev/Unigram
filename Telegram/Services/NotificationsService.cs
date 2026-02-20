@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -31,11 +32,14 @@ namespace Telegram.Services
     {
         Task ProcessAsync(Dictionary<string, string> data);
 
-        void PlaySound();
+        void PlaySound(bool sent);
 
         #region Chats related
 
         void SetMuteFor(Chat chat, int muteFor, XamlRoot xamlRoot);
+        void SetMuteFor(ForumTopic topic, int muteFor, XamlRoot xamlRoot);
+
+        void SetSound(Chat chat, bool silent, XamlRoot xamlRoot);
 
         #endregion
     }
@@ -43,7 +47,7 @@ namespace Telegram.Services
     public partial class NotificationsService : INotificationsService
     {
         private readonly IClientService _clientService;
-        private readonly ISessionService _sessionService;
+        private readonly ISession _sessionService;
         private readonly ISettingsService _settings;
         private readonly IEventAggregator _aggregator;
 
@@ -51,7 +55,7 @@ namespace Telegram.Services
 
         private readonly bool? _suppress;
 
-        public NotificationsService(IClientService clientService, ISettingsService settingsService, ISessionService sessionService, IEventAggregator aggregator)
+        public NotificationsService(IClientService clientService, ISettingsService settingsService, ISession sessionService, IEventAggregator aggregator)
         {
             _clientService = clientService;
             _settings = settingsService;
@@ -195,7 +199,7 @@ namespace Telegram.Services
 
                 dispatcher?.Dispatch(async () =>
                 {
-                    var xamlRoot = window.Content?.XamlRoot;
+                    var xamlRoot = window.XamlRoot;
                     if (xamlRoot == null)
                     {
                         return;
@@ -227,6 +231,12 @@ namespace Telegram.Services
         {
             Logger.Info("UpdateSuggestedActions");
 
+            var enableArchiveAndMuteNewChats = update.AddedActions.FirstOrDefault(x => x is SuggestedActionEnableArchiveAndMuteNewChats);
+            if (enableArchiveAndMuteNewChats == null)
+            {
+                return;
+            }
+
             await ViewService.WaitForMainWindowAsync();
 
             var window = WindowContext.Active ?? WindowContext.Main;
@@ -234,29 +244,26 @@ namespace Telegram.Services
 
             dispatcher?.Dispatch(async () =>
             {
-                foreach (var action in update.AddedActions)
+                var xamlRoot = window.XamlRoot;
+                if (xamlRoot == null)
                 {
-                    var xamlRoot = window.Content?.XamlRoot;
-                    if (xamlRoot == null)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    if (action is SuggestedActionEnableArchiveAndMuteNewChats)
+                if (enableArchiveAndMuteNewChats is SuggestedActionEnableArchiveAndMuteNewChats)
+                {
+                    var confirm = await MessagePopup.ShowAsync(xamlRoot, Strings.HideNewChatsAlertText, Strings.HideNewChatsAlertTitle, Strings.OK, Strings.Cancel);
+                    if (confirm == ContentDialogResult.Primary)
                     {
-                        var confirm = await MessagePopup.ShowAsync(xamlRoot, Strings.HideNewChatsAlertText, Strings.HideNewChatsAlertTitle, Strings.OK, Strings.Cancel);
-                        if (confirm == ContentDialogResult.Primary)
+                        var response = await _clientService.SendAsync(new GetArchiveChatListSettings());
+                        if (response is ArchiveChatListSettings settings)
                         {
-                            var response = await _clientService.SendAsync(new GetArchiveChatListSettings());
-                            if (response is ArchiveChatListSettings settings)
-                            {
-                                settings.ArchiveAndMuteNewChatsFromUnknownUsers = true;
-                                _clientService.Send(new SetArchiveChatListSettings(settings));
-                            }
+                            settings.ArchiveAndMuteNewChatsFromUnknownUsers = true;
+                            _clientService.Send(new SetArchiveChatListSettings(settings));
                         }
-
-                        _clientService.Send(new HideSuggestedAction(action));
                     }
+
+                    _clientService.Send(new HideSuggestedAction(enableArchiveAndMuteNewChats));
                 }
             });
         }
@@ -284,7 +291,7 @@ namespace Telegram.Services
 
             dispatcher?.Dispatch(async () =>
             {
-                var xamlRoot = window.Content?.XamlRoot;
+                var xamlRoot = window.XamlRoot;
                 if (xamlRoot == null)
                 {
                     return;
@@ -360,18 +367,41 @@ namespace Telegram.Services
                 _notifyIconUnreadCount = unreadCount;
                 _notifyIconUnreadUnmutedCount = unreadUnmutedCount;
 
-                NotifyIcon.SendUnreadCount(unreadCount, unreadUnmutedCount);
+                BridgeApplicationContext.SendUnreadCount(unreadCount, unreadUnmutedCount);
             }
         }
 
-        public void PlaySound()
+        private ulong _lastPlayedSent;
+        private ulong _lastPlayedReceived;
+
+        public void PlaySound(bool sent)
         {
             if (!_settings.Notifications.InAppSounds)
             {
                 return;
             }
 
-            Task.Run(() => SoundEffects.Play(SoundEffect.Sent));
+            var now = Logger.TickCount;
+            if (sent)
+            {
+                if (now - _lastPlayedSent < 500)
+                {
+                    return;
+                }
+
+                _lastPlayedSent = now;
+            }
+            else
+            {
+                if (now - _lastPlayedReceived < 500)
+                {
+                    return;
+                }
+
+                _lastPlayedReceived = now;
+            }
+
+            Task.Run(() => SoundEffects.Play(sent ? SoundEffect.Sent : SoundEffect.Received));
         }
 
         public void Handle(UpdateActiveNotifications update)
@@ -544,7 +574,7 @@ namespace Telegram.Services
 
                 var showPreview = _settings.Notifications.GetShowPreview(chat);
 
-                if (chat.Type is ChatTypeSecret || !showPreview || !_settings.Notifications.ShowName || TypeResolver.Current.Passcode.IsLockscreenRequired)
+                if (chat.Type is ChatTypeSecret || !showPreview || !_settings.Notifications.ShowName || LifetimeService.Current.Passcode.IsLockscreenRequired)
                 {
                     picture = string.Empty;
                     caption = Strings.AppName;
@@ -613,7 +643,7 @@ namespace Telegram.Services
                 xml += $"<image placement='appLogoOverride' hint-crop='circle' src='{picture}'/>";
             }
 
-            if (TypeResolver.Current.GetSessions().Count() > 1
+            if (LifetimeService.Current.Count > 1
                 && SettingsService.Current.IsAllAccountsNotifications
                 && _clientService.TryGetUser(_clientService.Options.MyId, out User user))
             {
@@ -680,6 +710,11 @@ namespace Telegram.Services
                 notification.SuppressPopup = suppressPopup || ticks - _lastShownToast <= 7000;
                 notifier.Show(notification);
 
+                if (ticks - _lastShownToast <= 7000)
+                {
+                    Logger.Info("Suppress popup");
+                }
+
                 if (soundFile != null && notifier.Setting == NotificationSetting.Enabled)
                 {
                     SoundEffects.Play(soundFile);
@@ -716,9 +751,13 @@ namespace Telegram.Services
             {
                 launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;saved_messages_topic_id={1}", launch, messageTopicSavedMessages.SavedMessagesTopicId);
             }
-            else if (message.TopicId is MessageTopicFeedbackChat messageTopicFeedbackChat)
+            else if (message.TopicId is MessageTopicDirectMessages messageTopicDirectMessagesChat)
             {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;feedback_chat_topic_id={1}", launch, messageTopicFeedbackChat.FeedbackChatTopicId);
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;feedback_chat_topic_id={1}", launch, messageTopicDirectMessagesChat.DirectMessagesChatTopicId);
+            }
+            else if (message.TopicId is MessageTopicThread messageTopicThread)
+            {
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;thread_id={1}", launch, messageTopicThread.MessageThreadId);
             }
 
             return launch;
@@ -753,8 +792,8 @@ namespace Telegram.Services
 
                     // TODO: topic id
 
-                    var replyToMessage = data.TryGetValue("msg_id", out string msg_id) && long.TryParse(msg_id, out long messageId) ? new InputMessageReplyToMessage(messageId, null) : null;
-                    var response = await _clientService.SendAsync(new SendMessage(chat.Id, 0, replyToMessage, new MessageSendOptions(0, false, true, false, false, 0, false, null, 0, 0, false), null, new InputMessageText(formatted, null, false)));
+                    var replyToMessage = data.TryGetValue("msg_id", out string msg_id) && long.TryParse(msg_id, out long messageId) ? new InputMessageReplyToMessage(messageId, null, 0) : null;
+                    var response = await _clientService.SendAsync(new SendMessage(chat.Id, null, replyToMessage, new MessageSendOptions(null, false, true, 0, false, null, 0, 0, false), new InputMessageText(formatted, null, false)));
 
                     if (chat.Type is ChatTypePrivate && chat.LastMessage != null)
                     {
@@ -840,6 +879,35 @@ namespace Telegram.Services
             return string.Empty;
         }
 
+        public void SetSound(Chat chat, bool silent, XamlRoot xamlRoot)
+        {
+            if (_settings.Notifications.TryGetScope(chat, out ScopeNotificationSettings scope))
+            {
+                var settings = chat.NotificationSettings.Clone();
+                var value = silent ? 0L : -1;
+
+                var useDefault = !silent;
+                if (useDefault)
+                {
+                    value = scope.SoundId;
+                }
+
+                settings.UseDefaultSound = useDefault;
+                settings.SoundId = value;
+
+                _clientService.Send(new SetChatNotificationSettings(chat.Id, settings));
+
+                if (silent)
+                {
+                    ToastPopup.Show(xamlRoot, Strings.SoundOffHint, ToastPopupIcon.SoundOff);
+                }
+                else
+                {
+                    ToastPopup.Show(xamlRoot, Strings.SoundOnHint, ToastPopupIcon.SoundOn);
+                }
+            }
+        }
+
         public void SetMuteFor(Chat chat, int value, XamlRoot xamlRoot)
         {
             if (_settings.Notifications.TryGetScope(chat, out ScopeNotificationSettings scope))
@@ -856,6 +924,43 @@ namespace Telegram.Services
                 settings.MuteFor = value;
 
                 _clientService.Send(new SetChatNotificationSettings(chat.Id, settings));
+
+                if (xamlRoot == null)
+                {
+                    return;
+                }
+
+                if (value == 0)
+                {
+                    ToastPopup.Show(xamlRoot, Strings.NotificationsUnmutedHint, ToastPopupIcon.Unmute);
+                }
+                else if (value >= 366 * 24 * 60 * 60)
+                {
+                    ToastPopup.Show(xamlRoot, Strings.NotificationsMutedHint, ToastPopupIcon.Mute);
+                }
+                else
+                {
+                    ToastPopup.Show(xamlRoot, string.Format(Strings.NotificationsMutedForHint, Locale.FormatMuteFor(value)), ToastPopupIcon.MuteFor);
+                }
+            }
+        }
+
+        public void SetMuteFor(ForumTopic topic, int value, XamlRoot xamlRoot)
+        {
+            if (_clientService.TryGetChat(topic.Info.ChatId, out Chat chat) && _settings.Notifications.TryGetScope(chat, out ScopeNotificationSettings scope))
+            {
+                var settings = topic.NotificationSettings.Clone();
+
+                var useDefault = value == scope.MuteFor || (value >= 366 * 24 * 60 * 60 && scope.MuteFor >= 366 * 24 * 60 * 60);
+                if (useDefault)
+                {
+                    value = scope.MuteFor;
+                }
+
+                settings.UseDefaultMuteFor = useDefault;
+                settings.MuteFor = value;
+
+                _clientService.Send(new SetForumTopicNotificationSettings(chat.Id, topic.Info.ForumTopicId, settings));
 
                 if (xamlRoot == null)
                 {

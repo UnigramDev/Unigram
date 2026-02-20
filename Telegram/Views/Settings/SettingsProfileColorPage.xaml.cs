@@ -1,14 +1,23 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System;
+using System.Collections.Specialized;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
+using Telegram.Views.Profile;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Settings
@@ -17,99 +26,232 @@ namespace Telegram.Views.Settings
     {
         public SettingsProfileColorViewModel ViewModel => DataContext as SettingsProfileColorViewModel;
 
+        private CompositionPropertySet _properties;
+
         public SettingsProfileColorPage()
         {
             InitializeComponent();
-            Title = Strings.UserColorTabProfile;
+            InitializeScrolling();
+
+            Title = Strings.YourNameColor;
         }
 
-        private bool _confirmed;
+        private void InitializeScrolling()
+        {
+            var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(ScrollingHost);
+            var visual = ElementComposition.GetElementVisual(HeaderPanel);
+            var border = ElementComposition.GetElementVisual(CardBackground);
+            var clipper = ElementComposition.GetElementVisual(ClipperBackground);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(HeaderPanel, true);
+
+            ProfileHeader.Height = 48 - 16;
+
+            _properties = visual.Compositor.CreatePropertySet();
+            _properties.InsertScalar("ActualHeight", ProfileHeader.ActualSize.Y + 16);
+
+            var translation = visual.Compositor.CreateExpressionAnimation(
+                "properties.ActualHeight > 16 ? scrollViewer.Translation.Y > -properties.ActualHeight ? 0 : -scrollViewer.Translation.Y - properties.ActualHeight : -scrollViewer.Translation.Y");
+            translation.SetReferenceParameter("scrollViewer", properties);
+            translation.SetReferenceParameter("properties", _properties);
+
+            var fadeOut = visual.Compositor.CreateExpressionAnimation(
+                "properties.ActualHeight > 16 ? scrollViewer.Translation.Y > -(properties.ActualHeight - 16) ? 1 : 1 - ((-scrollViewer.Translation.Y - (properties.ActualHeight - 16)) / 16) : 0");
+            fadeOut.SetReferenceParameter("scrollViewer", properties);
+            fadeOut.SetReferenceParameter("properties", _properties);
+
+            var fadeIn = visual.Compositor.CreateExpressionAnimation(
+                "properties.ActualHeight > 16 ? scrollViewer.Translation.Y > -(properties.ActualHeight - 16) ? 0 : ((-scrollViewer.Translation.Y - (properties.ActualHeight - 16)) / 16) : 1");
+            fadeIn.SetReferenceParameter("scrollViewer", properties);
+            fadeIn.SetReferenceParameter("properties", _properties);
+
+            visual.StartAnimation("Translation.Y", translation);
+
+            border.StartAnimation("Opacity", fadeOut);
+            clipper.StartAnimation("Opacity", fadeIn);
+        }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            NameView.Initialize(ViewModel.ClientService, new MessageSenderUser(ViewModel.ClientService.Options.MyId));
-            ProfileView.Initialize(ViewModel.ClientService, new MessageSenderUser(ViewModel.ClientService.Options.MyId));
+            if (ViewModel.SelectedTab is SettingsProfileColorTabViewModelBase tab)
+            {
+                MediaFrame.Navigate(tab.Type, null, new SuppressNavigationTransitionInfo());
+            }
         }
 
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            if (_confirmed)
+            if (_notifyCollectionChanged != null)
+            {
+                _notifyCollectionChanged.CollectionChanged -= OnCollectionChanged;
+                _notifyCollectionChanged = null;
+            }
+
+            if (MediaFrame.Content is ProfileTabPage tabPage)
+            {
+                tabPage.ScrollingHost.UnregisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, ref _itemsSourceToken);
+                tabPage.ScrollingHost.UnregisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, ref _selectionModeToken);
+            }
+        }
+
+        private long _itemsSourceToken;
+        private long _selectionModeToken;
+
+        private void OnNavigating(object sender, NavigatingCancelEventArgs e)
+        {
+            if (_notifyCollectionChanged != null)
+            {
+                _notifyCollectionChanged.CollectionChanged -= OnCollectionChanged;
+                _notifyCollectionChanged = null;
+            }
+
+            if (MediaFrame.Content is ProfileTabPage tabPage)
+            {
+                tabPage.ScrollingHost.UnregisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, ref _itemsSourceToken);
+                tabPage.ScrollingHost.UnregisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, ref _selectionModeToken);
+            }
+        }
+
+        private void OnNavigated(object sender, NavigationEventArgs e)
+        {
+            if (e.Content is SettingsProfileColorNameTabPage nameColor)
+            {
+                nameColor.DataContext = ViewModel.NameColor;
+                nameColor.Initialize(ViewModel.ClientService, new MessageSenderUser(ViewModel.ClientService.Options.MyId));
+            }
+            else if (e.Content is SettingsProfileColorProfileTabPage profileColor)
+            {
+                profileColor.DataContext = ViewModel.ProfileColor;
+                profileColor.Initialize(ViewModel.ClientService, new MessageSenderUser(ViewModel.ClientService.Options.MyId));
+            }
+
+            if (e.Content is not ProfileTabPage tabPage)
             {
                 return;
             }
 
-            if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
+            tabPage.ScrollingHost.RegisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, OnItemsSourceChanged, ref _itemsSourceToken);
+
+            if (tabPage.ScrollingHost.ItemsSource != null)
             {
-                if (ViewModel.IsPremium)
-                {
-                    var changed = false;
-
-                    if (user.AccentColorId != NameView.SelectedAccentColor?.Id || user.BackgroundCustomEmojiId != NameView.SelectedCustomEmojiId)
-                    {
-                        changed = true;
-                    }
-
-                    if (user.ProfileAccentColorId != ProfileView.SelectedAccentColor?.Id || user.ProfileBackgroundCustomEmojiId != ProfileView.SelectedCustomEmojiId)
-                    {
-                        changed = true;
-                    }
-
-                    if (changed)
-                    {
-                        ConfirmClose();
-                        e.Cancel = true;
-                    }
-                }
+                LoadMore(tabPage.ScrollingHost);
             }
         }
 
-        private async void ConfirmClose()
+        private INotifyCollectionChanged _notifyCollectionChanged;
+
+        private void OnItemsSourceChanged(DependencyObject sender, DependencyProperty dp)
         {
-            var confirm = await ViewModel.ShowPopupAsync(Strings.UserColorUnsavedMessage, Strings.UserColorUnsaved, Strings.ChatThemeSaveDialogDiscard, Strings.ChatThemeSaveDialogApply, destructive: true);
-            if (confirm == ContentDialogResult.Primary)
+            if (MediaFrame.Content is not ProfileTabPage tabPage || tabPage.ScrollingHost is not ListViewBase scrollingHost)
             {
-                _confirmed = true;
-                Frame.GoBack();
+                return;
             }
-            else if (confirm == ContentDialogResult.Secondary)
+
+            if (_notifyCollectionChanged != null)
             {
-                _confirmed = true;
-                PurchaseCommand_Click(null, null);
+                _notifyCollectionChanged.CollectionChanged -= OnCollectionChanged;
+            }
+
+            _notifyCollectionChanged = scrollingHost.ItemsSource as INotifyCollectionChanged;
+
+            if (_notifyCollectionChanged != null)
+            {
+                _notifyCollectionChanged.CollectionChanged += OnCollectionChanged;
+            }
+
+            LoadMore(scrollingHost);
+        }
+
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                if (MediaFrame.Content is not ProfileTabPage tabPage || tabPage.ScrollingHost is not ListViewBase scrollingHost)
+                {
+                    return;
+                }
+
+                LoadMore(scrollingHost);
             }
         }
 
-        private void PurchaseCommand_Click(object sender, RoutedEventArgs e)
+        private void ProfileHeader_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
+            _properties.InsertScalar("ActualHeight", ProfileHeader.ActualSize.Y + 16);
+            //ViewModel.HeaderHeight = Math.Max(e.NewSize.Height, 48 + 10);
+            MediaFrame.MinHeight = ScrollingHost.ActualHeight + e.NewSize.Height - 48;
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MediaFrame.MinHeight = Header.ActualHeight + e.NewSize.Height - 48;
+
+            if (MediaFrame.Content is not ProfileTabPage tabPage || tabPage.ScrollingHost is not ListViewBase scrollingHost)
             {
-                if (ViewModel.IsPremium)
+                return;
+            }
+
+            LoadMore(scrollingHost);
+        }
+
+        private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (MediaFrame.Content is not ProfileTabPage tabPage || tabPage.ScrollingHost is not ListViewBase scrollingHost)
+            {
+                return;
+            }
+
+            LoadMore(scrollingHost);
+        }
+
+        private bool _loadingMore;
+
+        private async void LoadMore(ListViewBase scrollingHost)
+        {
+            if (_loadingMore)
+            {
+                return;
+            }
+
+            _loadingMore = true;
+
+            uint loadedMore = 0;
+            int lastCacheIndex = scrollingHost.ItemsPanelRoot switch
+            {
+                ItemsStackPanel stackPanel => stackPanel.LastCacheIndex,
+                ItemsWrapGrid wrapGrid => wrapGrid.LastCacheIndex,
+                _ => -1
+            };
+
+            var needsMore = lastCacheIndex == scrollingHost.Items.Count - 1;
+            needsMore |= scrollingHost.ActualHeight < ScrollingHost.ActualHeight;
+
+            if (needsMore && scrollingHost.ItemsSource is ISupportIncrementalLoading supportIncrementalLoading && supportIncrementalLoading.HasMoreItems)
+            {
+                var result = await supportIncrementalLoading.LoadMoreItemsAsync(50);
+                loadedMore = result.Count;
+            }
+
+            _loadingMore = false;
+
+            if (loadedMore > 0)
+            {
+                LoadMore(scrollingHost);
+            }
+        }
+
+        private void Header_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (sender is TopNavView navigation && e.ClickedItem is SettingsProfileColorTabViewModelBase page && page.Type != MediaFrame.Content?.GetType())
+            {
+                var transition = new SlideNavigationTransitionInfo
                 {
-                    var changed = false;
+                    Effect = navigation.SelectedIndex < navigation.Items.IndexOf(e.ClickedItem)
+                        ? SlideNavigationTransitionEffect.FromRight
+                        : SlideNavigationTransitionEffect.FromLeft
+                };
 
-                    if (user.AccentColorId != NameView.SelectedAccentColor?.Id || user.BackgroundCustomEmojiId != NameView.SelectedCustomEmojiId)
-                    {
-                        ViewModel.ClientService.Send(new SetAccentColor(NameView.SelectedAccentColor.Id, NameView.SelectedCustomEmojiId));
-                        changed = true;
-                    }
-
-                    if (user.ProfileAccentColorId != ProfileView.SelectedAccentColor?.Id || user.ProfileBackgroundCustomEmojiId != ProfileView.SelectedCustomEmojiId)
-                    {
-                        ViewModel.ClientService.Send(new SetProfileAccentColor(ProfileView.SelectedAccentColor?.Id ?? -1, ProfileView.SelectedCustomEmojiId));
-                        changed = true;
-                    }
-
-                    if (changed)
-                    {
-                        ToastPopup.Show(XamlRoot, Strings.UserColorApplied, ToastPopupIcon.Success);
-                    }
-
-                    _confirmed = true;
-                    Frame.GoBack();
-                }
-                else
-                {
-                    ToastPopup.ShowFeaturePromo(ViewModel.NavigationService, new PremiumFeatureAccentColor());
-                }
+                MediaFrame.Navigate(page.Type, null, transition);
             }
         }
     }

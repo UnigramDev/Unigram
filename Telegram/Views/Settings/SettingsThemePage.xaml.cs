@@ -1,9 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
@@ -18,7 +20,7 @@ namespace Telegram.Views.Settings
         public SettingsThemePage()
         {
             InitializeComponent();
-            DataContext = TypeResolver.Current.Resolve<SettingsThemeViewModel>();
+            DataContext = LifetimeService.Current.ActiveItem.Resolve<SettingsThemeViewModel>();
 
             WatchDog.TrackEvent("SettingsThemePage");
         }
@@ -30,7 +32,7 @@ namespace Telegram.Views.Settings
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            if (XamlRoot.Content is Host.RootPage root)
+            if (XamlRoot.Content is WindowControl { Content: Host.RootPage root })
             {
                 root.HideEditor();
             }

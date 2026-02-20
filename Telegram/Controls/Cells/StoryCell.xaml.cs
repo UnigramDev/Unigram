@@ -1,9 +1,11 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
@@ -11,8 +13,6 @@ using Telegram.ViewModels.Stories;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Cells
 {
@@ -20,6 +20,8 @@ namespace Telegram.Controls.Cells
     {
         private StoryViewModel _viewModel;
         public StoryViewModel ViewModel => _viewModel;
+
+        private ThumbnailController _thumbnailController;
 
         public StoryCell()
         {
@@ -63,24 +65,17 @@ namespace Telegram.Controls.Cells
                 }
 
                 var thumbnail = photo.Photo.GetSmall();
-                if (thumbnail != null /*&& (file == null || !file.Photo.Local.IsDownloadingCompleted)*/)
-                {
-                    UpdateThumbnail(story, thumbnail.Photo, photo.Photo.Minithumbnail, true);
-                }
+                UpdateThumbnail(story, thumbnail?.Photo, photo.Photo.Minithumbnail, true);
             }
             else if (story.Content is StoryContentVideo video)
             {
                 Overlay.Visibility = Visibility.Visible;
                 Subtitle.Text = video.Video.GetDuration();
 
-                UpdateManager.Unsubscribe(this, ref _fileToken, true);
                 Texture.ImageSource = null;
+                UpdateManager.Unsubscribe(this, ref _fileToken);
 
-                var thumbnail = video.Video.Thumbnail;
-                if (thumbnail != null /*&& (file == null || !file.Photo.Local.IsDownloadingCompleted)*/)
-                {
-                    UpdateThumbnail(story, thumbnail.File, video.Video.Minithumbnail, true);
-                }
+                UpdateThumbnail(story, video.Video.Thumbnail?.File, video.Video.Minithumbnail, true);
             }
         }
 
@@ -99,31 +94,13 @@ namespace Telegram.Controls.Cells
 
         private void UpdateThumbnail(StoryViewModel story, File file, Minithumbnail minithumbnail, bool download)
         {
-            BitmapImage source = null;
-            ImageBrush brush;
-
-            if (LayoutRoot.Background is ImageBrush existing)
-            {
-                brush = existing;
-            }
-            else
-            {
-                brush = new ImageBrush
-                {
-                    Stretch = Stretch.UniformToFill,
-                    AlignmentX = AlignmentX.Center,
-                    AlignmentY = AlignmentY.Center
-                };
-
-                LayoutRoot.Background = brush;
-            }
+            _thumbnailController ??= new ThumbnailController(ThumbnailTexture);
 
             if (file != null)
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    source = new BitmapImage();
-                    PlaceholderHelper.GetBlurred(source, file.Local.Path, 3);
+                    _thumbnailController.Bitmap(file.Local.Path, hashCode: HashCode.Combine(story.PosterChatId, story.Id));
                 }
                 else
                 {
@@ -139,25 +116,29 @@ namespace Telegram.Controls.Cells
 
                     if (minithumbnail != null)
                     {
-                        source = new BitmapImage();
-                        PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
+                        _thumbnailController.Blur(minithumbnail.Data, 3, HashCode.Combine(story.PosterChatId, story.Id));
+                    }
+                    else
+                    {
+                        _thumbnailController.Recycle();
                     }
                 }
             }
             else if (minithumbnail != null)
             {
-                source = new BitmapImage();
-                PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
+                _thumbnailController.Blur(minithumbnail.Data, 3, HashCode.Combine(story.PosterChatId, story.Id));
             }
-
-            brush.ImageSource = source;
+            else
+            {
+                _thumbnailController.Recycle();
+            }
         }
 
         private void UpdateFile(StoryViewModel item, File file, bool download)
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                UpdateManager.Unsubscribe(this, ref _fileToken, true);
+                UpdateManager.Unsubscribe(this, ref _fileToken);
                 Texture.ImageSource = UriEx.ToBitmap(file.Local.Path, 0, 0);
             }
             else if (download)

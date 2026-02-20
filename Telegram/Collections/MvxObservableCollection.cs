@@ -1,21 +1,14 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-// MvxObservableCollection.cs
-// https://github.com/MvvmCross/MvvmCross/blob/develop/MvvmCross/Core/Core/ViewModels/MvxObservableCollection.cs
 
-// MvvmCross is licensed using Microsoft Public License (Ms-PL)
-// Contributions and inspirations noted in readme.md and license.txt
-//
-// Project Lead - Stuart Lodge, @slodge, me@slodge.com
-
+using Rg.DiffUtils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -25,11 +18,11 @@ namespace Telegram.Collections
 {
     public interface IMvxObservableCollection : IList
     {
-        void ReplaceWith(IEnumerable collection);
+        void ReplaceWithT(IEnumerable collection);
     }
 
     public partial class MvxObservableCollection<T>
-        : ObservableCollection<T>
+        : DiffObservableCollection<T>
         , IMvxObservableCollection
         , IList<T>
     {
@@ -55,6 +48,26 @@ namespace Telegram.Collections
         /// Initializes a new instance of the <see cref="MvxObservableCollection{T}"/> class.
         /// </summary>
         public MvxObservableCollection()
+        {
+        }
+
+        public MvxObservableCollection(IDiffHandler<T> diffHandler)
+            : base(diffHandler, new DiffOptions())
+        {
+        }
+
+        public MvxObservableCollection(DiffOptions options)
+            : base((IDiffHandler<T>)DiffHandler<T>.Default, options)
+        {
+        }
+
+        public MvxObservableCollection(IDiffHandler<T> diffHandler, DiffOptions options)
+            : base(diffHandler, options)
+        {
+        }
+
+        public MvxObservableCollection(IEnumerable<T> items, IDiffHandler<T> diffHandler, DiffOptions options)
+            : base(items, diffHandler, options)
         {
         }
 
@@ -99,12 +112,17 @@ namespace Telegram.Collections
             OnCollectionChanged(args);
         }
 
+        public void AddRangeT(IEnumerable items)
+        {
+            AddRange(items.Cast<T>());
+        }
+
         /// <summary>
         /// Adds the specified items collection to the current <see cref="MvxObservableCollection{T}"/> instance.
         /// </summary>
         /// <param name="items">The collection from which the items are copied.</param>
         /// <exception cref="ArgumentNullException">The items list is null.</exception>
-        public void AddRange(IEnumerable<T> items)
+        public new void AddRange(IEnumerable<T> items)
         {
             if (items == null)
             {
@@ -143,15 +161,22 @@ namespace Telegram.Collections
                 throw new ArgumentNullException(nameof(items));
             }
 
+            int insertIndex = index;
+
             using (SuppressEvents())
             {
                 foreach (T item in items)
                 {
-                    Insert(index, item);
+                    Insert(insertIndex++, item);
                 }
             }
 
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, changedItems: items, startingIndex: index));
+        }
+
+        public void ReplaceWithT(IEnumerable items)
+        {
+            ReplaceWith(items.Cast<T>());
         }
 
         /// <summary>
@@ -159,7 +184,7 @@ namespace Telegram.Collections
         /// </summary>
         /// <param name="items">The collection from which the items are copied.</param>
         /// <exception cref="ArgumentNullException">The items list is null.</exception>
-        public void ReplaceWith(IEnumerable items)
+        public void ReplaceWith(IEnumerable<T> items)
         {
             if (items == null)
             {
@@ -169,7 +194,7 @@ namespace Telegram.Collections
             using (SuppressEvents())
             {
                 Clear();
-                AddRange(items.Cast<T>());
+                AddRange(items);
             }
 
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
@@ -288,7 +313,7 @@ namespace Telegram.Collections
         /// <param name="start">The start index.</param>
         /// <param name="count">The count of items to remove.</param>
         /// <exception cref="ArgumentOutOfRangeException">Start index or count incorrect</exception>
-        public void RemoveRange(int start, int count)
+        public new void RemoveRange(int start, int count)
         {
             if (start < 0)
             {

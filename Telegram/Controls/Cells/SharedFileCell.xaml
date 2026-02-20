@@ -8,15 +8,13 @@
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="400"
-      Padding="12,6"
-      Background="{ThemeResource SettingsItemBackground}"
-      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+      Padding="12,6">
 
     <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition />
     </Grid.ColumnDefinitions>
-    <Grid x:Name="Ellipse"
+    <Grid x:Name="ButtonRoot"
           Width="48"
           Height="48"
           CornerRadius="24"
@@ -28,18 +26,29 @@
                              Click="Button_Click"
                              Style="{StaticResource InlineFileButtonStyle}" />
     </Grid>
-    <Grid Margin="12,0,0,0"
+    <Grid x:Name="TextRoot"
+          Margin="12,0,0,0"
           VerticalAlignment="Center"
           Grid.Column="1">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBlock x:Name="Title"
-                   MaxLines="1"
-                   TextWrapping="NoWrap"
-                   TextTrimming="CharacterEllipsis"
-                   Style="{StaticResource BaseTextBlockStyle}" />
+        <Grid HorizontalAlignment="Left">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="Title"
+                       TextWrapping="NoWrap"
+                       TextTrimming="CharacterEllipsis"
+                       Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBlock x:Name="TitleTrim"
+                       TextWrapping="NoWrap"
+                       TextTrimming="CharacterEllipsis"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       Grid.Column="1" />
+        </Grid>
 
         <TextBlock x:Name="Subtitle"
                    Style="{StaticResource BodyTextBlockStyle}"

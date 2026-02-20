@@ -1,15 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System.Threading.Tasks;
+
 using Telegram.Navigation;
-using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
-using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
@@ -17,48 +15,39 @@ namespace Telegram.ViewModels.Settings
     {
         private AutoDownloadType _type;
 
-        public SettingsDataAutoViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        public SettingsDataAutoViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, AutoDownloadType type)
             : base(clientService, settingsService, aggregator)
         {
-        }
+            _type = type;
 
-        protected override Task OnNavigatedToAsync(object parameter, NavigationMode navigationMode, NavigationState state)
-        {
-            if (parameter is AutoDownloadType type)
-            {
-                _type = type;
+            Title = type == AutoDownloadType.Photos
+                ? Strings.AutoDownloadPhotos
+                : type == AutoDownloadType.Videos
+                ? Strings.AutoDownloadVideos
+                : Strings.AutoDownloadFiles;
+            Header = type == AutoDownloadType.Photos
+                ? Strings.AutoDownloadPhotosTitle
+                : type == AutoDownloadType.Videos
+                ? Strings.AutoDownloadVideosTitle
+                : Strings.AutoDownloadFilesTitle;
 
-                Title = type == AutoDownloadType.Photos
-                    ? Strings.AutoDownloadPhotos
-                    : type == AutoDownloadType.Videos
-                    ? Strings.AutoDownloadVideos
-                    : Strings.AutoDownloadFiles;
-                Header = type == AutoDownloadType.Photos
-                    ? Strings.AutoDownloadPhotosTitle
-                    : type == AutoDownloadType.Videos
-                    ? Strings.AutoDownloadVideosTitle
-                    : Strings.AutoDownloadFilesTitle;
+            var preferences = Settings.AutoDownload;
+            var mode = type == AutoDownloadType.Photos
+                ? preferences.Photos
+                : type == AutoDownloadType.Videos
+                ? preferences.Videos
+                : preferences.Documents;
+            var limit = type == AutoDownloadType.Photos
+                ? 0
+                : type == AutoDownloadType.Videos
+                ? preferences.MaximumVideoSize
+                : preferences.MaximumDocumentSize;
 
-                var preferences = Settings.AutoDownload;
-                var mode = type == AutoDownloadType.Photos
-                    ? preferences.Photos
-                    : type == AutoDownloadType.Videos
-                    ? preferences.Videos
-                    : preferences.Documents;
-                var limit = type == AutoDownloadType.Photos
-                    ? 0
-                    : type == AutoDownloadType.Videos
-                    ? preferences.MaximumVideoSize
-                    : preferences.MaximumDocumentSize;
-
-                Contacts = mode.HasFlag(AutoDownloadMode.WifiContacts);
-                PrivateChats = mode.HasFlag(AutoDownloadMode.WifiPrivateChats);
-                Groups = mode.HasFlag(AutoDownloadMode.WifiGroups);
-                Channels = mode.HasFlag(AutoDownloadMode.WifiChannels);
-                Limit = limit;
-            }
-
-            return Task.CompletedTask;
+            _contacts = mode.HasFlag(AutoDownloadMode.WifiContacts);
+            _privateChats = mode.HasFlag(AutoDownloadMode.WifiPrivateChats);
+            _groups = mode.HasFlag(AutoDownloadMode.WifiGroups);
+            _channels = mode.HasFlag(AutoDownloadMode.WifiChannels);
+            _limit = limit;
         }
 
         private string _title;
@@ -79,38 +68,77 @@ namespace Telegram.ViewModels.Settings
         public bool Contacts
         {
             get => _contacts;
-            set => Set(ref _contacts, value);
+            set
+            {
+                if (Set(ref _contacts, value))
+                {
+                    Save();
+                }
+            }
         }
 
         private bool _privateChats;
         public bool PrivateChats
         {
             get => _privateChats;
-            set => Set(ref _privateChats, value);
+            set
+            {
+                if (Set(ref _privateChats, value))
+                {
+                    Save();
+                }
+            }
         }
 
         private bool _groups;
         public bool Groups
         {
             get => _groups;
-            set => Set(ref _groups, value);
+            set
+            {
+                if (Set(ref _groups, value))
+                {
+                    Save();
+                }
+            }
         }
 
         private bool _channels;
         public bool Channels
         {
             get => _channels;
-            set => Set(ref _channels, value);
+            set
+            {
+                if (Set(ref _channels, value))
+                {
+                    Save();
+                }
+            }
         }
 
         private long _limit;
         public long Limit
         {
             get => _limit;
-            set => Set(ref _limit, value);
+            set
+            {
+                if (Set(ref _limit, value))
+                {
+                    Save();
+                }
+            }
+        }
+
+        private bool _preload;
+        public bool Preload
+        {
+            get => _preload;
+            set => Set(ref _preload, value);
         }
 
         public bool IsLimitSupported => _type != AutoDownloadType.Photos;
+
+        public bool IsPreloadSupported => _type == AutoDownloadType.Videos && SettingsService.Current.Diagnostics.VideoPreloadDebug;
 
         public void Save()
         {
@@ -140,7 +168,7 @@ namespace Telegram.ViewModels.Settings
             }
             else if (_type == AutoDownloadType.Videos)
             {
-                preferences = preferences.UpdateVideosMode(mode, _limit);
+                preferences = preferences.UpdateVideosMode(mode, _limit, _preload);
             }
             else if (_type == AutoDownloadType.Documents)
             {

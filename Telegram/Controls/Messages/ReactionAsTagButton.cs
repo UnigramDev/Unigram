@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
@@ -23,12 +24,9 @@ namespace Telegram.Controls.Messages
         public ReactionAsTagButton()
         {
             DefaultStyleKey = typeof(ReactionAsTagButton);
-
-            Connected += OnConnected;
-            Disconnected += OnDisconnected;
         }
 
-        private void OnConnected(object sender, RoutedEventArgs e)
+        protected override void OnLoaded()
         {
             if (_tag != null)
             {
@@ -36,7 +34,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private void OnDisconnected(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
             if (_tag != null)
             {
@@ -44,7 +42,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        protected override void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)
+        protected override void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled, bool chosen)
         {
             IsChecked = interaction.IsChosen;
 
@@ -62,16 +60,11 @@ namespace Telegram.Controls.Messages
 
             if (string.IsNullOrEmpty(_tag?.Label))
             {
-                if (Count != null)
-                {
-                    Count.Visibility = Visibility.Collapsed;
-                }
+                Count.Visibility = Visibility.Collapsed;
             }
             else
             {
-                Count ??= GetTemplateChild(nameof(Count)) as AnimatedTextBlock;
                 Count.Visibility = Visibility.Visible;
-
                 Count.Text = _tag.Label;
             }
         }
@@ -88,16 +81,11 @@ namespace Telegram.Controls.Messages
         {
             if (string.IsNullOrEmpty(_tag?.Label))
             {
-                if (Count != null)
-                {
-                    Count.Visibility = Visibility.Collapsed;
-                }
+                Count.Visibility = Visibility.Collapsed;
             }
             else
             {
-                Count ??= GetTemplateChild(nameof(Count)) as AnimatedTextBlock;
                 Count.Visibility = Visibility.Visible;
-
                 Count.Text = _tag.Label;
             }
         }

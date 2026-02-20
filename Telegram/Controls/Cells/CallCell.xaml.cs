@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -30,7 +31,7 @@ namespace Telegram.Controls.Cells
             DateLabel.Text = Formatter.DateExtended(call.Message.Date);
             TypeLabel.Text = call.DisplayType;
 
-            Photo.SetUser(clientService, call.Peer, 36);
+            Photo.Source = ProfilePictureSource.User(clientService, call.Peer);
 
             VisualStateManager.GoToState(LayoutRoot, call.IsFailed ? "Missed" : "Default", false);
         }

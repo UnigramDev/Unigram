@@ -12,9 +12,7 @@
                        Disconnected="OnDisconnected"
                        IsTabStop="False">
 
-    <vlc:VideoView x:Name="Video"
-                   IsTabStop="False"
-                   Initialized="OnInitialized"
-                   SizeChanged="OnSizeChanged" />
+    <SwapChainPanel x:Name="Video"
+                    SizeChanged="OnSizeChanged" />
 
 </local:VideoPlayerBase>

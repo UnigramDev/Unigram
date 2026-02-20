@@ -11,6 +11,10 @@
                 Value="{ThemeResource MessageHeaderForegroundBrush}" />
         <Setter Property="HorizontalAlignment"
                 Value="Stretch" />
+        <Setter Property="CornerRadius"
+                Value="4" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:MessageForwardHeader">
@@ -45,8 +49,7 @@
                         <controls:ProfilePicture x:Name="ForwardPhoto"
                                                  HorizontalAlignment="Left"
                                                  VerticalAlignment="Bottom"
-                                                 Width="16"
-                                                 Height="16" />
+                                                 Size="16" />
 
                         <TextBlock x:Name="ForwardLabel"
                                    Foreground="{TemplateBinding Foreground}"

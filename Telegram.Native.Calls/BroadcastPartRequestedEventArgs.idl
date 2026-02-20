@@ -1,14 +1,24 @@
+import "Telegram.Native.Calls.idl";
+
 namespace Telegram.Native.Calls
 {
-    delegate void BroadcastPartRequestedDeferral(Int64 time, Int64 response, Telegram.Td.Api.Data data);
+    delegate void BroadcastPartRequestedDeferral(Int64 time, Int64 response, Windows.Foundation.Collections.IVector<byte> data);
 
     [default_interface]
-    runtimeclass BroadcastPartRequestedEventArgs
+    runtimeclass AudioBroadcastPartRequestedEventArgs
+    {
+        Int32 Scale{ get; };
+        Int64 Time{ get; };
+        BroadcastPartRequestedDeferral Deferral{ get; };
+    }
+
+    [default_interface]
+    runtimeclass VideoBroadcastPartRequestedEventArgs
     {
         Int32 Scale{ get; };
         Int64 Time{ get; };
         Int32 ChannelId{ get; };
-        Telegram.Td.Api.GroupCallVideoQuality VideoQuality{ get; };
+        VoipVideoChannelQuality VideoQuality{ get; };
         BroadcastPartRequestedDeferral Deferral{ get; };
     }
 }

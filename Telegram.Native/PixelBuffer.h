@@ -33,6 +33,10 @@ namespace winrt::Telegram::Native::implementation
 
         WriteableBitmap Source() noexcept;
 
+        static void Clear(IBuffer buffer);
+
+        static void SourceOver(IBuffer destination, IBuffer source, int32_t width, int32_t height);
+
     private:
         WriteableBitmap m_bitmap;
         uint8_t* m_pixels;

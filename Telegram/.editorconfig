@@ -3,9 +3,8 @@
 # top-most EditorConfig file
 root = true
 
-file_header_template = \nCopyright (c) Fela Ameghino 2015-2023\n\nDistributed under the GNU General Public License v3.0. (See accompanying\nfile LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)\n
-
 [*.cs]
+file_header_template = \nCopyright (c) Fela Ameghino 2015-2026\n\nDistributed under the GNU General Public License v3.0. (See accompanying\nfile LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)\n
 
 # IDE0005: Using directive is unnecessary.
 dotnet_diagnostic.IDE0005.severity = error
@@ -47,7 +46,7 @@ dotnet_diagnostic.IDE0060.severity = none
 dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity
 
 # IDE0066: Convert switch statement to expression
-csharp_style_prefer_switch_expression = false
+csharp_style_prefer_switch_expression = true
 
 # IDE0063: Use simple 'using' statement
 csharp_prefer_simple_using_statement = false:suggestion

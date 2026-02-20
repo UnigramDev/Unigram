@@ -6,7 +6,7 @@
              xmlns:controls="using:Telegram.Controls"
              mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ContentDialogBackground}">
+    <Grid Background="{ThemeResource ContentDialogTopOverlaySolid}">
         <ListView x:Name="ScrollingHost"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
@@ -47,7 +47,7 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Grid Background="{ThemeResource ControlFillColorDefaultBrush}"
+                            <Grid Background="{ThemeResource ControlAltFillColorTertiaryBrush}"
                                   BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                   BorderThickness="1,1,0,1"
                                   CornerRadius="4,0,0,4"
@@ -81,7 +81,7 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                     ScrollingHost="{x:Bind ScrollingHost}" />
     </Grid>
 </UserControl>

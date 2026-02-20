@@ -1,11 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.ViewModels.Create;
 using Telegram.ViewModels.Drawers;
@@ -30,7 +32,7 @@ namespace Telegram.Views.Create
 
         public override void OnNavigatedTo(object parameter)
         {
-            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.SessionId, EmojiDrawerMode.Text);
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.Session, EmojiDrawerMode.Text);
         }
 
         private void Title_Loaded(object sender, RoutedEventArgs e)
@@ -40,18 +42,18 @@ namespace Telegram.Views.Create
 
         #region Binding
 
-        private object ConvertPhoto(string title, BitmapImage preview)
+        private ProfilePictureSource ConvertPhoto(string title, BitmapImage preview)
         {
             if (preview != null)
             {
-                return preview;
+                return new ProfilePictureSourceBitmap(preview);
             }
             else if (string.IsNullOrWhiteSpace(title))
             {
-                return PlaceholderImage.GetGlyph(Icons.CameraAddFilled);
+                return ProfilePictureSourceText.GetGlyph(Icons.CameraAddFilled);
             }
 
-            return PlaceholderImage.GetNameForChat(title);
+            return ProfilePictureSourceText.GetNameForChat(title);
         }
 
         #endregion
@@ -63,7 +65,7 @@ namespace Telegram.Views.Create
             EmojiFlyout.ShowAt(TitleLabel, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
         }
 
-        private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
+        private void Emoji_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)
         {
             if (e.ClickedItem is EmojiData emoji)
             {

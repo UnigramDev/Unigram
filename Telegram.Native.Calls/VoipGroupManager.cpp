@@ -264,7 +264,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipGroupManager::SetVolume(int32_t ssrc, double volume)
     {
-        if (m_impl)
+        if (m_impl && ssrc)
         {
             m_impl->setVolume(ssrc, volume);
         }
@@ -276,16 +276,14 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         for (const VoipVideoChannelInfo& x : descriptions)
         {
-            auto user = x.ParticipantId().try_as<MessageSenderUser>();
-
             tgcalls::VideoChannelDescription item;
             item.audioSsrc = x.AudioSource();
-            item.userId = user.UserId();
             item.endpointId = winrt::to_string(x.EndpointId());
+            item.userId = x.ParticipantId();
             item.minQuality = (tgcalls::VideoChannelDescription::Quality)x.MinQuality();
             item.maxQuality = (tgcalls::VideoChannelDescription::Quality)x.MaxQuality();
 
-            for (const GroupCallVideoSourceGroup& group : x.SourceGroups())
+            for (const VoipVideoSourceGroup& group : x.SourceGroups())
             {
                 tgcalls::MediaSsrcGroup groupImpl;
                 groupImpl.semantics = winrt::to_string(group.Semantics());
@@ -352,25 +350,25 @@ namespace winrt::Telegram::Native::Calls::implementation
         case 125: scale = 3; break;
         }
 
-        Telegram::Td::Api::GroupCallVideoQuality qualityImpl;
+        VoipVideoChannelQuality qualityImpl;
         switch (quality)
         {
         case tgcalls::VideoChannelDescription::Quality::Thumbnail:
-            qualityImpl = Telegram::Td::Api::GroupCallVideoQualityThumbnail();
+            qualityImpl = VoipVideoChannelQuality::Thumbnail;
             break;
         case tgcalls::VideoChannelDescription::Quality::Medium:
-            qualityImpl = Telegram::Td::Api::GroupCallVideoQualityMedium();
+            qualityImpl = VoipVideoChannelQuality::Medium;
             break;
         case tgcalls::VideoChannelDescription::Quality::Full:
-            qualityImpl = Telegram::Td::Api::GroupCallVideoQualityFull();
+            qualityImpl = VoipVideoChannelQuality::Full;
             break;
         }
 
         auto task = std::make_shared<BroadcastPartTaskImpl>(std::move(done));
-        auto args = winrt::make_self<BroadcastPartRequestedEventArgs>(scale, time, channel, qualityImpl,
-            [task](int64_t time, int64_t response, Data data) { task->done(time, response, data); });
+        auto args = winrt::make_self<VideoBroadcastPartRequestedEventArgs>(scale, time, channel, qualityImpl,
+            [task](int64_t time, int64_t response, IVector<uint8_t> data) { task->done(time, response, data); });
 
-        m_broadcastPartRequested(*this, *args);
+        m_videoBroadcastPartRequested(*this, *args);
         return task;
     }
 
@@ -387,10 +385,10 @@ namespace winrt::Telegram::Native::Calls::implementation
         }
 
         auto task = std::make_shared<BroadcastPartTaskImpl>(std::move(done));
-        auto args = winrt::make_self<BroadcastPartRequestedEventArgs>(scale, time, 0, nullptr,
-            [task](int64_t time, int64_t response, Data data) { task->done(time, response, data); });
+        auto args = winrt::make_self<AudioBroadcastPartRequestedEventArgs>(scale, time,
+            [task](int64_t time, int64_t response, IVector<uint8_t> data) { task->done(time, response, data); });
 
-        m_broadcastPartRequested(*this, *args);
+        m_audioBroadcastPartRequested(*this, *args);
         return task;
     }
 
@@ -402,7 +400,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         auto task = std::make_shared<RequestMediaChannelDescriptionTaskImpl>(std::move(done));
         auto args = winrt::make_self<MediaChannelDescriptionsRequestedEventArgs>(audioSourceIds,
-            [task](IVector<GroupCallParticipant> participants) { task->done(participants); });
+            [task](IVector<VoipMediaChannelDescription> participants) { task->done(participants); });
 
         m_mediaChannelDescriptionsRequested(*this, *args);
         return task;
@@ -417,22 +415,12 @@ namespace winrt::Telegram::Native::Calls::implementation
         {
             if (m_encryptData)
             {
-                GroupCallDataChannel channel;
-                if (m_isScreencast)
-                {
-                    channel = GroupCallDataChannelScreenSharing();
-                }
-                else
-                {
-                    channel = GroupCallDataChannelMain();
-                }
-
-                data = m_encryptData(channel, data, unencryptedPrefixSize);
+                data = m_encryptData(m_isScreencast ? VoipDataChannel::ScreenSharing : VoipDataChannel::Main, data, unencryptedPrefixSize);
             }
         }
         else if (m_decryptData)
         {
-            data = m_decryptData(MessageSenderUser(userId), data);
+            data = m_decryptData(userId, data);
         }
 
         std::vector<uint8_t> result;
@@ -488,18 +476,34 @@ namespace winrt::Telegram::Native::Calls::implementation
 
 
 
-    winrt::event_token VoipGroupManager::BroadcastPartRequested(Windows::Foundation::TypedEventHandler<
+    winrt::event_token VoipGroupManager::AudioBroadcastPartRequested(Windows::Foundation::TypedEventHandler<
         winrt::Telegram::Native::Calls::VoipGroupManager,
-        winrt::Telegram::Native::Calls::BroadcastPartRequestedEventArgs> const& value)
+        winrt::Telegram::Native::Calls::AudioBroadcastPartRequestedEventArgs> const& value)
     {
         std::lock_guard const guard(m_lock);
-        return m_broadcastPartRequested.add(value);
+        return m_audioBroadcastPartRequested.add(value);
     }
 
-    void VoipGroupManager::BroadcastPartRequested(winrt::event_token const& token)
+    void VoipGroupManager::AudioBroadcastPartRequested(winrt::event_token const& token)
     {
         std::lock_guard const guard(m_lock);
-        m_broadcastPartRequested.remove(token);
+        m_audioBroadcastPartRequested.remove(token);
+    }
+
+
+
+    winrt::event_token VoipGroupManager::VideoBroadcastPartRequested(Windows::Foundation::TypedEventHandler<
+        winrt::Telegram::Native::Calls::VoipGroupManager,
+        winrt::Telegram::Native::Calls::VideoBroadcastPartRequestedEventArgs> const& value)
+    {
+        std::lock_guard const guard(m_lock);
+        return m_videoBroadcastPartRequested.add(value);
+    }
+
+    void VoipGroupManager::VideoBroadcastPartRequested(winrt::event_token const& token)
+    {
+        std::lock_guard const guard(m_lock);
+        m_videoBroadcastPartRequested.remove(token);
     }
 
 

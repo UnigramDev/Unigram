@@ -1,13 +1,15 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Services.Calls;
 using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Stories
@@ -22,22 +24,22 @@ namespace Telegram.ViewModels.Stories
         {
             ClientService = clientService;
 
-            ChatId = chatId;
+            PosterChatId = chatId;
             Chat = ClientService.GetChat(chatId);
 
             Date = storyInfo.Date;
-            StoryId = storyInfo.StoryId;
+            Id = storyInfo.StoryId;
         }
 
         public StoryViewModel(IClientService clientService, Story story, bool botPreview = false)
         {
             ClientService = clientService;
 
-            ChatId = story.PosterChatId;
+            PosterChatId = story.PosterChatId;
             Chat = ClientService.GetChat(story.PosterChatId);
 
             Date = story.Date;
-            StoryId = story.Id;
+            Id = story.Id;
 
             IsBotPreview = botPreview;
 
@@ -46,13 +48,16 @@ namespace Telegram.ViewModels.Stories
 
         public int Date { get; set; }
 
-        public long ChatId { get; set; }
+        public long PosterChatId { get; set; }
 
         public Chat Chat { get; private set; }
 
-        public int StoryId { get; set; }
+        public int Id { get; set; }
 
         public bool IsBotPreview { get; set; }
+
+        // TODO: Find a better solution
+        public VoipGroupCall GroupCall { get; set; }
 
         public async Task LoadAsync()
         {
@@ -64,11 +69,16 @@ namespace Telegram.ViewModels.Stories
 
             _task = new TaskCompletionSource<bool>();
 
-            var response = await ClientService.SendAsync(new GetStory(ChatId, StoryId, false));
+            var response = await ClientService.SendAsync(new GetStory(PosterChatId, Id, false));
             if (response is Story story)
             {
                 Update(story);
                 Prepare();
+
+                if (story.Content is StoryContentLive live && !ClientService.TryGetGroupCall(live.GroupCallId, out _))
+                {
+                    await ClientService.SendAsync(new GetGroupCall(live.GroupCallId));
+                }
             }
 
             _task.SetResult(true);
@@ -86,6 +96,8 @@ namespace Telegram.ViewModels.Stories
             CanToggleIsPostedToChatPage = story.CanToggleIsPostedToChatPage;
             CanBeEdited = story.CanBeEdited;
             CanBeDeleted = story.CanBeDeleted;
+            CanBeAddedToAlbum = story.CanBeAddedToAlbum;
+            AlbumIds = story.AlbumIds;
             IsVisibleOnlyForSelf = story.IsVisibleOnlyForSelf;
             IsPostedToChatPage = story.IsPostedToChatPage;
             HasExpiredViewers = story.HasExpiredViewers;
@@ -140,6 +152,10 @@ namespace Telegram.ViewModels.Stories
         /// True, if the story can be deleted.
         /// </summary>
         public bool CanBeDeleted { get; private set; }
+
+        public bool CanBeAddedToAlbum { get; private set; }
+
+        public IList<int> AlbumIds { get; private set; }
 
         /// <summary>
         /// True, if the story is visible only for the current user.

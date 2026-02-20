@@ -34,8 +34,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture x:Name="Photo"
-                                         Width="28"
-                                         Height="28" />
+                                         Size="28" />
 
                 <Grid Width="20"
                       Height="20"
@@ -122,32 +121,24 @@
                       Margin="0,14,0,14" />
         </StackPanel>
 
-        <Grid x:Name="PurchasePanel"
-              VerticalAlignment="Bottom"
-              HorizontalAlignment="Stretch"
-              Margin="24,0,24,16"
-              Grid.Row="2">
-            <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Click="Purchase_Click"
-                                  Style="{StaticResource AccentButtonStyle}"
-                                  FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  FontWeight="SemiBold"
-                                  BorderThickness="1"
-                                  Height="32">
-                <Grid>
-                    <TextBlock x:Name="PurchaseText"
-                               VerticalAlignment="Center"
-                               Margin="0,3,0,5" />
-                    <muxc:ProgressRing x:Name="PurchaseRing"
-                                       Visibility="Collapsed"
-                                       Foreground="#FFFFFF"
-                                       Width="20"
-                                       Height="20" />
-                </Grid>
-            </controls:BadgeButton>
-        </Grid>
+        <Button x:Name="PurchaseCommand"
+                Click="Purchase_Click"
+                Style="{StaticResource AccentButtonStyle}"
+                FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Stretch"
+                Margin="24,0,24,16"
+                Grid.Row="2">
+            <Grid>
+                <TextBlock x:Name="PurchaseText"
+                           VerticalAlignment="Center" />
+                <muxc:ProgressRing x:Name="PurchaseRing"
+                                   Visibility="Collapsed"
+                                   Foreground="#FFFFFF"
+                                   Width="20"
+                                   Height="20" />
+            </Grid>
+        </Button>
 
         <controls:SettingsFooter IsLink="True"
                                  Click="SettingsFooter_Click"

@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Linq;
 using System.Numerics;
@@ -13,6 +14,7 @@ using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
@@ -181,6 +183,9 @@ namespace Telegram.Controls
                     var scopedBatch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                     scopedBatch.Completed += OnAnimationCompleted;
 
+                    SetZIndex(prevIndicator, -1);
+                    SetZIndex(nextIndicator, -2);
+
                     // Play the animation on both the previous and next indicators
                     PlayIndicatorAnimations(prevIndicator,
                         0,
@@ -208,6 +213,15 @@ namespace Telegram.Controls
                 }
 
                 _activeIndicator = nextIndicator;
+            }
+        }
+
+        private void SetZIndex(UIElement indicator, int index)
+        {
+            var selector = indicator.GetParent<SelectorItem>();
+            if (selector != null)
+            {
+                Canvas.SetZIndex(selector, index);
             }
         }
 
@@ -350,7 +364,11 @@ namespace Telegram.Controls
                     AnimateSelectionChanged(SelectedItem);
                 }
             }
+
+            PrepareContainerForItem?.Invoke(element as SelectorItem, item);
         }
+
+        public event TypedEventHandler<SelectorItem, object> PrepareContainerForItem;
     }
 
     public partial class TopNavViewItem : TextListViewItem
@@ -366,7 +384,7 @@ namespace Telegram.Controls
         {
             if (!fromCache)
             {
-                SelectionIndicator ??= GetTemplateChild("SelectionIndicator") as UIElement;
+                SelectionIndicator ??= GetTemplateChild(nameof(SelectionIndicator)) as UIElement;
             }
 
             return SelectionIndicator;

@@ -1,10 +1,16 @@
-﻿using Telegram.ViewModels.Business;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Telegram.ViewModels.Business;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Cells.Business
 {
-    public sealed partial class BusinessHoursCell : Grid
+    public sealed partial class BusinessHoursCell : SettingsButton
     {
         public BusinessHoursViewModel ViewModel => DataContext as BusinessHoursViewModel;
 
@@ -24,8 +30,8 @@ namespace Telegram.Controls.Cells.Business
         {
             _day = value;
 
-            Button.Content = value.Name;
-            Button.Badge = value.Description;
+            Content = value.Name;
+            Description = value.Description;
 
             Switch.Toggled -= Switch_Toggled;
             Switch.IsOn = value.IsOpen;

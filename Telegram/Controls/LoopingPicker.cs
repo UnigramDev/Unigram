@@ -1,12 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Windows.Foundation;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -61,10 +61,7 @@ namespace Telegram.Controls
 
         protected void OnValueChanged(int oldValue, int newValue)
         {
-            if (ValueText != null)
-            {
-                ValueText.Text = newValue.ToString($"D{_digits}");
-            }
+            ValueText?.Text = newValue.ToString($"D{_digits}");
 
             ValueChanged?.Invoke(this, new LoopingPickerValueChangedEventArgs(oldValue, newValue));
         }
@@ -119,7 +116,14 @@ namespace Telegram.Controls
                 Focus(FocusState.Keyboard);
             }
 
-            base.OnPointerWheelChanged(e);
+            try
+            {
+                base.OnPointerWheelChanged(e);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         public void Increase()

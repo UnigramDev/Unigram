@@ -1,16 +1,15 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Controls;
-using Telegram.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using WinRT;
 
 namespace Telegram.Views.Popups
 {
@@ -30,7 +29,7 @@ namespace Telegram.Views.Popups
                 radio.Content = option.Text;
                 radio.Tag = option;
                 radio.IsChecked = option.IsChecked;
-                radio.Style = BootStrapper.Current.Resources["SettingsRadioButtonStyle"] as Style;
+                //radio.Style = BootStrapper.Current.Resources["SettingsRadioButtonStyle"] as Style;
 
                 LayoutRoot.Items.Add(radio);
             }
@@ -50,10 +49,6 @@ namespace Telegram.Views.Popups
         {
             SelectedIndex = ((ChooseOptionItem)LayoutRoot.Items.OfType<RadioButton>().FirstOrDefault(x => x.IsChecked == true)?.Tag)?.Value;
         }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
     }
 
     public partial class ChooseOptionItem
@@ -72,7 +67,6 @@ namespace Telegram.Views.Popups
         public string Footer { get; set; }
     }
 
-    [GeneratedBindableCustomProperty]
     public partial class SettingsOptionItem
     {
         public SettingsOptionItem(string text)
@@ -81,9 +75,13 @@ namespace Telegram.Views.Popups
         }
 
         public string Text { get; set; }
+
+        public override string ToString()
+        {
+            return Text;
+        }
     }
 
-    [GeneratedBindableCustomProperty]
     public partial class SettingsOptionItem<T> : SettingsOptionItem
     {
         public SettingsOptionItem(T value, string text)

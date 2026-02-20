@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -54,10 +55,15 @@ namespace Telegram.Common
             return visual;
         }
 
-        public static void ShakeView(FrameworkElement view, float x = 2)
+        public static void ShakeView(FrameworkElement element, float x = 2)
         {
-            var visual = ElementComposition.GetElementVisual(view);
-            ElementCompositionPreview.SetIsTranslationEnabled(view, true);
+            if (element == null)
+            {
+                return;
+            }
+
+            var visual = ElementComposition.GetElementVisual(element);
+            ElementCompositionPreview.SetIsTranslationEnabled(element, true);
 
             var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
             animation.Duration = TimeSpan.FromMilliseconds(50 * 6);

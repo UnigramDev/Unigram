@@ -7,11 +7,11 @@
                       xmlns:common="using:Telegram.Common"
                       xmlns:cells="using:Telegram.Controls.Cells"
                       xmlns:local="using:Telegram.Views.Profile"
-                      mc:Ignorable="d">
+                      mc:Ignorable="d"
+                      ItemsSource="{x:Bind ViewModel.SavedChatsTab.Items}">
 
     <Grid>
         <controls:TableListView x:Name="ScrollingHost"
-                                ItemsSource="{x:Bind ViewModel.SavedChatsTab.Items}"
                                 ItemClick="ListView_ItemClick"
                                 IsItemClickEnabled="True"
                                 ChoosingItemContainer="OnChoosingItemContainer"
@@ -20,10 +20,7 @@
                                 VerticalAlignment="Top">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Background="{ThemeResource SettingsItemBackground}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-                        <cells:ChatCell />
-                    </Grid>
+                    <cells:ChatCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Template>
@@ -43,7 +40,7 @@
                 </ControlTemplate>
             </ListView.Template>
             <ListView.Header>
-                <Border Height="{x:Bind ViewModel.HeaderHeight, Mode=OneWay}"
+                <Border x:Name="Header"
                         Margin="0,0,0,2" />
             </ListView.Header>
             <ListView.Footer>

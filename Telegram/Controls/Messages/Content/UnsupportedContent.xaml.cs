@@ -1,16 +1,15 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
-using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.Views;
 using Windows.ApplicationModel;
 using Windows.Services.Store;
 using Windows.System;
@@ -33,12 +32,12 @@ namespace Telegram.Controls.Messages.Content
 
         #region InitializeComponent
 
-        private BadgeButton Button;
+        private ButtonEx Button;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
         {
-            Button = GetTemplateChild(nameof(Button)) as BadgeButton;
+            Button = GetTemplateChild(nameof(Button)) as ButtonEx;
             Button.Content = Strings.UpdateApp.ToUpper();
             Button.Click += Button_Click;
 
@@ -95,10 +94,8 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                var navigationService = WindowContext.Current.GetNavigationService();
-                var service = TypeResolver.Current.Resolve<ICloudUpdateService>(_message.ClientService.SessionId);
-
-                if (navigationService != null && service != null)
+                var service = _message.ClientService.Session.Resolve<ICloudUpdateService>();
+                if (service != null)
                 {
                     if (service.NextUpdate == null)
                     {
@@ -107,7 +104,7 @@ namespace Telegram.Controls.Messages.Content
 
                     if (service.NextUpdate != null)
                     {
-                        await CloudUpdateService.LaunchAsync(navigationService, false);
+                        await CloudUpdateService.LaunchAsync(false);
                     }
                     else
                     {

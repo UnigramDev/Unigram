@@ -1,9 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -87,10 +89,16 @@ namespace Telegram.ViewModels.Settings
                     var response = await _clientService.SendAsync(new GetChatNotificationSettingsExceptions(_scope, false));
                     if (response is Telegram.Td.Api.Chats chats)
                     {
-                        foreach (var id in chats.ChatIds)
+                        foreach (var chat in _clientService.GetChats(chats.ChatIds))
                         {
-                            var chat = _clientService.GetChat(id);
-                            if (chat != null)
+                            if (_clientService.TryGetUser(chat.Id, out User user))
+                            {
+                                if (user.Type is not UserTypeDeleted)
+                                {
+                                    Add(chat);
+                                }
+                            }
+                            else
                             {
                                 Add(chat);
                             }
@@ -177,6 +185,18 @@ namespace Telegram.ViewModels.Settings
                     Scope.Save();
 
                     ShowToast(string.Format(Strings.NotificationsMutedForHint, Locale.FormatMuteFor(popup.Value)), ToastPopupIcon.MuteFor);
+                }
+            }
+        }
+
+        public async void RemoveAll()
+        {
+            var confirm = await ShowPopupAsync(Strings.NotificationsDeleteAllExceptionAlert, Strings.NotificationsDeleteAllExceptionTitle, Strings.Delete, Strings.Cancel, destructive: true);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                foreach (var chat in Items.ToList())
+                {
+                    Remove(chat);
                 }
             }
         }

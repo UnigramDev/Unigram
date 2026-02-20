@@ -31,18 +31,16 @@
                     <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/BlockedChats.tgs" />
 
                     <controls:HeaderedControl>
-                        <controls:BadgeButton Content="{CustomResource BlockUser}"
-                                              Click="{x:Bind ViewModel.Block}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Foreground="{ThemeResource DangerButtonBackground}"
-                                              Glyph="&#xE98B;" />
+                        <controls:SettingsButton Content="{CustomResource BlockUser}"
+                                                 Click="{x:Bind ViewModel.Block}"
+                                                 Foreground="{ThemeResource DangerButtonBackground}"
+                                                 Glyph="&#xE98B;" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ProfileCell BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                       Background="{ThemeResource SettingsItemBackground}" />
+                    <cells:ProfileCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>

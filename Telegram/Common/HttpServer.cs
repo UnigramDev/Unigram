@@ -1,5 +1,9 @@
-﻿// Copyright (C) 2016 by David Jeske, Barend Erasmus and donated to the public domain
-
+//
+// Copyright (c) Fela Ameghino 2015-2025
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +21,7 @@ namespace Telegram.Common
     {
         public string Method { get; set; }
         public string Path { get; set; }
+        public Dictionary<string, string> Query { get; set; }
         public Dictionary<string, string> Headers { get; set; }
 
         public HttpRequest()
@@ -43,11 +48,21 @@ namespace Telegram.Common
             Headers = new Dictionary<string, string>();
         }
 
-        // informational only tostring...
+        public HttpResponse(string statusCode, string reasonPhrase)
+        {
+            StatusCode = statusCode;
+            ReasonPhrase = reasonPhrase;
+            Headers = new Dictionary<string, string>();
+        }
+
         public override string ToString()
         {
             return string.Format("HTTP status {0} {1}", this.StatusCode, this.ReasonPhrase);
         }
+
+        public static HttpResponse NotFound => new HttpResponse("404", "Not Found");
+
+        public static HttpResponse InternalServerError => new HttpResponse("500", "Internal Server Error");
     }
 
     public class HttpServer
@@ -64,6 +79,8 @@ namespace Telegram.Common
             _port = port;
         }
 
+        public int Port => _listener?.LocalEndpoint is IPEndPoint endpoint ? endpoint.Port : _port;
+
         public void Start()
         {
             Thread thread = new Thread(new ThreadStart(Listen));
@@ -72,7 +89,7 @@ namespace Telegram.Common
 
         private void Listen()
         {
-            _listener = new TcpListener(IPAddress.Any, _port);
+            _listener = new TcpListener(IPAddress.Loopback, _port);
             _listener.Start();
 
             while (_active)
@@ -115,7 +132,17 @@ namespace Telegram.Common
                 HttpRequest request = GetRequest(stream);
 
                 // route and handle the request...
-                HttpResponse response = _callback(request);
+                HttpResponse response;
+
+                try
+                {
+                    response = _callback(request);
+                }
+                catch (Exception ex)
+                {
+                    response = HttpResponse.InternalServerError;
+                    Logger.Exception(ex);
+                }
 
                 Console.WriteLine("{0} {1}", response.StatusCode, request.Path);
                 // build a default response for errors
@@ -126,7 +153,7 @@ namespace Telegram.Common
                 stream.Close();
                 stream = null;
             }
-            catch (IOException)
+            catch
             {
                 // Connection was aborted
             }
@@ -142,14 +169,14 @@ namespace Telegram.Common
 
             response.Headers["Content-Length"] = response.Content.Length.ToString();
 
-            Write(stream, string.Format("HTTP/1.0 {0} {1}\n", response.StatusCode, response.ReasonPhrase));
+            Write(stream, string.Format("HTTP/1.0 {0} {1}\r\n", response.StatusCode, response.ReasonPhrase));
 
             foreach (var header in response.Headers)
             {
-                Write(stream, string.Format("{0}: {1}\n", header.Key, header.Value));
+                Write(stream, string.Format("{0}: {1}\r\n", header.Key, header.Value));
             }
 
-            Write(stream, "\n");
+            Write(stream, "\r\n");
 
             stream.Write(response.Content, 0, response.Content.Length);
         }
@@ -163,7 +190,7 @@ namespace Telegram.Common
                 next_char = stream.ReadByte();
                 if (next_char == '\n') { break; }
                 if (next_char == '\r') { continue; }
-                if (next_char == -1) { Thread.Sleep(1); continue; };
+                if (next_char == -1) { Thread.Sleep(1); continue; }
                 data += Convert.ToChar(next_char);
             }
             return data;
@@ -189,12 +216,20 @@ namespace Telegram.Common
             string resource = tokens[1];
             string protocolVersion = tokens[2];
 
+            Dictionary<string, string> query = new Dictionary<string, string>();
+            string[] resourceFull = resource.Split('?');
+            if (resourceFull.Length == 2)
+            {
+                resource = resourceFull[0];
+                query = resourceFull[1].ParseQueryString();
+            }
+
             //Read Headers
             Dictionary<string, string> headers = new Dictionary<string, string>();
             string line;
             while ((line = ReadLine(stream)) != null)
             {
-                if (line.Equals(""))
+                if (string.IsNullOrEmpty(line))
                 {
                     break;
                 }
@@ -218,6 +253,7 @@ namespace Telegram.Common
             {
                 Method = method,
                 Path = resource.Trim('/'),
+                Query = query,
                 Headers = headers,
             };
         }

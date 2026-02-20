@@ -1,10 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Common;
+
 using Windows.Storage;
 
 namespace Telegram.Services.Settings
@@ -51,13 +51,6 @@ namespace Telegram.Services.Settings
         {
             get => (StickersTab)(_selectedTab ??= GetValueOrDefault("SelectedTab", 2));
             set => AddOrUpdateValue(ref _selectedTab, "SelectedTab", (int)value);
-        }
-
-        private int? _skinTone;
-        public EmojiSkinTone SkinTone
-        {
-            get => (EmojiSkinTone)(_skinTone ??= GetValueOrDefault("SkinTone", 0));
-            set => AddOrUpdateValue(ref _skinTone, "SkinTone", (int)value);
         }
 
         private bool? _dynamicPackOrder;

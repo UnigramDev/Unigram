@@ -1,13 +1,15 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Cells;
+using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -30,17 +32,15 @@ namespace Telegram.Controls
             _handler = new AnimatedListHandler(ScrollingHost, AnimatedListType.Other);
 
             _zoomer = new ZoomableListHandler(ScrollingHost);
-            _zoomer.Opening = _handler.UnloadVisibleItems;
-            _zoomer.Closing = _handler.ThrottleVisibleItems;
-            _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
-            _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
+            _zoomer.Opening = _handler.Suspend;
+            _zoomer.Closing = _handler.Resume;
         }
 
         public void UpdateCornerRadius(double radius)
         {
-            var min = Math.Max(4, radius - 2);
+            var min = Math.Max(4, radius - 4);
 
-            Root.Padding = new Thickness(0, 0, 0, radius);
+            ScrollingHost.Padding = new Thickness(0, 0, 0, radius);
             SwitchPm.CornerRadius = new CornerRadius(min, min, 4, 4);
 
             CornerRadius = new CornerRadius(radius, radius, 0, 0);
@@ -122,12 +122,16 @@ namespace Telegram.Controls
             {
                 if (sender.ItemsPanel == VerticalStack)
                 {
-                    args.ItemContainer = new TextListViewItem();
+                    args.ItemContainer = new TextListViewItem
+                    {
+                        Style = BootStrapper.Current.Resources["DefaultListViewItemStyle"] as Style
+                    };
                 }
                 else
                 {
                     args.ItemContainer = new TextGridViewItem
                     {
+                        Style = App.Current.Resources["DefaultGridViewItemStyle"] as Style,
                         Margin = new Thickness(2)
                     };
                 }

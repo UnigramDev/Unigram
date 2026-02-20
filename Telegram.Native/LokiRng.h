@@ -10,6 +10,8 @@ namespace winrt::Telegram::Native::implementation
 
         float Next();
 
+        static float Random(uint32_t withSeed0, uint32_t seed1, uint32_t seed2);
+
     private:
         float m_seed;
     };

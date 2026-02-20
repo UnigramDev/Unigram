@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Linq;
 using Telegram.Common;
 using Telegram.Td.Api;
@@ -39,7 +40,7 @@ namespace Telegram.Controls.Stories
         {
             _viewModel = story;
 
-            if (story.ClientService.TryGetUser(story.ChatId, out User user) && user.Type is UserTypeBot)
+            if (story.ClientService.TryGetUser(story.PosterChatId, out User user) && user.Type is UserTypeBot)
             {
                 Visibility = Visibility.Collapsed;
             }
@@ -79,14 +80,7 @@ namespace Telegram.Controls.Stories
 
         private void Viewers_RecentUserHeadChanged(ProfilePicture sender, MessageSender messageSender)
         {
-            if (ViewModel.ClientService.TryGetUser(messageSender, out User user))
-            {
-                sender.SetUser(ViewModel.ClientService, user, 28);
-            }
-            else if (ViewModel.ClientService.TryGetChat(messageSender, out Chat chat))
-            {
-                sender.SetChat(ViewModel.ClientService, chat, 28);
-            }
+            sender.Source = ProfilePictureSource.MessageSender(ViewModel.ClientService, messageSender);
         }
     }
 }

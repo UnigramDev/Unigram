@@ -1,4 +1,11 @@
-﻿using System;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -27,10 +34,17 @@ namespace Telegram.ViewModels.Profile
             : base(clientService, settingsService, aggregator)
         {
             Items = new IncrementalCollection<SavedMessagesTopic>(this);
+            Items.TotalCount = clientService.SavedMessagesTopicCount;
         }
 
         public override void Subscribe()
         {
+            Aggregator.Subscribe<UpdateSavedMessagesTopicCount>(this, Handle);
+        }
+
+        private void Handle(UpdateSavedMessagesTopicCount update)
+        {
+            BeginOnUIThread(() => Items.TotalCount = update.TopicCount);
         }
 
         private void Handle(UpdateSavedMessagesTopic update)
@@ -46,7 +60,7 @@ namespace Telegram.ViewModels.Profile
 
             var totalCount = 0u;
 
-            var response = await ClientService.GetSavedMessagesChatsAsync(Items.Count, 20);
+            var response = await ClientService.GetSavedMessagesTopicsAsync(Items.Count, 20);
             if (response is Topics topics)
             {
                 foreach (var topic in ClientService.GetSavedMessagesTopics(topics.TopicIds))

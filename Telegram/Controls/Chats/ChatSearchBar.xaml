@@ -43,6 +43,8 @@
                     Value="{ThemeResource TextControlThemeMinWidth}" />
             <Setter Property="Padding"
                     Value="0,3,6,6" />
+            <Setter Property="CornerRadius"
+                    Value="{ThemeResource ControlCornerRadius}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
@@ -204,7 +206,7 @@
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="{ThemeResource ControlCornerRadius}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
                                     Control.IsTemplateFocusTarget="True"
                                     MinWidth="{TemplateBinding MinWidth}"
                                     MinHeight="{TemplateBinding MinHeight}" />
@@ -298,19 +300,47 @@
                                              TextChanged="OnTextChanged"
                                              SelectionChanged="OnSelectionChanged"
                                              PreviewKeyDown="OnKeyDown"
+                                             GotFocus="OnGotFocus"
+                                             LostFocus="OnLostFocus"
                                              Style="{StaticResource Test}"
                                              Grid.ColumnSpan="3" />
 
-                    <Button Click="{x:Bind ViewModel.ShowResults}"
-                            Visibility="{x:Bind ViewModel.Items, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                            Style="{StaticResource AccentTextButtonStyle}"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Padding="4,2"
-                            Grid.Column="1">
-                        <TextBlock Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.TotalCount), Mode=OneWay, FallbackValue=''}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}" />
-                    </Button>
+                    <Border x:Name="RootAutocomplete"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Bottom"
+                            Height="320"
+                            Margin="0,0,0,-320"
+                            Grid.ColumnSpan="3">
+                        <controls:TextListView x:Name="ListAutocomplete"
+                                               ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
+                                               Visibility="{x:Bind ConvertAutocompleteVisibility(ViewModel.Autocomplete), Mode=OneWay}"
+                                               ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                                               ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
+                                               Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                               BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                               BorderThickness="1,0,1,1"
+                                               CornerRadius="0,0,8,8"
+                                               AllowFocusOnInteraction="False"
+                                               IsItemClickEnabled="True"
+                                               SizeChanged="Autocomplete_SizeChanged"
+                                               ItemClick="Autocomplete_ItemClick"
+                                               ContainerContentChanging="OnContainerContentChanging"
+                                               VerticalAlignment="Top"
+                                               MaxHeight="320"
+                                               Grid.Row="3">
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection />
+                            </ListView.ItemContainerTransitions>
+                        </controls:TextListView>
+                    </Border>
+
+                    <TextBlock Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.TotalCount), Mode=OneWay, FallbackValue=''}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Visibility="{x:Bind ViewModel.Items, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Padding="4,2"
+                               Grid.Column="1" />
 
                     <controls:GlyphButton x:Name="DeleteButton"
                                           Click="Delete_Click"
@@ -368,39 +398,30 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Grid x:Name="ToolsPanel">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <controls:GlyphButton Click="FilterByMember_Click"
-                                              Glyph="&#xE77B;"
-                                              AllowFocusOnInteraction="False"
-                                              Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              AutomationProperties.Name="{CustomResource AccDescrSearchByUser}"
-                                              ToolTipService.ToolTip="{CustomResource AccDescrSearchByUser}"
-                                              FontSize="{StaticResource GlyphMediumFontSize}" />
-                        <controls:GlyphButton Click="FilterByMedia_Click"
-                                              Glyph="&#xEA69;"
-                                              AllowFocusOnInteraction="False"
-                                              FontSize="{StaticResource GlyphMediumFontSize}"
-                                              Visibility="Collapsed"
-                                              Grid.Column="1" />
-                        <controls:GlyphButton Click="{x:Bind ViewModel.Dialog.JumpDate}"
-                                              Glyph="&#xE787;"
-                                              AllowFocusOnInteraction="False"
-                                              AutomationProperties.Name="{CustomResource JumpToDate}"
-                                              ToolTipService.ToolTip="{CustomResource JumpToDate}"
-                                              FontSize="{StaticResource GlyphMediumFontSize}"
-                                              Grid.Column="2" />
-                    </Grid>
+                    <controls:GlyphButton x:Name="FilterByMember"
+                                          Click="FilterByMember_Click"
+                                          Glyph="&#xE77B;"
+                                          AllowFocusOnInteraction="False"
+                                          Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                          AutomationProperties.Name="{CustomResource AccDescrSearchByUser}"
+                                          ToolTipService.ToolTip="{CustomResource AccDescrSearchByUser}"
+                                          FontSize="{StaticResource GlyphMediumFontSize}"
+                                          Margin="0,0,-4,0" />
+                    <controls:GlyphButton Click="{x:Bind ViewModel.Dialog.JumpDate}"
+                                          Glyph="&#xE787;"
+                                          AllowFocusOnInteraction="False"
+                                          AutomationProperties.Name="{CustomResource JumpToDate}"
+                                          ToolTipService.ToolTip="{CustomResource JumpToDate}"
+                                          FontSize="{StaticResource GlyphMediumFontSize}"
+                                          Margin="0,0,-4,0"
+                                          Grid.Column="1" />
 
                     <controls:GlyphButton Click="Close_Click"
                                           Glyph="&#xE711;"
                                           AutomationProperties.Name="{CustomResource AccDescrCloseSearch}"
-                                          Grid.Column="1" />
+                                          Grid.Column="2" />
                 </Grid>
             </Grid>
         </Border>
@@ -425,23 +446,5 @@
                 </ScrollViewer>
             </Grid>
         </Grid>
-
-        <controls:TextListView x:Name="ListAutocomplete"
-                               ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
-                               Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                               ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
-                               ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
-                               Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                               AllowFocusOnInteraction="False"
-                               IsItemClickEnabled="True"
-                               ItemClick="Autocomplete_ItemClick"
-                               ContainerContentChanging="OnContainerContentChanging"
-                               VerticalAlignment="Top"
-                               MaxHeight="320"
-                               Grid.Row="3">
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection />
-            </ListView.ItemContainerTransitions>
-        </controls:TextListView>
     </Grid>
 </UserControl>

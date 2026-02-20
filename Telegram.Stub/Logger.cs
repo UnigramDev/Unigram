@@ -4,9 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -25,22 +23,22 @@ namespace Telegram.Stub
             Debug,
         }
 
-        public static void Assert(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Assert(object? message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(LogLevel.Assert, message, member, filePath, line);
         }
 
-        public static void Debug(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Debug(object? message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(LogLevel.Debug, message, member, filePath, line);
         }
 
-        public static void Warning(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Warning(object? message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(LogLevel.Warning, message, member, filePath, line);
         }
 
-        public static void Error(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Error(object? message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(LogLevel.Error, message, member, filePath, line);
         }
@@ -50,7 +48,7 @@ namespace Telegram.Stub
             Log(LogLevel.Error, exception.ToString(), member, filePath, line);
         }
 
-        public static void Info(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Info(object? message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(LogLevel.Info, message, member, filePath, line);
         }
@@ -66,7 +64,7 @@ namespace Telegram.Stub
         private unsafe static extern void GetSystemTimeAsFileTime(long* pSystemTimeAsFileTime);
 
         [Conditional("DEBUG")]
-        private static unsafe void Log(LogLevel level, object message, string member, string filePath, int line)
+        private static unsafe void Log(LogLevel level, object? message, string member, string filePath, int line)
         {
             // We use UtcNow instead of Now because Now is expensive.
             long diff = 116444736000000000;
@@ -90,6 +88,8 @@ namespace Telegram.Stub
             {
                 File.AppendAllText(path, entry + "\n");
             }
+
+            System.Diagnostics.Debug.WriteLine(entry);
         }
 
         //private const string FormatWithMessage = "[{0:yyyy-MM-dd HH\\:mm\\:ss\\:ffff}][{1}][{2}:{3}] {4}";

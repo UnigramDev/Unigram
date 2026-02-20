@@ -1,11 +1,15 @@
 //
-// Copyright Fela Ameghino & Contributors 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System.ComponentModel;
 using Telegram.Common;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Settings
@@ -22,10 +26,32 @@ namespace Telegram.Views.Settings
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (ApiInfo.IsPackagedRelease && ViewModel.ClientService.Options.CanIgnoreSensitiveContentRestrictions)
+            ViewModel.PropertyChanged += OnPropertyChanged;
+
+            if (ViewModel.ClientService.Options.IgnoreSensitiveContentRestrictions || ViewModel.ClientService.Options.CanIgnoreSensitiveContentRestrictions)
             {
                 FindName(nameof(SensitiveContent));
             }
+
+            UpdateEmailAddressPattern(ViewModel.EmailAddressPattern);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.EmailAddressPattern))
+            {
+                UpdateEmailAddressPattern(ViewModel.EmailAddressPattern);
+            }
+        }
+
+        private void UpdateEmailAddressPattern(FormattedText formatted)
+        {
+            ChangeEmailPattern?.SetText(ViewModel.ClientService, formatted);
         }
 
         #region Binding
@@ -75,5 +101,10 @@ namespace Telegram.Views.Settings
         }
 
         #endregion
+
+        private void ChangeEmailPattern_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateEmailAddressPattern(ViewModel.EmailAddressPattern);
+        }
     }
 }

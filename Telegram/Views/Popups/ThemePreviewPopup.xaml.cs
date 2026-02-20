@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Controls;
 using Telegram.Converters;
@@ -46,7 +47,7 @@ namespace Telegram.Views.Popups
             Chat6.Mockup(new ChatTypePrivate(), 5, "Max Bright", string.Empty, "How about some coffee?", true, 0, false, false, DateTime.Now.AddHours(-5));
             Chat7.Mockup(new ChatTypePrivate(), 6, "Natalie Parker", string.Empty, "OK, great)", true, 0, false, false, DateTime.Now.AddHours(-6));
 
-            Photo.Source = PlaceholderImage.GetNameForUser(Strings.ThemePreviewTitle);
+            Photo.Source = ProfilePictureSourceText.GetNameForUser(Strings.ThemePreviewTitle);
             Title.Text = Strings.ThemePreviewTitle;
             Subtitle.Text = string.Format("{0} {1} {2}", Strings.LastSeen, Strings.TodayAt, Formatter.Time(DateTime.Now.AddHours(-1)));
 
@@ -71,13 +72,9 @@ namespace Telegram.Views.Popups
         {
             try
             {
-                await TypeResolver.Current.Resolve<IThemeService>().InstallThemeAsync(_file);
+                await LifetimeService.Current.ActiveItem.Resolve<IThemeService>().InstallThemeAsync(_file);
             }
             catch { }
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
     }
 }

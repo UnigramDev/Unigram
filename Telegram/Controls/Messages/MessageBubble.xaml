@@ -69,6 +69,12 @@
                                         <Setter Target="Panel.(Grid.Column)"
                                                 Value="2" />
 
+                                        <!-- TODO: doesn't work because reply is going to eat up too much space -->
+                                        <!--<Setter Target="Column2.Width"
+                                                Value="*" />
+                                        <Setter Target="Column1.Width"
+                                                Value="Auto" />-->
+
                                         <Setter Target="MediaReactions.(Grid.Column)"
                                                 Value="0" />
                                         <Setter Target="MediaReactions.(Grid.ColumnSpan)"
@@ -115,6 +121,12 @@
                                         <Setter Target="Panel.(Grid.Column)"
                                                 Value="0" />
 
+                                        <!-- TODO: doesn't work because reply is going to eat up too much space -->
+                                        <!--<Setter Target="Column0.Width"
+                                                Value="*" />
+                                        <Setter Target="Column1.Width"
+                                                Value="Auto" />-->
+
                                         <Setter Target="MediaReactions.(Grid.Column)"
                                                 Value="1" />
                                         <Setter Target="MediaReactions.(Grid.ColumnSpan)"
@@ -143,6 +155,12 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <!--
+                        Once again we have to work around some bug caused by Grid measure implementation:
+                        Setting RowSpan="3" while being on Column="0" (the one we need) causes the Grid to insert
+                        some vertical space between row zero and two. Since in code we already control column zero
+                        width programmatically, it's safe to use negative margins.
+                        -->
                         <HyperlinkButton x:Name="PhotoRoot"
                                          x:Load="False"
                                          Style="{StaticResource EmptyHyperlinkButtonStyle}"
@@ -150,11 +168,20 @@
                                          HorizontalAlignment="Left"
                                          VerticalAlignment="Bottom"
                                          Width="30"
-                                         Height="30">
+                                         Height="30"
+                                         Margin="-38,0,0,0"
+                                         Grid.Column="1"
+                                         Grid.RowSpan="3">
                             <controls:ProfilePicture x:Name="Photo"
-                                                     Width="30"
-                                                     Height="30" />
+                                                     Size="30"
+                                                     Shape="Ellipse"
+                                                     IsCachingEnabled="True" />
                         </HyperlinkButton>
+
+                        <Rectangle x:Name="ShadowCaster"
+                                   RadiusX="15"
+                                   RadiusY="15"
+                                   Grid.Column="1" />
 
                         <Grid x:Name="ContentPanel"
                               Background="{ThemeResource MessageBackgroundBrush}"
@@ -163,9 +190,11 @@
                               Padding="0,4,0,0"
                               Grid.Column="1">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition x:Name="Column0"
+                                                  Width="Auto" />
+                                <ColumnDefinition x:Name="Column1" />
+                                <ColumnDefinition x:Name="Column2"
+                                                  Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -188,6 +217,8 @@
                                                       Grid.Row="1">
                                 <controls:FormattedTextBlock x:Name="Message"
                                                              Foreground="{ThemeResource MessageForegroundBrush}"
+                                                             HorizontalTextAlignment="DetectFromContent"
+                                                             TextReadingOrder="UseFlowDirection"
                                                              AdjustLineEnding="True"
                                                              Margin="10,0,10,6"
                                                              Grid.Column="1"
@@ -242,7 +273,6 @@
                                         <Hyperlink UnderlineStyle="None">
                                             <Run />
                                         </Hyperlink>
-                                        <Run Text="&#x200C;" />
                                     </TextBlock>
                                     <controls:IdentityIcon x:Name="Identity"
                                                            VerticalAlignment="Bottom"
@@ -284,20 +314,22 @@
                                              Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                                              HorizontalAlignment="Stretch"
                                              HorizontalContentAlignment="Stretch"
+                                             BorderThickness="0"
                                              Padding="0"
                                              Grid.Column="1"
                                              Grid.Row="2">
                                 <Grid BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
                                       BorderThickness="0,1,0,0"
-                                      Padding="10,4,10,4">
+                                      Padding="10,4,10,6">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <!-- TODO: Migrate to RecentUserHeads -->
-                                    <StackPanel x:Name="RecentRepliers"
-                                                Orientation="Horizontal"
-                                                Height="28" />
+                                    <controls:RecentUserHeads x:Name="RecentRepliers"
+                                                              BorderBrush="{ThemeResource MessageBackgroundBrush}"
+                                                              ItemSize="24"
+                                                              ItemOverlap="12" />
                                     <TextBlock x:Name="ThreadGlyph"
                                                Text="&#xE9BF;"
                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -313,16 +345,17 @@
                                                HorizontalAlignment="Right"
                                                VerticalAlignment="Center"
                                                FontSize="20"
-                                               Grid.Column="1" />
+                                               Grid.Column="2" />
                                 </Grid>
                             </HyperlinkButton>
                         </Grid>
 
-                        <controls:ReplyMarkupPanel x:Name="Markup"
-                                                   x:Load="False"
-                                                   MaxWidth="{StaticResource MessageMaxWidth}"
-                                                   Grid.Column="1"
-                                                   Grid.Row="1" />
+                        <local:ReplyMarkupInlinePanel x:Name="Markup"
+                                                      x:Load="False"
+                                                      MaxWidth="{StaticResource MessageMaxWidth}"
+                                                      Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                                      Grid.Column="1"
+                                                      Grid.Row="1" />
 
 
                         <!-- TODO: find a way to get rid of this -->
@@ -332,6 +365,22 @@
                                               Padding="0,2,0,0"
                                               Grid.Column="1"
                                               Grid.Row="2" />
+
+                        <Border x:Name="Summary"
+                                x:Load="False"
+                                Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                VerticalAlignment="Top"
+                                CornerRadius="15"
+                                Margin="8,0,0,0"
+                                Grid.Column="2">
+                            <controls:GlyphButton x:Name="SummaryButton"
+                                                  Foreground="{ThemeResource MessageServiceForegroundBrush}"
+                                                  FontSize="{StaticResource GlyphSmallFontSize}"
+                                                  Width="30"
+                                                  Height="30"
+                                                  CornerRadius="15"
+                                                  Padding="0" />
+                        </Border>
 
                         <Border x:Name="Action"
                                 x:Load="False"

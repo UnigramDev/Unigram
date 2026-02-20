@@ -83,8 +83,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePicture Width="36"
-                                             Height="36"
+                    <controls:ProfilePicture Size="36"
                                              Margin="0,0,12,0"
                                              Grid.RowSpan="2" />
 
@@ -94,8 +93,7 @@
                                VerticalAlignment="Bottom"
                                Grid.Column="1" />
                     <TextBlock VerticalAlignment="Top"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
                                TextTrimming="CharacterEllipsis"
                                TextWrapping="NoWrap"
                                Grid.Column="1"
@@ -220,10 +218,10 @@
                                             ItemTemplate="{StaticResource UserTemplate}"
                                             ElementPrepared="OnElementPrepared" />
 
-                        <controls:BadgeButton Click="{x:Bind ViewModel.ExpandTopSenders}"
-                                              Content="{x:Bind ConvertShowMore(ViewModel.TopSendersLeft.Count), Mode=OneWay}"
-                                              Visibility="{x:Bind ViewModel.TopSendersLeft.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
+                        <controls:SettingsButton Click="{x:Bind ViewModel.ExpandTopSenders}"
+                                                 Content="{x:Bind ConvertShowMore(ViewModel.TopSendersLeft.Count), Mode=OneWay}"
+                                                 Visibility="{x:Bind ViewModel.TopSendersLeft.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl Header="{CustomResource TopAdmins}"

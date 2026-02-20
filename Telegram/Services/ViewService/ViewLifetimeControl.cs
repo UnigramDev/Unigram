@@ -1,30 +1,9 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-//********************************************************
-//
-// Copyright (c) Microsoft. All rights reserved.
-//
-//*********************************************************
-
-// The objects defined here demonstrate how to make sure each of the views created remains alive as long as 
-// the app needs them, but only when they're being used by the app or the user. Many of the scenarios contained in this
-// sample use these functions to keep track of the views available and ensure that the view is not closed while
-// the scenario is attempting to show it.
-//
-// As you can see in scenario 1, the ApplicationViewSwitcher.TryShowAsStandaloneAsync and 
-// ProjectionManager.StartProjectingAsync methods let you show one view next to another. The Consolidated event
-// is fired when a view stops being visible separately from other views. Common cases where this will occur
-// is when the view falls out of the list of recently used apps, or when the user performs the close gesture on the view.
-// This is a good time to close the view, provided the app isn't trying to show the view at the same time. This event
-// is fired on the thread of the view that becomes consolidated.
-//
-// Each view lives on its own thread, so concurrency control is necessary. Also, as you'll see in the sample,
-// certain objects may be bound to UI on given threads. Properties of those objects should only be updated
-// on that UI thread.
 
 using System;
 using System.Collections.Concurrent;
@@ -55,7 +34,7 @@ namespace Telegram.Services
 
         #region Internal tracking fields
 
-        private readonly object syncObject = new object();
+        private readonly object syncObject = new();
 
         // This class uses references counts to make sure the secondary views isn't closed prematurely.
         // Whenever the main view is about to interact with the secondary view, it should take a reference
@@ -105,7 +84,7 @@ namespace Telegram.Services
 
         private Task ConsolidateAsyncImpl()
         {
-            if (Window.Current.Content is RootPage root)
+            if (WindowContext.Current.Content is RootPage root)
             {
                 root.PresentContent(null);
                 return Task.CompletedTask;
@@ -177,7 +156,15 @@ namespace Telegram.Services
                 WindowControlsMap.TryRemove(Id, out _);
 
                 // Explicitly calling Close breaks everything
-                Window.Current.Content = null;
+                if (Window.Current.Content is WindowControl control)
+                {
+                    control.Content = null;
+                }
+                else
+                {
+                    Window.Current.Content = null;
+                }
+
                 Window.Current.Close();
             }
         }

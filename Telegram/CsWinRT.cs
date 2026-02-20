@@ -1,9 +1,23 @@
-﻿using System;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+global using DispatcherQueue = Windows.System.DispatcherQueue;
+global using Object = Telegram.Td.Api.Object;
+global using Point = Windows.Foundation.Point;
+global using TimeZone = Telegram.Td.Api.TimeZone;
+global using User = Telegram.Td.Api.User;
+global using VirtualKey = Windows.System.VirtualKey;
+global using VirtualKeyModifiers = Windows.System.VirtualKeyModifiers;
+using System;
+#if NET9_0_OR_GREATER
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using WinRT;
 
-#if NET9_0_OR_GREATER
 [assembly: GeneratedWinRTExposedExternalType(typeof(byte[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(int[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(long[]))]
@@ -17,7 +31,7 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.CloseBirthdayUser[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.ClosedVectorPath[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.Emojis[]))]
-[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.FeedbackChatTopic[]))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.DirectMessagesChatTopic[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.ForumTopic[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.GroupCallParticipant[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.MessageEffect[]))]
@@ -39,8 +53,7 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.NameColor>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.ProfileColor>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.MvxObservableCollection<Telegram.Td.Api.PremiumFeature>))]
-#endif
-
+#else
 namespace WinRT
 {
     // This attribute is just a dummy for making it easier to port the code to .NET 9 and Native AOT.
@@ -49,3 +62,4 @@ namespace WinRT
 
     }
 }
+#endif

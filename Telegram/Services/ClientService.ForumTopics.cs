@@ -1,39 +1,46 @@
-﻿using System;
-using System.Collections.Concurrent;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Td.Api;
 
 namespace Telegram.Services
 {
     public partial interface ICacheService
     {
-        void SetPinnedForumTopics(long chatId, IList<long> messageThreadIds);
+        void SetPinnedForumTopics(long chatId, IList<int> forumTopicIds);
 
-        Task<Topics> GetForumTopicsAsync(long chatId, int offset, int limit);
+        Task<ForumTopics2> GetForumTopicsAsync(long chatId, int offset, int limit);
 
-        bool TryGetForumTopic(long chatId, long id, out ForumTopic topic);
+        bool TryGetForumTopic(long chatId, int id, out ForumTopic topic);
         bool TryGetForumTopic(long chatId, MessageTopic messageTopic, out ForumTopic topic);
 
-        IEnumerable<ForumTopic> GetForumTopics(long chatId, IEnumerable<long> ids);
-        ForumTopic GetForumTopic(long chatId, long id);
+        IEnumerable<ForumTopic> GetForumTopics(long chatId, IEnumerable<int> ids);
+        ForumTopic GetForumTopic(long chatId, int id);
 
         int UnreadTopicCount(long chatId);
     }
 
     public partial class ClientService
     {
-        private readonly ConcurrentDictionary<long, ForumTopicService> _forums = new();
+        private readonly ReaderWriterDictionary<long, ForumTopicService> _forums = new(100);
 
-        public void SetPinnedForumTopics(long chatId, IList<long> messageThreadIds)
+        public void SetPinnedForumTopics(long chatId, IList<int> forumTopicIds)
         {
             if (_forums.TryGetValue(chatId, out ForumTopicService manager))
             {
-                manager.SetPinnedForumTopics(messageThreadIds);
+                manager.SetPinnedForumTopics(forumTopicIds);
             }
         }
 
-        public Task<Topics> GetForumTopicsAsync(long chatId, int offset, int limit)
+        public Task<ForumTopics2> GetForumTopicsAsync(long chatId, int offset, int limit)
         {
             _forums.TryGetValue(chatId, out ForumTopicService manager);
 
@@ -46,7 +53,7 @@ namespace Telegram.Services
             return manager.GetForumTopicsAsync(offset, limit);
         }
 
-        public ForumTopic GetForumTopic(long chatId, long id)
+        public ForumTopic GetForumTopic(long chatId, int id)
         {
             if (_forums.TryGetValue(chatId, out ForumTopicService manager))
             {
@@ -56,7 +63,7 @@ namespace Telegram.Services
             return null;
         }
 
-        public bool TryGetForumTopic(long chatId, long id, out ForumTopic topic)
+        public bool TryGetForumTopic(long chatId, int id, out ForumTopic topic)
         {
             if (_forums.TryGetValue(chatId, out ForumTopicService manager))
             {
@@ -79,7 +86,7 @@ namespace Telegram.Services
             return false;
         }
 
-        public IEnumerable<ForumTopic> GetForumTopics(long chatId, IEnumerable<long> ids)
+        public IEnumerable<ForumTopic> GetForumTopics(long chatId, IEnumerable<int> ids)
         {
             if (_forums.TryGetValue(chatId, out ForumTopicService manager))
             {
@@ -99,18 +106,18 @@ namespace Telegram.Services
             return 0;
         }
 
-        private void UpdateForumTopic(long chatId, Action<ForumTopicService> update)
+        private void UpdateForumTopic(long chatId, bool createNew, Action<ForumTopicService> update)
         {
             if (_forums.TryGetValue(chatId, out ForumTopicService manager))
             {
                 update(manager);
             }
-            else
+            else if (createNew)
             {
                 manager = new ForumTopicService(this, _aggregator, chatId);
                 _forums[chatId] = manager;
 
-                manager.GetForumTopicsAsync(0, 20);
+                //manager.GetForumTopicsAsync(0, 20);
 
                 update(manager);
             }
@@ -125,12 +132,12 @@ namespace Telegram.Services
                     var manager = new ForumTopicService(this, _aggregator, chat.Id);
                     _forums[chat.Id] = manager;
 
-                    manager.GetForumTopicsAsync(0, 20);
+                    //manager.GetForumTopicsAsync(0, 20);
                 }
-                else if (supergroup.IsFeedbackGroup && !_feedbackChats.ContainsKey(chat.Id))
+                else if (supergroup.IsDirectMessagesGroup && !_directMessagesChats.ContainsKey(chat.Id))
                 {
-                    var manager = new FeedbackChatTopicService(this, _aggregator, chat.Id);
-                    _feedbackChats[chat.Id] = manager;
+                    var manager = new DirectMessagesChatTopicService(this, _aggregator, chat.Id);
+                    _directMessagesChats[chat.Id] = manager;
                 }
             }
         }

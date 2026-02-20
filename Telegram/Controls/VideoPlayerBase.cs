@@ -1,4 +1,11 @@
-﻿using System;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System;
 using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.ViewModels.Gallery;
@@ -87,11 +94,9 @@ namespace Telegram.Controls
 
         public abstract void Toggle();
 
-        public abstract void Stop();
-
         public abstract void Clear();
 
-        public abstract void AddTime(double value);
+        public abstract void Seek(double value);
 
         protected bool _isReady;
 
@@ -193,7 +198,7 @@ namespace Telegram.Controls
         public event TypedEventHandler<VideoPlayerBase, VideoPlayerLevelsChangedEventArgs> LevelsChanged;
         protected void OnLevelsChanged(IList<VideoPlayerLevel> levels, VideoPlayerLevel currentLevel)
         {
-            Levels = levels;
+            Levels = levels ?? Array.Empty<VideoPlayerLevel>();
             LevelsChanged?.Invoke(this, new VideoPlayerLevelsChangedEventArgs(levels, currentLevel, IsCurrentLevelAuto));
         }
 
@@ -208,6 +213,12 @@ namespace Telegram.Controls
         protected void OnClosed()
         {
             Closed?.Invoke(this, EventArgs.Empty);
+        }
+
+        public event TypedEventHandler<VideoPlayerBase, EventArgs> Failed;
+        protected void OnFailed()
+        {
+            Failed?.Invoke(this, EventArgs.Empty);
         }
 
         public event TypedEventHandler<VideoPlayerBase, EventArgs> TreeUpdated;

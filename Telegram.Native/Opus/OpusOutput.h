@@ -18,10 +18,10 @@
 #define WAV_HEADER_FIXED 44
 
 #define ReturnIfFailed(result, method) \
-	if((result = method) != OPUS_OK) \
-	{ \
-		return result; \
-	}
+    if((result = method) != OPUS_OK) \
+    { \
+        return result; \
+    }
 
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::Media;
@@ -93,25 +93,37 @@ namespace winrt::Telegram::Native::Opus::implementation
                 WriteFrame(buffer, count);
             }
 
+            free(buffer);
             CloseHandle(file);
         }
 
         void WriteFrame(AudioFrame frame) {
-            // TODO: this method doesn't really work,
-            // and I'm too lazy to really figure out why
             AudioBuffer audioBuffer = frame.LockBuffer(AudioBufferAccessMode::Read);
             IMemoryBufferReference bufferReference = audioBuffer.CreateReference();
 
-            const int frameLength = TG_OPUS_FRAME_SIZE * sizeof(int16_t);
             size_t dataLength = audioBuffer.Length();
-            size_t partsCount = dataLength / frameLength;
-
             auto buffer = bufferReference.data();
+
+            // Assuming float32 format
+            const int floatFrameLength = TG_OPUS_FRAME_SIZE * sizeof(float);
+            const int int16FrameLength = TG_OPUS_FRAME_SIZE * sizeof(int16_t);
+            size_t partsCount = dataLength / floatFrameLength;
+
+            std::vector<int16_t> int16Buffer(TG_OPUS_FRAME_SIZE);
 
             for (int i = 0; i < partsCount; i++)
             {
-                unsigned int count = frameLength * (i + 1) > dataLength ? dataLength - frameLength * i : frameLength;
-                WriteFrame(buffer + frameLength * i, count);
+                float* floatData = reinterpret_cast<float*>(buffer + floatFrameLength * i);
+
+                // Convert float32 [-1.0, 1.0] to int16 [-32768, 32767]
+                for (int j = 0; j < TG_OPUS_FRAME_SIZE; j++)
+                {
+                    float sample = floatData[j];
+                    sample = std::max(-1.0f, std::min(1.0f, sample)); // Clamp
+                    int16Buffer[j] = static_cast<int16_t>(sample * 32767.0f);
+                }
+
+                WriteFrame(reinterpret_cast<uint8_t*>(int16Buffer.data()), int16FrameLength);
             }
 
             bufferReference.Close();

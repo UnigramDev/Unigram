@@ -158,8 +158,6 @@
                 Value="{ThemeResource ProgressBarBorderThemeThickness}" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
-        <Setter Property="Maximum"
-                Value="100" />
         <Setter Property="MinHeight"
                 Value="{ThemeResource ProgressBarThemeMinHeight}" />
         <Setter Property="IsTabStop"
@@ -177,21 +175,23 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ProgressVoice">
-                    <Grid Background="Transparent">
-                        <Path x:Name="HorizontalTrackRect"
-                              Margin="{TemplateBinding Padding}"
-                              Fill="{TemplateBinding Foreground}"
-                              StrokeStartLineCap="Round"
-                              StrokeEndLineCap="Round"
-                              HorizontalAlignment="Stretch"
-                              Opacity="0.4" />
-                        <Path x:Name="ProgressBarIndicator"
-                              Margin="{TemplateBinding Padding}"
-                              Fill="{TemplateBinding Foreground}"
-                              StrokeStartLineCap="Round"
-                              StrokeEndLineCap="Round"
-                              HorizontalAlignment="Left" />
-                    </Grid>
+                    <Border Background="Transparent">
+                        <Grid x:Name="RootGrid">
+                            <Rectangle x:Name="HorizontalTrackRect"
+                                       Margin="{TemplateBinding Padding}"
+                                       Fill="{TemplateBinding Foreground}"
+                                       StrokeStartLineCap="Round"
+                                       StrokeEndLineCap="Round"
+                                       HorizontalAlignment="Stretch"
+                                       Opacity="0.4" />
+                            <Rectangle x:Name="ProgressBarIndicator"
+                                       Margin="{TemplateBinding Padding}"
+                                       Fill="{TemplateBinding Foreground}"
+                                       StrokeStartLineCap="Round"
+                                       StrokeEndLineCap="Round"
+                                       HorizontalAlignment="Stretch" />
+                        </Grid>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -244,10 +244,13 @@
                             <!--<TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>-->
                             <controls:ProgressVoice x:Name="Progress"
                                                     AutomationProperties.AccessibilityView="Raw"
-                                                    HorizontalAlignment="Left" />
+                                                    HorizontalAlignment="Stretch" />
 
                             <TextBlock x:Name="Subtitle"
-                                       Style="{StaticResource DisabledCaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
                                        Typography.NumeralAlignment="Tabular" />
                         </StackPanel>
 

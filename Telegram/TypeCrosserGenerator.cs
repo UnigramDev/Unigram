@@ -1,13 +1,15 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Telegram
@@ -17,7 +19,19 @@ namespace Telegram
         [Conditional("DEBUG")]
         public static void Generate()
         {
-            var types = typeof(Telegram.Td.Api.File).Assembly.GetTypes();
+            var typesToSkip = new[]
+            {
+                typeof(Telegram.Td.Api.MessageAlbumLastMessage),
+                typeof(Telegram.Td.Api.MessageChatEvent),
+                typeof(Telegram.Td.Api.MessagePaidAlbum),
+                typeof(Telegram.Td.Api.MessageSponsored),
+            };
+
+            var baseObject = typeof(Telegram.Td.Api.BaseObject);
+            var types = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .Where(t => baseObject.IsAssignableFrom(t) && t != baseObject && !typesToSkip.Contains(t))
+                .ToList();
 
             var typesToCross = new List<Type>();
             var typesToCrossMap = new Dictionary<Type, Dictionary<string, Type>>();
@@ -29,7 +43,7 @@ namespace Telegram
 
                 foreach (var type in types)
                 {
-                    if (type.IsInterface)
+                    if (type.IsAbstract)
                     {
                         continue;
                     }
@@ -68,13 +82,11 @@ namespace Telegram
 
                         typesToCrossMap[type] = targets;
 
-                        foreach (var baseType in type.GetInterfaces())
+                        var baseType = type.BaseType;
+                        if (baseType.IsPublic && baseType.IsVisible && !typesToCross.Contains(baseType))
                         {
-                            if (baseType.IsPublic && baseType.IsVisible && !typesToCross.Contains(baseType))
-                            {
-                                typesToCross.Add(baseType);
-                                addedSomething = true;
-                            }
+                            typesToCross.Add(baseType);
+                            addedSomething = true;
                         }
                     }
                 }
@@ -91,7 +103,7 @@ namespace Telegram
                 var key = type.Key.Name;
                 var name = type.Key.Name.CamelCase();
 
-                builder.AppendLine($"case {key} {name}:");
+                builder.AppendLine($"case global::Telegram.Td.Api.{key} {name}:");
                 builder.Increment();
 
                 foreach (var property in type.Value.OrderBy(x => x.Key))
@@ -135,6 +147,12 @@ namespace Telegram
                 builder.AppendLine("break;");
                 builder.Decrement();
             }
+
+            builder.AppendLine("case global::Telegram.Td.Api.File file:");
+            builder.Increment();
+            builder.AppendLine("ProcessFile(file);");
+            builder.AppendLine("break;");
+            builder.Decrement();
 
             builder.AppendLine("}");
             var c = builder.ToString();

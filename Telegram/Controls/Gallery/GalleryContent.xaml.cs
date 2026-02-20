@@ -1,19 +1,23 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Native.AI;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
-using Telegram.Views;
+using Telegram.Views.Popups;
 using Windows.Foundation;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -24,12 +28,14 @@ namespace Telegram.Controls.Gallery
 {
     public sealed partial class GalleryContent : AspectView
     {
-        private IGalleryDelegate _delegate;
+        private GalleryWindow _window;
         private GalleryMedia _item;
 
         private int _itemId;
 
         public GalleryMedia Item => _item;
+
+        private ThumbnailController _thumbnailController;
 
         private long _fileToken;
         private long _thumbnailToken;
@@ -68,7 +74,7 @@ namespace Telegram.Controls.Gallery
             {
                 UpdateManager.Unsubscribe(this, ref _fileToken);
 
-                _delegate.ClientService?.Send(new OpenMessageContent(message.ChatId, message.Id));
+                _window.ClientService?.Send(new OpenMessageContent(message.ChatId, message.Id));
             }
         }
 
@@ -145,9 +151,9 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        public void UpdateItem(IGalleryDelegate delegato, GalleryMedia item)
+        public void UpdateItem(GalleryWindow window, GalleryMedia item)
         {
-            _delegate = delegato;
+            _window = window;
             _item = item;
 
             _appliedRotation = item?.RotationAngle switch
@@ -160,7 +166,6 @@ namespace Telegram.Controls.Gallery
 
             Tag = item;
             RotationAngle = item?.RotationAngle ?? RotationAngle.Angle0;
-            Background = null;
             Texture.Source = null;
             Texture.Stretch = item?.Constraint != null
                 ? Stretch.UniformToFill
@@ -202,14 +207,23 @@ namespace Telegram.Controls.Gallery
                 DocumentName.Text = string.Empty;
             }
 
-            var thumbnail = item.Thumbnail;
-            if (thumbnail != null && item.IsMedia && (item.IsVideo || (item.IsPhoto && !file.Local.IsDownloadingCompleted)))
+            if (item.IsMedia && (item.IsVideo || (item.IsPhoto && !file.Local.IsDownloadingCompleted)))
             {
-                UpdateThumbnail(item, thumbnail, null, true);
+                UpdateThumbnail(item, item.Thumbnail, item.Minithumbnail, true);
             }
 
-            UpdateManager.Subscribe(this, delegato.ClientService, file, ref _fileToken, UpdateFile);
+            UpdateManager.Subscribe(this, window.ClientService, file, ref _fileToken, UpdateFile);
             UpdateFile(item, file);
+
+            if (item.AlternativeVideos.Count > 0)
+            {
+                var video = item.AlternativeVideos[0];
+                window.ClientService.DownloadFile(video.HlsFile.Id, 30);
+                window.ClientService.DownloadFile(video.Video.Id, 29, 0, (int)((double)video.Video.Size / item.Duration));
+            }
+
+            IsTextSelectionEnabled = false;
+            IsTextNotRecognized = false;
         }
 
         private void UpdateFile(object target, File file)
@@ -246,7 +260,7 @@ namespace Telegram.Controls.Gallery
 
                 if (item.IsPhoto && item.IsMedia)
                 {
-                    item.ClientService.DownloadFile(file.Id, 1);
+                    item.ClientService.DownloadFile(file.Id, 16);
                 }
             }
             else
@@ -262,7 +276,16 @@ namespace Telegram.Controls.Gallery
                     Button.SetGlyph(file.Id, MessageContentState.Photo);
                     Button.Opacity = 0;
 
-                    Texture.Source = UriEx.ToBitmap(file.Local.Path, 0, 0);
+                    if (Extensions.IsRelativePath(ApplicationData.Current.LocalFolder.Path, file.Local.Path, out _))
+                    {
+                        Texture.Source = UriEx.ToBitmap(file.Local.Path, 0, 0);
+                    }
+                    else
+                    {
+                        var bitmap = new BitmapImage();
+                        Texture.Source = bitmap;
+                        UpdateBitmap(bitmap, file.Local.Path);
+                    }
                 }
                 else
                 {
@@ -276,6 +299,22 @@ namespace Telegram.Controls.Gallery
                 Button.State == MessageContentState.Photo ? -1 : 0);
         }
 
+        private async void UpdateBitmap(BitmapImage bitmap, string path)
+        {
+            try
+            {
+                var file = await StorageFile.GetFileFromPathAsync(path);
+                using (var stream = await file.OpenReadAsync())
+                {
+                    await bitmap.SetSourceAsync(stream);
+                }
+            }
+            catch
+            {
+                //
+            }
+        }
+
         private void UpdateThumbnail(object target, File file)
         {
             UpdateThumbnail(_item, file, null, false);
@@ -283,31 +322,13 @@ namespace Telegram.Controls.Gallery
 
         private void UpdateThumbnail(GalleryMedia item, File file, Minithumbnail minithumbnail, bool download)
         {
-            BitmapImage source = null;
-            ImageBrush brush;
-
-            if (Background is ImageBrush existing)
-            {
-                brush = existing;
-            }
-            else
-            {
-                brush = new ImageBrush
-                {
-                    Stretch = Stretch.UniformToFill,
-                    AlignmentX = AlignmentX.Center,
-                    AlignmentY = AlignmentY.Center
-                };
-
-                Background = brush;
-            }
+            _thumbnailController ??= new ThumbnailController(ThumbnailTexture);
 
             if (file != null)
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    source = new BitmapImage();
-                    PlaceholderHelper.GetBlurred(source, file.Local.Path, 3);
+                    _thumbnailController.Blur(file.Local.Path, 3, item.File.Id);
                 }
                 else
                 {
@@ -315,26 +336,30 @@ namespace Telegram.Controls.Gallery
                     {
                         if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {
-                            _delegate.ClientService.DownloadFile(file.Id, 1);
+                            _window.ClientService.DownloadFile(file.Id, 1);
                         }
 
-                        UpdateManager.Subscribe(this, _delegate.ClientService, file, ref _thumbnailToken, UpdateThumbnail, true);
+                        UpdateManager.Subscribe(this, _window.ClientService, file, ref _thumbnailToken, UpdateThumbnail, true);
                     }
 
                     if (minithumbnail != null)
                     {
-                        source = new BitmapImage();
-                        PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
+                        _thumbnailController.Blur(minithumbnail.Data, 3, item.File.Id);
+                    }
+                    else
+                    {
+                        _thumbnailController.Recycle();
                     }
                 }
             }
             else if (minithumbnail != null)
             {
-                source = new BitmapImage();
-                PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
+                _thumbnailController.Blur(minithumbnail.Data, 3, item.File.Id);
             }
-
-            brush.ImageSource = source;
+            else
+            {
+                _thumbnailController.Recycle();
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -353,13 +378,13 @@ namespace Telegram.Controls.Gallery
 
             if (file.Local.IsDownloadingActive)
             {
-                item.ClientService.Send(new CancelDownloadFile(file.Id, false));
+                item.ClientService.CancelDownloadFile(file, false);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
                 if (SettingsService.Current.IsStreamingEnabled && item.IsVideo && item.IsStreamable)
                 {
-                    _delegate?.OpenFile(item, file);
+                    _window?.OpenFile(item, file);
                 }
                 else
                 {
@@ -368,11 +393,11 @@ namespace Telegram.Controls.Gallery
             }
             else if (item.IsVideo)
             {
-                _delegate?.OpenFile(item, file);
+                _window?.OpenFile(item, file);
             }
             else if (item is GalleryMessage message && !item.IsMedia)
             {
-                var service = TypeResolver.Current.Resolve<IStorageService>(_delegate.ClientService.SessionId);
+                var service = _window.ClientService.Session.Resolve<IStorageService>();
                 if (service != null)
                 {
                     _ = service.OpenFileAsync(file);
@@ -382,12 +407,10 @@ namespace Telegram.Controls.Gallery
 
         private GalleryTransportControls _controls;
 
-        private bool _stopped;
-
         private bool _unloaded;
         private int _fileId;
 
-        public void Play(GalleryMedia item, double position, GalleryTransportControls controls)
+        public void Play(GalleryMedia item, double position, GalleryTransportControls controls, bool force = false)
         {
             if (_unloaded)
             {
@@ -397,17 +420,20 @@ namespace Telegram.Controls.Gallery
             try
             {
                 var file = item.File;
-                if (file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled))
+                if (!force && file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled))
                 {
                     return;
                 }
 
                 _fileId = file.Id;
 
-                TypeResolver.Current.Playback.Pause();
+                if (!item.IsLoopingEnabled)
+                {
+                    LifetimeService.Current.Playback.Pause();
+                }
 
                 // Always recreate HLS player for now, try to reuse native one
-                if ((SettingsService.Current.Diagnostics.ForceWebView2 || item.IsHls()) && ChromiumWebPresenter.IsSupported())
+                if (!force && (SettingsService.Current.Diagnostics.ForceWebView2 || item.IsHls()) && ChromiumWebPresenter.IsSupported())
                 {
                     Video = new WebVideoPlayer();
                 }
@@ -463,7 +489,7 @@ namespace Telegram.Controls.Gallery
                     video.TreeUpdated -= OnTreeUpdated;
                     video.FirstFrameReady -= OnFirstFrameReady;
                     video.TrackChanged -= OnTrackChanged;
-                    video.Closed -= OnClosed;
+                    video.Failed -= OnFailed;
                 }
 
                 if (value != null)
@@ -471,7 +497,7 @@ namespace Telegram.Controls.Gallery
                     value.TreeUpdated += OnTreeUpdated;
                     value.FirstFrameReady += OnFirstFrameReady;
                     value.TrackChanged += OnTrackChanged;
-                    value.Closed += OnClosed;
+                    value.Failed += OnFailed;
                 }
 
                 Panel.Child = value;
@@ -489,12 +515,14 @@ namespace Telegram.Controls.Gallery
 
             if (Video != null)
             {
-                Video.Stop();
+                Video = null;
                 Button.Visibility = Visibility.Visible;
             }
 
+            _thumbnailController?.Recycle();
+
             UpdateManager.Unsubscribe(this, ref _fileToken);
-            UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
+            UpdateManager.Unsubscribe(this, ref _thumbnailToken);
         }
 
         private void OnTreeUpdated(VideoPlayerBase sender, EventArgs e)
@@ -513,40 +541,217 @@ namespace Telegram.Controls.Gallery
 
         private void OnTrackChanged(VideoPlayerBase sender, VideoPlayerTrackChangedEventArgs args)
         {
-            if (args.Width != 0 && args.Height != 0)
+            if (args.Width != 0 && args.Height != 0 && !ActualConstraint.IsEmpty)
             {
-                Constraint = new MaximumSize(args.Width, args.Height);
+                var size = ImageHelper.ScaleMin(args.Width, args.Height, Math.Max(ActualConstraint.Width, ActualConstraint.Height));
+                Constraint = new MaximumSize(size.Width, size.Height);
             }
         }
 
-        private void OnClosed(VideoPlayerBase sender, EventArgs e)
+        private void OnFailed(VideoPlayerBase sender, EventArgs args)
         {
-            if (_stopped)
+            if (_unloaded)
             {
-                _stopped = false;
-                Video.Clear();
-                Button.Visibility = Visibility.Visible;
+                return;
             }
+
+            _window.OpenFile(_item, _item.File, force: true);
         }
 
-        public void Stop(out int fileId, out double position)
+        public void Stop(out GalleryMedia item, out double position)
         {
             if (Video != null && !_unloaded)
             {
-                fileId = _fileId;
-                position = Video.Position;
+                item = _item;
 
-                _stopped = true;
-                Video.Stop();
+                var time = Video.Position;
+                var length = Video.Duration;
+
+                if (length >= 30 && time >= 10 && time <= length - 10)
+                {
+                    position = time;
+                }
+                else
+                {
+                    position = 0;
+                }
+
+                Video = null;
                 Button.Visibility = Visibility.Visible;
             }
             else
             {
-                fileId = 0;
+                item = null;
                 position = 0;
             }
 
             _fileId = 0;
+        }
+
+        public bool IsTextSelectionEnabled
+        {
+            get => Selection.Visibility == Visibility.Visible;
+            private set => Selection.Visibility = value
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        public void SelectAllText()
+        {
+            VisualUtilities.QueueCallbackForCompositionRendered(Selection.SelectAll);
+        }
+
+        public void CopySelectedText()
+        {
+            MessageHelper.CopyText(XamlRoot, Selection.SelectedText);
+        }
+
+        public string RecognizedText => Selection.Text;
+
+        public string SelectedText => Selection.SelectedText;
+
+        public bool IsTextSelected => Selection.SelectedText.Length > 0;
+
+        public bool IsTextNotRecognized { get; private set; }
+
+        private RecognizedText _recognizedText;
+        private int _recognizedTextFileId;
+
+        public async void RecognizeText()
+        {
+            if (IsTextSelectionEnabled)
+            {
+                Selection.ClearSelection();
+                IsTextSelectionEnabled = false;
+                return;
+            }
+            else if (_recognizedText != null && _recognizedTextFileId == _itemId)
+            {
+                IsTextSelectionEnabled = true;
+                return;
+            }
+
+            var viewModel = _window?.ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            var fileId = _itemId;
+            var service = viewModel.Session.Resolve<ITextRecognitionService>();
+
+            var status = await service.EnsureReadyAsync();
+            if (status is TextRecognitionStatusUnavailable unavailable)
+            {
+                // TODO: Error: not available
+
+                WatchDog.TrackEvent("TextRecognizer", new Properties { { "Status", "Unavailable" } });
+                return;
+            }
+            else if (status is TextRecognitionStatusDownloading downloading && fileId == _fileId && IsLoaded)
+            {
+                WatchDog.TrackEvent("TextRecognizer", new Properties { { "Status", "Downloading" } });
+
+                var confirm = await viewModel.ShowPopupAsync(new TextRecognitionDownloadPopup(viewModel.ClientService, viewModel.Aggregator, downloading.Document), requestedTheme: ElementTheme.Dark);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                status = await service.EnsureReadyAsync();
+            }
+            else
+            {
+                WatchDog.TrackEvent("TextRecognizer", new Properties { { "Status", "Available" } });
+            }
+
+            if (status is not TextRecognitionStatusAvailable available || fileId != _itemId || !IsLoaded)
+            {
+                // TODO: Error: not available
+                return;
+            }
+
+            IsTextSelectionEnabled = true;
+            Selection.ShowSkeleton();
+
+            var bitmap = await GetSoftwareBitmapAsync(_item?.File);
+            if (bitmap == null)
+            {
+                // TODO: Error: text recognition is not available
+
+                IsTextSelectionEnabled = false;
+                return;
+            }
+
+            if (bitmap.PixelWidth < 50 || bitmap.PixelHeight < 50)
+            {
+                ToastPopup.Show(XamlRoot, Strings.ScanTextTooSmall, ToastPopupIcon.Error);
+
+                IsTextSelectionEnabled = false;
+                return;
+            }
+
+            if (bitmap.PixelWidth > 10000 || bitmap.PixelHeight > 10000)
+            {
+                ToastPopup.Show(XamlRoot, Strings.ScanTextTooLarge, ToastPopupIcon.Error);
+
+                IsTextSelectionEnabled = false;
+                return;
+            }
+
+            if (fileId != _itemId || !IsLoaded)
+            {
+                IsTextSelectionEnabled = false;
+                return;
+            }
+
+            var result = await available.Recognizer.RecognizeAsync(bitmap);
+            if (result == null || result.Lines.Empty())
+            {
+                ToastPopup.Show(XamlRoot, Strings.ScanTextNoTextDetected, ToastPopupIcon.Info);
+
+                IsTextSelectionEnabled = false;
+                IsTextNotRecognized = true;
+                return;
+            }
+
+            if (fileId != _itemId || !IsLoaded)
+            {
+                return;
+            }
+
+            _recognizedText = result;
+            _recognizedTextFileId = _itemId;
+
+            Selection.ImageSize = new Vector2(bitmap.PixelWidth, bitmap.PixelHeight);
+            Selection.RecognizedText = result;
+        }
+
+        public async Task<SoftwareBitmap> GetSoftwareBitmapAsync(File file)
+        {
+            if (_window?.ViewModel == null)
+            {
+                return null;
+            }
+
+            var storage = await _window.ViewModel.ClientService.GetFileAsync(file);
+            if (storage == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                using (var stream = await storage.OpenReadAsync())
+                {
+                    var decoder = await BitmapDecoder.CreateAsync(stream);
+                    return await decoder.GetSoftwareBitmapAsync();
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

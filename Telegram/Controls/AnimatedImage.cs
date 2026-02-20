@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Effects;
 using RLottie;
 using System;
@@ -14,9 +15,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native;
+using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -24,7 +25,6 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.System;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
@@ -38,7 +38,7 @@ namespace Telegram.Controls
 {
     public partial class AnimatedImagePositionChangedEventArgs : EventArgs
     {
-        public int Position { get; set; }
+        public double Position { get; set; }
     }
 
     public partial class AnimatedImageLoopCompletedEventArgs : CancelEventArgs
@@ -46,7 +46,14 @@ namespace Telegram.Controls
 
     }
 
-    public partial class AnimatedImage : ControlEx, IPlayerView
+    public enum AnimatedImageResizeMode
+    {
+        None,
+        Fit,
+        Fill
+    }
+
+    public partial class AnimatedImage : AnimatedImageBase, IPlayerView
     {
         enum PlayingState
         {
@@ -72,22 +79,17 @@ namespace Telegram.Controls
         public AnimatedImage()
         {
             DefaultStyleKey = typeof(AnimatedImage);
-
-            Connected += OnLoaded;
-            Disconnected += OnUnloaded;
-
-            SizeChanged += OnSizeChanged;
         }
 
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        protected override void OnSizeChanged(SizeChangedEventArgs e)
         {
-            if (FitToSize)
+            if (ResizeMode != AnimatedImageResizeMode.None)
             {
                 Load();
             }
-        }
 
-        public bool FitToSize { get; set; }
+            UpdateRotation(LayoutRoot.Background as ImageBrush);
+        }
 
         public event EventHandler Ready;
         public event EventHandler<AnimatedImagePositionChangedEventArgs> PositionChanged;
@@ -115,29 +117,44 @@ namespace Telegram.Controls
             return new SuppressEventsDisposable(this);
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded()
         {
             Load();
 
-            XamlRoot.Changed += OnRasterizationScaleChanged;
+            base.OnLoaded();
             ReplacementColor?.RegisterColorChangedCallback(OnReplacementColorChanged, ref _replacementColorToken);
 
-            if (Source != null && IsOutlineEnabled)
+            if (Source != null)
             {
-                Source.OutlineChanged += OnOutlineChanged;
+                if (IsOutlineEnabled)
+                {
+                    Source.OutlineChanged += OnOutlineChanged;
+                }
+
+                if (IsViewportAware && !_effectiveViewportRegistered)
+                {
+                    _effectiveViewportRegistered = true;
+                    RegisterViewportChanged();
+                }
             }
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
             Unload();
 
-            XamlRoot.Changed -= OnRasterizationScaleChanged;
+            base.OnUnloaded();
             ReplacementColor?.UnregisterColorChangedCallback(ref _replacementColorToken);
 
             if (Source != null)
             {
                 Source.OutlineChanged -= OnOutlineChanged;
+            }
+
+            if (_effectiveViewportRegistered)
+            {
+                _effectiveViewportRegistered = false;
+                UnregisterViewportChanged();
             }
         }
 
@@ -198,32 +215,38 @@ namespace Telegram.Controls
 
         private void OnViewportAwareChanged(bool newValue, bool oldValue)
         {
-            if (newValue)
+            if (newValue && IsConnected && Source != null)
             {
-                EffectiveViewportChanged += OnEffectiveViewportChanged;
+                if (!_effectiveViewportRegistered)
+                {
+                    _effectiveViewportRegistered = true;
+                    RegisterViewportChanged();
+                }
+            }
+            else if (_effectiveViewportRegistered)
+            {
+                _effectiveViewportRegistered = false;
+                UnregisterViewportChanged();
+            }
+        }
+
+        protected override void OnViewportChanged(bool visible)
+        {
+            if (visible)
+            {
+                Play();
             }
             else
             {
-                EffectiveViewportChanged -= OnEffectiveViewportChanged;
+                Pause();
             }
         }
 
         private bool _withinViewport;
+        private bool _visible = true;
 
-        private void OnEffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
-        {
-            var within = args.BringIntoViewDistanceX < sender.ActualWidth && args.BringIntoViewDistanceY < sender.ActualHeight;
-            if (within && !_withinViewport)
-            {
-                _withinViewport = true;
-                Play();
-            }
-            else if (_withinViewport && !within)
-            {
-                _withinViewport = false;
-                Pause();
-            }
-        }
+        // TODO: a bit redunant now as it's already tracked internally
+        private bool _effectiveViewportRegistered;
 
         public void ViewportChanged(bool within)
         {
@@ -334,33 +357,57 @@ namespace Telegram.Controls
 
         #region FrameSize
 
+        private Size _frameSize = new(256, 256);
         public Size FrameSize
         {
-            get => (Size)GetValue(FrameSizeProperty);
-            set => SetValue(FrameSizeProperty, value);
+            get => _frameSize;
+            set
+            {
+                if (_frameSize != value)
+                {
+                    _frameSize = value;
+                    Load();
+                }
+            }
         }
-
-        public static readonly DependencyProperty FrameSizeProperty =
-            DependencyProperty.Register("FrameSize", typeof(Size), typeof(AnimatedImage), new PropertyMetadata(new Size(256, 256), OnPropertyChanged));
 
         #endregion
 
         #region DecodeFrameType
 
+        private DecodePixelType _decodeFrameType = DecodePixelType.Physical;
         public DecodePixelType DecodeFrameType
         {
-            get { return (DecodePixelType)GetValue(DecodeFrameTypeProperty); }
-            set { SetValue(DecodeFrameTypeProperty, value); }
+            get => _decodeFrameType;
+            set
+            {
+                if (_decodeFrameType != value)
+                {
+                    _decodeFrameType = value;
+                    Load();
+                }
+            }
         }
-
-        public static readonly DependencyProperty DecodeFrameTypeProperty =
-            DependencyProperty.Register("DecodeFrameType", typeof(DecodePixelType), typeof(AnimatedImage), new PropertyMetadata(DecodePixelType.Physical, OnPropertyChanged));
 
         #endregion
 
+        #region ResizeMode
 
+        private AnimatedImageResizeMode _resizeMode = AnimatedImageResizeMode.None;
+        public AnimatedImageResizeMode ResizeMode
+        {
+            get => _resizeMode;
+            set
+            {
+                if (_resizeMode != value)
+                {
+                    _resizeMode = value;
+                    Load();
+                }
+            }
+        }
 
-
+        #endregion
 
         #region Stretch
 
@@ -379,8 +426,9 @@ namespace Telegram.Controls
         {
             if (Source != null)
             {
-                var width = FitToSize ? (int)ActualWidth : (int)FrameSize.Width;
-                var height = FitToSize ? (int)ActualHeight : (int)FrameSize.Height;
+                var resize = ResizeMode;
+                var width = resize != AnimatedImageResizeMode.None ? (int)ActualWidth : (int)FrameSize.Width;
+                var height = resize != AnimatedImageResizeMode.None ? (int)ActualHeight : (int)FrameSize.Height;
                 var scale = 1d;
 
                 if (DecodeFrameType == DecodePixelType.Logical)
@@ -390,12 +438,12 @@ namespace Telegram.Controls
                     scale = _rasterizationScale;
                 }
 
-                if (FitToSize && (width <= 0 || height <= 0))
+                if (resize != AnimatedImageResizeMode.None && (width <= 0 || height <= 0))
                 {
                     return null;
                 }
 
-                return new AnimatedImagePresentation(Source, width, height, scale, LimitFps, LoopCount, AutoPlay, IsCachingEnabled);
+                return new AnimatedImagePresentation(Source, width, height, scale, LimitFps, LoopCount, AutoPlay, IsCachingEnabled, resize);
             }
 
             return null;
@@ -418,9 +466,18 @@ namespace Telegram.Controls
                 oldValue.OutlineChanged -= OnOutlineChanged;
             }
 
-            if (e.NewValue is AnimatedImageSource newValue && IsConnected && IsOutlineEnabled)
+            if (e.NewValue is AnimatedImageSource newValue && IsConnected)
             {
-                newValue.OutlineChanged += OnOutlineChanged;
+                if (IsOutlineEnabled)
+                {
+                    newValue.OutlineChanged += OnOutlineChanged;
+                }
+
+                if (IsViewportAware && !_effectiveViewportRegistered)
+                {
+                    _effectiveViewportRegistered = true;
+                    RegisterViewportChanged();
+                }
             }
         }
 
@@ -444,8 +501,8 @@ namespace Telegram.Controls
                     if (_presenter != null)
                     {
                         _presenter.Unload(this, _state == PlayingState.Playing);
-                        _presenter.LoopCompleted -= LoopCompleted;
-                        _presenter.PositionChanged -= PositionChanged;
+                        _presenter.LoopCompleted -= OnLoopCompleted;
+                        _presenter.PositionChanged -= OnPositionChanged;
                         _presenter.Paused -= OnPaused;
                         _presenter = null;
                     }
@@ -459,8 +516,8 @@ namespace Telegram.Controls
                     if (presentation != null)
                     {
                         _presenter = AnimatedImageLoader.Current.GetOrCreate(presentation);
-                        _presenter.LoopCompleted += LoopCompleted;
-                        _presenter.PositionChanged += PositionChanged;
+                        _presenter.LoopCompleted += OnLoopCompleted;
+                        _presenter.PositionChanged += OnPositionChanged;
                         _presenter.Paused += OnPaused;
                         _presenter.Load(this);
 
@@ -475,6 +532,7 @@ namespace Telegram.Controls
 
         private void UpdateShimmer(AnimatedImageSource source)
         {
+            // TODO: Enable whenever IsDownloadCompleted == false
             if (_clean is false || !IsConnected || !IsOutlineEnabled)
             {
                 return;
@@ -499,13 +557,23 @@ namespace Telegram.Controls
             if (_presenter != null && !IsConnected)
             {
                 _presenter.Unload(this, _state == PlayingState.Playing);
-                _presenter.LoopCompleted -= LoopCompleted;
-                _presenter.PositionChanged -= PositionChanged;
+                _presenter.LoopCompleted -= OnLoopCompleted;
+                _presenter.PositionChanged -= OnPositionChanged;
                 _presenter.Paused -= OnPaused;
                 _presenter = null;
 
                 LayoutRoot.Background = null;
             }
+        }
+
+        private void OnLoopCompleted(object sender, AnimatedImageLoopCompletedEventArgs e)
+        {
+            LoopCompleted?.Invoke(this, e);
+        }
+
+        private void OnPositionChanged(object sender, AnimatedImagePositionChangedEventArgs e)
+        {
+            PositionChanged?.Invoke(this, e);
         }
 
         private void OnPaused(object sender, EventArgs e)
@@ -521,12 +589,28 @@ namespace Telegram.Controls
                 return;
             }
 
-            LayoutRoot.Background = source;
+            if (source != null || CleanOnSourceChanged)
+            {
+                LayoutRoot.Background = source;
+            }
 
             if (_clean && source != null)
             {
                 _clean = false;
-                source.Stretch = Stretch;
+
+                if (DominantColor is SolidColorBrush dominantColor)
+                {
+                    dominantColor.Color = GetDominantColor(source.ImageSource as WriteableBitmap);
+                }
+
+                if (UpdateRotation(source))
+                {
+                    source.Stretch = Stretch.None;
+                }
+                else
+                {
+                    source.Stretch = Stretch;
+                }
 
                 _shimmer = null;
                 ElementCompositionPreview.SetElementChildVisual(LayoutRoot, null);
@@ -539,6 +623,83 @@ namespace Telegram.Controls
                 }
             }
         }
+
+        private unsafe Color GetDominantColor(WriteableBitmap bitmap)
+        {
+            if (bitmap == null)
+            {
+                return Color.FromArgb(0x55, 0, 0, 0);
+            }
+
+            float stepH = (bitmap.PixelHeight - 1) / 10f;
+            float stepW = (bitmap.PixelWidth - 1) / 10f;
+
+            int width = bitmap.PixelWidth;
+            bitmap.Buffer(out byte* imageBytes);
+
+            int r = 0, g = 0, b = 0;
+            int amount = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    int x = (int)(stepW * i);
+                    int y = (int)(stepH * j);
+                    int k = (y * width + x) * 4;
+
+                    byte alpha = imageBytes[k + 3];
+                    if (alpha > 200)
+                    {
+                        r += imageBytes[k + 2];
+                        g += imageBytes[k + 1];
+                        b += imageBytes[k + 0];
+                        amount++;
+                    }
+                }
+            }
+            if (amount == 0)
+            {
+                return Color.FromArgb(0x55, 0, 0, 0);
+            }
+
+            return Color.FromArgb(255, (byte)(r / amount), (byte)(g / amount), (byte)(b / amount));
+        }
+
+        private bool UpdateRotation(ImageBrush source)
+        {
+            if (LayoutRoot.Background is ImageBrush { ImageSource: WriteableBitmap bitmap, Transform: CompositeTransform composite })
+            {
+                double pixelWidth;
+                double pixelHeight;
+
+                if (composite.Rotation is 90 or 270)
+                {
+                    pixelWidth = bitmap.PixelHeight;
+                    pixelHeight = bitmap.PixelWidth;
+                }
+                else
+                {
+                    pixelWidth = bitmap.PixelWidth;
+                    pixelHeight = bitmap.PixelHeight;
+                }
+
+                var scaleX = ActualWidth / pixelWidth;
+                var scaleY = ActualHeight / pixelHeight;
+                var scale = Math.Max(scaleX, scaleY);
+
+                composite.ScaleX = scale;
+                composite.ScaleY = scale;
+
+                composite.CenterX = ActualWidth / 2;
+                composite.CenterY = ActualHeight / 2;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool CleanOnSourceChanged { get; set; } = true;
 
         private Border LayoutRoot;
 
@@ -555,11 +716,11 @@ namespace Telegram.Controls
             base.OnApplyTemplate();
         }
 
-        private void OnRasterizationScaleChanged(XamlRoot sender, XamlRootChangedEventArgs args)
+        protected override void OnRasterizationScaleChanged(double rasterizationScale)
         {
-            if (_rasterizationScale != sender.RasterizationScale && DecodeFrameType == DecodePixelType.Logical)
+            if (_rasterizationScale != rasterizationScale && DecodeFrameType == DecodePixelType.Logical)
             {
-                _rasterizationScale = sender.RasterizationScale;
+                _rasterizationScale = rasterizationScale;
                 Load();
             }
         }
@@ -653,7 +814,7 @@ namespace Telegram.Controls
                 catch (Exception ex)
                 {
                     // If it throws, let's rebuild the brush
-                    Logger.Error(ex);
+                    Logger.Exception(ex);
                 }
             }
 
@@ -715,9 +876,22 @@ namespace Telegram.Controls
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                Logger.Exception(ex);
             }
         }
+
+        #endregion
+
+        #region DominantColor
+
+        public SolidColorBrush DominantColor
+        {
+            get { return (SolidColorBrush)GetValue(DominantColorProperty); }
+            set { SetValue(DominantColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty DominantColorProperty =
+            DependencyProperty.Register("DominantColor", typeof(SolidColorBrush), typeof(AnimatedImage), new PropertyMetadata(null));
 
         #endregion
 
@@ -726,46 +900,42 @@ namespace Telegram.Controls
         public bool IsOutlineAnimated { get; set; } = false;
     }
 
-    public partial class AnimatedImagePresenter
+    public partial class AnimatedImagePresenter : IAnimation
     {
-        private bool _ticking;
-        private bool _rendering;
-        private bool _disposing;
-        private bool _disposed;
-
-        private int _loaded;
-
-        private long _tracker;
-
-        private int _playing;
-        private bool _idle = true;
-
-        // TODO: move this to PixelBuffer
-        private bool _dirty;
-
-        private bool _activated;
-
-        private int _loopCount;
-
-        private LoopThread _timer;
-        private bool _timerSubscribed;
-        private bool _renderingSubscribed;
+        private static readonly AnimationScheduler _scheduler = new();
+        private static readonly FifoActionWorker _workerQueue = new();
 
         private readonly AnimatedImagePresentation _presentation;
         private readonly AnimatedImageLoader _loader;
 
         private readonly DispatcherQueue _dispatcherQueue;
-        private readonly FifoActionWorker _workerQueue;
 
         private readonly List<AnimatedImage> _images = new();
 
-        private AnimatedImageTask _task;
-        private readonly object _lock = new();
+        private volatile int _loaded;
+        private volatile int _playing;
+        private int _tracker;
 
-        private AnimatedImagePositionChangedEventArgs _prevPosition;
-        private int _nextPosition;
+        private bool _idle = true;
+        private bool _dirty;
+        private bool _activated;
+
+        private volatile int _loopCount;
+
+        private int _timerSubscribed;
+        private bool _renderingSubscribed;
+
+        private AnimatedImageTask _task;
+        private bool _requested;
+
+        private volatile bool _rendering;
+        private volatile bool _ticking;
+        private volatile bool _disposing;
+        private volatile bool _disposed;
 
         private AnimatedImageLoopCompletedEventArgs _prevCompleted;
+        private AnimatedImagePositionChangedEventArgs _prevPosition;
+        private double _nextPosition;
 
         private string _nextMarker;
 
@@ -775,14 +945,18 @@ namespace Telegram.Controls
             _loader = loader;
 
             _dispatcherQueue = dispatcherQueue;
-            _workerQueue = new FifoActionWorker();
-
-            Increment();
+            _tracker++;
         }
 
         public bool Increment()
         {
-            return Interlocked.Increment(ref _tracker) > 1;
+            if (_tracker > 0)
+            {
+                _tracker++;
+                return true;
+            }
+
+            return false;
         }
 
         public event EventHandler<AnimatedImagePositionChangedEventArgs> PositionChanged;
@@ -797,7 +971,7 @@ namespace Telegram.Controls
         public void Load(AnimatedImage canvas)
         {
             _images.Add(canvas);
-            _workerQueue.Run(PrepareImpl);
+            LoadImpl();
 
             if (_dirty)
             {
@@ -808,41 +982,35 @@ namespace Telegram.Controls
         public void Unload(AnimatedImage canvas, bool playing)
         {
             _images.Remove(canvas);
-            _workerQueue.Run(() => UnloadImpl(playing));
+            UnloadImpl(playing);
 
             canvas.Invalidate(null);
         }
 
-        private void PrepareImpl()
+        private void LoadImpl()
         {
-            lock (_lock)
-            {
-                _loaded++;
+            _loaded++;
 
-                if (_loaded == 1)
+            if (_loaded == 1 && !_requested)
+            {
+                _requested = true;
+
+                if (_presentation.Source is DelayedFileSource delayed && !delayed.IsDownloadingCompleted)
                 {
-                    if (_presentation.Source is DelayedFileSource delayed && !delayed.IsDownloadingCompleted)
-                    {
-                        //Logger.Debug("Loaded, delayed");
-                        delayed.DownloadFile(this, UpdateFile);
-                    }
-                    else
-                    {
-                        //Logger.Debug("Loaded, requesting");
-                        _loader.Load(this);
-                    }
+                    delayed.DownloadFile(this, DelayedFileDownload.Loaded, UpdateFile);
+                }
+                else
+                {
+                    _loader.Load(this);
                 }
             }
         }
 
         private void UpdateFile(object target, Td.Api.File file)
         {
-            lock (_lock)
+            if (_loaded > 0)
             {
-                if (_loaded > 0)
-                {
-                    _loader.Load(this);
-                }
+                _loader.Load(this);
             }
         }
 
@@ -850,193 +1018,22 @@ namespace Telegram.Controls
         {
             //Logger.Debug();
 
-            lock (_lock)
-            {
-                _loaded--;
+            _loaded--;
+            _tracker--;
 
-                if (playing)
-                {
-                    _playing--;
-                }
-
-                var tracker = Interlocked.Decrement(ref _tracker);
-
-                if (_loaded <= 0 && tracker == 0)
-                {
-                    if (_task != null)
-                    {
-                        _loader.Activated -= OnActivated;
-                        _loader.Remove(_presentation);
-
-                        if (_ticking)
-                        {
-                            //Logger.Debug("Task exists, and timer is attached");
-                            _disposing = true;
-                            _ticking = false;
-                        }
-                        else
-                        {
-                            //Logger.Debug("Task exists, and timer is not attached");
-                            Dispose();
-                        }
-                    }
-                    else if (CorrelationId != 0)
-                    {
-                        _loader.Remove(CorrelationId);
-                    }
-                    else if (_presentation.Source is DelayedFileSource delayed)
-                    {
-                        delayed.Complete();
-                    }
-                }
-            }
-        }
-
-        public void Play(AnimatedImage canvas)
-        {
-            _workerQueue.Run(PlayImpl);
-
-            if (_dirty)
-            {
-                canvas.Invalidate(_imageBrush);
-            }
-        }
-
-        public void Pause()
-        {
-            _workerQueue.Run(PauseImpl);
-        }
-
-        public void Seek(string marker)
-        {
-            _workerQueue.Run(() => SeekImpl(marker));
-        }
-
-        private void PlayImpl()
-        {
-            lock (_lock)
-            {
-                _playing++;
-                _idle = false;
-
-                if (_playing == 1 && !_ticking && _loopCount >= 0)
-                {
-                    if (_task == null)
-                    {
-                        if (_presentation.Source is DelayedFileSource delayed && !delayed.IsDownloadingCompleted)
-                        {
-                            //Logger.Debug("Loaded, delayed");
-                            delayed.DownloadFile(this, UpdateFile);
-                        }
-                        else
-                        {
-                            //Logger.Debug("Loaded, requesting");
-                            _loader.Load(this);
-                        }
-
-                        return;
-                    }
-
-                    if (_nextMarker != null)
-                    {
-                        _task.Seek(_nextMarker);
-                        _nextMarker = null;
-                    }
-
-                    _rendering = true;
-                    _dispatcherQueue.TryEnqueue(RegisterRendering);
-
-                    _ticking = _activated;
-
-                    if (!_timerSubscribed && _ticking)
-                    {
-                        _timerSubscribed = true;
-                        _timer ??= LoopThreadPool.Rent(_task.Interval);
-                        _timer.Tick += OnTick;
-                    }
-                    else
-                    {
-                        OnTick(null);
-                    }
-                }
-            }
-        }
-
-        private void PauseImpl()
-        {
-            lock (_lock)
+            if (playing)
             {
                 _playing--;
-                _idle = false;
-
-                if (_playing == 0)
-                {
-                    _ticking = false;
-                }
-            }
-        }
-
-        private void SeekImpl(string marker)
-        {
-            var pause = false;
-
-            lock (_lock)
-            {
-                pause = _playing > 0;
-
-                _nextMarker = marker;
-                _loopCount = 0;
             }
 
-            if (pause)
+            if (_loaded <= 0 && _tracker == 0)
             {
-                PauseImpl();
-            }
+                _loader.Activated -= OnActivated;
+                _loader.Remove(_presentation);
 
-            PlayImpl();
-        }
-
-        public void Ready(AnimatedImageTask task)
-        {
-            _workerQueue.Run(() => ReadyImpl(task));
-        }
-
-        private void ReadyImpl(AnimatedImageTask task)
-        {
-            //Logger.Debug();
-
-            lock (_lock)
-            {
-                var tracker = Interlocked.Read(ref _tracker);
-
-                if (_loaded > 0)
+                var task = Volatile.Read(ref _task);
+                if (task != null)
                 {
-                    _task = task;
-
-                    _rendering = true;
-
-                    _dispatcherQueue.TryEnqueue(CreateResources);
-                    _createdResourcesLock.Wait();
-
-                    _ticking = (_idle && _presentation.AutoPlay) || (_playing > 0 && (_activated || _presentation.LoopCount > 0));
-                    _idle = false;
-
-                    if (!_timerSubscribed && _ticking)
-                    {
-                        _timerSubscribed = true;
-                        _timer ??= LoopThreadPool.Rent(_task.Interval);
-                        _timer.Tick += OnTick;
-                    }
-                    else
-                    {
-                        OnTick(null);
-                    }
-                }
-                else if (_task != null && tracker == 0)
-                {
-                    _loader.Activated -= OnActivated;
-                    _loader.Remove(_presentation);
-
                     if (_ticking)
                     {
                         //Logger.Debug("Task exists, and timer is attached");
@@ -1048,6 +1045,168 @@ namespace Telegram.Controls
                         //Logger.Debug("Task exists, and timer is not attached");
                         Dispose();
                     }
+                }
+                else if (CorrelationId != 0)
+                {
+                    _loader.Remove(CorrelationId);
+                }
+                else if (_presentation.Source is DelayedFileSource delayed)
+                {
+                    delayed.Complete();
+                }
+            }
+        }
+
+        public void Play(AnimatedImage canvas)
+        {
+            PlayImpl();
+
+            if (_dirty)
+            {
+                canvas.Invalidate(_imageBrush);
+            }
+        }
+
+        public void Pause()
+        {
+            PauseImpl();
+        }
+
+        public void Seek(string marker)
+        {
+            SeekImpl(marker);
+        }
+
+        private void PlayImpl()
+        {
+            _playing++;
+            _idle = false;
+
+            if (_playing == 1 && !_ticking && _loopCount >= 0)
+            {
+                var task = Volatile.Read(ref _task);
+                if (task == null)
+                {
+                    if (_presentation.Source is DelayedFileSource delayed && !delayed.IsDownloadingCompleted)
+                    {
+                        delayed.DownloadFile(this, DelayedFileDownload.Playing, UpdateFile);
+                    }
+                    else if (!_requested)
+                    {
+                        _loader.Load(this);
+                    }
+
+                    _requested = true;
+                    return;
+                }
+
+                if (_nextMarker != null)
+                {
+                    task.Seek(_nextMarker);
+                    _nextMarker = null;
+                }
+
+                _rendering = true;
+                RegisterRendering();
+
+                _ticking = _activated;
+
+                if (_ticking)
+                {
+                    if (Interlocked.CompareExchange(ref _timerSubscribed, 1, 0) == 0)
+                    {
+                        _scheduler.Subscribe(this);
+                    }
+                }
+                else
+                {
+                    _workerQueue.Run(RenderNextFrame);
+                }
+            }
+        }
+
+        private void PauseImpl()
+        {
+            _playing--;
+            _idle = false;
+
+            if (_playing == 0)
+            {
+                _ticking = false;
+
+                var task = Volatile.Read(ref _task);
+                if (task == null && _requested)
+                {
+                    if (_presentation.Source is DelayedFileSource delayed && !delayed.IsDownloadingCompleted)
+                    {
+                        delayed.DownloadFile(this, DelayedFileDownload.Unloaded, UpdateFile);
+                    }
+                }
+            }
+        }
+
+        private void SeekImpl(string marker)
+        {
+            var pause = _playing > 0;
+
+            _nextMarker = marker;
+            Interlocked.Exchange(ref _loopCount, 0);
+
+            if (pause)
+            {
+                PauseImpl();
+            }
+
+            PlayImpl();
+        }
+
+        public void Ready(AnimatedImageTask task)
+        {
+            _dispatcherQueue.TryEnqueue(() => ReadyImpl(task));
+        }
+
+        private void ReadyImpl(AnimatedImageTask task)
+        {
+            if (_loaded > 0)
+            {
+                Volatile.Write(ref _task, task);
+                FrameRate = task.FrameRate;
+
+                _rendering = true;
+
+                CreateResources();
+
+                _ticking = (_idle && _presentation.AutoPlay) || (_playing > 0 && (_activated || _presentation.LoopCount > 0));
+                _idle = false;
+
+                if (_ticking)
+                {
+                    if (Interlocked.CompareExchange(ref _timerSubscribed, 1, 0) == 0)
+                    {
+                        _scheduler.Subscribe(this);
+                    }
+                }
+                else
+                {
+                    _workerQueue.Run(RenderNextFrame);
+                }
+            }
+            else if (_tracker == 0)
+            {
+                _loader.Activated -= OnActivated;
+                _loader.Remove(_presentation);
+
+                // Ticking should be always false here
+                if (_ticking)
+                {
+                    //Logger.Debug("Task exists, and timer is attached");
+                    _disposing = true;
+                    _ticking = false;
+                }
+                else
+                {
+                    //Logger.Debug("Task exists, and timer is not attached");
+                    Dispose();
                 }
             }
         }
@@ -1066,16 +1225,19 @@ namespace Telegram.Controls
 
         private ImageBrush _imageBrush;
 
-        private readonly SemaphoreSlim _createdResourcesLock = new(0, 1);
         private readonly SemaphoreSlim _pausedLock = new(0, 1);
 
         private void CreateResources()
         {
-            var width = _task.PixelWidth;
-            var height = _task.PixelHeight;
+            var task = Volatile.Read(ref _task);
+            if (task == null)
+            {
+                return;
+            }
 
-            //_foregroundPrev = BufferSurface.Create((uint)(width * height * 4));
-            //_backgroundNext = BufferSurface.Create((uint)(width * height * 4));
+            var width = task.PixelWidth;
+            var height = task.PixelHeight;
+
             _foregroundPrev = new PixelBuffer(new WriteableBitmap(width, height));
             _backgroundNext = new PixelBuffer(new WriteableBitmap(width, height));
 
@@ -1088,27 +1250,18 @@ namespace Telegram.Controls
                 _loader.Activated += OnActivated;
             }
 
-            _createdResourcesLock.Release();
             RegisterRendering();
         }
-
-        //private void RegisterEvents()
-        //{
-        //    WindowContext.Current.Activated += OnActivated;
-        //}
-
-        //private void UnregisterEvents()
-        //{
-        //    WindowContext.Current.Activated -= OnActivated;
-        //}
 
         private void InvokePaused()
         {
             Paused?.Invoke(this, EventArgs.Empty);
+
+            _playing = 0;
             _pausedLock.Release();
         }
 
-        private async void OnActivated(object sender, WindowActivatedEventArgs args)
+        private void OnActivated(object sender, WindowActivatedEventArgs args)
         {
             if (_disposed)
             {
@@ -1119,7 +1272,7 @@ namespace Telegram.Controls
             }
 
             var activated = args.WindowActivationState != CoreWindowActivationState.Deactivated;
-            var subscribe = await Task.Run(() => Activated(activated));
+            var subscribe = Activated(activated);
 
             if (subscribe)
             {
@@ -1129,32 +1282,27 @@ namespace Telegram.Controls
 
         public bool Activated(bool active)
         {
-            lock (_lock)
+            if (_activated != active)
             {
-                if (_activated != active)
+                _activated = active;
+
+                if (_playing > 0 && !active)
                 {
-                    _activated = active;
+                    _ticking = false;
+                }
+                else if (Volatile.Read(ref _task) != null && _playing > 0 && !_ticking && _loopCount >= 0 && active)
+                {
+                    //_dispatcherQueue.TryEnqueue(RegisterRendering);
 
-                    if (_playing > 0 && !active)
+                    _rendering = true;
+                    _ticking = true;
+
+                    if (Interlocked.CompareExchange(ref _timerSubscribed, 1, 0) == 0)
                     {
-                        _ticking = false;
+                        _scheduler.Subscribe(this);
                     }
-                    else if (_task != null && _playing > 0 && !_ticking && _loopCount >= 0 && active)
-                    {
-                        //_dispatcherQueue.TryEnqueue(RegisterRendering);
 
-                        _rendering = true;
-                        _ticking = true;
-
-                        if (!_timerSubscribed)
-                        {
-                            _timerSubscribed = true;
-                            _timer ??= LoopThreadPool.Rent(_task.Interval);
-                            _timer.Tick += OnTick;
-                        }
-
-                        return true;
-                    }
+                    return true;
                 }
             }
 
@@ -1172,17 +1320,9 @@ namespace Telegram.Controls
 
         #endregion
 
-        private void OnTick(object sender, EventArgs e)
-        {
-            //Logger.Debug();
+        public double FrameRate { get; private set; }
 
-            lock (_lock)
-            {
-                OnTick(sender as LoopThread);
-            }
-        }
-
-        private void OnTick(LoopThread sender)
+        public void RenderNextFrame()
         {
             if (_loaded > 0 && !_disposing && !_disposed)
             {
@@ -1192,14 +1332,12 @@ namespace Telegram.Controls
             if (!_ticking)
             {
                 //Logger.Debug("-=");
+                if (Interlocked.CompareExchange(ref _timerSubscribed, 0, 1) == 1)
+                {
+                    _scheduler.Unsubscribe(this);
+                }
 
                 _rendering = false;
-                _timerSubscribed = false;
-
-                if (sender != null)
-                {
-                    sender.Tick -= OnTick;
-                }
 
                 if (_disposing)
                 {
@@ -1232,18 +1370,23 @@ namespace Telegram.Controls
 
         private bool NextFrame(IBuffer frame)
         {
-            var state = _task.NextFrame(frame, out _nextPosition);
+            var task = Volatile.Read(ref _task);
+            if (task == null)
+            {
+                return false;
+            }
 
+            var state = task.NextFrame(frame, out _nextPosition);
             if (state == AnimatedImageTaskState.Stop)
             {
-                _loopCount = -1;
                 _ticking = false;
+                Interlocked.Exchange(ref _loopCount, -1);
             }
             else if (state == AnimatedImageTaskState.Loop)
             {
-                _loopCount++;
+                Interlocked.Increment(ref _loopCount);
 
-                _prevCompleted ??= new();
+                _prevCompleted ??= new AnimatedImageLoopCompletedEventArgs();
                 _prevCompleted.Cancel = false;
 
                 LoopCompleted?.Invoke(this, _prevCompleted);
@@ -1251,11 +1394,10 @@ namespace Telegram.Controls
                 if (_prevCompleted.Cancel || (_loopCount >= _presentation.LoopCount && _presentation.LoopCount > 0))
                 {
                     _ticking = false;
-                    _loopCount = 0;
+                    Interlocked.Exchange(ref _loopCount, 0);
 
                     _dispatcherQueue.TryEnqueue(InvokePaused);
                     _pausedLock.Wait();
-                    _playing = 0;
                 }
             }
 
@@ -1270,59 +1412,45 @@ namespace Telegram.Controls
             //Debug.Assert(_images.Count == 0);
 
             //_dispatcherQueue.TryEnqueue(UnregisterEvents);
-            LoopThreadPool.Release(_timer);
 
-            _task = null;
-            _timer = null;
             _disposing = false;
             _disposed = true;
 
-            _foregroundPrev = null;
-            _foregroundNext = null;
-            _backgroundNext = null;
+            Volatile.Write(ref _task, null);
+
+            Interlocked.Exchange(ref _foregroundPrev, null);
+            Interlocked.Exchange(ref _foregroundNext, null);
+            Interlocked.Exchange(ref _backgroundNext, null);
 
             _loader.Activated -= OnActivated;
             _loader.Remove(_presentation);
         }
 
-        protected TimeSpan _interval;
-        protected TimeSpan _elapsed;
+        //private double _targetIntervalTicks;
+        //private long _lastTick;
 
-        public bool OnRendering(object sender, object e)
+        public bool Invalidate()
         {
-            //Logger.Debug();
-
             if (_images.Count > 0)
             {
-                OnRendering(e);
+                DrawFrame();
+
+                //long now = Stopwatch.GetTimestamp();
+
+                //if (_lastTick == 0 || now - _lastTick >= _targetIntervalTicks || !_rendering)
+                //{
+                //    _lastTick = now;
+                //    DrawFrame();
+                //}
             }
 
             if (!_rendering && _renderingSubscribed)
             {
-                //Logger.Debug("-=");
                 _renderingSubscribed = false;
                 return true;
             }
 
             return false;
-        }
-
-        private void OnRendering(object e)
-        {
-            if (_interval.TotalMilliseconds > 17)
-            {
-                var args = e as RenderingEventArgs;
-                var diff = args.RenderingTime - _elapsed;
-
-                if (diff < _interval / 3 * 2 /*|| !_active*/)
-                {
-                    return;
-                }
-
-                _elapsed = args.RenderingTime;
-            }
-
-            DrawFrame();
         }
 
         private void DrawFrame()
@@ -1342,13 +1470,24 @@ namespace Telegram.Controls
 
                 next.Source.Invalidate();
 
-                _imageBrush ??= new ImageBrush
+                if (_imageBrush == null)
                 {
-                    //ImageSource = _surface.Source,
-                    Stretch = Stretch.Uniform,
-                    AlignmentX = AlignmentX.Center,
-                    AlignmentY = AlignmentY.Center,
-                };
+                    _imageBrush = new ImageBrush
+                    {
+                        Stretch = Stretch.Uniform,
+                        AlignmentX = AlignmentX.Center,
+                        AlignmentY = AlignmentY.Center,
+                    };
+
+                    var task = Volatile.Read(ref _task);
+                    if (task.Rotation != 0)
+                    {
+                        _imageBrush.Transform = new CompositeTransform
+                        {
+                            Rotation = task.Rotation
+                        };
+                    }
+                }
 
                 _imageBrush.ImageSource = next.Source;
 
@@ -1392,12 +1531,16 @@ namespace Telegram.Controls
     public partial class LottieAnimatedImageTask : AnimatedImageTask
     {
         private readonly LottieAnimation _animation;
+        private readonly bool _shouldStop;
+
         private readonly HashSet<int> _markers;
 
         public LottieAnimatedImageTask(LottieAnimation animation, AnimatedImagePresentation presentation)
             : base(presentation)
         {
             _animation = animation;
+            _shouldStop = !presentation.Source.IsAnimated;
+
             _markers = presentation.Source.Markers?.Values.ToHashSet();
 
             PixelWidth = presentation.PixelWidth; //animation.PixelWidth;
@@ -1407,15 +1550,16 @@ namespace Telegram.Controls
             var interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / frameRate));
 
             Interval = interval;
+            FrameRate = frameRate;
         }
 
         private int _index;
 
-        public override AnimatedImageTaskState NextFrame(IBuffer frame, out int position)
+        public override AnimatedImageTaskState NextFrame(IBuffer frame, out double position)
         {
             position = 0;
 
-            if (_animation.IsReadyToCache)
+            if (_animation.IsReadyToCache && !_shouldStop)
             {
                 _animation.Cache();
                 return AnimatedImageTaskState.Skip;
@@ -1434,7 +1578,7 @@ namespace Telegram.Controls
             _animation.RenderSync(frame, _index);
             _index = Math.Min(_animation.TotalFrame, _index + framesPerUpdate);
 
-            if (_animation.TotalFrame == 1)
+            if (_animation.TotalFrame == 1 || _shouldStop)
             {
                 _index = 0;
                 return AnimatedImageTaskState.Stop;
@@ -1461,28 +1605,32 @@ namespace Telegram.Controls
     public partial class VideoAnimatedImageTask : AnimatedImageTask
     {
         private readonly CachedVideoAnimation _animation;
+        private readonly bool _shouldStop;
 
         public VideoAnimatedImageTask(CachedVideoAnimation animation, AnimatedImagePresentation presentation)
             : base(presentation)
         {
             _animation = animation;
+            _shouldStop = !presentation.Source.IsAnimated;
 
             PixelWidth = animation.PixelWidth;
             PixelHeight = animation.PixelHeight;
+            Rotation = animation.Rotation;
 
             var frameRate = Math.Clamp(animation.FrameRate, 1, 60 /*presentation.LimitFps ? 30 : 60*/);
             var interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / frameRate));
 
             Interval = interval;
+            FrameRate = frameRate;
         }
 
         private int _index;
 
-        public override AnimatedImageTaskState NextFrame(IBuffer frame, out int position)
+        public override AnimatedImageTaskState NextFrame(IBuffer frame, out double position)
         {
             position = 0;
 
-            if (_animation.IsReadyToCache)
+            if (_animation.IsReadyToCache && !_shouldStop)
             {
                 _animation.Cache();
                 return AnimatedImageTaskState.Skip;
@@ -1492,10 +1640,10 @@ namespace Telegram.Controls
                 return AnimatedImageTaskState.Skip;
             }
 
-            _animation.RenderSync(frame, out int seconds, out bool completed);
+            _animation.RenderSync(frame, out double seconds, out bool completed);
             _index++;
 
-            if (_animation.TotalFrame == 1 || (completed && _index == 1))
+            if (_animation.TotalFrame == 1 || _shouldStop || (completed && _index == 1))
             {
                 _index = 0;
                 return AnimatedImageTaskState.Stop;
@@ -1524,9 +1672,10 @@ namespace Telegram.Controls
             PixelHeight = pixelHeight;
 
             Interval = TimeSpan.FromMilliseconds(1000d / 30);
+            FrameRate = 30;
         }
 
-        public override AnimatedImageTaskState NextFrame(IBuffer frame, out int position)
+        public override AnimatedImageTaskState NextFrame(IBuffer frame, out double position)
         {
             position = 0;
 
@@ -1548,9 +1697,10 @@ namespace Telegram.Controls
             PixelHeight = animation.PixelHeight;
 
             Interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
+            FrameRate = 30;
         }
 
-        public override AnimatedImageTaskState NextFrame(IBuffer frame, out int position)
+        public override AnimatedImageTaskState NextFrame(IBuffer frame, out double position)
         {
             _animation.RenderSync(frame);
 
@@ -1571,9 +1721,13 @@ namespace Telegram.Controls
         public int PixelWidth { get; init; }
         public int PixelHeight { get; init; }
 
+        public int Rotation { get; init; }
+
         public TimeSpan Interval { get; init; }
 
-        public abstract AnimatedImageTaskState NextFrame(IBuffer frame, out int position);
+        public double FrameRate { get; init; }
+
+        public abstract AnimatedImageTaskState NextFrame(IBuffer frame, out double position);
 
         public virtual void Seek(string marker)
         {
@@ -1581,7 +1735,7 @@ namespace Telegram.Controls
         }
     }
 
-    public record AnimatedImagePresentation(AnimatedImageSource Source, int PixelWidth, int PixelHeight, double RasterizationScale, bool LimitFps, int LoopCount, bool AutoPlay, bool IsCachingEnabled);
+    public record AnimatedImagePresentation(AnimatedImageSource Source, int PixelWidth, int PixelHeight, double RasterizationScale, bool LimitFps, int LoopCount, bool AutoPlay, bool IsCachingEnabled, AnimatedImageResizeMode ResizeMode);
 
     public partial class AnimatedImageLoader
     {
@@ -1636,7 +1790,7 @@ namespace Telegram.Controls
         {
             for (int i = 0; i < _rendering.Count; i++)
             {
-                if (_rendering[i].OnRendering(sender, e))
+                if (_rendering[i].Invalidate())
                 {
                     _rendering.RemoveAt(i--);
                 }
@@ -1653,11 +1807,7 @@ namespace Telegram.Controls
             }
         }
 
-        private bool _workStarted;
-        private Thread _workThread;
-
-        private readonly WorkQueue _workQueue = new();
-        private readonly object _workLock = new();
+        private readonly LifoActionWorker _workQueue = new();
 
         private readonly ConcurrentDictionary<int, WeakReference<AnimatedImagePresenter>> _delegates = new();
         private readonly Dictionary<AnimatedImagePresentation, AnimatedImagePresenter> _presenters = new();
@@ -1697,106 +1847,82 @@ namespace Telegram.Controls
 
         public void Load(AnimatedImagePresenter sender)
         {
-            if (sender.CorrelationId != 0)
+            if (sender.CorrelationId != 0 && _delegates.ContainsKey(sender.CorrelationId))
             {
-                _delegates.TryRemove(sender.CorrelationId, out _);
+                // Already queued, don't enqueue again
+                return;
             }
 
-            //Logger.Debug();
             var correlationId = ++_indexer;
 
             sender.CorrelationId = correlationId;
 
             _delegates[correlationId] = new WeakReference<AnimatedImagePresenter>(sender);
-            _workQueue.Push(new WorkItem(correlationId, sender.Presentation));
-
-            lock (_workLock)
-            {
-                if (_workStarted is false)
-                {
-                    if (_workThread?.IsAlive is false)
-                    {
-                        _workThread.Join();
-                    }
-
-                    _workStarted = true;
-                    _workThread = new Thread(Work);
-                    _workThread.Start();
-                }
-            }
+            _workQueue.Run(() => Work(new WorkItem(correlationId, sender.Presentation)));
         }
 
-        private void Work()
+        private void Work(WorkItem work)
         {
-            while (_workStarted)
+            if (!_delegates.TryRemove(work.CorrelationId, out var weakDelegate))
             {
-                var work = _workQueue.WaitAndPop();
-                if (work == null)
-                {
-                    _workStarted = false;
-                    return;
-                }
+                return;
+            }
 
-                if (!_delegates.ContainsKey(work.CorrelationId))
+            try
+            {
+                if (work.Presentation.Source is LocalFileSource local)
                 {
-                    continue;
-                }
-
-                try
-                {
-                    if (work.Presentation.Source is LocalFileSource local)
+                    if (local.Format is StickerFormatTgs)
                     {
-                        if (local.Format is StickerFormatTgs)
-                        {
-                            LoadLottie(work, local);
-                        }
-                        else if (local.Format is StickerFormatWebp)
-                        {
-                            LoadWebP(work, local);
-                        }
-                        else if (local.Format is StickerFormatWebm)
-                        {
-                            LoadCachedVideo(work);
-                        }
-                        else
-                        {
-                            if (local.FilePath.HasExtension(".tgs", ".json"))
-                            {
-                                LoadLottie(work, local);
-                            }
-                            else if (local.FilePath.HasExtension(".webp"))
-                            {
-                                LoadWebP(work, local);
-                            }
-                            else
-                            {
-                                LoadCachedVideo(work);
-                            }
-                        }
+                        LoadLottie(weakDelegate, work, local);
                     }
-                    else if (work.Presentation.Source is ParticlesImageSource)
+                    else if (local.Format is StickerFormatWebp)
                     {
-                        LoadParticles(work);
+                        LoadWebP(weakDelegate, work, local);
+                    }
+                    else if (local.Format is StickerFormatWebm)
+                    {
+                        LoadCachedVideo(weakDelegate, work);
                     }
                     else
                     {
-                        LoadCachedVideo(work);
+                        if (local.FilePath.HasExtension(".tgs", ".json"))
+                        {
+                            LoadLottie(weakDelegate, work, local);
+                        }
+                        else if (local.FilePath.HasExtension(".webp"))
+                        {
+                            LoadWebP(weakDelegate, work, local);
+                        }
+                        else
+                        {
+                            LoadCachedVideo(weakDelegate, work);
+                        }
                     }
                 }
-                catch
+                else if (work.Presentation.Source is ParticlesImageSource particles)
                 {
-                    // Shit happens...
+                    LoadParticles(weakDelegate, work, particles);
                 }
+                else
+                {
+                    LoadCachedVideo(weakDelegate, work);
+                }
+            }
+            catch
+            {
+                // Shit happens...
+                NotifyDelegate(weakDelegate, null, null);
             }
         }
 
-        private void LoadParticles(WorkItem work)
+        private void LoadParticles(WeakReference<AnimatedImagePresenter> weakDelegate, WorkItem work, ParticlesImageSource particles)
         {
-            var animation = new ParticlesAnimation(work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.RasterizationScale);
-            NotifyDelegate(work.CorrelationId, null, new ParticlesAnimatedImageTask(animation, work.Presentation));
+            var animation = new ParticlesAnimation(work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.RasterizationScale, particles.Type, particles.Foreground, particles.Background);
+            NotifyDelegate(weakDelegate, null, new ParticlesAnimatedImageTask(animation, work.Presentation));
         }
 
-        private void LoadLottie(WorkItem work, LocalFileSource local)
+        private void LoadLottie(WeakReference<AnimatedImagePresenter> weakDelegate, WorkItem work, LocalFileSource local)
         {
             static bool IsValid(AnimatedImagePresentation presentation)
             {
@@ -1811,17 +1937,16 @@ namespace Telegram.Controls
             {
                 if (IsValid(work.Presentation))
                 {
-                    NotifyDelegate(work.CorrelationId, animation, new LottieAnimatedImageTask(animation, work.Presentation));
-                    return;
+                    NotifyDelegate(weakDelegate, animation, new LottieAnimatedImageTask(animation, work.Presentation));
                 }
-
-                animation.Dispose();
+                else
+                {
+                    animation.Dispose();
+                }
             }
-
-            _delegates.TryRemove(work.CorrelationId, out _);
         }
 
-        private void LoadCachedVideo(WorkItem work)
+        private void LoadCachedVideo(WeakReference<AnimatedImagePresenter> weakDelegate, WorkItem work)
         {
             static bool IsValid(CachedVideoAnimation animation)
             {
@@ -1832,22 +1957,26 @@ namespace Telegram.Controls
                     && !double.IsNaN(animation.FrameRate);
             }
 
-            var animation = CachedVideoAnimation.LoadFromFile(work.Presentation.Source, work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.IsCachingEnabled);
+            var animation = CachedVideoAnimation.LoadFromFile(work.Presentation.Source, work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.ResizeMode == AnimatedImageResizeMode.Fit, work.Presentation.IsCachingEnabled, work.Presentation.LimitFps);
             if (animation != null)
             {
                 if (IsValid(animation))
                 {
-                    NotifyDelegate(work.CorrelationId, animation, new VideoAnimatedImageTask(animation, work.Presentation));
-                    return;
+                    if (work.Presentation.Source.SeekToSeconds != 0)
+                    {
+                        animation.Seek(work.Presentation.Source.SeekToSeconds);
+                    }
+
+                    NotifyDelegate(weakDelegate, animation, new VideoAnimatedImageTask(animation, work.Presentation));
                 }
-
-                animation.Dispose();
+                else
+                {
+                    animation.Dispose();
+                }
             }
-
-            _delegates.TryRemove(work.CorrelationId, out _);
         }
 
-        private async void LoadWebP(WorkItem work, LocalFileSource local)
+        private async void LoadWebP(WeakReference<AnimatedImagePresenter> weakDelegate, WorkItem work, LocalFileSource local)
         {
             static bool IsValid(IBuffer animation, int pixelWidth, int pixelHeight)
             {
@@ -1863,8 +1992,7 @@ namespace Telegram.Controls
             {
                 if (IsValid(animation, pixelWidth, pixelHeight))
                 {
-                    NotifyDelegate(work.CorrelationId, null, new WebpAnimatedImageTask(animation, pixelWidth, pixelHeight, work.Presentation));
-                    return;
+                    NotifyDelegate(weakDelegate, null, new WebpAnimatedImageTask(animation, pixelWidth, pixelHeight, work.Presentation));
                 }
             }
             else
@@ -1903,30 +2031,29 @@ namespace Telegram.Controls
 
                     if (IsValid(animation, pixelWidth, pixelHeight))
                     {
-                        NotifyDelegate(work.CorrelationId, null, new WebpAnimatedImageTask(animation, pixelWidth, pixelHeight, work.Presentation));
-                        return;
+                        NotifyDelegate(weakDelegate, null, new WebpAnimatedImageTask(animation, pixelWidth, pixelHeight, work.Presentation));
                     }
                 }
                 catch
                 {
                     // All the remote procedure calls must be wrapped in a try-catch block
+                    NotifyDelegate(weakDelegate, null, null);
                 }
             }
-
-            _delegates.TryRemove(work.CorrelationId, out _);
         }
 
-        private bool NotifyDelegate(int correlationId, IDisposable disposable, AnimatedImageTask task)
+        private bool NotifyDelegate(WeakReference<AnimatedImagePresenter> weakDelegate, IDisposable disposable, AnimatedImageTask task)
         {
             static bool IsValid(AnimatedImageTask task)
             {
                 // TODO: check if animation is valid
                 // Width, height, frame rate...
-                return task.PixelWidth > 0
+                return task != null
+                    && task.PixelWidth > 0
                     && task.PixelHeight > 0;
             }
 
-            if (IsValid(task) && TryGetDelegate(correlationId, out var target))
+            if (TryGetDelegate(weakDelegate, out var target) && IsValid(task))
             {
                 target.Ready(task);
                 return true;
@@ -1936,14 +2063,11 @@ namespace Telegram.Controls
             return false;
         }
 
-        private bool TryGetDelegate(int correlationId, out AnimatedImagePresenter target)
+        private bool TryGetDelegate(WeakReference<AnimatedImagePresenter> weakDelegate, out AnimatedImagePresenter target)
         {
-            if (_delegates.TryRemove(correlationId, out var weak))
+            if (weakDelegate.TryGetTarget(out target))
             {
-                if (weak.TryGetTarget(out target))
-                {
-                    return true;
-                }
+                return true;
             }
 
             target = null;
@@ -1955,37 +2079,49 @@ namespace Telegram.Controls
         class WorkQueue
         {
             private readonly object _workAvailable = new();
-            private readonly Stack<WorkItem> _work = new();
+            private readonly Queue<WorkItem> _work = new();
+            private bool _shutdown;
 
             public void Push(WorkItem item)
             {
                 lock (_workAvailable)
                 {
-                    var was_empty = _work.Count == 0;
-
-                    _work.Push(item);
-
-                    if (was_empty)
-                    {
-                        Monitor.Pulse(_workAvailable);
-                    }
+                    _work.Enqueue(item);
+                    Monitor.Pulse(_workAvailable);
                 }
             }
 
-            public WorkItem WaitAndPop()
+            public WorkItem WaitAndPop(int timeoutMs = 3000)
             {
                 lock (_workAvailable)
                 {
-                    while (_work.Count == 0)
+                    while (true)
                     {
-                        var timeout = Monitor.Wait(_workAvailable, 3000);
-                        if (timeout is false)
+                        if (_shutdown)
+                        {
+                            return null;
+                        }
+
+                        if (_work.TryDequeue(out WorkItem item))
+                        {
+                            return item;
+                        }
+
+                        if (!Monitor.Wait(_workAvailable, timeoutMs))
                         {
                             return null;
                         }
                     }
+                }
+            }
 
-                    return _work.Pop();
+            public void Clear()
+            {
+                lock (_workAvailable)
+                {
+                    _shutdown = true;
+                    _work.Clear();
+                    Monitor.PulseAll(_workAvailable);
                 }
             }
         }

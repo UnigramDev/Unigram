@@ -46,8 +46,9 @@
                         <controls:AnimatedImage x:Name="Player"
                                                 AutoPlay="False"
                                                 IsCachingEnabled="False"
-                                                FitToSize="True"
+                                                ResizeMode="Fill"
                                                 FrameSize="0,0"
+                                                LimitFps="True"
                                                 DecodeFrameType="Logical"
                                                 Stretch="UniformToFill"
                                                 Ready="Player_Ready" />
@@ -89,6 +90,7 @@
             <GridView x:Name="Toolbar"
                       ItemsSource="{x:Bind ViewModel.Sets}"
                       SelectedItem="{x:Bind ViewModel.SelectedSet, Mode=TwoWay}"
+                      ContainerContentChanging="Toolbar_ContainerContentChanging"
                       Height="40"
                       IsItemClickEnabled="True"
                       ScrollViewer.HorizontalScrollBarVisibility="Hidden"
@@ -121,36 +123,22 @@
                 <GridView.ItemTemplateSelector>
                     <selectors:StickerSetTemplateSelector>
                         <selectors:StickerSetTemplateSelector.ItemTemplate>
-                            <DataTemplate x:DataType="viewModels:AnimationsCollection">
+                            <DataTemplate>
                                 <Grid>
-                                    <TextBlock Text="{x:Bind Name}"
-                                               FontFamily="{StaticResource EmojiThemeFontFamily}"
+                                    <TextBlock FontFamily="{StaticResource EmojiThemeFontFamily}"
                                                TextAlignment="Center"
                                                VerticalAlignment="Center"
                                                FontSize="16" />
                                 </Grid>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
-                        <selectors:StickerSetTemplateSelector.RecentsTemplate>
-                            <DataTemplate x:DataType="viewModels:AnimationsCollection">
-                                <Border AutomationProperties.Name="{x:Bind Title}"
-                                        ToolTipService.ToolTip="{x:Bind Title}"
-                                        Background="Transparent">
-                                    <FontIcon Glyph="&#xE911;"
-                                              FontFamily="{StaticResource TelegramThemeFontFamily}" />
-                                </Border>
+                        <selectors:StickerSetTemplateSelector.IconTemplate>
+                            <DataTemplate>
+                                <Grid Background="Transparent">
+                                    <FontIcon FontFamily="{StaticResource TelegramThemeFontFamily}" />
+                                </Grid>
                             </DataTemplate>
-                        </selectors:StickerSetTemplateSelector.RecentsTemplate>
-                        <selectors:StickerSetTemplateSelector.TrendingTemplate>
-                            <DataTemplate x:DataType="viewModels:AnimationsCollection">
-                                <Border AutomationProperties.Name="{x:Bind Title}"
-                                        ToolTipService.ToolTip="{x:Bind Title}"
-                                        Background="Transparent">
-                                    <FontIcon Glyph="&#xE989;"
-                                              FontFamily="{StaticResource TelegramThemeFontFamily}" />
-                                </Border>
-                            </DataTemplate>
-                        </selectors:StickerSetTemplateSelector.TrendingTemplate>
+                        </selectors:StickerSetTemplateSelector.IconTemplate>
                     </selectors:StickerSetTemplateSelector>
                 </GridView.ItemTemplateSelector>
                 <GridView.ItemContainerTransitions>

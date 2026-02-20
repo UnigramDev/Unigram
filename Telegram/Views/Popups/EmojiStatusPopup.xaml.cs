@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
 using Telegram.Controls;
@@ -12,7 +13,6 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Views.Popups
 {
@@ -57,50 +57,40 @@ namespace Telegram.Views.Popups
 
             if (clientService.TryGetUser(clientService.Options.MyId, out User self))
             {
-                Photo.SetUser(clientService, self, 28);
+                Photo.Source = ProfilePictureSource.User(clientService, self);
                 TitleText.Text = self.FullName();
             }
+
+            PrimaryButtonText = Strings.BotEmojiStatusConfirm;
         }
 
         private bool _submitted;
+        private bool _completed;
 
-        private async void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            args.Cancel = !_completed;
+
             if (_submitted)
             {
                 return;
             }
 
             _submitted = true;
-
-            PurchaseRing.Visibility = Windows.UI.Xaml.Visibility.Visible;
-
-            var visual1 = ElementComposition.GetElementVisual(PurchaseText);
-            var visual2 = ElementComposition.GetElementVisual(PurchaseRing);
-
-            ElementCompositionPreview.SetIsTranslationEnabled(PurchaseText, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(PurchaseRing, true);
-
-            var translate1 = visual1.Compositor.CreateScalarKeyFrameAnimation();
-            translate1.InsertKeyFrame(0, 0);
-            translate1.InsertKeyFrame(1, -32);
-
-            var translate2 = visual1.Compositor.CreateScalarKeyFrameAnimation();
-            translate2.InsertKeyFrame(0, 32);
-            translate2.InsertKeyFrame(1, 0);
-
-            visual1.StartAnimation("Translation.Y", translate1);
-            visual2.StartAnimation("Translation.Y", translate2);
+            IsPrimaryButtonPending = true;
 
             if (_clientService.IsPremium)
             {
                 var result = await _clientService.SendAsync(new SetEmojiStatus(new EmojiStatus(new EmojiStatusTypeCustomEmoji(_customEmojiId), _expirationDate)));
+
+                _completed = true;
                 Hide(result is Ok
                     ? ContentDialogResult.Primary
                     : ContentDialogResult.Secondary);
             }
             else
             {
+                _completed = true;
                 Hide();
                 _navigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureEmojiStatus()));
             }

@@ -10,7 +10,9 @@
                   xmlns:messages="using:Telegram.Controls.Messages"
                   xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
                   xmlns:popups="using:Telegram.Views.Popups"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  ShowHeaderBackground="False"
+                  NavigationMode="Root">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -21,20 +23,55 @@
     </Page.Transitions>
 
     <local:HostedPage.Action>
-        <Button Content="{CustomResource Save}"
-                Style="{StaticResource AccentButtonStyle}"
-                Click="PurchaseCommand_Click" />
+        <Button Content="{x:Bind ViewModel.SelectedTab.PrimaryButtonText, Mode=OneWay}"
+                Click="{x:Bind ViewModel.SelectedTab.Continue}"
+                Style="{StaticResource AccentButtonStyle}" />
     </local:HostedPage.Action>
 
     <Grid>
         <ScrollViewer x:Name="ScrollingHost"
-                      VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto">
-            <controls:SettingsPanel>
-                <popups:ChooseNameColorView x:Name="NameView" />
+                      SizeChanged="OnSizeChanged"
+                      ViewChanged="OnViewChanged">
+            <Grid>
+                <StackPanel x:Name="Header"
+                            SizeChanged="ProfileHeader_SizeChanged"
+                            VerticalAlignment="Top"
+                            Canvas.ZIndex="1">
+                    <Border x:Name="ProfileHeader"
+                            Margin="0,0,0,48" />
 
-                <popups:ChooseProfileColorView x:Name="ProfileView" />
-            </controls:SettingsPanel>
+                    <Grid x:Name="HeaderPanel"
+                          Canvas.ZIndex="1">
+                        <Border x:Name="ClipperBackground"
+                                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                                BorderThickness="0,0,0,1"
+                                BackgroundSizing="OuterBorderEdge"
+                                Margin="0,-48,0,0"
+                                Height="96" />
+
+                        <Grid CornerRadius="4"
+                              MaxWidth="1000"
+                              Margin="24,0">
+                            <Border x:Name="CardBackground"
+                                    Background="{ThemeResource SettingsItemBackground}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4" />
+                            <controls:TopNavView IsItemClickEnabled="True"
+                                                 ItemClick="Header_ItemClick"
+                                                 ItemsSource="{x:Bind ViewModel.Children}"
+                                                 SelectedItem="{x:Bind ViewModel.SelectedTab, Mode=TwoWay}"
+                                                 Height="40"
+                                                 Margin="8,4" />
+                        </Grid>
+                    </Grid>
+                </StackPanel>
+
+                <Frame x:Name="MediaFrame"
+                       Navigating="OnNavigating"
+                       Navigated="OnNavigated" />
+            </Grid>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>

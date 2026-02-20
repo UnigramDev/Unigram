@@ -6,7 +6,6 @@
              xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
              xmlns:controls="using:Telegram.Controls"
              xmlns:chats="using:Telegram.Controls.Chats"
-             muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="400">

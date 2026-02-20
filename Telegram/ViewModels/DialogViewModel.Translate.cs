@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +27,8 @@ namespace Telegram.ViewModels
         private string _languageDetected;
 
         public string DetectedLanguage => _languageDetected;
+
+        public bool IsLanguageDetected => _languageDetected != null && _languageDetected != "und";
 
         public bool CanTranslate => _chat.IsTranslatable && TranslateService.CanTranslate(_languageDetected, true);
 
@@ -55,7 +58,7 @@ namespace Telegram.ViewModels
 
         private void SetTranslating()
         {
-            if (Settings.Chats.TryGet(Chat.Id, ThreadId, ChatSetting.IsTranslating, out bool value))
+            if (Settings.Chats.TryGet(ChatId, TopicId, ChatSetting.IsTranslating, out bool value))
             {
                 Set(ref _isTranslating, value, nameof(IsTranslating));
             }
@@ -65,7 +68,7 @@ namespace Telegram.ViewModels
         {
             if (Set(ref _isTranslating, value, nameof(IsTranslating)))
             {
-                Settings.Chats[Chat.Id, ThreadId, ChatSetting.IsTranslating] = value;
+                Settings.Chats[ChatId, TopicId, ChatSetting.IsTranslating] = value;
 
                 UpdateChatIsTranslatable();
                 return true;
@@ -76,7 +79,7 @@ namespace Telegram.ViewModels
 
         private void UpdateLanguageStatistics(MessageViewModel message)
         {
-            if (_languageDetected != null || message.IsOutgoing || message.Text == null || !HasAutomaticTranslation())
+            if (IsLanguageDetected || message.IsOutgoing || string.IsNullOrEmpty(message.Text?.Text) || !HasAutomaticTranslation())
             {
                 return;
             }
@@ -112,7 +115,7 @@ namespace Telegram.ViewModels
 
             lock (_languageLock)
             {
-                if (_languageDetected != null || _languageBuilder == null || !HasAutomaticTranslation())
+                if (IsLanguageDetected || _languageBuilder == null || !HasAutomaticTranslation())
                 {
                     return;
                 }
@@ -120,7 +123,7 @@ namespace Telegram.ViewModels
                 _languageSlices++;
 
                 var enough = _languageSlices == 2 || _languageMessages >= 10;
-                var complete = IsFirstSliceLoaded is true && IsLastSliceLoaded is true;
+                var complete = IsNewestSliceLoaded is true && IsOldestSliceLoaded is true;
 
                 if (enough || complete)
                 {
@@ -130,6 +133,33 @@ namespace Telegram.ViewModels
                     Logger.Info(_languageDetected);
                     Dispatcher.Dispatch(UpdateChatIsTranslatable);
                 }
+                else
+                {
+                    _languageDetected = "und";
+                    Dispatcher.Dispatch(() => Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected));
+                }
+            }
+        }
+
+        public void SummarizeMessage(MessageViewModel message)
+        {
+            var changed = message.SummarizedText == null;
+            if (changed)
+            {
+                _translateService.Summarize(message, Settings.Translate.To);
+            }
+            else
+            {
+                message.SummarizedText = null;
+            }
+
+            if (changed != (message.SummarizedText == null))
+            {
+                Delegate?.UpdateBubbleWithMessageId(message.Id, bubble =>
+                {
+                    bubble.UpdateMessageTextLayout(message);
+                    Delegate?.UpdateMessageSummary(message);
+                });
             }
         }
 
@@ -140,7 +170,7 @@ namespace Telegram.ViewModels
             var translating = IsTranslating;
             var translateTo = Settings.Translate.To;
 
-            foreach (var message in Items)
+            void TranslateMessage(MessageViewModel message, bool reply)
             {
                 var changed = message.TranslatedText == null;
                 if (translating)
@@ -154,7 +184,24 @@ namespace Telegram.ViewModels
 
                 if (changed != (message.TranslatedText == null))
                 {
-                    Delegate?.UpdateBubbleWithMessageId(message.Id, bubble => bubble.UpdateMessageText(message));
+                    if (reply)
+                    {
+                        Delegate?.UpdateBubbleWithReplyToMessageId(message.Id, (bubble, reply) => bubble.UpdateMessageReply(reply));
+                    }
+                    else
+                    {
+                        Delegate?.UpdateBubbleWithMessageId(message.Id, bubble => bubble.UpdateMessageText(message));
+                    }
+                }
+            }
+
+            foreach (var message in Items)
+            {
+                TranslateMessage(message, false);
+
+                if (message.ReplyToItem is MessageViewModel reply)
+                {
+                    TranslateMessage(reply, true);
                 }
             }
         }
@@ -218,14 +265,20 @@ namespace Telegram.ViewModels
 
         public void StopTranslate()
         {
-            var languageName = Services.TranslateService.LanguageName(DetectedLanguage);
+            var detected = DetectedLanguage;
+            if (string.IsNullOrEmpty(detected))
+            {
+                return;
+            }
+
+            var languageName = Services.TranslateService.LanguageName(detected);
             var toast = string.Format(Strings.AddedToDoNotTranslate, languageName);
 
             // TODO: add undo button
             ShowToast(toast, ToastPopupIcon.Translate);
 
             var languages = Settings.Translate.DoNot;
-            languages.Add(DetectedLanguage);
+            languages.Add(detected);
 
             Settings.Translate.DoNot = languages;
 

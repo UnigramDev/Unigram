@@ -1,12 +1,14 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Controls.Cells;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -19,8 +21,6 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using static Telegram.Controls.Chats.ChatTextBox;
-using VirtualKey = Windows.System.VirtualKey;
-using VirtualKeyModifiers = Windows.System.VirtualKeyModifiers;
 
 namespace Telegram.Controls.Chats
 {
@@ -34,12 +34,18 @@ namespace Telegram.Controls.Chats
         {
             InitializeComponent();
 
+            if (ApiInfo.CanCreateThemeShadow)
+            {
+                ListAutocomplete.Shadow = new ThemeShadow();
+                ListAutocomplete.Translation = new Vector3(0, 0, 32);
+            }
+
             _debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Field.TextChanged += new TextChangedEventHandler(handler));
             _debouncer.Invoked += (s, args) =>
             {
                 if (Field.State != ChatSearchState.Members && !AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
                 {
-                    ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter, ViewModel.SavedMessagesTag);
+                    ViewModel?.Search(Field.Text, Field.From, ViewModel.SavedMessagesTag);
                 }
             };
         }
@@ -61,19 +67,17 @@ namespace Telegram.Controls.Chats
 
             Field.Text = viewModel?.Query ?? string.Empty;
             Field.From = viewModel?.From;
-            Field.Filter = null;
             Field.State = ChatSearchState.Text;
 
             if (viewModel != null)
             {
                 var history = viewModel.Dialog.Type is
                     not DialogType.History and
-                    not DialogType.Thread and
-                    not DialogType.SavedMessagesTopic;
+                    not DialogType.Thread;
 
                 SearchPrevious.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
                 SearchNext.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
-                ToolsPanel.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
+                FilterByMember.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
 
                 if (viewModel.From != null)
                 {
@@ -225,9 +229,7 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
-            if (args.Item is User user)
+            if (args.Item is User user && args.ItemContainer.ContentTemplateRoot is Grid content)
             {
                 var photo = content.Children[0] as ProfilePicture;
                 var title = content.Children[1] as TextBlock;
@@ -246,25 +248,11 @@ namespace Telegram.Controls.Chats
                     username.Text = string.Empty;
                 }
 
-                photo.SetUser(ViewModel.ClientService, user, 32);
+                photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
             }
-            else if (args.Item is ChatSearchMediaFilter filter)
+            else if (args.Item is Message message && args.ItemContainer.ContentTemplateRoot is ChatCell cell)
             {
-                var child = content.Children[0] as Border;
-                var glyph = child.Child as TextBlock;
-                var title = content.Children[1] as TextBlock;
-
-                glyph.Text = filter.Glyph;
-                title.Text = filter.Text;
-
-                if (filter.Filter is SearchMessagesFilterVideoNote)
-                {
-                    glyph.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
-                }
-                else
-                {
-                    glyph.FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily;
-                }
+                cell.UpdateMessage(ViewModel.ClientService, message, true);
             }
 
             args.Handled = true;
@@ -307,7 +295,7 @@ namespace Telegram.Controls.Chats
         {
             if (Field.State == ChatSearchState.Members)
             {
-                ViewModel.Autocomplete = new UsernameCollection(ViewModel.ClientService, ViewModel.Dialog.Chat.Id, 0, Field.Text, false, true, true);
+                ViewModel.Autocomplete = new UsernameCollection(ViewModel.ClientService, ViewModel.Dialog.Chat.Id, ViewModel.Dialog.TopicId, Field.Text, false, true, true);
             }
 
             DeleteButton.Visibility = string.IsNullOrEmpty(Field.Text) && Field.State == ChatSearchState.Text ? Visibility.Collapsed : Visibility.Visible;
@@ -320,7 +308,7 @@ namespace Telegram.Controls.Chats
             if (e.Key == VirtualKey.Enter && modifiers == VirtualKeyModifiers.None && Field.State != ChatSearchState.Members)
             {
                 _debouncer.Cancel();
-                ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter, ViewModel.SavedMessagesTag);
+                ViewModel?.Search(Field.Text, Field.From, ViewModel.SavedMessagesTag);
                 e.Handled = true;
             }
             else if (e.Key == VirtualKey.Enter && modifiers == VirtualKeyModifiers.Shift && Field.State != ChatSearchState.Members)
@@ -338,7 +326,7 @@ namespace Telegram.Controls.Chats
         private void Search_Click(object sender, RoutedEventArgs e)
         {
             _debouncer.Cancel();
-            ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter, ViewModel.SavedMessagesTag);
+            ViewModel?.Search(Field.Text, Field.From, ViewModel.SavedMessagesTag);
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
@@ -357,25 +345,19 @@ namespace Telegram.Controls.Chats
             Field.Focus(FocusState.Keyboard);
         }
 
-        private void FilterByMedia_Click(object sender, RoutedEventArgs e)
-        {
-            SetState(ChatSearchState.Media);
-            Field.Focus(FocusState.Keyboard);
-        }
-
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is User from)
             {
                 SetState(ChatSearchState.TextByMember, new MessageSenderUser(from.Id));
             }
-            else if (e.ClickedItem is ChatSearchMediaFilter filter)
+            else if (e.ClickedItem is Message message)
             {
-                SetState(ChatSearchState.TextByMedia, null, filter);
+                ViewModel.SetSelectedItem(message);
             }
         }
 
-        private void SetState(ChatSearchState state, MessageSender from = null, ChatSearchMediaFilter filter = null)
+        private void SetState(ChatSearchState state, MessageSender from = null)
         {
             var viewModel = ViewModel;
             if (viewModel == null)
@@ -385,7 +367,6 @@ namespace Telegram.Controls.Chats
 
             if (from != null)
             {
-                Field.Filter = null;
                 Field.From = from;
 
                 if (viewModel.ClientService.TryGetUser(from, out User user))
@@ -400,9 +381,7 @@ namespace Telegram.Controls.Chats
             else
             {
                 Field.From = null;
-                Field.Filter = filter;
-
-                Field.Header = filter?.Text;
+                Field.Header = null;
             }
 
             Field.Text = string.Empty;
@@ -411,25 +390,23 @@ namespace Telegram.Controls.Chats
             switch (state)
             {
                 case ChatSearchState.Members:
-                    ToolsPanel.Visibility = Visibility.Collapsed;
-                    viewModel.Autocomplete = new UsernameCollection(viewModel.ClientService, viewModel.Dialog.Chat.Id, 0, string.Empty, false, true, true);
-                    break;
-                case ChatSearchState.Media:
-                    ToolsPanel.Visibility = Visibility.Collapsed;
-                    viewModel.Autocomplete = viewModel.Filters;
+                    FilterByMember.Visibility = Visibility.Collapsed;
+                    viewModel.Autocomplete = new UsernameCollection(viewModel.ClientService, viewModel.Dialog.Chat.Id, viewModel.Dialog.TopicId, string.Empty, false, true, true);
                     break;
                 case ChatSearchState.TextByMember:
-                case ChatSearchState.TextByMedia:
-                    ToolsPanel.Visibility = Visibility.Collapsed;
+                    FilterByMember.Visibility = Visibility.Collapsed;
                     viewModel.Autocomplete = null;
                     break;
                 default:
-                    ToolsPanel.Visibility = viewModel.Dialog.Type is not DialogType.History and not DialogType.Thread ? Visibility.Collapsed : Visibility.Visible;
+                    FilterByMember.Visibility = viewModel.Dialog.Type is not DialogType.History and not DialogType.Thread ? Visibility.Collapsed : Visibility.Visible;
                     viewModel.Autocomplete = null;
                     break;
             }
 
             DeleteButton.Visibility = string.IsNullOrEmpty(Field.Text) && state == ChatSearchState.Text ? Visibility.Collapsed : Visibility.Visible;
+
+            _debouncer.Cancel();
+            ViewModel?.Search(Field.Text, Field.From, ViewModel.SavedMessagesTag);
         }
 
         private void Delete(bool allowDispose)
@@ -442,11 +419,7 @@ namespace Telegram.Controls.Chats
             {
                 SetState(ChatSearchState.Members);
             }
-            else if (Field.State == ChatSearchState.TextByMedia)
-            {
-                SetState(ChatSearchState.Media);
-            }
-            else if (Field.State is ChatSearchState.Members or ChatSearchState.Media)
+            else if (Field.State is ChatSearchState.Members)
             {
                 SetState(ChatSearchState.Text);
             }
@@ -477,6 +450,34 @@ namespace Telegram.Controls.Chats
             _viewHeader = header;
             _viewClipperOuter = clipperOuter;
             _viewDate = date;
+        }
+
+        private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var visible = e.NewSize.Width > 0 && e.NewSize.Height >= 2;
+            visible &= ListAutocomplete.Visibility == Visibility.Visible;
+            Field.CornerRadius = new CornerRadius(4, 4, visible ? 0 : 4, visible ? 0 : 4);
+        }
+
+        private void OnGotFocus(object sender, RoutedEventArgs e)
+        {
+            RootAutocomplete.Visibility = Visibility.Visible;
+        }
+
+        private void OnLostFocus(object sender, RoutedEventArgs e)
+        {
+            RootAutocomplete.Visibility = Visibility.Collapsed;
+        }
+
+        private Visibility ConvertAutocompleteVisibility(object autocomplete)
+        {
+            var visible = ListAutocomplete.ActualWidth > 0 && ListAutocomplete.ActualHeight >= 2;
+            visible &= autocomplete != null;
+            Field.CornerRadius = new CornerRadius(4, 4, visible ? 0 : 4, visible ? 0 : 4);
+
+            return autocomplete != null
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
     }
 }

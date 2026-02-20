@@ -1,13 +1,15 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.ComponentModel;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
+using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -36,7 +38,7 @@ namespace Telegram.Views.Folders
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.SessionId);
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.Session);
             TagPreviewText.DataContext = ViewModel;
 
             TitleField.AllowedEntities = FormattedTextEntity.CustomEmoji;
@@ -137,7 +139,7 @@ namespace Telegram.Views.Folders
             });
         }
 
-        private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
+        private void Emoji_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)
         {
             if (e.ClickedItem is EmojiData emoji)
             {

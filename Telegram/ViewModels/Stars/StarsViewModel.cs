@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Navigation;
@@ -18,7 +19,7 @@ namespace Telegram.ViewModels.Stars
         private readonly SubscriptionCollection _subscriptions;
 
         private string _nextOffset = string.Empty;
-        private StarTransactionDirection _direction;
+        private TransactionDirection _direction;
 
         public StarsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -83,7 +84,7 @@ namespace Telegram.ViewModels.Stars
 
         public bool HasMoreItems { get; private set; } = true;
 
-        class SubscriptionCollection : ViewModelBase, IIncrementalCollectionOwner
+        partial class SubscriptionCollection : ViewModelBase, IIncrementalCollectionOwner
         {
             private string _nextOffset = string.Empty;
 
@@ -139,8 +140,8 @@ namespace Telegram.ViewModels.Stars
                 _nextOffset = string.Empty;
                 _direction = _selectedIndex switch
                 {
-                    1 => new StarTransactionDirectionIncoming(),
-                    2 => new StarTransactionDirectionOutgoing(),
+                    1 => new TransactionDirectionIncoming(),
+                    2 => new TransactionDirectionOutgoing(),
                     _ => null
                 };
 

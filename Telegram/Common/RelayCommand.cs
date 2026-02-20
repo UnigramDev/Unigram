@@ -1,26 +1,9 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-// <copyright file="RelayCommand.cs" company="GalaSoft Laurent Bugnion">
-// Copyright © GalaSoft Laurent Bugnion 2009-2016
-// </copyright>
-// ****************************************************************************
-// <author>Laurent Bugnion</author>
-// <email>laurent@galasoft.ch</email>
-// <date>22.4.2009</date>
-// <project>GalaSoft.MvvmLight</project>
-// <web>http://www.mvvmlight.net</web>
-// <license>
-// See license.txt in this project or http://www.galasoft.ch/license_MIT.txt
-// </license>
-// <LastBaseLevel>BL0011</LastBaseLevel>
-// ****************************************************************************
-// <credits>This class was developed by Josh Smith (http://joshsmithonwpf.wordpress.com) and
-// slightly modified with his permission.</credits>
-// ****************************************************************************
 
 using System;
 using System.Diagnostics;

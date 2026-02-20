@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -18,7 +19,7 @@ namespace Telegram.Charts.Data
         public long[] x;
         public float[] xPercentage;
         public string[] daysLookup;
-        public List<Line> lines = new List<Line>();
+        public List<Line> lines = new();
         public int maxValue = 0;
         public int minValue = int.MaxValue;
 
@@ -49,7 +50,7 @@ namespace Telegram.Charts.Data
                 }
                 else
                 {
-                    Line l = new Line();
+                    Line l = new();
                     lines.Add(l);
                     int len = a.Count - 1;
                     l.id = a.GetStringAt(0);
@@ -83,7 +84,7 @@ namespace Telegram.Charts.Data
             JsonObject colors = jsonObject.GetNamedObject("colors");
             JsonObject names = jsonObject.GetNamedObject("names");
 
-            Regex colorPattern = new Regex("(.*)(#.*)", RegexOptions.Compiled);
+            Regex colorPattern = new("(.*)(#.*)", RegexOptions.Compiled);
             for (int i = 0; i < lines.Count; i++)
             {
                 Line line = lines[i];

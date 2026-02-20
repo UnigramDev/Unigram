@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -57,7 +58,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void Emojis_ItemClick(object sender, ItemClickEventArgs e)
+        private void Emojis_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)
         {
             if (e.ClickedItem is EmojiData emoji)
             {
@@ -77,10 +78,6 @@ namespace Telegram.Views.Popups
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             _completion.SetResult(ViewModel.Send());
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -108,7 +105,7 @@ namespace Telegram.Views.Popups
                 if (StickersRoot == null)
                 {
                     FindName(nameof(StickersPanel));
-                    StickersRoot.DataContext = StickerDrawerViewModel.Create(ViewModel.SessionId);
+                    StickersRoot.DataContext = StickerDrawerViewModel.Create(ViewModel.Session);
                     StickersRoot.ItemClick += Stickers_ItemClick;
                 }
 
@@ -125,7 +122,7 @@ namespace Telegram.Views.Popups
                 if (EmojisRoot == null)
                 {
                     FindName(nameof(EmojisPanel));
-                    EmojisRoot.DataContext = EmojiDrawerViewModel.Create(ViewModel.SessionId, EmojiDrawerMode.ChatPhoto);
+                    EmojisRoot.DataContext = EmojiDrawerViewModel.Create(ViewModel.Session, EmojiDrawerMode.ChatPhoto);
                 }
 
                 EmojisRoot.Activate(null);

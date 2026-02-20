@@ -1,11 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Drawers;
 using Telegram.Navigation;
@@ -29,7 +31,7 @@ namespace Telegram.Controls
         public event EventHandler SettingsClick;
 
         public Action<object> EmojiClick { get; set; }
-        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> EmojiContextRequested;
+        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<StickerViewModel>> EmojiContextRequested;
 
         public event EventHandler<StickerDrawerItemClickEventArgs> StickerClick;
         public event EventHandler<ItemContextRequestedEventArgs<Sticker>> StickerContextRequested;
@@ -40,16 +42,17 @@ namespace Telegram.Controls
 
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        public int SessionId
+        public ISession Session
         {
             get
             {
                 if (DataContext is ViewModelBase viewModel)
                 {
-                    return viewModel.SessionId;
+                    return viewModel.Session;
                 }
 
-                return int.MaxValue;
+                // TODO: verify
+                return null;
             }
         }
 
@@ -65,7 +68,7 @@ namespace Telegram.Controls
             header.Clip = header.Compositor.CreateInsetClip(0, -40, 0, 40);
         }
 
-        private void Emojis_ItemClick(object sender, ItemClickEventArgs e)
+        private void Emojis_ItemClick(object sender, EmojiDrawerItemClickEventArgs e)
         {
             if (e.ClickedItem is EmojiData emoji)
             {
@@ -112,12 +115,16 @@ namespace Telegram.Controls
                 if (EmojisRoot == null)
                 {
                     FindName(nameof(EmojisRoot));
-                    EmojisRoot.DataContext = EmojiDrawerViewModel.Create(SessionId);
+                    EmojisRoot.DataContext = EmojiDrawerViewModel.Create(Session);
                     EmojisRoot.ItemContextRequested += EmojiContextRequested;
                 }
                 else
                 {
-                    Show(Tab0, _prevIndex > index, 0);
+                    if (EmojisRoot.IsLoaded)
+                    {
+                        Show(Tab0, _prevIndex, _prevIndex = index);
+                    }
+
                     EmojisRoot.LoadVisibleItems();
                 }
 
@@ -145,13 +152,17 @@ namespace Telegram.Controls
                 if (AnimationsRoot == null)
                 {
                     FindName(nameof(AnimationsRoot));
-                    AnimationsRoot.DataContext = AnimationDrawerViewModel.Create(SessionId);
+                    AnimationsRoot.DataContext = AnimationDrawerViewModel.Create(Session);
                     AnimationsRoot.ItemClick += AnimationClick;
                     AnimationsRoot.ItemContextRequested += AnimationContextRequested;
                 }
                 else
                 {
-                    Show(Tab1, _prevIndex > index, 1);
+                    if (AnimationsRoot.IsLoaded)
+                    {
+                        Show(Tab1, _prevIndex, _prevIndex = index);
+                    }
+
                     AnimationsRoot.LoadVisibleItems();
                 }
 
@@ -179,15 +190,18 @@ namespace Telegram.Controls
                 if (StickersRoot == null)
                 {
                     FindName(nameof(StickersRoot));
-                    StickersRoot.DataContext = StickerDrawerViewModel.Create(SessionId);
+                    StickersRoot.DataContext = StickerDrawerViewModel.Create(Session);
                     StickersRoot.ItemClick += StickerClick;
                     StickersRoot.ItemContextRequested += StickerContextRequested;
                     StickersRoot.ChoosingItem += ChoosingSticker;
-                    StickersRoot.SettingsClick += SettingsClick;
                 }
                 else
                 {
-                    Show(Tab2, _prevIndex > index, 2);
+                    if (StickersRoot.IsLoaded)
+                    {
+                        Show(Tab2, _prevIndex, _prevIndex = index);
+                    }
+
                     StickersRoot.LoadVisibleItems();
                 }
 
@@ -195,23 +209,28 @@ namespace Telegram.Controls
                 SettingsService.Current.Stickers.SelectedTab = StickersTab.Stickers;
             }
 
-            _prevIndex = index;
             Navigation.SelectionChanged -= OnSelectionChanged;
             Navigation.SelectedIndex = index;
             Navigation.SelectionChanged += OnSelectionChanged;
         }
 
-        private void Show(UIElement element, bool leftToRight, int index)
+        private void Show(UIElement element, int prevIndex, int index)
         {
-            if (_prevIndex == -1)
+            Settings.Visibility = index != 1
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (!PowerSavingPolicy.AreSmoothTransitionsEnabled || prevIndex == index || prevIndex == -1)
             {
                 return;
             }
 
+            var leftToRight = prevIndex > index;
+
             var visualIn = ElementComposition.GetElementVisual(element);
             var offsetIn = visualIn.Compositor.CreateVector3KeyFrameAnimation();
-            offsetIn.InsertKeyFrame(0, new System.Numerics.Vector3(leftToRight ? -48 : 48, 0, 0));
-            offsetIn.InsertKeyFrame(1, new System.Numerics.Vector3());
+            offsetIn.InsertKeyFrame(0, new Vector3(leftToRight ? -48 : 48, 0, 0));
+            offsetIn.InsertKeyFrame(1, new Vector3());
             offsetIn.Duration = Constants.SoftAnimation;
 
             var opacityIn = visualIn.Compositor.CreateScalarKeyFrameAnimation();
@@ -257,7 +276,6 @@ namespace Telegram.Controls
                 StickersRoot.ItemClick -= StickerClick;
                 StickersRoot.ItemContextRequested -= StickerContextRequested;
                 StickersRoot.ChoosingItem -= ChoosingSticker;
-                StickersRoot.SettingsClick -= SettingsClick;
                 UnloadObject(StickersRoot);
 
                 Tab2.Visibility = Visibility.Collapsed;
@@ -348,7 +366,7 @@ namespace Telegram.Controls
             if (sender is FrameworkElement element)
             {
                 element.Loaded -= EmojisRoot_Loaded;
-                Show(Tab0, _prevIndex > 0, 0);
+                Show(Tab0, _prevIndex, _prevIndex = 0);
             }
         }
 
@@ -357,7 +375,7 @@ namespace Telegram.Controls
             if (sender is FrameworkElement element)
             {
                 element.Loaded -= AnimationsRoot_Loaded;
-                Show(Tab1, _prevIndex > 1, 1);
+                Show(Tab1, _prevIndex, _prevIndex = 1);
             }
         }
 
@@ -366,8 +384,13 @@ namespace Telegram.Controls
             if (sender is FrameworkElement element)
             {
                 element.Loaded -= StickersRoot_Loaded;
-                Show(Tab2, _prevIndex > 2, 2);
+                Show(Tab2, _prevIndex, _prevIndex = 2);
             }
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsClick?.Invoke(this, EventArgs.Empty);
         }
     }
 

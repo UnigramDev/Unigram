@@ -1,25 +1,45 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Profile
 {
     public sealed partial class ProfileMembersTabPage : ProfileTabPage
     {
+        public new ProfileViewModel ViewModel => DataContext as ProfileViewModel;
+
         public ProfileMembersTabPage()
         {
             InitializeComponent();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (ViewModel.ClientService.TryGetSupergroup(ViewModel.Chat, out Supergroup supergroup))
+            {
+                AddNew.Content = supergroup.IsChannel ? Strings.AddSubscriber : Strings.AddMember;
+                AddNewPanel.Visibility = supergroup.CanInviteUsers(ViewModel.Chat) ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else if (ViewModel.ClientService.TryGetBasicGroup(ViewModel.Chat, out BasicGroup basicGroup))
+            {
+                AddNew.Content = Strings.AddMember;
+                AddNewPanel.Visibility = basicGroup.CanInviteUsers(ViewModel.Chat) ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -87,7 +107,7 @@ namespace Telegram.Views.Profile
 
         private bool MemberRestrict_Loaded(Chat chat, ChatMemberStatus status, ChatMember member)
         {
-            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator admin && !admin.CanBeEdited)
+            if (member.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { CanBeEdited: false })
             {
                 return false;
             }
@@ -102,12 +122,12 @@ namespace Telegram.Views.Profile
                 return false;
             }
 
-            return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanRestrictMembers;
+            return status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { Rights.CanRestrictMembers: true };
         }
 
         private bool MemberRemove_Loaded(Chat chat, ChatMemberStatus status, ChatMember member)
         {
-            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator admin && !admin.CanBeEdited)
+            if (member.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { CanBeEdited: false })
             {
                 return false;
             }
@@ -117,12 +137,12 @@ namespace Telegram.Views.Profile
                 return false;
             }
 
-            if (chat.Type is ChatTypeBasicGroup)
+            if (chat.Type is ChatTypeBasicGroup && status is ChatMemberStatusAdministrator)
             {
                 return member.InviterUserId == ViewModel.ClientService.Options.MyId;
             }
 
-            return status is ChatMemberStatusCreator || status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanRestrictMembers;
+            return status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { Rights.CanRestrictMembers: true };
         }
 
         #endregion
@@ -153,13 +173,20 @@ namespace Telegram.Views.Profile
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.InRecycleQueue)
+            try
             {
-                return;
+                if (args.InRecycleQueue || ViewModel == null)
+                {
+                    return;
+                }
+                else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
+                {
+                    content.UpdateChatSharedMembers(ViewModel.ClientService, args, OnContainerContentChanging);
+                }
             }
-            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
+            catch (Exception ex)
             {
-                content.UpdateChatSharedMembers(ViewModel.ClientService, args, OnContainerContentChanging);
+                Logger.Exception(ex);
             }
         }
 

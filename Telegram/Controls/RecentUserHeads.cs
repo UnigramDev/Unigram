@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,10 +32,10 @@ namespace Telegram.Controls
 
     public partial class RecentUserHeads : Control
     {
-        private readonly RecentUserCollection _items = new RecentUserCollection();
-        private readonly HashSet<UIElement> _toBeRemoved = new HashSet<UIElement>();
+        private readonly RecentUserCollection _items = new();
+        private readonly HashSet<UIElement> _toBeRemoved = new();
 
-        private Grid _layoutRoot;
+        private Grid LayoutRoot;
 
         private readonly int _maxCount = 3;
         private readonly int _maxIndex = 2;
@@ -92,7 +93,7 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            _layoutRoot = GetTemplateChild("LayoutRoot") as Grid;
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
             _items.CollectionChanged += OnCollectionChanged;
 
             Reset();
@@ -131,7 +132,7 @@ namespace Telegram.Controls
 
         private void Reset()
         {
-            _layoutRoot.Children.Clear();
+            LayoutRoot.Children.Clear();
 
             for (int i = 0; i < Math.Min(_maxCount, _items.Count); i++)
             {
@@ -141,7 +142,7 @@ namespace Telegram.Controls
                 visual.Offset = new Vector3(i * (_itemSize + 4 - _itemOverlap), 0, 0);
 
                 Canvas.SetZIndex(container, -i);
-                _layoutRoot.Children.Insert(i, container);
+                LayoutRoot.Children.Add(container);
             }
         }
 
@@ -152,32 +153,32 @@ namespace Telegram.Controls
             var container = CreateContainer(item);
             AnimateAdding(container, index);
 
-            for (int i = index, real = index; i < _layoutRoot.Children.Count; i++)
+            for (int i = index, real = index; i < LayoutRoot.Children.Count; i++)
             {
-                if (_toBeRemoved.Contains(_layoutRoot.Children[i]))
+                if (_toBeRemoved.Contains(LayoutRoot.Children[i]))
                 {
                     continue;
                 }
 
                 if (real >= _maxCount - 1)
                 {
-                    _toBeRemoved.Add(_layoutRoot.Children[i]);
+                    _toBeRemoved.Add(LayoutRoot.Children[i]);
 
-                    AnimateRemoving(_layoutRoot.Children[i], real + 1);
+                    AnimateRemoving(LayoutRoot.Children[i], real + 1);
                     real++;
                 }
                 else
                 {
-                    AnimateMoving(_layoutRoot.Children[i], real, real + 1);
-                    UpdateContainer(_layoutRoot.Children[i], real + 1);
+                    AnimateMoving(LayoutRoot.Children[i], real, real + 1);
+                    UpdateContainer(LayoutRoot.Children[i], real + 1);
                     real++;
                 }
             }
 
-            index = Math.Max(Math.Min(_layoutRoot.Children.Count - 1, index), 0);
+            index = Math.Max(Math.Min(LayoutRoot.Children.Count - 1, index), 0);
 
             Canvas.SetZIndex(container, -index);
-            _layoutRoot.Children.Insert(index, container);
+            LayoutRoot.Children.Insert(index, container);
 
             InvalidateMeasure();
             AnimateAlignment();
@@ -188,7 +189,7 @@ namespace Telegram.Controls
         private void RemoveItem(int index, object item)
         {
             var batch = CreateScopedBatch();
-            var count = _layoutRoot.Children.Count;
+            var count = LayoutRoot.Children.Count;
 
             UIElement container = null;
             if (item != null)
@@ -197,25 +198,25 @@ namespace Telegram.Controls
                 AnimateAdding(container, _maxIndex);
             }
 
-            for (int i = index, real = index; i < _layoutRoot.Children.Count; i++)
+            for (int i = index, real = index; i < LayoutRoot.Children.Count; i++)
             {
-                if (_toBeRemoved.Contains(_layoutRoot.Children[i]))
+                if (_toBeRemoved.Contains(LayoutRoot.Children[i]))
                 {
                     continue;
                 }
 
                 if (real == index || real >= _maxCount)
                 {
-                    _toBeRemoved.Add(_layoutRoot.Children[i]);
+                    _toBeRemoved.Add(LayoutRoot.Children[i]);
                     count--;
 
-                    AnimateRemoving(_layoutRoot.Children[i], real + 1);
+                    AnimateRemoving(LayoutRoot.Children[i], real + 1);
                     real++;
                 }
                 else
                 {
-                    AnimateMoving(_layoutRoot.Children[i], real, real - 1);
-                    UpdateContainer(_layoutRoot.Children[i], real - 1);
+                    AnimateMoving(LayoutRoot.Children[i], real, real - 1);
+                    UpdateContainer(LayoutRoot.Children[i], real - 1);
                     real++;
                 }
             }
@@ -223,7 +224,7 @@ namespace Telegram.Controls
             if (container != null && count < _maxCount)
             {
                 Canvas.SetZIndex(container, -_maxCount);
-                _layoutRoot.Children.Insert(count, container);
+                LayoutRoot.Children.Insert(count, container);
             }
 
             InvalidateMeasure();
@@ -234,12 +235,12 @@ namespace Telegram.Controls
 
         private void MoveItem(int oldIndex, int newIndex)
         {
-            if (oldIndex >= _layoutRoot.Children.Count || newIndex >= _layoutRoot.Children.Count)
+            if (oldIndex >= LayoutRoot.Children.Count || newIndex >= LayoutRoot.Children.Count)
             {
                 return;
             }
 
-            _layoutRoot.Children.Move((uint)oldIndex, (uint)newIndex);
+            LayoutRoot.Children.Move((uint)oldIndex, (uint)newIndex);
 
             var compositor = BootStrapper.Current.Compositor;
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -249,7 +250,7 @@ namespace Telegram.Controls
 
             for (int i = start; i <= end; i++)
             {
-                AnimateMoving(_layoutRoot.Children[i], -1, i);
+                AnimateMoving(LayoutRoot.Children[i], -1, i);
             }
 
             batch.End();
@@ -258,8 +259,7 @@ namespace Telegram.Controls
         private UIElement CreateContainer(object item)
         {
             var picture = new ProfilePicture();
-            picture.Width = _itemSize;
-            picture.Height = _itemSize;
+            picture.Size = _itemSize;
 
             if (item is MessageSender sender)
             {
@@ -276,7 +276,7 @@ namespace Telegram.Controls
             container.VerticalAlignment = VerticalAlignment.Top;
             container.HorizontalAlignment = HorizontalAlignment.Left;
             container.BorderThickness = new Thickness(2);
-            container.CornerRadius = new CornerRadius((_itemSize + 4) / (picture.Shape == ProfilePictureShape.Superellipse ? 4 : 2));
+            container.CornerRadius = new CornerRadius((_itemSize + 4) / (picture.ComputedShape == ProfilePictureShape.Superellipse ? 4 : 2));
             container.Child = picture;
             container.Tag = item;
             container.SetBinding(Border.BorderBrushProperty, borderBrush);
@@ -305,7 +305,7 @@ namespace Telegram.Controls
             {
                 foreach (var element in _toBeRemoved)
                 {
-                    _layoutRoot.Children.Remove(element);
+                    LayoutRoot.Children.Remove(element);
                 }
 
                 _toBeRemoved.Clear();
@@ -382,7 +382,7 @@ namespace Telegram.Controls
             if (HorizontalAlignment == HorizontalAlignment.Center)
             {
                 // Not needed in templated control
-                ElementCompositionPreview.SetIsTranslationEnabled(_layoutRoot, true);
+                ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
 
                 var maxWidth = ((_itemSize + 4) * _maxCount) - (_itemOverlap * (_maxCount - 1));
 
@@ -393,13 +393,13 @@ namespace Telegram.Controls
                 offset.InsertKeyFrame(1, new Vector3(diff / 2, 0, 0));
                 //offset.Duration = TimeSpan.FromSeconds(1);
 
-                var visual = ElementComposition.GetElementVisual(_layoutRoot);
+                var visual = ElementComposition.GetElementVisual(LayoutRoot);
                 visual.StartAnimation("Translation", offset);
             }
             else if (HorizontalAlignment == HorizontalAlignment.Right)
             {
                 // Not needed in templated control
-                ElementCompositionPreview.SetIsTranslationEnabled(_layoutRoot, true);
+                ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
 
                 var maxWidth = ((_itemSize + 4) * _maxCount) - (_itemOverlap * (_maxCount - 1));
 
@@ -411,7 +411,7 @@ namespace Telegram.Controls
                 offset.InsertKeyFrame(1, new Vector3());
                 //offset.Duration = TimeSpan.FromSeconds(10);
 
-                var visual = ElementComposition.GetElementVisual(_layoutRoot);
+                var visual = ElementComposition.GetElementVisual(LayoutRoot);
                 //visual.StartAnimation("Translation", offset);
             }
         }
@@ -435,9 +435,56 @@ namespace Telegram.Controls
 
     public partial class RecentUserCollection : ObservableCollection<MessageSender>
     {
+        protected readonly struct SuppressEventsDisposable : IDisposable
+        {
+            private readonly RecentUserCollection _collection;
+
+            public SuppressEventsDisposable(RecentUserCollection collection)
+            {
+                _collection = collection;
+                ++collection._suppressEvents;
+            }
+
+            public void Dispose()
+            {
+                --_collection._suppressEvents;
+            }
+        }
+
+        private int _suppressEvents;
+
         public RecentUserCollection()
         {
 
+        }
+
+        protected SuppressEventsDisposable SuppressEvents()
+        {
+            return new SuppressEventsDisposable(this);
+        }
+
+        public bool EventsAreSuppressed
+        {
+            get { return _suppressEvents > 0; }
+        }
+
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            if (!EventsAreSuppressed)
+            {
+                base.OnCollectionChanged(e);
+            }
+        }
+
+        public void ReplaceWith(IEnumerable<MessageSender> items)
+        {
+            using (SuppressEvents())
+            {
+                Clear();
+                this.AddRange(items);
+            }
+
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         public void ReplaceDiff(IEnumerable<MessageSender> items)

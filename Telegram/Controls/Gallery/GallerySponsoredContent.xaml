@@ -1,0 +1,172 @@
+﻿<native:HyperlinkButtonEx x:Class="Telegram.Controls.Gallery.GallerySponsoredContent"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                          xmlns:controls="using:Telegram.Controls"
+                          xmlns:native="using:Telegram.Native.Controls"
+                          mc:Ignorable="d"
+                          d:DesignHeight="300"
+                          d:DesignWidth="400"
+                          Background="Transparent"
+                          MinHeight="48"
+                          HorizontalContentAlignment="Stretch"
+                          VerticalContentAlignment="Stretch"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Top"
+                          BorderThickness="0"
+                          Padding="0"
+                          Margin="0"
+                          Click="SponsoredMessage_Click">
+
+    <native:HyperlinkButtonEx.Template>
+        <ControlTemplate TargetType="HyperlinkButton">
+            <Grid x:Name="RootGrid"
+                  Padding="{TemplateBinding Padding}">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="PointerOver">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                               Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0"
+                                                            Value="{ThemeResource HyperlinkButtonBackgroundPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Pressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                               Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0"
+                                                            Value="{ThemeResource HyperlinkButtonBackgroundPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Disabled">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                               Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0"
+                                                            Value="{ThemeResource HyperlinkButtonBackgroundDisabled}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <ContentPresenter x:Name="ContentPresenter"
+                                  Background="{TemplateBinding Background}"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="{TemplateBinding BorderThickness}"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                  CornerRadius="15"
+                                  AutomationProperties.AccessibilityView="Raw" />
+            </Grid>
+        </ControlTemplate>
+    </native:HyperlinkButtonEx.Template>
+
+    <Grid Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}"
+          CornerRadius="15"
+          Padding="8,0,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Border x:Name="ThumbRoot"
+                Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                VerticalAlignment="Center"
+                Width="36"
+                Height="36"
+                Margin="0,0,0,0"
+                CornerRadius="18"
+                Grid.RowSpan="2">
+            <Border x:Name="ThumbEllipse">
+                <Border.Background>
+                    <ImageBrush x:Name="ThumbImage"
+                                Stretch="UniformToFill"
+                                AlignmentX="Center"
+                                AlignmentY="Center" />
+                </Border.Background>
+            </Border>
+        </Border>
+
+        <Grid Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="TitleText"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                       FontWeight="SemiBold"
+                       Margin="8,0,0,0"
+                       VerticalAlignment="Bottom" />
+
+            <controls:SettingsButton Click="About_Click"
+                                     Style="{StaticResource SmallButtonStyle}"
+                                     Glyph="{CustomResource SponsoredMessageAd}"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Bottom"
+                                     FontSize="11"
+                                     Padding="8,0"
+                                     Margin="8,0,0,0"
+                                     CornerRadius="8"
+                                     BorderThickness="0"
+                                     Height="16"
+                                     Grid.Column="2" />
+        </Grid>
+
+        <TextBlock x:Name="MessageText"
+                   Style="{StaticResource CaptionTextBlockStyle}"
+                   Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                   Margin="8,0,0,8"
+                   Grid.Column="1"
+                   Grid.Row="1" />
+
+        <Grid x:Name="RemoveRoot"
+              VerticalAlignment="Center"
+              Width="48"
+              Height="48"
+              Grid.Column="2"
+              Grid.RowSpan="2">
+            <Grid HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Width="20"
+                  Height="20">
+                <controls:SelfDestructTimer x:Name="MinDisplaySlice"
+                                            Background="Transparent"
+                                            Foreground="{ThemeResource AccentButtonBackground}"
+                                            Center="10"
+                                            Radius="9.5"
+                                            StrokeThickness="1" />
+                <controls:AnimatedTextBlock x:Name="MinDisplayText"
+                                            Foreground="{ThemeResource AccentButtonBackground}"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Margin="0,1,0,2">
+                    <controls:AnimatedTextBlock.TextStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontSize"
+                                    Value="11" />
+                            <Setter Property="TextAlignment"
+                                    Value="Center" />
+                        </Style>
+                    </controls:AnimatedTextBlock.TextStyle>
+                </controls:AnimatedTextBlock>
+            </Grid>
+            <controls:GlyphButton x:Name="RemoveButton"
+                                  Click="Remove_Click"
+                                  CornerRadius="24" />
+        </Grid>
+    </Grid>
+</native:HyperlinkButtonEx>

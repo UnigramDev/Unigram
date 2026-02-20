@@ -1,0 +1,144 @@
+<controls:ContentPopup x:Class="Telegram.Views.Popups.SuggestPostPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                       xmlns:controls="using:Telegram.Controls"
+                       mc:Ignorable="d"
+                       Padding="24,12,24,24"
+                       IsDismissButtonVisible="True"
+                       ButtonsLayout="Vertical">
+
+    <StackPanel>
+        <controls:TopNavView x:Name="Navigation"
+                             SelectionChanged="Navigation_SelectionChanged"
+                             HorizontalAlignment="Left"
+                             Height="40"
+                             Margin="0,0,0,12">
+            <controls:TopNavView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel VerticalAlignment="Center"
+                                Orientation="Horizontal"
+                                Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+                                Padding="4,0"
+                                CornerRadius="15" />
+                </ItemsPanelTemplate>
+            </controls:TopNavView.ItemsPanel>
+            <controls:TopNavView.ItemContainerStyle>
+                <Style TargetType="controls:TopNavViewItem">
+                    <Setter Property="HorizontalAlignment"
+                            Value="Stretch" />
+                    <Setter Property="VerticalAlignment"
+                            Value="Stretch" />
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Center" />
+                    <Setter Property="VerticalContentAlignment"
+                            Value="Center" />
+                    <Setter Property="UseSystemFocusVisuals"
+                            Value="True" />
+                    <Setter Property="FocusVisualMargin"
+                            Value="-3,5" />
+                    <Setter Property="CornerRadius"
+                            Value="12" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="controls:TopNavViewItem">
+                                <Grid x:Name="ContentBorder"
+                                      Background="Transparent">
+                                    <ContentPresenter x:Name="ContentPresenter"
+                                                      Grid.Column="1"
+                                                      Margin="8,5,8,6"
+                                                      TextWrapping="NoWrap"
+                                                      Foreground="{TemplateBinding Foreground}"
+                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                      Content="{TemplateBinding Content}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                      VerticalAlignment="Center"
+                                                      AutomationProperties.AccessibilityView="Raw"
+                                                      Canvas.ZIndex="1" />
+                                    <Grid x:Name="SelectionIndicatorGrid"
+                                          Margin="0,4,0,4"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch">
+                                        <Rectangle x:Name="SelectionIndicator"
+                                                   Fill="{ThemeResource ControlFillColorSecondaryBrush}"
+                                                   Opacity="0"
+                                                   RadiusX="10"
+                                                   RadiusY="10" />
+                                    </Grid>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </controls:TopNavView.ItemContainerStyle>
+            <controls:TopNavViewItem Content="{CustomResource SuggestedOfferStars}"
+                                     FontSize="12" />
+            <controls:TopNavViewItem Content="{CustomResource SuggestedOfferTON}"
+                                     FontSize="12" />
+        </controls:TopNavView>
+
+        <TextBlock x:Name="HeaderText"
+                   Style="{StaticResource BodyTextBlockStyle}" />
+
+        <Grid x:Name="InputRoot"
+              Margin="0,4,0,0"
+              VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="36" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="Label"
+                     BeforeTextChanging="OnBeforeTextChanging"
+                     TextChanged="Label_TextChanged"
+                     KeyDown="Label_KeyDown"
+                     Style="{StaticResource NoDeleteTextBoxStyle}"
+                     Grid.ColumnSpan="2" />
+            <controls:PremiumStarCount x:Name="StarCount"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Width="24"
+                                       Height="24" />
+            <TextBlock x:Name="TonCount"
+                       Text="&#xEA7E;"
+                       Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="20"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Width="20"
+                       Height="20" />
+
+            <controls:AnimatedTextBlock x:Name="Price"
+                                        TextStyle="{StaticResource InfoCaptionTextBlockStyle}"
+                                        TextAlignment="Right"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,8,0"
+                                        Grid.Column="1" />
+        </Grid>
+
+        <TextBlock x:Name="FooterText"
+                   Margin="0,8,0,0"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}" />
+
+        <TextBlock Text="{CustomResource PostSuggestionsOfferTitleTime}"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Margin="0,24,0,4" />
+
+        <muxc:DropDownButton x:Name="SendDate"
+                             Click="SendDate_Click"
+                             Content="{CustomResource PostSuggestionsAnytime}"
+                             HorizontalAlignment="Stretch"
+                             HorizontalContentAlignment="Left"
+                             Background="{ThemeResource TextControlBackground}"
+                             BorderBrush="{ThemeResource TextControlBorderBrush}" />
+
+        <TextBlock x:Name="SendDateFooter"
+                   Margin="0,8,0,0"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}" />
+    </StackPanel>
+</controls:ContentPopup>

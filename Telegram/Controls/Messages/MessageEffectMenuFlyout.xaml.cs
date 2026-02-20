@@ -1,12 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Numerics;
-using Telegram.Common;
 using Telegram.Controls.Drawers;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -23,7 +23,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Messages
 {
@@ -140,7 +139,7 @@ namespace Telegram.Controls.Messages
 
             var radius = 8;
 
-            viewModel ??= EffectDrawerViewModel.Create(clientService.SessionId);
+            viewModel ??= EffectDrawerViewModel.Create(clientService.Session);
 
             var view = new EffectDrawer();
             view.DataContext = viewModel;
@@ -392,11 +391,11 @@ namespace Telegram.Controls.Messages
         {
             if (_story.ChosenReactionType != null && _story.ChosenReactionType.AreTheSame(reaction))
             {
-                _story.ClientService.Send(new SetStoryReaction(_story.ChatId, _story.StoryId, null, true));
+                _story.ClientService.Send(new SetStoryReaction(_story.PosterChatId, _story.Id, null, true));
             }
             else
             {
-                await _story.ClientService.SendAsync(new SetStoryReaction(_story.ChatId, _story.StoryId, reaction, true));
+                await _story.ClientService.SendAsync(new SetStoryReaction(_story.PosterChatId, _story.Id, reaction, true));
 
                 if (_reserved != null && _reserved.IsLoaded)
                 {

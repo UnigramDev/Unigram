@@ -107,13 +107,13 @@
             <Border x:Name="JoinButtonBackground"
                     CornerRadius="16" />
 
-            <controls:BadgeButton x:Name="JoinButton"
-                                  Content="{CustomResource VoipChatJoin}"
-                                  Style="{StaticResource StartButtonStyle}"
-                                  Typography.NumeralAlignment="Tabular"
-                                  FontWeight="SemiBold"
-                                  CornerRadius="16"
-                                  Margin="0" />
+            <Button x:Name="JoinButton"
+                    Content="{CustomResource VoipChatJoin}"
+                    Style="{StaticResource StartButtonStyle}"
+                    Typography.NumeralAlignment="Tabular"
+                    FontWeight="SemiBold"
+                    CornerRadius="16"
+                    Margin="0" />
         </Grid>
 
     </Grid>

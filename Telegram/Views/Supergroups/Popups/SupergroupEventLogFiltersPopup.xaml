@@ -31,7 +31,7 @@
                                                MinHeight="32"
                                                Margin="0,0,-16,0">
                         <controls:SettingsExpander.Header>
-                            <Grid Margin="0,0,-12,0">
+                            <Grid Margin="-12,-11,0,-12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
@@ -61,7 +61,7 @@
                                                MinHeight="32"
                                                Margin="0,0,-16,0">
                         <controls:SettingsExpander.Header>
-                            <Grid Margin="0,0,-12,0">
+                            <Grid Margin="-12,-11,0,-12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
@@ -91,7 +91,7 @@
                                                MinHeight="32"
                                                Margin="0,0,-16,0">
                         <controls:SettingsExpander.Header>
-                            <Grid Margin="0,0,-12,0">
+                            <Grid Margin="-12,-11,0,-12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
@@ -133,6 +133,7 @@
         </ScrollViewer>
 
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
-                                    Background="{ThemeResource ContentDialogBackground}" />
+                                    Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    BottomInset="0" />
     </Grid>
 </controls:ContentPopup>

@@ -10,9 +10,7 @@
                        mc:Ignorable="d"
                        Title="{x:Bind ViewModel.Title}"
                        PrimaryButtonText="{x:Bind ViewModel.PrimaryButtonText}"
-                       SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
                        Padding="0,24,0,0">
 
     <controls:ContentPopup.Resources>
@@ -72,6 +70,9 @@
                                         IsFooter="True">
                     <RichTextBlock x:Name="SubtitleText"
                                    Style="{StaticResource BodyRichTextBlockStyle}"
+                                   TextWrapping="Wrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   MaxLines="1"
                                    Margin="24,0"
                                    Grid.Row="1">
                         <Paragraph x:Name="SubtitleParagraph" />
@@ -106,7 +107,7 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ChatShareCell SelectionStroke="{ThemeResource ContentDialogBackground}"
+                    <cells:ChatShareCell SelectionStroke="{ThemeResource ContentDialogTopOverlaySolid}"
                                          Stroke="{ThemeResource ChatLastMessageStateBrush}"
                                          Padding="0,6" />
                 </DataTemplate>
@@ -121,7 +122,8 @@
             </ListView.Footer>
         </ListView>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                    ScrollingHost="{x:Bind ScrollingHost}" />
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    ScrollingHost="{x:Bind ScrollingHost}"
+                                    BottomInset="0" />
     </Grid>
 </controls:ContentPopup>

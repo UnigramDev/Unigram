@@ -1,15 +1,16 @@
 namespace Telegram.Native
 {
     [default_interface]
-    runtimeclass FileStreamFromApp
+    runtimeclass FileStreamFromApp : Windows.Foundation.IClosable
     {
         FileStreamFromApp(String path);
 
         Boolean IsValid{ get; };
 
         Boolean Seek(Int64 offset);
+        
+        [default_overload]
         Int32 Read(Int64 pointer, UInt32 length);
-
-        void Close();
+        Int32 Read(Windows.Storage.Streams.IBuffer buffer, UInt32 length);
     }
 }

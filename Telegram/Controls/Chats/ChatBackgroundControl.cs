@@ -1,13 +1,14 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
-using System.Linq;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -21,37 +22,53 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Chats
 {
-    public partial class ChatBackgroundControl : GridEx
+    public partial class ChatBackgroundControl : ControlEx
     {
         private IClientService _clientService;
         private IEventAggregator _aggregator;
 
-        private Background _oldBackground = new Background();
+        private ChatTheme _oldTheme;
+        private Background _oldBackground = new();
         private bool? _oldDark;
+        private int? _oldDimming;
 
-        private readonly ChatBackgroundPresenter _presenter;
+        private ChatBackgroundPresenter Presenter;
+
+        private bool _templateApplied;
+        private bool _initialized;
 
         private readonly Compositor _compositor;
 
         public ChatBackgroundControl()
         {
-            _presenter = new ChatBackgroundPresenter();
+            DefaultStyleKey = typeof(ChatBackgroundControl);
+
+            Presenter = new ChatBackgroundPresenter();
             _compositor = BootStrapper.Current.Compositor;
 
             this.CreateInsetClip();
-
-            Children.Add(_presenter);
-
-            Connected += OnLoaded;
-            Disconnected += OnUnloaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        protected override void OnApplyTemplate()
+        {
+            Presenter = GetTemplateChild(nameof(Presenter)) as ChatBackgroundPresenter;
+
+            _templateApplied = true;
+
+            if (_oldDark != null && _oldDimming != null)
+            {
+                UpdateBackground(_oldTheme, _oldBackground, _oldDark.Value, _oldDimming.Value);
+            }
+
+            base.OnApplyTemplate();
+        }
+
+        protected override void OnLoaded()
         {
             _aggregator?.Subscribe<UpdateDefaultBackground>(this, Handle);
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
             _aggregator?.Unsubscribe(this);
         }
@@ -66,8 +83,8 @@ namespace Telegram.Controls.Chats
                 {
                     var background = update.Background;
 
-                    SyncBackgroundWithChatTheme(ref background, update.ForDarkTheme, out int dimming);
-                    UpdateBackground(background, update.ForDarkTheme, dimming);
+                    SyncBackgroundWithChatTheme(ref background, update.ForDarkTheme, out ChatTheme theme, out int dimming);
+                    UpdateBackground(theme, background, update.ForDarkTheme, dimming);
                 }
             });
         }
@@ -80,19 +97,21 @@ namespace Telegram.Controls.Chats
 
             var background = clientService.GetDefaultBackground(IsDarkTheme);
 
-            SyncBackgroundWithChatTheme(ref background, IsDarkTheme, out int dimming);
-            UpdateBackground(background, IsDarkTheme, dimming);
+            SyncBackgroundWithChatTheme(ref background, IsDarkTheme, out ChatTheme theme, out int dimming);
+            UpdateBackground(theme, background, IsDarkTheme, dimming);
         }
 
         public void Update(Background background, bool forDarkTheme)
         {
             if (forDarkTheme == IsDarkTheme)
             {
-                SyncBackgroundWithChatTheme(ref background, forDarkTheme, out int dimming);
-                UpdateBackground(background, forDarkTheme, dimming);
+                SyncBackgroundWithChatTheme(ref background, forDarkTheme, out ChatTheme theme, out int dimming);
+                UpdateBackground(theme, background, forDarkTheme, dimming);
             }
         }
 
+        private ThemeSettings _lightSettings;
+        private ThemeSettings _darkSettings;
         private ChatBackground _chatBackground;
         private ChatTheme _chatTheme;
         private bool _localFields;
@@ -101,6 +120,22 @@ namespace Telegram.Controls.Chats
         {
             _clientService = clientService;
 
+            if (clientService.TryGetEmojiChatTheme(theme, out EmojiChatTheme emoji))
+            {
+                _lightSettings = emoji.LightSettings;
+                _darkSettings = emoji.DarkSettings;
+            }
+            else if (theme is ChatThemeGift gift)
+            {
+                _lightSettings = gift.GiftTheme.LightSettings;
+                _darkSettings = gift.GiftTheme.DarkSettings;
+            }
+            else
+            {
+                _lightSettings = null;
+                _darkSettings = null;
+            }
+
             _chatBackground = background;
             _chatTheme = theme;
             _localFields = background != null || theme != null;
@@ -108,28 +143,32 @@ namespace Telegram.Controls.Chats
             Update(_oldBackground, IsDarkTheme);
         }
 
-        private void SyncBackgroundWithChatTheme(ref Background background, bool forDarkTheme, out int dimming)
+        private void SyncBackgroundWithChatTheme(ref Background background, bool forDarkTheme, out ChatTheme theme, out int dimming)
         {
             var chatBackground = _localFields ? _chatBackground : Theme.Current.ChatBackground;
+            var (lightSettings, darkSettings) = _localFields ? (_lightSettings, _darkSettings) : (Theme.Current.LightSettings, Theme.Current.DarkSettings);
             var chatTheme = _localFields ? _chatTheme : Theme.Current.ChatTheme;
 
             // I'm not a big fan of this, but this is the easiest way to keep background in sync
             if (chatBackground != null)
             {
+                theme = null;
                 background = chatBackground.Background;
                 dimming = forDarkTheme
                     ? chatBackground.DarkThemeDimming
                     : 0;
             }
-            else if (chatTheme != null)
+            else if (lightSettings != null && darkSettings != null)
             {
+                theme = chatTheme;
                 dimming = 0;
                 background = forDarkTheme
-                    ? chatTheme?.DarkSettings?.Background
-                    : chatTheme?.LightSettings?.Background;
+                    ? darkSettings.Background
+                    : lightSettings.Background;
             }
             else
             {
+                theme = null;
                 dimming = 0;
             }
         }
@@ -138,16 +177,25 @@ namespace Telegram.Controls.Chats
         {
             if (_oldBackground?.Type is BackgroundTypeFill updateFill && updateFill.Fill is BackgroundFillFreeformGradient)
             {
-                _presenter.Next();
+                Presenter.Next();
             }
             else if (_oldBackground?.Type is BackgroundTypePattern updatePattern && updatePattern.Fill is BackgroundFillFreeformGradient)
             {
-                _presenter.Next();
+                Presenter.Next();
             }
         }
 
-        private void UpdateBackground(Background background, bool dark, int dimming)
+        private void UpdateBackground(ChatTheme theme, Background background, bool dark, int dimming)
         {
+            if (!_templateApplied)
+            {
+                _oldTheme = theme;
+                _oldBackground = background;
+                _oldDark = dark;
+                _oldDimming = dimming;
+                return;
+            }
+
             if (background == null)
             {
                 var freeform = dark ? new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
@@ -156,82 +204,29 @@ namespace Telegram.Controls.Chats
                     new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
             }
 
-            if (_oldDark == dark && BackgroundEquals(_oldBackground, background))
+            if (_initialized && _oldDark == dark && _oldDimming == dimming && _oldBackground.AreTheSame(background))
             {
                 return;
             }
 
+            _oldTheme = theme;
             _oldBackground = background;
             _oldDark = dark;
+            _oldDimming = dimming;
+            _initialized = true;
 
-            _presenter.UpdateSource(_clientService, background, false);
+            Presenter.UpdateSource(_clientService, background, false, theme);
 
             if (dark && dimming != 0)
             {
-                _presenter.Opacity = 1 - (dimming / 100d);
+                Presenter.Opacity = 1 - (dimming / 100d);
                 Background = new SolidColorBrush(Colors.Black);
             }
             else
             {
-                _presenter.Opacity = 1;
+                Presenter.Opacity = 1;
                 Background = null;
             }
-        }
-
-        public static bool BackgroundEquals(Background prev, Background next, bool fast = false)
-        {
-            if (prev == null || next == null)
-            {
-                return prev == next;
-            }
-
-            if (fast && prev.Id != next.Id)
-            {
-                return false;
-            }
-
-            if (prev.Type is BackgroundTypeFill prevFill && next.Type is BackgroundTypeFill nextFill)
-            {
-                return FillEquals(prevFill.Fill, nextFill.Fill);
-            }
-            else if (prev.Type is BackgroundTypePattern prevPattern && next.Type is BackgroundTypePattern nextPattern)
-            {
-                return prevPattern.IsInverted == nextPattern.IsInverted
-                    && prevPattern.Intensity == nextPattern.Intensity
-                    && prev.Document?.DocumentValue.Id == next.Document?.DocumentValue.Id
-                    && FillEquals(prevPattern.Fill, nextPattern.Fill);
-            }
-            else if (prev.Type is BackgroundTypeWallpaper prevWallpaper && next.Type is BackgroundTypeWallpaper nextWallpaper)
-            {
-                return prevWallpaper.IsBlurred == nextWallpaper.IsBlurred
-                    && prev.Document?.DocumentValue.Id == next.Document?.DocumentValue.Id;
-            }
-            else if (prev.Type is BackgroundTypeChatTheme prevChatTheme && next.Type is BackgroundTypeChatTheme nextChatTheme)
-            {
-                return string.Equals(prevChatTheme.ThemeName, nextChatTheme.ThemeName);
-            }
-
-            return Equals(prev, next);
-        }
-
-        public static bool FillEquals(BackgroundFill prev, BackgroundFill next)
-        {
-            if (prev is BackgroundFillSolid prevSolid && next is BackgroundFillSolid nextSolid)
-            {
-                return prevSolid.Color == nextSolid.Color;
-            }
-            else if (prev is BackgroundFillGradient prevGradient && next is BackgroundFillGradient nextGradient)
-            {
-                return prevGradient.TopColor == nextGradient.TopColor
-                    && prevGradient.BottomColor == nextGradient.BottomColor
-                    && prevGradient.RotationAngle == nextGradient.RotationAngle;
-            }
-            else if (prev is BackgroundFillFreeformGradient prevFreeform && next is BackgroundFillFreeformGradient nextFreeform)
-            {
-                return prevFreeform.Colors.SequenceEqual(nextFreeform.Colors);
-            }
-
-            return false;
         }
     }
 
@@ -285,14 +280,14 @@ namespace Telegram.Controls.Chats
 
         private static readonly Vector2[] _positions = new Vector2[]
         {
-            new Vector2(0.80f, 0.10f),
-            new Vector2(0.60f, 0.20f),
-            new Vector2(0.35f, 0.25f),
-            new Vector2(0.25f, 0.60f),
-            new Vector2(0.20f, 0.90f),
-            new Vector2(0.40f, 0.80f),
-            new Vector2(0.65f, 0.75f),
-            new Vector2(0.75f, 0.40f),
+            new(0.80f, 0.10f),
+            new(0.60f, 0.20f),
+            new(0.35f, 0.25f),
+            new(0.25f, 0.60f),
+            new(0.20f, 0.90f),
+            new(0.40f, 0.80f),
+            new(0.65f, 0.75f),
+            new(0.75f, 0.40f),
         };
 
         private static readonly float[] _curve = new float[]
@@ -389,10 +384,10 @@ namespace Telegram.Controls.Chats
             {
                 stops[i] = new Vector2[]
                 {
-                    new Vector2(prev[0].X + d1x * _curve[i * 2]!, prev[0].Y + d1y * _curve[i * 2]!),
-                    new Vector2(prev[1].X + d2x * _curve[i * 2]!, prev[1].Y + d2y * _curve[i * 2]!),
-                    new Vector2(prev[2].X + d3x * _curve[i * 2]!, prev[2].Y + d3y * _curve[i * 2]!),
-                    new Vector2(prev[3].X + d4x * _curve[i * 2]!, prev[3].Y + d4y * _curve[i * 2]!)
+                    new(prev[0].X + d1x * _curve[i * 2]!, prev[0].Y + d1y * _curve[i * 2]!),
+                    new(prev[1].X + d2x * _curve[i * 2]!, prev[1].Y + d2y * _curve[i * 2]!),
+                    new(prev[2].X + d3x * _curve[i * 2]!, prev[2].Y + d3y * _curve[i * 2]!),
+                    new(prev[3].X + d4x * _curve[i * 2]!, prev[3].Y + d4y * _curve[i * 2]!)
                 };
             }
 

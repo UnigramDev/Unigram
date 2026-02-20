@@ -1,0 +1,161 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:local="using:Telegram.Controls.Messages.Content"
+                    mc:Ignorable="d">
+
+    <Style TargetType="local:ChecklistTaskContent">
+        <Setter Property="SelectionStroke"
+                Value="{ThemeResource MessageHeaderBorderBrush}" />
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="BorderBrush"
+                Value="Transparent" />
+        <Setter Property="BorderThickness"
+                Value="0" />
+        <Setter Property="Padding"
+                Value="0" />
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalAlignment"
+                Value="Stretch" />
+        <Setter Property="FontSize"
+                Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ChecklistTaskContent">
+                    <Grid x:Name="RootGrid"
+                          Background="{TemplateBinding Background}"
+                          Padding="10,0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ListViewItemBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ListViewItemBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled" />
+                                <VisualState x:Name="Checked" />
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ListViewItemBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ListViewItemBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CheckedDisabled" />
+                                <VisualState x:Name="Indeterminate" />
+                                <VisualState x:Name="IndeterminatePointerOver" />
+                                <VisualState x:Name="IndeterminatePressed" />
+                                <VisualState x:Name="IndeterminateDisabled" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="0" />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="PhotoRoot"
+                                Width="20"
+                                Height="20"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Margin="0,8,8,8">
+                            <controls:ProfilePicture x:Name="Photo"
+                                                     Size="20" />
+                        </Border>
+
+                        <Ellipse x:Name="CheckmarkNotDone"
+                                 Width="4"
+                                 Height="4"
+                                 UseLayoutRounding="False"
+                                 Fill="{ThemeResource MessageHeaderBorderBrush}"
+                                 StrokeThickness="0"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Top"
+                                 Margin="8,16,0,0" />
+                        <Path x:Name="CheckmarkDone"
+                              Fill="{ThemeResource MessageHeaderBorderBrush}"
+                              Data="M13.2197 6.96967L8.75 11.4393L6.78033 9.4697C6.48744 9.1768 6.01256 9.1768 5.71967 9.4697C5.42678 9.7626 5.42678 10.2374 5.71967 10.5303L8.2197 13.0303C8.5126 13.3232 8.9874 13.3232 9.2803 13.0303L14.2803 8.0303C14.5732 7.73744 14.5732 7.26256 14.2803 6.96967C13.9874 6.67678 13.5126 6.67678 13.2197 6.96967Z"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top"
+                              Margin="0,8,0,0" />
+
+                        <Border x:Name="CheckmarkIcon"
+                                Canvas.ZIndex="1"
+                                AutomationProperties.AccessibilityView="Raw"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Width="24"
+                                Height="24"
+                                Margin="-2,6,0,0" />
+
+                        <controls:FormattedTextBlock x:Name="TextText"
+                                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                     TextWrapping="Wrap"
+                                                     TextTrimming="CharacterEllipsis"
+                                                     VerticalAlignment="Top"
+                                                     IsTextSelectionEnabled="False"
+                                                     AutoFontSize="False"
+                                                     Margin="0,8,0,8"
+                                                     Grid.Column="1" />
+
+                        <TextBlock x:Name="UserText"
+                                   Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   IsHitTestVisible="False"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Bottom"
+                                   Margin="0,0,0,2"
+                                   Grid.Column="1" />
+
+                        <Border BorderBrush="{ThemeResource MessageSubtleForegroundBrush}"
+                                BorderThickness="0,0,0,0.5"
+                                VerticalAlignment="Bottom"
+                                Margin="0,0,-10,0"
+                                Opacity="0.3"
+                                Grid.Column="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -9,36 +9,55 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        Padding="0"
-                       IsDismissButtonVisible="True">
+                       IsDismissButtonVisible="True"
+                       PrimaryButtonStyle="{StaticResource PremiumButtonStyle}"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       ButtonsLayout="Vertical">
 
     <Grid>
         <ListView x:Name="ScrollingHost"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
-                  Padding="24,24,24,12">
+                  Padding="24,0,24,12">
             <ListView.Header>
-                <Grid>
+                <Grid Margin="0,0,0,24">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <controls:PremiumProgressBar x:Name="Progress"
-                                                 Glyph="&#xEA3A;"
-                                                 Margin="0,0,0,0"
-                                                 Grid.Row="1" />
+                    <Grid Background="{ThemeResource ControlAltFillColorTertiaryBrush}"
+                          CornerRadius="4"
+                          VerticalAlignment="Bottom">
+                        <TextBlock TextAlignment="Left"
+                                   FontWeight="SemiBold"
+                                   Margin="8,4,8,5" />
+                    </Grid>
 
+                    <controls:PremiumProgressBar x:Name="Progress"
+                                                 Background="{StaticResource PremiumLinearGradientBrush}"
+                                                 Glyph="&#xEA3A;"
+                                                 MaximumVisibility="Collapsed"
+                                                 Margin="0,24,0,0" />
+
+                    <TextBlock x:Name="TitleLabel"
+                               Text="{CustomResource StarRatingTitle}"
+                               Style="{StaticResource PopupTextBlockStyle}"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center"
+                               VerticalAlignment="Top"
+                               Margin="0,8,0,4"
+                               Grid.Row="1" />
                     <TextBlock x:Name="Description"
                                Style="{StaticResource BodyTextBlockStyle}"
-                               VerticalAlignment="Center"
+                               TextWrapping="Wrap"
                                TextAlignment="Center"
-                               Padding="0,24,0,12"
-                               Canvas.ZIndex="1"
+                               VerticalAlignment="Top"
+                               Margin="0,0,0,8"
                                Grid.Row="2" />
 
                     <Grid x:Name="CopyRoot"
-                          Margin="0,0,0,24"
                           Grid.Row="3">
                         <Button Click="CopyLink_Click"
                                 HorizontalAlignment="Stretch"
@@ -46,7 +65,7 @@
                             <TextBlock x:Name="Link"
                                        TextTrimming="CharacterEllipsis" />
                         </Button>
-                        <TextBlock Text="&#xE8C8;"
+                        <TextBlock Text="&#xEAC9;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    FontSize="20"
                                    Foreground="{ThemeResource AccentButtonBackground}"
@@ -64,37 +83,8 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                    ScrollingHost="{x:Bind ScrollingHost}" />
-
-
-        <Grid x:Name="PurchasePanel"
-              Visibility="Collapsed"
-              VerticalAlignment="Bottom"
-              HorizontalAlignment="Stretch"
-              Margin="24,0,24,24">
-            <Rectangle x:Name="PurchaseShadow"
-                       Loaded="PurchaseShadow_Loaded"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
-                       Fill="White"
-                       Margin="0"
-                       RadiusX="4"
-                       RadiusY="4">
-            </Rectangle>
-            <Border Background="{StaticResource PremiumLinearGradientBrush}"
-                    CornerRadius="4"
-                    Height="32" />
-            <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Click="Purchase_Click"
-                                  Style="{StaticResource StartButtonStyle}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  FontWeight="SemiBold"
-                                  Padding="16,3,16,5"
-                                  CornerRadius="4"
-                                  Margin="0"
-                                  Height="32" />
-        </Grid>
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    ScrollingHost="{x:Bind ScrollingHost}"
+                                    BottomInset="0" />
     </Grid>
 </controls:ContentPopup>

@@ -36,13 +36,13 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel VerticalAlignment="Top">
-                                <RichTextBlock x:Name="QuestionText"
-                                               TextWrapping="Wrap"
-                                               Style="{StaticResource BaseRichTextBlockStyle}"
-                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                               IsTextSelectionEnabled="False">
-                                    <Paragraph x:Name="Question" />
-                                </RichTextBlock>
+                                <controls:FormattedTextBlock x:Name="QuestionText"
+                                                             TextWrapping="Wrap"
+                                                             TextTrimming="CharacterEllipsis"
+                                                             FontWeight="SemiBold"
+                                                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                             IsTextSelectionEnabled="False"
+                                                             AutoFontSize="False" />
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock x:Name="Type"
                                                Foreground="{ThemeResource MessageSubtleForegroundBrush}"
@@ -88,15 +88,14 @@
 
                         <TextBlock x:Name="Votes"
                                    Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-                                   FontWeight="SemiBold"
                                    TextAlignment="Center"
-                                   Margin="0,12,0,4" />
+                                   Margin="0,8,0,4" />
 
                         <Button x:Name="Submit"
                                 Style="{StaticResource ListEmptyButtonStyle}"
                                 HorizontalAlignment="Center"
                                 CornerRadius="4"
-                                Margin="0,8,0,0">
+                                Margin="0,4,0,0">
                             <TextBlock Text="{CustomResource PollSubmitVotes}"
                                        Foreground="{ThemeResource MessageSubtleForegroundBrush}"
                                        FontWeight="SemiBold"
@@ -108,7 +107,7 @@
                                 Style="{StaticResource ListEmptyButtonStyle}"
                                 HorizontalAlignment="Center"
                                 CornerRadius="4"
-                                Margin="0,8,0,0">
+                                Margin="0,4,0,0">
                             <TextBlock Text="{CustomResource PollViewResults}"
                                        Foreground="{ThemeResource MessageSubtleForegroundBrush}"
                                        FontWeight="SemiBold"

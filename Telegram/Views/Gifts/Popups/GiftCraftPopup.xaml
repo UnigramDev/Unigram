@@ -1,0 +1,521 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Gifts.Popups.GiftCraftPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:muxm="using:Microsoft.UI.Xaml.Media"
+                       xmlns:controls="using:Telegram.Controls"
+                       mc:Ignorable="d"
+                       Padding="0">
+
+    <Grid RequestedTheme="Dark">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Border x:Name="BackgroundRoot"
+                Margin="0,-40,0,0"
+                CornerRadius="8"
+                Grid.RowSpan="3" />
+        <Border x:Name="FailedBackground"
+                Visibility="Collapsed"
+                Margin="0,-40,0,0"
+                CornerRadius="8"
+                Grid.RowSpan="3">
+            <Border.Background>
+                <muxm:RadialGradientBrush Center="0.5,0.3"
+                                          GradientOrigin="0.5,0.3"
+                                          RadiusX="0.5"
+                                          RadiusY="0.5">
+                    <GradientStop Color="#5D2E16" />
+                    <GradientStop Color="#371B1A"
+                                  Offset="1" />
+                </muxm:RadialGradientBrush>
+            </Border.Background>
+        </Border>
+
+        <controls:ProfilePatternCover x:Name="Pattern"
+                                      Opacity="0.4"
+                                      Grid.Row="1"
+                                      Grid.RowSpan="2">
+            <controls:ProfilePatternCover.Template>
+                <ControlTemplate TargetType="controls:ProfilePatternCover">
+                    <Grid>
+                        <Border x:Name="LayoutRoot" />
+                        <TextBlock x:Name="Animated"
+                                   Text="&#xEAF8;"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="36"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Width="36"
+                                   Height="36"
+                                   Opacity="0" />
+                    </Grid>
+                </ControlTemplate>
+            </controls:ProfilePatternCover.Template>
+        </controls:ProfilePatternCover>
+
+        <TextBlock Text="Craft Gift"
+                   Style="{StaticResource PopupTextBlockStyle}"
+                   Margin="24,24,0,0" />
+
+        <Grid Margin="0,48,0,48"
+              Height="96"
+              Grid.Row="1">
+            <Grid.Transform3D>
+                <PerspectiveTransform3D Depth="1000" />
+            </Grid.Transform3D>
+            <Border x:Name="Success"
+                    Width="320"
+                    Height="320"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Margin="0,-112" />
+            <Grid x:Name="Cube"
+                  Width="96"
+                  Height="96"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+                <Grid x:Name="Face2"
+                      Background="{ThemeResource ButtonBackground}"
+                      BorderBrush="{ThemeResource ButtonBorderBrush}"
+                      BorderThickness="1"
+                      CornerRadius="16">
+                    <TextBlock Text="&#xEAF8;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="50"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                    <Grid x:Name="ProbabilityRoot">
+                        <Border x:Name="Gauge"
+                                Width="72"
+                                Height="72" />
+
+                        <TextBlock x:Name="Probability"
+                                   TextAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Bottom"
+                                   Margin="0,0,0,4"
+                                   Grid.Row="1" />
+                    </Grid>
+                </Grid>
+                <Grid x:Name="Face3"
+                      Background="{ThemeResource ButtonBackground}"
+                      BorderBrush="{ThemeResource ButtonBorderBrush}"
+                      BorderThickness="1"
+                      CornerRadius="16">
+                    <TextBlock Text="&#xEA9C;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="48"
+                               Opacity="0.8"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Grid>
+                <Grid x:Name="Face4"
+                      Background="{ThemeResource ButtonBackground}"
+                      BorderBrush="{ThemeResource ButtonBorderBrush}"
+                      BorderThickness="1"
+                      CornerRadius="16">
+                    <TextBlock Text="&#xEA9C;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="48"
+                               Opacity="0.8"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Grid>
+                <Grid x:Name="Face5"
+                      Background="{ThemeResource ButtonBackground}"
+                      BorderBrush="{ThemeResource ButtonBorderBrush}"
+                      BorderThickness="1"
+                      CornerRadius="16">
+                    <TextBlock Text="&#xEA9C;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="48"
+                               Opacity="0.8"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Grid>
+                <Grid x:Name="Face6"
+                      Background="{ThemeResource ButtonBackground}"
+                      BorderBrush="{ThemeResource ButtonBorderBrush}"
+                      BorderThickness="1"
+                      CornerRadius="16">
+                    <TextBlock Text="&#xEA9C;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="48"
+                               Opacity="0.8"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Grid>
+                <Grid x:Name="Face1"
+                      Background="{ThemeResource ButtonBackground}"
+                      BorderBrush="{ThemeResource ButtonBorderBrush}"
+                      BorderThickness="1"
+                      CornerRadius="16">
+                    <TextBlock Text="&#xEA9C;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="48"
+                               Opacity="0.8"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Grid>
+            </Grid>
+
+            <Grid x:Name="Gifts"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch">
+                <Grid.Resources>
+                    <Style TargetType="Button"
+                           BasedOn="{StaticResource DefaultButtonStyle}">
+                        <Setter Property="HorizontalAlignment"
+                                Value="Center" />
+                        <Setter Property="VerticalAlignment"
+                                Value="Center" />
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="Padding"
+                                Value="0" />
+                        <Setter Property="Width"
+                                Value="96" />
+                        <Setter Property="Height"
+                                Value="96" />
+                        <Setter Property="CornerRadius"
+                                Value="16" />
+                    </Style>
+                </Grid.Resources>
+                <Button x:Name="Gift1"
+                        Click="Button_Click">
+                    <Grid>
+                        <Rectangle Fill="Blue"
+                                   Opacity="0.5" />
+                        <TextBlock Text="1" />
+                    </Grid>
+                </Button>
+
+                <Button x:Name="Gift2"
+                        Click="Button_Click">
+                    <Grid>
+                        <Rectangle Fill="Red"
+                                   Opacity="0.5" />
+                        <TextBlock Text="2" />
+                    </Grid>
+                </Button>
+
+                <Button x:Name="Gift3"
+                        Click="Button_Click">
+                    <Grid>
+                        <Rectangle Fill="Aqua"
+                                   Opacity="0.5" />
+                        <TextBlock Text="3" />
+                    </Grid>
+                </Button>
+
+                <Button x:Name="Gift4"
+                        Click="Button_Click">
+                    <Grid>
+                        <Rectangle Fill="Lavender"
+                                   Opacity="0.5" />
+                        <TextBlock Text="4" />
+                    </Grid>
+                </Button>
+            </Grid>
+
+        </Grid>
+
+        <Grid x:Name="Overlays"
+              Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  Width="64"
+                  Height="64"
+                  Margin="24,24,0,0">
+                <controls:BadgeControl x:Name="GiftProbability1"
+                                       Text="11%"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"
+                                       Margin="-4" />
+                <Border x:Name="GiftDismiss1"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="-4"
+                        Width="16"
+                        Height="16"
+                        CornerRadius="16">
+                    <TextBlock Text="&#xE894;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="12"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+            </Grid>
+            <Grid HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  Width="64"
+                  Height="64"
+                  Margin="24,8,0,0"
+                  Grid.Row="1">
+                <controls:BadgeControl x:Name="GiftProbability2"
+                                       Text="11%"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"
+                                       Margin="-4" />
+                <Border x:Name="GiftDismiss2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="-4"
+                        Width="16"
+                        Height="16"
+                        CornerRadius="16">
+                    <TextBlock Text="&#xE894;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="12"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+            </Grid>
+            <Grid HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Width="64"
+                  Height="64"
+                  Margin="0,24,24,0"
+                  Grid.Column="1">
+                <controls:BadgeControl x:Name="GiftProbability3"
+                                       Text="11%"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"
+                                       Margin="-4" />
+                <Border x:Name="GiftDismiss3"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="-4"
+                        Width="16"
+                        Height="16"
+                        CornerRadius="16">
+                    <TextBlock Text="&#xE894;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="12"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+            </Grid>
+            <Grid HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Width="64"
+                  Height="64"
+                  Margin="0,8,24,0"
+                  Grid.Column="1"
+                  Grid.Row="1">
+                <controls:BadgeControl x:Name="GiftProbability4"
+                                       Text="11%"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"
+                                       Margin="-4" />
+                <Border x:Name="GiftDismiss4"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="-4"
+                        Width="16"
+                        Height="16"
+                        CornerRadius="16">
+                    <TextBlock Text="&#xE894;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="12"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="PrepareRoot"
+              Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="52" />
+                <RowDefinition Height="48" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="Text1"
+                       TextAlignment="Center"
+                       Grid.Row="1" />
+            <RichTextBlock x:Name="Text2"
+                           TextAlignment="Center"
+                           IsTextSelectionEnabled="False"
+                           Grid.Row="2" />
+
+            <StackPanel x:Name="Attributes1"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Spacing="8"
+                        Margin="0,8,0,0"
+                        Grid.Row="3" />
+            <StackPanel x:Name="Attributes2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Spacing="8"
+                        Grid.Row="4" />
+
+            <Button x:Name="VariantsRoot"
+                    HorizontalAlignment="Center"
+                    CornerRadius="15"
+                    Grid.Row="4">
+                <StackPanel x:Name="Variants"
+                            Orientation="Horizontal"
+                            Spacing="2">
+                    <TextBlock Text="{CustomResource GiftCraftViewAllVariants}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               FontWeight="SemiBold"
+                               Margin="2,0,0,0" />
+                </StackPanel>
+            </Button>
+
+            <Border x:Name="CraftButtonBackground"
+                    HorizontalAlignment="Stretch"
+                    Margin="24,16,24,24"
+                    CornerRadius="24"
+                    Grid.Row="5" />
+
+            <Button x:Name="CraftButton"
+                    Click="Craft_Click"
+                    HorizontalAlignment="Stretch"
+                    Margin="24,16,24,24"
+                    CornerRadius="24"
+                    Grid.Row="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="CraftButtonText"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               TextAlignment="Center" />
+                    <TextBlock x:Name="CraftButtonInfo"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               TextAlignment="Center"
+                               Grid.Row="1" />
+                </Grid>
+            </Button>
+        </Grid>
+
+        <Grid x:Name="CraftingRoot"
+              Visibility="Collapsed"
+              Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="72" />
+            </Grid.RowDefinitions>
+
+            <Grid HorizontalAlignment="Center"
+                  Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <controls:AnimatedImage Source="ms-appx:///Assets/Animations/GiftCrafting.tgs"
+                                        AutoPlay="True"
+                                        Width="24"
+                                        Height="24"
+                                        FrameSize="24,24"
+                                        DecodeFrameType="Logical"
+                                        IsCachingEnabled="False"
+                                        Margin="0,0,4,0" />
+
+                <TextBlock Text="{CustomResource GiftCraftProgressTitle}"
+                           Style="{StaticResource PopupTextBlockStyle}"
+                           Grid.Column="1" />
+            </Grid>
+            <TextBlock x:Name="CraftingName"
+                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                       TextAlignment="Center"
+                       Grid.Row="2" />
+
+            <Border Background="{ThemeResource ButtonBackground}"
+                    BorderBrush="{ThemeResource ButtonBorderBrush}"
+                    BorderThickness="1"
+                    HorizontalAlignment="Center"
+                    Padding="12,1,12,3"
+                    CornerRadius="11"
+                    Margin="0,16,0,12"
+                    Grid.Row="3">
+                <TextBlock x:Name="CraftingProbability"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           FontWeight="SemiBold" />
+            </Border>
+
+            <TextBlock Text="{CustomResource GiftCraftProgressText}"
+                       TextAlignment="Center"
+                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                       Grid.Row="4" />
+        </Grid>
+
+        <Grid x:Name="FailedRoot"
+              Visibility="Collapsed"
+              Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel x:Name="FailedList"
+                        Spacing="8"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center" />
+
+            <TextBlock Text="{CustomResource GiftCraftFailedTitle}"
+                       TextAlignment="Center"
+                       Style="{StaticResource PopupTextBlockStyle}"
+                       Grid.Row="1" />
+            <TextBlock x:Name="FailedName"
+                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                       TextAlignment="Center"
+                       Grid.Row="2" />
+
+            <Border HorizontalAlignment="Stretch"
+                    Margin="24,24,24,24"
+                    CornerRadius="24"
+                    Height="48"
+                    Grid.Row="3">
+                <Border.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="#E27519" />
+                        <GradientStop Color="#DD4819"
+                                      Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+            <Button Content="{CustomResource GiftCraftButtonFailed}"
+                    Click="Clear_Click"
+                    HorizontalAlignment="Stretch"
+                    FontWeight="SemiBold"
+                    Margin="24,24,24,24"
+                    CornerRadius="24"
+                    Height="48"
+                    Grid.Row="3">
+            </Button>
+        </Grid>
+    </Grid>
+</controls:ContentPopup>

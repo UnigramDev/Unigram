@@ -1,11 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
+
 using System;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -13,7 +14,6 @@ using Telegram.Services;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Host
 {
@@ -25,18 +25,17 @@ namespace Telegram.Views.Host
         }
     }
 
-    public sealed partial class StandalonePage : Page, IPopupHost, IToastHost
+    public sealed partial class StandalonePage : Page, IPopupHost
     {
+        private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
-        private readonly IShortcutsService _shortcutsService;
 
         public StandalonePage(INavigationService navigationService)
         {
-            RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
+            _clientService = navigationService.Session.Resolve<IClientService>();
             _navigationService = navigationService;
-            _shortcutsService = TypeResolver.Current.Resolve<IShortcutsService>(navigationService.SessionId);
 
             //Grid.SetRow(navigationService.Frame, 2);
             //LayoutRoot.Children.Add(navigationService.Frame);
@@ -45,12 +44,12 @@ namespace Telegram.Views.Host
                 ? Strings.AppDisplayName
                 : Strings.AppName;
 
-            var clientService = TypeResolver.Current.Resolve<IClientService>(navigationService.SessionId);
-            var settingsService = TypeResolver.Current.Resolve<ISettingsService>(navigationService.SessionId);
-            var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(navigationService.SessionId);
+            var settingsService = navigationService.Session.Resolve<ISettingsService>();
+            var aggregator = navigationService.Session.Resolve<IEventAggregator>();
 
-            MasterDetail.Initialize(navigationService as NavigationService, null, new StandaloneViewModel(clientService, settingsService, aggregator), false);
+            MasterDetail.Initialize(navigationService as NavigationService, null, new StandaloneViewModel(_clientService, settingsService, aggregator), false);
             MasterDetail.NavigationService.FrameFacade.Navigating += OnNavigating;
+            MasterDetail.NavigationService.FrameFacade.ShortcutInvoked += OnShortcutInvoked;
 
             OnNavigating(null, new NavigatingEventArgs(null, null, null, null)
             {
@@ -59,26 +58,6 @@ namespace Telegram.Views.Host
         }
 
         public INavigationService NavigationService => _navigationService;
-
-        public void ToastOpened(TeachingTip toast)
-        {
-            if (_navigationService?.Frame != null)
-            {
-                _navigationService.Frame.Resources.Remove("TeachingTip");
-                _navigationService.Frame.Resources.Add("TeachingTip", toast);
-            }
-        }
-
-        public void ToastClosed(TeachingTip toast)
-        {
-            if (_navigationService?.Frame != null && _navigationService.Frame.Resources.TryGetValue("TeachingTip", out object cached))
-            {
-                if (cached == toast)
-                {
-                    _navigationService.Frame.Resources.Remove("TeachingTip");
-                }
-            }
-        }
 
         public void PopupOpened()
         {
@@ -115,14 +94,18 @@ namespace Telegram.Views.Host
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             InitializeTitleBar();
+
+            ShowHideBanner(LifetimeService.Current.Playback);
+            LifetimeService.Current.Playback.SourceChanged += OnPlaybackSourceChanged;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.FrameFacade.Navigating -= OnNavigating;
-            MasterDetail.Dispose();
+            //MasterDetail.NavigationService.FrameFacade.Navigating -= OnNavigating;
+            //MasterDetail.Dispose();
 
             UnloadTitleBar();
+            LifetimeService.Current.Playback.SourceChanged -= OnPlaybackSourceChanged;
         }
 
         private void InitializeTitleBar()
@@ -159,21 +142,15 @@ namespace Telegram.Views.Host
             }
         }
 
-        private void OnProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
+        private void OnShortcutInvoked(object sender, ShortcutInvokedEventArgs args)
         {
-            var invoked = _shortcutsService.Process(args);
-            if (invoked == null)
-            {
-                return;
-            }
-
-            foreach (var command in invoked.Commands)
+            foreach (var command in args.Shortcut.Commands)
             {
                 ProcessAppCommands(command, args);
             }
         }
 
-        private async void ProcessAppCommands(ShortcutCommand command, ProcessKeyboardAcceleratorEventArgs args)
+        private async void ProcessAppCommands(ShortcutCommand command, ShortcutInvokedEventArgs args)
         {
             if (command == ShortcutCommand.Search)
             {
@@ -187,6 +164,30 @@ namespace Telegram.Views.Host
             else if (command == ShortcutCommand.Close)
             {
                 await WindowContext.Current.ConsolidateAsync();
+            }
+            else if (command == ShortcutCommand.MediaStop)
+            {
+                LifetimeService.Current.Playback.Clear();
+                args.Handled = true;
+            }
+        }
+
+        private void Banner_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MasterDetail.BackgroundMargin = new Thickness(0, -e.NewSize.Height, 0, 0);
+        }
+
+        private void OnPlaybackSourceChanged(IPlaybackService sender, object args)
+        {
+            this.BeginOnUIThread(() => ShowHideBanner(sender));
+        }
+
+        private void ShowHideBanner(IPlaybackService sender)
+        {
+            if (sender.CurrentItem != null && Playback == null)
+            {
+                FindName(nameof(Playback));
+                Playback.Update(_clientService, _navigationService);
             }
         }
     }

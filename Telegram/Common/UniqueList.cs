@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,10 +16,10 @@ namespace Telegram.Common
         private readonly Func<TValue, TKey> _selector;
         private readonly SortedList<TKey, TValue> _inner;
 
-        public UniqueList(Func<TValue, TKey> selector)
+        public UniqueList(Func<TValue, TKey> selector, IComparer<TKey> comparer = null)
         {
             _selector = selector;
-            _inner = new SortedList<TKey, TValue>();
+            _inner = new SortedList<TKey, TValue>(comparer);
         }
 
         public IList<TKey> Keys => _inner.Keys;
@@ -45,15 +46,16 @@ namespace Telegram.Common
             }
         }
 
-        public void Add(TValue item)
+        public bool Add(TValue item)
         {
             var key = _selector(item);
             if (_inner.ContainsKey(key))
             {
-                return;
+                return false;
             }
 
             _inner.Add(key, item);
+            return true;
         }
 
         public void Clear()
@@ -117,9 +119,25 @@ namespace Telegram.Common
             _inner.RemoveAt(index);
         }
 
+        public bool TryRemove(TKey key, out TValue value)
+        {
+            if (_inner.TryGetValue(key, out value))
+            {
+                _inner.Remove(key);
+                return true;
+            }
+
+            return false;
+        }
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return _inner.Values.GetEnumerator();
+        }
+
+        void ICollection<TValue>.Add(TValue item)
+        {
+            Add(item);
         }
     }
 }

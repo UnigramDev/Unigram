@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,6 +14,7 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -23,10 +25,12 @@ using Telegram.Views;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
+using Telegram.Views.Profile.Popups;
 using Telegram.Views.Stars.Popups;
 using Telegram.Views.Supergroups;
 using Telegram.Views.Supergroups.Popups;
 using Telegram.Views.Users;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -42,19 +46,27 @@ namespace Telegram.ViewModels
         private readonly INotificationsService _notificationsService;
         private readonly ITranslateService _translateService;
 
-        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService)
-            : base(clientService, settingsService, storageService, aggregator, playbackService)
+        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IVoipService voipService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService)
+            : base(clientService, settingsService, storageService, aggregator)
         {
             _voipService = voipService;
             _notificationsService = notificationsService;
             _translateService = translateService;
 
+            _giftsTabViewModel.ItemsReady += Gifts_ItemsReady;
+
             SetTimerCommand = new RelayCommand<int?>(SetTimer);
+        }
+
+        private void Gifts_ItemsReady(object sender, EventArgs e)
+        {
+            Delegate?.UpdateChatGifts(Chat);
         }
 
         public ITranslateService TranslateService => _translateService;
 
-        public ProfileSavedChatsTabViewModel SavedChatsTab => _savedChatsViewModel;
+        public ProfileSavedChatsTabViewModel SavedChatsTab => _savedChatsTabViewModel;
+        public ProfileTopicsTabViewModel TopicsTab => _topicsTabViewModel;
         public ProfileStoriesTabViewModel PinnedStoriesTab => _pinnedStoriesTabViewModel;
         public ProfileStoriesTabViewModel ArchivedStoriesTab => _archivedStoriesTabViewModel;
         public ProfileGroupsTabViewModel GroupsTab => _groupsTabViewModel;
@@ -70,21 +82,16 @@ namespace Telegram.ViewModels
             set => Set(ref _members, value);
         }
 
-        private double _headerHeight;
-        public double HeaderHeight
-        {
-            get => _headerHeight;
-            set
-            {
-                if (Set(ref _headerHeight, value))
-                {
-                    PinnedStoriesTab.HeaderHeight = value;
-                    ArchivedStoriesTab.HeaderHeight = value;
-                }
-            }
-        }
+        private ProfileTab _mainTab;
 
         public long LinkedChatId { get; private set; }
+
+        private ReportMessageReactions _reportReactions;
+        public ReportMessageReactions ReportReactions
+        {
+            get => _reportReactions;
+            set => Set(ref _reportReactions, value);
+        }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
@@ -105,9 +112,14 @@ namespace Telegram.ViewModels
                     if (ClientService.TryGetForumTopic(chatMessageTopic.ChatId, forum.ForumTopicId, out ForumTopic topic))
                     {
                         ForumTopic = topic;
-                        Topic = new MessageTopicForum(topic.Info.MessageThreadId);
+                        Topic = new MessageTopicForum(topic.Info.ForumTopicId);
                     }
                 }
+            }
+
+            if (state != null && state.TryGet("report_reactions", out ReportMessageReactions reportReactions))
+            {
+                ReportReactions = reportReactions;
             }
 
             var chatId = (long)parameter;
@@ -189,6 +201,8 @@ namespace Telegram.ViewModels
 
         public override void Subscribe()
         {
+            base.Subscribe();
+
             Aggregator.Subscribe<UpdateUser>(this, Handle)
                 .Subscribe<UpdateUserFullInfo>(Handle)
                 .Subscribe<UpdateBasicGroup>(Handle)
@@ -203,6 +217,176 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatAccentColors>(Handle)
                 .Subscribe<UpdateChatActiveStories>(Handle)
                 .Subscribe<UpdateChatNotificationSettings>(Handle);
+        }
+
+        protected override async Task UpdateTabsAsync(Chat chat)
+        {
+            var tabs = new List<ProfileTabItem>();
+            var mainTab = default(ProfileTab);
+
+            if (_savedMessagesTopic != null)
+            {
+                await UpdateSharedCountAsync(chat, tabs);
+            }
+            else if (chat.Type is ChatTypePrivate or ChatTypeSecret)
+            {
+                var user = ClientService.GetUser(chat);
+                var cached = ClientService.GetUserFull(chat);
+
+                // This should really rarely happen
+                cached ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
+                mainTab = cached?.MainProfileTab;
+
+                if (MyProfile && user.Id == ClientService.Options.MyId)
+                {
+                    tabs.Add(new ProfileTabItem(new ProfileTabPosts(), ChatStoriesType.Pinned, PinnedStoriesTab.Items, Strings.R.ProfileStoriesCount));
+
+                    if (cached != null && cached.GiftCount > 0)
+                    {
+                        tabs.Add(new ProfileTabItem(new ProfileTabGifts(), null, cached.GiftCount, Strings.R.ProfileGiftsCount));
+                    }
+
+                    tabs.Add(new ProfileTabItem(new ProfileTabArchivedPosts(), ChatStoriesType.Archive, ArchivedStoriesTab.Items, Strings.R.ProfileStoriesArchiveCount));
+                }
+                else
+                {
+                    if (user.Type is UserTypeBot { HasTopics: true })
+                    {
+                        tabs.Add(new ProfileTabItem(new ProfileTabTopics(), null, TopicsTab.Items, Strings.R.Chats));
+                    }
+
+                    if (user.Id == ClientService.Options.MyId)
+                    {
+                        tabs.Add(new ProfileTabItem(new ProfileTabSavedChats(), null, SavedChatsTab.Items, Strings.R.Chats));
+                    }
+                    else if (cached?.BotInfo != null && cached.BotInfo.HasMediaPreviews)
+                    {
+                        tabs.Add(new ProfileTabItem(new ProfileTabPreviews(), ChatStoriesType.Pinned, PinnedStoriesTab.Items, Strings.R.ProfileStoriesCount));
+                    }
+                    else
+                    {
+                        if (cached != null && cached.HasPostedToProfileStories)
+                        {
+                            tabs.Add(new ProfileTabItem(new ProfileTabPosts(), ChatStoriesType.Pinned, PinnedStoriesTab.Items, Strings.R.ProfileStoriesCount));
+                        }
+
+                        if (user.Id != ClientService.Options.MyId && cached != null && cached.GiftCount > 0)
+                        {
+                            tabs.Add(new ProfileTabItem(new ProfileTabGifts(), null, cached.GiftCount, Strings.R.ProfileGiftsCount));
+                        }
+                    }
+
+                    await UpdateSharedCountAsync(chat, tabs);
+
+                    if (cached != null && cached.GroupInCommonCount > 0)
+                    {
+                        tabs.Add(new ProfileTabItem(new ProfileTabGroups(), null, cached.GroupInCommonCount, Strings.R.CommonGroups));
+                    }
+
+                    if (user.Type is UserTypeBot)
+                    {
+                        await _botsTabViewModel.LoadMoreItemsAsync(0);
+
+                        if (_botsTabViewModel.Items.Count > 0)
+                        {
+                            tabs.Add(new ProfileTabItem(new ProfileTabSimilarBots(), null, _botsTabViewModel.TotalCount, Strings.R.Bots));
+                        }
+                    }
+                }
+            }
+            else if (chat.Type is ChatTypeSupergroup typeSupergroup)
+            {
+                var supergroup = ClientService.GetSupergroup(chat);
+                var cached = ClientService.GetSupergroupFull(chat);
+
+                // This should really rarely happen
+                cached ??= await ClientService.SendAsync(new GetSupergroupFullInfo(supergroup.Id)) as SupergroupFullInfo;
+                mainTab = cached?.MainProfileTab;
+
+                if (ForumTopic == null && cached?.HasPinnedStories is true)
+                {
+                    tabs.Add(new ProfileTabItem(new ProfileTabPosts(), ChatStoriesType.Pinned, PinnedStoriesTab.Items, Strings.R.ProfileStoriesCount));
+                }
+
+                if (ForumTopic == null && cached?.GiftCount > 0)
+                {
+                    tabs.Add(new ProfileTabItem(new ProfileTabGifts(), null, cached.GiftCount, Strings.R.ProfileGiftsCount));
+                }
+
+                if (typeSupergroup.IsChannel)
+                {
+                    await UpdateSharedCountAsync(chat, tabs);
+                    await _channelsTabViewModel.LoadMoreItemsAsync(0);
+
+                    if (_channelsTabViewModel.Items.Count > 0)
+                    {
+                        tabs.Add(new ProfileTabItem(new ProfileTabSimilarChannels(), null, _channelsTabViewModel.TotalCount, Strings.R.Channels));
+                    }
+                }
+                else
+                {
+                    if (ForumTopic == null)
+                    {
+                        if (supergroup.HasForumTabs)
+                        {
+                            tabs.Add(new ProfileTabItem(new ProfileTabTopics(), null, TopicsTab.Items, Strings.R.Chats));
+                        }
+
+                        tabs.Add(new ProfileTabItem(new ProfileTabMembers(), null, ClientService.GetMembersCount(chat), Strings.R.Members));
+                    }
+
+                    await UpdateSharedCountAsync(chat, tabs);
+                }
+            }
+            else if (chat.Type is ChatTypeBasicGroup)
+            {
+                tabs.Add(new ProfileTabItem(new ProfileTabMembers(), null, ClientService.GetMembersCount(chat), Strings.R.Members));
+                await UpdateSharedCountAsync(chat, tabs);
+            }
+
+            ProfileTabItem already = null;
+            if (mainTab != null)
+            {
+                already = tabs.FirstOrDefault(x => x.Type.GetType() == mainTab.GetType());
+
+                if (already != null)
+                {
+                    tabs.Remove(already);
+                    tabs.Insert(0, already);
+                }
+            }
+
+            Items.ReplaceWith(tabs);
+            SelectedItem = already ?? tabs.FirstOrDefault();
+
+            _mainTab = mainTab;
+
+            if (already?.Type is not ProfileTabGifts)
+            {
+                _giftsTabViewModel.Preload();
+            }
+        }
+
+        private void UpdateMainTab(ProfileTab mainTab)
+        {
+            if (mainTab == null || (_mainTab == null && Items.Empty()))
+            {
+                return;
+            }
+
+            if (_mainTab == null || mainTab.GetType() != _mainTab.GetType())
+            {
+                var already = Items.FirstOrDefault(x => x.Type.GetType() == mainTab.GetType());
+                if (already != null)
+                {
+                    Items.Remove(already);
+                    Items.Insert(0, already);
+                }
+
+                SelectedItem ??= already;
+
+                _mainTab = mainTab;
+            }
         }
 
         private async void UpdateBalance(long chatId, MessageSender senderId)
@@ -253,6 +437,7 @@ namespace Telegram.ViewModels
                 BeginOnUIThread(() =>
                 {
                     LinkedChatId = update.UserFullInfo.PersonalChatId;
+                    UpdateMainTab(update.UserFullInfo.MainProfileTab);
                     Delegate?.UpdateUser(chat, user, update.UserFullInfo, false, false);
 
                     if (update.UserFullInfo.BotInfo?.CanGetRevenueStatistics is true)
@@ -341,6 +526,7 @@ namespace Telegram.ViewModels
                 BeginOnUIThread(() =>
                 {
                     LinkedChatId = update.SupergroupFullInfo.LinkedChatId;
+                    UpdateMainTab(update.SupergroupFullInfo.MainProfileTab);
                     MembersTab.UpdateMembers();
                     Delegate?.UpdateSupergroup(chat, supergroup, update.SupergroupFullInfo);
 
@@ -629,6 +815,20 @@ namespace Telegram.ViewModels
             }
         }
 
+        public void ViewUsername()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (ClientService.HasActiveUsername(chat, out string username))
+            {
+                OpenUsernameInfo(username);
+            }
+        }
+
         public void CopyUsername()
         {
             var chat = _chat;
@@ -637,24 +837,8 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypeSupergroup super)
+            if (ClientService.HasActiveUsername(chat, out string username))
             {
-                var supergroup = ClientService.GetSupergroup(super.SupergroupId);
-                if (supergroup == null || !supergroup.HasActiveUsername(out string username))
-                {
-                    return;
-                }
-
-                MessageHelper.CopyText(XamlRoot, $"@{username}");
-            }
-            else
-            {
-                var user = ClientService.GetUser(chat);
-                if (user == null || !user.HasActiveUsername(out string username))
-                {
-                    return;
-                }
-
                 MessageHelper.CopyText(XamlRoot, $"@{username}");
             }
         }
@@ -667,26 +851,21 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypeSupergroup super)
+            if (ClientService.HasActiveUsername(chat, out string username))
             {
-                var supergroup = ClientService.GetSupergroup(super.SupergroupId);
-                if (supergroup == null || !supergroup.HasActiveUsername(out string username))
-                {
-                    return;
-                }
-
                 MessageHelper.CopyLink(ClientService, XamlRoot, new InternalLinkTypePublicChat(username, string.Empty, false));
             }
-            else
-            {
-                var user = ClientService.GetUser(chat);
-                if (user == null || !user.HasActiveUsername(out string username))
-                {
-                    return;
-                }
+        }
 
-                MessageHelper.CopyLink(ClientService, XamlRoot, new InternalLinkTypePublicChat(username, string.Empty, false));
+        public void ShareUsername()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
             }
+
+            ShowPopup(new QrCodePopup(ClientService, NavigationService, Settings, chat));
         }
 
         public void GiftPremium()
@@ -732,7 +911,38 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void ShowIdenticon()
+        public async void ToggleProtectedContent()
+        {
+            var chat = _chat;
+            if (chat == null || !ClientService.TryGetUserFull(chat, out UserFullInfo fullInfo))
+            {
+                return;
+            }
+
+            var protectedContent = fullInfo.MyHasProtectedContent;
+
+            if (!protectedContent && (!IsPremium || Settings.ToolTip.Required("DisableSharing")))
+            {
+                var confirm = await ShowPopupAsync(new DisableSharingPopup(ClientService));
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                Settings.ToolTip.Increment("DisableSharing");
+
+                if (!IsPremium)
+                {
+                    NavigationService.ShowPromo();
+                    return;
+                }
+            }
+
+            ClientService.Send(new ToggleChatHasProtectedContent(chat.Id, !protectedContent));
+            ShowToast(protectedContent ? Strings.DisableSharingToastEnabled : Strings.DisableSharingToastDisabled, protectedContent ? ToastPopupIcon.Success : ToastPopupIcon.Ban);
+        }
+
+        public void ShowIdenticon()
         {
             var chat = _chat;
             if (chat == null)
@@ -740,7 +950,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            await ShowPopupAsync(new IdenticonPopup(SessionId, chat));
+            ShowPopup(new IdenticonPopup(ClientService, chat));
         }
 
         public async void Invite()
@@ -783,7 +993,7 @@ namespace Telegram.ViewModels
                 }
                 else if (fullInfo.BotInfo.Commands.Any(x => string.Equals(x.Command, "privacy", StringComparison.OrdinalIgnoreCase)))
                 {
-                    ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(new FormattedText("/privacy", Array.Empty<TextEntity>()), null, false)));
+                    ClientService.Send(new SendMessage(chat.Id, null, null, null, new InputMessageText("/privacy".AsFormattedText(), null, false)));
                     SendMessage();
                 }
                 else
@@ -826,7 +1036,7 @@ namespace Telegram.ViewModels
 
             if (response is CollectibleItemInfo info)
             {
-                await ShowPopupAsync(new CollectiblePopup(ClientService, Chat, info, type));
+                ShowPopup(new CollectiblePopup(ClientService, Chat, info, type));
             }
         }
 
@@ -839,7 +1049,7 @@ namespace Telegram.ViewModels
 
                 if (response is CollectibleItemInfo info)
                 {
-                    await ShowPopupAsync(new CollectiblePopup(ClientService, Chat, info, type));
+                    ShowPopup(new CollectiblePopup(ClientService, Chat, info, type));
                 }
             }
         }
@@ -962,7 +1172,7 @@ namespace Telegram.ViewModels
                 var confirm = await ShowPopupAsync(popup);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    ClientService.Send(new EditForumTopic(chat.Id, _forumTopic.Info.MessageThreadId, popup.SelectedName, true, popup.SelectedIcon.CustomEmojiId));
+                    ClientService.Send(new EditForumTopic(chat.Id, _forumTopic.Info.ForumTopicId, popup.SelectedName, true, popup.SelectedIcon.CustomEmojiId));
                 }
             }
             else if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
@@ -995,7 +1205,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void Join()
+        public async void Join()
         {
             var chat = _chat;
             if (chat == null)
@@ -1003,33 +1213,78 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            ClientService.Send(new JoinChat(chat.Id));
+            var response = await ClientService.SendAsync(new JoinChat(chat.Id));
+            if (response is Error error)
+            {
+                if (error.MessageEquals(ErrorType.INVITE_REQUEST_SENT))
+                {
+                    await ShowPopupAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription, Strings.RequestToJoinSent, Strings.OK);
+                    return;
+
+                    var message = Strings.RequestToJoinSent + Environment.NewLine + (chat.Type is ChatTypeSupergroup supergroup2 && supergroup2.IsChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription);
+                    var entity = new TextEntity(0, Strings.RequestToJoinSent.Length, new TextEntityTypeBold());
+
+                    var text = new FormattedText(message, new[] { entity });
+
+                    ToastPopup.Show(XamlRoot, text, ToastPopupIcon.JoinRequested);
+                }
+                else if (error.MessageEquals(ErrorType.CHANNELS_TOO_MUCH))
+                {
+                    NavigationService.ShowLimitReached(new PremiumLimitTypeSupergroupCount());
+                }
+                else
+                {
+                    ShowToast(error);
+                }
+            }
+        }
+
+        public void ShowRating()
+        {
+            if (ClientService.TryGetUser(Chat, out User user) && ClientService.TryGetUserFull(Chat, out UserFullInfo fullInfo))
+            {
+                ShowPopup(new ProfileRatingPopup(ClientService, user, fullInfo.Rating, fullInfo.PendingRating, fullInfo.PendingRatingDate));
+            }
         }
 
         public async void ShowPromo()
         {
-            if (Chat?.EmojiStatus?.Type is EmojiStatusTypeCustomEmoji emojiStatusTypeCustomEmoji)
+            bool CanShowPromo()
             {
-                var response = await ClientService.SendAsync(new GetCustomEmojiStickers(new[] { emojiStatusTypeCustomEmoji.CustomEmojiId }));
-                if (response is Stickers stickers)
+                if (ClientService.TryGetUser(Chat, out User user) && user.IsPremium && user.VerificationStatus?.IsScam is not true && user.VerificationStatus?.IsFake is not true)
                 {
-                    var second = await ClientService.SendAsync(new GetStickerSet(stickers.StickersValue[0].SetId));
-                    if (second is StickerSet stickerSet)
-                    {
-                        NavigationService.ShowPopup(new PromoPopup(ClientService, Chat, stickerSet), new PremiumSourceFeature(new PremiumFeatureEmojiStatus()));
-                        return;
-                    }
+                    return user.IsPremium || Chat.EmojiStatus != null;
                 }
-            }
-            else if (Chat?.EmojiStatus?.Type is EmojiStatusTypeUpgradedGift emojiStatusTypeUpgradedGift)
-            {
-                MessageHelper.NavigateToUpgradedGift(ClientService, NavigationService, emojiStatusTypeUpgradedGift.GiftName);
-                return;
+                else if (ClientService.TryGetSupergroup(Chat, out Supergroup supergroup) && supergroup.VerificationStatus?.IsScam is not true && supergroup.VerificationStatus?.IsFake is not true)
+                {
+                    return Chat.EmojiStatus != null;
+                }
+
+                return false;
             }
 
-            if (ClientService.TryGetUser(Chat, out User user) && user.IsPremium && user.VerificationStatus?.IsScam is not true && user.VerificationStatus?.IsFake is not true)
+            if (CanShowPromo())
             {
-                NavigationService.ShowPopup(new PromoPopup(ClientService, Chat, null), new PremiumSourceFeature(new PremiumFeatureEmojiStatus()));
+                if (Chat?.EmojiStatus?.Type is EmojiStatusTypeCustomEmoji emojiStatusTypeCustomEmoji)
+                {
+                    var response = await ClientService.SendAsync(new GetCustomEmojiStickers(new[] { emojiStatusTypeCustomEmoji.CustomEmojiId }));
+                    if (response is Stickers stickers)
+                    {
+                        var second = await ClientService.SendAsync(new GetStickerSet(stickers.StickersValue[0].SetId));
+                        if (second is StickerSet stickerSet)
+                        {
+                            NavigationService.ShowPopup(new PromoPopup(ClientService, Chat, stickerSet), new PremiumSourceFeature(new PremiumFeatureEmojiStatus()));
+                        }
+                    }
+                }
+                else if (Chat?.EmojiStatus?.Type is EmojiStatusTypeUpgradedGift emojiStatusTypeUpgradedGift)
+                {
+                    MessageHelper.NavigateToUpgradedGift(ClientService, NavigationService, emojiStatusTypeUpgradedGift.GiftName);
+                }
+                else
+                {
+                    NavigationService.ShowPopup(new PromoPopup(ClientService, Chat, null), new PremiumSourceFeature(new PremiumFeatureEmojiStatus()));
+                }
             }
         }
 
@@ -1205,6 +1460,17 @@ namespace Telegram.ViewModels
             }
         }
 
+        public void SetSound(bool silent)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            _notificationsService.SetSound(chat, silent, XamlRoot);
+        }
+
         #endregion
 
         #region Set timer
@@ -1224,7 +1490,7 @@ namespace Telegram.ViewModels
             }
             else if (ttl == null)
             {
-                var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret ? ChatTtlType.Secret : ChatTtlType.Normal);
+                var dialog = new ChatTtlPopup(ChatTtlType.Auto);
                 dialog.Value = chat.MessageAutoDeleteTime;
 
                 var confirm = await ShowPopupAsync(dialog);
@@ -1249,6 +1515,42 @@ namespace Telegram.ViewModels
             MessageHelper.NavigateToMainWebApp(ClientService, NavigationService, user, string.Empty, new WebAppOpenModeFullSize());
         }
 
+        public async void BanAndReport()
+        {
+            var reportReactions = ReportReactions;
+            if (reportReactions == null)
+            {
+                return;
+            }
+
+            var popup = new MessagePopup
+            {
+                Message = Strings.ReportAlertReaction,
+                Title = Strings.ReportReaction,
+                PrimaryButtonText = Strings.ReportChat,
+                SecondaryButtonText = Strings.Cancel,
+                CheckBoxLabel = Strings.BanUser,
+                IsChecked = true,
+                PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style
+            };
+
+            var confirm = await ShowPopupAsync(popup);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ReportReactions = null;
+                Delegate?.UpdateChat(Chat);
+
+                ClientService.Send(reportReactions);
+
+                if (popup.IsChecked is true)
+                {
+                    ClientService.Send(new BanChatMember(reportReactions.ChatId, reportReactions.SenderId, 0, false));
+                }
+
+                ShowToast(Strings.ReportChatSent, ToastPopupIcon.Info);
+            }
+        }
+
         #region Supergroup
 
         public void OpenSimilarChat(Chat chat)
@@ -1269,6 +1571,24 @@ namespace Telegram.ViewModels
         public void OpenSavedMessagesTopic(SavedMessagesTopic topic)
         {
             NavigationService.NavigateToChat(_chat.Id, topic: new MessageTopicSavedMessages(topic.Id));
+        }
+
+        public void OpenForumTopic(ForumTopic topic)
+        {
+            if (_chat is not Chat chat)
+            {
+                return;
+            }
+
+            if (NavigationService.IsChatOpen(chat.Id))
+            {
+                NavigationService.ReplaceChatInBackStack(chat.Id, new ChatMessageTopic(chat.Id, new MessageTopicForum(topic.Info.ForumTopicId)));
+                NavigationService.GoBack();
+            }
+            else
+            {
+                NavigationService.NavigateToChat(chat, topic: new MessageTopicForum(topic.Info.ForumTopicId));
+            }
         }
 
         private StarAmount _starCount;
@@ -1404,6 +1724,18 @@ namespace Telegram.ViewModels
             if (response is Error)
             {
                 _members.Insert(index, member);
+            }
+        }
+
+        public void SetMainTab(ProfileTab tab)
+        {
+            if (MyProfile)
+            {
+                ClientService.Send(new SetMainProfileTab(tab));
+            }
+            else if (Chat.Type is ChatTypeSupergroup supergroup)
+            {
+                ClientService.Send(new SetSupergroupMainProfileTab(supergroup.SupergroupId, tab));
             }
         }
 
@@ -1690,6 +2022,15 @@ namespace Telegram.ViewModels
 
                 return fullName;
             }
+        }
+    }
+
+    public partial class GroupCallMessageComparer : IComparer<GroupCallMessage>
+    {
+        public int Compare(GroupCallMessage x, GroupCallMessage y)
+        {
+            // TODO: expiration date?
+            return y.Date.CompareTo(x.Date);
         }
     }
 }

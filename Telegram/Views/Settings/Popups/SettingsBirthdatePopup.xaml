@@ -6,10 +6,7 @@
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
                        mc:Ignorable="d"
-                       Title="UserRestrictionsUntil"
-                       PrimaryButtonText="OK"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
                        Padding="20,24,20,24">
 
     <controls:ContentPopup.Resources>
@@ -112,6 +109,10 @@
 
         <Grid x:Name="LayoutRoot"
               Height="320">
+            <Grid.Resources>
+                <SolidColorBrush x:Key="ListViewItemBackgroundSelected"
+                                 Color="Transparent" />
+            </Grid.Resources>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
@@ -187,5 +188,12 @@
                                  IsLink="True"
                                  Click="PrivacyInfo_Click"
                                  Margin="4,8,-8,0" />
+
+        <Button x:Name="HideYear"
+                Click="HideYear_Click"
+                Content="{CustomResource DateOfBirthHideYear}"
+                Style="{StaticResource AccentTextButtonStyle}"
+                HorizontalAlignment="Stretch"
+                Margin="4,8,4,-16" />
     </StackPanel>
 </controls:ContentPopup>

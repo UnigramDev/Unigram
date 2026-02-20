@@ -5,33 +5,6 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     mc:Ignorable="d">
 
-    <Style x:Key="ProfileHeaderPatternStyle"
-           TargetType="controls:ProfileHeaderPattern">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="controls:ProfileHeaderPattern">
-                    <Grid Width="1000"
-                          Height="320">
-                        <Border x:Name="LayoutRoot" />
-                        <controls:AnimatedImage x:Name="Animated"
-                                                FrameSize="36,36"
-                                                DecodeFrameType="Logical"
-                                                AutoPlay="False"
-                                                IsViewportAware="False"
-                                                ReplacementColor="{TemplateBinding Foreground}"
-                                                Source="{TemplateBinding Source}"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Width="36"
-                                                Height="36"
-                                                Opacity="0"
-                                                IsTabStop="False" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style TargetType="controls:PatternBackground">
         <!--<Setter Property="BorderBrush"
                 Value="{ThemeResource CardStrokeColorDefaultBrush}" />
@@ -59,31 +32,15 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <Border x:Name="HeaderGlow"
-                                Width="1000"
-                                Height="320"
-                                Margin="-500,0,-500,-200"
-                                RenderTransformOrigin="0.5,0.0"
-                                VerticalAlignment="Top"
-                                Grid.RowSpan="2">
-                            <Border.RenderTransform>
-                                <ScaleTransform ScaleX="{Binding ScaleXY, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                                ScaleY="{Binding ScaleXY, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                            </Border.RenderTransform>
-                        </Border>
-
-                        <controls:ProfileHeaderPattern x:Name="Pattern"
-                                                       IsSmall="True"
-                                                       Margin="-500,0,-500,-200"
-                                                       Width="1000"
-                                                       Height="320"
-                                                       Opacity="0"
-                                                       Style="{StaticResource ProfileHeaderPatternStyle}"
-                                                       Grid.RowSpan="2" />
+                        <controls:ProfilePatternCover x:Name="Pattern"
+                                                      Opacity="0.4"
+                                                      Grid.RowSpan="2" />
 
                         <Grid HorizontalAlignment="Center"
-                              VerticalAlignment="Center">
-                            <ContentPresenter Content="{TemplateBinding Content}"
+                              VerticalAlignment="Center"
+                              Padding="{TemplateBinding Padding}">
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
                                               ContentTemplate="{TemplateBinding ContentTemplate}"
                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
@@ -95,43 +52,6 @@
                                         VerticalAlignment="Bottom"
                                         HorizontalAlignment="Stretch"
                                         Grid.Row="1" />
-
-                        <!--<Border VerticalAlignment="Bottom"
-                                HorizontalAlignment="Center"
-                                Grid.Row="1">
-                            <Grid x:Name="LabelTitle">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <controls:CustomEmojiIcon x:Name="BotVerified"
-                                                          VerticalAlignment="Bottom"
-                                                          Margin="0,0,4,4" />
-
-                                <TextBlock x:Name="Title"
-                                           TextWrapping="NoWrap"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextAlignment="Center"
-                                           IsTextSelectionEnabled="True"
-                                           Style="{StaticResource SubtitleTextBlockStyle}"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                           Grid.Column="1" />
-
-                                <controls:IdentityIcon x:Name="Identity"
-                                                       VerticalAlignment="Bottom"
-                                                       Margin="4,0,0,4"
-                                                       Grid.Column="2" />
-                            </Grid>
-                        </Border>
-                        <Border VerticalAlignment="Top"
-                                Margin="0,-2,0,0"
-                                Grid.Row="2">
-                            <TextBlock x:Name="Subtitle"
-                                       Style="{StaticResource BodyTextBlockStyle}"
-                                       Foreground="{ThemeResource PageHeaderDisabledBrush}"
-                                       TextAlignment="Center" />
-                        </Border>-->
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

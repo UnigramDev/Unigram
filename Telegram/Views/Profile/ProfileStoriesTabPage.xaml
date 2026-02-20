@@ -6,12 +6,9 @@
                       xmlns:common="using:Telegram.Common"
                       xmlns:controls="using:Telegram.Controls"
                       xmlns:cells="using:Telegram.Controls.Cells"
-                      xmlns:chats="using:Telegram.Controls.Chats"
-                      xmlns:messages="using:Telegram.Controls.Messages"
-                      xmlns:selectors="using:Telegram.Selectors"
-                      xmlns:td="using:Telegram.Td.Api"
                       xmlns:local="using:Telegram.Views.Profile"
-                      mc:Ignorable="d">
+                      mc:Ignorable="d"
+                      ItemsSource="{x:Bind ViewModel.ItemsView, Mode=OneWay}">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -23,7 +20,6 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <GridView x:Name="ScrollingHost"
-                  ItemsSource="{x:Bind ViewModel.Items}"
                   ItemClick="List_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
@@ -34,8 +30,9 @@
                   AllowDrop="True"
                   CanDragItems="True"
                   CanReorderItems="False"
-                  common:FluidGridView.MaxLength="1004"
-                  Padding="24,0,20,0">
+                  common:FluidGridView.Padding="0,0,4,0"
+                  common:FluidGridView.MaxLength="1008"
+                  Padding="24,0,16,0">
             <common:SelectedItemsBinder.Attached>
                 <common:SelectedItemsBinder SelectionMode="Auto"
                                             SelectedItems="{x:Bind ViewModel.SelectedItems}"
@@ -72,7 +69,103 @@
                 </ControlTemplate>
             </GridView.Template>
             <GridView.Header>
-                <Border Height="{x:Bind ViewModel.HeaderHeight, Mode=OneWay}" />
+                <StackPanel>
+                    <Border x:Name="Header" />
+
+                    <TextBlock x:Name="Hint"
+                               x:Load="{x:Bind ViewModel.ShowHint, Mode=OneWay}"
+                               Loaded="Hint_Loaded"
+                               TextAlignment="Center"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="0,12,0,8" />
+
+                    <controls:TopNavView x:Name="Navigation"
+                                         Visibility="{x:Bind ViewModel.HasAlbums, Mode=OneWay}"
+                                         ItemsSource="{x:Bind ViewModel.Albums}"
+                                         SelectedItem="{x:Bind ViewModel.SelectedAlbum, Mode=TwoWay}"
+                                         ItemContextRequested="Navigation_ItemContextRequested"
+                                         AllowDrop="True"
+                                         CanDragItems="True"
+                                         CanReorderItems="False"
+                                         DragItemsStarting="Navigation_DragItemsStarting"
+                                         DragItemsCompleted="Navigation_DragItemsCompleted"
+                                         HorizontalAlignment="Center"
+                                         Height="40"
+                                         Margin="0,0,0,-4">
+                        <controls:TopNavView.ItemContainerStyle>
+                            <Style TargetType="controls:TopNavViewItem">
+                                <Setter Property="HorizontalAlignment"
+                                        Value="Stretch" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Stretch" />
+                                <Setter Property="HorizontalContentAlignment"
+                                        Value="Center" />
+                                <Setter Property="VerticalContentAlignment"
+                                        Value="Center" />
+                                <Setter Property="UseSystemFocusVisuals"
+                                        Value="True" />
+                                <Setter Property="FocusVisualMargin"
+                                        Value="-3,5" />
+                                <Setter Property="CornerRadius"
+                                        Value="12" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="controls:TopNavViewItem">
+                                            <Grid x:Name="ContentBorder"
+                                                  Background="Transparent">
+                                                <ContentPresenter x:Name="ContentPresenter"
+                                                                  Grid.Column="1"
+                                                                  Margin="12,5,12,6"
+                                                                  TextWrapping="NoWrap"
+                                                                  Foreground="{TemplateBinding Foreground}"
+                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                  Content="{TemplateBinding Content}"
+                                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                                  VerticalAlignment="Center"
+                                                                  AutomationProperties.AccessibilityView="Raw"
+                                                                  Canvas.ZIndex="1" />
+                                                <Grid x:Name="SelectionIndicatorGrid"
+                                                      Margin="0,8,0,8"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch">
+                                                    <Rectangle x:Name="SelectionIndicator"
+                                                               Fill="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+                                                               Opacity="0"
+                                                               RadiusX="12"
+                                                               RadiusY="12" />
+                                                </Grid>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </controls:TopNavView.ItemContainerStyle>
+                        <controls:TopNavView.Footer>
+                            <Button Click="AddAlbum_Click"
+                                    AutomationProperties.Name="{CustomResource StoriesAlbumAddAlbum}"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                    Visibility="{x:Bind ViewModel.CanEditStories}"
+                                    Style="{StaticResource ListEmptyButtonStyle}"
+                                    VerticalAlignment="Center"
+                                    CornerRadius="12">
+                                <Grid Padding="8,3,12,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="&#xE710;"
+                                               FontSize="20"
+                                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                               Margin="0,0,4,-4" />
+                                    <TextBlock Text="{CustomResource StoriesAlbumAddAlbum}"
+                                               Grid.Column="1" />
+                                </Grid>
+                            </Button>
+                        </controls:TopNavView.Footer>
+                    </controls:TopNavView>
+                </StackPanel>
             </GridView.Header>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem"
@@ -98,33 +191,47 @@
         </GridView>
 
         <Grid x:Name="EmptyState"
-              x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
-              VerticalAlignment="Center"
-              MaxWidth="1000"
-              Margin="24,0">
+              Visibility="{x:Bind ViewModel.SelectedAlbum.IsEmpty, Mode=OneWay}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition />
             </Grid.RowDefinitions>
-            <!--<controls:AnimatedImage Source="ms-appx:///Assets/Animations/MyStories.tgs"
-                                    AutoPlay="True"
-                                    IsCachingEnabled="False"
-                                    DecodeFrameType="Logical"
-                                    FrameSize="140,140"
-                                    Width="140"
-                                    Height="140"
-                                    Margin="0,16,0,16" />-->
-            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertEmptyTitle(ViewModel.IsPostedToChatPage)}"
-                       Style="{StaticResource BodyStrongTextBlockStyle}"
-                       TextAlignment="Center"
-                       Margin="12,0,12,0"
-                       Grid.Row="1" />
-            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertEmptySubtitle(ViewModel.IsPostedToChatPage)}"
-                       Style="{StaticResource InfoCaptionTextBlockStyle}"
-                       TextAlignment="Center"
-                       Margin="12,0,12,0"
-                       Grid.Row="2" />
+            <Border Height="{x:Bind Header.Height, Mode=OneWay}" />
+            <Grid VerticalAlignment="Center"
+                  MaxWidth="1000"
+                  Margin="24,0"
+                  Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <!--<controls:AnimatedImage Source="ms-appx:///Assets/Animations/MyStories.tgs"
+                                        AutoPlay="True"
+                                        IsCachingEnabled="False"
+                                        DecodeFrameType="Logical"
+                                        FrameSize="140,140"
+                                        Width="140"
+                                        Height="140"
+                                        Margin="0,16,0,16" />-->
+                <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertEmptyTitle(ViewModel.SelectedAlbum), Mode=OneWay}"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           TextAlignment="Center"
+                           Margin="12,0,12,0" />
+                <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertEmptySubtitle(ViewModel.SelectedAlbum), Mode=OneWay}"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           TextAlignment="Center"
+                           Margin="12,4,12,0"
+                           Grid.Row="1" />
+
+                <Button Click="AddToAlbum_Click"
+                        Visibility="{x:Bind ConvertEmptyButton(ViewModel.SelectedAlbum), Mode=OneWay}"
+                        Content="{CustomResource StoriesAlbumAddToAlbum}"
+                        Style="{StaticResource AccentButtonStyle}"
+                        HorizontalAlignment="Center"
+                        Margin="0,12,0,0"
+                        Grid.Row="2" />
+            </Grid>
         </Grid>
 
         <Grid x:Name="ManagePanel"

@@ -1,9 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -65,6 +67,17 @@ namespace Telegram.ViewModels.Create
 
                 NavigationService.Navigate(typeof(SupergroupEditTypePage), new SupergroupEditTypeArgs(chat.Id, true));
                 NavigationService.GoBackAt(0, false);
+            }
+            else if (response is Error error)
+            {
+                if (error.MessageEquals(ErrorType.CHANNELS_TOO_MUCH))
+                {
+                    NavigationService.ShowLimitReached(new PremiumLimitTypeSupergroupCount());
+                }
+                else
+                {
+                    ShowToast(error);
+                }
             }
         }
 

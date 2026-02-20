@@ -1,13 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -16,7 +19,6 @@ using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
-using Telegram.Views.Settings.Popups;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -31,11 +33,38 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             _storageService = storageService;
+
+            AutoDownloadPhotos = new SettingsDataAutoViewModel(clientService, settingsService, aggregator, AutoDownloadType.Photos);
+            AutoDownloadVideos = new SettingsDataAutoViewModel(clientService, settingsService, aggregator, AutoDownloadType.Videos);
+            AutoDownloadDocuments = new SettingsDataAutoViewModel(clientService, settingsService, aggregator, AutoDownloadType.Documents);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            DownloadFolder = await _storageService.GetDownloadFolderAsync();
+            ClientService.Send(new GetStorageStatisticsFast(), result =>
+            {
+                if (result is StorageStatisticsFast statistics)
+                {
+                    BeginOnUIThread(() => StorageUsage = FileSizeConverter.Convert(statistics.FilesSize, true));
+                }
+            });
+
+            ClientService.Send(new GetNetworkStatistics(false), result =>
+            {
+                if (result is NetworkStatistics statistics)
+                {
+                    var sum = statistics.Entries
+                        .OfType<NetworkStatisticsEntryFile>()
+                        .Sum(x => x.ReceivedBytes + x.SentBytes);
+
+                    BeginOnUIThread(() => NetworkUsage = FileSizeConverter.Convert(sum, true));
+                }
+            });
+
+            if (IsDownloadFolderEnabled)
+            {
+                DownloadFolder = await _storageService.GetDownloadFolderAsync();
+            }
         }
 
         public int UseLessData
@@ -65,6 +94,19 @@ namespace Telegram.ViewModels.Settings
             new SettingsOptionItem<VoipDataSaving>(VoipDataSaving.Always, Strings.UseLessDataAlways),
         };
 
+        private string _storageUsage;
+        public string StorageUsage
+        {
+            get => _storageUsage;
+            set => Set(ref _storageUsage, value);
+        }
+
+        private string _networkUsage;
+        public string NetworkUsage
+        {
+            get => _networkUsage;
+            set => Set(ref _networkUsage, value);
+        }
 
         public Services.Settings.AutoDownloadSettings AutoDownload => Settings.AutoDownload;
 
@@ -97,8 +139,25 @@ namespace Telegram.ViewModels.Settings
             get => SettingsService.Current.IsDownloadFolderEnabled;
             set
             {
-                SettingsService.Current.IsDownloadFolderEnabled = value;
-                RaisePropertyChanged();
+                if (SettingsService.Current.IsDownloadFolderEnabled != value)
+                {
+                    SettingsService.Current.IsDownloadFolderEnabled = value;
+                    RaisePropertyChanged();
+
+                    UpdateDownloadFolder(value);
+                }
+            }
+        }
+
+        private async void UpdateDownloadFolder(bool value)
+        {
+            if (value)
+            {
+                DownloadFolder = await _storageService.GetDownloadFolderAsync();
+            }
+            else
+            {
+                DownloadFolder = null;
             }
         }
 
@@ -135,27 +194,11 @@ namespace Telegram.ViewModels.Settings
             DownloadFolder = await _storageService.SetDownloadFolderAsync(null);
         }
 
-        public void AutoDownloadPhotos()
-        {
-            OpenAutoDownload(AutoDownloadType.Photos);
-        }
+        public SettingsDataAutoViewModel AutoDownloadPhotos { get; }
 
-        public void AutoDownloadVideos()
-        {
-            OpenAutoDownload(AutoDownloadType.Videos);
-        }
+        public SettingsDataAutoViewModel AutoDownloadVideos { get; }
 
-        public void AutoDownloadDocuments()
-        {
-            OpenAutoDownload(AutoDownloadType.Documents);
-        }
-
-        private async void OpenAutoDownload(AutoDownloadType type)
-        {
-            await ShowPopupAsync(new SettingsDataAutoPopup(), type);
-            RaisePropertyChanged(nameof(AutoDownload));
-            RaisePropertyChanged(nameof(AutoDownloadDefault));
-        }
+        public SettingsDataAutoViewModel AutoDownloadDocuments { get; }
 
         public async void ResetAutoDownload()
         {

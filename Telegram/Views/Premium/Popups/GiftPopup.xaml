@@ -71,8 +71,7 @@
                                 </Grid.RowDefinitions>
                                 <controls:PremiumStarHeader Grid.RowSpan="3" />
                                 <controls:ProfilePicture x:Name="Photo"
-                                                         Width="96"
-                                                         Height="96"
+                                                         Size="96"
                                                          Margin="0,24,0,8" />
                                 <TextBlock x:Name="PremiumTitle"
                                            Text="{CustomResource Gift2Premium}"
@@ -172,25 +171,20 @@
                         </controls:TopNavView.ItemContainerStyle>
                         <controls:TopNavView.ItemTemplate>
                             <DataTemplate x:DataType="popups:GiftGroup">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <controls:PremiumStarCount Visibility="{x:Bind popups:GiftPopup.ConvertGiftGroupStartCountVisibility(Key)}"
-                                                               Width="18"
-                                                               VerticalAlignment="Top"
-                                                               Margin="0,-1,4,0" />
-
-                                    <TextBlock Text="{x:Bind popups:GiftPopup.ConvertGiftGroupStarCountText(Key, StarCount)}"
-                                               Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                               Typography.NumeralAlignment="Tabular"
-                                               VerticalAlignment="Center"
-                                               Margin="0,1,0,2"
-                                               Grid.Column="1" />
-                                </Grid>
+                                <TextBlock Text="{x:Bind popups:GiftPopup.ConvertGiftGroupStarCountText(Type)}"
+                                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                           Typography.NumeralAlignment="Tabular"
+                                           VerticalAlignment="Center"
+                                           Margin="0,1,0,2"
+                                           Grid.Column="1" />
                             </DataTemplate>
                         </controls:TopNavView.ItemTemplate>
+                        <controls:TopNavView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Center" />
+                            </ItemsPanelTemplate>
+                        </controls:TopNavView.ItemsPanel>
                     </controls:TopNavView>
                 </StackPanel>
             </GridView.Header>
@@ -219,7 +213,8 @@
             </GridView.ItemContainerTransitions>
         </GridView>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                    ScrollingHost="{x:Bind ScrollingHost}" />
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    ScrollingHost="{x:Bind ScrollingHost}"
+                                    BottomInset="0" />
     </Grid>
 </controls:ContentPopup>

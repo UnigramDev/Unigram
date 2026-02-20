@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -62,6 +63,16 @@ namespace Telegram.Services.Settings
             }
 
             return chat.NotificationSettings.SoundId;
+        }
+
+        public bool IsSilent(Chat chat)
+        {
+            if (chat.NotificationSettings.UseDefaultSound && TryGetScope(chat, out var scope))
+            {
+                return scope.SoundId == 0;
+            }
+
+            return chat.NotificationSettings.SoundId == 0;
         }
 
         public bool GetShowPreview(Chat chat)

@@ -1,10 +1,19 @@
-﻿using System;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System;
 using System.Collections.Specialized;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
+using Telegram.Controls.Messages;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Stories.Popups;
 using Windows.Foundation;
@@ -15,7 +24,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Stories
 {
@@ -100,15 +108,25 @@ namespace Telegram.Controls.Stories
             }
 
             var count = _last - _first + 1;
-            if (count > 0 && _collapsed)
+            if (count > 0 && _collapsed && _isVisible)
             {
                 Show.Width = count * 12 + 12 + 8;
-                Show.Margin = new Thickness(_first > 0 ? 22 : 10, 20, 0, 0);
+                Show.Margin = new Thickness(_first > 0 ? 26 : 14, 20, 0, 0);
                 Show.Visibility = Visibility.Visible;
+
+                Icon.Margin = new Thickness(Show.Width + Show.Margin.Left + 8, 20, 0, 0);
+                Icon.Visibility = Visibility.Visible;
+
+                TitleBarrr?.IsHitTestVisible = false;
+                TitleBarHandle?.Margin = new Thickness(SystemOverlayLeftInset > 0 ? SystemOverlayLeftInset + (count * 12 + 12 + 8) : TitleBarrr.Margin.Left + 40 + (count * 12 + 12 + 8), 0, SystemOverlayRightInset > 0 ? SystemOverlayRightInset : 88, 0);
             }
             else
             {
                 Show.Visibility = Visibility.Collapsed;
+                Icon.Visibility = Visibility.Collapsed;
+
+                TitleBarrr?.IsHitTestVisible = true;
+                TitleBarHandle?.Margin = new Thickness(SystemOverlayLeftInset > 0 ? SystemOverlayLeftInset : TitleBarrr.Margin.Left + 40, 0, SystemOverlayRightInset > 0 ? SystemOverlayRightInset : 88, 0);
             }
 
             ScrollingHost.IsHitTestVisible = !_collapsed;
@@ -209,13 +227,7 @@ namespace Telegram.Controls.Stories
             }
             else if (ViewModel.IsPremiumAvailable && !ViewModel.IsPremium)
             {
-                var popup = new Telegram.Views.Premium.Popups.FeaturesPopup(ViewModel.ClientService, null, new[] { new PremiumFeatureUpgradedStories() }, null, null, null, null, new PremiumFeatureUpgradedStories());
-                await ViewModel.ShowPopupAsync(popup);
-
-                if (popup.ShouldPurchase)
-                {
-                    await ViewModel.NavigationService.ShowPromoAsync(new PremiumSourceStoryFeature(new PremiumStoryFeatureStealthMode()));
-                }
+                ViewModel.NavigationService.ShowPromo(new PremiumFeatureUpgradedStories(), new PremiumSourceStoryFeature(new PremiumStoryFeatureStealthMode()));
             }
         }
 
@@ -347,6 +359,7 @@ namespace Telegram.Controls.Stories
         }
 
         public FrameworkElement TitleBarrr { get; set; }
+        public Border TitleBarHandle { get; set; }
         public FrameworkElement Header { get; set; }
 
         private bool _tabsLeftCollapsed = true;
@@ -371,6 +384,17 @@ namespace Telegram.Controls.Stories
             }
         }
 
+        private float _systemOverlayRightInset;
+        public float SystemOverlayRightInset
+        {
+            get => _systemOverlayRightInset;
+            set
+            {
+                _systemOverlayRightInset = value;
+                UpdateIndexes();
+            }
+        }
+
         private void UpdatePadding()
         {
             _progress?.InsertBoolean("RightToLeft", _systemOverlayLeftInset > 0);
@@ -385,6 +409,8 @@ namespace Telegram.Controls.Stories
             {
                 _isVisible = value;
                 _progress?.InsertBoolean("Visible", value);
+
+                UpdateIndexes();
             }
         }
 
@@ -479,6 +505,7 @@ namespace Telegram.Controls.Stories
             _progress.InsertScalar("First", _first);
             _progress.InsertScalar("Last", _last);
             _progress.InsertScalar("Count", _last - _first + 1);
+            _progress.InsertScalar("Total", _last + 1);
             _progress.InsertScalar("Progress", 0);
             _progress.StartAnimation("Progress", _progressAnimation);
 
@@ -487,8 +514,21 @@ namespace Telegram.Controls.Stories
 
             ForEach(_progress, _progressAnimation);
 
-            var titleVisualOffsetAnimation = compositor.CreateExpressionAnimation(
-                "_.RightToLeft ? 0 : _.Visible && _.Count > 0 ? (24 + (12 * _.Count)) * (1 - _.Progress) : 0");
+            // >= 0.5 : above
+            // <  0.5 : below
+            var offsetExpandedX = "-(_.Padding - _.First * 12) * (_.Progress)";
+            var offsetExpandedX2 = "24 + (12 * _.Count) + (((72 * _.Total) - (40 + (12 * _.Total))) * _.Progress)";
+            var offsetExpandedY = "48 * _.Progress";
+
+            var offsetExpressionX = $"_.Progress < 0.5 ? ({offsetExpandedX}) + ({offsetExpandedX2}) : 0";
+            var offsetExpressionY = $"_.Progress < 0.5 ? {offsetExpandedY} : 0";
+            var scaleExpression = "_.Progress < 0.5 ? 1 : 0.5 + (_.Progress - 0.5)";
+            var opacityExpression = "_.Progress < 0.5 ? 1 - _.Progress * 2 : (_.Progress - 0.5) * 2";
+
+            var titleVisualOffsetAnimation = compositor.CreateExpressionAnimation($"_.Visible && _.Count > 0 ? Vector3({offsetExpressionX}, {offsetExpressionY}, 0) : Vector3(0, 0, 0)");
+            var titleVisualScaleAnimation = compositor.CreateExpressionAnimation($"_.Visible && _.Count > 0 ? Vector3(Clamp({scaleExpression}, 0.5, 1), Clamp({scaleExpression}, 0.5, 1), 1) : Vector3(1, 1, 1)");
+            var titleVisualOpacityAnimation = compositor.CreateExpressionAnimation($"_.Visible && _.Count > 0 ? Clamp({opacityExpression}, 0, 1) : 1");
+            var titleVisualOpacityInverseAnimation = compositor.CreateExpressionAnimation("Clamp(1 - _.Progress * 2, 0, 1)");
 
             var storiesVisualOffsetAnimationX = compositor.CreateExpressionAnimation(
                 "(_.Padding - _.First * 12) * (1 - _.Progress)");
@@ -500,6 +540,9 @@ namespace Telegram.Controls.Stories
                 "84 * _.Progress");
 
             titleVisualOffsetAnimation.SetReferenceParameter("_", _progress);
+            titleVisualScaleAnimation.SetReferenceParameter("_", _progress);
+            titleVisualOpacityAnimation.SetReferenceParameter("_", _progress);
+            titleVisualOpacityInverseAnimation.SetReferenceParameter("_", _progress);
             storiesVisualOffsetAnimationX.SetReferenceParameter("_", _progress);
             storiesVisualOffsetAnimation.SetReferenceParameter("_", _progress);
             headerVisualOffsetAnimation.SetReferenceParameter("_", _progress);
@@ -508,6 +551,7 @@ namespace Telegram.Controls.Stories
             var storiesVisual = ElementComposition.GetElementVisual(this);
             var headerVisual = ElementComposition.GetElementVisual(Header);
 
+            titleVisual.CenterPoint = new Vector3(0, 10, 0);
             storiesVisual.Clip = clip;
 
             titleVisual.Properties.InsertVector3("Translation", Vector3.Zero);
@@ -518,7 +562,9 @@ namespace Telegram.Controls.Stories
             ElementCompositionPreview.SetIsTranslationEnabled(this, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
 
-            titleVisual.StartAnimation("Translation.X", titleVisualOffsetAnimation);
+            titleVisual.StartAnimation("Translation", titleVisualOffsetAnimation);
+            titleVisual.StartAnimation("Scale", titleVisualScaleAnimation);
+            titleVisual.StartAnimation("Opacity", titleVisualOpacityAnimation);
             storiesVisual.StartAnimation("Translation.X", storiesVisualOffsetAnimationX);
             clip.StartAnimation("RightInset", storiesVisualOffsetAnimationX);
             storiesVisual.StartAnimation("Translation.Y", storiesVisualOffsetAnimation);
@@ -664,11 +710,11 @@ namespace Telegram.Controls.Stories
                 }
                 else if (_scrollViewer.VerticalOffset >= 40)
                 {
-                    _scrollViewer.ChangeView(null, 88, null, false);
+                    _scrollViewer.TryChangeView(null, 88, null, false);
                 }
                 else
                 {
-                    _scrollViewer.ChangeView(null, 0, null, false);
+                    _scrollViewer.TryChangeView(null, 0, null, false);
                 }
 
                 ScrollToTop();
@@ -703,9 +749,9 @@ namespace Telegram.Controls.Stories
             _collapsed = true;
             Collapsing?.Invoke(this, EventArgs.Empty);
 
-            ControlledList.Padding = new Thickness(0, 0, 0, 0);
+            ControlledList.Padding = new Thickness(0);
             _progressAnimation.Properties.InsertBoolean("Collapsed", true);
-            _scrollViewer.SetVerticalPadding(0);
+            _scrollViewer.SetVerticalPadding(0, 0);
 
             UpdateMinHeight();
             UpdateIndexes();
@@ -734,12 +780,12 @@ namespace Telegram.Controls.Stories
             }
             else if (_directManipulation)
             {
-                _scrollViewer.ChangeView(null, _scrollViewer.VerticalOffset - 88, null, true);
+                _scrollViewer.TryChangeView(null, _scrollViewer.VerticalOffset - 88, null, true);
             }
             else
             {
                 _scrollViewer.CancelDirectManipulations();
-                _scrollViewer.ChangeView(null, 0, null, true);
+                _scrollViewer.TryChangeView(null, 0, null, true);
             }
         }
 
@@ -760,7 +806,7 @@ namespace Telegram.Controls.Stories
 
             ControlledList.Padding = new Thickness(0, 88, 0, 0);
             _progressAnimation.Properties.InsertBoolean("Collapsed", false);
-            _scrollViewer.SetVerticalPadding(88);
+            _scrollViewer.SetVerticalPadding(88, 0);
 
             UpdateMinHeight();
             UpdateIndexes();
@@ -790,12 +836,20 @@ namespace Telegram.Controls.Stories
                 boh.StartAnimation("Translation.Y", translation);
                 batch.End();
 
-                _scrollViewer.ChangeView(null, 0, null, true);
+                _scrollViewer.TryChangeView(null, 0, null, true);
             }
         }
 
 
 
         #endregion
+
+        private void Icon_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.IsPremium)
+            {
+                EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.EmojiStatus, Icon, EmojiFlyoutAlignment.TopLeft);
+            }
+        }
     }
 }

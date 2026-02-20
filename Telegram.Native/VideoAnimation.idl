@@ -1,8 +1,9 @@
 namespace Telegram.Native
 {
-    interface IVideoAnimationSource {
+    interface IVideoAnimationSource
+    {
         void SeekCallback(Int64 offset);
-        void ReadCallback(Int64 count);
+        void ReadCallback(Int64 count, Int64 buffer, out Int64 bytesRead);
 
         String FilePath{ get; };
         Int64 FileSize{ get; };
@@ -23,7 +24,7 @@ namespace Telegram.Native
 
         Windows.Storage.Streams.IRandomAccessStream GetAlbumCover();
 
-        Int32 RenderSync(Windows.Storage.Streams.IBuffer bitmap, Int32 width, Int32 height, Boolean preview, out Int32 seconds);
+        Int32 RenderSync(Windows.Storage.Streams.IBuffer bitmap, Int32 width, Int32 height, Boolean preview, out Double seconds);
 
         Int32 PixelWidth{ get; };
         Int32 PixelHeight{ get; };

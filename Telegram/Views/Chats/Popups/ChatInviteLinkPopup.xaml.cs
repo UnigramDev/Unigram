@@ -1,4 +1,11 @@
-﻿using Microsoft.UI.Xaml.Controls;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -14,7 +21,13 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Chats.Popups
 {
-    public partial record SelectionValue(int Value, string Text, bool IsCustom = false);
+    public partial record SelectionValue(int Value, string Text, bool IsCustom = false)
+    {
+        public override string ToString()
+        {
+            return Text;
+        }
+    }
 
     public sealed partial class ChatInviteLinkPopup : ContentPopup
     {
@@ -152,10 +165,6 @@ namespace Telegram.Views.Chats.Popups
                     Request = new CreateChatInviteLink(_chatId, name, expirationDate, memberLimit, createsJoinRequest);
                 }
             }
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void RequireMonthlyFee_Checked(object sender, RoutedEventArgs e)

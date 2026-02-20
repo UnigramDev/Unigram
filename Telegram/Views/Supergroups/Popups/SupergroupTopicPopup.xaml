@@ -7,16 +7,12 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       Title="TITLE"
-                       PrimaryButtonText="Button1"
-                       SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
                        VerticalContentAlignment="Stretch"
                        Padding="24,24,24,0">
 
     <Grid x:Name="RootGrid"
-          Margin="0,0,0,-32">
+          Margin="0,0,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -67,11 +63,7 @@
               Margin="-24,8,-24,0"
               Grid.Row="2">
             <drawers:TopicsEmojiDrawer x:Name="Emoji"
-                                       ScrollingHostPadding="8,0,0,56" />
-            <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                        ScrollingHost="{x:Bind Emoji.ScrollingHost}"
-                                        TopInset="0"
-                                        BottomInset="56" />
+                                       ScrollingHostPadding="8,0,0,8" />
         </Grid>
 
     </Grid>

@@ -16,9 +16,12 @@ namespace winrt::Telegram::Native::Calls::implementation
         m_impl = tgcalls::VideoCaptureInterface::Create(
             tgcalls::StaticThreads::getThreads(),
             winrt::to_string(id));
-        m_impl->setOnFatalError([this] {
-            m_failed = true;
-            m_fatalErrorOccurred(*this, nullptr);
+        m_impl->setOnFatalError([weakThis{ get_weak() }] {
+            if (auto strongThis = weakThis.get())
+            {
+                strongThis->m_failed = true;
+                strongThis->m_fatalErrorOccurred(*strongThis, nullptr);
+            }
             });
     }
 

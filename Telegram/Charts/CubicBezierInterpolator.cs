@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Numerics;
 
@@ -11,17 +12,17 @@ namespace Telegram.Charts
 {
     public partial class CubicBezierInterpolator //implements Interpolator
     {
-        public static readonly CubicBezierInterpolator DEFAULT = new CubicBezierInterpolator(0.25, 0.1, 0.25, 1);
-        public static readonly CubicBezierInterpolator EASE_OUT = new CubicBezierInterpolator(0, 0, .58, 1);
-        public static readonly CubicBezierInterpolator EASE_OUT_QUINT = new CubicBezierInterpolator(.23, 1, .32, 1);
-        public static readonly CubicBezierInterpolator EASE_IN = new CubicBezierInterpolator(.42, 0, 1, 1);
-        public static readonly CubicBezierInterpolator EASE_BOTH = new CubicBezierInterpolator(.42, 0, .58, 1);
+        public static readonly CubicBezierInterpolator DEFAULT = new(0.25, 0.1, 0.25, 1);
+        public static readonly CubicBezierInterpolator EASE_OUT = new(0, 0, .58, 1);
+        public static readonly CubicBezierInterpolator EASE_OUT_QUINT = new(.23, 1, .32, 1);
+        public static readonly CubicBezierInterpolator EASE_IN = new(.42, 0, 1, 1);
+        public static readonly CubicBezierInterpolator EASE_BOTH = new(.42, 0, .58, 1);
 
         protected Vector2 start;
         protected Vector2 end;
-        protected Vector2 a = new Vector2();
-        protected Vector2 b = new Vector2();
-        protected Vector2 c = new Vector2();
+        protected Vector2 a = new();
+        protected Vector2 b = new();
+        protected Vector2 c = new();
 
         public CubicBezierInterpolator(Vector2 start, Vector2 end)
         {

@@ -22,8 +22,7 @@
                              Height="64"
                              Width="64">
                 <controls:ProfilePicture Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}"
-                                         Height="64"
-                                         Width="64" />
+                                         Size="64" />
             </HyperlinkButton>
 
             <TextBlock Text="{CustomResource NewChannel}"
@@ -46,7 +45,7 @@
                             ShowMode="Transient">
                         <Flyout.FlyoutPresenterStyle>
                             <Style TargetType="FlyoutPresenter"
-                                   BasedOn="{StaticResource DefaultFlyoutPresenterStyle}">
+                                   BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
                                 <Setter Property="Padding"
                                         Value="0" />
                             </Style>
@@ -71,7 +70,7 @@
 
         <TextBox Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                 MaxLength="{StaticResource ChannelAboutMaxLength}"
+                 MaxLength="{StaticResource ChatAboutMaxLength}"
                  Header="{CustomResource DescriptionPlaceholder}"
                  TextWrapping="Wrap"
                  AcceptsReturn="True" />

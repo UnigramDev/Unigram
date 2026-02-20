@@ -1,11 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Services.Settings;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -13,7 +15,6 @@ using Telegram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Drawers
 {
@@ -67,10 +68,8 @@ namespace Telegram.Controls.Drawers
             _handler = new AnimatedListHandler(List, AnimatedListType.Animations);
 
             _zoomer = new ZoomableListHandler(List);
-            _zoomer.Opening = _handler.UnloadVisibleItems;
-            _zoomer.Closing = _handler.ThrottleVisibleItems;
-            _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
-            _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
+            _zoomer.Opening = _handler.Suspend;
+            _zoomer.Closing = _handler.Resume;
 
             _typing = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             _typing.Invoked += (s, args) =>
@@ -203,6 +202,35 @@ namespace Telegram.Controls.Drawers
         private void Player_Ready(object sender, EventArgs e)
         {
             _handler.ThrottleVisibleItems();
+        }
+
+        private void Toolbar_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.Item is AnimationsCollection collection)
+            {
+                Automation.SetToolTip(args.ItemContainer, collection.Title);
+
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+                if (content?.Children[0] is FontIcon icon)
+                {
+                    icon.Glyph = collection.Name switch
+                    {
+                        "tg/recentlyUsed" => Icons.EmojiRecents,
+                        "tg/trending" => Icons.Trending,
+                        _ => string.Empty
+                    };
+                }
+                else if (content?.Children[0] is TextBlock textBlock)
+                {
+                    textBlock.Text = collection.Name;
+                }
+
+                args.Handled = true;
+            }
         }
     }
 }

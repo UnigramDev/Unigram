@@ -38,6 +38,9 @@
                 <controls:HeaderedControl Header="{CustomResource TopicsLayout}"
                                           Footer="{CustomResource TopicsLayoutInfo}"
                                           Background="{ThemeResource SettingsItemBackground}"
+                                          BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                          BorderThickness="1"
+                                          CornerRadius="4"
                                           Visibility="{x:Bind ViewModel.IsEnabled, Mode=OneWay}">
                     <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                   HorizontalScrollMode="Auto"
@@ -61,7 +64,7 @@
                                                                 Source="ms-appx:///Assets/Animations/SupergroupTopicsTabs.tgs"
                                                                 AutoPlay="True"
                                                                 LoopCount="1"
-                                                                FitToSize="True"
+                                                                ResizeMode="Fill"
                                                                 DecodeFrameType="Logical" />
                                     </Grid>
                                 </RadioButton>
@@ -86,7 +89,7 @@
                                                                 Source="ms-appx:///Assets/Animations/SupergroupTopicsList.tgs"
                                                                 AutoPlay="True"
                                                                 LoopCount="1"
-                                                                FitToSize="True"
+                                                                ResizeMode="Fill"
                                                                 DecodeFrameType="Logical" />
                                     </Grid>
                                 </RadioButton>

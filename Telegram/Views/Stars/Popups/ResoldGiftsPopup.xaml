@@ -344,8 +344,9 @@
             </GridView.ItemContainerTransitions>
         </GridView>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                     ScrollingHost="{x:Bind ScrollingHost}"
+                                    BottomInset="0"
                                     Grid.Row="2" />
     </Grid>
 </controls:ContentPopup>

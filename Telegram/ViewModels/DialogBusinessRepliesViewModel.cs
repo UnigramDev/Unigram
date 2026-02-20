@@ -1,22 +1,23 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Rg.DiffUtils;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.ViewModels.Delegates;
 
 namespace Telegram.ViewModels
 {
     public partial class QuickReplyMessageViewModel : MessageViewModel
     {
-        public QuickReplyMessageViewModel(IClientService clientService, IPlaybackService playbackService, IMessageDelegate delegato, Chat chat, Message message, bool processText = false)
-            : base(clientService, playbackService, delegato, chat, null, message, processText)
+        public QuickReplyMessageViewModel(IClientService clientService, WeakReference delegato, Chat chat, Message message, bool processText = false)
+            : base(clientService, delegato, chat, null, null, message, processText)
         {
         }
 
@@ -25,8 +26,8 @@ namespace Telegram.ViewModels
 
     public partial class DialogBusinessRepliesViewModel : DialogViewModel, IDiffHandler<MessageViewModel>
     {
-        public DialogBusinessRepliesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, INetworkService networkService, IStorageService storageService, ITranslateService translateService)
-            : base(clientService, settingsService, aggregator, locationService, pushService, playbackService, voipService, networkService, storageService, translateService)
+        public DialogBusinessRepliesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IVoipService voipService, INetworkService networkService, IStorageService storageService, ITranslateService translateService)
+            : base(clientService, settingsService, aggregator, locationService, pushService, voipService, networkService, storageService, translateService)
         {
         }
 
@@ -40,8 +41,8 @@ namespace Telegram.ViewModels
 
         public override async Task LoadQuickReplyShortcutSliceAsync()
         {
-            IsFirstSliceLoaded = true;
-            IsLastSliceLoaded = true;
+            IsNewestSliceLoaded = true;
+            IsOldestSliceLoaded = true;
 
             Handle(new UpdateQuickReplyShortcutMessages(QuickReplyShortcut.Id, ClientService.GetQuickReplyMessages(QuickReplyShortcut.Id)));
 
@@ -58,8 +59,8 @@ namespace Telegram.ViewModels
 
             var replied = update.Messages.OrderBy(x => x.Id).Select(x =>
             {
-                var message = new Message(x.Id, new MessageSenderUser(ClientService.Options.MyId), ClientService.Options.MyId, x.SendingState, null, true, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, null, null, 0, 0, x.ViaBotUserId, 0, 0, 0, string.Empty, x.MediaAlbumId, 0, false, string.Empty, x.Content, x.ReplyMarkup);
-                var model = new QuickReplyMessageViewModel(ClientService, PlaybackService, _messageDelegate, _chat, message, true)
+                var message = new Message(x.Id, new MessageSenderUser(ClientService.Options.MyId), ClientService.Options.MyId, x.SendingState, null, true, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, x.ViaBotUserId, 0, 0, 0, string.Empty, x.MediaAlbumId, 0, null, string.Empty, x.Content, x.ReplyMarkup);
+                var model = new QuickReplyMessageViewModel(ClientService, _messageDelegateWeak, _chat, message, true)
                 {
                     CanBeEdited = x.CanBeEdited
                 };
@@ -96,8 +97,8 @@ namespace Telegram.ViewModels
                     Delegate?.UpdateBubbleWithMessageId(item.OldValue.Id, bubble => bubble.UpdateMessage(item.OldValue));
                 }
 
-                IsFirstSliceLoaded = true;
-                IsLastSliceLoaded = true;
+                IsNewestSliceLoaded = true;
+                IsOldestSliceLoaded = true;
             });
         }
 
@@ -108,7 +109,7 @@ namespace Telegram.ViewModels
 
         public void UpdateItem(MessageViewModel oldItem, MessageViewModel newItem)
         {
-            oldItem.UpdateWith(newItem);
+            oldItem.Replace(newItem);
             oldItem.Content = newItem.Content;
         }
     }

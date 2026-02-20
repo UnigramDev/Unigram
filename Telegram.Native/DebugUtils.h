@@ -9,6 +9,17 @@
 #ifndef DEBUG_UTILS_H
 #define DEBUG_UTILS_H
 
+#define STOWED_EXCEPTION_NESTED_TYPE(t) ((((((ULONG)(t)) >> 24) & 0xFF) <<  0) | \
+                                         (((((ULONG)(t)) >> 16) & 0xFF) <<  8) | \
+                                         (((((ULONG)(t)) >>  8) & 0xFF) << 16) | \
+                                         (((((ULONG)(t)) >>  0) & 0xFF) << 24))
+
+#define STOWED_EXCEPTION_NESTED_TYPE_NONE 0x00000000
+#define STOWED_EXCEPTION_NESTED_TYPE_WIN32 STOWED_EXCEPTION_NESTED_TYPE('W32E')
+#define STOWED_EXCEPTION_NESTED_TYPE_STOWED STOWED_EXCEPTION_NESTED_TYPE('STOW')
+#define STOWED_EXCEPTION_NESTED_TYPE_CLR STOWED_EXCEPTION_NESTED_TYPE('CLR1')
+#define STOWED_EXCEPTION_NESTED_TYPE_LEO STOWED_EXCEPTION_NESTED_TYPE('LEO1')
+
 typedef struct _STOWED_EXCEPTION_INFORMATION_HEADER
 {
     ULONG Size;

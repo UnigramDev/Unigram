@@ -1,10 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.Graphics.Canvas.Text;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -33,21 +33,20 @@ namespace Telegram.ViewModels.Settings
         {
             _themeService = themeService;
 
-            var fonts = CanvasTextFormat.GetSystemFontFamilies()
+            var fonts = PlaceholderHelper.Foreground.GetSystemFontFamilies(new[] { LocaleService.Current.Id, NativeUtils.GetCurrentCulture() })
                 .OrderBy(x => x)
-                .Select(x => new SettingsOptionItem<string>(x, x));
+                .Select(x => new SettingsOptionFontFamily(x, x, x));
 
-            FontFamilyOptions = new List<SettingsOptionItem<string>>(fonts);
-            FontFamilyOptions.Insert(0, new SettingsOptionItem<string>(string.Empty, Strings.Default));
+            FontFamilyOptions = new List<SettingsOptionFontFamily>(fonts);
+            FontFamilyOptions.Insert(0, new SettingsOptionFontFamily(string.Empty, Strings.Default, Windows.UI.Xaml.Media.FontFamily.XamlAutoFontFamily.Source));
 
             ChatThemes = new ObservableCollection<ChatThemeViewModel>();
 
-            var current = NativeUtils.GetScaleForCurrentView();
             var stored = settingsService.Appearance.Scaling;
 
-            if (stored == 0 || settingsService.Appearance.UseDefaultScaling)
+            if (settingsService.Appearance.UseDefaultScaling)
             {
-                stored = current;
+                stored = 0;
             }
 
             _scaling = stored;
@@ -84,9 +83,16 @@ namespace Telegram.ViewModels.Settings
             var defaultTheme = new ChatThemeViewModel(ClientService, "\U0001F3E0", defaultLight, defaultDark, false);
             var themes = ClientService.ChatThemes.Select(x => new ChatThemeViewModel(ClientService, x, false));
 
+            var selectedTheme = themes.FirstOrDefault(x => x.AreTheSame(Settings.Appearance.ChatTheme)) ?? defaultTheme;
+            if (selectedTheme != null)
+            {
+                selectedTheme.LightSettings.Background = ClientService.GetDefaultBackground(false) ?? defaultLight.Background;
+                selectedTheme.DarkSettings.Background = ClientService.GetDefaultBackground(true) ?? defaultDark.Background;
+            }
+
             ChatThemes.AddRange(new[] { defaultTheme }.Union(themes));
 
-            _selectedChatTheme = ChatThemes.FirstOrDefault(x => x.Name == Settings.Appearance.ChatTheme?.Name) ?? defaultTheme;
+            _selectedChatTheme = selectedTheme;
             RaisePropertyChanged(nameof(SelectedChatTheme));
 
             return Task.CompletedTask;
@@ -99,16 +105,23 @@ namespace Telegram.ViewModels.Settings
             set => SetChatTheme(value);
         }
 
+        public bool SelectionChanged { get; private set; }
+
         private void SetChatTheme(ChatThemeViewModel chatTheme)
         {
-            if (chatTheme == null || chatTheme.Name == _selectedChatTheme?.Name)
+            if (chatTheme == null || chatTheme.AreTheSame(_selectedChatTheme?.Type))
             {
                 return;
             }
 
             void SetBackground(Background background, bool forDarkTheme)
             {
-                if (background != null && chatTheme.Name != "\U0001F3E0")
+                if (chatTheme.Type is not ChatThemeEmoji emoji)
+                {
+                    return;
+                }
+
+                if (background != null && emoji.Name != "\U0001F3E0")
                 {
                     ClientService.Send(new SetDefaultBackground(new InputBackgroundRemote(background.Id), background.Type, forDarkTheme));
                 }
@@ -121,10 +134,11 @@ namespace Telegram.ViewModels.Settings
             SetBackground(chatTheme.LightSettings?.Background, false);
             SetBackground(chatTheme.DarkSettings?.Background, true);
 
-            Settings.Appearance.ChatTheme = chatTheme;
+            Settings.Appearance.ChatTheme = chatTheme.ToEmoji();
             Settings.Appearance.UpdateNightMode(updateBackground: false);
 
             _selectedChatTheme = chatTheme;
+            SelectionChanged = true;
             RaisePropertyChanged(nameof(SelectedChatTheme));
         }
 
@@ -144,26 +158,6 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _emojiSetId, value);
         }
 
-        public bool UseDefaultScaling
-        {
-            get => Settings.Appearance.UseDefaultScaling;
-            set
-            {
-                if (Settings.Appearance.UseDefaultScaling != value)
-                {
-                    Settings.Appearance.UseDefaultScaling = value;
-
-                    if (value || Settings.Appearance.Scaling == 0)
-                    {
-                        NativeUtils.OverrideScaleForCurrentView(Settings.Appearance.Scaling = _scaling = NativeUtils.GetScaleForCurrentView());
-                        RaisePropertyChanged(nameof(Scaling));
-                    }
-
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
         private int _scaling;
         public int Scaling
         {
@@ -172,8 +166,18 @@ namespace Telegram.ViewModels.Settings
             {
                 if (value >= 0 && value < _scalingIndexer.Length && _scaling != _scalingIndexer[value])
                 {
-                    NativeUtils.OverrideScaleForCurrentView(Settings.Appearance.Scaling = _scaling = _scalingIndexer[value]);
-                    UseDefaultScaling = false;
+                    var scaling = _scalingIndexer[value];
+                    if (scaling == 0)
+                    {
+                        NativeUtils.OverrideScaleForCurrentView(Settings.Appearance.Scaling = _scaling = NativeUtils.GetScaleForCurrentView());
+                        Settings.Appearance.UseDefaultScaling = true;
+                    }
+                    else
+                    {
+                        NativeUtils.OverrideScaleForCurrentView(Settings.Appearance.Scaling = _scaling = scaling);
+                        Settings.Appearance.UseDefaultScaling = false;
+                    }
+
                     RaisePropertyChanged();
                 }
             }
@@ -181,6 +185,7 @@ namespace Telegram.ViewModels.Settings
 
         private readonly int[] _scalingIndexer = new[]
         {
+            0,
             100,
             125,
             150,
@@ -188,6 +193,18 @@ namespace Telegram.ViewModels.Settings
             200,
             225,
             250
+        };
+
+        public List<SettingsOptionItem<int>> ScalingOptions { get; } = new()
+        {
+            new SettingsOptionItem<int>(0, Strings.Default),
+            new SettingsOptionItem<int>(100, "100%"),
+            new SettingsOptionItem<int>(125, "125%"),
+            new SettingsOptionItem<int>(150, "150%"),
+            new SettingsOptionItem<int>(175, "175%"),
+            new SettingsOptionItem<int>(200, "200%"),
+            new SettingsOptionItem<int>(225, "225%"),
+            new SettingsOptionItem<int>(250, "250%"),
         };
 
         private readonly Dictionary<int, int> _indexToSize = new() { { 0, 12 }, { 1, 13 }, { 2, 14 }, { 3, 15 }, { 4, 16 }, { 5, 17 }, { 6, 18 } };
@@ -349,15 +366,14 @@ namespace Telegram.ViewModels.Settings
                 if (value >= 0 && value < FontFamilyOptions.Count && SettingsService.Current.Appearance.FontFamily != FontFamilyOptions[value].Value)
                 {
                     SettingsService.Current.Appearance.FontFamily = FontFamilyOptions[value].Value;
-                    Theme.Current.UpdateEmojiSet();
-                    SettingsService.Current.Appearance.UpdateNightMode(true);
+                    SettingsService.Current.Appearance.UpdateNightMode(true, updateEmojiSet: true);
 
                     RaisePropertyChanged();
                 }
             }
         }
 
-        public List<SettingsOptionItem<string>> FontFamilyOptions { get; }
+        public List<SettingsOptionFontFamily> FontFamilyOptions { get; }
 
         public int SendBy
         {
@@ -458,6 +474,17 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
+    public class SettingsOptionFontFamily : SettingsOptionItem<string>
+    {
+        public SettingsOptionFontFamily(string value, string text, string fontFamily)
+            : base(value, text)
+        {
+            FontFamily = fontFamily;
+        }
+
+        public string FontFamily { get; init; }
+    }
+
     public partial class ChatThemeViewModel
     {
         public IClientService ClientService { get; }
@@ -466,17 +493,35 @@ namespace Telegram.ViewModels.Settings
 
         public ThemeSettings LightSettings { get; }
 
-        public string Name { get; }
+        public ChatTheme Type { get; }
 
         public bool IsChannel { get; }
 
-        public ChatThemeViewModel(IClientService clientService, ChatTheme chatTheme, bool isChannel)
+        public ChatThemeViewModel(IClientService clientService, EmojiChatTheme chatTheme, bool isChannel)
         {
             ClientService = clientService;
-            DarkSettings = chatTheme.DarkSettings;
-            LightSettings = chatTheme.LightSettings;
-            Name = chatTheme.Name;
-            IsChannel = IsChannel;
+            DarkSettings = Copy(chatTheme.DarkSettings);
+            LightSettings = Copy(chatTheme.LightSettings);
+            Type = new ChatThemeEmoji(chatTheme.Name);
+            IsChannel = isChannel;
+        }
+
+        public ChatThemeViewModel(IClientService clientService, GiftChatTheme chatTheme)
+        {
+            ClientService = clientService;
+            DarkSettings = Copy(chatTheme.DarkSettings);
+            LightSettings = Copy(chatTheme.LightSettings);
+            Type = new ChatThemeGift(chatTheme);
+        }
+
+        private ThemeSettings Copy(ThemeSettings x)
+        {
+            if (x == null)
+            {
+                return null;
+            }
+
+            return new ThemeSettings(x.BaseTheme, x.AccentColor, x.Background, x.OutgoingMessageFill, x.AnimateOutgoingMessageFill, x.OutgoingMessageAccentColor);
         }
 
         public ChatThemeViewModel(IClientService clientService, string name, ThemeSettings lightSettings, ThemeSettings darkSettings, bool isChannel)
@@ -484,18 +529,18 @@ namespace Telegram.ViewModels.Settings
             ClientService = clientService;
             DarkSettings = darkSettings;
             LightSettings = lightSettings;
-            Name = name;
+            Type = new ChatThemeEmoji(name);
             IsChannel = isChannel;
         }
 
-        public static implicit operator ChatTheme(ChatThemeViewModel chatTheme)
+        public EmojiChatTheme ToEmoji()
         {
-            if (chatTheme == null)
+            if (Type is ChatThemeEmoji emoji)
             {
-                return null;
+                return new EmojiChatTheme(emoji.Name, LightSettings, DarkSettings);
             }
 
-            return new ChatTheme(chatTheme.Name, chatTheme.LightSettings, chatTheme.DarkSettings);
+            return null;
         }
     }
 }

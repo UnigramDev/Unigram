@@ -286,6 +286,9 @@
   <data name="AccDescrRotate" xml:space="preserve">
     <value>Rotate</value>
   </data>
+  <data name="AccDescrScanText" xml:space="preserve">
+    <value>Scan Text</value>
+  </data>
   <data name="AccDescrSearchByUser" xml:space="preserve">
     <value>Filter by user</value>
   </data>
@@ -315,6 +318,9 @@
   </data>
   <data name="AccDescrStoryBy" xml:space="preserve">
     <value>Story from {0}</value>
+  </data>
+  <data name="AccDescrSuggestPost" xml:space="preserve">
+    <value>Suggest a Post</value>
   </data>
   <data name="AccDescrVerified" xml:space="preserve">
     <value>Verified</value>
@@ -384,6 +390,9 @@
   </data>
   <data name="AccountFrozenTitle" xml:space="preserve">
     <value>Your Account is Frozen</value>
+  </data>
+  <data name="AccountSettings" xml:space="preserve">
+    <value>Account</value>
   </data>
   <data name="AccountSwitch" xml:space="preserve">
     <value>Switch</value>
@@ -516,6 +525,12 @@
   </data>
   <data name="ActionGift2Received" xml:space="preserve">
     <value>You received a gift for **un2**</value>
+  </data>
+  <data name="ActionGiftChannel_one" xml:space="preserve">
+    <value>**un1** sent a gift to **un2** for {0} Star</value>
+  </data>
+  <data name="ActionGiftChannel_other" xml:space="preserve">
+    <value>**un1** sent a gift to **un2** for {0} Stars</value>
   </data>
   <data name="ActionGiftInbound" xml:space="preserve">
     <value>un1 sent you a gift for **un2**</value>
@@ -655,6 +670,12 @@
   <data name="ActionPinnedVoice" xml:space="preserve">
     <value>un1 pinned a voice message</value>
   </data>
+  <data name="ActionPrepaidGiftInbound" xml:space="preserve">
+    <value>un1 sent an upgrade worth **un2** for your gift</value>
+  </data>
+  <data name="ActionPrepaidGiftOutbound" xml:space="preserve">
+    <value>You sent an upgrade worth **un2** for **un1**&apos;s gift</value>
+  </data>
   <data name="ActionReactionsChanged" xml:space="preserve">
     <value>un1 changed chat reactions
 from: {0} 
@@ -728,6 +749,9 @@ Your prize is **{0} Stars**.</value>
   <data name="ActionStarGiveawayPrizeTitle" xml:space="preserve">
     <value>Congratulations!</value>
   </data>
+  <data name="ActionSuggestBirthday" xml:space="preserve">
+    <value>**un1** suggests you to add your date of birth</value>
+  </data>
   <data name="ActionSuggestPhotoFromYouDescription" xml:space="preserve">
     <value>You suggested this photo for {0}&apos;s Telegram profile</value>
   </data>
@@ -763,6 +787,9 @@ Your prize is **{0} Stars**.</value>
   </data>
   <data name="ActionUniqueGiftTransferOutbound" xml:space="preserve">
     <value>You transferred a gift to **un1**</value>
+  </data>
+  <data name="ActionUniqueGiftTransferService" xml:space="preserve">
+    <value>**un1** transferred a gift to **un2**!</value>
   </data>
   <data name="ActionUniqueGiftUpgradeInbound" xml:space="preserve">
     <value>**un1** turned the gift from you into a unique collectible</value>
@@ -820,6 +847,9 @@ Your prize is **{0} Stars**.</value>
   </data>
   <data name="ActionYouScoredInGame" xml:space="preserve">
     <value>You scored {0} in un2</value>
+  </data>
+  <data name="ActionYouSuggestBirthday" xml:space="preserve">
+    <value>You suggest to add date of birth</value>
   </data>
   <data name="AdaptiveLayout" xml:space="preserve">
     <value>Adaptive Layout for Wide Screens</value>
@@ -965,6 +995,12 @@ Your prize is **{0} Stars**.</value>
   <data name="AddMembersAlertTitle" xml:space="preserve">
     <value>Add {0}</value>
   </data>
+  <data name="AddNotes" xml:space="preserve">
+    <value>Add Notes...</value>
+  </data>
+  <data name="AddNotesInfo" xml:space="preserve">
+    <value>Notes are only visible to you.</value>
+  </data>
   <data name="AddPeopleNearby" xml:space="preserve">
     <value>Find People Nearby</value>
   </data>
@@ -988,6 +1024,9 @@ Your prize is **{0} Stars**.</value>
   </data>
   <data name="AddSubscriber" xml:space="preserve">
     <value>Add subscribers</value>
+  </data>
+  <data name="AddTasks" xml:space="preserve">
+    <value>Add Tasks</value>
   </data>
   <data name="AddToChannel" xml:space="preserve">
     <value>Add to Channel</value>
@@ -1120,6 +1159,29 @@ Your prize is **{0} Stars**.</value>
   </data>
   <data name="AffiliateProgramUpdateInfoLink" xml:space="preserve">
     <value>https://telegram.org/tos/affiliate-program</value>
+  </data>
+  <data name="AgeVerificationButton" xml:space="preserve">
+    <value>Verify My Age</value>
+  </data>
+  <data name="AgeVerificationFailedText" xml:space="preserve">
+    <value>Sorry, you can&apos;t view 18+ content.</value>
+  </data>
+  <data name="AgeVerificationFailedTitle" xml:space="preserve">
+    <value>Age Check Failed</value>
+  </data>
+  <data name="AgeVerificationNeedCameraPermission" xml:space="preserve">
+    <value>Telegram needs access to your camera so that you can confirm your age.</value>
+  </data>
+  <data name="AgeVerificationPassedTitle" xml:space="preserve">
+    <value>Age Check Passed</value>
+  </data>
+  <data name="AgeVerificationTextGB" xml:space="preserve">
+    <value>To access such content, you must confirm that you are at least **18** years old as required by UK law.
+
+This is a one-time process using your phone&apos;s camera. Your selfie will not be stored by Telegram.</value>
+  </data>
+  <data name="AgeVerificationTitle" xml:space="preserve">
+    <value>Age Verification</value>
   </data>
   <data name="Agree" xml:space="preserve">
     <value>Agree</value>
@@ -1524,8 +1586,38 @@ Please take a look at the &lt;a href=&quot;https://telegram.org/faq#general-ques
   <data name="AttachVoiceExpired" xml:space="preserve">
     <value>Expired voice message</value>
   </data>
+  <data name="AudioAddedToProfileRemove" xml:space="preserve">
+    <value>This audio is visible on your Profile. **Remove &gt;**</value>
+  </data>
+  <data name="AudioAddToProfile" xml:space="preserve">
+    <value>Add to Profile</value>
+  </data>
   <data name="AudioAutodownload" xml:space="preserve">
     <value>Voice messages</value>
+  </data>
+  <data name="AudioSaveTo" xml:space="preserve">
+    <value>Save to...</value>
+  </data>
+  <data name="AudioSaveToFiles" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="AudioSaveToInfo" xml:space="preserve">
+    <value>Choose where you want this audio to be saved.</value>
+  </data>
+  <data name="AudioSaveToMyProfile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="AudioSaveToMyProfileSaved" xml:space="preserve">
+    <value>Audio added to your Profile.</value>
+  </data>
+  <data name="AudioSaveToMyProfileUnsaved" xml:space="preserve">
+    <value>Audio removed from your Profile.</value>
+  </data>
+  <data name="AudioSaveToSavedMessages" xml:space="preserve">
+    <value>Saved Messages</value>
+  </data>
+  <data name="AudioSaveToSavedMessagesSaved" xml:space="preserve">
+    <value>Audio sent to Saved Messages.</value>
   </data>
   <data name="AudioUnknownArtist" xml:space="preserve">
     <value>Unknown artist</value>
@@ -1535,6 +1627,9 @@ Please take a look at the &lt;a href=&quot;https://telegram.org/faq#general-ques
   </data>
   <data name="AuthorHiddenDescription" xml:space="preserve">
     <value>Senders of these messages restricted to link their name when forwarding.</value>
+  </data>
+  <data name="AutoDeleteAfteTitle" xml:space="preserve">
+    <value>Auto-delete after...</value>
   </data>
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>Confirm</value>
@@ -1609,6 +1704,12 @@ All new messages in this chat will be automatically deleted {0} after they were 
   </data>
   <data name="AutoDownloadPm" xml:space="preserve">
     <value>PM</value>
+  </data>
+  <data name="AutoDownloadPreloadVideo" xml:space="preserve">
+    <value>Preload larger videos</value>
+  </data>
+  <data name="AutoDownloadPreloadVideoInfo" xml:space="preserve">
+    <value>Preload the first few seconds (1-2 MB) of videos larger than {0} for instant playback.</value>
   </data>
   <data name="AutodownloadPrivateChats" xml:space="preserve">
     <value>Private Chats</value>
@@ -1733,7 +1834,7 @@ Please enable Unigram in the Startup Apps Settings.</value>
     <value>Color</value>
   </data>
   <data name="BackgroundColorSinglePreviewLine1" xml:space="preserve">
-    <value>Click &apos;Set&apos; to apply the wallpaper.</value>
+    <value>Click &apos;Apply&apos; to set the wallpaper.</value>
   </data>
   <data name="BackgroundColorSinglePreviewLine2" xml:space="preserve">
     <value>Looks good</value>
@@ -1952,6 +2053,12 @@ from this chat</value>
   <data name="BoostingAvailableIn" xml:space="preserve">
     <value>available in {0}</value>
   </data>
+  <data name="BoostingBoostChannelMenu" xml:space="preserve">
+    <value>Boost Channel</value>
+  </data>
+  <data name="BoostingBoostGroupMenu" xml:space="preserve">
+    <value>Boost Group</value>
+  </data>
   <data name="BoostingBoostsChannelByUserServiceMsg" xml:space="preserve">
     <value>{0} boosted the channel</value>
   </data>
@@ -1975,6 +2082,9 @@ from this chat</value>
   </data>
   <data name="BoostingBoostsGroupByYouServiceMsgCount_other" xml:space="preserve">
     <value>You boosted the group {0} times</value>
+  </data>
+  <data name="BoostingBoostToSendMessages" xml:space="preserve">
+    <value>Boost this group to send messages</value>
   </data>
   <data name="BoostingCongratulations" xml:space="preserve">
     <value>Congratulations!</value>
@@ -2486,6 +2596,52 @@ from **{0}**.</value>
   <data name="BotAffiliateProgramTitle" xml:space="preserve">
     <value>Affiliate Program</value>
   </data>
+  <data name="BotAuthAllowMessages" xml:space="preserve">
+    <value>Allow Messages</value>
+  </data>
+  <data name="BotAuthAllowMessagesInfo" xml:space="preserve">
+    <value>This will allow {0} to message you.</value>
+  </data>
+  <data name="BotAuthBasedOnIP" xml:space="preserve">
+    <value>Based on the IP ({0})</value>
+  </data>
+  <data name="BotAuthBotSubtitle" xml:space="preserve">
+    <value>This bot will receive your **name**,
+**username** and **profile photo**.</value>
+  </data>
+  <data name="BotAuthInfo" xml:space="preserve">
+    <value>This login attempt came from the device above.</value>
+  </data>
+  <data name="BotAuthLoggedInSuccess" xml:space="preserve">
+    <value>You&apos;ve successfully logged into **{0}**.</value>
+  </data>
+  <data name="BotAuthLogin" xml:space="preserve">
+    <value>Log In</value>
+  </data>
+  <data name="BotAuthPhoneNumber" xml:space="preserve">
+    <value>Phone Number</value>
+  </data>
+  <data name="BotAuthPhoneNumberAccept" xml:space="preserve">
+    <value>Allow</value>
+  </data>
+  <data name="BotAuthPhoneNumberDeny" xml:space="preserve">
+    <value>Deny</value>
+  </data>
+  <data name="BotAuthPhoneNumberText" xml:space="preserve">
+    <value>**{0}** wants to access your phone number **{1}**.
+
+Allow access?</value>
+  </data>
+  <data name="BotAuthSiteSubtitle" xml:space="preserve">
+    <value>This site will receive your **name**,
+**username** and **profile photo**.</value>
+  </data>
+  <data name="BotAuthTitle" xml:space="preserve">
+    <value>Log in to **{0}**</value>
+  </data>
+  <data name="BotCantJoinGroups" xml:space="preserve">
+    <value>This bot can&apos;t join groups.</value>
+  </data>
   <data name="BotChangeSettings" xml:space="preserve">
     <value>Change Bot Settings</value>
   </data>
@@ -2518,6 +2674,18 @@ from **{0}**.</value>
   </data>
   <data name="BotEmojiStatusTitle" xml:space="preserve">
     <value>Set Emoji Status</value>
+  </data>
+  <data name="BotForumAskForStartNewChat" xml:space="preserve">
+    <value>Type any message to create a new thread.</value>
+  </data>
+  <data name="BotForumAskForStartNewChatTitle" xml:space="preserve">
+    <value>New Thread</value>
+  </data>
+  <data name="BotForumContinueChat" xml:space="preserve">
+    <value>Continue last thread</value>
+  </data>
+  <data name="BotForumNewTopic" xml:space="preserve">
+    <value>New Chat</value>
   </data>
   <data name="BotHelp" xml:space="preserve">
     <value>Help</value>
@@ -2589,6 +2757,27 @@ Do you want to revoke verification?</value>
   <data name="BotRestart" xml:space="preserve">
     <value>Restart Bot</value>
   </data>
+  <data name="BotRestoreStorageButton" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="BotRestoreStorageCreatedAt" xml:space="preserve">
+    <value>created on {0}</value>
+  </data>
+  <data name="BotRestoreStorageHeader" xml:space="preserve">
+    <value>Account to import data from</value>
+  </data>
+  <data name="BotRestoreStorageText" xml:space="preserve">
+    <value>**{0}** is requesting permission to import data from a previous Telegram account used on device.</value>
+  </data>
+  <data name="BotRestoreStorageTitle" xml:space="preserve">
+    <value>Import Data</value>
+  </data>
+  <data name="Bots_one" xml:space="preserve">
+    <value>{0} bot</value>
+  </data>
+  <data name="Bots_other" xml:space="preserve">
+    <value>{0} bots</value>
+  </data>
   <data name="BotSentRevokeVerifyRequest" xml:space="preserve">
     <value>**{0}**&apos;s verification has been revoked.</value>
   </data>
@@ -2659,7 +2848,7 @@ Do you want to revoke verification?</value>
     <value>You can collect rewards for Stars using Fragment, or use Stars to advertise your bot. You cannot withdraw less than 1000 stars. **Learn more &gt;**</value>
   </data>
   <data name="BotStarsWithdrawInfoLink" xml:space="preserve">
-    <value>https://telegram.org/tos/affiliate-program</value>
+    <value>https://telegram.org/privacy</value>
   </data>
   <data name="BotStarsWithdrawMinLimit_one" xml:space="preserve">
     <value>You cannot withdraw less than **{0} star**.</value>
@@ -2884,7 +3073,7 @@ Do you want to revoke verification?</value>
     <value>Manage Gifts and Stars</value>
   </data>
   <data name="BusinessBotPermissionsGiftsSell" xml:space="preserve">
-    <value>Sell Gifts</value>
+    <value>Convert Gifts to Stars</value>
   </data>
   <data name="BusinessBotPermissionsGiftsSettings" xml:space="preserve">
     <value>Change Gift Settings</value>
@@ -2896,7 +3085,7 @@ Do you want to revoke verification?</value>
     <value>Transfer Stars</value>
   </data>
   <data name="BusinessBotPermissionsGiftsView" xml:space="preserve">
-    <value>View Gifts</value>
+    <value>View Gifts and Stars</value>
   </data>
   <data name="BusinessBotPermissionsInfo" xml:space="preserve">
     <value>The bot can only reply on your behalf in chats that were active during the last 24h.</value>
@@ -3312,6 +3501,15 @@ Do you want to revoke verification?</value>
   <data name="CallEmojiKeyTooltip" xml:space="preserve">
     <value>If the emoji on {0}’s screen are the same, this call is 100% secure.</value>
   </data>
+  <data name="CallForbiddenInviteLinkButton" xml:space="preserve">
+    <value>Send Invite Link</value>
+  </data>
+  <data name="CallForbiddenInviteLinkText" xml:space="preserve">
+    <value>**{0}** restricts calling them. You can send them an invite link to call instead.</value>
+  </data>
+  <data name="CallForbiddenInviteLinkTitle" xml:space="preserve">
+    <value>Invite via Link</value>
+  </data>
   <data name="Calling" xml:space="preserve">
     <value>Calling you...</value>
   </data>
@@ -3383,6 +3581,12 @@ Do you want to revoke verification?</value>
   </data>
   <data name="CancelSending" xml:space="preserve">
     <value>Cancel Sending</value>
+  </data>
+  <data name="CancelTodoAlertText" xml:space="preserve">
+    <value>Are you sure you want to discard this Checklist?</value>
+  </data>
+  <data name="CancelTodoAlertTitle" xml:space="preserve">
+    <value>Discard Checklist</value>
   </data>
   <data name="CanJoin_one" xml:space="preserve">
     <value>{0} can join</value>
@@ -4091,6 +4295,9 @@ Minimum length is 5 characters.</value>
   <data name="ChatSettings" xml:space="preserve">
     <value>Chat Settings</value>
   </data>
+  <data name="ChatsLeaveAlert" xml:space="preserve">
+    <value>Are you sure you want to leave the selected chats?</value>
+  </data>
   <data name="ChatsMute" xml:space="preserve">
     <value>Mute</value>
   </data>
@@ -4163,6 +4370,12 @@ Minimum length is 5 characters.</value>
   <data name="Checking" xml:space="preserve">
     <value>Checking...</value>
   </data>
+  <data name="ChecklistTasks_one" xml:space="preserve">
+    <value>{0} task</value>
+  </data>
+  <data name="ChecklistTasks_other" xml:space="preserve">
+    <value>{0} tasks</value>
+  </data>
   <data name="CheckPhoneNumberNo" xml:space="preserve">
     <value>No</value>
   </data>
@@ -4179,7 +4392,7 @@ Minimum length is 5 characters.</value>
     <value>You&apos;ve restricted who can message you, but anyone can still invite you to groups and channels. Would you like to review these settings?</value>
   </data>
   <data name="CheckPrivacyInviteTitle" xml:space="preserve">
-    <value>Invitation Settings</value>
+    <value>Invite Settings</value>
   </data>
   <data name="CheckPrivacyReview" xml:space="preserve">
     <value>Review</value>
@@ -4277,6 +4490,9 @@ Minimum length is 5 characters.</value>
   <data name="ClearHistoryTitleSingle" xml:space="preserve">
     <value>Unsave messages from {0}</value>
   </data>
+  <data name="ClearLocalDatabase" xml:space="preserve">
+    <value>Clear Local Database</value>
+  </data>
   <data name="ClearMediaCache" xml:space="preserve">
     <value>Clear Cache</value>
   </data>
@@ -4334,6 +4550,48 @@ Minimum length is 5 characters.</value>
   <data name="CloudUpdateInstallingTitle" xml:space="preserve">
     <value>Please Wait...</value>
   </data>
+  <data name="CocoonFeature1Text" xml:space="preserve">
+    <value>No third party can access any data, such as translations, inside **@cocoon**</value>
+  </data>
+  <data name="CocoonFeature1TextLink" xml:space="preserve">
+    <value>https://t.me/cocoon</value>
+  </data>
+  <data name="CocoonFeature1Title" xml:space="preserve">
+    <value>Private</value>
+  </data>
+  <data name="CocoonFeature2Text" xml:space="preserve">
+    <value>Cocoon has allowed Telegram to reduce translation cost by 6x.</value>
+  </data>
+  <data name="CocoonFeature2Title" xml:space="preserve">
+    <value>Efficient</value>
+  </data>
+  <data name="CocoonFeature3Text" xml:space="preserve">
+    <value>Any developer can use Cocoon for AI features. Learn more at **cocoon.org**</value>
+  </data>
+  <data name="CocoonFeature3TextLink" xml:space="preserve">
+    <value>https://cocoon.org/</value>
+  </data>
+  <data name="CocoonFeature3Title" xml:space="preserve">
+    <value>For Everyone</value>
+  </data>
+  <data name="CocoonFooter" xml:space="preserve">
+    <value>Want to integrate Cocoon into your projects?
+Reach out at **t.me/cocoon?direct**</value>
+  </data>
+  <data name="CocoonFooterLink" xml:space="preserve">
+    <value>https://t.me/cocoon?direct</value>
+  </data>
+  <data name="CocoonPoweredBy" xml:space="preserve">
+    <value>Translations are powered by
+**🥚 Cocoon**.</value>
+  </data>
+  <data name="CocoonPoweredByLink" xml:space="preserve">
+    <value>**How does it work?**</value>
+  </data>
+  <data name="CocoonSubtitle" xml:space="preserve">
+    <value>Cocoon (**Co**nfidential **Co**mpute **O**pen **N**etwork)
+handles AI tasks safely and efficiently.</value>
+  </data>
   <data name="Code" xml:space="preserve">
     <value>Code</value>
   </data>
@@ -4361,6 +4619,12 @@ Minimum length is 5 characters.</value>
   <data name="Comments_other" xml:space="preserve">
     <value>{0} Comments</value>
   </data>
+  <data name="CommonGroups_one" xml:space="preserve">
+    <value>{0} group in common</value>
+  </data>
+  <data name="CommonGroups_other" xml:space="preserve">
+    <value>{0} groups in common</value>
+  </data>
   <data name="ConferenceCallIncoming" xml:space="preserve">
     <value>Incoming Group Call</value>
   </data>
@@ -4378,6 +4642,12 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="Confirm" xml:space="preserve">
     <value>Confirm</value>
+  </data>
+  <data name="ConfirmSensitiveContentText" xml:space="preserve">
+    <value>Confirm that you are over 18 years old and update your settings to see potentially explicit and sensitive content.</value>
+  </data>
+  <data name="ConfirmSensitiveContentTitle" xml:space="preserve">
+    <value>18+ Content</value>
   </data>
   <data name="Connected" xml:space="preserve">
     <value>Connected</value>
@@ -4404,7 +4674,7 @@ Minimum length is 5 characters.</value>
     <value>Try Connecting Through IPv6</value>
   </data>
   <data name="ContactInfoCommonGroups" xml:space="preserve">
-    <value>Shared groups</value>
+    <value>Common groups</value>
   </data>
   <data name="ContactInfoIsContact" xml:space="preserve">
     <value>Contact</value>
@@ -4489,8 +4759,14 @@ Minimum length is 5 characters.</value>
   <data name="Copy" xml:space="preserve">
     <value>Copy</value>
   </data>
+  <data name="CopyAsPath" xml:space="preserve">
+    <value>Copy as Path</value>
+  </data>
   <data name="CopyEmojiPreview" xml:space="preserve">
     <value>Copy Emoji</value>
+  </data>
+  <data name="CopyHashtag" xml:space="preserve">
+    <value>Copy Hashtag</value>
   </data>
   <data name="CopyImage" xml:space="preserve">
     <value>Copy Image</value>
@@ -4498,11 +4774,23 @@ Minimum length is 5 characters.</value>
   <data name="CopyLink" xml:space="preserve">
     <value>Copy Link</value>
   </data>
+  <data name="CopyMail" xml:space="preserve">
+    <value>Copy E-Mail</value>
+  </data>
+  <data name="CopyNumber" xml:space="preserve">
+    <value>Copy Number</value>
+  </data>
+  <data name="CopySelected" xml:space="preserve">
+    <value>Copy Selected</value>
+  </data>
   <data name="CopySelectedMessages" xml:space="preserve">
     <value>Copy Selected as Text</value>
   </data>
   <data name="CopySelectedText" xml:space="preserve">
     <value>Copy Selected Text</value>
+  </data>
+  <data name="CopyUsername" xml:space="preserve">
+    <value>Copy Username</value>
   </data>
   <data name="Country" xml:space="preserve">
     <value>Country</value>
@@ -4604,6 +4892,24 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DataUsage" xml:space="preserve">
     <value>Disk and network usage</value>
+  </data>
+  <data name="DateDay" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="DateMonth" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>Date Of Birth</value>
+  </data>
+  <data name="DateOfBirthAddToProfile" xml:space="preserve">
+    <value>Add to My Profile</value>
+  </data>
+  <data name="DateOfBirthHideYear" xml:space="preserve">
+    <value>Hide Year</value>
+  </data>
+  <data name="DateYear" xml:space="preserve">
+    <value>Year</value>
   </data>
   <data name="DayAgo" xml:space="preserve">
     <value>a day ago</value>
@@ -4711,7 +5017,7 @@ You can always switch back to the default Telegram theme here.</value>
     <value>Delete chat</value>
   </data>
   <data name="DeleteContact" xml:space="preserve">
-    <value>Delete contact</value>
+    <value>Delete Contact</value>
   </data>
   <data name="DeletedMessage" xml:space="preserve">
     <value>Deleted message</value>
@@ -4898,6 +5204,39 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DisableReactionsInfo" xml:space="preserve">
     <value>Members of the group can’t add any reactions to messages.</value>
+  </data>
+  <data name="DisableSharing" xml:space="preserve">
+    <value>Disable Sharing</value>
+  </data>
+  <data name="DisableSharingInfoButton" xml:space="preserve">
+    <value>Disable Sharing</value>
+  </data>
+  <data name="DisableSharingInfoHeader" xml:space="preserve">
+    <value>Disable Sharing</value>
+  </data>
+  <data name="DisableSharingInfoHeader1" xml:space="preserve">
+    <value>No Screenshots</value>
+  </data>
+  <data name="DisableSharingInfoHeader2" xml:space="preserve">
+    <value>No Forwarding</value>
+  </data>
+  <data name="DisableSharingInfoHeader3" xml:space="preserve">
+    <value>No Saving</value>
+  </data>
+  <data name="DisableSharingInfoText1" xml:space="preserve">
+    <value>Disable screenshots and screen recordings in this chat.</value>
+  </data>
+  <data name="DisableSharingInfoText2" xml:space="preserve">
+    <value>Disable message forwarding to other chats.</value>
+  </data>
+  <data name="DisableSharingInfoText3" xml:space="preserve">
+    <value>Disable copying texts and saving photos and videos to gallery.</value>
+  </data>
+  <data name="DisableSharingToastDisabled" xml:space="preserve">
+    <value>Sharing disabled for this chat</value>
+  </data>
+  <data name="DisableSharingToastEnabled" xml:space="preserve">
+    <value>Sharing enabled for this chat</value>
   </data>
   <data name="Discard" xml:space="preserve">
     <value>Discard</value>
@@ -5086,6 +5425,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="EditAdminGroupTransfer" xml:space="preserve">
     <value>Transfer Group Ownership</value>
   </data>
+  <data name="EditAdminManageDirect" xml:space="preserve">
+    <value>Manage Direct Messages</value>
+  </data>
   <data name="EditAdminPinMessages" xml:space="preserve">
     <value>Pin Messages</value>
   </data>
@@ -5141,7 +5483,7 @@ Anyone from the channel will be able to see messages in this group.</value>
     <value>You can transfer this channel to **{0}** only if you have:</value>
   </data>
   <data name="EditContact" xml:space="preserve">
-    <value>Edit contact</value>
+    <value>Edit Contact</value>
   </data>
   <data name="EditedMessage" xml:space="preserve">
     <value>edited</value>
@@ -5234,6 +5576,9 @@ If the number above is correct, please wait for the verification code.</value>
   <data name="EditProfileChannelTitle" xml:space="preserve">
     <value>Personal channel</value>
   </data>
+  <data name="EditToDo" xml:space="preserve">
+    <value>Edit</value>
+  </data>
   <data name="EditTopic" xml:space="preserve">
     <value>Edit Topic</value>
   </data>
@@ -5284,6 +5629,9 @@ If the number above is correct, please wait for the verification code.</value>
   </data>
   <data name="EmojiArchived" xml:space="preserve">
     <value>Emoji archived.</value>
+  </data>
+  <data name="EmojiPackCollectibles" xml:space="preserve">
+    <value>Collectibles</value>
   </data>
   <data name="EmojiRemoved" xml:space="preserve">
     <value>Emoji removed.</value>
@@ -5336,6 +5684,9 @@ You&apos;ll need the password you set up here to log in to your Telegram account
   </data>
   <data name="EnableReactionsChannelInfo" xml:space="preserve">
     <value>Allow subscribers to react to channel posts.</value>
+  </data>
+  <data name="EnableSharing" xml:space="preserve">
+    <value>Enable Sharing</value>
   </data>
   <data name="EnableSomeReactionsInfo" xml:space="preserve">
     <value>Members of the group can use only certain approved emoji as reactions to messages.</value>
@@ -5854,7 +6205,7 @@ Duration: {1}</value>
     <value>Add Fact or Context</value>
   </data>
   <data name="FactCheckToast" xml:space="preserve">
-    <value>This clarification was provided by a fact checking agency assigned by the department of the government of your country ({0}) responsible for combating misinformation.</value>
+    <value>This clarification was provided by Telegram.</value>
   </data>
   <data name="FactCheckWhat" xml:space="preserve">
     <value>what’s this?</value>
@@ -6376,16 +6727,22 @@ Duration: {1}</value>
     <value>Add this gift to your profile or convert it to {0} Stars.</value>
   </data>
   <data name="Gift2ActionOutInfo_one" xml:space="preserve">
-    <value>**{1}** can display this gift on their page or convert it to {0} Star.</value>
+    <value>**{1}** can add this gift to their profile or convert it to {0} Star.</value>
   </data>
   <data name="Gift2ActionOutInfo_other" xml:space="preserve">
-    <value>**{1}** can display this gift on their page or convert it to {0} Stars.</value>
+    <value>**{1}** can add this gift to their profile or convert it to {0} Stars.</value>
+  </data>
+  <data name="Gift2ActionReleasedBy" xml:space="preserve">
+    <value>Released by **{0}**</value>
   </data>
   <data name="Gift2ActionResell" xml:space="preserve">
     <value>Sell</value>
   </data>
   <data name="Gift2ActionSavedInfo" xml:space="preserve">
     <value>You added this gift to your profile.</value>
+  </data>
+  <data name="Gift2ActionSelfTitle" xml:space="preserve">
+    <value>Saved Gift</value>
   </data>
   <data name="Gift2ActionTitle" xml:space="preserve">
     <value>Gift from {0}</value>
@@ -6403,7 +6760,7 @@ Duration: {1}</value>
     <value>Unlist</value>
   </data>
   <data name="Gift2ActionUpgrade" xml:space="preserve">
-    <value>Tap “Unpack” to turn this gift into a unique collectible.</value>
+    <value>Tap &quot;Unpack&quot; to turn this gift into a unique collectible.</value>
   </data>
   <data name="Gift2ActionUpgradeOut" xml:space="preserve">
     <value>{0} can turn this gift to a unique collectible.</value>
@@ -6427,19 +6784,19 @@ Duration: {1}</value>
     <value>Gifted by {0} to {1} on {2}.</value>
   </data>
   <data name="Gift2AttributeOriginalDetailsComment" xml:space="preserve">
-    <value>Gifted by {0} to {1} on {2} with the comment: “{3}”</value>
+    <value>Gifted by {0} to {1} on {2} with the comment: &quot;{3}&quot;</value>
   </data>
   <data name="Gift2AttributeOriginalDetailsNoSender" xml:space="preserve">
     <value>Gifted to {0} on {1}.</value>
   </data>
   <data name="Gift2AttributeOriginalDetailsNoSenderComment" xml:space="preserve">
-    <value>Gifted to {0} on {1} with the comment: “{2}”</value>
+    <value>Gifted to {0} on {1} with the comment: &quot;{2}&quot;</value>
   </data>
   <data name="Gift2AttributeOriginalDetailsSelf" xml:space="preserve">
     <value>Saved by {0} on {1}.</value>
   </data>
   <data name="Gift2AttributeOriginalDetailsSelfComment" xml:space="preserve">
-    <value>Gifted by {0} on {1} with the comment: “{2}”</value>
+    <value>Gifted by {0} on {1} with the comment: &quot;{2}&quot;</value>
   </data>
   <data name="Gift2AttributeSymbol" xml:space="preserve">
     <value>Symbol</value>
@@ -6510,6 +6867,12 @@ Duration: {1}</value>
   <data name="Gift2CollectionNumber_other" xml:space="preserve">
     <value>Collectible #{0}</value>
   </data>
+  <data name="Gift2CollectionNumberBy_one" xml:space="preserve">
+    <value>Collectible #{0} by **{1}**</value>
+  </data>
+  <data name="Gift2CollectionNumberBy_other" xml:space="preserve">
+    <value>Collectible #{0} by **{1}**</value>
+  </data>
   <data name="Gift2ConvertButton" xml:space="preserve">
     <value>Convert</value>
   </data>
@@ -6565,8 +6928,14 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="Gift2FilterUnlimited" xml:space="preserve">
     <value>Unlimited</value>
   </data>
+  <data name="Gift2FilterUpgradable" xml:space="preserve">
+    <value>Upgradable</value>
+  </data>
   <data name="Gift2From" xml:space="preserve">
     <value>From</value>
+  </data>
+  <data name="Gift2GiftAnUpgrade" xml:space="preserve">
+    <value>Gift an Upgrade</value>
   </data>
   <data name="Gift2Hide" xml:space="preserve">
     <value>Hide My Name</value>
@@ -6584,10 +6953,10 @@ This action cannot be undone. This will permanently destroy the gift.</value>
     <value>Hide my name and message from visitors to my profile</value>
   </data>
   <data name="Gift2Info_one" xml:space="preserve">
-    <value>You can keep this gift in your Profile or convert it to **{0}** Star.</value>
+    <value>You can add this gift to your profile or convert it to **{0}** Star.</value>
   </data>
   <data name="Gift2Info_other" xml:space="preserve">
-    <value>You can keep this gift in your Profile or convert it to **{0}** Stars.</value>
+    <value>You can add this gift to your profile or convert it to **{0}** Stars.</value>
   </data>
   <data name="Gift2Info2Expired_one" xml:space="preserve">
     <value>You can add this gift of {0} Star to your profile.</value>
@@ -6611,10 +6980,10 @@ This action cannot be undone. This will permanently destroy the gift.</value>
     <value>Upgrade this gift for free to turn it into a unique collectible.</value>
   </data>
   <data name="Gift2InfoOut_one" xml:space="preserve">
-    <value>{1} can keep this gift in profile or convert it to **{0}** Star.</value>
+    <value>{1} can add this gift to their profile or convert it to **{0}** Star.</value>
   </data>
   <data name="Gift2InfoOut_other" xml:space="preserve">
-    <value>{1} can keep this gift in profile or convert it to **{0}** Stars.</value>
+    <value>{1} can add this gift to their profile or convert it to **{0}** Stars.</value>
   </data>
   <data name="Gift2InfoPinned" xml:space="preserve">
     <value>You added this gift to your profile.</value>
@@ -6627,6 +6996,9 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   </data>
   <data name="Gift2Limited1OfRibbon" xml:space="preserve">
     <value>1 of {0}</value>
+  </data>
+  <data name="Gift2LimitedPremium" xml:space="preserve">
+    <value>premium</value>
   </data>
   <data name="Gift2LimitedRibbon" xml:space="preserve">
     <value>limited</value>
@@ -6659,10 +7031,13 @@ This action cannot be undone. This will permanently destroy the gift.</value>
     <value>**Get More Stars &gt;**</value>
   </data>
   <data name="Gift2Months_one" xml:space="preserve">
-    <value>{0}-month</value>
+    <value>{0} month</value>
   </data>
   <data name="Gift2Months_other" xml:space="preserve">
-    <value>{0}-months</value>
+    <value>{0} months</value>
+  </data>
+  <data name="Gift2Myself" xml:space="preserve">
+    <value>buy yourself a gift</value>
   </data>
   <data name="Gift2OnSale" xml:space="preserve">
     <value>on sale</value>
@@ -6672,6 +7047,21 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   </data>
   <data name="Gift2OwnerChange" xml:space="preserve">
     <value>change</value>
+  </data>
+  <data name="Gift2PeerColorEmptyButton" xml:space="preserve">
+    <value>Browse gifts available for purchase &gt;</value>
+  </data>
+  <data name="Gift2PeerColorProfileEmptyTitle" xml:space="preserve">
+    <value>You don&apos;t have any gifts you can use as profile covers.</value>
+  </data>
+  <data name="Gift2PeerColorReplyEmptyTitle" xml:space="preserve">
+    <value>You don&apos;t have any gifts you can use as reply color.</value>
+  </data>
+  <data name="Gift2PerUserLimit_one" xml:space="preserve">
+    <value>You already sent **{0}** of these gifts, which is the limit.</value>
+  </data>
+  <data name="Gift2PerUserLimit_other" xml:space="preserve">
+    <value>You already sent **{0}** of these gifts, which is the limit.</value>
   </data>
   <data name="Gift2Pin" xml:space="preserve">
     <value>Pin</value>
@@ -6691,11 +7081,50 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="Gift2PremiumInfoLink" xml:space="preserve">
     <value>See Features &gt;</value>
   </data>
+  <data name="Gift2PremiumSubtitle" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to send these gifts and unlock access to powerful features.</value>
+  </data>
+  <data name="Gift2PremiumSubtitleMany_one" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to send up to **{0}** of these gifts and unlock powerful features.</value>
+  </data>
+  <data name="Gift2PremiumSubtitleMany_other" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to send up to **{0}** of these gifts and unlock powerful features.</value>
+  </data>
+  <data name="Gift2PremiumTitle" xml:space="preserve">
+    <value>Premium Gift</value>
+  </data>
+  <data name="Gift2PrepayUpgradeButton" xml:space="preserve">
+    <value>Pay ⭐️{0} for Upgrade</value>
+  </data>
+  <data name="Gift2PrepayUpgradeFeature1Text" xml:space="preserve">
+    <value>{0} will get a unique number, model, backdrop, and symbol for the gift.</value>
+  </data>
+  <data name="Gift2PrepayUpgradeFeature2Text" xml:space="preserve">
+    <value>{0} will be able to send the gift to anyone on Telegram.</value>
+  </data>
+  <data name="Gift2PrepayUpgradeFeature3Text" xml:space="preserve">
+    <value>{0} will be able to auction the gift on third-party NFT marketplaces.</value>
+  </data>
+  <data name="Gift2PrepayUpgradeText" xml:space="preserve">
+    <value>Let {0} turn your gift into a unique collectible.</value>
+  </data>
+  <data name="Gift2PrepayUpgradeTitle" xml:space="preserve">
+    <value>Make Unique</value>
+  </data>
+  <data name="Gift2PreviewRandomTraits" xml:space="preserve">
+    <value>Random Traits</value>
+  </data>
+  <data name="Gift2PreviewSelectedTraits" xml:space="preserve">
+    <value>Selected Traits</value>
+  </data>
   <data name="Gift2ProfileInvisible" xml:space="preserve">
     <value>This gift is hidden. Only you can see it.</value>
   </data>
   <data name="Gift2ProfileInvisible3" xml:space="preserve">
-    <value>This gift is hidden from your page. **Show &gt;**</value>
+    <value>This gift is hidden from your profile. **Show &gt;**</value>
+  </data>
+  <data name="Gift2ProfileInvisible4" xml:space="preserve">
+    <value>This gift is hidden. **Show on Profile &gt;**</value>
   </data>
   <data name="Gift2ProfileMakeInvisible" xml:space="preserve">
     <value>Hide from my profile</value>
@@ -6707,7 +7136,10 @@ This action cannot be undone. This will permanently destroy the gift.</value>
     <value>This gift is visible on your profile.</value>
   </data>
   <data name="Gift2ProfileVisible3" xml:space="preserve">
-    <value>This gift is visible on your page. **Hide &gt;**</value>
+    <value>This gift is visible on your profile. **Hide &gt;**</value>
+  </data>
+  <data name="Gift2ProfileVisible4" xml:space="preserve">
+    <value>This gift is visible. **Hide from profile &gt;**</value>
   </data>
   <data name="Gift2Quantity" xml:space="preserve">
     <value>Quantity</value>
@@ -6726,6 +7158,18 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   </data>
   <data name="Gift2RarityHint" xml:space="preserve">
     <value>Only {0} of such collectibles have this attribute</value>
+  </data>
+  <data name="Gift2ReleasedBy" xml:space="preserve">
+    <value>released by **{0}**</value>
+  </data>
+  <data name="Gift2RemoveDescriptionButton" xml:space="preserve">
+    <value>Remove for ⭐️{0}</value>
+  </data>
+  <data name="Gift2RemoveDescriptionText" xml:space="preserve">
+    <value>Do you want to permanently remove this description from your gift?</value>
+  </data>
+  <data name="Gift2RemoveDescriptionTitle" xml:space="preserve">
+    <value>Remove Description</value>
   </data>
   <data name="Gift2Resale" xml:space="preserve">
     <value>resale</value>
@@ -6787,6 +7231,12 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="Gift2SendPremium" xml:space="preserve">
     <value>Send a Gift for {0}</value>
   </data>
+  <data name="Gift2SentRemainsLimit_one" xml:space="preserve">
+    <value>You can send **{0}** more.</value>
+  </data>
+  <data name="Gift2SentRemainsLimit_other" xml:space="preserve">
+    <value>You can send **{0}** more.</value>
+  </data>
   <data name="Gift2ShowGift" xml:space="preserve">
     <value>Show</value>
   </data>
@@ -6832,6 +7282,15 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="Gift2StarsInfoLink" xml:space="preserve">
     <value>What are Stars &gt;</value>
   </data>
+  <data name="Gift2StarsSelf" xml:space="preserve">
+    <value>Buy a gift</value>
+  </data>
+  <data name="Gift2StarsSelfInfo1" xml:space="preserve">
+    <value>Buy yourself a gift to display on your page or reserve for later.</value>
+  </data>
+  <data name="Gift2StarsSelfInfo2" xml:space="preserve">
+    <value>Limited-edition gifts upgraded to collectibles can be gifted to others later.</value>
+  </data>
   <data name="Gift2Status" xml:space="preserve">
     <value>Status</value>
   </data>
@@ -6843,6 +7302,9 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   </data>
   <data name="Gift2TabAll" xml:space="preserve">
     <value>All Gifts</value>
+  </data>
+  <data name="Gift2TabCollectibles" xml:space="preserve">
+    <value>Collectibles</value>
   </data>
   <data name="Gift2TabInStock" xml:space="preserve">
     <value>In Stock</value>
@@ -6955,6 +7417,9 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="Gift2UpgradeButtonFree" xml:space="preserve">
     <value>Upgrade for Free</value>
   </data>
+  <data name="Gift2UpgradeButtonGift" xml:space="preserve">
+    <value>Upgrade</value>
+  </data>
   <data name="Gift2UpgradeFeature1Text" xml:space="preserve">
     <value>Get a unique number, model, backdrop and a symbol for your gift.</value>
   </data>
@@ -7009,11 +7474,257 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="Gift2Wear" xml:space="preserve">
     <value>Wear</value>
   </data>
+  <data name="GiftAddedToCollectionTitle_one" xml:space="preserve">
+    <value>{0} gift saved to **{1}**</value>
+  </data>
+  <data name="GiftAddedToCollectionTitle_other" xml:space="preserve">
+    <value>{0} gifts saved to **{1}**</value>
+  </data>
+  <data name="GiftAddedToCollectionX" xml:space="preserve">
+    <value>This gift has been added to **{0}** collection.</value>
+  </data>
+  <data name="GiftCraft" xml:space="preserve">
+    <value>Craft</value>
+  </data>
+  <data name="GiftCraftButton" xml:space="preserve">
+    <value>Craft Gift</value>
+  </data>
+  <data name="GiftCraftButtonEmpty" xml:space="preserve">
+    <value>Tap + to add your first gift</value>
+  </data>
+  <data name="GiftCraftButtonFailed" xml:space="preserve">
+    <value>Craft New Gift</value>
+  </data>
+  <data name="GiftCrafted" xml:space="preserve">
+    <value>crafted</value>
+  </data>
+  <data name="GiftCraftFailedText_one" xml:space="preserve">
+    <value>The crafting attempt was unsuccessful.
+**{0}** gift was lost.</value>
+  </data>
+  <data name="GiftCraftFailedText_other" xml:space="preserve">
+    <value>The crafting attempt was unsuccessful.
+**{0}** gifts were lost.</value>
+  </data>
+  <data name="GiftCraftFailedTitle" xml:space="preserve">
+    <value>Crafting Failed</value>
+  </data>
+  <data name="GiftCraftProgressSuccessChance" xml:space="preserve">
+    <value>{0} success chance</value>
+  </data>
+  <data name="GiftCraftProgressText" xml:space="preserve">
+    <value>If crafting fails, all selected gifts
+will be consumed.</value>
+  </data>
+  <data name="GiftCraftProgressTitle" xml:space="preserve">
+    <value>Crafting</value>
+  </data>
+  <data name="GiftCraftSuccessChance" xml:space="preserve">
+    <value>**{0}** Success Chance</value>
+  </data>
+  <data name="GiftCraftText1" xml:space="preserve">
+    <value>Add up to **4** gifts to craft new</value>
+  </data>
+  <data name="GiftCraftText2" xml:space="preserve">
+    <value>**{0} #{1}**.
+
+If crafting fails, all selected gifts
+will be **lost**.</value>
+  </data>
+  <data name="GiftCraftTextEmpty1" xml:space="preserve">
+    <value>Add up to **4** gifts to craft new</value>
+  </data>
+  <data name="GiftCraftTextEmpty2" xml:space="preserve">
+    <value>**{0}** gift.
+
+If crafting fails, all selected gifts
+will be **lost**.</value>
+  </data>
+  <data name="GiftCraftTitle" xml:space="preserve">
+    <value>Craft Gift</value>
+  </data>
+  <data name="GiftCraftViewAllVariants" xml:space="preserve">
+    <value>View all craftable variants &gt;</value>
+  </data>
+  <data name="GiftLocked" xml:space="preserve">
+    <value>Gift Locked</value>
+  </data>
   <data name="GiftMonths_one" xml:space="preserve">
     <value>{0}-month</value>
   </data>
   <data name="GiftMonths_other" xml:space="preserve">
     <value>{0}-months</value>
+  </data>
+  <data name="GiftOfferAccept" xml:space="preserve">
+    <value>Accept</value>
+  </data>
+  <data name="GiftOfferAmount" xml:space="preserve">
+    <value>⭐️ {0}</value>
+  </data>
+  <data name="GiftOfferAmountHigher" xml:space="preserve">
+    <value>{0} higher</value>
+  </data>
+  <data name="GiftOfferAmountHigherHint" xml:space="preserve">
+    <value>The value of this gift is **{0} higher** than the offer</value>
+  </data>
+  <data name="GiftOfferAmountHigherHint2" xml:space="preserve">
+    <value>The price of this offer is **{0}** higher
+than the average price for {1}</value>
+  </data>
+  <data name="GiftOfferAmountLower" xml:space="preserve">
+    <value>{0} lower</value>
+  </data>
+  <data name="GiftOfferAmountLowerHint" xml:space="preserve">
+    <value>The value of this gift is **{0} lower** than the offer</value>
+  </data>
+  <data name="GiftOfferAmountLowerHint2" xml:space="preserve">
+    <value>The price of this offer is **{0}** lower
+than the average price for {1}</value>
+  </data>
+  <data name="GiftOfferButtonStars" xml:space="preserve">
+    <value>Offer ⭐️{0}</value>
+  </data>
+  <data name="GiftOfferConfirmSend" xml:space="preserve">
+    <value>Confirm Offer</value>
+  </data>
+  <data name="GiftOfferDecline" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="GiftOfferDuration" xml:space="preserve">
+    <value>Offer Duration</value>
+  </data>
+  <data name="GiftOfferDurationInfoStars" xml:space="preserve">
+    <value>Choose how long **{0}** has to accept your offer. When it expires, your **Stars** will be refunded.</value>
+  </data>
+  <data name="GiftOfferDurationInfoTON" xml:space="preserve">
+    <value>Choose how long **{0}** has to accept your offer. When it expires, your **TON** will be refunded.</value>
+  </data>
+  <data name="GiftOfferHours_one" xml:space="preserve">
+    <value>{0} hour</value>
+  </data>
+  <data name="GiftOfferHours_other" xml:space="preserve">
+    <value>{0} hours</value>
+  </data>
+  <data name="GiftOfferOfferedTextStars" xml:space="preserve">
+    <value>**{0}** offered you **{1} Stars** for **{2}**.</value>
+  </data>
+  <data name="GiftOfferOfferedTextStarsOut" xml:space="preserve">
+    <value>You offered **{0}** **{1} Stars** for **{2}**.</value>
+  </data>
+  <data name="GiftOfferOfferedTextStarsRejected" xml:space="preserve">
+    <value>**{0}** rejected your offer of **{1} Stars** for **{2}**.</value>
+  </data>
+  <data name="GiftOfferOfferedTextStarsRejectedOut" xml:space="preserve">
+    <value>You rejected **{0}&apos;s** offer to buy your **{2}** for **{1} Stars**.</value>
+  </data>
+  <data name="GiftOfferOfferedTextTON" xml:space="preserve">
+    <value>**{0}** offered you **{1} TON** for **{2}**.</value>
+  </data>
+  <data name="GiftOfferOfferedTextTONOut" xml:space="preserve">
+    <value>You offered **{0}** **{1} TON** for **{2}**.</value>
+  </data>
+  <data name="GiftOfferOfferedTextTONRejected" xml:space="preserve">
+    <value>**{0}** rejected your offer of **{1} TON** for **{2}**.</value>
+  </data>
+  <data name="GiftOfferOfferedTextTONRejectedOut" xml:space="preserve">
+    <value>You rejected **{0}&apos;s** offer to buy your **{2}** for **{1} TON**.</value>
+  </data>
+  <data name="GiftOfferPay" xml:space="preserve">
+    <value>Pay ⭐️{0}</value>
+  </data>
+  <data name="GiftOfferPayMulti" xml:space="preserve">
+    <value>Pay {0} and {0}</value>
+  </data>
+  <data name="GiftOfferPayMultiPart" xml:space="preserve">
+    <value>⭐️{0}</value>
+  </data>
+  <data name="GiftOfferRejectConfirmConfirm" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="GiftOfferRejectConfirmText" xml:space="preserve">
+    <value>Are you sure you want to reject the offer from **{0}**?</value>
+  </data>
+  <data name="GiftOfferRejectConfirmTitle" xml:space="preserve">
+    <value>Reject Offer</value>
+  </data>
+  <data name="GiftOfferRowDuration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="GiftOfferRowFee" xml:space="preserve">
+    <value>Fee</value>
+  </data>
+  <data name="GiftOfferRowOffer" xml:space="preserve">
+    <value>Offer</value>
+  </data>
+  <data name="GiftOfferRowValue" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="GiftOfferSellFor" xml:space="preserve">
+    <value>Sell for ⭐️{0}</value>
+  </data>
+  <data name="GiftOfferSentText" xml:space="preserve">
+    <value>You successfully sent an offer for **{0}** to **{1}**.</value>
+  </data>
+  <data name="GiftOfferSentTitle" xml:space="preserve">
+    <value>Gift offer sent</value>
+  </data>
+  <data name="GiftOfferStarsToOffer" xml:space="preserve">
+    <value>Stars to offer</value>
+  </data>
+  <data name="GiftOfferStarsToOfferInfo" xml:space="preserve">
+    <value>Enter the amount of Stars you’d like to offer for **{0}**.</value>
+  </data>
+  <data name="GiftOfferStarsToOfferInfoIsHigh" xml:space="preserve">
+    <value>This offer is too high. The maximum offer for **{1}** is **{0} Stars**.</value>
+  </data>
+  <data name="GiftOfferStarsToOfferInfoIsLow" xml:space="preserve">
+    <value>This offer is too low. The minimum offer for **{1}** is **{0} Stars**.</value>
+  </data>
+  <data name="GiftOfferStatusAccepted" xml:space="preserve">
+    <value>This offer was accepted.</value>
+  </data>
+  <data name="GiftOfferStatusExpired" xml:space="preserve">
+    <value>This offer has expired.</value>
+  </data>
+  <data name="GiftOfferStatusPending" xml:space="preserve">
+    <value>This offer expires in **{0}**.</value>
+  </data>
+  <data name="GiftOfferStatusRejected" xml:space="preserve">
+    <value>This offer was rejected.</value>
+  </data>
+  <data name="GiftOfferToBuyMenu" xml:space="preserve">
+    <value>Offer to buy</value>
+  </data>
+  <data name="GiftOfferToBuyTitle" xml:space="preserve">
+    <value>Offer to Buy</value>
+  </data>
+  <data name="GiftOfferTONToOffer" xml:space="preserve">
+    <value>TON to offer</value>
+  </data>
+  <data name="GiftOfferTONToOfferInfo" xml:space="preserve">
+    <value>Enter the amount of TON you’d like to offer for **{0}**.</value>
+  </data>
+  <data name="GiftOfferTONToOfferInfoIsHigh" xml:space="preserve">
+    <value>This offer is too high. The maximum offer for **{1}** is **{0} TON**.</value>
+  </data>
+  <data name="GiftOfferTONToOfferInfoIsLow" xml:space="preserve">
+    <value>This offer is too low. The minimum offer for **{1}** is **{0} TON**.</value>
+  </data>
+  <data name="GiftOfferTransferInfoTextSellStars" xml:space="preserve">
+    <value>Do you want to sell **{2}** to **{1}** for **{0} Stars**?
+
+You will receive **{3} Stars** after fees.</value>
+  </data>
+  <data name="GiftOfferTransferInfoTextSellTON" xml:space="preserve">
+    <value>Do you want to sell **{2}** to **{1}** for **{0} TON**?
+
+You will receive **{3} TON** after fees.</value>
+  </data>
+  <data name="GiftOfferTransferInfoTextStars" xml:space="preserve">
+    <value>Do you want to offer **{0} Stars** to **{1}** for **{2}**?</value>
+  </data>
+  <data name="GiftOfferTransferInfoTextTON" xml:space="preserve">
+    <value>Do you want to offer **{0} TON** to **{1}** for **{2}**?</value>
   </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Gift Premium</value>
@@ -7042,6 +7753,114 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="GiftPremiumUseGiftBtn" xml:space="preserve">
     <value>Use Gift</value>
   </data>
+  <data name="GiftPreviewBackdrop" xml:space="preserve">
+    <value>backdrop</value>
+  </data>
+  <data name="GiftPreviewBackdrops" xml:space="preserve">
+    <value>Backdrops</value>
+  </data>
+  <data name="GiftPreviewCountBackdrops_one" xml:space="preserve">
+    <value>This collectible features **{0}** unique backdrop</value>
+  </data>
+  <data name="GiftPreviewCountBackdrops_other" xml:space="preserve">
+    <value>This collectible features **{0}** unique backdrops</value>
+  </data>
+  <data name="GiftPreviewCountModels_one" xml:space="preserve">
+    <value>This collectible features **{0}** unique models</value>
+  </data>
+  <data name="GiftPreviewCountModels_other" xml:space="preserve">
+    <value>This collectible features **{0}** unique models</value>
+  </data>
+  <data name="GiftPreviewCountSymbols_one" xml:space="preserve">
+    <value>This collectible features **{0}** unique symbol</value>
+  </data>
+  <data name="GiftPreviewCountSymbols_other" xml:space="preserve">
+    <value>This collectible features **{0}** unique symbols</value>
+  </data>
+  <data name="GiftPreviewModel" xml:space="preserve">
+    <value>model</value>
+  </data>
+  <data name="GiftPreviewModels" xml:space="preserve">
+    <value>Models</value>
+  </data>
+  <data name="GiftPreviewSymbol" xml:space="preserve">
+    <value>symbol</value>
+  </data>
+  <data name="GiftPreviewSymbols" xml:space="preserve">
+    <value>Symbols</value>
+  </data>
+  <data name="GiftRarityEpic" xml:space="preserve">
+    <value>epic</value>
+  </data>
+  <data name="GiftRarityLegendary" xml:space="preserve">
+    <value>legendary</value>
+  </data>
+  <data name="GiftRarityRare" xml:space="preserve">
+    <value>rare</value>
+  </data>
+  <data name="GiftRarityUncommon" xml:space="preserve">
+    <value>uncommon</value>
+  </data>
+  <data name="GiftRemovedFromCollectionTitle_one" xml:space="preserve">
+    <value>{0} gift removed from **{1}**</value>
+  </data>
+  <data name="GiftRemovedFromCollectionTitle_other" xml:space="preserve">
+    <value>{0} gifts removed from **{1}**</value>
+  </data>
+  <data name="GiftRemovedFromCollectionX" xml:space="preserve">
+    <value>This gift has been removed from **{0}** collection.</value>
+  </data>
+  <data name="GiftsCollectionAddCollection" xml:space="preserve">
+    <value>Add Collection</value>
+  </data>
+  <data name="GiftsCollectionAddHint" xml:space="preserve">
+    <value>Choose a name for your collection and add your gifts.</value>
+  </data>
+  <data name="GiftsCollectionAddToCollection" xml:space="preserve">
+    <value>Add to Collection</value>
+  </data>
+  <data name="GiftsCollectionCreateNew" xml:space="preserve">
+    <value>Create a New Collection</value>
+  </data>
+  <data name="GiftsCollectionMenuAddGifts" xml:space="preserve">
+    <value>Add Gifts</value>
+  </data>
+  <data name="GiftsCollectionMenuDeleteCollection" xml:space="preserve">
+    <value>Delete Collection</value>
+  </data>
+  <data name="GiftsCollectionMenuDeleteCollectionAsk" xml:space="preserve">
+    <value>Are you sure you want to delete the **{0}** collection?</value>
+  </data>
+  <data name="GiftsCollectionMenuEditName" xml:space="preserve">
+    <value>Edit Name</value>
+  </data>
+  <data name="GiftsCollectionMenuRemoveFromCollection" xml:space="preserve">
+    <value>Remove from Collection</value>
+  </data>
+  <data name="GiftsCollectionMenuShareLink" xml:space="preserve">
+    <value>Share Link</value>
+  </data>
+  <data name="GiftsCollectionNameAllGifts" xml:space="preserve">
+    <value>All Gifts</value>
+  </data>
+  <data name="GiftsCollectionNewCollection" xml:space="preserve">
+    <value>New Collection</value>
+  </data>
+  <data name="GiftsCollectionOrganizeDescription" xml:space="preserve">
+    <value>Add some of your gifts to this collection.</value>
+  </data>
+  <data name="GiftsCollectionOrganizeTitle" xml:space="preserve">
+    <value>Organize Your Gifts</value>
+  </data>
+  <data name="GiftsCollectionRename" xml:space="preserve">
+    <value>Rename Collection</value>
+  </data>
+  <data name="GiftsCollectionRenameHint" xml:space="preserve">
+    <value>Choose a new name for your collection.</value>
+  </data>
+  <data name="GiftsCollectionTitleInputHint" xml:space="preserve">
+    <value>Title</value>
+  </data>
   <data name="GiftsPinLimit_one" xml:space="preserve">
     <value>You can&apos;t pin more than {0} gift.</value>
   </data>
@@ -7063,8 +7882,65 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="GiftTelegramPremiumDescription" xml:space="preserve">
     <value>Give **{0}** access to exclusive features with **Telegram Premium**.</value>
   </data>
+  <data name="GiftTelegramPremiumOrStarsTitle" xml:space="preserve">
+    <value>Gift Premium or Stars</value>
+  </data>
   <data name="GiftTelegramPremiumTitle" xml:space="preserve">
     <value>Gift Telegram Premium</value>
+  </data>
+  <data name="GiftThemesSetIn" xml:space="preserve">
+    <value>Set as Theme in...</value>
+  </data>
+  <data name="GiftThemesSetInReuseConfirm" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="GiftThemesSetInReuseInfo" xml:space="preserve">
+    <value>This gift is already your theme in the chat with **{0}**. Remove it there and use it here instead?</value>
+  </data>
+  <data name="GiftValue2" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="GiftValue2LearnMore" xml:space="preserve">
+    <value>learn more</value>
+  </data>
+  <data name="GiftValueAverage" xml:space="preserve">
+    <value>This is average sale price of **{0}** on Telegram and Fragment over the past month.</value>
+  </data>
+  <data name="GiftValueAveragePrice" xml:space="preserve">
+    <value>Average Price</value>
+  </data>
+  <data name="GiftValueAveragePriceInfo" xml:space="preserve">
+    <value>**{0}** is the average sale price of **{1}** gifts over the past month.</value>
+  </data>
+  <data name="GiftValueInitialPrice" xml:space="preserve">
+    <value>Initial Price</value>
+  </data>
+  <data name="GiftValueInitialSale" xml:space="preserve">
+    <value>Initial Sale</value>
+  </data>
+  <data name="GiftValueLastFragment" xml:space="preserve">
+    <value>This is the price at which **{0}** was last sold on Fragment.</value>
+  </data>
+  <data name="GiftValueLastPrice" xml:space="preserve">
+    <value>Last Price</value>
+  </data>
+  <data name="GiftValueLastSale" xml:space="preserve">
+    <value>Last Sale</value>
+  </data>
+  <data name="GiftValueLastTelegram" xml:space="preserve">
+    <value>This is the price at which **{0}** was last sold on Telegram.</value>
+  </data>
+  <data name="GiftValueMinPrice" xml:space="preserve">
+    <value>Minimum Price</value>
+  </data>
+  <data name="GiftValueMinPriceInfo" xml:space="preserve">
+    <value>**{0}** is the floor price for **{1}** gifts listed on Telegram and Fragment.</value>
+  </data>
+  <data name="GiftValueOnSaleFragment" xml:space="preserve">
+    <value>for sale on Fragment &gt;</value>
+  </data>
+  <data name="GiftValueOnSaleTelegram" xml:space="preserve">
+    <value>for sale on Telegram &gt;</value>
   </data>
   <data name="GlobalAttachGifRestricted" xml:space="preserve">
     <value>Sending GIFs is not allowed in this group.</value>
@@ -7160,6 +8036,12 @@ about Telegram?</value>
   <data name="GroupCallLinkText2Two" xml:space="preserve">
     <value>**{0}** and **{1}** already joined this call.</value>
   </data>
+  <data name="GroupCallLinkText2Unknown_one" xml:space="preserve">
+    <value>**{0}** person already joined this call.</value>
+  </data>
+  <data name="GroupCallLinkText2Unknown_other" xml:space="preserve">
+    <value>**{0}** people already joined this call.</value>
+  </data>
   <data name="GroupCallLinkTitle" xml:space="preserve">
     <value>Group Call</value>
   </data>
@@ -7187,6 +8069,24 @@ about Telegram?</value>
   <data name="GroupEmojiStatusInfo" xml:space="preserve">
     <value>Choose a status that will be shown next to the group&apos;s name.</value>
   </data>
+  <data name="GroupJoinLinkText2Many_one" xml:space="preserve">
+    <value>**{1}**, **{2}** and **{0}** more person already joined this group.</value>
+  </data>
+  <data name="GroupJoinLinkText2Many_other" xml:space="preserve">
+    <value>**{1}**, **{2}** and **{0}** more people already joined this group.</value>
+  </data>
+  <data name="GroupJoinLinkText2One" xml:space="preserve">
+    <value>**{0}** already joined this group.</value>
+  </data>
+  <data name="GroupJoinLinkText2Two" xml:space="preserve">
+    <value>**{0}** and **{1}** already joined this group.</value>
+  </data>
+  <data name="GroupJoinLinkText2Unknown_one" xml:space="preserve">
+    <value>**{0}** person already joined this group.</value>
+  </data>
+  <data name="GroupJoinLinkText2Unknown_other" xml:space="preserve">
+    <value>**{0}** people already joined this group.</value>
+  </data>
   <data name="GroupMembersChartTitle" xml:space="preserve">
     <value>Group members</value>
   </data>
@@ -7200,7 +8100,7 @@ about Telegram?</value>
     <value>Set price per message</value>
   </data>
   <data name="GroupMessagesPriceInfo" xml:space="preserve">
-    <value>Your group will receive {0}% of the selected fee (~{1}) for each incoming message.</value>
+    <value>Your group will receive {0} of the selected fee (~{1}$) for each incoming message.</value>
   </data>
   <data name="GroupName" xml:space="preserve">
     <value>Group name</value>
@@ -7362,8 +8262,14 @@ They can still join via an invite link as long as they are not on the Removed Us
   <data name="HideOnTop" xml:space="preserve">
     <value>Hide</value>
   </data>
+  <data name="HidePinnedMessage2" xml:space="preserve">
+    <value>Hide Pinned Message</value>
+  </data>
   <data name="HidePinnedMessages" xml:space="preserve">
     <value>HIDE PINNED MESSAGES</value>
+  </data>
+  <data name="HidePinnedMessages2" xml:space="preserve">
+    <value>Hide Pinned Messages</value>
   </data>
   <data name="HideReadTime" xml:space="preserve">
     <value>Hide Read Time</value>
@@ -7381,6 +8287,9 @@ This setting does not affect group chats.</value>
   </data>
   <data name="HideSenderNames" xml:space="preserve">
     <value>Hide Sender Names</value>
+  </data>
+  <data name="HideSendersName" xml:space="preserve">
+    <value>Hide sender’s name</value>
   </data>
   <data name="HistoryCleared" xml:space="preserve">
     <value>History was cleared</value>
@@ -7412,11 +8321,20 @@ This setting does not affect group chats.</value>
   <data name="IfInactiveFor" xml:space="preserve">
     <value>If inactive for</value>
   </data>
+  <data name="ImageCopied" xml:space="preserve">
+    <value>Image copied to clipboard.</value>
+  </data>
   <data name="Import" xml:space="preserve">
     <value>Import</value>
   </data>
   <data name="ImportContacts" xml:space="preserve">
     <value>Import Contacts</value>
+  </data>
+  <data name="InactiveChannelSignature" xml:space="preserve">
+    <value>channel, inactive for {0}</value>
+  </data>
+  <data name="InactiveChatSignature" xml:space="preserve">
+    <value>{0}, inactive for {1}</value>
   </data>
   <data name="InAppNotifications" xml:space="preserve">
     <value>In-app notifications</value>
@@ -7499,8 +8417,29 @@ This setting does not affect group chats.</value>
   <data name="InviteLinkCount_other" xml:space="preserve">
     <value>{0} invite links</value>
   </data>
+  <data name="InviteLinkPrivate" xml:space="preserve">
+    <value>This topic link will only work for group members</value>
+  </data>
   <data name="InviteLinks" xml:space="preserve">
     <value>Invite Links</value>
+  </data>
+  <data name="InviteRestrictedUsers_one" xml:space="preserve">
+    <value>**{0} user** restricts adding them to groups. You can send them an invite link instead.</value>
+  </data>
+  <data name="InviteRestrictedUsers_other" xml:space="preserve">
+    <value>**{0} users** restrict adding them to groups. You can send them an invite link instead.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_one" xml:space="preserve">
+    <value>**{0} user** can only be invited via link, but you don&apos;t have permission to share invite links to this group.</value>
+  </data>
+  <data name="InviteRestrictedUsers2_other" xml:space="preserve">
+    <value>**{0} users** can only be invited via link, but you don&apos;t have permission to share invite links to this group.</value>
+  </data>
+  <data name="InviteRestrictedUsers2One" xml:space="preserve">
+    <value>**{0}** can only be invited via link, but you don&apos;t have permission to share invite links to this group.</value>
+  </data>
+  <data name="InviteRestrictedUsersOne" xml:space="preserve">
+    <value>**{0}** restricts adding them to groups. You can send them an invite link instead.</value>
   </data>
   <data name="InviteToChannelError" xml:space="preserve">
     <value>Sorry, you can&apos;t add this user to channels because of their privacy settings.</value>
@@ -7579,6 +8518,9 @@ This setting does not affect group chats.</value>
 
 All media will stay in the Telegram cloud and can be re-downloaded if you need it again.</value>
   </data>
+  <data name="KeepMediaInfoPart" xml:space="preserve">
+    <value>Photos, videos and other files from cloud chats that you have **not accessed** during this period will be removed from this device to save disk space.</value>
+  </data>
   <data name="KickFromGroup" xml:space="preserve">
     <value>Remove from group</value>
   </data>
@@ -7634,6 +8576,9 @@ You can change your language back at any time in Settings.</value>
   </data>
   <data name="LargeEmoji" xml:space="preserve">
     <value>Large Emoji</value>
+  </data>
+  <data name="LastActiveCommunities" xml:space="preserve">
+    <value>Least active communities</value>
   </data>
   <data name="LastName" xml:space="preserve">
     <value>Last name (optional)</value>
@@ -7706,6 +8651,12 @@ You can change your language back at any time in Settings.</value>
   </data>
   <data name="LeaveChannelMenu" xml:space="preserve">
     <value>Leave channel</value>
+  </data>
+  <data name="LeaveCommunities_one" xml:space="preserve">
+    <value>Leave community</value>
+  </data>
+  <data name="LeaveCommunities_other" xml:space="preserve">
+    <value>Leave {0} communities</value>
   </data>
   <data name="LeaveMegaMenu" xml:space="preserve">
     <value>Leave group</value>
@@ -7804,6 +8755,9 @@ Upgrade to **Telegram Premium** to create up to **{1}**.</value>
   <data name="LimitReachedPinDialogsPremium" xml:space="preserve">
     <value>Sorry, you can&apos;t pin more than {0} chats to the top. Unpin some that are currently pinned.</value>
   </data>
+  <data name="LimitReachedPinnedTopics" xml:space="preserve">
+    <value>Sorry, you can&apos;t pin more than {0} topics to the top.</value>
+  </data>
   <data name="LimitReachedPublicLinks" xml:space="preserve">
     <value>You have reserved too many public links. Try revoking the link from an older group or channel, or subscribe to **Telegram Premium** to double the limit to **{1}** public links.</value>
   </data>
@@ -7895,6 +8849,15 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   <data name="Listening" xml:space="preserve">
     <value>listening</value>
   </data>
+  <data name="LiteOptionsAnimationEffects" xml:space="preserve">
+    <value>Animation Effects</value>
+  </data>
+  <data name="LiteOptionsAnimationEffectsDisabled" xml:space="preserve">
+    <value>Animation effects are currently disabled system-wide. You can change this in **Accessibility &gt; Visual effects**.</value>
+  </data>
+  <data name="LiteOptionsAnimationEffectsInfo" xml:space="preserve">
+    <value>Enable or disable animation effects throughout the app.</value>
+  </data>
   <data name="LiteOptionsAutoplayChat" xml:space="preserve">
     <value>Autoplay in chat</value>
   </data>
@@ -7955,6 +8918,45 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   <data name="LiteSmoothTransitionsInfo" xml:space="preserve">
     <value>You can disable animated transitions between different sections of the app.</value>
   </data>
+  <data name="LiveStoryBadge" xml:space="preserve">
+    <value>LIVE</value>
+  </data>
+  <data name="LiveStoryHighlightFeatureEmoji" xml:space="preserve">
+    <value>emoji</value>
+  </data>
+  <data name="LiveStoryHighlightFeatureLength" xml:space="preserve">
+    <value>characters</value>
+  </data>
+  <data name="LiveStoryHighlightFeaturePin" xml:space="preserve">
+    <value>pin in chat</value>
+  </data>
+  <data name="LiveStoryMessageEditStars" xml:space="preserve">
+    <value>Edit Stars</value>
+  </data>
+  <data name="LiveStoryMessageRemoveStars" xml:space="preserve">
+    <value>Remove Stars</value>
+  </data>
+  <data name="LiveStoryMessageSentDateTimeAt" xml:space="preserve">
+    <value>Sent {0} at {1}</value>
+  </data>
+  <data name="LiveStoryMessageSentTodayAt" xml:space="preserve">
+    <value>Sent today at {0}</value>
+  </data>
+  <data name="LiveStoryMessageSentYesterdayAt" xml:space="preserve">
+    <value>Sent yesterday at {0}</value>
+  </data>
+  <data name="LiveStoryReactText" xml:space="preserve">
+    <value>Highlight and pin your message by sending Stars to **{0}**</value>
+  </data>
+  <data name="LiveStoryReactTitle" xml:space="preserve">
+    <value>React with Stars</value>
+  </data>
+  <data name="LiveStoryWatching_one" xml:space="preserve">
+    <value>{0} watching</value>
+  </data>
+  <data name="LiveStoryWatching_other" xml:space="preserve">
+    <value>{0} watching</value>
+  </data>
   <data name="Loading" xml:space="preserve">
     <value>Loading...</value>
   </data>
@@ -7966,6 +8968,19 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   </data>
   <data name="LocalDatabase" xml:space="preserve">
     <value>Local Database</value>
+  </data>
+  <data name="LocalDatabaseClearText" xml:space="preserve">
+    <value>Are you sure you want to clear cached text messages?</value>
+  </data>
+  <data name="LocalDatabaseClearText2" xml:space="preserve">
+    <value>Local database size: **{0}**</value>
+  </data>
+  <data name="LocalDatabaseClearText3" xml:space="preserve">
+    <value>**WARNING:**
+Secret chats and pending messages will be lost.</value>
+  </data>
+  <data name="LocalDatabaseClearTextTitle" xml:space="preserve">
+    <value>Clear local database</value>
   </data>
   <data name="LocalDocumentCache" xml:space="preserve">
     <value>Documents</value>
@@ -8008,6 +9023,9 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   </data>
   <data name="LoginPasswordTextShort" xml:space="preserve">
     <value>Two-Step Verification enabled. Your account is protected with an additional password.</value>
+  </data>
+  <data name="LoginWithPasskey" xml:space="preserve">
+    <value>Log in by passkey</value>
   </data>
   <data name="LoginWithQrCode" xml:space="preserve">
     <value>Quick log in using QR code</value>
@@ -8071,6 +9089,9 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   </data>
   <data name="ManageLinksInfoHelpPaid" xml:space="preserve">
     <value>You can create additional invite links that have a limited time, number of uses or require a paid subscription.</value>
+  </data>
+  <data name="ManageTopicsPermission" xml:space="preserve">
+    <value>Manage Topics</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Map</value>
@@ -8189,11 +9210,26 @@ Minimum length is 5 characters.</value>
   <data name="Message" xml:space="preserve">
     <value>Message</value>
   </data>
+  <data name="MessageAuthorSentBy" xml:space="preserve">
+    <value>Sent by **{0}**</value>
+  </data>
   <data name="MessageContainsEmojiPack" xml:space="preserve">
     <value>This message contains emoji from {0} pack.</value>
   </data>
   <data name="MessageContainsEmojiPacks_other" xml:space="preserve">
     <value>This message contains emoji from **{0} Packs**.</value>
+  </data>
+  <data name="MessageContainsReactionPack" xml:space="preserve">
+    <value>This reaction is from {0} emoji pack.</value>
+  </data>
+  <data name="MessageContainsReactionsPack" xml:space="preserve">
+    <value>Emoji from {0} pack were used as reactions.</value>
+  </data>
+  <data name="MessageContainsReactionsPacks_other" xml:space="preserve">
+    <value>Emoji from **{0} packs** were used as reactions.</value>
+  </data>
+  <data name="MessageGroupTodoList" xml:space="preserve">
+    <value>Group Checklist</value>
   </data>
   <data name="MessageLifetime" xml:space="preserve">
     <value>Self-Destruct Timer</value>
@@ -8250,7 +9286,7 @@ Minimum length is 5 characters.</value>
     <value>Don&apos;t ask me again</value>
   </data>
   <data name="MessageLockedStarsConfirmMessageMulti1_one" xml:space="preserve">
-    <value>You selected **{0}** chat that charge Stars for messages.</value>
+    <value>You selected **{0}** chat that charges Stars for messages.</value>
   </data>
   <data name="MessageLockedStarsConfirmMessageMulti1_other" xml:space="preserve">
     <value>You selected **{0}** chats that charge Stars for messages.</value>
@@ -8280,11 +9316,17 @@ Minimum length is 5 characters.</value>
     <value>{0} must pay ⭐️ {1} for each message to you.
 **Remove Fee**</value>
   </data>
+  <data name="MessageOptionsLinkTitle" xml:space="preserve">
+    <value>Link Preview</value>
+  </data>
   <data name="MessageOptionsReplySubtitle" xml:space="preserve">
     <value>You can select a specific part to quote</value>
   </data>
   <data name="MessageOptionsReplyTitle" xml:space="preserve">
     <value>Reply to Message</value>
+  </data>
+  <data name="MessagePersonalTodoList" xml:space="preserve">
+    <value>{0}&apos;s Checklist</value>
   </data>
   <data name="MessagePlayed_one" xml:space="preserve">
     <value>Played</value>
@@ -8316,6 +9358,57 @@ Minimum length is 5 characters.</value>
   <data name="MessageScheduledOn" xml:space="preserve">
     <value>Scheduled for {0}</value>
   </data>
+  <data name="MessageScheduledRepeatBiweekly" xml:space="preserve">
+    <value>biweekly</value>
+  </data>
+  <data name="MessageScheduledRepeatDaily" xml:space="preserve">
+    <value>daily</value>
+  </data>
+  <data name="MessageScheduledRepeatMonthly" xml:space="preserve">
+    <value>monthly</value>
+  </data>
+  <data name="MessageScheduledRepeatMonthlyMany_one" xml:space="preserve">
+    <value>{0}-monthly</value>
+  </data>
+  <data name="MessageScheduledRepeatMonthlyMany_other" xml:space="preserve">
+    <value>{0}-monthly</value>
+  </data>
+  <data name="MessageScheduledRepeatOption" xml:space="preserve">
+    <value>Repeat</value>
+  </data>
+  <data name="MessageScheduledRepeatOption3Monthly" xml:space="preserve">
+    <value>Every 3 months</value>
+  </data>
+  <data name="MessageScheduledRepeatOption6Monthly" xml:space="preserve">
+    <value>Every 6 months</value>
+  </data>
+  <data name="MessageScheduledRepeatOptionBiweekly" xml:space="preserve">
+    <value>Biweekly</value>
+  </data>
+  <data name="MessageScheduledRepeatOptionDaily" xml:space="preserve">
+    <value>Daily</value>
+  </data>
+  <data name="MessageScheduledRepeatOptionMonthly" xml:space="preserve">
+    <value>Monthly</value>
+  </data>
+  <data name="MessageScheduledRepeatOptionNever" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="MessageScheduledRepeatOptionWeekly" xml:space="preserve">
+    <value>Weekly</value>
+  </data>
+  <data name="MessageScheduledRepeatOptionYearly" xml:space="preserve">
+    <value>Yearly</value>
+  </data>
+  <data name="MessageScheduledRepeatPremium" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to schedule repeating messages.</value>
+  </data>
+  <data name="MessageScheduledRepeatWeekly" xml:space="preserve">
+    <value>weekly</value>
+  </data>
+  <data name="MessageScheduledRepeatYearly" xml:space="preserve">
+    <value>yearly</value>
+  </data>
   <data name="MessageScheduledUntilOnline" xml:space="preserve">
     <value>Scheduled until online</value>
   </data>
@@ -8340,11 +9433,50 @@ Minimum length is 5 characters.</value>
   <data name="MessageSeen_other" xml:space="preserve">
     <value>{0} Seen</value>
   </data>
+  <data name="MessageShowSensitiveContentAlways" xml:space="preserve">
+    <value>Always show 18+ media</value>
+  </data>
+  <data name="MessageShowSensitiveContentButton" xml:space="preserve">
+    <value>View Anyway</value>
+  </data>
+  <data name="MessageShowSensitiveContentChannelText" xml:space="preserve">
+    <value>This chat may contain sensitive content suitable only for adults. Do you still want to view it?</value>
+  </data>
+  <data name="MessageShowSensitiveContentChannelTextClosed" xml:space="preserve">
+    <value>This chat may contain sensitive content suitable only for adults.</value>
+  </data>
+  <data name="MessageShowSensitiveContentChannelTextClosedButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="MessageShowSensitiveContentChannelTitle" xml:space="preserve">
+    <value>18+</value>
+  </data>
+  <data name="MessageShowSensitiveContentMediaText" xml:space="preserve">
+    <value>This media may contain sensitive content suitable only for adults. Do you still want to view it?</value>
+  </data>
+  <data name="MessageShowSensitiveContentMediaTextClosed" xml:space="preserve">
+    <value>This media may contain sensitive content suitable only for adults.</value>
+  </data>
+  <data name="MessageShowSensitiveContentMediaTextClosedButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="MessageShowSensitiveContentMediaTitle" xml:space="preserve">
+    <value>18+</value>
+  </data>
   <data name="MessagesOverview" xml:space="preserve">
     <value>Messages</value>
   </data>
   <data name="MessageStarsUnlock" xml:space="preserve">
     <value>Buy Stars</value>
+  </data>
+  <data name="MessageSuggestionsUnsavedChanges" xml:space="preserve">
+    <value>You have changed the direct message settings. Apply changes?</value>
+  </data>
+  <data name="MessageTodo" xml:space="preserve">
+    <value>Checklist</value>
+  </data>
+  <data name="MessageTodoList" xml:space="preserve">
+    <value>Checklist</value>
   </data>
   <data name="Meters_one" xml:space="preserve">
     <value>{0} meter</value>
@@ -8521,7 +9653,7 @@ Minimum length is 5 characters.</value>
     <value>direct messages</value>
   </data>
   <data name="MonoforumSpan" xml:space="preserve">
-    <value>MESSAGES</value>
+    <value>DIRECT</value>
   </data>
   <data name="MonthAgo" xml:space="preserve">
     <value>a month ago</value>
@@ -8739,6 +9871,9 @@ people by username.</value>
   <data name="NoMessagesGreetingsDescription" xml:space="preserve">
     <value>Send a message or tap the greeting below.</value>
   </data>
+  <data name="NoNetworkUsageSince" xml:space="preserve">
+    <value>No network usage since {0}</value>
+  </data>
   <data name="NoOneJoined" xml:space="preserve">
     <value>No one joined</value>
   </data>
@@ -8902,6 +10037,15 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
   <data name="NotificationsChartTitle" xml:space="preserve">
     <value>Notifications</value>
   </data>
+  <data name="NotificationsDeleteAllException" xml:space="preserve">
+    <value>Delete All Exceptions</value>
+  </data>
+  <data name="NotificationsDeleteAllExceptionAlert" xml:space="preserve">
+    <value>Are you sure you want to delete all exceptions?</value>
+  </data>
+  <data name="NotificationsDeleteAllExceptionTitle" xml:space="preserve">
+    <value>Delete all exceptions</value>
+  </data>
   <data name="NotificationsExceptions" xml:space="preserve">
     <value>Exceptions</value>
   </data>
@@ -8979,6 +10123,9 @@ Stories</value>
   <data name="NoWordsRecognized" xml:space="preserve">
     <value>No words recognized.</value>
   </data>
+  <data name="NumberNotOnTelegram" xml:space="preserve">
+    <value>This number is not on Telegram</value>
+  </data>
   <data name="October" xml:space="preserve">
     <value>October</value>
   </data>
@@ -9019,6 +10166,9 @@ Stories</value>
   </data>
   <data name="OpenChannel2" xml:space="preserve">
     <value>Open Channel</value>
+  </data>
+  <data name="OpenChannelDirect" xml:space="preserve">
+    <value>CONTACT CHANNEL</value>
   </data>
   <data name="OpenEmojiSet" xml:space="preserve">
     <value>VIEW EMOJI</value>
@@ -9226,6 +10376,77 @@ messages from multiple devices.</value>
   <data name="PasscodePIN" xml:space="preserve">
     <value>PIN</value>
   </data>
+  <data name="Passkey" xml:space="preserve">
+    <value>Passkeys</value>
+  </data>
+  <data name="PasskeyAdd" xml:space="preserve">
+    <value>Add Passkey</value>
+  </data>
+  <data name="PasskeyAddedText" xml:space="preserve">
+    <value>You can now login into your account with {0}.</value>
+  </data>
+  <data name="PasskeyAddedTitle" xml:space="preserve">
+    <value>Passkey Added!</value>
+  </data>
+  <data name="PasskeyCreatedOn" xml:space="preserve">
+    <value>Created {0}</value>
+  </data>
+  <data name="PasskeyDeleteText" xml:space="preserve">
+    <value>Once deleted, this passkey can&apos;t be used to log in.
+
+Don&apos;t forget to remove it from your password manager too.</value>
+  </data>
+  <data name="PasskeyDeleteTitle" xml:space="preserve">
+    <value>Delete Passkey</value>
+  </data>
+  <data name="PasskeyFeature1Subtitle" xml:space="preserve">
+    <value>Make a passkey to sign in easily and safely.</value>
+  </data>
+  <data name="PasskeyFeature1Title" xml:space="preserve">
+    <value>Create a Passkey</value>
+  </data>
+  <data name="PasskeyFeature2Subtitle" xml:space="preserve">
+    <value>Use your face, fingerprint or screen lock to sign in.</value>
+  </data>
+  <data name="PasskeyFeature2Title" xml:space="preserve">
+    <value>Log in with face recognition</value>
+  </data>
+  <data name="PasskeyFeature3Subtitle" xml:space="preserve">
+    <value>Your passkey is stored safely in the cloud service you choose.</value>
+  </data>
+  <data name="PasskeyFeature3Title" xml:space="preserve">
+    <value>Store Passkey securely</value>
+  </data>
+  <data name="PasskeyFeatureButton" xml:space="preserve">
+    <value>Create Passkey</value>
+  </data>
+  <data name="PasskeyFeatureSubtitle" xml:space="preserve">
+    <value>Log in safely and keep your account secure.</value>
+  </data>
+  <data name="PasskeyFeatureTitle" xml:space="preserve">
+    <value>Protect your account</value>
+  </data>
+  <data name="PasskeyInfo" xml:space="preserve">
+    <value>Your passkey is stored securely in your password manager. **Learn more &gt;**</value>
+  </data>
+  <data name="PasskeyLastUsedOn" xml:space="preserve">
+    <value>Last used {0}</value>
+  </data>
+  <data name="PasskeyNotSupportedText" xml:space="preserve">
+    <value>Passkeys are not supported on your current version of Windows. To use this feature, please update your operating system to a more recent version.</value>
+  </data>
+  <data name="PasskeyPopupText" xml:space="preserve">
+    <value>Log in with your face, fingerprint or screen lock</value>
+  </data>
+  <data name="PasskeyPopupTitle" xml:space="preserve">
+    <value>🔑  Protect your account</value>
+  </data>
+  <data name="PasskeyTopInfo" xml:space="preserve">
+    <value>Manage your passkey, stored safely in the cloud service you choose.</value>
+  </data>
+  <data name="PasskeyUnknown" xml:space="preserve">
+    <value>Passkey</value>
+  </data>
   <data name="PassportDiscard" xml:space="preserve">
     <value>Discard</value>
   </data>
@@ -9258,6 +10479,9 @@ messages from multiple devices.</value>
   </data>
   <data name="PasteFromClipboard" xml:space="preserve">
     <value>Paste from clipboard</value>
+  </data>
+  <data name="PathCopied" xml:space="preserve">
+    <value>Path copied to clipboard.</value>
   </data>
   <data name="PauseAll" xml:space="preserve">
     <value>Pause all</value>
@@ -9516,6 +10740,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PinnedMessages" xml:space="preserve">
     <value>Pinned Messages</value>
   </data>
+  <data name="PinnedMessagesCount_one" xml:space="preserve">
+    <value>Pinned Message</value>
+  </data>
+  <data name="PinnedMessagesCount_other" xml:space="preserve">
+    <value>{0} Pinned Messages</value>
+  </data>
   <data name="PinNotify" xml:space="preserve">
     <value>Notify all members</value>
   </data>
@@ -9618,6 +10848,18 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PostSuggestions" xml:space="preserve">
     <value>Direct Messages</value>
   </data>
+  <data name="PostSuggestionsAddTime" xml:space="preserve">
+    <value>Edit Time</value>
+  </data>
+  <data name="PostSuggestionsAddTimeHint" xml:space="preserve">
+    <value>Select the date and time you want the post to be published.</value>
+  </data>
+  <data name="PostSuggestionsAddTimeHint2" xml:space="preserve">
+    <value>The post will remain available for at least {0} hours from this date.</value>
+  </data>
+  <data name="PostSuggestionsAnytime" xml:space="preserve">
+    <value>Anytime</value>
+  </data>
   <data name="PostSuggestionsDisabledUpdated" xml:space="preserve">
     <value>un1 disabled direct messages</value>
   </data>
@@ -9630,17 +10872,53 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PostSuggestionsInfo" xml:space="preserve">
     <value>Allow users to send messages to your channel, with the option to charge a fee for each message.</value>
   </data>
+  <data name="PostSuggestionsInlineAccept" xml:space="preserve">
+    <value>Accept</value>
+  </data>
+  <data name="PostSuggestionsInlineDecline" xml:space="preserve">
+    <value>Decline</value>
+  </data>
+  <data name="PostSuggestionsInlineEdit" xml:space="preserve">
+    <value>Suggest Changes</value>
+  </data>
   <data name="PostSuggestionsOff" xml:space="preserve">
     <value>Off</value>
   </data>
+  <data name="PostSuggestionsOfferForFree" xml:space="preserve">
+    <value>Offer for Free</value>
+  </data>
+  <data name="PostSuggestionsOfferStars" xml:space="preserve">
+    <value>Offer ⭐️{0}</value>
+  </data>
+  <data name="PostSuggestionsOfferSubtitleStars" xml:space="preserve">
+    <value>Choose how many Stars to pay to publish this post.</value>
+  </data>
+  <data name="PostSuggestionsOfferSubtitleTON" xml:space="preserve">
+    <value>Choose how much to pay to publish this post.</value>
+  </data>
+  <data name="PostSuggestionsOfferTitle" xml:space="preserve">
+    <value>Suggest a Post</value>
+  </data>
+  <data name="PostSuggestionsOfferTitlePriceStars" xml:space="preserve">
+    <value>Enter Price in Stars</value>
+  </data>
+  <data name="PostSuggestionsOfferTitlePriceTON" xml:space="preserve">
+    <value>Enter Price in TON</value>
+  </data>
+  <data name="PostSuggestionsOfferTitleTime" xml:space="preserve">
+    <value>Publishing Time</value>
+  </data>
+  <data name="PostSuggestionsOfferTON" xml:space="preserve">
+    <value>Offer {0} TON</value>
+  </data>
   <data name="PostSuggestionsPriceInfo" xml:space="preserve">
-    <value>You will receive {0}% of the selected fee (~{1}) for each incoming message.</value>
+    <value>Your channel will receive {0} of the selected fee (~{1}) for each incoming message.</value>
   </data>
   <data name="PostSuggestionsPriceUpdated_one" xml:space="preserve">
-    <value>un1 now accepts direct messages for {0} star</value>
+    <value>un1 now accepts direct messages for {0} Star</value>
   </data>
   <data name="PostSuggestionsPriceUpdated_other" xml:space="preserve">
-    <value>un1 now accepts direct messages for {0} stars</value>
+    <value>un1 now accepts direct messages for {0} Stars</value>
   </data>
   <data name="PowerUsage" xml:space="preserve">
     <value>Power Saving</value>
@@ -9858,6 +11136,13 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PremiumPreviewTagsDescription2" xml:space="preserve">
     <value>Organize your Saved Messages with tags for quicker access.</value>
   </data>
+  <data name="PremiumPreviewTodo" xml:space="preserve">
+    <value>Checklists</value>
+  </data>
+  <data name="PremiumPreviewTodoDescription" xml:space="preserve">
+    <value>Plan, assign and complete tasks –
+seamlessly and efficiently.</value>
+  </data>
   <data name="PremiumPreviewTranslations" xml:space="preserve">
     <value>Real-Time Translation</value>
   </data>
@@ -9908,6 +11193,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PremiumStickers" xml:space="preserve">
     <value>Premium Stickers</value>
+  </data>
+  <data name="PremiumStickerTooltip" xml:space="preserve">
+    <value>This set contains premium stickers like this one.</value>
   </data>
   <data name="PremiumStoriesCaption" xml:space="preserve">
     <value>Longer Captions</value>
@@ -9973,7 +11261,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Wrong layout?</value>
   </data>
   <data name="PriceForEachSuggestion" xml:space="preserve">
-    <value>Price for each message</value>
+    <value>Price per message</value>
   </data>
   <data name="PricePerMonth" xml:space="preserve">
     <value>{0} / month</value>
@@ -10020,6 +11308,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PrivacyBirthdaySetDone" xml:space="preserve">
     <value>Date of birth added.</value>
+  </data>
+  <data name="PrivacyBirthdaySetDoneInfo" xml:space="preserve">
+    <value>You can change your birth of date in settings.</value>
   </data>
   <data name="PrivacyBirthdayTitle" xml:space="preserve">
     <value>Who can see my date of birth?</value>
@@ -10085,10 +11376,13 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Show Gift Icon in Chats</value>
   </data>
   <data name="PrivacyGiftsShowIconInfo" xml:space="preserve">
-    <value>Display the {0} Gift in the message input field for both participants in all chats.</value>
+    <value>Display the {0} Gift icon in the message input field for both participants in all chats.</value>
   </data>
   <data name="PrivacyGiftsTitle" xml:space="preserve">
-    <value>Who can display gifts on my profile</value>
+    <value>Automatically display gifts from</value>
+  </data>
+  <data name="PrivacyGiftsTypeFromChannels" xml:space="preserve">
+    <value>From Channels</value>
   </data>
   <data name="PrivacyGiftsTypeHeader" xml:space="preserve">
     <value>Accepted gift types</value>
@@ -10100,7 +11394,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Limited-Edition</value>
   </data>
   <data name="PrivacyGiftsTypePremium" xml:space="preserve">
-    <value>Premium Subscription</value>
+    <value>Premium Subscriptions</value>
   </data>
   <data name="PrivacyGiftsTypeUnique" xml:space="preserve">
     <value>Unique</value>
@@ -10145,6 +11439,18 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PrivacyMiniappsText" xml:space="preserve">
     <value>all bots</value>
+  </data>
+  <data name="PrivacyMusic" xml:space="preserve">
+    <value>Saved Music</value>
+  </data>
+  <data name="PrivacyMusicInfo" xml:space="preserve">
+    <value>You can restrict who can see you music with granular precision.</value>
+  </data>
+  <data name="PrivacyMusicInfo3" xml:space="preserve">
+    <value>You can add users or entire groups that will not see your music.</value>
+  </data>
+  <data name="PrivacyMusicTitle" xml:space="preserve">
+    <value>Who can see my saved music in profile?</value>
   </data>
   <data name="PrivacyP2P" xml:space="preserve">
     <value>Peer-to-Peer Calls</value>
@@ -10215,6 +11521,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PrivacySettings" xml:space="preserve">
     <value>Privacy and Security</value>
   </data>
+  <data name="PrivacySettingsChangedAlert" xml:space="preserve">
+    <value>You have changed some privacy settings. Apply changes?</value>
+  </data>
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Privacy</value>
   </data>
@@ -10253,11 +11562,14 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PrivateChats" xml:space="preserve">
     <value>Private Chats</value>
   </data>
+  <data name="PrivateMessagesChargePremiumLocked" xml:space="preserve">
+    <value>Unlock with Telegram Premium</value>
+  </data>
   <data name="PrivateMessagesChargePrice" xml:space="preserve">
     <value>Charge for Messages</value>
   </data>
   <data name="PrivateMessagesChargePriceInfo" xml:space="preserve">
-    <value>Charge a fee for messages from people outside your contacts or those you haven&apos;t messaged first.</value>
+    <value>Charge a fee for messages from people outside your contacts or who you haven&apos;t messaged first.</value>
   </data>
   <data name="PrivateMessagesExceptions" xml:space="preserve">
     <value>Remove Fee</value>
@@ -10266,19 +11578,25 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Exceptions</value>
   </data>
   <data name="PrivateMessagesExceptionsInfo" xml:space="preserve">
-    <value>Add users or entire groups who won&apos;t be charged for sending messages to you.</value>
+    <value>Add users or entire groups who won&apos;t have to pay to send you messages.</value>
   </data>
   <data name="PrivateMessagesPriceHeader" xml:space="preserve">
     <value>Set your price per message</value>
   </data>
   <data name="PrivateMessagesPriceInfo" xml:space="preserve">
-    <value>You will receive {0}% of the selected fee (~{1}) for each incoming message.</value>
+    <value>You will receive {0} of the selected fee (~{1}$) for each incoming message.</value>
   </data>
   <data name="PrivateShares" xml:space="preserve">
     <value>Private Shares</value>
   </data>
   <data name="PrivateStory" xml:space="preserve">
     <value>Private story</value>
+  </data>
+  <data name="Proceed" xml:space="preserve">
+    <value>Proceed</value>
+  </data>
+  <data name="ProcessingVideo" xml:space="preserve">
+    <value>Processing...</value>
   </data>
   <data name="ProfileBirthday" xml:space="preserve">
     <value>Date of Birth</value>
@@ -10325,8 +11643,35 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ProfileGifts" xml:space="preserve">
     <value>Gifts</value>
   </data>
+  <data name="ProfileGiftsCount_one" xml:space="preserve">
+    <value>{0} gift</value>
+  </data>
+  <data name="ProfileGiftsCount_other" xml:space="preserve">
+    <value>{0} gifts</value>
+  </data>
   <data name="ProfileMyStories" xml:space="preserve">
     <value>My Stories</value>
+  </data>
+  <data name="ProfileNotes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="ProfileNotesInfo" xml:space="preserve">
+    <value>only visible to you</value>
+  </data>
+  <data name="ProfileNotesRemoveText" xml:space="preserve">
+    <value>Are you sure you want to remove the note?</value>
+  </data>
+  <data name="ProfileNotesRemoveTitle" xml:space="preserve">
+    <value>Delete Note</value>
+  </data>
+  <data name="ProfilePlaylistRemoveFromProfile" xml:space="preserve">
+    <value>Remove from Profile</value>
+  </data>
+  <data name="ProfilePlaylistTitle" xml:space="preserve">
+    <value>{0}&apos;s Playlist</value>
+  </data>
+  <data name="ProfilePlaylistTitleMine" xml:space="preserve">
+    <value>Your Playlist</value>
   </data>
   <data name="ProfileStories" xml:space="preserve">
     <value>Posts</value>
@@ -10337,14 +11682,41 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ProfileStoriesArchiveChannelHint" xml:space="preserve">
     <value>Only admins of the channel can see archived stories unless they are posted to the channel page.</value>
   </data>
+  <data name="ProfileStoriesArchiveCount_one" xml:space="preserve">
+    <value>{0} archived story</value>
+  </data>
+  <data name="ProfileStoriesArchiveCount_other" xml:space="preserve">
+    <value>{0} archived stories</value>
+  </data>
   <data name="ProfileStoriesArchiveHint" xml:space="preserve">
     <value>Only you can see archived stories unless you choose to post them to your profile.</value>
+  </data>
+  <data name="ProfileStoriesCount_one" xml:space="preserve">
+    <value>{0} story</value>
+  </data>
+  <data name="ProfileStoriesCount_other" xml:space="preserve">
+    <value>{0} stories</value>
+  </data>
+  <data name="ProfileTabSetAsMain" xml:space="preserve">
+    <value>Set as Main Tab</value>
   </data>
   <data name="PromoteUrl" xml:space="preserve">
     <value>https://ads.telegram.org</value>
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>Proxy</value>
+  </data>
+  <data name="ProxyBottomSheetChecking" xml:space="preserve">
+    <value>Checking</value>
+  </data>
+  <data name="ProxyBottomSheetCheckStatus" xml:space="preserve">
+    <value>Check Status</value>
+  </data>
+  <data name="ProxyBottomSheetCheckWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="ProxyBottomSheetCheckWarningText" xml:space="preserve">
+    <value>This will expose your IP address to the admin of the proxy server.</value>
   </data>
   <data name="ProxyConnections" xml:space="preserve">
     <value>Connections</value>
@@ -10363,6 +11735,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="ProxySettings" xml:space="preserve">
     <value>Proxy Settings</value>
+  </data>
+  <data name="ProxyStatus" xml:space="preserve">
+    <value>Status</value>
   </data>
   <data name="PsaHide" xml:space="preserve">
     <value>Hide</value>
@@ -10535,11 +11910,23 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="Regular" xml:space="preserve">
     <value>Regular</value>
   </data>
+  <data name="RemindDayAt" xml:space="preserve">
+    <value>&apos;Remind on&apos; MMM d &apos;at&apos; HH:mm</value>
+  </data>
+  <data name="RemindDayYearAt" xml:space="preserve">
+    <value>&apos;Remind on&apos; MMM d yyyy &apos;at&apos; HH:mm</value>
+  </data>
   <data name="Reminders" xml:space="preserve">
     <value>Reminders</value>
   </data>
+  <data name="RemindTodayAt" xml:space="preserve">
+    <value>&apos;Remind today at&apos; HH:mm</value>
+  </data>
   <data name="Remove" xml:space="preserve">
     <value>Remove</value>
+  </data>
+  <data name="RemoveAds" xml:space="preserve">
+    <value>Remove Ads</value>
   </data>
   <data name="RemovedFromFavorites" xml:space="preserve">
     <value>Sticker was removed from Favorites</value>
@@ -10616,6 +12003,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="Replies_other" xml:space="preserve">
     <value>{0} Replies</value>
   </data>
+  <data name="RepliesChatInfo" xml:space="preserve">
+    <value>This chat helps you keep track of replies to your comments in Channels.</value>
+  </data>
   <data name="RepliesTitle" xml:space="preserve">
     <value>Replies</value>
   </data>
@@ -10673,6 +12063,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ReportAdLearnMore" xml:space="preserve">
     <value>Learn more about our [Ad Policies and Guidelines](https://ads.telegram.org/guidelines).</value>
   </data>
+  <data name="ReportAlertReaction" xml:space="preserve">
+    <value>Are you sure you want to report reaction from this user?</value>
+  </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Report</value>
   </data>
@@ -10694,6 +12087,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ReportChatPornography" xml:space="preserve">
     <value>Pornography</value>
   </data>
+  <data name="ReportChatSent" xml:space="preserve">
+    <value>Report sent</value>
+  </data>
   <data name="ReportChatSpam" xml:space="preserve">
     <value>Spam</value>
   </data>
@@ -10711,6 +12107,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="ReportMessagesCount" xml:space="preserve">
     <value>Report {0}</value>
+  </data>
+  <data name="ReportReaction" xml:space="preserve">
+    <value>Report reaction</value>
+  </data>
+  <data name="ReportReactionAndBan" xml:space="preserve">
+    <value>Ban and Report</value>
   </data>
   <data name="ReportSelectedMessages" xml:space="preserve">
     <value>Report Selected</value>
@@ -10894,6 +12296,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ResetStatisticsAlert" xml:space="preserve">
     <value>Do you want to reset your usage statistics?</value>
   </data>
+  <data name="ResetStatisticsAlertTitle" xml:space="preserve">
+    <value>Reset statistics</value>
+  </data>
   <data name="ResetToOriginalPhoto" xml:space="preserve">
     <value>Reset to Original Photo</value>
   </data>
@@ -11038,6 +12443,12 @@ The group &quot;**{1}**&quot; will become private.</value>
 
 The channel &quot;**{1}**&quot; will become private.</value>
   </data>
+  <data name="RevokeStreamKey" xml:space="preserve">
+    <value>Revoke Stream Key</value>
+  </data>
+  <data name="RevokeStreamKeyAlert" xml:space="preserve">
+    <value>Are you sure you want to revoke your Stream Key?</value>
+  </data>
   <data name="Saturation" xml:space="preserve">
     <value>Saturation</value>
   </data>
@@ -11065,8 +12476,20 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SavedMessages" xml:space="preserve">
     <value>Saved Messages</value>
   </data>
+  <data name="SavedMessagesCount_one" xml:space="preserve">
+    <value>{0} saved message</value>
+  </data>
+  <data name="SavedMessagesCount_other" xml:space="preserve">
+    <value>{0} saved messages</value>
+  </data>
+  <data name="SavedMessagesProfileHint" xml:space="preserve">
+    <value>Messages you sent to Saved Messages</value>
+  </data>
   <data name="SavedMessagesTab" xml:space="preserve">
     <value>Saved Messages</value>
+  </data>
+  <data name="SavedMessagesTab2" xml:space="preserve">
+    <value>Saved</value>
   </data>
   <data name="SavedOpenChannel" xml:space="preserve">
     <value>OPEN CHANNEL</value>
@@ -11134,6 +12557,24 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="ScamMessage" xml:space="preserve">
     <value>SCAM</value>
   </data>
+  <data name="ScanTextDownloadingText" xml:space="preserve">
+    <value>We’re downloading the files needed to recognize text. This is a one-time setup—next time, it will be ready instantly.</value>
+  </data>
+  <data name="ScanTextDownloadingTitle" xml:space="preserve">
+    <value>Almost there...</value>
+  </data>
+  <data name="ScanTextFirstTime" xml:space="preserve">
+    <value>Click here to grab text</value>
+  </data>
+  <data name="ScanTextNoTextDetected" xml:space="preserve">
+    <value>There was no text detected</value>
+  </data>
+  <data name="ScanTextTooLarge" xml:space="preserve">
+    <value>This image is too large to scan for text</value>
+  </data>
+  <data name="ScanTextTooSmall" xml:space="preserve">
+    <value>This image is too small to scan for text</value>
+  </data>
   <data name="Schedule" xml:space="preserve">
     <value>Schedule</value>
   </data>
@@ -11145,6 +12586,12 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="ScheduleMessage" xml:space="preserve">
     <value>Schedule Message</value>
+  </data>
+  <data name="ScheduleMessageDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="ScheduleMessageTime" xml:space="preserve">
+    <value>Time</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
@@ -11172,6 +12619,66 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="SearchMyChannels" xml:space="preserve">
     <value>Channels you joined</value>
+  </data>
+  <data name="SearchPaidStars_one" xml:space="preserve">
+    <value>**{0} Star** spent on extra search.</value>
+  </data>
+  <data name="SearchPaidStars_other" xml:space="preserve">
+    <value>**{0} Stars** spent on extra search.</value>
+  </data>
+  <data name="SearchPosts" xml:space="preserve">
+    <value>Posts</value>
+  </data>
+  <data name="SearchPostsButton" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchPostsButtonPay_one" xml:space="preserve">
+    <value>Search for ⭐️{0}</value>
+  </data>
+  <data name="SearchPostsButtonPay_other" xml:space="preserve">
+    <value>Search for ⭐️{0}</value>
+  </data>
+  <data name="SearchPostsButtonPremium" xml:space="preserve">
+    <value>Subscribe to Premium</value>
+  </data>
+  <data name="SearchPostsFreeSearches_one" xml:space="preserve">
+    <value>{0} free search remaining today.</value>
+  </data>
+  <data name="SearchPostsFreeSearches_other" xml:space="preserve">
+    <value>{0} free searches remaining today.</value>
+  </data>
+  <data name="SearchPostsFreeSearchUnlocksIn" xml:space="preserve">
+    <value>free search unlocks in {0}</value>
+  </data>
+  <data name="SearchPostsHeaderFound" xml:space="preserve">
+    <value>Public Posts</value>
+  </data>
+  <data name="SearchPostsHeaderNews" xml:space="preserve">
+    <value>Telegram News</value>
+  </data>
+  <data name="SearchPostsLimitReached" xml:space="preserve">
+    <value>Limit Reached</value>
+  </data>
+  <data name="SearchPostsLimitReachedText_one" xml:space="preserve">
+    <value>You can make up to {0} search query per day.</value>
+  </data>
+  <data name="SearchPostsLimitReachedText_other" xml:space="preserve">
+    <value>You can make up to {0} search queries per day.</value>
+  </data>
+  <data name="SearchPostsNotFound" xml:space="preserve">
+    <value>Not Found</value>
+  </data>
+  <data name="SearchPostsNotFoundText" xml:space="preserve">
+    <value>No posts found for &quot;{0}&quot;.</value>
+  </data>
+  <data name="SearchPostsPremium" xml:space="preserve">
+    <value>Global search is a Premium feature.</value>
+  </data>
+  <data name="SearchPostsText" xml:space="preserve">
+    <value>Type a keyword to search for posts from public channels.</value>
+  </data>
+  <data name="SearchPostsTitle" xml:space="preserve">
+    <value>Global Search</value>
   </data>
   <data name="SearchRecommendedChannels" xml:space="preserve">
     <value>Similar Channels</value>
@@ -11202,6 +12709,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="SelectAll" xml:space="preserve">
     <value>Select All</value>
+  </data>
+  <data name="SelectChat" xml:space="preserve">
+    <value>Select Chat</value>
   </data>
   <data name="SelectContact" xml:space="preserve">
     <value>Select Contact</value>
@@ -11269,6 +12779,15 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SendByEnterKey" xml:space="preserve">
     <value>Enter</value>
   </data>
+  <data name="SendDayAt" xml:space="preserve">
+    <value>&apos;Send on&apos; MMM d &apos;at&apos; HH:mm</value>
+  </data>
+  <data name="SendDayYearAt" xml:space="preserve">
+    <value>&apos;Send on&apos; MMM d yyyy &apos;at&apos; HH:mm</value>
+  </data>
+  <data name="SendDirectMessage" xml:space="preserve">
+    <value>Send direct message</value>
+  </data>
   <data name="SendEmojiPreview" xml:space="preserve">
     <value>Send Emoji</value>
   </data>
@@ -11314,6 +12833,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SendMessageRestrictedForever" xml:space="preserve">
     <value>The admins of this group have restricted your ability to send messages.</value>
   </data>
+  <data name="SendTodayAt" xml:space="preserve">
+    <value>&apos;Send today at&apos; HH:mm</value>
+  </data>
   <data name="SendWhenOnline" xml:space="preserve">
     <value>Send When Online</value>
   </data>
@@ -11325,6 +12847,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="SendWithoutSound" xml:space="preserve">
     <value>Send Without Sound</value>
+  </data>
+  <data name="SensitiveContentSettingsToast" xml:space="preserve">
+    <value>You can update the visibility of sensitive media in **Privacy and Security &gt; Show 18+ Content**</value>
   </data>
   <data name="SensitiveDisableFiltering" xml:space="preserve">
     <value>Disable filtering</value>
@@ -11509,6 +13034,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SharePhoneNumberWith" xml:space="preserve">
     <value>Share my phone number with {0}</value>
   </data>
+  <data name="ShareQrCode" xml:space="preserve">
+    <value>Share QR Code</value>
+  </data>
   <data name="Shares_one" xml:space="preserve">
     <value>{0} share</value>
   </data>
@@ -11530,8 +13058,20 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="ShareYouPhoneNumberTitle" xml:space="preserve">
     <value>Share your phone number?</value>
   </data>
+  <data name="ShortHoursAgo_one" xml:space="preserve">
+    <value>{0}h</value>
+  </data>
+  <data name="ShortHoursAgo_other" xml:space="preserve">
+    <value>{0}h</value>
+  </data>
   <data name="ShortMessageLifetimeForever" xml:space="preserve">
     <value>Off</value>
+  </data>
+  <data name="ShortMinutesAgo_one" xml:space="preserve">
+    <value>{0}m</value>
+  </data>
+  <data name="ShortMinutesAgo_other" xml:space="preserve">
+    <value>{0}m</value>
   </data>
   <data name="ShortTimeNow" xml:space="preserve">
     <value>now</value>
@@ -11574,6 +13114,12 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="ShowOriginalButton" xml:space="preserve">
     <value>Show Original</value>
+  </data>
+  <data name="ShowSensitiveContent" xml:space="preserve">
+    <value>Show 18+ Content</value>
+  </data>
+  <data name="ShowSensitiveContentInfo" xml:space="preserve">
+    <value>Do not hide media that contains content suitable only for adults</value>
   </data>
   <data name="ShowTranslateButton" xml:space="preserve">
     <value>Show Translate Button</value>
@@ -11662,8 +13208,14 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SoundOff" xml:space="preserve">
     <value>Disable sound</value>
   </data>
+  <data name="SoundOffHint" xml:space="preserve">
+    <value>You will receive silent notifications.</value>
+  </data>
   <data name="SoundOn" xml:space="preserve">
     <value>Enable sound</value>
+  </data>
+  <data name="SoundOnHint" xml:space="preserve">
+    <value>You will receive notifications with sound.</value>
   </data>
   <data name="Speaking" xml:space="preserve">
     <value>speaking</value>
@@ -11698,11 +13250,84 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SponsoredMessage" xml:space="preserve">
     <value>ad</value>
   </data>
+  <data name="SponsoredMessage2" xml:space="preserve">
+    <value>Ad</value>
+  </data>
+  <data name="SponsoredMessage2Recommended" xml:space="preserve">
+    <value>Recommended</value>
+  </data>
+  <data name="SponsoredMessageAd" xml:space="preserve">
+    <value>Ad</value>
+  </data>
+  <data name="SponsoredMessageAdWhatIsThis" xml:space="preserve">
+    <value>what&apos;s this?</value>
+  </data>
+  <data name="SponsoredMessageInfo" xml:space="preserve">
+    <value>What are sponsored
+messages?</value>
+  </data>
   <data name="SponsoredMessageSponsor" xml:space="preserve">
     <value>Advertiser Info</value>
   </data>
   <data name="SponsoredMessageSponsorReportable" xml:space="preserve">
     <value>Sponsor Info</value>
+  </data>
+  <data name="StakeDiceActionLost" xml:space="preserve">
+    <value>un1 lost 💎 {0}</value>
+  </data>
+  <data name="StakeDiceActionWon" xml:space="preserve">
+    <value>un1 won 💎 {0}</value>
+  </data>
+  <data name="StakeDiceActionYouLost" xml:space="preserve">
+    <value>You lost 💎 {0}</value>
+  </data>
+  <data name="StakeDiceActionYouWon" xml:space="preserve">
+    <value>You won 💎 {0}</value>
+  </data>
+  <data name="StakeDiceButton" xml:space="preserve">
+    <value>Save and Roll</value>
+  </data>
+  <data name="StakeDicePlaceholder" xml:space="preserve">
+    <value>Your Stake</value>
+  </data>
+  <data name="StakeDiceReturns" xml:space="preserve">
+    <value>Results and Returns</value>
+  </data>
+  <data name="StakeDiceReturnsInfo" xml:space="preserve">
+    <value>A streak resets after 3 🎲 or a stake change.</value>
+  </data>
+  <data name="StakeDiceText" xml:space="preserve">
+    <value>A limited playtest of the upcoming emoji mini-game platform for a small group of users.</value>
+  </data>
+  <data name="StakeDiceTitle" xml:space="preserve">
+    <value>Emoji Stake</value>
+  </data>
+  <data name="StakeDiceTitleBeta" xml:space="preserve">
+    <value>Beta</value>
+  </data>
+  <data name="StakeDiceToast" xml:space="preserve">
+    <value>&quot;Your Stake: 💎 &quot;</value>
+  </data>
+  <data name="StakeDiceToastButton" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="StarGiftTransactionGiftPurchase" xml:space="preserve">
+    <value>Gift Purchase</value>
+  </data>
+  <data name="StarGiftTransactionGiftPurchaseRefund" xml:space="preserve">
+    <value>Refunded Gift Purchase</value>
+  </data>
+  <data name="StarGiftTransactionGiftSale" xml:space="preserve">
+    <value>Gift Sale</value>
+  </data>
+  <data name="StarGiftTransactionGiftSaleRefund" xml:space="preserve">
+    <value>Refunded Gift Sale</value>
+  </data>
+  <data name="StarGiftTransactionGiftTransfer" xml:space="preserve">
+    <value>Gift Transfer</value>
+  </data>
+  <data name="StarGiftTransactionGiftTransferRefund" xml:space="preserve">
+    <value>Refunded Gift Transfer</value>
   </data>
   <data name="StarMediaPurchase" xml:space="preserve">
     <value>Media Purchase</value>
@@ -11712,6 +13337,101 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="StarMySubscriptionsExpand" xml:space="preserve">
     <value>Show More</value>
+  </data>
+  <data name="StarRatingAdded" xml:space="preserve">
+    <value>ADDED</value>
+  </data>
+  <data name="StarRatingButtonUnderstood" xml:space="preserve">
+    <value>Understood</value>
+  </data>
+  <data name="StarRatingDeduces" xml:space="preserve">
+    <value>DEDUCTED</value>
+  </data>
+  <data name="StarRatingDescription" xml:space="preserve">
+    <value>This rating reflects **{0}&apos;s** activity
+on Telegram. It is based on:</value>
+  </data>
+  <data name="StarRatingDescription1" xml:space="preserve">
+    <value>{0} 100% of the Stars spent on gifts purchased from Telegram.</value>
+  </data>
+  <data name="StarRatingDescription2" xml:space="preserve">
+    <value>{0} 20% of the Stars spent on resold gifts, paid messages and channel posts.</value>
+  </data>
+  <data name="StarRatingDescription3" xml:space="preserve">
+    <value>{0} 10x refunded Stars and 85% of gifts converted back to Stars.</value>
+  </data>
+  <data name="StarRatingFuture_one" xml:space="preserve">
+    <value>The rating will update in {0} day after purchases.</value>
+  </data>
+  <data name="StarRatingFuture_other" xml:space="preserve">
+    <value>The rating will update in {0} days after purchases.</value>
+  </data>
+  <data name="StarRatingFuturePendingPoints_one" xml:space="preserve">
+    <value>{0} point is pending.</value>
+  </data>
+  <data name="StarRatingFuturePendingPoints_other" xml:space="preserve">
+    <value>{0} points are pending.</value>
+  </data>
+  <data name="StarRatingFuturePendingPointsAndLevel1_one" xml:space="preserve">
+    <value>{0} point and</value>
+  </data>
+  <data name="StarRatingFuturePendingPointsAndLevel1_other" xml:space="preserve">
+    <value>{0} points and</value>
+  </data>
+  <data name="StarRatingFuturePendingPointsAndLevel2_one" xml:space="preserve">
+    <value>Level {0} are pending.</value>
+  </data>
+  <data name="StarRatingFuturePendingPointsAndLevel2_other" xml:space="preserve">
+    <value>Level {0} are pending.</value>
+  </data>
+  <data name="StarRatingFuturePendingPointsPreview" xml:space="preserve">
+    <value>**Preview &gt;**</value>
+  </data>
+  <data name="StarRatingFuturePendingPointsPreviewBack" xml:space="preserve">
+    <value>**Back &gt;**</value>
+  </data>
+  <data name="StarRatingFuturePreview1_one" xml:space="preserve">
+    <value>This will be your rating in {0} day, after</value>
+  </data>
+  <data name="StarRatingFuturePreview1_other" xml:space="preserve">
+    <value>This will be your rating in {0} days, after</value>
+  </data>
+  <data name="StarRatingFuturePreview2_one" xml:space="preserve">
+    <value>{0} point are added.</value>
+  </data>
+  <data name="StarRatingFuturePreview2_other" xml:space="preserve">
+    <value>{0} points are added.</value>
+  </data>
+  <data name="StarRatingLevel" xml:space="preserve">
+    <value>Level {0}</value>
+  </data>
+  <data name="StarRatingLevelNegative" xml:space="preserve">
+    <value>Negative Rating</value>
+  </data>
+  <data name="StarRatingLevelNegativeOther" xml:space="preserve">
+    <value>A negative rating indicates that **{0}’s** payments are unreliable.</value>
+  </data>
+  <data name="StarRatingLevelNegativeYou_one" xml:space="preserve">
+    <value>A negative rating indicates that your payments are unreliable. Spend **{0} Star** to fix this issue.</value>
+  </data>
+  <data name="StarRatingLevelNegativeYou_other" xml:space="preserve">
+    <value>A negative rating indicates that your payments are unreliable. Spend **{0} Stars** to fix this issue.</value>
+  </data>
+  <data name="StarRatingSelfDescription" xml:space="preserve">
+    <value>This rating reflects your activity
+on Telegram. It is based on:</value>
+  </data>
+  <data name="StarRatingTitle" xml:space="preserve">
+    <value>Rating</value>
+  </data>
+  <data name="StarRatingTitle1" xml:space="preserve">
+    <value>Gifts from Telegram</value>
+  </data>
+  <data name="StarRatingTitle2" xml:space="preserve">
+    <value>Gifts and Posts from Users</value>
+  </data>
+  <data name="StarRatingTitle3" xml:space="preserve">
+    <value>Refunds and Conversions</value>
   </data>
   <data name="StarsAcquired" xml:space="preserve">
     <value>Stars Acquired!</value>
@@ -11770,6 +13490,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsCount_other" xml:space="preserve">
     <value>{0} Stars</value>
   </data>
+  <data name="StarsCountX" xml:space="preserve">
+    <value>{0} Stars</value>
+  </data>
   <data name="StarsFailed" xml:space="preserve">
     <value>Failed</value>
   </data>
@@ -11787,6 +13510,12 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="StarsGiftSent" xml:space="preserve">
     <value>Sent Gift</value>
+  </data>
+  <data name="StarsGiftUpgradeCompleted" xml:space="preserve">
+    <value>Gift Upgrade sent!</value>
+  </data>
+  <data name="StarsGiftUpgradeCompletedText" xml:space="preserve">
+    <value>{0} can now upgrade this gift for free.</value>
   </data>
   <data name="StarsGiveawayPrizeReceived" xml:space="preserve">
     <value>Received Prize</value>
@@ -11968,6 +13697,12 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsTransactionMessageFee_other" xml:space="preserve">
     <value>Fee for {0} Messages</value>
   </data>
+  <data name="StarsTransactionPremiumGift" xml:space="preserve">
+    <value>Telegram Premium</value>
+  </data>
+  <data name="StarsTransactionPremiumGiftDuration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
   <data name="StarsTransactionRecipient" xml:space="preserve">
     <value>From</value>
   </data>
@@ -12122,11 +13857,74 @@ and enter your phone number.</value>
   <data name="StorageUsage" xml:space="preserve">
     <value>Storage Usage</value>
   </data>
+  <data name="StorageUsageCalculating" xml:space="preserve">
+    <value>Calculating cache size...</value>
+  </data>
+  <data name="StorageUsageInfo" xml:space="preserve">
+    <value>All media will stay in the Telegram cloud and can be re-downloaded if you need them again.</value>
+  </data>
+  <data name="StorageUsageTelegram" xml:space="preserve">
+    <value>Telegram uses {0} of your device storage.</value>
+  </data>
+  <data name="StorageUsageTelegramLess" xml:space="preserve">
+    <value>Telegram uses {0} of your device storage.</value>
+  </data>
   <data name="Stories_one" xml:space="preserve">
     <value>{0} Story</value>
   </data>
   <data name="Stories_other" xml:space="preserve">
     <value>{0} Stories</value>
+  </data>
+  <data name="StoriesAlbumAddAlbum" xml:space="preserve">
+    <value>Add Album</value>
+  </data>
+  <data name="StoriesAlbumAddHint" xml:space="preserve">
+    <value>Choose a name for your album and add your stories.</value>
+  </data>
+  <data name="StoriesAlbumAddToAlbum" xml:space="preserve">
+    <value>Add to Album</value>
+  </data>
+  <data name="StoriesAlbumCreateNew" xml:space="preserve">
+    <value>Create a New Album</value>
+  </data>
+  <data name="StoriesAlbumMenuAddStories" xml:space="preserve">
+    <value>Add Stories</value>
+  </data>
+  <data name="StoriesAlbumMenuDeleteAlbum" xml:space="preserve">
+    <value>Delete Album</value>
+  </data>
+  <data name="StoriesAlbumMenuDeleteAlbumAsk" xml:space="preserve">
+    <value>Are you sure you want to delete the **{0}** album?</value>
+  </data>
+  <data name="StoriesAlbumMenuEditName" xml:space="preserve">
+    <value>Edit Name</value>
+  </data>
+  <data name="StoriesAlbumMenuRemoveFromAlbum" xml:space="preserve">
+    <value>Remove from Album</value>
+  </data>
+  <data name="StoriesAlbumMenuShareLink" xml:space="preserve">
+    <value>Share Link</value>
+  </data>
+  <data name="StoriesAlbumNameAllStories" xml:space="preserve">
+    <value>All Stories</value>
+  </data>
+  <data name="StoriesAlbumNewAlbum" xml:space="preserve">
+    <value>New Album</value>
+  </data>
+  <data name="StoriesAlbumOrganizeDescription" xml:space="preserve">
+    <value>Add some of your stories to this album.</value>
+  </data>
+  <data name="StoriesAlbumOrganizeTitle" xml:space="preserve">
+    <value>Organize Your Stories</value>
+  </data>
+  <data name="StoriesAlbumRename" xml:space="preserve">
+    <value>Rename Album</value>
+  </data>
+  <data name="StoriesAlbumRenameHint" xml:space="preserve">
+    <value>Choose a new name for your album.</value>
+  </data>
+  <data name="StoriesAlbumTitleInputHint" xml:space="preserve">
+    <value>Title</value>
   </data>
   <data name="StoriesMovedToContacts" xml:space="preserve">
     <value>Stories of **{0}** were moved to the **Archive**.</value>
@@ -12176,6 +13974,15 @@ and enter your phone number.</value>
   <data name="Story" xml:space="preserve">
     <value>Story</value>
   </data>
+  <data name="StoryAddedToAlbumTitle_one" xml:space="preserve">
+    <value>{0} story saved to **{1}**</value>
+  </data>
+  <data name="StoryAddedToAlbumTitle_other" xml:space="preserve">
+    <value>{0} stories saved to **{1}**</value>
+  </data>
+  <data name="StoryAddedToAlbumX" xml:space="preserve">
+    <value>This story has been added to **{0}** album.</value>
+  </data>
   <data name="StoryContactsHint" xml:space="preserve">
     <value>Only **{0}’s** contacts can view this story.</value>
   </data>
@@ -12211,6 +14018,15 @@ and enter your phone number.</value>
   </data>
   <data name="StoryReactionsByEmotionChartTitle" xml:space="preserve">
     <value>Story Reactions</value>
+  </data>
+  <data name="StoryRemovedFromAlbumTitle_one" xml:space="preserve">
+    <value>{0} story removed from **{1}**</value>
+  </data>
+  <data name="StoryRemovedFromAlbumTitle_other" xml:space="preserve">
+    <value>{0} stories removed from **{1}**</value>
+  </data>
+  <data name="StoryRemovedFromAlbumX" xml:space="preserve">
+    <value>This story has been removed from **{0}** album.</value>
   </data>
   <data name="StoryRemovedFromProfile" xml:space="preserve">
     <value>Story removed from your profile.</value>
@@ -12291,6 +14107,24 @@ list of viewers.</value>
   <data name="SuggestAnimatedEmojiInfo" xml:space="preserve">
     <value>Each time you enter an emoji you can replace it with an animated emoji.</value>
   </data>
+  <data name="SuggestAPostBelow" xml:space="preserve">
+    <value>Suggest a Post Below</value>
+  </data>
+  <data name="SuggestAPostBelowSubtitle" xml:space="preserve">
+    <value>Click to offer a price for publishing</value>
+  </data>
+  <data name="SuggestAPostBelowSubtitleStars" xml:space="preserve">
+    <value>⭐️ {0} for publishing anytime</value>
+  </data>
+  <data name="SuggestAPostBelowSubtitleStarsAndTime" xml:space="preserve">
+    <value>⭐️ {0} {1}</value>
+  </data>
+  <data name="SuggestAPostTooMuch" xml:space="preserve">
+    <value>Maximum offer: {0}</value>
+  </data>
+  <data name="SuggestAPostTooSmall" xml:space="preserve">
+    <value>Minimum offer: {0}</value>
+  </data>
   <data name="SuggestContacts" xml:space="preserve">
     <value>Suggest Frequent Contacts</value>
   </data>
@@ -12300,8 +14134,128 @@ list of viewers.</value>
   <data name="SuggestContactsInfo" xml:space="preserve">
     <value>Display people you message frequently at the top of the search section for quick access.</value>
   </data>
+  <data name="SuggestedDateOfBirthView" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="SuggestedMessageAcceptInfo" xml:space="preserve">
+    <value>Do you want to publish this post from **{0}**?</value>
+  </data>
+  <data name="SuggestedMessageAcceptInfo3" xml:space="preserve">
+    <value>It must remain visible for at least **{0}** hours after publication.</value>
+  </data>
+  <data name="SuggestedMessageAcceptInfoAdmin2" xml:space="preserve">
+    <value>You will receive **{0}** ({2}) for publishing this post **{1}**.</value>
+  </data>
+  <data name="SuggestedMessageAcceptInfoAnytimeAdmin2" xml:space="preserve">
+    <value>You will receive **{0}** ({1}) for publishing this post.</value>
+  </data>
+  <data name="SuggestedMessageAcceptInfoAnytimeUser2" xml:space="preserve">
+    <value>You will pay **{0}** for publishing this post.</value>
+  </data>
+  <data name="SuggestedMessageAcceptInfoUser2" xml:space="preserve">
+    <value>You will pay **{0}** for publishing this post **{1}**.</value>
+  </data>
+  <data name="SuggestedMessageAcceptStarsDisclaimer" xml:space="preserve">
+    <value>Transactions in Stars may be reversed by the payment provider within 21 days. Only accept Stars from people you trust.</value>
+  </data>
+  <data name="SuggestedMessageDecline" xml:space="preserve">
+    <value>Decline</value>
+  </data>
+  <data name="SuggestedMessageDeclineInfo" xml:space="preserve">
+    <value>Do you want to decline this post from **{0}**?</value>
+  </data>
+  <data name="SuggestedMessageDeclineReasonHint" xml:space="preserve">
+    <value>Add a reason (optional)</value>
+  </data>
+  <data name="SuggestedOfferCompleteAmountF" xml:space="preserve">
+    <value>{0} has received ⭐️ {1} for publishing post</value>
+  </data>
+  <data name="SuggestedOfferCompleteAmountUnknown" xml:space="preserve">
+    <value>{0} received payment for publishing post</value>
+  </data>
+  <data name="SuggestedOfferPaidUntil" xml:space="preserve">
+    <value>Paid until {0}</value>
+  </data>
+  <data name="SuggestedOfferRefundByAdminAmountF" xml:space="preserve">
+    <value>⭐️ {2} was returned to {0} because {1} deleted the message</value>
+  </data>
+  <data name="SuggestedOfferRefundByAdminAmountUnknown" xml:space="preserve">
+    <value>Payment was returned to {0} because {1} deleted the message</value>
+  </data>
+  <data name="SuggestedOfferRefundByUserAmountF" xml:space="preserve">
+    <value>{1} will not receive ⭐️ {2} because {0} requested a refund</value>
+  </data>
+  <data name="SuggestedOfferRefundByUserAmountUnknown" xml:space="preserve">
+    <value>{1} will not receive payment because {0} requested a refund</value>
+  </data>
+  <data name="SuggestedOfferStars" xml:space="preserve">
+    <value>Offer Stars</value>
+  </data>
+  <data name="SuggestedOfferTON" xml:space="preserve">
+    <value>Offer TON</value>
+  </data>
+  <data name="SuggestedPostAcceptTitle" xml:space="preserve">
+    <value>Accept Terms</value>
+  </data>
+  <data name="SuggestedPostPublish" xml:space="preserve">
+    <value>Publish</value>
+  </data>
   <data name="SuggestionLockedStars" xml:space="preserve">
     <value>**{0}** charges **⭐️ {1}** per message to its admin.</value>
+  </data>
+  <data name="SuggestionOfferInfoPrice" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="SuggestionOfferInfoPriceFree" xml:space="preserve">
+    <value>Free</value>
+  </data>
+  <data name="SuggestionOfferInfoTime" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="SuggestionOfferInfoTimeAnytime" xml:space="preserve">
+    <value>Anytime</value>
+  </data>
+  <data name="SuggestionOfferInfoTitle" xml:space="preserve">
+    <value>**{0}** suggested a post.</value>
+  </data>
+  <data name="SuggestionOfferInfoTitleEditedAnd" xml:space="preserve">
+    <value>and</value>
+  </data>
+  <data name="SuggestionOfferInfoTitleEditedFromX" xml:space="preserve">
+    <value>**{0}** suggested a new {1} for this post.</value>
+  </data>
+  <data name="SuggestionOfferInfoTitleEditedFromYou" xml:space="preserve">
+    <value>**You** suggested a new {0} for this post.</value>
+  </data>
+  <data name="SuggestionOfferInfoTitleEditedMedia" xml:space="preserve">
+    <value>media</value>
+  </data>
+  <data name="SuggestionOfferInfoTitleEditedPrice" xml:space="preserve">
+    <value>price</value>
+  </data>
+  <data name="SuggestionOfferInfoTitleEditedText" xml:space="preserve">
+    <value>text</value>
+  </data>
+  <data name="SuggestionOfferInfoTitleEditedTime" xml:space="preserve">
+    <value>time</value>
+  </data>
+  <data name="SuggestionOfferInfoTitleYou" xml:space="preserve">
+    <value>**You** suggested a post.</value>
+  </data>
+  <data name="SuggestionStarsWillBeLost" xml:space="preserve">
+    <value>Stars will be lost</value>
+  </data>
+  <data name="SuggestionStarsWillBeLostDelete" xml:space="preserve">
+    <value>Delete Anyway</value>
+  </data>
+  <data name="SuggestionStarsWillBeLostInfo" xml:space="preserve">
+    <value>You won’t receive Stars for this post if you delete it now. The post must remain visible for at least **{0} hours** after it was published.</value>
+  </data>
+  <data name="SuggestionTONWillBeLost" xml:space="preserve">
+    <value>TON will be lost</value>
+  </data>
+  <data name="SuggestionTONWillBeLostInfo" xml:space="preserve">
+    <value>You won’t receive TON for this post if you delete it now. The post must remain visible for at least **{0} hours** after it was published.</value>
   </data>
   <data name="SuggestionUnlockedStars" xml:space="preserve">
     <value>Send a direct message to the administrator of **{0}**.</value>
@@ -12335,6 +14289,12 @@ list of viewers.</value>
   </data>
   <data name="SuggestStickersNone" xml:space="preserve">
     <value>None</value>
+  </data>
+  <data name="SummarySubtitle" xml:space="preserve">
+    <value>Click to see original text</value>
+  </data>
+  <data name="SummaryTitle" xml:space="preserve">
+    <value>AI Summary</value>
   </data>
   <data name="SupportStatus" xml:space="preserve">
     <value>support</value>
@@ -12625,6 +14585,180 @@ in mini apps on Telegram.</value>
   <data name="TodayAtFormattedWithToday" xml:space="preserve">
     <value>today at {0}</value>
   </data>
+  <data name="Todo" xml:space="preserve">
+    <value>Checklist</value>
+  </data>
+  <data name="TodoAddedTask" xml:space="preserve">
+    <value>un1 added a new task **&quot;{0}&quot;** to **&quot;{1}&quot;**</value>
+  </data>
+  <data name="TodoAddedTaskOut" xml:space="preserve">
+    <value>You added a new task **&quot;{0}&quot;** to **&quot;{1}&quot;**</value>
+  </data>
+  <data name="TodoAddedTaskOutUnknown" xml:space="preserve">
+    <value>You added a new task **&quot;{0}&quot;** to a checklist</value>
+  </data>
+  <data name="TodoAddedTasks_one" xml:space="preserve">
+    <value>un1 added **{0} task** to **{1}**</value>
+  </data>
+  <data name="TodoAddedTasks_other" xml:space="preserve">
+    <value>un1 added **{0} tasks** to **{1}**</value>
+  </data>
+  <data name="TodoAddedTasksOut_one" xml:space="preserve">
+    <value>You added **{0} task** to **&quot;{1}&quot;**</value>
+  </data>
+  <data name="TodoAddedTasksOut_other" xml:space="preserve">
+    <value>You added **{0} tasks** to **&quot;{1}&quot;**</value>
+  </data>
+  <data name="TodoAddedTasksOutUnknown_one" xml:space="preserve">
+    <value>You added **{0} task** to a checklist</value>
+  </data>
+  <data name="TodoAddedTasksOutUnknown_other" xml:space="preserve">
+    <value>You added **{0} tasks** to a checklist</value>
+  </data>
+  <data name="TodoAddedTasksUnknown_one" xml:space="preserve">
+    <value>un1 added **{0} task** to a checklist</value>
+  </data>
+  <data name="TodoAddedTasksUnknown_other" xml:space="preserve">
+    <value>un1 added **{0} tasks** to a checklist</value>
+  </data>
+  <data name="TodoAddedTaskUnknown" xml:space="preserve">
+    <value>un1 added a new task **&quot;{0}&quot;** to a checklist</value>
+  </data>
+  <data name="TodoAddTaskInfoMax" xml:space="preserve">
+    <value>You have added the maximum number of tasks.</value>
+  </data>
+  <data name="TodoAddTasksButton" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="TodoAddTasksTitle" xml:space="preserve">
+    <value>New Tasks</value>
+  </data>
+  <data name="TodoAllowAddingTasks" xml:space="preserve">
+    <value>Allow Others to Add Tasks</value>
+  </data>
+  <data name="TodoAllowMarkingDone" xml:space="preserve">
+    <value>Allow Others to Mark As Done</value>
+  </data>
+  <data name="TodoCantForward" xml:space="preserve">
+    <value>Sorry, checklists can&apos;t be forwarded to channels.</value>
+  </data>
+  <data name="TodoCantForwardSecretChat" xml:space="preserve">
+    <value>Sorry, checklists can&apos;t be forwarded to secret chats.</value>
+  </data>
+  <data name="TodoCheck" xml:space="preserve">
+    <value>Check</value>
+  </data>
+  <data name="TodoCompleted_one" xml:space="preserve">
+    <value>{1} of {0} completed</value>
+  </data>
+  <data name="TodoCompleted_other" xml:space="preserve">
+    <value>{1} of {0} completed</value>
+  </data>
+  <data name="TodoCompletedDateTimeAt" xml:space="preserve">
+    <value>Completed {0} at {1}</value>
+  </data>
+  <data name="TodoCompletedTodayAt" xml:space="preserve">
+    <value>Completed at {0}</value>
+  </data>
+  <data name="TodoCompletedYesterdayAt" xml:space="preserve">
+    <value>Completed yesterday at {0}</value>
+  </data>
+  <data name="TodoCompleteForbidden" xml:space="preserve">
+    <value>**{0}** has restricted others from editing this checklist.</value>
+  </data>
+  <data name="TodoCompleteForbiddenForward" xml:space="preserve">
+    <value>You can&apos;t edit a forwarded checklist.</value>
+  </data>
+  <data name="TodoDeleteItem" xml:space="preserve">
+    <value>Delete Item</value>
+  </data>
+  <data name="TodoEditItem" xml:space="preserve">
+    <value>Edit Item</value>
+  </data>
+  <data name="TodoEditTasksButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="TodoEditTitle" xml:space="preserve">
+    <value>Edit Checklist</value>
+  </data>
+  <data name="TodoItemQuote" xml:space="preserve">
+    <value>Reply to Item</value>
+  </data>
+  <data name="TodoItemsTitle" xml:space="preserve">
+    <value>Checklist</value>
+  </data>
+  <data name="TodoMenuTabTask" xml:space="preserve">
+    <value>Task</value>
+  </data>
+  <data name="TodoNewTask" xml:space="preserve">
+    <value>Add a Task</value>
+  </data>
+  <data name="TodoNewTaskInfo_one" xml:space="preserve">
+    <value>You can add {0} more task.</value>
+  </data>
+  <data name="TodoNewTaskInfo_other" xml:space="preserve">
+    <value>You can add {0} more tasks.</value>
+  </data>
+  <data name="TodoPremiumRequired" xml:space="preserve">
+    <value>Only **Telegram Premium** subscribers can mark tasks as done.</value>
+  </data>
+  <data name="TodoTaskCompleted" xml:space="preserve">
+    <value>un1 marked **&quot;{0}&quot;** as done</value>
+  </data>
+  <data name="TodoTaskCompletedOut" xml:space="preserve">
+    <value>You marked **&quot;{0}&quot;** as done</value>
+  </data>
+  <data name="TodoTaskNotCompleted" xml:space="preserve">
+    <value>un1 marked **&quot;{0}&quot;** as not done</value>
+  </data>
+  <data name="TodoTaskNotCompletedOut" xml:space="preserve">
+    <value>You marked **&quot;{0}&quot;** as not done</value>
+  </data>
+  <data name="TodoTaskPlaceholder" xml:space="preserve">
+    <value>Task</value>
+  </data>
+  <data name="TodoTasksCompleted_one" xml:space="preserve">
+    <value>un1 marked **{0} task** as done</value>
+  </data>
+  <data name="TodoTasksCompleted_other" xml:space="preserve">
+    <value>un1 marked **{0} tasks** as done</value>
+  </data>
+  <data name="TodoTasksCompletedOut_one" xml:space="preserve">
+    <value>You marked **{0} task** as done</value>
+  </data>
+  <data name="TodoTasksCompletedOut_other" xml:space="preserve">
+    <value>You marked **{0} tasks** as done</value>
+  </data>
+  <data name="TodoTasksNotCompleted_one" xml:space="preserve">
+    <value>un1 marked **{0} task** as not done</value>
+  </data>
+  <data name="TodoTasksNotCompleted_other" xml:space="preserve">
+    <value>un1 marked **{0} tasks** as not done</value>
+  </data>
+  <data name="TodoTasksNotCompletedOut_one" xml:space="preserve">
+    <value>You marked **{0} tasks** as not done</value>
+  </data>
+  <data name="TodoTasksNotCompletedOut_other" xml:space="preserve">
+    <value>You marked **{0} tasks** as not done</value>
+  </data>
+  <data name="TodoTitle" xml:space="preserve">
+    <value>New Checklist</value>
+  </data>
+  <data name="TodoTitlePlaceholder" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="TodoUncheck" xml:space="preserve">
+    <value>Uncheck</value>
+  </data>
+  <data name="TonCount_one" xml:space="preserve">
+    <value>{0} TON</value>
+  </data>
+  <data name="TonCount_other" xml:space="preserve">
+    <value>{0} TON</value>
+  </data>
+  <data name="TonCountX" xml:space="preserve">
+    <value>{0} TON</value>
+  </data>
   <data name="TooManyTries" xml:space="preserve">
     <value>Too many tries.
 Please try again in {0}.</value>
@@ -12641,8 +14775,14 @@ Please try again in {0}.</value>
   <data name="TopicClosed2" xml:space="preserve">
     <value>{0} closed the topic</value>
   </data>
+  <data name="TopicClosedByAdmin" xml:space="preserve">
+    <value>The topic is closed</value>
+  </data>
   <data name="TopicCreated" xml:space="preserve">
     <value>Topic created</value>
+  </data>
+  <data name="TopicHidden2" xml:space="preserve">
+    <value>un1 hid the general topic</value>
   </data>
   <data name="TopicProfileStatus" xml:space="preserve">
     <value>In {0}</value>
@@ -12662,11 +14802,14 @@ Please try again in {0}.</value>
   <data name="TopicsEnabled" xml:space="preserve">
     <value>Enabled</value>
   </data>
+  <data name="TopicShown2" xml:space="preserve">
+    <value>un1 unhid the general topic</value>
+  </data>
   <data name="TopicsInfo" xml:space="preserve">
     <value>The group chat will be divided into topics created by admins and users.</value>
   </data>
   <data name="TopicsLayout" xml:space="preserve">
-    <value>Topics layout</value>
+    <value>Topic layout</value>
   </data>
   <data name="TopicsLayoutInfo" xml:space="preserve">
     <value>Choose how topics appear for all members.</value>
@@ -12870,6 +15013,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="TranslateMessagesInfo2" xml:space="preserve">
     <value>Google may have access to the text of messages you translate.</value>
   </data>
+  <data name="TranslateSelectedText" xml:space="preserve">
+    <value>Translate Selected Text</value>
+  </data>
   <data name="TranslateTo" xml:space="preserve">
     <value>Translate To</value>
   </data>
@@ -13008,6 +15154,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="Underline" xml:space="preserve">
     <value>Underline</value>
   </data>
+  <data name="Understood" xml:space="preserve">
+    <value>👌 Understood</value>
+  </data>
   <data name="Undo" xml:space="preserve">
     <value>Undo</value>
   </data>
@@ -13021,7 +15170,7 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
     <value>Pin</value>
   </data>
   <data name="UniqueGiftNotFound" xml:space="preserve">
-    <value>Gift was not found</value>
+    <value>Gift not found.</value>
   </data>
   <data name="UnknownErrorCode" xml:space="preserve">
     <value>Unknown error: {0}</value>
@@ -13041,6 +15190,12 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UnlockPremium" xml:space="preserve">
     <value>Subscribe to **Telegram Premium** to unlock this and many other features.</value>
   </data>
+  <data name="UnlockPremiumEmojiHint" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to unlock this emoji.</value>
+  </data>
+  <data name="UnlockPremiumEmojiReaction" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to unlock this reaction.</value>
+  </data>
   <data name="UnlockPremiumStickers" xml:space="preserve">
     <value>Unlock Premium Stickers</value>
   </data>
@@ -13059,11 +15214,17 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UnpinAllMessages" xml:space="preserve">
     <value>UNPIN ALL MESSAGES</value>
   </data>
+  <data name="UnpinAllMessages2" xml:space="preserve">
+    <value>Unpin All Messages</value>
+  </data>
   <data name="UnpinFromTop" xml:space="preserve">
     <value>Unpin from top</value>
   </data>
   <data name="UnpinMessage" xml:space="preserve">
     <value>Unpin</value>
+  </data>
+  <data name="UnpinMessage2" xml:space="preserve">
+    <value>Unpin Message</value>
   </data>
   <data name="UnpinMessageAlert" xml:space="preserve">
     <value>Are you sure you want to unpin this message for everyone?</value>
@@ -13191,6 +15352,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UseProxyTelegramInfo2" xml:space="preserve">
     <value>This proxy may display a sponsored channel in your chat list. This doesn&apos;t reveal any of your Telegram traffic.</value>
   </data>
+  <data name="UseProxyTitle" xml:space="preserve">
+    <value>Proxy Server</value>
+  </data>
   <data name="UseProxyUsername" xml:space="preserve">
     <value>Username</value>
   </data>
@@ -13214,6 +15378,12 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="UserColorApplied" xml:space="preserve">
     <value>Your name color has been updated!</value>
+  </data>
+  <data name="UserColorApply" xml:space="preserve">
+    <value>Apply Style</value>
+  </data>
+  <data name="UserColorApplyCollectible" xml:space="preserve">
+    <value>Wear Collectible</value>
   </data>
   <data name="UserColorApplyIcon" xml:space="preserve">
     <value>Apply Color and Icon</value>
@@ -13308,6 +15478,9 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="UsernameInvalidStartNumber" xml:space="preserve">
     <value>Usernames can&apos;t start with a number.</value>
+  </data>
+  <data name="UsernameNotOnTelegram" xml:space="preserve">
+    <value>This username is not on Telegram</value>
   </data>
   <data name="UsernamePlaceholder" xml:space="preserve">
     <value>Your Username</value>
@@ -13429,11 +15602,23 @@ However, it is currently available for purchase. **Learn more…**</value>
   <data name="Users_other" xml:space="preserve">
     <value>{0} users</value>
   </data>
+  <data name="UserSuggestBirthday" xml:space="preserve">
+    <value>Suggest Date of Birth</value>
+  </data>
+  <data name="UserSuggestBirthdayButton" xml:space="preserve">
+    <value>Suggest Date of Birth</value>
+  </data>
+  <data name="UserSuggestBirthdayTitle" xml:space="preserve">
+    <value>{0}&apos;s Date Of Birth</value>
+  </data>
   <data name="UsesLimitHelp" xml:space="preserve">
     <value>You can make the link work only for a certain number of users.</value>
   </data>
   <data name="UsesLimitHint" xml:space="preserve">
     <value>Enter Custom Limit</value>
+  </data>
+  <data name="UseSystemAccentColor" xml:space="preserve">
+    <value>Use System Accent Color</value>
   </data>
   <data name="UseSystemProxySettings" xml:space="preserve">
     <value>Use System Proxy Settings</value>
@@ -13506,6 +15691,18 @@ If you didn&apos;t request any codes — don&apos;t worry! Most likely, someone
   <data name="Videos_other" xml:space="preserve">
     <value>{0} videos</value>
   </data>
+  <data name="VideoSetOnceHint" xml:space="preserve">
+    <value>Tap to set this message to **Play Once**.</value>
+  </data>
+  <data name="VideoSetOnceHintEnabled" xml:space="preserve">
+    <value>The recipient will be able to play it only once.</value>
+  </data>
+  <data name="ViewAction" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="ViewAlbum" xml:space="preserve">
+    <value>VIEW ALBUM</value>
+  </data>
   <data name="ViewAnonymously" xml:space="preserve">
     <value>View
 Anonymously</value>
@@ -13515,6 +15712,9 @@ Anonymously</value>
   </data>
   <data name="ViewChatList" xml:space="preserve">
     <value>View Chat List</value>
+  </data>
+  <data name="ViewCollection" xml:space="preserve">
+    <value>VIEW COLLECTION</value>
   </data>
   <data name="ViewDetails" xml:space="preserve">
     <value>VIEW CONTACT</value>
@@ -13546,6 +15746,9 @@ Anonymously</value>
   <data name="ViewPhotoAction" xml:space="preserve">
     <value>View Photo</value>
   </data>
+  <data name="ViewProfile" xml:space="preserve">
+    <value>View Profile &gt;</value>
+  </data>
   <data name="ViewReplies_one" xml:space="preserve">
     <value>View {0} Reply</value>
   </data>
@@ -13576,6 +15779,15 @@ Anonymously</value>
   <data name="ViewWallpaperAction" xml:space="preserve">
     <value>View Wallpaper</value>
   </data>
+  <data name="VirtualKeyModifiersControl" xml:space="preserve">
+    <value>Ctrl</value>
+  </data>
+  <data name="VirtualKeyModifiersMenu" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="VirtualKeyModifiersShift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
   <data name="Voice_one" xml:space="preserve">
     <value>{0} voice message</value>
   </data>
@@ -13584,6 +15796,12 @@ Anonymously</value>
   </data>
   <data name="VoiceMessagesRestrictedByPrivacy" xml:space="preserve">
     <value>**{0}** doesn&apos;t accept voice messages.</value>
+  </data>
+  <data name="VoiceSetOnceHint" xml:space="preserve">
+    <value>Tap to set this message to **Play Once**.</value>
+  </data>
+  <data name="VoiceSetOnceHintEnabled" xml:space="preserve">
+    <value>The recipient will be able to listen only once.</value>
   </data>
   <data name="VoipBusy" xml:space="preserve">
     <value>Line busy</value>
@@ -13603,8 +15821,14 @@ Anonymously</value>
   <data name="VoipCallFailed2" xml:space="preserve">
     <value>Call Failed</value>
   </data>
+  <data name="VoipChannelDisableComments" xml:space="preserve">
+    <value>Disable Messages</value>
+  </data>
   <data name="VoipChannelEditTitle" xml:space="preserve">
     <value>Edit live stream title</value>
+  </data>
+  <data name="VoipChannelEnableComments" xml:space="preserve">
+    <value>Enable Messages</value>
   </data>
   <data name="VoipChannelEndAlertText" xml:space="preserve">
     <value>Do you want to end this live stream?</value>
@@ -13881,6 +16105,9 @@ Participants will see that the chat is being recorded.</value>
   <data name="VoipMaximize" xml:space="preserve">
     <value>maximize</value>
   </data>
+  <data name="VoipMessage" xml:space="preserve">
+    <value>Message</value>
+  </data>
   <data name="VoipMinimize" xml:space="preserve">
     <value>minimize</value>
   </data>
@@ -13922,6 +16149,12 @@ Participants will see that the chat is being recorded.</value>
   </data>
   <data name="VoipOngoingChatAlertTitle" xml:space="preserve">
     <value>Another video chat in progress</value>
+  </data>
+  <data name="VoipOngoingConferenceChatAlert" xml:space="preserve">
+    <value>Leave group call with **{0}** and start a new one with **{1}**?</value>
+  </data>
+  <data name="VoipOngoingConferenceChatAlert2" xml:space="preserve">
+    <value>Leave group call with **{0}** and call **{1}**?</value>
   </data>
   <data name="VoipPeerOutdated" xml:space="preserve">
     <value>**{0}**&apos;s app does not support calls. They need to update their app before you can call them.</value>
@@ -14040,7 +16273,7 @@ in your streaming app.</value>
     <value>White</value>
   </data>
   <data name="WhoCanAddMe" xml:space="preserve">
-    <value>Who can add me to group chats?</value>
+    <value>Who can add me?</value>
   </data>
   <data name="WhoCanAddMeInfo" xml:space="preserve">
     <value>You can restrict who can add you to groups and channels with granular precision.</value>
@@ -14115,6 +16348,9 @@ If you forget your password, you will lose access to your Telegram account. Ther
   </data>
   <data name="YourNameColor" xml:space="preserve">
     <value>Your Name Color</value>
+  </data>
+  <data name="YourNetworkUsageSince" xml:space="preserve">
+    <value>Your network usage since {0}</value>
   </data>
   <data name="YourNewEmail" xml:space="preserve">
     <value>Your new email</value>

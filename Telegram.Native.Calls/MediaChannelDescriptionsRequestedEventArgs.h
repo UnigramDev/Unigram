@@ -2,9 +2,6 @@
 
 #include "MediaChannelDescriptionsRequestedEventArgs.g.h"
 
-#include <winrt/Telegram.Td.Api.h>
-
-using namespace winrt::Telegram::Td::Api;
 using namespace winrt::Windows::Foundation::Collections;
 
 namespace winrt::Telegram::Native::Calls::implementation

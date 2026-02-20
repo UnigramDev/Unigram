@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Runtime.CompilerServices;
 using Telegram.Services;
@@ -66,9 +67,23 @@ namespace Telegram.Controls
 
         private bool _registerEvents = true;
 
+        private UIElement _banner;
+
+        private double GetBannerDesiredHeight(FrameworkElement detail)
+        {
+            _banner ??= detail.FindName("BannerPresenter") as UIElement;
+
+            if (_banner != null && _banner.DesiredSize.Height > 0)
+            {
+                return _banner.DesiredSize.Height + 8;
+            }
+
+            return 0;
+        }
+
         protected override Size MeasureOverride(Size availableSize)
         {
-            var detail = Children[0];
+            var detail = Children[0] as FrameworkElement;
             var master = Children[1];
             var grip = Children[2] as FrameworkElement;
 
@@ -89,8 +104,10 @@ namespace Telegram.Controls
             // Single column mode
             if (availableSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain || !HasMaster)
             {
-                master.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height)));
                 detail.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height)));
+
+                var desiredHeight = GetBannerDesiredHeight(detail);
+                master.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height - desiredHeight)));
 
                 grip.Measure(CreateSize(0, 0));
             }
@@ -117,7 +134,7 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var detail = Children[0];
+            var detail = Children[0] as FrameworkElement;
             var master = Children[1];
             var grip = Children[2] as FrameworkElement;
 
@@ -126,8 +143,10 @@ namespace Telegram.Controls
             {
                 CurrentState = MasterDetailState.Minimal;
 
-                master.Arrange(CreateRect(0, 0, finalSize.Width, finalSize.Height));
                 detail.Arrange(CreateRect(0, 0, finalSize.Width, finalSize.Height));
+
+                var desiredHeight = GetBannerDesiredHeight(detail);
+                master.Arrange(CreateRect(0, desiredHeight, finalSize.Width, finalSize.Height - desiredHeight));
 
                 grip.Arrange(CreateRect(0, 0, 0, 0));
             }
@@ -175,8 +194,8 @@ namespace Telegram.Controls
             return result;
         }
 
-        private static readonly CoreCursor _defaultCursor = new CoreCursor(CoreCursorType.Arrow, 1);
-        private static readonly CoreCursor _resizeCursor = new CoreCursor(CoreCursorType.SizeWestEast, 1);
+        private static readonly CoreCursor _defaultCursor = new(CoreCursorType.Arrow, 1);
+        private static readonly CoreCursor _resizeCursor = new(CoreCursorType.SizeWestEast, 1);
 
         private bool _pointerPressed;
         private double _pointerDelta;

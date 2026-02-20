@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System.Collections.Specialized;
 using Telegram.Common;
 using Telegram.Controls;
@@ -38,10 +39,6 @@ namespace Telegram.Views.Popups
             {
                 Hide();
             }
-        }
-
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -103,7 +100,7 @@ namespace Telegram.Views.Popups
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ClientService, user, 36);
+                photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
             }
 
             if (args.Phase < 2)

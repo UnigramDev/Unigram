@@ -1,9 +1,10 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
@@ -14,17 +15,23 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
-using Telegram.Views;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
-using Point = Windows.Foundation.Point;
+using Windows.UI.Xaml.Markup;
 
 namespace Telegram.Controls
 {
+    public enum ActiveStoriesClickMode
+    {
+        Disabled,
+        Enabled,
+        Auto
+    }
+
     public partial class ActiveStoriesSegments : HyperlinkButton
     {
         private static readonly Color _storyUnreadTopColor = Color.FromArgb(0xFF, 0x34, 0xC7, 0x6F);
@@ -33,17 +40,64 @@ namespace Telegram.Controls
         private static readonly Color _storyCloseFriendTopColor = Color.FromArgb(0xFF, 0x78, 0xd5, 0x38);
         private static readonly Color _storyCloseFriendBottomColor = Color.FromArgb(0xFF, 0x2a, 0xb5, 0x6d);
 
-        private static readonly Color _storyDefaultColor = Color.FromArgb(0xFF, 0xD8, 0xD8, 0xE1);
+        private static readonly Color _storyDefaultColor = Color.FromArgb(77, 128, 128, 128);
 
-        private bool _enabled;
+        private static readonly Color _storyLiveColor = Color.FromArgb(0xFF, 0xFF, 0x2C, 0x55);
 
         private bool _hasActiveStories;
+        private bool _hasLiveBadge;
 
         public bool HasActiveStories => _hasActiveStories;
+
+        public bool HasLiveBadge => _hasLiveBadge;
+
+        public bool IsLiveBadgeVisible { get; set; } = true;
+
+        private ContentPresenter Presenter;
+        private Border LiveBadge;
+
+        private Visual _visual;
 
         public ActiveStoriesSegments()
         {
             DefaultStyleKey = typeof(ActiveStoriesSegments);
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            Presenter = GetTemplateChild(nameof(Presenter)) as ContentPresenter;
+
+            if (_visual != null)
+            {
+                UpdateVisual(_hasLiveBadge, _visual);
+            }
+
+            base.OnApplyTemplate();
+        }
+
+        private void UpdateVisual(bool live, Visual visual)
+        {
+            _hasLiveBadge = live;
+
+            if (Presenter != null)
+            {
+                _visual = null;
+                ElementCompositionPreview.SetElementChildVisual(Presenter, visual);
+
+                if (live && IsLiveBadgeVisible)
+                {
+                    LiveBadge ??= GetTemplateChild(nameof(LiveBadge)) as Border;
+                }
+                else if (LiveBadge != null)
+                {
+                    XamlMarkupHelper.UnloadObject(LiveBadge);
+                    LiveBadge = null;
+                }
+            }
+            else
+            {
+                _visual = visual;
+            }
         }
 
         public async void Open(INavigationService navigationService, IClientService clientService, Chat chat, int side, Func<ActiveStoriesViewModel, Rect> origin)
@@ -60,7 +114,7 @@ namespace Telegram.Controls
 
             if (clientService.TryGetActiveStories(chat.Id, out ChatActiveStories cached))
             {
-                var unreadCount = cached.CountUnread(out bool closeFriends);
+                var unreadCount = cached.CountUnread(out bool closeFriends, out bool live);
                 ShowIndeterminate(side, unreadCount, closeFriends);
             }
             else
@@ -72,16 +126,17 @@ namespace Telegram.Controls
 
             if (clientService.TryGetActiveStories(chat.Id, out ChatActiveStories chatActiveStories))
             {
-                var settings = TypeResolver.Current.Resolve<ISettingsService>(clientService.SessionId);
-                var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(clientService.SessionId);
+                var settings = clientService.Session.Resolve<ISettingsService>();
+                var aggregator = clientService.Session.Resolve<IEventAggregator>();
 
                 var activeStories = new ActiveStoriesViewModel(clientService, settings, aggregator, chatActiveStories, chat);
                 await activeStories.Wait;
 
-                if (activeStories.Items.Count > 0 && activeStories.SelectedItem != null)
+                if (activeStories.Items.Count > 0)
                 {
                     var viewModel = new StoryListViewModel(clientService, settings, aggregator, activeStories);
                     viewModel.NavigationService = navigationService;
+                    viewModel.UpdateSelectedItem();
 
                     var window = new StoriesWindow();
                     window.Update(viewModel, activeStories, StoryOpenOrigin.ProfilePhoto, pointz, origin);
@@ -99,11 +154,10 @@ namespace Telegram.Controls
                 var visual = ElementComposition.GetElementVisual(element);
                 visual.Scale = Vector3.One;
 
-                ElementCompositionPreview.SetElementChildVisual(this, visual.Compositor.CreateSpriteVisual());
+                UpdateVisual(false, visual.Compositor.CreateSpriteVisual());
 
                 _hasActiveStories = false;
-                _enabled = false;
-                IsEnabled = false;
+                IsEnabled = InteractionMode is ActiveStoriesClickMode.Enabled;
             }
         }
 
@@ -111,11 +165,11 @@ namespace Telegram.Controls
         {
             if (user.Id != clientService.Options.MyId && clientService.TryGetChatFromUser(user.Id, out Chat chat))
             {
-                UpdateActiveStories(clientService, chat.Id, user.HasActiveStories, user.HasUnreadActiveStories, side);
+                UpdateActiveStories(clientService, chat.Id, user.ActiveStoryState, side);
             }
             else
             {
-                UpdateActiveStories(clientService, 0, false, false, side);
+                UpdateActiveStories(clientService, 0, null, side);
             }
         }
 
@@ -123,15 +177,15 @@ namespace Telegram.Controls
         {
             if (clientService != null && chat?.Type is ChatTypePrivate typePrivate && typePrivate.UserId != clientService.Options.MyId && clientService.TryGetUser(typePrivate.UserId, out User user))
             {
-                UpdateActiveStories(clientService, chat.Id, user.HasActiveStories, user.HasUnreadActiveStories, side);
+                UpdateActiveStories(clientService, chat.Id, user.ActiveStoryState, side);
             }
             else if (clientService != null && chat?.Type is ChatTypeSupergroup typeSupergroup && clientService.TryGetSupergroup(typeSupergroup.SupergroupId, out Supergroup supergroup))
             {
-                UpdateActiveStories(clientService, chat.Id, supergroup.HasActiveStories, supergroup.HasUnreadActiveStories, side);
+                UpdateActiveStories(clientService, chat.Id, supergroup.ActiveStoryState, side);
             }
             else
             {
-                UpdateActiveStories(clientService, 0, false, false, side);
+                UpdateActiveStories(clientService, 0, null, side);
             }
         }
 
@@ -139,44 +193,56 @@ namespace Telegram.Controls
         {
             if (activeStories.Stories.Count > 0)
             {
-                if (Content is UIElement element && !_hasActiveStories)
+                if (!_hasActiveStories)
                 {
-                    var visual = ElementComposition.GetElementVisual(element);
-                    visual.CenterPoint = new Vector3(side / 2);
-                    visual.Scale = new Vector3((side - 8f) / side);
+                    if (Content is UIElement element)
+                    {
+                        var visual = ElementComposition.GetElementVisual(element);
+                        visual.CenterPoint = new Vector3(side / 2);
+                        visual.Scale = new Vector3((side - 8f) / side);
+                    }
+
+                    _hasActiveStories = true;
+                    IsEnabled = InteractionMode is ActiveStoriesClickMode.Enabled or ActiveStoriesClickMode.Auto;
                 }
 
-                _hasActiveStories = true;
-
-                var unreadCount = activeStories.CountUnread(out bool closeFriends);
+                var unreadCount = activeStories.CountUnread(out bool closeFriends, out bool live);
 
                 if (precise)
                 {
-                    UpdateSegments(side, closeFriends, activeStories.Stories.Count, unreadCount);
+                    UpdateSegments(side, closeFriends, live, activeStories.Stories.Count, unreadCount);
                 }
                 else if (unreadCount > 0)
                 {
-                    UpdateSegments(side, closeFriends, 1, 1, 3.0f, 3.0f);
+                    UpdateSegments(side, closeFriends, live, 1, 1, 3.0f, 3.0f);
+                }
+                else if (live)
+                {
+                    UpdateSegments(side, false, true, 1, 1, 3.0f, 3.0f);
                 }
                 else
                 {
-                    UpdateSegments(side, false, 1, 0, 3.0f, 3.0f);
+                    UpdateSegments(side, false, false, 1, 0, 3.0f, 3.0f);
                 }
             }
-            else if (_hasActiveStories && Content is UIElement element)
+            else if (_hasActiveStories)
             {
-                var visual = ElementComposition.GetElementVisual(element);
-                visual.Scale = Vector3.One;
+                if (Content is UIElement element)
+                {
+                    var visual = ElementComposition.GetElementVisual(element);
+                    visual.Scale = Vector3.One;
 
-                ElementCompositionPreview.SetElementChildVisual(this, visual.Compositor.CreateSpriteVisual());
+                    UpdateVisual(false, visual.Compositor.CreateSpriteVisual());
+                }
 
                 _hasActiveStories = false;
+                IsEnabled = InteractionMode is ActiveStoriesClickMode.Enabled;
             }
         }
 
-        private void UpdateActiveStories(IClientService clientService, long chatId, bool hasActiveStories, bool hasUnreadActiveStories, int side)
+        private void UpdateActiveStories(IClientService clientService, long chatId, ActiveStoryState activeStoryState, int side)
         {
-            if (chatId == 0 || !hasActiveStories)
+            if (chatId == 0 || activeStoryState == null)
             {
                 if (_hasActiveStories)
                 {
@@ -185,19 +251,13 @@ namespace Telegram.Controls
                         var visual = ElementComposition.GetElementVisual(element);
                         visual.Scale = Vector3.One;
 
-                        ElementCompositionPreview.SetElementChildVisual(this, visual.Compositor.CreateSpriteVisual());
+                        UpdateVisual(false, visual.Compositor.CreateSpriteVisual());
                     }
 
-                    IsEnabled = IsClickEnabled;
+                    _hasActiveStories = false;
+                    IsEnabled = InteractionMode is ActiveStoriesClickMode.Enabled;
                 }
 
-                if (_enabled != IsClickEnabled)
-                {
-                    _enabled = IsClickEnabled;
-                    IsEnabled = _enabled;
-                }
-
-                _hasActiveStories = false;
                 return;
             }
 
@@ -211,22 +271,25 @@ namespace Telegram.Controls
                 }
 
                 _hasActiveStories = true;
-                _enabled = true;
-                IsEnabled = true;
+                IsEnabled = InteractionMode is ActiveStoriesClickMode.Enabled or ActiveStoriesClickMode.Auto;
             }
 
             if (clientService.TryGetActiveStories(chatId, out ChatActiveStories activeStories))
             {
-                var unreadCount = activeStories.CountUnread(out bool closeFriends);
-                UpdateSegments(side, closeFriends, activeStories.Stories.Count, unreadCount);
+                var unreadCount = activeStories.CountUnread(out bool closeFriends, out bool live);
+                UpdateSegments(side, closeFriends, live, activeStories.Stories.Count, unreadCount);
             }
-            else if (hasUnreadActiveStories)
+            else if (activeStoryState is ActiveStoryStateUnread)
             {
-                UpdateSegments(side, false, 1, 1);
+                UpdateSegments(side, false, false, 1, 1);
+            }
+            else if (activeStoryState is ActiveStoryStateLive)
+            {
+                UpdateSegments(side, false, true, 1, 1);
             }
             else
             {
-                UpdateSegments(side, false, 1, 0);
+                UpdateSegments(side, false, false, 1, 0);
             }
         }
 
@@ -240,7 +303,7 @@ namespace Telegram.Controls
             }
 
             _hasActiveStories = true;
-            UpdateSegments(side, closeFriends, 1, unread ? 1 : 0);
+            UpdateSegments(side, closeFriends, false, 1, unread ? 1 : 0);
         }
 
         public void UpdateSegments(int side, int total, int unread, float unreadThickness = 2.0f, float readThickness = 1.0f)
@@ -255,7 +318,7 @@ namespace Telegram.Controls
                 }
 
                 _hasActiveStories = true;
-                UpdateSegments(side, false, total, unread, unreadThickness, readThickness);
+                UpdateSegments(side, false, false, total, unread, unreadThickness, readThickness);
             }
             else if (_hasActiveStories && Content is UIElement element)
             {
@@ -263,12 +326,18 @@ namespace Telegram.Controls
                 visual.Scale = Vector3.One;
 
                 _hasActiveStories = false;
-                ElementCompositionPreview.SetElementChildVisual(this, visual.Compositor.CreateSpriteVisual());
+                UpdateVisual(false, visual.Compositor.CreateSpriteVisual());
             }
         }
 
-        private void UpdateSegments(int side, bool closeFriends, int total, int unread, float unreadThickness = 2.0f, float readThickness = 1.0f)
+        private void UpdateSegments(int side, bool closeFriends, bool live, int total, int unread, float unreadThickness = 2.0f, float readThickness = 1.0f)
         {
+            if (live)
+            {
+                total = 1;
+                unread = 1;
+            }
+
             var compositor = BootStrapper.Current.Compositor;
             var read = total - unread;
 
@@ -281,8 +350,8 @@ namespace Telegram.Controls
             if (unreadPath != null)
             {
                 var unreadStroke = compositor.CreateLinearGradientBrush();
-                unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(0, TopColor ?? (closeFriends ? _storyCloseFriendTopColor : _storyUnreadTopColor)));
-                unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(1, BottomColor ?? (closeFriends ? _storyCloseFriendBottomColor : _storyUnreadBottomColor)));
+                unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(0, TopColor ?? (live ? _storyLiveColor : closeFriends ? _storyCloseFriendTopColor : _storyUnreadTopColor)));
+                unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(1, BottomColor ?? (live ? _storyLiveColor : closeFriends ? _storyCloseFriendBottomColor : _storyUnreadBottomColor)));
                 unreadStroke.EndPoint = new Vector2(0, 1);
 
                 var unreadShape = compositor.CreateSpriteShape();
@@ -311,7 +380,7 @@ namespace Telegram.Controls
                 segments.Shapes.Add(readShape);
             }
 
-            ElementCompositionPreview.SetElementChildVisual(this, segments);
+            UpdateVisual(live, segments);
         }
 
         private CompositionGeometry GetSegments(Compositor compositor, float side, float segments, int index, int length, float thickness = 2.0f, float spacing = 4.0f)
@@ -436,19 +505,36 @@ namespace Telegram.Controls
 
             unreadStroke.StartAnimation("RotationAngle", rotation);
 
-            ElementCompositionPreview.SetElementChildVisual(this, indefiniteReplicatorLayer);
+            UpdateVisual(false, indefiniteReplicatorLayer);
         }
 
-        #region IsClickEnabled
+        #region Mode
 
-        public bool IsClickEnabled
+        public ActiveStoriesClickMode InteractionMode
         {
-            get { return (bool)GetValue(IsClickEnabledProperty); }
-            set { SetValue(IsClickEnabledProperty, value); }
+            get { return (ActiveStoriesClickMode)GetValue(InteractionModeProperty); }
+            set { SetValue(InteractionModeProperty, value); }
         }
 
-        public static readonly DependencyProperty IsClickEnabledProperty =
-            DependencyProperty.Register("IsClickEnabled", typeof(bool), typeof(ActiveStoriesSegments), new PropertyMetadata(true));
+        public static readonly DependencyProperty InteractionModeProperty =
+            DependencyProperty.Register("InteractionMode", typeof(ActiveStoriesClickMode), typeof(ActiveStoriesSegments), new PropertyMetadata(ActiveStoriesClickMode.Enabled, OnInteractionModeChanged));
+
+        private static void OnInteractionModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ActiveStoriesSegments)d).OnInteractionModeChanged((ActiveStoriesClickMode)e.NewValue);
+        }
+
+        private void OnInteractionModeChanged(ActiveStoriesClickMode interactionMode)
+        {
+            if (_hasActiveStories)
+            {
+                IsEnabled = interactionMode is ActiveStoriesClickMode.Enabled or ActiveStoriesClickMode.Auto;
+            }
+            else
+            {
+                IsEnabled = interactionMode is ActiveStoriesClickMode.Enabled;
+            }
+        }
 
         #endregion
 

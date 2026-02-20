@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,18 +20,31 @@ namespace LinqToVisualTree
     public partial class VisualTreeAdapter : ILinqTree<DependencyObject>
     {
         private readonly DependencyObject _item;
+        private readonly bool _last;
 
-        public VisualTreeAdapter(DependencyObject item)
+        public VisualTreeAdapter(DependencyObject item, bool last)
         {
             _item = item;
+            _last = last;
         }
 
         public IEnumerable<DependencyObject> Children()
         {
             int childrenCount = VisualTreeHelper.GetChildrenCount(_item);
-            for (int i = 0; i < childrenCount; i++)
+
+            if (_last)
             {
-                yield return VisualTreeHelper.GetChild(_item, i);
+                for (int i = childrenCount - 1; i >= 0; i--)
+                {
+                    yield return VisualTreeHelper.GetChild(_item, i);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < childrenCount; i++)
+                {
+                    yield return VisualTreeHelper.GetChild(_item, i);
+                }
             }
         }
 
@@ -62,14 +76,14 @@ namespace LinqToVisualTree
         /// <summary>
         /// Returns a collection of descendant elements.
         /// </summary>
-        public static IEnumerable<DependencyObject> Descendants(this DependencyObject item)
+        public static IEnumerable<DependencyObject> Descendants(this DependencyObject item, bool last = false)
         {
-            ILinqTree<DependencyObject> adapter = new VisualTreeAdapter(item);
+            ILinqTree<DependencyObject> adapter = new VisualTreeAdapter(item, last);
             foreach (var child in adapter.Children())
             {
                 yield return child;
 
-                foreach (var grandChild in child.Descendants())
+                foreach (var grandChild in child.Descendants(last))
                 {
                     yield return grandChild;
                 }
@@ -79,11 +93,11 @@ namespace LinqToVisualTree
         /// <summary>
         /// Returns a collection containing this element and all descendant elements.
         /// </summary>
-        public static IEnumerable<DependencyObject> DescendantsAndSelf(this DependencyObject item)
+        public static IEnumerable<DependencyObject> DescendantsAndSelf(this DependencyObject item, bool last = false)
         {
             yield return item;
 
-            foreach (var child in item.Descendants())
+            foreach (var child in item.Descendants(last))
             {
                 yield return child;
             }
@@ -94,13 +108,13 @@ namespace LinqToVisualTree
         /// </summary>
         public static IEnumerable<DependencyObject> Ancestors(this DependencyObject item)
         {
-            ILinqTree<DependencyObject> adapter = new VisualTreeAdapter(item);
+            ILinqTree<DependencyObject> adapter = new VisualTreeAdapter(item, false);
 
             var parent = adapter.Parent;
             while (parent != null)
             {
                 yield return parent;
-                adapter = new VisualTreeAdapter(parent);
+                adapter = new VisualTreeAdapter(parent, false);
                 parent = adapter.Parent;
             }
         }
@@ -123,7 +137,7 @@ namespace LinqToVisualTree
         /// </summary>
         public static IEnumerable<DependencyObject> Elements(this DependencyObject item)
         {
-            ILinqTree<DependencyObject> adapter = new VisualTreeAdapter(item);
+            ILinqTree<DependencyObject> adapter = new VisualTreeAdapter(item, false);
             foreach (var child in adapter.Children())
             {
                 yield return child;
@@ -192,9 +206,9 @@ namespace LinqToVisualTree
         /// <summary>
         /// Returns a collection of descendant elements which match the given type.
         /// </summary>
-        public static IEnumerable<T> Descendants<T>(this DependencyObject item)
+        public static IEnumerable<T> Descendants<T>(this DependencyObject item, bool last = false)
         {
-            return item.Descendants().Where(i => i is T).Cast<T>();
+            return item.Descendants(last).Where(i => i is T).Cast<T>();
         }
 
 

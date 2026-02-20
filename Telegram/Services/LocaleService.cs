@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,7 +14,6 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Windows.ApplicationModel.Resources;
 using Windows.Globalization;
 using Windows.Storage;
@@ -23,7 +23,7 @@ namespace Telegram.Services
 {
     public interface ILocaleService
     {
-        Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh);
+        Task<Object> SetLanguageAsync(LanguagePackInfo info, bool refresh);
 
         CultureInfo CurrentCulture { get; }
         string Id { get; }
@@ -32,6 +32,8 @@ namespace Telegram.Services
 
         string GetString(string key);
         string GetString(string key, int quantity);
+
+        void GetDatePositions(out int dayPosition, out int monthPosition, out int yearPosition);
 
         void Handle(UpdateLanguagePackStrings update);
 
@@ -61,7 +63,7 @@ namespace Telegram.Services
 
         private readonly ResourceLoader _loader;
 
-        private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, string>> _languagePack = new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>();
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, string>> _languagePack = new();
         private string _languageCode;
         private string _languageBase;
         private string _languagePlural;
@@ -135,7 +137,7 @@ namespace Telegram.Services
             ? FlowDirection.RightToLeft
             : FlowDirection.LeftToRight;
 
-        public async Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh)
+        public async Task<Object> SetLanguageAsync(LanguagePackInfo info, bool refresh)
         {
             _languageCode = info.Id;
             _languageBase = info.BaseLanguagePackId;
@@ -147,7 +149,7 @@ namespace Telegram.Services
 
             LoadCurrentCulture();
 
-            foreach (var clientService in TypeResolver.Current.ResolveAll<IClientService>())
+            foreach (var clientService in LifetimeService.Current.ResolveAll<IClientService>())
             {
                 var response = await clientService.SendAsync(new SetOption("language_pack_id", new OptionValueString(info.Id)));
                 if (response is Ok && refresh)
@@ -254,6 +256,36 @@ namespace Telegram.Services
 #else
             return _loader.GetString(selector);
 #endif
+        }
+
+        public void GetDatePositions(out int dayPosition, out int monthPosition, out int yearPosition)
+        {
+            dayPosition = 0;
+            monthPosition = 1;
+            yearPosition = 2;
+
+            // TODO: this isn't great because it does not respect the system locale
+            var parts = LocaleService.Current.CurrentCulture.DateTimeFormat.ShortDatePattern.Split(LocaleService.Current.CurrentCulture.DateTimeFormat.DateSeparator);
+            if (parts.Length != 3)
+            {
+                parts = new[] { "dd", "MM", "yyyy" };
+            }
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (parts[i].StartsWith("d", StringComparison.OrdinalIgnoreCase))
+                {
+                    dayPosition = i;
+                }
+                else if (parts[i].StartsWith("M", StringComparison.OrdinalIgnoreCase))
+                {
+                    monthPosition = i;
+                }
+                else if (parts[i].StartsWith("y", StringComparison.OrdinalIgnoreCase))
+                {
+                    yearPosition = i;
+                }
+            }
         }
 
         #region Handle

@@ -5,7 +5,6 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        Title="{x:Null}"
-                       TitleTemplate="{x:Null}"
                        Padding="24,0,24,24"
                        mc:Ignorable="d">
 
@@ -24,8 +23,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <controls:ProfilePicture x:Name="Photo"
-                                     Width="96"
-                                     Height="96"
+                                     Size="96"
                                      Margin="0,24,0,8" />
             <TextBlock x:Name="Title"
                        Style="{StaticResource PopupTextBlockStyle}"
@@ -40,12 +38,12 @@
         </Grid>
 
         <controls:RecentUserHeads x:Name="Participants"
-                                  BorderBrush="{ThemeResource ContentDialogBackground}"
+                                  BorderBrush="{ThemeResource ContentDialogTopOverlaySolid}"
                                   ItemSize="48"
                                   ItemOverlap="16"
                                   RecentUserHeadChanged="Participants_RecentUserHeadChanged"
                                   HorizontalAlignment="Center"
-                                  Margin="0,24,0,8"
+                                  Margin="0,24,0,4"
                                   Grid.Row="2" />
 
         <TextBlock x:Name="JoinRequestInfo"

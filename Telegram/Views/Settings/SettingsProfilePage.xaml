@@ -36,29 +36,27 @@
                               Margin="0,0,12,0"
                               Grid.RowSpan="2">
                             <controls:ProfilePicture x:Name="Photo"
-                                                     Height="96"
-                                                     Width="96" />
+                                                     Size="96" />
                         </Grid>
 
                         <TextBox Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  PlaceholderText="{CustomResource FirstNameSmall}"
                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                 MaxLength="{StaticResource ChannelTitleMaxLength}"
+                                 MaxLength="{StaticResource UserFirstNameMaxLength}"
                                  VerticalAlignment="Bottom"
                                  Margin="0,0,0,2"
                                  Grid.Column="1" />
                         <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  PlaceholderText="{CustomResource LastNameSmall}"
                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                 MaxLength="{StaticResource ChannelTitleMaxLength}"
+                                 MaxLength="{StaticResource UserLastNameMaxLength}"
                                  VerticalAlignment="Top"
                                  Margin="0,2,0,0"
                                  Grid.Column="1"
                                  Grid.Row="1" />
                     </Grid>
-                    <controls:BadgeButton Content="{CustomResource ChatSetNewPhoto}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9FE;">
+                    <controls:SettingsButton Content="{CustomResource ChatSetNewPhoto}"
+                                             Glyph="&#xE9FE;">
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedLeft">
                                 <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
@@ -77,15 +75,14 @@
                                 </MenuFlyoutItem>
                             </MenuFlyout>
                         </Button.Flyout>
-                    </controls:BadgeButton>
+                    </controls:SettingsButton>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource EditProfileChannel}">
-                    <controls:BadgeButton x:Name="PersonalChannel"
-                                          Content="{CustomResource EditProfileChannelTitle}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="{x:Bind ViewModel.ChangePersonalChannel}"
-                                          Glyph="&#xE789;" />
+                    <controls:SettingsButton x:Name="PersonalChannel"
+                                             Content="{CustomResource EditProfileChannelTitle}"
+                                             Click="{x:Bind ViewModel.ChangePersonalChannel}"
+                                             Glyph="&#xE789;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl IsFooterLink="True"
@@ -106,45 +103,40 @@
                                           Header="{CustomResource EditProfileBirthday}"
                                           Footer="{x:Bind ConvertBirthdateFooter(ViewModel.IsBirthdateContactsOnly), Mode=OneWay}"
                                           Click="BirthdatePrivacy_Click">
-                    <controls:BadgeButton x:Name="Birthdate"
-                                          Content="{CustomResource EditProfileBirthdayText}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="{x:Bind ViewModel.ChangeBirthdate}"
-                                          Glyph="&#xEA84;" />
-                    <controls:BadgeButton x:Name="BirthdateRemove"
-                                          Content="{CustomResource EditProfileBirthdayRemove}"
-                                          Click="{x:Bind ViewModel.RemoveBirthdate}"
-                                          Foreground="{ThemeResource DangerButtonBackground}" />
+                    <controls:SettingsButton x:Name="Birthdate"
+                                             Content="{CustomResource EditProfileBirthdayText}"
+                                             Click="{x:Bind ViewModel.ChangeBirthdate}"
+                                             Glyph="&#xEA84;" />
+                    <controls:SettingsButton x:Name="BirthdateRemove"
+                                             Content="{CustomResource EditProfileBirthdayRemove}"
+                                             Click="{x:Bind ViewModel.RemoveBirthdate}"
+                                             Foreground="{ThemeResource DangerButtonBackground}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
-                    <controls:BadgeButton x:Name="PhoneNumber"
-                                          Click="{x:Bind ViewModel.ChangePhoneNumber}"
-                                          Content="{CustomResource PhoneNumberChange2}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xF61B;" />
-                    <controls:BadgeButton x:Name="Username"
-                                          Click="{x:Bind ViewModel.ChangeUsername}"
-                                          Content="{CustomResource Username}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE168;" />
-                    <controls:BadgeButton x:Name="NameColor"
-                                          Content="{CustomResource YourNameColor}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="{x:Bind ViewModel.ChangeProfileColor}"
-                                          Glyph="&#xE2B1;">
-                        <controls:BadgeButton.Badge>
+                    <controls:SettingsButton x:Name="PhoneNumber"
+                                             Click="{x:Bind ViewModel.ChangePhoneNumber}"
+                                             Content="{CustomResource PhoneNumberChange2}"
+                                             Glyph="&#xF61B;" />
+                    <controls:SettingsButton x:Name="Username"
+                                             Click="{x:Bind ViewModel.ChangeUsername}"
+                                             Content="{CustomResource Username}"
+                                             Glyph="&#xE168;" />
+                    <controls:SettingsButton x:Name="NameColor"
+                                             Content="{CustomResource YourNameColor}"
+                                             Click="{x:Bind ViewModel.ChangeProfileColor}"
+                                             Glyph="&#xE2B1;">
+                        <controls:SettingsButton.Badge>
                             <controls:ProfileColorBadge x:Name="ProfileColor" />
-                        </controls:BadgeButton.Badge>
-                    </controls:BadgeButton>
+                        </controls:SettingsButton.Badge>
+                    </controls:SettingsButton>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
-                    <controls:BadgeButton Click="LogOut_Click"
-                                          Content="{CustomResource LogOutTitle}"
-                                          Foreground="{ThemeResource DangerButtonBackground}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE999;" />
+                    <controls:SettingsButton Click="LogOut_Click"
+                                             Content="{CustomResource LogOutTitle}"
+                                             Foreground="{ThemeResource DangerButtonBackground}"
+                                             Glyph="&#xE999;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

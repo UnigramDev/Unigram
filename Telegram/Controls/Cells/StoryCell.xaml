@@ -12,6 +12,14 @@
                          Background="{ThemeResource SettingsItemBackground}">
         <Border>
             <Border.Background>
+                <ImageBrush x:Name="ThumbnailTexture"
+                            Stretch="UniformToFill"
+                            AlignmentX="Center"
+                            AlignmentY="Center" />
+            </Border.Background>
+        </Border>
+        <Border>
+            <Border.Background>
                 <ImageBrush x:Name="Texture"
                             Stretch="UniformToFill"
                             AlignmentX="Center"

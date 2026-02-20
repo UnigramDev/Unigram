@@ -1,4 +1,11 @@
-﻿using System;
+//
+// Copyright (c) Fela Ameghino 2015-2026
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -10,6 +17,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Business;
 using Telegram.Views.Business.Popups;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Business
@@ -37,7 +45,7 @@ namespace Telegram.ViewModels.Business
 
             if (Items.Empty())
             {
-                var response = await ClientService.SendAsync(new GetBusinessFeatures());
+                var response = await ClientService.SendAsync(new GetBusinessFeatures(null));
                 if (response is BusinessFeatures features)
                 {
                     _features = features.Features.ToList();
@@ -143,9 +151,9 @@ namespace Telegram.ViewModels.Business
             if (IsPremium is false)
             {
                 var popup = new BusinessFeaturesPopup(ClientService, null, _features, _animations, feature);
-                await ShowPopupAsync(popup);
 
-                if (popup.ShouldPurchase && !ClientService.IsPremium)
+                var confirm = await ShowPopupAsync(popup);
+                if (confirm == ContentDialogResult.Primary && !ClientService.IsPremium)
                 {
                     //Purchase();
                 }

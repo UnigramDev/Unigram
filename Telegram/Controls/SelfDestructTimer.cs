@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Numerics;
 using Telegram.Navigation;
@@ -21,8 +22,39 @@ namespace Telegram.Controls
         private readonly CompositionSpriteShape _shape;
         private readonly CompositionEllipseGeometry _ellipse;
 
-        public double Radius { get; set; } = 21;
-        public double Center { get; set; } = 24;
+        private double _radius = 21;
+        public double Radius
+        {
+            get => _radius;
+            set
+            {
+                _radius = value;
+
+                _ellipse?.Radius = new Vector2((float)value);
+            }
+        }
+
+        private double _center = 24;
+        public double Center
+        {
+            get => _center;
+            set
+            {
+                _center = value;
+
+                if (_ellipse != null)
+                {
+                    _ellipse.Center = new Vector2((float)value);
+
+                    _shape.CenterPoint = new Vector2((float)value);
+
+                    _visual.Size = new Vector2((float)value * 2);
+                    _visual.CenterPoint = new Vector3((float)value);
+                }
+            }
+        }
+
+        public int StrokeThickness { get; set; } = 2;
 
         public SelfDestructTimer()
         {
@@ -35,7 +67,7 @@ namespace Telegram.Controls
 
             var shape = BootStrapper.Current.Compositor.CreateSpriteShape(ellipse);
             shape.CenterPoint = new Vector2((float)Center);
-            shape.StrokeThickness = 2;
+            shape.StrokeThickness = StrokeThickness;
             shape.StrokeStartCap = CompositionStrokeCap.Round;
             shape.StrokeEndCap = CompositionStrokeCap.Round;
 
@@ -63,6 +95,7 @@ namespace Telegram.Controls
             _ellipse.Center = new Vector2((float)Center);
 
             _shape.CenterPoint = new Vector2((float)Center);
+            _shape.StrokeThickness = StrokeThickness;
 
             _visual.Size = new Vector2((float)Center * 2);
             _visual.CenterPoint = new Vector3((float)Center);
@@ -106,14 +139,14 @@ namespace Telegram.Controls
 
         #region Maximum
 
-        public int? Maximum
+        public double? Maximum
         {
-            get => (int?)GetValue(MaximumProperty);
+            get => (double?)GetValue(MaximumProperty);
             set => SetValue(MaximumProperty, value);
         }
 
         public static readonly DependencyProperty MaximumProperty =
-            DependencyProperty.Register("Maximum", typeof(int?), typeof(SelfDestructTimer), new PropertyMetadata(null));
+            DependencyProperty.Register("Maximum", typeof(double?), typeof(SelfDestructTimer), new PropertyMetadata(null));
 
         #endregion
 
@@ -144,7 +177,7 @@ namespace Telegram.Controls
             {
                 var easing = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
                 var angleAnimation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-                angleAnimation.InsertKeyFrame(0, value);
+                angleAnimation.InsertKeyFrame(0, (float)value);
                 angleAnimation.InsertKeyFrame(1, 1f, easing);
                 angleAnimation.Duration = difference;
 
@@ -152,7 +185,7 @@ namespace Telegram.Controls
             }
             else
             {
-                _ellipse.TrimStart = value;
+                _ellipse.TrimStart = (float)value;
             }
 
             //double value;

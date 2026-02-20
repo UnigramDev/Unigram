@@ -57,7 +57,9 @@
             <RichTextBlock x:Name="Title"
                            cells:ChatFolderCell.Title="{x:Bind ViewModel.Name, Mode=OneWay}"
                            TextAlignment="Center"
-                           TextWrapping="NoWrap"
+                           TextWrapping="Wrap"
+                           TextTrimming="CharacterEllipsis"
+                           MaxLines="1"
                            IsTextSelectionEnabled="False"
                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
                            FontSize="10">

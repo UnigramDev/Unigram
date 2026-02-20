@@ -29,7 +29,8 @@
                                                MinHeight="32">
                         <controls:SettingsExpander.Header>
                             <CheckBox x:Name="CanManageMessages"
-                                      IsChecked="{x:Bind ViewModel.CanManageMessages, Mode=TwoWay}">
+                                      IsChecked="{x:Bind ViewModel.CanManageMessages, Mode=TwoWay}"
+                                      Margin="-12,-11,0,-12">
                                 <TextBlock>
                                         <Run Text="{CustomResource ChannelManageMessages}" />
                                         <Run Text="{x:Bind ConvertCanSendCount(ViewModel.CanManageMessagesCount), Mode=OneWay}"
@@ -58,7 +59,8 @@
                                                MinHeight="32">
                         <controls:SettingsExpander.Header>
                             <CheckBox x:Name="CanManageStories"
-                                      IsChecked="{x:Bind ViewModel.CanManageStories, Mode=TwoWay}">
+                                      IsChecked="{x:Bind ViewModel.CanManageStories, Mode=TwoWay}"
+                                      Margin="-12,-11,0,-12">
                                 <TextBlock>
                                         <Run Text="{CustomResource ChannelManageStories}" />
                                         <Run Text="{x:Bind ConvertCanSendCount(ViewModel.CanManageStoriesCount), Mode=OneWay}"
@@ -90,6 +92,10 @@
                               IsChecked="{x:Bind ViewModel.CanRestrictMembers, Mode=TwoWay}"
                               Content="{CustomResource EditAdminBanUsers}" />
 
+                    <CheckBox x:Name="ManageDirectMessages"
+                              IsChecked="{x:Bind ViewModel.CanManageDirectMessages, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminManageDirect}" />
+
                     <CheckBox x:Name="AddUsers"
                               IsChecked="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
                               Content="{CustomResource EditAdminAddUsers}" />
@@ -97,6 +103,10 @@
                     <CheckBox x:Name="PinMessages"
                               IsChecked="{x:Bind ViewModel.CanPinMessages, Mode=TwoWay}"
                               Content="{CustomResource EditAdminPinMessages}" />
+
+                    <CheckBox x:Name="ManageTopics"
+                              IsChecked="{x:Bind ViewModel.CanManageTopics, Mode=TwoWay}"
+                              Content="{CustomResource ManageTopicsPermission}" />
 
                     <CheckBox x:Name="ManageVideoChats"
                               IsChecked="{x:Bind ViewModel.CanManageVideoChats, Mode=TwoWay}"

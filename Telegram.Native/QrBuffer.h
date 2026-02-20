@@ -39,7 +39,7 @@ namespace winrt::Telegram::Native::implementation
             return m_replaceTill;
         }
 
-        static winrt::Telegram::Native::QrBuffer FromString(hstring text);
+        static winrt::Telegram::Native::QrBuffer FromString(hstring text, int minVersion = 1, int maxVersion = 40);
 
     private:
         int32_t m_size;

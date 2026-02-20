@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2025
+// Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +27,9 @@ namespace Telegram.Common
         private const int QUANTITY_FEW = 0x0008;
         private const int QUANTITY_MANY = 0x0010;
 
-        private static readonly Dictionary<string, CurrencyNumberFormatter> _currencyCache = new Dictionary<string, CurrencyNumberFormatter>();
+        private static readonly Dictionary<string, CurrencyNumberFormatter> _currencyCache = new();
 
-        private static readonly Dictionary<string, PluralRules> _allRules = new Dictionary<string, PluralRules>();
+        private static readonly Dictionary<string, PluralRules> _allRules = new();
         private static readonly ResourceLoader _loader;
 
         private static PluralRules _currentRules;
@@ -202,7 +203,7 @@ namespace Telegram.Common
                     break;
                 case "TON":
                     customFormat = " {0:N0}";
-                    doubleAmount = amount / 1000000000.0d;
+                    doubleAmount = amount / Constants.ToncoinMin;
                     break;
                 case "XTR":
                     customFormat = Icons.Premium + "\u200A{0:N0}";
@@ -277,6 +278,42 @@ namespace Telegram.Common
             return diff / 60 / 60 / 24 / 7 + "w";
         }
 
+        public static string FormatAutoDelete(int diff)
+        {
+            if (diff <= 0)
+            {
+                return string.Empty;
+            }
+            else if (diff < 60)
+            {
+                return diff + "s";
+            }
+            else if (diff < 60 * 60)
+            {
+                return diff / 60 + "m";
+            }
+            else if (diff < 60 * 60 * 24)
+            {
+                return diff / 60 / 60 + "h";
+            }
+            else if (diff < 60 * 60 * 24 * 7)
+            {
+                return diff / 60 / 60 / 24 + "d";
+            }
+            else if (diff < 60 * 60 * 24 * 30)
+            {
+                return diff / 60 / 60 / 24 / 7 + "w";
+            }
+            else if (diff < 60 * 60 * 24 * 365)
+            {
+                return diff / 60 / 60 / 24 / 30 + "mo";
+            }
+            else
+            {
+                return diff / 60 / 60 / 24 / 365 + "y";
+            }
+        }
+
         public static string FormatLivePeriod(int livePeriod, int date)
         {
             if (livePeriod == int.MaxValue)
@@ -291,6 +328,22 @@ namespace Telegram.Common
             }
 
             return Math.Round(diff / 60d / 60d) + "h";
+        }
+
+        public static string FormatShortTime(int livePeriod)
+        {
+            if (livePeriod < 60)
+            {
+                return livePeriod + "s";
+            }
+            else if (livePeriod < 60 * 60)
+            {
+                return livePeriod / 60 + "m";
+            }
+            else
+            {
+                return livePeriod / 60 / 60 + "h";
+            }
         }
 
         public static string FormatTtl(int ttl, bool shorter = false)

@@ -28,8 +28,7 @@
                                 SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ChatInviteLinkCell Background="{ThemeResource SettingsItemBackground}"
-                                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                    <cells:ChatInviteLinkCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Header>
@@ -107,17 +106,15 @@
                                     </controls:HeaderedControl>
 
                                     <controls:HeaderedControl Footer="{x:Bind ConvertNewLinkFooter(ViewModel.InviteLinks.Count, ViewModel.IsChannel), Mode=OneWay}">
-                                        <controls:BadgeButton Click="{x:Bind ViewModel.CreateLink}"
-                                                              Content="{CustomResource CreateNewLink}"
-                                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                              Glyph="&#xEA9C;" />
+                                        <controls:SettingsButton Click="{x:Bind ViewModel.CreateLink}"
+                                                                 Content="{CustomResource CreateNewLink}"
+                                                                 Glyph="&#xEA9C;" />
                                     </controls:HeaderedControl>
                                 </controls:SettingsPanel>
                             </ListView.Header>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <cells:ChatInviteLinkCell Background="{ThemeResource SettingsItemBackground}"
-                                                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                    <cells:ChatInviteLinkCell />
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                             <ListView.Template>
@@ -148,8 +145,7 @@
                     </ListView.Header>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <cells:ChatInviteLinkCell Background="{ThemeResource SettingsItemBackground}"
-                                                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                            <cells:ChatInviteLinkCell />
                         </DataTemplate>
                     </ListView.ItemTemplate>
                     <ListView.Template>
@@ -182,11 +178,10 @@
                 <controls:SettingsPanel IsFooter="True">
                     <controls:HeaderedControl Visibility="{x:Bind ViewModel.RevokedLinks.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               Margin="0,-14,0,0">
-                        <controls:BadgeButton Click="{x:Bind ViewModel.RevokeAll}"
-                                              Content="{CustomResource DeleteAllRevokedLinks}"
-                                              Foreground="{ThemeResource DangerButtonBackground}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xE74D;" />
+                        <controls:SettingsButton Click="{x:Bind ViewModel.RevokeAll}"
+                                                 Content="{CustomResource DeleteAllRevokedLinks}"
+                                                 Foreground="{ThemeResource DangerButtonBackground}"
+                                                 Glyph="&#xE74D;" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Footer>

@@ -30,8 +30,7 @@
                                          Width="48"
                                          Height="48">
                             <controls:ProfilePicture x:Name="Photo"
-                                                     Width="48"
-                                                     Height="48" />
+                                                     Size="48" />
                         </HyperlinkButton>
 
                         <StackPanel Margin="8,0,0,2"
@@ -43,7 +42,10 @@
                                        TextTrimming="CharacterEllipsis"
                                        Style="{StaticResource BaseTextBlockStyle}" />
                             <TextBlock x:Name="Subtitle"
-                                       Style="{StaticResource DisabledCaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
                                        Typography.NumeralAlignment="Tabular" />
                         </StackPanel>
 

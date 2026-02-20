@@ -28,7 +28,7 @@
                   Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ChatShareCell SelectionStroke="{ThemeResource ContentDialogBackground}"
+                    <cells:ChatShareCell SelectionStroke="{ThemeResource ContentDialogTopOverlaySolid}"
                                          Stroke="{ThemeResource ChatLastMessageStateBrush}" />
                 </DataTemplate>
             </ListView.ItemTemplate>

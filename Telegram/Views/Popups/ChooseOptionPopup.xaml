@@ -7,12 +7,8 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        Background="{ThemeResource PageBackgroundDarkBrush}"
-                       Title="TITLE"
-                       PrimaryButtonText="Button1"
-                       SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-                       Padding="0,12,0,24">
+                       Padding="0,12,0,18">
 
     <ContentDialog.Resources>
         <Style x:Key="RectangleStyle"

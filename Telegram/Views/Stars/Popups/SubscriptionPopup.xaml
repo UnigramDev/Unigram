@@ -23,10 +23,9 @@
                           Height="96"
                           Margin="0,0,0,8">
                         <controls:ProfilePicture x:Name="Photo"
-                                                 Width="96"
-                                                 Height="96" />
+                                                 Size="96" />
                         <controls:PremiumStarCount HorizontalAlignment="Right"
-                                                   VerticalAlignment="Bottom"/>
+                                                   VerticalAlignment="Bottom" />
                     </Grid>
 
                     <TextBlock x:Name="Title"
@@ -87,8 +86,7 @@
                                VerticalAlignment="Top" />
                     <controls:ProfilePicture x:Name="FromPhoto"
                                              Margin="8,4,0,4"
-                                             Width="24"
-                                             Height="24"
+                                             Size="24"
                                              Grid.Column="1" />
                     <TextBlock Margin="8,5,4,6"
                                Style="{StaticResource BodyTextBlockStyle}"
@@ -138,7 +136,7 @@
             </StackPanel>
         </ScrollViewer>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
                                     ScrollingHost="{x:Bind ScrollingHost}" />
 
         <Grid x:Name="PurchasePanel"
@@ -147,18 +145,18 @@
               Margin="24,12,24,24"
               Height="32"
               Grid.Row="1">
-            <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Content="{CustomResource StarsSubscriptionAgain}"
-                                  Click="Purchase_Click"
-                                  Style="{StaticResource AccentButtonStyle}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  FontWeight="SemiBold"
-                                  Padding="16,3,16,5"
-                                  CornerRadius="4"
-                                  BorderThickness="1"
-                                  Margin="0"
-                                  Height="32" />
+            <Button x:Name="PurchaseCommand"
+                    Content="{CustomResource StarsSubscriptionAgain}"
+                    Click="Purchase_Click"
+                    Style="{StaticResource AccentButtonStyle}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    FontWeight="SemiBold"
+                    Padding="16,3,16,5"
+                    CornerRadius="4"
+                    BorderThickness="1"
+                    Margin="0"
+                    Height="32" />
 
             <Button x:Name="CancelCommand"
                     Content="{CustomResource StarsSubscriptionCancel}"

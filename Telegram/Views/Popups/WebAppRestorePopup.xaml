@@ -1,0 +1,62 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.WebAppRestorePopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Popups"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:cells="using:Telegram.Controls.Cells"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       Padding="0,24,0,0"
+                       IsDismissButtonVisible="True">
+
+    <Grid>
+        <ListView x:Name="ScrollingHost"
+                  SelectionMode="Multiple"
+                  SelectionChanged="OnSelectionChanged"
+                  ChoosingItemContainer="OnChoosingItemContainer"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
+                  Padding="12,0,12,74">
+            <ListView.Header>
+                <StackPanel>
+                    <TextBlock x:Name="MessageLabel"
+                               Margin="12,0,12,8"
+                               Style="{StaticResource BodyTextBlockStyle}" />
+
+                    <TextBlock Text="{CustomResource BotRestoreStorageHeader}"
+                               Margin="12,0,12,8"
+                               Style="{StaticResource BaseTextBlockStyle}" />
+                </StackPanel>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="20,6,12,6">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Style="{StaticResource BaseTextBlockStyle}" />
+                        <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   Grid.Row="1" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection />
+            </ListView.ItemContainerTransitions>
+        </ListView>
+
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogTopOverlaySolid}"
+                                    ScrollingHost="{x:Bind ScrollingHost}"
+                                    BottomInset="56" />
+
+        <Button x:Name="PurchaseCommand"
+                Click="Purchase_Click"
+                Content="{CustomResource BotRestoreStorageButton}"
+                Style="{StaticResource AccentButtonStyle}"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Stretch"
+                Margin="24,0,24,24" />
+    </Grid>
+</controls:ContentPopup>
