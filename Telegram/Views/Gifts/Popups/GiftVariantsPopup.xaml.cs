@@ -90,7 +90,7 @@ namespace Telegram.Views.Gifts.Popups
             }
             else if (args.ItemContainer.ContentTemplateRoot is GiftVariantCell content)
             {
-                Color color;
+                Color color = default;
 
                 if (args.Item is UpgradedGiftModel model)
                 {

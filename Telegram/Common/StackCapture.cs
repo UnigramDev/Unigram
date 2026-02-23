@@ -319,7 +319,7 @@ namespace Telegram.Common
             var moduleSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, currentProcessId);
             if (moduleSnapshot != INVALID_HANDLE_VALUE)
             {
-                var me = new MODULEENTRY32 { dwSize = (uint)Marshal.SizeOf(typeof(MODULEENTRY32)) };
+                var me = new MODULEENTRY32 { dwSize = (uint)Marshal.SizeOf<MODULEENTRY32>() };
 
                 if (Module32First.Value(moduleSnapshot, ref me))
                 {
@@ -363,7 +363,7 @@ namespace Telegram.Common
                 return snapshot;
             }
 
-            var te = new THREADENTRY32 { dwSize = (uint)Marshal.SizeOf(typeof(THREADENTRY32)) };
+            var te = new THREADENTRY32 { dwSize = (uint)Marshal.SizeOf<THREADENTRY32>() };
 
             if (Thread32First(threadSnapshot, ref te))
             {

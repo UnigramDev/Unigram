@@ -173,7 +173,11 @@ namespace Telegram.Navigation
             {
                 var window = _window.CoreWindow;
                 var interop = (ICoreWindowInterop)(object)window;
+#if NET9_0_OR_GREATER
+                var hWnd = interop.get_WindowHandle();
+#else
                 var hWnd = interop.WindowHandle;
+#endif
 
                 return hWnd.ToInt64();
             }

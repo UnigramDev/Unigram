@@ -18,6 +18,16 @@ using System.Runtime.InteropServices.Marshalling;
 namespace Telegram.Common
 {
 #if NET9_0_OR_GREATER
+    [CustomMarshaller(typeof(Vector2), MarshalMode.Default, typeof(Vector2Marshaller))]
+    internal static class Vector2Marshaller
+    {
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Native { public float X, Y; }
+
+        public static Native ConvertToUnmanaged(Vector2 v) => new() { X = v.X, Y = v.Y };
+        public static Vector2 ConvertToManaged(Native n) => new(n.X, n.Y);
+    }
+
     [GeneratedComInterface]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 #else
@@ -35,8 +45,9 @@ namespace Telegram.Common
         [PreserveSig]
         int GetTrustLevel(out int trustLevel);
 
+        [return: MarshalUsing(typeof(Vector2Marshaller))]
         Vector2 get_RealizationSize();
-        void set_RealizationSize(Vector2 value);
+        void set_RealizationSize([MarshalUsing(typeof(Vector2Marshaller))] Vector2 value);
 #else
         Vector2 RealizationSize { get; set; }
 #endif
@@ -87,8 +98,13 @@ namespace Telegram.Common
     [Guid("45D64A29-A63E-4CB6-B498-5781D298CB4F")]
     public partial interface ICoreWindowInterop
     {
+#if NET9_0_OR_GREATER
+        IntPtr get_WindowHandle();
+        void MessageHandled([MarshalAs(UnmanagedType.Bool)] bool value);
+#else
         IntPtr WindowHandle { get; }
         void MessageHandled(bool value);
+#endif
     }
 
 #if NET9_0_OR_GREATER

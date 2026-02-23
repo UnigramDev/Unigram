@@ -193,7 +193,7 @@ namespace Telegram.Controls.Messages.Content
             RecognizedIcon ??= GetTemplateChild(nameof(RecognizedIcon)) as Border;
             RecognizedIcon.Visibility = Visibility.Visible;
 
-            Color foreground;
+            Color foreground = default;
             if (RecognizedText.Foreground is SolidColorBrush brush)
             {
                 foreground = brush.Color;

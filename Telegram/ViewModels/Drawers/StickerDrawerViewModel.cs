@@ -446,7 +446,7 @@ namespace Telegram.ViewModels.Drawers
         public long ChatId { get; private set; }
     }
 
-    [GeneratedBindableCustomProperty]
+    [GeneratedBindableCustomProperty(new[] {"Stickers"}, new[] {typeof(MvxObservableCollection<StickerViewModel>) })]
     public partial class StickerSetViewModel
     {
         protected readonly IClientService _clientService;

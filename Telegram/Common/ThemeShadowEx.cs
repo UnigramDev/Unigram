@@ -132,7 +132,11 @@ namespace Telegram.Common
             if (dropShadowVS is object obj && obj is ICompositionVisualSurfacePartner visualSurfacePartner)
             {
                 // TODO: Make sure to test in high DPI
+#if NET9_0_OR_GREATER
+                visualSurfacePartner.set_RealizationSize(dropShadowVisual.Size); // Required to avoid dwm.exe picking an arbitrary size that will cause bluriness.
+#else
                 visualSurfacePartner.RealizationSize = dropShadowVisual.Size; // Required to avoid dwm.exe picking an arbitrary size that will cause bluriness.
+#endif
             }
 
             var dropShadowBrush = compositor.CreateSurfaceBrush(dropShadowVS);
