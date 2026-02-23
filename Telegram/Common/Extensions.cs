@@ -57,6 +57,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+#if NET9_0_OR_GREATER
+using WinRT;
+#endif
 
 namespace Telegram.Common
 {
@@ -1353,7 +1356,6 @@ namespace Telegram.Common
 
             return hash;
         }
-#endif
 
         public static T RemoveLast<T>(this List<T> list)
         {
@@ -1775,12 +1777,8 @@ namespace Telegram.Common
             }
 
             var tcs = new TaskCompletionSource<bool>();
-            var registration = token.Register(() =>
-            {
-                element.LayoutUpdated -= layoutUpdated;
-                tcs.TrySetResult(false);
-            });
 
+            IDisposable registration = null;
             void layoutUpdated(object s1, object e1)
             {
                 element.LayoutUpdated -= layoutUpdated;
@@ -1788,6 +1786,12 @@ namespace Telegram.Common
 
                 registration.Dispose();
             }
+
+            registration = token.Register(() =>
+            {
+                element.LayoutUpdated -= layoutUpdated;
+                tcs.TrySetResult(false);
+            });
 
             element.LayoutUpdated += layoutUpdated;
             return tcs.Task;

@@ -1,7 +1,9 @@
 {
   "profiles": {
     "Telegram": {
-      "commandName": "MsixPackage"
+      "commandName": "MsixPackage",
+      "doNotLaunchApp": false,
+      "nativeDebugging": true
     }
   }
 }

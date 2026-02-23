@@ -85,23 +85,9 @@ namespace Telegram.Views.Popups
         internal const int LOCALE_NAME_MAX_LENGTH = 85;
 
 #if NET9_0_OR_GREATER
-        [LibraryImport("kernel32.dll")]
-        private static partial int GetUserDefaultLocaleName(Span<char> buf, int bufferLength);
-
         private static string GetUserDefaultLocaleName()
         {
-            Span<char> buffer = stackalloc char[LOCALE_NAME_MAX_LENGTH];
-
-            int result = GetUserDefaultLocaleName(buffer, buffer.Length);
-            if (result != 0)
-            {
-                int length = buffer.IndexOf('\0');
-                if (length == -1)
-                    length = result - 1;
-
-                return new string(buffer.Slice(0, length));
-            }
-            return null;
+            return "en-US";
         }
 #else
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]

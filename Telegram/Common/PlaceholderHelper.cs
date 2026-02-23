@@ -65,7 +65,7 @@ namespace Telegram.Common
                     {
                         try
                         {
-                            _background = new PlaceholderImageHelper(null);
+                            _background = new PlaceholderImageHelper(null as Window);
                         }
                         catch
                         {

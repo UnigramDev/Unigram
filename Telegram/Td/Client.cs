@@ -6,8 +6,8 @@
 //
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Text.Json;
 using System.Threading;
 using Telegram.Collections;
@@ -28,30 +28,30 @@ namespace Telegram.Td
         File ParseFile(ref Utf8JsonReader reader);
     }
 
-    public class Client
+    public partial class Client
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void TdLogMessageCallback(int verbosity_level, IntPtr message);
 
-        [SuppressUnmanagedCodeSecurity]
-        [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void td_set_log_message_callback(int max_verbosity_level, TdLogMessageCallback? callback);
+        [LibraryImport("tdjson.dll")]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+        public static partial void td_set_log_message_callback(int max_verbosity_level, TdLogMessageCallback? callback);
 
-        [SuppressUnmanagedCodeSecurity]
-        [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int td_create_client_id();
+        [LibraryImport("tdjson.dll")]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+        private static partial int td_create_client_id();
 
-        [SuppressUnmanagedCodeSecurity]
-        [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern unsafe void td_send(int client_id, long request_id, byte* request);
+        [LibraryImport("tdjson.dll")]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+        private static unsafe partial void td_send(int client_id, long request_id, byte* request);
 
-        [SuppressUnmanagedCodeSecurity]
-        [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern unsafe byte* td_execute(byte* request);
+        [LibraryImport("tdjson.dll")]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+        private static unsafe partial byte* td_execute(byte* request);
 
-        [SuppressUnmanagedCodeSecurity]
-        [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern unsafe byte* td_receive(double timeout, out int client_id, out long request_id);
+        [LibraryImport("tdjson.dll")]
+        [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+        private static unsafe partial byte* td_receive(double timeout, out int client_id, out long request_id);
 
         private static long _currentRequestId = 0;
         private static readonly ReaderWriterDictionary<long, Action<Object>> _handlers = new();
