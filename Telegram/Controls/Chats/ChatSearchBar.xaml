@@ -343,6 +343,7 @@
                                Grid.Column="1" />
 
                     <controls:GlyphButton x:Name="DeleteButton"
+                                          AutomationProperties.Name="{CustomResource AccDescrCloseSearch}" 
                                           Click="Delete_Click"
                                           Glyph="&#xE711;"
                                           FontSize="16"
@@ -355,6 +356,7 @@
                                           Visibility="Collapsed" />
 
                     <controls:GlyphButton x:Name="QueryButton"
+                                          AutomationProperties.Name="{CustomResource AccDescrCloseSearch}"
                                           Click="Search_Click"
                                           Glyph="&#xE721;"
                                           FontSize="16"
