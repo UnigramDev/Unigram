@@ -286,6 +286,7 @@
             </Border>
 
             <controls:GlyphButton x:Name="Menu"
+                                  AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
                                   Click="Menu_ContextRequested"
                                   Glyph="&#xE9E9;"
                                   Width="48"
@@ -639,6 +640,7 @@
                     </TransitionCollection>
                 </local:BottomPanel.ChildrenTransitions>
                 <controls:GlyphButton x:Name="Screen"
+                                      AutomationProperties.Name="{CustomResource VoipChatShare}"
                                       Click="Screen_Click"
                                       Glyph="&#xE956;"
                                       Background="#663e3f41"
@@ -654,6 +656,7 @@
                            Grid.Row="1" />
 
                 <controls:GlyphButton x:Name="Video"
+                                      AutomationProperties.Name="{CustomResource ChatVideo}"
                                       Click="Video_Click"
                                       Glyph="&#xE963;"
                                       Background="#663e3f41"
@@ -681,6 +684,7 @@
                             VerticalAlignment="Top"
                             IsHitTestVisible="False" />
                     <controls:GlyphButton x:Name="Audio"
+                                          AutomationProperties.Name="{CustomResource VoipUnmute}"
                                           Click="Audio_Click"
                                           Glyph="&#xE720;"
                                           Content="{CustomResource VoipUnmute}"
@@ -716,6 +720,7 @@
                            Canvas.ZIndex="3" />
 
                 <controls:AnimatedGlyphButton x:Name="Message"
+                                              AutomationProperties.Name="{CustomResource VoipMessage}"
                                               Click="Message_Click"
                                               Glyph="&#xEAE1;"
                                               Background="#663e3f41"
@@ -733,6 +738,7 @@
                            Grid.Column="3" />
 
                 <controls:GlyphButton x:Name="Leave"
+                                      AutomationProperties.Name="{CustomResource VoipGroupLeave}"
                                       Click="Leave_Click"
                                       Glyph="&#xEAE3;"
                                       Background="#66FF0000"

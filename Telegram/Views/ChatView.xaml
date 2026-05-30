@@ -1903,6 +1903,7 @@
                                                           Foreground="{ThemeResource MessageHeaderBorderBrush}" />
 
                                 <controls:GlyphButton x:Name="ComposerHeaderCancel"
+                                                      AutomationProperties.Name="{CustomResource AccDescrCancelReply}" 
                                                       Click="{x:Bind ViewModel.ClearReply}"
                                                       FontSize="{StaticResource GlyphLargeFontSize}"
                                                       Foreground="{ThemeResource MessageHeaderBorderBrush}"
@@ -2021,6 +2022,7 @@
 
                                     <!-- Button to change self-destructing timer, secret chats only -->
                                     <controls:GlyphButton x:Name="ButtonTimer"
+                                                          AutomationProperties.Name="{CustomResource AccDescrSetTimer}"
                                                           Glyph="&#xE9DB;"
                                                           Click="{x:Bind ViewModel.SetTimer}"
                                                           FontSize="{StaticResource GlyphLargeFontSize}"
@@ -2188,6 +2190,7 @@
                                 </Grid>
 
                                 <controls:GlyphButton x:Name="ButtonEditor"
+                                                      AutomationProperties.Name="{CustomResource AccDescrPhotoEditor}"
                                                       Click="ButtonEditor_Click"
                                                       Glyph="&#xEB02;"
                                                       VerticalAlignment="Top"
@@ -2260,6 +2263,7 @@
                     <Border Background="Transparent" />
 
                     <controls:GlyphButton x:Name="ButtonManage"
+                                          AutomationProperties.Name="{CustomResource Cancel}"
                                           Glyph="&#xE711;"
                                           Click="{x:Bind ViewModel.UnselectMessages}" />
 
@@ -2271,6 +2275,7 @@
                                                 Grid.Column="1" />
 
                     <controls:GlyphButton x:Name="ButtonForward"
+                                          AutomationProperties.Name="{CustomResource Forward}"
                                           Glyph="&#xE72D;"
                                           Content="{CustomResource Forward}"
                                           Click="{x:Bind ViewModel.ForwardSelectedMessages}"
@@ -2279,6 +2284,7 @@
                                           Grid.Column="3" />
 
                     <controls:GlyphButton x:Name="ButtonDelete"
+                                          AutomationProperties.Name="{CustomResource Delete}"
                                           Glyph="&#xE74D;"
                                           Content="{CustomResource Delete}"
                                           Foreground="{ThemeResource DangerButtonBackground}"
