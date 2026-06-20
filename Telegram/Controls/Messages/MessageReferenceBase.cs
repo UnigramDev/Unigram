@@ -55,7 +55,7 @@ namespace Telegram.Controls.Messages
             if (embedded.SuggestedPostInfo != null)
             {
                 Message = null;
-                GetSuggestedPostInfoTemplate(embedded.SuggestedPostInfo.Price, embedded.SuggestedPostInfo.SendDate);
+                GetSuggestedPostInfoTemplate(embedded.ClientService, embedded.SuggestedPostInfo.Price, embedded.SuggestedPostInfo.SendDate);
             }
             else if (embedded.LinkPreview != null && !embedded.LinkPreviewDisabled)
             {
@@ -78,7 +78,7 @@ namespace Telegram.Controls.Messages
                     message = embedded.LinkPreview.Url;
                 }
 
-                SetText(null,
+                SetText(embedded.ClientService,
                     null,
                     true,
                     null,
@@ -100,35 +100,35 @@ namespace Telegram.Controls.Messages
 
         #endregion
 
-        private void GetSuggestedPostInfoTemplate(SuggestedPostPrice price, int sendDate)
+        private void GetSuggestedPostInfoTemplate(IClientService clientService, SuggestedPostPrice price, int sendDate)
         {
             // 1F4C6	
             if (price == null && sendDate == 0)
             {
-                SetText(null, null, false, null, Strings.SuggestAPostBelow, null, Strings.SuggestAPostBelowSubtitle.AsFormattedText());
+                SetText(clientService, null, false, null, Strings.SuggestAPostBelow, null, Strings.SuggestAPostBelowSubtitle.AsFormattedText());
             }
             else if (sendDate == 0)
             {
                 if (price is SuggestedPostPriceStar priceStar)
                 {
-                    SetText(null, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStars.ReplaceStar(Icons.Premium), priceStar.StarCount).AsFormattedText());
+                    SetText(clientService, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStars.ReplaceStar(Icons.Premium), priceStar.StarCount).AsFormattedText());
                 }
                 else if (price is SuggestedPostPriceTon priceTon)
                 {
-                    SetText(null, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStars.ReplaceStar(Icons.Ton), priceTon.ToncoinCentCount / 100d).AsFormattedText());
+                    SetText(clientService, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStars.ReplaceStar(Icons.Ton), priceTon.ToncoinCentCount / 100d).AsFormattedText());
                 }
             }
             else if (price is SuggestedPostPriceStar priceStar)
             {
-                SetText(null, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStarsAndTime.ReplaceStar(Icons.Premium), priceStar.StarCount, string.Format("\U0001F4C6 {0}", Formatter.DateAt(sendDate))).AsFormattedText());
+                SetText(clientService, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStarsAndTime.ReplaceStar(Icons.Premium), priceStar.StarCount, string.Format("\U0001F4C6 {0}", Formatter.DateAt(sendDate))).AsFormattedText());
             }
             else if (price is SuggestedPostPriceTon priceTon)
             {
-                SetText(null, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStarsAndTime.ReplaceStar(Icons.Ton), priceTon.ToncoinCentCount / 100d, string.Format("\U0001F4C6 {0}", Formatter.DateAt(sendDate))).AsFormattedText());
+                SetText(clientService, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStarsAndTime.ReplaceStar(Icons.Ton), priceTon.ToncoinCentCount / 100d, string.Format("\U0001F4C6 {0}", Formatter.DateAt(sendDate))).AsFormattedText());
             }
             else
             {
-                SetText(null, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStarsAndTime.ReplaceStar(Icons.Premium), 0, string.Format("\U0001F4C6 {0}", Formatter.DateAt(sendDate))).AsFormattedText());
+                SetText(clientService, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStarsAndTime.ReplaceStar(Icons.Premium), 0, string.Format("\U0001F4C6 {0}", Formatter.DateAt(sendDate))).AsFormattedText());
             }
         }
 
@@ -388,6 +388,9 @@ namespace Telegram.Controls.Messages
                 case MessagePaidMedia paidMedia:
                     SetPaidMediaTemplate(message, sender, paidMedia, title, outgoing, white);
                     break;
+                case MessageLiveLocation liveLocation:
+                    SetLiveLocationTemplate(message, sender, liveLocation, title, outgoing, white);
+                    break;
                 case MessageLocation location:
                     SetLocationTemplate(message, sender, location, title, outgoing, white);
                     break;
@@ -473,6 +476,9 @@ namespace Telegram.Controls.Messages
                     break;
                 case MessagePaidMedia paidMedia:
                     SetPaidMediaTemplate(message, sender, paidMedia, title, outgoing, white);
+                    break;
+                case MessageLiveLocation liveLocation:
+                    SetLiveLocationTemplate(message, sender, liveLocation, title, outgoing, white);
                     break;
                 case MessageLocation location:
                     SetLocationTemplate(message, sender, location, title, outgoing, white);
@@ -742,6 +748,21 @@ namespace Telegram.Controls.Messages
             }
         }
 
+        private void SetLiveLocationTemplate(MessageViewModel message, MessageSender sender, MessageLiveLocation location, string title, bool outgoing, bool white)
+        {
+            HideThumbnail();
+
+            SetText(message.ClientService,
+                message,
+                outgoing,
+                sender,
+                title,
+                Strings.AttachLiveLocation,
+                null,
+                false,
+                white);
+        }
+
         private void SetLocationTemplate(MessageViewModel message, MessageSender sender, MessageLocation location, string title, bool outgoing, bool white)
         {
             HideThumbnail();
@@ -751,7 +772,7 @@ namespace Telegram.Controls.Messages
                 outgoing,
                 sender,
                 title,
-                location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation,
+                Strings.AttachLocation,
                 null,
                 false,
                 white);

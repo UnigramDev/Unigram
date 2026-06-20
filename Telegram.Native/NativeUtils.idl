@@ -28,6 +28,14 @@ namespace Telegram.Native
         Url = 128,
         Emoji = 256,
         Quote = 512,
+        // RichText-only additions. Subscript/Superscript/Marked are additive styles
+        // (no payload). Icon/Math are inline elements; their Type field carries the
+        // payload (Document/Width/Height or Expression).
+        Subscript = 0x400u,
+        Superscript = 0x800u,
+        Marked = 0x1000u,
+        Icon = 0x2000u,
+        Math = 0x4000u
     };
 
 

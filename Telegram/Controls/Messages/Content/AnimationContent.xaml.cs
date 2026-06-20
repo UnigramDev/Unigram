@@ -258,7 +258,7 @@ namespace Telegram.Controls.Messages.Content
                 MessageAnimation => true,
                 MessageGame game when !primary => game.Game.Animation != null,
                 MessageText text when text.LinkPreview != null && !primary => text.LinkPreview.Type is LinkPreviewTypeAnimation or LinkPreviewTypeEmbeddedAnimationPlayer { Animation: not null },
-                MessagePoll poll when poll.Media is MessageAnimation && !primary => true,
+                MessagePoll poll when poll.Media is PollMediaAnimation && !primary => true,
                 MessageSponsored { Content: MessageAnimation } when !primary => true,
                 _ => false,
             };
@@ -296,7 +296,7 @@ namespace Telegram.Controls.Messages.Content
 
                         break;
                     }
-                case MessagePoll poll when poll.Media is MessageAnimation pollAnimation:
+                case MessagePoll poll when poll.Media is PollMediaAnimation pollAnimation:
                     return pollAnimation.Animation;
                 case MessageSponsored { Content: MessageAnimation sponsored }:
                     return sponsored.Animation;

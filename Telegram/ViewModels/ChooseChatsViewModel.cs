@@ -756,7 +756,7 @@ namespace Telegram.ViewModels
             }
             else if (_configuration is ChooseChatsConfigurationPostLogs postLogs)
             {
-                var content = new InputMessageDocument(new InputFileLocal(postLogs.Path), null, true, null);
+                var content = new InputMessageDocument(new InputDocument(new InputFileLocal(postLogs.Path), null, true), null);
                 var verbosityLevel = SettingsService.Current.VerbosityLevel;
 
                 Client.Execute(new SetLogVerbosityLevel(0));

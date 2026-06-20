@@ -162,13 +162,48 @@ namespace Telegram.ViewModels
             ClientService.DownloadFile(file.Id, 32);
         }
 
-        public void OpenFile(File file)
+        public async void OpenFile(File file)
         {
+            if (file.Local.Path.EndsWith(".unigram-theme", StringComparison.OrdinalIgnoreCase))
+            {
+
+            }
+            else if (file.Local.Path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+            {
+                var instantView = await ParseMarkdown(file);
+                if (instantView != null)
+                {
+                    _viewModel.NavigationService.NavigateToInstant(instantView, "tg://" + System.IO.Path.GetFileName(file.Local.Path));
+                    return;
+                }
+            }
+
             var service = ClientService.Session.Resolve<IStorageService>();
             if (service != null)
             {
                 _ = service.OpenFileAsync(file);
             }
+        }
+
+        private async Task<WebPageInstantView> ParseMarkdown(File file)
+        {
+            try
+            {
+                var storage = await ClientService.GetFileAsync(file);
+                var text = await FileIO.ReadTextAsync(storage);
+
+                var blocks = MarkdownToInstantView.Parse(text);
+                if (blocks.Count > 0)
+                {
+                    return new WebPageInstantView(blocks, 0, 2, false, true, null);
+                }
+            }
+            catch
+            {
+
+            }
+
+            return null;
         }
 
         public void OpenUsername(string username)

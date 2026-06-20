@@ -62,7 +62,7 @@ namespace Telegram.Collections
                 }
                 else if (phase == 1)
                 {
-                    var response = await _clientService.SendAsync(new SearchChatsOnServer(_query, 100));
+                    var response = await _clientService.SendAsync(new SearchChatsOnServer(_query, null, 100));
                     if (response is Chats chats && _local != null)
                     {
                         foreach (var id in chats.ChatIds)
@@ -83,7 +83,7 @@ namespace Telegram.Collections
                 }
                 else if (phase == 2)
                 {
-                    var response = await _clientService.SendAsync(new SearchPublicChats(_query));
+                    var response = await _clientService.SendAsync(new SearchPublicChats(_query, null));
                     if (response is Chats chats)
                     {
                         foreach (var id in chats.ChatIds)

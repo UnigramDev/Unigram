@@ -145,9 +145,13 @@ namespace Telegram.Views.Chats
                     {
                         title.Text = animatedEmoji.Emoji;
                     }
+                    else if (message.Content is MessageLiveLocation)
+                    {
+                        title.Text = Strings.AttachLiveLocation;
+                    }
                     else if (message.Content is MessageLocation location)
                     {
-                        title.Text = location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation;
+                        title.Text = Strings.AttachLocation;
                     }
                     else if (message.Content is MessageVenue)
                     {

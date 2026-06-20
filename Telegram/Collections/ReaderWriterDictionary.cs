@@ -100,7 +100,7 @@ namespace Telegram.Collections
 
         public bool TryRemove(TKey key, out TValue value)
         {
-            _lock.EnterReadLock();
+            _lock.EnterWriteLock();
             try
             {
                 if (_dictionary.TryGetValue(key, out value))
@@ -113,7 +113,7 @@ namespace Telegram.Collections
             }
             finally
             {
-                _lock.ExitReadLock();
+                _lock.ExitWriteLock();
             }
         }
 

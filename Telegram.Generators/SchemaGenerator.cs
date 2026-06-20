@@ -590,6 +590,7 @@ namespace Telegram.Generators
 
             var documentation = new Dictionary<string, string>();
             var includeBotsOnly = false;
+            var forBotsOnly = new HashSet<string>();
 
             reader.Read();
 
@@ -609,17 +610,15 @@ namespace Telegram.Generators
                 {
                     documentation.Clear();
 
-                    while (reader.TokenType == TokenType.Comment)
-                    {
-                        ParseDocumentationLine(documentation, reader.Value);
-                        reader.Read();
-                    }
+                    ParseDocumentationLine(documentation, reader.Value);
+                    reader.Read();
 
                     if (documentation.TryGetValue("class", out string className))
                     {
                         var description = documentation["description"];
                         if (description.Contains("; for bots only") && !includeBotsOnly)
                         {
+                            forBotsOnly.Add(className);
                             continue;
                         }
 
@@ -662,7 +661,7 @@ namespace Telegram.Generators
                     }
 
                     var description = documentation["description"];
-                    if (description.Contains("; for bots only") && !includeBotsOnly)
+                    if ((description.Contains("; for bots only") || forBotsOnly.Contains(returnType)) && !includeBotsOnly)
                     {
                         reader.Read();
                         continue;

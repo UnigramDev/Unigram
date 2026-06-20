@@ -59,7 +59,7 @@ namespace Telegram.Common
 
         public IClientService ClientService => _clientService;
 
-        public async void NavigateToWebApp(User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, WebAppOpenMode openMode = null, Chat sourceChat = null, InternalLinkType sourceLink = null, string buttonText = null)
+        public async void NavigateToWebApp(User botUser, WebAppUrl url, long launchId = 0, AttachmentMenuBot menuBot = null, WebAppOpenMode openMode = null, OpenUrlSource source = null, InternalLinkType sourceLink = null, string buttonText = null)
         {
             if (sourceLink != null)
             {
@@ -87,7 +87,7 @@ namespace Telegram.Common
                 Height = 640,
                 PersistedId = "WebApp",
                 ViewMode = openMode is WebAppOpenModeFullScreen ? ViewServiceMode.FullScreen : ViewServiceMode.Default,
-                Content = control => new WebAppPage(ClientService, this, botUser, url, launchId, menuBot, sourceChat, sourceLink, buttonText)
+                Content = control => new WebAppPage(ClientService, this, botUser, url, launchId, menuBot, source, sourceLink, buttonText)
             });
         }
 

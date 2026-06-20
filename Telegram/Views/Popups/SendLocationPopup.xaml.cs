@@ -194,7 +194,7 @@ namespace Telegram.Views.Popups
             if (ScrollingHost.SelectedItem == null)
             {
                 CurrentLocation.UpdateState(true, true, true);
-                Media = new InputMessageLocation(ViewModel.Location, 0, 0, 0);
+                Media = new InputMessageLocation(ViewModel.Location);
             }
         }
 
@@ -203,7 +203,7 @@ namespace Telegram.Views.Popups
             ScrollingHost.SelectedItem = null;
 
             CurrentLocation.UpdateState(true, true, true);
-            Media = new InputMessageLocation(ViewModel.Location, 0, 0, 0);
+            Media = new InputMessageLocation(ViewModel.Location);
         }
 
         #region Recycle

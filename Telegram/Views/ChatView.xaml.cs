@@ -3261,6 +3261,13 @@ namespace Telegram.Views
                     flyout.CreateFlyoutItem(ViewModel.AddChecklistTask, message, Strings.AddTasks, Icons.AddCircle);
                 }
 
+                if (SettingsService.Current.Diagnostics.RichMessagesDebug && message.Content is MessageRichMessage richMessage)
+                {
+                    flyout.CreateFlyoutItem(() => {
+                        ViewModel.ShowPopup(new TextEditorRichPopup(ViewModel.ClientService, ViewModel.NavigationService, richMessage.Message));
+                        }, "Test");
+                }
+
                 if (checklistTask != null)
                 {
                     var checklistTaskItem = new MenuFlyoutSubItem();
@@ -6445,7 +6452,8 @@ namespace Telegram.Views
             ComposerHeaderReference.CornerRadius = new CornerRadius(4, min, 4, 4);
 
             ComposerHeaderCancel.CornerRadius =
-                ButtonEditor.CornerRadius = new CornerRadius(4, min, 4, 4);
+                ButtonMaximize.CornerRadius = new CornerRadius(4, min, 4, 4);
+            ButtonEditor.CornerRadius = new CornerRadius(min, 4, 4, 4);
             TextRoot.CornerRadius =
                 ChatFooter.CornerRadius =
                 ChatRecord.CornerRadius =
@@ -6613,7 +6621,7 @@ namespace Telegram.Views
             {
                 ButtonMore.Content = fullInfo.BotInfo.MenuButton.Text;
 
-                ViewModel.BotCommands = null;
+                ViewModel.BotCommands = fullInfo.BotInfo.Commands.Count > 0 ? fullInfo.BotInfo.Commands.Select(x => new UserCommand(user.Id, x)).ToList() : null;
                 ViewModel.HasBotCommands = false;
                 ShowHideSideButton(SideButton.BotMenu);
             }
@@ -8177,12 +8185,22 @@ namespace Telegram.Views
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            Logger.Info(e.NewSize.Height);
+            if (SettingsService.Current.Diagnostics.RichMessagesDebug)
+            {
+                ButtonMaximize.Visibility = e.NewSize.Height >= 84
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
         }
 
         private void ButtonEditor_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.OpenTextEditor();
+        }
+
+        private void ButtonMaximize_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.OpenRichTextEditor();
         }
     }
 

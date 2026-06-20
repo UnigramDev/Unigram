@@ -21,6 +21,8 @@ namespace Telegram.Controls.Cells
         private MessageWithOwner _message;
         public MessageWithOwner Message => _message;
 
+        private bool _media;
+
         private long _thumbnailToken;
 
         private ThumbnailController _thumbnailController;
@@ -51,7 +53,7 @@ namespace Telegram.Controls.Cells
 
             if (_message != null)
             {
-                UpdateMessage(_message, true);
+                UpdateMessage(_message, true, _media);
             }
             else if (_hidden)
             {
@@ -62,9 +64,10 @@ namespace Telegram.Controls.Cells
 
         #endregion
 
-        public void UpdateMessage(MessageWithOwner message, bool download)
+        public void UpdateMessage(MessageWithOwner message, bool download, bool media)
         {
             _message = message;
+            _media = media;
 
             if (!_templateApplied)
             {
@@ -106,6 +109,33 @@ namespace Telegram.Controls.Cells
 
                 Overlay.Visibility = Visibility.Collapsed;
             }
+            else if (message.Content is MessageRichMessage richMessage)
+            {
+                var block = PageBlockHelper.FindFirstMedia(richMessage.Message.Blocks, media ? PageBlockMediaKind.Media : PageBlockMediaKind.Animation);
+                if (block is PageBlockPhoto blockPhoto)
+                {
+                    var small = blockPhoto.Photo.GetThumbnail();
+                    UpdateThumbnail(message, small, blockPhoto.Photo.Minithumbnail, download, blockPhoto.HasSpoiler);
+
+                    Overlay.Visibility = Visibility.Collapsed;
+                }
+                else if (block is PageBlockVideo blockVideo)
+                {
+                    var thumbnail = blockVideo.Video.Thumbnail;
+                    var minithumbnail = blockVideo.Video.Minithumbnail;
+
+                    UpdateThumbnail(message, thumbnail, minithumbnail, download, blockVideo.HasSpoiler);
+
+                    Overlay.Visibility = Visibility.Visible;
+                    Subtitle.Text = blockVideo.Video.GetDuration();
+                }
+                else if (block is PageBlockAnimation blockAnimation)
+                {
+                    UpdateThumbnail(message, blockAnimation.Animation.Thumbnail, blockAnimation.Animation.Minithumbnail, download, blockAnimation.HasSpoiler);
+
+                    Overlay.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
         private bool _hidden;
@@ -132,7 +162,7 @@ namespace Telegram.Controls.Cells
 
         private void UpdateThumbnail(object target, File file)
         {
-            UpdateMessage(_message, false);
+            UpdateMessage(_message, false, _media);
         }
 
         private void UpdateThumbnail(MessageWithOwner message, Thumbnail thumbnail, Minithumbnail minithumbnail, bool download, bool hasSpoiler)

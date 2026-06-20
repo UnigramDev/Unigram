@@ -14,6 +14,7 @@ using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Supergroups;
 using Telegram.Views.Host;
+using Telegram.Views.Supergroups.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -125,11 +126,77 @@ namespace Telegram.Views.Supergroups
             UsernameHelp.Footer = group.IsChannel ? Strings.ChannelUsernameHelp : Strings.MegaUsernameHelp;
             PrivateLinkHelp.Footer = group.IsChannel ? Strings.ChannelPrivateLinkHelp : Strings.MegaPrivateLinkHelp;
 
-            JoinToSendMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+            ViewModel.ClientService.TryGetUser(fullInfo?.GuardBotUserId ?? 0, out User guardBotUser);
+
+            var hasGuardBotUser = guardBotUser.HasActiveUsername(out string guardBotUsername);
+
+            if (group.IsChannel)
+            {
+                if (group.Usernames?.EditableUsername.Length > 0)
+                {
+                    JoinToSendMessagesRoot.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    JoinToSendMessages.Visibility = Visibility.Collapsed;
+                    JoinToSendMessagesRoot.Footer = hasGuardBotUser
+                        ? string.Format(Strings.ChannelSettingsJoinRequestInfoManagedBy, "@" + guardBotUsername)
+                        : Strings.ChannelSettingsJoinRequestInfo2;
+
+                    JoinByRequest.Visibility = Visibility.Visible;
+                }
+            }
+            else if (group.HasLinkedChat)
+            {
+                JoinToSendMessages.Checked -= JoinToSendMessages_Toggled;
+                JoinToSendMessages.Unchecked -= JoinToSendMessages_Toggled;
+
+                JoinToSendMessages.Checked += JoinToSendMessages_Toggled;
+                JoinToSendMessages.Unchecked += JoinToSendMessages_Toggled;
+
+                JoinToSendMessagesRoot.Header = Strings.ChannelSettingsJoinTitle;
+                JoinToSendMessagesRoot.Footer = JoinToSendMessages.IsChecked is true
+                    ? Strings.ChannelSettingsJoinRequestInfo
+                    : Strings.ChannelSettingsJoinToSendInfo;
+
+                JoinByRequest.Visibility = JoinToSendMessages.IsChecked is true
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+            else if (group.Usernames?.EditableUsername.Length > 0)
+            {
+                JoinToSendMessages.Visibility = Visibility.Collapsed;
+                JoinToSendMessagesRoot.Footer = hasGuardBotUser
+                    ? string.Format(Strings.GroupPublicSettingsJoinRequestInfoManagedBy, "@" + guardBotUsername)
+                    : Strings.GroupPublicSettingsJoinRequestInfo2;
+
+                JoinByRequest.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                JoinToSendMessages.Visibility = Visibility.Collapsed;
+                JoinToSendMessagesRoot.Footer = hasGuardBotUser
+                    ? string.Format(Strings.GroupPrivateSettingsJoinRequestInfoManagedBy, "@" + guardBotUsername)
+                    : Strings.GroupPrivateSettingsJoinRequestInfo2;
+
+                JoinByRequest.Visibility = Visibility.Visible;
+            }
+
             RestrictSavingContent.Footer = group.IsChannel ? Strings.RestrictSavingContentInfoChannel : Strings.RestrictSavingContentInfoGroup;
 
             ViewModel.Username = group.Usernames?.EditableUsername ?? string.Empty;
             ViewModel.IsPublic = group.Usernames?.EditableUsername.Length > 0;
+        }
+
+        private void JoinToSendMessages_Toggled(object sender, RoutedEventArgs e)
+        {
+            JoinToSendMessagesRoot.Footer = JoinToSendMessages.IsChecked is true
+                ? Strings.ChannelSettingsJoinRequestInfo
+                : Strings.ChannelSettingsJoinToSendInfo;
+
+            JoinByRequest.Visibility = JoinToSendMessages.IsChecked is true
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
@@ -154,7 +221,11 @@ namespace Telegram.Views.Supergroups
             UsernameHelp.Footer = Strings.MegaUsernameHelp;
             PrivateLinkHelp.Footer = Strings.MegaPrivateLinkHelp;
 
-            JoinToSendMessages.Visibility = Visibility.Visible;
+            JoinToSendMessages.Visibility = Visibility.Collapsed;
+            JoinToSendMessagesRoot.Footer = Strings.GroupPrivateSettingsJoinRequestInfo2;
+
+            JoinByRequest.Visibility = Visibility.Visible;
+
             RestrictSavingContent.Footer = Strings.RestrictSavingContentInfoGroup;
 
             ViewModel.Username = string.Empty;
@@ -221,6 +292,14 @@ namespace Telegram.Views.Supergroups
             if (args.DropResult == DataPackageOperation.Move && args.Items.Count == 1 && args.Items[0] is UsernameInfo username)
             {
                 ViewModel.ReorderUsernames(username);
+            }
+        }
+
+        private void JoinToSendMessagesRoot_Click(object sender, TextUrlClickEventArgs e)
+        {
+            if (ViewModel.ClientService.TryGetSupergroupFull(ViewModel.Chat, out SupergroupFullInfo fullInfo))
+            {
+                ViewModel.NavigationService.ShowPopup(new SupergroupEditAdministratorPopup(), new SupergroupEditMemberArgs(ViewModel.Chat.Id, new MessageSenderUser(fullInfo.GuardBotUserId)));
             }
         }
     }

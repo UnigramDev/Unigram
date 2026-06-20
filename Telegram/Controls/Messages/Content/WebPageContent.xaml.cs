@@ -806,18 +806,18 @@ namespace Telegram.Controls.Messages.Content
         {
             var result = 0;
 
-            foreach (var block in linkPreview.PageBlocks)
+            foreach (var block in linkPreview.Blocks)
             {
                 if (block is PageBlockSlideshow slideshow)
                 {
-                    foreach (var item in slideshow.PageBlocks)
+                    foreach (var item in slideshow.Blocks)
                     {
                         result = CountBlock(linkPreview, item, result);
                     }
                 }
                 else if (block is PageBlockCollage collage)
                 {
-                    foreach (var item in collage.PageBlocks)
+                    foreach (var item in collage.Blocks)
                     {
                         result = CountBlock(linkPreview, item, result);
                     }

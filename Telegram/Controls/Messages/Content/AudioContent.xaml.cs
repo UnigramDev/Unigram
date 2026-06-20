@@ -409,7 +409,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 MessageAudio => true,
                 MessageText text when text.LinkPreview != null && !primary => text.LinkPreview.Type is LinkPreviewTypeAudio or LinkPreviewTypeEmbeddedAudioPlayer { Audio: not null },
-                MessagePoll poll when poll.Media is MessageAudio && !primary => true,
+                MessagePoll poll when poll.Media is PollMediaAudio && !primary => true,
                 _ => false,
             };
         }
@@ -439,7 +439,7 @@ namespace Telegram.Controls.Messages.Content
 
                         break;
                     }
-                case MessagePoll poll when poll.Media is MessageAudio pollAudio:
+                case MessagePoll poll when poll.Media is PollMediaAudio pollAudio:
                     return pollAudio.Audio;
             }
 

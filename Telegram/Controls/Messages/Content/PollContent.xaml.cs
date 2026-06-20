@@ -260,7 +260,7 @@ namespace Telegram.Controls.Messages.Content
 
             if (Media.Child is IContent media)
             {
-                if (media.IsValid(content, true))
+                if (media.IsValid(message.Content, true))
                 {
                     media.UpdateMessage(message);
                     return;
@@ -278,13 +278,13 @@ namespace Telegram.Controls.Messages.Content
 
             Media.Child = content switch
             {
-                MessageAnimation => new AnimationContent(message),
-                MessageAudio => new AudioContent(message),
-                MessageDocument => new DocumentContent(message),
-                MessageLocation => new LocationContent(message),
-                MessagePhoto => new PhotoContent(message),
-                MessageVenue => new VenueContent(message),
-                MessageVideo => new VideoContent(message),
+                PollMediaAnimation => new AnimationContent(message),
+                PollMediaAudio => new AudioContent(message),
+                PollMediaDocument => new DocumentContent(message),
+                PollMediaLocation => new LocationContent(message),
+                PollMediaPhoto => new PhotoContent(message),
+                PollMediaVenue => new VenueContent(message),
+                PollMediaVideo => new VideoContent(message),
                 _ => null
             };
 
@@ -292,8 +292,8 @@ namespace Telegram.Controls.Messages.Content
             Media.Margin = content switch
             {
                 //MessageAnimation => new AnimationContent(message),
-                MessageAudio => new Thickness(10, 8, 10, 4),
-                MessageDocument => new Thickness(10, 8, 10, 4),
+                PollMediaAudio => new Thickness(10, 8, 10, 4),
+                PollMediaDocument => new Thickness(10, 8, 10, 4),
                 //MessageLocation => new LocationContent(message),
                 //MessagePhoto => new PhotoContent(message),
                 //MessageVenue => new VenueContent(message),

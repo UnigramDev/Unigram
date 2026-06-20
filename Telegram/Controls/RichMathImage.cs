@@ -38,7 +38,7 @@ namespace Telegram.Controls
 
         protected override void OnRasterizationScaleChanged(double rasterizationScale)
         {
-            if (_surface == null)
+            if (_surface == null || LayoutRoot == null)
             {
                 return;
             }

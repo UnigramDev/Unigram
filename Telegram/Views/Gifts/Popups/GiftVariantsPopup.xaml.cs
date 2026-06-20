@@ -94,7 +94,7 @@ namespace Telegram.Views.Gifts.Popups
 
                 if (args.Item is UpgradedGiftModel model)
                 {
-                    color = Theme.Accent;
+                    color = content.ActualTheme == ElementTheme.Light ? Theme.AccentLight.Default : Theme.AccentDark.Default;
                     content.UpdateModel(_clientService, model);
                 }
                 else if (args.Item is UpgradedGiftBackdrop backdrop)

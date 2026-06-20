@@ -46,7 +46,7 @@ namespace Telegram.ViewModels.Gallery
             var big = _photo.GetBig();
             var small = _photo.GetSmall();
 
-            return new InputMessagePhoto(new InputFileId(big.Photo.Id), small?.ToInputThumbnail(), null, Array.Empty<int>(), big.Width, big.Height, null, false, null, false);
+            return new InputMessagePhoto(new InputPhoto(new InputFileId(big.Photo.Id), small?.ToInputThumbnail(), null, Array.Empty<int>(), big.Width, big.Height), null, false, null, false);
         }
     }
 }

@@ -13603,4 +13603,28 @@
     <string name="EditProfileChatAutomation">Chat Automation</string>
     <string name="EditProfileChatAutomationInfo">Add a bot to answer messages on your behalf.</string>
 
+    <string name="GuardBotJoinRequestApproved">Your request to join **{0}** has been approved</string>
+    <string name="GuardBotJoinRequestDeclined">Your request to join **{0}** has been declined</string>
+    <string name="GuardBotJoinRequestQueued">Your request to join **{0}** has been sent to the admins</string>
+
+    <string name="ChannelSettingsJoinRequestInfo2">Admin must approve anyone who wants to join the channel.</string>
+    <string name="ChannelSettingsJoinRequestInfoManagedBy">Admin must approve anyone who wants to join the channel. Managed by **{0}**</string>
+    <string name="GroupPrivateSettingsJoinRequestInfo2">Admin must approve anyone who wants to join the group.</string>
+    <string name="GroupPrivateSettingsJoinRequestInfoManagedBy">Admin must approve anyone who wants to join the group. Managed by **{0}**</string>
+    <string name="GroupPublicSettingsJoinRequestInfo2">Admin must approve anyone who wants to send a message in the group.</string>
+    <string name="GroupPublicSettingsJoinRequestInfoManagedBy">Admin must approve anyone who wants to send a message in the group. Managed by **{0}**</string>
+    <string name="EditAdminProcessJoinRequests">Process Join Requests</string>
+    <string name="EditAdminProcessJoinRequestsInfo">Allow this bot to approve new members using its own interfaces, such as captchas.</string>
+    <string name="ApproveNewMembersApplyToLinksApply">Apply</string>
+    <string name="ApproveNewMembersApplyToLinksDontApply">Don\'t Apply</string>
+    <string name="ApproveNewMembersApplyToLinksTitle">Apply to existing invite links</string>
+    <string name="ApproveNewMembersDisableForLinksChannel_one">Also disable **Approve New Members** for **{0} existing invite link** in this channel?</string>
+    <string name="ApproveNewMembersDisableForLinksChannel_other">Also disable **Approve New Members** for **{0} existing invite links** in this channel?</string>
+    <string name="ApproveNewMembersDisableForLinks_one">Also disable **Approve New Members** for **{0} existing invite link** in this group?</string>
+    <string name="ApproveNewMembersDisableForLinks_other">Also disable **Approve New Members** for **{0} existing invite links** in this group?</string>
+    <string name="ApproveNewMembersEnableForLinksChannel_one">Also enable **Approve New Members** for **{0} existing invite link** in this channel?</string>
+    <string name="ApproveNewMembersEnableForLinksChannel_other">Also enable **Approve New Members** for **{0} existing invite links** in this channel?</string>
+    <string name="ApproveNewMembersEnableForLinks_one">Also enable **Approve New Members** for **{0} existing invite link** in this group?</string>
+    <string name="ApproveNewMembersEnableForLinks_other">Also enable **Approve New Members** for **{0} existing invite links** in this group?</string>
+
 </resources>

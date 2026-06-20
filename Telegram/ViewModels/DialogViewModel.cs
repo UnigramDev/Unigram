@@ -116,7 +116,7 @@ namespace Telegram.ViewModels
 
         protected static readonly Dictionary<MessageId, MessageContent> _contentOverrides = new();
 
-        protected Dictionary<long, DialogPendingTextMessage> _pendingTextMessages = new();
+        protected Dictionary<long, DialogPendingMessage> _pendingMessages = new();
 
         protected readonly IMessageDelegate _messageDelegate;
         protected readonly WeakReference _messageDelegateWeak;
@@ -2651,14 +2651,14 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            foreach (var pending in _pendingTextMessages.Values)
+            foreach (var pending in _pendingMessages.Values)
             {
                 pending.Stop();
-                pending.Updated -= PendingTextMessage_Updated;
-                pending.Completed -= PendingTextMessage_Completed;
+                pending.Updated -= PendingMessage_Updated;
+                pending.Completed -= PendingMessage_Completed;
             }
 
-            _pendingTextMessages.Clear();
+            _pendingMessages.Clear();
 
             _lastSeenTimer?.Stop();
             _groupedMessages.Clear();
@@ -2837,8 +2837,8 @@ namespace Telegram.ViewModels
             {
                 var current = GetFormattedText(false, false);
 
-                var prev = _draft?.InputMessageText as InputMessageText;
-                var next = draft?.InputMessageText as InputMessageText;
+                var prev = _draft?.Content as DraftMessageContentText;
+                var next = draft?.Content as DraftMessageContentText;
 
                 if (prev != null && !prev.Text.AreTheSame(current))
                 {
@@ -2854,7 +2854,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            var input = draft?.InputMessageText as InputMessageText;
+            var input = draft?.Content as DraftMessageContentText;
             if (input == null || Type is not DialogType.History and not DialogType.Thread)
             {
                 _draft = null;
@@ -2900,7 +2900,7 @@ namespace Telegram.ViewModels
                 ComposerHeader = null;
 
             UpdateText:
-                if (draft.InputMessageText is InputMessageText text)
+                if (draft.Content is DraftMessageContentText text)
                 {
                     SetText(text.Text);
                 }
@@ -3010,7 +3010,7 @@ namespace Telegram.ViewModels
                     : new InputMessageReplyToExternalMessage(replyToChatId, replyToMessageId, quote, replyToTaskId, replyToOptionId)
                     : null;
 
-                draft = new DraftMessage(inputReply, 0, new InputMessageText(formattedText, null, false), 0, embedded?.SuggestedPostInfo);
+                draft = new DraftMessage(inputReply, 0, new DraftMessageContentText(formattedText, null), 0, embedded?.SuggestedPostInfo);
             }
 
             _draft = draft;
@@ -3389,33 +3389,7 @@ namespace Telegram.ViewModels
             }
 
             var response = await ClientService.SendAsync(new JoinChat(chat.Id));
-            if (response is Error error)
-            {
-                if (error.MessageEquals(ErrorType.INVITE_REQUEST_SENT))
-                {
-                    await ShowPopupAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription, Strings.RequestToJoinSent, Strings.OK);
-                    return;
-
-                    var message = Strings.RequestToJoinSent + Environment.NewLine + (chat.Type is ChatTypeSupergroup supergroup2 && supergroup2.IsChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription);
-                    var entity = new TextEntity(0, Strings.RequestToJoinSent.Length, new TextEntityTypeBold());
-
-                    var text = new FormattedText(message, new[] { entity });
-
-                    ToastPopup.Show(XamlRoot, text, ToastPopupIcon.JoinRequested);
-                }
-                else if (error.MessageEquals(ErrorType.CHANNELS_TOO_MUCH))
-                {
-                    NavigationService.ShowLimitReached(new PremiumLimitTypeSupergroupCount());
-                }
-                else
-                {
-                    ShowToast(error);
-                }
-            }
-            else if (Constants.DEBUG)
-            {
-                ClientService.Send(new AddLocalMessage(chat.Id, new MessageSenderChat(chat.Id), null, true, new InputMessageContact(new Contact("999888777666", "SIMILAR", "CHANNELS", string.Empty, ClientService.Options.MyId))));
-            }
+            MessageHelper.HandleChatJoinResult(ClientService, NavigationService, chat.Id, chat.Type is ChatTypeSupergroup { IsChannel: true }, response);
         }
 
         #endregion
@@ -3595,10 +3569,22 @@ namespace Telegram.ViewModels
             await ShowPopupAsync(popup);
             text = await tcs.Task;
 
+            TextField?.Focus(FocusState.Keyboard);
+
             if (text != null)
             {
                 SetFormattedText(text);
             }
+        }
+
+        public async void OpenRichTextEditor()
+        {
+            var text = GetFormattedText();
+            var message = new RichMessage(PageBlockHelper.ToPageBlocks(text), false, true);
+
+            var popup = new TextEditorRichPopup(ClientService, NavigationService, message);
+
+            await ShowPopupAsync(popup);
         }
 
         public void Boost()
@@ -4072,9 +4058,9 @@ namespace Telegram.ViewModels
             else if (InlineBotResults.Button.Type is InlineQueryResultsButtonTypeWebApp webApp && _currentInlineBot is User botUser)
             {
                 var response = await ClientService.SendAsync(new GetWebAppUrl(botUser.Id, webApp.Url, new WebAppOpenParameters(Theme.Current.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
-                if (response is HttpUrl httpUrl)
+                if (response is WebAppUrl webAppUrl)
                 {
-                    NavigationService.NavigateToWebApp(botUser, httpUrl.Url, sourceChat: Chat);
+                    NavigationService.NavigateToWebApp(botUser, webAppUrl, source: new OpenUrlSourceChat(ChatId, null));
                 }
             }
         }

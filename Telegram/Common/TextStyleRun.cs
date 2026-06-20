@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Td.Api;
@@ -91,6 +92,9 @@ namespace Telegram.Common
                     TextEntityTypeUnderline => TextStyle.Underline,
                     TextEntityTypeStrikethrough => TextStyle.Strikethrough,
                     TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode => TextStyle.Monospace,
+                    TextEntityTypeSubscript => TextStyle.Subscript,
+                    TextEntityTypeSuperscript => TextStyle.Superscript,
+                    TextEntityTypeMarked => TextStyle.Marked,
                     _ => TextStyle.None
                 };
 
@@ -156,6 +160,12 @@ namespace Telegram.Common
                     TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode => (TextStyle.Monospace, entity.Type),
                     TextEntityTypeMentionName => (TextStyle.Mention, entity.Type),
                     TextEntityTypeCustomEmoji => (TextStyle.Emoji, entity.Type),
+                    // RichText-only additions:
+                    TextEntityTypeSubscript => (TextStyle.Subscript, null),
+                    TextEntityTypeSuperscript => (TextStyle.Superscript, null),
+                    TextEntityTypeMarked => (TextStyle.Marked, null),
+                    TextEntityTypeIcon => (TextStyle.Icon, entity.Type),
+                    TextEntityTypeMathematicalExpression => (TextStyle.Math, entity.Type),
                     _ => (TextStyle.Url, entity.Type)
                 };
 
@@ -391,6 +401,40 @@ namespace Telegram.Common
 
             return new StyledText(text, entities, GetParagraphs(text, entities ?? Array.Empty<TextEntity>()));
         }
+
+        #region RichText
+
+        public static StyledText GetText(RichMessage message)
+        {
+            return GetText(PageBlockHelper.GetRichText(message.Blocks));
+        }
+
+        /// <summary>
+        /// Flattens a <see cref="RichText"/> tree into a string + entities pair and
+        /// wraps the result in a <see cref="StyledText"/>, reusing the same paragraph
+        /// splitting and run-merging machinery used for <see cref="FormattedText"/>.
+        /// </summary>
+        public static StyledText GetText(RichText richText)
+        {
+            if (richText == null)
+            {
+                return StyledText.Empty;
+            }
+
+            var builder = new StringBuilder();
+            var entities = new List<TextEntity>();
+            PageBlockHelper.Flatten(richText, builder, entities);
+
+            if (builder.Length == 0)
+            {
+                return StyledText.Empty;
+            }
+
+            var text = builder.ToString();
+            return new StyledText(text, entities, GetParagraphs(text, entities));
+        }
+
+        #endregion
 
         private readonly struct Break
         {
@@ -723,5 +767,47 @@ namespace Telegram.Common
         }
 
         public string Language { get; }
+    }
+}
+
+// =====================================================================
+// Synthetic TextEntityType subclasses for RichText-only constructs.
+// These don't exist in TDLib's schema; they only flow through the
+// in-memory rendering pipeline (RichText -> StyledText -> FormattedTextBlock).
+// Move to your TDLib API folder, or to a dedicated synthetic-entities
+// file, if you'd prefer to keep this file focused on TextStyleRun.
+// =====================================================================
+namespace Telegram.Td.Api
+{
+    public partial class TextEntityTypeSubscript : TextEntityType { }
+    public partial class TextEntityTypeSuperscript : TextEntityType { }
+    public partial class TextEntityTypeMarked : TextEntityType { }
+
+    public partial class TextEntityTypeIcon : TextEntityType
+    {
+        public Document Document { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        public TextEntityTypeIcon() { }
+
+        public TextEntityTypeIcon(Document document, int width, int height)
+        {
+            Document = document;
+            Width = width;
+            Height = height;
+        }
+    }
+
+    public partial class TextEntityTypeMathematicalExpression : TextEntityType
+    {
+        public string Expression { get; set; }
+
+        public TextEntityTypeMathematicalExpression() { }
+
+        public TextEntityTypeMathematicalExpression(string expression)
+        {
+            Expression = expression;
+        }
     }
 }

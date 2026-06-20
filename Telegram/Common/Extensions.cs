@@ -558,6 +558,17 @@ namespace Telegram.Common
             return (int)obj.GetNamedNumber(name, defaultValue);
         }
 
+        public static long GetNamedInt64(this JsonObject obj, string name, long defaultValue)
+        {
+            var value = obj.GetNamedString(name, string.Empty);
+            if (long.TryParse(value, out long result))
+            {
+                return result;
+            }
+
+            return defaultValue;
+        }
+
         public static bool HasExtension(this IStorageFile file, params string[] extensions)
         {
             foreach (var ext in extensions)

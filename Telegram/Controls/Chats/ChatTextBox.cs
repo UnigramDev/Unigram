@@ -1264,6 +1264,7 @@ namespace Telegram.Controls.Chats
         {
             _source = collection;
             _incrementalSource = collection as ISupportIncrementalLoading;
+            _initialized = collection is not ISupportIncrementalLoading;
         }
 
         public IAutocompleteCollection Source => _source;
@@ -1312,6 +1313,30 @@ namespace Telegram.Controls.Chats
                     {
                         UpdateImpl(source, true);
                     }
+                }
+            }
+            else
+            {
+                _source = source;
+                _incrementalSource = null;
+
+                if (_initialized)
+                {
+                    _loading = true;
+
+                    var token = Cancel();
+                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
+
+                    if (token.IsCancellationRequested)
+                    {
+                        _loading = false;
+                        return;
+                    }
+
+                    ReplaceDiff(diff);
+                    UpdateEmpty();
+
+                    _loading = false;
                 }
             }
         }

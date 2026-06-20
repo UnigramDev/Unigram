@@ -278,7 +278,7 @@ namespace Telegram.Td.Api
 
             if (string.IsNullOrEmpty(Text))
             {
-                return new FormattedText();
+                return new FormattedText(string.Empty, new List<TextEntity>(0));
             }
 
             newValue ??= string.Empty;

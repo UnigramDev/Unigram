@@ -80,6 +80,7 @@ namespace Telegram.Navigation.Services
         ToastPopup ShowToast(string text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
         ToastPopup ShowToast(FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
         ToastPopup ShowToast(FormattedText text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
+        void ShowToast(Error error);
 
         void ShowGallery(GalleryViewModelBase parameter, FrameworkElement closing = null, double timestamp = 0);
 
@@ -634,6 +635,11 @@ namespace Telegram.Navigation.Services
         public ToastPopup ShowToast(FormattedText text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             return ToastPopup.Show(XamlRoot, text, icon, requestedTheme, dismissAfter);
+        }
+
+        public void ShowToast(Error error)
+        {
+            ToastPopup.ShowError(XamlRoot, error);
         }
 
         public void ShowGallery(GalleryViewModelBase parameter, FrameworkElement closing = null, double timestamp = 0)

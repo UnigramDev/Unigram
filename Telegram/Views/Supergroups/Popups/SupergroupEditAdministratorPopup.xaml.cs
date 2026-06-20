@@ -81,8 +81,19 @@ namespace Telegram.Views.Supergroups.Popups
 
                 PrimaryButtonText = canBeEdited ? Strings.Done : string.Empty;
                 Dismiss.Visibility = member.Status is ChatMemberStatusAdministrator && canBeEdited ? Visibility.Visible : Visibility.Collapsed;
-                PermissionsFooter.Visibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
                 EditRankFooter.Text = string.Format(Strings.EditAdminRankInfo, member.Status is ChatMemberStatusCreator ? Strings.ChatTagOwner : Strings.ChatTagAdmin);
+
+                if (user.Type is UserTypeBot { IsGuard: true })
+                {
+                    ProcessJoinRequests.Visibility = Visibility.Visible;
+                    PermissionsFooter.Visibility = Visibility.Visible;
+                    PermissionsFooter.Text = Strings.EditAdminProcessJoinRequestsInfo;
+                }
+                else
+                {
+                    ProcessJoinRequests.Visibility = Visibility.Collapsed;
+                    PermissionsFooter.Visibility = canBeEdited ? Visibility.Collapsed : Visibility.Visible;
+                }
 
                 ChangeInfo.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited && !chat.Permissions.CanChangeInfo;
                 CanManageMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
@@ -103,6 +114,7 @@ namespace Telegram.Views.Supergroups.Popups
                 ManageVideoChats.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 AddAdmins.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 IsAnonymous.IsEnabled = canBeEdited;
+                ProcessJoinRequests.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 EditRankField.IsEnabled = canBeEdited;
             }
             else
@@ -120,7 +132,7 @@ namespace Telegram.Views.Supergroups.Popups
             if (chat.Type is ChatTypeSupergroup group)
             {
                 PermissionsRoot.Visibility = Visibility.Visible;
-                PermissionsFooter.Visibility = Visibility.Collapsed;
+                //PermissionsFooter.Visibility = Visibility.Collapsed;
 
                 if (group.IsChannel)
                 {
@@ -143,7 +155,7 @@ namespace Telegram.Views.Supergroups.Popups
             else
             {
                 PermissionsRoot.Visibility = Visibility.Collapsed;
-                PermissionsFooter.Visibility = Visibility.Collapsed;
+                //PermissionsFooter.Visibility = Visibility.Collapsed;
             }
 
             UpdatePreview(chat, member);

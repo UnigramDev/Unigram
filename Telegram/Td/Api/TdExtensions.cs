@@ -1473,11 +1473,6 @@ namespace Telegram.Td.Api
             return caption.Text.ToFormattedText();
         }
 
-        public static FormattedText ToFormattedText(this RichText text)
-        {
-            return text.ToPlainText().AsFormattedText();
-        }
-
         public static string ToPlainText(this PageBlockCaption caption)
         {
             return caption.Text.ToPlainText();
@@ -1593,6 +1588,40 @@ namespace Telegram.Td.Api
             }
         }
 
+        public static Photo GetPhoto(this PollMedia content)
+        {
+            switch (content)
+            {
+                case PollMediaPhoto photo:
+                    return photo.Photo;
+                case PollMediaLink text:
+                    return text.LinkPreview?.Type switch
+                    {
+                        LinkPreviewTypeAlbum album => album.Media[0] switch
+                        {
+                            LinkPreviewAlbumMediaPhoto albumPhoto => albumPhoto.Photo,
+                            _ => null
+                        },
+                        LinkPreviewTypePhoto photo => photo.Photo,
+                        LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail,
+                        LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail,
+                        LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Thumbnail,
+                        LinkPreviewTypeApp app => app.Photo,
+                        LinkPreviewTypeArticle article => article.Photo,
+                        LinkPreviewTypeChannelBoost channelBoost => channelBoost.Photo.ToPhoto(),
+                        LinkPreviewTypeChat chat => chat.Photo.ToPhoto(),
+                        LinkPreviewTypeDirectMessagesChat directMessagesChat => directMessagesChat.Photo.ToPhoto(),
+                        LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo.ToPhoto(),
+                        LinkPreviewTypeUser user => user.Photo.ToPhoto(),
+                        LinkPreviewTypeVideoChat videoChat => videoChat.Photo.ToPhoto(),
+                        LinkPreviewTypeWebApp webApp => webApp.Photo,
+                        _ => null
+                    };
+                default:
+                    return null;
+            }
+        }
+
         public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this MessageWithOwner message)
         {
             return GetFileAndThumbnailAndName(message.Content);
@@ -1674,6 +1703,65 @@ namespace Telegram.Td.Api
                     return (voiceNote.VoiceNote.Voice, null, null);
                 case MessagePoll poll:
                     return poll.Media.GetFileAndThumbnailAndName();
+            }
+
+            return (null, null, null);
+        }
+
+        public static (File File, Thumbnail Thumbnail, string FileName) GetFileAndThumbnailAndName(this PollMedia content)
+        {
+            switch (content)
+            {
+                case PollMediaAnimation animation:
+                    return (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.FileName);
+                case PollMediaAudio audio:
+                    return (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.FileName);
+                case PollMediaDocument document:
+                    return (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.FileName);
+                case PollMediaPhoto photo:
+                    {
+                        var big = photo.Photo.GetBig();
+                        if (big != null)
+                        {
+                            return (big.Photo, null, null);
+                        }
+                    }
+                    break;
+                case PollMediaSticker sticker:
+                    return (sticker.Sticker.StickerValue, null, null);
+                case PollMediaLink text:
+                    return text.LinkPreview?.Type switch
+                    {
+                        LinkPreviewTypeAlbum album => album.Media[0] switch
+                        {
+                            LinkPreviewAlbumMediaPhoto albumPhoto => (albumPhoto.Photo.GetBig()?.Photo, null, null),
+                            LinkPreviewAlbumMediaVideo albumVideo => (albumVideo.Video.VideoValue, albumVideo.Video.Thumbnail, albumVideo.Video.FileName),
+                            _ => (null, null, null)
+                        },
+                        LinkPreviewTypeAnimation animation => (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.FileName),
+                        LinkPreviewTypeAudio audio => (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.FileName),
+                        LinkPreviewTypeBackground background => (background.Document?.DocumentValue, background.Document?.Thumbnail, background.Document?.FileName),
+                        LinkPreviewTypeDirectMessagesChat directMessagesChat => (directMessagesChat.Photo?.GetFile(), null, null),
+                        LinkPreviewTypeDocument document => (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.FileName),
+                        LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => (embeddedAudioPlayer.Thumbnail?.GetFile(), null, null),
+                        LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => (embeddedAnimationPlayer.Thumbnail?.GetFile(), null, null),
+                        LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => (embeddedVideoPlayer.Thumbnail?.GetFile(), null, null),
+                        LinkPreviewTypeSticker sticker => (sticker.Sticker.StickerValue, sticker.Sticker.Thumbnail, null),
+                        LinkPreviewTypeVideo video => (video.Video.VideoValue, video.Video.Thumbnail, video.Video.FileName),
+                        LinkPreviewTypeVideoNote videoNote => (videoNote.VideoNote.Video, videoNote.VideoNote.Thumbnail, null),
+                        LinkPreviewTypePhoto photo => (photo.Photo.GetFile(), null, null),
+                        LinkPreviewTypeApp app => (app.Photo.GetFile(), null, null),
+                        LinkPreviewTypeArticle article => (article.Photo?.GetFile(), null, null),
+                        LinkPreviewTypeChannelBoost channelBoost => (channelBoost.Photo?.GetFile(), null, null),
+                        LinkPreviewTypeChat chat => (chat.Photo?.GetFile(), null, null),
+                        LinkPreviewTypeSupergroupBoost supergroupBoost => (supergroupBoost.Photo?.GetFile(), null, null),
+                        LinkPreviewTypeUser user => (user.Photo?.GetFile(), null, null),
+                        LinkPreviewTypeVideoChat videoChat => (videoChat.Photo?.GetFile(), null, null),
+                        LinkPreviewTypeWebApp webApp => (webApp.Photo?.GetFile(), null, null),
+                        _ => (null, null, null)
+                    };
+                case PollMediaVideo video:
+                    return (video.Video.VideoValue, video.Video.Thumbnail, video.Video.FileName);
             }
 
             return (null, null, null);
@@ -1888,6 +1976,58 @@ namespace Telegram.Td.Api
             return null;
         }
 
+        public static File GetFile(this PollMedia content)
+        {
+            switch (content)
+            {
+                case PollMediaAnimation animation:
+                    return animation.Animation.AnimationValue;
+                case PollMediaAudio audio:
+                    return audio.Audio.AudioValue;
+                case PollMediaDocument document:
+                    return document.Document.DocumentValue;
+                case PollMediaPhoto photo:
+                    return photo.Photo.GetBig()?.Photo;
+                case PollMediaSticker sticker:
+                    return sticker.Sticker.StickerValue;
+                case PollMediaLink text:
+                    return text.LinkPreview?.Type switch
+                    {
+                        LinkPreviewTypeAlbum album => album.Media[0] switch
+                        {
+                            LinkPreviewAlbumMediaPhoto albumPhoto => albumPhoto.Photo.GetBig()?.Photo,
+                            LinkPreviewAlbumMediaVideo albumVideo => albumVideo.Video.VideoValue,
+                            _ => null
+                        },
+                        LinkPreviewTypeAnimation animation => animation.Animation.AnimationValue,
+                        LinkPreviewTypeAudio audio => audio.Audio.AudioValue,
+                        LinkPreviewTypeBackground background => background.Document?.DocumentValue,
+                        LinkPreviewTypeDirectMessagesChat directMessagesChat => directMessagesChat.Photo?.GetFile(),
+                        LinkPreviewTypeDocument document => document.Document.DocumentValue,
+                        LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Audio?.AudioValue ?? embeddedAudioPlayer.Thumbnail?.GetFile(),
+                        LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Animation?.AnimationValue ?? embeddedAnimationPlayer.Thumbnail?.GetFile(),
+                        LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Video?.VideoValue ?? embeddedVideoPlayer.Thumbnail?.GetFile(),
+                        LinkPreviewTypeSticker sticker => sticker.Sticker.StickerValue,
+                        LinkPreviewTypeVideo video => video.Video.VideoValue,
+                        LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Video,
+                        LinkPreviewTypePhoto photo => photo.Photo.GetFile(),
+                        LinkPreviewTypeApp app => app.Photo.GetFile(),
+                        LinkPreviewTypeArticle article => article.Photo?.GetFile(),
+                        LinkPreviewTypeChannelBoost channelBoost => channelBoost.Photo?.GetFile(),
+                        LinkPreviewTypeChat chat => chat.Photo?.GetFile(),
+                        LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo?.GetFile(),
+                        LinkPreviewTypeUser user => user.Photo?.GetFile(),
+                        LinkPreviewTypeVideoChat videoChat => videoChat.Photo?.GetFile(),
+                        LinkPreviewTypeWebApp webApp => webApp.Photo?.GetFile(),
+                        _ => null
+                    };
+                case PollMediaVideo video:
+                    return video.Video.VideoValue;
+            }
+
+            return null;
+        }
+
         public static bool IsAnimatedContentDownloadCompleted(this MessageViewModel message)
         {
             var content = message.GeneratedContent ?? message.Content;
@@ -1907,9 +2047,9 @@ namespace Telegram.Td.Api
                         return game.Game.Animation.AnimationValue.Local.IsDownloadingCompleted;
                     }
                     return false;
-                case MessagePoll poll when poll.Media is MessageAnimation pollAnimation:
+                case MessagePoll poll when poll.Media is PollMediaAnimation pollAnimation:
                     return pollAnimation.Animation.AnimationValue.Local.IsDownloadingCompleted;
-                case MessagePoll poll when poll.Media is MessageVideo:
+                case MessagePoll poll when poll.Media is PollMediaVideo:
                     return true;
                 case MessageText text:
                     if (text.LinkPreview?.Type is LinkPreviewTypeAnimation previewAnimation)
@@ -2096,6 +2236,20 @@ namespace Telegram.Td.Api
             };
         }
 
+        public static Thumbnail GetThumbnail(this PollMedia content)
+        {
+            return content switch
+            {
+                PollMediaAnimation animation => animation.Animation.Thumbnail,
+                PollMediaAudio audio => audio.Audio.AlbumCoverThumbnail,
+                PollMediaDocument document => document.Document.Thumbnail,
+                PollMediaSticker sticker => sticker.Sticker.Thumbnail,
+                PollMediaLink text => text.LinkPreview?.GetThumbnail(),
+                PollMediaVideo video => video.Video.Thumbnail,
+                _ => null,
+            };
+        }
+
         public static Minithumbnail GetMinithumbnail(this Message message, bool secret = false)
         {
             return GetMinithumbnail(message.Content);
@@ -2113,7 +2267,7 @@ namespace Telegram.Td.Api
                 MessageText text => text.LinkPreview?.GetMinithumbnail(),
                 MessageVideo video => video.IsSecret && !secret ? null : (video.Cover?.Minithumbnail ?? video.Video.Minithumbnail),
                 MessageVideoNote videoNote => videoNote.IsSecret && !secret ? null : videoNote.VideoNote.Minithumbnail,
-                MessagePoll poll => poll.Media?.GetMinithumbnail(secret),
+                MessagePoll poll => poll.Media?.GetMinithumbnail(),
                 MessageSponsored sponsored => sponsored.Content switch
                 {
                     MessageAnimation sponsoredAnimation => sponsoredAnimation.Animation.Minithumbnail,
@@ -2121,6 +2275,20 @@ namespace Telegram.Td.Api
                     MessageVideo sponsoredVideo => sponsoredVideo.Video.Minithumbnail,
                     _ => null
                 },
+                _ => null,
+            };
+        }
+
+        public static Minithumbnail GetMinithumbnail(this PollMedia content)
+        {
+            return content switch
+            {
+                PollMediaPhoto photo => photo.Photo.Minithumbnail,
+                PollMediaAnimation animation => animation.Animation.Minithumbnail,
+                PollMediaAudio audio => audio.Audio.AlbumCoverMinithumbnail,
+                PollMediaDocument document => document.Document.Minithumbnail,
+                PollMediaLink text => text.LinkPreview?.GetMinithumbnail(),
+                PollMediaVideo video => (video.Cover?.Minithumbnail ?? video.Video.Minithumbnail),
                 _ => null,
             };
         }
@@ -2258,6 +2426,148 @@ namespace Telegram.Td.Api
             return sticker.Emoji.AsFormattedText();
         }
 
+        public static string ToPlainText(this RichMessage message)
+        {
+            var builder = new StringBuilder();
+
+            foreach (var block in message.Blocks)
+            {
+
+            }
+
+            return builder.ToString();
+        }
+
+        public static FormattedText ToFormattedText(this RichMessage message)
+        {
+            var text = PageBlockHelper.GetRichText(message.Blocks);
+            return text.ToFormattedText();
+        }
+
+        // ----------------------------------------------------------------
+        // RichText -> FormattedText
+        // ----------------------------------------------------------------
+
+        public static FormattedText ToFormattedText(this RichText richText)
+        {
+            var sb = new StringBuilder();
+            var entities = new List<TextEntity>();
+            if (richText != null)
+            {
+                Append(richText, sb, entities);
+            }
+            return new FormattedText { Text = sb.ToString(), Entities = entities };
+        }
+
+        private static void Append(RichText rt, StringBuilder sb, List<TextEntity> entities)
+        {
+            switch (rt)
+            {
+                case null:
+                    return;
+
+                case RichTextPlain p:
+                    if (!string.IsNullOrEmpty(p.Text)) sb.Append(p.Text);
+                    return;
+
+                case RichTexts rs:
+                    if (rs.Texts != null)
+                    {
+                        foreach (var t in rs.Texts) Append(t, sb, entities);
+                    }
+                    return;
+
+                case RichTextBold b:
+                    AppendWrapped(b.Text, sb, entities, new TextEntityTypeBold());
+                    return;
+
+                case RichTextItalic i:
+                    AppendWrapped(i.Text, sb, entities, new TextEntityTypeItalic());
+                    return;
+
+                case RichTextUnderline u:
+                    AppendWrapped(u.Text, sb, entities, new TextEntityTypeUnderline());
+                    return;
+
+                case RichTextStrikethrough s:
+                    AppendWrapped(s.Text, sb, entities, new TextEntityTypeStrikethrough());
+                    return;
+
+                case RichTextFixed f:
+                    AppendWrapped(f.Text, sb, entities, new TextEntityTypeCode());
+                    return;
+
+                case RichTextUrl url:
+                    AppendWrapped(url.Text, sb, entities, new TextEntityTypeTextUrl { Url = url.Url ?? "" });
+                    return;
+
+                case RichTextEmailAddress e:
+                    AppendWrapped(e.Text, sb, entities, new TextEntityTypeEmailAddress());
+                    return;
+
+                case RichTextPhoneNumber phone:
+                    AppendWrapped(phone.Text, sb, entities, new TextEntityTypePhoneNumber());
+                    return;
+
+                case RichTextReference r:
+                    Append(r.Text, sb, entities);
+                    return;
+
+                case RichTextReferenceLink r:
+                    AppendWrapped(r.Text, sb, entities, new TextEntityTypeTextUrl { Url = r.Url ?? "" });
+                    return;
+
+                case RichTextAnchorLink al:
+                    AppendWrapped(al.Text, sb, entities, new TextEntityTypeTextUrl { Url = al.Url ?? "" });
+                    return;
+
+                case RichTextMarked m:
+                    Append(m.Text, sb, entities);
+                    return;
+
+                case RichTextSubscript sub:
+                    Append(sub.Text, sb, entities);
+                    return;
+
+                case RichTextSuperscript sup:
+                    Append(sup.Text, sb, entities);
+                    return;
+
+                case RichTextMathematicalExpression math:
+                    if (!string.IsNullOrEmpty(math.Expression))
+                    {
+                        int start = sb.Length;
+                        sb.Append(math.Expression);
+                        if (sb.Length > start)
+                        {
+                            entities.Add(new TextEntity
+                            {
+                                Offset = start,
+                                Length = sb.Length - start,
+                                Type = new TextEntityTypeCode()
+                            });
+                        }
+                    }
+                    return;
+
+                case RichTextAnchor _:
+                case RichTextIcon _:
+                    // No visible text content.
+                    return;
+            }
+        }
+
+        private static void AppendWrapped(RichText inner, StringBuilder sb, List<TextEntity> entities, TextEntityType type)
+        {
+            int start = sb.Length;
+            Append(inner, sb, entities);
+            int len = sb.Length - start;
+            if (len > 0)
+            {
+                entities.Add(new TextEntity { Offset = start, Length = len, Type = type });
+            }
+        }
+
         public static bool HasCaption(this Message message)
         {
             var caption = message.Content.GetCaption();
@@ -2386,11 +2696,13 @@ namespace Telegram.Td.Api
                 case MessageGiveaway:
                 case MessageGiveawayWinners:
                 case MessageInvoice:
+                case MessageLiveLocation:
                 case MessageLocation:
                 case MessagePaidAlbum:
                 case MessagePaidMedia:
                 case MessagePhoto:
                 case MessagePoll:
+                case MessageRichMessage:
                 case MessageSticker:
                 case MessageText:
                 case MessageUnsupported:
@@ -3361,11 +3673,11 @@ namespace Telegram.Td.Api
                 .Any(x => x.AreTheSame(type));
         }
 
-        public static bool IsExpired(this MessageLocation location, long date)
+        public static bool IsExpired(this LiveLocation location, int expiresIn, long date)
         {
             if (location.LivePeriod > 0)
             {
-                if (location.ExpiresIn == 0)
+                if (expiresIn == 0)
                 {
                     return true;
                 }

@@ -350,6 +350,8 @@ namespace Telegram
                 builder.AppendLine("return (T)(" + GetSingletonName(_lazySingletons[i].Key) + " ??= " + GenerateConstructor(_lazySingletons[i].Value, 4) + ");");
             }
 
+            builder.AppendLine("case \"Telegram.Services.ISession\":");
+            builder.AppendLine("return (T)(object)this;");
             builder.AppendLine("default:");
             builder.AppendLine("return default;");
             builder.AppendLine();

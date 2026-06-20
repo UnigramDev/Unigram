@@ -1,0 +1,579 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.TextEditorRichPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:common="using:Telegram.Common"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:cells="using:Telegram.Controls.Cells"
+                       xmlns:local="using:Telegram.Views.Popups"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                       xmlns:content="using:Telegram.Controls.Messages.Content"
+                       xmlns:messages="using:Telegram.Controls.Messages"
+                       xmlns:drawers="using:Telegram.Controls.Drawers"
+                       mc:Ignorable="d"
+                       Padding="0,24,0,0"
+                       IsDismissButtonVisible="True"
+                       ButtonsLayout="Vertical"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       ContentMaxWidth="5000"
+                       ContentMaxHeight="5000"
+                       HorizontalContentAlignment="Stretch"
+                       VerticalContentAlignment="Stretch">
+
+    <controls:ContentPopup.Resources>
+        <Style TargetType="controls:GlyphToggleButton">
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="UncheckedForeground"
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
+            <Setter Property="CheckedForeground"
+                    Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}" />
+            <Setter Property="BorderBrush"
+                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Padding"
+                    Value="0" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Left" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalAlignment"
+                    Value="Top" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center" />
+            <Setter Property="FontFamily"
+                    Value="{StaticResource SymbolThemeFontFamily}" />
+            <Setter Property="FontSize"
+                    Value="{StaticResource GlyphMediumFontSize}" />
+            <Setter Property="FontWeight"
+                    Value="Normal" />
+            <Setter Property="Height"
+                    Value="48" />
+            <Setter Property="Width"
+                    Value="48" />
+            <Setter Property="UseSystemFocusVisuals"
+                    Value="True" />
+            <Setter Property="FocusVisualMargin"
+                    Value="-3" />
+            <Setter Property="CornerRadius"
+                    Value="{StaticResource GlyphButtonCornerRadius}" />
+            <Setter Property="Padding"
+                    Value="{StaticResource GlyphButtonPadding}" />
+            <!--<Setter Property="IsOneWay"
+                    Value="False" />-->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:GlyphToggleButton">
+                        <Grid Background="{TemplateBinding Background}"
+                              CornerRadius="{TemplateBinding CornerRadius}"
+                              Margin="{TemplateBinding Padding}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Checked">
+                                        <VisualState.Setters>
+                                            <Setter Target="CheckedBackground.Opacity"
+                                                    Value="0.1" />
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource TelegramBackgroundAccentBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="CheckedPointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="CheckedBackground.Opacity"
+                                                    Value="0.1" />
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource TelegramBackgroundAccentBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="CheckedPressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="CheckedBackground.Opacity"
+                                                    Value="0.15" />
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource TelegramBackgroundAccentBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="CheckedDisabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid x:Name="RootGrid">
+                                <Border x:Name="CheckedBackground"
+                                        Background="{ThemeResource TelegramBackgroundAccentBrush}"
+                                        Opacity="0" />
+                                <TextBlock x:Name="ContentPresenter"
+                                           Margin="{TemplateBinding Padding}"
+                                           Foreground="{TemplateBinding UncheckedForeground}"
+                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                           AutomationProperties.AccessibilityView="Raw"
+                                           Text="{TemplateBinding Glyph}" />
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </controls:ContentPopup.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition MaxWidth="320" />
+        </Grid.ColumnDefinitions>
+        <muxc:WebView2 x:Name="View"
+                       Source="ms-appx-web:///Assets/editor.html"
+                       Grid.Row="0"
+                       Grid.RowSpan="3" />
+
+        <messages:CustomEmojiCanvas x:Name="Canvas"
+                                    Grid.Row="0"
+                                    Grid.RowSpan="3" />
+
+        <Border Margin="0,0,0,-8">
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="#FFFFFFFF" />
+                    <GradientStop Color="#00FFFFFF"
+                                  Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <Border Margin="0,-8,0,0"
+                Grid.Row="2">
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="#00FFFFFF" />
+                    <GradientStop Color="#FFFFFFFF"
+                                  Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <Grid Padding="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Rectangle x:Name="BackShadow"
+                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                           Stroke="{ThemeResource SettingsItemBorderBrush}"
+                           Width="40"
+                           Height="40"
+                           RadiusX="20"
+                           RadiusY="20" />
+                <Border CornerRadius="20"
+                        Height="40"
+                        Width="40">
+                    <controls:GlyphButton x:Name="BackButton"
+                                          Width="40"
+                                          Height="40"
+                                          Glyph="&#xE72B;"
+                                          CornerRadius="20"
+                                          Padding="0" />
+                </Border>
+            </Grid>
+            <Grid Grid.Column="2">
+                <Rectangle x:Name="HistoryShadow"
+                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                           Stroke="{ThemeResource SettingsItemBorderBrush}"
+                           Width="80"
+                           Height="40"
+                           RadiusX="20"
+                           RadiusY="20" />
+                <Grid CornerRadius="20"
+                      Height="40"
+                      Width="80">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <controls:GlyphButton x:Name="UndoButton"
+                                          Click="Undo_Click"
+                                          AllowFocusOnInteraction="False"
+                                          Width="40"
+                                          Height="40"
+                                          Glyph="&#xE7A7;"
+                                          CornerRadius="20"
+                                          Padding="0" />
+                    <controls:GlyphButton x:Name="RedoButton"
+                                          Click="Redo_Click"
+                                          AllowFocusOnInteraction="False"
+                                          Width="40"
+                                          Height="40"
+                                          Glyph="&#xE7A6;"
+                                          CornerRadius="20"
+                                          Padding="0"
+                                          Grid.Column="1" />
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="DocumentRoot"
+              Padding="12"
+              ColumnSpacing="8"
+              Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Rectangle x:Name="EmojiShadow"
+                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                           Stroke="{ThemeResource SettingsItemBorderBrush}"
+                           Width="40"
+                           Height="40"
+                           RadiusX="20"
+                           RadiusY="20" />
+                <Border CornerRadius="20"
+                        Height="40"
+                        Width="40">
+                    <controls:GlyphButton x:Name="EmojiButton"
+                                          Click="Emoji_Click"
+                                          AllowFocusOnInteraction="False"
+                                          Width="40"
+                                          Height="40"
+                                          Glyph="&#xE76E;"
+                                          CornerRadius="20"
+                                          Padding="0">
+                        <FlyoutBase.AttachedFlyout>
+                            <Flyout x:Name="EmojiFlyout"
+                                    Placement="Top"
+                                    ShowMode="Transient">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="FlyoutPresenter"
+                                           BasedOn="{StaticResource CommandFlyoutPresenterStyle}">
+                                        <Setter Property="Padding"
+                                                Value="0" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+                                <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                                     ItemClick="Emoji_ItemClick"
+                                                     Width="300"
+                                                     Height="360" />
+                            </Flyout>
+                        </FlyoutBase.AttachedFlyout>
+                    </controls:GlyphButton>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <Rectangle x:Name="RewriteShadow"
+                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                           Stroke="{ThemeResource SettingsItemBorderBrush}"
+                           Width="40"
+                           Height="40"
+                           RadiusX="20"
+                           RadiusY="20" />
+                <Border CornerRadius="20"
+                        Height="40"
+                        Width="40">
+                    <controls:GlyphButton x:Name="RewriteButton"
+                                          AllowFocusOnInteraction="False"
+                                          Width="40"
+                                          Height="40"
+                                          Glyph="&#xE76E;"
+                                          CornerRadius="20"
+                                          Padding="0" />
+                </Border>
+            </Grid>
+
+            <Grid Grid.Column="2">
+                <Rectangle x:Name="BlockShadow"
+                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                           Stroke="{ThemeResource SettingsItemBorderBrush}"
+                           Width="200"
+                           Height="40"
+                           RadiusX="20"
+                           RadiusY="20" />
+                <Grid CornerRadius="20"
+                      Height="40"
+                      Width="200">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <controls:GlyphToggleButton x:Name="ParagraphButton"
+                                                Click="Paragraph_Click"
+                                                AllowFocusOnInteraction="False"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xE8D2;"
+                                                CornerRadius="20"
+                                                Padding="0" />
+                    <controls:GlyphToggleButton x:Name="QuoteButton"
+                                                Click="Quote_Click"
+                                                AllowFocusOnInteraction="False"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xEAC7;"
+                                                CornerRadius="20"
+                                                Padding="0"
+                                                Grid.Column="1" />
+                    <controls:GlyphToggleButton x:Name="ListButton"
+                                                Click="List_Click"
+                                                AllowFocusOnInteraction="False"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xEB09;"
+                                                CornerRadius="20"
+                                                Padding="0"
+                                                Grid.Column="2" />
+                    <controls:GlyphToggleButton x:Name="TableButton"
+                                                Click="Table_Click"
+                                                AllowFocusOnInteraction="False"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xEB08;"
+                                                CornerRadius="20"
+                                                Padding="0"
+                                                Grid.Column="3" />
+                    <controls:GlyphToggleButton x:Name="FormulaButton"
+                                                Click="Formula_Click"
+                                                AllowFocusOnInteraction="False"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xEB07;"
+                                                CornerRadius="20"
+                                                Padding="0"
+                                                Grid.Column="4" />
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Column="3">
+                <Rectangle x:Name="AttachShadow"
+                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                           Stroke="{ThemeResource SettingsItemBorderBrush}"
+                           Width="40"
+                           Height="40"
+                           RadiusX="20"
+                           RadiusY="20" />
+                <Border CornerRadius="20"
+                        Height="40"
+                        Width="40">
+                    <controls:GlyphButton x:Name="AttachButton"
+                                          AllowFocusOnInteraction="False"
+                                          Width="40"
+                                          Height="40"
+                                          Glyph="&#xE76E;"
+                                          CornerRadius="20"
+                                          Padding="0" />
+                </Border>
+            </Grid>
+
+            <Grid Grid.Column="4">
+                <Rectangle x:Name="SendShadow"
+                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                           Stroke="{ThemeResource SettingsItemBorderBrush}"
+                           Width="40"
+                           Height="40"
+                           RadiusX="20"
+                           RadiusY="20" />
+                <Border CornerRadius="20"
+                        Height="40"
+                        Width="40">
+                    <controls:GlyphButton x:Name="SendButton"
+                                          Width="40"
+                                          Height="40"
+                                          Glyph="&#xE76E;"
+                                          CornerRadius="20"
+                                          Padding="0" />
+                </Border>
+            </Grid>
+
+        </Grid>
+
+        <Grid x:Name="SelectionRoot"
+              ColumnSpacing="8"
+              Padding="12"
+              Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="1">
+                <Rectangle x:Name="StyleShadow"
+                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                           Stroke="{ThemeResource SettingsItemBorderBrush}"
+                           Width="240"
+                           Height="40"
+                           RadiusX="20"
+                           RadiusY="20" />
+                <Grid CornerRadius="20"
+                      Height="40"
+                      Width="240">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <controls:GlyphToggleButton x:Name="BoldButton"
+                                                Click="Bold_Click"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xE8DD;"
+                                                CornerRadius="20"
+                                                Padding="0" />
+                    <controls:GlyphToggleButton x:Name="ItalicButton"
+                                                Click="Italic_Click"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xE8DB;"
+                                                CornerRadius="20"
+                                                Padding="0"
+                                                Grid.Column="1" />
+                    <controls:GlyphToggleButton x:Name="UnderlineButton"
+                                                Click="Underline_Click"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xE8DC;"
+                                                CornerRadius="20"
+                                                Padding="0"
+                                                Grid.Column="2" />
+                    <controls:GlyphToggleButton x:Name="StrikethroughButton"
+                                                Click="Strikethrough_Click"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xE8DE;"
+                                                CornerRadius="20"
+                                                Padding="0"
+                                                Grid.Column="3" />
+                    <controls:GlyphToggleButton x:Name="SpoilerButton"
+                                                Click="Spoiler_Click"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xEAA1;"
+                                                CornerRadius="20"
+                                                Padding="0"
+                                                Grid.Column="4" />
+                    <controls:GlyphToggleButton x:Name="MonospaceButton"
+                                                Click="Monospace_Click"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xE943;"
+                                                CornerRadius="20"
+                                                Padding="0"
+                                                Grid.Column="5" />
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Column="2">
+                <Rectangle x:Name="EntityShadow"
+                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                           Stroke="{ThemeResource SettingsItemBorderBrush}"
+                           Width="80"
+                           Height="40"
+                           RadiusX="20"
+                           RadiusY="20" />
+                <Grid CornerRadius="20"
+                      Height="40"
+                      Width="80">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <controls:GlyphToggleButton x:Name="LinkButton"
+                                                Click="Link_Click"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xE71B;"
+                                                CornerRadius="20"
+                                                Padding="0" />
+                    <controls:GlyphToggleButton x:Name="DateButton"
+                                                Click="Date_Click"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xE787;"
+                                                CornerRadius="20"
+                                                Padding="0"
+                                                Grid.Column="1" />
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <ScrollViewer Grid.Column="1"
+                      Grid.Row="1">
+            <content:InstantContent x:Name="Content" />
+        </ScrollViewer>
+    </Grid>
+</controls:ContentPopup>

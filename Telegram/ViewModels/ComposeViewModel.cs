@@ -130,7 +130,7 @@ namespace Telegram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInput(), Array.Empty<int>(), animation.Duration, animation.Width, animation.Height, null, false, false);
+            var input = new InputMessageAnimation(new InputAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInput(), Array.Empty<int>(), animation.Duration, animation.Width, animation.Height), null, false, false);
 
             await SendMessageAsync(reply, input, options);
         }

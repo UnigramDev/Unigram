@@ -74,7 +74,7 @@ namespace Telegram.ViewModels.Gallery
                 //return new InputMessageAnimation(new InputFileId(_photo.Animation.File.Id), small?.ToInputThumbnail(), Array.Empty<int>(), ?, _photo.Animation.Length, _photo.Animation.Length, null);
             }
 
-            return new InputMessagePhoto(new InputFileId(big.Photo.Id), small?.ToInputThumbnail(), null, Array.Empty<int>(), big.Width, big.Height, null, false, null, false);
+            return new InputMessagePhoto(new InputPhoto(new InputFileId(big.Photo.Id), small?.ToInputThumbnail(), null, Array.Empty<int>(), big.Width, big.Height), null, false, null, false);
         }
     }
 }

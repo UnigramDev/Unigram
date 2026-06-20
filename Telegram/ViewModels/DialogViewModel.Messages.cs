@@ -1665,7 +1665,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, botUser.Id, webApp.Url, OutgoingTopicId, null, new WebAppOpenParameters(Theme.Current.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, sourceChat: chat, buttonText: inline.Text);
+                    NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, source: new OpenUrlSourceChat(ChatId, null), buttonText: inline.Text);
                 }
             }
             else if (inline.Type is InlineKeyboardButtonTypeCopyText copyText)
@@ -1809,7 +1809,7 @@ namespace Telegram.ViewModels
                     var location = await _locationService.GetPositionAsync(NavigationService);
                     if (location != null)
                     {
-                        await SendMessageAsync(null, new InputMessageLocation(location, 0, 0, 0), null);
+                        await SendMessageAsync(null, new InputMessageLocation(location), null);
                     }
                 }
             }
@@ -1827,9 +1827,9 @@ namespace Telegram.ViewModels
                 if (ClientService.TryGetUser(message.SenderId, out Td.Api.User botUser))
                 {
                     var response = await ClientService.SendAsync(new GetWebAppUrl(botUser.Id, webApp.Url, new WebAppOpenParameters(Theme.Current.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
-                    if (response is WebAppInfo webAppInfo)
+                    if (response is WebAppUrl webAppUrl)
                     {
-                        NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, sourceChat: chat, buttonText: keyboardButton.Text);
+                        NavigationService.NavigateToWebApp(botUser, webAppUrl, 0, null, source: new OpenUrlSourceChat(ChatId, null), buttonText: keyboardButton.Text);
                     }
                 }
             }
@@ -1868,7 +1868,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, botUser.Id, url, OutgoingTopicId, null, new WebAppOpenParameters(Theme.Current.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, sourceChat: chat);
+                    NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, source: new OpenUrlSourceChat(ChatId, null));
                 }
             }
         }
@@ -1884,7 +1884,7 @@ namespace Telegram.ViewModels
             var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, menuBot.BotUserId, string.Empty, OutgoingTopicId, null, new WebAppOpenParameters(Theme.Current.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
             if (response is WebAppInfo webAppInfo)
             {
-                NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, menuBot, sourceChat: chat);
+                NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, menuBot, source: new OpenUrlSourceChat(ChatId, null));
             }
         }
 

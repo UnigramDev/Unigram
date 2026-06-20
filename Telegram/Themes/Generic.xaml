@@ -32,6 +32,7 @@
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/InvoiceContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/InvoicePhotoContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/InvoicePreviewContent.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/LiveLocationContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/LocationContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PaidMediaContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PhotoContent.xaml" />
@@ -6269,11 +6270,11 @@
         <Setter Property="FontFamily"
                 Value="{ThemeResource TelegramThemeFontFamily}" />
         <Setter Property="FontSize"
-                Value="32" />
+                Value="20" />
         <Setter Property="FontWeight"
                 Value="Normal" />
         <Setter Property="Glyph"
-                Value="&#xEAE8;" />
+                Value="&#xEB06;" />
         <Setter Property="Height"
                 Value="48" />
         <Setter Property="Width"
@@ -6357,16 +6358,17 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Ellipse x:Name="ContentBackground"
-                                 Fill="#FFFFFF"
-                                 Width="16"
-                                 Height="16" />
+                                 Fill="{ThemeResource MessageHeaderBorderBrush}"
+                                 Width="32"
+                                 Height="32" />
 
                         <TextBlock x:Name="ContentPresenter"
                                    Margin="{TemplateBinding Padding}"
                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                    AutomationProperties.AccessibilityView="Raw"
-                                   Text="{TemplateBinding Glyph}" />
+                                   Foreground="#FFFFFF"
+                                   Text="&#xEB06;" />
 
                         <TextBlock x:Name="ExpiresInLabel"
                                    TextAlignment="Center"
@@ -7051,6 +7053,151 @@
 
     <Style TargetType="local:GlyphButton"
            BasedOn="{StaticResource DefaultGlyphButtonStyle}" />
+
+    <Style TargetType="chats:ChatRecordButton">
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource TextFillColorPrimaryBrush}" />
+        <Setter Property="BorderThickness"
+                Value="0" />
+        <Setter Property="Padding"
+                Value="0" />
+        <Setter Property="HorizontalAlignment"
+                Value="Left" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center" />
+        <Setter Property="VerticalAlignment"
+                Value="Top" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Center" />
+        <Setter Property="FontFamily"
+                Value="{StaticResource SymbolThemeFontFamily}" />
+        <Setter Property="FontSize"
+                Value="{StaticResource GlyphLargeFontSize}" />
+        <Setter Property="FontWeight"
+                Value="Normal" />
+        <Setter Property="Height"
+                Value="48" />
+        <Setter Property="Width"
+                Value="48" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
+        <Setter Property="CornerRadius"
+                Value="{StaticResource GlyphButtonCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="chats:ChatRecordButton">
+                    <Grid Background="{TemplateBinding Background}"
+                          CornerRadius="{TemplateBinding CornerRadius}"
+                          Margin="{StaticResource GlyphButtonPadding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Normal" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Normal" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Normal" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Checked" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Checked" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Checked" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedDisabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                Value="Checked" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="RootGrid">
+                            <Ellipse Fill="{ThemeResource MessageHeaderBorderBrush}"
+                                     Width="32"
+                                     Height="32" />
+
+                            <TextBlock x:Name="ContentPresenter1"
+                                       Margin="{TemplateBinding Padding}"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                            <TextBlock x:Name="ContentPresenter2"
+                                       Margin="{TemplateBinding Padding}"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       AutomationProperties.AccessibilityView="Raw" />
+
+                            <muxc:AnimatedIcon x:Name="Icon"
+                                               Source="{TemplateBinding Source}"
+                                               muxc:AnimatedIcon.State="Normal"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               AutomationProperties.AccessibilityView="Raw"
+                                               Width="20"
+                                               Height="20" />
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="chats:ChatStickerButton">
         <Setter Property="Background"

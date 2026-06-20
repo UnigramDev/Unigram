@@ -1226,29 +1226,7 @@ namespace Telegram.ViewModels
             }
 
             var response = await ClientService.SendAsync(new JoinChat(chat.Id));
-            if (response is Error error)
-            {
-                if (error.MessageEquals(ErrorType.INVITE_REQUEST_SENT))
-                {
-                    await ShowPopupAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription, Strings.RequestToJoinSent, Strings.OK);
-                    return;
-
-                    var message = Strings.RequestToJoinSent + Environment.NewLine + (chat.Type is ChatTypeSupergroup supergroup2 && supergroup2.IsChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription);
-                    var entity = new TextEntity(0, Strings.RequestToJoinSent.Length, new TextEntityTypeBold());
-
-                    var text = new FormattedText(message, new[] { entity });
-
-                    ToastPopup.Show(XamlRoot, text, ToastPopupIcon.JoinRequested);
-                }
-                else if (error.MessageEquals(ErrorType.CHANNELS_TOO_MUCH))
-                {
-                    NavigationService.ShowLimitReached(new PremiumLimitTypeSupergroupCount());
-                }
-                else
-                {
-                    ShowToast(error);
-                }
-            }
+            MessageHelper.HandleChatJoinResult(ClientService, NavigationService, chat.Id, chat.Type is ChatTypeSupergroup { IsChannel: true }, response);
         }
 
         public void ShowRating()

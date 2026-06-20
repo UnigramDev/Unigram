@@ -46,10 +46,10 @@ namespace Telegram.Services.Factories
             }
             else if (conversionType == ConversionType.Copy)
             {
-                return new InputMessageDocument(generated, thumbnail, false, caption);
+                return new InputMessageDocument(new InputDocument(generated, thumbnail, false), caption);
             }
 
-            return new InputMessagePhoto(generated, thumbnail, null, null, size.Width, size.Height, caption, captionAboveMedia, ttl, spoiler);
+            return new InputMessagePhoto(new InputPhoto(generated, thumbnail, null, null, size.Width, size.Height), caption, captionAboveMedia, ttl, spoiler);
         }
 
         public static async Task<Object> CreateVideoAsync(StorageVideo video, FormattedText caption, bool animated, bool captionAboveMedia, bool spoiler, MessageSelfDestructType ttl, long starCount)
@@ -85,10 +85,10 @@ namespace Telegram.Services.Factories
             }
             else if (animated && ttl == null)
             {
-                return new InputMessageAnimation(generated, thumbnail, null, duration, videoWidth, videoHeight, caption, captionAboveMedia, spoiler);
+                return new InputMessageAnimation(new InputAnimation(generated, thumbnail, null, duration, videoWidth, videoHeight), caption, captionAboveMedia, spoiler);
             }
 
-            return new InputMessageVideo(generated, thumbnail, null, 0, null, duration, videoWidth, videoHeight, true, caption, captionAboveMedia, ttl, spoiler);
+            return new InputMessageVideo(new InputVideo(generated, thumbnail, null, 0, null, duration, videoWidth, videoHeight, true), caption, captionAboveMedia, ttl, spoiler);
         }
 
         public static async Task<InputMessageContent> CreateVideoNoteAsync(StorageVideo video, VideoGeneration generation, MessageSelfDestructType selfDestructType)
@@ -119,7 +119,7 @@ namespace Telegram.Services.Factories
 
                 var albumCover = new InputThumbnail(await file.ToGeneratedAsync(ConversionType.AlbumCover), 0, 0);
 
-                return new InputMessageAudio(generated, albumCover, duration, title, performer, caption);
+                return new InputMessageAudio(new InputAudio(generated, albumCover, duration, title, performer), caption);
             }
 
             var thumbnail = new InputThumbnail(await file.ToGeneratedAsync(ConversionType.DocumentThumbnail), 0, 0);
@@ -146,7 +146,7 @@ namespace Telegram.Services.Factories
                 // TODO
             }
 
-            return new InputMessageDocument(generated, thumbnail, true, caption);
+            return new InputMessageDocument(new InputDocument(generated, thumbnail, true), caption);
         }
     }
 

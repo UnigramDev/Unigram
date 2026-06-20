@@ -51,6 +51,7 @@
 
         <TextBox x:Name="Title"
                  Loaded="Title_Loaded"
+                 TextChanged="Title_TextChanged"
                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
                  MaxLength="{StaticResource ChatTitleMaxLength}"
                  Header="{CustomResource AIEditorStyleTitle}"
@@ -76,6 +77,7 @@
         </TextBox>
 
         <TextBox x:Name="Prompt"
+                 TextChanged="Prompt_TextChanged"
                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
                  MaxLength="{StaticResource ChatAboutMaxLength}"
                  Header="{CustomResource AIEditorStylePrompt}"

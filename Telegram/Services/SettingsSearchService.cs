@@ -108,7 +108,7 @@ namespace Telegram.Services
                 var title = string.Empty;
                 var cicci = new List<SettingsSearchEntry>();
 
-                foreach (var block in linkPreview.PageBlocks)
+                foreach (var block in linkPreview.Blocks)
                 {
                     if (block is PageBlockList list)
                     {
@@ -116,7 +116,7 @@ namespace Telegram.Services
 
                         foreach (var item in list.Items)
                         {
-                            if (item.PageBlocks.Count == 1 && item.PageBlocks[0] is PageBlockParagraph paragraph && paragraph.Text is RichTextAnchorLink anchorLink)
+                            if (item.Blocks.Count == 1 && item.Blocks[0] is PageBlockParagraph paragraph && paragraph.Text is RichTextAnchorLink anchorLink)
                             {
                                 items.Add(new SettingsSearchFaq(anchorLink.Url, anchorLink.ToPlainText()));
                             }

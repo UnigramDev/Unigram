@@ -677,13 +677,13 @@ namespace Telegram.ViewModels.Business
 
                     if (!string.IsNullOrWhiteSpace(_query))
                     {
-                        var response1 = await _clientService.SendAsync(new SearchChats(_query, 50));
+                        var response1 = await _clientService.SendAsync(new SearchChats(_query, new SearchChatTypeFilterBot(), 50));
                         ProcessResult(response1);
 
-                        var response2 = await _clientService.SendAsync(new SearchChatsOnServer(_query, 50));
+                        var response2 = await _clientService.SendAsync(new SearchChatsOnServer(_query, new SearchChatTypeFilterBot(), 50));
                         ProcessResult(response2);
 
-                        var response3 = await _clientService.SendAsync(new SearchPublicChats(_query));
+                        var response3 = await _clientService.SendAsync(new SearchPublicChats(_query, new SearchChatTypeFilterBot()));
                         ProcessResult(response3);
                     }
 

@@ -1303,7 +1303,11 @@ namespace winrt::Telegram::Native::implementation
             result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, actualTestsCount, &actualTestsCount);
         }
 
-        ReturnDefaultIfFailed(result, result);
+        if (FAILED(result))
+        {
+            delete[] ranges;
+            return winrt::single_threaded_vector<Windows::Foundation::Rect>();
+        }
 
         std::vector<Windows::Foundation::Rect> vector;
 
@@ -1484,7 +1488,11 @@ namespace winrt::Telegram::Native::implementation
             result = textLayout->GetLineMetrics(ranges, actualLineCount, &actualLineCount);
         }
 
-        ReturnDefaultIfFailed(result, result);
+        if (FAILED(result))
+        {
+            delete[] ranges;
+            return {};
+        }
 
         float truncateHeight = 0;
         int32_t truncatePosition = 0;

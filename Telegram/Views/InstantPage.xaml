@@ -344,7 +344,8 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.Footer>
-                    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+                    <Grid x:Name="Feedback"
+                          Background="{ThemeResource PageBackgroundDarkBrush}">
                         <Button Click="Feedback_Click"
                                 Content="{CustomResource PreviewFeedback2}"
                                 HorizontalContentAlignment="Right"

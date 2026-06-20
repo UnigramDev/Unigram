@@ -381,6 +381,14 @@ namespace Telegram.Controls.Cells
             {
                 return previewAudio.Audio;
             }
+            else if (content is MessageRichMessage richMessage)
+            {
+                var block = PageBlockHelper.FindFirstMedia(richMessage.Message.Blocks, PageBlockMediaKind.Audio);
+                if (block is PageBlockAudio blockAudio)
+                {
+                    return blockAudio.Audio;
+                }
+            }
 
             return null;
         }

@@ -136,6 +136,11 @@ namespace Telegram.ViewModels.Supergroups
                     }
                 }
 
+                if (member.MemberId is MessageSenderUser senderUser && ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
+                {
+                    ProcessJoinRequests = fullInfo.GuardBotUserId == senderUser.UserId;
+                }
+
                 UpdateCanManageMessages();
                 UpdateCanManageStories();
             }
@@ -517,6 +522,13 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
+        private bool _processJoinRequests;
+        public bool ProcessJoinRequests
+        {
+            get => _processJoinRequests;
+            set => Set(ref _processJoinRequests, value);
+        }
+
         #endregion
 
         private string _customTitle;
@@ -629,13 +641,31 @@ namespace Telegram.ViewModels.Supergroups
             var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
             if (response is Ok)
             {
-                if (member.MemberId is MessageSenderUser user && !string.Equals(_customTitle, member.Tag))
+                if (member.MemberId is MessageSenderUser user)
                 {
-                    var tag = await ClientService.SendAsync(new SetChatMemberTag(chat.Id, user.UserId, _customTitle ?? string.Empty));
-                    if (tag is Error error)
+                    if (!string.Equals(_customTitle, member.Tag))
                     {
-                        ShowToast(error);
-                        return;
+                        var tag = await ClientService.SendAsync(new SetChatMemberTag(chat.Id, user.UserId, _customTitle ?? string.Empty));
+                        if (tag is Error error)
+                        {
+                            ShowToast(error);
+                            return;
+                        }
+                    }
+
+                    if (ClientService.TryGetSupergroup(Chat, out Supergroup supergroup)
+                        && ClientService.TryGetSupergroupFull(Chat, out SupergroupFullInfo fullInfo))
+                    {
+                        var processJoinRequests = fullInfo.GuardBotUserId == user.UserId;
+                        if (processJoinRequests != ProcessJoinRequests)
+                        {
+                            var joinByRequest = await ClientService.SendAsync(new ToggleSupergroupJoinByRequest(supergroup.Id, supergroup.JoinByRequest, user.UserId, false));
+                            if (joinByRequest is Error error)
+                            {
+                                ShowToast(error);
+                                return;
+                            }
+                        }
                     }
                 }
 

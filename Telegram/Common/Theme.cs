@@ -94,6 +94,7 @@ namespace Telegram.Common
             this["EmojiThemeFontFamily"] = new FontFamily(XamlAutoFontFamily);
             this["EmojiThemeFontFamilyWithSymbols"] = new FontFamily(XamlAutoFontFamily + comma + "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
             this["EmojiThemeFontFamilyWithRounded"] = new FontFamily(XamlAutoFontFamily + comma + "ms-appx:///Assets/Fonts/Nunito.ttf#Nunito" + comma + "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
+            this["EmojiThemeFontFamilyWithSerif"] = new FontFamily(emojiFontFamily + comma + "Times New Roman");
         }
 
         public string XamlAutoFontFamily { get; private set; }
@@ -121,7 +122,22 @@ namespace Telegram.Common
             }
         }
 
-        public static Color Accent { get; private set; } = Colors.Red;
+        private static ThemeAccent _accentDark;
+        private static ThemeAccent _accentLight;
+
+        public static ThemeAccent AccentDark => _accentDark ?? new();
+        public static ThemeAccent AccentLight => _accentLight ?? new();
+
+        public class ThemeAccent
+        {
+            public Color Dark1 { get; set; } = Colors.Red;
+            public Color Dark2 { get; set; } = Colors.Red;
+            public Color Dark3 { get; set; } = Colors.Red;
+            public Color Default { get; set; } = Colors.Red;
+            public Color Light3 { get; set; } = Colors.Red;
+            public Color Light2 { get; set; } = Colors.Red;
+            public Color Light1 { get; set; } = Colors.Red;
+        }
 
         public ThemeSettings LightSettings => _lastLightSettings;
         public ThemeSettings DarkSettings => _lastDarkSettings;
@@ -337,7 +353,25 @@ namespace Telegram.Common
 
                 if (_isPrimary)
                 {
-                    Accent = GetShade(AccentShade.Default);
+                    var accent = new ThemeAccent
+                    {
+                        Dark1 = GetShade(AccentShade.Dark1),
+                        Dark2 = GetShade(AccentShade.Dark2),
+                        Dark3 = GetShade(AccentShade.Dark3),
+                        Default = GetShade(AccentShade.Default),
+                        Light3 = GetShade(AccentShade.Light3),
+                        Light2 = GetShade(AccentShade.Light2),
+                        Light1 = GetShade(AccentShade.Light1),
+                    };
+
+                    if (requested == TelegramTheme.Dark)
+                    {
+                        _accentDark = accent;
+                    }
+                    else
+                    {
+                        _accentLight = accent;
+                    }
                 }
 
                 foreach (var item in lookup)

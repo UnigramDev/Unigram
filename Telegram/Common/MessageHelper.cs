@@ -68,6 +68,19 @@ namespace Telegram.Common
         }
     }
 
+    public partial class OpenUrlSourceJoinChatRequest : OpenUrlSource
+    {
+        public long QueryId { get; }
+
+        public long ChatId { get; }
+
+        public OpenUrlSourceJoinChatRequest(long queryId, long chatId)
+        {
+            QueryId = queryId;
+            ChatId = chatId;
+        }
+    }
+
     public partial class TonSite
     {
         public static bool TryCreate(IClientService clientService, Uri uri, out string magic)
@@ -1263,21 +1276,15 @@ namespace Telegram.Common
                     return;
                 }
 
-                var sourceChat = source switch
-                {
-                    OpenUrlSourceChat sourceMessage => clientService.GetChat(sourceMessage.ChatId),
-                    _ => null
-                };
-
                 var response2 = await clientService.SendAsync(new GetAttachmentMenuBot(botUser.Id));
                 if (response2 is AttachmentMenuBot menuBot)
                 {
-                    OpenMiniApp(clientService, navigation, botUser, menuBot, attachmentMenuBot.Url, sourceChat, attachmentMenuBot);
+                    OpenMiniApp(clientService, navigation, botUser, menuBot, attachmentMenuBot.Url, source, attachmentMenuBot);
                 }
             }
         }
 
-        public static async void OpenMiniApp(IClientService clientService, INavigationService navigation, User user, AttachmentMenuBot bot, string url, Chat sourceChat = null, InternalLinkType sourceLink = null, Action<bool> continuation = null)
+        public static async void OpenMiniApp(IClientService clientService, INavigationService navigation, User user, AttachmentMenuBot bot, string url, OpenUrlSource source = null, InternalLinkType sourceLink = null, Action<bool> continuation = null)
         {
             if (bot.ShowDisclaimerInSideMenu || !clientService.IsBotAddedToAttachmentMenu(bot.BotUserId))
             {
@@ -1317,9 +1324,9 @@ namespace Telegram.Common
             continuation?.Invoke(true);
 
             var response = await clientService.SendAsync(new GetWebAppUrl(bot.BotUserId, url, new WebAppOpenParameters(Theme.Current.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
-            if (response is HttpUrl httpUrl)
+            if (response is WebAppUrl webAppUrl)
             {
-                navigation.NavigateToWebApp(user, httpUrl.Url, 0, bot, null, sourceChat, sourceLink);
+                navigation.NavigateToWebApp(user, webAppUrl, 0, bot, null, source, sourceLink);
             }
         }
 
@@ -1469,12 +1476,10 @@ namespace Telegram.Common
                         _ => 0
                     };
 
-                    var sourceChat = clientService.GetChat(chatId);
-
                     var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(chatId, botUser.Id, webAppShortName, startParameter, foundWebApp.RequestWriteAccess && popup.IsChecked is true, new WebAppOpenParameters(Theme.Current.Parameters, Constants.WebAppHostName, mode)));
-                    if (responsa is HttpUrl url)
+                    if (responsa is WebAppUrl webAppUrl)
                     {
-                        navigation.NavigateToWebApp(botUser, url.Url, openMode: mode, sourceChat: sourceChat, sourceLink: new InternalLinkTypeWebApp(botUsername, webAppShortName, startParameter, mode));
+                        navigation.NavigateToWebApp(botUser, webAppUrl, openMode: mode, source: source, sourceLink: new InternalLinkTypeWebApp(botUsername, webAppShortName, startParameter, mode));
                     }
                 }
                 else
@@ -1981,36 +1986,13 @@ namespace Telegram.Common
                     }
 
                     var import = await clientService.SendAsync(new JoinChatByInviteLink(link));
-                    if (import is Chat chat)
+                    if (import is ChatJoinResultSuccess success)
                     {
-                        navigation.NavigateToChat(chat);
+                        navigation.NavigateToChat(success.ChatId);
                     }
-                    else if (import is Error error)
+                    else
                     {
-                        if (error.MessageEquals(ErrorType.INVITE_REQUEST_SENT))
-                        {
-                            navigation.ShowPopup(info.Type is InviteLinkChatTypeChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription, Strings.RequestToJoinSent, Strings.OK);
-                            return;
-
-                            var message = Strings.RequestToJoinSent + Environment.NewLine + (info.Type is InviteLinkChatTypeChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription);
-                            var entity = new TextEntity(0, Strings.RequestToJoinSent.Length, new TextEntityTypeBold());
-
-                            var text = new FormattedText(message, new[] { entity });
-
-                            navigation.ShowToast(text, ToastPopupIcon.JoinRequested);
-                        }
-                        else if (error.MessageEquals(ErrorType.FLOOD_WAIT))
-                        {
-                            navigation.ShowPopup(Strings.FloodWait, Strings.AppName, Strings.OK);
-                        }
-                        else if (error.MessageEquals(ErrorType.USERS_TOO_MUCH))
-                        {
-                            navigation.ShowPopup(Strings.JoinToGroupErrorFull, Strings.AppName, Strings.OK);
-                        }
-                        else
-                        {
-                            navigation.ShowPopup(Strings.JoinToGroupErrorNotExist, Strings.AppName, Strings.OK);
-                        }
+                        HandleChatJoinResult(clientService, navigation, info.ChatId, info.Type is InviteLinkChatTypeChannel, import);
                     }
                 }
             }
@@ -2024,6 +2006,59 @@ namespace Telegram.Common
                 {
                     navigation.ShowPopup(Strings.JoinToGroupErrorNotExist, Strings.AppName, Strings.OK);
                 }
+            }
+        }
+
+        public static async void HandleChatJoinResult(IClientService clientService, INavigationService navigation, long chatId, bool channel, Object result)
+        {
+            if (result is ChatJoinResultGuardBotApprovalRequired approvalRequired && clientService.TryGetUser(approvalRequired.BotUserId, out User botUser))
+            {
+                var popup = new MessagePopup
+                {
+                    Title = Strings.AppName,
+                    Message = Strings.BotWebViewStartPermission,
+                    PrimaryButtonText = Strings.Start,
+                    SecondaryButtonText = Strings.Cancel,
+                };
+
+                var confirm = await navigation.ShowPopupAsync(popup);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                navigation.NavigateToWebApp(botUser, approvalRequired.Url, source: new OpenUrlSourceJoinChatRequest(approvalRequired.QueryId, chatId));
+            }
+            else if (result is ChatJoinResultRequestSent)
+            {
+                await navigation.ShowPopupAsync(channel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription, Strings.RequestToJoinSent, Strings.OK);
+                return;
+
+                var message = Strings.RequestToJoinSent + Environment.NewLine + (channel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription);
+                var entity = new TextEntity(0, Strings.RequestToJoinSent.Length, new TextEntityTypeBold());
+
+                var text = new FormattedText(message, new[] { entity });
+
+                ToastPopup.Show(navigation.XamlRoot, text, ToastPopupIcon.JoinRequested);
+            }
+            else if (result is ChatJoinRequestResultDeclined)
+            {
+                navigation.ShowToast(string.Format(Strings.GuardBotJoinRequestDeclined, clientService.GetTitle(chatId)), ToastPopupIcon.Ban);
+            }
+            else if (result is Error error)
+            {
+                if (error.MessageEquals(ErrorType.CHANNELS_TOO_MUCH))
+                {
+                    navigation.ShowLimitReached(new PremiumLimitTypeSupergroupCount());
+                }
+                else
+                {
+                    navigation.ShowToast(error);
+                }
+            }
+            else if (Constants.DEBUG && channel)
+            {
+                clientService.Send(new AddLocalMessage(chatId, new MessageSenderChat(chatId), null, true, new InputMessageContact(new Contact("999888777666", "SIMILAR", "CHANNELS", string.Empty, clientService.Options.MyId))));
             }
         }
 

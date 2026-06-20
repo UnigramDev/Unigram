@@ -812,7 +812,11 @@ namespace Telegram.ViewModels
                         if (_chats.Contains(chat.Id))
                         {
                             oldIndex = IndexOf(chat);
-                            RemoveAt(oldIndex);
+
+                            if (oldIndex != -1)
+                            {
+                                RemoveAt(oldIndex);
+                            }
                         }
                         else
                         {

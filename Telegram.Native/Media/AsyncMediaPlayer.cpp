@@ -135,6 +135,7 @@ namespace winrt::Telegram::Native::Media::implementation
             {
                 bitrate_last_ = static_cast<int64_t>(source.FileSize() / duration * 15.0);
                 bitrate_estimate_ = static_cast<int64_t>(source.FileSize() / duration * 15.0);
+                //bitrate_maximum_ = static_cast<int64_t>(source.FileSize() / duration * 60.0);
             }
         }
 
@@ -217,8 +218,8 @@ namespace winrt::Telegram::Native::Media::implementation
 
             auto prefetch_size = PrefetchSize(30.0);
 
-            std::wstring msg = L"Read callback start " + std::to_wstring(prefetch_size / 1024.0 / 1024.0) + L" MB\n";
-            OutputDebugString(msg.c_str());
+            //std::wstring msg = L"Read callback start " + std::to_wstring(prefetch_size / 1024.0 / 1024.0) + L" MB\n";
+            //OutputDebugString(msg.c_str());
 
             source.ReadCallback(count, prefetch_size, bytesRead);
         }
@@ -242,6 +243,7 @@ namespace winrt::Telegram::Native::Media::implementation
 
     private:
         std::chrono::steady_clock::time_point bitrate_time_;
+        //double bitrate_maximum_;
         double bitrate_estimate_;
         double bitrate_last_;
         double bitrate_warmup_;

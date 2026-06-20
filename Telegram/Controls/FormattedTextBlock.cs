@@ -72,7 +72,17 @@ namespace Telegram.Controls
 
         private string _query;
 
-        private bool _isHighlighted;
+        [Flags]
+        enum HighlightType
+        {
+            None = 0,
+            Spoiler = 1 << 1,
+            Query = 1 << 2,
+            Marked = 1 << 3,
+            Cached = 1 << 4
+        }
+        
+        private HighlightType _highlight;
         private bool _ignoreSpoilers = false;
 
         private AnimatedImage _spoilerPresenter;
@@ -113,8 +123,9 @@ namespace Telegram.Controls
             }
         }
 
+        private TextHighlighter _cached;
+        private TextHighlighter _marked;
         private TextHighlighter _spoiler;
-        private bool _invalidateSpoilers;
 
         private Canvas Below;
         private RichTextBlock TextBlock;
@@ -377,13 +388,42 @@ namespace Telegram.Controls
 
         public void SetQuery(string query, bool force = false)
         {
-            if ((_query ?? string.Empty) == (query ?? string.Empty) && _isHighlighted == (_spoiler != null) && !force && !_invalidateSpoilers)
+            var highlight = HighlightType.None;
+            if (_spoiler != null)
             {
-                return;
+                highlight |= HighlightType.Spoiler;
+            }
+            if (_query != null)
+            {
+                highlight |= HighlightType.Query;
+            }
+            if (_cached != null)
+            {
+                highlight |= HighlightType.Cached;
+            }
+            if (_marked != null)
+            {
+                highlight |= HighlightType.Spoiler;
             }
 
+            if (!force)
+            {
+                var sameQuery = (_query ?? string.Empty) == (query ?? string.Empty);
+                var sameHighlight = _highlight == highlight;
+
+                if (sameQuery && sameHighlight)
+                {
+                    return;
+                }
+            }
+
+            //if ((_query ?? string.Empty) == (query ?? string.Empty) && _isHighlighted == (_spoiler != null) && !force && !_invalidateSpoilers)
+            //{
+            //    return;
+            //}
+
             _query = query;
-            _invalidateSpoilers = false;
+            //_highlight = highlight;
 
             if (TextBlock == null || !TextBlock.IsLoaded)
             {
@@ -392,9 +432,9 @@ namespace Telegram.Controls
 
             if (_text != null)
             {
-                if (_isHighlighted)
+                if (_highlight != HighlightType.None)
                 {
-                    _isHighlighted = false;
+                    _highlight = HighlightType.None;
                     TextBlock.TextHighlighters.Clear();
                 }
 
@@ -418,14 +458,26 @@ namespace Telegram.Controls
                         highligher.Background = new SolidColorBrush(Colors.Orange);
                         highligher.Ranges.Add(new TextRange { StartIndex = find - shift, Length = query.Length });
 
-                        _isHighlighted = true;
+                        _highlight |= HighlightType.Query;
                         TextBlock.TextHighlighters.Add(highligher);
                     }
                 }
 
+                if (_marked != null)
+                {
+                    _highlight |= HighlightType.Marked;
+                    TextBlock.TextHighlighters.Add(_marked);
+                }
+
+                if (_cached != null)
+                {
+                    _highlight |= HighlightType.Cached;
+                    TextBlock.TextHighlighters.Add(_cached);
+                }
+
                 if (_spoiler != null)
                 {
-                    _isHighlighted = true;
+                    _highlight |= HighlightType.Spoiler;
                     TextBlock.TextHighlighters.Add(_spoiler);
                 }
                 else
@@ -440,9 +492,9 @@ namespace Telegram.Controls
                     _spoilerGeometry = null;
                 }
             }
-            else if (_isHighlighted)
+            else if (_highlight != HighlightType.None)
             {
-                _isHighlighted = false;
+                _highlight = HighlightType.None;
                 TextBlock.TextHighlighters.Clear();
 
                 if (Below == null || _spoilerPresenter == null)
@@ -465,6 +517,11 @@ namespace Telegram.Controls
         public void SetText(IClientService clientService, string text, IList<TextEntity> entities, double fontSize = 0)
         {
             SetText(clientService, TextStyleRun.GetText(text, entities), fontSize);
+        }
+
+        public void SetText(IClientService clientService, RichText text)
+        {
+            SetText(clientService, TextStyleRun.GetText(text));
         }
 
         private HashSet<IXamlDirectObject> _activeParagraphs;
@@ -861,11 +918,15 @@ namespace Telegram.Controls
 
             if (string.IsNullOrEmpty(styled?.Text))
             {
-                _invalidateSpoilers = _spoiler != null;
+                _spoiler = null;
+                _cached = null;
+                _marked = null;
                 return;
             }
 
             TextHighlighter spoiler = null;
+            TextHighlighter cached = null;
+            TextHighlighter marked = null;
 
             var preformatted = false;
             TextParagraphType lastType = null;
@@ -874,7 +935,7 @@ namespace Telegram.Controls
             FontFamily monospaceFontFamily = null;
             FontFamily GetMonospaceFontFamily()
             {
-                return monospaceFontFamily ?? new FontFamily("Consolas, " + Theme.Current.XamlAutoFontFamily);
+                return monospaceFontFamily ?? new FontFamily("Cascadia Code, Consolas, " + Theme.Current.XamlAutoFontFamily);
             }
 
             var alignment = TextAlignment;
@@ -960,7 +1021,7 @@ namespace Telegram.Controls
                         var data = text.Substring(entity.Offset, entity.Length);
                         if (paragraph != null)
                         {
-                            if (entity.Type is TextEntityTypeCode)
+                            if (entity.Type is not TextEntityTypePre and not TextEntityTypePreCode)
                             {
                                 var hyperlink = GetOrCreateHyperlink();
                                 hyperlink.Click += Entity_Click;
@@ -1117,6 +1178,19 @@ namespace Telegram.Controls
                             parentInlines = direct.GetXamlDirectObjectProperty(hyperlink, XamlPropertyIndex.Span_Inlines);
                         }
 
+                        if (_spanForInlines == null && entity.HasFlag(TextStyle.Marked))
+                        {
+                            marked ??= new TextHighlighter();
+                            marked.Ranges.Add(new TextRange { StartIndex = offset, Length = entity.Length });
+                        }
+
+                        // TODO: 
+                        //if (_spanForInlines == null && entity.HasFlag(TextStyle.Cached))
+                        //{
+                        //    cached ??= new TextHighlighter();
+                        //    cached.Ranges.Add(new TextRange { StartIndex = offset, Length = entity.Length });
+                        //}
+
                         // Consumes local inlines instead of paragraph's
                         // TODO: still use a InlineUIContainer for emojis in spoilers to avoid text resizes
                         if (entity.Type is TextEntityTypeCustomEmoji customEmoji /*&& ((_ignoreSpoilers && entity.HasFlag(Native.TextStyle.Spoiler)) || !entity.HasFlag(Native.TextStyle.Spoiler))*/)
@@ -1248,6 +1322,44 @@ namespace Telegram.Controls
                                 RelativeDateService.Subscribe(run, this, part, entity, date);
                             }
                         }
+                        else if (_spanForInlines == null && entity.Type is TextEntityTypeMathematicalExpression mathematicalExpression)
+                        {
+                            var tex = new RichMathImage
+                            {
+                                Source = mathematicalExpression.Expression
+                            };
+
+                            if (tex.IsValid)
+                            {
+                                TextBlock.MinHeight = Math.Max(TextBlock.MinHeight, tex.PixelHeight);
+                                tex.Margin = new Thickness(0, 0, 0, tex.Baseline * tex.PixelHeight - tex.PixelHeight);
+
+                                var inline = new InlineUIContainer
+                                {
+                                    Child = tex
+                                };
+
+                                if (entity.Offset == 0 || (entity.Offset == previous && runs[j - 1].HasFlag(Native.TextStyle.Spoiler)))
+                                {
+                                    var character = direction != locale
+                                        ? direction == FlowDirection.RightToLeft ? Icons.RTL : Icons.LTR
+                                        : Icons.ZWNJ;
+
+                                    GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize, transparent: true);
+                                    offset++;
+                                }
+
+                                direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
+                                GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize, true);
+                                offset++;
+                            }
+                            else
+                            {
+                                GetOrCreateRun(direct, parentInlines, mathematicalExpression.Expression, entity.Offset, entity.Length, direction, entity.Flags, null, partFontSize, false);
+                                offset += entity.Length;
+                            }
+
+                        }
                         else
                         {
                             GetOrCreateRun(direct, parentInlines, text, entity.Offset, entity.Length, direction, entity.Flags, null, partFontSize, false);
@@ -1300,13 +1412,38 @@ namespace Telegram.Controls
                 spoiler.Foreground = new SolidColorBrush(Colors.Transparent);
                 spoiler.Background = new SolidColorBrush(Colors.Transparent);
 
-                _invalidateSpoilers = _spoiler != null;
                 _spoiler = spoiler;
             }
             else
             {
-                _invalidateSpoilers = _spoiler != null;
                 _spoiler = null;
+            }
+
+            if (cached?.Ranges.Count > 0)
+            {
+                var accent = ActualTheme == ElementTheme.Light
+                    ? Theme.AccentLight.Default
+                    : Theme.AccentDark.Default;
+
+                cached.Background = new SolidColorBrush(accent.WithAlpha(22));
+                cached.Foreground = new SolidColorBrush(accent);
+
+                _cached = cached;
+            }
+            else
+            {
+                _cached = null;
+            }
+
+            if (marked?.Ranges.Count > 0)
+            {
+                marked.Background = new SolidColorBrush(Colors.PaleGoldenrod);
+
+                _marked = marked;
+            }
+            else
+            {
+                _marked = null;
             }
 
             // TODO: get rid of _spoiler
@@ -1707,7 +1844,7 @@ namespace Telegram.Controls
 
         private void ProcessCodeBlock(XamlDirect direct, IXamlDirectObject inlines, IList<Token> tokens)
         {
-            var fontFamily = new FontFamily("Consolas, " + Theme.Current.XamlAutoFontFamily);
+            var fontFamily = new FontFamily("Cascadia Code, Consolas, " + Theme.Current.XamlAutoFontFamily);
 
             foreach (var token in tokens)
             {

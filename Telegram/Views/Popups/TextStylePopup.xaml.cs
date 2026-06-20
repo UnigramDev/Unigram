@@ -36,8 +36,13 @@ namespace Telegram.Views.Popups
 
             TitleText.Text = Strings.AIEditorNewStyle;
 
+            Title.MaxLength = (int)_clientService.Options.TextCompositionStyleTitleLengthMax;
+            Prompt.MaxLength = (int)_clientService.Options.TextCompositionStylePromptLengthMax;
+
             PrimaryButtonText = Strings.Create;
             SecondaryButtonText = Strings.Cancel;
+
+            UpdatePrimaryButton();
         }
 
         public TextStylePopup(IClientService clientService, INavigationService navigationService, TextCompositionStyle style)
@@ -55,12 +60,17 @@ namespace Telegram.Views.Popups
 
             TitleText.Text = Strings.AIEditorEditStyle;
 
+            Title.MaxLength = (int)_clientService.Options.TextCompositionStyleTitleLengthMax;
             Title.Text = style.Title;
+
+            Prompt.MaxLength = (int)_clientService.Options.TextCompositionStylePromptLengthMax;
             Prompt.Text = style.Prompt;
             AddLink.IsChecked = style.CreatorUserId != 0;
 
             PrimaryButtonText = Strings.Save;
             SecondaryButtonText = Strings.Cancel;
+
+            UpdatePrimaryButton();
         }
 
         public override void OnNavigatedTo(object parameter)
@@ -122,6 +132,25 @@ namespace Telegram.Views.Popups
             _customEmojiId = customEmoji.CustomEmojiId;
             Icon.Source = new CustomEmojiFileSource(_clientService, customEmoji.CustomEmojiId);
             IconPlaceholder.Visibility = Visibility.Collapsed;
+
+            UpdatePrimaryButton();
+        }
+
+        private void UpdatePrimaryButton()
+        {
+            IsPrimaryButtonEnabled = _customEmojiId != 0
+                && Title.Text.Length > 0 && Title.Text.Length <= _clientService.Options.TextCompositionStyleTitleLengthMax
+                && Prompt.Text.Length > 0 && Prompt.Text.Length <= _clientService.Options.TextCompositionStylePromptLengthMax;
+        }
+
+        private void Title_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdatePrimaryButton();
+        }
+
+        private void Prompt_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdatePrimaryButton();
         }
     }
 }

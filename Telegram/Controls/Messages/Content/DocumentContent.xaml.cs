@@ -268,7 +268,7 @@ namespace Telegram.Controls.Messages.Content
                     return document.Document;
                 case MessageText text when text.LinkPreview?.Type is LinkPreviewTypeDocument previewDocument:
                     return previewDocument.Document;
-                case MessagePoll poll when poll.Media is MessageDocument pollDocument:
+                case MessagePoll poll when poll.Media is PollMediaDocument pollDocument:
                     return pollDocument.Document;
             }
 

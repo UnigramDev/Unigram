@@ -239,7 +239,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var task2 = ClientService.SendAsync(new SearchChats(query, 100));
+            var task2 = ClientService.SendAsync(new SearchChats(query, new SearchChatTypeFilterBot(), 100));
             var task3 = ClientService.SendAsync(new SearchContacts(query, 100));
 
             await Task.WhenAny(task2, task3);
@@ -289,7 +289,7 @@ namespace Telegram.ViewModels
 
         private async Task LoadChatsAndContactsPart2Async(string query, CancellationToken cancellationToken)
         {
-            var response = await ClientService.SendAsync(new SearchChatsOnServer(query, 100));
+            var response = await ClientService.SendAsync(new SearchChatsOnServer(query, new SearchChatTypeFilterBot(), 100));
             if (response is Td.Api.Chats chats && !cancellationToken.IsCancellationRequested)
             {
                 using (await _diffLock.WaitAsync())
@@ -307,7 +307,7 @@ namespace Telegram.ViewModels
 
         private async Task LoadGlobalSearchAsync(string query, CancellationToken cancellationToken)
         {
-            var response = await ClientService.SendAsync(new SearchPublicChats(query));
+            var response = await ClientService.SendAsync(new SearchPublicChats(query, new SearchChatTypeFilterBot()));
             if (response is Td.Api.Chats chats && !cancellationToken.IsCancellationRequested)
             {
                 //var temp = new List<SearchResult>();

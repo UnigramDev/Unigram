@@ -1581,9 +1581,21 @@ namespace Telegram.Controls.Cells
         {
             thumbnail = null;
 
-            if (draft?.InputMessageText is InputMessageText draftText)
+            if (draft?.Content is DraftMessageContentText draftText)
             {
                 return draftText.Text;
+            }
+            else if (draft?.Content is DraftMessageContentRichMessage draftRichMessage)
+            {
+
+            }
+            else if (draft?.Content is DraftMessageContentVoiceNote draftVoiceNote)
+            {
+
+            }
+            else if (draft?.Content is DraftMessageContentVideoNote draftVideoNote)
+            {
+
             }
 
             static FormattedText Text(string text)
@@ -1667,8 +1679,10 @@ namespace Telegram.Controls.Cells
                     return Text1("\U0001F4CB ", invoice.PaidMediaCaption, invoice.ProductInfo.Title);
                 case MessageContact:
                     return Text("\U0001F464 " + Strings.AttachContact);
-                case MessageLocation location:
-                    return Text("\U0001F4CD " + (location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation));
+                case MessageLocation:
+                    return Text("\U0001F4CD " + Strings.AttachLocation);
+                case MessageLiveLocation:
+                    return Text("\U0001F4CD " + Strings.AttachLiveLocation);
                 case MessageVenue:
                     return Text("\U0001F4CD " + Strings.AttachLocation);
                 case MessagePhoto photo:
@@ -1754,6 +1768,8 @@ namespace Telegram.Controls.Cells
                     }
                 case MessageText text:
                     return text.Text;
+                case MessageRichMessage richMessage:
+                    return richMessage.Message.ToFormattedText();
                 case MessageDice dice:
                     return dice.Emoji.AsFormattedText();
                 case MessageStakeDice dice:

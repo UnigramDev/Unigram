@@ -118,6 +118,8 @@ namespace Telegram.Controls.Chats
 
         public ChatRecordButton()
         {
+            DefaultStyleKey = typeof(ChatRecordButton);
+
             Mode = ChatRecordMode.Voice;
 
             ClickMode = ClickMode.Press;

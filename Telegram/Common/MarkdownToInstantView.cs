@@ -15,66 +15,6 @@ using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using Telegram.Td.Api;
 
-namespace Telegram.Td.Api
-{
-    public class RichTextMath : RichText
-    {
-        public string Source { get; set; }
-    }
-
-    public class PageBlockMath : PageBlock
-    {
-        public string Source { get; set; }
-    }
-
-    public class PageBlockHeading : PageBlock
-    {
-        public int Level { get; set; }
-
-        public RichText Text { get; set; }
-    }
-
-    public partial class PageBlockListItem
-    {
-        public bool IsCheckBox { get; set; }
-
-        public bool IsChecked { get; set; }
-    }
-
-    /// <summary>
-    /// A block quote
-    /// </summary>
-    public partial class PageBlockQuoteBlock : PageBlock
-    {
-        /// <summary>
-        /// Quote text
-        /// </summary>
-        public IList<PageBlock> Blocks { get; set; }
-        /// <summary>
-        /// Quote credit
-        /// </summary>
-        public RichText Credit { get; set; }
-
-        /// <summary>
-        /// A block quote
-        /// </summary>
-        public PageBlockQuoteBlock()
-        {
-        }
-
-        /// <summary>
-        /// A block quote
-        /// </summary>
-        /// <param name="text">Quote text</param>
-        /// <param name="credit">Quote credit</param>
-        public PageBlockQuoteBlock(IList<PageBlock> blocks, RichText credit)
-        {
-            Blocks = blocks;
-            Credit = credit;
-        }
-    }
-}
-
 namespace Telegram.Common
 {
     /// <summary>
@@ -144,7 +84,7 @@ namespace Telegram.Common
                 case RichTextUrl _:
                 case RichTextEmailAddress _:
                 case RichTextFixed _:
-                case RichTextMath _:
+                case RichTextMathematicalExpression _:
                     return rt;
                 case RichTextBold b:
                     {
@@ -333,7 +273,7 @@ namespace Telegram.Common
                     break;
 
                 case MathBlock math:
-                    output.Add(new PageBlockMath { Source = JoinCodeLines(math).Trim() });
+                    output.Add(new PageBlockMathematicalExpression { Expression = JoinCodeLines(math).Trim() });
                     break;
 
                 case FencedCodeBlock fenced:
@@ -383,9 +323,9 @@ namespace Telegram.Common
 
         private static PageBlock MakeHeading(int level, RichText text)
         {
-            return new PageBlockHeading
+            return new PageBlockSectionHeading
             {
-                Level = level,
+                Size = level,
                 Text = text
             };
         }
@@ -415,7 +355,7 @@ namespace Telegram.Common
                 ConvertBlock(child, trailing);
             }
 
-            output.Add(new PageBlockQuoteBlock { Blocks = trailing, Credit = new RichTextPlain { Text = "" } });
+            output.Add(new PageBlockBlockQuote(trailing, null));
         }
 
         // --- Lists ---
@@ -519,9 +459,9 @@ namespace Telegram.Common
 
             return new PageBlockListItem
             {
-                PageBlocks = trailing,
+                Blocks = trailing,
                 Label = num,
-                IsCheckBox = checkbox,
+                HasCheckbox = checkbox,
                 IsChecked = isChecked
             };
 
@@ -645,7 +585,7 @@ namespace Telegram.Common
                     return ConvertAutolink(auto);
 
                 case Markdig.Extensions.Mathematics.MathInline math:
-                    return new RichTextMath { Source = math.Content.ToString() };
+                    return new RichTextMathematicalExpression { Expression = math.Content.ToString() };
 
                 case TaskList tl:
                     // Leftover task marker (shouldn't happen — we strip them in ExtractTaskMarker).

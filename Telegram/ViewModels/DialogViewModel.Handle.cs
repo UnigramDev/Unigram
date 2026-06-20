@@ -48,7 +48,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatLastMessage>(Handle)
                 .Subscribe<UpdateChatBusinessBotManageBar>(Handle)
                 .Subscribe<UpdateNewMessage>(Handle)
-                .Subscribe<UpdatePendingTextMessage>(Handle)
+                .Subscribe<UpdatePendingMessage>(Handle)
                 .Subscribe<UpdateDeleteMessages>(Handle)
                 .Subscribe<UpdateMessageContent>(Handle)
                 .Subscribe<UpdateMessageContentOpened>(Handle)
@@ -741,13 +741,13 @@ namespace Telegram.ViewModels
 
                 BeginOnUIThread(() =>
                 {
-                    DialogPendingTextMessage pending = null;
+                    DialogPendingMessage pending = null;
 
                     if (_chat.Type is ChatTypePrivate privata && update.Message.SenderId.IsUser(privata.UserId))
                     {
                         ulong lastUpdate = 0;
 
-                        foreach (var item in _pendingTextMessages.Values)
+                        foreach (var item in _pendingMessages.Values)
                         {
                             if (item.LastUpdate > lastUpdate)
                             {
@@ -756,14 +756,14 @@ namespace Telegram.ViewModels
                             }
                         }
 
-                        foreach (var item in _pendingTextMessages.Values)
+                        foreach (var item in _pendingMessages.Values)
                         {
                             if (item.DraftId != pending?.DraftId)
                             {
                                 item.Stop();
 
-                                item.Updated -= PendingTextMessage_Updated;
-                                item.Completed -= PendingTextMessage_Completed;
+                                item.Updated -= PendingMessage_Updated;
+                                item.Completed -= PendingMessage_Completed;
 
                                 if (Items.TryGetValue(item.DraftId, out MessageViewModel old))
                                 {
@@ -772,7 +772,7 @@ namespace Telegram.ViewModels
                             }
                         }
 
-                        _pendingTextMessages.Clear();
+                        _pendingMessages.Clear();
                     }
 
                     if (pending != null && Items.ContainsKey(long.MaxValue))
@@ -792,29 +792,29 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void Handle(UpdatePendingTextMessage update)
+        public void Handle(UpdatePendingMessage update)
         {
             if (_chat?.Id == update.ChatId && (TopicId == null || TopicId.IsForum(update.ForumTopicId)) && ClientService.TryGetUser(Chat, out User user))
             {
                 var topicId = new MessageTopicForum(update.ForumTopicId);
-                var content = new MessageText(update.Text, null, null);
+                var content = update.Content;
                 var message = CreateMessage(new Message(long.MaxValue, new MessageSenderUser(user.Id), update.ChatId, null, null, false, false, false, false, false, false, false, false, false, false, DateTime.Now.ToTimestamp(), 0, null, null, null, null, null, null, null, topicId, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, content, null));
                 message.GeneratedContentUnread = true;
                 message.IsInitial = false;
 
                 BeginOnUIThread(() =>
                 {
-                    if (_pendingTextMessages.TryGetValue(update.DraftId, out DialogPendingTextMessage pending))
+                    if (_pendingMessages.TryGetValue(update.DraftId, out DialogPendingMessage pending))
                     {
                         pending.Update(update);
                     }
                     else
                     {
-                        pending = new DialogPendingTextMessage(update, message);
-                        pending.Updated += PendingTextMessage_Updated;
-                        pending.Completed += PendingTextMessage_Completed;
+                        pending = message.Content is MessageText ? new DialogPendingTextMessage2(update, message) : new DialogPendingRichMessage(update, message);
+                        pending.Updated += PendingMessage_Updated;
+                        pending.Completed += PendingMessage_Completed;
 
-                        _pendingTextMessages[update.DraftId] = pending;
+                        _pendingMessages[update.DraftId] = pending;
                     }
 
                     if (Items.TryGetValue(long.MaxValue, out MessageViewModel already))
@@ -827,7 +827,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private void PendingTextMessage_Updated(DialogPendingTextMessage sender, MessageViewModel message)
+        private void PendingMessage_Updated(DialogPendingMessage sender, MessageViewModel message)
         {
             if (Items.TryGetValue(long.MaxValue, out MessageViewModel already))
             {
@@ -836,12 +836,12 @@ namespace Telegram.ViewModels
             }
         }
 
-        private void PendingTextMessage_Completed(DialogPendingTextMessage sender, Message completed)
+        private void PendingMessage_Completed(DialogPendingMessage sender, Message completed)
         {
-            _pendingTextMessages.Remove(sender.DraftId);
+            _pendingMessages.Remove(sender.DraftId);
 
-            sender.Updated -= PendingTextMessage_Updated;
-            sender.Completed -= PendingTextMessage_Completed;
+            sender.Updated -= PendingMessage_Updated;
+            sender.Completed -= PendingMessage_Completed;
 
             if (completed != null)
             {

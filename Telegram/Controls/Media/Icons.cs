@@ -34,6 +34,21 @@ namespace Telegram.Controls.Media
         public const string ZoomOut = "\uE96A";
         public const string ZoomCalendar = "\uEAC2";
 
+        public const string TableCellMerge = "\uEB10";
+        public const string TableCellSplit = "\uEB0F";
+        public const string TableDeleteColumn = "\uEB0E";
+        public const string TableDeleteRow = "\uEB0D";
+        public const string TableInsertColumn = "\uEB0C";
+        public const string TableInsertRow = "\uEB0B";
+        public const string TabInPrivate = "\uEB0A";
+        public const string TextAlignRight = "\uEB11";
+        public const string TextAlignLeft = "\uEB12";
+        public const string TextAlignCenter = "\uEB13";
+        public const string TextboxAlignTop = "\uEB14";
+        public const string TextboxAlignMiddle = "\uEB15";
+        public const string TextboxAlignBottom = "\uEB16";
+        public const string TextboxAlignCenter = "\uEB18";
+
         public const string Boosters12 = "\uEA6A";
         public const string Boosters212 = "\uEA6B";
 

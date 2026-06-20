@@ -283,7 +283,6 @@ namespace winrt::Telegram::Native::implementation
 
         AVFormatContext* fmt_ctx = nullptr;
         IVideoAnimationSource file{ nullptr };
-        HANDLE fileEvent = INVALID_HANDLE_VALUE;
         int video_stream_idx = -1;
         int audio_stream_idx = -1;
         int album_stream_idx = -1;

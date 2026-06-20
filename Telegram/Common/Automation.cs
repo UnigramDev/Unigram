@@ -198,6 +198,10 @@ namespace Telegram.Common
 
                 return text.Text.Text + ", ";
             }
+            else if (message.Content is MessageRichMessage richMessage)
+            {
+                return richMessage.Message.ToPlainText() + ", ";
+            }
             else if (message.Content is MessageDice dice)
             {
                 return dice.Emoji + ", ";
@@ -352,9 +356,13 @@ namespace Telegram.Common
             {
                 return Strings.AttachContact + ", ";
             }
-            else if (message.Content is MessageLocation location)
+            else if (message.Content is MessageLocation)
             {
-                return (location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation) + ", ";
+                return Strings.AttachLocation + ", ";
+            }
+            else if (message.Content is MessageLiveLocation)
+            {
+                return Strings.AttachLiveLocation + ", ";
             }
             else if (message.Content is MessageVenue)
             {
@@ -513,6 +521,10 @@ namespace Telegram.Common
 
                 return text.Text.Text + ", ";
             }
+            else if (message.Content is MessageRichMessage richMessage)
+            {
+                return richMessage.Message.ToPlainText() + ", ";
+            }
             else if (message.Content is MessageDice dice)
             {
                 return dice.Emoji + ", ";
@@ -667,9 +679,13 @@ namespace Telegram.Common
             {
                 return Strings.AttachContact + ", ";
             }
-            else if (message.Content is MessageLocation location)
+            else if (message.Content is MessageLocation)
             {
-                return (location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation) + ", ";
+                return Strings.AttachLocation + ", ";
+            }
+            else if (message.Content is MessageLiveLocation)
+            {
+                return Strings.AttachLiveLocation + ", ";
             }
             else if (message.Content is MessageVenue)
             {

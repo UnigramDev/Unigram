@@ -125,6 +125,10 @@
                     <CheckBox x:Name="IsAnonymous"
                               IsChecked="{x:Bind ViewModel.IsAnonymous, Mode=TwoWay}"
                               Content="{CustomResource EditAdminSendAnonymously}" />
+
+                    <CheckBox x:Name="ProcessJoinRequests"
+                              IsChecked="{x:Bind ViewModel.ProcessJoinRequests, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminProcessJoinRequests}" />
                 </StackPanel>
 
                 <TextBlock x:Name="PermissionsFooter"

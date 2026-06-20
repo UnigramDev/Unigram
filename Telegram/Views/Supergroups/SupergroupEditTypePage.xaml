@@ -115,14 +115,15 @@
                                                  Glyph="&#xE9F8;" />
                     </controls:HeaderedControl>
 
-                    <controls:HeaderedControl x:Name="JoinToSendMessages"
-                                              Header="{CustomResource ChannelSettingsJoinTitle}"
-                                              Footer="{x:Bind ConvertJoinToSendMessages(ViewModel.JoinToSendMessages), Mode=OneWay}">
-                        <CheckBox IsChecked="{x:Bind ViewModel.JoinToSendMessages, Mode=TwoWay}"
+                    <controls:HeaderedControl x:Name="JoinToSendMessagesRoot"
+                                              IsFooterLink="True"
+                                              Click="JoinToSendMessagesRoot_Click">
+                        <CheckBox x:Name="JoinToSendMessages"
+                                  IsChecked="{x:Bind ViewModel.JoinToSendMessages, Mode=TwoWay}"
                                   Content="{CustomResource ChannelSettingsJoinToSend}"
                                   Style="{StaticResource SettingsCheckBoxStyle}" />
-                        <CheckBox IsChecked="{x:Bind ViewModel.JoinByRequest, Mode=TwoWay}"
-                                  Visibility="{x:Bind ViewModel.JoinToSendMessages, Mode=OneWay}"
+                        <CheckBox x:Name="JoinByRequest"
+                                  IsChecked="{x:Bind ViewModel.JoinByRequest, Mode=TwoWay}"
                                   Content="{CustomResource ChannelSettingsJoinRequest}"
                                   Style="{StaticResource SettingsCheckBoxStyle}" />
                     </controls:HeaderedControl>

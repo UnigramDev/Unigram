@@ -7,6 +7,7 @@
 
 using System;
 using Telegram.Common;
+using Telegram.Controls.Messages.Content;
 using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -107,6 +108,18 @@ namespace Telegram.Controls.Messages
             else if (mediaRow == footerRow)
             {
                 _margin = new Size(0, 0);
+            }
+            else if (media is Border { Child: InstantContent rich })
+            {
+                if (rich.LastBlock is FormattedTextBlock lastBlock)
+                {
+                    _placeholder = true;
+                    _margin = Margins(availableSize.Width, lastBlock, footer);
+                }
+                else
+                {
+                    _margin = new Size(0, footer.DesiredSize.Height);
+                }
             }
             else
             {
@@ -272,9 +285,9 @@ namespace Telegram.Controls.Messages
             var text = textBlock.Text.Text.Substring(paragraph.Offset, paragraph.Length);
             var entities = paragraph.GetParts(out text);
 
-            var block = Children[0] is FormattedTextBlock formatted ? formatted : Children[1] as FormattedTextBlock;
-            var width = textBlock.LastAvailableWidth;
+            //var block = Children[0] is FormattedTextBlock formatted ? formatted : Children[1] as FormattedTextBlock;
 
+            var width = textBlock.LastAvailableWidth;
             if (width <= 0)
             {
                 return 0;
@@ -285,7 +298,7 @@ namespace Telegram.Controls.Messages
                 // TODO: this condition will be true whenever the message has more than a paragraph.
 
                 var bounds = PlaceholderHelper.Foreground.ContentEnd(text, entities, fontSize, width);
-                if (bounds.Y < block.DesiredSize.Height)
+                if (bounds.Y < textBlock.DesiredSize.Height)
                 {
                     return bounds.X;
                 }

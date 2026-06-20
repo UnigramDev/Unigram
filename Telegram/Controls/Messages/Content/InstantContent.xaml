@@ -13,7 +13,7 @@
         <Setter Property="Background"
                 Value="{ThemeResource MessageHeaderBorderBrush}" />
         <Setter Property="Margin"
-                Value="0,8,0,6" />
+                Value="0,0,0,0" />
         <Setter Property="IsTabStop"
                 Value="True" />
         <Setter Property="CornerRadius"
@@ -114,26 +114,6 @@
                                         Value="Wrap" />
                             </Style>
 
-                            <Style x:Key="BlockHeaderTextBlockStyle"
-                                   TargetType="RichTextBlock"
-                                   BasedOn="{StaticResource BodyRichTextBlockStyle}">
-                                <Setter Property="FontSize"
-                                        Value="24" />
-                                <Setter Property="FontFamily"
-                                        Value="Times New Roman" />
-                            </Style>
-
-                            <Style x:Key="BlockSubheaderTextBlockStyle"
-                                   TargetType="RichTextBlock"
-                                   BasedOn="{StaticResource BodyRichTextBlockStyle}">
-                                <Setter Property="FontFamily"
-                                        Value="{ThemeResource EmojiThemeFontFamily}" />
-                                <Setter Property="FontSize"
-                                        Value="20" />
-                                <Setter Property="FontFamily"
-                                        Value="Times New Roman" />
-                            </Style>
-
                             <Style x:Key="BlockBodyTextBlockStyle"
                                    TargetType="RichTextBlock"
                                    BasedOn="{StaticResource BodyRichTextBlockStyle}">
@@ -162,7 +142,7 @@
                             <Style x:Key="BlockDividerStyle"
                                    TargetType="Rectangle">
                                 <Setter Property="Fill"
-                                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                        Value="{ThemeResource SettingsItemBorderBrush}" />
                                 <Setter Property="Height"
                                         Value="1" />
                             </Style>
@@ -178,16 +158,9 @@
                             </Style>
 
                             <Style x:Key="BlockPullquoteStyle"
-                                   TargetType="StackPanel" />
-                            <Style x:Key="BlockPhotoStyle"
-                                   TargetType="StackPanel">
-                                <Setter Property="HorizontalAlignment"
-                                        Value="Center" />
-                            </Style>
-                            <Style x:Key="BlockVideoStyle"
-                                   TargetType="StackPanel">
-                                <Setter Property="HorizontalAlignment"
-                                        Value="Center" />
+                                   TargetType="Grid">
+                                <Setter Property="Background"
+                                        Value="{ThemeResource MessageHeaderBorderBrush}" />
                             </Style>
                             <Style x:Key="BlockEmbedStyle"
                                    TargetType="StackPanel" />
@@ -196,8 +169,6 @@
                                 <Setter Property="HorizontalAlignment"
                                         Value="Center" />
                             </Style>
-                            <Style x:Key="BlockCollageStyle"
-                                   TargetType="StackPanel" />
 
                             <Style x:Key="BlockEmbedPostStyle"
                                    TargetType="StackPanel">

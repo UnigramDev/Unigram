@@ -52,24 +52,24 @@ namespace Telegram.Controls.Cells
 
         public static (string Glyph, Color Background, string Animation) IconForSession(Session session)
         {
-            return session.Type switch
+            return session.DeviceType switch
             {
-                SessionTypeXbox => ("", Color.FromArgb(0xff, 0x35, 0xc7, 0x59), null),
-                SessionTypeChrome => ("\uE96D", Color.FromArgb(0xFF, 0x35, 0xC7, 0x59), "Chrome"),
-                SessionTypeBrave => ("", Color.FromArgb(0xFF, 0xFF, 0x95, 0x00), null),
-                SessionTypeVivaldi => ("", Color.FromArgb(0xFF, 0xFF, 0x3C, 0x30), null),
-                SessionTypeSafari => ("\uE974", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Safari"),
-                SessionTypeApple => ("\uE974", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Safari"),
-                SessionTypeFirefox => ("\uE96F", Color.FromArgb(0xFF, 0xFF, 0x95, 0x00), "Firefox"),
-                SessionTypeOpera => ("", Color.FromArgb(0xFF, 0xFF, 0x3C, 0x30), null),
-                SessionTypeAndroid => ("\uE96C", Color.FromArgb(0xFF, 0x35, 0xC7, 0x59), "Android"),
-                SessionTypeIphone => ("\uE971", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Iphone"),
-                SessionTypeIpad => ("\uE970", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Ipad"),
-                SessionTypeMac => ("\uE973", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Mac"),
-                SessionTypeUbuntu => ("\uE976", Color.FromArgb(0xFF, 0xFF, 0x95, 0x00), "Ubuntu"),
-                SessionTypeLinux => ("\uE972", Color.FromArgb(0xFF, 0x8E, 0x8E, 0x93), "Linux"),
-                SessionTypeWindows => ("\uE977", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Windows"),
-                SessionTypeEdge => ("\uE96E", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Edge"),
+                SessionDeviceTypeXbox => ("", Color.FromArgb(0xff, 0x35, 0xc7, 0x59), null),
+                SessionDeviceTypeChrome => ("\uE96D", Color.FromArgb(0xFF, 0x35, 0xC7, 0x59), "Chrome"),
+                SessionDeviceTypeBrave => ("", Color.FromArgb(0xFF, 0xFF, 0x95, 0x00), null),
+                SessionDeviceTypeVivaldi => ("", Color.FromArgb(0xFF, 0xFF, 0x3C, 0x30), null),
+                SessionDeviceTypeSafari => ("\uE974", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Safari"),
+                SessionDeviceTypeApple => ("\uE974", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Safari"),
+                SessionDeviceTypeFirefox => ("\uE96F", Color.FromArgb(0xFF, 0xFF, 0x95, 0x00), "Firefox"),
+                SessionDeviceTypeOpera => ("", Color.FromArgb(0xFF, 0xFF, 0x3C, 0x30), null),
+                SessionDeviceTypeAndroid => ("\uE96C", Color.FromArgb(0xFF, 0x35, 0xC7, 0x59), "Android"),
+                SessionDeviceTypeIphone => ("\uE971", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Iphone"),
+                SessionDeviceTypeIpad => ("\uE970", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Ipad"),
+                SessionDeviceTypeMac => ("\uE973", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Mac"),
+                SessionDeviceTypeUbuntu => ("\uE976", Color.FromArgb(0xFF, 0xFF, 0x95, 0x00), "Ubuntu"),
+                SessionDeviceTypeLinux => ("\uE972", Color.FromArgb(0xFF, 0x8E, 0x8E, 0x93), "Linux"),
+                SessionDeviceTypeWindows => ("\uE977", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Windows"),
+                SessionDeviceTypeEdge => ("\uE96E", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Edge"),
                 _ => ("", Color.FromArgb(0xFF, 0x8E, 0x8E, 0x93), null)
             };
         }

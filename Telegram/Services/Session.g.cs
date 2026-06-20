@@ -925,6 +925,8 @@ namespace Telegram.Services
                     return (T)(_textRecognitionService ??= new Telegram.Services.TextRecognitionService(
                         _clientService,
                         _eventAggregator));
+                case "Telegram.Services.ISession":
+                    return (T)(object)this;
                 default:
                     return default;
 

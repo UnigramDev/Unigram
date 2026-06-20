@@ -223,7 +223,6 @@ namespace winrt::Telegram::Native::implementation
 
         int ret;
         info->file = file;
-        info->fileEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 
         //av_log_set_level(AV_LOG_DEBUG);
         //av_log_set_callback(RedirectLoggingOutputs);

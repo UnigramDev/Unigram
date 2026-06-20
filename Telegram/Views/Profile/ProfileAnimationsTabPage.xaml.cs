@@ -52,7 +52,7 @@ namespace Telegram.Views.Profile
                 {
                     if (args.Item is MessageWithOwner message)
                     {
-                        cell.UpdateMessage(message, true);
+                        cell.UpdateMessage(message, true, false);
                     }
                     else
                     {

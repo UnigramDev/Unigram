@@ -142,17 +142,26 @@ namespace Telegram.Views.Popups
         private void UpdatePrimaryButtonText()
         {
             var date = GetDateTime(false);
-            if (date.Date == DateTime.Today)
+            try
             {
-                PrimaryButtonText = date.ToString(_reminder ? Strings.RemindTodayAt : Strings.SendTodayAt);
+                if (date.Date == DateTime.Today)
+                {
+                    PrimaryButtonText = date.ToString(_reminder ? Strings.RemindTodayAt : Strings.SendTodayAt);
+                }
+                else if (date.Year == DateTime.Today.Year)
+                {
+                    PrimaryButtonText = date.ToString(_reminder ? Strings.RemindDayAt : Strings.SendDayAt);
+                }
+                else
+                {
+                    PrimaryButtonText = date.ToString(_reminder ? Strings.RemindDayYearAt : Strings.SendDayYearAt);
+                }
             }
-            else if (date.Year == DateTime.Today.Year)
+            catch
             {
-                PrimaryButtonText = date.ToString(_reminder ? Strings.RemindDayAt : Strings.SendDayAt);
-            }
-            else
-            {
-                PrimaryButtonText = date.ToString(_reminder ? Strings.RemindDayYearAt : Strings.SendDayYearAt);
+                WatchDog.TrackError("Failed to format string for " + LocaleService.Current.Id);
+
+                PrimaryButtonText = date.ToString();
             }
         }
 

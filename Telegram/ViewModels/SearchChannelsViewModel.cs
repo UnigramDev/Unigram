@@ -159,7 +159,7 @@ namespace Telegram.ViewModels
 
             if (string.IsNullOrEmpty(query))
             {
-                var response = await ClientService.SendAsync(new SearchRecentlyFoundChats(query, 50));
+                var response = await ClientService.SendAsync(new SearchRecentlyFoundChats(query, new SearchChatTypeFilterChannel(), 50));
                 if (response is Td.Api.Chats chats && !cancellationToken.IsCancellationRequested)
                 {
                     foreach (var chat in ClientService.GetChats(chats.ChatIds))
@@ -205,7 +205,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var task2 = ClientService.SendAsync(new SearchChats(query, 100));
+            var task2 = ClientService.SendAsync(new SearchChats(query, new SearchChatTypeFilterChannel(), 100));
             var task3 = ClientService.SendAsync(new SearchContacts(query, 100));
 
             await Task.WhenAny(task2, task3);
@@ -241,7 +241,7 @@ namespace Telegram.ViewModels
 
         private async Task LoadChatsAndContactsPart2Async(string query, CancellationToken cancellationToken)
         {
-            var response = await ClientService.SendAsync(new SearchChatsOnServer(query, 100));
+            var response = await ClientService.SendAsync(new SearchChatsOnServer(query, new SearchChatTypeFilterChannel(), 100));
             if (response is Td.Api.Chats chats && !cancellationToken.IsCancellationRequested)
             {
                 var temp = new List<SearchResult>();
@@ -260,7 +260,7 @@ namespace Telegram.ViewModels
 
         private async Task LoadGlobalSearchAsync(string query, CancellationToken cancellationToken)
         {
-            var response = await ClientService.SendAsync(new SearchPublicChats(query));
+            var response = await ClientService.SendAsync(new SearchPublicChats(query, new SearchChatTypeFilterChannel()));
             if (response is Td.Api.Chats chats && !cancellationToken.IsCancellationRequested)
             {
                 var temp = new List<SearchResult>();

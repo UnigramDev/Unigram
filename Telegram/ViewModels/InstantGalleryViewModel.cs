@@ -33,18 +33,18 @@ namespace Telegram.ViewModels
             var response = await clientService.SendAsync(new GetWebPageInstantView(linkPreview.Url, true));
             if (response is WebPageInstantView instantView && instantView.IsFull)
             {
-                foreach (var block in instantView.PageBlocks)
+                foreach (var block in instantView.Blocks)
                 {
                     if (block is PageBlockSlideshow slideshow)
                     {
-                        foreach (var item in slideshow.PageBlocks)
+                        foreach (var item in slideshow.Blocks)
                         {
                             items.Add(CountBlock(clientService, instantView, item));
                         }
                     }
                     else if (block is PageBlockCollage collage)
                     {
-                        foreach (var item in collage.PageBlocks)
+                        foreach (var item in collage.Blocks)
                         {
                             items.Add(CountBlock(clientService, instantView, item));
                         }
@@ -100,15 +100,15 @@ namespace Telegram.ViewModels
         {
             if (pageBlock is PageBlockPhoto photoBlock)
             {
-                return new GalleryPhoto(clientService, photoBlock.Photo, photoBlock.Caption.ToFormattedText());
+                return new GalleryPhoto(clientService, photoBlock.Photo, photoBlock.Caption?.ToFormattedText());
             }
             else if (pageBlock is PageBlockVideo videoBlock)
             {
-                return new GalleryVideo(clientService, videoBlock.Video, videoBlock.Caption.ToFormattedText());
+                return new GalleryVideo(clientService, videoBlock.Video, videoBlock.Caption?.ToFormattedText());
             }
             else if (pageBlock is PageBlockAnimation animationBlock)
             {
-                return new GalleryAnimation(clientService, animationBlock.Animation, animationBlock.Caption.ToFormattedText());
+                return new GalleryAnimation(clientService, animationBlock.Animation, animationBlock.Caption?.ToFormattedText());
             }
 
             return null;

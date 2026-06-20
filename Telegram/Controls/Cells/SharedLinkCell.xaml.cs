@@ -34,14 +34,6 @@ namespace Telegram.Controls.Cells
             _navigationService = navigationService;
             _message = message;
 
-            var caption = message.GetCaption();
-            if (caption == null)
-            {
-                return;
-            }
-
-            var text = message.Content as MessageText;
-
             var links = new List<string>();
 
             string title = null;
@@ -52,8 +44,7 @@ namespace Telegram.Controls.Cells
             Thumbnail webPageThumbnail = null;
             Minithumbnail webPageMinithumbnail = null;
 
-            var linkPreview = text?.LinkPreview;
-            if (linkPreview != null)
+            if (message.Content is MessageText { LinkPreview: LinkPreview linkPreview })
             {
 
                 title = linkPreview.Title;
@@ -68,8 +59,18 @@ namespace Telegram.Controls.Cells
                 webPageThumbnail = linkPreview.GetThumbnail();
                 webPageMinithumbnail = linkPreview.GetMinithumbnail();
             }
+            else if (message.Content is MessageRichMessage richMessage)
+            {
+                foreach (var link in PageBlockHelper.GetLinks(richMessage.Message.Blocks))
+                {
+                    links.Add(link.Url);
+                }
 
-            if (caption.Entities.Count > 0)
+                description = PageBlockHelper.GetPlainText(richMessage.Message.Blocks);
+            }
+
+            var caption = message.GetCaption();
+            if (caption?.Entities.Count > 0)
             {
                 for (int a = 0; a < caption.Entities.Count; a++)
                 {

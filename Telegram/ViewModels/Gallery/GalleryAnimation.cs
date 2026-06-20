@@ -47,7 +47,7 @@ namespace Telegram.ViewModels.Gallery
 
         public override InputMessageContent ToInput()
         {
-            return new InputMessageAnimation(new InputFileId(_animation.AnimationValue.Id), _animation.Thumbnail?.ToInput(), Array.Empty<int>(), _animation.Duration, _animation.Width, _animation.Height, null, false, false);
+            return new InputMessageAnimation(new InputAnimation(new InputFileId(_animation.AnimationValue.Id), _animation.Thumbnail?.ToInput(), Array.Empty<int>(), _animation.Duration, _animation.Width, _animation.Height), null, false, false);
         }
     }
 }

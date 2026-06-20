@@ -105,6 +105,10 @@
                     <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ConnectedAnimationsDebug, Mode=TwoWay}"
                               Content="Connected Animations Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.RichMessagesDebug, Mode=TwoWay}"
+                              Content="Rich Messages Debug"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>

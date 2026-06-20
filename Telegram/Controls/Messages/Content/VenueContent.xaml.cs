@@ -65,9 +65,9 @@ namespace Telegram.Controls.Messages.Content
 
             Texture.Constraint = message;
             Texture.XamlRoot = XamlRoot;
-            Texture.SetSource(message.ClientService, venue.Venue.Location, 320, 200, message.ChatId);
+            Texture.SetSource(message.ClientService, venue.Location, 320, 200, message.ChatId);
 
-            if (string.IsNullOrEmpty(venue.Venue.Type))
+            if (string.IsNullOrEmpty(venue.Type))
             {
                 VenueDot.Visibility = Visibility.Visible;
                 VenueGlyph.UriSource = null;
@@ -75,7 +75,7 @@ namespace Telegram.Controls.Messages.Content
             else
             {
                 VenueDot.Visibility = Visibility.Collapsed;
-                VenueGlyph.UriSource = new Uri(string.Format("https://ss3.4sqi.net/img/categories_v2/{0}_88.png", venue.Venue.Type));
+                VenueGlyph.UriSource = new Uri(string.Format("https://ss3.4sqi.net/img/categories_v2/{0}_88.png", venue.Type));
             }
         }
 
@@ -89,12 +89,12 @@ namespace Telegram.Controls.Messages.Content
             return content switch
             {
                 MessageVenue => true,
-                MessagePoll poll when poll.Media is MessageVenue && !primary => true,
+                MessagePoll poll when poll.Media is PollMediaVenue && !primary => true,
                 _ => false,
             };
         }
 
-        private MessageVenue GetContent(MessageViewModel message)
+        private Venue GetContent(MessageViewModel message)
         {
             if (message?.Delegate == null)
             {
@@ -105,9 +105,9 @@ namespace Telegram.Controls.Messages.Content
             switch (content)
             {
                 case MessageVenue venue:
-                    return venue;
-                case MessagePoll poll when poll.Media is MessageVenue pollVenue:
-                    return pollVenue;
+                    return venue.Venue;
+                case MessagePoll poll when poll.Media is PollMediaVenue pollVenue:
+                    return pollVenue.Venue;
             }
 
             return null;
@@ -123,11 +123,11 @@ namespace Telegram.Controls.Messages.Content
 
             if (_message.ClientService.TryGetUser(_message.SenderId, out User senderUser))
             {
-                _message.Delegate.OpenLocation(venue.Venue.Location, senderUser.FullName());
+                _message.Delegate.OpenLocation(venue.Location, senderUser.FullName());
             }
             else if (_message.ClientService.TryGetChat(_message.SenderId, out Chat senderChat))
             {
-                _message.Delegate.OpenLocation(venue.Venue.Location, _message.ClientService.GetTitle(senderChat));
+                _message.Delegate.OpenLocation(venue.Location, _message.ClientService.GetTitle(senderChat));
             }
         }
     }

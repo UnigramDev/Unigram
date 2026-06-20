@@ -219,7 +219,9 @@ namespace Telegram.Controls.Chats
             // TODO: video message
             Visibility = Visibility.Visible;
 
-            _blobVisual.FillColor = Theme.Accent;
+            _blobVisual.FillColor = ActualTheme == ElementTheme.Light
+                    ? Theme.AccentLight.Default
+                    : Theme.AccentDark.Default;
 
             if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
             {
@@ -633,7 +635,9 @@ namespace Telegram.Controls.Chats
                 ellipse.Size = new Vector2(WaveformBackground.ActualSize.Y, WaveformBackground.ActualSize.Y);
 
                 var shape = compositor.CreateSpriteShape(ellipse);
-                shape.FillBrush = compositor.CreateColorBrush(Theme.Accent);
+                shape.FillBrush = compositor.CreateColorBrush(ActualTheme == ElementTheme.Light
+                    ? Theme.AccentLight.Default
+                    : Theme.AccentDark.Default);
 
                 var visual = compositor.CreateShapeVisual();
                 visual.Size = WaveformBackground.ActualSize;
@@ -663,7 +667,9 @@ namespace Telegram.Controls.Chats
                 pause.StartAnimation("Translation.Y", translate);
 
                 ElementCompositionPreview.SetElementChildVisual(WaveformBackground, visual);
-                ChatRecordGlyph.Foreground = new SolidColorBrush(Theme.Accent);
+                ChatRecordGlyph.Foreground = new SolidColorBrush(ActualTheme == ElementTheme.Light
+                    ? Theme.AccentLight.Default
+                    : Theme.AccentDark.Default);
                 ChatRecordGlyph.Text = Icons.SendFilled32;
                 ChatRecordGlyph.FontSize = 32;
 
@@ -683,7 +689,9 @@ namespace Telegram.Controls.Chats
                 ellipse.Size = new Vector2(WaveformBackground.ActualSize.Y, WaveformBackground.ActualSize.Y);
 
                 var shape = compositor.CreateSpriteShape(ellipse);
-                shape.FillBrush = compositor.CreateColorBrush(Theme.Accent);
+                shape.FillBrush = compositor.CreateColorBrush(ActualTheme == ElementTheme.Light
+                    ? Theme.AccentLight.Default
+                    : Theme.AccentDark.Default);
 
                 var visual = compositor.CreateShapeVisual();
                 visual.Size = WaveformBackground.ActualSize;

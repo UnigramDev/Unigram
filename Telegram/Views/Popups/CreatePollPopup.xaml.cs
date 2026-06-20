@@ -116,7 +116,7 @@ namespace Telegram.Views.Popups
                 var question = QuestionText.GetFormattedText();
                 var options = Items.Where(x => !string.IsNullOrWhiteSpace(x.Text.Text)).Select(x => new InputPollOption(x.Text, null)).ToList();
                 var description = DescriptionText.GetFormattedText();
-                var media = default(InputMessageContent);
+                var media = default(InputPollMedia);
                 var isAnonymous = IsAnonymous.IsChecked == false;
                 var allowsMultipleAnswers = AllowsMultipleAnswers.IsChecked == true;
                 var allowsRevoting = AllowsRevoting.IsChecked == true;

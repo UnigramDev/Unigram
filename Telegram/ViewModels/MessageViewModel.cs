@@ -50,7 +50,14 @@ namespace Telegram.ViewModels
 
             if (processText)
             {
-                SetText(message.Content?.GetCaption());
+                if (message.Content is MessageRichMessage richMessage)
+                {
+                    Text = TextStyleRun.GetText(richMessage.Message);
+                }
+                else
+                {
+                    SetText(message.Content?.GetCaption());
+                }
             }
         }
 
@@ -64,7 +71,14 @@ namespace Telegram.ViewModels
 
             if (processText)
             {
-                SetText(message.Content?.GetCaption());
+                if (message.Content is MessageRichMessage richMessage)
+                {
+                    Text = TextStyleRun.GetText(richMessage.Message);
+                }
+                else
+                {
+                    SetText(message.Content?.GetCaption());
+                }
             }
         }
 
@@ -145,7 +159,11 @@ namespace Telegram.ViewModels
             {
                 _generatedContent = value;
 
-                if (value != null)
+                if (value is MessageRichMessage richMessage)
+                {
+                    Text = TextStyleRun.GetText(richMessage.Message);
+                }
+                else if (value != null)
                 {
                     SetText(value.GetCaption());
                 }
@@ -591,7 +609,14 @@ namespace Telegram.ViewModels
         private void SetContent(MessageContent content)
         {
             _content = content;
-            SetText(content?.GetCaption());
+            if (content is MessageRichMessage richMessage)
+            {
+                Text = TextStyleRun.GetText(richMessage.Message);
+            }
+            else
+            {
+                SetText(content?.GetCaption());
+            }
         }
 
         protected void SetText(FormattedText caption)

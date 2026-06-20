@@ -234,7 +234,7 @@ namespace Telegram.Controls.Messages.Content
         {
             // Currently, can be only of the types messageAnimation, messageLocation, messagePhoto, messageSticker, messageVenue, or messageVideo without caption
 
-            if (option.Media is MessageAnimation animation)
+            if (option.Media is PollMediaAnimation animation)
             {
                 var child = new ImageView
                 {
@@ -254,7 +254,7 @@ namespace Telegram.Controls.Messages.Content
 
                 Media.Content = child;
             }
-            else if (option.Media is MessageLocation location)
+            else if (option.Media is PollMediaLocation location)
             {
                 var child = new ImageView
                 {
@@ -274,7 +274,7 @@ namespace Telegram.Controls.Messages.Content
 
                 Media.Content = child;
             }
-            else if (option.Media is MessagePhoto photo)
+            else if (option.Media is PollMediaPhoto photo)
             {
                 var child = new ImageView
                 {
@@ -294,7 +294,7 @@ namespace Telegram.Controls.Messages.Content
 
                 Media.Content = child;
             }
-            else if (option.Media is MessageSticker sticker)
+            else if (option.Media is PollMediaSticker sticker)
             {
                 Media ??= GetTemplateChild(nameof(Media)) as HyperlinkButton;
                 Media.Content = new AnimatedImage
@@ -306,7 +306,7 @@ namespace Telegram.Controls.Messages.Content
                     Source = DelayedFileSource.FromSticker(message.ClientService, sticker.Sticker)
                 };
             }
-            else if (option.Media is MessageVenue venue)
+            else if (option.Media is PollMediaVenue venue)
             {
                 var child = new ImageView
                 {
@@ -326,7 +326,7 @@ namespace Telegram.Controls.Messages.Content
 
                 Media.Content = child;
             }
-            else if (option.Media is MessageVideo video)
+            else if (option.Media is PollMediaVideo video)
             {
                 var child = new ImageView
                 {
@@ -354,33 +354,33 @@ namespace Telegram.Controls.Messages.Content
 
         private void Media_Click(object sender, RoutedEventArgs e)
         {
-            if (_option.Media is MessageLocation location)
+            if (_option.Media is PollMediaLocation location)
             {
                 _message.Delegate.OpenLocation(location.Location, null);
             }
-            else if (_option.Media is MessageSticker sticker)
+            else if (_option.Media is PollMediaSticker sticker)
             {
 
             }
-            else if (_option.Media is MessageVenue venue)
+            else if (_option.Media is PollMediaVenue venue)
             {
                 _message.Delegate.OpenLocation(venue.Venue.Location, null);
             }
             else
             {
                 GalleryMedia media = null;
-                if (_option.Media is MessageAnimation animation)
+                if (_option.Media is PollMediaAnimation animation)
                 {
                     media = new GalleryAnimation(_message.ClientService, animation.Animation, _option.Text);
                 }
                 // Location
-                else if (_option.Media is MessagePhoto photo)
+                else if (_option.Media is PollMediaPhoto photo)
                 {
                     media = new GalleryPhoto(_message.ClientService, photo.Photo, _option.Text);
                 }
                 // Sticker
                 // Venue
-                else if (_option.Media is MessageVideo video)
+                else if (_option.Media is PollMediaVideo video)
                 {
                     media = new GalleryVideo(_message.ClientService, video.Video, _option.Text);
                 }

@@ -55,7 +55,7 @@ namespace Telegram.Views
         private WebAppStorage _deviceStorage;
         private WebAppStorage _secureStorage;
 
-        private readonly Chat _sourceChat;
+        private readonly OpenUrlSource _source;
         private readonly User _botUser;
         private readonly AttachmentMenuBot _menuBot;
 
@@ -80,7 +80,7 @@ namespace Telegram.Views
         private ShapeVisual _placeholderVisual;
 
         // TODO: constructor should take a function and URL should be loaded asynchronously
-        public WebAppPage(IClientService clientService, INavigationService navigationService, User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null, InternalLinkType sourceLink = null, string buttonText = null)
+        public WebAppPage(IClientService clientService, INavigationService navigationService, User botUser, WebAppUrl url, long launchId = 0, AttachmentMenuBot menuBot = null, OpenUrlSource source = null, InternalLinkType sourceLink = null, string buttonText = null)
         {
             InitializeComponent();
 
@@ -89,19 +89,20 @@ namespace Telegram.Views
             _aggregator = clientService.Session.Resolve<IEventAggregator>();
 
             _aggregator.Subscribe<UpdateWebAppMessageSent>(this, Handle)
-                .Subscribe<UpdatePaymentCompleted>(Handle);
+                .Subscribe<UpdatePaymentCompleted>(Handle)
+                .Subscribe<UpdateChatJoinResult>(Handle);
 
             _botUser = botUser;
             _launchId = launchId;
             _menuBot = menuBot;
-            _sourceChat = sourceChat;
+            _source = source;
             _sourceLink = sourceLink != null ? new InternalLinkTypeMainWebApp(botUser.ActiveUsername(), string.Empty, new WebAppOpenModeFullSize()) : null;
             _buttonText = buttonText;
 
             TitleText.Text = botUser.FullName();
             Photo.Source = ProfilePictureSource.User(clientService, botUser);
 
-            View.Navigate(url);
+            View.Navigate(url.Url);
 
             var panel = ElementComposition.GetElementVisual(BottomBarPanel);
             panel.Clip = panel.Compositor.CreateInsetClip(0, 96, 0, 0);
@@ -234,6 +235,15 @@ namespace Telegram.Views
         private void Handle(UpdatePaymentCompleted update)
         {
             PostEvent("invoice_closed", "slug", update.Slug, "status", update.Status);
+        }
+
+        private void Handle(UpdateChatJoinResult update)
+        {
+            if (_source is OpenUrlSourceJoinChatRequest joinChatRequest && joinChatRequest.QueryId == update.QueryId && joinChatRequest.ChatId == update.ChatId)
+            {
+                _closeNeedConfirmation = false;
+                this.BeginOnUIThread(Close);
+            }
         }
 
         private bool _closed;
@@ -1991,9 +2001,9 @@ namespace Telegram.Views
                     return;
                 }
             }
-            else if (_sourceChat != null)
+            else if (_source is OpenUrlSourceChat openUrlSourceChat)
             {
-                _aggregator.Publish(new UpdateChatSwitchInlineQuery(_sourceChat.Id, _botUser.Id, query));
+                _aggregator.Publish(new UpdateChatSwitchInlineQuery(openUrlSourceChat.ChatId, _botUser.Id, query));
             }
 
             _closeNeedConfirmation = false;

@@ -169,6 +169,7 @@
     <Compile Include="Assets\Icons\Profile.cs" />
     <Compile Include="Assets\Icons\VoiceRecognition.cs" />
     <Compile Include="Assets\Icons\VoiceVideo.cs" />
+    <Compile Include="Assets\Icons\VoiceVideo2.cs" />
     <Compile Include="Charts\Animator.cs" />
     <Compile Include="Charts\BarChartView.cs" />
     <Compile Include="Charts\BaseChartView.cs" />
@@ -223,6 +224,7 @@
     <Compile Include="Common\MediaDeviceList.cs" />
     <Compile Include="Common\MediaDevicePermissions.cs" />
     <Compile Include="Common\NativeMethodChecker.cs" />
+    <Compile Include="Common\PageBlockHelper.cs" />
     <Compile Include="Common\SliderHelper.cs" />
     <Compile Include="Common\StackCapture.cs" />
     <Compile Include="Common\ThemeShadowEx.cs" />
@@ -368,6 +370,9 @@
     <Compile Include="Controls\MenuFlyoutContent.cs" />
     <Compile Include="Composition\CompositionColorSource.cs" />
     <Compile Include="Controls\MenuFlyoutInfoItem.cs" />
+    <Compile Include="Controls\Messages\Content\LiveLocationContent.xaml.cs">
+      <DependentUpon>LiveLocationContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Content\StakeDiceContent.xaml.cs">
       <DependentUpon>StakeDiceContent.xaml</DependentUpon>
     </Compile>
@@ -1339,6 +1344,11 @@
     <Compile Include="Views\Popups\ChooseCountriesPopup.xaml.cs">
       <DependentUpon>ChooseCountriesPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\TextEditorRichPopup.xaml.cs">
+      <DependentUpon>TextEditorRichPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\RichEditorCommands.cs" />
+    <Compile Include="Views\Popups\RichEditorState.cs" />
     <Compile Include="Views\Popups\TextStylePopup.xaml.cs">
       <DependentUpon>TextStylePopup.xaml</DependentUpon>
     </Compile>
@@ -3060,6 +3070,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Messages\Content\LiveLocationContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Messages\Content\StakeDiceContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3617,6 +3631,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ChooseCountriesPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\TextEditorRichPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

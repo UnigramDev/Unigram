@@ -143,7 +143,7 @@
       <AdditionalIncludeDirectories>..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <ObjectFileName>$(IntDir)%(RelativeDir)/</ObjectFileName>
+      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -164,7 +164,7 @@
       <AdditionalIncludeDirectories>..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <ObjectFileName>$(IntDir)%(RelativeDir)/</ObjectFileName>
+      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -185,7 +185,7 @@
       <AdditionalIncludeDirectories>..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <ObjectFileName>$(IntDir)%(RelativeDir)/</ObjectFileName>
+      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -206,7 +206,7 @@
       <AdditionalIncludeDirectories>..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <ObjectFileName>$(IntDir)%(RelativeDir)/</ObjectFileName>
+      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -227,7 +227,7 @@
       <AdditionalIncludeDirectories>..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <ObjectFileName>$(IntDir)%(RelativeDir)/</ObjectFileName>
+      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -248,7 +248,7 @@
       <AdditionalIncludeDirectories>..\Libraries\MicroTeX\src;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <ObjectFileName>$(IntDir)%(RelativeDir)/</ObjectFileName>
+      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
