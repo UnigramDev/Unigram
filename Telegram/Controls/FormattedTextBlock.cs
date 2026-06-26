@@ -866,7 +866,7 @@ namespace Telegram.Controls
             _clientService = clientService;
             _text = styled;
             _plain = styled != null && rangeStart == rangeEnd && styled.Paragraphs[rangeStart].IsPlain;
-            _direction = styled != null ? styled.Paragraphs[rangeStart].Direction : TextDirectionality.Neutral;
+            _direction = styled != null && rangeStart == rangeEnd ? styled.Paragraphs[rangeStart].Direction : TextDirectionality.Neutral;
             _fontSize = fontSize;
             _first = rangeStart;
             _last = rangeEnd;
