@@ -1,12 +1,11 @@
 namespace Telegram.Native
 {
     [default_interface]
-    runtimeclass FreeformGradientSurface
+    runtimeclass FreeformGradientSurface : Windows.Foundation.IClosable
     {
         Windows.Foundation.Collections.IVector<Windows.UI.Color> Colors;
 
         Windows.UI.Composition.CompositionSurfaceBrush Brush{ get; };
         void Next();
-        void Stop();
     }
 }

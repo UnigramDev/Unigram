@@ -247,7 +247,7 @@ namespace Telegram.Controls.Media
         {
             if (IsNegative && Pattern == null)
             {
-                _freeform?.Stop();
+                _freeform?.Dispose();
                 _freeform = null;
 
                 return BootStrapper.Current.Compositor.CreateColorBrush(Colors.Black);
@@ -261,7 +261,7 @@ namespace Telegram.Controls.Media
                 }
                 else
                 {
-                    _freeform?.Stop();
+                    _freeform?.Dispose();
                     _freeform = PlaceholderHelper.Foreground.CreateFreeformGradient(freeform.GetColors());
                 }
 
@@ -269,14 +269,14 @@ namespace Telegram.Controls.Media
             }
             else if (Fill is BackgroundFillGradient gradient)
             {
-                _freeform?.Stop();
+                _freeform?.Dispose();
                 _freeform = null;
 
                 return TdBackground.GetGradient(BootStrapper.Current.Compositor, gradient.TopColor, gradient.BottomColor, gradient.RotationAngle);
             }
             else if (Fill is BackgroundFillSolid solid)
             {
-                _freeform?.Stop();
+                _freeform?.Dispose();
                 _freeform = null;
 
                 return BootStrapper.Current.Compositor.CreateColorBrush(solid.Color.ToColor());
@@ -339,6 +339,9 @@ namespace Telegram.Controls.Media
 
             _brush?.Dispose();
             _brush = null;
+
+            _freeform?.Dispose();
+            _freeform = null;
 
             if (Pattern != null)
             {

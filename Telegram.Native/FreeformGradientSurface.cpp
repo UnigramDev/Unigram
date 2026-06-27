@@ -41,11 +41,43 @@ namespace winrt::Telegram::Native::implementation
         m_renderingDeviceReplaced = m_compositionDevice.RenderingDeviceReplaced({ get_weak(), &FreeformGradientSurface::OnRenderingDeviceReplaced});
     }
 
+    void FreeformGradientSurface::Close()
+    {
+        // Must run on the UI thread. Stops the timer, detaches both event handlers, and releases every
+        // UI-thread-affinitized member here so that finalization of the managed wrapper (which can run
+        // on the GC thread) has nothing affinitized left to release.
+        if (m_closed)
+        {
+            return;
+        }
+
+        m_closed = true;
+
+        if (m_timer != nullptr)
+        {
+            m_timer.Stop();
+            m_timer.Tick(m_tick);
+            m_timer = nullptr;
+        }
+
+        if (m_compositionDevice != nullptr)
+        {
+            m_compositionDevice.RenderingDeviceReplaced(m_renderingDeviceReplaced);
+            m_compositionDevice = nullptr;
+        }
+
+        m_brush = nullptr;
+        m_surface = nullptr;
+        m_bitmap = nullptr;
+        m_d2dFactory = nullptr;
+        m_compositor = nullptr;
+        m_colors = nullptr;
+    }
+
     FreeformGradientSurface::~FreeformGradientSurface()
     {
-        m_timer.Stop();
-        m_timer.Tick(m_tick);
-        m_compositionDevice.RenderingDeviceReplaced(m_renderingDeviceReplaced);
+        // All UI-thread-affinitized resources are released by Close(), which the owner must call on the
+        // UI thread. If Close() ran, the members are already null and destruction here is a no-op.
     }
 
     void FreeformGradientSurface::OnRenderingDeviceReplaced(CompositionGraphicsDevice const&, RenderingDeviceReplacedEventArgs const&)
@@ -183,10 +215,5 @@ namespace winrt::Telegram::Native::implementation
         m_easing = GetKeyFrames();
         m_index = 0;
         m_timer.Start();
-    }
-
-    void FreeformGradientSurface::Stop()
-    {
-        m_timer.Stop();
     }
 }

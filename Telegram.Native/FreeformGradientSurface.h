@@ -51,12 +51,16 @@ namespace winrt::Telegram::Native::implementation
 
         CompositionSurfaceBrush Brush();
         void Next();
-        void Stop();
+
+        // Deterministic teardown. MUST be called on the UI thread (composition/timer are UI-affinitized).
+        // After Close() all UI resources are released, so finalization on the GC thread is a no-op.
+        void Close();
 
         static constexpr float s_width = 50.f;
         static constexpr float s_height = 50.f;
 
     private:
+        bool m_closed = false;
         Compositor m_compositor;
         CompositionGraphicsDevice m_compositionDevice;
         winrt::com_ptr<ID2D1Factory1> m_d2dFactory;
