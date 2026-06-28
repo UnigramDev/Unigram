@@ -83,6 +83,7 @@ namespace Telegram.Controls
 
         private AnimatedImage _spoilerPresenter;
         private CanvasGeometry _spoilerGeometry;
+        private bool _spoilerAdded;
 
         private Span _spanForInlines;
 
@@ -414,6 +415,7 @@ namespace Telegram.Controls
                     Below.Children.Remove(_spoilerPresenter);
                     _spoilerPresenter = null;
                     _spoilerGeometry = null;
+                    _spoilerAdded = false;
                 }
             }
         }
@@ -497,6 +499,7 @@ namespace Telegram.Controls
                 Below.Children.Remove(_spoilerPresenter);
                 _spoilerPresenter = null;
                 _spoilerGeometry = null;
+                _spoilerAdded = false;
             }
 
             // The cross-block selection (Extended mode) sits on top of the base ones.
@@ -1590,6 +1593,7 @@ namespace Telegram.Controls
                     Below.Children.Remove(_spoilerPresenter);
                     _spoilerPresenter = null;
                     _spoilerGeometry = null;
+                    _spoilerAdded = false;
                 }
 
                 return;
@@ -1729,6 +1733,7 @@ namespace Telegram.Controls
                     Below.Children.Remove(_spoilerPresenter);
                     _spoilerPresenter = null;
                     _spoilerGeometry = null;
+                    _spoilerAdded = false;
                 }
 
                 return;
@@ -1782,7 +1787,11 @@ namespace Telegram.Controls
             Canvas.SetLeft(_spoilerPresenter, minX);
             Canvas.SetTop(_spoilerPresenter, minY);
 
-            Below.Children.Add(_spoilerPresenter);
+            if (!_spoilerAdded)
+            {
+                _spoilerAdded = true;
+                Below.Children.Add(_spoilerPresenter);
+            }
 
             var visual = ElementComposition.GetElementVisual(_spoilerPresenter);
             var geometry = visual.Compositor.CreatePathGeometry(new CompositionPath(_spoilerGeometry));
