@@ -19,7 +19,6 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -214,7 +213,12 @@ namespace Telegram.Controls.Messages
         }
 
         public static readonly DependencyProperty SubtleBrushProperty =
-            DependencyProperty.Register("SubtleBrush", typeof(Brush), typeof(MessageReply), new PropertyMetadata(null));
+            DependencyProperty.Register("SubtleBrush", typeof(Brush), typeof(MessageReply), new PropertyMetadata(null, OnSubtleBrushChanged));
+
+        private static void OnSubtleBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((MessageReply)d).ServiceLabel?.Foreground = e.NewValue as Brush;
+        }
 
         #endregion
 
@@ -247,11 +251,7 @@ namespace Telegram.Controls.Messages
             Pattern = GetTemplateChild(nameof(Pattern)) as MessageReplyPattern;
             Quote = GetTemplateChild(nameof(Quote)) as TextBlock;
 
-            BindingOperations.SetBinding(ServiceLabel, Run.ForegroundProperty, new Binding
-            {
-                Path = new PropertyPath("SubtleBrush"),
-                Source = this
-            });
+            ServiceLabel.Foreground = SubtleBrush;
 
             BackgroundOverlay.Margin = new Thickness(0, 0, -Padding.Right, 0);
 
