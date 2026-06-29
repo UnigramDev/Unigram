@@ -1249,9 +1249,9 @@ namespace Telegram.Common
         /// Deep structural equality of two page blocks, used as the item-equality
         /// test when diffing a streaming message so unchanged blocks aren't
         /// re-rendered. Returns true only when the two blocks would render
-        /// identically — every rendered property is compared. (Media is compared by
-        /// its scalar attributes + caption; the underlying file objects, which are
-        /// stable across a stream, are not deep-compared.)
+        /// identically — every rendered property is compared. (Media is compared by its
+        /// scalar attributes + caption + the media file id / Url, so a block whose media
+        /// is swapped to a different file is treated as changed.)
         /// </summary>
         public static bool Compare(PageBlock x, PageBlock y)
         {
@@ -1283,11 +1283,11 @@ namespace Telegram.Common
                 (PageBlockChatLink a, PageBlockChatLink b) => a.Title == b.Title && a.Username == b.Username && a.AccentColorId == b.AccentColorId,
 
                 // Media + caption (scalar attributes + caption)
-                (PageBlockAnimation a, PageBlockAnimation b) => a.NeedAutoplay == b.NeedAutoplay && a.HasSpoiler == b.HasSpoiler && Compare(a.Caption, b.Caption),
-                (PageBlockAudio a, PageBlockAudio b) => Compare(a.Caption, b.Caption),
-                (PageBlockPhoto a, PageBlockPhoto b) => string.Equals(a.Url, b.Url) && a.HasSpoiler == b.HasSpoiler && Compare(a.Caption, b.Caption),
-                (PageBlockVideo a, PageBlockVideo b) => a.NeedAutoplay == b.NeedAutoplay && a.IsLooped == b.IsLooped && a.HasSpoiler == b.HasSpoiler && Compare(a.Caption, b.Caption),
-                (PageBlockVoiceNote a, PageBlockVoiceNote b) => Compare(a.Caption, b.Caption),
+                (PageBlockAnimation a, PageBlockAnimation b) => a.NeedAutoplay == b.NeedAutoplay && a.HasSpoiler == b.HasSpoiler && SameFile(a.Animation?.AnimationValue, b.Animation?.AnimationValue) && Compare(a.Caption, b.Caption),
+                (PageBlockAudio a, PageBlockAudio b) => SameFile(a.Audio?.AudioValue, b.Audio?.AudioValue) && Compare(a.Caption, b.Caption),
+                (PageBlockPhoto a, PageBlockPhoto b) => string.Equals(a.Url, b.Url) && a.HasSpoiler == b.HasSpoiler && SamePhoto(a.Photo, b.Photo) && Compare(a.Caption, b.Caption),
+                (PageBlockVideo a, PageBlockVideo b) => a.NeedAutoplay == b.NeedAutoplay && a.IsLooped == b.IsLooped && a.HasSpoiler == b.HasSpoiler && SameFile(a.Video?.VideoValue, b.Video?.VideoValue) && Compare(a.Caption, b.Caption),
+                (PageBlockVoiceNote a, PageBlockVoiceNote b) => SameFile(a.VoiceNote?.Voice, b.VoiceNote?.Voice) && Compare(a.Caption, b.Caption),
                 (PageBlockMap a, PageBlockMap b) => a.Zoom == b.Zoom && a.Width == b.Width && a.Height == b.Height && SameLocation(a.Location, b.Location) && Compare(a.Caption, b.Caption),
                 (PageBlockEmbedded a, PageBlockEmbedded b) => string.Equals(a.Url, b.Url) && string.Equals(a.Html, b.Html) && a.Width == b.Width && a.Height == b.Height && a.IsFullWidth == b.IsFullWidth && a.AllowScrolling == b.AllowScrolling && Compare(a.Caption, b.Caption),
 
@@ -1471,6 +1471,39 @@ namespace Telegram.Common
             }
 
             return a.Latitude == b.Latitude && a.Longitude == b.Longitude && a.HorizontalAccuracy == b.HorizontalAccuracy;
+        }
+
+        private static bool SameFile(File a, File b)
+        {
+            if (a == null || b == null)
+            {
+                return a == b;
+            }
+
+            return a.Id == b.Id;
+        }
+
+        private static bool SamePhoto(Photo a, Photo b)
+        {
+            if (a == null || b == null)
+            {
+                return a == b;
+            }
+
+            if (a.Sizes.Count != b.Sizes.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < a.Sizes.Count; i++)
+            {
+                if (!SameFile(a.Sizes[i].Photo, b.Sizes[i].Photo))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
