@@ -34,6 +34,7 @@ namespace Telegram.Controls.Media
         public const string ZoomOut = "\uE96A";
         public const string ZoomCalendar = "\uEAC2";
 
+        public const string Table = "\uEB08";
         public const string TableCellMerge = "\uEB10";
         public const string TableCellSplit = "\uEB0F";
         public const string TableDeleteColumn = "\uEB0E";
@@ -399,6 +400,7 @@ namespace Telegram.Controls.Media
         public const string Emoji8 = "\uE927";
 
         public const string Calendar = "\uE787";
+        public const string TextParagraph = "\uEB23";
         public const string TextFont = "\uE8D2";
         public const string StarFilled = "\uE735";
         public const string StarFilled16 = "\uEA23";
