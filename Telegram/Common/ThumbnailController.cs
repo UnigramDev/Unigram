@@ -64,6 +64,8 @@ namespace Telegram.Common
 
                 if (_generation != generation)
                 {
+                    bitmapSource.Dispose();
+                    bitmap.Dispose();
                     return;
                 }
 
@@ -106,6 +108,8 @@ namespace Telegram.Common
 
                 if (_generation != generation)
                 {
+                    bitmapSource.Dispose();
+                    bitmap.Dispose();
                     return;
                 }
 
