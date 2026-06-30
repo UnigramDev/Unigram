@@ -795,6 +795,8 @@ namespace Telegram.Controls
                 //}
             }
 
+            _fastRun = null;
+
             //_activeEmojis.Clear();
             _activeRuns.Clear();
             _activeSpans.Clear();
@@ -841,7 +843,6 @@ namespace Telegram.Controls
                 _spanForInlines.Inlines.Clear();
             }
 
-            _fastRun = null;
             Recycle(direct);
         }
 
@@ -860,10 +861,6 @@ namespace Telegram.Controls
             var prevFontSize = _fontSize;
 
             var autoFontSize = fontSize;
-            if (AutoFontSize && fontSize == 0)
-            {
-                fontSize = Theme.Current.MessageFontSize;
-            }
 
             _clientService = clientService;
             _text = styled;
@@ -882,6 +879,10 @@ namespace Telegram.Controls
             var execution = ++_templateExecuted;
 
             var xamlFontSize = TextBlock.FontSize;
+            if (AutoFontSize && fontSize == 0)
+            {
+                fontSize = Theme.Current.MessageFontSize;
+            }
 
             var direct = XamlDirect.GetDefault();
             var locale = LocaleService.Current.FlowDirection;
@@ -889,6 +890,13 @@ namespace Telegram.Controls
             // PERF: fast path if both model and view have one paragraph with one run
             if (_plain && _plain == prevPlain && !HasCodeBlocks)
             {
+                var direction = _spanForInlines != null ? locale : _direction switch
+                {
+                    TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
+                    TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
+                    _ => locale
+                };
+
                 if (_fastRun == null)
                 {
                     IXamlDirectObject paragraph;
@@ -904,13 +912,6 @@ namespace Telegram.Controls
                         inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
                     }
 
-                    var direction = paragraph == null ? locale : _direction switch
-                    {
-                        TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
-                        TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
-                        _ => locale
-                    };
-
                     _fastRun = GetOrCreateRun(direct, inlines, styled.Paragraphs[rangeStart].Text, direction, TextStyle.None, null, fontSize, false);
 
                     if (paragraph != null)
@@ -925,12 +926,7 @@ namespace Telegram.Controls
                 {
                     if (_direction != prevDirection)
                     {
-                        direct.SetEnumProperty(_fastRun, XamlPropertyIndex.Run_FlowDirection, (uint)(_spanForInlines != null ? locale : _direction switch
-                        {
-                            TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
-                            TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
-                            _ => locale
-                        }));
+                        direct.SetEnumProperty(_fastRun, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
                     }
 
                     if (_fontSize != prevFontSize)
@@ -947,6 +943,8 @@ namespace Telegram.Controls
 
                 // Plain text has no spoiler/cached/marked; only the query may apply.
                 ApplyHighlighters();
+
+                HasLineEnding = AdjustLineEnding && direction != locale;
 
                 if (!_skeletonCollapsed)
                 {
