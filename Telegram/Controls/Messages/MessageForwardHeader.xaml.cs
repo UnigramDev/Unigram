@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
@@ -56,11 +55,6 @@ namespace Telegram.Controls.Messages
             }
 
             return null;
-        }
-
-        protected override bool GoToElementStateCore(string stateName, bool useTransitions)
-        {
-            return base.GoToElementStateCore(stateName, useTransitions);
         }
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)

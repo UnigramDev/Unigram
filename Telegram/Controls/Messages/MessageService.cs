@@ -21,12 +21,9 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
-using Windows.UI;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
@@ -3177,139 +3174,6 @@ namespace Telegram.Controls.Messages
 
             return source;
         }
-
-        private void ReplaceEntities(MessageViewModel message, Span span, string text, IList<TextEntity> entities)
-        {
-            if (entities == null)
-            {
-                span.Inlines.Add(new Run { Text = text });
-                return;
-            }
-
-            var previous = 0;
-
-            foreach (var entity in entities.OrderBy(x => x.Offset))
-            {
-                if (entity.Offset > previous)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
-                }
-
-                if (entity.Length + entity.Offset > text.Length)
-                {
-                    previous = entity.Offset + entity.Length;
-                    continue;
-                }
-
-                if (entity.Type is TextEntityTypeBold)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontWeight = FontWeights.SemiBold });
-                }
-                else if (entity.Type is TextEntityTypeItalic)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontStyle = FontStyle.Italic });
-                }
-                else if (entity.Type is TextEntityTypeCode)
-                {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
-                }
-                else if (entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
-                {
-                    // TODO any additional
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
-                }
-                else if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypePhoneNumber || entity.Type is TextEntityTypeMention || entity.Type is TextEntityTypeHashtag || entity.Type is TextEntityTypeCashtag || entity.Type is TextEntityTypeBotCommand)
-                {
-                    var data = text.Substring(entity.Offset, entity.Length);
-
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
-                    hyperlink.Inlines.Add(new Run { Text = data });
-                    //hyperlink.Foreground = foreground;
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = new SolidColorBrush(Colors.White);
-                    hyperlink.FontWeight = FontWeights.SemiBold;
-                    span.Inlines.Add(hyperlink);
-
-                    //if (entity is TLMessageEntityUrl)
-                    //{
-                    //    SetEntity(hyperlink, (string)data);
-                    //}
-                }
-                else if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeMentionName)
-                {
-                    object data;
-                    if (entity.Type is TextEntityTypeTextUrl textUrl)
-                    {
-                        data = textUrl.Url;
-                    }
-                    else if (entity.Type is TextEntityTypeMentionName mentionName)
-                    {
-                        data = mentionName.UserId;
-                    }
-
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, null);
-                    hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
-                    //hyperlink.Foreground = foreground;
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = new SolidColorBrush(Colors.White);
-                    hyperlink.FontWeight = FontWeights.SemiBold;
-                    span.Inlines.Add(hyperlink);
-
-                    //if (entity is TLMessageEntityTextUrl textUrl)
-                    //{
-                    //    SetEntity(hyperlink, textUrl.Url);
-                    //    ToolTipService.SetToolTip(hyperlink, textUrl.Url);
-                    //}
-                }
-
-                previous = entity.Offset + entity.Length;
-            }
-
-            if (text.Length > previous)
-            {
-                span.Inlines.Add(new Run { Text = text.Substring(previous) });
-            }
-        }
-
-        private void Entity_Click(MessageViewModel message, TextEntityType type, string data)
-        {
-            if (type is TextEntityTypeBotCommand)
-            {
-                message.Delegate.SendBotCommand(data);
-            }
-            else if (type is TextEntityTypeEmailAddress)
-            {
-                message.Delegate.OpenUrl("mailto:" + data, false);
-            }
-            else if (type is TextEntityTypePhoneNumber)
-            {
-                message.Delegate.OpenUrl("tel:" + data, false);
-            }
-            else if (type is TextEntityTypeHashtag || type is TextEntityTypeCashtag)
-            {
-                message.Delegate.OpenHashtag(data);
-            }
-            else if (type is TextEntityTypeMention)
-            {
-                message.Delegate.OpenUsername(data);
-            }
-            else if (type is TextEntityTypeMentionName mentionName)
-            {
-                message.Delegate.OpenUser(mentionName.UserId);
-            }
-            else if (type is TextEntityTypeTextUrl textUrl)
-            {
-                message.Delegate.OpenUrl(textUrl.Url, true, new OpenUrlSourceChat(message.ChatId, message.SenderId));
-            }
-            else if (type is TextEntityTypeUrl)
-            {
-                message.Delegate.OpenUrl(data, false, new OpenUrlSourceChat(message.ChatId, message.SenderId));
-            }
-        }
-
-
 
         private static Game GetGame(MessageViewModel message)
         {
