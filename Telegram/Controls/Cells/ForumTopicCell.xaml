@@ -128,7 +128,6 @@
                             </Grid.ColumnDefinitions>
                             <controls:FormattedTextBlock x:Name="BriefText"
                                                          Style="{StaticResource InfoBodyFormattedTextBlockStyle}"
-                                                         EmojiStyle="{StaticResource InfoCustomEmojiStyle}"
                                                          FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                                          IsTextSelectionEnabled="False"
                                                          TextTrimming="CharacterEllipsis"

@@ -141,8 +141,7 @@ namespace Telegram.Controls.Chats
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 Margin = new Thickness(11, 3, 11, 5),
                 VerticalAlignment = VerticalAlignment.Center,
-                HyperlinkStyle = Windows.UI.Xaml.Documents.UnderlineStyle.None,
-                EmojiStyle = BootStrapper.Current.Resources["MessageCustomEmojiStyle"] as Style
+                HyperlinkStyle = Windows.UI.Xaml.Documents.UnderlineStyle.None
             };
 
             grid.Children.Add(block);

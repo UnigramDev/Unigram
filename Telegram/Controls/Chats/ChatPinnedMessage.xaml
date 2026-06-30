@@ -132,7 +132,6 @@
                                              Foreground="{ThemeResource MessageForegroundBrush}"
                                              FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                              Style="{StaticResource ReplyBodyFormattedTextBlockStyle}"
-                                             EmojiStyle="{StaticResource MessageCustomEmojiStyle}"
                                              TextTrimming="CharacterEllipsis"
                                              TextWrapping="Wrap"
                                              AutoFontSize="False">
@@ -148,7 +147,6 @@
                                              Foreground="{ThemeResource MessageForegroundBrush}"
                                              FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                              Style="{StaticResource ReplyBodyFormattedTextBlockStyle}"
-                                             EmojiStyle="{StaticResource MessageCustomEmojiStyle}"
                                              TextTrimming="CharacterEllipsis"
                                              TextWrapping="Wrap"
                                              AutoFontSize="False">

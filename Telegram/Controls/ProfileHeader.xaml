@@ -595,7 +595,6 @@
                   Margin="24,8,24,8">
                 <controls:FormattedTextBlock x:Name="BotVerifiedText"
                                              Style="{StaticResource InfoCaptionFormattedTextBlockStyle}"
-                                             EmojiStyle="{StaticResource InfoCustomEmojiStyle}"
                                              IsTextSelectionEnabled="False"
                                              AutoFontSize="False" />
             </Grid>

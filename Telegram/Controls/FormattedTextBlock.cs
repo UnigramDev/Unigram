@@ -1288,7 +1288,6 @@ namespace Telegram.Controls
                                 player.LoopCount = 0;
                                 player.HorizontalAlignment = HorizontalAlignment.Left;
                                 player.FlowDirection = FlowDirection.LeftToRight;
-                                player.Style = EmojiStyle;
                                 player.IsHitTestVisible = false;
                                 player.IsEnabled = false;
                                 player.IsViewportAware = false;
@@ -2017,19 +2016,6 @@ namespace Telegram.Controls
 
         public static readonly DependencyProperty TextAlignmentProperty =
             DependencyProperty.Register("TextAlignment", typeof(TextAlignment), typeof(FormattedTextBlock), new PropertyMetadata(TextAlignment.Left));
-
-        #endregion
-
-        #region EmojiStyle
-
-        public Style EmojiStyle
-        {
-            get { return (Style)GetValue(EmojiStyleProperty); }
-            set { SetValue(EmojiStyleProperty, value); }
-        }
-
-        public static readonly DependencyProperty EmojiStyleProperty =
-            DependencyProperty.Register("EmojiStyle", typeof(Style), typeof(FormattedTextBlock), new PropertyMetadata(null));
 
         #endregion
 

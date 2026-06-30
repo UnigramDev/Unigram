@@ -44,7 +44,6 @@
 
     <controls:FormattedTextBlock x:Name="BriefText"
                                  Style="{StaticResource InfoBodyFormattedTextBlockStyle}"
-                                 EmojiStyle="{StaticResource InfoCustomEmojiStyle}"
                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                  IsTextSelectionEnabled="False"
                                  TextTrimming="CharacterEllipsis"

@@ -172,7 +172,6 @@
                                                          IconForeground="{TemplateBinding SubtleBrush}"
                                                          FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                                          Style="{StaticResource ReplyBodyFormattedTextBlockStyle}"
-                                                         EmojiStyle="{StaticResource MessageCustomEmojiStyle}"
                                                          AutoFontSize="False"
                                                          Grid.Row="1">
                                 <Paragraph>
