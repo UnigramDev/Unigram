@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Numerics;
-using System.Threading;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
@@ -28,7 +27,6 @@ using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
@@ -57,7 +55,7 @@ namespace Telegram.Controls
         public readonly Queue<Hyperlink> Hyperlinks = new();
         public readonly Queue<IXamlDirectObject> Spans = new();
         public readonly Queue<IXamlDirectObject> Runs = new();
-        public readonly Queue<InlineUIContainer> Emoji = new();
+        //public readonly Queue<InlineUIContainer> Emoji = new();
     }
 
     [ContentProperty(Name = "Blocks")]
@@ -524,17 +522,16 @@ namespace Telegram.Controls
             SetText(clientService, TextStyleRun.GetText(text));
         }
 
-        private HashSet<IXamlDirectObject> _activeParagraphs;
-        private HashSet<Hyperlink> _activeHyperlinks;
-        private HashSet<IXamlDirectObject> _activeSpans;
-        private HashSet<IXamlDirectObject> _activeRuns;
-        private HashSet<InlineUIContainer> _activeEmojis;
+        private readonly HashSet<IXamlDirectObject> _activeParagraphs = new();
+        private readonly HashSet<Hyperlink> _activeHyperlinks = new();
+        private readonly HashSet<IXamlDirectObject> _activeSpans = new();
+        private readonly HashSet<IXamlDirectObject> _activeRuns = new();
+        //private readonly HashSet<InlineUIContainer> _activeEmojis = new();
 
         private IXamlDirectObject GetOrCreateParagraph(XamlDirect direct)
         {
             if (_pools != null && _pools.Paragraphs.TryDequeue(out var paragraph))
             {
-                direct.ClearProperty(paragraph, XamlPropertyIndex.Block_Margin);
                 direct.ClearProperty(paragraph, XamlPropertyIndex.Block_TextAlignment);
                 direct.ClearProperty(paragraph, XamlPropertyIndex.TextElement_FontSize);
                 direct.ClearProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily);
@@ -544,7 +541,7 @@ namespace Telegram.Controls
             }
 
             paragraph = direct.CreateInstance(XamlTypeIndex.Paragraph);
-            _activeParagraphs?.Add(paragraph);
+            _activeParagraphs.Add(paragraph);
             return paragraph;
         }
 
@@ -557,7 +554,7 @@ namespace Telegram.Controls
             }
 
             hyperlink = new Hyperlink();
-            _activeHyperlinks?.Add(hyperlink);
+            _activeHyperlinks.Add(hyperlink);
             return hyperlink;
         }
 
@@ -570,7 +567,7 @@ namespace Telegram.Controls
             }
 
             span = direct.CreateInstance(XamlTypeIndex.Span);
-            _activeSpans?.Add(span);
+            _activeSpans.Add(span);
             return span;
         }
 
@@ -653,7 +650,7 @@ namespace Telegram.Controls
             }
 
             run = NativeUtils.AddRunToCollection(direct, inlines, text, offset, length, direction, style, fontFamily, fontSize, transparent);
-            _activeRuns?.Add(run);
+            _activeRuns.Add(run);
             return run;
         }
 
@@ -736,17 +733,17 @@ namespace Telegram.Controls
             }
 
             run = NativeUtils.AddRunToCollection(direct, inlines, text, direction, style, fontFamily, fontSize, transparent);
-            _activeRuns?.Add(run);
+            _activeRuns.Add(run);
             return run;
         }
 
         private CustomEmojiIcon GetOrCreateEmoji(out InlineUIContainer inline)
         {
-            if (_pools != null && _pools.Emoji.TryDequeue(out inline))
-            {
-                _activeEmojis.Add(inline);
-                return inline.Child as CustomEmojiIcon;
-            }
+            //if (_pools != null && _pools.Emoji.TryDequeue(out inline))
+            //{
+            //    _activeEmojis.Add(inline);
+            //    return inline.Child as CustomEmojiIcon;
+            //}
 
             var player = new CustomEmojiIcon();
             inline = new InlineUIContainer
@@ -754,49 +751,51 @@ namespace Telegram.Controls
                 Child = player
             };
 
-            _activeEmojis?.Add(inline);
+            //_activeEmojis.Add(inline);
             return player;
         }
 
         private void Recycle(XamlDirect xd)
         {
-            if (_pools == null)
+            if (_pools != null)
             {
-                return;
-            }
-
-            IXamlDirectObject inlines;
-            foreach (var paragraph in _activeParagraphs)
-            {
-                inlines = xd.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
-                xd.ClearCollection(inlines);
-                _pools.Paragraphs.Enqueue(paragraph);
-            }
-            foreach (var hyperlink in _activeHyperlinks)
-            {
-                hyperlink.Inlines.Clear();
-                hyperlink.Click -= Entity_Click;
-                _pools.Hyperlinks.Enqueue(hyperlink);
-            }
-            foreach (var span in _activeSpans)
-            {
-                inlines = xd.GetXamlDirectObjectProperty(span, XamlPropertyIndex.Span_Inlines);
-                xd.ClearCollection(inlines);
-                _pools.Spans.Enqueue(span);
-            }
-            foreach (var run in _activeRuns)
-            {
-                _pools.Runs.Enqueue(run);
-            }
-            foreach (var emoji in _activeEmojis)
-            {
-                if (_pools.Emoji.Count < 500)
+                IXamlDirectObject inlines;
+                foreach (var paragraph in _activeParagraphs)
                 {
-                    _pools.Emoji.Enqueue(emoji);
+                    inlines = xd.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
+                    xd.ClearCollection(inlines);
+                    _pools.Paragraphs.Enqueue(paragraph);
                 }
+                foreach (var hyperlink in _activeHyperlinks)
+                {
+                    hyperlink.Inlines.Clear();
+                    if (_entityHandler != null)
+                    {
+                        hyperlink.Click -= _entityHandler;
+                    }
+                    _pools.Hyperlinks.Enqueue(hyperlink);
+                }
+                foreach (var span in _activeSpans)
+                {
+                    inlines = xd.GetXamlDirectObjectProperty(span, XamlPropertyIndex.Span_Inlines);
+                    xd.ClearCollection(inlines);
+                    _pools.Spans.Enqueue(span);
+                }
+                foreach (var run in _activeRuns)
+                {
+                    _pools.Runs.Enqueue(run);
+                }
+                // Let's disable emoji recycle for now and just recycle bare TextElement types
+                //foreach (var emoji in _activeEmojis)
+                //{
+                //    if (_pools.Emoji.Count < 500)
+                //    {
+                //        _pools.Emoji.Enqueue(emoji);
+                //    }
+                //}
             }
 
-            _activeEmojis.Clear();
+            //_activeEmojis.Clear();
             _activeRuns.Clear();
             _activeSpans.Clear();
             _activeHyperlinks.Clear();
@@ -823,7 +822,7 @@ namespace Telegram.Controls
             _templateExecuted = 0;
             ClearEntities();
 
-            if (_pools == null || (_fastRun != null && _plain))
+            if (!_templateApplied || _pools == null || (_fastRun != null && _plain))
             {
                 return;
             }
@@ -2155,22 +2154,7 @@ namespace Telegram.Controls
         public FormattedTextBlockRecyclePool RecyclePool
         {
             get => _pools;
-            set
-            {
-                // Currently recycle pool is only used by message text blocks
-                // This means that we only set the recycle pool once and that's it.
-                // In case this changes, the current logic becomes invalid.
-                if (_pools == null && value != null)
-                {
-                    _activeParagraphs = new();
-                    _activeHyperlinks = new();
-                    _activeSpans = new();
-                    _activeRuns = new();
-                    _activeEmojis = new();
-                }
-
-                _pools = value;
-            }
+            set => _pools = value;
         }
 
         #endregion
