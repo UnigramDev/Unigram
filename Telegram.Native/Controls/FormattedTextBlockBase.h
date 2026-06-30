@@ -40,7 +40,7 @@ namespace winrt::Telegram::Native::Controls::implementation
         FrameworkElement::LayoutUpdated_revoker m_layoutUpdatedRevoker{};
         FrameworkElement::EffectiveViewportChanged_revoker m_effectiveViewportChangedRevoker{};
 
-        uint64_t m_expandSelectionDeadline;
+        uint64_t m_expandSelectionDeadline{ 0 };
 
         void HandleLostFocus(const IInspectable&, const RoutedEventArgs&);
         void HandleSizeChanged(const IInspectable&, const SizeChangedEventArgs&);
