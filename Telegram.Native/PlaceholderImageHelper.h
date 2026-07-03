@@ -274,6 +274,8 @@ namespace winrt::Telegram::Native::implementation
         void Close()
         {
             m_nineGridCache.clear();
+            m_svgCacheList.clear();
+            m_svgCacheIndex.clear();
             m_deviceLostHelper.StopWatchingCurrentDevice();
         }
 
@@ -369,6 +371,10 @@ namespace winrt::Telegram::Native::implementation
 
         HRESULT CreateTextFormatImpl(hstring text, IVector<TextStylePart> entities, double fontSize, double width, winrt::com_ptr<TextFormat>& textFormat);
 
+        // Returns decompressed SVG bytes, caching them in a small LRU. Must be called while holding
+        // m_criticalSection. nsvgParse mutates its input in place, so callers must parse a *copy*.
+        const std::string& GetDecompressedSvg(hstring const& path);
+
     public:
         Window m_window;
         Compositor m_compositor;
@@ -392,6 +398,14 @@ namespace winrt::Telegram::Native::implementation
         std::mutex m_criticalSection;
 
         std::unordered_map<int, winrt::com_ptr<winrt::Telegram::Native::implementation::MessageBubbleNineGrid>> m_nineGridCache;
+
+        // Bounded LRU cache of decompressed SVG bytes keyed by file path. Switching among a few chats
+        // re-renders their (different) pattern backgrounds repeatedly; without this, each switch
+        // re-reads + gunzips the same file, and those large variable-size temporaries fragment the
+        // segment heap. Capped so at most a handful of patterns stay resident.
+        static constexpr size_t kSvgCacheCapacity = 6;
+        std::list<std::pair<std::wstring, std::string>> m_svgCacheList; // front = most recently used
+        std::unordered_map<std::wstring, std::list<std::pair<std::wstring, std::string>>::iterator> m_svgCacheIndex;
     };
 } // namespace winrt::Telegram::Native::implementation
 

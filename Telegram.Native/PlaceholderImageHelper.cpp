@@ -466,20 +466,29 @@ namespace winrt::Telegram::Native::implementation
         fseek(file, 0, SEEK_END);
         size_t length = ftell(file);
         fseek(file, 0, SEEK_SET);
-        char* buffer = (char*)malloc(length);
-        fread(buffer, 1, length, file);
-        fclose(file);
 
-        if (!buffer || length == 0)
+        if (length == 0)
         {
-            free(buffer);
+            fclose(file);
             return "";
         }
 
+        char* buffer = (char*)malloc(length);
+        if (!buffer)
+        {
+            fclose(file);
+            return "";
+        }
+
+        fread(buffer, 1, length, file);
+        fclose(file);
+
         if (!IsGzipCompressed(buffer, length))
         {
+            // Construct the string *before* freeing the buffer; the previous order read freed memory.
+            std::string raw(buffer, length);
             free(buffer);
-            return std::string(buffer, length);
+            return raw;
         }
 
         z_stream stream = {};
@@ -490,18 +499,21 @@ namespace winrt::Telegram::Native::implementation
             return "";
         }
 
-        stream.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(buffer));
+        stream.next_in = reinterpret_cast<Bytef*>(buffer);
         stream.avail_in = static_cast<uInt>(length);
 
         std::string decompressed;
-        const size_t CHUNK_SIZE = 32768;
+        // Pre-size to avoid the append/realloc cascade that fragments the heap (gzip on these is ~3-5x).
+        decompressed.reserve(length * 4);
+
+        // One reusable stack buffer instead of allocating a vector on every inflate iteration.
+        char chunk[32768];
 
         int ret;
         do
         {
-            std::vector<char> chunk(CHUNK_SIZE);
-            stream.next_out = reinterpret_cast<Bytef*>(chunk.data());
-            stream.avail_out = static_cast<uInt>(chunk.size());
+            stream.next_out = reinterpret_cast<Bytef*>(chunk);
+            stream.avail_out = static_cast<uInt>(sizeof(chunk));
 
             ret = inflate(&stream, Z_NO_FLUSH);
 
@@ -512,14 +524,49 @@ namespace winrt::Telegram::Native::implementation
                 return "";
             }
 
-            size_t decompressedSize = chunk.size() - stream.avail_out;
-            decompressed.append(chunk.data(), decompressedSize);
+            decompressed.append(chunk, sizeof(chunk) - stream.avail_out);
 
         } while (ret != Z_STREAM_END);
 
         inflateEnd(&stream);
         free(buffer);
         return decompressed;
+    }
+
+    // Returns decompressed SVG bytes for the given file, caching results in a small LRU so repeated
+    // background re-renders don't re-read + gunzip the same file (which churns/fragments the heap).
+    // Must be called while holding m_criticalSection. nsvgParse mutates its input in place, so callers
+    // must copy the returned bytes into a local buffer before parsing.
+    const std::string& PlaceholderImageHelper::GetDecompressedSvg(hstring const& path)
+    {
+        std::wstring key(path.c_str());
+
+        auto found = m_svgCacheIndex.find(key);
+        if (found != m_svgCacheIndex.end())
+        {
+            // Promote to most-recently-used.
+            m_svgCacheList.splice(m_svgCacheList.begin(), m_svgCacheList, found->second);
+            return found->second->second;
+        }
+
+        auto decompressed = DecompressFromFile(path);
+        if (decompressed.empty())
+        {
+            // Don't cache failures (e.g. file not yet downloaded) so a later retry can re-read.
+            static const std::string empty;
+            return empty;
+        }
+
+        m_svgCacheList.emplace_front(key, std::move(decompressed));
+        m_svgCacheIndex[key] = m_svgCacheList.begin();
+
+        if (m_svgCacheList.size() > kSvgCacheCapacity)
+        {
+            m_svgCacheIndex.erase(m_svgCacheList.back().first);
+            m_svgCacheList.pop_back();
+        }
+
+        return m_svgCacheList.front().second;
     }
 
     ChatBackgroundPattern PlaceholderImageHelper::DrawSvg(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale)
@@ -540,7 +587,8 @@ namespace winrt::Telegram::Native::implementation
         float rasterScale = (float)rasterizationScale;
         float dpi = 0.25f * rasterScale;
 
-        auto data = DecompressFromFile(path);
+        // nsvgParse mutates its input buffer in place, so parse a copy of the cached bytes.
+        std::string data(GetDecompressedSvg(path));
         auto patterns = winrt::single_threaded_vector<ChatBackgroundSymbol>();
 
         struct NSVGimage* image;
