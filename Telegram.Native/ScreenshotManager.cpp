@@ -38,6 +38,7 @@ namespace winrt::Telegram::Native::implementation
 		typedef HBITMAP(WINAPI* pCreateCompatibleBitmap)(_In_ HDC hdc, _In_ int cx, _In_ int cy);
 		typedef HDC(WINAPI* pCreateCompatibleDC)(_In_opt_ HDC hdc);
 		typedef BOOL(WINAPI* pDeleteObject)(_In_ HGDIOBJ ho);
+		typedef BOOL(WINAPI* pDeleteDC)(_In_ HDC hdc);
 		typedef int(WINAPI* pGetDIBits)(_In_ HDC hdc, _In_ HBITMAP hbm, _In_ UINT start, _In_ UINT cLines,
 			_Out_opt_ LPVOID lpvBits, _At_((LPBITMAPINFOHEADER)lpbmi, _Inout_) LPBITMAPINFO lpbmi, _In_ UINT usage);  // SAL actual size of lpbmi is computed from structure elements
 		typedef HGDIOBJ(WINAPI* pSelectObject)(_In_ HDC hdc, _In_ HGDIOBJ h);
@@ -51,6 +52,7 @@ namespace winrt::Telegram::Native::implementation
 		static const auto createCompatibleBitmap = gdi32.GetMethod<pCreateCompatibleBitmap>("CreateCompatibleBitmap");
 		static const auto createCompatibleDC = gdi32.GetMethod<pCreateCompatibleDC>("CreateCompatibleDC");
 		static const auto deleteObject = gdi32.GetMethod<pDeleteObject>("DeleteObject");
+		static const auto deleteDC = gdi32.GetMethod<pDeleteDC>("DeleteDC");
 		static const auto getDIBits = gdi32.GetMethod<pGetDIBits>("GetDIBits");
 		static const auto selectObject = gdi32.GetMethod<pSelectObject>("SelectObject");
 
@@ -78,13 +80,14 @@ namespace winrt::Telegram::Native::implementation
 		printWindow(hWnd, hDCMem, 0x00000002);
 
 		selectObject(hDCMem, hOld);
-		deleteObject(hDCMem);
+		deleteDC(hDCMem); // CreateCompatibleDC -> DeleteDC (DeleteObject doesn't free a DC)
 
 		BITMAPINFO lpbi = { 0 };
 		lpbi.bmiHeader.biSize = sizeof(lpbi);
 
 		if (0 == getDIBits(hDC, hBmp, 0, 0, NULL, &lpbi, DIB_RGB_COLORS))
 		{
+			deleteObject(hBmp);
 			releaseDC(hWnd, hDC);
 			return nullptr;
 		}
@@ -101,9 +104,13 @@ namespace winrt::Telegram::Native::implementation
 		// bitmap data (the "pixels") in the buffer lpPixels
 		if (0 == getDIBits(hDC, hBmp, 0, lpbi.bmiHeader.biHeight, lpPixels, &lpbi, DIB_RGB_COLORS))
 		{
+			deleteObject(hBmp);
 			releaseDC(hWnd, hDC);
 			return nullptr;
 		}
+
+		deleteObject(hBmp);
+		releaseDC(hWnd, hDC);
 
 		return lpBitmap;
 	}
