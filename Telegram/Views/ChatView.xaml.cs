@@ -4309,7 +4309,7 @@ namespace Telegram.Views
 
         private bool MessageUnvotePoll_Loaded(MessageViewModel message)
         {
-            if ((ViewModel.Type == DialogType.History || ViewModel.Type == DialogType.Thread) && message.Content is MessagePoll poll && poll.Poll.Type is PollTypeRegular)
+            if ((ViewModel.Type == DialogType.History || ViewModel.Type == DialogType.Thread) && message.Content is MessagePoll poll && poll.Poll.Type is PollTypeRegular && poll.Poll.AllowsRevoting)
             {
                 return poll.Poll.Options.Any(x => x.IsChosen) && !poll.Poll.IsClosed;
             }
