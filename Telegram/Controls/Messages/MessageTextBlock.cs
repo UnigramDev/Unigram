@@ -56,7 +56,35 @@ namespace Telegram.Controls.Messages
 
         public bool HasCodeBlocks { get; private set; }
 
-        public event EventHandler<TextEntityClickEventArgs> TextEntityClick;
+        // TODO: make sure all this event thing is actually needed
+        private event EventHandler<TextEntityClickEventArgs> _textEntityClick;
+        public event EventHandler<TextEntityClickEventArgs> TextEntityClick
+        {
+            add
+            {
+                if (_textEntityClick == null)
+                {
+                    foreach (var block in _blocks)
+                    {
+                        block.TextEntityClick += OnBlockTextEntityClick;
+                    }
+                }
+
+                _textEntityClick += value;
+            }
+            remove
+            {
+                _textEntityClick -= value;
+
+                if (_textEntityClick == null)
+                {
+                    foreach (var block in _blocks)
+                    {
+                        block.TextEntityClick -= OnBlockTextEntityClick;
+                    }
+                }
+            }
+        }
 
         #region Forwarded configuration
 
@@ -265,6 +293,14 @@ namespace Telegram.Controls.Messages
         // OnUnloaded returns its Runs/Paragraphs to the shared RecyclePool.
         private void ClearBlocks()
         {
+            if (_textEntityClick != null)
+            {
+                foreach (var block in _blocks)
+                {
+                    block.TextEntityClick -= OnBlockTextEntityClick;
+                }
+            }
+
             _blocks.Clear();
             _ranges.Clear();
             Children.Clear();
@@ -335,7 +371,12 @@ namespace Telegram.Controls.Messages
                 block.RecyclePool = _recyclePool;
             }
 
-            block.TextEntityClick += OnBlockTextEntityClick;
+            // !!!
+            if (_textEntityClick != null)
+            {
+                block.TextEntityClick += OnBlockTextEntityClick;
+            }
+
             return block;
         }
 
@@ -346,10 +387,10 @@ namespace Telegram.Controls.Messages
         private void OnBlockTextEntityClick(object sender, TextEntityClickEventArgs e)
         {
             // Forward with the originating inner block as sender (callers expect a FormattedTextBlock).
-            TextEntityClick?.Invoke(sender, e);
+            _textEntityClick?.Invoke(sender, e);
         }
 
-        #endregion
+#endregion
 
         #region Layout (vertical stack)
 

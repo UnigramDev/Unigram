@@ -565,15 +565,29 @@ namespace Telegram.Controls
             return paragraph;
         }
 
+        // TODO: make sure all this event thing is needed
+        private TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> _entityHandler;
+
         private Hyperlink GetOrCreateHyperlink()
         {
             if (_pools != null && _pools.Hyperlinks.TryDequeue(out var hyperlink))
             {
+                if (IsConnected)
+                {
+                    hyperlink.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
+                }
+
                 _activeHyperlinks.Add(hyperlink);
                 return hyperlink;
             }
 
             hyperlink = new Hyperlink();
+
+            if (IsConnected)
+            {
+                hyperlink.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
+            }
+
             _activeHyperlinks.Add(hyperlink);
             return hyperlink;
         }
@@ -826,6 +840,16 @@ namespace Telegram.Controls
 
         protected override void OnLoaded()
         {
+            foreach (var hyperlink in _activeHyperlinks)
+            {
+                if (_entityHandler != null)
+                {
+                    hyperlink.Click -= _entityHandler;
+                }
+
+                hyperlink.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
+            }
+
             // Don't reapply the text if it was just applied by OnApplyTemplate
             if (_templateExecuted > 0 || _pools == null)
             {
@@ -841,6 +865,14 @@ namespace Telegram.Controls
 
         protected override void OnUnloaded()
         {
+            if (_entityHandler != null)
+            {
+                foreach (var hyperlink in _activeHyperlinks)
+                {
+                    hyperlink.Click -= _entityHandler;
+                }
+            }
+
             _templateExecuted = 0;
             ClearEntities();
 
@@ -1107,7 +1139,6 @@ namespace Telegram.Controls
                             if (entity.Type is not TextEntityTypePre and not TextEntityTypePreCode)
                             {
                                 var hyperlink = GetOrCreateHyperlink();
-                                hyperlink.Click += Entity_Click;
                                 hyperlink.Foreground = CodeForeground;
                                 hyperlink.UnderlineStyle = UnderlineStyle.None;
 
@@ -1186,7 +1217,6 @@ namespace Telegram.Controls
                                         MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(entity.Type));
                                     }
 
-                                    hyperlink.Click += Entity_Click;
                                     hyperlink.Foreground = HyperlinkForeground;
                                     hyperlink.UnderlineStyle = HyperlinkStyle;
                                     hyperlink.FontWeight = HyperlinkFontWeight;
@@ -1200,7 +1230,6 @@ namespace Telegram.Controls
                                     var hyperlink = GetOrCreateHyperlink();
                                     var data = text.Substring(entity.Offset, entity.Length);
 
-                                    hyperlink.Click += Entity_Click;
                                     hyperlink.Foreground = HyperlinkForeground;
                                     hyperlink.UnderlineStyle = HyperlinkStyle;
                                     hyperlink.FontWeight = HyperlinkFontWeight;
@@ -1256,6 +1285,7 @@ namespace Telegram.Controls
 
                         // Consumes local inlines instead of paragraph's
                         // TODO: still use a InlineUIContainer for emojis in spoilers to avoid text resizes
+                        // !!!
                         if (entity.Type is TextEntityTypeCustomEmoji customEmoji /*&& ((_ignoreSpoilers && entity.HasFlag(Native.TextStyle.Spoiler)) || !entity.HasFlag(Native.TextStyle.Spoiler))*/)
                         {
                             var data = text.Substring(entity.Offset, entity.Length);
@@ -1278,7 +1308,7 @@ namespace Telegram.Controls
                                         Child = block
                                     }
                                 };
-                                
+
                                 // TODO: this isn't going to be updated on theme changes
                                 block.Foreground = IconForeground;
                             }

@@ -20,6 +20,7 @@ using Telegram.Controls.Stories;
 using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Native.Composition;
+using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
@@ -76,7 +77,7 @@ namespace Telegram.Controls.Messages
         public bool Highlight { get; } = true;
     }
 
-    public sealed partial class MessageBubble : Control, IReactionsDelegate
+    public sealed partial class MessageBubble : ControlEx, IReactionsDelegate
     {
         private MessageViewModel _message;
 
@@ -249,8 +250,10 @@ namespace Telegram.Controls.Messages
 
             //ContentPanel.CanDrag = true;
             //ContentPanel.DragStarting += OnDragStarting;
-            ContentPanel.SizeChanged += OnSizeChanged;
-            Message.TextEntityClick += Message_TextEntityClick;
+            
+            // TODO: make sure this is needed
+            //ContentPanel.SizeChanged += OnSizeChanged;
+            //Message.TextEntityClick += Message_TextEntityClick;
 
             _layerVisual = CompositionDevice.GetElementLayerVisual(ContentPanel);
 
@@ -811,9 +814,12 @@ namespace Telegram.Controls.Messages
                         if (PhotoRoot == null)
                         {
                             PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as HyperlinkButton;
-                            PhotoRoot.Click += Photo_Click;
-
                             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+
+                            if (IsConnected)
+                            {
+                                PhotoRoot.Click += Photo_Click;
+                            }
                         }
 
                         _photoId = message.Id;
@@ -961,7 +967,10 @@ namespace Telegram.Controls.Messages
                 Action = GetTemplateChild(nameof(Action)) as Border;
                 ActionButton = GetTemplateChild(nameof(ActionButton)) as GlyphButton;
 
-                ActionButton.Click += Action_Click;
+                if (IsConnected)
+                {
+                    ActionButton.Click += Action_Click;
+                }
             }
 
             if (outgoing && !_outgoingAction)
@@ -985,7 +994,10 @@ namespace Telegram.Controls.Messages
                 Summary = GetTemplateChild(nameof(Summary)) as Border;
                 SummaryButton = GetTemplateChild(nameof(SummaryButton)) as GlyphButton;
 
-                SummaryButton.Click += Summary_Click;
+                if (IsConnected)
+                {
+                    SummaryButton.Click += Summary_Click;
+                }
             }
 
             if (outgoing && !_outgoingSummary)
@@ -1068,9 +1080,14 @@ namespace Telegram.Controls.Messages
             if (Reply == null && message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden)
             {
                 Reply = GetTemplateChild(nameof(Reply)) as MessageReply;
-                Reply.Click += Reply_Click;
 
-                Panel.Reply = Reply;
+                if (IsConnected)
+                {
+                    Reply.Click += Reply_Click;
+                }
+
+                // TODO: check if this can be restored
+                //Panel.Reply = Reply;
             }
 
             Reply?.UpdateMessageReply(message);
@@ -1257,7 +1274,11 @@ namespace Telegram.Controls.Messages
                     if (PsaInfo == null)
                     {
                         PsaInfo = GetTemplateChild(nameof(PsaInfo)) as GlyphButton;
-                        PsaInfo.Click += PsaInfo_Click;
+
+                        if (IsConnected)
+                        {
+                            PsaInfo.Click += PsaInfo_Click;
+                        }
                     }
 
                     PsaInfo.Visibility = Visibility.Visible;
@@ -1461,7 +1482,10 @@ namespace Telegram.Controls.Messages
                 HeaderLink = HeaderLabel.Inlines[0] as Hyperlink;
                 HeaderLinkRun = HeaderLink.Inlines[0] as Run;
 
-                HeaderLink.Click += From_Click;
+                if (IsConnected)
+                {
+                    HeaderLink.Click += From_Click;
+                }
             }
 
             return HeaderLabel;
@@ -1472,7 +1496,11 @@ namespace Telegram.Controls.Messages
             if (ForwardHeader == null)
             {
                 ForwardHeader = GetTemplateChild(nameof(ForwardHeader)) as MessageForwardHeader;
-                ForwardHeader.Click += FwdFrom_Click;
+
+                if (IsConnected)
+                {
+                    ForwardHeader.Click += FwdFrom_Click;
+                }
             }
         }
 
@@ -2478,6 +2506,39 @@ namespace Telegram.Controls.Messages
             _ignoreSizeChanged = true;
         }
 
+        protected override void OnLoaded()
+        {
+            // TODO: a more elegant way is needed
+            OnUnloaded();
+
+            ContentPanel.SizeChanged += OnSizeChanged;
+            Message.TextEntityClick += Message_TextEntityClick;
+
+            Reply?.Click += Reply_Click;
+            ForwardHeader?.Click += FwdFrom_Click;
+            HeaderLink?.Click += From_Click;
+            PhotoRoot?.Click += Photo_Click;
+            ActionButton?.Click += Action_Click;
+            SummaryButton?.Click += Summary_Click;
+            Thread?.Click += Thread_Click;
+            PsaInfo?.Click += PsaInfo_Click;
+        }
+
+        protected override void OnUnloaded()
+        {
+            ContentPanel.SizeChanged -= OnSizeChanged;
+            Message.TextEntityClick -= Message_TextEntityClick;
+
+            Reply?.Click -= Reply_Click;
+            ForwardHeader?.Click -= FwdFrom_Click;
+            HeaderLink?.Click -= From_Click;
+            PhotoRoot?.Click -= Photo_Click;
+            ActionButton?.Click -= Action_Click;
+            SummaryButton?.Click -= Summary_Click;
+            Thread?.Click -= Thread_Click;
+            PsaInfo?.Click -= PsaInfo_Click;
+        }
+
         public void AnimateSendout(float xTranslate, float xScale, float yScale, float fontScale, double outer, double inner, double delay, bool reply)
         {
             if (!_templateApplied)
@@ -3347,9 +3408,12 @@ namespace Telegram.Controls.Messages
             if (PhotoRoot == null)
             {
                 PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as HyperlinkButton;
-                PhotoRoot.Click += Photo_Click;
-
                 Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+
+                if (IsConnected)
+                {
+                    PhotoRoot.Click += Photo_Click;
+                }
             }
 
             PhotoRoot.Visibility = Visibility.Visible;
@@ -3604,9 +3668,12 @@ namespace Telegram.Controls.Messages
                 if (PhotoRoot == null)
                 {
                     PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as HyperlinkButton;
-                    PhotoRoot.Click += Photo_Click;
-
                     Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+
+                    if (IsConnected)
+                    {
+                        PhotoRoot.Click += Photo_Click;
+                    }
                 }
 
                 PhotoRoot.Visibility = Visibility.Visible;

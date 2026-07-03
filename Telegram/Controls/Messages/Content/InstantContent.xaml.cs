@@ -14,6 +14,7 @@ using System.Threading;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
+using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -30,7 +31,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed partial class InstantContent : Control, IContent
+    public sealed partial class InstantContent : ControlEx, IContent
     {
         private CancellationTokenSource _instantViewToken;
 
@@ -912,7 +913,12 @@ namespace Telegram.Controls.Messages.Content
             _debugChildren.Add(block);
 #endif
 
-            block.TextEntityClick += Block_TextEntityClick;
+            // TODO: subscribe-unsubscribe
+            if (IsConnected)
+            {
+                block.TextEntityClick += Block_TextEntityClick;
+            }
+
             // Extended: native selection off (so the inner RichTextBlock doesn't capture
             // the pointer and fight the manager), driven by _selectionManager, with the
             // I-beam handled manually by FormattedTextBlock.
