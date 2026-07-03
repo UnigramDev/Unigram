@@ -33,6 +33,8 @@ namespace Telegram.Controls.Messages
 
         public ReactionsPanel()
         {
+            Telegram.Common.Instrumentation.Register(this);
+
             TabFocusNavigation = KeyboardNavigationMode.Once;
 
             ChildrenTransitions = new TransitionCollection
@@ -42,6 +44,10 @@ namespace Telegram.Controls.Messages
 
             ElementComposition.GetElementVisual(this);
         }
+
+#if INSTRUMENTATION
+        internal IEnumerable<object> DebugChildren() => _cache.Values;
+#endif
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {

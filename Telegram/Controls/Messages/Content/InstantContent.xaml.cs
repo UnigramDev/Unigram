@@ -44,12 +44,18 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(InstantContent);
+            Telegram.Common.Instrumentation.Register(this);
         }
 
-        public InstantContent()
-        {
-            DefaultStyleKey = typeof(InstantContent);
-        }
+#if INSTRUMENTATION
+        // Every instrumented control this InstantContent creates (text blocks + media content controls),
+        // captured at creation so orphan analysis can reach them (they're nested arbitrarily deep, so a
+        // single panel's Children won't do). Tied to this InstantContent's lifetime (built once per page,
+        // discarded wholesale), so no stale accumulation.
+        private readonly List<object> _debugChildren = new();
+
+        internal IEnumerable<object> DebugChildren() => _debugChildren;
+#endif
 
         #region InitializeComponent
 
@@ -387,6 +393,9 @@ namespace Telegram.Controls.Messages.Content
             var message = CreateMessage(clientService, new MessageLocation(map.Location));
 
             var content = new LocationContent(message);
+#if INSTRUMENTATION
+            _debugChildren.Add(content);
+#endif
             //content.Tag = galleryItem;
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
@@ -888,7 +897,21 @@ namespace Telegram.Controls.Messages.Content
         // and the manager attaches to LayoutRoot. No per-block wiring is needed here.
         private FormattedTextBlock CreateTextBlock()
         {
-            var block = new FormattedTextBlock();
+            var block = new FormattedTextBlock
+            {
+                AutoFontSize = true,
+                IgnoreSpoilers = false,
+                HorizontalTextAlignment = TextAlignment.DetectFromContent,
+                TextReadingOrder = TextReadingOrder.UseFlowDirection,
+                AdjustLineEnding = false,
+            };
+
+            Instrumentation.Register(block);
+
+#if INSTRUMENTATION
+            _debugChildren.Add(block);
+#endif
+
             block.TextEntityClick += Block_TextEntityClick;
             // Extended: native selection off (so the inner RichTextBlock doesn't capture
             // the pointer and fight the manager), driven by _selectionManager, with the
@@ -1184,6 +1207,9 @@ namespace Telegram.Controls.Messages.Content
 
             var message = CreateMessage(clientService, new MessagePhoto(block.Photo, null, null, false, block.HasSpoiler, false));
             var content = new PhotoContent(message, album: parent is PageBlockCollage);
+#if INSTRUMENTATION
+            _debugChildren.Add(content);
+#endif
             //content.Tag = galleryItem;
             content.HorizontalAlignment = parent is PageBlockCollage ? HorizontalAlignment.Stretch : HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
@@ -1220,6 +1246,9 @@ namespace Telegram.Controls.Messages.Content
 
             var message = CreateMessage(clientService, new MessageVideo(block.Video, Array.Empty<AlternativeVideo>(), Array.Empty<VideoStoryboard>(), null, 0, null, false, block.HasSpoiler, false));
             var content = new VideoContent(message, album: parent is PageBlockCollage);
+#if INSTRUMENTATION
+            _debugChildren.Add(content);
+#endif
             //content.Tag = galleryItem;
             content.HorizontalAlignment = parent is PageBlockCollage ? HorizontalAlignment.Stretch : HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
@@ -1256,6 +1285,9 @@ namespace Telegram.Controls.Messages.Content
 
             var message = CreateMessage(clientService, new MessageAnimation(block.Animation, null, false, block.HasSpoiler, false));
             var content = new AnimationContent(message);
+#if INSTRUMENTATION
+            _debugChildren.Add(content);
+#endif
             //content.Tag = galleryItem;
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
@@ -1294,6 +1326,9 @@ namespace Telegram.Controls.Messages.Content
 
             var message = CreateMessage(clientService, block.Audio.AudioValue.Id, new MessageAudio(block.Audio, string.Empty.AsFormattedText()));
             var content = new AudioContent(message);
+#if INSTRUMENTATION
+            _debugChildren.Add(content);
+#endif
             content.HorizontalAlignment = HorizontalAlignment.Left;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
@@ -1323,6 +1358,9 @@ namespace Telegram.Controls.Messages.Content
 
             var message = CreateMessage(clientService, block.VoiceNote.Voice.Id, new MessageAudio(new Audio(block.VoiceNote.Duration, string.Empty, string.Empty, string.Empty, string.Empty, null, null, null, block.VoiceNote.Voice), string.Empty.AsFormattedText()));
             var content = new AudioContent(message);
+#if INSTRUMENTATION
+            _debugChildren.Add(content);
+#endif
             content.HorizontalAlignment = HorizontalAlignment.Left;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
@@ -1575,6 +1613,9 @@ namespace Telegram.Controls.Messages.Content
         private FrameworkElement ProcessCollage(IClientService clientService, PageBlockCollage block)
         {
             var content = new PageBlockCollageContent(block);
+#if INSTRUMENTATION
+            _debugChildren.Add(content);
+#endif
 
             foreach (var item in block.Blocks)
             {

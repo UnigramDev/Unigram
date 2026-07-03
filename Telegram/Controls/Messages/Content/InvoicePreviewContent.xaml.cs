@@ -27,6 +27,7 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(InvoicePreviewContent);
+            Telegram.Common.Instrumentation.Register(this);
         }
 
         #region InitializeComponent

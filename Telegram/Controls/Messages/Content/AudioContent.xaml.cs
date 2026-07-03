@@ -33,6 +33,7 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(AudioContent);
+            Telegram.Common.Instrumentation.Register(this);
         }
 
         public AudioContent()

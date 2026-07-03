@@ -36,6 +36,8 @@ namespace Telegram.Controls.Messages
         public MessageService()
         {
             DefaultStyleKey = typeof(MessageService);
+
+            Telegram.Common.Instrumentation.Register(this);
         }
 
         public MessageViewModel Message => _message;

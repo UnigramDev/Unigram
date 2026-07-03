@@ -42,6 +42,7 @@ namespace Telegram.Controls.Messages.Content
             _album = album;
 
             DefaultStyleKey = typeof(VideoContent);
+            Telegram.Common.Instrumentation.Register(this);
         }
 
         #region InitializeComponent

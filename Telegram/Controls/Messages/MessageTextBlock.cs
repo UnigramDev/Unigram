@@ -51,6 +51,7 @@ namespace Telegram.Controls.Messages
         public MessageTextBlock()
         {
             // Match RichTextBlock's default text-y baseline behaviour for stacking.
+            Instrumentation.Register(this);
         }
 
         public bool HasCodeBlocks { get; private set; }
@@ -327,6 +328,8 @@ namespace Telegram.Controls.Messages
                 AdjustLineEnding = true,
             };
 
+            Instrumentation.Register(block);
+
             if (_recyclePool != null)
             {
                 block.RecyclePool = _recyclePool;
@@ -335,6 +338,10 @@ namespace Telegram.Controls.Messages
             block.TextEntityClick += OnBlockTextEntityClick;
             return block;
         }
+
+#if INSTRUMENTATION
+        internal IEnumerable<object> DebugChildren() => _blocks;
+#endif
 
         private void OnBlockTextEntityClick(object sender, TextEntityClickEventArgs e)
         {

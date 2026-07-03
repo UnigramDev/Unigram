@@ -25,6 +25,7 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(StickerSetContent);
+            Telegram.Common.Instrumentation.Register(this);
         }
 
         #region InitializeComponent

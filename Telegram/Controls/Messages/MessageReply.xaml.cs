@@ -155,6 +155,8 @@ namespace Telegram.Controls.Messages
         public MessageReply()
         {
             DefaultStyleKey = typeof(MessageReply);
+
+            Telegram.Common.Instrumentation.Register(this);
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()

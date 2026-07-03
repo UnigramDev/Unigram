@@ -24,6 +24,7 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(LocationContent);
+            Telegram.Common.Instrumentation.Register(this);
         }
 
         #region InitializeComponent

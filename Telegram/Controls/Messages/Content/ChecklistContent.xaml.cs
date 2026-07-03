@@ -31,7 +31,21 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(ChecklistContent);
+            Telegram.Common.Instrumentation.Register(this);
         }
+
+#if INSTRUMENTATION
+        internal System.Collections.Generic.IEnumerable<object> DebugChildren()
+        {
+            if (Tasks != null)
+            {
+                foreach (var child in Tasks.Children)
+                {
+                    yield return child;
+                }
+            }
+        }
+#endif
 
         #region InitializeComponent
 

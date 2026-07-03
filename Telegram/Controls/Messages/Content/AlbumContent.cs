@@ -23,11 +23,22 @@ namespace Telegram.Controls.Messages.Content
 
         public AlbumContent(MessageViewModel message)
         {
+            Telegram.Common.Instrumentation.Register(this);
             UpdateMessage(message);
 
             // I don't like this much, but it's the easier way to add margins between children
             //Margin = new Thickness(0, 0, -MessageAlbum.ITEM_MARGIN, -MessageAlbum.ITEM_MARGIN);
         }
+
+#if INSTRUMENTATION
+        internal System.Collections.Generic.IEnumerable<object> DebugChildren()
+        {
+            foreach (var child in Children)
+            {
+                yield return child;
+            }
+        }
+#endif
 
         private (Rect[], Size) _positions;
 

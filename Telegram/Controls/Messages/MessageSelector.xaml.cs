@@ -50,6 +50,8 @@ namespace Telegram.Controls.Messages
         public MessageSelector()
         {
             DefaultStyleKey = typeof(MessageSelector);
+
+            Instrumentation.Register(this);
         }
 
         public MessageSelector(MessageViewModel message, UIElement child)
@@ -58,6 +60,16 @@ namespace Telegram.Controls.Messages
             _message = message;
             Content = child;
         }
+
+#if INSTRUMENTATION
+        internal System.Collections.Generic.IEnumerable<object> DebugChildren()
+        {
+            if (Content != null)
+            {
+                yield return Content;
+            }
+        }
+#endif
 
         private TextSelectionManager _textSelectionManager;
 

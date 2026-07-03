@@ -97,7 +97,22 @@ namespace Telegram.Controls.Messages
         public MessageBubble()
         {
             DefaultStyleKey = typeof(MessageBubble);
+
+            Instrumentation.Register(this);
         }
+
+#if INSTRUMENTATION
+        internal IEnumerable<object> DebugChildren()
+        {
+            if (Message != null) yield return Message;
+            if (Reply != null) yield return Reply;
+            if (ForwardHeader != null) yield return ForwardHeader;
+            if (Footer != null) yield return Footer;
+            if (Reactions != null) yield return Reactions;
+            if (MediaReactions != null) yield return MediaReactions;
+            if (Media?.Child != null) yield return Media.Child;
+        }
+#endif
 
         public bool HasFloatingElements
         {

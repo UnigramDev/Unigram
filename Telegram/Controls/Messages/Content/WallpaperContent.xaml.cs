@@ -21,7 +21,9 @@ namespace Telegram.Controls.Messages.Content
         public WallpaperContent(MessageViewModel message, bool album = false)
         {
             _message = message;
+
             DefaultStyleKey = typeof(WallpaperContent);
+            Telegram.Common.Instrumentation.Register(this);
         }
 
         #region InitializeComponent

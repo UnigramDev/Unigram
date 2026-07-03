@@ -37,12 +37,23 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(WebPageContent);
+            Telegram.Common.Instrumentation.Register(this);
         }
 
         public WebPageContent()
         {
             DefaultStyleKey = typeof(WebPageContent);
         }
+
+#if INSTRUMENTATION
+        internal System.Collections.Generic.IEnumerable<object> DebugChildren()
+        {
+            if (Media?.Child != null)
+            {
+                yield return Media.Child;
+            }
+        }
+#endif
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {

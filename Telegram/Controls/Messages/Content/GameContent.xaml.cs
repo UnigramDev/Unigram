@@ -28,7 +28,18 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(GameContent);
+            Telegram.Common.Instrumentation.Register(this);
         }
+
+#if INSTRUMENTATION
+        internal System.Collections.Generic.IEnumerable<object> DebugChildren()
+        {
+            if (Media?.Child != null)
+            {
+                yield return Media.Child;
+            }
+        }
+#endif
 
         #region InitializeComponent
 
@@ -226,12 +237,12 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else if (entity.Type is TextEntityTypeCode)
                 {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
+                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Cascadia Mono, Consolas") });
                 }
                 else if (entity.Type is TextEntityTypePreCode)
                 {
                     // TODO any additional
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
+                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Cascadia Mono, Consolas") });
                 }
                 else if (entity.Type is TextEntityTypeUrl or TextEntityTypeEmailAddress or TextEntityTypePhoneNumber or TextEntityTypeMention or TextEntityTypeHashtag or TextEntityTypeCashtag or TextEntityTypeBotCommand)
                 {

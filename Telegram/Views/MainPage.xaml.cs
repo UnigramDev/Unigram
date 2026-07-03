@@ -1209,6 +1209,10 @@ namespace Telegram.Views
                     GC.Collect();
                     //NativeUtils.Collect = false;
 
+#if INSTRUMENTATION
+                    Logger.Info(this.GetChild<ChatView>().DebugAnalyzeOrphans());
+#endif
+
                     GarbageCollectionMonitor.DisconnectUnusedReferenceSources();
                     return;
                 }

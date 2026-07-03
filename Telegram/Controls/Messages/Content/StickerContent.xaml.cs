@@ -34,6 +34,7 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(StickerContent);
+            Telegram.Common.Instrumentation.Register(this);
 
             Click += Button_Click;
             DragStarting += Button_DragStarting;

@@ -39,6 +39,7 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(VoiceNoteContent);
+            Telegram.Common.Instrumentation.Register(this);
         }
 
         public VoiceNoteContent()

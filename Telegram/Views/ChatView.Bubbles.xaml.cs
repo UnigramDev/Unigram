@@ -1178,6 +1178,56 @@ namespace Telegram.Views
             public int TotalCount { get; set; }
         }
 
+#if INSTRUMENTATION
+        // Builds the orphan picture top-down: roots = realized containers + the recycle pools; anything
+        // registered with Instrumentation but not reachable from there is orphaned (see Instrumentation.Analyze).
+        public string DebugAnalyzeOrphans()
+        {
+            var roots = new List<object>();
+
+            if (Messages?.ItemsPanelRoot is Panel panel)
+            {
+                foreach (var child in panel.Children)
+                {
+                    if (child is ChatHistoryViewItem)
+                    {
+                        roots.Add(child);
+                    }
+                }
+            }
+
+            foreach (var strategy in _typeToStrategy.Values)
+            {
+                foreach (var container in strategy.Queue)
+                {
+                    roots.Add(container);
+                }
+            }
+
+            return Telegram.Common.Instrumentation.Analyze(roots, DebugChildrenOf);
+        }
+
+        // Hardcoded per-type descent (each instrumented type exposes its instrumented children).
+        private static IEnumerable<object> DebugChildrenOf(object node)
+        {
+            return node switch
+            {
+                ChatHistoryViewItem x => x.DebugChildren(),
+                MessageSelector x => x.DebugChildren(),
+                MessageBubble x => x.DebugChildren(),
+                MessageTextBlock x => x.DebugChildren(),
+                ReactionsPanel x => x.DebugChildren(),
+                Telegram.Controls.Messages.Content.InstantContent x => x.DebugChildren(),
+                Telegram.Controls.Messages.Content.ChecklistContent x => x.DebugChildren(),
+                Telegram.Controls.Messages.Content.PollContent x => x.DebugChildren(),
+                Telegram.Controls.Messages.Content.WebPageContent x => x.DebugChildren(),
+                Telegram.Controls.Messages.Content.GameContent x => x.DebugChildren(),
+                Telegram.Controls.Messages.Content.AlbumContent x => x.DebugChildren(),
+                _ => System.Array.Empty<object>()
+            };
+        }
+#endif
+
         public string GetVirtualizationInfo()
         {
             if (Messages.ItemsPanelRoot is ItemsStackPanel panel)
