@@ -3072,9 +3072,14 @@ namespace Telegram.Views
             {
                 if (selected.ContainsKey(message.Id))
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ForwardSelectedMessages, Strings.ForwardSelected, Icons.Share);
+                    var props = await ViewModel.ClientService.GetMessagePropertiesAsync(selected.Select(x => new MessageId(x.Value)));
 
-                    if (selected.All(x => MessageDownload_Loaded(x.Value)))
+                    if (props.Values.All(x => x.CanBeForwarded))
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.ForwardSelectedMessages, Strings.ForwardSelected, Icons.Share);
+                    }
+
+                    if (selected.Values.All(x => MessageDownload_Loaded(x)))
                     {
                         flyout.CreateFlyoutItem(ViewModel.DownloadSelectedMessages, Strings.DownloadSelected, Icons.ArrowDownload);
                     }
@@ -3084,10 +3089,18 @@ namespace Telegram.Views
                         flyout.CreateFlyoutItem(ViewModel.ReportSelectedMessages, Strings.ReportSelectedMessages, Icons.ShieldError);
                     }
 
-                    flyout.CreateFlyoutItem(ViewModel.DeleteSelectedMessages, Strings.DeleteSelected, Icons.Delete, destructive: true);
+                    if (props.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf))
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.DeleteSelectedMessages, Strings.DeleteSelected, Icons.Delete, destructive: true);
+                    }
+
                     flyout.CreateFlyoutItem(ViewModel.UnselectMessages, Strings.ClearSelection);
-                    flyout.CreateFlyoutSeparator();
-                    flyout.CreateFlyoutItem(ViewModel.CopySelectedMessages, Strings.CopySelectedMessages, Icons.Copy);
+
+                    if (selected.Values.All(x => x.CanBeSaved))
+                    {
+                        flyout.CreateFlyoutSeparator();
+                        flyout.CreateFlyoutItem(ViewModel.CopySelectedMessages, Strings.CopySelectedMessages, Icons.Copy);
+                    }
                 }
                 else
                 {
