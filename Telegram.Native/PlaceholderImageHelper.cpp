@@ -1122,7 +1122,7 @@ namespace winrt::Telegram::Native::implementation
             else if (entity.Type == TextStyle::Monospace)
             {
                 ReturnIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
-                ReturnIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
+                ReturnIfFailed(result, textLayout->SetFontFamilyName(L"Cascadia Mono, Consolas", { startPosition, length }));
             }
         }
 
@@ -1190,7 +1190,7 @@ namespace winrt::Telegram::Native::implementation
             else if (entity.Type == TextStyle::Monospace)
             {
                 ReturnDefaultIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
-                ReturnDefaultIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
+                ReturnDefaultIfFailed(result, textLayout->SetFontFamilyName(L"Cascadia Mono, Consolas", { startPosition, length }));
             }
         }
 
@@ -1283,7 +1283,7 @@ namespace winrt::Telegram::Native::implementation
             else if (entity.Type == TextStyle::Monospace)
             {
                 ReturnDefaultIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
-                ReturnDefaultIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
+                ReturnDefaultIfFailed(result, textLayout->SetFontFamilyName(L"Cascadia Mono, Consolas", { startPosition, length }));
             }
         }
 
@@ -1392,7 +1392,7 @@ namespace winrt::Telegram::Native::implementation
             else if (entity.Type == TextStyle::Monospace)
             {
                 ReturnDefaultIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
-                ReturnDefaultIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
+                ReturnDefaultIfFailed(result, textLayout->SetFontFamilyName(L"Cascadia Mono, Consolas", { startPosition, length }));
             }
         }
 
@@ -1464,7 +1464,7 @@ namespace winrt::Telegram::Native::implementation
             else if (entity.Type == TextStyle::Monospace)
             {
                 ReturnDefaultIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
-                ReturnDefaultIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
+                ReturnDefaultIfFailed(result, textLayout->SetFontFamilyName(L"Cascadia Mono, Consolas", { startPosition, length }));
             }
         }
 
