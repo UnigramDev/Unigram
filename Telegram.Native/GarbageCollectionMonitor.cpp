@@ -127,8 +127,10 @@ namespace winrt::Telegram::Native::implementation
     void GarbageCollectionMonitor::StopMonitoring(CoreWindow const& window)
     {
         void* windowKey = winrt::get_abi(window);
-        WindowState state;
-        bool found = false;
+
+        CoreWindow stateWindow{ nullptr };
+        event_token activatedToken{};
+        event_token closedToken{};
 
         {
             std::lock_guard lock(s_syncLock);
@@ -138,20 +140,33 @@ namespace winrt::Telegram::Native::implementation
                 return;
             }
 
-            state = std::move(it->second);
-            s_windowStates.erase(it);
-            found = true;
+            stateWindow = it->second.Window;
+            activatedToken = it->second.ActivatedToken;
+            closedToken = it->second.ClosedToken;
         }
 
-        if (found && state.Window)
+        // Detach the handlers BEFORE erasing the node. The Activated handler captures a raw
+        // pointer into the map node, so it must be impossible for it to fire once the node is
+        // gone. Removing the tokens outside the lock also avoids deadlocking against the Closed
+        // handler (which re-enters StopMonitoring and takes s_syncLock).
+        if (stateWindow)
         {
-            if (state.ActivatedToken)
+            if (activatedToken)
             {
-                state.Window.Activated(state.ActivatedToken);
+                stateWindow.Activated(activatedToken);
             }
-            if (state.ClosedToken)
+            if (closedToken)
             {
-                state.Window.Closed(state.ClosedToken);
+                stateWindow.Closed(closedToken);
+            }
+        }
+
+        {
+            std::lock_guard lock(s_syncLock);
+            auto it = s_windowStates.find(windowKey);
+            if (it != s_windowStates.end())
+            {
+                s_windowStates.erase(it);
             }
         }
     }
