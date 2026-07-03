@@ -1945,8 +1945,6 @@ namespace Telegram.Controls
 
         private readonly Dictionary<string, SolidColorBrush> _brushes = new();
 
-        private CancellationTokenSource _token;
-
         #endregion
 
         private void Entity_Click(Hyperlink hyperlink, HyperlinkClickEventArgs e)

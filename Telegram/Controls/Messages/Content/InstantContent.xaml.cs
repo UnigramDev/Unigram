@@ -1483,14 +1483,12 @@ namespace Telegram.Controls.Messages.Content
                 VerticalAlignment = VerticalAlignment.Bottom,
             };
 
-            var binding = new Binding
+            pager.SetBinding(PipsPager.SelectedPageIndexProperty, new Binding
             {
                 Path = new PropertyPath("SelectedIndex"),
                 Source = flip,
                 Mode = BindingMode.TwoWay
-            };
-
-            BindingOperations.SetBinding(pager, PipsPager.SelectedPageIndexProperty, binding);
+            });
 
             var content = new Grid();
             content.Children.Add(flip);
