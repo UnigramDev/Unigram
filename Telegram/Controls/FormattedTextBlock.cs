@@ -1088,14 +1088,10 @@ namespace Telegram.Controls
                             {
                                 var hyperlink = GetOrCreateHyperlink();
                                 hyperlink.Click += Entity_Click;
+                                hyperlink.Foreground = CodeForeground;
                                 hyperlink.UnderlineStyle = UnderlineStyle.None;
 
                                 MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(entity.Type, data));
-                                BindingOperations.SetBinding(hyperlink, Hyperlink.ForegroundProperty, _foregroundBinding ??= new Binding
-                                {
-                                    Path = new PropertyPath("Foreground"),
-                                    Source = this
-                                });
 
                                 var native = direct.GetXamlDirectObject(hyperlink);
                                 var collection = direct.GetXamlDirectObjectProperty(native, XamlPropertyIndex.Span_Inlines);
@@ -1171,15 +1167,10 @@ namespace Telegram.Controls
                                     }
 
                                     hyperlink.Click += Entity_Click;
+                                    hyperlink.Foreground = HyperlinkForeground;
                                     hyperlink.UnderlineStyle = HyperlinkStyle;
                                     hyperlink.FontWeight = HyperlinkFontWeight;
                                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-
-                                    BindingOperations.SetBinding(hyperlink, Hyperlink.ForegroundProperty, _hyperlinkBinding ??= new Binding
-                                    {
-                                        Path = new PropertyPath("HyperlinkForeground"),
-                                        Source = this
-                                    });
 
                                     parent = direct.GetXamlDirectObject(hyperlink);
                                     parentInlines = direct.GetXamlDirectObjectProperty(parent, XamlPropertyIndex.Span_Inlines);
@@ -1190,17 +1181,12 @@ namespace Telegram.Controls
                                     var data = text.Substring(entity.Offset, entity.Length);
 
                                     hyperlink.Click += Entity_Click;
+                                    hyperlink.Foreground = HyperlinkForeground;
                                     hyperlink.UnderlineStyle = HyperlinkStyle;
                                     hyperlink.FontWeight = HyperlinkFontWeight;
                                     hyperlink.UnderlineStyle = entity.Type is TextEntityTypeUrl
                                         ? UnderlineStyle.Single
                                         : UnderlineStyle.None;
-
-                                    BindingOperations.SetBinding(hyperlink, Hyperlink.ForegroundProperty, _hyperlinkBinding ??= new Binding
-                                    {
-                                        Path = new PropertyPath("HyperlinkForeground"),
-                                        Source = this
-                                    });
 
                                     if (entity.Type is TextEntityTypeDateTime dateTime)
                                     {
@@ -1272,12 +1258,9 @@ namespace Telegram.Controls
                                         Child = block
                                     }
                                 };
-
-                                BindingOperations.SetBinding(block, global::Windows.UI.Xaml.Controls.TextBlock.ForegroundProperty, _emojiBinding ??= new Binding
-                                {
-                                    Path = new PropertyPath("IconForeground"),
-                                    Source = this
-                                });
+                                
+                                // TODO: this isn't going to be updated on theme changes
+                                block.Foreground = IconForeground;
                             }
                             else
                             {
@@ -1285,6 +1268,7 @@ namespace Telegram.Controls
                                 player.LoopCount = 0;
                                 player.HorizontalAlignment = HorizontalAlignment.Left;
                                 player.FlowDirection = FlowDirection.LeftToRight;
+                                player.Foreground = IconForeground;
                                 player.IsHitTestVisible = false;
                                 player.IsEnabled = false;
                                 player.IsViewportAware = false;
@@ -1306,12 +1290,6 @@ namespace Telegram.Controls
                                 }
 
                                 _effectiveViewportChanged.Add(player);
-
-                                BindingOperations.SetBinding(player, AnimatedImage.ReplacementColorProperty, _emojiBinding ??= new Binding
-                                {
-                                    Path = new PropertyPath("IconForeground"),
-                                    Source = this
-                                });
 
                                 if (autoFontSize != 0)
                                 {
@@ -1543,10 +1521,6 @@ namespace Telegram.Controls
                 RegisterLayoutChanged();
             }
         }
-
-        private Binding _foregroundBinding;
-        private Binding _hyperlinkBinding;
-        private Binding _emojiBinding;
 
         private HashSet<CustomEmojiIcon> _effectiveViewportChanged;
 
@@ -2129,7 +2103,52 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty HyperlinkForegroundProperty =
-            DependencyProperty.Register("HyperlinkForeground", typeof(Brush), typeof(FormattedTextBlock), new PropertyMetadata(null));
+            DependencyProperty.Register("HyperlinkForeground", typeof(Brush), typeof(FormattedTextBlock), new PropertyMetadata(null, OnHyperlinkForegroundChanged));
+
+        private static void OnHyperlinkForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FormattedTextBlock)d).OnHyperlinkForegroundChanged((Brush)e.NewValue, (Brush)e.OldValue);
+        }
+
+        private void OnHyperlinkForegroundChanged(Brush newValue, Brush oldValue)
+        {
+            foreach (var child in _activeHyperlinks)
+            {
+                if (child.Foreground == oldValue)
+                {
+                    child.Foreground = newValue;
+                }
+            }
+        }
+
+        #endregion
+
+        #region CodeForeground
+
+        public Brush CodeForeground
+        {
+            get { return (Brush)GetValue(CodeForegroundProperty); }
+            set { SetValue(CodeForegroundProperty, value); }
+        }
+
+        public static readonly DependencyProperty CodeForegroundProperty =
+            DependencyProperty.Register("CodeForeground", typeof(Brush), typeof(FormattedTextBlock), new PropertyMetadata(null, OnCodeForegroundChanged));
+
+        private static void OnCodeForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FormattedTextBlock)d).OnCodeForegroundChanged((Brush)e.NewValue, (Brush)e.OldValue);
+        }
+
+        private void OnCodeForegroundChanged(Brush newValue, Brush oldValue)
+        {
+            foreach (var child in _activeHyperlinks)
+            {
+                if (child.Foreground == oldValue)
+                {
+                    child.Foreground = newValue;
+                }
+            }
+        }
 
         #endregion
 
@@ -2142,7 +2161,23 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty IconForegroundProperty =
-            DependencyProperty.Register("IconForeground", typeof(Brush), typeof(FormattedTextBlock), new PropertyMetadata(null));
+            DependencyProperty.Register("IconForeground", typeof(Brush), typeof(FormattedTextBlock), new PropertyMetadata(null, OnIconForegroundChanged));
+
+        private static void OnIconForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FormattedTextBlock)d).OnIconForegroundChanged((Brush)e.NewValue);
+        }
+
+        private void OnIconForegroundChanged(Brush newValue)
+        {
+            if (_effectiveViewportChanged != null)
+            {
+                foreach (var child in _effectiveViewportChanged)
+                {
+                    child.ReplacementColor = newValue;
+                }
+            }
+        }
 
         #endregion
 

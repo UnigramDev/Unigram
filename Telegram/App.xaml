@@ -214,6 +214,10 @@
                    BasedOn="{StaticResource CaptionFormattedTextBlockStyle}">
                 <Setter Property="Foreground"
                         Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                <Setter Property="CodeForeground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                <Setter Property="IconForeground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
             </Style>
 
             <Style TargetType="PivotItem">
@@ -381,6 +385,8 @@
             <Style x:Key="InfoBodyFormattedTextBlockStyle"
                    TargetType="controls:FormattedTextBlock">
                 <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                <Setter Property="CodeForeground"
                         Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
                 <Setter Property="IconForeground"
                         Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />

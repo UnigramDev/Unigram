@@ -211,6 +211,8 @@
                                    TargetType="controls:FormattedTextBlock">
                                 <Setter Property="Foreground"
                                         Value="{ThemeResource MessageHeaderForegroundBrush}" />
+                                <Setter Property="CodeForeground"
+                                        Value="{ThemeResource MessageHeaderForegroundBrush}" />
                                 <Setter Property="IconForeground"
                                         Value="{ThemeResource MessageHeaderForegroundBrush}" />
                             </Style>
