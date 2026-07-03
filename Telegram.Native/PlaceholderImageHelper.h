@@ -8,6 +8,9 @@
 #include <D2d1_3.h>
 #include <D3d11_4.h>
 #include <map>
+#include <list>
+#include <string>
+#include <unordered_map>
 
 #include <SurfaceImage.h>
 #include <TextFormat.h>
@@ -176,6 +179,17 @@ namespace winrt::Telegram::Native::implementation
 
         ~DeviceLostHelper()
         {
+            // Cancel any pending wait and drain in-flight callbacks before the helper dies, so a
+            // device-lost callback can't run RaiseDeviceLostEvent on a destroyed object. Safe to
+            // wait here because the destructor never runs on the threadpool callback thread
+            // (unlike StopWatchingCurrentDevice, which OnDeviceLost re-enters and so must not
+            // wait on itself).
+            if (m_onDeviceLostHandler)
+            {
+                ::SetThreadpoolWait(m_onDeviceLostHandler, nullptr, nullptr);
+                ::WaitForThreadpoolWaitCallbacks(m_onDeviceLostHandler, TRUE);
+            }
+
             StopWatchingCurrentDevice();
             m_onDeviceLostHandler = nullptr;
         }

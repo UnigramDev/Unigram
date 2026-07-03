@@ -89,7 +89,10 @@ namespace winrt::Telegram::Native::Media::implementation
         libvlc_media_player_set_rate(m_player, options.Rate());
 
         m_events = new EventContext(m_player, get_weak());
-        m_defaultAudioRenderDeviceChanged = MediaDevice::DefaultAudioRenderDeviceChanged({ this, &AsyncMediaPlayer::OnDefaultAudioRenderDeviceChanged });
+        // MediaDevice::DefaultAudioRenderDeviceChanged is a static (app-lifetime) event that can
+        // fire on a system thread; a raw 'this' would dangle if it races teardown. get_weak()
+        // makes it a no-op once the player is gone (it is also detached in Close()).
+        m_defaultAudioRenderDeviceChanged = MediaDevice::DefaultAudioRenderDeviceChanged({ get_weak(), &AsyncMediaPlayer::OnDefaultAudioRenderDeviceChanged });
     }
 
     AsyncMediaPlayer::~AsyncMediaPlayer()
@@ -481,7 +484,9 @@ namespace winrt::Telegram::Native::Media::implementation
 
         {
             std::lock_guard<std::mutex> lock(work_lock_);
-            CleanupManager::Close(m_instance, m_player, m_events, m_context, std::move(*work_thread_));
+            // work_thread_ is only created on the first Write(); if the player is closed before
+            // any command was issued it is still null, so don't dereference it.
+            CleanupManager::Close(m_instance, m_player, m_events, m_context, work_thread_ ? std::move(*work_thread_) : std::thread{});
         }
     }
 

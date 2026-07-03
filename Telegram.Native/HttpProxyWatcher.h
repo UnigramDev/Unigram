@@ -26,10 +26,7 @@ namespace winrt::Telegram::Native::implementation
 
         void Close()
         {
-            SetEvent(m_shutdownEvent);
-            m_thread.join();
-
-            CloseHandle(m_shutdownEvent);
+            StopThread();
         }
 
         hstring Server()
@@ -61,8 +58,7 @@ namespace winrt::Telegram::Native::implementation
 
             if (!m_changed)
             {
-                SetEvent(m_shutdownEvent);
-                m_thread.join();
+                StopThread();
             }
         }
 
@@ -73,8 +69,25 @@ namespace winrt::Telegram::Native::implementation
         static void ThreadLoop(HttpProxyWatcher* watcher);
         void UpdateValues(HKEY internetSettings, bool notify);
 
+        // Signals the watcher thread to exit, joins it, and releases the shutdown event.
+        // Safe to call more than once (Close + last-handler-removed) and when never started.
+        void StopThread()
+        {
+            if (m_thread.joinable())
+            {
+                SetEvent(m_shutdownEvent);
+                m_thread.join();
+            }
+
+            if (m_shutdownEvent)
+            {
+                CloseHandle(m_shutdownEvent);
+                m_shutdownEvent = nullptr;
+            }
+        }
+
         std::thread m_thread;
-        HANDLE m_shutdownEvent;
+        HANDLE m_shutdownEvent{ nullptr };
 
         hstring m_server;
         bool m_isEnabled;
