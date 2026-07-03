@@ -42,6 +42,28 @@ namespace Telegram.Controls
             base.OnApplyTemplate();
         }
 
+        protected override void OnContentChanged(object oldContent, object newContent)
+        {
+            if (oldContent is FormattedTextBlock oldBlock)
+            {
+                oldBlock.IsTextTrimmableChanged -= OnIsTextTrimmableChanged;
+            }
+
+            if (newContent is FormattedTextBlock newBlock)
+            {
+                // TODO: make sure this releases correctly
+                newBlock.IsTextTrimmableChanged += OnIsTextTrimmableChanged;
+            }
+
+            OnExpandableChanged(this, null);
+            base.OnContentChanged(oldContent, newContent);
+        }
+
+        private void OnIsTextTrimmableChanged(object sender, System.EventArgs e)
+        {
+            OnExpandableChanged(this, null);
+        }
+
         private void Header_Click(object sender, RoutedEventArgs e)
         {
             if (Content is FormattedTextBlock block)

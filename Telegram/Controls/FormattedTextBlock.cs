@@ -241,8 +241,28 @@ namespace Telegram.Controls
 
         public double LastAvailableWidth { get; private set; }
 
+        public bool IsTextTrimmable { get; private set; }
+        public event EventHandler IsTextTrimmableChanged;
+
         protected override Size MeasureOverride(Size availableSize)
         {
+            if (_text != null && _first == _last && _text.Paragraphs[_first].Type is TextParagraphTypeQuote { IsExpandable: true })
+            {
+                var styled = _text.Paragraphs[_first];
+                var partial = styled.Text;
+                var entities = styled.GetParts(out partial) ?? Array.Empty<TextStylePart>();
+                var quoteSize = (AutoFontSize ? Theme.Current.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
+
+                var metrics = PlaceholderHelper.Foreground.MaxLines(partial, 0, partial.Length, entities, quoteSize, availableSize.Width, false, 3);
+                var trimmable = metrics.TruncatedHeight < metrics.Height;
+                
+                if (IsTextTrimmable != trimmable)
+                {
+                    IsTextTrimmable = trimmable;
+                    IsTextTrimmableChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+
             LastAvailableWidth = availableSize.Width;
             return base.MeasureOverride(availableSize);
         }
