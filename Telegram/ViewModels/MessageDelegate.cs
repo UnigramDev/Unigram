@@ -19,6 +19,7 @@ using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
+using Windows.Storage;
 using Windows.UI.Xaml;
 
 namespace Telegram.ViewModels
@@ -579,6 +580,8 @@ namespace Telegram.ViewModels
             _viewModel = viewModel;
         }
 
+        public DialogViewModel ViewModel => _viewModel;
+
         public override Chat Chat => _viewModel.Chat;
 
         #region Facades
@@ -699,6 +702,87 @@ namespace Telegram.ViewModels
             _viewModel.Gallery.FirstItem = content;
 
             _viewModel.NavigationService.ShowGallery(_viewModel.Gallery, target);
+        }
+    }
+
+    public partial class RichMessageDelegate : DialogMessageDelegate
+    {
+        private readonly RichMessage _message;
+        private readonly DialogMessageDelegate _delegate;
+
+        public RichMessageDelegate(RichMessage message, DialogMessageDelegate delegato)
+            : base(delegato.ViewModel)
+        {
+            _message = message;
+        }
+
+        public override void OpenMedia(MessageViewModel message, FrameworkElement target, double timestamp = 0)
+        {
+            PageBlockMediaKind kind;
+            if (message.Content is MessagePhoto or MessageVideo)
+            {
+                kind = PageBlockMediaKind.Media;
+            }
+            else if (message.Content is MessageAnimation)
+            {
+                kind = PageBlockMediaKind.Animation;
+            }
+            else
+            {
+                // ?
+                return;
+            }
+
+            var gallery = new InstantGalleryViewModel(ClientService, ClientService.Session.Resolve<IStorageService>(), ClientService.Session.Resolve<IEventAggregator>());
+            var media = PageBlockHelper.FindAllMedia(_message.Blocks, kind);
+
+            var source = FindBlock(target);
+
+            foreach (var block in media)
+            {
+                GalleryMedia item;
+                if (block is PageBlockPhoto photo)
+                {
+                    item = new GalleryPhoto(ClientService, photo.Photo, photo.Caption?.ToFormattedText());
+                }
+                else if (block is PageBlockVideo video)
+                {
+                    item = new GalleryVideo(ClientService, video.Video, video.Caption?.ToFormattedText());
+                }
+                else if (block is PageBlockAnimation animation)
+                {
+                    item = new GalleryAnimation(ClientService, animation.Animation, animation.Caption?.ToFormattedText());
+                }
+                else
+                {
+                    // ?
+                    continue;
+                }
+
+                gallery.Items.Add(item);
+
+                if (source == block)
+                {
+                    gallery.SelectedItem = item;
+                    gallery.FirstItem = item;
+                }
+            }
+
+            ViewModel.NavigationService.ShowGallery(gallery, target);
+
+            static PageBlock FindBlock(FrameworkElement element)
+            {
+                if (element.Tag is PageBlock block)
+                {
+                    return block;
+                }
+                else if (element.Parent is FrameworkElement parent)
+                {
+                    return FindBlock(parent);
+                }
+
+                return null;
+            }
         }
     }
 }

@@ -227,6 +227,7 @@
     <Compile Include="Common\PageBlockHelper.cs" />
     <Compile Include="Common\SliderHelper.cs" />
     <Compile Include="Common\StackCapture.cs" />
+    <Compile Include="Common\TextSelectionCoordinator.cs" />
     <Compile Include="Common\ThemeShadowEx.cs" />
     <Compile Include="Common\NormalizingStringBuilder.cs" />
     <Compile Include="Common\VideoPreloader.cs" />
@@ -404,9 +405,12 @@
     <Compile Include="Controls\Messages\Content\InstantContent.xaml.cs">
       <DependentUpon>InstantContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ISelectableControl.cs" />
+    <Compile Include="Common\TextSelectionManager.cs" />
     <Compile Include="Controls\Messages\MessageSummary.xaml.cs">
       <DependentUpon>MessageSummary.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\MessageTextBlock.cs" />
     <Compile Include="Controls\Messages\Service\MessageChatHasProtectedContentDisableRequestedContent.xaml.cs">
       <DependentUpon>MessageChatHasProtectedContentDisableRequestedContent.xaml</DependentUpon>
     </Compile>
@@ -919,6 +923,7 @@
     <Compile Include="Controls\FauxCheckBox.cs" />
     <Compile Include="Controls\FileButton.cs" />
     <Compile Include="Controls\FormattedTextBlock.cs" />
+    <Compile Include="Controls\FormattedTextBlock.Selectable.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
     <Compile Include="Controls\FormattedTextFlyout.xaml.cs">
       <DependentUpon>FormattedTextFlyout.xaml</DependentUpon>

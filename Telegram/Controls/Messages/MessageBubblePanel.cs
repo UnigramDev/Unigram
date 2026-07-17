@@ -43,7 +43,7 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            FormattedTextBlock text;
+            FrameworkElement text;
             FrameworkElement media;
             UIElement factCheck;
             UIElement third;
@@ -51,14 +51,14 @@ namespace Telegram.Controls.Messages
             var first = Children[0];
             if (first is MessageFactCheck or MessageSummary)
             {
-                text = Children[1] as FormattedTextBlock;
+                text = Children[1] as FrameworkElement;
                 media = Children[2] as FrameworkElement;
                 third = Children[3];
                 factCheck = first;
             }
             else
             {
-                text = Children[0] as FormattedTextBlock;
+                text = Children[0] as FrameworkElement;
                 media = Children[1] as FrameworkElement;
                 third = Children[2];
                 factCheck = null;
@@ -101,9 +101,9 @@ namespace Telegram.Controls.Messages
             {
                 _margin = new Size(0, 0);
             }
-            else if (textRow == footerRow)
+            else if (textRow == footerRow && text is MessageTextBlock blocks && blocks.Children.Count > 0)
             {
-                _margin = Margins(availableSize.Width, text, footer);
+                _margin = Margins(availableSize.Width, blocks.DesiredSize.Width, blocks.Children[^1] as FormattedTextBlock, footer);
             }
             else if (mediaRow == footerRow)
             {
@@ -150,7 +150,7 @@ namespace Telegram.Controls.Messages
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            FormattedTextBlock text;
+            MessageTextBlock text;
             FrameworkElement media;
             UIElement factCheck;
             UIElement third;
@@ -158,14 +158,14 @@ namespace Telegram.Controls.Messages
             var first = Children[0];
             if (first is MessageFactCheck or MessageSummary)
             {
-                text = Children[1] as FormattedTextBlock;
+                text = Children[1] as MessageTextBlock;
                 media = Children[2] as FrameworkElement;
                 third = Children[3];
                 factCheck = first;
             }
             else
             {
-                text = first as FormattedTextBlock;
+                text = first as MessageTextBlock;
                 media = Children[1] as FrameworkElement;
                 third = Children[2];
                 factCheck = null;
@@ -232,12 +232,16 @@ namespace Telegram.Controls.Messages
             return finalSize;
         }
 
-        private Size Margins(double availableWidth, FormattedTextBlock text, MessageFooter footer)
+        private Size Margins(double availableWidth, double desiredWidth, FormattedTextBlock text, MessageFooter footer)
         {
             var marginLeft = 0d;
             var marginBottom = 0d;
 
-            if (_placeholder)
+            if (text == null)
+            {
+                return new Size(0, Theme.Current.MessageFontSize * 1.33);
+            }
+            else if (_placeholder)
             {
                 var maxWidth = availableWidth;
                 var footerWidth = footer.DesiredSize.Width + footer.Margin.Left + footer.Margin.Right;
@@ -253,7 +257,7 @@ namespace Telegram.Controls.Messages
                     return new Size(Math.Max(0, footerWidth - 16), 0);
                 }
 
-                var width = text.DesiredSize.Width;
+                var width = desiredWidth;
                 var bounds = ContentEnd(text, fontSize * BootStrapper.Current.TextScaleFactor);
 
                 var diff = width - bounds;

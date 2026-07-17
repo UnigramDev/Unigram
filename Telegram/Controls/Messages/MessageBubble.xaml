@@ -215,14 +215,10 @@
                             <local:MessageBubblePanel x:Name="Panel"
                                                       Grid.Column="1"
                                                       Grid.Row="1">
-                                <controls:FormattedTextBlock x:Name="Message"
-                                                             Foreground="{ThemeResource MessageForegroundBrush}"
-                                                             HorizontalTextAlignment="DetectFromContent"
-                                                             TextReadingOrder="UseFlowDirection"
-                                                             AdjustLineEnding="True"
-                                                             Margin="10,0,10,6"
-                                                             Grid.Column="1"
-                                                             Grid.Row="2" />
+                                <local:MessageTextBlock x:Name="Message"
+                                                        Margin="10,0,10,6"
+                                                        Grid.Column="1"
+                                                        Grid.Row="2" />
 
                                 <Border x:Name="Media"
                                         Grid.Column="1"

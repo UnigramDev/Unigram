@@ -83,7 +83,10 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
+            if (IsConnected)
+            {
+                LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
+            }
 
             if (string.IsNullOrEmpty(audio.Title))
             {
@@ -302,8 +305,11 @@ namespace Telegram.Controls.Cells
 
                 UpdatePosition(LifetimeService.Current.Playback.Position, LifetimeService.Current.Playback.Duration);
 
-                LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
-                LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
+                if (IsConnected)
+                {
+                    LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
+                    LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
+                }
             }
             else
             {

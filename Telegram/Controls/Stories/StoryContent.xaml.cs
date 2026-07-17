@@ -1876,7 +1876,7 @@ namespace Telegram.Controls.Stories
             var language = LanguageIdentification.IdentifyLanguage(message.Text.Text);
             var translate = ViewModel.Session.Resolve<ITranslateService>();
 
-            var popup = new TranslatePopup(translate, message.Text.Text, language, ViewModel.Settings.Translate.To, false)
+            var popup = new TranslatePopup(translate, message.Text, language, ViewModel.Settings.Translate.To, false)
             {
                 RequestedTheme = ElementTheme.Dark
             };

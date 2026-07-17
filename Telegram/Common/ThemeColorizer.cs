@@ -91,7 +91,7 @@ namespace Telegram.Common
                 return color;
             }
 
-            return result.Value.ToRGB();
+            return result.Value.ToRGB(color.A);
         }
 
         //void Colorize(string name, ref byte r, ref byte g, ref byte b)

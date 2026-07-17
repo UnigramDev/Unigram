@@ -177,7 +177,10 @@ namespace Telegram.Controls.Messages.Content
                     continue;
                 }
 
-                var selector = new MessageSelector(pos, element);
+                var selector = new MessageSelector(pos, element)
+                {
+                    IsTrackerEnabled = false
+                };
 
                 Children.Add(selector);
 
@@ -229,6 +232,18 @@ namespace Telegram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
+        }
+
+        public void UpdateSelection(long messageId)
+        {
+            foreach (var child in Children)
+            {
+                if (child is MessageSelector selector && selector.Message?.Id == messageId)
+                {
+                    selector.UpdateSelection();
+                    return;
+                }
+            }
         }
 
         public void UpdateSelectionEnabled(bool value, bool animate)

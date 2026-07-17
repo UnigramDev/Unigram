@@ -5,6 +5,7 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:controls="using:Telegram.Controls"
                         xmlns:local="using:Telegram.Controls.Gallery"
+                        xmlns:messages="using:Telegram.Controls.Messages"
                         mc:Ignorable="d"
                         d:DesignHeight="300"
                         d:DesignWidth="400"
@@ -166,12 +167,13 @@
                         Visibility="{x:Bind ConvertCaption(ViewModel.SelectedItem.Caption), Mode=OneWay}"
                         HorizontalAlignment="Center"
                         CornerRadius="4"
-                        Padding="8"
                         Margin="0,8,0,0">
-                    <controls:FormattedTextBlock x:Name="Caption"
-                                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                 TextTrimming="CharacterEllipsis"
-                                                 MaxLines="5" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  VerticalScrollMode="Auto"
+                                  MaxHeight="120">
+                        <messages:MessageTextBlock x:Name="Caption"
+                                                   Margin="8" />
+                    </ScrollViewer>
                 </Border>
             </StackPanel>
         </local:GalleryBottomPanel>

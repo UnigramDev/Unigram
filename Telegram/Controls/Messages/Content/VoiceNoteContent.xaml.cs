@@ -46,6 +46,24 @@ namespace Telegram.Controls.Messages.Content
             DefaultStyleKey = typeof(VoiceNoteContent);
         }
 
+        protected override void OnLoaded()
+        {
+            var voiceNote = GetContent(_message);
+            if (voiceNote == null || !_templateApplied)
+            {
+                return;
+            }
+
+            // Subscribe to the session-lived Playback service only while connected (see AudioContent):
+            // bind-path subscriptions leaked controls prepared but never loaded. Visuals were already
+            // set during bind; this only (re)establishes the subscriptions, so it stays cheap.
+            var playback = LifetimeService.Current.Playback;
+            playback.SourceChanged -= OnPlaybackStateChanged;
+            playback.SourceChanged += OnPlaybackStateChanged;
+
+            UpdateFile(_message, voiceNote.Voice);
+        }
+
         protected override void OnUnloaded()
         {
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
@@ -109,7 +127,10 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
+            if (IsConnected)
+            {
+                LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
+            }
 
             Progress.UpdateWaveform(voiceNote.Waveform, voiceNote.Duration);
             ViewOnce.Visibility = message.SelfDestructType is MessageSelfDestructTypeImmediately
@@ -383,8 +404,11 @@ namespace Telegram.Controls.Messages.Content
 
                 UpdatePosition(LifetimeService.Current.Playback.Position, LifetimeService.Current.Playback.Duration, LifetimeService.Current.Playback.IsPlaying);
 
-                LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
-                LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
+                if (IsConnected)
+                {
+                    LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
+                    LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
+                }
 
                 Button.Progress = 1;
                 Progress.IsEnabled = true;

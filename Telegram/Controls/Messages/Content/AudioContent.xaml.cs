@@ -81,6 +81,25 @@ namespace Telegram.Controls.Messages.Content
 
         #endregion
 
+        protected override void OnLoaded()
+        {
+            var audio = GetContent(_message);
+            if (audio == null || !_templateApplied)
+            {
+                return;
+            }
+
+            // Subscribe to the session-lived Playback service only while connected. Subscribing on
+            // bind (UpdateMessage/UpdatePlayback, gated by IsConnected) leaked controls that were
+            // prepared but never loaded, so OnUnloaded/Recycle never ran. The visuals were already
+            // set during bind; here we only (re)establish the subscriptions, so it stays cheap.
+            var playback = LifetimeService.Current.Playback;
+            playback.SourceChanged -= OnPlaybackStateChanged;
+            playback.SourceChanged += OnPlaybackStateChanged;
+
+            UpdatePlayback(_message, audio, audio.AudioValue);
+        }
+
         protected override void OnUnloaded()
         {
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
@@ -100,7 +119,10 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
+            if (IsConnected)
+            {
+                LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
+            }
 
             if (string.IsNullOrEmpty(audio.Title))
             {
@@ -323,8 +345,11 @@ namespace Telegram.Controls.Messages.Content
 
                 UpdatePosition(LifetimeService.Current.Playback.Position, LifetimeService.Current.Playback.Duration);
 
-                LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
-                LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
+                if (IsConnected)
+                {
+                    LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
+                    LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
+                }
             }
             else
             {

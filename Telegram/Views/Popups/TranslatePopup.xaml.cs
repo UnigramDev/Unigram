@@ -6,6 +6,7 @@
 //
 
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -16,6 +17,7 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class TranslatePopup : ContentPopup
     {
+        private readonly IClientService _clientService;
         private readonly ITranslateService _translateService;
         private readonly string _toLanguage;
         private readonly string _tone;
@@ -23,23 +25,32 @@ namespace Telegram.Views.Popups
         private readonly long _chatId;
         private readonly long _messageId;
 
-        private readonly string _text;
+        private readonly FormattedText _text;
 
         private readonly string _fromLanguage;
         private readonly bool _contentProtected;
 
+        private readonly TextSelectionManager _textSelectionManager;
+
         private bool _loadingMore;
 
         public TranslatePopup(ITranslateService translateService, string text, string fromLanguage, string toLanguage, bool contentProtected)
+            : this(translateService, 0, 0, text.AsFormattedText(), fromLanguage, toLanguage, contentProtected)
+        {
+
+        }
+
+        public TranslatePopup(ITranslateService translateService, FormattedText text, string fromLanguage, string toLanguage, bool contentProtected)
             : this(translateService, 0, 0, text, fromLanguage, toLanguage, contentProtected)
         {
 
         }
 
-        public TranslatePopup(ITranslateService translateService, long chatId, long messageId, string text, string fromLanguage, string toLanguage, bool contentProtected)
+        public TranslatePopup(ITranslateService translateService, long chatId, long messageId, FormattedText text, string fromLanguage, string toLanguage, bool contentProtected)
         {
             InitializeComponent();
 
+            _clientService = translateService.ClientService;
             _translateService = translateService;
             _toLanguage = toLanguage;
 
@@ -50,6 +61,8 @@ namespace Telegram.Views.Popups
 
             _fromLanguage = fromLanguage;
             _contentProtected = contentProtected;
+
+            _textSelectionManager = new TextSelectionManager(this, Block, handleContextMenu: true);
 
             Title = Strings.AutomaticTranslation;
             PrimaryButtonText = Strings.Close;
@@ -69,17 +82,15 @@ namespace Telegram.Views.Popups
 
             ToLanguage.Text = toName;
 
-            Presenter.PlaceholderText = text;
-            Presenter.IsPlaceholderRightToLeft = rtl;
-            Presenter.IsTextSelectionEnabled = !contentProtected;
+            Block.ShowHideSkeleton(true);
+            Block.SetText(_clientService, text);
 
             Opened += OnOpened;
         }
 
         private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            var block = Presenter;
-            if (_loadingMore || block.PlaceholderText == null || block.Tag != null)
+            if (_loadingMore)
             {
                 return;
             }
@@ -95,7 +106,7 @@ namespace Telegram.Views.Popups
             }
             else
             {
-                task = _translateService.TranslateAsync(block.PlaceholderText, _toLanguage, _tone);
+                task = _translateService.TranslateAsync(_text, _toLanguage, _tone);
             }
 
             var response = await task;
@@ -107,17 +118,20 @@ namespace Telegram.Views.Popups
                     await Task.Delay(1000 - diff);
                 }
 
-                block.Text = translation.Text;
+                Block.ShowHideSkeleton(false);
+                Block.SetText(_clientService, translation);
             }
             else if (response is Error error)
             {
+                Block.ShowHideSkeleton(false);
+
                 if (error.Code == 429)
                 {
-                    block.Text = Strings.TranslationFailedAlert1;
+                    Block.SetText(_clientService, Strings.TranslationFailedAlert1.AsFormattedText());
                 }
                 else
                 {
-                    block.Text = Strings.TranslationFailedAlert2;
+                    Block.SetText(_clientService, Strings.TranslationFailedAlert2.AsFormattedText());
                 }
             }
 

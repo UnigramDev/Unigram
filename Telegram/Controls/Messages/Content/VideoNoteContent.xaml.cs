@@ -41,6 +41,28 @@ namespace Telegram.Controls.Messages.Content
             DefaultStyleKey = typeof(VideoNoteContent);
         }
 
+        protected override void OnLoaded()
+        {
+            if (_message == null || !_templateApplied)
+            {
+                return;
+            }
+
+            // Subscribe to the session-lived Playback service only while connected (see AudioContent):
+            // bind-path subscriptions leaked controls prepared but never loaded.
+            var playback = LifetimeService.Current.Playback;
+            playback.SourceChanged -= OnPlaybackStateChanged;
+            playback.SourceChanged += OnPlaybackStateChanged;
+
+            if (_withinViewport && _message.AreTheSame(playback.CurrentItem))
+            {
+                playback.StateChanged -= OnPlaybackStateChanged;
+                playback.StateChanged += OnPlaybackStateChanged;
+                playback.PositionChanged -= OnPositionChanged;
+                playback.PositionChanged += OnPositionChanged;
+            }
+        }
+
         protected override void OnUnloaded()
         {
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
@@ -103,7 +125,10 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
+            if (IsConnected)
+            {
+                LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
+            }
 
             LayoutRoot.Constraint = message;
 
@@ -584,8 +609,11 @@ namespace Telegram.Controls.Messages.Content
 
             if (_withinViewport && _message.AreTheSame(LifetimeService.Current.Playback.CurrentItem))
             {
-                LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
-                LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
+                if (IsConnected)
+                {
+                    LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
+                    LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
+                }
 
                 if (_panel == null)
                 {

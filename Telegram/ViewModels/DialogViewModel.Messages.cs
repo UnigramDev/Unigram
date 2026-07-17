@@ -1313,52 +1313,47 @@ namespace Telegram.ViewModels
 
         public void TranslateMessage(MessageQuote message)
         {
-            string text = message.Quote.Text;
-
-            var language = LanguageIdentification.IdentifyLanguage(text);
-            var popup = new TranslatePopup(_translateService, text, language, Settings.Translate.To, !message.Message.CanBeSaved);
+            var language = LanguageIdentification.IdentifyLanguage(message.Quote.Text);
+            var popup = new TranslatePopup(_translateService, message.Quote, language, Settings.Translate.To, !message.Message.CanBeSaved);
             ShowPopup(popup);
         }
 
         public void TranslateMessage(MessageViewModel message)
         {
-            string text;
+            FormattedText text;
             long chatId;
             long messageId;
 
             if (message.Content is MessagePoll poll)
             {
-                var builder = new StringBuilder(poll.Poll.Question.Text);
+                var builder = new FormattedText(poll.Poll.Question.Text, poll.Poll.Question.Entities.ToList());
 
                 foreach (var option in poll.Poll.Options)
                 {
-                    builder.AppendLine();
-                    builder.AppendFormat("\U0001F518 {0}", option.Text.Text);
+                    builder = FormattedText.Concat("\n\U0001F518 ", option.Text);
                 }
 
-                text = builder.ToString();
+                text = builder;
                 chatId = 0;
                 messageId = 0;
             }
             else if (message.Content is MessageChecklist checklist)
             {
-                var builder = new StringBuilder(checklist.List.Title.Text);
+                var builder = new FormattedText(checklist.List.Title.Text, checklist.List.Title.Entities.ToList());
 
                 foreach (var task in checklist.List.Tasks)
                 {
-                    builder.AppendLine();
-
                     if (task.CompletionDate != 0)
                     {
-                        builder.AppendFormat("\u2611 {0}", task.Text.Text);
+                        builder = FormattedText.Concat("\n\u2611 ", task.Text);
                     }
                     else
                     {
-                        builder.AppendFormat("\u2610 {0}", task.Text.Text);
+                        builder = FormattedText.Concat("\n\u2610 ", task.Text);
                     }
                 }
 
-                text = builder.ToString();
+                text = builder;
                 chatId = 0;
                 messageId = 0;
             }
@@ -1370,7 +1365,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                text = caption.Text;
+                text = caption;
                 chatId = message.ChatId;
                 messageId = message.Id;
 
@@ -1382,7 +1377,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            var language = LanguageIdentification.IdentifyLanguage(text);
+            var language = LanguageIdentification.IdentifyLanguage(text.Text);
             var popup = new TranslatePopup(_translateService, /*chatId, messageId,*/ text, language, Settings.Translate.To, !message.CanBeSaved);
             ShowPopup(popup);
         }

@@ -180,7 +180,7 @@ namespace Telegram.Controls.Messages
         private Grid ContentPanel;
         private Grid Header;
         private MessageBubblePanel Panel;
-        private FormattedTextBlock Message;
+        private MessageTextBlock Message;
         private Border Media;
         private MessageFooter Footer;
 
@@ -228,7 +228,7 @@ namespace Telegram.Controls.Messages
             ContentPanel = GetTemplateChild(nameof(ContentPanel)) as Grid;
             Header = GetTemplateChild(nameof(Header)) as Grid;
             Panel = GetTemplateChild(nameof(Panel)) as MessageBubblePanel;
-            Message = GetTemplateChild(nameof(Message)) as FormattedTextBlock;
+            Message = GetTemplateChild(nameof(Message)) as MessageTextBlock;
             Media = GetTemplateChild(nameof(Media)) as Border;
             Footer = GetTemplateChild(nameof(Footer)) as MessageFooter;
 
@@ -1948,12 +1948,19 @@ namespace Telegram.Controls.Messages
             }
             else if (content is MessageRichMessage)
             {
-                ContentPanel.Padding = new Thickness(0, 0, 0, 0);
-                Media.Margin = new Thickness(0, 0, 0, 0);
+                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+                Media.Margin = new Thickness(0);
                 FooterToNormal();
                 Grid.SetRow(Footer, 4);
                 Grid.SetRow(Message, 2);
-                Panel.Placeholder = false;
+                Panel.Placeholder = true;
+
+                //ContentPanel.Padding = new Thickness(0, 0, 0, 0);
+                //Media.Margin = new Thickness(0, 0, 0, 0);
+                //FooterToNormal();
+                //Grid.SetRow(Footer, 4);
+                //Grid.SetRow(Message, 2);
+                //Panel.Placeholder = false;
             }
             else
             {
@@ -2321,7 +2328,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            TextEntityClick(message, Message, e);
+            TextEntityClick(message, sender as FormattedTextBlock, e);
         }
 
         public static void TextEntityClick(MessageViewModel message, FormattedTextBlock textBlock, TextEntityClickEventArgs e)
@@ -2822,13 +2829,8 @@ namespace Telegram.Controls.Messages
                 var index = ClientEx.SearchQuote(caption, options.Quote);
                 if (index >= 0)
                 {
-                    var rich = Message.GetChild<RichTextBlock>();
-
                     var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.TextScaleFactor;
                     var quoteSize = Theme.Current.CaptionFontSize * BootStrapper.Current.TextScaleFactor;
-
-                    var width = Message.LastAvailableWidth;
-                    var inset = 0;
 
                     var minX = double.MaxValue;
                     var minY = double.MaxValue;
@@ -2849,17 +2851,7 @@ namespace Telegram.Controls.Messages
                     for (int j = 0; j < message.Text.Paragraphs.Count; j++)
                     {
                         StyledParagraph styled = message.Text.Paragraphs[j];
-                        Paragraph paragraph = rich.Blocks[j] as Paragraph;
-
-                        if (j == 0)
-                        {
-                            inset = styled.Type switch
-                            {
-                                TextParagraphTypeMonospace { Language.Length: > 0 } => 22 + 6,
-                                not null => 6,
-                                _ => 0
-                            };
-                        }
+                        Paragraph paragraph = Message.GetBlock(j, out double width, out Point adjustment) as Paragraph;
 
                         if (!TextStyleRun.GetRelativeRange(index, options.Quote.Text.Text.Length, styled.Offset, styled.Length, out int xoffset, out int xlength))
                         {
@@ -2876,7 +2868,7 @@ namespace Telegram.Controls.Messages
                         var rectangles = PlaceholderHelper.Foreground.RangeMetrics(partial, xoffset, xlength, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft, true);
                         var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
-                        var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X, relative.Y + position.Y + inset);
+                        var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X + adjustment.X, relative.Y + position.Y + adjustment.Y);
 
                         for (int i = 0; i < rectangles.Count; i++)
                         {

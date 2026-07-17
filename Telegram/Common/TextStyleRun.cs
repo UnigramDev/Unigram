@@ -611,29 +611,80 @@ namespace Telegram.Common
         public StyledText(string text, IList<TextEntity> entities, IList<StyledParagraph> paragraphs)
         {
             Text = text;
-            Entities = entities;
             Parts = TextStyleRun.GetParts(entities);
             Paragraphs = paragraphs;
+            IsComplex = GetIsComplex(paragraphs);
+        }
 
-            if (paragraphs.Count == 1)
+        private static bool GetIsComplex(IList<StyledParagraph> paragraphs)
+        {
+            for (int i = 0; i < paragraphs.Count; i++)
             {
-                var paragraph = paragraphs[0];
-                var plain = text.Length > 0
-                    && paragraph.Entities.Count == 0;
-
-                IsPlain = plain;
+                if (paragraphs[i].Type != null)
+                {
+                    return true;
+                }
             }
+
+            return false;
         }
 
         public string Text { get; }
-
-        public IList<TextEntity> Entities { get; }
 
         public IList<TextStylePart> Parts { get; }
 
         public IList<StyledParagraph> Paragraphs { get; }
 
         public bool IsPlain { get; }
+
+        public bool IsComplex { get; }
+
+        /// <summary>
+        /// Extracts the [start, start+length) character range of this styled text as a
+        /// standalone <see cref="FormattedText"/> — the substring plus the entities that
+        /// intersect the range, clipped and re-based to the slice. Operates purely on the
+        /// styled text (no original FormattedText needed), so it behaves the same whether
+        /// this came from a FormattedText or a RichText. Used to copy a selection.
+        /// </summary>
+        public FormattedText Substring(int start, int length)
+        {
+            if (start < 0)
+            {
+                length += start;
+                start = 0;
+            }
+
+            var end = Math.Min(Text.Length, start + Math.Max(0, length));
+            if (end <= start)
+            {
+                return new FormattedText(string.Empty, new List<TextEntity>());
+            }
+
+            // Paragraph entities are paragraph-relative; lift each back to an absolute
+            // offset before clipping to the requested range. (StyledText no longer keeps a
+            // flattened entity list — the paragraphs are the source of truth.)
+            var entities = new List<TextEntity>();
+            foreach (var paragraph in Paragraphs)
+            {
+                if (paragraph.Entities == null)
+                {
+                    continue;
+                }
+
+                foreach (var entity in paragraph.Entities)
+                {
+                    var absolute = paragraph.Offset + entity.Offset;
+                    var from = Math.Max(absolute, start);
+                    var to = Math.Min(absolute + entity.Length, end);
+                    if (to > from)
+                    {
+                        entities.Add(new TextEntity(from - start, to - from, entity.Type));
+                    }
+                }
+            }
+
+            return new FormattedText(Text.Substring(start, end - start), entities);
+        }
 
         public static StyledText Empty = new(string.Empty, Array.Empty<TextEntity>(), Array.Empty<StyledParagraph>());
     }
@@ -674,6 +725,10 @@ namespace Telegram.Common
                     _ => null
                 };
             }
+            else
+            {
+                IsPlain = true;
+            }
         }
 
         public string Text { get; }
@@ -693,6 +748,8 @@ namespace Telegram.Common
         public int Padding { get; }
 
         public TextParagraphType Type { get; }
+
+        public bool IsPlain { get; }
 
         public bool IsDirty { get; set; } = true;
 

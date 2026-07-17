@@ -32,6 +32,17 @@ namespace Telegram.Controls.Cells
             InitializeComponent();
         }
 
+        protected override void OnLoaded()
+        {
+            var message = _message;
+            if (message == null)
+            {
+                return;
+            }
+
+            UpdateMessage(message);
+        }
+
         protected override void OnUnloaded()
         {
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
@@ -72,7 +83,13 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
+            // Subscribe to the session-lived Playback service only while connected; OnLoaded
+            // re-runs UpdateMessage so this fires once loaded. Subscribing on bind leaked cells
+            // prepared but never loaded (so OnUnloaded never ran).
+            if (IsConnected)
+            {
+                LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
+            }
 
             if (message.ClientService.TryGetUser(message.SenderId, out User user))
             {
@@ -176,8 +193,11 @@ namespace Telegram.Controls.Cells
 
                 UpdatePosition(LifetimeService.Current.Playback.Position, LifetimeService.Current.Playback.Duration);
 
-                LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
-                LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
+                if (IsConnected)
+                {
+                    LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
+                    LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
+                }
             }
             else
             {

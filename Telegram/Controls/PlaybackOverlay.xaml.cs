@@ -36,18 +36,15 @@ namespace Telegram.Controls
             Presenter.PointerPressed += Presenter_PointerPressed;
             Presenter.PointerMoved += Presenter_PointerMoved;
             Presenter.PointerReleased += Presenter_PointerReleased;
-
-            Connected += OnConnected;
-            Disconnected += OnDisconnected;
         }
 
-        private void OnConnected(object sender, RoutedEventArgs e)
+        protected override void OnLoaded()
         {
             VideoNoteContent.VisibleMessagesChanged += OnVisibleMessagesChanged;
             LifetimeService.Current.Playback.SourceChanged += OnSourceChanged;
         }
 
-        private void OnDisconnected(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
             VideoNoteContent.VisibleMessagesChanged -= OnVisibleMessagesChanged;
             LifetimeService.Current.Playback.SourceChanged -= OnSourceChanged;

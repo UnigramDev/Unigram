@@ -47,54 +47,23 @@ namespace Telegram.Controls
         public bool IsConnected => _loaded;
         public bool IsDisconnected => _unloaded;
 
-        private event RoutedEventHandler _connected;
-        public event RoutedEventHandler Connected
+        public event RoutedEventHandler Connected;
+        public event RoutedEventHandler Disconnected;
+
+        public UserControlEx()
         {
-            add
-            {
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded += OnChanged;
-                    Unloaded += OnChanged;
-                }
-
-                _connected += value;
-            }
-            remove
-            {
-                _connected -= value;
-
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded -= OnChanged;
-                    Unloaded -= OnChanged;
-                }
-            }
+            Loaded += OnChanged;
+            Unloaded += OnChanged;
         }
 
-        private event RoutedEventHandler _disconnected;
-        public event RoutedEventHandler Disconnected
+        protected virtual void OnLoaded()
         {
-            add
-            {
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded += OnChanged;
-                    Unloaded += OnChanged;
-                }
 
-                _disconnected += value;
-            }
-            remove
-            {
-                _disconnected -= value;
+        }
 
-                if (_connected == null && _disconnected == null)
-                {
-                    Loaded -= OnChanged;
-                    Unloaded -= OnChanged;
-                }
-            }
+        protected virtual void OnUnloaded()
+        {
+
         }
 
         private void OnChanged(object sender, RoutedEventArgs e)
@@ -108,13 +77,15 @@ namespace Telegram.Controls
             {
                 _loaded = true;
                 _unloaded = false;
-                _connected?.Invoke(this, e);
+                OnLoaded();
+                Connected?.Invoke(this, e);
             }
             else if (parent == null && _loaded)
             {
                 _loaded = false;
                 _unloaded = true;
-                _disconnected?.Invoke(sender, e);
+                OnUnloaded();
+                Disconnected?.Invoke(sender, e);
             }
         }
     }

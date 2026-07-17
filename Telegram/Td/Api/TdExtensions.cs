@@ -129,6 +129,7 @@ namespace Telegram.Td.Api
                 MessageAlbum album => album.ShowCaptionAboveMedia,
                 MessagePaidAlbum paidAlbum => paidAlbum.ShowCaptionAboveMedia,
                 MessagePaidMedia paidMedia => paidMedia.ShowCaptionAboveMedia,
+                MessageRichMessage richMessage => richMessage.Message.Blocks[0] is not PageBlockAnimation and not PageBlockCollage and not PageBlockMap and not PageBlockPhoto and not PageBlockSlideshow and not PageBlockVideo,
                 _ => false
             };
         }
@@ -2582,6 +2583,11 @@ namespace Telegram.Td.Api
 
         public static bool HasCaption(this MessageContent content)
         {
+            if (content is MessageRichMessage richMessage)
+            {
+                return richMessage.Message.Blocks[0] is not PageBlockAnimation and not PageBlockCollage and not PageBlockMap and not PageBlockPhoto and not PageBlockSlideshow and not PageBlockVideo;
+            }
+
             var caption = content.GetCaption();
             return caption != null && !string.IsNullOrEmpty(caption.Text);
         }

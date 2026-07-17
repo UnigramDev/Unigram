@@ -59,9 +59,19 @@ namespace Telegram.Views.Popups
             LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
             LifetimeService.Current.Playback.PlaylistChanged += OnPlaylistChanged;
 
+            Unloaded += OnUnloaded;
+
             ScrollingHost.ItemsSource = _items;
 
             UpdateGlyph();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
+            LifetimeService.Current.Playback.PlaylistChanged -= OnPlaylistChanged;
         }
 
         public bool CompareItems(PlaybackItem oldItem, PlaybackItem newItem)

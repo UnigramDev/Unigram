@@ -38,8 +38,12 @@ namespace winrt::Telegram::Native::implementation
 
         Invalidate(m_rasterizationScale);
 
-        m_xamlRootChanged = m_xamlRoot.Changed({ this, &MessageBubbleNineGrid::OnXamlRootChanged });
-        m_renderingDeviceReplaced = m_compositionDevice.RenderingDeviceReplaced({ this, &MessageBubbleNineGrid::OnRenderingDeviceReplaced });
+        // Non-owning raw 'this' delegates would dangle if a callback (especially
+        // RenderingDeviceReplaced, raised on the app-shared CompositionGraphicsDevice during
+        // device-lost recovery) fires around/after teardown. get_weak() makes them no-op once
+        // the object is gone. See FreeformGradientSurface for the same pattern.
+        m_xamlRootChanged = m_xamlRoot.Changed({ get_weak(), &MessageBubbleNineGrid::OnXamlRootChanged });
+        m_renderingDeviceReplaced = m_compositionDevice.RenderingDeviceReplaced({ get_weak(), &MessageBubbleNineGrid::OnRenderingDeviceReplaced });
     }
 
     MessageBubbleNineGrid::~MessageBubbleNineGrid()
@@ -63,6 +67,8 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT MessageBubbleNineGrid::Invalidate(double rasterizationScale)
     {
+        if (!m_surface) return E_FAIL;
+
         //std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 

@@ -453,78 +453,96 @@
     <Style TargetType="local:BlockQuote">
         <Setter Property="Foreground"
                 Value="{ThemeResource MessageHeaderForegroundBrush}" />
+        <Setter Property="Background"
+                Value="{ThemeResource MessageHeaderBackgroundBrush}" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource MessageHeaderBorderBrush}" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Glyph"
+                Value="&#xEA5A;" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:BlockQuote">
-                    <Grid CornerRadius="4">
-                        <Rectangle x:Name="Overlay"
-                                   Fill="{TemplateBinding BorderBrush}"
-                                   Opacity="0.1"
-                                   Grid.ColumnSpan="3" />
-                        <Rectangle x:Name="Pill"
-                                   Fill="{TemplateBinding BorderBrush}"
-                                   HorizontalAlignment="Left"
-                                   Width="3" />
+                    <Border CornerRadius="4">
+                        <Grid Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="3,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <HyperlinkButton x:Name="Header"
+                                             x:Load="False"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalAlignment="Stretch"
+                                             Background="{TemplateBinding Background}"
+                                             Foreground="{TemplateBinding Foreground}"
+                                             Grid.Column="1">
+                                <HyperlinkButton.Template>
+                                    <ControlTemplate TargetType="HyperlinkButton">
+                                        <ContentPresenter Background="{TemplateBinding Background}"
+                                                          HorizontalContentAlignment="Stretch"
+                                                          VerticalContentAlignment="Stretch" />
+                                    </ControlTemplate>
+                                </HyperlinkButton.Template>
+                                <TextBlock Text="{TemplateBinding LanguageName}"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           FontWeight="SemiBold"
+                                           Margin="8,2,0,4" />
+                            </HyperlinkButton>
 
-                        <TextBlock Text="{TemplateBinding Glyph}"
-                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                   FontSize="16"
-                                   Foreground="{TemplateBinding Foreground}"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Top"
-                                   Margin="4" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="local:BlockCode">
-        <Setter Property="Foreground"
-                Value="{ThemeResource MessageHeaderForegroundBrush}" />
-        <Setter Property="BorderBrush"
-                Value="{ThemeResource MessageHeaderBorderBrush}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="local:BlockCode">
-                    <Grid CornerRadius="4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Rectangle x:Name="Overlay"
-                                   Fill="{TemplateBinding BorderBrush}"
-                                   Opacity="0.1"
-                                   Grid.ColumnSpan="2" />
-                        <Rectangle x:Name="Pill"
-                                   Fill="{TemplateBinding BorderBrush}"
-                                   HorizontalAlignment="Left"
-                                   Width="3" />
-
-                        <Grid VerticalAlignment="Top"
-                              Grid.Column="1">
-                            <Rectangle Fill="{TemplateBinding BorderBrush}"
-                                       Opacity="0.1"
-                                       Grid.ColumnSpan="3" />
-                            <TextBlock Text="{TemplateBinding LanguageName}"
+                            <TextBlock Text="{TemplateBinding Glyph}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="16"
                                        Foreground="{TemplateBinding Foreground}"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       FontWeight="SemiBold"
-                                       Margin="8,2,0,4" />
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Top"
+                                       IsHitTestVisible="False"
+                                       Margin="4"
+                                       Grid.Column="1"
+                                       Grid.RowSpan="2" />
+
+                            <ContentPresenter Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Padding="{TemplateBinding Padding}"
+                                              Foreground="{ThemeResource TextControlForeground}"
+                                              Grid.Column="1"
+                                              Grid.Row="1" />
+
+                            <HyperlinkButton x:Name="Expand"
+                                             x:Load="False"
+                                             Content="&#xE0E5;"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalAlignment="Stretch"
+                                             Foreground="{TemplateBinding Foreground}"
+                                             FontWeight="SemiBold"
+                                             FontSize="16"
+                                             Grid.Column="1"
+                                             Grid.Row="1">
+                                <HyperlinkButton.Template>
+                                    <ControlTemplate TargetType="HyperlinkButton">
+                                        <ContentPresenter Padding="4"
+                                                          Background="Transparent"
+                                                          FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                          HorizontalContentAlignment="Right"
+                                                          VerticalContentAlignment="Bottom" />
+                                    </ControlTemplate>
+                                </HyperlinkButton.Template>
+                            </HyperlinkButton>
                         </Grid>
-
-
-                        <TextBlock Text="&#xEA5A;"
-                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                   FontSize="16"
-                                   Foreground="{TemplateBinding Foreground}"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Top"
-                                   Margin="4"
-                                   Grid.Column="1" />
-                    </Grid>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -2361,7 +2379,6 @@
                         <RichTextBlock x:Name="TextBlock"
                                        Foreground="{TemplateBinding Foreground}"
                                        Padding="{TemplateBinding Padding}"
-                                       IsTextSelectionEnabled="{TemplateBinding IsTextSelectionEnabled}"
                                        FontFamily="{TemplateBinding FontFamily}"
                                        FontSize="{TemplateBinding FontSize}"
                                        TextAlignment="{TemplateBinding TextAlignment}"

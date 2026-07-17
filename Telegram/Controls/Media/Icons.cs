@@ -84,6 +84,7 @@ namespace Telegram.Controls.Media
         public const string CodeFilled16 = "\uEA5A";
         public const string CodeBlockFilled16 = "\uEA3D";
         public const string QuoteBlockFilled16 = "\uEA01";
+        public const string QuoteBlockOpenFilled16 = "\uEB19";
         public const string QuoteBlock = "\uEAC7";
 
         public const string Globe = "\uE774";
@@ -170,6 +171,15 @@ namespace Telegram.Controls.Media
 
         public const string WarningFilled = "\uEAD9";
 
+        public const string TextT = "\uEB22";
+        public const string TextHeader1 = "\uEB21";
+        public const string TextHeader2 = "\uEB20";
+        public const string TextHeader3 = "\uEB1F";
+        public const string TextHeader4 = "\uEB1E";
+        public const string TextHeader5 = "\uEB1D";
+        public const string TextHeader6 = "\uEB1C";
+        public const string TextNumberList = "\uEB17";
+        public const string TextBulletList = "\uEB09";
         public const string TextBold = "\uE8DD";
         public const string TextItalic = "\uE8DB";
         public const string TextUnderline = "\uE8DC";

@@ -56,6 +56,8 @@ namespace Telegram.Controls.Gallery
         private readonly Visual _layerFullScreen;
         private readonly Visual _bottom;
 
+        private TextSelectionManager _textSelectionManager;
+
         private bool _wasFullScreen;
         private bool _lastFullScreen;
 
@@ -789,10 +791,14 @@ namespace Telegram.Controls.Gallery
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            _textSelectionManager ??= new TextSelectionManager(this, Caption, handleContextMenu: true);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            _textSelectionManager?.Detach();
+            _textSelectionManager = null;
+
             Unload();
         }
 

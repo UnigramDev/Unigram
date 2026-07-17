@@ -1311,6 +1311,15 @@ namespace Telegram.Views
                     }
                 }
             }
+            else if (focused is MessageSelector selector && selector.HasSelection)
+            {
+                var caption = selector.GetSelectedText();
+                if (caption != null)
+                {
+                    ViewModel.SearchExecute(caption.Text);
+                    return;
+                }
+            }
 
             ViewModel.SearchExecute(string.Empty);
         }
@@ -1374,7 +1383,14 @@ namespace Telegram.Views
                     var focused = FocusManagerEx.TryGetFocusedElement();
                     if (focused is MessageSelector selector && selector.Message != null && MessageCopy_Loaded(selector.Message))
                     {
-                        ViewModel.CopyMessage(selector.Message);
+                        if (selector.HasSelection)
+                        {
+                            selector.CopySelectionToClipboard();
+                        }
+                        else
+                        {
+                            ViewModel.CopyMessage(selector.Message);
+                        }
                         args.Handled = true;
                     }
                     else if (focused is RichTextBlock textBlock)
@@ -3179,6 +3195,16 @@ namespace Telegram.Views
                         };
                     }
                 }
+                else if (element is MessageBubble { Parent: MessageSelector parent } && parent.HasSelection)
+                {
+                    quote = new MessageQuote
+                    {
+                        Message = message,
+                        Quote = parent.GetSelectedSourceText(out selectionStart),
+                        Position = selectionStart
+                    };
+                    selectionEnd = selectionStart + quote.Quote.Text.Length;
+                }
 
                 if (message.Content is MessageGift gift && ViewModel.ClientService.TryGetUser(chat, out User user))
                 {
@@ -3540,7 +3566,7 @@ namespace Telegram.Views
                 flyout.Items.RemoveAt(flyout.Items.Count - 1);
             }
 
-            if (element is IReactionsDelegate bubble && selected.Count == 0)
+            if (element is IReactionsDelegate reactionsDelegate && selected.Count == 0)
             {
                 flyout.Opened += async (s, args) =>
                 {
@@ -3551,7 +3577,7 @@ namespace Telegram.Views
                             || reactions.PopularReactions.Count > 0
                             || reactions.RecentReactions.Count > 0)
                         {
-                            ReactionsMenuFlyout.ShowAt(reactions, message, bubble, flyout);
+                            ReactionsMenuFlyout.ShowAt(reactions, message, reactionsDelegate, flyout);
                         }
                     }
                 };

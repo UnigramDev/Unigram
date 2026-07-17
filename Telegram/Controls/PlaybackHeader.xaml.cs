@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {
-    public sealed partial class PlaybackHeader : UserControl
+    public sealed partial class PlaybackHeader : UserControlEx
     {
         private IClientService _clientService;
         private INavigationService _navigationService;
@@ -64,11 +64,8 @@ namespace Telegram.Controls
             }
         }
 
-        public void Update(IClientService clientService, INavigationService navigationService)
+        protected override void OnLoaded()
         {
-            _clientService = clientService;
-            _navigationService = navigationService;
-
             // We unsubscribe first to avoid duplicated notifications
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
@@ -79,6 +76,33 @@ namespace Telegram.Controls
             LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
 
             UpdateGlyph();
+        }
+
+        protected override void OnUnloaded()
+        {
+            LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
+        }
+
+        public void Update(IClientService clientService, INavigationService navigationService)
+        {
+            _clientService = clientService;
+            _navigationService = navigationService;
+
+            // We unsubscribe first to avoid duplicated notifications
+            LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
+
+            if (IsConnected)
+            {
+                LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
+                LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
+                LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
+
+                UpdateGlyph();
+            }
         }
 
         private void OnPlaybackStateChanged(IPlaybackService sender, object args)

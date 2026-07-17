@@ -65,24 +65,20 @@ namespace Telegram.Controls
     {
         private IClientService _clientService;
         private StyledText _text;
+        private bool _plain = true;
+        private TextDirectionality _direction;
         private double _fontSize;
 
         private IXamlDirectObject _fastRun;
-        private double _fastFontSize;
 
         private string _query;
 
-        [Flags]
-        enum HighlightType
-        {
-            None = 0,
-            Spoiler = 1 << 1,
-            Query = 1 << 2,
-            Marked = 1 << 3,
-            Cached = 1 << 4
-        }
-        
-        private HighlightType _highlight;
+        // Paragraph range of the shared StyledText this control currently renders
+        // (inclusive). Full text => [0, Paragraphs.Count - 1]. Used to keep the build loop
+        // and the post-build geometry passes in sync when MessageTextBlock renders a slice.
+        private int _first;
+        private int _last;
+
         private bool _ignoreSpoilers = false;
 
         private AnimatedImage _spoilerPresenter;
@@ -90,7 +86,6 @@ namespace Telegram.Controls
 
         private Span _spanForInlines;
 
-        private readonly List<int> _codeBlocks = new();
         private readonly List<Hyperlink> _links = new();
         private readonly List<IXamlDirectObject> _dates = new();
         private readonly List<TextStyleSpoiler> _spoilers = new();
@@ -126,6 +121,30 @@ namespace Telegram.Controls
         private TextHighlighter _cached;
         private TextHighlighter _marked;
         private TextHighlighter _spoiler;
+
+        // Map between the rendered/highlighter index space (the `offset` SetText builds,
+        // and the space TextHighlighter.Ranges use) and StyledText.Text offsets. Built
+        // by SetText as it emits runs; used by the selection layer (FormattedTextBlock.
+        // Selectable.cs) to convert a selection back to a StyledText slice for copy.
+        // Each segment is rendered/styled-contiguous; lengths differ for custom emoji,
+        // dates and ZWNJ inserts (and paragraph breaks advance styled but not rendered).
+        private readonly struct IndexSegment
+        {
+            public readonly int Rendered;
+            public readonly int Styled;
+            public readonly int RenderedLength;
+            public readonly int StyledLength;
+
+            public IndexSegment(int rendered, int styled, int renderedLength, int styledLength)
+            {
+                Rendered = rendered;
+                Styled = styled;
+                RenderedLength = renderedLength;
+                StyledLength = styledLength;
+            }
+        }
+
+        private List<IndexSegment> _indexMap;
 
         private Canvas Below;
         private RichTextBlock TextBlock;
@@ -193,6 +212,14 @@ namespace Telegram.Controls
             Below = GetTemplateChild(nameof(Below)) as Canvas;
             TextBlock = GetTemplateChild(nameof(TextBlock)) as RichTextBlock;
 
+            if (TextBlock != null)
+            {
+                // Driven in code (was a TemplateBinding): only the native Enabled mode
+                // turns on the inner control's own selection; Disabled/Extended leave it
+                // off (Extended is handled by TextSelectionManager).
+                TextBlock.IsTextSelectionEnabled = TextSelection == TextSelectionMode.Enabled;
+            }
+
             for (int i = 0; i < _blocks?.Count; i++)
             {
                 var block = _blocks[i] as Paragraph;
@@ -208,12 +235,8 @@ namespace Telegram.Controls
 
             if (/*_clientService != null &&*/ _text != null)
             {
-                SetText(_clientService, _text, _fontSize);
-
-                if (_query != null || _spoiler != null)
-                {
-                    SetQuery(_query, true);
-                }
+                // SetText applies the highlighters itself (ApplyHighlighters).
+                SetText(_clientService, _text, _first, _last, _fontSize);
             }
         }
 
@@ -226,6 +249,7 @@ namespace Telegram.Controls
         }
 
         private bool _textSelectionDisabled;
+        private bool _textSelectionIBeam;
 
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
         {
@@ -263,6 +287,19 @@ namespace Telegram.Controls
                 TextBlock.IsHitTestVisible = true;
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
             }
+
+            // Extended: native selection is off, so RichTextBlock won't show the I-beam.
+            // Drive it ourselves over text; leave the cursor over a hyperlink (its own Hand)
+            // and over a spoiler (handled above, which returns early).
+            if (_spanForInlines == null && TextBlock != null && _textSelection == TextSelectionMode.Extended)
+            {
+                var hyperlink = TextBlock.GetHyperlinkFromPoint(e.GetCurrentPoint(TextBlock).Position);
+                if (hyperlink == null)
+                {
+                    _textSelectionIBeam = true;
+                    Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.IBeam, 0);
+                }
+            }
         }
 
         protected override void OnPointerExited(PointerRoutedEventArgs e)
@@ -271,6 +308,12 @@ namespace Telegram.Controls
             {
                 _textSelectionDisabled = false;
                 TextBlock.IsHitTestVisible = true;
+                Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
+            }
+            else if (_spanForInlines == null && _textSelectionIBeam)
+            {
+                // Restore the cursor when leaving an Extended block (we set IBeam on move).
+                _textSelectionIBeam = false;
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
             }
 
@@ -338,7 +381,6 @@ namespace Telegram.Controls
             _links.Clear();
             _dates.Clear();
             _spoilers.Clear();
-            _codeBlocks.Clear();
 
             if (_effectiveViewportChanged != null)
             {
@@ -361,7 +403,7 @@ namespace Telegram.Controls
 
                 if (value)
                 {
-                    SetText(_clientService, _text, _fontSize);
+                    SetText(_clientService, _text, _first, _last, _fontSize);
                     SetQuery(string.Empty);
 
                     if (Below == null || _spoilerPresenter == null)
@@ -386,126 +428,81 @@ namespace Telegram.Controls
             }
         }
 
+        // Sets the search query highlighter only. The spoiler/cached/marked highlighters
+        // are owned by SetText and applied there, so callers that don't search never have
+        // to call this. Both setters funnel through ApplyHighlighters.
         public void SetQuery(string query, bool force = false)
         {
-            var highlight = HighlightType.None;
-            if (_spoiler != null)
+            if (!force && (_query ?? string.Empty) == (query ?? string.Empty))
             {
-                highlight |= HighlightType.Spoiler;
+                return;
             }
-            if (_query != null)
-            {
-                highlight |= HighlightType.Query;
-            }
-            if (_cached != null)
-            {
-                highlight |= HighlightType.Cached;
-            }
-            if (_marked != null)
-            {
-                highlight |= HighlightType.Spoiler;
-            }
-
-            if (!force)
-            {
-                var sameQuery = (_query ?? string.Empty) == (query ?? string.Empty);
-                var sameHighlight = _highlight == highlight;
-
-                if (sameQuery && sameHighlight)
-                {
-                    return;
-                }
-            }
-
-            //if ((_query ?? string.Empty) == (query ?? string.Empty) && _isHighlighted == (_spoiler != null) && !force && !_invalidateSpoilers)
-            //{
-            //    return;
-            //}
 
             _query = query;
-            //_highlight = highlight;
+            ApplyHighlighters();
+        }
 
+        // Rebuilds the inner RichTextBlock's TextHighlighters from the current state:
+        // the query highlighter (from _query, recomputed against the live text) plus the
+        // marked/cached/spoiler highlighters SetText produced. Both SetText and SetQuery
+        // call this, so neither has to be invoked after the other. Z-order (bottom to
+        // top): query, marked, cached, spoiler, then the active selection.
+        private void ApplyHighlighters()
+        {
             if (TextBlock == null || !TextBlock.IsLoaded)
             {
                 return;
             }
 
-            if (_text != null)
+            TextBlock.TextHighlighters.Clear();
+
+            if (_text != null && _query?.Length > 0 && _last >= _first)
             {
-                if (_highlight != HighlightType.None)
+                // Search within THIS block's paragraph range only (shared StyledText), then
+                // map the absolute match offset to this block's rendered index via _indexMap.
+                // Clamp to the text length (paragraph offsets can occasionally over-run it).
+                var blockStart = Math.Min(_text.Paragraphs[_first].Offset, _text.Text.Length);
+                var blockEnd = Math.Min(_text.Paragraphs[_last].Offset + _text.Paragraphs[_last].Length, _text.Text.Length);
+
+                var find = blockEnd > blockStart
+                    ? _text.Text.IndexOf(_query, blockStart, blockEnd - blockStart, StringComparison.OrdinalIgnoreCase)
+                    : -1;
+                if (find != -1)
                 {
-                    _highlight = HighlightType.None;
-                    TextBlock.TextHighlighters.Clear();
-                }
+                    var highligher = new TextHighlighter();
+                    highligher.Foreground = new SolidColorBrush(Colors.White);
+                    highligher.Background = new SolidColorBrush(Colors.Orange);
+                    highligher.Ranges.Add(new TextRange { StartIndex = StyledToRendered(find), Length = _query.Length });
 
-                if (query?.Length > 0)
-                {
-                    var find = _text.Text.IndexOf(query, StringComparison.OrdinalIgnoreCase);
-                    if (find != -1)
-                    {
-                        var shift = 0;
-
-                        foreach (var para in _text.Paragraphs)
-                        {
-                            if (para.Offset + para.Length < find)
-                            {
-                                shift++;
-                            }
-                        }
-
-                        var highligher = new TextHighlighter();
-                        highligher.Foreground = new SolidColorBrush(Colors.White);
-                        highligher.Background = new SolidColorBrush(Colors.Orange);
-                        highligher.Ranges.Add(new TextRange { StartIndex = find - shift, Length = query.Length });
-
-                        _highlight |= HighlightType.Query;
-                        TextBlock.TextHighlighters.Add(highligher);
-                    }
-                }
-
-                if (_marked != null)
-                {
-                    _highlight |= HighlightType.Marked;
-                    TextBlock.TextHighlighters.Add(_marked);
-                }
-
-                if (_cached != null)
-                {
-                    _highlight |= HighlightType.Cached;
-                    TextBlock.TextHighlighters.Add(_cached);
-                }
-
-                if (_spoiler != null)
-                {
-                    _highlight |= HighlightType.Spoiler;
-                    TextBlock.TextHighlighters.Add(_spoiler);
-                }
-                else
-                {
-                    if (Below == null || _spoilerPresenter == null)
-                    {
-                        return;
-                    }
-
-                    Below.Children.Remove(_spoilerPresenter);
-                    _spoilerPresenter = null;
-                    _spoilerGeometry = null;
+                    TextBlock.TextHighlighters.Add(highligher);
                 }
             }
-            else if (_highlight != HighlightType.None)
+
+            if (_marked != null)
             {
-                _highlight = HighlightType.None;
-                TextBlock.TextHighlighters.Clear();
+                TextBlock.TextHighlighters.Add(_marked);
+            }
 
-                if (Below == null || _spoilerPresenter == null)
-                {
-                    return;
-                }
+            if (_cached != null)
+            {
+                TextBlock.TextHighlighters.Add(_cached);
+            }
 
+            if (_spoiler != null)
+            {
+                TextBlock.TextHighlighters.Add(_spoiler);
+            }
+            else if (Below != null && _spoilerPresenter != null)
+            {
                 Below.Children.Remove(_spoilerPresenter);
                 _spoilerPresenter = null;
                 _spoilerGeometry = null;
-                _spoiler = null;
+            }
+
+            // The cross-block selection (Extended mode) sits on top of the base ones.
+            if (_selection != null)
+            {
+                TextBlock.TextHighlighters.Add(_selection);
             }
         }
 
@@ -813,12 +810,8 @@ namespace Telegram.Controls
 
             if (/*_clientService != null &&*/ _text != null)
             {
-                SetText(_clientService, _text, _fontSize);
-
-                if (_query != null || _spoiler != null)
-                {
-                    SetQuery(_query, true);
-                }
+                // SetText applies the highlighters itself (ApplyHighlighters).
+                SetText(_clientService, _text, _first, _last, _fontSize);
             }
         }
 
@@ -827,7 +820,7 @@ namespace Telegram.Controls
             _templateExecuted = 0;
             ClearEntities();
 
-            if (_pools == null || (_fastRun != null && _text?.IsPlain is true))
+            if (_pools == null || (_fastRun != null && _plain))
             {
                 return;
             }
@@ -852,12 +845,32 @@ namespace Telegram.Controls
 
         public void SetText(IClientService clientService, StyledText styled, double fontSize = 0)
         {
-            var prevPlain = _text?.IsPlain ?? false;
-            var prevDirection = prevPlain ? _text?.Paragraphs[0].Direction : TextDirectionality.Neutral;
+            SetText(clientService, styled, 0, (styled?.Paragraphs.Count ?? 0) - 1, fontSize);
+        }
+
+        // Renders only paragraphs [first, last] of a SHARED StyledText (MessageTextBlock hands
+        // each child a block's range). Offsets stay absolute (Map/copy index the shared text);
+        // the rendered/highlighter space is per-block. Full range == the single-arg overload.
+        public void SetText(IClientService clientService, StyledText styled, int rangeStart, int rangeEnd, double fontSize = 0)
+        {
+            var prevPlain = _plain;
+            var prevDirection = _direction;
+            var prevFontSize = _fontSize;
+
+            var autoFontSize = fontSize;
+            if (AutoFontSize && fontSize == 0)
+            {
+                fontSize = Theme.Current.MessageFontSize;
+            }
 
             _clientService = clientService;
             _text = styled;
+            _plain = styled != null && rangeStart == rangeEnd && styled.Paragraphs[rangeStart].IsPlain;
+            _direction = styled != null ? styled.Paragraphs[rangeStart].Direction : TextDirectionality.Neutral;
             _fontSize = fontSize;
+            _first = rangeStart;
+            _last = rangeEnd;
+            _contentLength = -1;
 
             if (!_templateApplied)
             {
@@ -866,26 +879,72 @@ namespace Telegram.Controls
 
             var execution = ++_templateExecuted;
 
-            var autoFontSize = fontSize;
             var xamlFontSize = TextBlock.FontSize;
 
-            if (AutoFontSize && fontSize == 0)
-            {
-                fontSize = Theme.Current.MessageFontSize;
-            }
-
             var direct = XamlDirect.GetDefault();
+            var locale = LocaleService.Current.FlowDirection;
 
             // PERF: fast path if both model and view have one paragraph with one run
-            if (_fastRun != null && styled != null && prevPlain && styled.IsPlain && prevDirection == styled.Paragraphs[0].Direction && !HasCodeBlocks)
+            if (_plain && _plain == prevPlain && !HasCodeBlocks)
             {
-                if (_fastFontSize != fontSize)
+                if (_fastRun == null)
                 {
-                    _fastFontSize = fontSize;
-                    direct.SetDoubleProperty(_fastRun, XamlPropertyIndex.TextElement_FontSize, fontSize);
+                    IXamlDirectObject paragraph;
+                    IXamlDirectObject inlines;
+                    if (_spanForInlines != null)
+                    {
+                        paragraph = null;
+                        inlines = direct.GetXamlDirectObjectProperty(direct.GetXamlDirectObject(_spanForInlines), XamlPropertyIndex.Span_Inlines);
+                    }
+                    else
+                    {
+                        paragraph = GetOrCreateParagraph(direct);
+                        inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
+                    }
+
+                    var direction = paragraph == null ? locale : _direction switch
+                    {
+                        TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
+                        TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
+                        _ => locale
+                    };
+
+                    _fastRun = GetOrCreateRun(direct, inlines, styled.Paragraphs[rangeStart].Text, direction, TextStyle.None, null, fontSize, false);
+
+                    if (paragraph != null)
+                    {
+                        var directBlock2 = direct.GetXamlDirectObject(TextBlock);
+                        var blocks2 = direct.GetXamlDirectObjectProperty(directBlock2, XamlPropertyIndex.RichTextBlock_Blocks);
+
+                        direct.AddToCollection(blocks2, paragraph);
+                    }
+                }
+                else
+                {
+                    if (_direction != prevDirection)
+                    {
+                        direct.SetEnumProperty(_fastRun, XamlPropertyIndex.Run_FlowDirection, (uint)(_spanForInlines != null ? locale : _direction switch
+                        {
+                            TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
+                            TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
+                            _ => locale
+                        }));
+                    }
+
+                    if (_fontSize != prevFontSize)
+                    {
+                        direct.SetDoubleProperty(_fastRun, XamlPropertyIndex.TextElement_FontSize, _fontSize);
+                    }
+
+                    direct.SetStringProperty(_fastRun, XamlPropertyIndex.Run_Text, styled.Paragraphs[rangeStart].Text);
                 }
 
-                direct.SetStringProperty(_fastRun, XamlPropertyIndex.Run_Text, styled.Text);
+                // Plain single run: rendered index == styled offset, so the converter's
+                // 1:1 fallback is exact — no map needed.
+                _indexMap = null;
+
+                // Plain text has no spoiler/cached/marked; only the query may apply.
+                ApplyHighlighters();
 
                 if (!_skeletonCollapsed)
                 {
@@ -895,12 +954,9 @@ namespace Telegram.Controls
                 return;
             }
 
-            var locale = LocaleService.Current.FlowDirection;
-
             var directBlock = direct.GetXamlDirectObject(TextBlock);
             var blocks = direct.GetXamlDirectObjectProperty(directBlock, XamlPropertyIndex.RichTextBlock_Blocks);
 
-            _fastFontSize = fontSize;
             ClearEntities();
 
             var textOffset = -1;
@@ -921,6 +977,10 @@ namespace Telegram.Controls
                 _spoiler = null;
                 _cached = null;
                 _marked = null;
+                _indexMap = null;
+
+                // Clear any highlighters left over from previous content.
+                ApplyHighlighters();
                 return;
             }
 
@@ -939,17 +999,22 @@ namespace Telegram.Controls
             }
 
             var alignment = TextAlignment;
-
-            var text = styled.Text;
             var offset = 0;
 
-            for (int i = 0; i < styled.Paragraphs.Count; i++)
+            _indexMap = new List<IndexSegment>();
+
+            // Records one rendered<->styled segment for the index map; call BEFORE the
+            // matching `offset += renderedLength`. `styledStart` is the StyledText.Text
+            // offset (part.Offset + the paragraph-local position).
+            void Map(int styledStart, int renderedLength, int styledLength)
             {
-                StyledParagraph part = styled.Paragraphs[i];
+                _indexMap.Add(new IndexSegment(offset, styledStart, renderedLength, styledLength));
+            }
 
-                // This should not happen, but it does.
-                text = styled.Text.Substring(part.Offset, Math.Min(part.Length, styled.Text.Length - part.Offset));
-
+            for (int i = _first; i <= _last; i++)
+            {
+                var part = styled.Paragraphs[i];
+                var text = part.Text;
                 var type = part.Type;
                 var runs = part.Runs;
                 var partFontSize = fontSize;
@@ -992,13 +1057,10 @@ namespace Telegram.Controls
 
                 if (part.Type is TextParagraphTypeQuote quote && paragraph != null)
                 {
-                    var last = part == styled.Paragraphs[^1];
-                    var temp = direct.GetObject(paragraph) as Paragraph;
-                    direct.SetThicknessProperty(paragraph, XamlPropertyIndex.Block_Margin, new Thickness(11, 6, 24, last ? 0 : 8));
+                    // TODO: quotes in RichMessage use normal font size, quotes in formatted text small
+                    // decide what of the two we want to keep.
                     direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.CaptionFontSize);
                     partFontSize = Theme.Current.CaptionFontSize;
-
-                    _codeBlocks.Add(i);
                 }
 
                 for (int j = 0; j < runs.Count; j++)
@@ -1007,6 +1069,7 @@ namespace Telegram.Controls
                     if (entity.Offset > previous)
                     {
                         GetOrCreateRun(direct, inlines, text, previous, entity.Offset - previous, direction, Native.TextStyle.None, null, fontSize: partFontSize, false);
+                        Map(part.Offset + previous, entity.Offset - previous, entity.Offset - previous);
                         offset += entity.Offset - previous;
                     }
 
@@ -1038,6 +1101,7 @@ namespace Telegram.Controls
                                 var collection = direct.GetXamlDirectObjectProperty(native, XamlPropertyIndex.Span_Inlines);
 
                                 GetOrCreateRun(direct, collection, data, direction, Native.TextStyle.None, GetMonospaceFontFamily(), partFontSize, false);
+                                Map(part.Offset + entity.Offset, data.Length, data.Length);
                                 offset += data.Length;
 
                                 direct.AddToCollection(inlines, native);
@@ -1047,28 +1111,21 @@ namespace Telegram.Controls
                                 direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, GetMonospaceFontFamily());
 
                                 var placeholder = GetOrCreateRun(direct, inlines, data, direction, Native.TextStyle.None, null, 0, false);
+                                Map(part.Offset + entity.Offset, data.Length, data.Length);
                                 offset += data.Length;
 
                                 preformatted = true;
-
-                                var has = entity.Type is TextEntityTypePreCode { Language.Length: > 0 };
-
-                                var last = part == styled.Paragraphs[^1];
-                                var temp = direct.GetObject(paragraph) as Paragraph;
-
-                                direct.SetThicknessProperty(paragraph, XamlPropertyIndex.Block_Margin, new Thickness(11, (has ? 22 : 0) + 6, has ? 8 : 24, last ? 0 : 8));
 
                                 if (entity.Type is TextEntityTypePreCode preCode && preCode.Language.Length > 0)
                                 {
                                     ProcessCodeBlock(direct, inlines, placeholder, data, preCode.Language, execution);
                                 }
-
-                                _codeBlocks.Add(i);
                             }
                         }
                         else
                         {
                             GetOrCreateRun(direct, inlines, data, direction, Native.TextStyle.None, GetMonospaceFontFamily(), 0, false);
+                            Map(part.Offset + entity.Offset, data.Length, data.Length);
                             offset += data.Length;
                         }
                     }
@@ -1085,7 +1142,7 @@ namespace Telegram.Controls
                                 direct.SetObjectProperty(hyperlink, XamlPropertyIndex.TextElement_Foreground, null);
                                 direct.SetObjectProperty(hyperlink, XamlPropertyIndex.TextElement_FontFamily, BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily);
 
-                                _spoilers.Add(new TextStyleSpoiler(entity.Offset + dates, entity.Length, new TextStyleSpoiler(entity.Offset, entity.Length, i)));
+                                _spoilers.Add(new TextStyleSpoiler(entity.Offset + dates, entity.Length, new TextStyleSpoiler(entity.Offset, entity.Length, i - _first)));
 
                                 spoiler ??= new TextHighlighter();
                                 spoiler.Ranges.Add(new TextRange { StartIndex = offset, Length = entity.Length });
@@ -1164,7 +1221,7 @@ namespace Telegram.Controls
                             direct.SetObjectProperty(hyperlink, XamlPropertyIndex.TextElement_Foreground, null);
                             direct.SetObjectProperty(hyperlink, XamlPropertyIndex.TextElement_FontFamily, BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily);
 
-                            _spoilers.Add(new TextStyleSpoiler(entity.Offset + dates, entity.Length, i));
+                            _spoilers.Add(new TextStyleSpoiler(entity.Offset + dates, entity.Length, i - _first));
 
                             if (textOffset == -1)
                             {
@@ -1301,11 +1358,13 @@ namespace Telegram.Controls
                                     : Icons.ZWNJ;
 
                                 GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize, transparent: true);
+                                Map(part.Offset + entity.Offset, 1, 0); // leading mark: no styled advance
                                 offset++;
                             }
 
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
                             GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize, true);
+                            Map(part.Offset + entity.Offset, 1, entity.Length); // emoji (container=0 rendered) + ZWNJ <-> alt-text
                             offset++;
                         }
                         else if (entity.Type is TextEntityTypeDateTime date && date.FormattingType != null)
@@ -1313,6 +1372,7 @@ namespace Telegram.Controls
                             entity.Update(part);
 
                             var run = GetOrCreateRun(direct, parentInlines, entity.FormattedText, direction, entity.Flags, null, partFontSize, false);
+                            Map(part.Offset + entity.Offset, entity.FormattedText.Length, entity.Length); // displayed date <-> original
                             offset += entity.FormattedText.Length;
                             dates += entity.FormattedText.Length - entity.Length;
 
@@ -1346,16 +1406,19 @@ namespace Telegram.Controls
                                         : Icons.ZWNJ;
 
                                     GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize, transparent: true);
+                                    Map(part.Offset + entity.Offset, 1, 0); // leading mark: no styled advance
                                     offset++;
                                 }
 
                                 direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
                                 GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize, true);
+                                Map(part.Offset + entity.Offset, 1, entity.Length); // math image + ZWNJ <-> expression
                                 offset++;
                             }
                             else
                             {
                                 GetOrCreateRun(direct, parentInlines, mathematicalExpression.Expression, entity.Offset, entity.Length, direction, entity.Flags, null, partFontSize, false);
+                                Map(part.Offset + entity.Offset, entity.Length, entity.Length);
                                 offset += entity.Length;
                             }
 
@@ -1363,6 +1426,7 @@ namespace Telegram.Controls
                         else
                         {
                             GetOrCreateRun(direct, parentInlines, text, entity.Offset, entity.Length, direction, entity.Flags, null, partFontSize, false);
+                            Map(part.Offset + entity.Offset, entity.Length, entity.Length);
                             offset += entity.Length;
                         }
 
@@ -1378,6 +1442,7 @@ namespace Telegram.Controls
                 if (text.Length > previous)
                 {
                     _fastRun = GetOrCreateRun(direct, inlines, text, previous, text.Length - previous, direction, Native.TextStyle.None, null, partFontSize, false);
+                    Map(part.Offset + previous, text.Length - previous, text.Length - previous);
                     offset += text.Length - previous;
                 }
 
@@ -1385,13 +1450,13 @@ namespace Telegram.Controls
                 {
                     direct.AddToCollection(blocks, paragraph);
                 }
-                else if (i < styled.Paragraphs.Count - 1)
+                else if (i < _last)
                 {
                     GetOrCreateRun(direct, inlines, " ", direction, Native.TextStyle.None, null, 0, false);
                     offset++;
                 }
 
-                if (part.Offset == 0)
+                if (i == _first)
                 {
                     firstType = type;
                 }
@@ -1448,23 +1513,17 @@ namespace Telegram.Controls
 
             // TODO: get rid of _spoiler
 
-            var topPadding = 0d;
+            // Apply the spoiler/cached/marked highlighters just produced (plus the
+            // current query). Callers no longer have to follow SetText with SetQuery.
+            ApplyHighlighters();
+
             var bottomPadding = false;
 
             if (_spanForInlines == null)
             {
-                if (firstType is TextParagraphTypeMonospace { Language.Length: > 0 })
+                if (AdjustLineEnding && _last >= _first)
                 {
-                    topPadding = 22 + 6;
-                }
-                else if (firstType is not null)
-                {
-                    topPadding = 6;
-                }
-
-                if (AdjustLineEnding && styled.Paragraphs.Count > 0)
-                {
-                    var direction = styled.Paragraphs[^1].Direction switch
+                    var direction = styled.Paragraphs[_last].Direction switch
                     {
                         TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
                         TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
@@ -1479,9 +1538,6 @@ namespace Telegram.Controls
             }
 
             HasLineEnding = bottomPadding;
-
-            Below.Margin = new Thickness(0, topPadding, 0, 0);
-            TextBlock.Margin = new Thickness(0, topPadding, 0, 0);
 
             if (spoilerChanged || !_skeletonCollapsed)
             {
@@ -1517,71 +1573,11 @@ namespace Telegram.Controls
 
         protected override void OnLayoutUpdated()
         {
-            UpdateBelow();
             UpdateSpoilers();
 
             if (!_skeletonCollapsed && _text != null)
             {
                 InvalidateSkeleton();
-            }
-        }
-
-        private void UpdateBelow()
-        {
-            Below.Children.ClearIfNotEmpty();
-
-            var fontSize = (AutoFontSize ? Theme.Current.MessageFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
-            var quoteSize = (AutoFontSize ? Theme.Current.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
-
-            var width = LastAvailableWidth;
-
-            foreach (var block in _codeBlocks)
-            {
-                StyledParagraph styled = _text.Paragraphs[block];
-                Paragraph paragraph = TextBlock.Blocks[block] as Paragraph;
-
-                if (paragraph == null)
-                {
-                    // TODO: figure out why this happens
-                    continue;
-                }
-
-                var partial = _text.Text.Substring(styled.Offset, styled.Length);
-                var entities = styled.GetParts(out partial) ?? Array.Empty<TextStylePart>();
-
-                var size = styled.Type is TextParagraphTypeQuote
-                    ? quoteSize
-                    : fontSize;
-
-                var rectangles = PlaceholderHelper.Foreground.LayoutMetrics(partial, 0, partial.Length, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft);
-                var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
-                var end = paragraph.ContentEnd.GetCharacterRect(paragraph.ContentEnd.LogicalDirection);
-
-                var startY = Math.Round(relative.Y);
-                var endBottom = Math.Round(end.Bottom);
-
-                if (styled.Type is TextParagraphTypeMonospace monospace && monospace.Language.Length > 0)
-                {
-                    var rect = new BlockCode();
-                    rect.Width = rectangles.Width + paragraph.Margin.Left + paragraph.Margin.Right;
-                    rect.Height = Math.Max(endBottom - startY + 6 + 22, 0);
-                    rect.LanguageName = monospace.Language;
-                    Canvas.SetLeft(rect, styled.Direction == TextDirectionality.RightToLeft ? ActualWidth - rect.Width : 0);
-                    Canvas.SetTop(rect, startY - 2 - 22);
-
-                    Below.Children.Add(rect);
-                }
-                else
-                {
-                    var rect = new BlockQuote();
-                    rect.Width = rectangles.Width + paragraph.Margin.Left + paragraph.Margin.Right;
-                    rect.Height = Math.Max(endBottom - startY + 6, 0);
-                    rect.Glyph = paragraph.FontSize == Theme.Current.MessageFontSize ? Icons.CodeFilled16 : Icons.QuoteBlockFilled16;
-                    Canvas.SetLeft(rect, styled.Direction == TextDirectionality.RightToLeft ? ActualWidth - rect.Width : 0);
-                    Canvas.SetTop(rect, startY - 2);
-
-                    Below.Children.Add(rect);
-                }
             }
         }
 
@@ -1603,7 +1599,6 @@ namespace Telegram.Controls
             var quoteSize = (AutoFontSize ? Theme.Current.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
 
             var width = LastAvailableWidth;
-            var inset = 0;
 
             var position = new Windows.Foundation.Point(0, 0);
 
@@ -1621,23 +1616,13 @@ namespace Telegram.Controls
                 // Would be cool to optimize this for contiguous paragraphs
                 foreach (var hyperlink in _spoilers)
                 {
-                    StyledParagraph styled = _text.Paragraphs[hyperlink.ParagraphIndex];
+                    StyledParagraph styled = _text.Paragraphs[_first + hyperlink.ParagraphIndex];
                     Paragraph paragraph = TextBlock.Blocks[hyperlink.ParagraphIndex] as Paragraph;
 
                     if (paragraph == null)
                     {
                         // TODO: figure out why this happens
                         continue;
-                    }
-
-                    if (hyperlink.ParagraphIndex == 0)
-                    {
-                        inset = styled.Type switch
-                        {
-                            TextParagraphTypeMonospace { Language.Length: > 0 } => 22 + 6,
-                            not null => 6,
-                            _ => 0
-                        };
                     }
 
                     int xoffset = hyperlink.Offset;
@@ -1653,7 +1638,7 @@ namespace Telegram.Controls
                     var rectangles = PlaceholderHelper.Foreground.RangeMetrics(partial, xoffset, xlength, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft, true);
                     var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
-                    var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X, relative.Y + position.Y + inset);
+                    var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X, relative.Y + position.Y);
 
                     for (int i = 0; i < rectangles?.Count; i++)
                     {
@@ -1695,7 +1680,7 @@ namespace Telegram.Controls
                 // Would be cool to optimize this for contiguous paragraphs
                 foreach (var hyperlink in _spoilers)
                 {
-                    StyledParagraph styled = _text.Paragraphs[hyperlink.ParagraphIndex];
+                    StyledParagraph styled = _text.Paragraphs[_first + hyperlink.ParagraphIndex];
 
                     int xoffset = styled.Offset + hyperlink.Offset;
                     int xlength = hyperlink.Length;
@@ -1706,7 +1691,7 @@ namespace Telegram.Controls
                     var size = fontSize;
 
                     var rectangles = PlaceholderHelper.Foreground.RangeMetrics(partial, xoffset, xlength, entities, size, width - relative.X, styled.Direction == TextDirectionality.RightToLeft, false);
-                    var point = new Windows.Foundation.Point(relative.X + position.X, relative.Y + position.Y + inset);
+                    var point = new Windows.Foundation.Point(relative.X + position.X, relative.Y + position.Y);
 
                     for (int i = 0; i < rectangles?.Count; i++)
                     {
@@ -1834,6 +1819,10 @@ namespace Telegram.Controls
 
                     direct.ClearCollection(inlines);
                     ProcessCodeBlock(direct, inlines, tokens.Children);
+
+                    // The inline tree changed (placeholder -> syntax spans); the cached
+                    // selection length must be recomputed on next access.
+                    _contentLength = -1;
                 }
             }
             catch
@@ -2035,18 +2024,8 @@ namespace Telegram.Controls
 
         #endregion
 
-        #region IsTextSelectionEnabled
-
-        public bool IsTextSelectionEnabled
-        {
-            get { return (bool)GetValue(IsTextSelectionEnabledProperty); }
-            set { SetValue(IsTextSelectionEnabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsTextSelectionEnabledProperty =
-            DependencyProperty.Register("IsTextSelectionEnabled", typeof(bool), typeof(FormattedTextBlock), new PropertyMetadata(true));
-
-        #endregion
+        // IsTextSelectionEnabled / TextSelection (the TextSelectionMode enum + DP) live
+        // in FormattedTextBlock.Selectable.cs.
 
         #region OverflowContentTarget
 
@@ -2292,7 +2271,6 @@ namespace Telegram.Controls
         private void InvalidateSkeleton()
         {
             var width = LastAvailableWidth;
-            var inset = 0;
 
             var fontSize = (AutoFontSize ? Theme.Current.MessageFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
             var quoteSize = (AutoFontSize ? Theme.Current.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
@@ -2301,25 +2279,15 @@ namespace Telegram.Controls
             var current = new List<Rect>();
             var last = default(Rect);
 
-            for (int block = 0; block < _text.Paragraphs.Count; block++)
+            for (int block = 0; block <= _last - _first; block++)
             {
-                StyledParagraph styled = _text.Paragraphs[block];
+                StyledParagraph styled = _text.Paragraphs[_first + block];
                 Paragraph paragraph = TextBlock.Blocks[block] as Paragraph;
 
                 if (paragraph == null)
                 {
                     // TODO: figure out why this happens
                     continue;
-                }
-
-                if (block == 0)
-                {
-                    inset = styled.Type switch
-                    {
-                        TextParagraphTypeMonospace { Language.Length: > 0 } => 22 + 6,
-                        not null => 6,
-                        _ => 0
-                    };
                 }
 
                 var partial = _text.Text.Substring(styled.Offset, styled.Length);
@@ -2332,7 +2300,7 @@ namespace Telegram.Controls
                 var rectangles = PlaceholderHelper.Foreground.LineMetrics(partial, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft);
                 var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
-                var point = new Windows.Foundation.Point(paragraph.Margin.Left /*+ position.X*/, relative.Y /*+ position.Y*/ + inset);
+                var point = new Windows.Foundation.Point(paragraph.Margin.Left /*+ position.X*/, relative.Y /*+ position.Y*/);
 
                 for (int i = 0; i < rectangles.Count; i++)
                 {

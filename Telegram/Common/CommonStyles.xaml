@@ -2252,9 +2252,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="HyperlinkButton">
                     <ContentPresenter Background="{TemplateBinding Background}"
-                                      CornerRadius="{TemplateBinding CornerRadius}"
-                                      HorizontalAlignment="Stretch"
-                                      VerticalAlignment="Stretch" />
+                                      CornerRadius="{TemplateBinding CornerRadius}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

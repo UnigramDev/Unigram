@@ -38,8 +38,6 @@ namespace Telegram.ViewModels
         protected readonly ForumTopic _forumTopic;
         protected readonly DirectMessagesChatTopic _directMessagesChatTopic;
 
-        private Action _updateSelection;
-
         public MessageViewModel(IClientService clientService, IMessageDelegate delegato, Chat chat, ForumTopic forumTopic, DirectMessagesChatTopic directMessagesChatTopic, Message message, bool processText = false)
             : base(clientService, message, chat)
         {
@@ -85,16 +83,6 @@ namespace Telegram.ViewModels
         public long LastReadOutboxMessageId => _forumTopic?.LastReadOutboxMessageId
             ?? _directMessagesChatTopic?.LastReadOutboxMessageId
             ?? Chat.LastReadOutboxMessageId;
-
-        public void SelectionChanged()
-        {
-            _updateSelection?.Invoke();
-        }
-
-        public void UpdateSelectionCallback(Action action)
-        {
-            _updateSelection = action;
-        }
 
         //public void Cleanup()
         //{

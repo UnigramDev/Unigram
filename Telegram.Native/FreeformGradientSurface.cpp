@@ -30,7 +30,7 @@ namespace winrt::Telegram::Native::implementation
         m_brush.Stretch(CompositionStretch::Fill);
 
         m_timer.Interval(std::chrono::milliseconds(500 / 30));
-        m_tick = m_timer.Tick({ this, &FreeformGradientSurface::OnTick });
+        m_tick = m_timer.Tick({ get_weak(), &FreeformGradientSurface::OnTick});
 
         m_easing = GetKeyFrames();
         m_pixels.reserve(s_width * s_height * 4);
@@ -38,11 +38,12 @@ namespace winrt::Telegram::Native::implementation
         Invalidate();
 
         m_phase = 0;
-        m_renderingDeviceReplaced = m_compositionDevice.RenderingDeviceReplaced({ this, &FreeformGradientSurface::OnRenderingDeviceReplaced });
+        m_renderingDeviceReplaced = m_compositionDevice.RenderingDeviceReplaced({ get_weak(), &FreeformGradientSurface::OnRenderingDeviceReplaced});
     }
 
     FreeformGradientSurface::~FreeformGradientSurface()
     {
+        m_timer.Stop();
         m_timer.Tick(m_tick);
         m_compositionDevice.RenderingDeviceReplaced(m_renderingDeviceReplaced);
     }
@@ -126,6 +127,8 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT FreeformGradientSurface::Invalidate()
     {
+        if (!m_surface) return E_FAIL;
+
         //std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 

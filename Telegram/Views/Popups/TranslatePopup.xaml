@@ -4,50 +4,9 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
+                       xmlns:messages="using:Telegram.Controls.Messages"
                        mc:Ignorable="d"
                        Padding="0,12,0,0">
-
-    <controls:ContentPopup.Resources>
-        <Style TargetType="controls:LoadingTextBlock">
-            <Setter Property="Background"
-                    Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
-            <Setter Property="BorderBrush"
-                    Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-            <Setter Property="Foreground"
-                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
-            <Setter Property="PlaceholderBrush"
-                    Value="{ThemeResource TextFillColorPrimaryBrush}" />
-            <Setter Property="VerticalAlignment"
-                    Value="Top" />
-            <Setter Property="HorizontalAlignment"
-                    Value="Stretch" />
-            <Setter Property="Padding"
-                    Value="24,4,24,4" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:LoadingTextBlock">
-                        <Grid>
-                            <TextBlock x:Name="Placeholder"
-                                       Text="{TemplateBinding PlaceholderText}"
-                                       Foreground="{TemplateBinding PlaceholderBrush}"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                       Padding="{TemplateBinding Padding}"
-                                       TextAlignment="DetectFromContent"
-                                       TextWrapping="Wrap" />
-                            <TextBlock x:Name="Presenter"
-                                       Text="{TemplateBinding Text}"
-                                       Foreground="{TemplateBinding Foreground}"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                       Padding="{TemplateBinding Padding}"
-                                       IsTextSelectionEnabled="{TemplateBinding IsTextSelectionEnabled}"
-                                       TextAlignment="DetectFromContent"
-                                       TextWrapping="Wrap" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </controls:ContentPopup.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -68,8 +27,8 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <controls:LoadingTextBlock x:Name="Presenter"
-                                       Margin="0,8,0,20" />
+            <messages:MessageTextBlock x:Name="Block"
+                                       Margin="24,12,24,24" />
         </ScrollViewer>
 
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"

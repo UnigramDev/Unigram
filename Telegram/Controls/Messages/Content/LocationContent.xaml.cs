@@ -141,6 +141,10 @@ namespace Telegram.Controls.Messages.Content
                 {
                     _message.Delegate.OpenLocation(location, _message.ClientService.GetTitle(senderChat));
                 }
+                else
+                {
+                    _message.Delegate.OpenLocation(location, null);
+                }
             }
         }
     }

@@ -179,6 +179,108 @@ namespace Telegram.Common
         }
 
         // =====================================================================
+        // FindAllMedia
+        // =====================================================================
+
+        /// <summary>
+        /// Walks the block list (descending into the same container blocks as
+        /// <see cref="FindFirstMedia"/>) and returns every block whose kind is
+        /// included in <paramref name="kind"/>, in document order.
+        /// </summary>
+        public static List<PageBlock> FindAllMedia(IList<PageBlock> blocks, PageBlockMediaKind kind)
+        {
+            var result = new List<PageBlock>();
+            FindAllMedia(blocks, kind, result);
+            return result;
+        }
+
+        /// <summary>
+        /// Appends every matching media block to <paramref name="result"/> (which the
+        /// caller owns — reuse it across calls to avoid the list allocation). The
+        /// traversal is recursion over the call stack with no intermediate
+        /// allocations (no LINQ/iterators/closures).
+        /// </summary>
+        public static void FindAllMedia(IList<PageBlock> blocks, PageBlockMediaKind kind, List<PageBlock> result)
+        {
+            if (blocks == null || kind == PageBlockMediaKind.None)
+            {
+                return;
+            }
+
+            foreach (var block in blocks)
+            {
+                CollectMediaCore(block, kind, result);
+            }
+        }
+
+        private static void CollectMediaCore(PageBlock block, PageBlockMediaKind kind, List<PageBlock> result)
+        {
+            // A block can be both a match and a container (PageBlockEmbeddedPost), so
+            // unlike FindFirst — which stops at the first hit — we add the match AND
+            // still descend, to collect everything.
+            if (MatchesKind(block, kind))
+            {
+                result.Add(block);
+            }
+
+            switch (block)
+            {
+                case PageBlockCover cover:
+                    CollectMediaCore(cover.Cover, kind, result);
+                    return;
+                case PageBlockList list:
+                    if (list.Items != null)
+                    {
+                        foreach (var item in list.Items)
+                        {
+                            CollectMediaInList(item.Blocks, kind, result);
+                        }
+                    }
+                    return;
+                case PageBlockDetails details:
+                    CollectMediaInList(details.Blocks, kind, result);
+                    return;
+                case PageBlockCollage collage:
+                    CollectMediaInList(collage.Blocks, kind, result);
+                    return;
+                case PageBlockSlideshow slideshow:
+                    CollectMediaInList(slideshow.Blocks, kind, result);
+                    return;
+                case PageBlockBlockQuote blockquote:
+                    CollectMediaInList(blockquote.Blocks, kind, result);
+                    return;
+                case PageBlockEmbeddedPost ep:
+                    CollectMediaInList(ep.Blocks, kind, result);
+                    return;
+            }
+        }
+
+        private static void CollectMediaInList(IList<PageBlock> blocks, PageBlockMediaKind kind, List<PageBlock> result)
+        {
+            if (blocks == null) return;
+            foreach (var b in blocks)
+            {
+                CollectMediaCore(b, kind, result);
+            }
+        }
+
+        private static bool MatchesKind(PageBlock block, PageBlockMediaKind kind)
+        {
+            return block switch
+            {
+                PageBlockPhoto => (kind & PageBlockMediaKind.Photo) != 0,
+                PageBlockVideo => (kind & PageBlockMediaKind.Video) != 0,
+                PageBlockAnimation => (kind & PageBlockMediaKind.Animation) != 0,
+                PageBlockAudio => (kind & PageBlockMediaKind.Audio) != 0,
+                PageBlockVoiceNote => (kind & PageBlockMediaKind.VoiceNote) != 0,
+                PageBlockMap => (kind & PageBlockMediaKind.Map) != 0,
+                PageBlockEmbedded => (kind & PageBlockMediaKind.Embedded) != 0,
+                PageBlockEmbeddedPost => (kind & PageBlockMediaKind.EmbeddedPost) != 0,
+                _ => false,
+            };
+        }
+
+        // =====================================================================
         // GetLinks
         // =====================================================================
 

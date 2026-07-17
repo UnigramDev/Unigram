@@ -1746,6 +1746,18 @@ namespace Telegram.Views
             }
         }
 
+        public void UpdateMessageSelection(MessageViewModel message)
+        {
+            // Album sub-messages aren't list items (not in _messageIdToSelector); they're reached
+            // through their album container via MediaAlbumId. The hosting MessageSelector then
+            // refreshes the album-level state and the specific child (see MessageSelector.UpdateSelection).
+            if (_messageIdToSelector.TryGetValue(message.Id, out var container)
+                || (message.MediaAlbumId != 0 && _albumIdToSelector.TryGetValue(message.MediaAlbumId, out container)))
+            {
+                (container.ContentTemplateRoot as MessageSelector)?.UpdateSelection(message.Id);
+            }
+        }
+
         private void UpdateCache(MessageViewModel message, ChatHistoryViewItem container, bool recycle)
         {
             if (recycle)

@@ -59,10 +59,21 @@ namespace Telegram.Controls.Messages
             Content = child;
         }
 
+        private TextSelectionManager _textSelectionManager;
+
+        public bool HasSelection => _textSelectionManager.HasSelection;
+
+        public void CopySelectionToClipboard() => _textSelectionManager.CopySelectionToClipboard();
+
+        public FormattedText GetSelectedText() => _textSelectionManager.GetSelectedText();
+        public FormattedText GetSelectedSourceText(out int position) => _textSelectionManager.GetSelectedSourceText(out position);
+
         public bool IsTrackerEnabled { get; set; } = true;
 
         protected override void OnLoaded()
         {
+            _textSelectionManager ??= new TextSelectionManager(this, ContentTemplateRoot);
+
             if (_trackerOwner == null && RootGrid != null && IsTrackerEnabled && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare))
             {
                 _compositor = BootStrapper.Current.Compositor;
@@ -92,6 +103,9 @@ namespace Telegram.Controls.Messages
 
         protected override void OnUnloaded()
         {
+            _textSelectionManager?.Detach();
+            _textSelectionManager = null;
+
             if (_trackerOwner != null)
             {
                 _trackerOwner.ValuesChanged -= OnValuesChanged;
@@ -114,9 +128,7 @@ namespace Telegram.Controls.Messages
                 content.Recycle();
             }
 
-            _message?.UpdateSelectionCallback(null);
             _message = null;
-
             _owner = null;
         }
 
@@ -296,8 +308,6 @@ namespace Telegram.Controls.Messages
             {
                 return;
             }
-
-            message.UpdateSelectionCallback(UpdateSelection);
 
             UpdateSelectionEnabled(selectionEnabled, false);
             UpdateMessageSuggestedPostInfo(message);
@@ -487,6 +497,22 @@ namespace Telegram.Controls.Messages
             }
         }
 
+        public void UpdateSelection(long messageId)
+        {
+            // Album container: any member changing can flip the album-level "all selected" state,
+            // so recompute it unconditionally (don't gate on messageId — the album group's Id
+            // aliases one child's Id). Then refresh the specific child sub-message.
+            if (Content is MessageBubble bubble && bubble.MediaTemplateRoot is AlbumContent album)
+            {
+                UpdateSelection();
+                album.UpdateSelection(messageId);
+            }
+            else if (_message?.Id == messageId)
+            {
+                UpdateSelection();
+            }
+        }
+
 
         // This should be held in memory, or animation will stop
         private CompositionPropertySet _props;
@@ -544,7 +570,7 @@ namespace Telegram.Controls.Messages
 
         private bool IsAlbum => _message?.Content is MessageAlbum;
 
-        private bool IsAlbumChild => _message?.Content is not MessageAlbum && _message.MediaAlbumId != 0;
+        private bool IsAlbumChild => _message != null && _message.Content is not MessageAlbum && _message.MediaAlbumId != 0;
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -585,6 +611,11 @@ namespace Telegram.Controls.Messages
 
         private void ConfigureInteractionTracker()
         {
+            if (IsAlbumChild)
+            {
+                return;
+            }
+
             _interactionSource = VisualInteractionSource.Create(_hitTest);
 
             //Configure for x-direction panning
