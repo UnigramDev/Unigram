@@ -164,7 +164,7 @@ namespace Telegram.Views.Popups
                 else
                 {
                     var now = DateTime.Now.ToTimestamp();
-                    var paid = messages.FirstOrDefault(x => (x.IsPaidStarSuggestedPost || x.IsPaidTonSuggestedPost) && now < (int)clientService.Options.SuggestedPostLifetimeMin + x.GetDate());
+                    var paid = messages.FirstOrDefault(x => (x.IsPaidStarSuggestedPost || x.IsPaidGramSuggestedPost) && now < (int)clientService.Options.SuggestedPostLifetimeMin + x.GetDate());
 
                     if (paid != null && paid.IsPaidStarSuggestedPost)
                     {
@@ -173,7 +173,7 @@ namespace Telegram.Views.Popups
 
                         PrimaryButtonText = Strings.SuggestionStarsWillBeLostDelete;
                     }
-                    else if (paid != null && paid.IsPaidTonSuggestedPost)
+                    else if (paid != null && paid.IsPaidGramSuggestedPost)
                     {
                         Title = Strings.SuggestionTONWillBeLost;
                         TextBlockHelper.SetMarkdown(Message, string.Format(Strings.SuggestionTONWillBeLostInfo, (clientService.Options.SuggestedPostLifetimeMin / 3600.0).ToString("N0")));

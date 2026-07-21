@@ -1031,7 +1031,7 @@ namespace Telegram.Common
                         default: break;
                     }
                     break;
-                case SettingsSectionMyToncoins myToncoins:
+                case SettingsSectionMyGrams myGrams:
                     break;
                 case SettingsSectionPowerSaving powerSaving:
                     switch (powerSaving.Subsection)
@@ -2027,7 +2027,15 @@ namespace Telegram.Common
                     return;
                 }
 
-                navigation.NavigateToWebApp(botUser, approvalRequired.Url, source: new OpenUrlSourceJoinChatRequest(approvalRequired.QueryId, chatId));
+                var response = await clientService.SendAsync(new GetGuardBotWebAppUrl(approvalRequired.QueryId, new WebAppOpenParameters(Theme.Current.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
+                if (response is WebAppUrl webAppUrl)
+                {
+                    navigation.NavigateToWebApp(botUser, webAppUrl, source: new OpenUrlSourceJoinChatRequest(approvalRequired.QueryId, chatId));
+                }
+                else if (response is Error error)
+                {
+                    navigation.ShowToast(error);
+                }
             }
             else if (result is ChatJoinResultRequestSent)
             {
@@ -2041,7 +2049,7 @@ namespace Telegram.Common
 
                 ToastPopup.Show(navigation.XamlRoot, text, ToastPopupIcon.JoinRequested);
             }
-            else if (result is ChatJoinRequestResultDeclined)
+            else if (result is ChatJoinResultDeclined)
             {
                 navigation.ShowToast(string.Format(Strings.GuardBotJoinRequestDeclined, clientService.GetTitle(chatId)), ToastPopupIcon.Ban);
             }

@@ -258,7 +258,7 @@ namespace Telegram.Controls.Messages.Content
                 FontFamily = BootStrapper.Current.Resources["EmojiThemeFontFamilyWithSymbols"] as FontFamily
             };
 
-            TextBlockHelper.SetMarkdown(label, Strings.StakeDiceToast + (_message.ClientService.StakeDiceState.StakeToncoinAmount / Constants.ToncoinMin).ToString("0.#"));
+            TextBlockHelper.SetMarkdown(label, Strings.StakeDiceToast + (_message.ClientService.StakeDiceState.StakeGramAmount / Constants.ToncoinMin).ToString("0.#"));
 
             var button = new SettingsButton
             {
@@ -295,7 +295,7 @@ namespace Telegram.Controls.Messages.Content
             var confirm = await ToastPopup.ShowActionAsync(XamlRoot, grid, Strings.StakeDiceButton, null, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.Center, cancellationToken: cancellationToken.Token);
             if (confirm == ContentDialogResult.Primary)
             {
-                _message.Delegate.SendMessage(new InputMessageStakeDice(_message.ClientService.StakeDiceState.StateHash, _message.ClientService.StakeDiceState.StakeToncoinAmount, false));
+                _message.Delegate.SendMessage(new InputMessageStakeDice(_message.ClientService.StakeDiceState.StateHash, _message.ClientService.StakeDiceState.StakeGramAmount, false));
             }
 
             return;

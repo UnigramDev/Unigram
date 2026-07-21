@@ -282,9 +282,9 @@ namespace Telegram.Views.Gifts.Popups
                 if (confirm == ContentDialogResult.Primary)
                 {
                     GiftResalePrice price;
-                    if (giftForResale.Gift.ResaleParameters.ToncoinOnly)
+                    if (giftForResale.Gift.ResaleParameters.GramOnly)
                     {
-                        price = new GiftResalePriceTon(giftForResale.Gift.ResaleParameters.ToncoinCentCount);
+                        price = new GiftResalePriceGram(giftForResale.Gift.ResaleParameters.GramCentCount);
                     }
                     else
                     {

@@ -103,6 +103,7 @@ namespace Telegram.Views.Popups
         public void SetParagraph() => Exec("setParagraph");
         public void SetHeading(int size) => Exec("setHeading", new JsonObject { { "size", Num(size) } });
         public void SetPreformatted() => Exec("setPreformatted");
+        public void SetFooter() => Exec("setFooter");
 
         /// <summary>Sets the current code block's language; pass null/empty for none.</summary>
         public void SetLanguage(string language) => Exec("setLanguage", new JsonObject { { "language", Str(language) } });
@@ -168,12 +169,20 @@ namespace Telegram.Views.Popups
         public void Undo() => Exec("undo");
         public void Redo() => Exec("redo");
 
+        // --- clipboard / selection ----------------------------------------------
+        public void SelectAll() => Exec("selectAll");
+        public void Delete() => Exec("delete");
+        public void Copy() => Exec("copy");
+        public void Cut() => Exec("cut");
+        public void Paste() => Exec("paste");
+
         // --- theme --------------------------------------------------------------
         /// <summary>Updates the editor accent color and/or light/dark mode at runtime. Either argument is optional.</summary>
-        public void SetTheme(Color? accent = null, bool? dark = null)
+        public void SetTheme(Color? accent = null, bool? dark = null, Color? background = null)
         {
             var args = new JsonObject();
             if (accent != null) args["accent"] = Str($"#{accent.Value.R:X2}{accent.Value.G:X2}{accent.Value.B:X2}");
+            if (background != null) args["background"] = Str($"#{background.Value.R:X2}{background.Value.G:X2}{background.Value.B:X2}");
             if (dark is bool value) args["dark"] = Bool(value);
             Exec("setTheme", args);
         }
@@ -190,6 +199,24 @@ namespace Telegram.Views.Popups
 
             ReadOnlySpan<byte> bytes = Encoding.UTF8.GetBytes(json);
             return ClientJson.FromJson(bytes, handler) as RichMessage;
+        }
+
+        public async Task<InputRichMessage> GetInputModelAsync()
+        {
+            var json = await _webView.ExecuteScriptAsync("UnigramEditor.exec('getInputModel')");
+            if (string.IsNullOrEmpty(json) || json == "null")
+            {
+                return null;
+            }
+
+            ReadOnlySpan<byte> bytes = Encoding.UTF8.GetBytes(json);
+            var blocks = ClientJson.FromJson(bytes) as RichMessageSourceBlocks;
+            if (blocks != null)
+            {
+                return new InputRichMessage(blocks, false, true);
+            }
+
+            return null;
         }
 
         /// <summary>Loads a document into the editor. Round-trips with <see cref="GetModelAsync"/>.</summary>

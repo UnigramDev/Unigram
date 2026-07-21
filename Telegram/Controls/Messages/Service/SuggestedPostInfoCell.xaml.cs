@@ -88,9 +88,9 @@ namespace Telegram.Controls.Messages.Service
             {
                 Price.Text = string.Format(Strings.StarsCountX, priceStar.StarCount);
             }
-            else if (message.SuggestedPostInfo.Price is SuggestedPostPriceTon priceTon)
+            else if (message.SuggestedPostInfo.Price is SuggestedPostPriceGram priceGram)
             {
-                Price.Text = string.Format(Strings.TonCountX, priceTon.ToncoinCentCount / 100d);
+                Price.Text = string.Format(Strings.TonCountX, priceGram.GramCentCount / 100d);
             }
 
             if (message.SuggestedPostInfo.SendDate == 0)

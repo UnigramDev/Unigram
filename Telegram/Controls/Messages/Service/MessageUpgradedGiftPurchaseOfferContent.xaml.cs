@@ -73,9 +73,9 @@ namespace Telegram.Controls.Messages.Service
             {
                 message = string.Format(Strings.GiftOfferTransferInfoTextSellStars, resalePriceStar.ToCount(), user.FullName(true), upgradedGiftPurchaseOffer.Gift.ToName(), resalePriceStar.ToCount(Message.ClientService.Options.GiftResaleStarEarningsPerMille));
             }
-            else if (upgradedGiftPurchaseOffer.Price is GiftResalePriceTon resalePriceTon)
+            else if (upgradedGiftPurchaseOffer.Price is GiftResalePriceGram resalePriceGram)
             {
-                message = string.Format(Strings.GiftOfferTransferInfoTextSellTON, resalePriceTon.ToCount(), user.FullName(true), upgradedGiftPurchaseOffer.Gift.ToName(), resalePriceTon.ToCount(Message.ClientService.Options.GiftResaleToncoinEarningsPerMille));
+                message = string.Format(Strings.GiftOfferTransferInfoTextSellTON, resalePriceGram.ToCount(), user.FullName(true), upgradedGiftPurchaseOffer.Gift.ToName(), resalePriceGram.ToCount(Message.ClientService.Options.GiftResaleGramEarningsPerMille));
             }
 
             var confirm = await Message.Delegate.NavigationService.ShowPopupAsync(string.Format(message, user.FullName(true)), Strings.GiftOfferRejectConfirmTitle, Strings.GiftOfferSellFor, Strings.Cancel);

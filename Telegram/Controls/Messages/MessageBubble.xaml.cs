@@ -3584,7 +3584,7 @@ namespace Telegram.Controls.Messages
 
             if (sender != null)
             {
-                var message = new Message(chat.Id, sender, 0, null, null, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, null, null);
+                var message = new Message(chat.Id, sender, null, 0, null, null, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, null, null);
                 var settings = clientService.Session.Resolve<ISettingsService>();
 
                 var delegato = new ChatMessageDelegate(clientService, settings, chat);

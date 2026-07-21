@@ -304,9 +304,9 @@ namespace Telegram.Td.Api
             {
                 return string.Format(Strings.StarsCountX, priceStar.StarCount);
             }
-            else if (price is SuggestedPostPriceTon priceTon)
+            else if (price is SuggestedPostPriceGram priceGram)
             {
-                return string.Format(Strings.TonCountX, priceTon.ToncoinCentCount / 100d);
+                return string.Format(Strings.TonCountX, priceGram.GramCentCount / 100d);
             }
 
             return string.Format(Strings.StarsCountX, 0);
@@ -454,9 +454,9 @@ namespace Telegram.Td.Api
             {
                 return (resalePriceStar.StarCount * (part / 1000d)).ToString("N0");
             }
-            else if (resalePrice is GiftResalePriceTon resalePriceTon)
+            else if (resalePrice is GiftResalePriceGram resalePriceGram)
             {
-                return (resalePriceTon.ToncoinCentCount * (part / 1000d)).ToString("N0");
+                return (resalePriceGram.GramCentCount * (part / 1000d)).ToString("N0");
             }
 
             return string.Empty;
@@ -1370,9 +1370,9 @@ namespace Telegram.Td.Api
             {
                 return xStar.StarCount == yStar.StarCount;
             }
-            else if (x is SuggestedPostPriceTon xTon && y is SuggestedPostPriceTon yTon)
+            else if (x is SuggestedPostPriceGram xGram && y is SuggestedPostPriceGram yGram)
             {
-                return xTon.ToncoinCentCount == yTon.ToncoinCentCount;
+                return xGram.GramCentCount == yGram.GramCentCount;
             }
 
             return false;

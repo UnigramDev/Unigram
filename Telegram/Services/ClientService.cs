@@ -392,7 +392,7 @@ namespace Telegram.Services
         private StakeDiceState _stakeDiceState = new();
 
         private StarAmount _ownedStarCount;
-        private long? _ownedTonCount;
+        private long? _ownedGramCount;
 
         private JsonValueObject _config;
 
@@ -995,7 +995,7 @@ namespace Telegram.Services
             ProfileColors = null;
             AvailableProfileColors = null;
             _ownedStarCount = null;
-            _ownedTonCount = null;
+            _ownedGramCount = null;
             DefaultPaidReactionType = new PaidReactionTypeRegular();
             AgeVerificationParameters = null;
             SavedMessagesTopicCount = 0;
@@ -1448,17 +1448,17 @@ namespace Telegram.Services
             }
         }
 
-        public long OwnedTonCount
+        public long OwnedGramCount
         {
             get
             {
-                if (_ownedTonCount == null)
+                if (_ownedGramCount == null)
                 {
                     Send(new GetTonTransactions(null, string.Empty, 1));
                     return 0;
                 }
 
-                return _ownedTonCount ?? 0;
+                return _ownedGramCount ?? 0;
             }
         }
 
@@ -3936,8 +3936,8 @@ namespace Telegram.Services
                 case UpdateOwnedStarCount updateOwnedStarCount:
                     _ownedStarCount = updateOwnedStarCount.StarAmount;
                     break;
-                case UpdateOwnedTonCount updateOwnedTonCount:
-                    _ownedTonCount = updateOwnedTonCount.TonAmount;
+                case UpdateOwnedGramCount updateOwnedGramCount:
+                    _ownedGramCount = updateOwnedGramCount.GramAmount;
                     break;
                 case UpdateDefaultPaidReactionType updateDefaultPaidReactionType:
                     DefaultPaidReactionType = updateDefaultPaidReactionType.Type;

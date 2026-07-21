@@ -57,10 +57,10 @@ namespace Telegram.Views.Popups
                 Navigation.SelectedIndex = 0;
                 Label.Text = Formatter.FormatInt(priceStar.StarCount);
             }
-            else if (suggestedPostInfo?.Price is SuggestedPostPriceTon priceTon)
+            else if (suggestedPostInfo?.Price is SuggestedPostPriceGram priceGram)
             {
                 Navigation.SelectedIndex = 1;
-                Label.Text = Formatter.FormatDouble(priceTon.ToncoinCentCount / 100d);
+                Label.Text = Formatter.FormatDouble(priceGram.GramCentCount / 100d);
             }
             else
             {
@@ -225,12 +225,12 @@ namespace Telegram.Views.Popups
             if (Navigation.SelectedIndex == 1)
             {
                 var xtr = value / 1000000d;
-                var usd = xtr * _clientService.Options.MillionToncoinToUsdRate;
+                var usd = xtr * _clientService.Options.MillionGramToUsdRate;
 
-                SuggestedPostInfo = new InputSuggestedPostInfo(value > 0 ? new SuggestedPostPriceTon(value) : null, SuggestedPostInfo?.SendDate ?? 0);
+                SuggestedPostInfo = new InputSuggestedPostInfo(value > 0 ? new SuggestedPostPriceGram(value) : null, SuggestedPostInfo?.SendDate ?? 0);
                 Price.Text = "~" + Telegram.Converters.Formatter.FormatAmount((long)usd, "USD");
 
-                IsPrimaryButtonEnabled = value == 0 || (value >= _clientService.Options.SuggestedPostToncoinCentCountMin && value <= _clientService.Options.SuggestedPostToncoinCentCountMax);
+                IsPrimaryButtonEnabled = value == 0 || (value >= _clientService.Options.SuggestedPostGramCentCountMin && value <= _clientService.Options.SuggestedPostGramCentCountMax);
                 PrimaryButtonText = string.Format(Strings.PostSuggestionsOfferTON, (value / 100d).ToString("0.##"));
             }
             else

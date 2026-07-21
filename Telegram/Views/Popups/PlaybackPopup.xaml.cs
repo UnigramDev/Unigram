@@ -534,7 +534,7 @@ namespace Telegram.Views.Popups
 
         private void SaveToProfile(PlaybackItem item)
         {
-            _clientService.Send(new AddProfileAudio(new InputFileId(item.Document.Id), 0, string.Empty, string.Empty));
+            _clientService.Send(new AddProfileAudio(new InputAudio(new InputFileId(item.Document.Id), null, 0, string.Empty, string.Empty)));
             _navigationService.ShowToast(Strings.AudioSaveToMyProfileSaved, ToastPopupIcon.SavedMessages);
 
             if (item.AreTheSame(LifetimeService.Current.Playback.CurrentItem))
@@ -724,7 +724,7 @@ namespace Telegram.Views.Popups
         {
             if (LifetimeService.Current.Playback.CurrentItem is PlaybackItem item)
             {
-                _clientService.Send(new AddProfileAudio(new InputFileId(item.Document.Id), 0, string.Empty, string.Empty));
+                _clientService.Send(new AddProfileAudio(new InputAudio(new InputFileId(item.Document.Id), null, 0, string.Empty, string.Empty)));
                 ShowHideRemove(true);
             }
         }

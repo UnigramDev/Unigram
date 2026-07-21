@@ -19,10 +19,14 @@ namespace Telegram.Views.Popups
         Paragraph,
         Heading,
         Preformatted,
+        Footer,
         Blockquote,
         Pullquote,
         List,
         Table,
+        // Reported only when the caret is in the details HEADER (the collapsible body
+        // reports its own block type).
+        Details,
         Photo,
         Video,
         Audio,
@@ -94,9 +98,17 @@ namespace Telegram.Views.Popups
         /// <summary>Anchor name; only meaningful when <see cref="BlockType"/> is <see cref="RichEditorBlockType.Anchor"/>.</summary>
         public string AnchorName { get; private set; } = string.Empty;
 
-        // --- history ------------------------------------------------------------
+        // --- document -----------------------------------------------------------
+        /// <summary>True when the document has no content yet (a single empty block).</summary>
+        public bool IsEmpty { get; private set; } = true;
+
+        // --- history / clipboard ------------------------------------------------
         public bool CanUndo { get; private set; }
         public bool CanRedo { get; private set; }
+        /// <summary>True when there's a selection to copy / cut.</summary>
+        public bool CanCopy { get; private set; }
+        /// <summary>True when the editor can accept a paste (gate on the system clipboard too).</summary>
+        public bool CanPaste { get; private set; }
 
         // --- table (only meaningful while InTable is true) ----------------------
         /// <summary>True when the caret is inside a table; the remaining table properties are only meaningful then.</summary>
@@ -195,9 +207,13 @@ namespace Telegram.Views.Popups
                 CanDeleteColumn = false;
             }
 
+            IsEmpty = state.GetNamedBoolean("isEmpty", true);
+
             var can = state.GetNamedObject("can", null) ?? new JsonObject();
             CanUndo = can.GetNamedBoolean("undo", false);
             CanRedo = can.GetNamedBoolean("redo", false);
+            CanCopy = can.GetNamedBoolean("copy", false);
+            CanPaste = can.GetNamedBoolean("paste", false);
 
             var selection = state.GetNamedObject("selection", null) ?? new JsonObject();
             SelectionIsEmpty = selection.GetNamedBoolean("empty", true);
@@ -253,10 +269,12 @@ namespace Telegram.Views.Popups
             {
                 "heading" => RichEditorBlockType.Heading,
                 "preformatted" => RichEditorBlockType.Preformatted,
+                "footer" => RichEditorBlockType.Footer,
                 "blockquote" => RichEditorBlockType.Blockquote,
                 "pullquote" => RichEditorBlockType.Pullquote,
                 "list" => RichEditorBlockType.List,
                 "table" => RichEditorBlockType.Table,
+                "details" => RichEditorBlockType.Details,
                 "photo" => RichEditorBlockType.Photo,
                 "video" => RichEditorBlockType.Video,
                 "audio" => RichEditorBlockType.Audio,

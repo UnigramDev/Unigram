@@ -1702,7 +1702,7 @@ namespace Telegram.ViewModels
             {
                 var percent = message.SuggestedPostInfo.Price switch
                 {
-                    SuggestedPostPriceTon => (ClientService.Options.SuggestedPostToncoinEarningsPerMille / 1000d).ToString("0.##%"),
+                    SuggestedPostPriceGram => (ClientService.Options.SuggestedPostGramEarningsPerMille / 1000d).ToString("0.##%"),
                     _ => (ClientService.Options.SuggestedPostStarEarningsPerMille / 1000d).ToString("0.##%")
                 };
 

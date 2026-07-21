@@ -2554,15 +2554,15 @@ namespace Telegram.Controls.Messages
                     content = string.Format(Strings.GiftOfferOfferedTextStars, user.FullName(true), resalePriceStar.StarCount.ToString("N0"), upgradedGift.Gift.ToName());
                 }
             }
-            else if (upgradedGift.Price is GiftResalePriceTon resalePriceTon)
+            else if (upgradedGift.Price is GiftResalePriceGram resalePriceGram)
             {
                 if (message.IsOutgoing)
                 {
-                    content = string.Format(Strings.GiftOfferOfferedTextTONOut, user.FullName(true), resalePriceTon.ToncoinCentCount, upgradedGift.Gift.ToName());
+                    content = string.Format(Strings.GiftOfferOfferedTextTONOut, user.FullName(true), resalePriceGram.GramCentCount, upgradedGift.Gift.ToName());
                 }
                 else
                 {
-                    content = string.Format(Strings.GiftOfferOfferedTextTON, user.FullName(true), resalePriceTon.ToncoinCentCount, upgradedGift.Gift.ToName());
+                    content = string.Format(Strings.GiftOfferOfferedTextTON, user.FullName(true), resalePriceGram.GramCentCount, upgradedGift.Gift.ToName());
                 }
             }
 
@@ -2610,15 +2610,15 @@ namespace Telegram.Controls.Messages
                         return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextStarsRejected, user.FullName(true), resalePriceStar.StarCount.ToString("N0"), upgradedGift.Gift.ToName()));
                     }
                 }
-                else if (upgradedGift.Price is GiftResalePriceTon resalePriceTon)
+                else if (upgradedGift.Price is GiftResalePriceGram resalePriceGram)
                 {
                     if (message.IsOutgoing)
                     {
-                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejectedOut, user.FullName(true), upgradedGift.Gift.ToName(), resalePriceTon.ToncoinCentCount));
+                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejectedOut, user.FullName(true), upgradedGift.Gift.ToName(), resalePriceGram.GramCentCount));
                     }
                     else
                     {
-                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejected, user.FullName(true), resalePriceTon.ToncoinCentCount, upgradedGift.Gift.ToName()));
+                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejected, user.FullName(true), resalePriceGram.GramCentCount, upgradedGift.Gift.ToName()));
                     }
                 }
             }
@@ -2635,15 +2635,15 @@ namespace Telegram.Controls.Messages
                         return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextStarsRejected, user.FullName(true), resalePriceStar.StarCount.ToString("N0"), upgradedGift.Gift.ToName()));
                     }
                 }
-                else if (upgradedGift.Price is GiftResalePriceTon resalePriceTon)
+                else if (upgradedGift.Price is GiftResalePriceGram resalePriceGram)
                 {
                     if (message.IsOutgoing)
                     {
-                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejectedOut, user.FullName(true), upgradedGift.Gift.ToName(), resalePriceTon.ToncoinCentCount));
+                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejectedOut, user.FullName(true), upgradedGift.Gift.ToName(), resalePriceGram.GramCentCount));
                     }
                     else
                     {
-                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejected, user.FullName(true), resalePriceTon.ToncoinCentCount, upgradedGift.Gift.ToName()));
+                        return ClientEx.ParseMarkdown(string.Format(Strings.GiftOfferOfferedTextTONRejected, user.FullName(true), resalePriceGram.GramCentCount, upgradedGift.Gift.ToName()));
                     }
                 }
             }
@@ -2872,9 +2872,9 @@ namespace Telegram.Controls.Messages
             {
                 return string.Format(Strings.SuggestedOfferCompleteAmountF.ReplaceStar(Icons.Premium), sender, suggestedPostPaid.StarAmount.ToValue()).AsFormattedText();
             }
-            else if (suggestedPostPaid.TonAmount > 0)
+            else if (suggestedPostPaid.GramAmount > 0)
             {
-                return string.Format(Strings.SuggestedOfferCompleteAmountF.ReplaceStar(Icons.Ton), sender, suggestedPostPaid.TonAmount / Constants.ToncoinMin).AsFormattedText();
+                return string.Format(Strings.SuggestedOfferCompleteAmountF.ReplaceStar(Icons.Ton), sender, suggestedPostPaid.GramAmount / Constants.ToncoinMin).AsFormattedText();
             }
 
             return string.Format(Strings.SuggestedOfferCompleteAmountUnknown, sender).AsFormattedText();
@@ -2892,9 +2892,9 @@ namespace Telegram.Controls.Messages
                     {
                         return string.Format(Strings.SuggestedOfferRefundByAdminAmountF.ReplaceStar(Icons.Premium), sender, message.Chat.Title, priceStar.StarCount).AsFormattedText();
                     }
-                    else if (replyTo.SuggestedPostInfo.Price is SuggestedPostPriceTon priceTon)
+                    else if (replyTo.SuggestedPostInfo.Price is SuggestedPostPriceGram priceGram)
                     {
-                        return string.Format(Strings.SuggestedOfferRefundByAdminAmountF.ReplaceStar(Icons.Ton), sender, message.Chat.Title, priceTon.ToncoinCentCount).AsFormattedText();
+                        return string.Format(Strings.SuggestedOfferRefundByAdminAmountF.ReplaceStar(Icons.Ton), sender, message.Chat.Title, priceGram.GramCentCount).AsFormattedText();
                     }
                 }
                 else
@@ -2908,9 +2908,9 @@ namespace Telegram.Controls.Messages
                 {
                     return string.Format(Strings.SuggestedOfferRefundByUserAmountF.ReplaceStar(Icons.Premium), sender, message.Chat.Title, priceStar.StarCount).AsFormattedText();
                 }
-                else if (replyTo.SuggestedPostInfo.Price is SuggestedPostPriceTon priceTon)
+                else if (replyTo.SuggestedPostInfo.Price is SuggestedPostPriceGram priceGram)
                 {
-                    return string.Format(Strings.SuggestedOfferRefundByUserAmountF.ReplaceStar(Icons.Ton), sender, message.Chat.Title, priceTon.ToncoinCentCount).AsFormattedText();
+                    return string.Format(Strings.SuggestedOfferRefundByUserAmountF.ReplaceStar(Icons.Ton), sender, message.Chat.Title, priceGram.GramCentCount).AsFormattedText();
                 }
             }
             else

@@ -102,7 +102,7 @@ namespace Telegram.Services.Factories
             var thumbnail = await video.ToVideoThumbnailAsync(generation, ConversionType.TranscodeThumbnail, serialized);
 
             // TODO: 172 selfDestructType
-            return new InputMessageVideoNote(generated, thumbnail, duration, (int)generation.Width, selfDestructType);
+            return new InputMessageVideoNote(new InputVideoNote(generated, thumbnail, duration, (int)generation.Width), selfDestructType);
         }
 
         public static async Task<Object> CreateDocumentAsync(StorageMedia media, FormattedText caption, bool forceDocument)
@@ -132,7 +132,7 @@ namespace Telegram.Services.Factories
                     {
                         if ((width == 512 && height <= width) || (height == 512 && width <= height))
                         {
-                            return new InputMessageSticker(generated, null, width, height, string.Empty);
+                            return new InputMessageSticker(new InputSticker(generated, null, width, height), string.Empty);
                         }
                     }
                 }

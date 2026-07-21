@@ -84,7 +84,7 @@ namespace Telegram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageSticker(new InputFileId(sticker.StickerValue.Id), sticker.Thumbnail?.ToInput(), sticker.Width, sticker.Height, emoji ?? string.Empty);
+            var input = new InputMessageSticker(new InputSticker(new InputFileId(sticker.StickerValue.Id), sticker.Thumbnail?.ToInput(), sticker.Width, sticker.Height), emoji ?? string.Empty);
 
             await SendMessageAsync(reply, input, options);
         }
@@ -695,7 +695,7 @@ namespace Telegram.ViewModels
 
             // TODO: 172 selfDestructType
             var reply = GetReply(true);
-            var input = new InputMessageVoiceNote(await file.ToGeneratedAsync(ConversionType.Opus), duration, Array.Empty<byte>(), caption, selfDestructType);
+            var input = new InputMessageVoiceNote(new InputVoiceNote(await file.ToGeneratedAsync(ConversionType.Opus), duration, Array.Empty<byte>()), caption, selfDestructType);
 
             await SendMessageAsync(reply, input, options);
         }
