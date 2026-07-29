@@ -20,11 +20,13 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <controls:GlyphButton x:Name="BackButton"
+                              AutomationProperties.Name="{CustomResource AccDescrGoBack}"
                               ContextRequested="BackButton_ContextRequested"
                               Glyph="&#xE72B;"
                               IsEnabled="False"
                               Width="48" />
         <controls:GlyphButton x:Name="ForwardButton"
+                              AutomationProperties.Name="{CustomResource AccDescrGoForward}"
                               ContextRequested="ForwardButton_ContextRequested"
                               Glyph="&#xE72A;"
                               IsEnabled="False"
