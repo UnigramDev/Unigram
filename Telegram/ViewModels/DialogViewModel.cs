@@ -2854,12 +2854,11 @@ namespace Telegram.ViewModels
                 }
             }
 
-            var input = draft?.Content as DraftMessageContentText;
-            if (input == null || Type is not DialogType.History and not DialogType.Thread)
+            if (draft?.Content == null || Type is not DialogType.History and not DialogType.Thread)
             {
                 _draft = null;
 
-                SetText(null as string);
+                Delegate?.UpdateChatDraft(chat, null);
                 ComposerHeader = null;
             }
             else
@@ -2900,10 +2899,7 @@ namespace Telegram.ViewModels
                 ComposerHeader = null;
 
             UpdateText:
-                if (draft.Content is DraftMessageContentText text)
-                {
-                    SetText(text.Text);
-                }
+                Delegate?.UpdateChatDraft(chat, draft);
             }
         }
 
@@ -2963,7 +2959,7 @@ namespace Telegram.ViewModels
             }
 
             var chat = Chat;
-            if (chat == null || RestrictsNewChats)
+            if (chat == null || chat.DraftMessage?.Content is DraftMessageContentRichMessage || RestrictsNewChats)
             {
                 return;
             }
@@ -3622,9 +3618,8 @@ namespace Telegram.ViewModels
             var text = GetFormattedText();
             var message = new RichMessage(PageBlockHelper.ToPageBlocks(text), false, true);
 
-            var popup = new TextEditorRichPopup(ClientService, NavigationService, message);
-
-            await ShowPopupAsync(popup);
+            // Carry the current reply into the editor; send options are picked with their defaults on send.
+            NavigationService.NavigateToTextEditor(ChatId, OutgoingTopicId, 0, message, GetReply(false));
         }
 
         public void Boost()

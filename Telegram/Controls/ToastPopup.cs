@@ -92,6 +92,7 @@ namespace Telegram.Controls
                 PremiumFeatureMessageEffects => Strings.AnimatedEffectPremium,
                 PremiumFeatureUniqueReactions => Strings.UnlockPremiumEmojiReaction,
                 PremiumFeatureCustomEmoji => Strings.UnlockPremiumEmojiHint,
+                PremiumFeatureRichMessages => Strings.ArticleConversionText,
                 _ => Strings.UnlockPremium
             };
 

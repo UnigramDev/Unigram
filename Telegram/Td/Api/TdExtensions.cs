@@ -2429,14 +2429,8 @@ namespace Telegram.Td.Api
 
         public static string ToPlainText(this RichMessage message)
         {
-            var builder = new StringBuilder();
-
-            foreach (var block in message.Blocks)
-            {
-
-            }
-
-            return builder.ToString();
+            var text = PageBlockHelper.GetRichText(message.Blocks);
+            return text.ToPlainText();
         }
 
         public static FormattedText ToFormattedText(this RichMessage message)

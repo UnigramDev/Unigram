@@ -1,0 +1,298 @@
+/* editor.css — CSS REQUIRED by the editor itself, shared by every build.
+ * assemble.js injects this into both the production shell (editor only) and the
+ * dev shell (editor + toolbar/inspector) at its CSS marker. Contains the design
+ * tokens plus the ProseMirror base + node styling the bundle relies on. The
+ * dev-only chrome (app/command/status bars, inspector) lives in shell.html. */
+
+/* Two fonts shipped in the app package (Assets/fonts), served same-origin via the
+   WebView2 virtual host so @font-face passes CORS. --emoji is an emoji-only font
+   prepended to every text stack; --icon is an icon font for UI glyphs (pull-quote
+   marks, etc.). In the browser dev build these URLs 404 and the stacks fall back. */
+@font-face { font-family: "AppEmoji"; src: url("Emoji/apple.ttf") format("truetype"); }
+@font-face { font-family: "AppIcons"; src: url("Fonts/Telegram.ttf") format("truetype"); }
+
+:root {
+  --chrome: #eef1f4;
+  --chrome-2: #e3e8ee;
+  --surface: #ffffff;
+  --ink: #14202b;
+  --ink-soft: #5a6b7b;
+  --line: #d6dde4;
+  --accent: #2f86d6;
+  --accent-soft: #e6f1fb;
+  --inspector: #0e1620;
+  --inspector-line: #1d2a39;
+  --code: #8fd3a6;
+  --radius: 7px;
+  --emoji: "AppEmoji";   /* emoji-only font, prepended to every stack below */
+  --icon: "AppIcons";    /* icon font for UI glyphs */
+  --ui: var(--emoji), "Segoe UI", system-ui, -apple-system, sans-serif;
+  --heading: var(--emoji), "Times New Roman", Times, serif;
+  --mono: var(--emoji), "Cascadia Code", ui-monospace, "SF Mono", Consolas, monospace;
+}
+/* Dark theme — toggled by setTheme({ dark:true }), which sets data-theme on
+   <html>. --accent is left to the inline value setTheme writes (the app's). */
+:root[data-theme="dark"] {
+  --surface: #17212b;
+  --ink: #e7eef5;
+  --ink-soft: #8aa0b4;
+  --line: #2b3a4a;
+  --chrome: #232f3b;
+  --chrome-2: #1b2630;
+  --accent-soft: #15324a;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+
+/* Scrollbar (the editor scroll container, prod #editor / dev .surface). The thumb
+   tracks --ink, so it's dark on the light theme and light on the dark theme; the
+   track is left clear 64px at the top and bottom. */
+#editor::-webkit-scrollbar, .surface::-webkit-scrollbar { width: 10px; }
+#editor::-webkit-scrollbar-track, .surface::-webkit-scrollbar-track { margin: 64px 0; background: transparent; }
+#editor::-webkit-scrollbar-thumb, .surface::-webkit-scrollbar-thumb {
+  border: 2px solid transparent; background-clip: padding-box; border-radius: 6px;
+  background-color: color-mix(in srgb, var(--ink) 28%, transparent);
+}
+#editor::-webkit-scrollbar-thumb:hover, .surface::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--ink) 45%, transparent);
+}
+
+/* ============ ProseMirror base (required, not in JS bundle) ============ */
+.ProseMirror { position: relative; word-wrap: break-word; white-space: pre-wrap; -webkit-font-variant-ligatures: none; font-variant-ligatures: none; outline: none; }
+.ProseMirror pre { white-space: pre-wrap; }
+.ProseMirror[contenteditable="true"] { caret-color: var(--accent); }
+.ProseMirror-gapcursor { display: none; pointer-events: none; position: absolute; }
+.ProseMirror-gapcursor:after { content: ""; display: block; position: absolute; top: -2px; width: 22px; border-top: 2px solid var(--accent); animation: pm-blink 1.1s steps(2, start) infinite; }
+@keyframes pm-blink { to { visibility: hidden; } }
+.ProseMirror-focused .ProseMirror-gapcursor { display: block; }
+/* tables — separate borders so the table can have rounded (4px) corners; the
+   grid is drawn with each cell's right+bottom border (last row/column drop theirs,
+   the table border closes the edge). */
+.ProseMirror .tableWrapper { overflow-x: auto; margin: 14px 0; }
+.ProseMirror table { border-collapse: separate; border-spacing: 0; table-layout: fixed; width: 100%; border: 1px solid var(--line); border-radius: 4px; }
+.ProseMirror td, .ProseMirror th { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 7px 10px; vertical-align: top; position: relative; }
+.ProseMirror tr td:last-child, .ProseMirror tr th:last-child { border-right: none; }
+.ProseMirror tr:last-child td, .ProseMirror tr:last-child th { border-bottom: none; }
+/* round the four corner cells to match the table radius */
+.ProseMirror tr:first-child td:first-child, .ProseMirror tr:first-child th:first-child { border-top-left-radius: 4px; }
+.ProseMirror tr:first-child td:last-child, .ProseMirror tr:first-child th:last-child { border-top-right-radius: 4px; }
+.ProseMirror tr:last-child td:first-child, .ProseMirror tr:last-child th:first-child { border-bottom-left-radius: 4px; }
+.ProseMirror tr:last-child td:last-child, .ProseMirror tr:last-child th:last-child { border-bottom-right-radius: 4px; }
+.ProseMirror th { background: var(--chrome); font-weight: 600; text-align: left; }
+.ProseMirror td[align="center"], .ProseMirror th[align="center"] { text-align: center; }
+.ProseMirror td[align="right"], .ProseMirror th[align="right"] { text-align: right; }
+.ProseMirror td[data-valign="middle"], .ProseMirror th[data-valign="middle"] { vertical-align: middle; }
+.ProseMirror td[data-valign="bottom"], .ProseMirror th[data-valign="bottom"] { vertical-align: bottom; }
+/* cells hold exactly one paragraph — no block margin inside them */
+.ProseMirror td p, .ProseMirror th p { margin: 0; }
+/* cell selection: hide the partial text-selection highlight, keep a faint fill */
+.ProseMirror.pm-cell-selection ::selection { background: transparent; }
+.ProseMirror .selectedCell:after { content: ""; position: absolute; inset: 0; background: color-mix(in srgb, var(--accent) 12%, transparent); pointer-events: none; }
+/* 2px accent outline drawn only on the OUTER edges of the cell-selection rect, so
+   it reads as a single perimeter (interior cell borders stay the grey grid). It
+   lives on an absolutely-positioned ::before so toggling the selection never
+   changes cell size (no table resize). */
+.ProseMirror .pm-cell-selected::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.ProseMirror .pm-cell-selected.pm-edge-top::before { border-top: 2px solid var(--accent); }
+.ProseMirror .pm-cell-selected.pm-edge-bottom::before { border-bottom: 2px solid var(--accent); }
+.ProseMirror .pm-cell-selected.pm-edge-left::before { border-left: 2px solid var(--accent); }
+.ProseMirror .pm-cell-selected.pm-edge-right::before { border-right: 2px solid var(--accent); }
+/* round only the outer corners of the selection rectangle (corner cells) */
+.ProseMirror .pm-cell-selected.pm-edge-top.pm-edge-left::before { border-top-left-radius: 4px; }
+.ProseMirror .pm-cell-selected.pm-edge-top.pm-edge-right::before { border-top-right-radius: 4px; }
+.ProseMirror .pm-cell-selected.pm-edge-bottom.pm-edge-left::before { border-bottom-left-radius: 4px; }
+.ProseMirror .pm-cell-selected.pm-edge-bottom.pm-edge-right::before { border-bottom-right-radius: 4px; }
+
+/* ============ node styling ============ */
+/* Base text matches the native renderer: Segoe UI 14px. */
+.ProseMirror { line-height: normal; color: var(--ink); font-family: var(--ui); font-size: 14px; }
+/* 8px above every block (overrides the UA margin-block); the first block in a
+   container sits flush against its top edge. */
+.ProseMirror p, .ProseMirror h1, .ProseMirror h2, .ProseMirror h3, .ProseMirror h4,
+.ProseMirror h5, .ProseMirror h6, .ProseMirror blockquote, .ProseMirror pre,
+.ProseMirror ul, .ProseMirror ol, .ProseMirror hr, .ProseMirror .pm-figure,
+.ProseMirror .pm-math-block, .ProseMirror .pm-details, .ProseMirror .pm-anchor,
+.ProseMirror .tableWrapper, .ProseMirror table {
+  margin: 8px 0 0;
+}
+.ProseMirror > :first-child,
+.ProseMirror blockquote > :first-child,
+.ProseMirror li > :first-child,
+.ProseMirror .pm-li-content > :first-child,
+.ProseMirror .pm-details-content > :first-child { margin-top: 0; }
+/* Headings: Times New Roman semi-bold. Size 1 = 24px down to size 6 = 14px (-2px
+   per step). The schema maps heading size 1..6 to h1..h6. */
+.ProseMirror h1, .ProseMirror h2, .ProseMirror h3,
+.ProseMirror h4, .ProseMirror h5, .ProseMirror h6 {
+  font-family: var(--heading); font-weight: 600;
+}
+.ProseMirror h1 { font-size: 24px; }
+.ProseMirror h2 { font-size: 22px; }
+.ProseMirror h3 { font-size: 20px; }
+.ProseMirror h4 { font-size: 18px; }
+.ProseMirror h5 { font-size: 16px; }
+.ProseMirror h6 { font-size: 14px; }
+.ProseMirror a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(47,134,214,.4); }
+.ProseMirror .pm-mention { color: var(--accent); }
+.ProseMirror code { font-family: var(--mono); font-size: .88em; background: var(--chrome); padding: 1px 5px; border-radius: 4px; }
+.ProseMirror mark { background: #fff1a8; padding: 0 2px; border-radius: 3px; }
+/* sub/sup without growing the line box: line-height:0 + relative offset keeps the
+   surrounding text on the same baseline (UA vertical-align:sub/super shifts it). */
+.ProseMirror sub, .ProseMirror sup { font-size: .75em; line-height: 0; position: relative; vertical-align: baseline; }
+.ProseMirror sup { top: -.5em; }
+.ProseMirror sub { bottom: -.25em; }
+/* Blockquote + preformatted share an accent box: 4px radius, accent fill at 0.1
+   opacity, and a left "pill" rounded ONLY on its outer (left) corners. Fill and
+   pill track --accent, so setTheme updates them live. */
+.ProseMirror blockquote, .ProseMirror pre {
+  position: relative; padding: 8px 12px 8px 15px; border-radius: 4px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--ink);
+  overflow: hidden; /* clip the pill to the rounded corners (pre overrides x to auto below) */
+}
+/* blockquote padding matches native: left 8, top 4, right 8, bottom 6 — plus the 3px
+   accent bar sits OUTSIDE that, so the left inset is 3 + 8 = 11px. */
+.ProseMirror blockquote { padding: 4px 8px 6px 11px; }
+.ProseMirror blockquote::before, .ProseMirror pre::after {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--accent); border-radius: 4px 0 0 4px; /* TL + BL rounded, TR + BR flat */
+}
+/* pageBlockFooter — normal text at 12px (an article footer / attribution line). */
+.ProseMirror .pm-footer { font-size: 12px; }
+
+/* blockquote credit: muted attribution. Optional — created on demand; shows an
+   "Add credit" placeholder while empty (same mechanism as the pullquote author). */
+.ProseMirror .pm-blockquote-credit { position: relative; margin-top: 6px; font-size: .9em; font-weight: 600; color: var(--ink-soft); }
+.ProseMirror .pm-blockquote-credit.pm-empty::before {
+  content: attr(data-placeholder); position: absolute; left: 0; right: 0;
+  pointer-events: none; color: var(--ink-soft); font-weight: 400;
+}
+/* credit (and its placeholder) stays hidden until the quote body has content */
+.ProseMirror blockquote.pm-empty-body .pm-blockquote-credit { display: none; }
+/* preformatted: monospace. The language label is a real (clickable) element on
+   the first line, rendered by the NodeView — shows "language" when none is set. */
+.ProseMirror pre { font-family: var(--mono); font-size: .86em; overflow-x: auto; }
+.ProseMirror pre code { background: none; padding: 0; font-size: inherit; }
+.ProseMirror .pm-pre-lang {
+  display: block; width: max-content; margin-bottom: 6px; cursor: pointer; user-select: none;
+  font-family: var(--ui); font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--ink-soft);
+}
+.ProseMirror .pm-pre-lang:hover { color: var(--accent); }
+/* Pull quote (mirrors native ProcessPullquote): a horizontally-centered pill,
+   0.1 accent fill, 8px radius. A 3-column grid flanks the quote text with
+   icon-font quote marks (open bottom-left, close top-right); the author line
+   spans below and appears only once the quote has text. The quote is 14px italic
+   centered; the author 14px semibold accent. Placeholders: "Enter quote" / "Add
+   author". (Quote glyphs: Icons.QuoteBlockOpenFilled16 / QuoteBlockFilled16.) */
+.ProseMirror .pm-pullquote {
+  /* max-content keeps the text on one line and grows the pill as you type;
+     min-width holds it open for the placeholder so it can't collapse. */
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+  width: max-content; min-width: 12em; max-width: 100%; margin: 8px auto 0;
+  border-radius: 8px; background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.ProseMirror .pm-pullquote::before, .ProseMirror .pm-pullquote::after {
+  grid-row: 1; font-family: var(--icon); font-size: 16px; line-height: 1; color: var(--accent); margin: 4px; pointer-events: none;
+}
+.ProseMirror .pm-pullquote::before { content: "\EB19"; grid-column: 1; align-self: end; justify-self: start; }   /* open, bottom-left */
+.ProseMirror .pm-pullquote::after { content: "\EA01"; grid-column: 3; align-self: start; justify-self: end; }    /* close, top-right */
+.ProseMirror .pm-pullquote-text { grid-column: 2; grid-row: 1; position: relative; text-align: center; font-size: 14px; font-style: italic; font-weight: 400; margin: 6px 0 8px; }
+.ProseMirror .pm-pullquote-credit { grid-column: 1 / -1; grid-row: 2; position: relative; text-align: center; font-size: 14px; font-weight: 600; color: var(--accent); margin: -4px 8px 8px; }
+/* author line stays hidden until the quote has content */
+.ProseMirror .pm-pullquote-text.pm-empty + .pm-pullquote-credit { display: none; }
+/* placeholders — non-editable, centered over the line */
+.ProseMirror .pm-pullquote-text.pm-empty::before, .ProseMirror .pm-pullquote-credit.pm-empty::before {
+  content: attr(data-placeholder); position: absolute; left: 0; right: 0;
+  pointer-events: none; color: var(--ink-soft); font-weight: 400;
+}
+/* divider: a 13px-tall (clickable) box with a 1px line drawn centered via a background
+   gradient — robust to box-sizing, unlike a padding+clip trick. */
+.ProseMirror hr {
+  border: none; margin: 1.4em 0; height: 13px; cursor: pointer;
+  background: linear-gradient(var(--line), var(--line)) center / 100% 1px no-repeat;
+}
+.ProseMirror hr.ProseMirror-selectednode { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.ProseMirror .pm-spoiler { background: var(--ink); color: transparent; border-radius: 4px; padding: 0 2px; cursor: pointer; transition: color .15s; }
+.ProseMirror .pm-spoiler:hover { color: var(--surface); }
+/* anchor: invisible in the published article, shown here as a small chip with
+   its name (⚓ name). The outer block keeps base font metrics so its height
+   matches a paragraph; the chip is the small pill inside. Select to delete;
+   double-click (demo) to rename. */
+.ProseMirror .pm-anchor { display: flex; align-items: center; cursor: pointer; user-select: none; }
+.ProseMirror .pm-anchor-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--ink-soft); background: var(--chrome); border: 1px dashed var(--line); border-radius: 4px; padding: 1px 7px; }
+.ProseMirror .pm-anchor-chip:before { content: "⚓"; }
+.ProseMirror .pm-anchor.ProseMirror-selectednode .pm-anchor-chip { outline: 2px solid var(--accent); outline-offset: 1px; color: var(--accent); border-color: var(--accent); }
+
+/* lists + checklists */
+.ProseMirror ul, .ProseMirror ol { padding-left: 1.5em; }
+.ProseMirror li { margin: .25em 0; }
+/* Checklist: the checkbox sits in the list's marker gutter (absolutely, like a
+   bullet) so the text flows at the normal content edge — aligned with bullet and
+   numbered items. */
+.ProseMirror .pm-checklist-item { list-style: none; position: relative; }
+.ProseMirror .pm-li-content { flex: 1; }
+/* WinUI 11 (Fluent) checkbox: 20x20, 4px radius, 1px neutral border unchecked;
+   accent fill + white Segoe Fluent Icons checkmark when checked, with hover. */
+.ProseMirror .pm-checkbox {
+  position: absolute; left: -24px; top: 1px; width: 20px; height: 20px; /* 20px box + 4px gap before text */
+  border: 1.5px solid color-mix(in srgb, var(--ink) 45%, transparent);
+  border-radius: 4px; background: transparent; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background .1s ease, border-color .1s ease;
+}
+.ProseMirror .pm-checkbox:hover {
+  border-color: color-mix(in srgb, var(--ink) 60%, transparent);
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+.ProseMirror .pm-checkbox[data-checked="true"] { background: var(--accent); border-color: var(--accent); }
+.ProseMirror .pm-checkbox[data-checked="true"]:hover { background: color-mix(in srgb, var(--accent) 90%, #000); border-color: color-mix(in srgb, var(--accent) 90%, #000); }
+.ProseMirror .pm-checkbox[data-checked="true"]:after {
+  content: "\E73E"; /* Segoe Fluent Icons / MDL2 CheckMark glyph */
+  font-family: "Segoe Fluent Icons", "Segoe MDL2 Assets", sans-serif;
+  color: #fff; font-size: 14px; line-height: 1;
+}
+
+/* emoji + math */
+/* Invisible, non-clickable 20x20 placeholder; the native overlay draws on top. */
+.ProseMirror .pm-emoji { display: inline-block; width: 20px; height: 20px; vertical-align: middle; pointer-events: none; }
+/* Covered by a text selection: paint the system selection color (the browser
+   won't highlight an empty non-editable atom on its own). */
+.ProseMirror .pm-emoji-selected { background: Highlight; }
+.ProseMirror .pm-math-inline { font-family: var(--mono); font-size: .9em; background: var(--accent-soft); color: #1b5a8f; padding: 1px 6px; border-radius: 4px; }
+.ProseMirror .pm-math-block { font-family: var(--mono); font-size: .95em; text-align: center; background: var(--accent-soft); color: #1b5a8f; padding: 14px; border-radius: var(--radius); }
+.ProseMirror .ProseMirror-selectednode.pm-math-block, .ProseMirror .pm-math-inline.ProseMirror-selectednode { outline: 2px solid var(--accent); }
+
+/* details */
+.ProseMirror .pm-details { border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; position: relative; }
+.ProseMirror .pm-details-bar { position: absolute; left: 8px; top: 10px; }
+.ProseMirror .pm-details-toggle { border: none; background: transparent; cursor: pointer; font-size: 13px; color: var(--ink-soft); width: 18px; }
+.ProseMirror .pm-details-content { margin-left: 18px; }
+.ProseMirror .pm-details-content > summary { font-weight: 600; list-style: none; }
+.ProseMirror .pm-details[data-open="false"] .pm-details-content > :not(summary) { display: none; }
+
+/* collage: a CSS grid whose template + per-figure placement collageView derives
+   from the mosaic album tiling (grid cells can span rows/columns, so column-
+   spanning mosaic layouts render correctly). Figures stay in flow (selection /
+   cursor mapping keep working) and fill their cell with the media cropped to
+   cover. The group caption spans all columns on the final row. Slideshow = row. */
+.ProseMirror .pm-collage { display: grid; border-radius: 4px; overflow: hidden; }
+.ProseMirror .pm-collage > .pm-figure { position: relative; margin: 0; min-width: 0; min-height: 0; overflow: hidden; }
+/* fill the whole grid cell with absolute inset rather than height:100% (percentage
+   heights inside stretch-sized grid items are unreliable) so the media — which
+   carries the click-to-select handler — is a full hit target. */
+.ProseMirror .pm-collage > .pm-figure .pm-figure-media { position: absolute; inset: 0; height: auto; border-radius: 0; }
+.ProseMirror .pm-collage > .pm-figure .pm-figure-media img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto !important; }
+.ProseMirror .pm-collage > .pm-figure .pm-figure-caption-wrap { display: none; } /* no per-figure caption in a collage */
+.ProseMirror .pm-slideshow { display: flex; flex-wrap: wrap; gap: 8px; }
+.ProseMirror .pm-slideshow .pm-figure { flex: 1 1 40%; margin: 0; }
+.ProseMirror .pm-collage > figcaption, .ProseMirror .pm-slideshow > figcaption {
+  width: 100%; text-align: center; font-size: .9em; color: var(--ink-soft);
+}
+
+/* figure */
+.ProseMirror .pm-figure { margin: 1em 0; }
+.ProseMirror .pm-figure.pm-selected .pm-figure-media { outline: 2px solid var(--accent); }
+.ProseMirror .pm-figure-media { position: relative; border-radius: var(--radius); overflow: hidden; cursor: pointer; background: #16202b; }
+.ProseMirror .pm-figure-media img { display: block; width: 100%; }
+.ProseMirror .pm-figure-spoiler { position: absolute; inset: 0; backdrop-filter: blur(14px); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+.ProseMirror .pm-figure-tag { position: absolute; left: 8px; top: 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: #cdd9e5; background: rgba(0,0,0,.45); padding: 2px 7px; border-radius: 20px; }
+.ProseMirror .pm-figure-caption-wrap figcaption { text-align: center; font-size: .9em; color: var(--ink-soft); margin-top: 8px; }

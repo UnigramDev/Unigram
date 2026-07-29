@@ -1629,7 +1629,7 @@ namespace Telegram.Views
 
         private void CheckButtonsVisibility()
         {
-            var empty = TextField.IsEmpty;
+            var empty = TextField.IsEmpty && DraftField.Visibility == Visibility.Collapsed;
             var editing = ViewModel.ComposerHeader?.Editing != null || ViewModel.CurrentInlineBot != null;
 
             if (empty != _oldEmpty)
@@ -7168,6 +7168,28 @@ namespace Telegram.Views
         {
             ConnectedBot.UpdateChatBusinessBotManageBar(chat, businessBotManageBar);
             ViewVisibleMessages(false);
+        }
+
+        public void UpdateChatDraft(Chat chat, DraftMessage draft)
+        {
+            if (draft?.Content is DraftMessageContentText text)
+            {
+                ViewModel.SetText(text.Text);
+                DraftField.Visibility = Visibility.Collapsed;
+            }
+            else if (draft?.Content is DraftMessageContentRichMessage richMessage)
+            {
+                ViewModel.SetText(null as string);
+                DraftField.Visibility = Visibility.Visible;
+                DraftField.UpdateView(ViewModel.ClientService, richMessage.Message.Blocks, false);
+            }
+            else
+            {
+                ViewModel.SetText(null as string);
+                DraftField.Visibility = Visibility.Collapsed;
+            }
+
+            CheckButtonsVisibility();
         }
 
         public void UpdateGroupCall(Chat chat, GroupCall groupCall)

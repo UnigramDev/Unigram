@@ -1350,6 +1350,9 @@
     <Compile Include="Views\Popups\ChooseCountriesPopup.xaml.cs">
       <DependentUpon>ChooseCountriesPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\FormulaPopup.xaml.cs">
+      <DependentUpon>FormulaPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\TextEditorRichPopup.xaml.cs">
       <DependentUpon>TextEditorRichPopup.xaml</DependentUpon>
     </Compile>
@@ -2174,6 +2177,9 @@
     <Compile Include="Views\Users\UserEditPage.xaml.cs">
       <DependentUpon>UserEditPage.xaml</DependentUpon>
     </Compile>
+    <Content Include="..\Libraries\unigram-iv-editor\editor.html">
+      <Link>Assets\editor.html</Link>
+    </Content>
     <Content Include="Assets\Audio\received.mp3" />
     <Content Include="Assets\Audio\sent.mp3" />
     <Content Include="Assets\Audio\voicechat_join.mp3" />
@@ -3639,6 +3645,10 @@
     <Page Include="Views\Popups\ChooseCountriesPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\FormulaPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\TextEditorRichPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

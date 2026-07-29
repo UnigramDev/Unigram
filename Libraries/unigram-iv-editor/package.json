@@ -1,0 +1,34 @@
+{
+  "name": "unigram-iv-editor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Single-flow Instant View editor (ProseMirror) for Unigram, hosted in WebView2. PageBlock/RichText <-> editor model mapping with a native-toolbar bridge.",
+  "type": "module",
+  "scripts": {
+    "bundle": "esbuild src/main.js --bundle --format=iife --global-name=PMEditor --minify --outfile=dist/bundle.min.js",
+    "bundle:dev": "esbuild src/main.js --bundle --format=iife --global-name=PMEditor --sourcemap --outfile=dist/bundle.min.js",
+    "assemble": "node assemble.js",
+    "assemble:shell": "node assemble.js --shell",
+    "build": "npm run bundle && npm run assemble",
+    "build:shell": "npm run bundle && npm run assemble:shell",
+    "dev": "npm run bundle:dev && npm run assemble:shell",
+    "test": "node test/serialize.test.mjs"
+  },
+  "dependencies": {
+    "prosemirror-commands": "^1.7.1",
+    "prosemirror-dropcursor": "^1.8.2",
+    "prosemirror-gapcursor": "^1.4.1",
+    "prosemirror-history": "^1.5.0",
+    "prosemirror-inputrules": "^1.5.1",
+    "prosemirror-keymap": "^1.2.3",
+    "prosemirror-model": "^1.25.9",
+    "prosemirror-schema-list": "^1.5.1",
+    "prosemirror-state": "^1.4.4",
+    "prosemirror-tables": "^1.8.5",
+    "prosemirror-transform": "^1.12.0",
+    "prosemirror-view": "^1.41.9"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  }
+}

@@ -150,6 +150,9 @@ namespace Telegram.Views.Popups
         public void InsertMathInline(string latex) => Exec("insertMathInline", new JsonObject { { "latex", Str(latex) } });
         public void InsertMathBlock(string latex) => Exec("insertMathBlock", new JsonObject { { "latex", Str(latex) } });
 
+        /// <summary>Sets the LaTeX of the selected math node (after the user edits it in the host's editor).</summary>
+        public void SetMathExpression(string latex) => Exec("setMathExpression", new JsonObject { { "latex", Str(latex) } });
+
         // --- table --------------------------------------------------------------
         public void InsertTable(int rows = 2, int columns = 2) => Exec("insertTable", new JsonObject { { "rows", Num(rows) }, { "cols", Num(columns) } });
         public void TableAddRowAfter() => Exec("tableAddRowAfter");
@@ -185,6 +188,24 @@ namespace Telegram.Views.Popups
             if (background != null) args["background"] = Str($"#{background.Value.R:X2}{background.Value.G:X2}{background.Value.B:X2}");
             if (dark is bool value) args["dark"] = Bool(value);
             Exec("setTheme", args);
+        }
+
+        // --- config -------------------------------------------------------------
+        /// <summary>
+        /// Provides the InputRichMessage limits (TDLib <c>getOption</c> values) to the editor so
+        /// it enforces them and reports usage (see <see cref="RichEditorState"/>). Call on
+        /// <c>ready</c>. Keys mirror the getOption names verbatim.
+        /// </summary>
+        public void SetConfig(long textLengthMax, long blockCountMax, long depthMax, long mediaCountMax, long tableColumnCountMax)
+        {
+            Exec("setConfig", new JsonObject
+            {
+                { "rich_message_text_length_max", Num(textLengthMax) },
+                { "rich_message_block_count_max", Num(blockCountMax) },
+                { "rich_message_depth_max", Num(depthMax) },
+                { "rich_message_media_count_max", Num(mediaCountMax) },
+                { "rich_message_table_column_count_max", Num(tableColumnCountMax) },
+            });
         }
 
         // --- persistence / queries ----------------------------------------------

@@ -1581,21 +1581,14 @@ namespace Telegram.Controls.Cells
         {
             thumbnail = null;
 
-            if (draft?.Content is DraftMessageContentText draftText)
+            if (draft != null)
             {
-                return draftText.Text;
-            }
-            else if (draft?.Content is DraftMessageContentRichMessage draftRichMessage)
-            {
-
-            }
-            else if (draft?.Content is DraftMessageContentVoiceNote draftVoiceNote)
-            {
-
-            }
-            else if (draft?.Content is DraftMessageContentVideoNote draftVideoNote)
-            {
-
+                return draft.Content switch
+                {
+                    DraftMessageContentText draftText => draftText.Text,
+                    DraftMessageContentRichMessage draftRichMessage => draftRichMessage.Message.ToFormattedText(),
+                    _ => string.Empty.AsFormattedText()
+                };
             }
 
             static FormattedText Text(string text)

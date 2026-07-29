@@ -1,27 +1,16 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.TextEditorRichPopup"
-                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:common="using:Telegram.Common"
-                       xmlns:controls="using:Telegram.Controls"
-                       xmlns:cells="using:Telegram.Controls.Cells"
-                       xmlns:local="using:Telegram.Views.Popups"
-                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-                       xmlns:content="using:Telegram.Controls.Messages.Content"
-                       xmlns:messages="using:Telegram.Controls.Messages"
-                       xmlns:drawers="using:Telegram.Controls.Drawers"
-                       mc:Ignorable="d"
-                       Padding="0,24,0,0"
-                       IsDismissButtonVisible="True"
-                       ButtonsLayout="Vertical"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       ContentMaxWidth="5000"
-                       ContentMaxHeight="5000"
-                       HorizontalContentAlignment="Stretch"
-                       VerticalContentAlignment="Stretch">
+﻿<controls:UserControlEx x:Class="Telegram.Views.Popups.TextEditorRichPopup"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                        xmlns:common="using:Telegram.Common"
+                        xmlns:controls="using:Telegram.Controls"
+                        xmlns:drawers="using:Telegram.Controls.Drawers"
+                        xmlns:messages="using:Telegram.Controls.Messages"
+                        mc:Ignorable="d">
 
-    <controls:ContentPopup.Resources>
+    <controls:UserControlEx.Resources>
         <Style TargetType="controls:GlyphToggleButton">
             <Setter Property="Background"
                     Value="Transparent" />
@@ -177,7 +166,7 @@
             </Setter>
         </Style>
 
-    </controls:ContentPopup.Resources>
+    </controls:UserControlEx.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -185,10 +174,6 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition MaxWidth="320" />
-        </Grid.ColumnDefinitions>
         <muxc:WebView2 x:Name="View"
                        Source="ms-appx-web:///Assets/editor.html"
                        Grid.Row="0"
@@ -200,20 +185,27 @@
 
         <Border Margin="0,0,0,-8">
             <Border.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="#FFFFFFFF" />
-                    <GradientStop Color="#00FFFFFF"
-                                  Offset="1" />
+                <LinearGradientBrush StartPoint="0,1"
+                                     EndPoint="0,0">
+                    <common:Scrim.Gradient>
+                        <common:CubicBezierGradient x:Name="Scrim"
+                                                    TopOpacity="0"
+                                                    TopColor="{ThemeResource ContentDialogTopOverlaySolid}"
+                                                    BottomColor="{ThemeResource ContentDialogTopOverlaySolid}" />
+                    </common:Scrim.Gradient>
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
         <Border Margin="0,-8,0,0"
                 Grid.Row="2">
             <Border.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="#00FFFFFF" />
-                    <GradientStop Color="#FFFFFFFF"
-                                  Offset="1" />
+                <LinearGradientBrush StartPoint="0,0"
+                                     EndPoint="0,1">
+                    <common:Scrim.Gradient>
+                        <common:CubicBezierGradient TopOpacity="0"
+                                                    TopColor="{ThemeResource ContentDialogTopOverlaySolid}"
+                                                    BottomColor="{ThemeResource ContentDialogTopOverlaySolid}" />
+                    </common:Scrim.Gradient>
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
@@ -283,31 +275,39 @@
               ColumnSpacing="8"
               Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Grid>
-                <Rectangle x:Name="EmojiShadow"
+
+            <Grid Grid.Column="1">
+                <Rectangle x:Name="BlockShadow"
                            Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                            Stroke="{ThemeResource SettingsItemBorderBrush}"
-                           Width="40"
+                           Width="240"
                            Height="40"
                            RadiusX="20"
                            RadiusY="20" />
-                <Border CornerRadius="20"
-                        Height="40"
-                        Width="40">
+                <Grid CornerRadius="20"
+                      Height="40"
+                      Width="240">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
                     <controls:GlyphButton x:Name="EmojiButton"
                                           Click="Emoji_Click"
                                           AllowFocusOnInteraction="False"
                                           Width="40"
                                           Height="40"
                                           Glyph="&#xE76E;"
-                                          CornerRadius="20"
-                                          Padding="0">
+                                          CornerRadius="20">
                         <FlyoutBase.AttachedFlyout>
                             <Flyout x:Name="EmojiFlyout"
                                     Placement="Top"
@@ -326,56 +326,14 @@
                             </Flyout>
                         </FlyoutBase.AttachedFlyout>
                     </controls:GlyphButton>
-                </Border>
-            </Grid>
-
-            <Grid Grid.Column="1">
-                <Rectangle x:Name="RewriteShadow"
-                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                           Stroke="{ThemeResource SettingsItemBorderBrush}"
-                           Width="40"
-                           Height="40"
-                           RadiusX="20"
-                           RadiusY="20" />
-                <Border CornerRadius="20"
-                        Height="40"
-                        Width="40">
-                    <controls:GlyphButton x:Name="RewriteButton"
-                                          AllowFocusOnInteraction="False"
-                                          Width="40"
-                                          Height="40"
-                                          Glyph="&#xE76E;"
-                                          CornerRadius="20"
-                                          Padding="0" />
-                </Border>
-            </Grid>
-
-            <Grid Grid.Column="2">
-                <Rectangle x:Name="BlockShadow"
-                           Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                           Stroke="{ThemeResource SettingsItemBorderBrush}"
-                           Width="200"
-                           Height="40"
-                           RadiusX="20"
-                           RadiusY="20" />
-                <Grid CornerRadius="20"
-                      Height="40"
-                      Width="200">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
                     <controls:GlyphToggleButton x:Name="ParagraphButton"
                                                 Click="Paragraph_Click"
                                                 AllowFocusOnInteraction="False"
                                                 Width="40"
                                                 Height="40"
-                                                Glyph="&#xE8D2;"
+                                                Glyph="&#xEB23;"
                                                 CornerRadius="20"
-                                                Padding="0" />
+                                                Grid.Column="1" />
                     <controls:GlyphToggleButton x:Name="QuoteButton"
                                                 Click="Quote_Click"
                                                 AllowFocusOnInteraction="False"
@@ -383,8 +341,7 @@
                                                 Height="40"
                                                 Glyph="&#xEAC7;"
                                                 CornerRadius="20"
-                                                Padding="0"
-                                                Grid.Column="1" />
+                                                Grid.Column="2" />
                     <controls:GlyphToggleButton x:Name="ListButton"
                                                 Click="List_Click"
                                                 AllowFocusOnInteraction="False"
@@ -392,8 +349,7 @@
                                                 Height="40"
                                                 Glyph="&#xEB09;"
                                                 CornerRadius="20"
-                                                Padding="0"
-                                                Grid.Column="2" />
+                                                Grid.Column="3" />
                     <controls:GlyphToggleButton x:Name="TableButton"
                                                 Click="Table_Click"
                                                 AllowFocusOnInteraction="False"
@@ -401,8 +357,7 @@
                                                 Height="40"
                                                 Glyph="&#xEB08;"
                                                 CornerRadius="20"
-                                                Padding="0"
-                                                Grid.Column="3" />
+                                                Grid.Column="4" />
                     <controls:GlyphToggleButton x:Name="FormulaButton"
                                                 Click="Formula_Click"
                                                 AllowFocusOnInteraction="False"
@@ -410,8 +365,7 @@
                                                 Height="40"
                                                 Glyph="&#xEB07;"
                                                 CornerRadius="20"
-                                                Padding="0"
-                                                Grid.Column="4" />
+                                                Grid.Column="5" />
                 </Grid>
             </Grid>
 
@@ -431,8 +385,7 @@
                                           Width="40"
                                           Height="40"
                                           Glyph="&#xE76E;"
-                                          CornerRadius="20"
-                                          Padding="0" />
+                                          CornerRadius="20" />
                 </Border>
             </Grid>
 
@@ -448,11 +401,26 @@
                         Height="40"
                         Width="40">
                     <controls:GlyphButton x:Name="SendButton"
+                                          Click="Send_Click"
                                           Width="40"
                                           Height="40"
                                           Glyph="&#xE76E;"
-                                          CornerRadius="20"
-                                          Padding="0" />
+                                          CornerRadius="20" />
+                </Border>
+                <!-- Premium lock: shown for free users when the message contains rich content that
+                     can't be sent as a plain FormattedText (RichEditorState.HasRichContent). -->
+                <Border x:Name="SendLock"
+                        Visibility="Collapsed"
+                        IsHitTestVisible="False"
+                        Width="18"
+                        Height="18"
+                        CornerRadius="9"
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom">
+                    <FontIcon Glyph="&#xE72E;"
+                              FontFamily="Segoe MDL2 Assets"
+                              FontSize="11" />
                 </Border>
             </Grid>
 
@@ -472,14 +440,16 @@
                 <Rectangle x:Name="StyleShadow"
                            Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                            Stroke="{ThemeResource SettingsItemBorderBrush}"
-                           Width="240"
+                           Width="320"
                            Height="40"
                            RadiusX="20"
                            RadiusY="20" />
                 <Grid CornerRadius="20"
                       Height="40"
-                      Width="240">
+                      Width="320">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
                         <ColumnDefinition />
                         <ColumnDefinition />
                         <ColumnDefinition />
@@ -492,15 +462,13 @@
                                                 Width="40"
                                                 Height="40"
                                                 Glyph="&#xE8DD;"
-                                                CornerRadius="20"
-                                                Padding="0" />
+                                                CornerRadius="20" />
                     <controls:GlyphToggleButton x:Name="ItalicButton"
                                                 Click="Italic_Click"
                                                 Width="40"
                                                 Height="40"
                                                 Glyph="&#xE8DB;"
                                                 CornerRadius="20"
-                                                Padding="0"
                                                 Grid.Column="1" />
                     <controls:GlyphToggleButton x:Name="UnderlineButton"
                                                 Click="Underline_Click"
@@ -508,7 +476,6 @@
                                                 Height="40"
                                                 Glyph="&#xE8DC;"
                                                 CornerRadius="20"
-                                                Padding="0"
                                                 Grid.Column="2" />
                     <controls:GlyphToggleButton x:Name="StrikethroughButton"
                                                 Click="Strikethrough_Click"
@@ -516,7 +483,6 @@
                                                 Height="40"
                                                 Glyph="&#xE8DE;"
                                                 CornerRadius="20"
-                                                Padding="0"
                                                 Grid.Column="3" />
                     <controls:GlyphToggleButton x:Name="SpoilerButton"
                                                 Click="Spoiler_Click"
@@ -524,7 +490,6 @@
                                                 Height="40"
                                                 Glyph="&#xEAA1;"
                                                 CornerRadius="20"
-                                                Padding="0"
                                                 Grid.Column="4" />
                     <controls:GlyphToggleButton x:Name="MonospaceButton"
                                                 Click="Monospace_Click"
@@ -532,8 +497,21 @@
                                                 Height="40"
                                                 Glyph="&#xE943;"
                                                 CornerRadius="20"
-                                                Padding="0"
                                                 Grid.Column="5" />
+                    <controls:GlyphToggleButton x:Name="SubscriptButton"
+                                                Click="Subscript_Click"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xEB1B;"
+                                                CornerRadius="20"
+                                                Grid.Column="6" />
+                    <controls:GlyphToggleButton x:Name="SuperscriptButton"
+                                                Click="Superscript_Click"
+                                                Width="40"
+                                                Height="40"
+                                                Glyph="&#xEB1A;"
+                                                CornerRadius="20"
+                                                Grid.Column="7" />
                 </Grid>
             </Grid>
 
@@ -570,10 +548,5 @@
                 </Grid>
             </Grid>
         </Grid>
-
-        <ScrollViewer Grid.Column="1"
-                      Grid.Row="1">
-            <content:InstantContent x:Name="Content" />
-        </ScrollViewer>
     </Grid>
-</controls:ContentPopup>
+</controls:UserControlEx>

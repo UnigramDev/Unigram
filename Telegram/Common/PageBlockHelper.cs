@@ -1012,6 +1012,388 @@ namespace Telegram.Common
         }
 
         // =====================================================================
+        // TryGetFormattedText — RichMessage / InputRichMessage -> FormattedText,
+        // only when the flatten is LOSSLESS (fail on any unrepresentable content)
+        // =====================================================================
+
+        /// <summary>
+        /// Attempts to flatten a display <see cref="RichMessage"/> into a single
+        /// <see cref="FormattedText"/> (text + inline entities), succeeding <b>only when nothing
+        /// is lost</b>. Representable: paragraphs (joined by '\n'), preformatted (→ pre / pre-code),
+        /// block quotes with an empty credit whose body is paragraphs (→ block-quote entity), and
+        /// every inline that maps 1:1 to a message entity. Any other block (heading, footer, list,
+        /// table, divider, anchor, details, collage, slideshow, cover, media, …), a block quote
+        /// with a credit or non-paragraph body, or an inline with no faithful entity (icon, anchor,
+        /// reference / reference-link / anchor-link) makes this return <c>false</c>.
+        /// </summary>
+        public static bool TryGetFormattedText(RichMessage message, out FormattedText result)
+        {
+            var text = new StringBuilder();
+            var entities = new List<TextEntity>();
+            if (TryAppendBlocks(message?.Blocks, text, entities))
+            {
+                result = new FormattedText(text.ToString(), entities);
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to flatten an <see cref="InputRichMessage"/> into a single
+        /// <see cref="FormattedText"/> under the same lossless rules as the
+        /// <see cref="TryGetFormattedText(RichMessage, out FormattedText)"/> overload. Only a
+        /// <see cref="RichMessageSourceBlocks"/> source is considered — markdown / HTML sources
+        /// (which would need parsing to flatten) always return <c>false</c>. <c>is_rtl</c> /
+        /// <c>detect_automatic_blocks</c> are rendering/authoring hints and are ignored.
+        /// </summary>
+        public static bool TryGetFormattedText(InputRichMessage message, out FormattedText result)
+        {
+            if (message?.Source is RichMessageSourceBlocks source)
+            {
+                var text = new StringBuilder();
+                var entities = new List<TextEntity>();
+                if (TryAppendInputBlocks(source.Blocks, text, entities))
+                {
+                    result = new FormattedText(text.ToString(), entities);
+                    return true;
+                }
+            }
+
+            result = null;
+            return false;
+        }
+
+        /// <summary>
+        /// LOSSY flatten of a <see cref="RichMessage"/> to a plain message <see cref="FormattedText"/>,
+        /// for "send without formatting": block structure is flattened to lines (paragraphs joined by
+        /// '\n'; blockquotes/pre/headings become plain text), media becomes its placeholder, and inline
+        /// entities that a message can't carry (subscript/superscript/marked/math/icon) are dropped —
+        /// keeping the covered text as plain. Supported inline formatting (bold/italic/link/spoiler/…)
+        /// survives. Unlike <see cref="TryGetFormattedText(RichMessage, out FormattedText)"/> it never
+        /// fails. Reuses <see cref="GetRichText"/> (block tree -&gt; RichText) + <see cref="Flatten"/>.
+        /// </summary>
+        public static FormattedText GetFormattedText(RichMessage message)
+        {
+            var text = new StringBuilder();
+            var entities = new List<TextEntity>();
+            Flatten(GetRichText(message?.Blocks), text, entities);
+
+            // Drop entities with no message equivalent (keep their text as plain).
+            for (int i = entities.Count - 1; i >= 0; i--)
+            {
+                if (!IsMessageEntity(entities[i].Type))
+                {
+                    entities.RemoveAt(i);
+                }
+            }
+
+            return new FormattedText(text.ToString(), entities);
+        }
+
+        // Entity types a message FormattedText can carry. Excludes the IV-only entities that Flatten can
+        // emit (subscript/superscript/marked/mathematical-expression/icon) — see the supported set in
+        // td_api (textEntityType*).
+        private static bool IsMessageEntity(TextEntityType type)
+        {
+            switch (type)
+            {
+                case TextEntityTypeSubscript:
+                case TextEntityTypeSuperscript:
+                case TextEntityTypeMarked:
+                case TextEntityTypeMathematicalExpression:
+                case TextEntityTypeIcon:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        // Top-level blocks are joined by a single '\n' (the inverse of ToPageBlocks, which splits
+        // paragraphs on '\n'). Returns false the moment a block isn't losslessly representable.
+        private static bool TryAppendBlocks(IList<PageBlock> blocks, StringBuilder text, List<TextEntity> entities)
+        {
+            if (blocks == null)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < blocks.Count; i++)
+            {
+                if (i > 0)
+                {
+                    text.Append('\n');
+                }
+
+                if (!TryAppendBlock(blocks[i], text, entities))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool TryAppendBlock(PageBlock block, StringBuilder text, List<TextEntity> entities)
+        {
+            switch (block)
+            {
+                case PageBlockParagraph p:
+                    return TryAppendRichText(p.Text, text, entities);
+
+                case PageBlockPreformatted pre:
+                {
+                    int start = text.Length;
+                    if (!TryAppendRichText(pre.Text, text, entities))
+                    {
+                        return false;
+                    }
+
+                    int length = text.Length - start;
+                    if (length > 0)
+                    {
+                        TextEntityType type = string.IsNullOrEmpty(pre.Language)
+                            ? new TextEntityTypePre()
+                            : new TextEntityTypePreCode(pre.Language);
+                        entities.Add(new TextEntity(start, length, type));
+                    }
+
+                    return true;
+                }
+
+                case PageBlockBlockQuote quote:
+                {
+                    // A credit can't live in a block-quote entity; the body must be paragraphs.
+                    if (!IsEmpty(quote.Credit))
+                    {
+                        return false;
+                    }
+
+                    int start = text.Length;
+                    var body = quote.Blocks;
+                    if (body != null)
+                    {
+                        for (int i = 0; i < body.Count; i++)
+                        {
+                            if (body[i] is not PageBlockParagraph para)
+                            {
+                                return false;
+                            }
+
+                            if (i > 0)
+                            {
+                                text.Append('\n');
+                            }
+
+                            if (!TryAppendRichText(para.Text, text, entities))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    int length = text.Length - start;
+                    if (length > 0)
+                    {
+                        entities.Add(new TextEntity(start, length, new TextEntityTypeBlockQuote()));
+                    }
+
+                    return true;
+                }
+
+                default:
+                    // Any other block type (heading/footer/list/table/media/divider/anchor/…) = loss.
+                    return false;
+            }
+        }
+
+        private static bool TryAppendInputBlocks(IList<InputPageBlock> blocks, StringBuilder text, List<TextEntity> entities)
+        {
+            if (blocks == null)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < blocks.Count; i++)
+            {
+                if (i > 0)
+                {
+                    text.Append('\n');
+                }
+
+                if (!TryAppendInputBlock(blocks[i], text, entities))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool TryAppendInputBlock(InputPageBlock block, StringBuilder text, List<TextEntity> entities)
+        {
+            switch (block)
+            {
+                case InputPageBlockParagraph p:
+                    return TryAppendRichText(p.Text, text, entities);
+
+                case InputPageBlockPreformatted pre:
+                {
+                    int start = text.Length;
+                    if (!TryAppendRichText(pre.Text, text, entities))
+                    {
+                        return false;
+                    }
+
+                    int length = text.Length - start;
+                    if (length > 0)
+                    {
+                        TextEntityType type = string.IsNullOrEmpty(pre.Language)
+                            ? new TextEntityTypePre()
+                            : new TextEntityTypePreCode(pre.Language);
+                        entities.Add(new TextEntity(start, length, type));
+                    }
+
+                    return true;
+                }
+
+                case InputPageBlockBlockQuote quote:
+                {
+                    if (!IsEmpty(quote.Credit))
+                    {
+                        return false;
+                    }
+
+                    int start = text.Length;
+                    var body = quote.Blocks;
+                    if (body != null)
+                    {
+                        for (int i = 0; i < body.Count; i++)
+                        {
+                            if (body[i] is not InputPageBlockParagraph para)
+                            {
+                                return false;
+                            }
+
+                            if (i > 0)
+                            {
+                                text.Append('\n');
+                            }
+
+                            if (!TryAppendRichText(para.Text, text, entities))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    int length = text.Length - start;
+                    if (length > 0)
+                    {
+                        entities.Add(new TextEntity(start, length, new TextEntityTypeBlockQuote()));
+                    }
+
+                    return true;
+                }
+
+                default:
+                    return false;
+            }
+        }
+
+        // Strict inline flatten: like Flatten, but returns false on any RichText that can't be
+        // faithfully carried by a message entity (icon, anchor, reference / reference-link /
+        // anchor-link, or any unknown type — all caught by the default arm).
+        private static bool TryAppendRichText(RichText richText, StringBuilder text, IList<TextEntity> entities)
+        {
+            switch (richText)
+            {
+                case null:
+                    return true;
+
+                case RichTextPlain p:
+                    if (!string.IsNullOrEmpty(p.Text))
+                    {
+                        text.Append(p.Text);
+                    }
+                    return true;
+
+                case RichTexts rs:
+                    if (rs.Texts != null)
+                    {
+                        foreach (var child in rs.Texts)
+                        {
+                            if (!TryAppendRichText(child, text, entities))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+
+                // Style wrappers
+                case RichTextBold b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeBold());
+                case RichTextItalic b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeItalic());
+                case RichTextUnderline b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeUnderline());
+                case RichTextStrikethrough b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeStrikethrough());
+                case RichTextSpoiler b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeSpoiler());
+                case RichTextFixed b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeCode());
+                // NOTE: subscript / superscript / marked have NO message TextEntityType (they exist for IV
+                // RichText only), so they're not representable — they fall through to the default (false).
+
+                // Payload-carrying wrappers
+                case RichTextUrl b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
+                case RichTextEmailAddress b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeEmailAddress());
+                case RichTextPhoneNumber b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypePhoneNumber());
+                case RichTextMentionName b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeMentionName(b.UserId));
+                case RichTextDateTime b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeDateTime(b.UnixTime, b.FormattingType));
+
+                // Auto-detected (the text is the value)
+                case RichTextMention b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeMention());
+                case RichTextHashtag b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeHashtag());
+                case RichTextCashtag b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeCashtag());
+                case RichTextBotCommand b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeBotCommand());
+                case RichTextBankCardNumber b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeBankCardNumber());
+
+                // Leaves carrying their own text content
+                case RichTextCustomEmoji ce:
+                    if (!string.IsNullOrEmpty(ce.AlternativeText))
+                    {
+                        int start = text.Length;
+                        text.Append(ce.AlternativeText);
+                        entities.Add(new TextEntity(start, ce.AlternativeText.Length, new TextEntityTypeCustomEmoji(ce.CustomEmojiId)));
+                    }
+                    return true;
+
+                // NOTE: mathematical expressions have no message TextEntityType either (IV-only), so
+                // inline math is not representable — it falls through to the default (false).
+
+                default:
+                    // richTextIcon / richTextAnchor / richTextReference / richTextReferenceLink /
+                    // richTextAnchorLink (and any unknown) can't be represented without loss.
+                    return false;
+            }
+        }
+
+        private static bool TryEmitSpan(RichText inner, StringBuilder text, IList<TextEntity> entities, TextEntityType type)
+        {
+            int start = text.Length;
+            if (!TryAppendRichText(inner, text, entities))
+            {
+                return false;
+            }
+
+            int length = text.Length - start;
+            if (length > 0)
+            {
+                entities.Add(new TextEntity(start, length, type));
+            }
+
+            return true;
+        }
+
+        // =====================================================================
         // ToPageBlocks — FormattedText (message text + entities) -> page blocks
         // =====================================================================
 
@@ -1504,6 +1886,201 @@ namespace Telegram.Common
             }
 
             return true;
+        }
+
+        // =====================================================================
+        // ToInputRichMessage — RichMessage (display) -> InputRichMessage (sendable)
+        // =====================================================================
+
+        /// <summary>
+        /// Converts a display <see cref="RichMessage"/> (blocks with resolved media objects,
+        /// e.g. as returned by getMessageRichMessage) into a sendable <see cref="InputRichMessage"/>:
+        /// each <see cref="PageBlock"/> becomes its <c>inputPageBlock*</c> equivalent (media is
+        /// rebuilt into <c>input*</c> media, preferring remote file ids), wrapped in a
+        /// <see cref="RichMessageSourceBlocks"/>. Blocks with no input equivalent
+        /// (title/subtitle/kicker/authorDate/header/subheader/embedded/embeddedPost/chatLink/
+        /// relatedArticles/…) are dropped; a cover unwraps to the block it covers.
+        /// </summary>
+        public static InputRichMessage ToInputRichMessage(RichMessage message, bool detectAutomaticBlocks = false)
+        {
+            var blocks = ToInputBlocks(message?.Blocks);
+            return new InputRichMessage(new RichMessageSourceBlocks(blocks), message?.IsRtl ?? false, detectAutomaticBlocks);
+        }
+
+        /// <summary>Converts a list of display <see cref="PageBlock"/> into their <c>inputPageBlock*</c> equivalents (unsupported blocks dropped). The returned list is owned by the caller.</summary>
+        public static IList<InputPageBlock> ToInputBlocks(IList<PageBlock> blocks)
+        {
+            var result = new List<InputPageBlock>();
+            if (blocks != null)
+            {
+                foreach (var block in blocks)
+                {
+                    var input = BlockToInput(block);
+                    if (input != null)
+                    {
+                        result.Add(input);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private static InputPageBlock BlockToInput(PageBlock block)
+        {
+            switch (block)
+            {
+                case PageBlockSectionHeading x:
+                    return new InputPageBlockSectionHeading(x.Text, x.Size);
+                case PageBlockParagraph x:
+                    return new InputPageBlockParagraph(x.Text);
+                case PageBlockPreformatted x:
+                    return new InputPageBlockPreformatted(x.Text, x.Language ?? string.Empty);
+                case PageBlockFooter x:
+                    return new InputPageBlockFooter(x.Footer);
+                //case PageBlockThinking x:
+                //    return new InputPageBlockThinking(x.Text);
+                case PageBlockDivider:
+                    return new InputPageBlockDivider();
+                case PageBlockMathematicalExpression x:
+                    return new InputPageBlockMathematicalExpression(x.Expression);
+                case PageBlockAnchor x:
+                    return new InputPageBlockAnchor(x.Name);
+                case PageBlockList x:
+                    return new InputPageBlockList(ToInputListItems(x.Items));
+                case PageBlockBlockQuote x:
+                    return new InputPageBlockBlockQuote(ToInputBlocks(x.Blocks), x.Credit);
+                case PageBlockPullQuote x:
+                    return new InputPageBlockPullQuote(x.Text, x.Credit);
+                case PageBlockAnimation x:
+                    return new InputPageBlockAnimation(ToInputAnimation(x.Animation), x.Caption, x.HasSpoiler);
+                case PageBlockAudio x:
+                    return new InputPageBlockAudio(ToInputAudio(x.Audio), x.Caption);
+                case PageBlockPhoto x:
+                    return new InputPageBlockPhoto(ToInputPhoto(x.Photo), x.Caption, x.HasSpoiler);
+                case PageBlockVideo x:
+                    return new InputPageBlockVideo(ToInputVideo(x.Video), x.Caption, x.HasSpoiler);
+                case PageBlockVoiceNote x:
+                    return new InputPageBlockVoiceNote(ToInputVoiceNote(x.VoiceNote), x.Caption);
+                case PageBlockCollage x:
+                    return new InputPageBlockCollage(ToInputBlocks(x.Blocks), x.Caption);
+                case PageBlockSlideshow x:
+                    return new InputPageBlockSlideshow(ToInputBlocks(x.Blocks), x.Caption);
+                case PageBlockTable x:
+                    return new InputPageBlockTable(x.Caption, x.Cells, x.IsBordered, x.IsStriped);
+                case PageBlockDetails x:
+                    return new InputPageBlockDetails(x.Header, ToInputBlocks(x.Blocks), x.IsOpen);
+                case PageBlockMap x:
+                    return new InputPageBlockMap(x.Location, x.Zoom, x.Width, x.Height, x.Caption);
+                case PageBlockCover x:
+                    // No inputPageBlockCover — unwrap to the covered block.
+                    return BlockToInput(x.Cover);
+                default:
+                    // No input equivalent (title/subtitle/kicker/authorDate/header/subheader/
+                    // embedded/embeddedPost/chatLink/relatedArticles/subscribe/anchor-only/...).
+                    return null;
+            }
+        }
+
+        private static IList<InputPageBlockListItem> ToInputListItems(IList<PageBlockListItem> items)
+        {
+            var result = new List<InputPageBlockListItem>();
+            if (items != null)
+            {
+                foreach (var item in items)
+                {
+                    result.Add(new InputPageBlockListItem(ToInputBlocks(item.Blocks), item.HasCheckbox, item.IsChecked, item.Value, item.Type ?? string.Empty));
+                }
+            }
+
+            return result;
+        }
+
+        // --- display media -> input media ---------------------------------------
+        // Prefer the persistent remote id (survives beyond the session), else the local id.
+        private static InputFile ToInputFile(File file)
+        {
+            if (file == null)
+            {
+                return null;
+            }
+
+            if (file.Remote != null && !string.IsNullOrEmpty(file.Remote.Id))
+            {
+                return new InputFileRemote(file.Remote.Id);
+            }
+
+            return new InputFileId(file.Id);
+        }
+
+        private static InputThumbnail ToInputThumbnail(Thumbnail thumbnail)
+        {
+            if (thumbnail?.File == null)
+            {
+                return null;
+            }
+
+            return new InputThumbnail(ToInputFile(thumbnail.File), thumbnail.Width, thumbnail.Height);
+        }
+
+        private static InputPhoto ToInputPhoto(Photo photo)
+        {
+            if (photo?.Sizes == null || photo.Sizes.Count == 0)
+            {
+                return null;
+            }
+
+            // First size = thumbnail, last = main (largest); no separate thumbnail when there's only one.
+            var main = photo.Sizes[photo.Sizes.Count - 1];
+            var thumb = photo.Sizes[0];
+            var thumbnail = thumb != main
+                ? new InputThumbnail(ToInputFile(thumb.Photo), thumb.Width, thumb.Height)
+                : null;
+
+            return new InputPhoto(ToInputFile(main.Photo), thumbnail, null, Array.Empty<int>(), main.Width, main.Height);
+        }
+
+        private static InputVideo ToInputVideo(Video video)
+        {
+            if (video == null)
+            {
+                return null;
+            }
+
+            return new InputVideo(ToInputFile(video.VideoValue), ToInputThumbnail(video.Thumbnail), null, 0,
+                Array.Empty<int>(), video.Duration, video.Width, video.Height, video.SupportsStreaming);
+        }
+
+        private static InputAnimation ToInputAnimation(Animation animation)
+        {
+            if (animation == null)
+            {
+                return null;
+            }
+
+            return new InputAnimation(ToInputFile(animation.AnimationValue), ToInputThumbnail(animation.Thumbnail),
+                Array.Empty<int>(), animation.Duration, animation.Width, animation.Height);
+        }
+
+        private static InputAudio ToInputAudio(Audio audio)
+        {
+            if (audio == null)
+            {
+                return null;
+            }
+
+            return new InputAudio(ToInputFile(audio.AudioValue), ToInputThumbnail(audio.AlbumCoverThumbnail),
+                audio.Duration, audio.Title, audio.Performer);
+        }
+
+        private static InputVoiceNote ToInputVoiceNote(VoiceNote voice)
+        {
+            if (voice == null)
+            {
+                return null;
+            }
+
+            return new InputVoiceNote(ToInputFile(voice.Voice), voice.Duration, voice.Waveform);
         }
     }
 }

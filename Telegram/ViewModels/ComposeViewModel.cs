@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Navigation;
@@ -1074,6 +1075,11 @@ namespace Telegram.ViewModels
             var applied = await BeforeSendMessageAsync(formattedText, linkPreview);
             if (applied || string.IsNullOrEmpty(formattedText.Text))
             {
+                if (chat.DraftMessage?.Content is DraftMessageContentRichMessage richMessage)
+                {
+                    SendRichMessage(richMessage, options, reply);
+                }
+
                 return null;
             }
 
@@ -1116,6 +1122,58 @@ namespace Telegram.ViewModels
             }
 
             return response;
+        }
+
+        private async void SendRichMessage(DraftMessageContentRichMessage richMessage, MessageSendOptions options, InputMessageReplyTo reply)
+        {
+            if (IsPremiumAvailable && !IsPremium)
+            {
+                if (PageBlockHelper.TryGetFormattedText(richMessage.Message, out FormattedText formatted))
+                {
+                    await SendMessageAsync(formatted, null, options, reply);
+                    return;
+                }
+
+                ToastPopup.ShowFeaturePromo(NavigationService, new PremiumFeatureRichMessages());
+                return;
+            }
+
+            options ??= await PickMessageSendOptionsAsync(reorder: false);
+
+            if (options == null)
+            {
+                return;
+            }
+
+            reply ??= GetReply(options.OnlyPreview == false, options.SchedulingState != null);
+
+            await SendMessageAsync(reply, new InputMessageRichMessage(PageBlockHelper.ToInputRichMessage(richMessage.Message), true), options);
+        }
+
+        private async void SendRichMessage(InputRichMessage richMessage, MessageSendOptions options, InputMessageReplyTo reply)
+        {
+            if (IsPremiumAvailable && !IsPremium)
+            {
+                if (PageBlockHelper.TryGetFormattedText(richMessage, out FormattedText formatted))
+                {
+                    await SendMessageAsync(formatted, null, options, reply);
+                    return;
+                }
+
+                ToastPopup.ShowFeaturePromo(NavigationService, new PremiumFeatureRichMessages());
+                return;
+            }
+
+            options ??= await PickMessageSendOptionsAsync(reorder: false);
+
+            if (options == null)
+            {
+                return;
+            }
+
+            reply ??= GetReply(options.OnlyPreview == false, options.SchedulingState != null);
+
+            await SendMessageAsync(reply, new InputMessageRichMessage(richMessage, true), options);
         }
 
         private bool TextStillContainsEmojis(IList<TextEntity> entities)

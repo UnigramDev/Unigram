@@ -20,15 +20,18 @@ using Telegram.Controls.Drawers;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Native.Highlight;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Data.Json;
+using Windows.UI.Core.Preview;
+using Windows.UI.ViewManagement;
 using Windows.Foundation;
-using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,28 +40,42 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class TextEditorRichPopup : ContentPopup
+    public sealed partial class TextEditorRichPopup : UserControlEx
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
-        private readonly FormattedText _text;
+        private readonly long _chatId;
+        private readonly MessageTopic _topic;
+        private readonly long _messageId;
 
         private readonly RichMessage _message;
 
-        private readonly TaskCompletionSource<FormattedText> _tcs;
+        // Reply + send options for the outgoing message (a new send; ignored when editing, i.e. _messageId != 0).
+        private readonly InputMessageReplyTo _replyTo;
+        private readonly MessageSendOptions _sendOptions;
+
         private bool _closedExpected;
 
         private string _translateToLanguage;
 
-        public TextEditorRichPopup(IClientService clientService, INavigationService navigationService, RichMessage message)
+        public TextEditorRichPopup(IClientService clientService, INavigationService navigationService, long chatId, MessageTopic topic, long messageId, RichMessage message, InputMessageReplyTo replyTo = null, MessageSendOptions sendOptions = null)
         {
             InitializeComponent();
 
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(clientService.Session);
 
             _clientService = clientService;
-            _navigationService = navigationService;
+            // NavigationService is window-specific: `navigationService` belongs to the originating chat
+            // window, but this popup runs in its own window. Wrap it in a SecondaryNavigationService bound
+            // to THIS window (forwards navigations — e.g. the premium promo — back to the source window),
+            // like WebAppPage.
+            _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, WindowContext.Current);
+            _chatId = chatId;
+            _topic = topic;
+            _messageId = messageId;
             _message = message;
+            _replyTo = replyTo;
+            _sendOptions = sendOptions;
 
             if (ApiInfo.CanCreateThemeShadow)
             {
@@ -70,12 +87,6 @@ namespace Telegram.Views.Popups
 
                 HistoryShadow.Shadow = shadow;
                 HistoryShadow.Translation = translation;
-
-                EmojiShadow.Shadow = shadow;
-                EmojiShadow.Translation = translation;
-
-                RewriteShadow.Shadow = shadow;
-                RewriteShadow.Translation = translation;
 
                 BlockShadow.Shadow = shadow;
                 BlockShadow.Translation = translation;
@@ -96,21 +107,114 @@ namespace Telegram.Views.Popups
             Initialize(message);
         }
 
+        public bool AreTheSame(long chatId, long messageId)
+        {
+            return chatId == _chatId && messageId == _messageId;
+        }
+
         private async void Initialize(RichMessage message)
         {
-            var file = await Package.Current.InstalledLocation.GetFileAsync("Assets\\editor.html");
-            var text = await FileIO.ReadTextAsync(file);
-
             await View.EnsureCoreWebView2Async();
 
             _state = new RichEditorState();
             _commands = new RichEditorCommands(View.CoreWebView2);
 
+            var assets = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets");
+            View.CoreWebView2.SetVirtualHostNameToFolderMapping("editor.unigram", assets, CoreWebView2HostResourceAccessKind.Allow);
+
             View.CoreWebView2.NavigationCompleted += OnNavigationCompleted;
             View.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
             View.CoreWebView2.ContextMenuRequested += OnContextMenuRequested;
-            View.CoreWebView2.NavigateToString(text);
+            View.CoreWebView2.Navigate("https://editor.unigram/editor.html");
 
+            ActualThemeChanged += OnActualThemeChanged;
+
+            // Premium can change at runtime (UpdateOption "is_premium"); re-evaluate the send-button lock.
+            _aggregator = _clientService.Session.Resolve<IEventAggregator>();
+            _aggregator.Subscribe<UpdateOption>(this, Handle);
+
+            // Offer to save a draft when the editor window is closed (X / system close).
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            Unloaded += OnUnloaded;
+        }
+
+        private IEventAggregator _aggregator;
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Unloaded -= OnUnloaded;
+            _aggregator?.Unsubscribe(this);
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
+        }
+
+        // Closing the editor window offers to save the current text as a chat draft. Skipped when we're
+        // closing after an explicit send (_closedExpected), when editing an existing message (_messageId
+        // != 0 — nothing to draft), or when the document is empty.
+        private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        {
+            if (_closedExpected || _messageId != 0 || (_state?.IsEmpty ?? true))
+            {
+                return;
+            }
+
+            var deferral = e.GetDeferral();
+
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, "Save this message as a draft?", "Draft", "Save", "Discard");
+            if (confirm == ContentDialogResult.Primary)
+            {
+                await SaveDraftAsync();
+            }
+            else if (confirm != ContentDialogResult.Secondary)
+            {
+                // Dismissed — cancel the close and keep editing.
+                e.Handled = true;
+            }
+
+            deferral.Complete();
+        }
+
+        private async Task SaveDraftAsync()
+        {
+            var richMessage = await _commands.GetModelAsync();
+            if (richMessage == null)
+            {
+                return;
+            }
+
+            var draft = new DraftMessage(_replyTo, 0, new DraftMessageContentRichMessage(richMessage), 0, null);
+            _clientService.Send(new SetChatDraftMessage(_chatId, _topic, draft));
+        }
+
+        public void Handle(UpdateOption update)
+        {
+            if (update.Name == OptionsService.R.IsPremium)
+            {
+                this.BeginOnUIThread(UpdateSendLock);
+            }
+        }
+
+        // Free users see a lock over the send button when the document contains rich content that
+        // can't be sent as a plain message FormattedText (RichEditorState.HasRichContent).
+        private void UpdateSendLock()
+        {
+            var locked = _state != null && _state.HasRichContent && !_clientService.IsPremium;
+            SendLock.Visibility = locked ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void OnActualThemeChanged(FrameworkElement sender, object args)
+        {
+            UpdateTheme();
+        }
+
+        private void UpdateTheme()
+        {
+            Color? background = null;
+            if (Scrim.TopColor is SolidColorBrush color)
+            {
+                background = color.Color;
+            }
+
+            _commands?.SetTheme(ActualTheme == ElementTheme.Light ? Theme.AccentLight.Dark1 : Theme.AccentDark.Light2, ActualTheme == ElementTheme.Dark, background);
         }
 
         private async void OnNavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
@@ -143,7 +247,14 @@ namespace Telegram.Views.Popups
                     //var payload = $"{{\"command\":\"setModel\",\"id\":1,\"args\":{_message.ToJson()}}}";
                     //View.CoreWebView2.PostWebMessageAsJson(payload);
 
-                    _commands.SetTheme(ActualTheme == ElementTheme.Light ? Theme.AccentLight.Dark1 : Theme.AccentDark.Light2, ActualTheme == ElementTheme.Dark);
+                    UpdateTheme();
+
+                    _commands.SetConfig(
+                        _clientService.Options.RichMessageTextLengthMax,
+                        _clientService.Options.RichMessageBlockCountMax,
+                        _clientService.Options.RichMessageDepthMax,
+                        _clientService.Options.RichMessageMediaCountMax,
+                        _clientService.Options.RichMessageTableColumnCountMax);
                     _commands.SetModel(_message);
 
                     //PostEvent("setTheme", "accent", "#ff0000", "dark", false);
@@ -156,13 +267,45 @@ namespace Telegram.Views.Popups
                 else if (type == "state")
                 {
                     _state.Update(data);
+                    UpdateSendLock();
 
                     UndoButton.IsEnabled = _state.CanUndo;
                     RedoButton.IsEnabled = _state.CanRedo;
 
-                    ParagraphButton.IsChecked = _state.BlockType is RichEditorBlockType.Heading or RichEditorBlockType.Paragraph or RichEditorBlockType.Pullquote or RichEditorBlockType.Preformatted;
+                    ParagraphButton.IsChecked = _state.BlockType is RichEditorBlockType.Heading or RichEditorBlockType.Paragraph or RichEditorBlockType.Pullquote or RichEditorBlockType.Preformatted or RichEditorBlockType.Footer;
+                    ParagraphButton.Glyph = _state.BlockType switch
+                    {
+                        RichEditorBlockType.Heading => _state.HeadingSize switch
+                        {
+                            1 => Icons.TextHeader1,
+                            2 => Icons.TextHeader2,
+                            3 => Icons.TextHeader3,
+                            4 => Icons.TextHeader4,
+                            5 => Icons.TextHeader5,
+                            _ => Icons.TextHeader6
+                        },
+                        RichEditorBlockType.Paragraph => Icons.TextParagraph,
+                        RichEditorBlockType.Pullquote => "?",
+                        RichEditorBlockType.Preformatted => Icons.Code,
+                        _ => Icons.TextParagraph,
+                    };
+
                     QuoteButton.IsChecked = _state.BlockType == RichEditorBlockType.Blockquote;
-                    ListButton.IsChecked = _state.BlockType == RichEditorBlockType.List;
+
+                    ListButton.IsChecked = _state.BlockType is RichEditorBlockType.List or RichEditorBlockType.Details;
+                    ListButton.Glyph = _state.BlockType switch
+                    {
+                        RichEditorBlockType.List => _state.ListType switch
+                        {
+                            RichEditorListType.Bullet => Icons.TextBulletList,
+                            RichEditorListType.Ordered => Icons.TextNumberList,
+                            RichEditorListType.Checkbox => "?",
+                            _ => Icons.TextBulletList,
+                        },
+                        RichEditorBlockType.Details => "?",
+                        _ => Icons.TextBulletList
+                    };
+
                     TableButton.IsChecked = _state.BlockType == RichEditorBlockType.Table;
                     FormulaButton.IsChecked = _state.BlockType == RichEditorBlockType.Math;
 
@@ -175,10 +318,12 @@ namespace Telegram.Views.Popups
                     StrikethroughButton.IsChecked = _state.Strikethrough;
                     SpoilerButton.IsChecked = _state.Spoiler;
                     MonospaceButton.IsChecked = _state.Code;
+                    SubscriptButton.IsChecked = _state.Subscript;
+                    SuperscriptButton.IsChecked = _state.Superscript;
                     LinkButton.IsChecked = _state.Link;
                     DateButton.IsChecked = _state.DateTime;
 
-                    UpdateModel();
+                    //UpdateModel();
                 }
                 else if (type == "customEmoji")
                 {
@@ -189,7 +334,7 @@ namespace Telegram.Views.Popups
                     var moving = data.GetNamedBoolean("moving");
 
                     var positions = new List<EmojiPosition>();
-                    
+
                     foreach (var item in emojis)
                     {
                         var obj = item.GetObject();
@@ -218,6 +363,11 @@ namespace Telegram.Views.Popups
                     var height = rect.GetNamedNumber("height");
 
                     OnPreformattedLanguage(language, x, y, width, height);
+                }
+                else if (type == "mathExpression")
+                {
+                    // {"type":"mathExpression","latex":"e^{i\\pi}+1=0","block":false,"dpr":1.5,"rect":{...}}
+                    OnMathExpression(data.GetNamedString("latex"));
                 }
                 else
                 {
@@ -279,19 +429,126 @@ namespace Telegram.Views.Popups
             });
         }
 
-        private void OnContextMenuRequested(CoreWebView2 sender, CoreWebView2ContextMenuRequestedEventArgs args)
+        // Double-clicking a formula in the editor now fires a "mathExpression" event (instead
+        // of an in-web-view prompt); we edit the LaTeX natively and write it back via
+        // setMathExpression, which targets the math node the editor selected on double-click.
+        private async void OnMathExpression(string latex)
         {
-            args.Handled = false;
-        }
+            var popup = new FormulaPopup(latex);
 
-        private async void UpdateModel()
-        {
-            var model = await _commands.GetModelAsync();
-            if (model != null)
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
+            if (confirm == ContentDialogResult.Primary)
             {
-                Content.UpdateView(_clientService, model.Blocks, false);
+                _commands.SetMathExpression(popup.Source);
             }
         }
+
+        private void OnContextMenuRequested(CoreWebView2 sender, CoreWebView2ContextMenuRequestedEventArgs args)
+        {
+            args.Handled = true;
+
+            var flyout = new MenuFlyout();
+
+            var canPaste = ClipboardEx.TryGetContent().Contains(StandardDataFormats.Text);
+
+            flyout.CreateFlyoutItem(_state.CanUndo, _commands.Undo, Strings.TextUndo, Icons.ArrowUndo, VirtualKey.Z);
+            flyout.CreateFlyoutItem(_state.CanRedo, _commands.Redo, Strings.Redo, Icons.ArrowRedo, VirtualKey.Y);
+            flyout.CreateFlyoutSeparator();
+            flyout.CreateFlyoutItem(_state.CanCopy, _commands.Cut, Strings.Cut, Icons.Cut, VirtualKey.X);
+            flyout.CreateFlyoutItem(_state.CanCopy, _commands.Copy, Strings.Copy, Icons.Copy, VirtualKey.C);
+            flyout.CreateFlyoutItem(_state.CanPaste && canPaste, _commands.Paste, Strings.Paste, Icons.ClipboardPaste, VirtualKey.V);
+            flyout.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.Delete, Strings.Delete);
+            flyout.CreateFlyoutSeparator();
+
+            if (_state.BlockType is RichEditorBlockType.Heading or RichEditorBlockType.Paragraph or RichEditorBlockType.Pullquote or RichEditorBlockType.Preformatted or RichEditorBlockType.Footer)
+            {
+                var paragraph = new MenuFlyoutSubItem
+                {
+                    Text = "Paragraph",
+                    Icon = MenuFlyoutHelper.CreateIcon(Icons.TextParagraph)
+                };
+
+                PopulateParagraphFlyout(paragraph.Items);
+
+                flyout.Items.Add(paragraph);
+            }
+            else if (_state.BlockType is RichEditorBlockType.List or RichEditorBlockType.Details)
+            {
+                var paragraph = new MenuFlyoutSubItem
+                {
+                    Text = "List",
+                    Icon = MenuFlyoutHelper.CreateIcon(Icons.TextBulletList)
+                };
+
+                PopulateListFlyout(paragraph.Items);
+
+                flyout.Items.Add(paragraph);
+            }
+            else if (_state.BlockType == RichEditorBlockType.Table)
+            {
+                var table = new MenuFlyoutSubItem
+                {
+                    Text = "Table",
+                    Icon = MenuFlyoutHelper.CreateIcon(Icons.Table)
+                };
+
+                PopulateTableFlyout(table.Items);
+
+                flyout.Items.Add(table);
+            }
+
+            var formatting = new MenuFlyoutSubItem
+            {
+                Text = Strings.Formatting,
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.TextFont)
+            };
+
+            formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.ToggleBold, Strings.Bold, Icons.TextBold, VirtualKey.B);
+
+            formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.ToggleItalic, Strings.Italic, Icons.TextItalic, VirtualKey.I);
+
+            formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.ToggleUnderline, Strings.Underline, Icons.TextUnderline, VirtualKey.U);
+
+            formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.ToggleStrikethrough, Strings.Strike, Icons.TextStrikethrough, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+
+            //if ((entities & FormattedTextEntity.Quote) != 0)
+            //{
+            //    _formattingFlyout.CreateFlyoutItem(length, ToggleQuote, Strings.Quote, Icons.QuoteBlock, (VirtualKey)190, VirtualKeyModifiers.Control | Windows.System.VirtualKeyModifiers.Shift);
+            //}
+
+            formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.ToggleCode, Strings.Mono, Icons.Code, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+
+            formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, _commands.ToggleSpoiler, Strings.Spoiler, Icons.Spoiler, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+
+            //formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, CreateDate, Strings.FormattedDate, Icons.Calendar);
+
+            //formatting.CreateFlyoutSeparator();
+
+            //formatting.CreateFlyoutItem(!_state.SelectionIsEmpty, CreateLink, clone.Link.Length > 0 ? Strings.EditLink : Strings.CreateLink, Icons.Link, VirtualKey.K);
+
+            //formatting.CreateFlyoutSeparator();
+            //formatting.CreateFlyoutItem(length && !IsDefaultFormat(selection), ToggleRegular, Strings.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+
+            flyout.Items.Add(formatting);
+
+            flyout.CreateFlyoutSeparator();
+            flyout.CreateFlyoutItem(!_state.IsEmpty, _commands.SelectAll, Strings.SelectAll, null, VirtualKey.A);
+
+            flyout.ShowAt(View, new FlyoutShowOptions
+            {
+                Position = args.Location,
+                ShowMode = FlyoutShowMode.Transient
+            });
+        }
+
+        //private async void UpdateModel()
+        //{
+        //    var model = await _commands.GetModelAsync();
+        //    if (model != null)
+        //    {
+        //        Content.UpdateView(_clientService, model.Blocks, false);
+        //    }
+        //}
 
         private void Bold_Click(object sender, RoutedEventArgs e)
         {
@@ -321,6 +578,16 @@ namespace Telegram.Views.Popups
         private void Monospace_Click(object sender, RoutedEventArgs e)
         {
             _commands.ToggleCode();
+        }
+
+        private void Subscript_Click(object sender, RoutedEventArgs e)
+        {
+            _commands.ToggleSubscript();
+        }
+
+        private void Superscript_Click(object sender, RoutedEventArgs e)
+        {
+            _commands.ToggleSuperscript();
         }
 
         private void Link_Click(object sender, RoutedEventArgs e)
@@ -401,9 +668,21 @@ namespace Telegram.Views.Popups
         private void Paragraph_Click(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
+
+            PopulateParagraphFlyout(flyout.Items);
+
+            flyout.ShowAt(ParagraphButton, new FlyoutShowOptions
+            {
+                Placement = FlyoutPlacementMode.Top,
+                ShowMode = FlyoutShowMode.Transient
+            });
+        }
+
+        private void PopulateParagraphFlyout(IList<MenuFlyoutItemBase> flyout)
+        {
             var heading = new MenuFlyoutSubItem
             {
-                Text = "Heading"
+                Text = Strings.ArticleHeading
             };
 
             {
@@ -413,10 +692,11 @@ namespace Telegram.Views.Popups
                 {
                     var child = new ToggleMenuFlyoutItem
                     {
-                        Text = string.Format("Heading {0}", i),
+                        Text = i == 1 ? Strings.ArticleHeading1 : i == 2 ? Strings.ArticleHeading2 : i == 3 ? Strings.ArticleHeading3 : i == 4 ? Strings.ArticleHeading4 : i == 5 ? Strings.ArticleHeading5 : Strings.ArticleHeading6,
                         FontFamily = new FontFamily("Times New Roman"),
                         FontSize = 24 - ((i - 1) * 2),
                         FontWeight = FontWeights.SemiBold,
+                        Icon = MenuFlyoutHelper.CreateIcon(i == 1 ? Icons.TextHeader1 : i == 2 ? Icons.TextHeader2 : i == 3 ? Icons.TextHeader3 : i == 4 ? Icons.TextHeader4 : i == 5 ? Icons.TextHeader5 : Icons.TextHeader6),
                         IsChecked = _state.BlockType == RichEditorBlockType.Heading && _state.HeadingSize == i,
                         CommandParameter = i,
                         Command = command
@@ -428,32 +708,39 @@ namespace Telegram.Views.Popups
 
             var text = new ToggleMenuFlyoutItem
             {
-                Text = "Text",
+                Text = Strings.ArticleText,
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.TextT),
                 IsChecked = _state.BlockType == RichEditorBlockType.Paragraph,
                 Command = new RelayCommand(_commands.SetParagraph)
             };
 
             var pullquote = new ToggleMenuFlyoutItem
             {
-                Text = "Pullquote",
+                Text = Strings.ArticlePullquote,
                 IsChecked = _state.BlockType == RichEditorBlockType.Pullquote,
                 Command = new RelayCommand(_commands.TogglePullquote)
             };
 
             var preformatted = new ToggleMenuFlyoutItem
             {
-                Text = "Code",
+                Text = Strings.ArticleCode,
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.Code),
                 IsChecked = _state.BlockType == RichEditorBlockType.Preformatted,
                 Command = new RelayCommand(_commands.SetPreformatted)
             };
 
-            flyout.Items.Add(heading);
-            flyout.Items.Add(text);
-            flyout.Items.Add(pullquote);
-            flyout.Items.Add(preformatted);
+            var footer = new ToggleMenuFlyoutItem
+            {
+                Text = Strings.ArticleFooter,
+                IsChecked = _state.BlockType == RichEditorBlockType.Footer,
+                Command = new RelayCommand(_commands.SetFooter)
+            };
 
-            flyout.ShowAt(ParagraphButton, FlyoutPlacementMode.Top);
-
+            flyout.Add(heading);
+            flyout.Add(text);
+            flyout.Add(pullquote);
+            flyout.Add(preformatted);
+            flyout.Add(footer);
         }
 
         private void Quote_Click(object sender, RoutedEventArgs e)
@@ -463,12 +750,24 @@ namespace Telegram.Views.Popups
 
         private void List_Click(object sender, RoutedEventArgs e)
         {
+            var flyout = new MenuFlyout();
+
+            PopulateListFlyout(flyout.Items);
+
+            flyout.ShowAt(ListButton, new FlyoutShowOptions
+            {
+                Placement = FlyoutPlacementMode.Top,
+                ShowMode = FlyoutShowMode.Transient
+            });
+        }
+
+        private void PopulateListFlyout(IList<MenuFlyoutItemBase> flyout)
+        {
             var command = new RelayCommand<RichEditorListType>(_commands.ToggleList);
 
-            var flyout = new MenuFlyout();
             var none = new ToggleMenuFlyoutItem
             {
-                Text = "None",
+                Text = Strings.ArticleNone,
                 IsChecked = _state.ListType == RichEditorListType.None,
                 CommandParameter = RichEditorListType.None,
                 Command = command
@@ -476,7 +775,8 @@ namespace Telegram.Views.Popups
 
             var bulleted = new ToggleMenuFlyoutItem
             {
-                Text = "Bulleted",
+                Text = Strings.ArticleListBulleted,
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.TextBulletList),
                 IsChecked = _state.ListType == RichEditorListType.Bullet,
                 CommandParameter = RichEditorListType.Bullet,
                 Command = command
@@ -484,7 +784,8 @@ namespace Telegram.Views.Popups
 
             var numbered = new ToggleMenuFlyoutItem
             {
-                Text = "Numbered",
+                Text = Strings.ArticleListNumbered,
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.TextNumberList),
                 IsChecked = _state.ListType == RichEditorListType.Ordered,
                 CommandParameter = RichEditorListType.Ordered,
                 Command = command
@@ -492,18 +793,24 @@ namespace Telegram.Views.Popups
 
             var checklist = new ToggleMenuFlyoutItem
             {
-                Text = "To-Do",
+                Text = Strings.ArticleListTodo,
                 IsChecked = _state.ListType == RichEditorListType.Checkbox,
                 CommandParameter = RichEditorListType.Checkbox,
                 Command = command
             };
 
-            flyout.Items.Add(none);
-            flyout.Items.Add(bulleted);
-            flyout.Items.Add(numbered);
-            flyout.Items.Add(checklist);
+            var toggle = new ToggleMenuFlyoutItem
+            {
+                Text = Strings.ArticleToggleBlock,
+                IsChecked = _state.BlockType == RichEditorBlockType.Details,
+                Command = new RelayCommand(_commands.InsertDetails)
+            };
 
-            flyout.ShowAt(ListButton, FlyoutPlacementMode.Top);
+            flyout.Add(none);
+            flyout.Add(bulleted);
+            flyout.Add(numbered);
+            flyout.Add(checklist);
+            flyout.Add(toggle);
         }
 
         private void Table_Click(object sender, RoutedEventArgs e)
@@ -515,6 +822,18 @@ namespace Telegram.Views.Popups
             }
 
             var flyout = new MenuFlyout();
+
+            PopulateTableFlyout(flyout.Items);
+
+            flyout.ShowAt(TableButton, new FlyoutShowOptions
+            {
+                Placement = FlyoutPlacementMode.Top,
+                ShowMode = FlyoutShowMode.Transient
+            });
+        }
+
+        private void PopulateTableFlyout(IList<MenuFlyoutItemBase> flyout)
+        {
             var alignment = new MenuFlyoutSubItem
             {
                 Text = "Alignment",
@@ -589,49 +908,58 @@ namespace Telegram.Views.Popups
                 alignment.Items.Add(bottom);
             }
 
-            flyout.Items.Add(alignment);
-            flyout.CreateFlyoutItem(_commands.TableToggleHeader, _state.CellIsHeader is true ? "Remove Highlight" : "Highlight Cell", Icons.TabInPrivate);
-            
+            flyout.Add(alignment);
+            flyout.CreateFlyoutItem(_commands.TableToggleHeader, _state.CellIsHeader is true ? Strings.ArticleRemoveHighlight : Strings.ArticleHighlightCell, Icons.TabInPrivate);
+
             if (_state.CanMergeCells)
             {
-                flyout.CreateFlyoutItem(_commands.TableMergeCells, "Merge Cells", Icons.TableCellMerge);
+                flyout.CreateFlyoutItem(_commands.TableMergeCells, Strings.ArticleMergeCells, Icons.TableCellMerge);
             }
 
             if (_state.CanUnmergeCells)
             {
-                flyout.CreateFlyoutItem(_commands.TableSplitCell, "Split Cells", Icons.TableCellSplit);
+                flyout.CreateFlyoutItem(_commands.TableSplitCell, Strings.ArticleSplitCells, Icons.TableCellSplit);
             }
 
             if (_state.CanAddRow)
             {
-                flyout.CreateFlyoutItem(_commands.TableAddRowAfter, "Add Row", Icons.TableInsertRow);
+                flyout.CreateFlyoutItem(_commands.TableAddRowBefore, Strings.ArticleInsertAbove, Icons.TableInsertRow);
+                flyout.CreateFlyoutItem(_commands.TableAddRowAfter, Strings.ArticleInsertBelow, Icons.TableInsertRow);
             }
 
             if (_state.CanDeleteRow)
             {
-                flyout.CreateFlyoutItem(_commands.TableDeleteRow, "Delete Row", Icons.TableDeleteRow, destructive: true);
+                flyout.CreateFlyoutItem(_commands.TableDeleteRow, Strings.ArticleDeleteRow, Icons.TableDeleteRow, destructive: true);
             }
 
             if (_state.CanAddColumn)
             {
-                flyout.CreateFlyoutItem(_commands.TableAddColumnAfter, "Add Column", Icons.TableInsertColumn);
+                flyout.CreateFlyoutItem(_commands.TableAddColumnBefore, Strings.ArticleInsertLeft, Icons.TableInsertColumn);
+                flyout.CreateFlyoutItem(_commands.TableAddColumnAfter, Strings.ArticleInsertRight, Icons.TableInsertColumn);
             }
 
             if (_state.CanDeleteColumn)
             {
-                flyout.CreateFlyoutItem(_commands.TableDeleteColumn, "Delete Column", Icons.TableDeleteColumn, destructive: true);
+                flyout.CreateFlyoutItem(_commands.TableDeleteColumn, Strings.ArticleDeleteColumn, Icons.TableDeleteColumn, destructive: true);
             }
-
-            flyout.ShowAt(TableButton, new FlyoutShowOptions
-            {
-                Placement = FlyoutPlacementMode.Top,
-                ShowMode = FlyoutShowMode.Transient
-            });
         }
 
-        private void Formula_Click(object sender, RoutedEventArgs e)
+        private async void Formula_Click(object sender, RoutedEventArgs e)
         {
-            _commands.InsertAnchor("yolo");
+            var popup = new FormulaPopup();
+
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                if (_state.BlockType == RichEditorBlockType.Table)
+                {
+                    _commands.InsertMathInline(popup.Source);
+                }
+                else
+                {
+                    _commands.InsertMathBlock(popup.Source);
+                }
+            }
         }
 
         private void Emoji_Click(object sender, RoutedEventArgs e)
@@ -654,6 +982,65 @@ namespace Telegram.Views.Popups
             {
                 //TitleField.InsertEmoji(sticker);
                 _commands.InsertEmoji(customEmoji.CustomEmojiId, sticker.Emoji);
+            }
+        }
+
+        private async void Send_Click(object sender, RoutedEventArgs e)
+        {
+            var richMessage = await _commands.GetInputModelAsync();
+            if (richMessage == null)
+            {
+                return;
+            }
+
+            // Editing an existing rich message.
+            if (_messageId != 0)
+            {
+                await _clientService.SendAsync(new EditMessageMedia(_chatId, _messageId, new InputMessageRichMessage(richMessage, false)));
+                Close();
+                return;
+            }
+
+            // Sending a new one — mirrors ComposeViewModel.SendRichMessage: a free user sends the plain
+            // FormattedText when the content is representable, otherwise gets the Premium feature promo;
+            // a Premium user sends the full rich message.
+            if (_clientService.IsPremiumAvailable && !_clientService.IsPremium)
+            {
+                if (PageBlockHelper.TryGetFormattedText(richMessage, out FormattedText formatted))
+                {
+                    await SendAsync(new InputMessageText(formatted, null, false));
+                    Close();
+                }
+                else
+                {
+                    ToastPopup.ShowFeaturePromo(_navigationService, new PremiumFeatureRichMessages());
+                }
+
+                return;
+            }
+
+            await SendAsync(new InputMessageRichMessage(richMessage, true));
+            Close();
+        }
+
+        private async Task SendAsync(InputMessageContent content)
+        {
+            var options = _sendOptions ?? new MessageSendOptions();
+            options.SendingId = Math.Max(options.SendingId, 1);
+            await _clientService.SendAsync(new SendMessage(_chatId, _topic, _replyTo, options, content));
+        }
+
+        private void Close()
+        {
+            _closedExpected = true;
+
+            if (WindowContext.Current != null)
+            {
+                _ = WindowContext.Current.ConsolidateAsync();
+            }
+            else
+            {
+                _ = ApplicationView.GetForCurrentView().TryConsolidateAsync();
             }
         }
     }

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unigram · Instant View editor</title>
+<style>
+  /* Shared editor CSS (design tokens + ProseMirror styling). */
+  /*__EDITOR_CSS__*/
+
+  /* Production framing: the editor fills the WebView; the native side owns all
+     chrome. No toolbar, no inspector, no status bar — just the contenteditable.
+     The editable fills all available height (padding lives on it) so the caret
+     and clicks work anywhere, even with an empty document; it scrolls when long. */
+  /* page background is --surface, which the host sets via setTheme({ background }). */
+  body { font-family: var(--ui); color: var(--ink); background: var(--surface); display: flex; flex-direction: column; }
+  #editor { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+  #editor .ProseMirror { flex: 1; padding: 64px 12px; }
+</style>
+</head>
+<body>
+  <!-- The only thing in the WebView is the editor surface. The native (C#/XAML)
+       toolbar drives it through window.UnigramEditor and the message bridge;
+       it must call setModel in response to the {type:"ready"} message. -->
+  <div id="editor"></div>
+
+  <!-- EDITOR BUNDLE -->
+  <script>/*__BUNDLE__*/</script>
+  <!-- Mount immediately; mountEditor wires window.UnigramEditor and emits ready. -->
+  <script>PMEditor.mountEditor(document.getElementById("editor"));</script>
+</body>
+</html>

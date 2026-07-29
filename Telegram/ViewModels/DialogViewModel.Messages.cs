@@ -1072,7 +1072,12 @@ namespace Telegram.ViewModels
 
         public void EditMessage(MessageViewModel message)
         {
-            if (message.Content is MessageChecklist)
+            if (message.Content is MessageRichMessage)
+            {
+                EditRichMessage(message);
+                return;
+            }
+            else if (message.Content is MessageChecklist)
             {
                 EditChecklist(message);
                 return;
@@ -1527,6 +1532,29 @@ namespace Telegram.ViewModels
         }
 
         #endregion
+
+        public async void EditRichMessage(MessageViewModel message)
+        {
+            if (message.Content is not MessageRichMessage richMessage)
+            {
+                return;
+            }
+
+            NavigationService.NavigateToTextEditor(message.ChatId, null, message.Id, richMessage.Message);
+
+            //var popup = new TextEditorRichPopup(ClientService, NavigationService, richMessage.Message);
+            //var confirm = await ShowPopupAsync(popup);
+            //if (confirm != ContentDialogResult.Primary || popup.Input == null)
+            //{
+            //    return;
+            //}
+
+            //var response = await ClientService.SendAsync(new EditMessageMedia(message.ChatId, message.Id, new InputMessageRichMessage(popup.Input, false)));
+            //if (response is Error error)
+            //{
+            //    ShowToast(error);
+            //}
+        }
 
         #region Keyboard button
 

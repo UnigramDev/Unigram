@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unigram · Instant View editor (ProseMirror demo)</title>
+<style>
+  /* Design tokens + ProseMirror base/node styling shared with the editor-only
+     build. assemble.js injects host/editor.css here. */
+  /*__EDITOR_CSS__*/
+
+  body {
+    font-family: var(--ui);
+    color: var(--ink);
+    background: var(--chrome);
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+
+  /* ---- app bar ---- */
+  .appbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 9px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { font-weight: 600; letter-spacing: .2px; }
+  .brand .tag {
+    font-size: 11px; font-weight: 600; color: var(--accent);
+    background: var(--accent-soft); padding: 2px 7px; border-radius: 20px;
+    margin-left: 6px; vertical-align: middle;
+  }
+  .arch { display: flex; align-items: center; gap: 8px; color: var(--ink-soft); font-size: 12px; }
+  .arch .chip { padding: 3px 9px; border-radius: 20px; border: 1px solid var(--line); white-space: nowrap; }
+  .arch .chip.native { background: var(--chrome-2); }
+  .arch .chip.web { background: var(--surface); }
+  .arch .chip.model { background: var(--inspector); color: #cdd9e5; border-color: var(--inspector-line); }
+  .arch .flow { opacity: .5; }
+
+  /* ---- native command bar (simulated XAML CommandBar) ---- */
+  .commandbar {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 2px;
+    padding: 6px 12px;
+    background: linear-gradient(180deg, var(--chrome) 0%, var(--chrome-2) 100%);
+    border-bottom: 1px solid var(--line);
+  }
+  .commandbar .group { display: flex; align-items: center; gap: 2px; }
+  .commandbar .sep { width: 1px; align-self: stretch; background: var(--line); margin: 4px 7px; }
+  .cmd {
+    min-width: 30px; height: 30px; padding: 0 8px;
+    border: 1px solid transparent; background: transparent; border-radius: 6px;
+    color: var(--ink); font-family: var(--ui); font-size: 13px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+    transition: background .08s, border-color .08s;
+  }
+  .cmd:hover { background: rgba(0,0,0,.06); }
+  .cmd:active { background: rgba(0,0,0,.1); }
+  .cmd.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .cmd:disabled { opacity: .35; cursor: default; }
+  .cmd .b { font-weight: 700; } .cmd .i { font-style: italic; }
+  .cmd .u { text-decoration: underline; } .cmd .s { text-decoration: line-through; }
+  .cmd small { font-size: 11px; color: var(--ink-soft); }
+  select.cmd { padding-right: 22px; }
+  .tablegroup { transition: opacity .12s; }
+  .tablegroup[aria-disabled="true"] { opacity: .35; pointer-events: none; }
+
+  /* ---- workspace ---- */
+  .workspace { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 380px; }
+  @media (max-width: 900px) { .workspace { grid-template-columns: 1fr; } .inspector { display: none; } }
+
+  .surface { position: relative; overflow: auto; padding: 28px 0 80px; background: #f6f8fa; }
+  .surface-label {
+    position: sticky; top: 0; z-index: 2; width: max-content; margin: 0 auto 14px;
+    font-size: 11px; color: var(--ink-soft); background: var(--surface);
+    border: 1px solid var(--line); border-radius: 20px; padding: 3px 11px;
+  }
+  .editor {
+    background: var(--surface); max-width: 720px; margin: 0 auto; min-height: 70vh;
+    border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 40px 52px; box-shadow: 0 1px 3px rgba(20,32,43,.06);
+  }
+
+  /* ---- inspector ---- */
+  .inspector { background: var(--inspector); color: #c9d6e2; display: flex; flex-direction: column; min-height: 0; }
+  .inspector-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 14px; border-bottom: 1px solid var(--inspector-line);
+    font-size: 12px; letter-spacing: .3px; text-transform: uppercase; color: #8aa0b4;
+  }
+  .seg { display: flex; border: 1px solid var(--inspector-line); border-radius: 6px; overflow: hidden; }
+  .seg button {
+    background: transparent; color: #8aa0b4; border: none; padding: 4px 10px;
+    font-size: 12px; cursor: pointer; font-family: var(--ui);
+  }
+  .seg button.on { background: var(--accent); color: #fff; }
+  .model {
+    margin: 0; flex: 1; overflow: auto; padding: 14px;
+    font-family: var(--mono); font-size: 12px; line-height: 1.55;
+    color: var(--code); white-space: pre; tab-size: 2;
+  }
+  .model .k { color: #7fb6e8; } .model .s { color: #e6c08a; } .model .n { color: #c792ea; }
+
+  /* ---- status bar ---- */
+  .statusbar {
+    display: flex; gap: 18px; align-items: center; padding: 6px 16px;
+    background: var(--surface); border-top: 1px solid var(--line);
+    font-size: 12px; color: var(--ink-soft);
+  }
+  .statusbar b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+  <header class="appbar">
+    <div class="brand">Unigram · Instant View editor <span class="tag">demo</span></div>
+    <div class="arch">
+      <span class="chip native">Native toolbar</span><span class="flow">⇄</span>
+      <span class="chip web">WebView editor</span><span class="flow">→</span>
+      <span class="chip model">TDLib model</span>
+    </div>
+  </header>
+
+  <!-- NATIVE TOOLBAR (simulated). In production this is a XAML CommandBar that
+       calls window.UnigramEditor.exec(...) and reflects state pushed back to it.
+       It never touches ProseMirror directly. -->
+  <div class="commandbar" id="toolbar" role="toolbar" aria-label="Formatting">
+    <div class="group">
+      <button class="cmd" data-cmd="undo" id="undoBtn" title="Undo (Ctrl+Z)">↶</button>
+      <button class="cmd" data-cmd="redo" id="redoBtn" title="Redo (Ctrl+Y)">↷</button>
+    </div>
+    <div class="sep"></div>
+    <div class="group">
+      <select class="cmd" id="blockType" title="Block style">
+        <option value="paragraph">Paragraph</option>
+        <option value="h1">Heading 1</option>
+        <option value="h2">Heading 2</option>
+        <option value="h3">Heading 3</option>
+        <option value="preformatted">Code block</option>
+      </select>
+      <select class="cmd" id="langType" title="Code language" disabled></select>
+    </div>
+    <div class="sep"></div>
+    <div class="group">
+      <button class="cmd" data-cmd="toggleBold" data-mark="bold" title="Bold (Ctrl+B)"><span class="b">B</span></button>
+      <button class="cmd" data-cmd="toggleItalic" data-mark="italic" title="Italic (Ctrl+I)"><span class="i">I</span></button>
+      <button class="cmd" data-cmd="toggleUnderline" data-mark="underline" title="Underline (Ctrl+U)"><span class="u">U</span></button>
+      <button class="cmd" data-cmd="toggleStrike" data-mark="strike" title="Strikethrough"><span class="s">S</span></button>
+      <button class="cmd" data-cmd="toggleCode" data-mark="code" title="Monospace"><span style="font-family:var(--mono)">&lt;/&gt;</span></button>
+      <button class="cmd" data-cmd="toggleSpoiler" data-mark="spoiler" title="Spoiler">▦</button>
+      <button class="cmd" data-cmd="toggleMarked" data-mark="marked" title="Highlight">▮</button>
+      <button class="cmd" data-cmd="toggleSuperscript" data-mark="superscript" title="Superscript">x²</button>
+      <button class="cmd" data-cmd="toggleSubscript" data-mark="subscript" title="Subscript">x₂</button>
+      <button class="cmd" data-action="link" data-mark="link" title="Link">🔗</button>
+      <button class="cmd" data-action="datetime" data-mark="dateTime" title="Date / time">📅</button>
+    </div>
+    <div class="sep"></div>
+    <div class="group">
+      <button class="cmd" data-cmd="toggleList" data-arg='{"type":"bullet"}' title="Bulleted list">•</button>
+      <button class="cmd" data-cmd="toggleList" data-arg='{"type":"ordered"}' title="Numbered list"><small>1.</small></button>
+      <button class="cmd" data-cmd="toggleList" data-arg='{"type":"checkbox"}' title="Checklist">☑</button>
+      <button class="cmd" data-cmd="toggleList" title="No list">⊘</button>
+      <button class="cmd" data-cmd="outdent" title="Outdent">⇤</button>
+      <button class="cmd" data-cmd="indent" title="Indent">⇥</button>
+      <button class="cmd" data-cmd="toggleBlockquote" title="Quote">❝</button>
+      <button class="cmd" data-cmd="togglePullquote" title="Pull quote">❠</button>
+      <button class="cmd" data-cmd="insertDetails" title="Collapsible section">▸≡</button>
+    </div>
+    <div class="sep"></div>
+    <div class="group">
+      <button class="cmd" data-action="emoji" title="Custom emoji">😀</button>
+      <button class="cmd" data-cmd="insertImage" title="Image">🖼</button>
+      <button class="cmd" data-cmd="insertTable" title="Table">▦</button>
+      <button class="cmd" data-action="mathInline" title="Inline formula">ƒ</button>
+      <button class="cmd" data-action="mathBlock" title="Block formula">∑</button>
+      <button class="cmd" data-cmd="insertDivider" title="Divider">―</button>
+      <button class="cmd" data-action="anchor" title="Anchor">⚓</button>
+    </div>
+    <div class="sep"></div>
+    <div class="group tablegroup" id="tablegroup" aria-disabled="true">
+      <button class="cmd" data-cmd="tableAddRowAfter" data-can="canAddRow" title="Add row">+row</button>
+      <button class="cmd" data-cmd="tableDeleteRow" data-can="canDeleteRow" title="Delete row">−row</button>
+      <button class="cmd" data-cmd="tableAddColumnAfter" data-can="canAddColumn" title="Add column">+col</button>
+      <button class="cmd" data-cmd="tableDeleteColumn" data-can="canDeleteColumn" title="Delete column">−col</button>
+      <button class="cmd" data-cmd="tableMergeCells" data-can="canMerge" title="Merge cells">⧉</button>
+      <button class="cmd" data-cmd="tableSplitCell" data-can="canUnmerge" title="Split cell">⊟</button>
+      <button class="cmd" data-cmd="tableToggleHeader" data-th="isHeader" title="Header cell">TH</button>
+      <button class="cmd" data-cmd="setCellAlign" data-arg='{"align":"left"}' data-align="left" title="Align left">⬅</button>
+      <button class="cmd" data-cmd="setCellAlign" data-arg='{"align":"center"}' data-align="center" title="Align center">⬌</button>
+      <button class="cmd" data-cmd="setCellAlign" data-arg='{"align":"right"}' data-align="right" title="Align right">➡</button>
+      <button class="cmd" data-cmd="setCellValign" data-arg='{"valign":"top"}' data-valign="top" title="Align top">⤒</button>
+      <button class="cmd" data-cmd="setCellValign" data-arg='{"valign":"middle"}' data-valign="middle" title="Align middle">⊟</button>
+      <button class="cmd" data-cmd="setCellValign" data-arg='{"valign":"bottom"}' data-valign="bottom" title="Align bottom">⤓</button>
+    </div>
+  </div>
+
+  <main class="workspace">
+    <section class="surface">
+      <div class="surface-label">WebView2 · contenteditable — single editing flow</div>
+      <div id="editor" class="editor"></div>
+    </section>
+    <aside class="inspector">
+      <div class="inspector-head">
+        <span>Serialized model</span>
+        <div class="seg" id="seg">
+          <button data-view="tdlib" class="on">TDLib</button>
+          <button data-view="pm">ProseMirror</button>
+        </div>
+      </div>
+      <pre id="model" class="model"></pre>
+    </aside>
+  </main>
+
+  <footer class="statusbar" id="status">
+    <span>Block: <b id="st-block">paragraph</b></span>
+    <span>In table: <b id="st-table">no</b></span>
+    <span id="st-hint">Double-click a formula to edit its LaTeX · click the media to select it</span>
+  </footer>
+
+  <!-- EDITOR BUNDLE (this is the only code that runs inside the WebView) -->
+  <script>/*__BUNDLE__*/</script>
+  <!-- HOST APP (this stands in for the native C# / XAML side) -->
+  <script>/*__APP__*/</script>
+</body>
+</html>
