@@ -35,7 +35,7 @@ namespace Telegram.Selectors
             {
                 return MentionTemplate;
             }
-            else if (item is UserCommand or QuickReplyShortcut)
+            else if (item is BotCommandFullInfo or QuickReplyShortcut)
             {
                 return CommandTemplate;
             }

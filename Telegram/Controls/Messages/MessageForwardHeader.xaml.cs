@@ -150,7 +150,7 @@ namespace Telegram.Controls.Messages
             ForwardPhoto = GetTemplateChild(nameof(ForwardPhoto)) as ProfilePicture;
 
             ForwardText = ForwardLabel.Inlines[0] as Run;
-            ForwardLink = ForwardLabel.Inlines[2] as Run;
+            ForwardLink = ForwardLabel.Inlines[1] as Run;
 
             //ForwardLink.Click += FwdFrom_Click;
 
@@ -190,22 +190,40 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            if (message.Content is MessageAsyncStory story && message.ClientService.TryGetChat(story.StoryPosterChatId, out Chat storyChat))
+            if (message.ReceiverId != null)
+            {
+                ForwardText.Text = string.Empty;
+
+                // TODO: icon
+                if (message.ReceiverId.IsUser(message.ClientService.Options.MyId))
+                {
+                    ForwardLink.Text = "\uEA4F\u00A0" + Strings.EphemeralMessageVisibleToYou;
+                }
+                else
+                {
+                    ForwardLink.Text = "\uEA4F\u00A0" + string.Format(Strings.EphemeralMessageVisibleToOther, message.ClientService.GetTitle(message.ReceiverId));
+                }
+
+                ForwardLink.FontWeight = FontWeights.Normal;
+                ForwardPhoto.Source = null;
+                Visibility = Visibility.Visible;
+            }
+            else if (message.Content is MessageAsyncStory story && message.ClientService.TryGetChat(story.StoryPosterChatId, out Chat storyChat))
             {
                 if (story.State == MessageStoryState.Expired)
                 {
                     if (message.ClientService.TryGetSupergroup(storyChat, out Supergroup supergroup) && supergroup.Status is ChatMemberStatusLeft && !supergroup.IsPublic())
                     {
-                        ForwardText.Text = Strings.PrivateStory;
+                        ForwardText.Text = Strings.PrivateStory + "\n";
                     }
                     else
                     {
-                        ForwardText.Text = string.Format("{0}\u00A0{1}", Icons.ExpiredStory, Strings.ExpiredStory);
+                        ForwardText.Text = string.Format("{0}\u00A0{1}", Icons.ExpiredStory, Strings.ExpiredStory) + "\n";
                     }
                 }
                 else
                 {
-                    ForwardText.Text = Strings.ForwardedStory;
+                    ForwardText.Text = Strings.ForwardedStory + "\n";
                 }
 
                 ForwardLink.Text = "\uEA4F\u00A0" + storyChat.Title;
@@ -266,7 +284,7 @@ namespace Telegram.Controls.Messages
                     ForwardPhoto.Source = ProfilePictureSourceText.GetNameForUser(message.ImportInfo.SenderName, long.MinValue);
                 }
 
-                ForwardText.Text = line1;
+                ForwardText.Text = line1 + "\n";
                 ForwardLink.Text = "\uEA4F\u00A0" + (line2 ?? string.Empty);
 
                 Visibility = Visibility.Visible;

@@ -3235,7 +3235,7 @@ namespace Telegram.Views
                     {
                         flyout.CreateFlyoutItem(ViewModel.ReplyToMessage, message, Strings.Reply, Icons.ArrowReply);
                     }
-                    else
+                    else if (properties.CanBeRepliedInAnotherChat)
                     {
                         flyout.CreateFlyoutItem(ViewModel.ReplyToMessageInAnotherChat, message, Strings.ReplyToAnotherChat, Icons.ArrowReply);
                     }
@@ -3528,7 +3528,17 @@ namespace Telegram.Views
                     }
                 }
 
-                if (message.CanBeSaved is false && message.Chat.HasProtectedContent && flyout.Items.Count > 0)
+                if (message.ReceiverId != null && flyout.Items.Count > 0)
+                {
+                    flyout.CreateFlyoutSeparator();
+                    flyout.Items.Add(new MenuFlyoutLabel
+                    {
+                        Padding = new Thickness(12, 4, 12, 4),
+                        MaxWidth = 178,
+                        Text = Strings.EphemeralMessageMenuHint
+                    });
+                }
+                else if (message.CanBeSaved is false && message.Chat.HasProtectedContent && flyout.Items.Count > 0)
                 {
                     string hasProtectedContent;
                     if (message.IsChannelPost)
@@ -4780,12 +4790,12 @@ namespace Telegram.Views
                     ViewModel.ResolveInlineBot(username);
                 }
             }
-            else if (e.ClickedItem is UserCommand command)
+            else if (e.ClickedItem is BotCommandFullInfo command)
             {
-                var insert = $"/{command.Item.Command}";
+                var insert = $"/{command.Command}";
                 if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
                 {
-                    var bot = ViewModel.ClientService.GetUser(command.UserId);
+                    var bot = ViewModel.ClientService.GetUser(command.BotUserId);
                     if (bot != null && bot.HasActiveUsername(out string username))
                     {
                         insert += $"@{username}";
@@ -5152,20 +5162,23 @@ namespace Telegram.Views
                 return;
             }
 
-            if (args.Item is UserCommand userCommand)
+            if (args.Item is BotCommandFullInfo userCommand)
             {
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
 
                 var photo = content.Children[0] as ProfilePicture;
-                var title = content.Children[1] as TextBlock;
+                var command = content.Children[1] as TextBlock;
+                var ephemeral = content.Children[2] as TextBlock;
+                var description = content.Children[3] as TextBlock;
 
-                var command = title.Inlines[0] as Run;
-                var description = title.Inlines[1] as Run;
+                command.Text = $"/{userCommand.Command}";
+                description.Text = userCommand.Description;
 
-                command.Text = $"/{userCommand.Item.Command} ";
-                description.Text = userCommand.Item.Description;
+                ephemeral.Visibility = userCommand.IsEphemeral
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
 
-                if (ViewModel.ClientService.TryGetUser(userCommand.UserId, out User user))
+                if (ViewModel.ClientService.TryGetUser(userCommand.BotUserId, out User user))
                 {
                     photo.Source = ProfilePictureSource.User(ViewModel.ClientService, user);
                 }
@@ -6660,22 +6673,25 @@ namespace Telegram.Views
             {
                 ButtonMore.Content = fullInfo.BotInfo.MenuButton.Text;
 
-                ViewModel.BotCommands = fullInfo.BotInfo.Commands.Count > 0 ? fullInfo.BotInfo.Commands.Select(x => new UserCommand(user.Id, x)).ToList() : null;
+                ViewModel.BotCommands = fullInfo.BotInfo.Commands.Count > 0 ? fullInfo.BotInfo.Commands.Select(x => new BotCommandFullInfo(user.Id, x)).ToList() : null;
                 ViewModel.HasBotCommands = false;
+                ViewModel.HasEphemeralBotCommands = false;
                 ShowHideSideButton(SideButton.BotMenu);
             }
             else if (fullInfo.BotInfo?.Commands.Count > 0)
             {
                 ButtonMore.Content = Strings.BotsMenuTitle;
 
-                ViewModel.BotCommands = fullInfo.BotInfo.Commands.Select(x => new UserCommand(user.Id, x)).ToList();
+                ViewModel.BotCommands = fullInfo.BotInfo.Commands.Select(x => new BotCommandFullInfo(user.Id, x)).ToList();
                 ViewModel.HasBotCommands = false;
+                ViewModel.HasEphemeralBotCommands = false;
                 ShowHideSideButton(SideButton.BotMenu);
             }
             else
             {
                 ViewModel.BotCommands = null;
                 ViewModel.HasBotCommands = false;
+                ViewModel.HasEphemeralBotCommands = false;
                 ShowHideSideButton(SideButton.None);
             }
 
@@ -6851,15 +6867,16 @@ namespace Telegram.Views
             btnSendMessage.SlowModeDelay = 0;
             btnSendMessage.SlowModeDelayExpiresIn = 0;
 
-            var commands = new List<UserCommand>();
+            var commands = new List<BotCommandFullInfo>();
 
             foreach (var command in fullInfo.BotCommands)
             {
-                commands.AddRange(command.Commands.Select(x => new UserCommand(command.BotUserId, x)));
+                commands.AddRange(command.Commands.Select(x => new BotCommandFullInfo(command.BotUserId, x)));
             }
 
             ViewModel.BotCommands = commands;
             ViewModel.HasBotCommands = commands.Count > 0;
+            ViewModel.HasEphemeralBotCommands = commands.Any(x => x.IsEphemeral);
             //ShowHideBotCommands(false);
         }
 
@@ -7084,15 +7101,16 @@ namespace Telegram.Views
                 _slowModeTimer.Stop();
             }
 
-            var commands = new List<UserCommand>();
+            var commands = new List<BotCommandFullInfo>();
 
             foreach (var command in fullInfo.BotCommands)
             {
-                commands.AddRange(command.Commands.Select(x => new UserCommand(command.BotUserId, x)));
+                commands.AddRange(command.Commands.Select(x => new BotCommandFullInfo(command.BotUserId, x)));
             }
 
             ViewModel.BotCommands = commands;
             ViewModel.HasBotCommands = commands.Count > 0;
+            ViewModel.HasEphemeralBotCommands = commands.Any(x => x.IsEphemeral);
             //ShowHideBotCommands(false);
         }
 

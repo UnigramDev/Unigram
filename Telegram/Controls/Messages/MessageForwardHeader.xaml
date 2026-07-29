@@ -57,9 +57,7 @@
                                    FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap">
-                            <Run />
-                            <LineBreak />
-                            <Run FontWeight="SemiBold" />
+                            <Run /><Run FontWeight="SemiBold" />
                         </TextBlock>
                     </Grid>
                 </ControlTemplate>

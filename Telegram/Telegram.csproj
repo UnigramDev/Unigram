@@ -514,6 +514,7 @@
     <Compile Include="Services\ClientService.ForumTopics.cs" />
     <Compile Include="Services\FeedbackChatTopicService.cs" />
     <Compile Include="Services\Settings\VideoSettings.cs" />
+    <Compile Include="Td\Api\InputMessageReplyToEphemeralMessage.cs" />
     <Compile Include="Td\Api\MessageAlbumLastMessage.cs" />
     <Compile Include="Services\PaidReactionService.cs" />
     <Compile Include="Controls\Messages\ReactionAsPaidButton.cs" />

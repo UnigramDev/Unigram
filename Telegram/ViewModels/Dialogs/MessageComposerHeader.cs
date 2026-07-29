@@ -17,7 +17,11 @@ namespace Telegram.ViewModels
             var sameTopic = (viewModel.TopicId == null || viewModel.Thread != null) || (viewModel.TopicId != null && Message.TopicId.AreTheSame(viewModel.TopicId));
 
             var chatId = Message.ChatId;
-            if (chatId == viewModel.ChatId && sameTopic)
+            if (chatId == viewModel.ChatId && Message.ReceiverId != null && Message.SenderId is MessageSenderUser senderUser)
+            {
+                return new InputMessageReplyToEphemeralMessage(Message.Id, senderUser.UserId, Quote, ChecklistTaskId, PollOptionId);
+            }
+            else if (chatId == viewModel.ChatId && sameTopic)
             {
                 if (Message.TopicId != null && (viewModel.IsForum || viewModel.IsDirectMessagesGroup))
                 {

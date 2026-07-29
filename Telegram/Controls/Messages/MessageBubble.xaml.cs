@@ -1255,7 +1255,7 @@ namespace Telegram.Controls.Messages
                 HeaderLinkRun.Text = string.Empty;
             }
 
-            if (message.Content is MessageAsyncStory story)
+            if (message.ReceiverId != null || message.Content is MessageAsyncStory story)
             {
                 LoadForwardLabel();
                 forward = true;

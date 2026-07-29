@@ -9256,6 +9256,21 @@ namespace Telegram
         public static string EnterYourPasscode => Resource.GetString("EnterYourPasscode");
         
         /// <summary>
+        /// Localized resource similar to "Only you see this message. It will disappear after you log in again."
+        /// </summary>
+        public static string EphemeralMessageMenuHint => Resource.GetString("EphemeralMessageMenuHint");
+        
+        /// <summary>
+        /// Localized resource similar to "Only visible to {0}"
+        /// </summary>
+        public static string EphemeralMessageVisibleToOther => Resource.GetString("EphemeralMessageVisibleToOther");
+        
+        /// <summary>
+        /// Localized resource similar to "Only visible to you"
+        /// </summary>
+        public static string EphemeralMessageVisibleToYou => Resource.GetString("EphemeralMessageVisibleToYou");
+        
+        /// <summary>
         /// Localized resource similar to "An error occurred."
         /// </summary>
         public static string ErrorOccurred => Resource.GetString("ErrorOccurred");

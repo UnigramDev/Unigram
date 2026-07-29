@@ -6062,6 +6062,15 @@ Learn more at telegram.org</value>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Enter your passcode</value>
   </data>
+  <data name="EphemeralMessageMenuHint" xml:space="preserve">
+    <value>Only you see this message. It will disappear after you log in again.</value>
+  </data>
+  <data name="EphemeralMessageVisibleToOther" xml:space="preserve">
+    <value>Only visible to {0}</value>
+  </data>
+  <data name="EphemeralMessageVisibleToYou" xml:space="preserve">
+    <value>Only visible to you</value>
+  </data>
   <data name="ErrorOccurred" xml:space="preserve">
     <value>An error occurred.</value>
   </data>

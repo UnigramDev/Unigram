@@ -13627,4 +13627,7 @@
     <string name="ApproveNewMembersEnableForLinks_one">Also enable **Approve New Members** for **{0} existing invite link** in this group?</string>
     <string name="ApproveNewMembersEnableForLinks_other">Also enable **Approve New Members** for **{0} existing invite links** in this group?</string>
 
+    <string name="EphemeralMessageVisibleToYou">Only visible to you</string>
+    <string name="EphemeralMessageVisibleToOther">Only visible to {0}</string>
+    <string name="EphemeralMessageMenuHint">Only you see this message. It will disappear after you log in again.</string>
 </resources>

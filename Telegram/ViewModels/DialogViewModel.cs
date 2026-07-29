@@ -2921,12 +2921,19 @@ namespace Telegram.ViewModels
         private bool _hasBotCommands;
         public bool HasBotCommands
         {
-            get => _hasBotCommands;
+            get => _hasBotCommands && BotCommands != null;
             set => Set(ref _hasBotCommands, value);
         }
 
-        private List<UserCommand> _botCommands;
-        public List<UserCommand> BotCommands
+        private bool _hasEphemeralBotCommands;
+        public bool HasEphemeralBotCommands
+        {
+            get => _hasEphemeralBotCommands && BotCommands != null;
+            set => Set(ref _hasEphemeralBotCommands, value);
+        }
+
+        private List<BotCommandFullInfo> _botCommands;
+        public List<BotCommandFullInfo> BotCommands
         {
             get => _botCommands;
             set => Set(ref _botCommands, value);
@@ -3173,6 +3180,39 @@ namespace Telegram.ViewModels
 
                     NavigationService.NavigateToChat(chatId, topic: topicId, force: false, state: state);
                     return null;
+                }
+            }
+
+            if (replyTo is InputMessageReplyToEphemeralMessage ephemeralMessage)
+            {
+                return new SendEphemeralMessage(chatId, topicId, ephemeralMessage.ReceiverUserId, new InputMessageReplyToMessage(ephemeralMessage.MessageId, ephemeralMessage.Quote, ephemeralMessage.ChecklistTaskId, ephemeralMessage.PollOptionId), messageSendOptions?.SendingId ?? 0, messageSendOptions?.OnlyPreview ?? false, inputMessageContent);
+            }
+            else if (HasEphemeralBotCommands)
+            {
+                var caption = inputMessageContent switch
+                {
+                    InputMessageText text => text.Text,
+                    _ => null
+                };
+
+                if (caption.Text.StartsWith("/"))
+                {
+                    var split = caption.Text[1..].Split(' ');
+                    split = split[0].Split('@');
+
+                    if (split.Length == 2)
+                    {
+                        foreach (var command in BotCommands.Where(x => string.Equals(x.Command, split[0], StringComparison.OrdinalIgnoreCase)))
+                        {
+                            if (ClientService.TryGetUser(command.BotUserId, out User botUser))
+                            {
+                                if (botUser.HasActiveUsername(split[1], out _))
+                                {
+                                    return new SendEphemeralMessage(chatId, topicId, command.BotUserId, null, messageSendOptions?.SendingId ?? 0, messageSendOptions?.OnlyPreview ?? false, inputMessageContent);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -4712,16 +4752,22 @@ namespace Telegram.ViewModels
         #endregion
     }
 
-    public partial class UserCommand
+    public partial class BotCommandFullInfo(long userId, BotCommand command)
     {
-        public UserCommand(long userId, BotCommand command)
-        {
-            UserId = userId;
-            Item = command;
-        }
+        public long BotUserId { get; set; } = userId;
 
-        public long UserId { get; set; }
-        public BotCommand Item { get; set; }
+        /// <summary>
+        /// Text of the bot command
+        /// </summary>
+        public string Command { get; set; } = command.Command;
+        /// <summary>
+        /// Represents a command supported by a bot
+        /// </summary>
+        public string Description { get; set; } = command.Description;
+        /// <summary>
+        /// True, if the command must send an ephemeral message instead of a regular one
+        /// </summary>
+        public bool IsEphemeral { get; set; } = command.IsEphemeral;
     }
 
     [Flags]
