@@ -26,6 +26,7 @@ namespace Telegram.Views.Popups
         private readonly long _messageId;
 
         private readonly FormattedText _text;
+        private readonly RichMessage _message;
 
         private readonly string _fromLanguage;
         private readonly bool _contentProtected;
@@ -88,6 +89,48 @@ namespace Telegram.Views.Popups
             Opened += OnOpened;
         }
 
+        public TranslatePopup(ITranslateService translateService, long chatId, long messageId, RichMessage text, string fromLanguage, string toLanguage, bool contentProtected)
+        {
+            InitializeComponent();
+
+            _clientService = translateService.ClientService;
+            _translateService = translateService;
+            _toLanguage = toLanguage;
+
+            _chatId = chatId;
+            _messageId = messageId;
+
+            _message = text;
+
+            _fromLanguage = fromLanguage;
+            _contentProtected = contentProtected;
+
+            _textSelectionManager = new TextSelectionManager(this, Block, handleContextMenu: true);
+
+            Title = Strings.AutomaticTranslation;
+            PrimaryButtonText = Strings.Close;
+            //SecondaryButtonText = Strings.Language;
+
+            var fromName = TranslateService.LanguageName(fromLanguage, out bool rtl);
+            var toName = TranslateService.LanguageName(toLanguage);
+
+            if (string.IsNullOrEmpty(fromName))
+            {
+                FromLanguage.Text = "Auto \u2192";
+            }
+            else
+            {
+                FromLanguage.Text = string.Format("{0} \u2192", fromName);
+            }
+
+            ToLanguage.Text = toName;
+
+            RichBlock.ShowHideSkeleton(true);
+            RichBlock.UpdateView(_clientService, text.Blocks, !text.IsFull);
+
+            Opened += OnOpened;
+        }
+
         private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
             if (_loadingMore)
@@ -99,14 +142,28 @@ namespace Telegram.Views.Popups
 
             var ticks = Logger.TickCount;
 
-            Task<object> task;
+            Task<Object> task;
             if (_chatId != 0 && _messageId != 0)
             {
-                task = _translateService.TranslateAsync(_chatId, _messageId, _toLanguage, _tone);
+                if (_message != null)
+                {
+                    task = _clientService.SendAsync(new TranslateMessageRichMessage(_chatId, _messageId, _toLanguage, _tone));
+                }
+                else
+                {
+                    task = _translateService.TranslateAsync(_chatId, _messageId, _toLanguage, _tone);
+                }
             }
             else
             {
-                task = _translateService.TranslateAsync(_text, _toLanguage, _tone);
+                if (_message != null)
+                {
+                    task = _clientService.SendAsync(new TranslateRichMessage(null, _toLanguage, _tone));
+                }
+                else
+                {
+                    task = _translateService.TranslateAsync(_text, _toLanguage, _tone);
+                }
             }
 
             var response = await task;
@@ -120,6 +177,17 @@ namespace Telegram.Views.Popups
 
                 Block.ShowHideSkeleton(false);
                 Block.SetText(_clientService, translation);
+            }
+            else if (response is RichMessage richTranslation)
+            {
+                var diff = (int)(Logger.TickCount - ticks);
+                if (diff < 1000)
+                {
+                    await Task.Delay(1000 - diff);
+                }
+
+                RichBlock.ShowHideSkeleton(false);
+                RichBlock.UpdateView(_clientService, richTranslation.Blocks, !richTranslation.IsFull);
             }
             else if (response is Error error)
             {
@@ -147,8 +215,16 @@ namespace Telegram.Views.Popups
             var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary && popup.SelectedItem != null)
             {
-                var translate = new TranslatePopup(_translateService, _chatId, _messageId, _text, _fromLanguage, popup.SelectedItem, _contentProtected);
-                _ = translate.ShowQueuedAsync(XamlRoot);
+                if (_message != null)
+                {
+                    var translate = new TranslatePopup(_translateService, _chatId, _messageId, _message, _fromLanguage, popup.SelectedItem, _contentProtected);
+                    _ = translate.ShowQueuedAsync(XamlRoot);
+                }
+                else
+                {
+                    var translate = new TranslatePopup(_translateService, _chatId, _messageId, _text, _fromLanguage, popup.SelectedItem, _contentProtected);
+                    _ = translate.ShowQueuedAsync(XamlRoot);
+                }
             }
         }
     }

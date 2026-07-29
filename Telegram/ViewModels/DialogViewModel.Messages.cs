@@ -1357,6 +1357,49 @@ namespace Telegram.ViewModels
                 chatId = 0;
                 messageId = 0;
             }
+            else if (message.Content is MessageVoiceNote voiceNote && voiceNote.VoiceNote.SpeechRecognitionResult is SpeechRecognitionResultText speechVoiceText)
+            {
+                if (voiceNote.Caption.Text.Length > 0 && speechVoiceText.Text.Length > 0)
+                {
+                    text = ClientEx.Format("{0}\n{1}", speechVoiceText.Text, voiceNote.Caption.Text);
+                }
+                else if (speechVoiceText.Text.Length > 0)
+                {
+                    text = speechVoiceText.Text.AsFormattedText();
+                }
+                else
+                {
+                    return;
+                }
+
+                chatId = 0;
+                messageId = 0;
+            }
+            else if (message.Content is MessageVideoNote videoNote && videoNote.VideoNote.SpeechRecognitionResult is SpeechRecognitionResultText speechVideoText)
+            {
+                if (speechVideoText.Text.Length > 0)
+                {
+                    text = speechVideoText.Text.AsFormattedText();
+                }
+                else
+                {
+                    return;
+                }
+
+                chatId = 0;
+                messageId = 0;
+            }
+            else if (message.Content is MessageRichMessage richMessage)
+            {
+                text = richMessage.Message.ToFormattedText();
+                chatId = message.ChatId;
+                messageId = message.Id;
+
+                var language2 = LanguageIdentification.IdentifyLanguage(text.Text);
+                var popup2 = new TranslatePopup(_translateService, chatId, messageId, richMessage.Message, language2, Settings.Translate.To, !message.CanBeSaved);
+                ShowPopup(popup2);
+                return;
+            }
             else
             {
                 var caption = message.GetTranslatableText();
@@ -1378,7 +1421,7 @@ namespace Telegram.ViewModels
             }
 
             var language = LanguageIdentification.IdentifyLanguage(text.Text);
-            var popup = new TranslatePopup(_translateService, /*chatId, messageId,*/ text, language, Settings.Translate.To, !message.CanBeSaved);
+            var popup = new TranslatePopup(_translateService, chatId, messageId, text, language, Settings.Translate.To, !message.CanBeSaved);
             ShowPopup(popup);
         }
 

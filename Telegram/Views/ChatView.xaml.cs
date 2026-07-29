@@ -4439,6 +4439,10 @@ namespace Telegram.Views
             {
                 return ViewModel.TranslateService.CanTranslateText(checklist.List.Title.Text);
             }
+            else if (message.Content is MessageRichMessage richMessage)
+            {
+                return ViewModel.TranslateService.CanTranslateText(richMessage.Message.ToPlainText());
+            }
 
             return false;
         }

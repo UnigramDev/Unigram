@@ -5,6 +5,7 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:messages="using:Telegram.Controls.Messages"
+                       xmlns:content="using:Telegram.Controls.Messages.Content"
                        mc:Ignorable="d"
                        Padding="0,12,0,0">
 
@@ -27,8 +28,12 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <messages:MessageTextBlock x:Name="Block"
-                                       Margin="24,12,24,24" />
+            <Grid>
+                <messages:MessageTextBlock x:Name="Block"
+                                           Margin="24,12,24,24" />
+                <content:InstantContent x:Name="RichBlock"
+                                        Margin="14,12,14,24" />
+            </Grid>
         </ScrollViewer>
 
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
