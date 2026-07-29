@@ -1231,7 +1231,9 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (direction == null && TryGetFirstVisibleMessageId(out long firstVisibleId))
+            long firstVisibleId = 0;
+            long lastVisibleId = 0;
+            if (direction == null && TryGetFirstVisibleMessageId(out firstVisibleId) && TryGetLastVisibleMessageId(out lastVisibleId, out _))
             {
                 direction = firstVisibleId < fromMessageId ? ScrollIntoViewAlignment.Default : ScrollIntoViewAlignment.Leading;
             }
@@ -1243,21 +1245,16 @@ namespace Telegram.ViewModels
 
             if (onlyRemote is false && Items.TryGetValue(fromMessageId, out MessageViewModel already))
             {
-                if (alignment == VerticalAlignment.Center)
+                if (alignment == VerticalAlignment.Center && false)
                 {
                     var index = Items.IndexOf(already);
-                    var needNextSlice = index < 25 || Items.Count - index < 25;
-
-                    if (needNextSlice)
+                    if (index < 25 && IsOldestSliceLoaded is not true)
                     {
-                        if (direction == ScrollIntoViewAlignment.Leading)
-                        {
-                            await LoadNextSliceAsync(PanelScrollingDirection.Forward);
-                        }
-                        else
-                        {
-                            await LoadNextSliceAsync(PanelScrollingDirection.Backward);
-                        }
+                        await LoadNextSliceAsync(PanelScrollingDirection.Backward);
+                    }
+                    else if (Items.Count - index < 25 && IsNewestSliceLoaded is not true)
+                    {
+                        await LoadNextSliceAsync(PanelScrollingDirection.Forward);
                     }
                 }
                 else if (alignment == VerticalAlignment.Top && !onlyRemote)
