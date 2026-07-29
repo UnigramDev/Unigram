@@ -329,6 +329,8 @@ namespace Telegram.Services
         private readonly ReaderWriterDictionary<long, Supergroup> _supergroups = new(500);
         private readonly ReaderWriterDictionary<long, SupergroupFullInfo> _supergroupsFull = new(500);
 
+        private readonly ReaderWriterDictionary<long, Community> _communities = new();
+
         private readonly ReaderWriterDictionary<int, GroupCall> _groupCalls = new();
 
         private readonly ConcurrentDictionary<int, ChatListUnreadCount> _unreadCounts = new();
@@ -3662,6 +3664,9 @@ namespace Telegram.Services
                     break;
                 case UpdateDirectMessagesChatTopic updateDirectMessagesChatTopic:
                     UpdateDirectMessagesChatTopic(updateDirectMessagesChatTopic.Topic.ChatId, manager => manager.UpdateDirectMessagesChatTopic(updateDirectMessagesChatTopic.Topic));
+                    break;
+                case UpdateCommunity updateCommunity:
+                    _communities[updateCommunity.Community.Id] = updateCommunity.Community;
                     break;
                 case UpdateGroupCall updateGroupCall:
                     _groupCalls[updateGroupCall.GroupCall.Id] = updateGroupCall.GroupCall;
