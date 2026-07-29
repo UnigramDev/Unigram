@@ -1021,21 +1021,18 @@ namespace Telegram.Views
                 var text = ProcessText(block, false);
                 if (text != null)
                 {
-                    element.Children.Add(text);
+                    return new BlockQuote
+                    {
+                        Glyph = Icons.CodeFilled16,
+                        Content = text,
+                        Padding = new Thickness(8, 4, 24, 6)
+                    };
                 }
-
-                var test = new Grid();
-                test.Children.Add(new BlockQuote
-                {
-                    Glyph = Icons.CodeFilled16
-                });
-                test.Children.Add(element);
-
-                element.Padding = new Thickness(12, 2, 0, 4);
-                return test;
             }
             else
             {
+                var formatted = new FormattedText(plain.Text, new[] { new TextEntity(0, plain.Text.Length, new TextEntityTypePreCode(block.Language)) });
+
                 var paragraph = new Paragraph();
                 paragraph.Inlines.Add(plain.Text);
 
@@ -1047,7 +1044,7 @@ namespace Telegram.Views
                 element.Children.Add(text);
 
                 var test = new Grid();
-                test.Children.Add(new BlockCode
+                test.Children.Add(new BlockQuote
                 {
                     //Glyph = Icons.QuoteBlockFilled16
                     LanguageName = block.Language
@@ -1057,6 +1054,8 @@ namespace Telegram.Views
                 element.Padding = new Thickness(12, 22, 0, 4);
                 return test;
             }
+
+            return null;
         }
 
         private async void ProcessCodeBlock(InlineCollection inlines, string text, string language, int execution)

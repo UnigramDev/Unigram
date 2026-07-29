@@ -218,6 +218,7 @@
     <Compile Include="Common\ExceptionSerializer.cs" />
     <Compile Include="Common\FeatureTokenGenerator.cs" />
     <Compile Include="Collections\HashSetDictionary.cs" />
+    <Compile Include="Common\Instrumentation.cs" />
     <Compile Include="Common\LocalDatabase.cs" />
     <Compile Include="Common\MarkdownToInstantView.cs" />
     <Compile Include="Common\MediaDeviceTracker.cs" />

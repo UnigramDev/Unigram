@@ -883,6 +883,31 @@ namespace Telegram.Navigation
             return modifiers;
         }
 
+        public static bool KeyModifiers(VirtualKeyModifiers compare)
+        {
+            //return (InputKeyboardSource.GetKeyStateForCurrentThread(key) & Windows.UI.Core.CoreVirtualKeyStates.Down) != 0;
+
+            var modifiers = VirtualKeyModifiers.None;
+            var coreWindow = Window.Current.CoreWindow;
+
+            if ((coreWindow.GetAsyncKeyState(VirtualKey.Control) & CoreVirtualKeyStates.Down) != 0)
+            {
+                modifiers |= VirtualKeyModifiers.Control;
+            }
+
+            if ((coreWindow.GetAsyncKeyState(VirtualKey.Menu) & CoreVirtualKeyStates.Down) != 0)
+            {
+                modifiers |= VirtualKeyModifiers.Menu;
+            }
+
+            if ((coreWindow.GetAsyncKeyState(VirtualKey.Shift) & CoreVirtualKeyStates.Down) != 0)
+            {
+                modifiers |= VirtualKeyModifiers.Shift;
+            }
+
+            return modifiers == compare;
+        }
+
         public static async void Activate(string persistedId)
         {
             var oldViewId = WindowContext.Current.Id;

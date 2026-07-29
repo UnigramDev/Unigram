@@ -48,6 +48,11 @@ namespace Telegram.Controls.Messages.Content
             Telegram.Common.Instrumentation.Register(this);
         }
 
+        public InstantContent()
+        {
+            DefaultStyleKey = typeof(InstantContent);
+        }
+
 #if INSTRUMENTATION
         // Every instrumented control this InstantContent creates (text blocks + media content controls),
         // captured at creation so orphan analysis can reach them (they're nested arbitrarily deep, so a
@@ -73,6 +78,12 @@ namespace Telegram.Controls.Messages.Content
             {
                 UpdateMessage(_message);
             }
+            else if (_prevValue != null)
+            {
+                var blocks = _prevValue;
+                _prevValue = null;
+                UpdateView(_clientService, blocks, false);
+            }
         }
 
         #endregion
@@ -88,10 +99,9 @@ namespace Telegram.Controls.Messages.Content
                     if (element is Panel panel && panel.Children.Count > 0)
                     {
                         // TODO: a better logic is needed (i.e. only use for some specific panel type)
-                        return null;
                         return FindBlock(panel.Children[^1]);
                     }
-                    else if (element is FormattedTextBlock block)
+                    else if (element is FormattedTextBlock block && block.TextAlignment == TextAlignment.DetectFromContent)
                     {
                         return block;
                     }
@@ -178,10 +188,25 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
+        private bool _skeletonCollapsed = true;
+
+        public void ShowHideSkeleton(bool show)
+        {
+            _skeletonCollapsed = !show;
+        }
+
+        private IClientService _clientService;
         private IList<PageBlock> _prevValue;
 
         public void UpdateView(IClientService clientService, IList<PageBlock> blocks, bool part)
         {
+            if (!_templateApplied)
+            {
+                _clientService = clientService;
+                _prevValue = blocks;
+                return;
+            }
+
             var prev = _prevValue ?? Array.Empty<PageBlock>();
             var diff = DiffUtil.CalculateDiff(prev, blocks, PageBlockHelper.Compare, Constants.DiffOptions);
 
@@ -906,6 +931,8 @@ namespace Telegram.Controls.Messages.Content
                 TextReadingOrder = TextReadingOrder.UseFlowDirection,
                 AdjustLineEnding = false,
             };
+
+            block.ShowHideSkeleton(!_skeletonCollapsed);
 
             Instrumentation.Register(block);
 

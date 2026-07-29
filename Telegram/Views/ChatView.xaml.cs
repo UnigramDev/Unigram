@@ -3412,7 +3412,7 @@ namespace Telegram.Views
 
                 if (properties.CanBeDeletedOnlyForSelf || properties.CanBeDeletedForAllUsers)
                 {
-                    if (message.IsPaidStarSuggestedPost || message.IsPaidTonSuggestedPost && DateTime.Now.ToTimestamp() < (int)message.ClientService.Options.SuggestedPostLifetimeMin + message.GetDate())
+                    if (message.IsPaidStarSuggestedPost || message.IsPaidGramSuggestedPost && DateTime.Now.ToTimestamp() < (int)message.ClientService.Options.SuggestedPostLifetimeMin + message.GetDate())
                     {
                         var delete = new MenuFlyoutInfoItem
                         {
@@ -4217,12 +4217,12 @@ namespace Telegram.Views
 
         private bool MessageSendNow_Loaded(MessageViewModel message)
         {
-            return message.SchedulingState != null && !message.IsPaidStarSuggestedPost && !message.IsPaidTonSuggestedPost;
+            return message.SchedulingState != null && !message.IsPaidStarSuggestedPost && !message.IsPaidGramSuggestedPost;
         }
 
         private bool MessageReschedule_Loaded(MessageViewModel message)
         {
-            return message.SchedulingState is not null and not MessageSchedulingStateSendWhenVideoProcessed && !message.IsPaidStarSuggestedPost && !message.IsPaidTonSuggestedPost;
+            return message.SchedulingState is not null and not MessageSchedulingStateSendWhenVideoProcessed && !message.IsPaidStarSuggestedPost && !message.IsPaidGramSuggestedPost;
         }
 
         private bool MessageQuote_Loaded(MessageQuote quote, MessageProperties properties)

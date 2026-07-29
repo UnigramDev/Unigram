@@ -184,7 +184,7 @@
                                    Text="&#xEA01;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    FontSize="16"
-                                   Foreground="{TemplateBinding Background}"
+                                   Foreground="{TemplateBinding HeaderBrush}"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
                                    Margin="4"
