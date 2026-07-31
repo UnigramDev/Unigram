@@ -17201,6 +17201,40 @@ in your streaming app.</value>
   <data name="Weeks_other" xml:space="preserve">
     <value>{0} weeks</value>
   </data>
+  <data name="WelcomeMessage" xml:space="preserve">
+    <value>Welcome Message</value>
+  </data>
+  <data name="WelcomeMessageEmptySubtitle" xml:space="preserve">
+    <value>Automatically greet new
+members when they join.</value>
+  </data>
+  <data name="WelcomeMessageEmptyTitle" xml:space="preserve">
+    <value>Create a Welcome
+Message</value>
+  </data>
+  <data name="WelcomeMessageEnter" xml:space="preserve">
+    <value>Add a message</value>
+  </data>
+  <data name="WelcomeMessageHint_one" xml:space="preserve">
+    <value>New members will see this message
+when they join</value>
+  </data>
+  <data name="WelcomeMessageHint_other" xml:space="preserve">
+    <value>New members will see these messages
+when they join</value>
+  </data>
+  <data name="WelcomeMessageHint2" xml:space="preserve">
+    <value>Tap it to delete it</value>
+  </data>
+  <data name="WelcomeMessageOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="WelcomeMessagesLimit_one" xml:space="preserve">
+    <value>Limit of **{0}** message reached.</value>
+  </data>
+  <data name="WelcomeMessagesLimit_other" xml:space="preserve">
+    <value>Limit of **{0}** messages reached.</value>
+  </data>
   <data name="White" xml:space="preserve">
     <value>White</value>
   </data>

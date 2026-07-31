@@ -711,6 +711,7 @@
     <Compile Include="ViewModels\Delegates\ISavedMessagesChatsDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISupergroupMembersDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ITopicListDelegate.cs" />
+    <Compile Include="ViewModels\DialogWelcomeMessagesViewModel.cs" />
     <Compile Include="ViewModels\DialogBusinessRepliesViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogPendingTextMessage.cs" />
     <Compile Include="ViewModels\Dialogs\DialogPinnedMessagesViewModel.cs" />
@@ -1247,6 +1248,9 @@
     </Compile>
     <Compile Include="Views\Calls\VoipPage.xaml.cs">
       <DependentUpon>VoipPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatWelcomeMessagesPage.xaml.cs">
+      <DependentUpon>ChatWelcomeMessagesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
@@ -3512,6 +3516,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Calls\VoipPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ChatWelcomeMessagesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -1818,6 +1818,11 @@ namespace Telegram.ViewModels
             return Task.CompletedTask;
         }
 
+        public virtual Task LoadWelcomeMessageSliceAsync()
+        {
+            return Task.CompletedTask;
+        }
+
         public async Task LoadDateSliceAsync(int dateOffset)
         {
             var chat = _chat;
@@ -2380,6 +2385,13 @@ namespace Telegram.ViewModels
 
                 NotifyInitialized();
                 LoadQuickReplyShortcutSliceAsync();
+            }
+            else if (Type == DialogType.WelcomeMessages)
+            {
+                Logger.Debug(string.Format("{0} - Loading welcome messages", chat.Id));
+
+                NotifyInitialized();
+                LoadWelcomeMessageSliceAsync();
             }
             else if (IsSavedMessagesTab)
             {
@@ -3157,6 +3169,10 @@ namespace Telegram.ViewModels
 
                 return new AddQuickReplyShortcutMessage(QuickReplyShortcut.Name, 0, inputMessageContent);
             }
+            else if (Type == DialogType.WelcomeMessages)
+            {
+                return new AddChatWelcomeMessage(chatId, inputMessageContent);
+            }
 
             if (IsForum && ForumTopic == null && Chat.Type is ChatTypePrivate)
             {
@@ -3304,6 +3320,18 @@ namespace Telegram.ViewModels
                         {
                             // TODO
                             function = new EditQuickReplyMessage(QuickReplyShortcut.Id, editing.Id, new InputMessageText(formattedText, linkPreview, true));
+                        }
+                    }
+                    else if (Type == DialogType.WelcomeMessages)
+                    {
+                        if (textContent)
+                        {
+                            function = new EditChatWelcomeMessage(ChatId, (int)editing.Id, new InputMessageText(formattedText, linkPreview, true));
+                        }
+                        else
+                        {
+                            // TODO
+                            function = new EditChatWelcomeMessage(ChatId, (int)editing.Id, new InputMessageText(formattedText, linkPreview, true));
                         }
                     }
                     else if (textContent)
@@ -3751,6 +3779,7 @@ namespace Telegram.ViewModels
                 || Type == DialogType.EventLog
                 || Type == DialogType.Pinned
                 || Type == DialogType.BusinessReplies
+                || Type == DialogType.WelcomeMessages
                 || Type == DialogType.ScheduledMessages)
             {
                 return;
@@ -4770,6 +4799,7 @@ namespace Telegram.ViewModels
         Pinned,
         ScheduledMessages,
         BusinessReplies,
+        WelcomeMessages,
         EventLog
     }
 }

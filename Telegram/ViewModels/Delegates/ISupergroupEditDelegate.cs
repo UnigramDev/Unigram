@@ -5,9 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System.Collections.Generic;
+using Telegram.Td.Api;
+
 namespace Telegram.ViewModels.Delegates
 {
     public interface ISupergroupEditDelegate : ISupergroupDelegate, IBasicGroupDelegate
     {
+        void UpdateChatWelcomeMessages(Chat chat, IList<WelcomeMessage> messages);
     }
 }

@@ -3034,6 +3034,15 @@ namespace Telegram.Views
                         CanBeSaved = true
                     };
                 }
+                else if (ViewModel.Type == DialogType.WelcomeMessages)
+                {
+                    properties = new MessageProperties
+                    {
+                        CanBeDeletedOnlyForSelf = true,
+                        CanBeEdited = true,
+                        CanBeSaved = true
+                    };
+                }
                 else if (ViewModel is DialogEventLogViewModel eventLog && message.Event is ChatEvent chatEvent)
                 {
                     var senderId = chatEvent.Action switch
@@ -3432,7 +3441,10 @@ namespace Telegram.Views
                     }
                 }
 
-                flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.SelectMessage, message, Strings.Select, Icons.CheckmarkCircle);
+                if (ViewModel.Type != DialogType.WelcomeMessages)
+                {
+                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.SelectMessage, message, Strings.Select, Icons.CheckmarkCircle);
+                }
 
                 flyout.CreateFlyoutSeparator();
 
@@ -3528,7 +3540,7 @@ namespace Telegram.Views
                     }
                 }
 
-                if (message.ReceiverId != null && flyout.Items.Count > 0)
+                if (ViewModel.Type != DialogType.WelcomeMessages && message.ReceiverId != null && flyout.Items.Count > 0)
                 {
                     flyout.CreateFlyoutSeparator();
                     flyout.Items.Add(new MenuFlyoutLabel
@@ -4292,6 +4304,10 @@ namespace Telegram.Views
             if (message is QuickReplyMessageViewModel quickReply)
             {
                 return quickReply.CanBeEdited;
+            }
+            else if (message is WelcomeMessageViewModel)
+            {
+                return true;
             }
 
             return properties.CanBeEdited;
@@ -5653,6 +5669,10 @@ namespace Telegram.Views
                     "hello" => Strings.BusinessGreet,
                     _ => shortcut.Name
                 };
+            }
+            else if (ViewModel.Type == DialogType.WelcomeMessages)
+            {
+                ChatTitle = Strings.WelcomeMessage;
             }
             else if (chat.Type is ChatTypeSecret)
             {

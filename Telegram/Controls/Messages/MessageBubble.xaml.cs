@@ -1901,7 +1901,7 @@ namespace Telegram.Controls.Messages
                 {
                     top = 4;
                 }
-                if ((message.ForwardInfo != null && !message.IsSaved) || message.ViaBotUserId != 0 || (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || message.IsChannelPost || message.Content is MessageAsyncStory)
+                if ((message.ForwardInfo != null && !message.IsSaved) || message.ReceiverId != null || message.ViaBotUserId != 0 || (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || message.IsChannelPost || message.Content is MessageAsyncStory)
                 {
                     top = 4;
                 }

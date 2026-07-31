@@ -13703,5 +13703,15 @@
     <string name="ArticleAIAddToPage">Add to Page</string>
     <string name="PremiumPreviewRichEditor">Formatting Tools</string>
     <string name="PremiumPreviewRichEditorDescription">Add headers, tables, inline media and AI content to messages.</string>
+    <string name="WelcomeMessage">Welcome Message</string>
+    <string name="WelcomeMessageEmptySubtitle">Automatically greet new\nmembers when they join.</string>
+    <string name="WelcomeMessageEmptyTitle">Create a Welcome\nMessage</string>
+    <string name="WelcomeMessageEnter">Add a message</string>
+    <string name="WelcomeMessageHint_one">New members will see this message\nwhen they join</string>
+    <string name="WelcomeMessageHint_other">New members will see these messages\nwhen they join</string>
+    <string name="WelcomeMessageHint2">Tap it to delete it</string>
+    <string name="WelcomeMessageOff">Off</string>
+    <string name="WelcomeMessagesLimit_one">Limit of **{0}** message reached.</string>
+    <string name="WelcomeMessagesLimit_other">Limit of **{0}** messages reached.</string>
 
 </resources>

@@ -190,6 +190,20 @@ namespace Telegram.Services
                             _clientService,
                             _settingsService,
                             _eventAggregator));
+                case "Telegram.ViewModels.DialogWelcomeMessagesViewModel":
+                    return (T)(object)new Telegram.ViewModels.DialogWelcomeMessagesViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator,
+                        _locationService ??= new Telegram.Services.LocationService(_clientService),
+                        _notificationsService,
+                        _voipService,
+                        _networkService,
+                        _storageService ??= new Telegram.Services.StorageService(_clientService),
+                        _translateService ??= new Telegram.Services.TranslateService(
+                            _clientService,
+                            _settingsService,
+                            _eventAggregator));
                 case "Telegram.ViewModels.DialogPinnedViewModel":
                     return (T)(object)new Telegram.ViewModels.DialogPinnedViewModel(
                         _clientService,
