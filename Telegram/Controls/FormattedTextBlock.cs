@@ -1276,12 +1276,11 @@ namespace Telegram.Controls
                             marked.Ranges.Add(new TextRange { StartIndex = offset, Length = entity.Length });
                         }
 
-                        // TODO: 
-                        //if (_spanForInlines == null && entity.HasFlag(TextStyle.Cached))
-                        //{
-                        //    cached ??= new TextHighlighter();
-                        //    cached.Ranges.Add(new TextRange { StartIndex = offset, Length = entity.Length });
-                        //}
+                        if (_spanForInlines == null && entity.HasFlag(TextStyle.Cached))
+                        {
+                            cached ??= new TextHighlighter();
+                            cached.Ranges.Add(new TextRange { StartIndex = offset, Length = entity.Length });
+                        }
 
                         // Consumes local inlines instead of paragraph's
                         // TODO: still use a InlineUIContainer for emojis in spoilers to avoid text resizes

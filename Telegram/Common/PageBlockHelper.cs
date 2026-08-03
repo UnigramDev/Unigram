@@ -984,8 +984,16 @@ namespace Telegram.Common
 
                 // Url-shaped wrappers (carry a payload)
                 case RichTextUrl b:
-                    EmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
-                    return;
+                    {
+                        // is_cached would otherwise be dropped here: it says the target
+                        // already has an instant view, which is why the link is
+                        // highlighted instead of underlined. Emitted as a marker over the
+                        // same range so the link entity keeps its exact meaning.
+                        int start = text.Length;
+                        EmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
+                        EmitCached(b.IsCached, start, text, entities);
+                        return;
+                    }
                 case RichTextEmailAddress b:
                     EmitSpan(b.Text, text, entities, new TextEntityTypeEmailAddress());
                     return;
@@ -1004,15 +1012,24 @@ namespace Telegram.Common
                     Flatten(b.Text, text, entities);
                     return;
                 case RichTextReferenceLink b:
-                    // Reference and AnchorLink both navigate to an in-page anchor. The
-                    // server-provided URL is the standard target, so they fold into
-                    // TextEntityTypeTextUrl. If the renderer needs the anchor_name
-                    // separately, swap this for a dedicated entity type.
-                    EmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
-                    return;
+                    {
+                        // Reference and AnchorLink both navigate to an in-page anchor. The
+                        // server-provided URL is the standard target, so they fold into
+                        // TextEntityTypeTextUrl. If the renderer needs the anchor_name
+                        // separately, swap this for a dedicated entity type.
+                        int start = text.Length;
+                        EmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
+                        // Always cached: the target is this very page.
+                        EmitCached(true, start, text, entities);
+                        return;
+                    }
                 case RichTextAnchorLink b:
-                    EmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
-                    return;
+                    {
+                        int start = text.Length;
+                        EmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
+                        EmitCached(true, start, text, entities);
+                        return;
+                    }
 
                 // Auto-detected entities (text is the value)
                 case RichTextMention b:
@@ -1083,6 +1100,18 @@ namespace Telegram.Common
                 case RichTextAnchor _:
                     // Skipped — see ObjectReplacementChar comment above.
                     return;
+            }
+        }
+
+        // Lays the cached marker over the span an EmitSpan just wrote. Purely a style:
+        // the link entity underneath keeps its type, so click handling is unaffected and
+        // only the highlighter looks for this.
+        private static void EmitCached(bool isCached, int start, StringBuilder text, IList<TextEntity> entities)
+        {
+            int length = text.Length - start;
+            if (isCached && length > 0)
+            {
+                entities.Add(new TextEntity(start, length, new TextEntityTypeCached()));
             }
         }
 
