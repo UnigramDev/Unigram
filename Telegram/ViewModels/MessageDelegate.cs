@@ -489,6 +489,89 @@ namespace Telegram.ViewModels
         public virtual void OpenMedia(GalleryMedia media, FrameworkElement target) { }
 
         /// <summary>
+        /// Opens the gallery for a medium tapped inside a page (an instant view or a rich
+        /// message): the gallery is built from <paramref name="blocks"/> on demand, in
+        /// document order, and opens at the block the tapped element belongs to.
+        ///
+        /// Nothing is collected while rendering — the blocks are the source of truth, and
+        /// the tapped element finds its own block by walking up the Tag chain. That's what
+        /// lets one renderer serve both hosts.
+        /// </summary>
+        protected void OpenPageBlockMedia(IList<PageBlock> blocks, PageBlockMediaKind kind, FrameworkElement target)
+        {
+            var gallery = new InstantGalleryViewModel(ClientService,
+                ClientService.Session.Resolve<IStorageService>(),
+                ClientService.Session.Resolve<IEventAggregator>());
+
+            var media = PageBlockHelper.FindAllMedia(blocks, kind);
+            var source = FindBlock(target);
+
+            foreach (var block in media)
+            {
+                GalleryMedia item;
+                if (block is PageBlockPhoto photo)
+                {
+                    item = new GalleryPhoto(ClientService, photo.Photo, photo.Caption?.ToFormattedText());
+                }
+                else if (block is PageBlockVideo video)
+                {
+                    item = new GalleryVideo(ClientService, video.Video, video.Caption?.ToFormattedText());
+                }
+                else if (block is PageBlockAnimation animation)
+                {
+                    item = new GalleryAnimation(ClientService, animation.Animation, animation.Caption?.ToFormattedText());
+                }
+                else
+                {
+                    continue;
+                }
+
+                gallery.Items.Add(item);
+
+                if (source == block)
+                {
+                    gallery.SelectedItem = item;
+                    gallery.FirstItem = item;
+                }
+            }
+
+            NavigationService.ShowGallery(gallery, target);
+
+            static PageBlock FindBlock(FrameworkElement element)
+            {
+                if (element.Tag is PageBlock block)
+                {
+                    return block;
+                }
+                else if (element.Parent is FrameworkElement parent)
+                {
+                    return FindBlock(parent);
+                }
+
+                return null;
+            }
+        }
+
+        // Which gallery a tapped medium belongs to. Photos and videos share one; an
+        // animation opens on its own.
+        protected static bool TryGetMediaKind(MessageContent content, out PageBlockMediaKind kind)
+        {
+            if (content is MessagePhoto or MessageVideo)
+            {
+                kind = PageBlockMediaKind.Media;
+                return true;
+            }
+            else if (content is MessageAnimation)
+            {
+                kind = PageBlockMediaKind.Animation;
+                return true;
+            }
+
+            kind = PageBlockMediaKind.None;
+            return false;
+        }
+
+        /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
         public virtual void OpenPoll(MessageViewModel message) { }
@@ -695,13 +778,13 @@ namespace Telegram.ViewModels
 
         public override void OpenMedia(MessageViewModel message, FrameworkElement target, double timestamp = 0)
         {
-            var content = target.Tag as GalleryMedia;
-            content ??= _viewModel.Gallery.Items.FirstOrDefault();
-
-            _viewModel.Gallery.SelectedItem = content;
-            _viewModel.Gallery.FirstItem = content;
-
-            _viewModel.NavigationService.ShowGallery(_viewModel.Gallery, target);
+            // Built from the page's blocks on tap, exactly like a rich message. The
+            // renderer collects nothing while it builds, so there's no parallel gallery
+            // list to keep in sync — and none to go stale when the page re-renders.
+            if (TryGetMediaKind(message.Content, out var kind))
+            {
+                OpenPageBlockMedia(_viewModel.Blocks, kind, target);
+            }
         }
     }
 
@@ -718,70 +801,9 @@ namespace Telegram.ViewModels
 
         public override void OpenMedia(MessageViewModel message, FrameworkElement target, double timestamp = 0)
         {
-            PageBlockMediaKind kind;
-            if (message.Content is MessagePhoto or MessageVideo)
+            if (TryGetMediaKind(message.Content, out var kind))
             {
-                kind = PageBlockMediaKind.Media;
-            }
-            else if (message.Content is MessageAnimation)
-            {
-                kind = PageBlockMediaKind.Animation;
-            }
-            else
-            {
-                // ?
-                return;
-            }
-
-            var gallery = new InstantGalleryViewModel(ClientService, ClientService.Session.Resolve<IStorageService>(), ClientService.Session.Resolve<IEventAggregator>());
-            var media = PageBlockHelper.FindAllMedia(_message.Blocks, kind);
-
-            var source = FindBlock(target);
-
-            foreach (var block in media)
-            {
-                GalleryMedia item;
-                if (block is PageBlockPhoto photo)
-                {
-                    item = new GalleryPhoto(ClientService, photo.Photo, photo.Caption?.ToFormattedText());
-                }
-                else if (block is PageBlockVideo video)
-                {
-                    item = new GalleryVideo(ClientService, video.Video, video.Caption?.ToFormattedText());
-                }
-                else if (block is PageBlockAnimation animation)
-                {
-                    item = new GalleryAnimation(ClientService, animation.Animation, animation.Caption?.ToFormattedText());
-                }
-                else
-                {
-                    // ?
-                    continue;
-                }
-
-                gallery.Items.Add(item);
-
-                if (source == block)
-                {
-                    gallery.SelectedItem = item;
-                    gallery.FirstItem = item;
-                }
-            }
-
-            ViewModel.NavigationService.ShowGallery(gallery, target);
-
-            static PageBlock FindBlock(FrameworkElement element)
-            {
-                if (element.Tag is PageBlock block)
-                {
-                    return block;
-                }
-                else if (element.Parent is FrameworkElement parent)
-                {
-                    return FindBlock(parent);
-                }
-
-                return null;
+                OpenPageBlockMedia(_message.Blocks, kind, target);
             }
         }
     }

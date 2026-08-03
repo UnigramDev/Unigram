@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -18,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public partial class InstantViewModel : MultiViewModelBase
+    public partial class InstantViewModel : ViewModelBase
     {
         private readonly ITranslateService _translateService;
 
@@ -28,11 +29,7 @@ namespace Telegram.ViewModels
             : base(clientService, settingsService, aggregator)
         {
             _translateService = translateService;
-            _gallery = new InstantGalleryViewModel(clientService, storageService, aggregator);
-
             _messageDelegate = new InstantMessageDelegate(this);
-
-            Children.Add(_gallery);
         }
 
         public ITranslateService TranslateService => _translateService;
@@ -65,6 +62,13 @@ namespace Telegram.ViewModels
         public Uri ShareLink { get; set; }
         public string ShareTitle { get; set; }
 
+        /// <summary>
+        /// The blocks currently on screen, set by the page as it renders. The gallery is
+        /// built from these on demand (see MessageDelegate.OpenPageBlockMedia) rather than
+        /// collected while rendering, so nothing has to be kept in sync.
+        /// </summary>
+        public IList<PageBlock> Blocks { get; set; }
+
         public MessageViewModel CreateMessage(Message message)
         {
             if (message == null)
@@ -73,13 +77,6 @@ namespace Telegram.ViewModels
             }
 
             return new MessageViewModel(ClientService, _messageDelegate, null, null, null, message, false);
-        }
-
-        private InstantGalleryViewModel _gallery;
-        public InstantGalleryViewModel Gallery
-        {
-            get => _gallery;
-            set => Set(ref _gallery, value);
         }
 
         private string _title;
