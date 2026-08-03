@@ -136,6 +136,7 @@ namespace Telegram.Common
                 PageBlockSlideshow slideshow => ProcessSlideshow(clientService, slideshow),
                 PageBlockCollage collage => ProcessCollage(clientService, collage),
                 PageBlockPullQuote pullquote => ProcessPullquote(clientService, pullquote),
+                PageBlockExpandableBlockQuote expandable => ProcessExpandableBlockquote(clientService, expandable),
                 PageBlockDocument document => ProcessDocument(clientService, document),
                 PageBlockAnchor anchor => ProcessAnchor(clientService, anchor),
                 PageBlockPreformatted preformatted => ProcessPreformatted(clientService, preformatted),
@@ -946,6 +947,58 @@ namespace Telegram.Common
             return new BlockQuote
             {
                 Glyph = Icons.QuoteBlockFilled16,
+                Content = content,
+                Padding = new Thickness(8, 4, 24, 6)
+            };
+        }
+
+        // Unlike PageBlockBlockQuote this holds rich text directly, so the body comes
+        // from ProcessText rather than from nested blocks. That's also what makes the
+        // collapse affordance possible here: BlockQuote.IsExpandable only drives a
+        // FormattedTextBlock, which is exactly what ProcessText returns — so the quote
+        // starts clamped and the chevron expands it. With a credit the content becomes
+        // a panel instead, and the control (correctly) reports itself non-expandable.
+        // TODO: support expandable + caption?
+        private FrameworkElement ProcessExpandableBlockquote(IClientService clientService, PageBlockExpandableBlockQuote block)
+        {
+            var text = ProcessText(clientService, block, false);
+            var caption = ProcessText(clientService, block, true);
+
+            if (text == null && caption == null)
+            {
+                return null;
+            }
+
+            FrameworkElement content;
+            var expandable = false;
+
+            if (caption == null && text is FormattedTextBlock formatted)
+            {
+                formatted.MaxLines = 3;
+                content = formatted;
+                expandable = true;
+            }
+            else
+            {
+                var panel = new StackPanel();
+
+                if (text != null)
+                {
+                    panel.Children.Add(text);
+                }
+
+                if (caption != null)
+                {
+                    panel.Children.Add(caption);
+                }
+
+                content = panel;
+            }
+
+            return new BlockQuote
+            {
+                Glyph = Icons.QuoteBlockFilled16,
+                IsExpandable = expandable,
                 Content = content,
                 Padding = new Thickness(8, 4, 24, 6)
             };
