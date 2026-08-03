@@ -375,6 +375,7 @@
     <Compile Include="Controls\Messages\Content\LiveLocationContent.xaml.cs">
       <DependentUpon>LiveLocationContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\PageBlockRenderer.cs" />
     <Compile Include="Controls\Messages\Content\StakeDiceContent.xaml.cs">
       <DependentUpon>StakeDiceContent.xaml</DependentUpon>
     </Compile>

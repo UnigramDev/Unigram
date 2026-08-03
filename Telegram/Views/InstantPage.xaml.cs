@@ -6,35 +6,21 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Media;
-using Telegram.Controls.Messages.Content;
-using Telegram.Converters;
-using Telegram.Native.Highlight;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.ViewModels.Gallery;
 using Telegram.Views.Popups;
-using Windows.Foundation;
 using Windows.System;
-using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views
 {
@@ -56,7 +42,7 @@ namespace Telegram.Views
         }
     }
 
-    public sealed partial class InstantPage : HostedPage
+    public sealed partial class InstantPage : HostedPage, IPageBlockContext
     {
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
 
@@ -64,10 +50,12 @@ namespace Telegram.Views
 
         public IEventAggregator Aggregator => ViewModel.Aggregator;
 
-        private readonly List<IPlayerView> _animations = new();
+        private TextSelectionManager _textSelectionManager;
 
         public InstantPage()
         {
+            _renderer = new PageBlockRenderer(this);
+
             InitializeComponent();
         }
 
@@ -80,6 +68,13 @@ namespace Telegram.Views
                 scroll.PointerWheelChanged += OnPointerWheelChanged;
             }
 
+            // Selection across the whole page, driven by the shared manager: every text
+            // block the renderer produces is a FormattedTextBlock (an ISelectableControl),
+            // so the manager finds them itself and the page needs no per-block wiring.
+            // Rooted at the list rather than the page so the header and footer chrome
+            // stay outside the selection.
+            _textSelectionManager ??= new TextSelectionManager(this, ScrollingHost, handleContextMenu: true);
+
             Dispatcher.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
         }
 
@@ -87,14 +82,10 @@ namespace Telegram.Views
         {
             Dispatcher.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
 
-            foreach (var animation in _animations)
-            {
-                try
-                {
-                    animation?.ViewportChanged(false);
-                }
-                catch { }
-            }
+            // Detach explicitly: the manager hooks the STATIC FocusManager events while a
+            // selection is live, which would otherwise keep this page alive for the session.
+            _textSelectionManager?.Detach();
+            _textSelectionManager = null;
         }
 
         private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
@@ -114,10 +105,7 @@ namespace Telegram.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             ScrollingHost.Items.Clear();
-            ViewModel.Gallery.Items.Clear();
-            ViewModel.Gallery.TotalItems = 0;
-            ViewModel.Gallery.SelectedItem = null;
-            _anchors.Clear();
+            _renderer.ClearAnchors();
 
             var args = e.Parameter as InstantPageArgs;
             if (args?.InstantView == null || !Uri.TryCreate(args.Url, UriKind.Absolute, out Uri uri))
@@ -145,6 +133,9 @@ namespace Telegram.Views
         {
             _instantView = instantView;
 
+            // The gallery is built from these when a medium is tapped, not collected here.
+            ViewModel.Blocks = instantView.Blocks;
+
             ScrollingHost.FlowDirection = instantView.IsRtl ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
 
             if (instantView.ViewCount > 0)
@@ -162,7 +153,7 @@ namespace Telegram.Views
             FrameworkElement firstElement = null;
             foreach (var block in instantView.Blocks)
             {
-                var element = ProcessBlock(block);
+                var element = _renderer.ProcessBlock(ViewModel.ClientService, block, null);
                 var spacing = SpacingBetweenBlocks(previousBlock, block);
                 var padding = PaddingForBlock(block);
 
@@ -180,6 +171,11 @@ namespace Telegram.Views
                     else
                     {
                         element.Margin = new Thickness(padding, spacing, padding, 0);
+
+                        // How a tapped medium finds the block it came from — the delegate
+                        // walks up from the tapped control until it hits a Tag like this.
+                        element.Tag = block;
+
                         ScrollingHost.Items.Add(element);
                     }
                 }
@@ -208,1762 +204,77 @@ namespace Telegram.Views
             }
         }
 
-        private readonly long _webpageId;
 
-        //private Stack<Panel> _containers = new Stack<Panel>();
-        private readonly double _padding = 12;
+        // Every block becomes XAML through the shared renderer — the same one the
+        // rich-message bubble uses. This page only decides how the results are hosted
+        // (one virtualized list item per top-level block) and what a link does.
+        private readonly PageBlockRenderer _renderer;
 
-        private readonly Dictionary<string, Border> _anchors = new();
+        #region IPageBlockContext
 
-        private FrameworkElement ProcessBlock(PageBlock block)
-        {
-            return block switch
-            {
-                PageBlockCover cover => ProcessCover(cover),
-                PageBlockAuthorDate authorDate => ProcessAuthorDate(authorDate),
-                PageBlockHeader or PageBlockSubheader or PageBlockTitle or PageBlockSubtitle or PageBlockFooter or PageBlockParagraph or PageBlockKicker or PageBlockSectionHeading => ProcessText(block, false),
-                PageBlockBlockQuote blockquote => ProcessBlockquote(blockquote),
-                PageBlockDivider divider => ProcessDivider(divider),
-                PageBlockPhoto photo => ProcessPhoto(photo),
-                PageBlockList list => ProcessList(list),
-                PageBlockVideo video => ProcessVideo(video),
-                PageBlockAnimation animation => ProcessAnimation(animation),
-                PageBlockEmbeddedPost embedPost => ProcessEmbedPost(embedPost),
-                PageBlockSlideshow slideshow => ProcessSlideshow(slideshow),
-                PageBlockCollage collage => ProcessCollage(collage),
-                PageBlockEmbedded embed => ProcessEmbed(embed),
-                PageBlockPullQuote pullquote => ProcessPullquote(pullquote),
-                PageBlockAnchor anchor => ProcessAnchor(anchor),
-                PageBlockPreformatted preformatted => ProcessPreformatted(preformatted),
-                PageBlockChatLink channel => ProcessChannel(channel),
-                PageBlockDetails details => ProcessDetails(details),
-                PageBlockTable table => ProcessTable(table),
-                PageBlockRelatedArticles relatedArticles => ProcessRelatedArticles(relatedArticles),
-                PageBlockMap map => ProcessMap(map),
-                PageBlockAudio audio => ProcessAudio(audio),
-                PageBlockVoiceNote voiceNote => ProcessVoiceNote(voiceNote),
-                PageBlockMathematicalExpression math => ProcessMath(math),
-                _ => ProcessUnsupported(block),
-            };
-        }
+        ResourceDictionary IPageBlockContext.Resources => Resources;
 
-        #region 3.0
+        // The page is loaded before it renders, and never recycled block-by-block.
+        bool IPageBlockContext.IsConnected => true;
 
-        private FrameworkElement ProcessMath(PageBlockMathematicalExpression math)
-        {
-            var tex = new RichMathImage
-            {
-                Source = math.Expression
-            };
+        // Nothing streams into an instant view: it arrives whole.
+        bool IPageBlockContext.IsSkeletonVisible => false;
 
-            if (tex.IsValid)
-            {
-                return tex;
-            }
-
-            return ProcessText(new PageBlockParagraph(new RichTextPlain(math.Expression)), false);
-        }
-
-        #endregion
-
-        #region 2.0
-
-        private FrameworkElement ProcessMap(PageBlockMap map)
-        {
-            var image = new ImageView();
-            image.Constraint = map;
-            image.XamlRoot = ViewModel.XamlRoot;
-            image.SetSource(ViewModel.ClientService, map.Location, map.Width, map.Height, 0);
-
-            var caption = ProcessCaption(map.Caption);
-            if (caption != null)
-            {
-                caption.Margin = new Thickness(12, 8, 0, 0);
-
-                var panel = new StackPanel { HorizontalAlignment = HorizontalAlignment.Center };
-                panel.Children.Add(image);
-                panel.Children.Add(caption);
-
-                return panel;
-            }
-
-            return image;
-        }
-
-        private FrameworkElement ProcessRelatedArticles(PageBlockRelatedArticles relatedArticles)
-        {
-            var panel = new StackPanel();
-
-            var header = ProcessText(relatedArticles, false);
-            if (header != null)
-            {
-                var border = new Border { Style = Resources["BlockRelatedArticlesHeaderPanelStyle"] as Style };
-                border.Child = header;
-
-                panel.Children.Add(border);
-            }
-
-            foreach (var article in relatedArticles.Articles)
-            {
-                var grid = new Grid();
-                grid.ColumnDefinitions.Add(1, GridUnitType.Star);
-                grid.ColumnDefinitions.Add(1, GridUnitType.Auto);
-                grid.RowDefinitions.Add(1, GridUnitType.Auto);
-                grid.RowDefinitions.Add(1, GridUnitType.Auto);
-
-                var title = new TextBlock { Text = article.Title };
-                var description = new TextBlock { TextWrapping = TextWrapping.Wrap, TextTrimming = TextTrimming.CharacterEllipsis, MaxLines = 2, Style = Resources["BlockAuthorDateTextBlockStyle"] as Style };
-
-                if (string.IsNullOrEmpty(article.Author))
-                {
-                    description.Text = article.Description;
-                }
-                else
-                {
-                    description.Text = article.Author;
-
-                    if (article.PublishDate > 0)
-                    {
-                        description.Text += " — " + Formatter.Date(article.PublishDate, Strings.chatFullDate);
-                    }
-                }
-
-                if (article.Photo != null)
-                {
-                    var photo = new ImageView
-                    {
-                        Width = 36,
-                        Height = 36,
-                        Stretch = Stretch.UniformToFill,
-                        VerticalAlignment = VerticalAlignment.Top
-                    };
-
-                    var file = article.Photo.GetSmall()?.Photo;
-                    if (file != null)
-                    {
-                        photo.SetSource(ViewModel.ClientService, file, 36, 36);
-                    }
-
-                    Grid.SetColumn(photo, 1);
-                    Grid.SetRowSpan(photo, 2);
-
-                    grid.Children.Add(photo);
-                }
-
-                Grid.SetRow(description, 1);
-
-                grid.Children.Add(title);
-                grid.Children.Add(description);
-
-                var button = new SettingsButton { HorizontalContentAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Stretch, Margin = new Thickness(-12, 0, -12, 0) };
-                button.Content = grid;
-                button.Click += (s, args) => Hyperlink_Click(new RichTextUrl(null, article.Url, true));
-
-                panel.Children.Add(button);
-            }
-
-            return panel;
-        }
-
-        private FrameworkElement ProcessTable(PageBlockTable table, bool test = true)
-        {
-            var grid = new Grid();
-
-            var thickness = table.IsBordered ? 1 : 0;
-
-            var columns = table.Cells.Select(x => x.Sum(x => x.Colspan)).Max();
-            var rows = table.Cells.Count;
-
-            for (int i = 0; i < columns; i++)
-            {
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto), MaxWidth = 200 });
-            }
-
-            var row = 0;
-            var offset = new Dictionary<int, int>();
-
-            foreach (var rowz in table.Cells)
-            {
-                var column = 0;
-
-                if (offset.TryGetValue(row, out int adjust))
-                {
-                    column = adjust;
-                }
-
-                foreach (var cell in rowz)
-                {
-                    var textBlock = new RichTextBlock();
-                    var span = new Span();
-                    var paragraph = new Paragraph();
-                    paragraph.Inlines.Add(span);
-                    textBlock.Blocks.Add(paragraph);
-                    textBlock.TextWrapping = TextWrapping.Wrap;
-
-                    switch (cell.Align)
-                    {
-                        case PageBlockHorizontalAlignmentLeft left:
-                            textBlock.TextAlignment = TextAlignment.Left;
-                            break;
-                        case PageBlockHorizontalAlignmentCenter center:
-                            textBlock.TextAlignment = TextAlignment.Center;
-                            break;
-                        case PageBlockHorizontalAlignmentRight right:
-                            textBlock.TextAlignment = TextAlignment.Right;
-                            break;
-                    }
-
-                    switch (cell.Valign)
-                    {
-                        case PageBlockVerticalAlignmentTop top:
-                            textBlock.VerticalAlignment = VerticalAlignment.Top;
-                            break;
-                        case PageBlockVerticalAlignmentMiddle middle:
-                            textBlock.VerticalAlignment = VerticalAlignment.Center;
-                            break;
-                        case PageBlockVerticalAlignmentBottom bottom:
-                            textBlock.VerticalAlignment = VerticalAlignment.Bottom;
-                            break;
-                    }
-
-                    //textBlock.Margin = new Thickness(12, 0, 12, 12);
-                    ProcessRichText(cell.Text, span, textBlock);
-
-                    var border = new Border();
-                    border.Style = Resources[cell.IsHeader || (table.IsStriped && row % 2 == 0) ? "BlockTableHeaderStyle" : "BlockTableCellStyle"] as Style;
-                    border.BorderThickness = new Thickness(column == 0 ? thickness : 0, row == 0 ? thickness : 0, thickness, thickness);
-                    border.Padding = new Thickness(8, 4, 8, 4);
-                    border.Child = textBlock;
-
-                    Grid.SetRow(border, row);
-                    Grid.SetRowSpan(border, cell.Rowspan);
-                    Grid.SetColumn(border, column);
-                    Grid.SetColumnSpan(border, cell.Colspan);
-
-                    if (cell.Rowspan > 1 && column == adjust)
-                    {
-                        for (int i = 1; i < cell.Rowspan; i++)
-                        {
-                            offset[row + i] = column + cell.Colspan;
-                        }
-                    }
-
-                    grid.Children.Add(border);
-
-                    column += cell.Colspan;
-                }
-
-                grid.RowDefinitions.Add(1, GridUnitType.Auto);
-
-                row++;
-            }
-
-            var scroll = new ScrollViewer();
-            scroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            scroll.HorizontalScrollMode = ScrollMode.Auto;
-            scroll.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-            scroll.VerticalScrollMode = ScrollMode.Disabled;
-
-            scroll.Content = grid;
-
-            if (test && Constants.DEBUG)
-            {
-                var panel = new StackPanel();
-                //panel.Children.Add(caption);
-                panel.Children.Add(scroll);
-
-                var button = new Button();
-                button.Content = "Rebuild";
-                button.Click += (s, args) =>
-                {
-                    panel.Children.RemoveAt(0);
-                    panel.Children.Insert(0, ProcessTable(table, false));
-                };
-
-                panel.Children.Add(button);
-
-                return panel;
-            }
-
-            var caption = ProcessText(table, true);
-            if (caption != null)
-            {
-                var panel = new StackPanel();
-                panel.Children.Add(caption);
-                panel.Children.Add(scroll);
-
-                return panel;
-            }
-
-            return scroll;
-        }
-
-        private FrameworkElement ProcessDetails(PageBlockDetails details)
-        {
-            var panel = new StackPanel();
-
-            var header = new SettingsButton { Content = ProcessText(details, false), Glyph = details.IsOpen ? Icons.ChevronUp : Icons.ChevronDown, Margin = new Thickness(-12, 0, -12, 0) };
-            var inner = new StackPanel { Padding = new Thickness(0, 12, 0, 12), Visibility = details.IsOpen ? Visibility.Visible : Visibility.Collapsed };
-
-            panel.Children.Add(header);
-            panel.Children.Add(inner);
-
-            foreach (var block in details.Blocks)
-            {
-                inner.Children.Add(ProcessBlock(block));
-            }
-
-            header.Click += (s, args) =>
-            {
-                inner.Visibility = inner.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-                header.Glyph = inner.Visibility == Visibility.Visible ? Icons.ChevronUp : Icons.ChevronDown;
-            };
-
-            return panel;
-        }
-
-        #endregion
-
-        private FrameworkElement ProcessCover(PageBlockCover block)
-        {
-            return ProcessBlock(block.Cover);
-        }
-
-        private FrameworkElement ProcessChannel(PageBlockChatLink channel)
-        {
-            //var chat = channel.Channel as TLChannel;
-            //if (chat.IsMin)
-            //{
-            //    chat = InMemoryCacheService.Current.GetChat(chat.Id) as TLChannel ?? channel.Channel as TLChannel;
-            //}
-
-            //var button = new Button
-            //{
-            //    Style = Resources["ChannelBlockStyle"] as Style,
-            //    Content = chat
-            //};
-
-            //if (chat.IsMin && chat.HasUsername)
-            //{
-            //    MTProtoService.Current.ResolveUsernameAsync(chat.Username,
-            //        result =>
-            //        {
-            //            this.BeginOnUIThread(() => button.Content = result.Chats.FirstOrDefault());
-            //        });
-            //}
-
-            //return button;
-
-            return new Border();
-        }
-
-        private FrameworkElement ProcessAuthorDate(PageBlockAuthorDate block)
-        {
-            var textBlock = new TextBlock { Style = Resources["BlockAuthorDateTextBlockStyle"] as Style };
-
-            if (!block.Author.IsNullOrEmpty())
-            {
-                var span = new Span();
-                textBlock.Inlines.Add(string.Format(Strings.ArticleByAuthor, string.Empty));
-                textBlock.Inlines.Add(span);
-                ProcessRichText(block.Author, span, null);
-            }
-
-            if (block.PublishDate > 0)
-            {
-                if (textBlock.Inlines.Count > 0)
-                {
-                    textBlock.Inlines.Add(" — ");
-                }
-
-                textBlock.Inlines.Add(Formatter.Date(block.PublishDate, Strings.chatFullDate));
-            }
-
-            return textBlock;
-        }
-
-        private FrameworkElement ProcessText(PageBlock block, bool caption)
-        {
-            RichText text = null;
-            switch (block)
-            {
-                case PageBlockTitle title:
-                    text = title.Title;
-                    break;
-                case PageBlockSubtitle subtitle:
-                    text = subtitle.Subtitle;
-                    break;
-                case PageBlockHeader header:
-                    text = header.Header;
-                    break;
-                case PageBlockSubheader subheader:
-                    text = subheader.Subheader;
-                    break;
-                case PageBlockFooter footer:
-                    text = footer.Footer;
-                    break;
-                case PageBlockParagraph paragraphz:
-                    text = paragraphz.Text;
-                    break;
-                case PageBlockPreformatted preformatted:
-                    text = preformatted.Text;
-                    break;
-                case PageBlockBlockQuote blockquote:
-                    text = blockquote.Credit;
-                    break;
-                case PageBlockPullQuote pullquote:
-                    text = caption ? pullquote.Credit : pullquote.Text;
-                    break;
-                case PageBlockDetails details:
-                    text = details.Header;
-                    break;
-                case PageBlockTable table:
-                    text = table.Caption;
-                    break;
-                case PageBlockRelatedArticles relatedArticles:
-                    text = relatedArticles.Header;
-                    break;
-                case PageBlockKicker kicker:
-                    text = kicker.Kicker;
-                    break;
-                case PageBlockSectionHeading heading:
-                    text = heading.Text;
-                    break;
-            }
-
-            if (PageBlockHelper.IsEmpty(text))
-            {
-                return null;
-            }
-
-            var textBlock = CreateTextBlock();
-            var span = new Span();
-            var paragraph = new Paragraph();
-            paragraph.Inlines.Add(span);
-            textBlock.Blocks.Add(paragraph);
-            textBlock.TextWrapping = TextWrapping.Wrap;
-
-            textBlock.ContextMenuOpening += Text_ContextMenuOpening;
-            textBlock.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Text_ContextRequested), true);
-
-            //textBlock.Margin = new Thickness(12, 0, 12, 12);
-            ProcessRichText(text, span, textBlock);
-
-            switch (block)
-            {
-                case PageBlockTitle title:
-                    textBlock.FontSize = 28;
-                    textBlock.FontFamily = new FontFamily("Times New Roman");
-                    //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
-                    break;
-                case PageBlockSubtitle subtitle:
-                    textBlock.FontSize = 17;
-                    //textBlock.FontFamily = new FontFamily("Times New Roman");
-                    //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
-                    break;
-                case PageBlockHeader header:
-                    textBlock.Style = Resources["BlockHeaderTextBlockStyle"] as Style;
-                    break;
-                case PageBlockSubheader subheader:
-                    textBlock.Style = Resources["BlockSubheaderTextBlockStyle"] as Style;
-                    break;
-                case PageBlockParagraph paragraphz:
-                    textBlock.Style = Resources["BlockBodyTextBlockStyle"] as Style;
-                    break;
-                case PageBlockPreformatted preformatted:
-                    textBlock.FontSize = 16;
-                    break;
-                case PageBlockFooter footer:
-                    textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
-                    //textBlock.TextAlignment = TextAlignment.Center;
-                    break;
-                case PageBlockPhoto photo:
-                case PageBlockVideo video:
-                    textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
-                    textBlock.TextAlignment = TextAlignment.Center;
-                    break;
-                case PageBlockSlideshow slideshow:
-                case PageBlockEmbedded embed:
-                case PageBlockEmbeddedPost embedPost:
-                    textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
-                    //textBlock.TextAlignment = TextAlignment.Center;
-                    break;
-                case PageBlockBlockQuote blockquote:
-                    if (caption)
-                    {
-                        textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
-                        textBlock.Margin = new Thickness(0, 12, 0, 0);
-                    }
-                    else
-                    {
-                        textBlock.Style = Resources["BlockBodyTextBlockStyle"] as Style;
-                    }
-                    break;
-                case PageBlockPullQuote pullquote:
-                    if (caption)
-                    {
-                        textBlock.Style = Resources["BlockCaptionTextBlockStyle"] as Style;
-                    }
-                    else
-                    {
-                        textBlock.Style = Resources["BlockBodyTextBlockStyle"] as Style;
-                        textBlock.FontFamily = new FontFamily("Times New Roman");
-                        //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
-                        textBlock.TextAlignment = TextAlignment.Center;
-                    }
-                    break;
-                case PageBlockDetails details:
-                    textBlock.IsTextSelectionEnabled = false;
-                    break;
-                case PageBlockRelatedArticles relatedArticles:
-                    textBlock.Style = Resources["BlockRelatedArticlesHeaderStyle"] as Style;
-                    break;
-                case PageBlockSectionHeading heading:
-                    textBlock.Style = Resources["BlockHeaderTextBlockStyle"] as Style;
-                    textBlock.FontSize = 28 - ((heading.Size - 1) * 2);
-                    break;
-            }
-
-            return textBlock;
-        }
-
-        #region Text selection
-
-        public partial class SelectionRange
-        {
-            public int Start { get; set; }
-            public int End { get; set; }
-
-            public SelectionRange(int start, int end)
-            {
-                Start = start;
-                End = end;
-            }
-        }
-
-        private RichTextBlock _selectionAnchor;
-        private Point _selectionAnchorPoint;
-        private Point _stackPoint;
-
-        private int _selectionDirection;
-        private TextPointer _selectionPivot;
-
-        private SelectionRange _selectionClue;
-        private bool _selectionDirty;
-
-        private bool _selecting;
-
-        private HashSet<RichTextBlock> _selection = new();
-
-        private RichTextBlock CreateTextBlock()
-        {
-            var block = new RichTextBlock();
-            block.SelectionChanged += OnSelectionChanged;
-            block.LostFocus += OnLostFocus;
-            block.AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
-            block.AddHandler(PointerMovedEvent, new PointerEventHandler(OnPointerMoved), true);
-            block.AddHandler(PointerReleasedEvent, new PointerEventHandler(OnPointerReleased), true);
-
-            return block;
-        }
-
-        private void RemoveSelectionHighlighter(RichTextBlock block)
-        {
-            for (int i = block.TextHighlighters.Count - 1; i >= 0; i--)
-            {
-                if (block.TextHighlighters[i].Background == block.SelectionHighlightColor)
-                {
-                    block.TextHighlighters.RemoveAt(i);
-                    return;
-                }
-            }
-        }
-
-        private void OnLostFocus(object sender, RoutedEventArgs e)
-        {
-            foreach (var block in _selection)
-            {
-                RemoveSelectionHighlighter(block);
-            }
-
-            if (sender is RichTextBlock anchor)
-            {
-                anchor.Select(anchor.ContentStart, anchor.ContentStart);
-            }
-        }
-
-        private void OnSelectionChanged(object sender, RoutedEventArgs e)
-        {
-            if (_selectionAnchor == sender && _selectionPivot == null)
-            {
-                if (_selectionClue != null)
-                {
-                    if (_selectionAnchor.SelectionStart.Offset == _selectionClue.Start || _selectionAnchor.SelectionStart.Offset == _selectionClue.End)
-                    {
-                        _selectionPivot = _selectionAnchor.SelectionStart;
-                        return;
-                    }
-                    else if (_selectionAnchor.SelectionEnd.Offset == _selectionClue.Start || _selectionAnchor.SelectionEnd.Offset == _selectionClue.End)
-                    {
-                        _selectionPivot = _selectionAnchor.SelectionEnd;
-                        return;
-                    }
-                }
-
-                _selectionClue = new SelectionRange(_selectionAnchor.SelectionStart.Offset, _selectionAnchor.SelectionEnd.Offset);
-            }
-        }
-
-        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            _selectionAnchor = sender as RichTextBlock;
-            RemoveSelectionHighlighter(_selectionAnchor);
-
-            var transform = _selectionAnchor.TransformToVisual(XamlRoot.Content);
-            var anchorPoint = transform.TransformPoint(new Point());
-
-            _selectionAnchorPoint = new Point(anchorPoint.X, anchorPoint.Y + (_selectionAnchor.ActualHeight / 2));
-
-            var transform2 = ScrollingHost.ItemsPanelRoot.TransformToVisual(XamlRoot.Content);
-            var anchorPoint2 = transform2.TransformPoint(new Point());
-
-            _stackPoint = anchorPoint;
-        }
-
-        private void CreateHighlighter(RichTextBlock block, TextPointer start, TextPointer end)
-        {
-            CreateHighlighter(block, start.OffsetToIndex(), end.OffsetToIndex());
-        }
-
-        private void CreateHighlighter(RichTextBlock block, int start, int length)
-        {
-            var highlighter = new TextHighlighter
-            {
-                Background = block.SelectionHighlightColor,
-                Foreground = new SolidColorBrush(Colors.White)
-            };
-
-            highlighter.Ranges.Add(new TextRange
-            {
-                StartIndex = start,
-                Length = length
-            });
-
-            RemoveSelectionHighlighter(block);
-            block.TextHighlighters.Add(highlighter);
-        }
-
-        private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
-        {
-            if (_selectionAnchor == null)
-            {
-                return;
-            }
-
-            var point = e.GetCurrentPoint(XamlRoot.Content);
-            var y1 = Math.Min(_selectionAnchorPoint.Y, point.Position.Y);
-            var y2 = Math.Max(_selectionAnchorPoint.Y, point.Position.Y);
-
-            var area = new Rect(_stackPoint.X, y1, ScrollingHost.ItemsPanelRoot.ActualWidth, y2 - y1);
-            var elements = VisualTreeHelper.FindElementsInHostCoordinates(area, ScrollingHost.ItemsPanelRoot);
-
-            var direction = Math.Sign(_selectionAnchorPoint.Y - point.Position.Y);
-
-            //Debug.WriteLine(direction < 0 ? "Selecting from top to bottom" : "Selecting from bottom to top");
-            //Debug.WriteLine(direction < 0 ? "Using selection start as anchor" : "Using selection end as anchor");
-
-            var selection = new HashSet<RichTextBlock>();
-
-            foreach (var block in elements.OfType<RichTextBlock>())
-            {
-                if (_selectionAnchor == block)
-                {
-                    continue;
-                }
-
-                var relative = e.GetCurrentPoint(block);
-                if (relative.Position.Y >= 0 && relative.Position.Y <= Math.Ceiling(block.ActualHeight))
-                {
-                    // Active block
-                    var position = block.GetPositionFromPoint(relative.Position);
-
-                    if (direction < 0)
-                    {
-                        CreateHighlighter(block, block.ContentStart, position);
-                    }
-                    else
-                    {
-                        CreateHighlighter(block, position, block.ContentEnd);
-                    }
-                }
-                else
-                {
-                    // Full block
-                    CreateHighlighter(block, 0, int.MaxValue);
-                }
-
-                selection.Add(block);
-            }
-
-            selection.Add(_selectionAnchor);
-
-            //Debug.WriteLine(selection.Count);
-
-            if (_selectionPivot != null)
-            {
-                var relative = e.GetCurrentPoint(_selectionAnchor);
-                //Debug.WriteLine("Anchor {0}: ({1} ~> {2})", _selectionAnchor.Tag, relative.Position, _selectionAnchor.ActualHeight);
-
-                if (relative.Position.Y < 0)
-                {
-                    _selectionDirty = true;
-                    _selectionAnchor.Select(_selectionAnchor.ContentStart, _selectionPivot);
-                }
-                else if (relative.Position.Y > _selectionAnchor.ActualHeight)
-                {
-                    _selectionDirty = true;
-                    _selectionAnchor.Select(_selectionPivot, _selectionAnchor.ContentEnd);
-                }
-                else if (_selectionDirty)
-                {
-                    _selectionDirty = false;
-                    _selectionAnchor.Select(_selectionPivot, _selectionPivot);
-                }
-            }
-
-            foreach (var block in _selection)
-            {
-                if (selection.Contains(block))
-                {
-                    continue;
-                }
-
-                RemoveSelectionHighlighter(block);
-            }
-
-            _selection = selection;
-            _selectionDirection = direction;
-        }
-
-        private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
-        {
-            if (sender is RichTextBlock block)
-            {
-                Debug.WriteLine("Released, {0}", block.Tag);
-            }
-
-            _selectionAnchor = null;
-            _selectionPivot = null;
-            _selectionClue = null;
-            _selectionDirty = false;
-            _selectionDirection = 0;
-            _selecting = false;
-        }
-
-        #endregion
-
-        private void Text_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
-        {
-            MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, sender, args, null);
-        }
-
-        private void Text_ContextMenuOpening(object sender, ContextMenuEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private FrameworkElement ProcessCaption(PageBlockCaption caption)
-        {
-            var textEmpty = PageBlockHelper.IsEmpty(caption?.Text);
-            var citeEmpty = PageBlockHelper.IsEmpty(caption?.Credit);
-
-            if (textEmpty && citeEmpty)
-            {
-                return null;
-            }
-
-            var textBlock = CreateTextBlock();
-            var span = new Span();
-            var paragraph = new Paragraph();
-            paragraph.Inlines.Add(span);
-            textBlock.Blocks.Add(paragraph);
-            textBlock.TextWrapping = TextWrapping.Wrap;
-
-            if (!textEmpty)
-            {
-                ProcessRichText(caption.Text, span, textBlock);
-            }
-
-            if (!citeEmpty)
-            {
-                if (!textEmpty)
-                {
-                    span.Inlines.Add(new LineBreak());
-                }
-
-                ProcessRichText(caption.Credit, span, textBlock);
-            }
-
-            return textBlock;
-        }
-
-        private FrameworkElement ProcessUnsupported(PageBlock block)
-        {
-            return new TextBlock { Text = block.ToString() };
-        }
-
-        private FrameworkElement ProcessPreformatted(PageBlockPreformatted block)
-        {
-            var element = new StackPanel(); // { Style = Resources["BlockPreformattedStyle"] as Style };
-
-            if (block.Text is not RichTextPlain plain || string.IsNullOrEmpty(block.Language))
-            {
-                var text = ProcessText(block, false);
-                if (text != null)
-                {
-                    return new BlockQuote
-                    {
-                        Glyph = Icons.CodeFilled16,
-                        Content = text,
-                        Padding = new Thickness(8, 4, 24, 6)
-                    };
-                }
-            }
-            else
-            {
-                var formatted = new FormattedText(plain.Text, new[] { new TextEntity(0, plain.Text.Length, new TextEntityTypePreCode(block.Language)) });
-
-                var paragraph = new Paragraph();
-                paragraph.Inlines.Add(plain.Text);
-
-                var text = new RichTextBlock();
-                text.Blocks.Add(paragraph);
-
-                ProcessCodeBlock(paragraph.Inlines, plain.Text, block.Language, 0);
-
-                element.Children.Add(text);
-
-                var test = new Grid();
-                test.Children.Add(new BlockQuote
-                {
-                    //Glyph = Icons.QuoteBlockFilled16
-                    LanguageName = block.Language
-                });
-                test.Children.Add(element);
-
-                element.Padding = new Thickness(12, 22, 0, 4);
-                return test;
-            }
-
-            return null;
-        }
-
-        private async void ProcessCodeBlock(InlineCollection inlines, string text, string language, int execution)
-        {
-            try
-            {
-                var tokens = await SyntaxToken.TokenizeAsync(language.ToLowerInvariant(), text);
-
-                inlines.Clear();
-                ProcessCodeBlock(inlines, tokens.Children);
-            }
-            catch
-            {
-                // Tokenization may fail
-            }
-        }
-
-        private void ProcessCodeBlock(InlineCollection inlines, IList<Token> tokens)
-        {
-            var fontFamily = new FontFamily("Consolas, " + Theme.Current.XamlAutoFontFamily);
-
-            foreach (var token in tokens)
-            {
-                if (token is SyntaxToken syntax)
-                {
-                    var color = GetColor(syntax.Type);
-                    if (color == null && syntax.Alias.Length > 0)
-                    {
-                        color = GetColor(syntax.Alias);
-                    }
-
-                    var span = new Span();
-
-                    span.FontFamily = fontFamily;
-
-                    if (color != null)
-                    {
-                        span.Foreground = color;
-                    }
-
-                    if (syntax.Type == "bold")
-                    {
-                        span.FontWeight = FontWeights.SemiBold;
-                    }
-                    else if (syntax.Type == "italic")
-                    {
-                        span.FontStyle = FontStyle.Italic;
-                    }
-
-                    ProcessCodeBlock(span.Inlines, syntax.Children);
-                    inlines.Add(span);
-                }
-                else if (token is TextToken text)
-                {
-                    inlines.Add(text.Value/*, fontFamily*/);
-                }
-            }
-        }
-
-        SolidColorBrush GetColor(string type)
-        {
-            if (_brushes.TryGetValue(type, out var brush))
-            {
-                return brush;
-            }
-
-            var target = ActualTheme == ElementTheme.Light ? _light : _dark;
-            if (target.TryGetValue(type, out var color))
-            {
-                _brushes[type] = new SolidColorBrush(color);
-                return _brushes[type];
-            }
-
-            return null;
-        }
-
-        private readonly Dictionary<string, Color> _light = new()
-        {
-            { "comment", Colors.SlateGray },
-            { "block-comment", Colors.SlateGray },
-            { "prolog", Colors.SlateGray },
-            { "doctype", Colors.SlateGray },
-            { "cdata", Colors.SlateGray },
-            { "punctuation", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
-            { "property", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "tag", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "boolean", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "number", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "constant", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "symbol", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "deleted", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
-            { "selector", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "attr-name", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "string", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "char", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "builtin", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "inserted", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "operator", Color.FromArgb(0xFF, 0x9a, 0x6e, 0x3a) },
-            { "entity", Color.FromArgb(0xFF, 0x9a, 0x6e, 0x3a) },
-            { "url", Color.FromArgb(0xFF, 0x9a, 0x6e, 0x3a) },
-            { "atrule", Color.FromArgb(0xFF, 0x00, 0x77, 0xAA) },
-            { "attr-value", Color.FromArgb(0xFF, 0x00, 0x77, 0xAA) },
-            { "keyword", Color.FromArgb(0xFF, 0x00, 0x77, 0xAA) },
-            { "function", Color.FromArgb(0xFF, 0x00, 0x77, 0xAA) },
-            { "class-name", Color.FromArgb(0xFF, 0xDD, 0x4A, 0x68) },
-        };
-
-        private readonly Dictionary<string, Color> _dark = new()
-        {
-            { "comment", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
-            { "block-comment", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
-            { "prolog", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
-            { "doctype", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
-            { "cdata", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
-            { "punctuation", Color.FromArgb(0xFF, 0xCC, 0xCC, 0xCC) },
-            { "property", Color.FromArgb(0xFF, 0xf8, 0xc5, 0x55) },
-            { "tag", Color.FromArgb(0xFF, 0xe2, 0x77, 0x7a) },
-            { "boolean", Color.FromArgb(0xFF, 0xf0, 0x8d, 0x49) },
-            { "number", Color.FromArgb(0xFF, 0xf0, 0x8d, 0x49) },
-            { "constant", Color.FromArgb(0xFF, 0xf8, 0xc5, 0x55) },
-            { "symbol", Color.FromArgb(0xFF, 0xf8, 0xc5, 0x55) },
-            { "deleted", Color.FromArgb(0xFF, 0xe2, 0x77, 0x7a) },
-            { "selector", Color.FromArgb(0xFF, 0xcc, 0x99, 0xcd) },
-            { "attr-name", Color.FromArgb(0xFF, 0xe2, 0x77, 0x7a) },
-            { "string", Color.FromArgb(0xFF, 0x7e, 0xc6, 0x99) },
-            { "char", Color.FromArgb(0xFF, 0x7e, 0xc6, 0x99) },
-            { "builtin", Color.FromArgb(0xFF, 0xcc, 0x99, 0xcd) },
-            { "inserted", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
-            { "operator", Color.FromArgb(0xFF, 0x67, 0xcd, 0xcc) },
-            { "entity", Color.FromArgb(0xFF, 0x67, 0xcd, 0xcc) },
-            { "url", Color.FromArgb(0xFF, 0x67, 0xcd, 0xcc) },
-            { "atrule", Color.FromArgb(0xFF, 0xcc, 0x99, 0xcd) },
-            { "attr-value", Color.FromArgb(0xFF, 0x7e, 0xc6, 0x99) },
-            { "keyword", Color.FromArgb(0xFF, 0xcc, 0x99, 0xcd) },
-            { "function", Color.FromArgb(0xFF, 0xf0, 0x8d, 0x49) },
-            { "class-name", Color.FromArgb(0xFF, 0xf8, 0xc5, 0x55) },
-            // namespace 0xe2, 0x77, 0x7a
-            // function-name 6196cc
-        };
-
-        private readonly Dictionary<string, SolidColorBrush> _brushes = new();
-
-        private FrameworkElement ProcessDivider(PageBlockDivider block)
-        {
-            var element = new Rectangle { Style = Resources["BlockDividerStyle"] as Style };
-            return element;
-        }
-
-        private FrameworkElement ProcessList(PageBlockList block)
-        {
-            var panel = new Grid();
-            panel.ColumnDefinitions.Add(1, GridUnitType.Auto);
-            panel.ColumnDefinitions.Add(new ColumnDefinition());
-
-            var row = 0;
-
-            foreach (var item in block.Items)
-            {
-                FrameworkElement label;
-                if (item.HasCheckbox)
-                {
-                    label = new CheckBox
-                    {
-                        IsChecked = item.IsChecked,
-                        Margin = new Thickness(0, -6, 8, 4),
-                        Padding = new Thickness(0),
-                        MinWidth = 0,
-                        MinHeight = 0
-                    };
-                }
-                else
-                {
-                    label = new TextBlock
-                    {
-                        Text = item.Label,
-                        TextAlignment = TextAlignment.Right,
-                        Margin = new Thickness(0, 0, 8, 0)
-                    };
-                }
-
-                var stack = new StackPanel();
-
-                foreach (var inner in item.Blocks)
-                {
-                    var child = ProcessBlock(inner);
-                    if (child != null)
-                    {
-                        stack.Children.Add(child);
-                    }
-                }
-
-                Grid.SetRow(label, row);
-                Grid.SetRow(stack, row);
-                Grid.SetColumn(stack, 1);
-
-                panel.RowDefinitions.Add(1, GridUnitType.Auto);
-                panel.Children.Add(label);
-                panel.Children.Add(stack);
-
-                row++;
-            }
-
-            return panel;
-        }
-
-        private FrameworkElement ProcessBlockquote(PageBlockBlockQuote block)
-        {
-            var element = new StackPanel(); //{ Style = Resources["BlockBlockquoteStyle"] as Style };
-
-            foreach (var child in block.Blocks)
-            {
-                element.Children.Add(ProcessBlock(child));
-            }
-
-            var caption = ProcessText(block, true);
-            if (caption != null)
-            {
-                element.Children.Add(caption);
-            }
-
-            var test = new Grid();
-            test.Children.Add(new BlockQuote
-            {
-                Glyph = Icons.QuoteBlockFilled16
-            });
-            test.Children.Add(element);
-
-            element.Padding = new Thickness(12, 2, 0, 4);
-            return test;
-        }
-
-        private FrameworkElement ProcessPullquote(PageBlockPullQuote block)
-        {
-            var element = new StackPanel { Style = Resources["BlockPullquoteStyle"] as Style };
-
-            var text = ProcessText(block, false);
-            if (text != null)
-            {
-                element.Children.Add(text);
-            }
-
-            var caption = ProcessText(block, true);
-            if (caption != null)
-            {
-                element.Children.Add(caption);
-            }
-
-            return element;
-        }
-
-        private FrameworkElement ProcessPhoto(PageBlockPhoto block)
-        {
-            var galleryItem = new GalleryPhoto(ViewModel.ClientService, block.Photo, block.Caption?.ToFormattedText());
-            ViewModel.Gallery.Items.Add(galleryItem);
-
-            var message = CreateMessage(new MessagePhoto(block.Photo, null, null, false, false, false));
-            var element = new StackPanel { Style = Resources["BlockPhotoStyle"] as Style };
-
-            var content = new PhotoContent(message);
-            content.Tag = galleryItem;
-            content.HorizontalAlignment = HorizontalAlignment.Center;
-            content.ClearValue(MaxWidthProperty);
-            content.ClearValue(MaxHeightProperty);
-
-            element.Children.Add(content);
-
-            var caption = ProcessCaption(block.Caption);
-            if (caption != null)
-            {
-                caption.Margin = new Thickness(12, 8, 0, 0);
-                element.Children.Add(caption);
-            }
-
-            return element;
-        }
-
-        private FrameworkElement ProcessVideo(PageBlockVideo block)
-        {
-            var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
-
-            if (block.Video != null)
-            {
-                var galleryItem = new GalleryVideo(ViewModel.ClientService, block.Video, block.Caption?.ToFormattedText());
-                ViewModel.Gallery.Items.Add(galleryItem);
-
-                var message = CreateMessage(new MessageVideo(block.Video, Array.Empty<AlternativeVideo>(), Array.Empty<VideoStoryboard>(), null, 0, null, false, false, false));
-
-                var content = new VideoContent(message);
-                content.Tag = galleryItem;
-                content.HorizontalAlignment = HorizontalAlignment.Center;
-                content.ClearValue(MaxWidthProperty);
-                content.ClearValue(MaxHeightProperty);
-
-                element.Children.Add(content);
-            }
-
-            var caption = ProcessCaption(block.Caption);
-            if (caption != null)
-            {
-                caption.Margin = new Thickness(12, 8, 0, 0);
-                element.Children.Add(caption);
-            }
-
-            return element;
-        }
-
-        private FrameworkElement ProcessAnimation(PageBlockAnimation block)
-        {
-            var galleryItem = new GalleryAnimation(ViewModel.ClientService, block.Animation, block.Caption?.ToFormattedText());
-            ViewModel.Gallery.Items.Add(galleryItem);
-
-            var message = CreateMessage(new MessageAnimation(block.Animation, null, false, block.HasSpoiler, false));
-            var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
-
-            var content = new AnimationContent(message);
-            content.Tag = galleryItem;
-            content.HorizontalAlignment = HorizontalAlignment.Center;
-            content.ClearValue(MaxWidthProperty);
-            content.ClearValue(MaxHeightProperty);
-
-            if (block.Animation.AnimationValue.Local.IsDownloadingCompleted)
-            {
-                _animations.Add(content.GetPlaybackElement());
-            }
-
-            element.Children.Add(content);
-
-            var caption = ProcessCaption(block.Caption);
-            if (caption != null)
-            {
-                caption.Margin = new Thickness(12, 8, 0, 0);
-                element.Children.Add(caption);
-            }
-
-            return element;
-        }
-
-        private FrameworkElement ProcessAudio(PageBlockAudio block)
-        {
-            var message = CreateMessage(block.Audio.AudioValue.Id, new MessageAudio(block.Audio, string.Empty.AsFormattedText()));
-            var element = new StackPanel();
-
-            var content = new AudioContent(message);
-            content.HorizontalAlignment = HorizontalAlignment.Left;
-            content.ClearValue(MaxWidthProperty);
-            content.ClearValue(MaxHeightProperty);
-
-            element.Children.Add(content);
-
-            var caption = ProcessCaption(block.Caption);
-            if (caption != null)
-            {
-                caption.Margin = new Thickness(0, 8, 0, 0);
-                element.Children.Add(caption);
-            }
-
-            return element;
-        }
-
-        private FrameworkElement ProcessVoiceNote(PageBlockVoiceNote block)
-        {
-            var message = CreateMessage(block.VoiceNote.Voice.Id, new MessageAudio(new Audio(block.VoiceNote.Duration, string.Empty, string.Empty, string.Empty, string.Empty, null, null, null, block.VoiceNote.Voice), string.Empty.AsFormattedText()));
-            var element = new StackPanel();
-
-            var content = new AudioContent(message);
-            content.HorizontalAlignment = HorizontalAlignment.Left;
-            content.ClearValue(MaxWidthProperty);
-            content.ClearValue(MaxHeightProperty);
-
-            element.Children.Add(content);
-
-            var caption = ProcessCaption(block.Caption);
-            if (caption != null)
-            {
-                caption.Margin = new Thickness(0, 8, 0, 0);
-                element.Children.Add(caption);
-            }
-
-            return element;
-        }
-
-        private MessageViewModel CreateMessage(MessageContent content)
-        {
-            return ViewModel.CreateMessage(new Message { Content = content });
-        }
-
-        private MessageViewModel CreateMessage(long id, MessageContent content)
+        MessageViewModel IPageBlockContext.CreateMessage(long id, MessageContent content)
         {
             return ViewModel.CreateMessage(new Message { Id = id, Content = content });
         }
 
-        private FrameworkElement ProcessEmbed(PageBlockEmbedded block)
+        void IPageBlockContext.TextEntityClick(FormattedTextBlock sender, TextEntityClickEventArgs args)
         {
-            var element = new StackPanel { Style = Resources["BlockEmbedStyle"] as Style };
-
-            var view = new WebViewer();
-
-            void loaded(object sender, RoutedEventArgs e)
+            if (args.Type is TextEntityTypeTextUrl textUrl)
             {
-                view.Loaded -= loaded;
-
-                // TODO: auto-size
-
-                if (!block.AllowScrolling)
-                {
-                    // TODO: block scrolling
-                    //await view.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync("document.querySelector('body').style.overflow='hidden'");
-                }
-                if (!string.IsNullOrEmpty(block.Html))
-                {
-                    view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
-                }
-                else if (!string.IsNullOrEmpty(block.Url))
-                {
-                    view.Navigate(block.Url);
-                }
+                Hyperlink_Click(new RichTextUrl(null, textUrl.Url, false));
             }
-
-            void unloaded(object sender, RoutedEventArgs e)
+            else if (args.Type is TextEntityTypeUrl && args.Text != null)
             {
-                view.Unloaded -= unloaded;
-                view.Close();
-            }
-
-            view.Loaded += loaded;
-            view.Unloaded += unloaded;
-
-            //if (block.HasPosterPhotoId)
-            //{
-            //    var photo = page.Photos.FirstOrDefault(x => x.Id == block.PosterPhotoId);
-            //    var image = new ImageView();
-            //    image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, "thumbnail");
-            //    image.Constraint = photo;
-            //    child = image;
-            //}
-            var ratio = new AspectView();
-            ratio.MaxWidth = block.Width;
-            ratio.MaxHeight = block.Height;
-            ratio.Constraint = new Size(block.Width, block.Height);
-            ratio.Children.Add(view);
-
-            element.Children.Add(ratio);
-
-            var caption = ProcessCaption(block.Caption);
-            if (caption != null)
-            {
-                caption.Margin = new Thickness(12, 8, 0, 0);
-                element.Children.Add(caption);
-            }
-
-            return element;
-        }
-
-        private FrameworkElement ProcessSlideshow(PageBlockSlideshow block)
-        {
-            var element = new StackPanel { Style = Resources["BlockSlideshowStyle"] as Style };
-
-            var items = new List<FrameworkElement>();
-            foreach (var item in block.Blocks)
-            {
-                if (item is PageBlockPhoto photoBlock)
-                {
-                    var galleryItem = new GalleryPhoto(ViewModel.ClientService, photoBlock.Photo, photoBlock.Caption?.ToFormattedText());
-                    ViewModel.Gallery.Items.Add(galleryItem);
-
-                    var message = CreateMessage(new MessagePhoto(photoBlock.Photo, null, null, false, false, false));
-
-                    var content = new PhotoContent(message);
-                    content.Tag = galleryItem;
-                    content.HorizontalAlignment = HorizontalAlignment.Center;
-                    content.ClearValue(MaxWidthProperty);
-                    content.ClearValue(MaxHeightProperty);
-
-                    items.Add(content);
-                }
-                else if (item is PageBlockVideo videoBlock)
-                {
-                    var galleryItem = new GalleryVideo(ViewModel.ClientService, videoBlock.Video, videoBlock.Caption?.ToFormattedText());
-                    ViewModel.Gallery.Items.Add(galleryItem);
-
-                    var message = CreateMessage(new MessageVideo(videoBlock.Video, Array.Empty<AlternativeVideo>(), Array.Empty<VideoStoryboard>(), null, 0, null, false, false, false));
-
-                    var content = new VideoContent(message);
-                    content.Tag = galleryItem;
-                    content.HorizontalAlignment = HorizontalAlignment.Center;
-                    content.ClearValue(MaxWidthProperty);
-                    content.ClearValue(MaxHeightProperty);
-
-                    items.Add(content);
-                }
-            }
-
-            var flip = new FlipView();
-            flip.ItemsSource = items;
-            flip.MaxHeight = 420;
-
-            element.Children.Add(flip);
-
-            var caption = ProcessCaption(block.Caption);
-            if (caption != null)
-            {
-                caption.Margin = new Thickness(12, 8, 0, 0);
-                element.Children.Add(caption);
-            }
-
-            return element;
-        }
-
-        private FrameworkElement ProcessCollage(PageBlockCollage block)
-        {
-            var element = new StackPanel { Style = Resources["BlockCollageStyle"] as Style };
-
-            var items = new List<ImageView>();
-            foreach (var item in block.Blocks)
-            {
-                if (item is PageBlockPhoto photoBlock)
-                {
-                    //var galleryItem = new GalleryPhotoItem(photoBlock.Photo, photoBlock.Caption?.ToString());
-                    //ViewModel.Gallery.Items.Add(galleryItem);
-
-                    var child = new ImageView();
-                    //child.Source = (ImageSource)DefaultPhotoConverter.Convert(photoBlock.Photo, true);
-                    //child.DataContext = galleryItem;
-                    //child.Click += Image_Click;
-                    child.Width = 72;
-                    child.Height = 72;
-                    child.Stretch = Stretch.UniformToFill;
-                    child.Margin = new Thickness(0, 0, 4, 4);
-
-                    items.Add(child);
-                }
-                else if (item is PageBlockVideo videoBlock)
-                {
-                    //var galleryItem = new GalleryDocumentItem(videoBlock.Video, videoBlock.Caption?.ToString());
-                    //ViewModel.Gallery.Items.Add(galleryItem);
-
-                    var child = new ImageView();
-                    //child.Source = (ImageSource)DefaultPhotoConverter.Convert(videoBlock.Video, true);
-                    //child.DataContext = galleryItem;
-                    //child.Click += Image_Click;
-                    child.Width = 72;
-                    child.Height = 72;
-                    child.Stretch = Stretch.UniformToFill;
-                    child.Margin = new Thickness(0, 0, 4, 4);
-
-                    items.Add(child);
-                }
-            }
-
-            var grid = new Grid();
-            grid.ColumnDefinitions.Add(1, GridUnitType.Auto);
-            grid.ColumnDefinitions.Add(1, GridUnitType.Auto);
-            grid.ColumnDefinitions.Add(1, GridUnitType.Auto);
-            grid.ColumnDefinitions.Add(1, GridUnitType.Auto);
-
-            for (int i = 0; i < items.Count; i++)
-            {
-                var y = i / 4;
-                var x = i % 4;
-
-                grid.Children.Add(items[i]);
-                Grid.SetRow(items[i], y);
-                Grid.SetColumn(items[i], x);
-
-                if (x == 0)
-                {
-                    grid.RowDefinitions.Add(1, GridUnitType.Auto);
-                }
-            }
-
-            element.Children.Add(grid);
-
-            var caption = ProcessCaption(block.Caption);
-            if (caption != null)
-            {
-                caption.Margin = new Thickness(12, 8, 0, 0);
-                element.Children.Add(caption);
-            }
-
-            return element;
-        }
-
-        private FrameworkElement ProcessEmbedPost(PageBlockEmbeddedPost block)
-        {
-            var element = new StackPanel { Style = Resources["BlockEmbedPostStyle"] as Style };
-
-            var header = new Grid();
-            header.RowDefinitions.Add(1, GridUnitType.Auto);
-            header.RowDefinitions.Add(1, GridUnitType.Auto);
-            header.ColumnDefinitions.Add(1, GridUnitType.Auto);
-            header.ColumnDefinitions.Add(new ColumnDefinition());
-            header.Margin = new Thickness(_padding, 0, 0, 0);
-
-            var photo = block.AuthorPhoto;
-            if (photo != null)
-            {
-                var ellipse = new Ellipse();
-                ellipse.Width = 36;
-                ellipse.Height = 36;
-                ellipse.Margin = new Thickness(0, 0, _padding, 0);
-                //ellipse.Fill = new ImageBrush { ImageSource = (ImageSource)DefaultPhotoConverter.Convert(photo, true), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-                Grid.SetRowSpan(ellipse, 2);
-
-                header.Children.Add(ellipse);
-            }
-
-            var textAuthor = new TextBlock();
-            textAuthor.Text = block.Author;
-            textAuthor.VerticalAlignment = VerticalAlignment.Bottom;
-            Grid.SetColumn(textAuthor, 1);
-            Grid.SetRow(textAuthor, 0);
-
-            var textDate = new TextBlock();
-            textDate.Text = Formatter.ToLocalTime(block.Date).ToString("dd MMMM yyyy");
-            textDate.VerticalAlignment = VerticalAlignment.Top;
-            textDate.Style = (Style)Resources["CaptionTextBlockStyle"];
-            textDate.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-            Grid.SetColumn(textDate, 1);
-            Grid.SetRow(textDate, 1);
-
-            header.Children.Add(textAuthor);
-            header.Children.Add(textDate);
-
-            element.Children.Add(header);
-
-            PageBlock previousBlock = null;
-            foreach (var subBlock in block.Blocks)
-            {
-                var subLayout = ProcessBlock(subBlock);
-                var spacing = SpacingBetweenBlocks(previousBlock, block);
-
-                if (subLayout != null)
-                {
-                    subLayout.Margin = new Thickness(_padding, spacing, _padding, 0);
-                    element.Children.Add(subLayout);
-                }
-
-                previousBlock = block;
-                FrameworkElement previousElement = subLayout;
-            }
-
-            return element;
-        }
-
-        private FrameworkElement ProcessAnchor(PageBlockAnchor block)
-        {
-            var element = new Border();
-            _anchors[block.Name] = element;
-
-            return element;
-        }
-
-        private void ProcessRichText(RichText text, Span span, RichTextBlock textBlock)
-        {
-            int offset = 0;
-            var cached = new TextHighlighter();
-            var marked = new TextHighlighter();
-
-            ProcessRichText(text, span, TextEffects.None, ref offset, cached.Ranges, marked.Ranges);
-
-            if (cached.Ranges.Count > 0 && textBlock != null)
-            {
-                var accent = ActualTheme == ElementTheme.Light
-                    ? Theme.AccentLight.Default
-                    : Theme.AccentDark.Default;
-
-                cached.Background = new SolidColorBrush(accent.WithAlpha(22));
-                cached.Foreground = new SolidColorBrush(accent);
-
-                textBlock.TextHighlighters.Add(cached);
-            }
-
-            if (marked.Ranges.Count > 0 && textBlock != null)
-            {
-                marked.Background = new SolidColorBrush(Colors.PaleGoldenrod);
-
-                textBlock.TextHighlighters.Add(marked);
+                // An auto-detected url carries no payload — the covered text is the url.
+                Hyperlink_Click(new RichTextUrl(null, args.Text, false));
             }
         }
 
-        private static int _target;
-        private int _current;
-
-        private bool ProcessRichText(RichText text, Span span, TextEffects effects, ref int offset, IList<TextRange> cached, IList<TextRange> marked)
+        void IPageBlockContext.OpenUrl(string url)
         {
-            switch (text)
+            // is_cached: a related article is part of this page's set, so prefer opening
+            // it as an instant view rather than handing it to the browser.
+            Hyperlink_Click(new RichTextUrl(null, url, true));
+        }
+
+        void IPageBlockContext.OpenInlineButton(InlineButton button)
+        {
+            // A page has no message behind it, so the types that answer *to a message*
+            // (callback, login-url, switch-inline, buy, user) have nothing to answer
+            // against. Better inert than firing a query that can't be attributed.
+            switch (button.Type)
             {
-                case RichTextPlain plainText:
-                    if (string.IsNullOrEmpty(plainText.Text))
+                case InlineKeyboardButtonTypeUrl url:
+                    if (MessageHelper.TryCreateUri(url.Url, out Uri uri))
                     {
-                        return false;
+                        OpenUrl(uri);
                     }
-
-                    if (effects.HasFlag(TextEffects.Cached))
+                    break;
+                case InlineKeyboardButtonTypeWebApp webApp:
+                    if (MessageHelper.TryCreateUri(webApp.Url, out Uri webAppUri))
                     {
-                        cached.Add(new TextRange { StartIndex = offset, Length = plainText.Text.Length });
+                        OpenUrl(webAppUri);
                     }
-                    else if (effects.HasFlag(TextEffects.Marked))
-                    {
-                        marked.Add(new TextRange { StartIndex = offset, Length = plainText.Text.Length });
-                    }
-
-                    span.Inlines.Add(plainText.Text);
-                    offset += plainText.Text.Length;
-                    return true;
-                case RichTexts concatText:
-                    var added = false;
-
-                    foreach (var concat in concatText.Texts)
-                    {
-                        var concatRun = new Span();
-
-                        if (ProcessRichText(concat, concatRun, effects, ref offset, cached, marked))
-                        {
-                            span.Inlines.Add(concatRun);
-                            added = true;
-                        }
-                    }
-
-                    return added;
-                case RichTextBold boldText:
-                    span.FontWeight = FontWeights.SemiBold;
-                    return ProcessRichText(boldText.Text, span, effects, ref offset, cached, marked);
-                case RichTextEmailAddress emailText:
-                    return ProcessRichText(emailText.Text, span, effects, ref offset, cached, marked);
-                case RichTextFixed fixedText:
-                    span.FontFamily = new FontFamily("Consolas");
-                    return ProcessRichText(fixedText.Text, span, effects, ref offset, cached, marked);
-                case RichTextItalic italicText:
-                    span.FontStyle |= FontStyle.Italic;
-                    return ProcessRichText(italicText.Text, span, effects, ref offset, cached, marked);
-                case RichTextStrikethrough strikeText:
-                    span.TextDecorations |= TextDecorations.Strikethrough;
-                    return ProcessRichText(strikeText.Text, span, effects, ref offset, cached, marked);
-                case RichTextUnderline underlineText:
-                    span.TextDecorations |= TextDecorations.Underline;
-                    return ProcessRichText(underlineText.Text, span, effects, ref offset, cached, marked);
-                case RichTextAnchorLink anchorLinkText:
-                    try
-                    {
-                        var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
-
-                        if (ProcessRichText(anchorLinkText.Text, hyperlink, effects | TextEffects.Cached, ref offset, cached, marked))
-                        {
-                            span.Inlines.Add(hyperlink);
-                            hyperlink.Click += (s, args) => Hyperlink_Click(anchorLinkText);
-                            Extensions.SetToolTip(hyperlink, anchorLinkText.Url);
-                            MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(null, anchorLinkText.Url));
-                            MessageHelper.SetEntityAction(hyperlink, () => Hyperlink_Click(anchorLinkText));
-
-                            return true;
-                        }
-
-                        return false;
-                    }
-                    catch
-                    {
-                        Logger.Info("InstantPage: Probably nesting anchorLink inside textUrl");
-                        return ProcessRichText(anchorLinkText.Text, span, effects, ref offset, cached, marked);
-                    }
-                case RichTextUrl urlText:
-                    try
-                    {
-                        if (urlText.IsCached)
-                        {
-                            effects |= TextEffects.Cached;
-                        }
-
-                        var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
-
-                        if (ProcessRichText(urlText.Text, hyperlink, effects, ref offset, cached, marked))
-                        {
-                            span.Inlines.Add(hyperlink);
-                            hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
-                            Extensions.SetToolTip(hyperlink, urlText.Url);
-                            MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(null, urlText.Url));
-                            MessageHelper.SetEntityAction(hyperlink, () => Hyperlink_Click(urlText));
-                            return true;
-                        }
-
-                        return false;
-                    }
-                    catch
-                    {
-                        Logger.Info("InstantPage: Probably nesting textUrl inside textUrl");
-                        return ProcessRichText(urlText.Text, span, effects, ref offset, cached, marked);
-                    }
-                case RichTextReference reference:
-                    return ProcessRichText(reference.Text, span, effects, ref offset, cached, marked);
-                case RichTextReferenceLink referenceLink:
-                    try
-                    {
-                        var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
-
-                        if (ProcessRichText(referenceLink.Text, hyperlink, effects | TextEffects.Cached, ref offset, cached, marked))
-                        {
-                            span.Inlines.Add(hyperlink);
-                            //hyperlink.Click += (s, args) => Hyperlink_Click(reference);
-                            Extensions.SetToolTip(hyperlink, referenceLink.Url);
-                            MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(null, referenceLink.Url));
-                            //MessageHelper.SetEntityAction(hyperlink, () => Hyperlink_Click(reference));
-
-                            return true;
-                        }
-
-                        return false;
-                    }
-                    catch
-                    {
-                        Logger.Info("InstantPage: Probably nesting reference inside textUrl");
-                        return ProcessRichText(referenceLink.Text, span, effects, ref offset, cached, marked);
-                    }
-                case RichTextIcon icon:
-                    var photo = new ImageView
-                    {
-                        Width = icon.Width,
-                        Height = icon.Height
-                    };
-
-                    var file = icon.Document.DocumentValue;
-                    if (file != null)
-                    {
-                        photo.SetSource(ViewModel.ClientService, file, icon.Width, icon.Height);
-                    }
-
-                    var inline = new InlineUIContainer();
-                    inline.Child = photo;
-                    span.Inlines.Add(inline);
-                    return true;
-                case RichTextMarked markedText:
-                    // ???
-                    return ProcessRichText(markedText.Text, span, effects | TextEffects.Marked, ref offset, cached, marked);
-                case RichTextPhoneNumber phoneNumber:
-                    try
-                    {
-                        var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
-                        span.Inlines.Add(hyperlink);
-                        hyperlink.Click += (s, args) => Hyperlink_Click(phoneNumber);
-                        return ProcessRichText(phoneNumber.Text, hyperlink, effects, ref offset, cached, marked);
-                    }
-                    catch
-                    {
-                        Logger.Debug("InstantPage: Probably nesting phoneNumber inside textUrl");
-                        return ProcessRichText(phoneNumber.Text, span, effects, ref offset, cached, marked);
-                    }
-                case RichTextSubscript subscript:
-                    Typography.SetVariants(span, FontVariants.Subscript);
-                    return ProcessRichText(subscript.Text, span, effects, ref offset, cached, marked);
-                case RichTextSuperscript superscript:
-                    Typography.SetVariants(span, FontVariants.Superscript);
-                    return ProcessRichText(superscript.Text, span, effects, ref offset, cached, marked);
-                case RichTextMathematicalExpression math:
-                    {
-                        //var tex = new RichMathSurface(math.Source);
-                        //var output = new Image
-                        //{
-                        //    Width = tex.PixelWidth,
-                        //    Height = tex.PixelHeight,
-                        //    Margin = new Thickness(0, 0, 0, tex.Baseline * tex.PixelHeight - tex.PixelHeight),
-                        //    Stretch = Stretch.Uniform
-                        //};
-
-                        //output.Loaded += (s, args) =>
-                        //{
-                        //    var width = (int)(tex.PixelWidth * XamlRoot.RasterizationScale);
-                        //    var height = (int)(tex.PixelHeight * XamlRoot.RasterizationScale);
-
-                        //    var bitmap = new WriteableBitmap(width, height);
-
-                        //    tex.RenderSync(bitmap.PixelBuffer, XamlRoot.RasterizationScale, Colors.Black);
-
-                        //    bitmap.Invalidate();
-                        //    output.Source = bitmap;
-                        //};
-
-                        var tex = new RichMathImage
-                        {
-                            Source = math.Expression
-                        };
-
-                        if (tex.IsValid)
-                        {
-                            tex.Margin = new Thickness(0, 0, 0, tex.Baseline * tex.PixelHeight - tex.PixelHeight);
-
-                            span.Inlines.Add(new InlineUIContainer
-                            {
-                                Child = tex
-                            });
-                        }
-                        else
-                        {
-                            ProcessRichText(new RichTextPlain(math.Expression), span, effects, ref offset, cached, marked);
-                        }
-                    }
-                    return true;
-                default:
-                    span.Inlines.Add(text.ToString());
-                    return false;
+                    break;
+                case InlineKeyboardButtonTypeCopyText copyText:
+                    MessageHelper.CopyText(XamlRoot, copyText.Text);
+                    break;
             }
         }
 
-        [Flags]
-        private enum TextEffects
+        void IPageBlockContext.RegisterDebug(object element)
         {
-            None,
-            Cached,
-            Marked
         }
+
+        #endregion
 
         private double SpacingBetweenBlocks(PageBlock upper, PageBlock lower)
         {
@@ -2099,20 +410,7 @@ namespace Telegram.Views
                 return 0.0;
             }
 
-            return _padding;
-        }
-
-        private void Image_Click(object sender, RoutedEventArgs e)
-        {
-            var image = sender as ImageView;
-            var item = image.DataContext as GalleryMedia;
-            if (item != null)
-            {
-                ViewModel.Gallery.SelectedItem = item;
-                ViewModel.Gallery.FirstItem = item;
-
-                ViewModel.NavigationService.ShowGallery(ViewModel.Gallery, image);
-            }
+            return 12;
         }
 
         private async void Hyperlink_Click(RichTextAnchorLink anchorLinkText)
@@ -2121,7 +419,7 @@ namespace Telegram.Views
             {
                 ScrollingHost.ScrollToTop();
             }
-            else if (_anchors.TryGetValue(anchorLinkText.AnchorName, out Border anchor))
+            else if (_renderer.TryGetAnchor(anchorLinkText.AnchorName, out Border anchor))
             {
                 await ScrollingHost.ScrollToItem2(anchor, VerticalAlignment.Top);
             }
