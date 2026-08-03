@@ -136,6 +136,7 @@ namespace Telegram.Common
                 PageBlockSlideshow slideshow => ProcessSlideshow(clientService, slideshow),
                 PageBlockCollage collage => ProcessCollage(clientService, collage),
                 PageBlockPullQuote pullquote => ProcessPullquote(clientService, pullquote),
+                PageBlockDocument document => ProcessDocument(clientService, document),
                 PageBlockAnchor anchor => ProcessAnchor(clientService, anchor),
                 PageBlockPreformatted preformatted => ProcessPreformatted(clientService, preformatted),
                 PageBlockChatLink channel => ProcessChannel(clientService, channel),
@@ -948,6 +949,38 @@ namespace Telegram.Common
                 Content = content,
                 Padding = new Thickness(8, 4, 24, 6)
             };
+        }
+
+        private FrameworkElement ProcessDocument(IClientService clientService, PageBlockDocument block)
+        {
+            if (block.Document == null)
+            {
+                return null;
+            }
+
+            var message = CreateMessage(clientService, block.Document.DocumentValue.Id, new MessageDocument(block.Document, string.Empty.AsFormattedText()));
+            var content = new DocumentContent(message);
+#if INSTRUMENTATION
+            _context.RegisterDebug(content);
+#endif
+            content.HorizontalAlignment = HorizontalAlignment.Left;
+            content.ClearValue(FrameworkElement.MaxWidthProperty);
+            content.ClearValue(FrameworkElement.MaxHeightProperty);
+
+            var caption = ProcessCaption(clientService, block.Caption);
+            if (caption != null)
+            {
+                caption.Margin = new Thickness(0, 8, 0, 0);
+
+                var element = new StackPanel();
+
+                element.Children.Add(content);
+                element.Children.Add(caption);
+
+                return element;
+            }
+
+            return content;
         }
 
         private FrameworkElement ProcessPullquote(IClientService clientService, PageBlockPullQuote block)
