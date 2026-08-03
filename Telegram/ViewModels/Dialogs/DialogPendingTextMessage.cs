@@ -402,18 +402,23 @@ namespace Telegram.ViewModels
                 PageBlockFooter b => Length(b.Footer),
                 PageBlockThinking b => Length(b.Text),
                 PageBlockPullQuote b => Length(b.Text) + Length(b.Credit),
+                PageBlockExpandableBlockQuote b => Length(b.Text) + Length(b.Credit),
                 PageBlockMathematicalExpression b => b.Expression?.Length ?? 0,
                 // Atomic
                 PageBlockAnchor _ => 0,
                 PageBlockDivider _ => 1,
                 PageBlockChatLink _ => 1,
                 //PageBlockThinking _ => 1,
+                // A button is atomic and costs 1, so a row reveals one button at a
+                // time instead of appearing all at once — and never half-drawn.
+                PageBlockButtonRow b => b.Buttons?.Count ?? 0,
                 // Media + caption
                 PageBlockAnimation b => 1 + Length(b.Caption),
                 PageBlockAudio b => 1 + Length(b.Caption),
                 PageBlockPhoto b => 1 + Length(b.Caption),
                 PageBlockVideo b => 1 + Length(b.Caption),
                 PageBlockVoiceNote b => 1 + Length(b.Caption),
+                PageBlockDocument b => 1 + Length(b.Caption),
                 PageBlockMap b => 1 + Length(b.Caption),
                 PageBlockEmbedded b => 1 + Length(b.Caption),
                 // Containers
@@ -453,6 +458,9 @@ namespace Telegram.ViewModels
                 // Leaves
                 case RichTextAnchor _: return 0;
                 case RichTextIcon _: return 1;
+                // 1, not the label's length: the label is never revealed piecemeal,
+                // and SubstringRichText has no partial form for it.
+                case RichTextButton _: return 1;
                 case RichTextCustomEmoji ce: return ce.AlternativeText?.Length ?? 0;
                 case RichTextMathematicalExpression me: return me.Expression?.Length ?? 0;
 
@@ -596,6 +604,14 @@ namespace Telegram.ViewModels
                         var credit = SubstringRichText(b.Credit, ref remaining);
                         return new PageBlockPullQuote(text, credit);
                     }
+                case PageBlockExpandableBlockQuote b:
+                    {
+                        // Rich text + credit, like the pull quote above — not a list of
+                        // blocks like PageBlockBlockQuote.
+                        var text = SubstringRichText(b.Text, ref remaining) ?? new RichTextPlain("");
+                        var credit = SubstringRichText(b.Credit, ref remaining);
+                        return new PageBlockExpandableBlockQuote(text, credit);
+                    }
                 case PageBlockMathematicalExpression b:
                     {
                         var expr = b.Expression ?? string.Empty;
@@ -635,11 +651,33 @@ namespace Telegram.ViewModels
                         var caption = SubstringCaption(b.Caption, ref remaining);
                         return new PageBlockVoiceNote(b.VoiceNote, caption);
                     }
+                case PageBlockDocument b:
+                    {
+                        remaining -= 1;
+                        var caption = SubstringCaption(b.Caption, ref remaining);
+                        return new PageBlockDocument(b.Document, caption);
+                    }
                 case PageBlockMap b:
                     {
                         remaining -= 1;
                         var caption = SubstringCaption(b.Caption, ref remaining);
                         return new PageBlockMap(b.Location, b.Zoom, b.Width, b.Height, caption);
+                    }
+
+                // One whole button per unit — never a partial one.
+                case PageBlockButtonRow b:
+                    {
+                        var buttons = new List<InlineButton>();
+                        if (b.Buttons != null)
+                        {
+                            foreach (var button in b.Buttons)
+                            {
+                                if (remaining <= 0) break;
+                                remaining -= 1;
+                                buttons.Add(button);
+                            }
+                        }
+                        return new PageBlockButtonRow(buttons, b.Align);
                     }
                 case PageBlockEmbedded b:
                     {
@@ -750,9 +788,12 @@ namespace Telegram.ViewModels
                         return new RichTextMathematicalExpression(expr.Substring(0, take));
                     }
 
-                // Atomic, no partial form.
+                // Atomic, no partial form. (A button never reaches this switch: it
+                // costs 1, so it either fits whole above or is stopped by the
+                // remaining <= 0 guard at the top.)
                 case RichTextIcon _:
                 case RichTextCustomEmoji _:
+                case RichTextButton _:
                     return null;
 
                 // Wrappers without metadata

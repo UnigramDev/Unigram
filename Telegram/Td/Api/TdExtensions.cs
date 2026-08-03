@@ -1508,6 +1508,9 @@ namespace Telegram.Td.Api
                     return ToPlainText(underlineText.Text);
                 case RichTextUrl urlText:
                     return ToPlainText(urlText.Text);
+                case RichTextButton _:
+                    // TODO: decide if to extract text or not.
+                    return PageBlockHelper.PlaceholderButton;
                 default:
                     return null;
             }
@@ -2543,6 +2546,11 @@ namespace Telegram.Td.Api
                             });
                         }
                     }
+                    return;
+
+                case RichTextButton _:
+                    // TODO: decide what to do here
+                    sb.Append(PageBlockHelper.PlaceholderButton);
                     return;
 
                 case RichTextAnchor _:
