@@ -5,11 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using LinqToVisualTree;
 using System;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Entities;
@@ -18,7 +15,6 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 
@@ -171,32 +167,7 @@ namespace Telegram.Controls.Chats
 
         protected override string GetNameCore()
         {
-            var builder = new StringBuilder();
-            var descendants = _owner.DescendantsAndSelf();
-
-            foreach (UIElement child in descendants.Where(x => x is TextBlock or RichTextBlock))
-            {
-                var view = AutomationProperties.GetAccessibilityView(child);
-                if (view == AccessibilityView.Raw)
-                {
-                    continue;
-                }
-
-                var peer = FrameworkElementAutomationPeer.FromElement(child);
-                if (peer == null)
-                {
-                    continue;
-                }
-
-                if (builder.Length > 0)
-                {
-                    builder.Append(", ");
-                }
-
-                builder.Append(peer.GetName());
-            }
-
-            return builder.ToString();
+            return Automation.GetNameCore(_owner);
         }
     }
 }
