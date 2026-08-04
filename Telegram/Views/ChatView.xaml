@@ -2202,7 +2202,7 @@
 
                                 <controls:GlyphButton x:Name="ButtonMaximize"
                                                       Click="ButtonMaximize_Click"
-                                                      Glyph="&#xEA95;"
+                                                      Glyph="&#xEB24;"
                                                       VerticalAlignment="Top"
                                                       Height="48"
                                                       Visibility="Collapsed"
