@@ -5159,13 +5159,19 @@ namespace Telegram.Views
             }
             else if (args.Item is QuickReplyShortcut shortcut)
             {
-                var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
-                var photo = content.Children[0] as ProfilePicture;
-                var title = content.Children[1] as TextBlock;
-
-                var command = title.Inlines[0] as Run;
-                var description = title.Inlines[1] as Run;
+                // The list picks its template per item type, so a recycled container can still be
+                // showing the previous type's tree when this fires. Match the shape instead of
+                // indexing into it blindly.
+                if (args.ItemContainer.ContentTemplateRoot is not Grid content
+                    || content.Children.Count < 2
+                    || content.Children[0] is not ProfilePicture photo
+                    || content.Children[1] is not TextBlock title
+                    || title.Inlines.Count < 2
+                    || title.Inlines[0] is not Run command
+                    || title.Inlines[1] is not Run description)
+                {
+                    return;
+                }
 
                 command.Text = $"/{shortcut.Name} ";
                 description.Text = Locale.Declension(Strings.R.messages, shortcut.MessageCount);
@@ -5177,13 +5183,17 @@ namespace Telegram.Views
             }
             else if (args.Item is User user)
             {
-                var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
-                var photo = content.Children[0] as ProfilePicture;
-                var title = content.Children[1] as TextBlock;
-
-                var name = title.Inlines[0] as Run;
-                var username = title.Inlines[1] as Run;
+                // Same shape as the shortcut branch above, and the same recycling hazard.
+                if (args.ItemContainer.ContentTemplateRoot is not Grid content
+                    || content.Children.Count < 2
+                    || content.Children[0] is not ProfilePicture photo
+                    || content.Children[1] is not TextBlock title
+                    || title.Inlines.Count < 2
+                    || title.Inlines[0] is not Run name
+                    || title.Inlines[1] is not Run username)
+                {
+                    return;
+                }
 
                 name.Text = user.FullName();
 
