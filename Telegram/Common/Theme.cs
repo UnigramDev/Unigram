@@ -93,7 +93,7 @@ namespace Telegram.Common
             this["ContentControlThemeFontFamily"] = new FontFamily(XamlAutoFontFamily);
             this["EmojiThemeFontFamily"] = new FontFamily(XamlAutoFontFamily);
             this["EmojiThemeFontFamilyWithSymbols"] = new FontFamily(XamlAutoFontFamily + comma + "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
-            this["EmojiThemeFontFamilyWithRounded"] = new FontFamily(XamlAutoFontFamily + comma + "ms-appx:///Assets/Fonts/Nunito.ttf#Nunito" + comma + "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
+            this["EmojiThemeFontFamilyWithRounded"] = new FontFamily(XamlAutoFontFamily + comma + "ms-appx:///Assets/Fonts/Nunito.ttf#Nunito Bold" + comma + "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
             this["EmojiThemeFontFamilyWithSerif"] = new FontFamily(emojiFontFamily + comma + "Times New Roman");
         }
 

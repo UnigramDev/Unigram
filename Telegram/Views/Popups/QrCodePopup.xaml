@@ -71,6 +71,8 @@
                                     <Style TargetType="TextBlock">
                                         <Setter Property="FontFamily"
                                                 Value="/Assets/Fonts/Nunito.ttf#Nunito" />
+                                        <Setter Property="FontWeight"
+                                                Value="SemiBold" />
                                         <Setter Property="FontSize"
                                                 Value="24" />
                                     </Style>
