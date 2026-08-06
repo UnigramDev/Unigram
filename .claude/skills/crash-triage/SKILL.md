@@ -146,12 +146,19 @@ than an honest "not diagnosed".
 
 ## 5. Fix and open a PR
 
-The fix ships from current code, not from the old release, so branch off `develop`:
+The fix ships from current code, not from the old release, so branch off `develop` — but off
+**GitHub's** develop, not a local mirror of it. A clone of the user's working repo inherits their
+remote-tracking refs, which are routinely stale *and* carry unpushed local commits, so
+`origin/develop` there is not the branch the PR will merge into:
 
 ```
-git -C <workdir> fetch origin develop
-git -C <workdir> checkout -b fix/<short-slug> origin/develop
+git -C <workdir> remote add github https://github.com/UnigramDev/Unigram
+git -C <workdir> fetch github develop
+git -C <workdir> checkout -b <short-slug> github/develop
 ```
+
+Do not prefix the branch with `fix/`: a branch literally named `fix` already exists on the
+remote, and git rejects the push with `directory file conflict`.
 
 **First re-check the bug on `develop`.** The code may have moved or already been fixed. If it
 is already fixed, stop and report that — including which commit fixed it, so the user can
@@ -164,13 +171,23 @@ allocations in rendering/layout, and no lambda event handlers.
 Open the PR against `develop`:
 
 ```
-git -C <workdir> push -u origin fix/<short-slug>
-gh pr create --repo UnigramDev/Unigram --base develop --title "..." --body "..."
+git -C <workdir> push -u github <short-slug>
+gh pr create --repo UnigramDev/Unigram --base develop --head <short-slug> --title "..." --body "..."
 ```
 
 The PR body should carry: the crash group hash, error type and message, affected users and
 count, the versions affected, the symbolicated frames that identify the site, the diagnosis,
 and what the fix changes. That is what makes the PR reviewable without re-running the tooling.
+
+**State plainly whether the change was built and run.** A UWP/.NET Native build is usually not
+available here, and a reviewer must not have to guess whether a patch was compiled. Roslyn will
+at least confirm the file still parses:
+
+```
+CSharpSyntaxTree.ParseText(File.ReadAllText(path)).GetDiagnostics()
+```
+
+That catches typos, not type errors — say so rather than implying more.
 
 ## Limits
 
