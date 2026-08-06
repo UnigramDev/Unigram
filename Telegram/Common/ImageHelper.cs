@@ -513,7 +513,9 @@ namespace Telegram.Common
 
         public static async Task<IRandomAccessStream> OpenReadAsync(StorageFile sourceFile, TimeSpan? trimStart = null)
         {
-            if (sourceFile.FileType.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
+            // The same set EditMediaPopup uses to decide whether a file is a video, so
+            // the two cannot disagree about what reaches the frame extraction below.
+            if (sourceFile.HasExtension(Constants.VideoTypes))
             {
                 return await Task.Run(async () =>
                 {
