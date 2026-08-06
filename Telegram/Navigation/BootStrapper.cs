@@ -637,9 +637,26 @@ namespace Telegram.Navigation
 
             CallOnInitialize(false, e);
 
-            if (WindowContext.Current.Content == null)
+            // The context is normally built by OnWindowCreated, but it is thread-static and gets
+            // cleared when a view's dispatcher shuts down, so an activation arriving on a view
+            // that has been through that leaves us with none. InternalActivated already allows
+            // for it (it tests WindowContext.Current?.Content) and calls in here regardless, so
+            // build one instead of dereferencing null.
+            var context = WindowContext.Current;
+            if (context == null)
             {
-                WindowContext.Current.Content = CreateRootElement(e, WindowContext.Current);
+                if (Window.Current == null)
+                {
+                    Logger.Error("No window to initialize the frame with");
+                    return;
+                }
+
+                context = CreateWindowWrapper(Window.Current);
+            }
+
+            if (context.Content == null)
+            {
+                context.Content = CreateRootElement(e, context);
             }
             else
             {
