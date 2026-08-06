@@ -26,41 +26,45 @@ namespace Telegram.Common
 {
     public static class ImageHelper
     {
-        public static Size Scale(this Size size, double requestedMaxSide)
-        {
-            double ratioX = (double)requestedMaxSide / size.Width;
-            double ratioY = (double)requestedMaxSide / size.Height;
-            double ratio = Math.Max(ratioX, ratioY);
+        #region Scaling
 
-            return new Size(size.Width * ratio, size.Height * ratio);
+        // Contain semantics throughout: the source fits inside a square of the given
+        // side. SizeEx.Scale in Telegram.Controls has an identical signature but
+        // multiplies by a factor instead.
+
+        /// <summary>
+        /// Factor that fits <paramref name="width"/> by <paramref name="height"/> inside
+        /// a square of <paramref name="side"/>, touching it on the longer edge. Greater
+        /// than 1 when the source is smaller than the box; use <see cref="Clamp"/> for a
+        /// bound that never scales up.
+        /// </summary>
+        public static double FitRatio(double width, double height, double side)
+        {
+            return Math.Min(side / width, side / height);
         }
 
-        public static Size Scale(double width, double height, double requestedMaxSide)
+        /// <summary><see cref="FitRatio"/> applied to the size itself.</summary>
+        public static Size Fit(double width, double height, double side)
         {
-            double ratioX = (double)requestedMaxSide / width;
-            double ratioY = (double)requestedMaxSide / height;
-            double ratio = Math.Max(ratioX, ratioY);
-
+            var ratio = FitRatio(width, height, side);
             return new Size(width * ratio, height * ratio);
         }
 
-        public static double ScaleRatioMin(double width, double height, double requestedMaxSide)
+        /// <summary>
+        /// <see cref="Fit"/> when the size exceeds <paramref name="maxSide"/>, otherwise
+        /// the size unchanged. Never scales up.
+        /// </summary>
+        public static Size Clamp(double width, double height, double maxSide)
         {
-            double ratioX = (double)requestedMaxSide / width;
-            double ratioY = (double)requestedMaxSide / height;
-            double ratio = Math.Min(ratioX, ratioY);
+            if (width > maxSide || height > maxSide)
+            {
+                return Fit(width, height, maxSide);
+            }
 
-            return ratio;
+            return new Size(width, height);
         }
 
-        public static Size ScaleMin(double width, double height, double requestedMaxSide)
-        {
-            double ratioX = (double)requestedMaxSide / width;
-            double ratioY = (double)requestedMaxSide / height;
-            double ratio = Math.Min(ratioX, ratioY);
-
-            return new Size(width * ratio, height * ratio);
-        }
+        #endregion
 
         public static async Task<SizeInt32> GetScaleAsync(StorageFile file, bool allowMultipleFrames = false, int requestedMinSide = 1280, ImageGeneration generation = null)
         {
@@ -88,23 +92,12 @@ namespace Telegram.Common
                         height = (uint)(crop.Height * height);
                     }
 
-                    if (width > requestedMinSide || height > requestedMinSide)
-                    {
-                        double ratioX = (double)requestedMinSide / width;
-                        double ratioY = (double)requestedMinSide / height;
-                        double ratio = Math.Min(ratioX, ratioY);
-
-                        return new SizeInt32
-                        {
-                            Width = (int)(width * ratio),
-                            Height = (int)(height * ratio)
-                        };
-                    }
+                    var scaled = Clamp(width, height, requestedMinSide);
 
                     return new SizeInt32
                     {
-                        Width = (int)(width),
-                        Height = (int)(height)
+                        Width = (int)scaled.Width,
+                        Height = (int)scaled.Height
                     };
                 }
             }
@@ -149,21 +142,18 @@ namespace Telegram.Common
 
             using (var resizedStream = await resizedImageFile.OpenAsync(FileAccessMode.ReadWrite))
             {
+                // An empty transform, not one set to the source's own size: the decoder
+                // resamples whenever ScaledWidth and ScaledHeight are set.
                 BitmapTransform transform;
 
-                if (requestedMinSide > 0 && (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide))
+                if (requestedMinSide > 0 && (originalPixelWidth > requestedMinSide || originalPixelHeight > requestedMinSide))
                 {
-                    double ratioX = (double)requestedMinSide / originalPixelWidth;
-                    double ratioY = (double)requestedMinSide / originalPixelHeight;
-                    double ratio = Math.Min(ratioX, ratioY);
-
-                    uint width = (uint)(originalPixelWidth * ratio);
-                    uint height = (uint)(originalPixelHeight * ratio);
+                    var scaled = Fit(originalPixelWidth, originalPixelHeight, requestedMinSide);
 
                     transform = new BitmapTransform
                     {
-                        ScaledWidth = width,
-                        ScaledHeight = height,
+                        ScaledWidth = (uint)scaled.Width,
+                        ScaledHeight = (uint)scaled.Height,
                         InterpolationMode = bestQuality
                             ? BitmapInterpolationMode.Fant
                             : BitmapInterpolationMode.Linear
@@ -223,20 +213,10 @@ namespace Telegram.Common
                         using var videoStream = await source.File.OpenReadAsync();
                         using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false, false);
 
-                        if (animation.PixelWidth > requestedMinSide || animation.PixelHeight > requestedMinSide)
-                        {
-                            double ratioX = (double)requestedMinSide / animation.PixelWidth;
-                            double ratioY = (double)requestedMinSide / animation.PixelHeight;
-                            double ratio = Math.Min(ratioX, ratioY);
+                        var scaled = Clamp(animation.PixelWidth, animation.PixelHeight, requestedMinSide);
 
-                            width = (int)(animation.PixelWidth * ratio);
-                            height = (int)(animation.PixelHeight * ratio);
-                        }
-                        else
-                        {
-                            width = animation.PixelWidth;
-                            height = animation.PixelHeight;
-                        }
+                        width = (int)scaled.Width;
+                        height = (int)scaled.Height;
 
                         var frame = BufferSurface.Create((uint)(width * height * 4));
                         animation.RenderSync(frame, width, height, true, out _);
@@ -268,24 +248,16 @@ namespace Telegram.Common
             var decoder = await BitmapDecoder.CreateAsync(source);
             if (decoder.BitmapPixelFormat == BitmapPixelFormat.Bgra8)
             {
-                var originalPixelWidth = decoder.PixelWidth;
-                var originalPixelHeight = decoder.PixelHeight;
-
                 BitmapTransform transform;
 
                 if (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide)
                 {
-                    double ratioX = (double)requestedMinSide / originalPixelWidth;
-                    double ratioY = (double)requestedMinSide / originalPixelHeight;
-                    double ratio = Math.Min(ratioX, ratioY);
-
-                    uint width = (uint)(originalPixelWidth * ratio);
-                    uint height = (uint)(originalPixelHeight * ratio);
+                    var scaled = Fit(decoder.PixelWidth, decoder.PixelHeight, requestedMinSide);
 
                     transform = new BitmapTransform
                     {
-                        ScaledWidth = width,
-                        ScaledHeight = height,
+                        ScaledWidth = (uint)scaled.Width,
+                        ScaledHeight = (uint)scaled.Height,
                         InterpolationMode = BitmapInterpolationMode.Linear
                     };
                 }
@@ -309,6 +281,70 @@ namespace Telegram.Common
             }
         }
 
+        /// <summary>
+        /// Builds the decoder transform for a crop: the source region to read, the size
+        /// of the resized image, and the rotation and flip to apply. Shared by
+        /// <see cref="CropAsync"/> and <see cref="CropAndPreviewAsync"/>.
+        /// </summary>
+        /// <param name="cropRectangle">
+        /// Normalized when its right and bottom edges are within 1, in pixels otherwise,
+        /// the whole image when empty.
+        /// </param>
+        private static BitmapTransform ComputeCropTransform(BitmapDecoder decoder, Rect cropRectangle,
+            ImageRotation rotation, ImageFlip flip, int min, int max, BitmapInterpolationMode interpolation)
+        {
+            var imageSize = new Size(decoder.PixelWidth, decoder.PixelHeight);
+
+            // TODO: cropRectangle comes already translated, so no rotation/flip needs to be applied to it
+            // I don't really like this, but at the same time I don't like the idea of "unapplying" the transform in ImageCropper
+            //
+            // The size is therefore swapped twice: first to expand a normalized rectangle
+            // against the cropper's dimensions, then back so ScaledWidth and ScaledHeight
+            // describe the source, which the decoder scales before rotating.
+            var rotated = rotation is ImageRotation.Clockwise90Degrees or ImageRotation.Clockwise270Degrees;
+
+            if (rotated)
+            {
+                (imageSize.Width, imageSize.Height) = (imageSize.Height, imageSize.Width);
+            }
+
+            if (cropRectangle == default || (cropRectangle.Width == 0 && cropRectangle.Height == 0))
+            {
+                cropRectangle = new Rect(0, 0, decoder.PixelWidth, decoder.PixelHeight);
+            }
+            else if (cropRectangle.Right <= 1 && cropRectangle.Bottom <= 1)
+            {
+                cropRectangle = new Rect(
+                    cropRectangle.X * imageSize.Width,
+                    cropRectangle.Y * imageSize.Height,
+                    cropRectangle.Width * imageSize.Width,
+                    cropRectangle.Height * imageSize.Height);
+            }
+
+            (cropRectangle, imageSize) = Scale(cropRectangle, imageSize, min, max);
+
+            if (rotated)
+            {
+                (imageSize.Width, imageSize.Height) = (imageSize.Height, imageSize.Width);
+            }
+
+            return new BitmapTransform
+            {
+                ScaledWidth = (uint)imageSize.Width,
+                ScaledHeight = (uint)imageSize.Height,
+                Bounds = new BitmapBounds
+                {
+                    X = (uint)cropRectangle.X,
+                    Y = (uint)cropRectangle.Y,
+                    Width = (uint)cropRectangle.Width,
+                    Height = (uint)cropRectangle.Height
+                },
+                Rotation = (BitmapRotation)rotation,
+                Flip = (BitmapFlip)flip,
+                InterpolationMode = interpolation
+            };
+        }
+
         public static async Task<StorageFile> CropAsync(StorageFile sourceFile, StorageFile file, Rect cropRectangle, int min = 1280, int max = 0, double quality = 0.77, ImageRotation rotation = ImageRotation.None, ImageFlip flip = ImageFlip.None, TimeSpan? trimStart = null, bool bestQuality = false)
         {
             file ??= await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
@@ -317,62 +353,8 @@ namespace Telegram.Common
             using (var destination = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
                 var decoder = await BitmapDecoder.CreateAsync(source);
-                var imageSize = new Size(decoder.PixelWidth, decoder.PixelHeight);
-
-                // TODO: cropRectangle comes already translated, so no rotation/flip needs to be applied to it
-                // I don't really like this, but at the same time I don't like the idea of "unapplying" the transform in ImageCropper
-                if (rotation is ImageRotation.Clockwise90Degrees or ImageRotation.Clockwise270Degrees)
-                {
-                    (imageSize.Width, imageSize.Height) = (imageSize.Height, imageSize.Width);
-                }
-
-                if (cropRectangle == default || (cropRectangle.Width == 0 && cropRectangle.Height == 0))
-                {
-                    cropRectangle = new Rect(0, 0, decoder.PixelWidth, decoder.PixelHeight);
-                }
-                else if (cropRectangle.Right <= 1 && cropRectangle.Bottom <= 1)
-                {
-                    cropRectangle = new Rect(
-                        cropRectangle.X * imageSize.Width,
-                        cropRectangle.Y * imageSize.Height,
-                        cropRectangle.Width * imageSize.Width,
-                        cropRectangle.Height * imageSize.Height);
-                }
-
-                (cropRectangle, imageSize) = Scale(cropRectangle, imageSize, min, max);
-
-                if (rotation is ImageRotation.Clockwise90Degrees or ImageRotation.Clockwise270Degrees)
-                {
-                    (imageSize.Width, imageSize.Height) = (imageSize.Height, imageSize.Width);
-                }
-
-                //if (flip != ImageFlip.None)
-                //{
-                //    cropRectangle = FlipArea(cropRectangle, imageSize.Width, imageSize.Height, flip);
-                //}
-
-                //if (rotation != ImageRotation.None)
-                //{
-                //    cropRectangle = RotateArea(cropRectangle, imageSize.Width, imageSize.Height, (int)rotation);
-                //}
-
-                var bounds = new BitmapBounds();
-                bounds.X = (uint)cropRectangle.X;
-                bounds.Y = (uint)cropRectangle.Y;
-                bounds.Width = (uint)cropRectangle.Width;
-                bounds.Height = (uint)cropRectangle.Height;
-
-                var transform = new BitmapTransform
-                {
-                    ScaledWidth = (uint)imageSize.Width,
-                    ScaledHeight = (uint)imageSize.Height,
-                    Bounds = bounds,
-                    Rotation = (BitmapRotation)rotation,
-                    Flip = (BitmapFlip)flip,
-                    InterpolationMode = bestQuality
-                            ? BitmapInterpolationMode.Fant
-                            : BitmapInterpolationMode.Linear
-                };
+                var transform = ComputeCropTransform(decoder, cropRectangle, rotation, flip, min, max,
+                    bestQuality ? BitmapInterpolationMode.Fant : BitmapInterpolationMode.Linear);
 
                 var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
@@ -420,40 +402,36 @@ namespace Telegram.Common
             return area;
         }
 
-        private static (Rect, Size) Scale(Rect rect, Size start, int min, int max)
+        /// <summary>
+        /// Scales a crop rectangle and its source image by the same factor, so the crop
+        /// covers the same region once the decoder has resized the image.
+        ///
+        /// The factor is derived from the crop, bounded above by <paramref name="min"/>
+        /// and below by <paramref name="max"/>. Returns the rectangle in the resized
+        /// image's coordinates and the size of that resized image.
+        /// </summary>
+        private static (Rect Crop, Size Image) Scale(Rect rect, Size image, int min, int max)
         {
-            var width = rect.Width;
-            var height = rect.Height;
+            var scaled = Clamp(rect.Width, rect.Height, min);
 
-            if (width > min || height > min)
+            // Then up to the floor. The larger ratio, because both sides must reach
+            // max: the smaller one brings the longer edge down to it and leaves the
+            // shorter edge below.
+            if (scaled.Width < max || scaled.Height < max)
             {
-                double ratioX = min / width;
-                double ratioY = min / height;
-                double ratio = Math.Min(ratioX, ratioY);
+                double ratio = Math.Max(max / scaled.Width, max / scaled.Height);
 
-                width *= ratio;
-                height *= ratio;
+                scaled.Width *= ratio;
+                scaled.Height *= ratio;
             }
 
-            if (width < max || height < max)
-            {
-                double ratioX = max / width;
-                double ratioY = max / height;
-                double ratio = Math.Min(ratioX, ratioY);
+            // One factor per axis. The scaling above is uniform so the two agree, but a
+            // zero-width or zero-height crop must keep yielding NaN as it did before.
+            var ratioW = scaled.Width / rect.Width;
+            var ratioH = scaled.Height / rect.Height;
 
-                width *= ratio;
-                height *= ratio;
-            }
-
-            var ratioW = start.Width * width / rect.Width;
-            var ratioH = start.Height * height / rect.Height;
-
-            var x = rect.X * ratioW / start.Width;
-            var y = rect.Y * ratioH / start.Height;
-            var w = rect.Width * ratioW / start.Width;
-            var h = rect.Height * ratioH / start.Height;
-
-            return (new Rect(x, y, w, h), new Size(ratioW, ratioH));
+            return (new Rect(rect.X * ratioW, rect.Y * ratioH, scaled.Width, scaled.Height),
+                new Size(image.Width * ratioW, image.Height * ratioH));
         }
 
         public static async Task<ImageSource> CropAndPreviewAsync(StorageMedia source, ImageGeneration generation, int maxSize = 1280)
@@ -489,50 +467,8 @@ namespace Telegram.Common
         public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream source, ImageGeneration generation, int maxSize = 1280)
         {
             var decoder = await BitmapDecoder.CreateAsync(source);
-
-            var cropRectangle = generation.Rectangle;
-            var imageSize = new Size(decoder.PixelWidth, decoder.PixelHeight);
-
-            // TODO: cropRectangle comes already translated, so no rotation/flip needs to be applied to it
-            // I don't really like this, but at the same time I don't like the idea of "unapplying" the transform in ImageCropper
-            if (generation.Rotation is ImageRotation.Clockwise90Degrees or ImageRotation.Clockwise270Degrees)
-            {
-                (imageSize.Width, imageSize.Height) = (imageSize.Height, imageSize.Width);
-            }
-
-            if (cropRectangle == default || (cropRectangle.Width == 0 && cropRectangle.Height == 0))
-            {
-                cropRectangle = new Rect(0, 0, decoder.PixelWidth, decoder.PixelHeight);
-            }
-            else if (cropRectangle.Right <= 1 && cropRectangle.Bottom <= 1)
-            {
-                cropRectangle = new Rect(
-                    cropRectangle.X * imageSize.Width,
-                    cropRectangle.Y * imageSize.Height,
-                    cropRectangle.Width * imageSize.Width,
-                    cropRectangle.Height * imageSize.Height);
-            }
-
-            (cropRectangle, imageSize) = Scale(cropRectangle, imageSize, maxSize, 0);
-
-            if (generation.Rotation is ImageRotation.Clockwise90Degrees or ImageRotation.Clockwise270Degrees)
-            {
-                (imageSize.Width, imageSize.Height) = (imageSize.Height, imageSize.Width);
-            }
-
-            var bounds = new BitmapBounds();
-            bounds.X = (uint)cropRectangle.X;
-            bounds.Y = (uint)cropRectangle.Y;
-            bounds.Width = (uint)cropRectangle.Width;
-            bounds.Height = (uint)cropRectangle.Height;
-
-            var transform = new BitmapTransform();
-            transform.ScaledWidth = (uint)imageSize.Width;
-            transform.ScaledHeight = (uint)imageSize.Height;
-            transform.Bounds = bounds;
-            transform.InterpolationMode = BitmapInterpolationMode.Linear;
-            transform.Rotation = (BitmapRotation)generation.Rotation;
-            transform.Flip = (BitmapFlip)generation.Flip;
+            var transform = ComputeCropTransform(decoder, generation.Rectangle, generation.Rotation, generation.Flip,
+                maxSize, 0, BitmapInterpolationMode.Linear);
 
             var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
@@ -587,18 +523,16 @@ namespace Telegram.Common
             }
         }
 
-        public static BitmapTransform ComputeScalingTransformForSourceImage(BitmapDecoder sourceDecoder)
+        public static BitmapTransform ComputeScalingTransformForSourceImage(BitmapDecoder sourceDecoder, int maxSide = 1280)
         {
             var transform = new BitmapTransform();
 
-            if (sourceDecoder.PixelWidth > 1280 || sourceDecoder.PixelHeight > 1280)
+            if (sourceDecoder.PixelWidth > maxSide || sourceDecoder.PixelHeight > maxSide)
             {
-                double ratioX = (double)1280 / sourceDecoder.PixelWidth;
-                double ratioY = (double)1280 / sourceDecoder.PixelHeight;
-                double ratio = Math.Min(ratioX, ratioY);
+                var scaled = Fit(sourceDecoder.PixelWidth, sourceDecoder.PixelHeight, maxSide);
 
-                transform.ScaledWidth = (uint)(sourceDecoder.PixelWidth * ratio);
-                transform.ScaledHeight = (uint)(sourceDecoder.PixelHeight * ratio);
+                transform.ScaledWidth = (uint)scaled.Width;
+                transform.ScaledHeight = (uint)scaled.Height;
                 transform.InterpolationMode = BitmapInterpolationMode.Linear;
             }
 

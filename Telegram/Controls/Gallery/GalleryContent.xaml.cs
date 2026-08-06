@@ -543,7 +543,7 @@ namespace Telegram.Controls.Gallery
         {
             if (args.Width != 0 && args.Height != 0 && !ActualConstraint.IsEmpty)
             {
-                var size = ImageHelper.ScaleMin(args.Width, args.Height, Math.Max(ActualConstraint.Width, ActualConstraint.Height));
+                var size = ImageHelper.Fit(args.Width, args.Height, Math.Max(ActualConstraint.Width, ActualConstraint.Height));
                 Constraint = new MaximumSize(size.Width, size.Height);
             }
         }

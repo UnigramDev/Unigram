@@ -275,7 +275,7 @@ namespace Telegram.Controls.Gallery
             }
 
             _storyboardFrames = frames;
-            _storyboardScale = ImageHelper.ScaleRatioMin(width, height, 144);
+            _storyboardScale = ImageHelper.FitRatio(width, height, 144);
 
             _tooltip.Width = width * _storyboardScale;
             _tooltip.Height = height * _storyboardScale;
