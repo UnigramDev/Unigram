@@ -114,13 +114,17 @@ namespace Telegram.Common
 
 
         /// <summary>
-        /// Resizes and crops source file image so that resized image width/height are not larger than <param name="requestedMinSide"></param>
+        /// Re-encodes an image so that neither side exceeds
+        /// <paramref name="requestedMinSide"/>.
         /// </summary>
-        /// <param name="sourceFile">Source StorageFile</param>
-        /// <param name="resizedImageFile">Target StorageFile</param>
-        /// <param name="requestedMinSide">Max width/height of the output image</param>
-        /// <param name="quality">JPEG compression quality (0.77 for pictures, 0.87 for thumbnails)</param>
-        /// <returns></returns>
+        /// <param name="requestedMinSide">
+        /// Upper bound on width and height, despite the name. Zero leaves the source
+        /// size alone.
+        /// </param>
+        /// <param name="bestQuality">Fant interpolation rather than linear.</param>
+        /// <param name="trimStart">
+        /// For video sources, the position to take the frame from.
+        /// </param>
         public static async Task<StorageFile> ScaleAsync(Guid encoderId, StorageFile sourceFile, StorageFile resizedImageFile, int requestedMinSide, bool bestQuality = false, TimeSpan? trimStart = null)
         {
             using (var source = await OpenReadAsync(sourceFile, trimStart))
@@ -168,7 +172,7 @@ namespace Telegram.Common
 
                 // Not using ATM, quality is too low
                 //var propertySet = new BitmapPropertySet();
-                //var qualityValue = new BitmapTypedValue(quality, Windows.Foundation.PropertyType.Single);
+                //var qualityValue = new BitmapTypedValue(0.77, Windows.Foundation.PropertyType.Single);
                 //propertySet.Add("ImageQuality", qualityValue);
 
                 var encoder = await BitmapEncoder.CreateAsync(encoderId, resizedStream/*, propertySet*/);
@@ -351,11 +355,11 @@ namespace Telegram.Common
             };
         }
 
-        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, StorageFile file, Rect cropRectangle, int min = 1280, int max = 0, double quality = 0.77, ImageRotation rotation = ImageRotation.None, ImageFlip flip = ImageFlip.None, TimeSpan? trimStart = null, bool bestQuality = false)
+        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, StorageFile file, Rect cropRectangle, int min = 1280, int max = 0, ImageRotation rotation = ImageRotation.None, ImageFlip flip = ImageFlip.None, TimeSpan? trimStart = null, bool bestQuality = false)
         {
             file ??= await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
 
-            using (var source = await OpenReadAsync(sourceFile))
+            using (var source = await OpenReadAsync(sourceFile, trimStart))
             using (var destination = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
                 var decoder = await BitmapDecoder.CreateAsync(source);
@@ -366,7 +370,7 @@ namespace Telegram.Common
 
                 // Not using ATM, quality is too low
                 //var propertySet = new BitmapPropertySet();
-                //var qualityValue = new BitmapTypedValue(quality, PropertyType.Single);
+                //var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
                 //propertySet.Add("ImageQuality", qualityValue);
 
                 var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, destination);
@@ -377,14 +381,18 @@ namespace Telegram.Common
             return file;
         }
 
+        /// <summary>
+        /// Rotates a rectangle clockwise within a <paramref name="width"/> by
+        /// <paramref name="height"/> space, <paramref name="count"/> quarter turns.
+        /// The space's own dimensions swap with every turn.
+        /// </summary>
         public static Rect RotateArea(Rect area, double width, double height, int count)
         {
             count = count % 4;
 
             for (int i = 0; i < count; i++)
             {
-                var point = new Point(height - area.Bottom, width - (width - area.X));
-                area = new Rect(point.X, point.Y, area.Height, area.Width);
+                area = new Rect(height - area.Bottom, area.X, area.Height, area.Width);
 
                 (width, height) = (height, width);
             }
