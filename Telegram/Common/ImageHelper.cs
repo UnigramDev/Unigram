@@ -219,12 +219,14 @@ namespace Telegram.Common
                         height = (int)scaled.Height;
 
                         var frame = BufferSurface.Create((uint)(width * height * 4));
-                        animation.RenderSync(frame, width, height, true, out _);
 
-                        return frame;
+                        // On failure the buffer is left holding uninitialised memory.
+                        return animation.RenderSync(frame, width, height, true, out _)
+                            ? frame
+                            : null;
                     });
 
-                    if (width > 0 && height > 0)
+                    if (buffer != null && width > 0 && height > 0)
                     {
                         var bitmap = new WriteableBitmap(width, height);
                         BufferSurface.Copy(buffer, bitmap.PixelBuffer);
@@ -238,7 +240,11 @@ namespace Telegram.Common
                     return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                // Callers treat null as "no preview" and substitute a placeholder.
+                Logger.Error(ex);
+            }
 
             return null;
         }
@@ -450,7 +456,13 @@ namespace Telegram.Common
                 int height = animation.PixelHeight;
 
                 var frame = BufferSurface.Create((uint)(width * height * 4));
-                await Task.Run(() => animation.RenderSync(frame, width, height, true, out _));
+
+                // Throws rather than returning null: StorageMedia.Refresh recovers by
+                // falling back to the unedited preview, and does so from a catch.
+                if (!await Task.Run(() => animation.RenderSync(frame, width, height, true, out _)))
+                {
+                    throw new InvalidOperationException($"No frame could be rendered from '{source.File.Name}'.");
+                }
 
                 using var stream = new InMemoryRandomAccessStream();
                 PlaceholderHelper.Background.Encode(frame, stream, width, height, animation.Rotation);
@@ -509,7 +521,14 @@ namespace Telegram.Common
                     int height = animation.PixelHeight;
 
                     var frame = BufferSurface.Create((uint)(width * height * 4));
-                    var result = animation.RenderSync(frame, width, height, true, out _);
+
+                    // Callers pass the result straight to BitmapDecoder, so returning null
+                    // would only move the failure. GenerationService and ImageCropper
+                    // both catch this.
+                    if (!animation.RenderSync(frame, width, height, true, out _))
+                    {
+                        throw new InvalidOperationException($"No frame could be rendered from '{sourceFile.Name}'.");
+                    }
 
                     var stream = new InMemoryRandomAccessStream();
                     PlaceholderHelper.Background.Encode(frame, stream, width, height, animation.Rotation);
