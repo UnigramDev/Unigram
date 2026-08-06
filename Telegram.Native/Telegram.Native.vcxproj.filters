@@ -906,12 +906,6 @@
     <ClCompile Include="..\Libraries\MicroTeX\src\res\font\tt10.def.cpp">
       <Filter>MicroTeX\res\font</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\MicroTeX\src\res\parser\font_parser.cpp">
-      <Filter>MicroTeX\res\parser</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\MicroTeX\src\res\parser\formula_parser.cpp">
-      <Filter>MicroTeX\res\parser</Filter>
-    </ClCompile>
     <ClCompile Include="..\Libraries\MicroTeX\src\res\reg\builtin_font_reg.cpp">
       <Filter>MicroTeX\res\reg</Filter>
     </ClCompile>
@@ -942,6 +936,7 @@
     <ClCompile Include="..\Libraries\MicroTeX\src\utils\utils.cpp">
       <Filter>MicroTeX\utils</Filter>
     </ClCompile>
+    <ClCompile Include="graphic_dwrite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -1466,12 +1461,6 @@
     <ClInclude Include="..\Libraries\MicroTeX\src\res\symbol_def.res.h">
       <Filter>MicroTeX\res</Filter>
     </ClInclude>
-    <ClInclude Include="..\Libraries\MicroTeX\src\res\parser\font_parser.h">
-      <Filter>MicroTeX\res\parser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\MicroTeX\src\res\parser\formula_parser.h">
-      <Filter>MicroTeX\res\parser</Filter>
-    </ClInclude>
     <ClInclude Include="..\Libraries\MicroTeX\src\res\reg\builtin_font_reg.h">
       <Filter>MicroTeX\res\reg</Filter>
     </ClInclude>
@@ -1505,6 +1494,7 @@
     <ClInclude Include="..\Libraries\MicroTeX\src\utils\utils.h">
       <Filter>MicroTeX\utils</Filter>
     </ClInclude>
+    <ClInclude Include="graphic_dwrite.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Telegram.Native.def" />
@@ -1601,5 +1591,6 @@
     </Midl>
     <Midl Include="FreeformGradientSurface.idl" />
     <Midl Include="GarbageCollectionMonitor.idl" />
+    <Midl Include="RichMathSurface.idl" />
   </ItemGroup>
 </Project>
