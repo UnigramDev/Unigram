@@ -687,16 +687,18 @@ namespace Telegram.Common
                     textBlock.Style = BootStrapper.Current.Resources["InfoCaptionFormattedTextBlockStyle"] as Style;
                     break;
                 case PageBlockBlockQuote:
-                    textBlock.Style = BootStrapper.Current.Resources["InfoCaptionFormattedTextBlockStyle"] as Style;
-                    textBlock.Margin = new Thickness(0, 8, 0, 0);
+                    textBlock.Style = _context.Resources["PullquoteCreditStyle"] as Style;
+                    textBlock.FontWeight = FontWeights.SemiBold;
+                    textBlock.Margin = new Thickness(0, 0, 0, 0);
                     break;
                 case PageBlockExpandableBlockQuote:
                     // Only the credit is styled: the body is the quote's own text and
                     // reads like body copy, exactly as in a plain block quote.
                     if (caption)
                     {
-                        textBlock.Style = BootStrapper.Current.Resources["InfoCaptionFormattedTextBlockStyle"] as Style;
-                        textBlock.Margin = new Thickness(0, 8, 0, 0);
+                        textBlock.Style = _context.Resources["PullquoteCreditStyle"] as Style;
+                        textBlock.FontWeight = FontWeights.SemiBold;
+                        textBlock.Margin = new Thickness(0, 0, 0, 0);
                     }
                     break;
                 case PageBlockPullQuote:
@@ -942,6 +944,7 @@ namespace Telegram.Common
             var caption = ProcessText(clientService, block, true);
             if (caption != null)
             {
+                caption.Style = _context.Resources["PullquoteCreditStyle"] as Style;
                 content.Children.Add(caption);
             }
 
@@ -990,6 +993,7 @@ namespace Telegram.Common
 
                 if (caption != null)
                 {
+                    caption.Style = _context.Resources["PullquoteCreditStyle"] as Style;
                     panel.Children.Add(caption);
                 }
 
