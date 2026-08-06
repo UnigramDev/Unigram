@@ -37,6 +37,9 @@ Columns: group hash, count, affected users, version, `SYMS`, type/message. `SYMS
 unresolved. `--sort users` ranks by people affected, which is usually the right priority;
 `--sort count` ranks by raw volume.
 
+These figures are for deciding what to work on. They are private telemetry and never get
+published — see section 5.
+
 Prefer groups that are frequent, recent, on the current release, and whose `SYMS` is high.
 Skip a group whose own-code PDB is missing — you cannot analyse what you cannot symbolicate.
 
@@ -175,9 +178,19 @@ git -C <workdir> push -u github <short-slug>
 gh pr create --repo UnigramDev/Unigram --base develop --head <short-slug> --title "..." --body "..."
 ```
 
-The PR body should carry: the crash group hash, error type and message, affected users and
-count, the versions affected, the symbolicated frames that identify the site, the diagnosis,
-and what the fix changes. That is what makes the PR reviewable without re-running the tooling.
+The PR body should carry: the error type and message, the versions affected, the symbolicated
+frames that identify the site, the diagnosis, and what the fix changes. That is what makes the
+PR reviewable without re-running the tooling.
+
+**Never publish impact numbers.** The repository is public; how many users a crash affects is
+private telemetry and must not appear in a PR body, a commit message, a branch name or an issue
+— not as a user count, not as a device count, not as "30+ distinct devices", and not as a
+crash count that implies one. Say "reported by crash telemetry on <version>" and stop there.
+Group hashes and per-device/per-OS breakdowns stay out too. Use the numbers to decide what to
+work on, never to justify the work in public.
+
+This applies to the commit message as much as the PR body — it is pushed and equally public.
+Check both before pushing; scrubbing after the fact needs a force-push.
 
 **State plainly whether the change was built and run.** A UWP/.NET Native build is usually not
 available here, and a reviewer must not have to guess whether a patch was compiled. Roslyn will
@@ -196,9 +209,9 @@ That catches typos, not type errors — say so rather than implying more.
   user's.
 - **Never push to `develop` or `main`,** and never force-push. Fixes go on a branch, via a PR.
 - **Never commit in `C:\Source\Telegram`.** All work happens in the clone.
-- **Crash data is user data.** Records carry device names and OS builds, and the backend
-  returns a `user_id` (crashctl never prints it). Keep output local — it does not go into
-  artifacts, gists, or anything published. Quoting a stack trace in the PR is fine; pasting
-  device lists is not.
+- **Crash data is user data, and the repository is public.** Records carry device names and OS
+  builds, and the backend returns a `user_id` (crashctl never prints it). Keep output local —
+  it does not go into artifacts, gists, or anything published. Quoting a stack trace is fine.
+  Impact numbers, device lists and group hashes are not: see section 5.
 - **Report honestly.** "Symbols missing, could not analyse" and "could not determine the cause"
   are correct outcomes. Do not upgrade a hypothesis to a diagnosis to have something to show.
