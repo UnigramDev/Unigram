@@ -46,7 +46,6 @@ using Telegram.Views.Settings;
 using Telegram.Views.Stars.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
@@ -3941,65 +3940,11 @@ namespace Telegram.Views
 
         private async void LoadMessageEmojis(MessageViewModel message, MenuFlyout flyout, IList<long> customEmojiIds)
         {
-            void ShowSkeleton(UIElement element)
+            void ShowSkeleton(FrameworkElement element)
             {
-                var size = new Vector2(200, 48);
-                var itemHeight = 6 + 36 + 6;
-
-                var shapes = new List<CanvasGeometry>();
-
-                shapes.Add(CanvasGeometry.CreateRoundedRectangle(null, 8, 6, 180, 14, 4, 4));
-                shapes.Add(CanvasGeometry.CreateRoundedRectangle(null, 8, 6 + 16, 140, 14, 4, 4));
-
-                var compositor = BootStrapper.Current.Compositor;
-
-                var geometries = shapes.ToArray();
-                var path = compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreateGroup(null, geometries, CanvasFilledRegionDetermination.Winding)));
-
-                var transparent = Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF);
-                var foregroundColor = Color.FromArgb(0x0F, 0xFF, 0xFF, 0xFF);
-                var backgroundColor = Color.FromArgb(0x0F, 0xFF, 0xFF, 0xFF);
-
-                var lookup = ThemeService.GetLookup(ActualTheme);
-                if (lookup.TryGet("MenuFlyoutItemBackgroundPointerOver", out Color color))
-                {
-                    foregroundColor = color;
-                    backgroundColor = color;
-                }
-
-                var gradient = compositor.CreateLinearGradientBrush();
-                gradient.StartPoint = new Vector2(0, 0);
-                gradient.EndPoint = new Vector2(1, 0);
-                gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.0f, transparent));
-                gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.5f, foregroundColor));
-                gradient.ColorStops.Add(compositor.CreateColorGradientStop(1.0f, transparent));
-
-                var background = compositor.CreateRectangleGeometry();
-                background.Size = size;
-                var backgroundShape = compositor.CreateSpriteShape(background);
-                backgroundShape.FillBrush = compositor.CreateColorBrush(backgroundColor);
-
-                var foreground = compositor.CreateRectangleGeometry();
-                foreground.Size = size;
-                var foregroundShape = compositor.CreateSpriteShape(foreground);
-                foregroundShape.FillBrush = gradient;
-
-                var clip = compositor.CreateGeometricClip(path);
-                var visual = compositor.CreateShapeVisual();
-                visual.Clip = clip;
-                visual.Shapes.Add(backgroundShape);
-                visual.Shapes.Add(foregroundShape);
-                visual.RelativeSizeAdjustment = Vector2.One;
-
-                var animation = compositor.CreateVector2KeyFrameAnimation();
-                animation.InsertKeyFrame(0, new Vector2(-size.X, 0));
-                animation.InsertKeyFrame(1, new Vector2(size.X, 0));
-                animation.IterationBehavior = AnimationIterationBehavior.Forever;
-                animation.Duration = TimeSpan.FromSeconds(1);
-
-                foregroundShape.StartAnimation("Offset", animation);
-
-                ElementCompositionPreview.SetElementChildVisual(element, visual);
+                VisualUtilities.SetSkeleton(element, new Vector2(200, 48),
+                    CanvasGeometry.CreateRoundedRectangle(null, 8, 6, 180, 14, 4, 4),
+                    CanvasGeometry.CreateRoundedRectangle(null, 8, 6 + 16, 140, 14, 4, 4));
             }
 
             var grid = new Grid
