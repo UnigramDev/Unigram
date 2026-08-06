@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -146,6 +146,12 @@ namespace Telegram.Controls.Messages
             return new Size(w, h);
         }
 
+        // Reused across passes. These carry the button rectangles to the native clip
+        // builder, and arrange runs on every layout of every inline keyboard, so
+        // rebuilding them cost the outer list plus one inner list per row each time.
+        private readonly List<IList<Rect>> _clipRows = new();
+        private bool _clipValid;
+
         protected override Size ArrangeOverride(Size finalSize)
         {
             var j = 0;
@@ -159,36 +165,75 @@ namespace Telegram.Controls.Messages
                 visual.Clip = _clip = visual.Compositor.CreateGeometricClip();
             }
 
-            var rows = new List<IList<Rect>>(Rows.Count);
+            // The clip costs a call across the ABI and a fresh path geometry, so it is
+            // rebuilt only when a rectangle moves. Rectangles are compared in place as
+            // they are written, which keeps the buffers reusable.
+            var changed = !_clipValid || _clipRows.Count != Rows.Count;
 
-            foreach (var row in Rows)
+            while (_clipRows.Count < Rows.Count)
             {
+                _clipRows.Add(new List<Rect>());
+            }
+
+            while (_clipRows.Count > Rows.Count)
+            {
+                _clipRows.RemoveAt(_clipRows.Count - 1);
+            }
+
+            for (int r = 0; r < Rows.Count; r++)
+            {
+                var row = Rows[r];
+                var buffer = _clipRows[r];
+
                 var column = (finalSize.Width - spacing * (row - 1)) / row;
                 var height = 0d;
 
                 var x = 0d;
 
-                var clip = new List<Rect>(row);
+                // Cleared rather than trimmed afterwards, so the loop below only appends
+                // past the end.
+                if (buffer.Count != row)
+                {
+                    buffer.Clear();
+                    changed = true;
+                }
 
                 y += spacing;
 
                 for (int i = 0; i < row; i++)
                 {
                     var child = Children[j + i];
-                    child.Arrange(new Rect(x, y, column, child.DesiredSize.Height));
-                    clip.Add(new Rect(x, y, column, child.DesiredSize.Height));
+                    var rect = new Rect(x, y, column, child.DesiredSize.Height);
+
+                    child.Arrange(rect);
+
+                    if (i < buffer.Count)
+                    {
+                        if (buffer[i] != rect)
+                        {
+                            buffer[i] = rect;
+                            changed = true;
+                        }
+                    }
+                    else
+                    {
+                        buffer.Add(rect);
+                    }
 
                     height = Math.Max(height, child.DesiredSize.Height);
                     x += column + spacing;
                 }
 
-                rows.Add(clip);
-
                 y += height;
                 j += row;
             }
 
-            _clip.Geometry = _clip.Compositor.CreatePathGeometry(PlaceholderHelper.Foreground.GetReplyMarkupClip(rows, CornerRadius.X, CornerRadius.Y));
+            if (changed)
+            {
+                _clip.Geometry = _clip.Compositor.CreatePathGeometry(PlaceholderHelper.Foreground.GetReplyMarkupClip(_clipRows, CornerRadius.X, CornerRadius.Y));
+                _clipValid = true;
+            }
+
             return finalSize;
         }
     }

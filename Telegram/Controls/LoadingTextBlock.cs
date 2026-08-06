@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -268,6 +268,16 @@ namespace Telegram.Controls
             return new Size(availableSize.Width, Presenter.DesiredSize.Height);
         }
 
+        // Inputs the skeleton clip is derived from. Cached because rebuilding it costs
+        // a native text measurement, one D2D geometry per line, a group, a path, a path
+        // geometry and a clip, and none of these change between most arrange passes.
+        private string _clipText;
+        private double _clipFontSize;
+        private double _clipWidth;
+        private bool _clipRightToLeft;
+        private Thickness _clipPadding;
+        private bool _clipValid;
+
         protected override Size ArrangeOverride(Size finalSize)
         {
             finalSize = base.ArrangeOverride(finalSize);
@@ -277,26 +287,69 @@ namespace Telegram.Controls
                 return finalSize;
             }
 
-            var list = new List<CanvasGeometry>();
+            UpdateSkeletonClip();
 
-            var left = (float)Padding.Left;
-            var top = (float)Padding.Top;
-            var rects = PlaceholderHelper.Foreground.LineMetrics(PlaceholderText ?? string.Empty, Array.Empty<TextStylePart>(), Placeholder.FontSize, Placeholder.DesiredSize.Width - Padding.Left - Padding.Right, IsPlaceholderRightToLeft);
+            _skeleton.Size = Placeholder.DesiredSize.ToVector2();
 
-            foreach (var rect in rects)
+            return finalSize;
+        }
+
+        private void UpdateSkeletonClip()
+        {
+            var text = PlaceholderText ?? string.Empty;
+            var fontSize = Placeholder.FontSize;
+            var width = Placeholder.DesiredSize.Width;
+            var rightToLeft = IsPlaceholderRightToLeft;
+            var padding = Padding;
+
+            if (_clipValid
+                && _clipFontSize == fontSize
+                && _clipWidth == width
+                && _clipRightToLeft == rightToLeft
+                && _clipPadding.Equals(padding)
+                && _clipText == text)
             {
+                return;
+            }
+
+            _clipText = text;
+            _clipFontSize = fontSize;
+            _clipWidth = width;
+            _clipRightToLeft = rightToLeft;
+            _clipPadding = padding;
+            _clipValid = true;
+
+            var left = (float)padding.Left;
+            var top = (float)padding.Top;
+            var rects = PlaceholderHelper.Foreground.LineMetrics(text, Array.Empty<TextStylePart>(), fontSize, width - padding.Left - padding.Right, rightToLeft);
+
+            // Sized up front and filled by index: CreateGroup takes an array, and the
+            // count is known before the loop starts.
+            var geometries = new CanvasGeometry[rects.Count];
+            var count = 0;
+
+            for (int i = 0; i < rects.Count; i++)
+            {
+                var rect = rects[i];
+
                 if (rect.Width < 1 || rect.Height < 1)
                 {
                     continue;
                 }
 
-                list.Add(CanvasGeometry.CreateRoundedRectangle(null, new Rect(left + rect.X - 4, top + rect.Y - 2, rect.Width + 6, rect.Height + 6), 4, 4));
+                geometries[count++] = CanvasGeometry.CreateRoundedRectangle(null,
+                    new Rect(left + rect.X - 4, top + rect.Y - 2, rect.Width + 6, rect.Height + 6), 4, 4);
             }
 
-            _skeleton.Clip = BootStrapper.Current.Compositor.CreateGeometricClip(BootStrapper.Current.Compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreateGroup(null, list.ToArray(), CanvasFilledRegionDetermination.Winding))));
-            _skeleton.Size = Placeholder.DesiredSize.ToVector2();
+            if (count < geometries.Length)
+            {
+                Array.Resize(ref geometries, count);
+            }
 
-            return finalSize;
+            var compositor = BootStrapper.Current.Compositor;
+            var group = CanvasGeometry.CreateGroup(null, geometries, CanvasFilledRegionDetermination.Winding);
+
+            _skeleton.Clip = compositor.CreateGeometricClip(compositor.CreatePathGeometry(new CompositionPath(group)));
         }
     }
 }
