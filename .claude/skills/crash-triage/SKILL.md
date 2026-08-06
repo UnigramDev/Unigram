@@ -211,11 +211,33 @@ CSharpSyntaxTree.ParseText(File.ReadAllText(path)).GetDiagnostics()
 
 That catches typos, not type errors — say so rather than implying more.
 
-## Limits
+## 6. Close the group when the PR merges
 
-- **Never mark a crash group closed.** `crashctl mark` writes to the shared backend and needs
-  `--yes`. Whether a fix worked is only knowable after a release ships; that call is the
-  user's.
+Merging is what marks a crash fixed:
+
+```
+$CRASHCTL mark <group_hash> --status closed --yes
+```
+
+The group hash cannot live in the PR (section 5), so record the mapping locally when you open
+the PR — `<pr number> <tab> <group hash>` in a scratch file — or the link is lost the moment
+the PR is the only thing left.
+
+Merged is not released, so the group can still collect crashes from users on the old build.
+That is expected; the status reflects that a fix exists, not that it has reached anyone yet.
+
+To notice the merge, watch the PR:
+
+```
+gh pr view <pr> --repo UnigramDev/Unigram --json state -q .state
+```
+
+A polling watcher must filter out its own comments. `gh` posts under the user's account, so
+author cannot distinguish them, and unfiltered the agent reads its own words back as if they
+were instructions. End every agent-written comment with an HTML-comment marker and skip
+comments containing it.
+
+## Limits
 - **Never push to `develop` or `main`,** and never force-push. Fixes go on a branch, via a PR.
 - **Never commit in `C:\Source\Telegram`.** All work happens in the clone.
 - **Crash data is user data, and the repository is public.** Records carry device names and OS
