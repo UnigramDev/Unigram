@@ -833,6 +833,59 @@
             </messages:MessageService>
         </DataTemplate>
 
+        <DataTemplate x:Name="UnsupportedTemplate">
+            <messages:MessageService Click="ServiceMessage_Click"
+                                     Padding="8,4,12,4"
+                                     Margin="0,8,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="&#xE9B0;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="48"
+                               Foreground="{ThemeResource MessageServiceBackgroundBrush}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="&#xEB06;"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="24"
+                               Foreground="#FFFFFF"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center" />
+
+                    <Grid VerticalAlignment="Center"
+                          Margin="8,0,12,4"
+                          Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Unsupported message"
+                                   FontWeight="SemiBold"
+                                   Foreground="#FFFFFF" />
+                        <TextBlock Text="Update Telegram to view this message"
+                                   FontSize="12"
+                                   Foreground="#AAFFFFFF"
+                                   Grid.Row="1" />
+                    </Grid>
+
+                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
+                            CornerRadius="14"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Padding="12,3,12,5"
+                            Grid.Column="2">
+                        <TextBlock Text="Update"
+                                   Foreground="#FFFFFF"
+                                   TextAlignment="Center"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
+                    </Border>
+                </Grid>
+            </messages:MessageService>
+        </DataTemplate>
+
         <DataTemplate x:Name="ServiceMessageNewThreadTemplate">
             <messages:MessageService HorizontalAlignment="Stretch">
                 <Button.Template>

@@ -160,6 +160,7 @@ namespace Telegram.Views
             AddStrategy(ChatHistoryViewItemType.ServiceChatHasProtectedContentDisableRequested, ServiceMessageChatHasProtectedContentDisableRequestedTemplate);
             AddStrategy(ChatHistoryViewItemType.ServiceAccountInfo, ServiceMessageAccountInfoTemplate);
             AddStrategy(ChatHistoryViewItemType.ServiceNewThread, ServiceMessageNewThreadTemplate);
+            AddStrategy(ChatHistoryViewItemType.Unsupported, UnsupportedTemplate);
 
             _focusState = new DebouncedProperty<FocusState>(100, FocusText, CanFocusText);
 

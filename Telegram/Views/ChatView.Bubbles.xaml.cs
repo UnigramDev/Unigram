@@ -1629,7 +1629,11 @@ namespace Telegram.Views
                 return ChatHistoryViewItemType.Incoming;
             }
 
-            if (message.IsService)
+            if (message.Content is MessageUnsupported)
+            {
+                return ChatHistoryViewItemType.Unsupported;
+            }
+            else if (message.IsService)
             {
                 return message.Content switch
                 {
