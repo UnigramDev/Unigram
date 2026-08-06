@@ -197,11 +197,11 @@ namespace Telegram.Controls.Messages
                 // TODO: icon
                 if (message.ReceiverId.IsUser(message.ClientService.Options.MyId))
                 {
-                    ForwardLink.Text = "\uEA4F\u00A0" + Strings.EphemeralMessageVisibleToYou;
+                    ForwardLink.Text = "\uE9A6\u00A0" + Strings.EphemeralMessageVisibleToYou;
                 }
                 else
                 {
-                    ForwardLink.Text = "\uEA4F\u00A0" + string.Format(Strings.EphemeralMessageVisibleToOther, message.ClientService.GetTitle(message.ReceiverId));
+                    ForwardLink.Text = "\uE9A6\u00A0" + string.Format(Strings.EphemeralMessageVisibleToOther, message.ClientService.GetTitle(message.ReceiverId));
                 }
 
                 ForwardLink.FontWeight = FontWeights.Normal;

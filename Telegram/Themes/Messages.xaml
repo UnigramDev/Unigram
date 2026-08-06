@@ -58,7 +58,7 @@
                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                VerticalAlignment="Center"
-                               Margin="4,-4,0,4"
+                               Margin="4,4,0,0"
                                Grid.Column="2" />
                     <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
