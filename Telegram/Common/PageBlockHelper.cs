@@ -1260,89 +1260,89 @@ namespace Telegram.Common
                     return TryAppendRichText(p.Text, text, entities);
 
                 case PageBlockPreformatted pre:
-                {
-                    int start = text.Length;
-                    if (!TryAppendRichText(pre.Text, text, entities))
                     {
-                        return false;
-                    }
+                        int start = text.Length;
+                        if (!TryAppendRichText(pre.Text, text, entities))
+                        {
+                            return false;
+                        }
 
-                    int length = text.Length - start;
-                    if (length > 0)
-                    {
-                        TextEntityType type = string.IsNullOrEmpty(pre.Language)
-                            ? new TextEntityTypePre()
-                            : new TextEntityTypePreCode(pre.Language);
-                        entities.Add(new TextEntity(start, length, type));
-                    }
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            TextEntityType type = string.IsNullOrEmpty(pre.Language)
+                                ? new TextEntityTypePre()
+                                : new TextEntityTypePreCode(pre.Language);
+                            entities.Add(new TextEntity(start, length, type));
+                        }
 
-                    return true;
-                }
+                        return true;
+                    }
 
                 case PageBlockBlockQuote quote:
-                {
-                    // A credit can't live in a block-quote entity; the body must be paragraphs.
-                    if (!IsEmpty(quote.Credit))
                     {
-                        return false;
-                    }
-
-                    int start = text.Length;
-                    var body = quote.Blocks;
-                    if (body != null)
-                    {
-                        for (int i = 0; i < body.Count; i++)
+                        // A credit can't live in a block-quote entity; the body must be paragraphs.
+                        if (!IsEmpty(quote.Credit))
                         {
-                            if (body[i] is not PageBlockParagraph para)
-                            {
-                                return false;
-                            }
+                            return false;
+                        }
 
-                            if (i > 0)
+                        int start = text.Length;
+                        var body = quote.Blocks;
+                        if (body != null)
+                        {
+                            for (int i = 0; i < body.Count; i++)
                             {
-                                text.Append('\n');
-                            }
+                                if (body[i] is not PageBlockParagraph para)
+                                {
+                                    return false;
+                                }
 
-                            if (!TryAppendRichText(para.Text, text, entities))
-                            {
-                                return false;
+                                if (i > 0)
+                                {
+                                    text.Append('\n');
+                                }
+
+                                if (!TryAppendRichText(para.Text, text, entities))
+                                {
+                                    return false;
+                                }
                             }
                         }
-                    }
 
-                    int length = text.Length - start;
-                    if (length > 0)
-                    {
-                        entities.Add(new TextEntity(start, length, new TextEntityTypeBlockQuote()));
-                    }
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            entities.Add(new TextEntity(start, length, new TextEntityTypeBlockQuote()));
+                        }
 
-                    return true;
-                }
+                        return true;
+                    }
 
                 case PageBlockExpandableBlockQuote quote:
-                {
-                    // Unlike the plain block quote this one holds RichText directly, so it maps
-                    // 1:1 onto the expandable-blockquote entity — no paragraph-shape requirement.
-                    // A credit still can't be carried.
-                    if (!IsEmpty(quote.Credit))
                     {
-                        return false;
-                    }
+                        // Unlike the plain block quote this one holds RichText directly, so it maps
+                        // 1:1 onto the expandable-blockquote entity — no paragraph-shape requirement.
+                        // A credit still can't be carried.
+                        if (!IsEmpty(quote.Credit))
+                        {
+                            return false;
+                        }
 
-                    int start = text.Length;
-                    if (!TryAppendRichText(quote.Text, text, entities))
-                    {
-                        return false;
-                    }
+                        int start = text.Length;
+                        if (!TryAppendRichText(quote.Text, text, entities))
+                        {
+                            return false;
+                        }
 
-                    int length = text.Length - start;
-                    if (length > 0)
-                    {
-                        entities.Add(new TextEntity(start, length, new TextEntityTypeExpandableBlockQuote()));
-                    }
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            entities.Add(new TextEntity(start, length, new TextEntityTypeExpandableBlockQuote()));
+                        }
 
-                    return true;
-                }
+                        return true;
+                    }
 
                 default:
                     // Any other block type (heading/footer/list/table/media/document/button-row/
@@ -1382,86 +1382,86 @@ namespace Telegram.Common
                     return TryAppendRichText(p.Text, text, entities);
 
                 case InputPageBlockPreformatted pre:
-                {
-                    int start = text.Length;
-                    if (!TryAppendRichText(pre.Text, text, entities))
                     {
-                        return false;
-                    }
+                        int start = text.Length;
+                        if (!TryAppendRichText(pre.Text, text, entities))
+                        {
+                            return false;
+                        }
 
-                    int length = text.Length - start;
-                    if (length > 0)
-                    {
-                        TextEntityType type = string.IsNullOrEmpty(pre.Language)
-                            ? new TextEntityTypePre()
-                            : new TextEntityTypePreCode(pre.Language);
-                        entities.Add(new TextEntity(start, length, type));
-                    }
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            TextEntityType type = string.IsNullOrEmpty(pre.Language)
+                                ? new TextEntityTypePre()
+                                : new TextEntityTypePreCode(pre.Language);
+                            entities.Add(new TextEntity(start, length, type));
+                        }
 
-                    return true;
-                }
+                        return true;
+                    }
 
                 case InputPageBlockBlockQuote quote:
-                {
-                    if (!IsEmpty(quote.Credit))
                     {
-                        return false;
-                    }
-
-                    int start = text.Length;
-                    var body = quote.Blocks;
-                    if (body != null)
-                    {
-                        for (int i = 0; i < body.Count; i++)
+                        if (!IsEmpty(quote.Credit))
                         {
-                            if (body[i] is not InputPageBlockParagraph para)
-                            {
-                                return false;
-                            }
+                            return false;
+                        }
 
-                            if (i > 0)
+                        int start = text.Length;
+                        var body = quote.Blocks;
+                        if (body != null)
+                        {
+                            for (int i = 0; i < body.Count; i++)
                             {
-                                text.Append('\n');
-                            }
+                                if (body[i] is not InputPageBlockParagraph para)
+                                {
+                                    return false;
+                                }
 
-                            if (!TryAppendRichText(para.Text, text, entities))
-                            {
-                                return false;
+                                if (i > 0)
+                                {
+                                    text.Append('\n');
+                                }
+
+                                if (!TryAppendRichText(para.Text, text, entities))
+                                {
+                                    return false;
+                                }
                             }
                         }
-                    }
 
-                    int length = text.Length - start;
-                    if (length > 0)
-                    {
-                        entities.Add(new TextEntity(start, length, new TextEntityTypeBlockQuote()));
-                    }
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            entities.Add(new TextEntity(start, length, new TextEntityTypeBlockQuote()));
+                        }
 
-                    return true;
-                }
+                        return true;
+                    }
 
                 case InputPageBlockExpandableBlockQuote quote:
-                {
-                    // Holds RichText directly — see the display-side twin above.
-                    if (!IsEmpty(quote.Credit))
                     {
-                        return false;
-                    }
+                        // Holds RichText directly — see the display-side twin above.
+                        if (!IsEmpty(quote.Credit))
+                        {
+                            return false;
+                        }
 
-                    int start = text.Length;
-                    if (!TryAppendRichText(quote.Text, text, entities))
-                    {
-                        return false;
-                    }
+                        int start = text.Length;
+                        if (!TryAppendRichText(quote.Text, text, entities))
+                        {
+                            return false;
+                        }
 
-                    int length = text.Length - start;
-                    if (length > 0)
-                    {
-                        entities.Add(new TextEntity(start, length, new TextEntityTypeExpandableBlockQuote()));
-                    }
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            entities.Add(new TextEntity(start, length, new TextEntityTypeExpandableBlockQuote()));
+                        }
 
-                    return true;
-                }
+                        return true;
+                    }
 
                 default:
                     return false;

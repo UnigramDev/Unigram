@@ -250,7 +250,7 @@ namespace Telegram.Controls.Messages
 
             //ContentPanel.CanDrag = true;
             //ContentPanel.DragStarting += OnDragStarting;
-            
+
             // TODO: make sure this is needed
             //ContentPanel.SizeChanged += OnSizeChanged;
             //Message.TextEntityClick += Message_TextEntityClick;
@@ -4061,7 +4061,7 @@ namespace Telegram.Controls.Messages
                 case MessageAsyncStory story:
                     return story.State != MessageStoryState.Expired;
                 case MessageRichMessage richMessage:
-                    return richMessage.Message.Blocks[^1] is PageBlockAnimation { Caption: null } or PageBlockCollage { Caption : null } or PageBlockMap { Caption: null } or PageBlockPhoto { Caption: null } or PageBlockSlideshow { Caption: null } or PageBlockVideo { Caption: null };
+                    return richMessage.Message.Blocks[^1] is PageBlockAnimation { Caption: null } or PageBlockCollage { Caption: null } or PageBlockMap { Caption: null } or PageBlockPhoto { Caption: null } or PageBlockSlideshow { Caption: null } or PageBlockVideo { Caption: null };
                 default:
                     return false;
             }

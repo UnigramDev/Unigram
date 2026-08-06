@@ -2377,26 +2377,26 @@ namespace Telegram.Common
             }
         }
 
-//        private static async void AddToCalendar_Click(XamlRoot xamlRoot, int date, MessageViewModel message)
-//        {
-//            DateTime eventStart = Formatter.ToLocalTime(date).ToUniversalTime();
+        //        private static async void AddToCalendar_Click(XamlRoot xamlRoot, int date, MessageViewModel message)
+        //        {
+        //            DateTime eventStart = Formatter.ToLocalTime(date).ToUniversalTime();
 
-//            string content = $@"BEGIN:VCALENDAR
-//VERSION:2.0
-//PRODID:-//Telegram//EN
-//BEGIN:VEVENT
-//UID:{Guid.NewGuid()}@yourdomain.com
-//DTSTAMP:{DateTime.UtcNow.ToString("yyyyMMddTHHmmss")}Z
-//DTSTART:{eventStart.ToString("yyyyMMddTHHmmss")}
-//SUMMARY:Event Title
-//END:VEVENT
-//END:VCALENDAR";
+        //            string content = $@"BEGIN:VCALENDAR
+        //VERSION:2.0
+        //PRODID:-//Telegram//EN
+        //BEGIN:VEVENT
+        //UID:{Guid.NewGuid()}@yourdomain.com
+        //DTSTAMP:{DateTime.UtcNow.ToString("yyyyMMddTHHmmss")}Z
+        //DTSTART:{eventStart.ToString("yyyyMMddTHHmmss")}
+        //SUMMARY:Event Title
+        //END:VEVENT
+        //END:VCALENDAR";
 
-//            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("event.ics", CreationCollisionOption.ReplaceExisting);
+        //            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("event.ics", CreationCollisionOption.ReplaceExisting);
 
-//            await FileIO.WriteTextAsync(file, content);
-//            await Launcher.LaunchFileAsync(file);
-//        }
+        //            await FileIO.WriteTextAsync(file, content);
+        //            await Launcher.LaunchFileAsync(file);
+        //        }
 
         private static async void SetAReminder_Click(XamlRoot xamlRoot, int date, MessageViewModel message)
         {

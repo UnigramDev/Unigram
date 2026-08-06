@@ -60,7 +60,7 @@ namespace Telegram.Views.Popups
             IsPrimaryButtonPending = true;
 
             var deferral = args.GetDeferral();
-            
+
             var response = await _clientService.SendAsync(new SetChatMemberTag(_chat.Id, user.UserId, Field.Text));
             if (response is Error error)
             {

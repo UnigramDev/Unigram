@@ -255,7 +255,7 @@ namespace Telegram.Controls
 
                 var metrics = PlaceholderHelper.Foreground.MaxLines(partial, 0, partial.Length, entities, quoteSize, availableSize.Width, false, 3);
                 var trimmable = metrics.TruncatedHeight < metrics.Height;
-                
+
                 if (IsTextTrimmable != trimmable)
                 {
                     IsTextTrimmable = trimmable;

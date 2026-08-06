@@ -390,7 +390,7 @@ namespace Telegram.Controls.Messages
             _textEntityClick?.Invoke(sender, e);
         }
 
-#endregion
+        #endregion
 
         #region Layout (vertical stack)
 
