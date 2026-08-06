@@ -537,7 +537,7 @@ namespace winrt::Telegram::Native::implementation
         return nullptr;
     }
 
-    int VideoAnimation::RenderSync(IBuffer bitmap, int32_t w, int32_t h, bool preview, double& seconds)
+    bool VideoAnimation::RenderSync(IBuffer bitmap, int32_t w, int32_t h, bool preview, double& seconds)
     {
         uint8_t* pixels = bitmap.data();
         bool completed;
@@ -560,7 +560,7 @@ namespace winrt::Telegram::Native::implementation
         return value;
     }
 
-    int VideoAnimation::RenderSync(uint8_t* pixels, int32_t width, int32_t height, bool preview, double& seconds, bool& completed)
+    bool VideoAnimation::RenderSync(uint8_t* pixels, int32_t width, int32_t height, bool preview, double& seconds, bool& completed)
     {
         slim_lock_guard const guard(m_lock);
         completed = false;
@@ -569,7 +569,7 @@ namespace winrt::Telegram::Native::implementation
 
         if (!fmt_ctx || !video_dec_ctx || !pkt || !frame)
         {
-            return 0;
+            return false;
         }
 
         while (!stopped && triesCount > 0)
@@ -680,8 +680,16 @@ namespace winrt::Telegram::Native::implementation
                             int decode_result = decode_frame(pixels, width, height);
                             if (decode_result >= 0)
                             {
-                                return 1; // Successfully rendered frame
+                                return true; // Successfully rendered frame
                             }
+
+                            // Conversion failure depends on the stream format, so it
+                            // repeats for every remaining frame. has_decoded_frames is
+                            // already set and freezes the budget below, which would
+                            // otherwise leave this loop decoding the file end to end,
+                            // seeking back to zero and repeating indefinitely. Spend a
+                            // try to guarantee termination.
+                            triesCount--;
                         }
                     }
 
@@ -752,7 +760,8 @@ namespace winrt::Telegram::Native::implementation
             completed = true;
         }
 
-        return 0;
+        // Reached only on giving up; pixels is untouched.
+        return false;
     }
 
     inline bool is_aligned(const void* ptr, std::uintptr_t alignment) noexcept
@@ -779,21 +788,21 @@ namespace winrt::Telegram::Native::implementation
             return -1;
         }
 
-        // Supported pixel formats
-        bool supported_format = (frame->format == AV_PIX_FMT_YUV420P ||
+        // Formats libyuv converts without a scaler. Not the set of supported formats:
+        // anything else goes through swscale, including the high bit depth profiles
+        // such as the yuv420p10le produced by HEVC Main 10.
+        bool libyuv_format = (frame->format == AV_PIX_FMT_YUV420P ||
             frame->format == AV_PIX_FMT_YUVA420P ||
             frame->format == AV_PIX_FMT_BGRA ||
             frame->format == AV_PIX_FMT_RGBA ||
             frame->format == AV_PIX_FMT_YUVJ420P ||
             frame->format == AV_PIX_FMT_YUV444P);
 
-        if (!supported_format)
-        {
-            return -1;
-        }
-
-        // Initialize SWS context if needed (and pixels are aligned)
-        if (sws_ctx == nullptr && ((intptr_t)pixels) % 16 == 0)
+        // Initialize SWS context if needed. The alignment test only chooses swscale in
+        // preference to libyuv, so it applies only when a libyuv path exists; otherwise
+        // the scaler is the only way to convert the frame. The scaling path below
+        // handles an unaligned destination through an intermediate buffer.
+        if (sws_ctx == nullptr && (!libyuv_format || ((intptr_t)pixels) % 16 == 0))
         {
             AVPixelFormat src_format = (AVPixelFormat)frame->format;
 
@@ -817,6 +826,12 @@ namespace winrt::Telegram::Native::implementation
                     SWS_BILINEAR, nullptr, nullptr, nullptr
                 );
             }
+        }
+
+        // No scaler and no direct path: the frame cannot be converted.
+        if (sws_ctx == nullptr && !libyuv_format)
+        {
+            return -1;
         }
 
         // Fast path: Use libyuv for direct conversion (no SWS context)
