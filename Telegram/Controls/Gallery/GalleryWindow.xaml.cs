@@ -12,11 +12,13 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
+using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
@@ -1320,6 +1322,51 @@ namespace Telegram.Controls.Gallery
         {
             var container = GetElement(CarouselDirection.None);
             e.Cancel = container.IsTextSelectionEnabled;
+        }
+
+        private void Caption_TextEntityClick(object sender, TextEntityClickEventArgs e)
+        {
+            var delegato = new MessageDelegate(ViewModel);
+            if (e.Type is TextEntityTypeBotCommand && e.Text is string command)
+            {
+                delegato.SendBotCommand(command);
+            }
+            else if (e.Type is TextEntityTypeEmailAddress)
+            {
+                delegato.OpenUrl("mailto:" + e.Text, false);
+            }
+            else if (e.Type is TextEntityTypePhoneNumber)
+            {
+                delegato.OpenUrl("tel:" + e.Text, false);
+            }
+            else if (e.Type is TextEntityTypeHashtag or TextEntityTypeCashtag && e.Text is string hashtag)
+            {
+                delegato.OpenHashtag(hashtag);
+            }
+            else if (e.Type is TextEntityTypeMention && e.Text is string username)
+            {
+                delegato.OpenUsername(username);
+            }
+            else if (e.Type is TextEntityTypeMentionName mentionName)
+            {
+                delegato.OpenUser(mentionName.UserId);
+            }
+            else if (e.Type is TextEntityTypeTextUrl textUrl)
+            {
+                delegato.OpenUrl(textUrl.Url, true);
+            }
+            else if (e.Type is TextEntityTypeUrl && e.Text is string url)
+            {
+                delegato.OpenUrl(url, false);
+            }
+            else if (e.Type is TextEntityTypeBankCardNumber && e.Text is string cardNumber)
+            {
+                delegato.OpenBankCardNumber(cardNumber);
+            }
+            else if (e.Type is TextEntityTypeMediaTimestamp mediaTimestamp)
+            {
+                // TODO: seek
+            }
         }
     }
 }
