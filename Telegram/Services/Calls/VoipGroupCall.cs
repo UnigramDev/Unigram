@@ -190,7 +190,7 @@ namespace Telegram.Services.Calls
 
                 CreateWindow(false);
 
-                _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
+                NotifyMutedChanged();
             }
 
             if (scheduled)
@@ -220,7 +220,26 @@ namespace Telegram.Services.Calls
 
             CreateWindow(false);
 
+            NotifyMutedChanged();
+
             Rejoin(ClientService.MyId);
+        }
+
+        /// <summary>
+        /// Hands the manager's mute state to the system call, once there is one to hand
+        /// it to.
+        ///
+        /// The manager is read into a local because this now runs after an await, and
+        /// Dispose clears the field from whichever thread ends the call.
+        /// </summary>
+        private void NotifyMutedChanged()
+        {
+            var manager = _manager;
+
+            if (manager != null)
+            {
+                _coordinator?.TryNotifyMutedChanged(manager.IsMuted);
+            }
         }
 
         public VoipGroupCall(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, XamlRoot xamlRoot, InputGroupCall inputGroupCall)
@@ -277,8 +296,6 @@ namespace Telegram.Services.Calls
             _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
             _manager.SetEncryptDecrypt(EncryptData, DecryptData);
 
-            _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
-
             _ = JoinConferenceAsync();
         }
 
@@ -333,8 +350,6 @@ namespace Telegram.Services.Calls
             _manager.VideoBroadcastPartRequested += OnVideoBroadcastPartRequested;
             _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
             _manager.SetEncryptDecrypt(EncryptData, DecryptData);
-
-            _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
 
             _ = JoinConferenceAsync();
         }
