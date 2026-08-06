@@ -253,42 +253,50 @@ namespace Telegram.Common
             return null;
         }
 
+        /// <summary>
+        /// Decodes a still preview, bounded to <paramref name="requestedMinSide"/> on its
+        /// longer side.
+        ///
+        /// Single frame only: SoftwareBitmapSource holds one, so an animated GIF comes
+        /// back static. No GIF reaches this today — StorageMedia previews photos through
+        /// a BitmapImage with DecodePixelWidth and only calls the overload above for
+        /// video, leaving its StoragePhoto branch untaken — but a caller that changes
+        /// that needs a FrameCount > 1 branch returning a BitmapImage, which can carry
+        /// the same bound through DecodePixelWidth and DecodePixelHeight.
+        /// </summary>
         public static async Task<ImageSource> GetPreviewBitmapAsync(IRandomAccessStream source, int requestedMinSide = 1280)
         {
             var decoder = await BitmapDecoder.CreateAsync(source);
-            if (decoder.BitmapPixelFormat == BitmapPixelFormat.Bgra8)
+
+            BitmapTransform transform;
+
+            if (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide)
             {
-                BitmapTransform transform;
+                var scaled = Fit(decoder.PixelWidth, decoder.PixelHeight, requestedMinSide);
 
-                if (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide)
+                transform = new BitmapTransform
                 {
-                    var scaled = Fit(decoder.PixelWidth, decoder.PixelHeight, requestedMinSide);
-
-                    transform = new BitmapTransform
-                    {
-                        ScaledWidth = (uint)scaled.Width,
-                        ScaledHeight = (uint)scaled.Height,
-                        InterpolationMode = BitmapInterpolationMode.Linear
-                    };
-                }
-                else
-                {
-                    transform = new BitmapTransform();
-                }
-
-                var bitmap = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-                var bitmapImage = new SoftwareBitmapSource();
-                await bitmapImage.SetBitmapAsync(bitmap);
-
-                return bitmapImage;
+                    ScaledWidth = (uint)scaled.Width,
+                    ScaledHeight = (uint)scaled.Height,
+                    InterpolationMode = BitmapInterpolationMode.Linear
+                };
             }
             else
             {
-                var bitmap = new BitmapImage();
-                await bitmap.SetSourceAsync(source);
-
-                return bitmap;
+                transform = new BitmapTransform();
             }
+
+            // Bgra8 premultiplied whatever the file holds: the decoder converts, and it
+            // is the only combination SoftwareBitmapSource accepts. Asking for
+            // decoder.BitmapPixelFormat instead meant every other format had to fall
+            // through to a BitmapImage that decoded at full size, ignoring
+            // requestedMinSide.
+            var bitmap = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+            var bitmapImage = new SoftwareBitmapSource();
+            await bitmapImage.SetBitmapAsync(bitmap);
+
+            return bitmapImage;
         }
 
         /// <summary>
