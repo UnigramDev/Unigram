@@ -69,6 +69,8 @@ namespace Telegram.Controls
                 Source = new CustomEmojiFileSource(clientService, iconCustomEmojiId);
             }
 
+            var disabled = false;
+
             switch (type)
             {
                 case InlineKeyboardButtonTypeUrl typeUrl:
@@ -105,22 +107,52 @@ namespace Telegram.Controls
                 case InlineKeyboardButtonTypeSuggestionEdit:
                     Icon = Icons.EditFilled;
                     break;
+                case InlineKeyboardButtonTypeDisabled:
+                    IsEnabled = false;
+                    disabled = true;
+                    break;
             }
 
-            switch (style)
+            if (text != null)
             {
-                case ButtonStylePrimary:
-                    Background = new SolidColorBrush(Color.FromArgb(0xB2, 0x22, 0x9a, 0xf0));
-                    break;
-                case ButtonStyleDanger:
-                    Background = new SolidColorBrush(Color.FromArgb(0xB2, 0xdb, 0x46, 0x46));
-                    break;
-                case ButtonStyleSuccess:
-                    Background = new SolidColorBrush(Color.FromArgb(0xB2, 0x40, 0xb1, 0x35));
-                    break;
-                case ButtonStyleLink:
-                    // TODO:
-                    break;
+                switch (style)
+                {
+                    case ButtonStylePrimary:
+                        Background = new SolidColorBrush(Color.FromArgb(0xB2, 0x22, 0x9a, 0xf0));
+                        break;
+                    case ButtonStyleDanger:
+                        Background = new SolidColorBrush(Color.FromArgb(0xB2, 0xdb, 0x46, 0x46));
+                        break;
+                    case ButtonStyleSuccess:
+                        Background = new SolidColorBrush(Color.FromArgb(0xB2, 0x40, 0xb1, 0x35));
+                        break;
+                }
+            }
+            else
+            {
+                switch (style)
+                {
+                    case ButtonStylePrimary:
+                        Background = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x7a, 0xff));
+                        Foreground = new SolidColorBrush(disabled ? Color.FromArgb(0xFF, 0x66, 0xaf, 0xff) : Color.FromArgb(0xFF, 0xff, 0xff, 0xff));
+                        break;
+                    case ButtonStyleDanger:
+                        Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xff, 0xe2, 0xe0));
+                        Foreground = new SolidColorBrush(disabled ? Color.FromArgb(0xFF, 0xff, 0x8e, 0x88) : Color.FromArgb(0xFF, 0xff, 0x3b, 0x30));
+                        break;
+                    case ButtonStyleSuccess:
+                        Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xe8, 0xf6, 0xec));
+                        Foreground = new SolidColorBrush(disabled ? Color.FromArgb(0xFF, 0x83, 0xce, 0x96) : Color.FromArgb(0xFF, 0x1e, 0xa6, 0x41));
+                        break;
+                    case ButtonStyleLink:
+                        Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xe5, 0xf2, 0xff));
+                        Foreground = new SolidColorBrush(disabled ? Color.FromArgb(0xFF, 0xa0, 0xce, 0xff) : Color.FromArgb(0xFF, 0x00, 0x7a, 0xff));
+                        break;
+                    default:
+                        Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xe4, 0xe4, 0xe6));
+                        Foreground = new SolidColorBrush(disabled ? Color.FromArgb(0xFF, 0x94, 0x94, 0x95) : Color.FromArgb(0xFF, 0x00, 0x00, 0x00));
+                        break;
+                }
             }
         }
 

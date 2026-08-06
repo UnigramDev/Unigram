@@ -138,6 +138,7 @@ namespace Telegram.Common
                 PageBlockPullQuote pullquote => ProcessPullquote(clientService, pullquote),
                 PageBlockExpandableBlockQuote expandable => ProcessExpandableBlockquote(clientService, expandable),
                 PageBlockDocument document => ProcessDocument(clientService, document),
+                PageBlockButtonRow buttonRow => ProcessButtonRow(clientService, buttonRow),
                 PageBlockAnchor anchor => ProcessAnchor(clientService, anchor),
                 PageBlockPreformatted preformatted => ProcessPreformatted(clientService, preformatted),
                 PageBlockChatLink channel => ProcessChannel(clientService, channel),
@@ -1036,6 +1037,85 @@ namespace Telegram.Common
             return content;
         }
 
+        private FrameworkElement ProcessButtonRow(IClientService clientService, PageBlockButtonRow block)
+        {
+            var element = new Grid
+            {
+                ColumnSpacing = 4,
+                HorizontalAlignment = block.Align switch
+                {
+                    PageBlockHorizontalAlignmentLeft => HorizontalAlignment.Left,
+                    PageBlockHorizontalAlignmentCenter => HorizontalAlignment.Center,
+                    PageBlockHorizontalAlignmentRight => HorizontalAlignment.Right,
+                    _ => HorizontalAlignment.Stretch
+                }
+            };
+
+            var column = 0;
+
+            foreach (var button in block.Buttons)
+            {
+                var content = CreateInlineButton(clientService, button);
+                element.Children.Add(content);
+                element.ColumnDefinitions.Add(new ColumnDefinition());
+
+                Grid.SetColumn(content, column++);
+            }
+
+            return element;
+        }
+
+        private ReplyMarkupInlineButton CreateInlineButton(IClientService clientService, InlineButton button)
+        {
+            var block = new FormattedTextBlock
+            {
+                AutoFontSize = true,
+                IgnoreSpoilers = false,
+                HorizontalTextAlignment = TextAlignment.DetectFromContent,
+                TextReadingOrder = TextReadingOrder.UseFlowDirection,
+                TextSelection = TextSelectionMode.Disabled,
+                AdjustLineEnding = false,
+            };
+
+            Instrumentation.Register(block);
+
+#if INSTRUMENTATION
+            _context.RegisterDebug(block);
+#endif
+
+            block.SetText(clientService, button.Text);
+
+            var element = new ReplyMarkupInlineButton
+            {
+                // The label is the button's own content, so unlike the page text around
+                // it, it *is* rendered here — it's just never harvested as page text.
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                CornerRadius = new CornerRadius(16),
+                Content = block,
+                Tag = button
+            };
+
+            // Null label: the content is the FormattedTextBlock above, so the button keeps
+            // its RichText formatting. Everything else — the type glyph, the emoji icon,
+            // the ButtonStyle colour — comes from the same place an inline keyboard gets
+            // it, so the two can't drift apart.
+            element.SetButton(clientService, null, 0, button.Style, button.Type);
+
+            element.Click += InlineButton_Click;
+            return element;
+        }
+
+        private void InlineButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not FrameworkElement { Tag: InlineButton button })
+            {
+                return;
+            }
+
+            _context.OpenInlineButton(button);
+        }
+
         private FrameworkElement ProcessPullquote(IClientService clientService, PageBlockPullQuote block)
         {
             var content = new Grid
@@ -1669,6 +1749,10 @@ namespace Telegram.Common
                 else if (block is PageBlockAnchor || (block is PageBlockParagraph && previousBlock is PageBlockParagraph))
                 {
                     top = 0;
+                }
+                else if (block is PageBlockButtonRow && previousBlock is PageBlockButtonRow)
+                {
+                    top = 4;
                 }
                 else if (block is PageBlockDivider)
                 {
