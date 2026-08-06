@@ -519,7 +519,7 @@ namespace Telegram.Services.Calls
             {
                 Logger.Error(ex);
 
-                _coordinator?.MuteStateChanged += OnMuteStateChanged;
+                _coordinator?.MuteStateChanged -= OnMuteStateChanged;
                 _coordinator = null;
 
                 _systemCall = null;
