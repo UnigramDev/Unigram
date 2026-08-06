@@ -8,8 +8,7 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         mc:Ignorable="d"
                         ActualThemeChanged="OnActualThemeChanged"
-                        SizeChanged="OnSizeChanged"
-                        Unloaded="OnUnloaded">
+                        SizeChanged="OnSizeChanged">
 
     <Grid>
         <Grid.RowDefinitions>

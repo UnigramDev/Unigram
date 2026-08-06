@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -56,6 +57,8 @@ namespace Telegram.Controls.Gallery
         public GalleryContent()
         {
             InitializeComponent();
+
+            Telegram.Common.Instrumentation.Register(this);
 
             RotationAngleChanged += OnRotationAngleChanged;
             SizeChanged += OnSizeChanged;
@@ -409,6 +412,23 @@ namespace Telegram.Controls.Gallery
 
         private bool _unloaded;
         private int _fileId;
+
+#if INSTRUMENTATION
+        // The controls are the window's, lent to whichever slot is playing, so that
+        // one is a back-reference rather than ownership. Reported anyway:
+        // reachability is what the analysis measures, and a slot that never let go
+        // of them is exactly what is being looked for. Duplicates are fine — the
+        // walk is over a set.
+        internal IEnumerable<object> DebugChildren()
+        {
+            yield return _controls;
+
+            // Read off Panel.Child rather than a field, which is where a player
+            // actually lives — a slot that was unloaded but still has one is the
+            // leak this is here to catch.
+            yield return Video;
+        }
+#endif
 
         public void Play(GalleryMedia item, double position, GalleryTransportControls controls, bool force = false)
         {

@@ -6,6 +6,8 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -75,6 +77,9 @@ namespace Telegram.Controls.Gallery
         private GalleryWindow()
         {
             InitializeComponent();
+
+            Telegram.Common.Instrumentation.Register(this);
+            DebugSetCurrent(this);
 
             _layout = ElementComposition.GetElementVisual(LayoutRoot);
 
@@ -813,6 +818,10 @@ namespace Telegram.Controls.Gallery
 
             _unloaded = true;
 
+            // Past this point nothing legitimately holds the window, so it stops
+            // being a root: whatever still references it is the leak.
+            DebugClearCurrent(this);
+
             if (ViewModel != null)
             {
                 ViewModel.Delegate = null;
@@ -1279,6 +1288,99 @@ namespace Telegram.Controls.Gallery
         {
             return LayoutRoot.GetElement(direction) as GalleryContent;
         }
+
+        #region Instrumentation
+
+        [Conditional("INSTRUMENTATION")]
+        private static void DebugSetCurrent(GalleryWindow window)
+        {
+#if INSTRUMENTATION
+            // Weak, and only ever consulted by the analysis: the point is to find out
+            // who keeps the window alive, so this must not be one of them. Replacing
+            // it when a second gallery opens is right — the first is meant to be
+            // collectible by then.
+            s_current = new WeakReference<GalleryWindow>(window);
+#endif
+        }
+
+        [Conditional("INSTRUMENTATION")]
+        private static void DebugClearCurrent(GalleryWindow window)
+        {
+#if INSTRUMENTATION
+            // Only when it is still us. A gallery can be opened before the previous
+            // one has finished unloading, and an unconditional clear would drop the
+            // live window as a root and report its whole subtree as leaked.
+            if (s_current != null && s_current.TryGetTarget(out var current) && current == window)
+            {
+                s_current = null;
+            }
+#endif
+        }
+
+#if INSTRUMENTATION
+        private static WeakReference<GalleryWindow> s_current;
+
+        // The gallery is built fresh per show and torn down on close, so unlike the
+        // message list there is no pool and no steady state: once the window has
+        // unloaded the correct number of live gallery objects is ZERO. Anything the
+        // analysis still finds is either the open window's subtree or a leak.
+        //
+        // Roots and descent are exposed separately rather than as an Analyze call of
+        // their own: orphans are "registered but unreachable from the roots", so
+        // analysing the gallery alone would report the whole message tree as leaked,
+        // and vice versa. MainPage.DebugAnalyzeOrphans makes the single call over
+        // every area's roots at once.
+        public static IEnumerable<object> DebugRoots()
+        {
+            if (s_current != null && s_current.TryGetTarget(out var window))
+            {
+                yield return window;
+            }
+
+            // Picture-in-picture outlives the gallery on purpose and keeps its own
+            // static, so while it is up it is a legitimate holder of a transport
+            // controls and a player.
+            var compact = GalleryCompactOverlay.DebugCurrent;
+            if (compact != null)
+            {
+                yield return compact;
+            }
+        }
+
+        // Returns nothing for types this area does not own, so it composes with the
+        // other areas' descents.
+        internal static IEnumerable<object> DebugChildrenOf(object node)
+        {
+            return node switch
+            {
+                GalleryWindow x => x.DebugChildren(),
+                GalleryContent x => x.DebugChildren(),
+                GalleryCompactOverlay x => x.DebugChildren(),
+                GalleryTransportControls x => x.DebugChildren(),
+                MessageTextBlock x => x.DebugChildren(),
+                // VideoPlayerBase is a leaf: it is the thing being looked for, and
+                // it owns nothing else that is registered.
+                _ => Array.Empty<object>()
+            };
+        }
+
+        internal IEnumerable<object> DebugChildren()
+        {
+            // The three carousel slots, not GetElement: that maps a direction onto
+            // whichever slot currently holds it, and a leak analysis wants all of
+            // them regardless of where the carousel has rotated to.
+            yield return Element0;
+            yield return Element1;
+            yield return Element2;
+
+            yield return Sponsored;
+            yield return BottomPanel;
+            yield return Controls;
+            yield return Caption;
+        }
+#endif
+
+        #endregion
 
         private void FullScreen_Click(object sender, RoutedEventArgs e)
         {
