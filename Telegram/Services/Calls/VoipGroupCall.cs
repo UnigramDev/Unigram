@@ -83,7 +83,9 @@ namespace Telegram.Services.Calls
 
         private bool _isScheduled;
         private bool _isConnected;
-        private bool _isClosed;
+        // Volatile because JoinAsync reads it after awaiting the system call
+        // reservation, by which point Dispose may have run on another thread.
+        private volatile bool _isClosed;
 
         private VoipGroupCallStreamState _streamState;
         private readonly object _streamStateLock = new();
@@ -148,14 +150,7 @@ namespace Telegram.Services.Calls
             _manager.VideoBroadcastPartRequested += OnVideoBroadcastPartRequested;
             _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
 
-            if (!_isLiveStory)
-            {
-                InitializeSystemCallAsync(groupCall.Id, groupCall.Title).Wait();
-                CreateWindow(false);
-
-                _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
-            }
-            else
+            if (_isLiveStory)
             {
                 Aggregator.Subscribe<UpdateGroupCall>(this, Handle, EventType.GroupCall, Id)
                     .Subscribe<UpdateGroupCallParticipant>(Handle)
@@ -167,15 +162,65 @@ namespace Telegram.Services.Calls
                     .Subscribe<UpdateLiveStoryTopDonors>(Handle);
             }
 
-            if (groupCall.ScheduledStartDate > 0)
+            _ = JoinAsync(groupCall.Id, groupCall.Title, alias, groupCall.ScheduledStartDate > 0);
+        }
+
+        /// <summary>
+        /// The tail of the constructor, from the system call reservation onwards.
+        ///
+        /// Reserving it blocked the constructor, which VoipCoordinator runs inside its
+        /// _activeLock. The UI thread takes that lock through VoipCoordinator.ActiveCall,
+        /// so it froze for as long as the reservation took. Nothing here needs the
+        /// constructor to have returned, so it runs after instead of during.
+        /// </summary>
+        private async Task JoinAsync(int callId, string callTitle, MessageSender alias, bool scheduled)
+        {
+            if (!_isLiveStory)
+            {
+                await InitializeSystemCallAsync(callId, callTitle);
+
+                // Left before the reservation completed. Dispose ran with _systemCall
+                // still null and had nothing to release, so this has to, or Windows is
+                // left holding a call that can no longer be ended.
+                if (_isClosed)
+                {
+                    DisposeSystemCall();
+                    return;
+                }
+
+                CreateWindow(false);
+
+                _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
+            }
+
+            if (scheduled)
             {
                 IsJoined = true;
-                ClientService.Send(new SetVideoChatDefaultParticipant(chat.Id, alias));
+                ClientService.Send(new SetVideoChatDefaultParticipant(_chat.Id, alias));
             }
             else
             {
                 Rejoin(alias);
             }
+        }
+
+        /// <summary>
+        /// <see cref="JoinAsync"/> for the two conference constructors, which have no
+        /// group call to name and always rejoin as the current user.
+        /// </summary>
+        private async Task JoinConferenceAsync()
+        {
+            await InitializeSystemCallAsync(0, "groupCall.Title");
+
+            if (_isClosed)
+            {
+                DisposeSystemCall();
+                return;
+            }
+
+            CreateWindow(false);
+
+            Rejoin(ClientService.MyId);
         }
 
         public VoipGroupCall(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, XamlRoot xamlRoot, InputGroupCall inputGroupCall)
@@ -234,10 +279,7 @@ namespace Telegram.Services.Calls
 
             _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
 
-            InitializeSystemCallAsync(0, "groupCall.Title").Wait();
-            CreateWindow(false);
-
-            Rejoin(clientService.MyId);
+            _ = JoinConferenceAsync();
         }
 
         public VoipGroupCall(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, XamlRoot xamlRoot, IList<long> userIds)
@@ -294,10 +336,7 @@ namespace Telegram.Services.Calls
 
             _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
 
-            InitializeSystemCallAsync(0, "groupCall.Title").Wait();
-            CreateWindow(false);
-
-            Rejoin(clientService.MyId);
+            _ = JoinConferenceAsync();
         }
 
         public VoipGroupCallVerificationStateChangedEventArgs VerificationState { get; private set; }
@@ -1078,6 +1117,16 @@ namespace Telegram.Services.Calls
 
             EndScreenSharing();
 
+            DisposeSystemCall();
+        }
+
+        /// <summary>
+        /// Releases the system call registration. Does nothing when none was reserved,
+        /// so it is safe both before <see cref="InitializeSystemCallAsync"/> has run and
+        /// after a previous release.
+        /// </summary>
+        private void DisposeSystemCall()
+        {
             try
             {
                 if (_coordinator != null)
