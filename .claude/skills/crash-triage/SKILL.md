@@ -185,9 +185,18 @@ PR reviewable without re-running the tooling.
 **Never publish impact numbers.** The repository is public; how many users a crash affects is
 private telemetry and must not appear in a PR body, a commit message, a branch name or an issue
 — not as a user count, not as a device count, not as "30+ distinct devices", and not as a
-crash count that implies one. Say "reported by crash telemetry on <version>" and stop there.
-Group hashes and per-device/per-OS breakdowns stay out too. Use the numbers to decide what to
-work on, never to justify the work in public.
+crash count that implies one. Group hashes and per-device/per-OS breakdowns stay out too. Use
+the numbers to decide what to work on, never to justify the work in public.
+
+Don't strip by hand — that already failed once. Generate the public text mechanically:
+
+```
+$CRASHCTL show <group_hash> --public
+```
+
+It emits the exception, the frames and the missing-symbol list with all of the above withheld,
+overrides `--json`/`--log-tail` so neither reintroduces it, and rewrites account names in
+Windows user paths. Say "reported by crash telemetry on <version>" and stop there.
 
 This applies to the commit message as much as the PR body — it is pushed and equally public.
 Check both before pushing; scrubbing after the fact needs a force-push.
