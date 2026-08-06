@@ -165,7 +165,7 @@ namespace Telegram.Charts
                     line.paint.A = (byte)(255 * line.alpha * transitionAlpha);
                     if (!USE_LINES)
                     {
-                        canvas.DrawGeometry(CanvasGeometry.CreatePath(line.chartPath), line.paint);
+                        DrawGeometry(canvas, line.chartPath, line.paint);
                     }
                     //else canvas.drawLines(line.linesPath, 0, j, line.paint);
                 }
@@ -280,7 +280,7 @@ namespace Telegram.Charts
                     //if (USE_LINES)
                     //    canvas.drawLines(line.linesPathBottom, 0, line.linesPathBottomSize, line.bottomLinePaint);
                     //else
-                    canvas.DrawGeometry(CanvasGeometry.CreatePath(line.bottomLinePath), line.bottomLinePaint);
+                    DrawGeometry(canvas, line.bottomLinePath, line.bottomLinePaint);
 
                 }
             }

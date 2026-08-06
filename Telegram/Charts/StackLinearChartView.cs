@@ -458,7 +458,7 @@ namespace Telegram.Charts
                     if (line.chartPath != null)
                     {
                         line.chartPath.EndFigure(CanvasFigureLoop.Open);
-                        canvas.FillGeometry(CanvasGeometry.CreatePath(line.chartPath), line.paint.Color);
+                        FillGeometry(canvas, line.chartPath, line.paint.Color);
                     }
 
                     line.paint.A = 255;
@@ -619,7 +619,7 @@ namespace Telegram.Charts
                     if (line.chartPathPicker != null)
                     {
                         line.chartPathPicker.EndFigure(CanvasFigureLoop.Open);
-                        canvas.FillGeometry(CanvasGeometry.CreatePath(line.chartPathPicker), line.paint.Color);
+                        FillGeometry(canvas, line.chartPathPicker, line.paint.Color);
                     }
                 }
             }

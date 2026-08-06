@@ -42,6 +42,27 @@ namespace Telegram.Charts
         public float currentMaxHeight = 250;
         public float currentMinHeight = 0;
 
+        /// <summary>
+        /// Draws a path and releases the geometry built for it.
+        ///
+        /// CanvasGeometry wraps a D2D geometry and is built inside the draw pass, once
+        /// per line on every frame of an animating chart. Left to the finalizer it holds
+        /// native memory until the next collection. The drawing session consumes the
+        /// geometry before the call returns, so nothing outlives the using.
+        /// </summary>
+        protected static void DrawGeometry(CanvasDrawingSession canvas, CanvasPathBuilder path, Paint paint)
+        {
+            using var geometry = CanvasGeometry.CreatePath(path);
+            canvas.DrawGeometry(geometry, paint);
+        }
+
+        /// <inheritdoc cref="DrawGeometry"/>
+        protected static void FillGeometry(CanvasDrawingSession canvas, CanvasPathBuilder path, Color color)
+        {
+            using var geometry = CanvasGeometry.CreatePath(path);
+            canvas.FillGeometry(geometry, color);
+        }
+
         public abstract void SetDataPublic(ChartData data);
 
         public abstract List<LineViewData> GetLines();
