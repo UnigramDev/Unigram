@@ -3197,13 +3197,22 @@ namespace Telegram.Views
                 }
                 else if (element is MessageBubble { Parent: MessageSelector parent } && parent.HasSelection)
                 {
-                    quote = new MessageQuote
+                    // HasSelection only reports that a selection is shown; the source text behind
+                    // it can still be unavailable, in which case GetSelectedSourceText returns
+                    // null. Everything below already treats a null quote as "no quote", so leave
+                    // it unset instead of dereferencing it.
+                    var selected = parent.GetSelectedSourceText(out selectionStart);
+                    if (selected != null)
                     {
-                        Message = message,
-                        Quote = parent.GetSelectedSourceText(out selectionStart),
-                        Position = selectionStart
-                    };
-                    selectionEnd = selectionStart + quote.Quote.Text.Length;
+                        quote = new MessageQuote
+                        {
+                            Message = message,
+                            Quote = selected,
+                            Position = selectionStart
+                        };
+
+                        selectionEnd = selectionStart + selected.Text.Length;
+                    }
                 }
 
                 if (message.Content is MessageGift gift && ViewModel.ClientService.TryGetUser(chat, out User user))
