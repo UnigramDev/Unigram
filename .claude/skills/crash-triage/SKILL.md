@@ -43,10 +43,11 @@ Skip a group whose own-code PDB is missing — you cannot analyse what you canno
 ## 2. Symbolicate
 
 ```
-$CRASHCTL show <group_hash> --sample 60
+$CRASHCTL show <group_hash> --sample 60 --log-tail
 ```
 
-Read the output in this order:
+Always pass `--log-tail`. It is the highest-value part of the record and costs one extra
+request. Read the output in this order:
 
 - **`versions`** — which releases crash. Carry this into section 3.
 - **`frames N/M resolved`** and **`!! MISSING SYMBOLS`** — if the Unigram modules are missing,
@@ -56,9 +57,38 @@ Read the output in this order:
   .NET Native (AOT), symbol names are mangled (`$0_Telegram::…`, `Stub_18<System.__Canon>`);
   `exit_point` is often the more readable rendering of the same stack. The symbolicator's
   added value over it is the file and line.
+- **`log tail`** — see below.
 
-`--json` for structured output, `--log-tail` for the app log, `--offline` to skip the Microsoft
-symbol server when triaging in bulk.
+`--json` for structured output, `--offline` to skip the Microsoft symbol server when triaging
+in bulk.
+
+### The log tail is where the cause usually is
+
+The stack says *where* the app died. The log tail says *what it was doing*, which is what you
+actually need to explain the crash. It has two parts.
+
+A **state header** — app version, language, session duration, memory used/available/total,
+window size, column width, screen scaling and text scaling, active calls, and often the raw
+`HRESULT`. Check these against the crash's device spread: an OOM-shaped crash with
+`Memory available` near zero, or a layout crash at 200% scaling, is a much stronger lead than
+the stack alone.
+
+A **timestamped trace**, each line `[unixtime,ms][File.cs:line][Method] message`:
+
+```
+[…077][NavigationService.cs:467][NavigateToAsync] Mode: New, Parameter: 8870522043 …
+[…087][InstantContent.xaml.cs:183][UpdateView] Steps: 4, added: 1, removed: 3, moved: 0
+[…106][InstantContent.xaml.cs:183][UpdateView] Steps: 6, added: 1, removed: 5, moved: 0
+```
+
+Work backwards from the last entries. Look for the sequence that reaches the anchor frame,
+repeated or escalating values, and how much wall-clock time the last steps took. These lines
+carry their own `File.cs:line`, so they corroborate the symbolicated stack independently — if
+the two disagree, trust neither until you understand why.
+
+Logging in the app is currently sparse, so the trace often thins out right before the
+interesting moment. When that happens, note in the PR which log line would have settled the
+question; adding it is a legitimate follow-up.
 
 ## 3. Map the version to its source — do not skip
 
@@ -105,6 +135,11 @@ Read the anchor frame and its callers at the reference commit. State the failure
 which value is null, which index is out of range, which invariant broke, and the sequence that
 gets there. Use the version/OS/device spread from section 2 — a crash confined to one OS build
 or one GPU vendor is a different bug from one spread evenly.
+
+Reconcile three sources before settling on a cause: the symbolicated stack (where), the log
+tail's final entries (what led there), and the code at the reference commit (how that state is
+reachable). A diagnosis that explains all three is worth acting on; one that explains only the
+stack usually is not.
 
 If you cannot explain the crash, say so and stop. A plausible-looking guess wastes more time
 than an honest "not diagnosed".
