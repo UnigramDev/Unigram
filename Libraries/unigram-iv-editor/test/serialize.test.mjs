@@ -136,6 +136,70 @@ ok("media: structured video -> file_id, autoplay/loop preserved", () => {
   if (b.need_autoplay !== true || b.is_looped !== true) throw new Error("video flags lost");
 });
 
+ok("pageBlockExpandableBlockQuote round-trips text + credit (not as a blockquote)", () => {
+  const eq = { "@type": "pageBlockExpandableBlockQuote", text: RT("Hidden until asked"), credit: RT("Author") };
+  const b = toTDLib(load([eq]))[0];
+  if (b["@type"] !== "pageBlockExpandableBlockQuote") throw new Error("not expandable: " + b["@type"]);
+  if (b.text?.text !== "Hidden until asked") throw new Error("text lost");
+  if (b.credit?.text !== "Author") throw new Error("credit lost");
+  // It holds RichText directly, so it must NOT have grown a blocks vector.
+  if ("blocks" in b) throw new Error("expandable quote must not carry blocks");
+  const input = toInputBlocks(load([eq]))[0];
+  if (input["@type"] !== "inputPageBlockExpandableBlockQuote") throw new Error("input type: " + input["@type"]);
+});
+
+ok("pageBlockDocument round-trips as a figure (no url, no spoiler)", () => {
+  const doc = {
+    "@type": "pageBlockDocument",
+    document: { "@type": "document", file_name: "spec.pdf", mime_type: "application/pdf", document: { "@type": "file", id: 42 } },
+    caption: { "@type": "pageBlockCaption", text: RT("The spec"), credit: null },
+  };
+  const b = toTDLib(load([doc]))[0];
+  if (b["@type"] !== "pageBlockDocument") throw new Error("not a document: " + b["@type"]);
+  if (b.file_id !== 42) throw new Error("document file id lost: " + b.file_id);
+  if (b.caption?.text?.text !== "The spec") throw new Error("caption lost");
+  if ("has_spoiler" in b || "url" in b) throw new Error("document carries neither a spoiler nor a url");
+  const input = toInputBlocks(load([doc]))[0];
+  if (input["@type"] !== "inputPageBlockDocument") throw new Error("input type: " + input["@type"]);
+  if (input.document?.["@type"] !== "inputDocument") throw new Error("display document not converted to inputDocument");
+  if (input.document.document?.id !== 42) throw new Error("input file id lost");
+  if ("has_spoiler" in input) throw new Error("inputPageBlockDocument has no spoiler field");
+});
+
+ok("pageBlockButtonRow round-trips verbatim, with its alignment", () => {
+  const button = (t) => ({
+    "@type": "inlineButton", text: RT(t),
+    style: { "@type": "buttonStylePrimary" },
+    type: { "@type": "inlineKeyboardButtonTypeUrl", url: "https://t.me/" + t },
+  });
+  const row = { "@type": "pageBlockButtonRow", buttons: [button("a"), button("b")], align: { "@type": "pageBlockHorizontalAlignmentCenter" } };
+  const b = toTDLib(load([row]))[0];
+  if (b["@type"] !== "pageBlockButtonRow") throw new Error("not a button row: " + b["@type"]);
+  if ((b.buttons || []).length !== 2) throw new Error("buttons lost: " + (b.buttons || []).length);
+  // Verbatim: style and type are the button's own business, the editor rewrites nothing.
+  if (b.buttons[0].style?.["@type"] !== "buttonStylePrimary") throw new Error("button style lost");
+  if (b.buttons[1].type?.url !== "https://t.me/b") throw new Error("button payload lost");
+  if (b.align?.["@type"] !== "pageBlockHorizontalAlignmentCenter") throw new Error("alignment lost: " + JSON.stringify(b.align));
+  const input = toInputBlocks(load([row]))[0];
+  if (input["@type"] !== "inputPageBlockButtonRow") throw new Error("input type: " + input["@type"]);
+  if (input.buttons[0].type?.url !== "https://t.me/a") throw new Error("input buttons must cross over unchanged");
+});
+
+ok("richTextButton stays a button — its label never becomes page text", () => {
+  const btn = {
+    "@type": "richTextButton",
+    button: { "@type": "inlineButton", text: RT("Subscribe"), style: { "@type": "buttonStyleDefault" }, type: { "@type": "inlineKeyboardButtonTypeCallback", data: "eA==" } },
+  };
+  const d = load([{ "@type": "pageBlockParagraph", text: { "@type": "richTexts", texts: [RT("Tap "), btn] } }]);
+  // The label is the button's content, so it must not show up as document text.
+  if (d.textContent.includes("Subscribe")) throw new Error("button label leaked into the document text");
+  const out = toTDLib(d)[0];
+  const back = (out.text.texts || []).find((x) => x["@type"] === "richTextButton");
+  if (!back) throw new Error("richTextButton not reconstructed on save");
+  if (back.button?.text?.text !== "Subscribe") throw new Error("button label lost");
+  if (back.button?.type?.data !== "eA==") throw new Error("button payload lost");
+});
+
 console.log("round-trip:");
 ok("blockquote credit: preserved when present, dropped when absent", () => {
   const withCredit = { "@type": "pageBlockBlockQuote", blocks: [{ "@type": "pageBlockParagraph", text: RT("Quote") }], credit: RT("Author") };

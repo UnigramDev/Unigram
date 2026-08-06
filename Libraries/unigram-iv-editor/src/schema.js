@@ -14,6 +14,7 @@
 
 import { Schema } from "prosemirror-model";
 import { tableNodes } from "prosemirror-tables";
+import { richTextToPlain } from "./serialize.js";
 
 // --- Table nodes from prosemirror-tables, extended with align/valign --------
 const baseTables = tableNodes({
@@ -134,6 +135,52 @@ const nodes = {
     toDOM: () => ["div", { class: "pm-pullquote-credit" }, 0],
   },
 
+  // pageBlockExpandableBlockQuote — text + credit held directly, like the pull
+  // quote above, NOT a list of blocks like `blockquote`. Collapsing is a viewer
+  // affordance with nothing to author, so this edits fully expanded and only the
+  // block type round-trips.
+  expandable_blockquote: {
+    group: "block",
+    content: "expandable_text expandable_credit",
+    // Same reason as pullquote: a gap cursor between the two regions would let
+    // typing split the quote in two.
+    allowGapCursor: false,
+    parseDOM: [{ tag: "blockquote.pm-expandable" }],
+    toDOM: () => ["blockquote", { class: "pm-expandable" }, 0],
+  },
+  expandable_text: {
+    content: "inline*",
+    isolating: true,
+    parseDOM: [{ tag: "div.pm-expandable-text" }],
+    toDOM: () => ["div", { class: "pm-expandable-text" }, 0],
+  },
+  expandable_credit: {
+    content: "inline*",
+    isolating: true,
+    parseDOM: [{ tag: "div.pm-expandable-credit" }],
+    toDOM: () => ["div", { class: "pm-expandable-credit" }, 0],
+  },
+
+  // pageBlockButtonRow — a row of actions. A block atom holding the buttons
+  // verbatim: label, style and type are the button's own business, and there is
+  // no authoring UI for them, so this round-trips untouched the way pageBlockMap
+  // does. The label is shown but is not document text — it can't be edited or
+  // selected into a copy.
+  button_row: {
+    group: "block",
+    atom: true,
+    selectable: true,
+    attrs: {
+      buttons: { default: null },   // raw vector<inlineButton>
+      align: { default: "left" },   // PageBlockHorizontalAlignment
+    },
+    toDOM: (n) => [
+      "div",
+      { class: "pm-button-row", "data-align": n.attrs.align },
+      ...(n.attrs.buttons || []).map((b) => ["span", { class: "pm-button" }, richTextToPlain(b?.text)]),
+    ],
+  },
+
   // pageBlockDivider — a block atom so it can be clicked/selected (and deleted) as a unit.
   divider: {
     group: "block",
@@ -214,7 +261,7 @@ const nodes = {
     // slideshow does not (only the group itself is captioned).
     content: "caption?",
     attrs: {
-      kind: { default: "photo" },        // photo|video|audio|animation|voice|map
+      kind: { default: "photo" },        // photo|video|audio|animation|voice|document|map
       fileId: { default: "" },           // TDLib file id / remote id
       src: { default: "" },              // resolved appassets:// url for preview
       width: { default: 0 },
@@ -288,6 +335,18 @@ const nodes = {
         "data-alt": n.attrs.alt,
       },
     ],
+  },
+
+  // richTextButton (inline atom) — an action sitting in a line of text. Held
+  // verbatim like button_row above: the label renders, but it is the button's
+  // content, not the document's, so it is never edited or harvested as text.
+  button: {
+    group: "inline",
+    inline: true,
+    atom: true,
+    selectable: true,
+    attrs: { button: { default: null } },   // raw inlineButton
+    toDOM: (n) => ["span", { class: "pm-button" }, richTextToPlain(n.attrs.button?.text)],
   },
 
   // richTextMathematicalExpression (inline atom)

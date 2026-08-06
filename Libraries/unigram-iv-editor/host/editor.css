@@ -168,6 +168,41 @@ html, body { height: 100%; margin: 0; }
 }
 /* credit (and its placeholder) stays hidden until the quote body has content */
 .ProseMirror blockquote.pm-empty-body .pm-blockquote-credit { display: none; }
+/* pageBlockExpandableBlockQuote — the same accent bar as a block quote (it IS a
+   quote), plus a chevron marking that a reader can expand it. Unlike blockquote
+   this holds rich text directly, so its two regions are inline, like a pullquote's.
+   Nothing here collapses: authoring shows the whole quote, and the affordance is
+   the viewer's. */
+.ProseMirror blockquote.pm-expandable { position: relative; }
+.ProseMirror blockquote.pm-expandable::after {
+  content: "\EA01"; position: absolute; right: 4px; bottom: 2px;
+  font-family: var(--icon); font-size: 12px; line-height: 1; color: var(--ink-soft);
+  pointer-events: none;
+}
+.ProseMirror .pm-expandable-text { position: relative; }
+.ProseMirror .pm-expandable-credit { position: relative; margin-top: 6px; font-size: .9em; font-weight: 600; color: var(--ink-soft); }
+.ProseMirror .pm-expandable-text.pm-empty::before, .ProseMirror .pm-expandable-credit.pm-empty::before {
+  content: attr(data-placeholder); position: absolute; left: 0; right: 0;
+  pointer-events: none; color: var(--ink-soft); font-weight: 400;
+}
+/* credit stays hidden until the quote body has content, like the others */
+.ProseMirror .pm-expandable-text.pm-empty + .pm-expandable-credit { display: none; }
+
+/* pageBlockButtonRow / richTextButton — actions, not text. Rendered as inert
+   chips: the label is the button's own content, so it is never editable here and
+   never lands in the document's text (pointer-events/user-select off). */
+.ProseMirror .pm-button-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.ProseMirror .pm-button-row[data-align="center"] { justify-content: center; }
+.ProseMirror .pm-button-row[data-align="right"] { justify-content: flex-end; }
+.ProseMirror .pm-button {
+  display: inline-block; padding: 4px 12px; border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent); font-size: 13px; font-weight: 600; line-height: 18px;
+  white-space: nowrap; user-select: none; pointer-events: none;
+}
+/* inline (richTextButton) sits on the text baseline */
+.ProseMirror span.pm-button { vertical-align: baseline; margin: 0 2px; }
+
 /* preformatted: monospace. The language label is a real (clickable) element on
    the first line, rendered by the NodeView — shows "language" when none is set. */
 .ProseMirror pre { font-family: var(--mono); font-size: .86em; overflow-x: auto; }

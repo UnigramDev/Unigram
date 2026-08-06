@@ -364,6 +364,11 @@ export const pullquoteCreditView = placeholderRegion("pm-pullquote-credit", "Add
 // same as the pullquote author line.
 export const blockquoteCreditView = placeholderRegion("pm-blockquote-credit", "Add credit");
 
+// expandable blockquote — inline text + credit regions (it holds RichText, not
+// blocks), so both get the same placeholder treatment as the pullquote's.
+export const expandableTextView = placeholderRegion("pm-expandable-text", "Enter quote");
+export const expandableCreditView = placeholderRegion("pm-expandable-credit", "Add credit");
+
 // blockquote — toggles `pm-empty-body` while the quoted text is empty so CSS can hide the
 // credit line (and its placeholder) until the user types, mirroring how the pullquote
 // author line stays hidden until the quote has content.

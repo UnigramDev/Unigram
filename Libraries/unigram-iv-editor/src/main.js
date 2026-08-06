@@ -32,6 +32,7 @@ import { schema } from "./schema.js";
 import {
   customEmojiView, makeMathView, detailsView, figureView, listItemView, anchorView,
   makePreformattedView, pullquoteTextView, pullquoteCreditView, blockquoteView, blockquoteCreditView, collageView,
+  expandableTextView, expandableCreditView,
 } from "./nodeviews.js";
 import { toTDLib, toInputBlocks, fromTDLib } from "./serialize.js";
 
@@ -156,11 +157,12 @@ function describeBlock(state) {
     const name = sel.node.type.name;
     if (name === "figure") return { type: sel.node.attrs.kind || "photo", size: null, listType: null };
     if (name === "math_block") return { type: "math", size: null, listType: null };
+    if (name === "button_row") return { type: "buttons", size: null, listType: null };
     if (name === "anchor") return { type: "anchor", size: null, listType: null, name: sel.node.attrs.name || "" };
   }
 
   const { $from } = sel;
-  let textBlock = null, size = null, figureKind = null, listType = null, inBlockquote = false, inPullquote = false, language = "", inDetailsHeader = false;
+  let textBlock = null, size = null, figureKind = null, listType = null, inBlockquote = false, inPullquote = false, language = "", inDetailsHeader = false, inExpandable = false;
   for (let d = $from.depth; d > 0; d--) {
     const node = $from.node(d);
     switch (node.type.name) {
@@ -191,6 +193,9 @@ function describeBlock(state) {
       case "blockquote":
         inBlockquote = true;
         break;
+      case "expandable_blockquote":
+        inExpandable = true; // caret is in the quote text or the credit region
+        break;
       case "details_summary":
         inDetailsHeader = true; // caret is in the details HEADER (not the collapsible body)
         break;
@@ -206,6 +211,7 @@ function describeBlock(state) {
     // Only the details HEADER reports "details"; the collapsible body reports its own block.
     inDetailsHeader ? "details"
     : inPullquote ? "pullquote"
+    : inExpandable ? "expandable_blockquote"
     : isInTable(state) ? "table"
     : listType ? "list"
     : inBlockquote ? "blockquote"
@@ -297,7 +303,9 @@ function isDocEmpty(doc) {
 // slideshow) AND the subscript/superscript/marked marks + inline math (no matching message entity —
 // unlike RichText, message FormattedText has no such entities). Cached per (immutable) doc.
 const _richCache = new WeakMap();
-const RICH_OK_BLOCKS = new Set(["doc", "paragraph", "preformatted", "blockquote"]);
+// expandable_blockquote is representable: it holds RichText directly, so it maps
+// 1:1 onto TextEntityTypeExpandableBlockQuote (see PageBlockHelper.TryAppendBlock).
+const RICH_OK_BLOCKS = new Set(["doc", "paragraph", "preformatted", "blockquote", "expandable_blockquote", "expandable_text"]);
 const RICH_UNSUPPORTED_MARKS = new Set(["subscript", "superscript", "marked"]);
 function hasRichContent(doc) {
   let cached = _richCache.get(doc);
@@ -315,10 +323,11 @@ function computeHasRichContent(doc) {
     const name = node.type.name;
     if (node.isInline) {
       // custom_emoji -> TextEntityTypeCustomEmoji (representable); inline math has no message entity.
-      if (name === "math_inline") rich = true;
+      // A button has none either — and a message has no way to act on one anyway.
+      if (name === "math_inline" || name === "button") rich = true;
       return false;
     }
-    if (name === "blockquote_credit") {
+    if (name === "blockquote_credit" || name === "expandable_credit") {
       if (node.content.size > 0) rich = true; // a non-empty credit can't live in a blockquote entity
       return false;
     }
@@ -416,6 +425,7 @@ function computeMetrics(doc) {
         node.forEach((c) => { if (c.type.name === "caption") inlineAt(c.content, d + 1); });
         break;
       case "pullquote":
+      case "expandable_blockquote":
         node.forEach((c) => inlineAt(c.content, d + 1));
         break;
       case "paragraph":
@@ -1171,6 +1181,8 @@ export function mountEditor(mount, initialBlocks = []) {
       pullquote_credit: pullquoteCreditView,
       blockquote: blockquoteView,
       blockquote_credit: blockquoteCreditView,
+      expandable_text: expandableTextView,
+      expandable_credit: expandableCreditView,
       preformatted: makePreformattedView((language, rect) => sendToHost({
         type: "preformattedLanguage",
         language,

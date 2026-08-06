@@ -31,6 +31,18 @@ const MARK_WRAP = [
 
 const plain = (s) => T("richTextPlain", { text: s });
 
+// Flat text of a RichText tree. Only used to LABEL things the editor renders but
+// doesn't own — button faces — never to pull page text out of the model.
+export function richTextToPlain(rt) {
+  if (!rt) return "";
+  const t = rt["@type"];
+  if (t === "richTextPlain") return rt.text || "";
+  if (t === "richTexts") return (rt.texts || []).map(richTextToPlain).join("");
+  if (t === "richTextCustomEmoji") return rt.alternative_text || "";
+  if (t === "richTextMathematicalExpression") return rt.expression || "";
+  return richTextToPlain(rt.text);
+}
+
 function wrapMarks(text, marks) {
   let rt = plain(text);
   const has = (name) => marks.find((m) => m.type.name === name);
@@ -58,6 +70,9 @@ function inlineToRichText(fragment) {
       }));
     } else if (node.type.name === "math_inline") {
       parts.push(T("richTextMathematicalExpression", { expression: node.attrs.latex }));
+    } else if (node.type.name === "button") {
+      // Carried through untouched — the editor never rewrites a button.
+      parts.push(T("richTextButton", { button: node.attrs.button }));
     }
   });
   if (parts.length === 0) return plain("");
@@ -71,7 +86,15 @@ const FIGURE_TYPE = {
   audio: "pageBlockAudio",
   animation: "pageBlockAnimation",
   voice: "pageBlockVoiceNote",
+  document: "pageBlockDocument",
 };
+
+// PageBlockHorizontalAlignment <-> the `align` attr, shared by table cells and
+// button rows.
+const alignType = (a) =>
+  a === "center" ? T("pageBlockHorizontalAlignmentCenter")
+  : a === "right" ? T("pageBlockHorizontalAlignmentRight")
+  : T("pageBlockHorizontalAlignmentLeft");
 
 function blockToTDLib(node) {
   const n = node.type.name;
@@ -104,6 +127,19 @@ function blockToTDLib(node) {
       });
       return T("pageBlockPullQuote", { text, credit });
     }
+    case "expandable_blockquote": {
+      let text = plain(""), credit = null;
+      node.forEach((c) => {
+        if (c.type.name === "expandable_text") text = inlineToRichText(c.content);
+        else if (c.type.name === "expandable_credit") credit = c.content.size ? inlineToRichText(c.content) : null;
+      });
+      return T("pageBlockExpandableBlockQuote", { text, credit });
+    }
+    case "button_row":
+      return T("pageBlockButtonRow", {
+        buttons: node.attrs.buttons || [],
+        align: alignType(node.attrs.align),
+      });
     case "divider":
       return T("pageBlockDivider");
     case "anchor":
@@ -182,6 +218,10 @@ function figureToTDLib(node) {
       caption,
     });
   }
+  // pageBlockDocument is just document + caption — no url, no spoiler.
+  if (node.attrs.kind === "document") {
+    return T("pageBlockDocument", { file_id: node.attrs.fileId, caption });
+  }
   const type = FIGURE_TYPE[node.attrs.kind] || "pageBlockPhoto";
   // The structured photo/video/... object is replaced by `file_id` (the host
   // resolves it back to a file); the preview `url` is preserved as-is.
@@ -240,10 +280,6 @@ function tableToTDLib(node) {
   return T("pageBlockTable", { caption: null, cells: rows, is_bordered: true, is_striped: false });
 }
 
-const alignType = (a) =>
-  a === "center" ? T("pageBlockHorizontalAlignmentCenter")
-  : a === "right" ? T("pageBlockHorizontalAlignmentRight")
-  : T("pageBlockHorizontalAlignmentLeft");
 const valignType = (v) =>
   v === "middle" ? T("pageBlockVerticalAlignmentMiddle")
   : v === "bottom" ? T("pageBlockVerticalAlignmentBottom")
@@ -269,6 +305,7 @@ const INPUT_FIGURE = {
   audio: "inputPageBlockAudio",
   animation: "inputPageBlockAnimation",
   voice: "inputPageBlockVoiceNote",
+  document: "inputPageBlockDocument",
 };
 
 // TDLib File -> InputFile: prefer the persistent remote id, else the session id.
@@ -340,6 +377,13 @@ function mediaToInput(kind, media) {
         duration: media.duration || 0,
         waveform: media.waveform || "",
       });
+    case "document":
+      return T("inputDocument", {
+        document: fileToInput(media.document),
+        thumbnail: thumbnailToInput(media.thumbnail),
+        // The server already typed this file, so there's nothing to re-detect.
+        disable_content_type_detection: false,
+      });
     default:
       return null;
   }
@@ -370,7 +414,8 @@ function figureToInput(node) {
   // media field name matches the kind (photo/video/animation/audio/voice_note)
   const field = kind === "voice" ? "voice_note" : kind;
   out[field] = mediaToInput(kind, node.attrs.media);
-  if (kind !== "audio" && kind !== "voice") out.has_spoiler = node.attrs.hasSpoiler;
+  // Only the visual kinds carry a spoiler — audio, voice and document don't.
+  if (kind !== "audio" && kind !== "voice" && kind !== "document") out.has_spoiler = node.attrs.hasSpoiler;
   return T(type, out);
 }
 
@@ -411,6 +456,21 @@ function blockToInput(node) {
       });
       return T("inputPageBlockPullQuote", { text, credit });
     }
+    case "expandable_blockquote": {
+      let text = plain(""), credit = null;
+      node.forEach((c) => {
+        if (c.type.name === "expandable_text") text = inlineToRichText(c.content);
+        else if (c.type.name === "expandable_credit") credit = c.content.size ? inlineToRichText(c.content) : null;
+      });
+      return T("inputPageBlockExpandableBlockQuote", { text, credit });
+    }
+    case "button_row":
+      // inputPageBlockButtonRow takes inlineButton, not an input twin — the
+      // buttons cross over unchanged.
+      return T("inputPageBlockButtonRow", {
+        buttons: node.attrs.buttons || [],
+        align: alignType(node.attrs.align),
+      });
     case "divider":
       return T("inputPageBlockDivider");
     case "anchor":
@@ -504,6 +564,11 @@ function richTextToInline(rt, schema, marks = []) {
     out.push(schema.nodes.custom_emoji.create({ customEmojiId: rt.custom_emoji_id, alt: rt.alternative_text }));
   } else if (t === "richTextMathematicalExpression") {
     out.push(schema.nodes.math_inline.create({ latex: rt.expression }));
+  } else if (t === "richTextButton") {
+    // Note this must come before the generic `rt.text` fallback below: a button
+    // HAS no `text` of its own (the label is button.text), and falling through
+    // would silently turn the action into the words on its face.
+    out.push(schema.nodes.button.create({ button: rt.button || null }));
   } else if (rt.text) {
     // entity wrappers (mention/hashtag/...) collapse back to plain text
     out.push(...richTextToInline(rt.text, schema, marks));
@@ -542,6 +607,7 @@ function mediaInfo(b) {
     case "pageBlockAnimation": file = b.animation?.animation; width = b.animation?.width || 0; height = b.animation?.height || 0; break;
     case "pageBlockAudio": file = b.audio?.audio; break;
     case "pageBlockVoiceNote": file = b.voice_note?.voice; break;
+    case "pageBlockDocument": file = b.document?.document; break;
   }
   return { fileId: file?.id ?? b.file_id ?? "", src: b.url || "", width, height };
 }
@@ -571,6 +637,16 @@ function blockFromTDLib(b, schema) {
         N.pullquote_text.create(null, inline(b.text)),
         N.pullquote_credit.create(null, b.credit ? inline(b.credit) : []),
       ]);
+    case "pageBlockExpandableBlockQuote":
+      return N.expandable_blockquote.create(null, [
+        N.expandable_text.create(null, inline(b.text)),
+        N.expandable_credit.create(null, b.credit ? inline(b.credit) : []),
+      ]);
+    case "pageBlockButtonRow":
+      return N.button_row.create({
+        buttons: b.buttons || [],
+        align: alignName(b.align),
+      });
     case "pageBlockDivider":
       return N.divider.create();
     case "pageBlockAnchor":
@@ -597,12 +673,13 @@ function blockFromTDLib(b, schema) {
     case "pageBlockVideo":
     case "pageBlockAnimation":
     case "pageBlockAudio":
-    case "pageBlockVoiceNote": {
+    case "pageBlockVoiceNote":
+    case "pageBlockDocument": {
       const kind = Object.keys(FIGURE_TYPE).find((k) => FIGURE_TYPE[k] === b["@type"]) || "photo";
       const cap = N.caption.create(null, b.caption ? inline(b.caption.text) : []);
       const { fileId, src, width, height } = mediaInfo(b);
       // keep the raw display media object so getInputModel can build input* media
-      const media = b.photo || b.video || b.animation || b.audio || b.voice_note || null;
+      const media = b.photo || b.video || b.animation || b.audio || b.voice_note || b.document || null;
       return N.figure.create(
         { kind, fileId, src, width, height, media, hasSpoiler: !!b.has_spoiler, needAutoplay: !!b.need_autoplay, isLooped: !!b.is_looped },
         cap
