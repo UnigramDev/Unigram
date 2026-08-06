@@ -61,18 +61,62 @@ namespace Telegram.Controls.Messages
 
         private TextSelectionManager _textSelectionManager;
 
-        public bool HasSelection => _textSelectionManager.HasSelection;
+        public bool HasSelection => _textSelectionManager?.HasSelection ?? false;
 
-        public void CopySelectionToClipboard() => _textSelectionManager.CopySelectionToClipboard();
+        public void CopySelectionToClipboard() => _textSelectionManager?.CopySelectionToClipboard();
 
-        public FormattedText GetSelectedText() => _textSelectionManager.GetSelectedText();
-        public FormattedText GetSelectedSourceText(out int position) => _textSelectionManager.GetSelectedSourceText(out position);
+        public FormattedText GetSelectedText() => _textSelectionManager?.GetSelectedText();
+
+        public FormattedText GetSelectedSourceText(out int position)
+        {
+            if (_textSelectionManager == null)
+            {
+                position = 0;
+                return null;
+            }
+
+            return _textSelectionManager.GetSelectedSourceText(out position);
+        }
+
+        // The manager needs the content element, which isn't guaranteed to be there yet when
+        // Loaded fires: a container can be connected before it has been given any content.
+        // Building the manager then threw ArgumentNullException(root) out of the Loaded handler
+        // and took the app down, so attach whenever a content element is actually present -
+        // on load, and again whenever the content itself changes.
+        //
+        // IsConnected is required: only OnUnloaded and OnContentChanged detach the manager, so
+        // attaching while disconnected would leave the pointer handlers on the content forever,
+        // and through them root this control for the rest of the session.
+        private void EnsureTextSelectionManager()
+        {
+            if (_textSelectionManager == null && IsConnected && Content is UIElement root)
+            {
+                _textSelectionManager = new TextSelectionManager(this, root);
+            }
+        }
+
+        protected override void OnContentChanged(object oldContent, object newContent)
+        {
+            base.OnContentChanged(oldContent, newContent);
+
+            // The manager's pointer handlers live on the previous content element, so they have
+            // to come off before attaching to the new one - otherwise they outlive the element
+            // they were added to and the manager keeps reporting selection for content that is
+            // no longer displayed.
+            if (_textSelectionManager != null)
+            {
+                _textSelectionManager.Detach();
+                _textSelectionManager = null;
+            }
+
+            EnsureTextSelectionManager();
+        }
 
         public bool IsTrackerEnabled { get; set; } = true;
 
         protected override void OnLoaded()
         {
-            _textSelectionManager ??= new TextSelectionManager(this, ContentTemplateRoot);
+            EnsureTextSelectionManager();
 
             if (_trackerOwner == null && RootGrid != null && IsTrackerEnabled && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare))
             {
