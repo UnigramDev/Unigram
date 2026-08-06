@@ -561,13 +561,21 @@ namespace Telegram.Common
         public static async Task<IRandomAccessStream> DrawStrokesAsync(SoftwareBitmap file, IReadOnlyList<SmoothPathBuilder> strokes, Rect rectangle, ImageRotation rotation, ImageFlip flip)
         {
             var device = ElementComposition.GetSharedDevice();
-            var bitmap = CanvasBitmap.CreateFromSoftwareBitmap(device, file);
+
+            using var bitmap = CanvasBitmap.CreateFromSoftwareBitmap(device, file);
+            using var target = DrawStrokes(device, bitmap, strokes, rectangle, rotation, flip);
 
             var stream = new InMemoryRandomAccessStream();
 
-            using (var canvas2 = DrawStrokes(device, bitmap, strokes, rectangle, rotation, flip))
+            try
             {
-                await canvas2.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg/*, 0.77f*/);
+                await target.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg/*, 0.77f*/);
+            }
+            catch
+            {
+                // Owned here until it is returned.
+                stream.Dispose();
+                throw;
             }
 
             stream.Seek(0);
@@ -577,24 +585,57 @@ namespace Telegram.Common
         public static async Task<StorageFile> DrawStrokesAsync(StorageFile file, IReadOnlyList<SmoothPathBuilder> strokes, Rect rectangle, ImageRotation rotation, ImageFlip flip)
         {
             var device = ElementComposition.GetSharedDevice();
-            var bitmap = await CanvasBitmap.LoadAsync(device, file.Path);
 
-            using (var canvas2 = DrawStrokes(device, bitmap, strokes, rectangle, rotation, flip))
+            CanvasRenderTarget target;
+
+            // Scoped so the bitmap is released before the file is reopened for writing,
+            // since it was loaded from that same path.
+            using (var bitmap = await CanvasBitmap.LoadAsync(device, file.Path))
+            {
+                target = DrawStrokes(device, bitmap, strokes, rectangle, rotation, flip);
+            }
+
+            using (target)
             using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
-                await canvas2.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg/*, 0.77f*/);
+                await target.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg/*, 0.77f*/);
             }
 
             return file;
         }
 
+        /// <summary>
+        /// Composites <paramref name="strokes"/> over <paramref name="bitmap"/> and
+        /// returns the result.
+        ///
+        /// The caller owns both the bitmap passed in and the render target returned.
+        /// </summary>
         public static CanvasRenderTarget DrawStrokes(CanvasDevice device, CanvasBitmap bitmap, IReadOnlyList<SmoothPathBuilder> strokes, Rect rectangle, ImageRotation rotation, ImageFlip flip)
         {
-            var canvas1 = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
-            var canvas2 = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
+            // The strokes are drawn into their own target so the transform below applies
+            // to them alone, then composited over the bitmap.
+            using var overlay = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
 
-            var size = canvas1.Size.ToVector2();
-            var canvasSize = canvas1.Size.ToVector2();
+            var target = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
+
+            try
+            {
+                DrawStrokes(overlay, target, bitmap, strokes, rectangle, rotation, flip);
+            }
+            catch
+            {
+                // Owned here until it is returned.
+                target.Dispose();
+                throw;
+            }
+
+            return target;
+        }
+
+        private static void DrawStrokes(CanvasRenderTarget overlay, CanvasRenderTarget target, CanvasBitmap bitmap, IReadOnlyList<SmoothPathBuilder> strokes, Rect rectangle, ImageRotation rotation, ImageFlip flip)
+        {
+            var size = overlay.Size.ToVector2();
+            var canvasSize = overlay.Size.ToVector2();
 
             var scaleX = 1 / (float)rectangle.Width;
             var scaleY = 1 / (float)rectangle.Height;
@@ -610,7 +651,7 @@ namespace Telegram.Common
                 scaleY = 1 * 1 / (float)rectangle.Width;
             }
 
-            using (var session = canvas1.CreateDrawingSession())
+            using (var session = overlay.CreateDrawingSession())
             {
                 switch (rotation)
                 {
@@ -668,16 +709,11 @@ namespace Telegram.Common
                 }
             }
 
-            using (var session = canvas2.CreateDrawingSession())
+            using (var session = target.CreateDrawingSession())
             {
                 session.DrawImage(bitmap);
-                session.DrawImage(canvas1);
+                session.DrawImage(overlay);
             }
-
-            bitmap.Dispose();
-            canvas1.Dispose();
-
-            return canvas2;
         }
     }
 }
