@@ -29,13 +29,20 @@ namespace Telegram.Native
         Emoji = 256,
         Quote = 512,
         // RichText-only additions. Subscript/Superscript/Marked are additive styles
-        // (no payload). Icon/Math are inline elements; their Type field carries the
-        // payload (Document/Width/Height or Expression).
+        // (no payload). Icon/Math/Button are inline elements; their Type field carries
+        // the payload (Document/Width/Height, Expression, or the InlineButton).
         Subscript = 0x400u,
         Superscript = 0x800u,
         Marked = 0x1000u,
         Icon = 0x2000u,
-        Math = 0x4000u
+        Math = 0x4000u,
+        // Deliberately not Url: a button is an action, so it must not fall into the
+        // link path and get a link's hit-testing, styling and context menu.
+        Button = 0x8000u,
+        // Additive, and always paired with Url: the link's target already has an
+        // instant view, so following it keeps the reader in-app. Purely a highlight —
+        // the run stays a normal link in every other respect.
+        Cached = 0x10000u
     };
 
 
