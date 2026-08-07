@@ -6041,6 +6041,11 @@ namespace Telegram.Views
             }
             else
             {
+                if (message?.ReplyMarkup is ReplyMarkupInlineKeyboard { ForceReply: true } or ReplyMarkupShowKeyboard { ForceReply: true })
+                {
+                    ViewModel.ReplyToMessage(message);
+                }
+
                 var updated = ReplyMarkup.Update(message, message?.ReplyMarkup, false);
                 if (updated)
                 {
