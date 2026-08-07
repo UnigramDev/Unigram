@@ -1449,6 +1449,33 @@ namespace Telegram.Controls
                             }
 
                         }
+                        else if (_spanForInlines == null && entity.Type is TextEntityTypeButton button)
+                        {
+                            var inline = new InlineUIContainer
+                            {
+                                Child = CreateInlineButton(clientService, button.Button)
+                            };
+
+                            if (entity.Offset == 0 || (entity.Offset == previous && runs[j - 1].HasFlag(Native.TextStyle.Spoiler)))
+                            {
+                                var character = direction != locale
+                                    ? direction == FlowDirection.RightToLeft ? Icons.RTL : Icons.LTR
+                                    : Icons.ZWNJ;
+
+                                GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize, transparent: true);
+                                Map(part.Offset + entity.Offset, 1, 0); // leading mark: no styled advance
+                                offset++;
+                            }
+
+                            direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
+                            GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize, true);
+                            Map(part.Offset + entity.Offset, 1, entity.Length); // math image + ZWNJ <-> expression
+                            offset++;
+                        }
+                        else if (_spanForInlines == null && entity.Type is TextEntityTypeIcon icon)
+                        {
+                            // TODO
+                        }
                         else
                         {
                             GetOrCreateRun(direct, parentInlines, text, entity.Offset, entity.Length, direction, entity.Flags, null, partFontSize, false);
@@ -1569,6 +1596,49 @@ namespace Telegram.Controls
             {
                 RegisterLayoutChanged();
             }
+        }
+
+        private UIElement CreateInlineButton(IClientService clientService, InlineButton button)
+        {
+            var block = new FormattedTextBlock
+            {
+                AutoFontSize = true,
+                IgnoreSpoilers = false,
+                HorizontalTextAlignment = TextAlignment.DetectFromContent,
+                TextReadingOrder = TextReadingOrder.UseFlowDirection,
+                TextSelection = TextSelectionMode.Disabled,
+                AdjustLineEnding = false,
+            };
+
+            block.SetText(clientService, button.Text);
+
+            var element = new ReplyMarkupInlineButton
+            {
+                // The label is the button's own content, so unlike the page text around
+                // it, it *is* rendered here — it's just never harvested as page text.
+                Content = block,
+                Tag = button
+            };
+
+            element.SetButton(clientService, null, 0, button.Style, button.Type);
+
+            element.Padding = new Thickness(4, 0, 4, 0);
+            element.Margin = new Thickness(0, 0, 0, -4);
+            element.BorderThickness = new Thickness(0);
+            element.CornerRadius = new CornerRadius(10);
+            element.Height = 20;
+            element.MinWidth = 20;
+
+            element.Click += InlineButton_Click;
+            return new Border
+            {
+                Child = element
+            };
+        }
+
+        private void InlineButton_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO: button click
         }
 
         private HashSet<CustomEmojiIcon> _effectiveViewportChanged;
