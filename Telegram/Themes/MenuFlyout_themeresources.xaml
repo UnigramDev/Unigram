@@ -703,9 +703,9 @@
                                 <VisualState x:Name="CheckAndIconPlaceholder">
                                     <VisualState.Setters>
                                         <Setter Target="TextBlock.Margin"
-                                                Value="{StaticResource MenuFlyoutItemDoublePlaceholderThemeThickness}" />
-                                        <Setter Target="IconRoot.Margin"
                                                 Value="{StaticResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                        <!--<Setter Target="IconRoot.Margin"
+                                                Value="{StaticResource MenuFlyoutItemPlaceholderThemeThickness}" />-->
                                         <Setter Target="IconRoot.Visibility"
                                                 Value="Visible" />
                                     </VisualState.Setters>
