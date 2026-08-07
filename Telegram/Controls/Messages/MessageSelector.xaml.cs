@@ -101,9 +101,19 @@ namespace Telegram.Controls.Messages
         // and through them root this control for the rest of the session.
         private void EnsureTextSelectionManager()
         {
-            if (_textSelectionManager == null && IsConnected && Content is UIElement root)
+            if (IsConnected && Content is UIElement root)
             {
-                _textSelectionManager = new TextSelectionManager(this, root);
+                // Built once and re-pointed afterwards. A container is handed new content
+                // every time it comes back round the history, and the manager is the same
+                // shape each time: only the element it watches differs.
+                if (_textSelectionManager == null)
+                {
+                    _textSelectionManager = new TextSelectionManager(this, root);
+                }
+                else
+                {
+                    _textSelectionManager.Attach(root);
+                }
             }
         }
 
@@ -115,11 +125,7 @@ namespace Telegram.Controls.Messages
             // to come off before attaching to the new one - otherwise they outlive the element
             // they were added to and the manager keeps reporting selection for content that is
             // no longer displayed.
-            if (_textSelectionManager != null)
-            {
-                _textSelectionManager.Detach();
-                _textSelectionManager = null;
-            }
+            _textSelectionManager?.Detach();
 
             EnsureTextSelectionManager();
         }
@@ -159,8 +165,9 @@ namespace Telegram.Controls.Messages
 
         protected override void OnUnloaded()
         {
+            // Detached, not dropped: the container goes back to the pool and comes out again
+            // with new content, and Detach leaves the manager clean for it.
             _textSelectionManager?.Detach();
-            _textSelectionManager = null;
 
             if (_trackerOwner != null)
             {

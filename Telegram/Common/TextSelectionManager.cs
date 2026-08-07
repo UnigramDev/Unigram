@@ -42,7 +42,9 @@ namespace Telegram.Common
         private static readonly ulong DoubleClickTime = new Windows.UI.ViewManagement.UISettings().DoubleClickTime;
 
         private readonly Control _owner;
-        private readonly UIElement _root;
+
+        // Null while detached. The owner never changes, but the content it carries does.
+        private UIElement _root;
 
         // Selectable controls in document (visual pre-order) order, rebuilt per gesture.
         private readonly List<ISelectableControl> _items = new();
@@ -88,20 +90,47 @@ namespace Telegram.Common
         private readonly PointerEventHandler _pointerReleased;
         private readonly PointerEventHandler _pointerCaptureLost;
 
+        private readonly bool _handleContextMenu;
+
         public TextSelectionManager(Control owner, UIElement root, bool handleContextMenu = false)
         {
+            _owner = owner;
+            _handleContextMenu = handleContextMenu;
+
+            _pointerPressed = new PointerEventHandler(OnPointerPressed);
+            _pointerMoved = new PointerEventHandler(OnPointerMoved);
+            _pointerReleased = new PointerEventHandler(OnPointerReleased);
+            _pointerCaptureLost = new PointerEventHandler(OnPointerCaptureLost);
+
+            Attach(root);
+        }
+
+        /// <summary>
+        /// Binds the manager to the element carrying the selectable content.
+        ///
+        /// Separate from the constructor so one manager can outlive the content it watches.
+        /// A recycled message container is handed new content over and over as the history
+        /// scrolls, and building a manager for each one puts an allocation, four routed
+        /// handler registrations and two owner subscriptions on that path.
+        /// </summary>
+        public void Attach(UIElement root)
+        {
+            if (_root != null)
+            {
+                Detach();
+            }
+
             _root = root ?? throw new ArgumentNullException(nameof(root));
-            _root.AddHandler(UIElement.PointerPressedEvent, _pointerPressed = new PointerEventHandler(OnPointerPressed), true);
-            _root.AddHandler(UIElement.PointerMovedEvent, _pointerMoved = new PointerEventHandler(OnPointerMoved), true);
-            _root.AddHandler(UIElement.PointerReleasedEvent, _pointerReleased = new PointerEventHandler(OnPointerReleased), true);
-            _root.AddHandler(UIElement.PointerCaptureLostEvent, _pointerCaptureLost = new PointerEventHandler(OnPointerCaptureLost), true);
+            _root.AddHandler(UIElement.PointerPressedEvent, _pointerPressed, true);
+            _root.AddHandler(UIElement.PointerMovedEvent, _pointerMoved, true);
+            _root.AddHandler(UIElement.PointerReleasedEvent, _pointerReleased, true);
+            _root.AddHandler(UIElement.PointerCaptureLostEvent, _pointerCaptureLost, true);
             // FocusManager.LostFocus is a STATIC event; if we unload mid-selection we'd
             // leak the subscription (and this whole control), so always unhook on unload.
-            _owner = owner;
             _owner.KeyDown += OnKeyDown;
             _owner.Unloaded += OnUnloaded;
 
-            if (handleContextMenu)
+            if (_handleContextMenu)
             {
                 _root.ContextRequested += OnContextRequested;
             }
@@ -135,7 +164,18 @@ namespace Telegram.Common
 
         public void Detach()
         {
-            StopWatchingFocus();
+            if (_root == null)
+            {
+                return;
+            }
+
+            // The selection belongs to the content being left behind, and _items holds the
+            // controls it was made of. Kept, they would be highlighted again the next time
+            // the manager was asked about a selection, and they would hold the old content
+            // alive for as long as the manager does.
+            ClearSelection();
+            _items.Clear();
+
             _root.RemoveHandler(UIElement.PointerPressedEvent, _pointerPressed);
             _root.RemoveHandler(UIElement.PointerMovedEvent, _pointerMoved);
             _root.RemoveHandler(UIElement.PointerReleasedEvent, _pointerReleased);
@@ -143,6 +183,8 @@ namespace Telegram.Common
             _root.ContextRequested -= OnContextRequested;
             _owner.KeyDown -= OnKeyDown;
             _owner.Unloaded -= OnUnloaded;
+
+            _root = null;
         }
 
         // The per-window coordinator that keeps a single selection across bubbles. Resolved
@@ -677,7 +719,13 @@ namespace Telegram.Common
         private void RebuildItems()
         {
             _items.Clear();
-            Collect(_root);
+
+            // The gesture handlers only run while attached, but SelectAll is public and the
+            // manager now outlives any one content element.
+            if (_root != null)
+            {
+                Collect(_root);
+            }
         }
 
         private void Collect(DependencyObject node)
