@@ -1506,7 +1506,9 @@ namespace Telegram.Controls.Cells
 
         private void UpdateBriefLabel(Chat chat, FormattedText message)
         {
-            if (message != null && chat?.Id == _clientService.Options.TelegramServiceNotificationsChatId || chat?.Id == _clientService.Options.VerificationCodesBotChatId)
+            // Parenthesised: && binds tighter than ||, so the null check only covered the
+            // first of the two chats and Match below would have run on a null message.
+            if (message != null && (chat?.Id == _clientService.Options.TelegramServiceNotificationsChatId || chat?.Id == _clientService.Options.VerificationCodesBotChatId))
             {
                 var pattern = chat?.Id == _clientService.Options.TelegramServiceNotificationsChatId
                     ? _verificationCodes
