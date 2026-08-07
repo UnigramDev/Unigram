@@ -4633,7 +4633,7 @@
       <Version>4.6.2</Version>
     </PackageReference>
     <PackageReference Include="VideoLAN.LibVLC.UWP">
-      <Version>3.0.22-rc1</Version>
+      <Version>3.0.23</Version>
     </PackageReference>
     <PackageReference Include="Win2D.uwp">
       <Version>1.28.3</Version>
