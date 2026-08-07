@@ -1617,19 +1617,18 @@ namespace Telegram.Controls
                 // The label is the button's own content, so unlike the page text around
                 // it, it *is* rendered here — it's just never harvested as page text.
                 Content = block,
-                Tag = button
+                Tag = button,
+                Padding = new Thickness(4, 0, 4, 0),
+                Margin = new Thickness(0, 0, 0, -4),
+                BorderThickness = new Thickness(0),
+                CornerRadius = new CornerRadius(10),
+                Height = 20,
+                MinWidth = 20,
             };
 
             element.SetButton(clientService, null, 0, button.Style, button.Type);
-
-            element.Padding = new Thickness(4, 0, 4, 0);
-            element.Margin = new Thickness(0, 0, 0, -4);
-            element.BorderThickness = new Thickness(0);
-            element.CornerRadius = new CornerRadius(10);
-            element.Height = 20;
-            element.MinWidth = 20;
-
             element.Click += InlineButton_Click;
+
             return new Border
             {
                 Child = element
@@ -1638,7 +1637,10 @@ namespace Telegram.Controls
 
         private void InlineButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: button click
+            if (sender is ReplyMarkupInlineButton { Tag: InlineButton button })
+            {
+                TextEntityClick?.Invoke(this, new TextEntityClickEventArgs(new TextEntityTypeButton(button)));
+            }
         }
 
         private HashSet<CustomEmojiIcon> _effectiveViewportChanged;
