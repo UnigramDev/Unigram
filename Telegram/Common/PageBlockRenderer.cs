@@ -1105,8 +1105,10 @@ namespace Telegram.Common
             // the ButtonStyle colour — comes from the same place an inline keyboard gets
             // it, so the two can't drift apart.
             element.SetButton(clientService, null, 0, button.Style, button.Type);
-
             element.Click += InlineButton_Click;
+
+            block.IconForeground = element.Foreground;
+
             return element;
         }
 

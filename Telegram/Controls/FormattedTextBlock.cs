@@ -312,6 +312,7 @@ namespace Telegram.Controls
             // and over a spoiler (handled above, which returns early).
             if (_spanForInlines == null && TextBlock != null && _textSelection == TextSelectionMode.Extended)
             {
+                // TODO: figure out how to avoid the IBeam when pointer is on a TextEntityTypeButton
                 var hyperlink = TextBlock.GetHyperlinkFromPoint(e.GetCurrentPoint(TextBlock).Position);
                 if (hyperlink == null)
                 {
@@ -1317,7 +1318,7 @@ namespace Telegram.Controls
                                 player.LoopCount = 0;
                                 player.HorizontalAlignment = HorizontalAlignment.Left;
                                 player.FlowDirection = FlowDirection.LeftToRight;
-                                player.Foreground = IconForeground;
+                                player.ReplacementColor = IconForeground;
                                 player.IsHitTestVisible = false;
                                 player.IsEnabled = false;
                                 player.IsViewportAware = false;
@@ -1628,6 +1629,8 @@ namespace Telegram.Controls
 
             element.SetButton(clientService, null, 0, button.Style, button.Type);
             element.Click += InlineButton_Click;
+
+            block.IconForeground = element.Foreground;
 
             return new Border
             {
