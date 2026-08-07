@@ -161,6 +161,20 @@ Two checks that catch most of it:
   `CommandTemplate` for both `UserCommand` and `QuickReplyShortcut`, which one file would have
   shown.
 
+**Never construct something to make a null go away until you know who else constructs it.**
+Where the null is a not-yet-initialised singleton, creating one here means two exist: whichever
+runs last wins the field, and everything written to the loser is silently discarded. That is
+worse than the crash, because it corrupts state instead of aborting. Grep every construction
+site and work out the ordering first. `WindowContext` is exactly this — the constructor assigns
+the thread-static `_current`, and `OnWindowCreated` constructs one on its own schedule, so
+building a second during activation orphans the frame that was just attached to the first.
+
+**When the timing is the bug, the fix is sequencing, not defaulting.** If state is missing
+because two things race, neither inventing the state nor returning early is right: returning
+leaves the feature silently dead (the same trap as guarding a template mismatch). What is
+needed is to carry the input forward and act on it when the state does arrive. That is a design
+decision about startup, not a null check — propose it and ask rather than guessing.
+
 If you cannot explain the crash, say so and stop. A plausible-looking guess wastes more time
 than an honest "not diagnosed".
 
