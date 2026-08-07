@@ -15,7 +15,6 @@ using Telegram.Composition;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Messages.Content;
 using Telegram.Controls.Messages.Service;
-using Telegram.Native.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -33,7 +32,8 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
-    public sealed partial class MessageSelector : ToggleButtonEx
+    // TEMP: revert to ToggleButtonEx
+    public sealed partial class MessageSelector : ToggleButtonEx2
     {
         private Border Header;
         private Border Footer;
