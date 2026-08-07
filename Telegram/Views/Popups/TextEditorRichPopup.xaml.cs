@@ -82,9 +82,6 @@ namespace Telegram.Views.Popups
                 var shadow = new ThemeShadow();
                 var translation = new Vector3(0, 0, Constants.BubbleElevation * 2);
 
-                BackShadow.Shadow = shadow;
-                BackShadow.Translation = translation;
-
                 HistoryShadow.Shadow = shadow;
                 HistoryShadow.Translation = translation;
 

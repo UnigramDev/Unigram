@@ -14,10 +14,11 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Border>
+        <Border Margin="0,0,0,12">
             <controls:RichMathImage x:Name="Result" />
         </Border>
         <TextBox x:Name="Input"
+                 PlaceholderText="{CustomResource ArticleLatexEquation}"
                  TextChanged="OnTextChanged"
                  Grid.Row="1" />
     </Grid>
