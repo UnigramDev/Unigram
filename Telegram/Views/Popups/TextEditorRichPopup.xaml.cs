@@ -175,13 +175,13 @@ namespace Telegram.Views.Popups
 
         private async Task SaveDraftAsync()
         {
-            var richMessage = await _commands.GetModelAsync();
+            var richMessage = await _commands.GetInputModelAsync();
             if (richMessage == null)
             {
                 return;
             }
 
-            var draft = new DraftMessage(_replyTo, 0, new DraftMessageContentRichMessage(richMessage), 0, null);
+            var draft = new DraftMessage(_replyTo, 0, new DraftMessageContentInputRichMessage(richMessage), 0, null);
             _clientService.Send(new SetChatDraftMessage(_chatId, _topic, draft));
         }
 
