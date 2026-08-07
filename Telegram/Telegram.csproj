@@ -218,6 +218,7 @@
     <Compile Include="Common\ExceptionSerializer.cs" />
     <Compile Include="Common\FeatureTokenGenerator.cs" />
     <Compile Include="Collections\HashSetDictionary.cs" />
+    <Compile Include="Common\Instrumentation.cs" />
     <Compile Include="Common\LocalDatabase.cs" />
     <Compile Include="Common\MarkdownToInstantView.cs" />
     <Compile Include="Common\MediaDeviceTracker.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Common\ThemeShadowEx.cs" />
     <Compile Include="Common\NormalizingStringBuilder.cs" />
     <Compile Include="Common\VideoPreloader.cs" />
+    <Compile Include="Common\VisualUtilities.Skeleton.cs" />
     <Compile Include="Common\WebAppStorage.cs" />
     <Compile Include="Composition\CompositionPropertySetColorSource.cs" />
     <Compile Include="Composition\CompositionVisualColorSource.cs" />
@@ -374,6 +376,7 @@
     <Compile Include="Controls\Messages\Content\LiveLocationContent.xaml.cs">
       <DependentUpon>LiveLocationContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\PageBlockRenderer.cs" />
     <Compile Include="Controls\Messages\Content\StakeDiceContent.xaml.cs">
       <DependentUpon>StakeDiceContent.xaml</DependentUpon>
     </Compile>
@@ -424,6 +427,8 @@
     <Compile Include="Controls\PopupInfo.cs" />
     <Compile Include="Controls\PremiumProgressBar.cs" />
     <Compile Include="Controls\ProgressRingIndeterminate.cs" />
+    <Compile Include="Controls\ReplyMarkupButton.cs" />
+    <Compile Include="Controls\ReplyMarkupInlineButton.cs" />
     <Compile Include="Controls\RichMathImage.cs" />
     <Compile Include="Controls\SettingsRadioButton.cs" />
     <Compile Include="Controls\SlidePanel.cs" />
@@ -447,6 +452,8 @@
     <Compile Include="Services\Settings\ToolTipSettings.cs" />
     <Compile Include="Services\TextRecognitionService.cs" />
     <Compile Include="Services\Session.g.cs" />
+    <Compile Include="Streams\MediaRange.cs" />
+    <Compile Include="Streams\RemoteFilePrefetch.cs" />
     <Compile Include="Td\Api\FormattedText.cs" />
     <Compile Include="Td\Api\InlineKeyboardButtonTypeSuggestionApprove.cs" />
     <Compile Include="Td\Api\InlineKeyboardButtonTypeSuggestionDecline.cs" />
@@ -460,7 +467,7 @@
     <Compile Include="Controls\Messages\MessageFactCheck.xaml.cs">
       <DependentUpon>MessageFactCheck.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\ReplyMarkupInlinePanel.cs" />
+    <Compile Include="Controls\ReplyMarkupInlinePanel.cs" />
     <Compile Include="Controls\Messages\Service\SuggestedPostInfoCell.xaml.cs">
       <DependentUpon>SuggestedPostInfoCell.xaml</DependentUpon>
     </Compile>
@@ -514,6 +521,7 @@
     <Compile Include="Services\ClientService.ForumTopics.cs" />
     <Compile Include="Services\FeedbackChatTopicService.cs" />
     <Compile Include="Services\Settings\VideoSettings.cs" />
+    <Compile Include="Td\Api\InputMessageReplyToEphemeralMessage.cs" />
     <Compile Include="Td\Api\MessageAlbumLastMessage.cs" />
     <Compile Include="Services\PaidReactionService.cs" />
     <Compile Include="Controls\Messages\ReactionAsPaidButton.cs" />
@@ -599,7 +607,6 @@
     <Compile Include="Services\Settings\TranslateSettings.cs" />
     <Compile Include="Streams\AnimatedEmojiFileSource.cs" />
     <Compile Include="Streams\ParticlesImageSource.cs" />
-    <Compile Include="Stub.cs" />
     <Compile Include="Td\Api\MessageTag.cs" />
     <Compile Include="Td\Api\MinithumbnailId.cs" />
     <Compile Include="Controls\Cells\StoryCell.xaml.cs">
@@ -709,6 +716,7 @@
     <Compile Include="ViewModels\Delegates\ISavedMessagesChatsDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISupergroupMembersDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ITopicListDelegate.cs" />
+    <Compile Include="ViewModels\DialogWelcomeMessagesViewModel.cs" />
     <Compile Include="ViewModels\DialogBusinessRepliesViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\DialogPendingTextMessage.cs" />
     <Compile Include="ViewModels\Dialogs\DialogPinnedMessagesViewModel.cs" />
@@ -1246,6 +1254,9 @@
     <Compile Include="Views\Calls\VoipPage.xaml.cs">
       <DependentUpon>VoipPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ChatWelcomeMessagesPage.xaml.cs">
+      <DependentUpon>ChatWelcomeMessagesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
     </Compile>
@@ -1348,6 +1359,9 @@
     </Compile>
     <Compile Include="Views\Popups\ChooseCountriesPopup.xaml.cs">
       <DependentUpon>ChooseCountriesPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\FormulaPopup.xaml.cs">
+      <DependentUpon>FormulaPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\TextEditorRichPopup.xaml.cs">
       <DependentUpon>TextEditorRichPopup.xaml</DependentUpon>
@@ -2173,6 +2187,9 @@
     <Compile Include="Views\Users\UserEditPage.xaml.cs">
       <DependentUpon>UserEditPage.xaml</DependentUpon>
     </Compile>
+    <Content Include="..\Libraries\unigram-iv-editor\editor.html">
+      <Link>Assets\editor.html</Link>
+    </Content>
     <Content Include="Assets\Audio\received.mp3" />
     <Content Include="Assets\Audio\sent.mp3" />
     <Content Include="Assets\Audio\voicechat_join.mp3" />
@@ -3507,6 +3524,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\ChatWelcomeMessagesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\ChatEventLogPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -3638,6 +3659,10 @@
     <Page Include="Views\Popups\ChooseCountriesPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\FormulaPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\TextEditorRichPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -4569,7 +4594,7 @@
       <Version>1.5.4</Version>
     </PackageReference>
     <PackageReference Include="Markdig">
-      <Version>1.2.0</Version>
+      <Version>1.3.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Bcl.HashCode">
       <Version>6.0.0</Version>
@@ -4581,10 +4606,10 @@
       <Version>2.8.7</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.3595.46</Version>
+      <Version>1.0.4129.50</Version>
     </PackageReference>
     <PackageReference Include="PolySharp">
-      <Version>1.15.0</Version>
+      <Version>1.16.0</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -4598,13 +4623,13 @@
       <Version>4.6.3</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>10.0.0</Version>
+      <Version>10.0.10</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Channels">
-      <Version>10.0.0</Version>
+      <Version>10.0.10</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
-      <Version>4.6.1</Version>
+      <Version>4.6.2</Version>
     </PackageReference>
     <PackageReference Include="VideoLAN.LibVLC.UWP">
       <Version>3.0.22-rc1</Version>
@@ -4613,7 +4638,7 @@
       <Version>1.28.3</Version>
     </PackageReference>
     <PackageReference Include="System.Reflection.Metadata">
-      <Version>10.0.0</Version>
+      <Version>10.0.10</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

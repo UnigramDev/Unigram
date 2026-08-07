@@ -22,9 +22,9 @@ namespace Telegram.Controls.Messages.Service
                 return;
             }
 
-            if (stakeDice.PrizeToncoinAmount != -1)
+            if (stakeDice.PrizeGramAmount != -1)
             {
-                Text.Text = string.Format(Strings.StakeDiceActionYouWon, (stakeDice.PrizeToncoinAmount / Constants.ToncoinMin).ToString("0.#"));
+                Text.Text = string.Format(Strings.StakeDiceActionYouWon, (stakeDice.PrizeGramAmount / Constants.ToncoinMin).ToString("0.#"));
             }
         }
     }

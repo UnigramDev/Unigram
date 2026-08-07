@@ -19,7 +19,11 @@ namespace Telegram.Common
     // roots is orphaned; the orphan set is descended the same way to rebuild the leaked subtrees.
     //
     // Register is [Conditional("INSTRUMENTATION")] so it compiles out of normal builds; the analysis
-    // (Snapshot/Analyze, and every DebugChildren / ChatView.DebugAnalyzeOrphans) is #if INSTRUMENTATION.
+    // (Snapshot/Analyze, and every DebugRoots / DebugChildren) is #if INSTRUMENTATION.
+    //
+    // Analyze is called ONCE, over the union of every instrumented area's roots — see
+    // MainPage.DebugAnalyzeOrphans. Orphans are "registered but unreachable from the roots", so a call per
+    // area would report every other area's live objects as leaked.
     public static class Instrumentation
     {
         private static readonly List<WeakReference> s_all = new();

@@ -1031,7 +1031,7 @@ namespace Telegram.Common
                         default: break;
                     }
                     break;
-                case SettingsSectionMyToncoins myToncoins:
+                case SettingsSectionMyGrams myGrams:
                     break;
                 case SettingsSectionPowerSaving powerSaving:
                     switch (powerSaving.Subsection)
@@ -2027,7 +2027,15 @@ namespace Telegram.Common
                     return;
                 }
 
-                navigation.NavigateToWebApp(botUser, approvalRequired.Url, source: new OpenUrlSourceJoinChatRequest(approvalRequired.QueryId, chatId));
+                var response = await clientService.SendAsync(new GetGuardBotWebAppUrl(approvalRequired.QueryId, new WebAppOpenParameters(Theme.Current.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
+                if (response is WebAppUrl webAppUrl)
+                {
+                    navigation.NavigateToWebApp(botUser, webAppUrl, source: new OpenUrlSourceJoinChatRequest(approvalRequired.QueryId, chatId));
+                }
+                else if (response is Error error)
+                {
+                    navigation.ShowToast(error);
+                }
             }
             else if (result is ChatJoinResultRequestSent)
             {
@@ -2041,7 +2049,7 @@ namespace Telegram.Common
 
                 ToastPopup.Show(navigation.XamlRoot, text, ToastPopupIcon.JoinRequested);
             }
-            else if (result is ChatJoinRequestResultDeclined)
+            else if (result is ChatJoinResultDeclined)
             {
                 navigation.ShowToast(string.Format(Strings.GuardBotJoinRequestDeclined, clientService.GetTitle(chatId)), ToastPopupIcon.Ban);
             }
@@ -2369,26 +2377,26 @@ namespace Telegram.Common
             }
         }
 
-//        private static async void AddToCalendar_Click(XamlRoot xamlRoot, int date, MessageViewModel message)
-//        {
-//            DateTime eventStart = Formatter.ToLocalTime(date).ToUniversalTime();
+        //        private static async void AddToCalendar_Click(XamlRoot xamlRoot, int date, MessageViewModel message)
+        //        {
+        //            DateTime eventStart = Formatter.ToLocalTime(date).ToUniversalTime();
 
-//            string content = $@"BEGIN:VCALENDAR
-//VERSION:2.0
-//PRODID:-//Telegram//EN
-//BEGIN:VEVENT
-//UID:{Guid.NewGuid()}@yourdomain.com
-//DTSTAMP:{DateTime.UtcNow.ToString("yyyyMMddTHHmmss")}Z
-//DTSTART:{eventStart.ToString("yyyyMMddTHHmmss")}
-//SUMMARY:Event Title
-//END:VEVENT
-//END:VCALENDAR";
+        //            string content = $@"BEGIN:VCALENDAR
+        //VERSION:2.0
+        //PRODID:-//Telegram//EN
+        //BEGIN:VEVENT
+        //UID:{Guid.NewGuid()}@yourdomain.com
+        //DTSTAMP:{DateTime.UtcNow.ToString("yyyyMMddTHHmmss")}Z
+        //DTSTART:{eventStart.ToString("yyyyMMddTHHmmss")}
+        //SUMMARY:Event Title
+        //END:VEVENT
+        //END:VCALENDAR";
 
-//            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("event.ics", CreationCollisionOption.ReplaceExisting);
+        //            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("event.ics", CreationCollisionOption.ReplaceExisting);
 
-//            await FileIO.WriteTextAsync(file, content);
-//            await Launcher.LaunchFileAsync(file);
-//        }
+        //            await FileIO.WriteTextAsync(file, content);
+        //            await Launcher.LaunchFileAsync(file);
+        //        }
 
         private static async void SetAReminder_Click(XamlRoot xamlRoot, int date, MessageViewModel message)
         {

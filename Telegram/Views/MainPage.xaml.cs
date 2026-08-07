@@ -1210,7 +1210,7 @@ namespace Telegram.Views
                     //NativeUtils.Collect = false;
 
 #if INSTRUMENTATION
-                    Logger.Info(this.GetChild<ChatView>().DebugAnalyzeOrphans());
+                    Logger.Info(DebugAnalyzeOrphans());
 #endif
 
                     GarbageCollectionMonitor.DisconnectUnusedReferenceSources();
@@ -1222,6 +1222,51 @@ namespace Telegram.Views
                 ProcessAppCommands(command, args);
             }
         }
+
+#if INSTRUMENTATION
+        // ONE Analyze over the union of every instrumented area's roots.
+        //
+        // It has to be one call. Orphans are "registered but not reachable from the roots", so a per-area
+        // call would mark every other area's live objects as leaked — analysing the chat alone reports the
+        // open gallery as a leak, and analysing the gallery alone reports the whole message list as one.
+        //
+        // Adding an area means adding its roots here and chaining its descent below; both return nothing
+        // for types they do not own, so the order does not matter and overlaps are harmless (the walk is
+        // over a set).
+        private string DebugAnalyzeOrphans()
+        {
+            var roots = new List<object>();
+
+            var chat = this.GetChild<ChatView>();
+            if (chat != null)
+            {
+                roots.AddRange(chat.DebugRoots());
+            }
+
+            roots.AddRange(Telegram.Controls.Gallery.GalleryWindow.DebugRoots());
+            roots.AddRange(WebAppPage.DebugRoots());
+
+            return Telegram.Common.Instrumentation.Analyze(roots, DebugChildrenOf);
+        }
+
+        private static IEnumerable<object> DebugChildrenOf(object node)
+        {
+            foreach (var child in ChatView.DebugChildrenOf(node))
+            {
+                yield return child;
+            }
+
+            foreach (var child in Telegram.Controls.Gallery.GalleryWindow.DebugChildrenOf(node))
+            {
+                yield return child;
+            }
+
+            foreach (var child in WebAppPage.DebugChildrenOf(node))
+            {
+                yield return child;
+            }
+        }
+#endif
 
         private async void ProcessAppCommands(ShortcutCommand command, ShortcutInvokedEventArgs args)
         {
@@ -1635,6 +1680,7 @@ namespace Telegram.Views
                 e.SourcePageType == typeof(ChatScheduledPage) ||
                 e.SourcePageType == typeof(ChatEventLogPage) ||
                 e.SourcePageType == typeof(ChatBusinessRepliesPage) ||
+                e.SourcePageType == typeof(ChatWelcomeMessagesPage) ||
                 e.SourcePageType == typeof(BlankPage);
 
             var animate = MasterDetail.CurrentState != MasterDetailState.Minimal ||
@@ -1707,6 +1753,7 @@ namespace Telegram.Views
                 frame.CurrentSourcePageType == typeof(ChatScheduledPage) ||
                 frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
                 frame.CurrentSourcePageType == typeof(ChatBusinessRepliesPage) ||
+                frame.CurrentSourcePageType == typeof(ChatWelcomeMessagesPage) ||
                 frame.CurrentSourcePageType == typeof(BlankPage);
 
             var type = allowed ? BackgroundKind.Background : BackgroundKind.Material;

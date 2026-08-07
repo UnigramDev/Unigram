@@ -8,8 +8,6 @@
                        mc:Ignorable="d"
                        d:DesignHeight="300"
                        d:DesignWidth="400"
-                       Connected="OnConnected"
-                       Disconnected="OnDisconnected"
                        IsTabStop="False">
 
     <muxc:WebView2 x:Name="Video"

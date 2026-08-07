@@ -19,10 +19,14 @@ namespace Telegram.Views.Popups
         Paragraph,
         Heading,
         Preformatted,
+        Footer,
         Blockquote,
         Pullquote,
         List,
         Table,
+        // Reported only when the caret is in the details HEADER (the collapsible body
+        // reports its own block type).
+        Details,
         Photo,
         Video,
         Audio,
@@ -94,9 +98,25 @@ namespace Telegram.Views.Popups
         /// <summary>Anchor name; only meaningful when <see cref="BlockType"/> is <see cref="RichEditorBlockType.Anchor"/>.</summary>
         public string AnchorName { get; private set; } = string.Empty;
 
-        // --- history ------------------------------------------------------------
+        // --- document -----------------------------------------------------------
+        /// <summary>True when the document has no content yet (a single empty block).</summary>
+        public bool IsEmpty { get; private set; } = true;
+
+        /// <summary>
+        /// True when the document contains content that can't be sent as a plain message
+        /// <c>FormattedText</c> (premium-only rich content: media, tables, headings, lists, dividers,
+        /// details, pull-quotes, anchors, collages, or subscript/superscript/marked/inline-math). The
+        /// send button shows a lock for free users, and sending is gated on it.
+        /// </summary>
+        public bool HasRichContent { get; private set; }
+
+        // --- history / clipboard ------------------------------------------------
         public bool CanUndo { get; private set; }
         public bool CanRedo { get; private set; }
+        /// <summary>True when there's a selection to copy / cut.</summary>
+        public bool CanCopy { get; private set; }
+        /// <summary>True when the editor can accept a paste (gate on the system clipboard too).</summary>
+        public bool CanPaste { get; private set; }
 
         // --- table (only meaningful while InTable is true) ----------------------
         /// <summary>True when the caret is inside a table; the remaining table properties are only meaningful then.</summary>
@@ -133,6 +153,26 @@ namespace Telegram.Views.Popups
 
         public int SelectionFrom { get; private set; }
         public int SelectionTo { get; private set; }
+
+        // --- InputRichMessage usage ---------------------------------------------
+        // Live counts the editor reports on every change, so the toolbar can show X/Y and
+        // gate Send / inserts against the getOption maxes the host set via
+        // RichEditorCommands.SetConfig (the host already holds those, so they aren't echoed here).
+
+        /// <summary>Total text length: text + custom-emoji alt + math source (UTF-16 units).</summary>
+        public int TextLength { get; private set; }
+
+        /// <summary>Total blocks + list items + table rows.</summary>
+        public int BlockCount { get; private set; }
+
+        /// <summary>Max nesting depth of blocks + rich texts (best-effort until reconciled with TDLib).</summary>
+        public int Depth { get; private set; }
+
+        /// <summary>Total media across all blocks (photos/videos/audio/animations/voice + maps).</summary>
+        public int MediaCount { get; private set; }
+
+        /// <summary>Widest table's column count.</summary>
+        public int TableColumnCount { get; private set; }
 
         /// <summary>
         /// Applies an editor <c>state</c> message. Missing sections fall back to defaults,
@@ -195,9 +235,14 @@ namespace Telegram.Views.Popups
                 CanDeleteColumn = false;
             }
 
+            IsEmpty = state.GetNamedBoolean("isEmpty", true);
+            HasRichContent = state.GetNamedBoolean("hasRichContent", false);
+
             var can = state.GetNamedObject("can", null) ?? new JsonObject();
             CanUndo = can.GetNamedBoolean("undo", false);
             CanRedo = can.GetNamedBoolean("redo", false);
+            CanCopy = can.GetNamedBoolean("copy", false);
+            CanPaste = can.GetNamedBoolean("paste", false);
 
             var selection = state.GetNamedObject("selection", null) ?? new JsonObject();
             SelectionIsEmpty = selection.GetNamedBoolean("empty", true);
@@ -205,6 +250,13 @@ namespace Telegram.Views.Popups
             SelectionIsNode = selection.GetNamedBoolean("isNode", false);
             SelectionFrom = (int)selection.GetNamedNumber("from", 0);
             SelectionTo = (int)selection.GetNamedNumber("to", 0);
+
+            var usage = state.GetNamedObject("usage", null) ?? new JsonObject();
+            TextLength = (int)usage.GetNamedNumber("text_length", 0);
+            BlockCount = (int)usage.GetNamedNumber("block_count", 0);
+            Depth = (int)usage.GetNamedNumber("depth", 0);
+            MediaCount = (int)usage.GetNamedNumber("media_count", 0);
+            TableColumnCount = (int)usage.GetNamedNumber("table_column_count", 0);
         }
 
         private static bool? GetNullableBoolean(JsonObject obj, string key)
@@ -253,10 +305,12 @@ namespace Telegram.Views.Popups
             {
                 "heading" => RichEditorBlockType.Heading,
                 "preformatted" => RichEditorBlockType.Preformatted,
+                "footer" => RichEditorBlockType.Footer,
                 "blockquote" => RichEditorBlockType.Blockquote,
                 "pullquote" => RichEditorBlockType.Pullquote,
                 "list" => RichEditorBlockType.List,
                 "table" => RichEditorBlockType.Table,
+                "details" => RichEditorBlockType.Details,
                 "photo" => RichEditorBlockType.Photo,
                 "video" => RichEditorBlockType.Video,
                 "audio" => RichEditorBlockType.Audio,

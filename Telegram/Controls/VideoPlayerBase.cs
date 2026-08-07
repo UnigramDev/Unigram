@@ -76,6 +76,15 @@ namespace Telegram.Controls
 
     public abstract partial class VideoPlayerBase : UserControlEx
     {
+        protected VideoPlayerBase()
+        {
+            // The object a leaked gallery actually costs you — a decoder, its
+            // surfaces and whatever the media engine holds behind them. Only the
+            // gallery ever creates one, so this cannot show up as an orphan in the
+            // message tree's analysis.
+            Telegram.Common.Instrumentation.Register(this);
+        }
+
         private double _rate;
         public abstract double Rate { get; set; }
 

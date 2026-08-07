@@ -657,7 +657,7 @@ namespace Telegram.Controls.Chats
             var all = ViewModel.BotCommands;
             if (all != null)
             {
-                var results = new AutocompleteList(command, all.Where(x => x.Item.Command.StartsWith(command, StringComparison.OrdinalIgnoreCase)));
+                var results = new AutocompleteList(command, all.Where(x => x.Command.StartsWith(command, StringComparison.OrdinalIgnoreCase)));
                 if (results.Count > 0)
                 {
                     return results;

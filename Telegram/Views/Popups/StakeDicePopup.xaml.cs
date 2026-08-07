@@ -57,7 +57,7 @@ namespace Telegram.Views.Popups
 
             int width = 3;
 
-            for (int i = 0; i < state.SuggestedStakeToncoinAmounts.Count; i++)
+            for (int i = 0; i < state.SuggestedStakeGramAmounts.Count; i++)
             {
                 int x = i % width;
                 int y = i / width;
@@ -69,10 +69,10 @@ namespace Telegram.Views.Popups
 
                 var button = new Button
                 {
-                    Content = string.Format("{0:0.#} \U0001F48E", state.SuggestedStakeToncoinAmounts[i] / Constants.ToncoinMin),
+                    Content = string.Format("{0:0.#} \U0001F48E", state.SuggestedStakeGramAmounts[i] / Constants.ToncoinMin),
                     Style = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
-                    Tag = state.SuggestedStakeToncoinAmounts[i]
+                    Tag = state.SuggestedStakeGramAmounts[i]
                 };
 
                 button.Click += Button_Click;
@@ -84,7 +84,7 @@ namespace Telegram.Views.Popups
             }
 
             Label.Padding = new Thickness(36, Label.Padding.Top, Label.Padding.Right, Label.Padding.Bottom);
-            Label.Text = Formatter.FormatDouble(state.StakeToncoinAmount / Constants.ToncoinMin);
+            Label.Text = Formatter.FormatDouble(state.StakeGramAmount / Constants.ToncoinMin);
             Label.SelectionStart = Label.Text.Length;
 
             var index = Strings.StakeDiceReturnsInfo.IndexOf("\U0001F3B2");
@@ -252,7 +252,7 @@ namespace Telegram.Views.Popups
         private void OnValueChanged(long value)
         {
             var xtr = value / Constants.ToncoinMin / 10000.0;
-            var usd = xtr * _clientService.Options.MillionToncoinToUsdRate;
+            var usd = xtr * _clientService.Options.MillionGramToUsdRate;
 
             _toncoinAmount = value;
             Price.Text = "~" + Telegram.Converters.Formatter.FormatAmount((long)usd, "USD");

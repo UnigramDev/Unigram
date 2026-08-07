@@ -8,12 +8,14 @@
 using System;
 using System.Threading;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Services.Settings
 {
@@ -222,6 +224,22 @@ namespace Telegram.Services.Settings
                     }
 
                     window.RequestedTheme = theme;
+
+                    foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(window.XamlRoot))
+                    {
+                        if (popup.Child is ContentPopup contentPopup && contentPopup.RequestedTheme != ElementTheme.Default)
+                        {
+                            // This should be no longer needed
+                            if (force is true)
+                            {
+                                contentPopup.RequestedTheme = theme == ElementTheme.Dark
+                                    ? ElementTheme.Light
+                                    : ElementTheme.Dark;
+                            }
+
+                            contentPopup.RequestedTheme = theme;
+                        }
+                    }
                 }
             });
 

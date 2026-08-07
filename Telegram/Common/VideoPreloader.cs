@@ -55,7 +55,7 @@ namespace Telegram.Common
                 return;
             }
 
-            var token = (clientService.SessionId << 16) | file.Id;
+            var token = UpdateManager.CreateToken(clientService.SessionId, file.Id);
             if (_presenters.ContainsKey(token))
             {
                 return;

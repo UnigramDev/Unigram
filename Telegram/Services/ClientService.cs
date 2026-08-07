@@ -48,7 +48,7 @@ namespace Telegram.Services
         Task<File> DownloadFileAsync(File file, int priority, long offset = 0, long limit = 0);
 
         void AddFileToDownloads(File file, long chatId, long messageId, int priority = 30);
-        void CancelDownloadFile(File file, bool onlyIfPending = false);
+        void CancelDownloadFile(File file, bool onlyIfPending = false, bool onlyIfStreaming = false);
         bool IsDownloadFileCanceled(int fileId);
 
         void PrepareLogs(int fileId, int verbosityLevel);
@@ -159,6 +159,8 @@ namespace Telegram.Services
         IList<QuickReplyMessage> GetQuickReplyMessages(int id);
         IList<QuickReplyShortcut> GetQuickReplyShortcuts();
         bool CheckQuickReplyShortcutName(string name);
+
+        IList<WelcomeMessage> GetWelcomeMessages(long chatId);
 
         Task<IList<MessageEffect>> GetMessageEffectsAsync(IEnumerable<long> effectIds);
         MessageEffect LoadMessageEffect(long effectId, bool preload);
@@ -329,7 +331,11 @@ namespace Telegram.Services
         private readonly ReaderWriterDictionary<long, Supergroup> _supergroups = new(500);
         private readonly ReaderWriterDictionary<long, SupergroupFullInfo> _supergroupsFull = new(500);
 
+        private readonly ReaderWriterDictionary<long, Community> _communities = new();
+
         private readonly ReaderWriterDictionary<int, GroupCall> _groupCalls = new();
+
+        private readonly ReaderWriterDictionary<long, IList<WelcomeMessage>> _welcomeMessages = new();
 
         private readonly ConcurrentDictionary<int, ChatListUnreadCount> _unreadCounts = new();
 
@@ -392,7 +398,7 @@ namespace Telegram.Services
         private StakeDiceState _stakeDiceState = new();
 
         private StarAmount _ownedStarCount;
-        private long? _ownedTonCount;
+        private long? _ownedGramCount;
 
         private JsonValueObject _config;
 
@@ -995,7 +1001,7 @@ namespace Telegram.Services
             ProfileColors = null;
             AvailableProfileColors = null;
             _ownedStarCount = null;
-            _ownedTonCount = null;
+            _ownedGramCount = null;
             DefaultPaidReactionType = new PaidReactionTypeRegular();
             AgeVerificationParameters = null;
             SavedMessagesTopicCount = 0;
@@ -1159,11 +1165,14 @@ namespace Telegram.Services
 
         public void DownloadFile(int fileId, int priority, long offset = 0, long limit = 0, bool synchronous = false)
         {
+            TrackExplicitDownload(fileId);
             Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
         }
 
         public async Task<File> DownloadFileAsync(File file, int priority, long offset = 0, long limit = 0)
         {
+            TrackExplicitDownload(file.Id);
+
             var response = await SendAsync(new DownloadFile(file.Id, priority, offset, limit, true));
             if (response is File updated)
             {
@@ -1448,17 +1457,17 @@ namespace Telegram.Services
             }
         }
 
-        public long OwnedTonCount
+        public long OwnedGramCount
         {
             get
             {
-                if (_ownedTonCount == null)
+                if (_ownedGramCount == null)
                 {
                     Send(new GetTonTransactions(null, string.Empty, 1));
                     return 0;
                 }
 
-                return _ownedTonCount ?? 0;
+                return _ownedGramCount ?? 0;
             }
         }
 
@@ -1877,6 +1886,16 @@ namespace Telegram.Services
             }
 
             return ClientEx.CheckQuickReplyShortcutName(name);
+        }
+
+        public IList<WelcomeMessage> GetWelcomeMessages(long chatId)
+        {
+            if (_welcomeMessages.TryGetValue(chatId, out var value))
+            {
+                return value;
+            }
+
+            return Array.Empty<WelcomeMessage>();
         }
 
         public bool IsSavedMessages(MessageSender sender)
@@ -3097,10 +3116,10 @@ namespace Telegram.Services
             }
 
             // TODO: move the message after track when figured out why WeakAction throws a NRE
-            var token = SessionId << 16 | file.Id;
+            var token = UpdateManager.CreateToken(SessionId, file.Id);
             if (file.Local.IsDownloadingCompleted)
             {
-                EventAggregator.Current.Publish(file, token | 0x01000000);
+                EventAggregator.Current.Publish(file, token | UpdateManager.CompletionOnly);
             }
 
             EventAggregator.Current.Publish(file, token);
@@ -3642,6 +3661,16 @@ namespace Telegram.Services
                         break;
                     }
 
+                case UpdateChatWelcomeMessages updateChatWelcomeMessages:
+                    {
+                        if (_chats.TryGetValue(updateChatWelcomeMessages.ChatId, out Chat value))
+                        {
+                            _welcomeMessages[updateChatWelcomeMessages.ChatId] = updateChatWelcomeMessages.Messages;
+                        }
+
+                        break;
+                    }
+
                 case UpdateConnectionState updateConnectionState:
                     _connectionState = updateConnectionState.State;
                     break;
@@ -3662,6 +3691,9 @@ namespace Telegram.Services
                     break;
                 case UpdateDirectMessagesChatTopic updateDirectMessagesChatTopic:
                     UpdateDirectMessagesChatTopic(updateDirectMessagesChatTopic.Topic.ChatId, manager => manager.UpdateDirectMessagesChatTopic(updateDirectMessagesChatTopic.Topic));
+                    break;
+                case UpdateCommunity updateCommunity:
+                    _communities[updateCommunity.Community.Id] = updateCommunity.Community;
                     break;
                 case UpdateGroupCall updateGroupCall:
                     _groupCalls[updateGroupCall.GroupCall.Id] = updateGroupCall.GroupCall;
@@ -3936,8 +3968,8 @@ namespace Telegram.Services
                 case UpdateOwnedStarCount updateOwnedStarCount:
                     _ownedStarCount = updateOwnedStarCount.StarAmount;
                     break;
-                case UpdateOwnedTonCount updateOwnedTonCount:
-                    _ownedTonCount = updateOwnedTonCount.TonAmount;
+                case UpdateOwnedGramCount updateOwnedGramCount:
+                    _ownedGramCount = updateOwnedGramCount.GramAmount;
                     break;
                 case UpdateDefaultPaidReactionType updateDefaultPaidReactionType:
                     DefaultPaidReactionType = updateDefaultPaidReactionType.Type;

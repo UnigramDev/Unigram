@@ -156,8 +156,10 @@ namespace Telegram.Controls
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var result = args.Item as InlineQueryResult;
+            if (args.InRecycleQueue || args.Item is not InlineQueryResult result)
+            {
+                return;
+            }
 
             if (args.ItemContainer.ContentTemplateRoot is InlineResultMediaCell mediaCell)
             {
@@ -167,7 +169,7 @@ namespace Telegram.Controls
             {
                 articleCell.UpdateResult(ViewModel.ClientService, result);
             }
-            else if (content.Children[0] is AnimatedImage animated)
+            else if (args.ItemContainer.ContentTemplateRoot is Grid content && content.Children[0] is AnimatedImage animated)
             {
                 if (result is InlineQueryResultSticker sticker)
                 {

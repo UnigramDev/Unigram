@@ -187,7 +187,7 @@ namespace Telegram.ViewModels
             IsFromOffline = message.IsFromOffline;
             IsChannelPost = message.IsChannelPost;
             IsPaidStarSuggestedPost = message.IsPaidStarSuggestedPost;
-            IsPaidTonSuggestedPost = message.IsPaidTonSuggestedPost;
+            IsPaidGramSuggestedPost = message.IsPaidGramSuggestedPost;
             SuggestedPostInfo = message.SuggestedPostInfo;
             CanBeSaved = message.CanBeSaved;
             IsOutgoing = message.IsOutgoing;
@@ -197,6 +197,7 @@ namespace Telegram.ViewModels
             SendingState = message.SendingState;
             ChatId = message.ChatId;
             TopicId = message.TopicId;
+            ReceiverId = message.ReceiverId;
             SenderId = message.SenderId;
             SenderBoostCount = message.SenderBoostCount;
             SenderTag = message.SenderTag;
@@ -232,7 +233,7 @@ namespace Telegram.ViewModels
             IsFromOffline = message.IsFromOffline;
             IsChannelPost = message.IsChannelPost;
             IsPaidStarSuggestedPost = message.IsPaidStarSuggestedPost;
-            IsPaidTonSuggestedPost = message.IsPaidTonSuggestedPost;
+            IsPaidGramSuggestedPost = message.IsPaidGramSuggestedPost;
             SuggestedPostInfo = message.SuggestedPostInfo;
             CanBeSaved = message.CanBeSaved;
             IsOutgoing = message.IsOutgoing;
@@ -242,6 +243,7 @@ namespace Telegram.ViewModels
             SendingState = message.SendingState;
             ChatId = message.ChatId;
             TopicId = message.TopicId;
+            ReceiverId = message.ReceiverId;
             SenderId = message.SenderId;
             SenderBoostCount = message.SenderBoostCount;
             SenderTag = message.SenderTag;
@@ -381,7 +383,7 @@ namespace Telegram.ViewModels
             IsFromOffline = message.IsFromOffline;
             IsChannelPost = message.IsChannelPost;
             IsPaidStarSuggestedPost = message.IsPaidStarSuggestedPost;
-            IsPaidTonSuggestedPost = message.IsPaidTonSuggestedPost;
+            IsPaidGramSuggestedPost = message.IsPaidGramSuggestedPost;
             SuggestedPostInfo = message.SuggestedPostInfo;
             IsOutgoing = message.IsOutgoing;
             IsPinned = message.IsPinned;
@@ -389,6 +391,7 @@ namespace Telegram.ViewModels
             ReplyMarkup = message.ReplyMarkup;
             ReplyTo = message.ReplyTo;
             FactCheck = message.FactCheck;
+            ReceiverId = message.ReceiverId;
             SenderId = message.SenderId;
             SendingState = message.SendingState;
             SelfDestructType = message.SelfDestructType;
@@ -489,7 +492,7 @@ namespace Telegram.ViewModels
             IsFromOffline = message.IsFromOffline;
             IsChannelPost = message.IsChannelPost;
             IsPaidStarSuggestedPost = message.IsPaidStarSuggestedPost;
-            IsPaidTonSuggestedPost = message.IsPaidTonSuggestedPost;
+            IsPaidGramSuggestedPost = message.IsPaidGramSuggestedPost;
             SuggestedPostInfo = message.SuggestedPostInfo;
             CanBeSaved = message.CanBeSaved;
             IsOutgoing = message.IsOutgoing;
@@ -499,6 +502,7 @@ namespace Telegram.ViewModels
             SendingState = message.SendingState;
             ChatId = message.ChatId;
             TopicId = message.TopicId;
+            ReceiverId = message.ReceiverId;
             SenderId = message.SenderId;
             SenderBoostCount = message.SenderBoostCount;
             SenderTag = message.SenderTag;
@@ -571,7 +575,7 @@ namespace Telegram.ViewModels
         public bool IsFromOffline { get; protected set; }
         public bool IsChannelPost { get; protected set; }
         public bool IsPaidStarSuggestedPost { get; protected set; }
-        public bool IsPaidTonSuggestedPost { get; protected set; }
+        public bool IsPaidGramSuggestedPost { get; protected set; }
         public SuggestedPostInfo SuggestedPostInfo { get; set; }
         public bool CanBeSaved { get; protected set; }
         public bool IsOutgoing { get; protected set; }
@@ -582,6 +586,7 @@ namespace Telegram.ViewModels
         public long ChatId { get; protected set; }
         public MessageTopic TopicId { get; protected set; }
         public MessageSender SenderId { get; set; }
+        public MessageSender ReceiverId { get; set; }
         public int SenderBoostCount { get; protected set; }
         public string SenderTag { get; set; }
         public long SenderBusinessBotUserId { get; protected set; }
@@ -654,7 +659,7 @@ namespace Telegram.ViewModels
         // TODO: Get rid of this
         public Message Get()
         {
-            return new Message(Id, SenderId, ChatId, SendingState, SchedulingState, IsOutgoing, IsPinned, IsFromOffline, CanBeSaved, HasTimestampedMedia, IsChannelPost, IsPaidStarSuggestedPost, IsPaidTonSuggestedPost, ContainsUnreadMention, ContainsUnreadPollVotes, Date, EditDate, ForwardInfo, ImportInfo, InteractionInfo, UnreadReactions, FactCheck, SuggestedPostInfo, ReplyTo, TopicId, SelfDestructType, SelfDestructIn, AutoDeleteIn, ViaBotUserId, GuestBotCallerId, SenderBusinessBotUserId, SenderBoostCount, SenderTag, PaidMessageStarCount, AuthorSignature, MediaAlbumId, EffectId, RestrictionInfo, SummaryLanguageCode, Content, ReplyMarkup);
+            return new Message(Id, SenderId, ReceiverId, ChatId, SendingState, SchedulingState, IsOutgoing, IsPinned, IsFromOffline, CanBeSaved, HasTimestampedMedia, IsChannelPost, IsPaidStarSuggestedPost, IsPaidGramSuggestedPost, ContainsUnreadMention, ContainsUnreadPollVotes, Date, EditDate, ForwardInfo, ImportInfo, InteractionInfo, UnreadReactions, FactCheck, SuggestedPostInfo, ReplyTo, TopicId, SelfDestructType, SelfDestructIn, AutoDeleteIn, ViaBotUserId, GuestBotCallerId, SenderBusinessBotUserId, SenderBoostCount, SenderTag, PaidMessageStarCount, AuthorSignature, MediaAlbumId, EffectId, RestrictionInfo, SummaryLanguageCode, Content, ReplyMarkup);
         }
 
         public virtual bool CanBeAddedToDownloads

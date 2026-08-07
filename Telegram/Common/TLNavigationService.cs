@@ -20,6 +20,7 @@ using Telegram.ViewModels.Settings;
 using Telegram.Views;
 using Telegram.Views.Host;
 using Telegram.Views.Payments;
+using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Password;
@@ -58,6 +59,35 @@ namespace Telegram.Common
         }
 
         public IClientService ClientService => _clientService;
+
+        public async void NavigateToTextEditor(long chatId, MessageTopic topic, long messageId, RichMessage message, InputMessageReplyTo replyTo = null, MessageSendOptions sendOptions = null)
+        {
+            var oldViewId = Window.Id;
+            var found = false;
+
+            await WindowContext.ForEachAsync(window =>
+            {
+                if (window.Content is TextEditorRichPopup textEditor && textEditor.AreTheSame(chatId, messageId))
+                {
+                    _ = ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
+                    found = true;
+                }
+            });
+
+            if (found)
+            {
+                return;
+            }
+
+            await OpenAsync(new ViewServiceOptions
+            {
+                Width = 384,
+                Height = 640,
+                PersistedId = "TextEditor",
+                ViewMode = ViewServiceMode.Default,
+                Content = control => new TextEditorRichPopup(ClientService, this, chatId, topic, messageId, message, replyTo, sendOptions)
+            });
+        }
 
         public async void NavigateToWebApp(User botUser, WebAppUrl url, long launchId = 0, AttachmentMenuBot menuBot = null, WebAppOpenMode openMode = null, OpenUrlSource source = null, InternalLinkType sourceLink = null, string buttonText = null)
         {

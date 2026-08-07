@@ -199,7 +199,7 @@ namespace Telegram.Charts
                         (b - a) >= 180.0 ? CanvasArcSize.Large : CanvasArcSize.Small);
 
                     builder.EndFigure(CanvasFigureLoop.Closed);
-                    canvas.FillGeometry(CanvasGeometry.CreatePath(builder), lines[i].paint.Color);
+                    FillGeometry(canvas, builder, lines[i].paint.Color);
 
                     //lines[i].paint.setStyle(Paint.Style.STROKE);
 

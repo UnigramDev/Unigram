@@ -29,12 +29,15 @@ namespace Telegram.Common
         Map = 0x20u,
         Embedded = 0x40u,        // pageBlockEmbedded (iframe-style)
         EmbeddedPost = 0x80u,    // pageBlockEmbeddedPost (Telegram post embed)
+        Document = 0x100u,       // pageBlockDocument (a file, not a viewable medium)
 
-        // Conventional groupings
+        // Conventional groupings. Document is deliberately outside Visual and
+        // Media: it has no preview to show, so a gallery asking for Visual must
+        // not be handed one.
         Media = Photo | Video,
         Visual = Photo | Video | Animation,
         Audible = Audio | VoiceNote,
-        Any = Photo | Video | Animation | Audio | VoiceNote | Map | Embedded | EmbeddedPost
+        Any = Photo | Video | Animation | Audio | VoiceNote | Map | Embedded | EmbeddedPost | Document
     }
 
     /// <summary>
@@ -83,10 +86,22 @@ namespace Telegram.Common
         private const string PlaceholderAudio = "\U0001F3B5";
         private const string PlaceholderVoiceNote = "\U0001F3A4";
         private const string PlaceholderMap = "\U0001F4CD";
+        private const string PlaceholderDocument = "\U0001F4C4";
         private const string PlaceholderEmbedded = "[embed]";
         private const string PlaceholderEmbeddedPost = "[post]";
         private const string PlaceholderChatLink = "[chat]";
         private const string PlaceholderDivider = "---";
+
+        // A button contributes no text of its own: its label belongs to the button,
+        // not to the page, so it is never harvested. This stands in for it wherever
+        // a flat projection needs *something* — and its length must stay stable,
+        // because streaming (DialogPendingTextMessage) computes offsets from it and
+        // a mismatch would truncate at the wrong position. Flatten additionally
+        // covers it with a TextEntityTypeButton carrying the button itself, so a
+        // renderer can substitute the real thing without needing the label here.
+        // internal: TdExtensions has its own RichText walkers that need the same
+        // stand-in. They fold into this class in the walker consolidation.
+        internal const string PlaceholderButton = "[button]";
 
         // =====================================================================
         // FindFirstMedia
@@ -130,6 +145,7 @@ namespace Telegram.Common
                 case PageBlockAnimation when (kind & PageBlockMediaKind.Animation) != 0:
                 case PageBlockAudio when (kind & PageBlockMediaKind.Audio) != 0:
                 case PageBlockVoiceNote when (kind & PageBlockMediaKind.VoiceNote) != 0:
+                case PageBlockDocument when (kind & PageBlockMediaKind.Document) != 0:
                 case PageBlockMap when (kind & PageBlockMediaKind.Map) != 0:
                 case PageBlockEmbedded when (kind & PageBlockMediaKind.Embedded) != 0:
                 case PageBlockEmbeddedPost when (kind & PageBlockMediaKind.EmbeddedPost) != 0:
@@ -273,6 +289,7 @@ namespace Telegram.Common
                 PageBlockAnimation => (kind & PageBlockMediaKind.Animation) != 0,
                 PageBlockAudio => (kind & PageBlockMediaKind.Audio) != 0,
                 PageBlockVoiceNote => (kind & PageBlockMediaKind.VoiceNote) != 0,
+                PageBlockDocument => (kind & PageBlockMediaKind.Document) != 0,
                 PageBlockMap => (kind & PageBlockMediaKind.Map) != 0,
                 PageBlockEmbedded => (kind & PageBlockMediaKind.Embedded) != 0,
                 PageBlockEmbeddedPost => (kind & PageBlockMediaKind.EmbeddedPost) != 0,
@@ -359,6 +376,12 @@ namespace Telegram.Common
                     CollectLinksFromRichText(pq.Text, result);
                     CollectLinksFromRichText(pq.Credit, result);
                     return;
+                // Text and credit like a pull quote, not a list of blocks like a
+                // block quote — the expandable one holds rich text directly.
+                case PageBlockExpandableBlockQuote eq:
+                    CollectLinksFromRichText(eq.Text, result);
+                    CollectLinksFromRichText(eq.Credit, result);
+                    return;
 
                 // Container blocks
                 case PageBlockBlockQuote bq:
@@ -441,6 +464,9 @@ namespace Telegram.Common
                 case PageBlockVoiceNote vn:
                     CollectLinksFromCaption(vn.Caption, result);
                     return;
+                case PageBlockDocument doc:
+                    CollectLinksFromCaption(doc.Caption, result);
+                    return;
                 case PageBlockMap m:
                     CollectLinksFromCaption(m.Caption, result);
                     return;
@@ -466,7 +492,10 @@ namespace Telegram.Common
                     }
                     return;
 
-                // No links carried
+                // No links carried. A button row is a row of actions, not of
+                // links: what a button does is the client's business, and it is
+                // not part of the page's link graph.
+                case PageBlockButtonRow _:
                 case PageBlockAnchor _:
                 case PageBlockDivider _:
                 case PageBlockMathematicalExpression _:
@@ -488,7 +517,11 @@ namespace Telegram.Common
                 case null:
                     return;
 
-                // No-link leaves
+                // No-link leaves. RichTextButton is one of them on purpose: a
+                // button is an action, not a link, and its label is not page
+                // content to be harvested — the same reason an inline keyboard
+                // never appears in GetLinks.
+                case RichTextButton _:
                 case RichTextPlain _:
                 case RichTextCustomEmoji _:
                 case RichTextIcon _:
@@ -657,6 +690,13 @@ namespace Telegram.Common
                     pieces.Add(pq.Text);
                     if (!IsEmpty(pq.Credit)) pieces.Add(pq.Credit);
                     return;
+                // Holds rich text directly (like a pull quote), not a list of
+                // blocks like PageBlockBlockQuote — the "expandable" part is a
+                // rendering affordance and has no text projection.
+                case PageBlockExpandableBlockQuote eq:
+                    pieces.Add(eq.Text);
+                    if (!IsEmpty(eq.Credit)) pieces.Add(eq.Credit);
+                    return;
 
                 // Container blocks
                 case PageBlockBlockQuote bq:
@@ -741,6 +781,10 @@ namespace Telegram.Common
                     pieces.Add(new RichTextPlain(PlaceholderVoiceNote));
                     CollectRichTextFromCaption(vn.Caption, pieces);
                     return;
+                case PageBlockDocument doc:
+                    pieces.Add(new RichTextPlain(PlaceholderDocument));
+                    CollectRichTextFromCaption(doc.Caption, pieces);
+                    return;
                 case PageBlockMap m:
                     pieces.Add(new RichTextPlain(PlaceholderMap));
                     CollectRichTextFromCaption(m.Caption, pieces);
@@ -756,6 +800,30 @@ namespace Telegram.Common
                     return;
                 case PageBlockChatLink cl:
                     pieces.Add(new RichTextPlain(PlaceholderChatLink));
+                    return;
+
+                // A row stays one piece (pieces are joined by '\n', and these sit
+                // side by side). The buttons are carried through as RichTextButton
+                // rather than flattened to their placeholder here, so a renderer
+                // downstream of GetRichText can still show real buttons.
+                case PageBlockButtonRow br:
+                    if (br.Buttons != null && br.Buttons.Count > 0)
+                    {
+                        if (br.Buttons.Count == 1)
+                        {
+                            pieces.Add(new RichTextButton(br.Buttons[0]));
+                        }
+                        else
+                        {
+                            var row = new List<RichText>(br.Buttons.Count * 2 - 1);
+                            for (int i = 0; i < br.Buttons.Count; i++)
+                            {
+                                if (i > 0) row.Add(new RichTextPlain(" "));
+                                row.Add(new RichTextButton(br.Buttons[i]));
+                            }
+                            pieces.Add(new RichTexts(row));
+                        }
+                    }
                     return;
                 case PageBlockDivider _:
                     pieces.Add(new RichTextPlain(PlaceholderDivider));
@@ -820,6 +888,10 @@ namespace Telegram.Common
                     return;
                 case RichTextCustomEmoji ce:
                     if (ce.AlternativeText != null) sb.Append(ce.AlternativeText);
+                    return;
+                // The label is the button's, not the page's — stand in for it.
+                case RichTextButton _:
+                    sb.Append(PlaceholderButton);
                     return;
                 case RichTextMathematicalExpression me:
                     if (me.Expression != null) sb.Append(me.Expression);
@@ -912,8 +984,16 @@ namespace Telegram.Common
 
                 // Url-shaped wrappers (carry a payload)
                 case RichTextUrl b:
-                    EmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
-                    return;
+                    {
+                        // is_cached would otherwise be dropped here: it says the target
+                        // already has an instant view, which is why the link is
+                        // highlighted instead of underlined. Emitted as a marker over the
+                        // same range so the link entity keeps its exact meaning.
+                        int start = text.Length;
+                        EmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
+                        EmitCached(b.IsCached, start, text, entities);
+                        return;
+                    }
                 case RichTextEmailAddress b:
                     EmitSpan(b.Text, text, entities, new TextEntityTypeEmailAddress());
                     return;
@@ -932,15 +1012,24 @@ namespace Telegram.Common
                     Flatten(b.Text, text, entities);
                     return;
                 case RichTextReferenceLink b:
-                    // Reference and AnchorLink both navigate to an in-page anchor. The
-                    // server-provided URL is the standard target, so they fold into
-                    // TextEntityTypeTextUrl. If the renderer needs the anchor_name
-                    // separately, swap this for a dedicated entity type.
-                    EmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
-                    return;
+                    {
+                        // Reference and AnchorLink both navigate to an in-page anchor. The
+                        // server-provided URL is the standard target, so they fold into
+                        // TextEntityTypeTextUrl. If the renderer needs the anchor_name
+                        // separately, swap this for a dedicated entity type.
+                        int start = text.Length;
+                        EmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
+                        // Always cached: the target is this very page.
+                        EmitCached(true, start, text, entities);
+                        return;
+                    }
                 case RichTextAnchorLink b:
-                    EmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
-                    return;
+                    {
+                        int start = text.Length;
+                        EmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
+                        EmitCached(true, start, text, entities);
+                        return;
+                    }
 
                 // Auto-detected entities (text is the value)
                 case RichTextMention b:
@@ -994,9 +1083,35 @@ namespace Telegram.Common
                         return;
                     }
 
+                // Leaf whose text belongs to the button, not to the page: emit the
+                // placeholder so the entity has a non-zero length, and hand the
+                // whole button to the renderer through the entity. The label is
+                // reachable as Button.Text if the renderer wants it — nothing here
+                // harvests it into the page's text.
+                case RichTextButton button:
+                    {
+                        int start = text.Length;
+                        text.Append(PlaceholderButton);
+                        entities.Add(new TextEntity(start, PlaceholderButton.Length,
+                            new TextEntityTypeButton(button.Button)));
+                        return;
+                    }
+
                 case RichTextAnchor _:
                     // Skipped — see ObjectReplacementChar comment above.
                     return;
+            }
+        }
+
+        // Lays the cached marker over the span an EmitSpan just wrote. Purely a style:
+        // the link entity underneath keeps its type, so click handling is unaffected and
+        // only the highlighter looks for this.
+        private static void EmitCached(bool isCached, int start, StringBuilder text, IList<TextEntity> entities)
+        {
+            int length = text.Length - start;
+            if (isCached && length > 0)
+            {
+                entities.Add(new TextEntity(start, length, new TextEntityTypeCached()));
             }
         }
 
@@ -1012,6 +1127,440 @@ namespace Telegram.Common
         }
 
         // =====================================================================
+        // TryGetFormattedText — RichMessage / InputRichMessage -> FormattedText,
+        // only when the flatten is LOSSLESS (fail on any unrepresentable content)
+        // =====================================================================
+
+        /// <summary>
+        /// Attempts to flatten a display <see cref="RichMessage"/> into a single
+        /// <see cref="FormattedText"/> (text + inline entities), succeeding <b>only when nothing
+        /// is lost</b>. Representable: paragraphs (joined by '\n'), preformatted (→ pre / pre-code),
+        /// block quotes with an empty credit whose body is paragraphs (→ block-quote entity), and
+        /// every inline that maps 1:1 to a message entity. Any other block (heading, footer, list,
+        /// table, divider, anchor, details, collage, slideshow, cover, media, …), a block quote
+        /// with a credit or non-paragraph body, or an inline with no faithful entity (icon, anchor,
+        /// reference / reference-link / anchor-link) makes this return <c>false</c>.
+        /// </summary>
+        public static bool TryGetFormattedText(RichMessage message, out FormattedText result)
+        {
+            var text = new StringBuilder();
+            var entities = new List<TextEntity>();
+            if (TryAppendBlocks(message?.Blocks, text, entities))
+            {
+                result = new FormattedText(text.ToString(), entities);
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to flatten an <see cref="InputRichMessage"/> into a single
+        /// <see cref="FormattedText"/> under the same lossless rules as the
+        /// <see cref="TryGetFormattedText(RichMessage, out FormattedText)"/> overload. Only a
+        /// <see cref="RichMessageSourceBlocks"/> source is considered — markdown / HTML sources
+        /// (which would need parsing to flatten) always return <c>false</c>. <c>is_rtl</c> /
+        /// <c>detect_automatic_blocks</c> are rendering/authoring hints and are ignored.
+        /// </summary>
+        public static bool TryGetFormattedText(InputRichMessage message, out FormattedText result)
+        {
+            if (message?.Source is RichMessageSourceBlocks source)
+            {
+                var text = new StringBuilder();
+                var entities = new List<TextEntity>();
+                if (TryAppendInputBlocks(source.Blocks, text, entities))
+                {
+                    result = new FormattedText(text.ToString(), entities);
+                    return true;
+                }
+            }
+
+            result = null;
+            return false;
+        }
+
+        /// <summary>
+        /// LOSSY flatten of a <see cref="RichMessage"/> to a plain message <see cref="FormattedText"/>,
+        /// for "send without formatting": block structure is flattened to lines (paragraphs joined by
+        /// '\n'; blockquotes/pre/headings become plain text), media becomes its placeholder, and inline
+        /// entities that a message can't carry (subscript/superscript/marked/math/icon/button) are dropped —
+        /// keeping the covered text as plain. Supported inline formatting (bold/italic/link/spoiler/…)
+        /// survives. Unlike <see cref="TryGetFormattedText(RichMessage, out FormattedText)"/> it never
+        /// fails. Reuses <see cref="GetRichText"/> (block tree -&gt; RichText) + <see cref="Flatten"/>.
+        /// </summary>
+        public static FormattedText GetFormattedText(RichMessage message)
+        {
+            var text = new StringBuilder();
+            var entities = new List<TextEntity>();
+            Flatten(GetRichText(message?.Blocks), text, entities);
+
+            // Drop entities with no message equivalent (keep their text as plain).
+            for (int i = entities.Count - 1; i >= 0; i--)
+            {
+                if (!IsMessageEntity(entities[i].Type))
+                {
+                    entities.RemoveAt(i);
+                }
+            }
+
+            return new FormattedText(text.ToString(), entities);
+        }
+
+        // Entity types a message FormattedText can carry. Excludes the IV-only entities that Flatten can
+        // emit (subscript/superscript/marked/mathematical-expression/icon/button) — see the supported set
+        // in td_api (textEntityType*). Button is client-only on top of that: it exists nowhere in the
+        // schema, so it can never leave the client.
+        private static bool IsMessageEntity(TextEntityType type)
+        {
+            switch (type)
+            {
+                case TextEntityTypeSubscript:
+                case TextEntityTypeSuperscript:
+                case TextEntityTypeMarked:
+                case TextEntityTypeMathematicalExpression:
+                case TextEntityTypeIcon:
+                case TextEntityTypeButton:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        // Top-level blocks are joined by a single '\n' (the inverse of ToPageBlocks, which splits
+        // paragraphs on '\n'). Returns false the moment a block isn't losslessly representable.
+        private static bool TryAppendBlocks(IList<PageBlock> blocks, StringBuilder text, List<TextEntity> entities)
+        {
+            if (blocks == null)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < blocks.Count; i++)
+            {
+                if (i > 0)
+                {
+                    text.Append('\n');
+                }
+
+                if (!TryAppendBlock(blocks[i], text, entities))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool TryAppendBlock(PageBlock block, StringBuilder text, List<TextEntity> entities)
+        {
+            switch (block)
+            {
+                case PageBlockParagraph p:
+                    return TryAppendRichText(p.Text, text, entities);
+
+                case PageBlockPreformatted pre:
+                    {
+                        int start = text.Length;
+                        if (!TryAppendRichText(pre.Text, text, entities))
+                        {
+                            return false;
+                        }
+
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            TextEntityType type = string.IsNullOrEmpty(pre.Language)
+                                ? new TextEntityTypePre()
+                                : new TextEntityTypePreCode(pre.Language);
+                            entities.Add(new TextEntity(start, length, type));
+                        }
+
+                        return true;
+                    }
+
+                case PageBlockBlockQuote quote:
+                    {
+                        // A credit can't live in a block-quote entity; the body must be paragraphs.
+                        if (!IsEmpty(quote.Credit))
+                        {
+                            return false;
+                        }
+
+                        int start = text.Length;
+                        var body = quote.Blocks;
+                        if (body != null)
+                        {
+                            for (int i = 0; i < body.Count; i++)
+                            {
+                                if (body[i] is not PageBlockParagraph para)
+                                {
+                                    return false;
+                                }
+
+                                if (i > 0)
+                                {
+                                    text.Append('\n');
+                                }
+
+                                if (!TryAppendRichText(para.Text, text, entities))
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            entities.Add(new TextEntity(start, length, new TextEntityTypeBlockQuote()));
+                        }
+
+                        return true;
+                    }
+
+                case PageBlockExpandableBlockQuote quote:
+                    {
+                        // Unlike the plain block quote this one holds RichText directly, so it maps
+                        // 1:1 onto the expandable-blockquote entity — no paragraph-shape requirement.
+                        // A credit still can't be carried.
+                        if (!IsEmpty(quote.Credit))
+                        {
+                            return false;
+                        }
+
+                        int start = text.Length;
+                        if (!TryAppendRichText(quote.Text, text, entities))
+                        {
+                            return false;
+                        }
+
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            entities.Add(new TextEntity(start, length, new TextEntityTypeExpandableBlockQuote()));
+                        }
+
+                        return true;
+                    }
+
+                default:
+                    // Any other block type (heading/footer/list/table/media/document/button-row/
+                    // divider/anchor/…) = loss.
+                    return false;
+            }
+        }
+
+        private static bool TryAppendInputBlocks(IList<InputPageBlock> blocks, StringBuilder text, List<TextEntity> entities)
+        {
+            if (blocks == null)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < blocks.Count; i++)
+            {
+                if (i > 0)
+                {
+                    text.Append('\n');
+                }
+
+                if (!TryAppendInputBlock(blocks[i], text, entities))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool TryAppendInputBlock(InputPageBlock block, StringBuilder text, List<TextEntity> entities)
+        {
+            switch (block)
+            {
+                case InputPageBlockParagraph p:
+                    return TryAppendRichText(p.Text, text, entities);
+
+                case InputPageBlockPreformatted pre:
+                    {
+                        int start = text.Length;
+                        if (!TryAppendRichText(pre.Text, text, entities))
+                        {
+                            return false;
+                        }
+
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            TextEntityType type = string.IsNullOrEmpty(pre.Language)
+                                ? new TextEntityTypePre()
+                                : new TextEntityTypePreCode(pre.Language);
+                            entities.Add(new TextEntity(start, length, type));
+                        }
+
+                        return true;
+                    }
+
+                case InputPageBlockBlockQuote quote:
+                    {
+                        if (!IsEmpty(quote.Credit))
+                        {
+                            return false;
+                        }
+
+                        int start = text.Length;
+                        var body = quote.Blocks;
+                        if (body != null)
+                        {
+                            for (int i = 0; i < body.Count; i++)
+                            {
+                                if (body[i] is not InputPageBlockParagraph para)
+                                {
+                                    return false;
+                                }
+
+                                if (i > 0)
+                                {
+                                    text.Append('\n');
+                                }
+
+                                if (!TryAppendRichText(para.Text, text, entities))
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            entities.Add(new TextEntity(start, length, new TextEntityTypeBlockQuote()));
+                        }
+
+                        return true;
+                    }
+
+                case InputPageBlockExpandableBlockQuote quote:
+                    {
+                        // Holds RichText directly — see the display-side twin above.
+                        if (!IsEmpty(quote.Credit))
+                        {
+                            return false;
+                        }
+
+                        int start = text.Length;
+                        if (!TryAppendRichText(quote.Text, text, entities))
+                        {
+                            return false;
+                        }
+
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            entities.Add(new TextEntity(start, length, new TextEntityTypeExpandableBlockQuote()));
+                        }
+
+                        return true;
+                    }
+
+                default:
+                    return false;
+            }
+        }
+
+        // Strict inline flatten: like Flatten, but returns false on any RichText that can't be
+        // faithfully carried by a message entity (icon, anchor, reference / reference-link /
+        // anchor-link, or any unknown type — all caught by the default arm).
+        private static bool TryAppendRichText(RichText richText, StringBuilder text, IList<TextEntity> entities)
+        {
+            switch (richText)
+            {
+                case null:
+                    return true;
+
+                case RichTextPlain p:
+                    if (!string.IsNullOrEmpty(p.Text))
+                    {
+                        text.Append(p.Text);
+                    }
+                    return true;
+
+                case RichTexts rs:
+                    if (rs.Texts != null)
+                    {
+                        foreach (var child in rs.Texts)
+                        {
+                            if (!TryAppendRichText(child, text, entities))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+
+                // Style wrappers
+                case RichTextBold b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeBold());
+                case RichTextItalic b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeItalic());
+                case RichTextUnderline b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeUnderline());
+                case RichTextStrikethrough b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeStrikethrough());
+                case RichTextSpoiler b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeSpoiler());
+                case RichTextFixed b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeCode());
+                // NOTE: subscript / superscript / marked have NO message TextEntityType (they exist for IV
+                // RichText only), so they're not representable — they fall through to the default (false).
+
+                // Payload-carrying wrappers
+                case RichTextUrl b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeTextUrl(b.Url));
+                case RichTextEmailAddress b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeEmailAddress());
+                case RichTextPhoneNumber b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypePhoneNumber());
+                case RichTextMentionName b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeMentionName(b.UserId));
+                case RichTextDateTime b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeDateTime(b.UnixTime, b.FormattingType));
+
+                // Auto-detected (the text is the value)
+                case RichTextMention b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeMention());
+                case RichTextHashtag b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeHashtag());
+                case RichTextCashtag b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeCashtag());
+                case RichTextBotCommand b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeBotCommand());
+                case RichTextBankCardNumber b: return TryEmitSpan(b.Text, text, entities, new TextEntityTypeBankCardNumber());
+
+                // Leaves carrying their own text content
+                case RichTextCustomEmoji ce:
+                    if (!string.IsNullOrEmpty(ce.AlternativeText))
+                    {
+                        int start = text.Length;
+                        text.Append(ce.AlternativeText);
+                        entities.Add(new TextEntity(start, ce.AlternativeText.Length, new TextEntityTypeCustomEmoji(ce.CustomEmojiId)));
+                    }
+                    return true;
+
+                // NOTE: mathematical expressions have no message TextEntityType either (IV-only), so
+                // inline math is not representable — it falls through to the default (false).
+
+                default:
+                    // richTextIcon / richTextAnchor / richTextReference / richTextReferenceLink /
+                    // richTextAnchorLink / richTextButton (and any unknown) can't be represented
+                    // without loss. A button especially so: a message carries no way to act on it.
+                    return false;
+            }
+        }
+
+        private static bool TryEmitSpan(RichText inner, StringBuilder text, IList<TextEntity> entities, TextEntityType type)
+        {
+            int start = text.Length;
+            if (!TryAppendRichText(inner, text, entities))
+            {
+                return false;
+            }
+
+            int length = text.Length - start;
+            if (length > 0)
+            {
+                entities.Add(new TextEntity(start, length, type));
+            }
+
+            return true;
+        }
+
+        // =====================================================================
         // ToPageBlocks — FormattedText (message text + entities) -> page blocks
         // =====================================================================
 
@@ -1019,7 +1568,8 @@ namespace Telegram.Common
         /// Converts a <see cref="FormattedText"/> (a message's text + entities) into a
         /// list of <see cref="PageBlock"/>, preserving every entity — the inverse of
         /// <see cref="Flatten"/>. Block-level entities become their own blocks: block
-        /// quotes (incl. expandable) → <see cref="PageBlockBlockQuote"/>, pre / pre-code
+        /// quotes → <see cref="PageBlockBlockQuote"/>, expandable ones →
+        /// <see cref="PageBlockExpandableBlockQuote"/>, pre / pre-code
         /// → <see cref="PageBlockPreformatted"/>. Everything else becomes a
         /// <see cref="PageBlockParagraph"/>, one per line (the text is split on every
         /// '\n', inside block quotes too; empty lines are dropped). Inline entities are
@@ -1063,7 +1613,14 @@ namespace Telegram.Common
                     case TextEntityTypePreCode pc:
                         blocks.Add(new PageBlockPreformatted(BuildRichText(s, be.Offset, end, inline), pc.Language ?? string.Empty));
                         break;
-                    default: // BlockQuote / ExpandableBlockQuote
+                    case TextEntityTypeExpandableBlockQuote _:
+                        // pageBlockExpandableBlockQuote holds RichText directly, so the span
+                        // stays one node (newlines and all) instead of being split into
+                        // paragraphs — which makes this the exact inverse of TryAppendBlock.
+                        blocks.Add(new PageBlockExpandableBlockQuote(
+                            BuildRichText(s, be.Offset, end, inline), new RichTextPlain(string.Empty)));
+                        break;
+                    default: // BlockQuote
                         var inner = new List<PageBlock>();
                         AppendParagraphs(inner, s, be.Offset, end, inline);
                         if (inner.Count == 0)
@@ -1275,6 +1832,7 @@ namespace Telegram.Common
                 (PageBlockFooter a, PageBlockFooter b) => Compare(a.Footer, b.Footer),
                 (PageBlockThinking a, PageBlockThinking b) => Compare(a.Text, b.Text),
                 (PageBlockPullQuote a, PageBlockPullQuote b) => Compare(a.Text, b.Text) && Compare(a.Credit, b.Credit),
+                (PageBlockExpandableBlockQuote a, PageBlockExpandableBlockQuote b) => Compare(a.Text, b.Text) && Compare(a.Credit, b.Credit),
                 (PageBlockMathematicalExpression a, PageBlockMathematicalExpression b) => string.Equals(a.Expression, b.Expression),
 
                 // Atomic
@@ -1288,6 +1846,7 @@ namespace Telegram.Common
                 (PageBlockPhoto a, PageBlockPhoto b) => string.Equals(a.Url, b.Url) && a.HasSpoiler == b.HasSpoiler && SamePhoto(a.Photo, b.Photo) && Compare(a.Caption, b.Caption),
                 (PageBlockVideo a, PageBlockVideo b) => a.NeedAutoplay == b.NeedAutoplay && a.IsLooped == b.IsLooped && a.HasSpoiler == b.HasSpoiler && SameFile(a.Video?.VideoValue, b.Video?.VideoValue) && Compare(a.Caption, b.Caption),
                 (PageBlockVoiceNote a, PageBlockVoiceNote b) => SameFile(a.VoiceNote?.Voice, b.VoiceNote?.Voice) && Compare(a.Caption, b.Caption),
+                (PageBlockDocument a, PageBlockDocument b) => string.Equals(a.Document?.FileName, b.Document?.FileName) && SameFile(a.Document?.DocumentValue, b.Document?.DocumentValue) && Compare(a.Caption, b.Caption),
                 (PageBlockMap a, PageBlockMap b) => a.Zoom == b.Zoom && a.Width == b.Width && a.Height == b.Height && SameLocation(a.Location, b.Location) && Compare(a.Caption, b.Caption),
                 (PageBlockEmbedded a, PageBlockEmbedded b) => string.Equals(a.Url, b.Url) && string.Equals(a.Html, b.Html) && a.Width == b.Width && a.Height == b.Height && a.IsFullWidth == b.IsFullWidth && a.AllowScrolling == b.AllowScrolling && Compare(a.Caption, b.Caption),
 
@@ -1299,6 +1858,7 @@ namespace Telegram.Common
                 (PageBlockSlideshow a, PageBlockSlideshow b) => Compare(a.Blocks, b.Blocks) && Compare(a.Caption, b.Caption),
                 (PageBlockEmbeddedPost a, PageBlockEmbeddedPost b) => string.Equals(a.Url, b.Url) && string.Equals(a.Author, b.Author) && a.Date == b.Date && Compare(a.Blocks, b.Blocks) && Compare(a.Caption, b.Caption),
                 (PageBlockDetails a, PageBlockDetails b) => a.IsOpen == b.IsOpen && Compare(a.Header, b.Header) && Compare(a.Blocks, b.Blocks),
+                (PageBlockButtonRow a, PageBlockButtonRow b) => SameType(a.Align, b.Align) && Compare(a.Buttons, b.Buttons),
                 (PageBlockTable a, PageBlockTable b) => a.IsBordered == b.IsBordered && a.IsStriped == b.IsStriped && Compare(a.Caption, b.Caption) && Compare(a.Cells, b.Cells),
 
                 // PageBlockRelatedArticles is intentionally not diffed (always re-rendered).
@@ -1331,6 +1891,7 @@ namespace Telegram.Common
                 case (RichTextAnchor a, RichTextAnchor b): return a.Name == b.Name;
                 case (RichTextIcon a, RichTextIcon b): return a.Document.DocumentValue.Id == b.Document.DocumentValue.Id && a.Width == b.Width && a.Height == b.Height;
                 case (RichTextCustomEmoji a, RichTextCustomEmoji b): return a.CustomEmojiId == b.CustomEmojiId && string.Equals(a.AlternativeText, b.AlternativeText);
+                case (RichTextButton a, RichTextButton b): return Compare(a.Button, b.Button);
                 case (RichTextMathematicalExpression a, RichTextMathematicalExpression b): return string.Equals(a.Expression, b.Expression);
 
                 // Plain style wrappers (no payload beyond the inner text)
@@ -1361,6 +1922,75 @@ namespace Telegram.Common
 
                 default: return false;
             }
+        }
+
+        private static bool Compare(InlineButton a, InlineButton b)
+        {
+            if (a == null || b == null)
+            {
+                return a == b;
+            }
+
+            return SameType(a.Style, b.Style) && SameButtonType(a.Type, b.Type) && Compare(a.Text, b.Text);
+        }
+
+        private static bool Compare(IList<InlineButton> a, IList<InlineButton> b)
+        {
+            if (a == null || b == null)
+            {
+                return a == b;
+            }
+            if (a.Count != b.Count)
+            {
+                return false;
+            }
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (!Compare(a[i], b[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Two buttons that look identical but act differently must still compare unequal,
+        // so the payload matters, not just the variant. Parameterless variants
+        // (callbackGame/buy/disabled) are settled by SameType in the default arm.
+        private static bool SameButtonType(InlineKeyboardButtonType x, InlineKeyboardButtonType y)
+        {
+            switch (x, y)
+            {
+                case (InlineKeyboardButtonTypeUrl a, InlineKeyboardButtonTypeUrl b): return string.Equals(a.Url, b.Url);
+                case (InlineKeyboardButtonTypeWebApp a, InlineKeyboardButtonTypeWebApp b): return string.Equals(a.Url, b.Url);
+                case (InlineKeyboardButtonTypeLoginUrl a, InlineKeyboardButtonTypeLoginUrl b): return a.Id == b.Id && string.Equals(a.Url, b.Url) && string.Equals(a.ForwardText, b.ForwardText);
+                case (InlineKeyboardButtonTypeCallback a, InlineKeyboardButtonTypeCallback b): return SameBytes(a.Data, b.Data);
+                case (InlineKeyboardButtonTypeCallbackWithPassword a, InlineKeyboardButtonTypeCallbackWithPassword b): return SameBytes(a.Data, b.Data);
+                case (InlineKeyboardButtonTypeSwitchInline a, InlineKeyboardButtonTypeSwitchInline b): return string.Equals(a.Query, b.Query) && SameType(a.TargetChat, b.TargetChat);
+                case (InlineKeyboardButtonTypeUser a, InlineKeyboardButtonTypeUser b): return a.UserId == b.UserId;
+                case (InlineKeyboardButtonTypeCopyText a, InlineKeyboardButtonTypeCopyText b): return string.Equals(a.Text, b.Text);
+                default: return SameType(x, y);
+            }
+        }
+
+        private static bool SameBytes(IList<byte> a, IList<byte> b)
+        {
+            if (a == null || b == null)
+            {
+                return a == b;
+            }
+            if (a.Count != b.Count)
+            {
+                return false;
+            }
+            for (int i = 0; i < a.Count; i++)
+            {
+                if (a[i] != b[i])
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private static bool Compare(PageBlockCaption a, PageBlockCaption b)
@@ -1504,6 +2134,220 @@ namespace Telegram.Common
             }
 
             return true;
+        }
+
+        // =====================================================================
+        // ToInputRichMessage — RichMessage (display) -> InputRichMessage (sendable)
+        // =====================================================================
+
+        /// <summary>
+        /// Converts a display <see cref="RichMessage"/> (blocks with resolved media objects,
+        /// e.g. as returned by getMessageRichMessage) into a sendable <see cref="InputRichMessage"/>:
+        /// each <see cref="PageBlock"/> becomes its <c>inputPageBlock*</c> equivalent (media is
+        /// rebuilt into <c>input*</c> media, preferring remote file ids), wrapped in a
+        /// <see cref="RichMessageSourceBlocks"/>. Blocks with no input equivalent
+        /// (title/subtitle/kicker/authorDate/header/subheader/embedded/embeddedPost/chatLink/
+        /// relatedArticles/…) are dropped; a cover unwraps to the block it covers.
+        /// </summary>
+        public static InputRichMessage ToInputRichMessage(RichMessage message, bool detectAutomaticBlocks = false)
+        {
+            var blocks = ToInputBlocks(message?.Blocks);
+            return new InputRichMessage(new RichMessageSourceBlocks(blocks), message?.IsRtl ?? false, detectAutomaticBlocks);
+        }
+
+        /// <summary>Converts a list of display <see cref="PageBlock"/> into their <c>inputPageBlock*</c> equivalents (unsupported blocks dropped). The returned list is owned by the caller.</summary>
+        public static IList<InputPageBlock> ToInputBlocks(IList<PageBlock> blocks)
+        {
+            var result = new List<InputPageBlock>();
+            if (blocks != null)
+            {
+                foreach (var block in blocks)
+                {
+                    var input = BlockToInput(block);
+                    if (input != null)
+                    {
+                        result.Add(input);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private static InputPageBlock BlockToInput(PageBlock block)
+        {
+            switch (block)
+            {
+                case PageBlockSectionHeading x:
+                    return new InputPageBlockSectionHeading(x.Text, x.Size);
+                case PageBlockParagraph x:
+                    return new InputPageBlockParagraph(x.Text);
+                case PageBlockPreformatted x:
+                    return new InputPageBlockPreformatted(x.Text, x.Language ?? string.Empty);
+                case PageBlockFooter x:
+                    return new InputPageBlockFooter(x.Footer);
+                //case PageBlockThinking x:
+                //    return new InputPageBlockThinking(x.Text);
+                case PageBlockDivider:
+                    return new InputPageBlockDivider();
+                case PageBlockMathematicalExpression x:
+                    return new InputPageBlockMathematicalExpression(x.Expression);
+                case PageBlockAnchor x:
+                    return new InputPageBlockAnchor(x.Name);
+                case PageBlockList x:
+                    return new InputPageBlockList(ToInputListItems(x.Items));
+                case PageBlockBlockQuote x:
+                    return new InputPageBlockBlockQuote(ToInputBlocks(x.Blocks), x.Credit);
+                case PageBlockPullQuote x:
+                    return new InputPageBlockPullQuote(x.Text, x.Credit);
+                case PageBlockExpandableBlockQuote x:
+                    return new InputPageBlockExpandableBlockQuote(x.Text, x.Credit);
+                case PageBlockDocument x:
+                    return new InputPageBlockDocument(ToInputDocument(x.Document), x.Caption);
+                case PageBlockButtonRow x:
+                    // inputPageBlockButtonRow takes inlineButton, not an input twin — the
+                    // buttons carry across unchanged.
+                    return new InputPageBlockButtonRow(x.Buttons, x.Align);
+                case PageBlockAnimation x:
+                    return new InputPageBlockAnimation(ToInputAnimation(x.Animation), x.Caption, x.HasSpoiler);
+                case PageBlockAudio x:
+                    return new InputPageBlockAudio(ToInputAudio(x.Audio), x.Caption);
+                case PageBlockPhoto x:
+                    return new InputPageBlockPhoto(ToInputPhoto(x.Photo), x.Caption, x.HasSpoiler);
+                case PageBlockVideo x:
+                    return new InputPageBlockVideo(ToInputVideo(x.Video), x.Caption, x.HasSpoiler);
+                case PageBlockVoiceNote x:
+                    return new InputPageBlockVoiceNote(ToInputVoiceNote(x.VoiceNote), x.Caption);
+                case PageBlockCollage x:
+                    return new InputPageBlockCollage(ToInputBlocks(x.Blocks), x.Caption);
+                case PageBlockSlideshow x:
+                    return new InputPageBlockSlideshow(ToInputBlocks(x.Blocks), x.Caption);
+                case PageBlockTable x:
+                    return new InputPageBlockTable(x.Caption, x.Cells, x.IsBordered, x.IsStriped);
+                case PageBlockDetails x:
+                    return new InputPageBlockDetails(x.Header, ToInputBlocks(x.Blocks), x.IsOpen);
+                case PageBlockMap x:
+                    return new InputPageBlockMap(x.Location, x.Zoom, x.Width, x.Height, x.Caption);
+                case PageBlockCover x:
+                    // No inputPageBlockCover — unwrap to the covered block.
+                    return BlockToInput(x.Cover);
+                default:
+                    // No input equivalent (title/subtitle/kicker/authorDate/header/subheader/
+                    // embedded/embeddedPost/chatLink/relatedArticles/subscribe/anchor-only/...).
+                    return null;
+            }
+        }
+
+        private static IList<InputPageBlockListItem> ToInputListItems(IList<PageBlockListItem> items)
+        {
+            var result = new List<InputPageBlockListItem>();
+            if (items != null)
+            {
+                foreach (var item in items)
+                {
+                    result.Add(new InputPageBlockListItem(ToInputBlocks(item.Blocks), item.HasCheckbox, item.IsChecked, item.Value, item.Type ?? string.Empty));
+                }
+            }
+
+            return result;
+        }
+
+        // --- display media -> input media ---------------------------------------
+        // Prefer the persistent remote id (survives beyond the session), else the local id.
+        private static InputFile ToInputFile(File file)
+        {
+            if (file == null)
+            {
+                return null;
+            }
+
+            if (file.Remote != null && !string.IsNullOrEmpty(file.Remote.Id))
+            {
+                return new InputFileRemote(file.Remote.Id);
+            }
+
+            return new InputFileId(file.Id);
+        }
+
+        private static InputThumbnail ToInputThumbnail(Thumbnail thumbnail)
+        {
+            if (thumbnail?.File == null)
+            {
+                return null;
+            }
+
+            return new InputThumbnail(ToInputFile(thumbnail.File), thumbnail.Width, thumbnail.Height);
+        }
+
+        private static InputPhoto ToInputPhoto(Photo photo)
+        {
+            if (photo?.Sizes == null || photo.Sizes.Count == 0)
+            {
+                return null;
+            }
+
+            // First size = thumbnail, last = main (largest); no separate thumbnail when there's only one.
+            var main = photo.Sizes[photo.Sizes.Count - 1];
+            var thumb = photo.Sizes[0];
+            var thumbnail = thumb != main
+                ? new InputThumbnail(ToInputFile(thumb.Photo), thumb.Width, thumb.Height)
+                : null;
+
+            return new InputPhoto(ToInputFile(main.Photo), thumbnail, null, Array.Empty<int>(), main.Width, main.Height);
+        }
+
+        private static InputVideo ToInputVideo(Video video)
+        {
+            if (video == null)
+            {
+                return null;
+            }
+
+            return new InputVideo(ToInputFile(video.VideoValue), ToInputThumbnail(video.Thumbnail), null, 0,
+                Array.Empty<int>(), video.Duration, video.Width, video.Height, video.SupportsStreaming);
+        }
+
+        private static InputAnimation ToInputAnimation(Animation animation)
+        {
+            if (animation == null)
+            {
+                return null;
+            }
+
+            return new InputAnimation(ToInputFile(animation.AnimationValue), ToInputThumbnail(animation.Thumbnail),
+                Array.Empty<int>(), animation.Duration, animation.Width, animation.Height);
+        }
+
+        private static InputAudio ToInputAudio(Audio audio)
+        {
+            if (audio == null)
+            {
+                return null;
+            }
+
+            return new InputAudio(ToInputFile(audio.AudioValue), ToInputThumbnail(audio.AlbumCoverThumbnail),
+                audio.Duration, audio.Title, audio.Performer);
+        }
+
+        private static InputDocument ToInputDocument(Document document)
+        {
+            if (document == null)
+            {
+                return null;
+            }
+
+            // The server already typed this file, so there's nothing to re-detect.
+            return new InputDocument(ToInputFile(document.DocumentValue), ToInputThumbnail(document.Thumbnail), false);
+        }
+
+        private static InputVoiceNote ToInputVoiceNote(VoiceNote voice)
+        {
+            if (voice == null)
+            {
+                return null;
+            }
+
+            return new InputVoiceNote(ToInputFile(voice.Voice), voice.Duration, voice.Waveform);
         }
     }
 }

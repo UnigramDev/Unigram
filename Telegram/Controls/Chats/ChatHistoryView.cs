@@ -186,7 +186,7 @@ namespace Telegram.Controls.Chats
                 SetScrollingMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
 
                 ViewModel.PendingSponsoredMessage = null;
-                ViewModel.InsertMessageInOrder(ViewModel.CreateMessage(new Message(message.MessageId, null, ViewModel.ChatId, null, null, false, false, false, false, false, true, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageSponsored(message), null)));
+                ViewModel.InsertMessageInOrder(ViewModel.CreateMessage(new Message(message.MessageId, null, null, ViewModel.ChatId, null, null, false, false, false, false, false, true, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageSponsored(message), null)));
             }
         }
 
@@ -246,7 +246,7 @@ namespace Telegram.Controls.Chats
                     SetScrollingMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
 
                     ViewModel.PendingSponsoredMessage = null;
-                    ViewModel.InsertMessageInOrder(ViewModel.CreateMessage(new Message(message.MessageId, null, ViewModel.ChatId, null, null, false, false, false, false, false, true, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageSponsored(message), null)));
+                    ViewModel.InsertMessageInOrder(ViewModel.CreateMessage(new Message(message.MessageId, null, null, ViewModel.ChatId, null, null, false, false, false, false, false, true, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageSponsored(message), null)));
                 }
             }
         }

@@ -113,8 +113,10 @@ namespace Telegram.Controls.Messages
             {
                 if (rich.LastBlock is FormattedTextBlock lastBlock)
                 {
-                    _placeholder = true;
-                    _margin = Margins(availableSize.Width, lastBlock, footer);
+                    //_placeholder = true;
+                    _margin = Margins(availableSize.Width, lastBlock.DesiredSize.Width, lastBlock, footer);
+                    //media = text;
+                    //(media, text) = (text, media);
                 }
                 else
                 {

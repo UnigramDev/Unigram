@@ -6,7 +6,6 @@
 //
 
 using Microsoft.UI.Xaml.Media;
-using System;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Navigation;

@@ -70,11 +70,11 @@ namespace Telegram.Common
 
                 if (_class == MediaDeviceClass.AudioInput)
                 {
-                    MediaDevice.DefaultAudioCaptureDeviceChanged += OnDefaultAudioCaptureDeviceChanged;
+                    MediaDevice.DefaultAudioCaptureDeviceChanged -= OnDefaultAudioCaptureDeviceChanged;
                 }
                 else if (_class == MediaDeviceClass.AudioOutput)
                 {
-                    MediaDevice.DefaultAudioRenderDeviceChanged += OnDefaultAudioRenderDeviceChanged;
+                    MediaDevice.DefaultAudioRenderDeviceChanged -= OnDefaultAudioRenderDeviceChanged;
                 }
             }
             catch

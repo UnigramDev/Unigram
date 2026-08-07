@@ -178,6 +178,12 @@
                                              IsChevronVisible="True"
                                              Glyph="&#xE987;" />
 
+                    <controls:SettingsButton x:Name="WelcomeMessages"
+                                             Content="{CustomResource WelcomeMessage}"
+                                             Click="{x:Bind ViewModel.WelcomeMessages}"
+                                             IsChevronVisible="True"
+                                             Glyph="&#xEA74;" />
+
                     <controls:SettingsButton x:Name="InviteLinks"
                                              Content="{CustomResource InviteLinks}"
                                              Click="{x:Bind ViewModel.InviteLinks}"

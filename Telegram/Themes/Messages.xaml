@@ -43,6 +43,8 @@
                 <Grid Padding="12,6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <controls:ProfilePicture Size="32"
@@ -50,9 +52,19 @@
                                              Grid.RowSpan="2" />
                     <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                VerticalAlignment="Center"
-                               Grid.Column="1">
-                        <Run /><Run Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                    </TextBlock>
+                               Grid.Column="1" />
+                    <TextBlock Text="&#xEA28;"
+                               FontSize="20"
+                               FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               VerticalAlignment="Center"
+                               Margin="4,4,0,0"
+                               Grid.Column="2" />
+                    <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               VerticalAlignment="Center"
+                               Margin="4,0,0,0"
+                               Grid.Column="3" />
                 </Grid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.CommandTemplate>

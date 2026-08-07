@@ -1650,8 +1650,215 @@ You can use Telegram on all your devices at once and use several accounts in the
   <data name="AreYouSureWebSessions" xml:space="preserve">
     <value>Are you sure you want to disconnect all websites where you logged in with Telegram?</value>
   </data>
+  <data name="ArticleAIAddToPage" xml:space="preserve">
+    <value>Add to Page</value>
+  </data>
+  <data name="ArticleAICreate" xml:space="preserve">
+    <value>Create With AI</value>
+  </data>
+  <data name="ArticleAIGenerate" xml:space="preserve">
+    <value>Generate</value>
+  </data>
+  <data name="ArticleAIPrompt" xml:space="preserve">
+    <value>Write a prompt...</value>
+  </data>
+  <data name="ArticleAlignment" xml:space="preserve">
+    <value>Alignment</value>
+  </data>
   <data name="ArticleByAuthor" xml:space="preserve">
     <value>by {0}</value>
+  </data>
+  <data name="ArticleCode" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="ArticleCommandAudio" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="ArticleCommandDivider" xml:space="preserve">
+    <value>Divider</value>
+  </data>
+  <data name="ArticleCommandImage" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="ArticleCommandList" xml:space="preserve">
+    <value>List</value>
+  </data>
+  <data name="ArticleCommandMap" xml:space="preserve">
+    <value>Map</value>
+  </data>
+  <data name="ArticleCommandMath" xml:space="preserve">
+    <value>Math</value>
+  </data>
+  <data name="ArticleCommandOrderedList" xml:space="preserve">
+    <value>Ordered List</value>
+  </data>
+  <data name="ArticleCommandTable" xml:space="preserve">
+    <value>Table</value>
+  </data>
+  <data name="ArticleCommandToggle" xml:space="preserve">
+    <value>Toggle</value>
+  </data>
+  <data name="ArticleCommandVideo" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="ArticleConversionSendPlain" xml:space="preserve">
+    <value>Send Without Formatting</value>
+  </data>
+  <data name="ArticleConversionSubscribe" xml:space="preserve">
+    <value>Subscribe to Premium</value>
+  </data>
+  <data name="ArticleConversionText" xml:space="preserve">
+    <value>This message uses rich formatting, which requires **Telegram Premium**.</value>
+  </data>
+  <data name="ArticleConversionTitle" xml:space="preserve">
+    <value>Remove Formatting</value>
+  </data>
+  <data name="ArticleDeleteColumn" xml:space="preserve">
+    <value>Delete Column</value>
+  </data>
+  <data name="ArticleDeleteDraft" xml:space="preserve">
+    <value>Delete draft</value>
+  </data>
+  <data name="ArticleDeleteDraftMessage" xml:space="preserve">
+    <value>You will lose what you’ve written.</value>
+  </data>
+  <data name="ArticleDeleteDraftTitle" xml:space="preserve">
+    <value>Delete this draft?</value>
+  </data>
+  <data name="ArticleDeleteRow" xml:space="preserve">
+    <value>Delete Row</value>
+  </data>
+  <data name="ArticleDeleteTable" xml:space="preserve">
+    <value>Delete Table</value>
+  </data>
+  <data name="ArticleEditor" xml:space="preserve">
+    <value>Rich Editor</value>
+  </data>
+  <data name="ArticleFooter" xml:space="preserve">
+    <value>Footer</value>
+  </data>
+  <data name="ArticleHeading" xml:space="preserve">
+    <value>Heading</value>
+  </data>
+  <data name="ArticleHeading1" xml:space="preserve">
+    <value>Heading 1</value>
+  </data>
+  <data name="ArticleHeading2" xml:space="preserve">
+    <value>Heading 2</value>
+  </data>
+  <data name="ArticleHeading3" xml:space="preserve">
+    <value>Heading 3</value>
+  </data>
+  <data name="ArticleHeading4" xml:space="preserve">
+    <value>Heading 4</value>
+  </data>
+  <data name="ArticleHeading5" xml:space="preserve">
+    <value>Heading 5</value>
+  </data>
+  <data name="ArticleHeading6" xml:space="preserve">
+    <value>Heading 6</value>
+  </data>
+  <data name="ArticleHighlightCell" xml:space="preserve">
+    <value>Highlight Cell</value>
+  </data>
+  <data name="ArticleHighlightColumn" xml:space="preserve">
+    <value>Highlight Column</value>
+  </data>
+  <data name="ArticleHighlightRow" xml:space="preserve">
+    <value>Highlight Row</value>
+  </data>
+  <data name="ArticleHintAuthor" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="ArticleHintCode" xml:space="preserve">
+    <value>Type code here...</value>
+  </data>
+  <data name="ArticleHintDetailsTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="ArticleHintLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="ArticleHintQuote" xml:space="preserve">
+    <value>Enter quote</value>
+  </data>
+  <data name="ArticleHintText" xml:space="preserve">
+    <value>Type something...</value>
+  </data>
+  <data name="ArticleHintTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="ArticleIndent" xml:space="preserve">
+    <value>Indent</value>
+  </data>
+  <data name="ArticleInsertAbove" xml:space="preserve">
+    <value>Insert Above</value>
+  </data>
+  <data name="ArticleInsertBelow" xml:space="preserve">
+    <value>Insert Below</value>
+  </data>
+  <data name="ArticleInsertLeft" xml:space="preserve">
+    <value>Insert Left</value>
+  </data>
+  <data name="ArticleInsertRight" xml:space="preserve">
+    <value>Insert Right</value>
+  </data>
+  <data name="ArticleLatexEquation" xml:space="preserve">
+    <value>LaTeX Equation</value>
+  </data>
+  <data name="ArticleLatexError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ArticleListBulleted" xml:space="preserve">
+    <value>Bulleted</value>
+  </data>
+  <data name="ArticleListBulletedList" xml:space="preserve">
+    <value>Bulleted list</value>
+  </data>
+  <data name="ArticleListChecklist" xml:space="preserve">
+    <value>Checklist</value>
+  </data>
+  <data name="ArticleListNumbered" xml:space="preserve">
+    <value>Numbered</value>
+  </data>
+  <data name="ArticleListNumberedList" xml:space="preserve">
+    <value>Numbered list</value>
+  </data>
+  <data name="ArticleListTodo" xml:space="preserve">
+    <value>To-Do</value>
+  </data>
+  <data name="ArticleMergeCells" xml:space="preserve">
+    <value>Merge Cells</value>
+  </data>
+  <data name="ArticleNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ArticleOutdent" xml:space="preserve">
+    <value>Outdent</value>
+  </data>
+  <data name="ArticlePullquote" xml:space="preserve">
+    <value>Pullquote</value>
+  </data>
+  <data name="ArticleQuote" xml:space="preserve">
+    <value>Quote</value>
+  </data>
+  <data name="ArticleRemoveHighlight" xml:space="preserve">
+    <value>Remove Highlight</value>
+  </data>
+  <data name="ArticleSaveDraftMessage" xml:space="preserve">
+    <value>You can save written text in a draft before closing.</value>
+  </data>
+  <data name="ArticleSaveDraftTitle" xml:space="preserve">
+    <value>Save this draft?</value>
+  </data>
+  <data name="ArticleSplitCells" xml:space="preserve">
+    <value>Split Cells</value>
+  </data>
+  <data name="ArticleText" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="ArticleToggleBlock" xml:space="preserve">
+    <value>Toggle block</value>
   </data>
   <data name="AskAQuestion" xml:space="preserve">
     <value>Ask a Question</value>
@@ -1663,6 +1870,9 @@ Please take a look at the &lt;a href=&quot;https://telegram.org/faq#general-ques
   </data>
   <data name="AskButton" xml:space="preserve">
     <value>Ask a volunteer</value>
+  </data>
+  <data name="AttachArticle" xml:space="preserve">
+    <value>Article</value>
   </data>
   <data name="AttachAudio" xml:space="preserve">
     <value>Voice message</value>
@@ -6061,6 +6271,15 @@ Learn more at telegram.org</value>
   </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Enter your passcode</value>
+  </data>
+  <data name="EphemeralMessageMenuHint" xml:space="preserve">
+    <value>Only you see this message. It will disappear after you log in again.</value>
+  </data>
+  <data name="EphemeralMessageVisibleToOther" xml:space="preserve">
+    <value>Only visible to {0}</value>
+  </data>
+  <data name="EphemeralMessageVisibleToYou" xml:space="preserve">
+    <value>Only visible to you</value>
   </data>
   <data name="ErrorOccurred" xml:space="preserve">
     <value>An error occurred.</value>
@@ -11696,6 +11915,12 @@ countries can vote</value>
   <data name="PremiumPreviewReactions2Description" xml:space="preserve">
     <value>React with thousands of emoji — using multiple reactions per message.</value>
   </data>
+  <data name="PremiumPreviewRichEditor" xml:space="preserve">
+    <value>Formatting Tools</value>
+  </data>
+  <data name="PremiumPreviewRichEditorDescription" xml:space="preserve">
+    <value>Add headers, tables, inline media and AI content to messages.</value>
+  </data>
   <data name="PremiumPreviewStickers" xml:space="preserve">
     <value>Premium Stickers</value>
   </data>
@@ -16975,6 +17200,40 @@ in your streaming app.</value>
   </data>
   <data name="Weeks_other" xml:space="preserve">
     <value>{0} weeks</value>
+  </data>
+  <data name="WelcomeMessage" xml:space="preserve">
+    <value>Welcome Message</value>
+  </data>
+  <data name="WelcomeMessageEmptySubtitle" xml:space="preserve">
+    <value>Automatically greet new
+members when they join.</value>
+  </data>
+  <data name="WelcomeMessageEmptyTitle" xml:space="preserve">
+    <value>Create a Welcome
+Message</value>
+  </data>
+  <data name="WelcomeMessageEnter" xml:space="preserve">
+    <value>Add a message</value>
+  </data>
+  <data name="WelcomeMessageHint_one" xml:space="preserve">
+    <value>New members will see this message
+when they join</value>
+  </data>
+  <data name="WelcomeMessageHint_other" xml:space="preserve">
+    <value>New members will see these messages
+when they join</value>
+  </data>
+  <data name="WelcomeMessageHint2" xml:space="preserve">
+    <value>Tap it to delete it</value>
+  </data>
+  <data name="WelcomeMessageOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="WelcomeMessagesLimit_one" xml:space="preserve">
+    <value>Limit of **{0}** message reached.</value>
+  </data>
+  <data name="WelcomeMessagesLimit_other" xml:space="preserve">
+    <value>Limit of **{0}** messages reached.</value>
   </data>
   <data name="White" xml:space="preserve">
     <value>White</value>

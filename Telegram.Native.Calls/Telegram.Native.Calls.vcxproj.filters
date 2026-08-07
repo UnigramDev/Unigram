@@ -430,9 +430,9 @@
     <Midl Include="VoipCallServer.idl" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="PropertySheet.props" />
     <None Include="VoipManager.def" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="tgcalls">

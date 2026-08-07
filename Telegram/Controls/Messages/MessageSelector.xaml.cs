@@ -723,21 +723,116 @@ namespace Telegram.Controls.Messages
             visual.StartAnimation("Translation.X", offsetExp);
         }
 
-        public async void PrepareForItemOverride(MessageViewModel message, bool canReply)
+        // td_api packs the type of a message in the low bits of its identifier, with the
+        // server id shifted up by MessageId::SERVER_ID_SHIFT. Nothing below the shift is
+        // set once the server has confirmed the message.
+        private const long MessageTypeMask = (1L << 20) - 1;
+        private const long MessageTypeYetUnsent = 1;
+        private const long MessageTypeLocal = 2;
+        private const long MessageShortTypeMask = 3;
+
+        // MessageId(ServerMessageId(1)), the message a channel is created with.
+        private const long FirstServerMessageId = 1L << 20;
+
+        private static bool IsServerMessage(long messageId)
+        {
+            return messageId > 0 && (messageId & MessageTypeMask) == 0;
+        }
+
+        /// <summary>
+        /// Whether the message can be forwarded, after MessagesManager::can_forward_message.
+        /// </summary>
+        private static bool CanBeForwarded(MessageViewModel message)
+        {
+            // Self destructing, scheduled, or not yet acknowledged by the server.
+            if (message.SelfDestructType != null || message.SchedulingState != null || !IsServerMessage(message.Id))
+            {
+                return false;
+            }
+
+            if (message.Chat?.Type is ChatTypeSecret)
+            {
+                return false;
+            }
+
+            // The same protected content test, already carried on the message: it is off
+            // when the message is marked no-forwards, when the chat protects its content,
+            // and when the content is secret.
+            if (!message.CanBeSaved)
+            {
+                return false;
+            }
+
+            return message.Content switch
+            {
+                // Nothing to carry over without text or a link preview.
+                MessageText text => text.Text?.Text.Length > 0 || text.LinkPreview != null,
+
+                MessageUnsupported => false,
+
+                // TDLib also turns down a poll that is still local. It cannot be one
+                // here: a message that has not reached the server has no server id, and
+                // the caller has already let only settled messages through.
+
+                // Service and expired messages are left behind. IsService covers both,
+                // which is why the expired contents are not named here.
+                _ => !message.Content.IsService()
+            };
+        }
+
+        /// <summary>
+        /// Whether the message can be replied to, here or in another chat, after
+        /// MessagesManager::can_reply_to_message and can_reply_to_message_in_another_dialog.
+        /// </summary>
+        private static bool CanBeReplied(MessageViewModel message)
+        {
+            var chat = message.Chat;
+            if (chat == null || (message.Id & MessageShortTypeMask) == MessageTypeYetUnsent)
+            {
+                return false;
+            }
+
+            // A message a channel was created with is not a reply target, in either sense.
+            var channel = chat.Type is ChatTypeSupergroup { IsChannel: true };
+            if (message.Id == FirstServerMessageId && channel)
+            {
+                return false;
+            }
+
+            // Replying in this chat.
+            var local = (message.Id & MessageShortTypeMask) == MessageTypeLocal;
+            if ((!local || chat.Type is ChatTypeSecret) && chat.CanSendBasicMessages(message.ClientService))
+            {
+                return true;
+            }
+
+            // Or quoting it into another one, which needs it forwardable and on the
+            // server, and is not offered by the chats that only carry direct messages.
+            return CanBeForwarded(message)
+                && IsServerMessage(message.Id)
+                && !(message.ClientService.TryGetSupergroup(chat, out var supergroup) && supergroup.IsDirectMessagesGroup);
+        }
+
+        public void PrepareForItemOverride(MessageViewModel message, bool canReply)
         {
             bool share = false;
             bool reply = false;
 
             if (message.SendingState == null)
             {
-                var properties = await message.ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
-                if (properties == null)
-                {
-                    return;
-                }
+                // Derived here rather than asked of TDLib. GetMessageProperties was a
+                // request per message scrolled into view, answered on the one thread that
+                // also carries every update, and it came back after the container had
+                // been bound to something else, so the gesture was configured for a
+                // message that had already left it.
+                share = SettingsService.Current.SwipeToShare && CanBeForwarded(message);
 
-                share = SettingsService.Current.SwipeToShare && properties.CanBeForwarded;
-                reply = SettingsService.Current.SwipeToReply && (properties.CanBeReplied || properties.CanBeRepliedInAnotherChat);
+                // canReply is deliberately not consulted: it is not reliable yet, and it
+                // is wrong in the costlier direction. Offering the gesture on the few
+                // messages that turn out not to accept a reply is a smaller failure than
+                // withholding it wherever the flag is wrong, which reads as the feature
+                // being broken.
+                reply = SettingsService.Current.SwipeToReply && CanBeReplied(message);
             }
 
             if (_tracker != null)

@@ -24,9 +24,9 @@ namespace Telegram.Services
 
         bool CanTranslate(string language, bool entireChat);
 
-        Task<object> TranslateAsync(long chatId, long messageId, string toLanguage, string tone);
-        Task<object> TranslateAsync(string text, string toLanguage, string tone);
-        Task<object> TranslateAsync(FormattedText text, string toLanguage, string tone);
+        Task<Object> TranslateAsync(long chatId, long messageId, string toLanguage, string tone);
+        Task<Object> TranslateAsync(string text, string toLanguage, string tone);
+        Task<Object> TranslateAsync(FormattedText text, string toLanguage, string tone);
 
         bool Translate(MessageViewModel message, string toLanguage);
         bool Summarize(MessageViewModel message, string toLanguage);
@@ -123,19 +123,19 @@ namespace Telegram.Services
             return true;
         }
 
-        public Task<object> TranslateAsync(string text, string toLanguage, string tone)
+        public Task<Object> TranslateAsync(string text, string toLanguage, string tone)
         {
             return TranslateAsync(new FormattedText(text, null), toLanguage, tone);
         }
 
-        public async Task<object> TranslateAsync(FormattedText text, string toLanguage, string tone)
+        public Task<Object> TranslateAsync(FormattedText text, string toLanguage, string tone)
         {
-            return await ClientService.SendAsync(new TranslateText(text, toLanguage, tone));
+            return ClientService.SendAsync(new TranslateText(text, toLanguage, tone));
         }
 
-        public async Task<object> TranslateAsync(long chatId, long messageId, string toLanguage, string tone)
+        public Task<Object> TranslateAsync(long chatId, long messageId, string toLanguage, string tone)
         {
-            return await ClientService.SendAsync(new TranslateMessageText(chatId, messageId, toLanguage, tone));
+            return ClientService.SendAsync(new TranslateMessageText(chatId, messageId, toLanguage, tone));
         }
 
         private readonly ConcurrentDictionary<TranslatedKey, TranslatedMessage> _translations = new();

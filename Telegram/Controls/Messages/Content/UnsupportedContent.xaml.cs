@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -71,7 +72,14 @@ namespace Telegram.Controls.Messages.Content
         {
             Button.ShowSkeleton();
 
-            if (ApiInfo.IsStoreRelease || _message == null)
+            await CheckForUpdatesAsync(XamlRoot, _message?.ClientService);
+
+            Button.HideSkeleton();
+        }
+
+        public static async Task CheckForUpdatesAsync(XamlRoot xamlRoot, IClientService clientService)
+        {
+            if (ApiInfo.IsStoreRelease || clientService == null)
             {
                 try
                 {
@@ -80,7 +88,7 @@ namespace Telegram.Controls.Messages.Content
                     var updates = await context.GetAppAndOptionalStorePackageUpdatesAsync();
                     if (updates == null && updates.Count == 0)
                     {
-                        ToastPopup.Show(XamlRoot, Strings.CheckForUpdatesInfo, ToastPopupIcon.Info);
+                        ToastPopup.Show(xamlRoot, Strings.CheckForUpdatesInfo, ToastPopupIcon.Info);
                         return;
                     }
                 }
@@ -95,7 +103,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                var service = _message.ClientService.Session.Resolve<ICloudUpdateService>();
+                var service = clientService.Session.Resolve<ICloudUpdateService>();
                 if (service != null)
                 {
                     if (service.NextUpdate == null)
@@ -109,12 +117,10 @@ namespace Telegram.Controls.Messages.Content
                     }
                     else
                     {
-                        ToastPopup.Show(XamlRoot, Strings.CheckForUpdatesInfo, ToastPopupIcon.Info);
+                        ToastPopup.Show(xamlRoot, Strings.CheckForUpdatesInfo, ToastPopupIcon.Info);
                     }
                 }
             }
-
-            Button.HideSkeleton();
         }
     }
 }

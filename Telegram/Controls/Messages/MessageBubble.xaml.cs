@@ -250,7 +250,7 @@ namespace Telegram.Controls.Messages
 
             //ContentPanel.CanDrag = true;
             //ContentPanel.DragStarting += OnDragStarting;
-            
+
             // TODO: make sure this is needed
             //ContentPanel.SizeChanged += OnSizeChanged;
             //Message.TextEntityClick += Message_TextEntityClick;
@@ -1255,7 +1255,7 @@ namespace Telegram.Controls.Messages
                 HeaderLinkRun.Text = string.Empty;
             }
 
-            if (message.Content is MessageAsyncStory story)
+            if (message.ReceiverId != null || message.Content is MessageAsyncStory story)
             {
                 LoadForwardLabel();
                 forward = true;
@@ -1901,7 +1901,7 @@ namespace Telegram.Controls.Messages
                 {
                     top = 4;
                 }
-                if ((message.ForwardInfo != null && !message.IsSaved) || message.ViaBotUserId != 0 || (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || message.IsChannelPost || message.Content is MessageAsyncStory)
+                if ((message.ForwardInfo != null && !message.IsSaved) || message.ReceiverId != null || message.ViaBotUserId != 0 || (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || message.IsChannelPost || message.Content is MessageAsyncStory)
                 {
                     top = 4;
                 }
@@ -3584,7 +3584,7 @@ namespace Telegram.Controls.Messages
 
             if (sender != null)
             {
-                var message = new Message(chat.Id, sender, 0, null, null, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, null, null);
+                var message = new Message(chat.Id, sender, null, 0, null, null, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, null, null);
                 var settings = clientService.Session.Resolve<ISettingsService>();
 
                 var delegato = new ChatMessageDelegate(clientService, settings, chat);
@@ -4061,7 +4061,7 @@ namespace Telegram.Controls.Messages
                 case MessageAsyncStory story:
                     return story.State != MessageStoryState.Expired;
                 case MessageRichMessage richMessage:
-                    return richMessage.Message.Blocks[^1] is PageBlockAnimation { Caption: null } or PageBlockCollage { Caption : null } or PageBlockMap { Caption: null } or PageBlockPhoto { Caption: null } or PageBlockSlideshow { Caption: null } or PageBlockVideo { Caption: null };
+                    return richMessage.Message.Blocks[^1] is PageBlockAnimation { Caption: null } or PageBlockCollage { Caption: null } or PageBlockMap { Caption: null } or PageBlockPhoto { Caption: null } or PageBlockSlideshow { Caption: null } or PageBlockVideo { Caption: null };
                 default:
                     return false;
             }

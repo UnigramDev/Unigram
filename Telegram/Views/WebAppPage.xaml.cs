@@ -9,6 +9,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
 using System.Text;
@@ -83,6 +84,7 @@ namespace Telegram.Views
         public WebAppPage(IClientService clientService, INavigationService navigationService, User botUser, WebAppUrl url, long launchId = 0, AttachmentMenuBot menuBot = null, OpenUrlSource source = null, InternalLinkType sourceLink = null, string buttonText = null)
         {
             InitializeComponent();
+            RegisterInstance();
 
             _clientService = clientService;
             _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, WindowContext.Current);
@@ -110,11 +112,6 @@ namespace Telegram.Views
             ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
             WindowContext.Current.SetTitleBar(TitleBar, true);
-            Window.Current.Activated += OnActivated;
-
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
-            ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
 
             LoadPlaceholder();
         }
@@ -184,6 +181,7 @@ namespace Telegram.Views
         public WebAppPage(IClientService clientService, INavigationService navigationService, User botUser, string url, string title, long gameChatId = 0, long gameMessageId = 0)
         {
             InitializeComponent();
+            RegisterInstance();
 
             _clientService = clientService;
             _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, WindowContext.Current);
@@ -204,9 +202,6 @@ namespace Telegram.Views
             ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
             WindowContext.Current.SetTitleBar(TitleBar, true);
-
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
         }
 
         #region IToastHost
@@ -284,8 +279,84 @@ namespace Telegram.Views
             }
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        // Live pages, so the analysis has a root for each one. Registered instances that
+        // are not reachable from a root count as orphans, so without this every open
+        // mini app would be reported as a leak.
+        private static readonly List<WeakReference<WebAppPage>> s_instances = new();
+
+        [Conditional("INSTRUMENTATION")]
+        private void RegisterInstance()
         {
+            Instrumentation.Register(this);
+
+            lock (s_instances)
+            {
+                for (int i = s_instances.Count - 1; i >= 0; i--)
+                {
+                    if (!s_instances[i].TryGetTarget(out _))
+                    {
+                        s_instances.RemoveAt(i);
+                    }
+                }
+
+                s_instances.Add(new WeakReference<WebAppPage>(this));
+            }
+        }
+
+#if INSTRUMENTATION
+        public static IEnumerable<object> DebugRoots()
+        {
+            lock (s_instances)
+            {
+                foreach (var reference in s_instances)
+                {
+                    if (reference.TryGetTarget(out var page) && page.IsConnected)
+                    {
+                        yield return page;
+                    }
+                }
+            }
+        }
+
+        // Returns nothing for types this area does not own, so it composes with the
+        // other areas' descents.
+        public static IEnumerable<object> DebugChildrenOf(object node)
+        {
+            if (node is WebAppPage page)
+            {
+                yield return page.View;
+                yield return page._navigationService;
+            }
+        }
+#endif
+
+        /// <summary>
+        /// Both constructors used to subscribe these, and neither unsubscribed, so the
+        /// page stayed reachable from the view for as long as the view lived.
+        ///
+        /// UserControlEx guarantees OnLoaded and OnUnloaded alternate, which the raw
+        /// Loaded and Unloaded events do not: those fire again on every reparenting, and
+        /// subscribing from there would attach a second handler each time. Both
+        /// CloseRequested and Consolidated take deferrals, so a duplicate handler is a
+        /// duplicate confirmation dialog rather than merely wasted work.
+        /// </summary>
+        protected override void OnLoaded()
+        {
+            Window.Current.Activated += OnActivated;
+
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
+        }
+
+        protected override void OnUnloaded()
+        {
+            Window.Current.Activated -= OnActivated;
+
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
+            ApplicationView.GetForCurrentView().Consolidated -= OnConsolidated;
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged -= OnVisibleBoundsChanged;
+
             if (_launchId != 0)
             {
                 _clientService.Send(new CloseWebApp(_launchId));

@@ -166,6 +166,11 @@ namespace Telegram.Common
                     TextEntityTypeMarked => (TextStyle.Marked, null),
                     TextEntityTypeIcon => (TextStyle.Icon, entity.Type),
                     TextEntityTypeMathematicalExpression => (TextStyle.Math, entity.Type),
+                    TextEntityTypeButton => (TextStyle.Button, entity.Type),
+                    // A marker laid over a link, never standing alone. Type stays null so
+                    // the link's own entity survives the merge below — Merge keeps the
+                    // first non-null Type and ORs the flags together.
+                    TextEntityTypeCached => (TextStyle.Cached, null),
                     _ => (TextStyle.Url, entity.Type)
                 };
 
@@ -866,5 +871,30 @@ namespace Telegram.Td.Api
         {
             Expression = expression;
         }
+    }
+
+    public partial class TextEntityTypeButton : TextEntityType
+    {
+        public InlineButton Button { get; set; }
+
+        public TextEntityTypeButton() { }
+
+        public TextEntityTypeButton(InlineButton button)
+        {
+            Button = button;
+        }
+    }
+
+    /// <summary>
+    /// Marks a link whose target already has an instant view (richTextUrl.is_cached,
+    /// and the in-page reference/anchor links). Following one keeps the reader in the
+    /// app, so it's highlighted rather than drawn as an ordinary link.
+    ///
+    /// Client-only, and deliberately a SEPARATE entity laid over the link rather than a
+    /// flavour of textEntityTypeTextUrl: everything that dispatches on the link type
+    /// keeps working untouched, and GetRuns merges the two into one run.
+    /// </summary>
+    public partial class TextEntityTypeCached : TextEntityType
+    {
     }
 }

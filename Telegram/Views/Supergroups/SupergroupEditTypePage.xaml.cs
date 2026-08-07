@@ -6,6 +6,7 @@
 //
 
 using Microsoft.UI.Xaml.Controls;
+using System.Collections.Generic;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation;
@@ -239,6 +240,7 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateChatTitle(Chat chat) { }
         public void UpdateChatPhoto(Chat chat) { }
+        public void UpdateChatWelcomeMessages(Chat chat, IList<WelcomeMessage> messages) { }
 
         #endregion
 

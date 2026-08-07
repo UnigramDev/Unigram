@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using LinqToVisualTree;
 using System.Linq;
 using System.Text;
 using Telegram.Controls.Messages;
@@ -15,12 +16,43 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Common
 {
     public static class Automation
     {
+        public static string GetNameCore(UIElement owner)
+        {
+            var builder = new StringBuilder();
+            var descendants = owner.DescendantsAndSelf();
+
+            foreach (UIElement child in descendants.Where(x => x is TextBlock or RichTextBlock))
+            {
+                var view = AutomationProperties.GetAccessibilityView(child);
+                if (view == AccessibilityView.Raw)
+                {
+                    continue;
+                }
+
+                var peer = FrameworkElementAutomationPeer.FromElement(child);
+                if (peer == null)
+                {
+                    continue;
+                }
+
+                if (builder.Length > 0)
+                {
+                    builder.Append(", ");
+                }
+
+                builder.Append(peer.GetName());
+            }
+
+            return builder.ToString();
+        }
+
         public static void SetToolTip(DependencyObject element, string text)
         {
             try

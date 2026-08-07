@@ -375,7 +375,76 @@ namespace Telegram.Services.Calls
             }
         }
 
+        // Transitions are applied one at a time, in the order TDLib reported them.
+        //
+        // TransitionToRequestingOrRinging awaits the system call reservation, and
+        // VoipCoordinator calls Update from inside its _activeLock on the TdReceive
+        // thread. Blocking on that reservation held the lock for its whole duration —
+        // up to the 120 second ringing timeout of RequestNewIncomingCall — and the UI
+        // thread takes the same lock through VoipCoordinator.ActiveCall, so it froze.
+        //
+        // Queueing preserves what blocking gave: a discard reported while the
+        // reservation is in flight is applied once it completes, so DisposeImpl finds
+        // _systemCall populated and releases it rather than orphaning the registration.
+        private readonly Queue<(Call Call, VoipState State)> _pending = new();
+        private bool _transitioning;
+
         public void Update(Call call, VoipState state)
+        {
+            lock (_stateLock)
+            {
+                _pending.Enqueue((call, state));
+
+                // Already draining, and it will pick this up. Returning here is also
+                // what makes a transition that reenters Update safe.
+                if (_transitioning)
+                {
+                    return;
+                }
+
+                _transitioning = true;
+            }
+
+            _ = TransitionAsync();
+        }
+
+        /// <summary>
+        /// Drains <see cref="_pending"/> until it is empty, never overlapping two
+        /// transitions. Exactly one of these runs at a time; see <see cref="Update"/>.
+        /// </summary>
+        private async Task TransitionAsync()
+        {
+            while (true)
+            {
+                Call call;
+                VoipState state;
+
+                lock (_stateLock)
+                {
+                    if (_pending.Count == 0)
+                    {
+                        _transitioning = false;
+                        return;
+                    }
+
+                    (call, state) = _pending.Dequeue();
+                }
+
+                try
+                {
+                    await UpdateImpl(call, state);
+                }
+                catch (Exception ex)
+                {
+                    // Caught per transition rather than around the loop: nothing else
+                    // drains this queue, so abandoning it would leave the call unable to
+                    // reach Discarded, and the system call registration would outlive it.
+                    Logger.Error(ex);
+                }
+            }
+        }
+
+        private async Task UpdateImpl(Call call, VoipState state)
         {
             if (_state >= state)
             {
@@ -398,7 +467,7 @@ namespace Telegram.Services.Calls
 
             if (state == VoipState.Requesting || (state == VoipState.Ringing && !call.IsOutgoing))
             {
-                TransitionToRequestingOrRinging();
+                await TransitionToRequestingOrRinging();
             }
             else if (state == VoipState.Ringing)
             {
@@ -557,12 +626,12 @@ namespace Telegram.Services.Calls
             }
         }
 
-        private void TransitionToRequestingOrRinging()
+        private async Task TransitionToRequestingOrRinging()
         {
             if (ClientService.TryGetUser(UserId, out User user))
             {
                 Logger.Info("Waiting for call creation");
-                InitializeSystemCallAsync(user, IsOutgoing).Wait();
+                await InitializeSystemCallAsync(user, IsOutgoing);
             }
 
             // If the system request fails, we still want to ring and show the call window

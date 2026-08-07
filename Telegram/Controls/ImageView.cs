@@ -493,7 +493,7 @@ namespace Telegram.Controls
 
             if (scaledWidth > 1024 || scaledHeight > 1024)
             {
-                var scaledSize = ImageHelper.ScaleMin(width * XamlRoot.RasterizationScale, height * XamlRoot.RasterizationScale, 1024);
+                var scaledSize = ImageHelper.Fit(width * XamlRoot.RasterizationScale, height * XamlRoot.RasterizationScale, 1024);
                 scaledWidth = (int)scaledSize.Width;
                 scaledHeight = (int)scaledSize.Height;
             }

@@ -71,6 +71,7 @@ namespace Telegram.Views.Profile
             else if (args.ItemContainer.ContentTemplateRoot is ChatCell content && args.Item is SavedMessagesTopic savedMessagesTopic)
             {
                 content.UpdateSavedMessagesTopic(ViewModel.ClientService, savedMessagesTopic);
+                args.Handled = true;
             }
         }
 

@@ -172,6 +172,7 @@
                                   VerticalScrollMode="Auto"
                                   MaxHeight="120">
                         <messages:MessageTextBlock x:Name="Caption"
+                                                   TextEntityClick="Caption_TextEntityClick"
                                                    Margin="8" />
                     </ScrollViewer>
                 </Border>

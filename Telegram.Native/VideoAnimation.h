@@ -217,8 +217,8 @@ namespace winrt::Telegram::Native::implementation
 
         IRandomAccessStream GetAlbumCover();
 
-        int RenderSync(IBuffer buffer, int32_t width, int32_t height, bool preview, double& seconds);
-        int RenderSync(uint8_t* pixels, int32_t width, int32_t height, bool preview, double& seconds, bool& completed);
+        bool RenderSync(IBuffer buffer, int32_t width, int32_t height, bool preview, double& seconds);
+        bool RenderSync(uint8_t* pixels, int32_t width, int32_t height, bool preview, double& seconds, bool& completed);
 
         int PixelWidth()
         {

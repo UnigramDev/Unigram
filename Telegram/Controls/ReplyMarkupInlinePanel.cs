@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -8,26 +8,20 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
-using Telegram.Controls.Media;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
     public partial class ReplyMarkupInlinePanel : Panel
     {
-        private readonly double _keyboardHeight = 260;
-
         private CompositionGeometricClip _clip;
 
         private bool _empty = true;
@@ -93,68 +87,8 @@ namespace Telegram.Controls.Messages
                     var button = new ReplyMarkupInlineButton(this, item);
                     button.HorizontalAlignment = HorizontalAlignment.Stretch;
                     button.VerticalAlignment = VerticalAlignment.Stretch;
-                    button.Text = item.Text.Replace('\n', ' ');
                     button.Click += Button_Click;
-
-                    if (item.IconCustomEmojiId != 0)
-                    {
-                        button.Source = new CustomEmojiFileSource(message.ClientService, item.IconCustomEmojiId);
-                    }
-
-                    switch (item.Type)
-                    {
-                        case InlineKeyboardButtonTypeUrl typeUrl:
-                            button.Glyph = "\uE9B7";
-                            Extensions.SetToolTip(button, typeUrl.Url);
-                            break;
-                        case InlineKeyboardButtonTypeLoginUrl:
-                            button.Glyph = "\uE9B7";
-                            break;
-                        case InlineKeyboardButtonTypeSwitchInline:
-                            button.Glyph = "\uEE35";
-                            break;
-                        case InlineKeyboardButtonTypeBuy:
-                            if (receipt)
-                            {
-                                button.Content = Strings.PaymentReceipt;
-                            }
-                            else
-                            {
-                                button.Content = item.Text.ReplaceStar(Icons.Premium);
-                            }
-                            break;
-                        case InlineKeyboardButtonTypeWebApp:
-                            button.Glyph = Icons.Window16;
-                            break;
-                        case InlineKeyboardButtonTypeCopyText:
-                            button.Glyph = Icons.CopyFilled16;
-                            break;
-
-                        case InlineKeyboardButtonTypeSuggestionDecline suggestionDecline:
-                            button.IsEnabled = suggestionDecline.IsEnabled;
-                            button.Icon = Icons.DismissCircleFilled;
-                            break;
-                        case InlineKeyboardButtonTypeSuggestionApprove suggestionApprove:
-                            button.IsEnabled = suggestionApprove.IsEnabled;
-                            button.Icon = Icons.CheckmarkCircleFilled;
-                            break;
-                        case InlineKeyboardButtonTypeSuggestionEdit:
-                            button.Icon = Icons.EditFilled;
-                            break;
-                    }
-
-                    switch (item.Style)
-                    {
-                        case ButtonStylePrimary:
-                            button.Background = new SolidColorBrush(Color.FromArgb(0xB2, 0x22, 0x9a, 0xf0));
-                            break;
-                        case ButtonStyleDanger:
-                            button.Background = new SolidColorBrush(Color.FromArgb(0xB2, 0xdb, 0x46, 0x46));
-                            break;
-                        case ButtonStyleSuccess:
-                            button.Background = new SolidColorBrush(Color.FromArgb(0xB2, 0x40, 0xb1, 0x35));
-                            break;
-                    }
+                    button.SetButton(message.ClientService, item.Text, item.IconCustomEmojiId, item.Style, item.Type, receipt);
 
                     Children.Add(button);
                 }
@@ -212,6 +146,12 @@ namespace Telegram.Controls.Messages
             return new Size(w, h);
         }
 
+        // Reused across passes. These carry the button rectangles to the native clip
+        // builder, and arrange runs on every layout of every inline keyboard, so
+        // rebuilding them cost the outer list plus one inner list per row each time.
+        private readonly List<IList<Rect>> _clipRows = new();
+        private bool _clipValid;
+
         protected override Size ArrangeOverride(Size finalSize)
         {
             var j = 0;
@@ -225,36 +165,75 @@ namespace Telegram.Controls.Messages
                 visual.Clip = _clip = visual.Compositor.CreateGeometricClip();
             }
 
-            var rows = new List<IList<Rect>>(Rows.Count);
+            // The clip costs a call across the ABI and a fresh path geometry, so it is
+            // rebuilt only when a rectangle moves. Rectangles are compared in place as
+            // they are written, which keeps the buffers reusable.
+            var changed = !_clipValid || _clipRows.Count != Rows.Count;
 
-            foreach (var row in Rows)
+            while (_clipRows.Count < Rows.Count)
             {
+                _clipRows.Add(new List<Rect>());
+            }
+
+            while (_clipRows.Count > Rows.Count)
+            {
+                _clipRows.RemoveAt(_clipRows.Count - 1);
+            }
+
+            for (int r = 0; r < Rows.Count; r++)
+            {
+                var row = Rows[r];
+                var buffer = _clipRows[r];
+
                 var column = (finalSize.Width - spacing * (row - 1)) / row;
                 var height = 0d;
 
                 var x = 0d;
 
-                var clip = new List<Rect>(row);
+                // Cleared rather than trimmed afterwards, so the loop below only appends
+                // past the end.
+                if (buffer.Count != row)
+                {
+                    buffer.Clear();
+                    changed = true;
+                }
 
                 y += spacing;
 
                 for (int i = 0; i < row; i++)
                 {
                     var child = Children[j + i];
-                    child.Arrange(new Rect(x, y, column, child.DesiredSize.Height));
-                    clip.Add(new Rect(x, y, column, child.DesiredSize.Height));
+                    var rect = new Rect(x, y, column, child.DesiredSize.Height);
+
+                    child.Arrange(rect);
+
+                    if (i < buffer.Count)
+                    {
+                        if (buffer[i] != rect)
+                        {
+                            buffer[i] = rect;
+                            changed = true;
+                        }
+                    }
+                    else
+                    {
+                        buffer.Add(rect);
+                    }
 
                     height = Math.Max(height, child.DesiredSize.Height);
                     x += column + spacing;
                 }
 
-                rows.Add(clip);
-
                 y += height;
                 j += row;
             }
 
-            _clip.Geometry = _clip.Compositor.CreatePathGeometry(PlaceholderHelper.Foreground.GetReplyMarkupClip(rows, CornerRadius.X, CornerRadius.Y));
+            if (changed)
+            {
+                _clip.Geometry = _clip.Compositor.CreatePathGeometry(PlaceholderHelper.Foreground.GetReplyMarkupClip(_clipRows, CornerRadius.X, CornerRadius.Y));
+                _clipValid = true;
+            }
+
             return finalSize;
         }
     }

@@ -1179,19 +1179,21 @@ namespace Telegram.Views
         }
 
 #if INSTRUMENTATION
-        // Builds the orphan picture top-down: roots = realized containers + the recycle pools; anything
-        // registered with Instrumentation but not reachable from there is orphaned (see Instrumentation.Analyze).
-        public string DebugAnalyzeOrphans()
+        // The message tree's legitimate holders: realized containers + the recycle pools.
+        //
+        // Roots and descent are exposed separately, rather than as one Analyze call, because orphans are
+        // "registered but unreachable from the roots" — analysing one area at a time would report every
+        // OTHER area's live objects as leaked. There is one call, over the union of every area's roots;
+        // MainPage.DebugAnalyzeOrphans assembles it.
+        public IEnumerable<object> DebugRoots()
         {
-            var roots = new List<object>();
-
             if (Messages?.ItemsPanelRoot is Panel panel)
             {
                 foreach (var child in panel.Children)
                 {
                     if (child is ChatHistoryViewItem)
                     {
-                        roots.Add(child);
+                        yield return child;
                     }
                 }
             }
@@ -1200,15 +1202,14 @@ namespace Telegram.Views
             {
                 foreach (var container in strategy.Queue)
                 {
-                    roots.Add(container);
+                    yield return container;
                 }
             }
-
-            return Telegram.Common.Instrumentation.Analyze(roots, DebugChildrenOf);
         }
 
         // Hardcoded per-type descent (each instrumented type exposes its instrumented children).
-        private static IEnumerable<object> DebugChildrenOf(object node)
+        // Returns nothing for types this area does not own, so it composes with the other areas'.
+        internal static IEnumerable<object> DebugChildrenOf(object node)
         {
             return node switch
             {
@@ -1629,7 +1630,11 @@ namespace Telegram.Views
                 return ChatHistoryViewItemType.Incoming;
             }
 
-            if (message.IsService)
+            if (message.Content is MessageUnsupported)
+            {
+                return ChatHistoryViewItemType.Unsupported;
+            }
+            else if (message.IsService)
             {
                 return message.Content switch
                 {

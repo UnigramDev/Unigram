@@ -155,6 +155,11 @@ namespace Telegram.Views.Popups
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var sticker = args.Item as ViewModels.Drawers.StickerViewModel;
 
+            if (args.InRecycleQueue || content == null || sticker == null)
+            {
+                return;
+            }
+
             var file = sticker.StickerValue;
             if (file == null)
             {

@@ -82,6 +82,7 @@ namespace Telegram.Views.Profile
             {
                 _itemToSelector[forumTopic.Info.ForumTopicId] = args.ItemContainer;
                 content.UpdateForumTopic(ViewModel.TopicsTab, forumTopic);
+                args.Handled = true;
             }
         }
 

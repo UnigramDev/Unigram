@@ -24,7 +24,9 @@ namespace Telegram.Native
 
         Windows.Storage.Streams.IRandomAccessStream GetAlbumCover();
 
-        Int32 RenderSync(Windows.Storage.Streams.IBuffer bitmap, Int32 width, Int32 height, Boolean preview, out Double seconds);
+        // True when a frame was written into the buffer. On false the buffer is left
+        // untouched and holds uninitialised memory.
+        Boolean RenderSync(Windows.Storage.Streams.IBuffer bitmap, Int32 width, Int32 height, Boolean preview, out Double seconds);
 
         Int32 PixelWidth{ get; };
         Int32 PixelHeight{ get; };

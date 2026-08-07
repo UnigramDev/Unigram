@@ -113,18 +113,18 @@ namespace Telegram.Controls.Messages
                 {
                     SetText(clientService, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStars.ReplaceStar(Icons.Premium), priceStar.StarCount).AsFormattedText());
                 }
-                else if (price is SuggestedPostPriceTon priceTon)
+                else if (price is SuggestedPostPriceGram priceGram)
                 {
-                    SetText(clientService, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStars.ReplaceStar(Icons.Ton), priceTon.ToncoinCentCount / 100d).AsFormattedText());
+                    SetText(clientService, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStars.ReplaceStar(Icons.Ton), priceGram.GramCentCount / 100d).AsFormattedText());
                 }
             }
             else if (price is SuggestedPostPriceStar priceStar)
             {
                 SetText(clientService, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStarsAndTime.ReplaceStar(Icons.Premium), priceStar.StarCount, string.Format("\U0001F4C6 {0}", Formatter.DateAt(sendDate))).AsFormattedText());
             }
-            else if (price is SuggestedPostPriceTon priceTon)
+            else if (price is SuggestedPostPriceGram priceGram)
             {
-                SetText(clientService, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStarsAndTime.ReplaceStar(Icons.Ton), priceTon.ToncoinCentCount / 100d, string.Format("\U0001F4C6 {0}", Formatter.DateAt(sendDate))).AsFormattedText());
+                SetText(clientService, null, false, null, Strings.SuggestAPostBelow, null, string.Format(Strings.SuggestAPostBelowSubtitleStarsAndTime.ReplaceStar(Icons.Ton), priceGram.GramCentCount / 100d, string.Format("\U0001F4C6 {0}", Formatter.DateAt(sendDate))).AsFormattedText());
             }
             else
             {

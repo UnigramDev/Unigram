@@ -446,7 +446,7 @@ namespace Telegram.ViewModels
                 .ToList<MessageWithOwner>();
 
             IDictionary<MessageId, MessageProperties> properties;
-            if (Type == DialogType.BusinessReplies)
+            if (Type is DialogType.BusinessReplies or DialogType.WelcomeMessages)
             {
                 properties = items.ToDictionary(x => new MessageId(x), y => new MessageProperties
                 {
@@ -481,6 +481,15 @@ namespace Telegram.ViewModels
             if (Type == DialogType.BusinessReplies)
             {
                 ClientService.Send(new DeleteQuickReplyShortcutMessages(QuickReplyShortcut.Id, messages.Select(x => x.Id).ToList()));
+                return;
+            }
+            else if (Type == DialogType.WelcomeMessages)
+            {
+                foreach (var message in messages)
+                {
+                    ClientService.Send(new DeleteChatWelcomeMessage(ChatId, (int)message.Id));
+                }
+
                 return;
             }
 
@@ -618,13 +627,13 @@ namespace Telegram.ViewModels
                     switch (message.Content)
                     {
                         case MessageAudio audio:
-                            ClientService.Send(new AddFileToDownloads(audio.Audio.AudioValue.Id, message.ChatId, message.Id, 32));
+                            ClientService.AddFileToDownloads(audio.Audio.AudioValue, message.ChatId, message.Id, 32);
                             break;
                         case MessageDocument document:
-                            ClientService.Send(new AddFileToDownloads(document.Document.DocumentValue.Id, message.ChatId, message.Id, 32));
+                            ClientService.AddFileToDownloads(document.Document.DocumentValue, message.ChatId, message.Id, 32);
                             break;
                         case MessageVideo video:
-                            ClientService.Send(new AddFileToDownloads(video.Video.VideoValue.Id, message.ChatId, message.Id, 32));
+                            ClientService.AddFileToDownloads(video.Video.VideoValue, message.ChatId, message.Id, 32);
                             break;
                     }
                 }
@@ -1072,7 +1081,12 @@ namespace Telegram.ViewModels
 
         public void EditMessage(MessageViewModel message)
         {
-            if (message.Content is MessageChecklist)
+            if (message.Content is MessageRichMessage)
+            {
+                EditRichMessage(message);
+                return;
+            }
+            else if (message.Content is MessageChecklist)
             {
                 EditChecklist(message);
                 return;
@@ -1357,6 +1371,49 @@ namespace Telegram.ViewModels
                 chatId = 0;
                 messageId = 0;
             }
+            else if (message.Content is MessageVoiceNote voiceNote && voiceNote.VoiceNote.SpeechRecognitionResult is SpeechRecognitionResultText speechVoiceText)
+            {
+                if (voiceNote.Caption.Text.Length > 0 && speechVoiceText.Text.Length > 0)
+                {
+                    text = ClientEx.Format("{0}\n{1}", speechVoiceText.Text, voiceNote.Caption.Text);
+                }
+                else if (speechVoiceText.Text.Length > 0)
+                {
+                    text = speechVoiceText.Text.AsFormattedText();
+                }
+                else
+                {
+                    return;
+                }
+
+                chatId = 0;
+                messageId = 0;
+            }
+            else if (message.Content is MessageVideoNote videoNote && videoNote.VideoNote.SpeechRecognitionResult is SpeechRecognitionResultText speechVideoText)
+            {
+                if (speechVideoText.Text.Length > 0)
+                {
+                    text = speechVideoText.Text.AsFormattedText();
+                }
+                else
+                {
+                    return;
+                }
+
+                chatId = 0;
+                messageId = 0;
+            }
+            else if (message.Content is MessageRichMessage richMessage)
+            {
+                text = richMessage.Message.ToFormattedText();
+                chatId = message.ChatId;
+                messageId = message.Id;
+
+                var language2 = LanguageIdentification.IdentifyLanguage(text.Text);
+                var popup2 = new TranslatePopup(_translateService, chatId, messageId, richMessage.Message, language2, Settings.Translate.To, !message.CanBeSaved);
+                ShowPopup(popup2);
+                return;
+            }
             else
             {
                 var caption = message.GetTranslatableText();
@@ -1378,7 +1435,7 @@ namespace Telegram.ViewModels
             }
 
             var language = LanguageIdentification.IdentifyLanguage(text.Text);
-            var popup = new TranslatePopup(_translateService, /*chatId, messageId,*/ text, language, Settings.Translate.To, !message.CanBeSaved);
+            var popup = new TranslatePopup(_translateService, chatId, messageId, text, language, Settings.Translate.To, !message.CanBeSaved);
             ShowPopup(popup);
         }
 
@@ -1484,6 +1541,29 @@ namespace Telegram.ViewModels
         }
 
         #endregion
+
+        public async void EditRichMessage(MessageViewModel message)
+        {
+            if (message.Content is not MessageRichMessage richMessage)
+            {
+                return;
+            }
+
+            NavigationService.NavigateToTextEditor(message.ChatId, null, message.Id, richMessage.Message);
+
+            //var popup = new TextEditorRichPopup(ClientService, NavigationService, richMessage.Message);
+            //var confirm = await ShowPopupAsync(popup);
+            //if (confirm != ContentDialogResult.Primary || popup.Input == null)
+            //{
+            //    return;
+            //}
+
+            //var response = await ClientService.SendAsync(new EditMessageMedia(message.ChatId, message.Id, new InputMessageRichMessage(popup.Input, false)));
+            //if (response is Error error)
+            //{
+            //    ShowToast(error);
+            //}
+        }
 
         #region Keyboard button
 
@@ -1702,7 +1782,7 @@ namespace Telegram.ViewModels
             {
                 var percent = message.SuggestedPostInfo.Price switch
                 {
-                    SuggestedPostPriceTon => (ClientService.Options.SuggestedPostToncoinEarningsPerMille / 1000d).ToString("0.##%"),
+                    SuggestedPostPriceGram => (ClientService.Options.SuggestedPostGramEarningsPerMille / 1000d).ToString("0.##%"),
                     _ => (ClientService.Options.SuggestedPostStarEarningsPerMille / 1000d).ToString("0.##%")
                 };
 

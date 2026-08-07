@@ -22,11 +22,16 @@ namespace Telegram.Streams
 
         private readonly IClientService _clientService;
         private readonly File _file;
-        private readonly double _duration;
         private readonly int _priority;
         private readonly bool _adaptive;
 
         private readonly RemoteFileBitrate _bitrate;
+
+        // Null unless this source owns the download, in which case ReadCallback uses the
+        // window it is handed rather than one worked out here.
+        private readonly RemoteFilePrefetch _prefetch;
+
+        private readonly bool _streaming;
 
         private long _offset;
         private long _count;
@@ -35,17 +40,32 @@ namespace Telegram.Streams
 
         private long _fileToken;
 
-        public RemoteFileSource(IClientService clientService, File file, double duration)
+        /// <param name="streaming">
+        /// Whether this source is the reader that owns the file's download, playing it
+        /// forwards from beginning to end. It then sizes the download window from the rate
+        /// it consumes at, rather than using the one passed to <see cref="ReadCallback"/>,
+        /// and stops the download when it closes.
+        ///
+        /// Callers that serve one ranged request each want this off: they have nothing to
+        /// measure a rate from, and the file is being read by others at the same time.
+        /// </param>
+        public RemoteFileSource(IClientService clientService, File file, double duration, bool streaming = true)
         {
             _event = new ManualResetEvent(false);
 
             _clientService = clientService;
             _file = file;
-            _duration = duration;
             _priority = 32;
             _adaptive = true;
 
             _bitrate = new RemoteFileBitrate(file);
+
+            _streaming = streaming;
+
+            if (streaming)
+            {
+                _prefetch = new RemoteFilePrefetch(file.Size, duration);
+            }
 
             Format = new StickerFormatWebm();
             UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile);
@@ -57,7 +77,6 @@ namespace Telegram.Streams
 
             _clientService = clientService;
             _file = file;
-            _duration = 0;
             _priority = 32;
             _adaptive = false;
 
@@ -69,40 +88,104 @@ namespace Telegram.Streams
         {
             lock (_stateLock)
             {
+                // Nothing here touches the prefetch window. Seeking moves where the reader
+                // is, not how fast the link runs or how dense the media is, and both of
+                // those are what size the window.
                 _offset = offset;
 
                 if (_file.Local.CanBeDownloaded && !_file.Local.IsDownloadingCompleted && !_adaptive)
                 {
-                    _clientService.DownloadFile(_file.Id, _priority, offset, 0, false);
+                    Download(offset, 0);
                 }
             }
         }
 
+        private bool AtEndOfStream => _closed || _offset >= _file.Size - 1;
+
+        /// <summary>
+        /// Whether reporting zero bytes would mean anything other than the end.
+        ///
+        /// Zero is the caller's end of stream: AsyncMediaPlayer turns a zero byte count
+        /// into a zero length ReadFile, and libvlc reads that as the end of the media.
+        /// It may therefore only be reported once there genuinely is nothing left; every
+        /// other "nothing available yet" has to keep waiting instead.
+        ///
+        /// This is also what terminates the read loops. A zero count would satisfy
+        /// MustWait without waiting and read back zero bytes, which is neither progress
+        /// nor the end.
+        /// </summary>
+        private bool CanRead(long count)
+        {
+            return count > 0 && !AtEndOfStream;
+        }
+
         public override void ReadCallback(long count, long buffer, out long bytesRead)
         {
-            if (MustWait(count, buffer))
-            {
-                _event.WaitOne();
-            }
+            var started = Logger.TickCount;
+            var waited = 0UL;
 
-            bytesRead = DownloadedBytes;
+            while (true)
+            {
+                if (MustWait(count, PrefetchWindow(buffer)))
+                {
+                    var blocked = Logger.TickCount;
+                    _event.WaitOne();
+                    waited += Logger.TickCount - blocked;
+                }
+
+                bytesRead = DownloadedBytes;
+
+                if (bytesRead != 0 || !CanRead(count))
+                {
+                    // Time spent blocked is subtracted: the reader consumed nothing then,
+                    // and counting it would deflate the rate exactly when a stall makes a
+                    // larger window the thing that would have helped.
+                    //
+                    // Both are unsigned, so the subtraction is floored rather than allowed
+                    // to wrap, in case the clock is read either side of an adjustment.
+                    var elapsed = Logger.TickCount - started;
+
+                    _prefetch?.Advance(count,
+                        TimeSpan.FromMilliseconds(elapsed > waited ? elapsed - waited : 0),
+                        DownloadBitsPerSecond);
+                    return;
+                }
+
+                // Nothing yet, and not the end: MustWait requested the range again on
+                // the way through, so go back and wait for the update that answers it.
+            }
+        }
+
+        private long PrefetchWindow(long buffer)
+        {
+            return _prefetch?.Window ?? buffer;
         }
 
         public async Task<long> ReadCallbackAsync(long count, long buffer)
         {
-            if (MustWait(count, buffer))
+            while (true)
             {
-                await _event.WaitOneAsync();
-            }
+                if (MustWait(count, PrefetchWindow(buffer)))
+                {
+                    await _event.WaitOneAsync();
+                }
 
-            return DownloadedBytes;
+                var bytesRead = DownloadedBytes;
+
+                if (bytesRead != 0 || !CanRead(count))
+                {
+                    return bytesRead;
+                }
+            }
         }
 
-        public double Duration => _duration;
+        // RemoteFileBitrate divides by a millisecond tick count, so what it reports is
+        // bits per millisecond. It used to be handed to the native player as DownloadRate
+        // and compared there against a per-second media bitrate, which made the link look
+        // a thousand times slower than it is.
+        private double DownloadBitsPerSecond => (_bitrate?.CurrentBitrate ?? 0) * 1000;
 
-        public double DownloadRate => _bitrate?.CurrentBitrate ?? 0;
-
-        public long DownloadedBytes => CalculateDownloadedBytes();
+        private long DownloadedBytes => CalculateDownloadedBytes();
 
         private long CalculateDownloadedBytes()
         {
@@ -116,6 +199,15 @@ namespace Telegram.Streams
                 return 0;
             }
 
+            // Tested before the window, not inside it: once the file is complete every
+            // offset is available, whatever download_offset happens to have been left
+            // at. Inside the window this returned 0, which ReadCallback would now spin
+            // on, since MustWait does not wait for a file that is already downloaded.
+            if (_file.Local.IsDownloadingCompleted && _file.Local.Path.Length > 0)
+            {
+                return Math.Max(0, _file.Size - _offset);
+            }
+
             var begin = _file.Local.DownloadOffset;
             var end = _file.Local.DownloadOffset + _file.Local.DownloadedPrefixSize;
 
@@ -124,30 +216,21 @@ namespace Telegram.Streams
 
             if (_file.Local.Path.Length > 0 && inBegin && inEnd)
             {
-                if (_file.Local.IsDownloadingCompleted)
-                {
-                    return Math.Max(0, _file.Size - _offset);
-                }
-                else
-                {
-                    return Math.Max(0, end - _offset);
-                }
+                return Math.Max(0, end - _offset);
             }
 
-            using var ev = new ManualResetEventSlim(false);
-            var buffered = 0L;
-
-            _clientService.Send(new GetFileDownloadedPrefixSize(_file.Id, _offset), result =>
-            {
-                if (result is FileDownloadedPrefixSize prefixSize)
-                {
-                    buffered = prefixSize.Size;
-                }
-                ev.Set();
-            });
-
-            ev.Wait(500);
-            return buffered;
+            // Outside the window the last update described, so nothing is known yet.
+            //
+            // This used to send GetFileDownloadedPrefixSize and block for up to half a
+            // second on the answer, which could not arrive: Client.Run dispatches
+            // updates and responses on one thread, MustWait holds _stateLock across the
+            // wait, and UpdateFile needs that same lock, so the reply queued behind a
+            // dispatch this call was itself blocking. It timed out and reported zero.
+            //
+            // The query is also redundant. MustWait calls DownloadFile with the current
+            // offset on every pass, and TDLib sets download_offset to it and recomputes
+            // downloaded_prefix_size against it, so the next update carries the answer.
+            return 0;
         }
 
         protected bool MustWait(long count, long buffer)
@@ -166,7 +249,7 @@ namespace Telegram.Streams
                 if (downloaded >= count)
                 {
                     // Always request new bytes
-                    _clientService.DownloadFile(_file.Id, _priority, _offset, buffer, false);
+                    Download(_offset, buffer);
 
                     //Logger.Debug($"Next chunk is available for {_file.Id}, offset: {_offset}, limit: {buffer}, count: {count}, download: {_file.Local.DownloadOffset}, prefix: {_file.Local.DownloadedPrefixSize}, size: {_file.Size}");
                     return false;
@@ -176,11 +259,23 @@ namespace Telegram.Streams
                 _event.Reset();
                 _count = count;
 
-                _clientService.DownloadFile(_file.Id, _priority, _offset, buffer, false);
+                Download(_offset, buffer);
 
                 //Logger.Debug($"Not enough data available for {_file.Id}, offset: {_offset}, limit: {buffer}, count: {count}, download: {_file.Local.DownloadOffset}, prefix: {_file.Local.DownloadedPrefixSize}, size: {_file.Size}");
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Asks for the range the reader is about to need.
+        ///
+        /// Sent directly rather than through IClientService.DownloadFile, which records
+        /// the file as one that was asked for in its own right. This is a reader pulling
+        /// in the parts it is about to read, and it is what Close is allowed to cancel.
+        /// </summary>
+        private void Download(long offset, long limit)
+        {
+            _clientService.Send(new DownloadFile(_file.Id, _priority, offset, limit, false));
         }
 
         public override string FilePath => _file.Local.Path;
@@ -256,11 +351,19 @@ namespace Telegram.Streams
                 //Logger.Debug($"Disposing the stream");
                 UpdateManager.Unsubscribe(this, ref _fileToken);
 
-                //if (cancel)
-                //{
-                //    _canceled = true;
-                //    _clientService.Send(new CancelDownloadFile(_file.Id, false));
-                //}
+                // Only the reader that owns the download stops it. The last window this
+                // source asked for is still running, and nothing else ends it, so closing
+                // the player would otherwise leave it fetching ahead of a video nobody is
+                // watching. Sources serving one ranged request each share the file with
+                // whoever else is reading it and must leave it alone.
+                //
+                // onlyIfStreaming keeps this to the download this source started: the same
+                // file may also be downloading because the user asked for it, or because
+                // auto-download picked it up, and neither ends when a player closes.
+                if (_streaming)
+                {
+                    _clientService.CancelDownloadFile(_file, false, true);
+                }
 
                 _event.Set();
             }

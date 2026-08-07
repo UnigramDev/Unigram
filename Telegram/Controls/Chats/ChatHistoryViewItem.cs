@@ -32,6 +32,7 @@ namespace Telegram.Controls.Chats
         ServiceChatHasProtectedContentDisableRequested,
         ServiceAccountInfo,
         ServiceNewThread,
+        Unsupported,
     }
 
     public partial class ChatHistoryViewItem : ListViewItem

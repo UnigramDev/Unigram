@@ -51,7 +51,7 @@ namespace Telegram.Generators
 
                 var referencedTypes = FindReferencedTypes(classes, returnTypes);
                 var toJsonTypes = FindReferencedTypes(classes, classes.Where(x => x.IsFunction));
-                var fromJsonTypes = toJsonTypes.Except(referencedTypes).ToList();
+                var fromJsonTypes = new List<SchemaClass>(); // toJsonTypes.Except(referencedTypes).ToList();
 
                 var builder = new StringBuilder();
                 builder.AppendLine("using System.Collections.Generic;");
@@ -78,6 +78,12 @@ namespace Telegram.Generators
                 builder.AppendLine("  {");
                 builder.AppendLine("    switch (hash)");
                 builder.AppendLine("    {");
+
+                var richMessageSourceBlocks = classes.FirstOrDefault(x => x.Name == "richMessageSourceBlocks");
+                if (richMessageSourceBlocks != null)
+                {
+                    returnTypes.Add(richMessageSourceBlocks);
+                }
 
                 foreach (var clazz in returnTypes)
                 {

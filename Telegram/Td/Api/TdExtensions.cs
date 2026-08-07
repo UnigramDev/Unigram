@@ -304,9 +304,9 @@ namespace Telegram.Td.Api
             {
                 return string.Format(Strings.StarsCountX, priceStar.StarCount);
             }
-            else if (price is SuggestedPostPriceTon priceTon)
+            else if (price is SuggestedPostPriceGram priceGram)
             {
-                return string.Format(Strings.TonCountX, priceTon.ToncoinCentCount / 100d);
+                return string.Format(Strings.TonCountX, priceGram.GramCentCount / 100d);
             }
 
             return string.Format(Strings.StarsCountX, 0);
@@ -432,7 +432,7 @@ namespace Telegram.Td.Api
                     {
                         new(Strings.PostSuggestionsInlineEdit, 0, new ButtonStyleDefault(), new InlineKeyboardButtonTypeSuggestionEdit())
                     }
-                });
+                }, false);
             }
 
             return null;
@@ -454,9 +454,9 @@ namespace Telegram.Td.Api
             {
                 return (resalePriceStar.StarCount * (part / 1000d)).ToString("N0");
             }
-            else if (resalePrice is GiftResalePriceTon resalePriceTon)
+            else if (resalePrice is GiftResalePriceGram resalePriceGram)
             {
-                return (resalePriceTon.ToncoinCentCount * (part / 1000d)).ToString("N0");
+                return (resalePriceGram.GramCentCount * (part / 1000d)).ToString("N0");
             }
 
             return string.Empty;
@@ -1370,9 +1370,9 @@ namespace Telegram.Td.Api
             {
                 return xStar.StarCount == yStar.StarCount;
             }
-            else if (x is SuggestedPostPriceTon xTon && y is SuggestedPostPriceTon yTon)
+            else if (x is SuggestedPostPriceGram xGram && y is SuggestedPostPriceGram yGram)
             {
-                return xTon.ToncoinCentCount == yTon.ToncoinCentCount;
+                return xGram.GramCentCount == yGram.GramCentCount;
             }
 
             return false;
@@ -1508,6 +1508,9 @@ namespace Telegram.Td.Api
                     return ToPlainText(underlineText.Text);
                 case RichTextUrl urlText:
                     return ToPlainText(urlText.Text);
+                case RichTextButton _:
+                    // TODO: decide if to extract text or not.
+                    return PageBlockHelper.PlaceholderButton;
                 default:
                     return null;
             }
@@ -2429,14 +2432,8 @@ namespace Telegram.Td.Api
 
         public static string ToPlainText(this RichMessage message)
         {
-            var builder = new StringBuilder();
-
-            foreach (var block in message.Blocks)
-            {
-
-            }
-
-            return builder.ToString();
+            var text = PageBlockHelper.GetRichText(message.Blocks);
+            return text.ToPlainText();
         }
 
         public static FormattedText ToFormattedText(this RichMessage message)
@@ -2549,6 +2546,11 @@ namespace Telegram.Td.Api
                             });
                         }
                     }
+                    return;
+
+                case RichTextButton _:
+                    // TODO: decide what to do here
+                    sb.Append(PageBlockHelper.PlaceholderButton);
                     return;
 
                 case RichTextAnchor _:
@@ -3650,20 +3652,45 @@ namespace Telegram.Td.Api
 
             foreach (var reaction in reactions)
             {
-                if (reaction is ReactionTypeEmoji emojiItem)
-                {
-                    emoji ??= new HashSet<string>();
-                    emoji.Add(emojiItem.Emoji);
-                }
-                else if (reaction is ReactionTypeCustomEmoji customEmojiItem)
-                {
-                    customEmoji ??= new HashSet<long>();
-                    customEmoji.Add(customEmojiItem.CustomEmojiId);
-                }
-                else if (reaction is ReactionTypePaid)
-                {
-                    paid = true;
-                }
+                Discern(reaction, ref paid, ref emoji, ref customEmoji);
+            }
+        }
+
+        /// <summary>
+        /// Overload over the unread list itself, so callers holding one need not project
+        /// it through Select.
+        ///
+        /// Indexed rather than enumerated: this runs for every message carrying
+        /// reactions, and the list is usually empty, so the enumerator would be the only
+        /// allocation on the common path.
+        /// </summary>
+        public static void Discern(this IList<UnreadReaction> reactions, out bool paid, out HashSet<string> emoji, out HashSet<long> customEmoji)
+        {
+            paid = false;
+            emoji = null;
+            customEmoji = null;
+
+            for (int i = 0; i < reactions.Count; i++)
+            {
+                Discern(reactions[i].Type, ref paid, ref emoji, ref customEmoji);
+            }
+        }
+
+        private static void Discern(ReactionType reaction, ref bool paid, ref HashSet<string> emoji, ref HashSet<long> customEmoji)
+        {
+            if (reaction is ReactionTypeEmoji emojiItem)
+            {
+                emoji ??= new HashSet<string>();
+                emoji.Add(emojiItem.Emoji);
+            }
+            else if (reaction is ReactionTypeCustomEmoji customEmojiItem)
+            {
+                customEmoji ??= new HashSet<long>();
+                customEmoji.Add(customEmojiItem.CustomEmojiId);
+            }
+            else if (reaction is ReactionTypePaid)
+            {
+                paid = true;
             }
         }
 

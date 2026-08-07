@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -75,7 +75,6 @@ namespace Telegram.Controls.Messages
                 }
 
                 message.UnreadReactions
-                    .Select(x => x.Type)
                     .Discern(out bool paid, out var unreadEmoji, out var unreadCustomEmoji);
 
                 bool Animate(ReactionType reaction)
@@ -251,12 +250,16 @@ namespace Telegram.Controls.Messages
                 }
             }
 
-            foreach (var child in Children)
+            // Indexed for the same reason as the arrange pass below: foreach over
+            // UIElementCollection allocates an IEnumerator<UIElement> per pass.
+            count = Children.Count;
+
+            for (int i = 0; i < count; i++)
             {
+                var child = Children[i];
+
                 child.Measure(availableSize);
                 Measure(child.DesiredSize.Width, child.DesiredSize.Height);
-
-                count++;
             }
 
             if (count > 0)
@@ -287,70 +290,66 @@ namespace Telegram.Controls.Messages
         protected override Size ArrangeOverride(Size finalSize)
         {
             var position = new Size(Padding.Left, Padding.Top);
-            var count = 0;
 
             var center = HorizontalContentAlignment != HorizontalAlignment.Left;
-            var rows = center
-                ? new List<List<Rect>>()
-                : null;
-            var row = center
-                ? new List<Rect>()
-                : null;
+
+            // A row is a contiguous run of children, complete as soon as the next child
+            // does not fit, at which point its right edge is known. Centring therefore
+            // needs no buffer: each run is arranged in place, walking its children a
+            // second time to recover their offsets. Buffering the rects instead cost a
+            // List per row on every pass.
+            var rowStart = 0;
+            var rowTop = position.Height;
+
+            // Local function, not a delegate: nothing converts it, so the capture stays
+            // on the stack.
+            void ArrangeRow(int from, int to, double y, double right)
+            {
+                var offset = center
+                    ? HorizontalContentAlignment == HorizontalAlignment.Center
+                        ? (finalSize.Width - right) / 2
+                        : finalSize.Width - right
+                    : 0;
+
+                var left = Padding.Left;
+
+                for (int i = from; i < to; i++)
+                {
+                    var child = Children[i];
+                    child.Arrange(new Rect(left + offset, y, child.DesiredSize.Width, child.DesiredSize.Height));
+
+                    left += child.DesiredSize.Width + Spacing;
+                }
+            }
 
             double currentV = 0;
-            foreach (var child in Children)
+
+            // Indexed: foreach over UIElementCollection goes through
+            // IEnumerator<UIElement> and allocates one per pass.
+            var count = Children.Count;
+
+            for (int index = 0; index < count; index++)
             {
-                var desiredMeasure = new Size(child.DesiredSize.Width, child.DesiredSize.Height);
+                var desiredMeasure = Children[index].DesiredSize;
                 if ((desiredMeasure.Width + position.Width) > finalSize.Width)
                 {
-                    // next row!
+                    // Next row. Spacing was added after the last child of the completed
+                    // row, so subtracting it gives that row's right edge.
+                    ArrangeRow(rowStart, index, rowTop, position.Width - Spacing);
+
+                    rowStart = index;
                     position.Width = Padding.Left;
                     position.Height += currentV + Spacing;
+                    rowTop = position.Height;
                     currentV = 0;
-
-                    if (center)
-                    {
-                        rows.Add(row);
-                        row = new List<Rect>();
-                    }
-                }
-
-                // Place the item
-                if (center)
-                {
-                    row.Add(new Rect(position.Width, position.Height, child.DesiredSize.Width, child.DesiredSize.Height));
-                }
-                else
-                {
-                    child.Arrange(new Rect(position.Width, position.Height, child.DesiredSize.Width, child.DesiredSize.Height));
                 }
 
                 // adjust the location for the next items
                 position.Width += desiredMeasure.Width + Spacing;
                 currentV = Math.Max(desiredMeasure.Height, currentV);
-                count++;
             }
 
-            if (center)
-            {
-                if (row.Count > 0)
-                {
-                    rows.Add(row);
-                }
-
-                var i = 0;
-
-                foreach (var item in rows)
-                {
-                    var width = item[^1].Right;
-                    var diff = HorizontalContentAlignment == HorizontalAlignment.Center ? (finalSize.Width - width) / 2 : finalSize.Width - width;
-
-                    foreach (var child in item)
-                    {
-                        Children[i++].Arrange(new Rect(child.X + diff, child.Y, child.Width, child.Height));
-                    }
-                }
-            }
+            ArrangeRow(rowStart, count, rowTop, position.Width - Spacing);
 
             return finalSize;
         }

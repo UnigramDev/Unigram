@@ -1506,7 +1506,9 @@ namespace Telegram.Controls.Cells
 
         private void UpdateBriefLabel(Chat chat, FormattedText message)
         {
-            if (message != null && chat?.Id == _clientService.Options.TelegramServiceNotificationsChatId || chat?.Id == _clientService.Options.VerificationCodesBotChatId)
+            // Parenthesised: && binds tighter than ||, so the null check only covered the
+            // first of the two chats and Match below would have run on a null message.
+            if (message != null && (chat?.Id == _clientService.Options.TelegramServiceNotificationsChatId || chat?.Id == _clientService.Options.VerificationCodesBotChatId))
             {
                 var pattern = chat?.Id == _clientService.Options.TelegramServiceNotificationsChatId
                     ? _verificationCodes
@@ -1581,21 +1583,14 @@ namespace Telegram.Controls.Cells
         {
             thumbnail = null;
 
-            if (draft?.Content is DraftMessageContentText draftText)
+            if (draft != null)
             {
-                return draftText.Text;
-            }
-            else if (draft?.Content is DraftMessageContentRichMessage draftRichMessage)
-            {
-
-            }
-            else if (draft?.Content is DraftMessageContentVoiceNote draftVoiceNote)
-            {
-
-            }
-            else if (draft?.Content is DraftMessageContentVideoNote draftVideoNote)
-            {
-
+                return draft.Content switch
+                {
+                    DraftMessageContentText draftText => draftText.Text,
+                    DraftMessageContentRichMessage draftRichMessage => draftRichMessage.Message.ToFormattedText(),
+                    _ => string.Empty.AsFormattedText()
+                };
             }
 
             static FormattedText Text(string text)

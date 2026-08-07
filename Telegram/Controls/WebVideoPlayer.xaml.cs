@@ -11,12 +11,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
 using Windows.ApplicationModel;
@@ -34,22 +34,19 @@ namespace Telegram.Controls
 
         private readonly Dictionary<int, AlternativeVideo> _playlist = new();
 
-        private long _initialPosition;
+        private double _initialPosition;
 
         public WebVideoPlayer()
         {
             InitializeComponent();
-
-            Connected += OnConnected;
-            Disconnected += OnDisconnected;
         }
 
-        private void OnConnected(object sender, RoutedEventArgs e)
+        protected override void OnLoaded()
         {
             IsUnloadedExpected = false;
         }
 
-        private void OnDisconnected(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded()
         {
             if (IsUnloadedExpected)
             {
@@ -58,6 +55,7 @@ namespace Telegram.Controls
 
             if (_core != null)
             {
+                _core.NavigationCompleted -= OnNavigationCompleted;
                 _core.WebResourceRequested -= OnWebResourceRequested;
                 _core.WebMessageReceived -= OnWebMessageReceived;
                 _core = null;
@@ -84,6 +82,12 @@ namespace Telegram.Controls
         public override void Play(GalleryMedia video, double position)
         {
             _video = video;
+            _initialPosition = position;
+
+            // Keyed by file id, and the ids of whatever played before are still in here
+            // otherwise: the m3u8 handler looks the requested one up to rewrite the
+            // playlist, and would find a segment belonging to the previous video.
+            _playlist.Clear();
 
             foreach (var item in video.FindAlternatives("h264"))
             {
@@ -94,14 +98,22 @@ namespace Telegram.Controls
             {
                 _ = Video.EnsureCoreWebView2Async();
             }
-            else if (_video.AlternativeVideos.Count > 0)
-            {
-                _core.Navigate("http://127.0.0.1/hls.html");
-            }
             else
             {
-                _core.Navigate("http://127.0.0.1/mp4.html");
+                Navigate();
             }
+        }
+
+        private void Navigate()
+        {
+            if (_core == null || _video == null)
+            {
+                return;
+            }
+
+            _core.Navigate(_video.AlternativeVideos.Count > 0
+                ? "http://127.0.0.1/hls.html"
+                : "http://127.0.0.1/mp4.html");
         }
 
         public override void Play()
@@ -133,7 +145,7 @@ namespace Telegram.Controls
 
         public override void Seek(double value)
         {
-            ExecuteScript($"playerAddTime({value})");
+            ExecuteScript($"playerAddTime({value.ToString(CultureInfo.InvariantCulture)})");
         }
 
         private double _position;
@@ -143,7 +155,10 @@ namespace Telegram.Controls
             set
             {
                 OnPositionChanged(_position = value);
-                ExecuteScript($"playerSeek({value})");
+
+                // Invariant, as everywhere a number is written into a script: a locale
+                // with a comma for a decimal separator turns the argument into two.
+                ExecuteScript($"playerSeek({value.ToString(CultureInfo.InvariantCulture)})");
             }
         }
 
@@ -215,14 +230,7 @@ namespace Telegram.Controls
 
             _core.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
 
-            if (_video.AlternativeVideos.Count > 0)
-            {
-                _core.Navigate("http://127.0.0.1/hls.html");
-            }
-            else
-            {
-                _core.Navigate("http://127.0.0.1/mp4.html");
-            }
+            Navigate();
         }
 
         private void OnNavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
@@ -235,6 +243,24 @@ namespace Telegram.Controls
         {
             var deferral = args.GetDeferral();
 
+            try
+            {
+                await ProcessWebResourceRequestAsync(sender, args);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+            finally
+            {
+                // The request stays outstanding until this runs, and the player stalls
+                // waiting for a segment that is never answered.
+                deferral.Complete();
+            }
+        }
+
+        private async Task ProcessWebResourceRequestAsync(CoreWebView2 sender, CoreWebView2WebResourceRequestedEventArgs args)
+        {
             var segments = args.Request.Uri.Split('/');
             var resource = segments[^1];
 
@@ -271,8 +297,6 @@ namespace Telegram.Controls
             if (resource == "favicon.ico")
             {
                 CreateWebResourceResponse(null, 404, "Not Found", string.Empty);
-
-                deferral.Complete();
                 return;
             }
 
@@ -298,11 +322,17 @@ namespace Telegram.Controls
                 var playlistString = new StringBuilder();
                 playlistString.Append("#EXTM3U\n");
 
+                var duration = Math.Max(_video.Duration, 1);
+
                 foreach (var item in _playlist.Values.OrderBy(x => x.Width * x.Height))
                 {
                     int width = item.Width;
                     int height = item.Height;
-                    int bandwidth = (int)((double)item.Video.Size / _video.Duration) * 8;
+
+                    // Only used by hls.js to rank the variants, so the average is enough.
+                    // Guarded against a missing duration, which would divide by zero and
+                    // make every variant look the same.
+                    int bandwidth = (int)(item.Video.Size * 8 / duration);
 
                     playlistString.Append($"#EXT-X-STREAM-INF:BANDWIDTH={bandwidth},RESOLUTION={width}x{height}\n");
                     playlistString.Append($"{item.HlsFile.Id}.m3u8\n");
@@ -318,64 +348,33 @@ namespace Telegram.Controls
                 var file = await _video.ClientService.GetFileAsync(fileId);
                 if (file == null)
                 {
-                    deferral.Complete();
                     return;
                 }
 
-                long offset = 0;
-                long limit = 0;
-                long buffer = 0;
+                var query = new Uri(args.Request.Uri).Query.ParseQueryString();
 
-                if (args.Request.Headers.TryGetValue("Range", out string range) && RangeHeaderValue.TryParse(range, out var ranges))
+                double duration = 0;
+                if (query.TryGetValue("duration", out string durationValue))
                 {
-                    var uri = new Uri(args.Request.Uri);
-                    var query = uri.Query.ParseQueryString();
-
-                    if (query.TryGetValue("duration", out string durationValue) && int.TryParse(durationValue, out int duration) && duration > 0)
-                    {
-                        buffer = Math.Min((long)(((double)file.Size / duration) * 15), 4 * 1024 * 1024);
-                    }
-                    else
-                    {
-                        buffer = 1 * 1024 * 1024;
-                    }
-
-                    foreach (var part in ranges.Ranges)
-                    {
-                        offset = part.From ?? 0;
-
-                        if (part.To.HasValue)
-                        {
-                            limit = part.To.Value - offset + 1;
-                            buffer = part.To.Value - offset + 1;
-                        }
-                        else if ((double)offset / file.Size >= 0.95)
-                        {
-                            // Likely metadata, let's read the remaning all together
-                            limit = 0;
-                            buffer = 0;
-                        }
-                        else
-                        {
-                            limit = Math.Min(file.Size - offset, 64 * 1024);
-                            buffer = Math.Min(file.Size - offset, buffer);
-                        }
-
-                        break;
-                    }
+                    double.TryParse(durationValue, NumberStyles.Float, CultureInfo.InvariantCulture, out duration);
                 }
 
-                if (limit == 0)
+                args.Request.Headers.TryGetValue("Range", out string range);
+
+                var media = MediaRange.Parse(range, file.Size, duration);
+                if (media.Count == 0)
                 {
-                    limit = file.Size - offset;
-                    buffer = file.Size - offset;
+                    CreateWebResourceResponse(null, 416, "Range Not Satisfiable", string.Empty);
+                    return;
                 }
 
-                //Logger.Info(resource + ", offset: " + offset + ", count:" + limit);
+                //Logger.Info(resource + ", offset: " + media.Offset + ", count:" + media.Count);
 
-                var remote = new Telegram.Streams.RemoteFileSource(_video.ClientService, file, _video.Duration);
-                remote.SeekCallback(offset);
-                var bytesRead = await remote.ReadCallbackAsync(limit, buffer);
+                // hls.js asks for explicit ranges and this source lives for one of them,
+                // so the window is the request's to choose rather than measured here.
+                var remote = new RemoteFileSource(_video.ClientService, file, _video.Duration, streaming: false);
+                remote.SeekCallback(media.Offset);
+                var bytesRead = await remote.ReadCallbackAsync(media.Count, media.Window);
                 remote.Close();
 
                 if (bytesRead >= 0)
@@ -406,14 +405,26 @@ namespace Telegram.Controls
                             using (var stream = await storage.OpenReadAsync())
                             using (var destination = new InMemoryRandomAccessStream())
                             {
-                                stream.Seek((ulong)offset);
+                                stream.Seek((ulong)media.Offset);
 
-                                var data = new Windows.Storage.Streams.Buffer((uint)limit);
-                                var readBuffer = await stream.ReadAsync(data, (uint)limit, InputStreamOptions.None);
+                                // Copied straight from the file into the response, rather
+                                // than through a buffer holding the whole range a second
+                                // time. A response runs to megabytes, and the intermediate
+                                // doubled that for as long as the two were both alive.
+                                var copied = await RandomAccessStream.CopyAsync(stream, destination, (ulong)media.Count);
 
-                                await destination.WriteAsync(readBuffer);
-
-                                CreateWebResourceResponse(destination, 206, "OK", string.Format("Content-Type: video/mp4\nContent-Range: bytes {0}-{1}/{2}", offset, offset + limit - 1, file.Size));
+                                if (copied > 0)
+                                {
+                                    // Describes what the body actually carries. The file is
+                                    // still downloading, so the copy can come up short of
+                                    // what was asked for, and a range promising more leaves
+                                    // the player waiting on bytes that are never sent.
+                                    CreateWebResourceResponse(destination, 206, "OK", string.Format("Content-Type: video/mp4\nContent-Range: bytes {0}-{1}/{2}", media.Offset, media.Offset + (long)copied - 1, file.Size));
+                                }
+                                else
+                                {
+                                    CreateWebResourceResponse(null, 404, "Not Found", string.Empty);
+                                }
                             }
                         }
                         catch
@@ -427,8 +438,6 @@ namespace Telegram.Controls
                     CreateWebResourceResponse(null, 404, "Not Found", string.Empty);
                 }
             }
-
-            deferral.Complete();
         }
 
         private void OnWebMessageReceived(CoreWebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
@@ -453,6 +462,15 @@ namespace Telegram.Controls
                     var defaultRate = eventData.GetNamedNumber("defaultRate", 1);
                     OnVolumeChanged(_volume = eventData.GetNamedNumber("volume", 1));
                     OnDurationChanged(_duration = eventData.GetNamedNumber("duration", 0));
+
+                    // Seeking is setting currentTime, which the element only honours once
+                    // it knows how long the media is, so the position the gallery opened
+                    // at waits here for the first status that reports a duration.
+                    if (_initialPosition > 0 && _duration > 0)
+                    {
+                        Position = _initialPosition;
+                        _initialPosition = 0;
+                    }
 
                     if (eventData.ContainsKey("levels"))
                     {

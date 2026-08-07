@@ -44,6 +44,14 @@ namespace Telegram.Common
             }
         }
 
+        public static void NavigateToTextEditor(this INavigationService service, long chatId, MessageTopic topic, long messageId, RichMessage message, InputMessageReplyTo replyTo = null, MessageSendOptions sendOptions = null)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.NavigateToTextEditor(chatId, topic, messageId, message, replyTo, sendOptions);
+            }
+        }
+
         public static void NavigateToWebApp(this INavigationService service, User botUser, WebAppUrl url, long launchId = 0, AttachmentMenuBot menuBot = null, WebAppOpenMode openMode = null, OpenUrlSource source = null, InternalLinkType sourceLink = null, string buttonText = null)
         {
             if (service is TLNavigationService serviceEx)

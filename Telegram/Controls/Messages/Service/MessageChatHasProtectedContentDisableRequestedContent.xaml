@@ -67,7 +67,7 @@
                     Grid.Row="1">
                 <controls:ReplyMarkupInlineButton Click="Reject_Click"
                                                   Icon="&#xEACD;"
-                                                  Text="{CustomResource GiftOfferDecline}"
+                                                  Content="{CustomResource GiftOfferDecline}"
                                                   HorizontalAlignment="Stretch" />
             </Border>
             <Border x:Name="Accept"
@@ -78,7 +78,7 @@
                     Grid.Row="1">
                 <controls:ReplyMarkupInlineButton Click="Accept_Click"
                                                   Icon="&#xEACC;"
-                                                  Text="{CustomResource GiftOfferAccept}"
+                                                  Content="{CustomResource GiftOfferAccept}"
                                                   HorizontalAlignment="Stretch" />
             </Border>
         </Grid>

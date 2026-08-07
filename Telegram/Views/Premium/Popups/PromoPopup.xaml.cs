@@ -482,19 +482,21 @@ namespace Telegram.Views.Premium.Popups
                     iconValue = Icons.BuildingShopFilled;
                     titleValue = Strings.TelegramBusiness;
                     subtitleValue = Strings.PremiumPreviewBusinessDescription;
-                    badge = true;
                     break;
                 case PremiumFeatureMessageEffects:
                     iconValue = Icons.ChatSparkeFilled;
                     titleValue = Strings.PremiumPreviewEffects;
                     subtitleValue = Strings.PremiumPreviewEffectsDescription;
-                    badge = true;
                     break;
                 case PremiumFeatureChecklists:
                     iconValue = Icons.CheckmarkSquareFilled;
                     titleValue = Strings.PremiumPreviewTodo;
                     subtitleValue = Strings.PremiumPreviewTodoDescription;
-                    badge = true;
+                    break;
+                case PremiumFeatureRichMessages:
+                    iconValue = Icons.WarningFilled;
+                    titleValue = Strings.PremiumPreviewRichEditor;
+                    subtitleValue = Strings.PremiumPreviewRichEditorDescription;
                     break;
             }
 
