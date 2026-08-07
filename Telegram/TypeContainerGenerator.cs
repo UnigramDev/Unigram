@@ -87,7 +87,6 @@ namespace Telegram
                 typeof(SendLocationViewModel),
                 typeof(DialogViewModel),
                 typeof(DialogBusinessRepliesViewModel),
-                typeof(DialogWelcomeMessagesViewModel),
                 typeof(DialogPinnedViewModel),
                 typeof(DialogScheduledViewModel),
                 typeof(DialogEventLogViewModel),

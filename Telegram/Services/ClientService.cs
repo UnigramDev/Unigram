@@ -160,8 +160,6 @@ namespace Telegram.Services
         IList<QuickReplyShortcut> GetQuickReplyShortcuts();
         bool CheckQuickReplyShortcutName(string name);
 
-        IList<WelcomeMessage> GetWelcomeMessages(long chatId);
-
         Task<IList<MessageEffect>> GetMessageEffectsAsync(IEnumerable<long> effectIds);
         MessageEffect LoadMessageEffect(long effectId, bool preload);
 
@@ -334,8 +332,6 @@ namespace Telegram.Services
         private readonly ReaderWriterDictionary<long, Community> _communities = new();
 
         private readonly ReaderWriterDictionary<int, GroupCall> _groupCalls = new();
-
-        private readonly ReaderWriterDictionary<long, IList<WelcomeMessage>> _welcomeMessages = new();
 
         private readonly ConcurrentDictionary<int, ChatListUnreadCount> _unreadCounts = new();
 
@@ -1886,16 +1882,6 @@ namespace Telegram.Services
             }
 
             return ClientEx.CheckQuickReplyShortcutName(name);
-        }
-
-        public IList<WelcomeMessage> GetWelcomeMessages(long chatId)
-        {
-            if (_welcomeMessages.TryGetValue(chatId, out var value))
-            {
-                return value;
-            }
-
-            return Array.Empty<WelcomeMessage>();
         }
 
         public bool IsSavedMessages(MessageSender sender)
@@ -3656,26 +3642,6 @@ namespace Telegram.Services
                         if (_chats.TryGetValue(updateChatBusinessBotManageBar.ChatId, out Chat value))
                         {
                             value.BusinessBotManageBar = updateChatBusinessBotManageBar.BusinessBotManageBar;
-                        }
-
-                        break;
-                    }
-
-                case UpdateChatHasWelcomeMessages updateChatHasWelcomeMessages:
-                    {
-                        if (_chats.TryGetValue(updateChatHasWelcomeMessages.ChatId, out Chat value))
-                        {
-                            value.HasWelcomeMessages = updateChatHasWelcomeMessages.HasWelcomeMessages;
-                        }
-
-                        break;
-                    }
-
-                case UpdateChatWelcomeMessages updateChatWelcomeMessages:
-                    {
-                        if (_chats.TryGetValue(updateChatWelcomeMessages.ChatId, out Chat value))
-                        {
-                            _welcomeMessages[updateChatWelcomeMessages.ChatId] = updateChatWelcomeMessages.Messages;
                         }
 
                         break;

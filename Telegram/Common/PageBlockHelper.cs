@@ -145,7 +145,6 @@ namespace Telegram.Common
                 case PageBlockAnimation when (kind & PageBlockMediaKind.Animation) != 0:
                 case PageBlockAudio when (kind & PageBlockMediaKind.Audio) != 0:
                 case PageBlockVoiceNote when (kind & PageBlockMediaKind.VoiceNote) != 0:
-                case PageBlockDocument when (kind & PageBlockMediaKind.Document) != 0:
                 case PageBlockMap when (kind & PageBlockMediaKind.Map) != 0:
                 case PageBlockEmbedded when (kind & PageBlockMediaKind.Embedded) != 0:
                 case PageBlockEmbeddedPost when (kind & PageBlockMediaKind.EmbeddedPost) != 0:
@@ -289,7 +288,6 @@ namespace Telegram.Common
                 PageBlockAnimation => (kind & PageBlockMediaKind.Animation) != 0,
                 PageBlockAudio => (kind & PageBlockMediaKind.Audio) != 0,
                 PageBlockVoiceNote => (kind & PageBlockMediaKind.VoiceNote) != 0,
-                PageBlockDocument => (kind & PageBlockMediaKind.Document) != 0,
                 PageBlockMap => (kind & PageBlockMediaKind.Map) != 0,
                 PageBlockEmbedded => (kind & PageBlockMediaKind.Embedded) != 0,
                 PageBlockEmbeddedPost => (kind & PageBlockMediaKind.EmbeddedPost) != 0,
@@ -376,12 +374,6 @@ namespace Telegram.Common
                     CollectLinksFromRichText(pq.Text, result);
                     CollectLinksFromRichText(pq.Credit, result);
                     return;
-                // Text and credit like a pull quote, not a list of blocks like a
-                // block quote — the expandable one holds rich text directly.
-                case PageBlockExpandableBlockQuote eq:
-                    CollectLinksFromRichText(eq.Text, result);
-                    CollectLinksFromRichText(eq.Credit, result);
-                    return;
 
                 // Container blocks
                 case PageBlockBlockQuote bq:
@@ -464,9 +456,6 @@ namespace Telegram.Common
                 case PageBlockVoiceNote vn:
                     CollectLinksFromCaption(vn.Caption, result);
                     return;
-                case PageBlockDocument doc:
-                    CollectLinksFromCaption(doc.Caption, result);
-                    return;
                 case PageBlockMap m:
                     CollectLinksFromCaption(m.Caption, result);
                     return;
@@ -492,10 +481,6 @@ namespace Telegram.Common
                     }
                     return;
 
-                // No links carried. A button row is a row of actions, not of
-                // links: what a button does is the client's business, and it is
-                // not part of the page's link graph.
-                case PageBlockButtonRow _:
                 case PageBlockAnchor _:
                 case PageBlockDivider _:
                 case PageBlockMathematicalExpression _:
@@ -517,11 +502,6 @@ namespace Telegram.Common
                 case null:
                     return;
 
-                // No-link leaves. RichTextButton is one of them on purpose: a
-                // button is an action, not a link, and its label is not page
-                // content to be harvested — the same reason an inline keyboard
-                // never appears in GetLinks.
-                case RichTextButton _:
                 case RichTextPlain _:
                 case RichTextCustomEmoji _:
                 case RichTextIcon _:
@@ -690,13 +670,6 @@ namespace Telegram.Common
                     pieces.Add(pq.Text);
                     if (!IsEmpty(pq.Credit)) pieces.Add(pq.Credit);
                     return;
-                // Holds rich text directly (like a pull quote), not a list of
-                // blocks like PageBlockBlockQuote — the "expandable" part is a
-                // rendering affordance and has no text projection.
-                case PageBlockExpandableBlockQuote eq:
-                    pieces.Add(eq.Text);
-                    if (!IsEmpty(eq.Credit)) pieces.Add(eq.Credit);
-                    return;
 
                 // Container blocks
                 case PageBlockBlockQuote bq:
@@ -781,10 +754,6 @@ namespace Telegram.Common
                     pieces.Add(new RichTextPlain(PlaceholderVoiceNote));
                     CollectRichTextFromCaption(vn.Caption, pieces);
                     return;
-                case PageBlockDocument doc:
-                    pieces.Add(new RichTextPlain(PlaceholderDocument));
-                    CollectRichTextFromCaption(doc.Caption, pieces);
-                    return;
                 case PageBlockMap m:
                     pieces.Add(new RichTextPlain(PlaceholderMap));
                     CollectRichTextFromCaption(m.Caption, pieces);
@@ -802,29 +771,6 @@ namespace Telegram.Common
                     pieces.Add(new RichTextPlain(PlaceholderChatLink));
                     return;
 
-                // A row stays one piece (pieces are joined by '\n', and these sit
-                // side by side). The buttons are carried through as RichTextButton
-                // rather than flattened to their placeholder here, so a renderer
-                // downstream of GetRichText can still show real buttons.
-                case PageBlockButtonRow br:
-                    if (br.Buttons != null && br.Buttons.Count > 0)
-                    {
-                        if (br.Buttons.Count == 1)
-                        {
-                            pieces.Add(new RichTextButton(br.Buttons[0]));
-                        }
-                        else
-                        {
-                            var row = new List<RichText>(br.Buttons.Count * 2 - 1);
-                            for (int i = 0; i < br.Buttons.Count; i++)
-                            {
-                                if (i > 0) row.Add(new RichTextPlain(" "));
-                                row.Add(new RichTextButton(br.Buttons[i]));
-                            }
-                            pieces.Add(new RichTexts(row));
-                        }
-                    }
-                    return;
                 case PageBlockDivider _:
                     pieces.Add(new RichTextPlain(PlaceholderDivider));
                     return;
@@ -888,10 +834,6 @@ namespace Telegram.Common
                     return;
                 case RichTextCustomEmoji ce:
                     if (ce.AlternativeText != null) sb.Append(ce.AlternativeText);
-                    return;
-                // The label is the button's, not the page's — stand in for it.
-                case RichTextButton _:
-                    sb.Append(PlaceholderButton);
                     return;
                 case RichTextMathematicalExpression me:
                     if (me.Expression != null) sb.Append(me.Expression);
@@ -1083,20 +1025,6 @@ namespace Telegram.Common
                         return;
                     }
 
-                // Leaf whose text belongs to the button, not to the page: emit the
-                // placeholder so the entity has a non-zero length, and hand the
-                // whole button to the renderer through the entity. The label is
-                // reachable as Button.Text if the renderer wants it — nothing here
-                // harvests it into the page's text.
-                case RichTextButton button:
-                    {
-                        int start = text.Length;
-                        text.Append(PlaceholderButton);
-                        entities.Add(new TextEntity(start, PlaceholderButton.Length,
-                            new TextEntityTypeButton(button.Button)));
-                        return;
-                    }
-
                 case RichTextAnchor _:
                     // Skipped — see ObjectReplacementChar comment above.
                     return;
@@ -1220,7 +1148,6 @@ namespace Telegram.Common
                 case TextEntityTypeMarked:
                 case TextEntityTypeMathematicalExpression:
                 case TextEntityTypeIcon:
-                case TextEntityTypeButton:
                     return false;
                 default:
                     return true;
@@ -1319,31 +1246,6 @@ namespace Telegram.Common
                         return true;
                     }
 
-                case PageBlockExpandableBlockQuote quote:
-                    {
-                        // Unlike the plain block quote this one holds RichText directly, so it maps
-                        // 1:1 onto the expandable-blockquote entity — no paragraph-shape requirement.
-                        // A credit still can't be carried.
-                        if (!IsEmpty(quote.Credit))
-                        {
-                            return false;
-                        }
-
-                        int start = text.Length;
-                        if (!TryAppendRichText(quote.Text, text, entities))
-                        {
-                            return false;
-                        }
-
-                        int length = text.Length - start;
-                        if (length > 0)
-                        {
-                            entities.Add(new TextEntity(start, length, new TextEntityTypeExpandableBlockQuote()));
-                        }
-
-                        return true;
-                    }
-
                 default:
                     // Any other block type (heading/footer/list/table/media/document/button-row/
                     // divider/anchor/…) = loss.
@@ -1435,29 +1337,6 @@ namespace Telegram.Common
                         if (length > 0)
                         {
                             entities.Add(new TextEntity(start, length, new TextEntityTypeBlockQuote()));
-                        }
-
-                        return true;
-                    }
-
-                case InputPageBlockExpandableBlockQuote quote:
-                    {
-                        // Holds RichText directly — see the display-side twin above.
-                        if (!IsEmpty(quote.Credit))
-                        {
-                            return false;
-                        }
-
-                        int start = text.Length;
-                        if (!TryAppendRichText(quote.Text, text, entities))
-                        {
-                            return false;
-                        }
-
-                        int length = text.Length - start;
-                        if (length > 0)
-                        {
-                            entities.Add(new TextEntity(start, length, new TextEntityTypeExpandableBlockQuote()));
                         }
 
                         return true;
@@ -1612,13 +1491,6 @@ namespace Telegram.Common
                         break;
                     case TextEntityTypePreCode pc:
                         blocks.Add(new PageBlockPreformatted(BuildRichText(s, be.Offset, end, inline), pc.Language ?? string.Empty));
-                        break;
-                    case TextEntityTypeExpandableBlockQuote _:
-                        // pageBlockExpandableBlockQuote holds RichText directly, so the span
-                        // stays one node (newlines and all) instead of being split into
-                        // paragraphs — which makes this the exact inverse of TryAppendBlock.
-                        blocks.Add(new PageBlockExpandableBlockQuote(
-                            BuildRichText(s, be.Offset, end, inline), new RichTextPlain(string.Empty)));
                         break;
                     default: // BlockQuote
                         var inner = new List<PageBlock>();
@@ -1832,7 +1704,6 @@ namespace Telegram.Common
                 (PageBlockFooter a, PageBlockFooter b) => Compare(a.Footer, b.Footer),
                 (PageBlockThinking a, PageBlockThinking b) => Compare(a.Text, b.Text),
                 (PageBlockPullQuote a, PageBlockPullQuote b) => Compare(a.Text, b.Text) && Compare(a.Credit, b.Credit),
-                (PageBlockExpandableBlockQuote a, PageBlockExpandableBlockQuote b) => Compare(a.Text, b.Text) && Compare(a.Credit, b.Credit),
                 (PageBlockMathematicalExpression a, PageBlockMathematicalExpression b) => string.Equals(a.Expression, b.Expression),
 
                 // Atomic
@@ -1846,7 +1717,6 @@ namespace Telegram.Common
                 (PageBlockPhoto a, PageBlockPhoto b) => string.Equals(a.Url, b.Url) && a.HasSpoiler == b.HasSpoiler && SamePhoto(a.Photo, b.Photo) && Compare(a.Caption, b.Caption),
                 (PageBlockVideo a, PageBlockVideo b) => a.NeedAutoplay == b.NeedAutoplay && a.IsLooped == b.IsLooped && a.HasSpoiler == b.HasSpoiler && SameFile(a.Video?.VideoValue, b.Video?.VideoValue) && Compare(a.Caption, b.Caption),
                 (PageBlockVoiceNote a, PageBlockVoiceNote b) => SameFile(a.VoiceNote?.Voice, b.VoiceNote?.Voice) && Compare(a.Caption, b.Caption),
-                (PageBlockDocument a, PageBlockDocument b) => string.Equals(a.Document?.FileName, b.Document?.FileName) && SameFile(a.Document?.DocumentValue, b.Document?.DocumentValue) && Compare(a.Caption, b.Caption),
                 (PageBlockMap a, PageBlockMap b) => a.Zoom == b.Zoom && a.Width == b.Width && a.Height == b.Height && SameLocation(a.Location, b.Location) && Compare(a.Caption, b.Caption),
                 (PageBlockEmbedded a, PageBlockEmbedded b) => string.Equals(a.Url, b.Url) && string.Equals(a.Html, b.Html) && a.Width == b.Width && a.Height == b.Height && a.IsFullWidth == b.IsFullWidth && a.AllowScrolling == b.AllowScrolling && Compare(a.Caption, b.Caption),
 
@@ -1858,7 +1728,6 @@ namespace Telegram.Common
                 (PageBlockSlideshow a, PageBlockSlideshow b) => Compare(a.Blocks, b.Blocks) && Compare(a.Caption, b.Caption),
                 (PageBlockEmbeddedPost a, PageBlockEmbeddedPost b) => string.Equals(a.Url, b.Url) && string.Equals(a.Author, b.Author) && a.Date == b.Date && Compare(a.Blocks, b.Blocks) && Compare(a.Caption, b.Caption),
                 (PageBlockDetails a, PageBlockDetails b) => a.IsOpen == b.IsOpen && Compare(a.Header, b.Header) && Compare(a.Blocks, b.Blocks),
-                (PageBlockButtonRow a, PageBlockButtonRow b) => SameType(a.Align, b.Align) && Compare(a.Buttons, b.Buttons),
                 (PageBlockTable a, PageBlockTable b) => a.IsBordered == b.IsBordered && a.IsStriped == b.IsStriped && Compare(a.Caption, b.Caption) && Compare(a.Cells, b.Cells),
 
                 // PageBlockRelatedArticles is intentionally not diffed (always re-rendered).
@@ -1891,7 +1760,6 @@ namespace Telegram.Common
                 case (RichTextAnchor a, RichTextAnchor b): return a.Name == b.Name;
                 case (RichTextIcon a, RichTextIcon b): return a.Document.DocumentValue.Id == b.Document.DocumentValue.Id && a.Width == b.Width && a.Height == b.Height;
                 case (RichTextCustomEmoji a, RichTextCustomEmoji b): return a.CustomEmojiId == b.CustomEmojiId && string.Equals(a.AlternativeText, b.AlternativeText);
-                case (RichTextButton a, RichTextButton b): return Compare(a.Button, b.Button);
                 case (RichTextMathematicalExpression a, RichTextMathematicalExpression b): return string.Equals(a.Expression, b.Expression);
 
                 // Plain style wrappers (no payload beyond the inner text)
@@ -1922,36 +1790,6 @@ namespace Telegram.Common
 
                 default: return false;
             }
-        }
-
-        private static bool Compare(InlineButton a, InlineButton b)
-        {
-            if (a == null || b == null)
-            {
-                return a == b;
-            }
-
-            return SameType(a.Style, b.Style) && SameButtonType(a.Type, b.Type) && Compare(a.Text, b.Text);
-        }
-
-        private static bool Compare(IList<InlineButton> a, IList<InlineButton> b)
-        {
-            if (a == null || b == null)
-            {
-                return a == b;
-            }
-            if (a.Count != b.Count)
-            {
-                return false;
-            }
-            for (int i = 0; i < a.Count; i++)
-            {
-                if (!Compare(a[i], b[i]))
-                {
-                    return false;
-                }
-            }
-            return true;
         }
 
         // Two buttons that look identical but act differently must still compare unequal,
@@ -2200,14 +2038,6 @@ namespace Telegram.Common
                     return new InputPageBlockBlockQuote(ToInputBlocks(x.Blocks), x.Credit);
                 case PageBlockPullQuote x:
                     return new InputPageBlockPullQuote(x.Text, x.Credit);
-                case PageBlockExpandableBlockQuote x:
-                    return new InputPageBlockExpandableBlockQuote(x.Text, x.Credit);
-                case PageBlockDocument x:
-                    return new InputPageBlockDocument(ToInputDocument(x.Document), x.Caption);
-                case PageBlockButtonRow x:
-                    // inputPageBlockButtonRow takes inlineButton, not an input twin — the
-                    // buttons carry across unchanged.
-                    return new InputPageBlockButtonRow(x.Buttons, x.Align);
                 case PageBlockAnimation x:
                     return new InputPageBlockAnimation(ToInputAnimation(x.Animation), x.Caption, x.HasSpoiler);
                 case PageBlockAudio x:

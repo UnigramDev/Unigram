@@ -5,10 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System.Collections.Generic;
 using System.Linq;
 using Telegram.Controls;
-using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
@@ -49,7 +47,6 @@ namespace Telegram.Views.Supergroups
         {
             //UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
-            UpdateChatWelcomeMessages(chat, ViewModel.ClientService.GetWelcomeMessages(chat.Id));
 
             if (chat.AvailableReactions is ChatAvailableReactionsAll)
             {
@@ -89,19 +86,6 @@ namespace Telegram.Views.Supergroups
             else
             {
                 Photo.Source = ProfilePictureSource.Chat(ViewModel.ClientService, chat);
-            }
-        }
-
-        public void UpdateChatWelcomeMessages(Chat chat, IList<WelcomeMessage> messages)
-        {
-            if (messages.Count > 0)
-            {
-                var badge = ChatCell.UpdateBriefLabel(messages[0].Content, false, null, false, out _);
-                WelcomeMessages.Badge = badge.Text;
-            }
-            else
-            {
-                WelcomeMessages.Badge = Strings.WelcomeMessageOff;
             }
         }
 
@@ -259,8 +243,6 @@ namespace Telegram.Views.Supergroups
             ChatLinked.Content = group.IsChannel ? Strings.Discussion : Strings.LinkedChannel;
             ChatLinked.Glyph = group.IsChannel ? Icons.ChatEmpty : Icons.Megaphone;
 
-            WelcomeMessages.Visibility = group.IsChannel || !canChangeInfo ? Visibility.Collapsed : Visibility.Visible;
-
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
             Permissions.Visibility = group.IsChannel || !canRestrictMembers ? Visibility.Collapsed : Visibility.Visible;
 
@@ -326,8 +308,6 @@ namespace Telegram.Views.Supergroups
             ChannelColor.Visibility = Visibility.Collapsed;
 
             GroupTopics.Badge = Strings.TopicsDisabled;
-
-            WelcomeMessages.Visibility = !canChangeInfo ? Visibility.Collapsed : Visibility.Visible;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
             Permissions.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;

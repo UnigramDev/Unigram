@@ -166,7 +166,6 @@ namespace Telegram.Common
                     TextEntityTypeMarked => (TextStyle.Marked, null),
                     TextEntityTypeIcon => (TextStyle.Icon, entity.Type),
                     TextEntityTypeMathematicalExpression => (TextStyle.Math, entity.Type),
-                    TextEntityTypeButton => (TextStyle.Button, entity.Type),
                     // A marker laid over a link, never standing alone. Type stays null so
                     // the link's own entity survives the merge below — Merge keeps the
                     // first non-null Type and ORs the flags together.
@@ -870,18 +869,6 @@ namespace Telegram.Td.Api
         public TextEntityTypeMathematicalExpression(string expression)
         {
             Expression = expression;
-        }
-    }
-
-    public partial class TextEntityTypeButton : TextEntityType
-    {
-        public InlineButton Button { get; set; }
-
-        public TextEntityTypeButton() { }
-
-        public TextEntityTypeButton(InlineButton button)
-        {
-            Button = button;
         }
     }
 

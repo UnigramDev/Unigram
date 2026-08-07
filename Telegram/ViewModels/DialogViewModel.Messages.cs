@@ -446,7 +446,7 @@ namespace Telegram.ViewModels
                 .ToList<MessageWithOwner>();
 
             IDictionary<MessageId, MessageProperties> properties;
-            if (Type is DialogType.BusinessReplies or DialogType.WelcomeMessages)
+            if (Type is DialogType.BusinessReplies)
             {
                 properties = items.ToDictionary(x => new MessageId(x), y => new MessageProperties
                 {
@@ -481,15 +481,6 @@ namespace Telegram.ViewModels
             if (Type == DialogType.BusinessReplies)
             {
                 ClientService.Send(new DeleteQuickReplyShortcutMessages(QuickReplyShortcut.Id, messages.Select(x => x.Id).ToList()));
-                return;
-            }
-            else if (Type == DialogType.WelcomeMessages)
-            {
-                foreach (var message in messages)
-                {
-                    ClientService.Send(new DeleteChatWelcomeMessage(ChatId, (int)message.Id));
-                }
-
                 return;
             }
 

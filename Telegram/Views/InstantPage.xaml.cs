@@ -245,31 +245,6 @@ namespace Telegram.Views
             Hyperlink_Click(new RichTextUrl(null, url, true));
         }
 
-        void IPageBlockContext.OpenInlineButton(InlineButton button)
-        {
-            // A page has no message behind it, so the types that answer *to a message*
-            // (callback, login-url, switch-inline, buy, user) have nothing to answer
-            // against. Better inert than firing a query that can't be attributed.
-            switch (button.Type)
-            {
-                case InlineKeyboardButtonTypeUrl url:
-                    if (MessageHelper.TryCreateUri(url.Url, out Uri uri))
-                    {
-                        OpenUrl(uri);
-                    }
-                    break;
-                case InlineKeyboardButtonTypeWebApp webApp:
-                    if (MessageHelper.TryCreateUri(webApp.Url, out Uri webAppUri))
-                    {
-                        OpenUrl(webAppUri);
-                    }
-                    break;
-                case InlineKeyboardButtonTypeCopyText copyText:
-                    MessageHelper.CopyText(XamlRoot, copyText.Text);
-                    break;
-            }
-        }
-
         void IPageBlockContext.RegisterDebug(object element)
         {
         }

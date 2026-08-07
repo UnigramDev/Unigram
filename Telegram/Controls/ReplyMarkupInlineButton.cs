@@ -107,10 +107,6 @@ namespace Telegram.Controls
                 case InlineKeyboardButtonTypeSuggestionEdit:
                     Icon = Icons.EditFilled;
                     break;
-                case InlineKeyboardButtonTypeDisabled:
-                    IsEnabled = false;
-                    disabled = true;
-                    break;
             }
 
             if (text != null)
@@ -143,10 +139,6 @@ namespace Telegram.Controls
                     case ButtonStyleSuccess:
                         Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xe8, 0xf6, 0xec));
                         Foreground = new SolidColorBrush(disabled ? Color.FromArgb(0xFF, 0x83, 0xce, 0x96) : Color.FromArgb(0xFF, 0x1e, 0xa6, 0x41));
-                        break;
-                    case ButtonStyleLink:
-                        Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xe5, 0xf2, 0xff));
-                        Foreground = new SolidColorBrush(disabled ? Color.FromArgb(0xFF, 0xa0, 0xce, 0xff) : Color.FromArgb(0xFF, 0x00, 0x7a, 0xff));
                         break;
                     default:
                         Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xe4, 0xe4, 0xe6));

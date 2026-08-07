@@ -58,12 +58,6 @@ namespace Telegram.Common
         /// </summary>
         void OpenUrl(string url);
 
-        /// <summary>
-        /// A pageBlockButtonRow / richTextButton was tapped. A rich message can answer
-        /// every button type (it has a chat and a message id); an instant view can't.
-        /// </summary>
-        void OpenInlineButton(InlineButton button);
-
         /// <summary>Records a created control for orphan analysis. No-op unless instrumented.</summary>
         void RegisterDebug(object element);
     }
@@ -136,9 +130,6 @@ namespace Telegram.Common
                 PageBlockSlideshow slideshow => ProcessSlideshow(clientService, slideshow),
                 PageBlockCollage collage => ProcessCollage(clientService, collage),
                 PageBlockPullQuote pullquote => ProcessPullquote(clientService, pullquote),
-                PageBlockExpandableBlockQuote expandable => ProcessExpandableBlockquote(clientService, expandable),
-                PageBlockDocument document => ProcessDocument(clientService, document),
-                PageBlockButtonRow buttonRow => ProcessButtonRow(clientService, buttonRow),
                 PageBlockAnchor anchor => ProcessAnchor(clientService, anchor),
                 PageBlockPreformatted preformatted => ProcessPreformatted(clientService, preformatted),
                 PageBlockChatLink channel => ProcessChannel(clientService, channel),
@@ -641,8 +632,6 @@ namespace Telegram.Common
                 PageBlockPreformatted preformatted => preformatted.Text,
                 PageBlockBlockQuote blockquote => blockquote.Credit,
                 PageBlockPullQuote pullquote => caption ? pullquote.Credit : pullquote.Text,
-                // Holds rich text directly, like the pull quote — not blocks like PageBlockBlockQuote.
-                PageBlockExpandableBlockQuote expandable => caption ? expandable.Credit : expandable.Text,
                 PageBlockDetails details => details.Header,
                 PageBlockTable table => table.Caption,
                 PageBlockRelatedArticles relatedArticles => relatedArticles.Header,
@@ -690,16 +679,6 @@ namespace Telegram.Common
                     textBlock.Style = _context.Resources["PullquoteCreditStyle"] as Style;
                     textBlock.FontWeight = FontWeights.SemiBold;
                     textBlock.Margin = new Thickness(0, 0, 0, 0);
-                    break;
-                case PageBlockExpandableBlockQuote:
-                    // Only the credit is styled: the body is the quote's own text and
-                    // reads like body copy, exactly as in a plain block quote.
-                    if (caption)
-                    {
-                        textBlock.Style = _context.Resources["PullquoteCreditStyle"] as Style;
-                        textBlock.FontWeight = FontWeights.SemiBold;
-                        textBlock.Margin = new Thickness(0, 0, 0, 0);
-                    }
                     break;
                 case PageBlockPullQuote:
                     textBlock.TextAlignment = TextAlignment.Center;
@@ -954,170 +933,6 @@ namespace Telegram.Common
                 Content = content,
                 Padding = new Thickness(8, 4, 24, 6)
             };
-        }
-
-        // Unlike PageBlockBlockQuote this holds rich text directly, so the body comes
-        // from ProcessText rather than from nested blocks. That's also what makes the
-        // collapse affordance possible here: BlockQuote.IsExpandable only drives a
-        // FormattedTextBlock, which is exactly what ProcessText returns — so the quote
-        // starts clamped and the chevron expands it. With a credit the content becomes
-        // a panel instead, and the control (correctly) reports itself non-expandable.
-        // TODO: support expandable + caption?
-        private FrameworkElement ProcessExpandableBlockquote(IClientService clientService, PageBlockExpandableBlockQuote block)
-        {
-            var text = ProcessText(clientService, block, false);
-            var caption = ProcessText(clientService, block, true);
-
-            if (text == null && caption == null)
-            {
-                return null;
-            }
-
-            FrameworkElement content;
-            var expandable = false;
-
-            if (caption == null && text is FormattedTextBlock formatted)
-            {
-                formatted.MaxLines = 3;
-                content = formatted;
-                expandable = true;
-            }
-            else
-            {
-                var panel = new StackPanel();
-
-                if (text != null)
-                {
-                    panel.Children.Add(text);
-                }
-
-                if (caption != null)
-                {
-                    caption.Style = _context.Resources["PullquoteCreditStyle"] as Style;
-                    panel.Children.Add(caption);
-                }
-
-                content = panel;
-            }
-
-            return new BlockQuote
-            {
-                Glyph = Icons.QuoteBlockFilled16,
-                IsExpandable = expandable,
-                Content = content,
-                Padding = new Thickness(8, 4, 24, 6)
-            };
-        }
-
-        private FrameworkElement ProcessDocument(IClientService clientService, PageBlockDocument block)
-        {
-            if (block.Document == null)
-            {
-                return null;
-            }
-
-            var message = CreateMessage(clientService, block.Document.DocumentValue.Id, new MessageDocument(block.Document, string.Empty.AsFormattedText()));
-            var content = new DocumentContent(message);
-#if INSTRUMENTATION
-            _context.RegisterDebug(content);
-#endif
-            content.HorizontalAlignment = HorizontalAlignment.Left;
-            content.ClearValue(FrameworkElement.MaxWidthProperty);
-            content.ClearValue(FrameworkElement.MaxHeightProperty);
-
-            var caption = ProcessCaption(clientService, block.Caption);
-            if (caption != null)
-            {
-                caption.Margin = new Thickness(0, 8, 0, 0);
-
-                var element = new StackPanel();
-
-                element.Children.Add(content);
-                element.Children.Add(caption);
-
-                return element;
-            }
-
-            return content;
-        }
-
-        private FrameworkElement ProcessButtonRow(IClientService clientService, PageBlockButtonRow block)
-        {
-            var element = new Grid
-            {
-                ColumnSpacing = 4,
-                HorizontalAlignment = block.Align switch
-                {
-                    PageBlockHorizontalAlignmentLeft => HorizontalAlignment.Left,
-                    PageBlockHorizontalAlignmentCenter => HorizontalAlignment.Center,
-                    PageBlockHorizontalAlignmentRight => HorizontalAlignment.Right,
-                    _ => HorizontalAlignment.Stretch
-                }
-            };
-
-            var column = 0;
-
-            foreach (var button in block.Buttons)
-            {
-                var content = CreateInlineButton(clientService, button);
-                element.Children.Add(content);
-                element.ColumnDefinitions.Add(new ColumnDefinition());
-
-                Grid.SetColumn(content, column++);
-            }
-
-            return element;
-        }
-
-        private ReplyMarkupInlineButton CreateInlineButton(IClientService clientService, InlineButton button)
-        {
-            var block = new FormattedTextBlock
-            {
-                AutoFontSize = true,
-                IgnoreSpoilers = false,
-                HorizontalTextAlignment = TextAlignment.DetectFromContent,
-                TextReadingOrder = TextReadingOrder.UseFlowDirection,
-                TextSelection = TextSelectionMode.Disabled,
-                AdjustLineEnding = false,
-            };
-
-            Instrumentation.Register(block);
-
-#if INSTRUMENTATION
-            _context.RegisterDebug(block);
-#endif
-
-            block.SetText(clientService, button.Text);
-
-            var element = new ReplyMarkupInlineButton
-            {
-                // The label is the button's own content, so unlike the page text around
-                // it, it *is* rendered here — it's just never harvested as page text.
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
-                CornerRadius = new CornerRadius(16),
-                Content = block,
-                Tag = button
-            };
-
-            // Null label: the content is the FormattedTextBlock above, so the button keeps
-            // its RichText formatting. Everything else — the type glyph, the emoji icon,
-            // the ButtonStyle colour — comes from the same place an inline keyboard gets
-            // it, so the two can't drift apart.
-            element.SetButton(clientService, null, 0, button.Style, button.Type);
-
-            element.Click += InlineButton_Click;
-            return element;
-        }
-
-        private void InlineButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is not FrameworkElement { Tag: InlineButton button })
-            {
-                return;
-            }
-
-            _context.OpenInlineButton(button);
         }
 
         private FrameworkElement ProcessPullquote(IClientService clientService, PageBlockPullQuote block)
@@ -1753,10 +1568,6 @@ namespace Telegram.Common
                 else if (block is PageBlockAnchor || (block is PageBlockParagraph && previousBlock is PageBlockParagraph))
                 {
                     top = 0;
-                }
-                else if (block is PageBlockButtonRow && previousBlock is PageBlockButtonRow)
-                {
-                    top = 4;
                 }
                 else if (block is PageBlockDivider)
                 {

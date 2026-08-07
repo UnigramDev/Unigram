@@ -283,21 +283,6 @@ namespace Telegram.Controls.Messages.Content
             MessageHelper.OpenUrl(_clientService ?? _message?.ClientService, _message?.Delegate?.NavigationService, url);
         }
 
-        void IPageBlockContext.OpenInlineButton(InlineButton button)
-        {
-            if (_message == null)
-            {
-                return;
-            }
-
-            // Re-shape the IV button into the keyboard button the existing handler
-            // expects — same style and type, only the label's RichText flattens to a
-            // string. Unlike an instant view, a message can answer every type: it has
-            // the chat and message id a callback query needs.
-            var inline = new InlineKeyboardButton(button.Text.ToPlainText() ?? string.Empty, 0, button.Style, button.Type);
-            _message.Delegate?.OpenInlineButton(_message, inline);
-        }
-
         void IPageBlockContext.RegisterDebug(object element)
         {
 #if INSTRUMENTATION

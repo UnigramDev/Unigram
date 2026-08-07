@@ -148,8 +148,6 @@ namespace Telegram.ViewModels.Supergroups
 
             Delegate?.UpdateChat(chat);
 
-            ClientService.Send(new LoadChatWelcomeMessages(chat.Id));
-
             if (chat.Type is ChatTypeSupergroup super)
             {
                 var item = ClientService.GetSupergroup(super.SupergroupId);
@@ -213,7 +211,6 @@ namespace Telegram.ViewModels.Supergroups
         public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateChatPhoto>(this, Handle)
-                .Subscribe<UpdateChatWelcomeMessages>(Handle)
                 .Subscribe<UpdateSupergroup>(Handle)
                 .Subscribe<UpdateSupergroupFullInfo>(Handle)
                 .Subscribe<UpdateBasicGroup>(Handle)
@@ -231,20 +228,6 @@ namespace Telegram.ViewModels.Supergroups
             if (chat.Id == update.ChatId)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatPhoto(chat));
-            }
-        }
-
-        public void Handle(UpdateChatWelcomeMessages update)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            if (chat.Id == update.ChatId)
-            {
-                BeginOnUIThread(() => Delegate?.UpdateChatWelcomeMessages(chat, update.Messages));
             }
         }
 
@@ -536,14 +519,6 @@ namespace Telegram.ViewModels.Supergroups
             if (_chat is Chat chat)
             {
                 NavigationService.ShowPopupAsync(new SupergroupReactionsPopup(), chat.Id);
-            }
-        }
-
-        public void WelcomeMessages()
-        {
-            if (_chat is Chat chat)
-            {
-                NavigationService.Navigate(typeof(ChatWelcomeMessagesPage), chat.Id);
             }
         }
 

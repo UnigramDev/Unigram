@@ -76,7 +76,6 @@ namespace Telegram.Views.Host
                 e.SourcePageType == typeof(ChatScheduledPage) ||
                 e.SourcePageType == typeof(ChatEventLogPage) ||
                 e.SourcePageType == typeof(ChatBusinessRepliesPage) ||
-                e.SourcePageType == typeof(ChatWelcomeMessagesPage) ||
                 e.SourcePageType == typeof(BlankPage);
 
             var type = allowed ? BackgroundKind.Background : BackgroundKind.Material;

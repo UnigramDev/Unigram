@@ -2424,10 +2424,6 @@ namespace Telegram.Controls.Messages
             {
                 message.Delegate.OpenBankCardNumber(cardNumber);
             }
-            else if (e.Type is TextEntityTypeButton button)
-            {
-                message.Delegate.OpenInlineButton(message, new InlineKeyboardButton(string.Empty, 0, button.Button.Style, button.Button.Type));
-            }
             else if (e.Type is TextEntityTypeMediaTimestamp mediaTimestamp)
             {
                 var target = message.HasTimestampedMedia ? message : message.ReplyToItem;
