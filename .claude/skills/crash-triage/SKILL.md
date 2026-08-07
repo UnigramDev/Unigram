@@ -144,6 +144,23 @@ tail's final entries (what led there), and the code at the reference commit (how
 reachable). A diagnosis that explains all three is worth acting on; one that explains only the
 stack usually is not.
 
+**Read the mechanism, don't infer it.** A hypothesis that explains the stack is not the same as
+the cause, and it is easy to build a confident fix on one that was never checked. Before
+writing code, name the specific file that would confirm it and open that file.
+
+Two checks that catch most of it:
+
+- **Does the frequency match the story?** A race should crash intermittently; a wrong constant
+  or a mismatched template crashes every single time that path runs. If the theory is a race
+  but the failing path is rare-but-deterministic, the theory is wrong.
+- **For a visual-tree mismatch, read the `DataTemplateSelector` before blaming recycling.**
+  Two item types mapped to one `DataTemplate` while the code-behind expects different trees is
+  a permanent mismatch, and the fix belongs in the template or the selector, not in a guard
+  around the symptom. Guarding it there converts a crash into a silently blank row and hides
+  the real bug. This exact mistake sank a PR: `AutocompleteTemplateSelector` returned
+  `CommandTemplate` for both `UserCommand` and `QuickReplyShortcut`, which one file would have
+  shown.
+
 If you cannot explain the crash, say so and stop. A plausible-looking guess wastes more time
 than an honest "not diagnosed".
 
