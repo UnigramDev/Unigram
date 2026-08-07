@@ -1265,6 +1265,18 @@ namespace Telegram.Common
             access.Buffer(out imageBytes);
         }
 
+        public static unsafe Span<byte> Buffer(this WriteableBitmap bitmap)
+        {
+#if NET9_0_OR_GREATER
+            var access = bitmap.PixelBuffer.As<IBufferByteAccess>();
+#else
+            var access = (IBufferByteAccess)bitmap.PixelBuffer;
+#endif
+            access.Buffer(out byte* imageBytes);
+
+            return new Span<byte>(imageBytes, bitmap.PixelWidth * bitmap.PixelHeight * 4);
+        }
+
         public static unsafe void Buffer(this IMemoryBufferReference reference, out byte* buffer, out uint capacity)
         {
 #if NET9_0_OR_GREATER
