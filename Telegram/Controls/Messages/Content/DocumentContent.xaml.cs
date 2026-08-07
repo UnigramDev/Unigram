@@ -250,7 +250,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 MessageDocument => true,
                 MessageText text when text.LinkPreview != null && !primary => text.LinkPreview.Type is LinkPreviewTypeDocument,
-                MessagePoll poll when poll.Media is MessageDocument && !primary => true,
+                MessagePoll poll when poll.Media is PollMediaDocument && !primary => true,
                 _ => false,
             };
         }
