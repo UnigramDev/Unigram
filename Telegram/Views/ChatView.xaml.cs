@@ -3223,17 +3223,17 @@ namespace Telegram.Views
                     // it can still be unavailable, in which case GetSelectedSourceText returns
                     // null. Everything below already treats a null quote as "no quote", so leave
                     // it unset instead of dereferencing it.
-                    var selected = parent.GetSelectedSourceText(out selectionStart);
-                    if (selected != null)
+                    var selection = parent.GetSelectedSourceText(out selectionStart);
+                    if (selection != null)
                     {
                         quote = new MessageQuote
                         {
                             Message = message,
-                            Quote = selected,
+                            Quote = selection,
                             Position = selectionStart
                         };
 
-                        selectionEnd = selectionStart + selected.Text.Length;
+                        selectionEnd = selectionStart + selection.Text.Length;
                     }
                 }
 
