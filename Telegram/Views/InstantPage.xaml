@@ -109,26 +109,6 @@
                     Value="Wrap" />
         </Style>
 
-        <Style x:Key="BlockHeaderTextBlockStyle"
-               TargetType="RichTextBlock"
-               BasedOn="{StaticResource BodyRichTextBlockStyle}">
-            <Setter Property="FontSize"
-                    Value="24" />
-            <Setter Property="FontFamily"
-                    Value="Times New Roman" />
-        </Style>
-
-        <Style x:Key="BlockSubheaderTextBlockStyle"
-               TargetType="RichTextBlock"
-               BasedOn="{StaticResource BodyRichTextBlockStyle}">
-            <Setter Property="FontFamily"
-                    Value="{ThemeResource EmojiThemeFontFamily}" />
-            <Setter Property="FontSize"
-                    Value="20" />
-            <Setter Property="FontFamily"
-                    Value="Times New Roman" />
-        </Style>
-
         <Style x:Key="BlockBodyTextBlockStyle"
                TargetType="RichTextBlock"
                BasedOn="{StaticResource BodyRichTextBlockStyle}">
@@ -157,7 +137,7 @@
         <Style x:Key="BlockDividerStyle"
                TargetType="Rectangle">
             <Setter Property="Fill"
-                    Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                    Value="{ThemeResource SettingsItemBorderBrush}" />
             <Setter Property="Height"
                     Value="1" />
         </Style>
@@ -173,16 +153,9 @@
         </Style>
 
         <Style x:Key="BlockPullquoteStyle"
-               TargetType="StackPanel" />
-        <Style x:Key="BlockPhotoStyle"
-               TargetType="StackPanel">
-            <Setter Property="HorizontalAlignment"
-                    Value="Center" />
-        </Style>
-        <Style x:Key="BlockVideoStyle"
-               TargetType="StackPanel">
-            <Setter Property="HorizontalAlignment"
-                    Value="Center" />
+               TargetType="Grid">
+            <Setter Property="Background"
+                    Value="{ThemeResource MessageHeaderBorderBrush}" />
         </Style>
         <Style x:Key="BlockEmbedStyle"
                TargetType="StackPanel" />
@@ -191,8 +164,6 @@
             <Setter Property="HorizontalAlignment"
                     Value="Center" />
         </Style>
-        <Style x:Key="BlockCollageStyle"
-               TargetType="StackPanel" />
 
         <Style x:Key="BlockEmbedPostStyle"
                TargetType="StackPanel">
@@ -227,6 +198,22 @@
                     Value="{ThemeResource ControlAltFillColorSecondaryBrush}" />
             <Setter Property="BorderBrush"
                     Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        </Style>
+
+        <Style x:Key="AccentTextBlockStyle"
+               TargetType="TextBlock">
+            <Setter Property="Foreground"
+                    Value="{ThemeResource MessageHeaderForegroundBrush}" />
+        </Style>
+
+        <Style x:Key="PullquoteCreditStyle"
+               TargetType="controls:FormattedTextBlock">
+            <Setter Property="Foreground"
+                    Value="{ThemeResource MessageHeaderForegroundBrush}" />
+            <Setter Property="CodeForeground"
+                    Value="{ThemeResource MessageHeaderForegroundBrush}" />
+            <Setter Property="IconForeground"
+                    Value="{ThemeResource MessageHeaderForegroundBrush}" />
         </Style>
 
         <!--<DataTemplate x:Key="ChannelItemTemplate" x:DataType="tl:TLChannel">
