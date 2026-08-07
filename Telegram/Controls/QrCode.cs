@@ -113,13 +113,13 @@ namespace Telegram.Controls
             }
         }
 
-        public static QrCodeGeometry CreateGeometry(string text, int minVersion = 1, int maxVersion = 40, bool combine = false)
+        public static QrCodeGeometry CreateGeometry(string text, int minVersion = 1, int maxVersion = 40, bool combine = false, float size = 222)
         {
             var data = QrBuffer.FromString(text);
             var replaceFrom = data.ReplaceFrom;
             var replaceTill = data.ReplaceTill;
 
-            var size = 222f;
+            //var size = 185f; //222f;
             var pixel = size / data.Size;
 
             bool value(int row, int column)
@@ -162,8 +162,8 @@ namespace Telegram.Controls
 
             void large(float x, float y)
             {
-                var rect1 = CanvasGeometry.CreateRoundedRectangle(null, x, y, pixel * 7 + 2, pixel * 7 + 2, 15, 15);
-                var rect2 = CanvasGeometry.CreateRoundedRectangle(null, x + pixel, y + pixel, pixel * 5 + 2, pixel * 5 + 2, 9, 9);
+                var rect1 = CanvasGeometry.CreateRoundedRectangle(null, x, y, pixel * 7 + 2, pixel * 7 + 2, 15 / 222f * size, 15 / 222f * size);
+                var rect2 = CanvasGeometry.CreateRoundedRectangle(null, x + pixel, y + pixel, pixel * 5 + 2, pixel * 5 + 2, 9 / 222f * size, 9 / 222f * size);
                 var rect3 = CanvasGeometry.CreateRoundedRectangle(null, x + pixel * 2, y + pixel * 2, pixel * 3 + 2, pixel * 3 + 2, pixel, pixel);
 
                 if (combine)
@@ -316,8 +316,12 @@ namespace Telegram.Controls
 
             if (combine)
             {
-                // If combined we add the inner circle
-                builder.AddGeometry(CanvasGeometry.CreateCircle(null, 111, 111, 16));
+                // TODO: do this in a more predictable way
+                if (size == 222)
+                {
+                    // If combined we add the inner circle
+                    builder.AddGeometry(CanvasGeometry.CreateCircle(null, 111, 111, 16));
+                }
 
                 return new QrCodeGeometry(new CompositionPath(CanvasGeometry.CreatePath(builder)));
             }
