@@ -1113,7 +1113,7 @@ namespace Telegram.Services
                 MessageChecklistTasksDone or
                 MessagePollOptionAdded or
                 MessagePollOptionDeleted or
-                MessageSuggestedPostPaid or 
+                MessageSuggestedPostPaid or
                 MessageSuggestedPostRefunded)
             {
                 Send(new GetRepliedMessage(message.ChatId, message.Id), handler);
@@ -3656,6 +3656,16 @@ namespace Telegram.Services
                         if (_chats.TryGetValue(updateChatBusinessBotManageBar.ChatId, out Chat value))
                         {
                             value.BusinessBotManageBar = updateChatBusinessBotManageBar.BusinessBotManageBar;
+                        }
+
+                        break;
+                    }
+
+                case UpdateChatHasWelcomeMessages updateChatHasWelcomeMessages:
+                    {
+                        if (_chats.TryGetValue(updateChatHasWelcomeMessages.ChatId, out Chat value))
+                        {
+                            value.HasWelcomeMessages = updateChatHasWelcomeMessages.HasWelcomeMessages;
                         }
 
                         break;
