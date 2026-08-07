@@ -28,14 +28,25 @@ namespace Telegram.Common
             return null != element.GetParent<ContentDialog>();
         }
 
-        public static SpriteVisual DropShadow(UIElement element, float radius = 20, float opacity = 0.25f, UIElement target = null)
+        /// <param name="color">
+        /// Black unless given. A light shadow is not a contradiction: offset by a
+        /// pixel with no blur it is how an engraved or embossed edge is drawn.
+        /// </param>
+        /// <param name="offset">
+        /// Where the shadow falls, matching box-shadow's offset-x/offset-y. In the
+        /// element's own space, so it turns with any render transform the element
+        /// carries.
+        /// </param>
+        public static SpriteVisual DropShadow(UIElement element, float radius = 20, float opacity = 0.25f,
+            UIElement target = null, Color? color = null, Vector3 offset = default)
         {
             var compositor = BootStrapper.Current.Compositor;
 
             var shadow = compositor.CreateDropShadow();
             shadow.BlurRadius = radius;
             shadow.Opacity = opacity;
-            shadow.Color = Colors.Black;
+            shadow.Color = color ?? Colors.Black;
+            shadow.Offset = offset;
 
             var visual = compositor.CreateSpriteVisual();
             visual.Shadow = shadow;
