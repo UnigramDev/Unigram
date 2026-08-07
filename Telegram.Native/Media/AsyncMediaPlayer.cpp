@@ -11,6 +11,11 @@
 
 namespace winrt::Telegram::Native::Media::implementation
 {
+    // Each player owns a whole libvlc instance, so this is also the number of live instances
+    // competing for the same audio endpoint. Worth having in a crash log tail: the audio faults
+    // are suspected to involve one instance being torn down while others are still playing.
+    static std::atomic<int> s_instances{ 0 };
+
     AsyncMediaPlayer::AsyncMediaPlayer(AsyncMediaPlayerOptions  const& options, AsyncMediaPlayerSwapChain const& context)
         : m_options(options)
         , m_context(context)
@@ -77,10 +82,15 @@ namespace winrt::Telegram::Native::Media::implementation
 
         m_instance = libvlc_new(argv.size(), argv.data());
 
-        if (options.Debug())
-        {
-            libvlc_log_set(m_instance, &LogCallback, this);
-        }
+        // Always attach the log callback, not just in debug. libvlc reports the reason an audio
+        // or demux failure happened -- "cannot get render client (error 0x...)" and similar --
+        // and without this none of it reaches the crash log tail, which is all we get back from
+        // the field. HandleLog drops anything below warning before formatting it, so the cost
+        // outside debug is a comparison per message.
+        libvlc_log_set(m_instance, &LogCallback, this);
+
+        s_instances += 1;
+        LOGGER_INFO(L"libvlc instance created ({} alive)", s_instances.load());
 
         m_player = libvlc_media_player_new(m_instance);
 
@@ -104,6 +114,12 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         if (AudioDeviceRole::Default == args.Role())
         {
+            // Logged on both sides on purpose. The system event arrives on an arbitrary thread
+            // and the switch is applied later on the worker, and in between the old device is
+            // still being played to -- which is the window the audio crashes cluster in. Seeing
+            // both timestamps in a crash log tail tells us whether the fault landed inside it.
+            LOGGER_INFO(L"default audio render device changed, queueing switch");
+
             // Set() captures its arguments by value and runs them later on the worker thread,
             // so a const char* is copied as a pointer and not as characters. The temporary
             // string from to_string dies at the end of this statement, leaving libvlc to read
@@ -111,7 +127,7 @@ namespace winrt::Telegram::Native::Media::implementation
             // capture so it outlives the queue.
             Write([this, id = winrt::to_string(args.Id())]
                 {
-                    libvlc_audio_output_set(m_player, id.c_str());
+                    LOGGER_INFO(L"applying audio device switch");
                     libvlc_audio_output_device_set(m_player, NULL, id.c_str());
                 });
         }
@@ -351,16 +367,19 @@ namespace winrt::Telegram::Native::Media::implementation
         if (closed_) return;
 
         closed_ = true;
-        work_queue_.clear();
+        const auto queued = work_queue_.clear();
+
+        // Teardown is the prime suspect for the audio crashes: this runs on whichever thread
+        // called Close, while the worker may still be inside a queued libvlc call and the audio
+        // output is being stopped underneath it. Record what was in flight.
+        const int alive = s_instances.fetch_sub(1) - 1;
+        LOGGER_INFO(L"closing, {} queued action(s) dropped, {} instance(s) still alive", queued, alive);
 
         MediaDevice::DefaultAudioRenderDeviceChanged(m_defaultAudioRenderDeviceChanged);
 
         libvlc_media_player_set_pause(m_player, true);
 
-        if (m_options.Debug())
-        {
-            libvlc_log_unset(m_instance);
-        }
+        libvlc_log_unset(m_instance);
 
         if (m_context)
         {
@@ -491,6 +510,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
     void AsyncMediaPlayer::HandleLog(int level, const libvlc_log_t* ctx, const char* fmt, va_list args)
     {
+        // Formatting costs two vsnprintf passes and an allocation, and libvlc is talkative at
+        // notice level and below, so decide whether the message is wanted before paying for it.
+        const bool debug = m_options.Debug();
+        if (level < LIBVLC_WARNING && !debug)
+            return;
+
         int byteLength = vsnprintf(nullptr, 0, fmt, args) + 1;
         if (byteLength <= 1)
             return;
@@ -510,7 +535,29 @@ namespace winrt::Telegram::Native::Media::implementation
         //ss << "[AsyncMediaPlayer.cpp][" << file << ":" << line << "][" << message;
         //winrt::Telegram::Td::Client::Execute(winrt::Telegram::Td::Api::AddLogMessage(2, winrt::to_hstring(ss.str())));
 
-        m_log(*this, AsyncMediaPlayerLogEventArgs((AsyncMediaPlayerLogLevel)level, winrt::to_hstring(message), winrt::to_hstring(module), winrt::to_hstring(file), line));
+        // Warnings and errors go to the app log so they survive into a crash report; the event
+        // is only for a debug session, where nothing may be listening at all.
+        if (level >= LIBVLC_WARNING)
+        {
+            // std::format needs wide arguments to match the wide format string that hstring
+            // requires; module and message are both narrow coming out of libvlc.
+            const std::wstring wmodule = winrt::to_hstring(module ? module : "?").c_str();
+            const std::wstring wmessage = winrt::to_hstring(message).c_str();
+
+            if (level >= LIBVLC_ERROR)
+            {
+                LOGGER_ERROR(L"vlc[{}] {}", wmodule, wmessage);
+            }
+            else
+            {
+                LOGGER_WARNING(L"vlc[{}] {}", wmodule, wmessage);
+            }
+        }
+
+        if (debug)
+        {
+            m_log(*this, AsyncMediaPlayerLogEventArgs((AsyncMediaPlayerLogLevel)level, winrt::to_hstring(message), winrt::to_hstring(module), winrt::to_hstring(file), line));
+        }
     }
 
     void AsyncMediaPlayer::HandleEvent(const libvlc_event_t* event)

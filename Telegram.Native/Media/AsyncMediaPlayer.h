@@ -95,18 +95,25 @@ public:
         }
     }
 
-    void clear()
+    // Returns how many actions were dropped, so callers can report what was still in flight
+    // at teardown without needing a separate size() that could only ever be racy.
+    size_t clear()
     {
         std::lock_guard<std::mutex> lock(work_available_mutex_);
+
+        size_t dropped = 0;
 
         // Clear regular work queue
         while (!work_.empty())
         {
             work_.pop();
+            dropped++;
         }
 
         shutdown_ = true;
         work_available_cv_.notify_all();
+
+        return dropped;
     }
 };
 
