@@ -1,0 +1,73 @@
+From 4f211a4aa54f6013f56f97d2a954d2b3e09582c4 Mon Sep 17 00:00:00 2001
+From: Fela <frayx@live.it>
+Date: Fri, 7 Aug 2026 15:24:53 +0400
+Subject: [PATCH] Fix the contrib SourceForge mirror and libvlc-only packaging
+
+Two things stopped this tree from building.
+
+contrib fetching pointed $(SF) at netcologne.dl.sourceforge.net, a mirror that
+no longer resolves, and the trailing slash also dropped the /project path
+segment, so the URLs were malformed even before DNS failed. All twelve
+SourceForge-hosted contribs were affected; mingw-w64 failed first because its
+videolan mirror returns 404 as well, leaving it with no working source at all.
+The generic downloads.sourceforge.net redirector picks a live mirror, and the
+fetched tarball passes the recorded SHA512.
+
+Packaging then failed at the very end of an otherwise complete build. -r
+selects release mode and an installer together, but -z builds libvlc without
+the GUI, so NSIS tried to package a vlc.exe that was never built and died on
+"File: vlc.exe -> no files found". package-win32 cannot simply be skipped
+because it is also what stages the distribution tree; package-win-strip is the
+part that produces $(win32_destdir) without going near NSIS, so that runs
+instead.
+
+Verified: make fetch completes for both x86_64 and aarch64, and both
+architectures build libvlc, libvlccore and their plugins.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+---
+ contrib/src/main.mak          |  2 +-
+ extras/package/win32/build.sh | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/contrib/src/main.mak b/contrib/src/main.mak
+index a4a930dd5c..f84b5a7390 100644
+--- a/contrib/src/main.mak
++++ b/contrib/src/main.mak
+@@ -19,7 +19,7 @@ VPATH := $(TARBALLS)
+ 
+ # Common download locations
+ GNU ?= http://ftpmirror.gnu.org/gnu
+-SF := https://netcologne.dl.sourceforge.net/
++SF := https://downloads.sourceforge.net/project
+ VIDEOLAN := http://downloads.videolan.org/pub/videolan
+ CONTRIB_VIDEOLAN := http://downloads.videolan.org/pub/contrib
+ GITHUB := https://github.com/
+diff --git a/extras/package/win32/build.sh b/extras/package/win32/build.sh
+index e974d3dd29..6ffdacf606 100755
+--- a/extras/package/win32/build.sh
++++ b/extras/package/win32/build.sh
+@@ -516,6 +516,20 @@ ${SCRIPT_PATH}/configure.sh --host=$TRIPLET --with-contrib=../contrib/$CONTRIB_P
+ info "Compiling"
+ make -j$JOBS
+ 
++# -r selects release mode and an installer at the same time, but -z builds libvlc
++# without the GUI, so there is no vlc.exe for the NSIS script to package and
++# package-win32-exe fails on "File: vlc.exe -> no files found" after an otherwise
++# complete build.
++#
++# package-win32 pulls that in, so it cannot be used here, but it is also what stages
++# the distribution tree. package-win-strip is the part that produces $(win32_destdir)
++# without going near NSIS, which is what a libvlc-only build actually wants.
++if [ -n "$DISABLEGUI" ] && [ -n "$INSTALLER" ]; then
++    info "Built without the GUI: staging the distribution, skipping the installer"
++    make package-win-strip
++    INSTALLER=""
++fi
++
+ if [ "$INSTALLER" = "n" ]; then
+ make package-win32-debug-7zip
+ make -j$JOBS package-win32 package-msi
+-- 
+2.40.0.windows.1
+

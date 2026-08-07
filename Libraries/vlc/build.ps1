@@ -23,21 +23,21 @@ $CurrentPath = (Get-Location).ProviderPath
 Write-Host "==> Current Path: $CurrentPath"
 
 # Step 1: Apply patches
-$PatchFiles = Get-ChildItem -Path $CurrentPath -Filter *.patch
-if ($PatchFiles.Count -gt 0) {
-    Push-Location "$CurrentPath\vlc"
-    foreach ($Patch in $PatchFiles) {
-        Write-Host "Applying patch: $($Patch.Name)"
-        git am --keep-cr $Patch.FullName 2>$null
-        if ($LASTEXITCODE -ne 0) {
-            Write-Host "Patch already applied or failed, skipping..."
-            git am --abort 2>$null
-        }
-    }
-    Pop-Location
-} else {
-    Write-Host "No patch files found."
-}
+#$PatchFiles = Get-ChildItem -Path $CurrentPath -Filter *.patch
+#if ($PatchFiles.Count -gt 0) {
+#    Push-Location "$CurrentPath\vlc"
+#    foreach ($Patch in $PatchFiles) {
+#        Write-Host "Applying patch: $($Patch.Name)"
+#        git am --keep-cr $Patch.FullName 2>$null
+#        if ($LASTEXITCODE -ne 0) {
+#            Write-Host "Patch already applied or failed, skipping..."
+#            git am --abort 2>$null
+#        }
+#    }
+#    Pop-Location
+#} else {
+#    Write-Host "No patch files found."
+#}
 
 # Step 2: Copy revision.txt
 $RevisionFile = Join-Path $CurrentPath "revision.txt"
@@ -60,14 +60,42 @@ $SourceFolder = "`"$SourceFolder`""
 $DockerCommand = "cd ../vlc`n"
 
 foreach ($a in $NormalizedArch) {
-    $DockerCommand += "extras/package/win32/build.sh -a $a -z -r -u -w -D=$SourceFolder`n"
+    # -D takes its value as a separate argument. Passing it as -D=<path> makes getopts
+    # capture the '=' as part of OPTARG, which ends up in the -fdebug-prefix-map
+    # replacement and puts a literal '=' in front of every source path recorded in the
+    # PDBs, e.g. "=C:\...\win64-uwp\modules\=C:\...\modules\audio_output\wasapi.c".
+    $DockerCommand += "extras/package/win32/build.sh -a $a -z -r -u -w -D $SourceFolder`n"
 }
 
 $DockerCommand += "exit`n"
 
 Write-Host "Launching Docker..."
-docker run -it -v "${CurrentPath}\vlc:/vlc" registry.videolan.org/vlc-debian-llvm-uwp:20211020111246 bash -c "$DockerCommand"
 
-# Step 4: Pack NuGet
-Write-Host "Packing NuGet..."
-nuget pack VideoLAN.LibVLC.UWP.nuspec -OutputDirectory "${CurrentPath}\.."
+# No -it: it needs a terminal on stdin, so the script cannot run from CI or any
+# non-interactive shell ("cannot attach stdin to a TTY-enabled container").
+docker run --rm -v "${CurrentPath}\vlc:/vlc" registry.videolan.org/vlc-debian-llvm-uwp:20211020111246 bash -c "$DockerCommand"
+
+if ($LASTEXITCODE -ne 0) {
+    # Without this the script used to carry on and pack whatever happened to be lying around
+    # from an earlier build, turning a failed build into a stale package.
+    throw "Docker build failed with exit code $LASTEXITCODE"
+}
+
+# Step 4: Generate the plugin cache
+# Cross-compiled builds skip it (Makefile.am only runs vlc-cache-gen when build == host), so
+# without this libvlc rescans every plugin on each startup.
+Write-Host "Generating plugin cache..."
+& (Join-Path $CurrentPath "plugins-cache.ps1") -Root $CurrentPath
+
+# Step 5: Pack NuGet
+# The nuspec refers to the install directory by version (vlc-3.0.23), so the version is
+# substituted rather than hardcoded 284 times. A wildcard would be simpler but NuGet then
+# treats every target as a directory, producing build/win10-x64/libvlc.dll/libvlc.dll.
+$VlcVersion = (Get-ChildItem -Path (Join-Path $CurrentPath "vlc\win64-uwp") -Directory -Filter "vlc-*" |
+    Select-Object -First 1).Name -replace '^vlc-', ''
+if (-not $VlcVersion) {
+    throw "Could not determine the built VLC version from vlc\win64-uwp"
+}
+
+Write-Host "Packing NuGet (VLC $VlcVersion)..."
+nuget pack VideoLAN.LibVLC.UWP.nuspec -Properties "vlcver=$VlcVersion" -OutputDirectory "${CurrentPath}\.."
