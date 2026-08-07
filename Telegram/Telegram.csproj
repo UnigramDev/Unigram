@@ -232,6 +232,7 @@
     <Compile Include="Common\ThemeShadowEx.cs" />
     <Compile Include="Common\NormalizingStringBuilder.cs" />
     <Compile Include="Common\VideoPreloader.cs" />
+    <Compile Include="Common\VisualUtilities.Skeleton.cs" />
     <Compile Include="Common\WebAppStorage.cs" />
     <Compile Include="Composition\CompositionPropertySetColorSource.cs" />
     <Compile Include="Composition\CompositionVisualColorSource.cs" />
@@ -606,7 +607,6 @@
     <Compile Include="Services\Settings\TranslateSettings.cs" />
     <Compile Include="Streams\AnimatedEmojiFileSource.cs" />
     <Compile Include="Streams\ParticlesImageSource.cs" />
-    <Compile Include="Stub.cs" />
     <Compile Include="Td\Api\MessageTag.cs" />
     <Compile Include="Td\Api\MinithumbnailId.cs" />
     <Compile Include="Controls\Cells\StoryCell.xaml.cs">
@@ -4638,7 +4638,7 @@
       <Version>1.28.3</Version>
     </PackageReference>
     <PackageReference Include="System.Reflection.Metadata">
-      <Version>10.0.0</Version>
+      <Version>10.0.10</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
