@@ -655,7 +655,7 @@ namespace Telegram.Controls.Messages
         private VisualInteractionSource _interactionSource;
         private bool _interacting;
 
-        private readonly bool _requiresArrange = !ApiInfo.IsWindows11;
+        private static readonly bool _requiresArrange = !ApiInfo.IsWindows11;
 
         private bool _share;
         private bool _reply;
