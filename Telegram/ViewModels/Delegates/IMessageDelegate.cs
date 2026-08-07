@@ -6,6 +6,7 @@
 //
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -82,6 +83,7 @@ namespace Telegram.ViewModels.Delegates
 
         void HideSponsoredMessage(MessageViewModel message);
 
+        Task<bool> CanEditTagAsync(MessageViewModel message);
         string GetMemberTag(MessageViewModel message, out ChatMemberRank rank);
         bool IsAdministrator(MessageSender memberId);
         void UpdateAdministrators(Chat chat);

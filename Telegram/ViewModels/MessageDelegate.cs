@@ -10,6 +10,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
@@ -31,7 +32,7 @@ namespace Telegram.ViewModels
         Other
     };
 
-    public record ChatMemberTag(ChatMemberRank Rank, string Tag);
+    public record ChatMemberTag(ChatMemberRank Rank, string Tag, bool CanBeEdited);
 
     public partial class MessageDelegate : ViewModelBase, IMessageDelegate
     {
@@ -223,6 +224,34 @@ namespace Telegram.ViewModels
             MessageHelper.OpenUrl(ClientService, NavigationService, url, untrust, source);
         }
 
+        // TODO: needs rework
+        public async Task<bool> CanEditTagAsync(MessageViewModel message)
+        {
+            GetMemberTag(message, out ChatMemberRank rank);
+
+            if (message.SenderId.IsUser(message.ClientService.Options.MyId))
+            {
+                return message.ClientService.CanEditTag(message.Chat, new ChatMember(message.SenderId, string.Empty, 0, 0, message.ClientService.GetChatMemberStatus(message.Chat, out _)));
+            }
+
+            if (rank == ChatMemberRank.Admin)
+            {
+                var response = await message.ClientService.SendAsync(new GetChatMember(message.ChatId, message.SenderId));
+                if (response is ChatMember member)
+                {
+                    return message.ClientService.CanEditTag(message.Chat, member);
+                }
+
+                return false;
+            }
+            else if (rank != ChatMemberRank.Owner)
+            {
+                return message.ClientService.CanEditTag(message.Chat, new ChatMember(message.SenderId, string.Empty, 0, 0, new ChatMemberStatusMember()));
+            }
+
+            return false;
+        }
+
         public string GetMemberTag(MessageViewModel message, out ChatMemberRank rank)
         {
             if (message.IsChannelPost)
@@ -310,7 +339,16 @@ namespace Telegram.ViewModels
                         _ => ChatMemberRank.Other
                     };
 
-                    members[senderUser.UserId] = new ChatMemberTag(type, member.Tag);
+                    // TODO: needs implementation
+                    //var canBeEdited = member.Status switch
+                    //{
+                    //    ChatMemberStatusCreator => 
+                    //    ChatMemberStatusAdministrator admin => admin.CanBeEdited
+                    //}
+
+                    var canBeEdited = false;
+
+                    members[senderUser.UserId] = new ChatMemberTag(type, member.Tag, canBeEdited);
                 }
 
                 _admins[chat.Id] = members;
@@ -321,7 +359,7 @@ namespace Telegram.ViewModels
                 {
                     if (result is ChatAdministrators users)
                     {
-                        _admins[chat.Id] = users.Administrators.ToDictionary(x => x.UserId, y => new ChatMemberTag(y.IsOwner ? ChatMemberRank.Owner : ChatMemberRank.Admin, y.CustomTitle));
+                        _admins[chat.Id] = users.Administrators.ToDictionary(x => x.UserId, y => new ChatMemberTag(y.IsOwner ? ChatMemberRank.Owner : ChatMemberRank.Admin, y.CustomTitle, y.CanBeEdited));
                     }
                 });
             }
