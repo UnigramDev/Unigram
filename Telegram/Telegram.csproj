@@ -2184,6 +2184,7 @@
     <Compile Include="Views\Supergroups\SupergroupPermissionsPage.xaml.cs">
       <DependentUpon>SupergroupPermissionsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\VisualUtilities.Tilt.cs" />
     <Compile Include="Views\Users\UserEditPage.xaml.cs">
       <DependentUpon>UserEditPage.xaml</DependentUpon>
     </Compile>
