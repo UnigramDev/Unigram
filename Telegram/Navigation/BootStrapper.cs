@@ -124,6 +124,23 @@ namespace Telegram.Navigation
 
         private WindowContext CreateWindowWrapper(Window window)
         {
+            // WindowContext's constructor assigns the thread-static Current, so building a second
+            // one for a view that already has one replaces it, and whatever was attached to the
+            // first - the frame, most importantly - is silently orphaned. Activation can run
+            // before OnWindowCreated, so the context may already exist by the time we get here.
+            var context = WindowContext.Current;
+            if (context != null)
+            {
+                if (context.CoreWindow == window.CoreWindow)
+                {
+                    Logger.Info("Window context already exists, reusing it");
+                    return context;
+                }
+
+                Logger.Warning("Window context belongs to a different window, replacing it");
+            }
+
+            Logger.Info("Creating the window context");
             return new WindowContext(window);
         }
 
@@ -637,9 +654,28 @@ namespace Telegram.Navigation
 
             CallOnInitialize(false, e);
 
-            if (WindowContext.Current.Content == null)
+            // Activation can arrive before OnWindowCreated has run - share target activation
+            // appears to race it - which leaves the view with a window but no context, and
+            // InternalActivated calls in here regardless because it only tests
+            // WindowContext.Current?.Content. Build the context early rather than dereference
+            // null; CreateWindowWrapper reuses whatever already exists, so the OnWindowCreated
+            // that follows will not replace this one.
+            var context = WindowContext.Current;
+            if (context == null)
             {
-                WindowContext.Current.Content = CreateRootElement(e, WindowContext.Current);
+                if (Window.Current == null)
+                {
+                    Logger.Error($"Activated with no window at all, cannot initialize the frame. Kind: {e.Kind}");
+                    return;
+                }
+
+                Logger.Warning($"Activated before OnWindowCreated, creating the window context early. Kind: {e.Kind}");
+                context = CreateWindowWrapper(Window.Current);
+            }
+
+            if (context.Content == null)
+            {
+                context.Content = CreateRootElement(e, context);
             }
             else
             {
