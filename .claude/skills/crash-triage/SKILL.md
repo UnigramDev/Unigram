@@ -144,6 +144,33 @@ tail's final entries (what led there), and the code at the reference commit (how
 reachable). A diagnosis that explains all three is worth acting on; one that explains only the
 stack usually is not.
 
+**Find out why the value is wrong before deciding what to do about it.** "It was null" is where
+the investigation starts, not where it ends. Trace back to the code that should have set it and
+establish what actually happened: who assigns it, under what conditions that assignment is
+skipped, and which of those the crash reports match. Only then is there enough to choose a fix.
+
+The bar is that you can name the state that produced it in one sentence — "the container was
+connected before its content was set", "the selector hands both item types the same template" —
+and point at the code that creates that state. If the best available sentence is "somehow it
+was null", the diagnosis is not finished, and adding a null check just moves the failure
+somewhere quieter without removing it.
+
+Where the answer lands decides the fix, and the three outcomes are different:
+
+| Why it was null | Fix |
+|---|---|
+| The API legitimately returns null and the caller assumed otherwise | Handle it at the call site — a guard is genuinely correct |
+| Something upstream is misconfigured or wired wrong | Fix that. A guard here hides a permanent bug and usually degrades silently |
+| Two things race, so the state is merely not there *yet* | Sequencing. Neither defaulting nor returning early is right |
+
+All three appeared in this codebase within a day: `GetSelectedSourceText` documents three null
+returns and the caller ignored them (guard was right); `AutocompleteTemplateSelector` returned
+one template for two item types (guard was wrong, the selector was); `WindowContext` was absent
+because activation beat window creation (guard and construction were both wrong).
+
+A guard that is added without knowing which row applies is a guess, and two of the three rows
+punish it.
+
 **Read the mechanism, don't infer it.** A hypothesis that explains the stack is not the same as
 the cause, and it is easy to build a confident fix on one that was never checked. Before
 writing code, name the specific file that would confirm it and open that file.
@@ -176,7 +203,13 @@ needed is to carry the input forward and act on it when the state does arrive. T
 decision about startup, not a null check — propose it and ask rather than guessing.
 
 If you cannot explain the crash, say so and stop. A plausible-looking guess wastes more time
-than an honest "not diagnosed".
+than an honest "not diagnosed". That includes the case where a guard would obviously stop the
+crash: shipping one without knowing why the value was wrong is still a guess, and it costs the
+next person the evidence, because the crash stops being reported while the bug is still there.
+
+Say what the cause was in the PR, not only what the change does. A reviewer who knows this code
+can tell in seconds whether the stated cause is right, and that is the check worth optimising
+for — far more than whether the diff looks tidy.
 
 ## 5. Fix and open a PR
 
