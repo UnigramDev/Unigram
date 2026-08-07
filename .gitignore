@@ -278,3 +278,4 @@ _Pvt_Extensions
 /Telegram2
 /Libraries/tdjson/td_api.tl
 /Libraries/tdjson/build-native
+/.claude/settings.local.json.bak
