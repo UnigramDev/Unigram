@@ -112,6 +112,7 @@ namespace winrt::Telegram::Native::Media::implementation
             Write([this, id = winrt::to_string(args.Id())]
                 {
                     libvlc_audio_output_set(m_player, id.c_str());
+                    libvlc_audio_output_device_set(m_player, NULL, id.c_str());
                 });
         }
     }
