@@ -5162,13 +5162,14 @@ namespace Telegram.Views
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
 
                 var photo = content.Children[0] as ProfilePicture;
-                var title = content.Children[1] as TextBlock;
-
-                var command = title.Inlines[0] as Run;
-                var description = title.Inlines[1] as Run;
+                var command = content.Children[1] as TextBlock;
+                var ephemeral = content.Children[2] as TextBlock;
+                var description = content.Children[3] as TextBlock;
 
                 command.Text = $"/{shortcut.Name} ";
                 description.Text = Locale.Declension(Strings.R.messages, shortcut.MessageCount);
+
+                ephemeral.Visibility = Visibility.Collapsed;
 
                 if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
                 {
