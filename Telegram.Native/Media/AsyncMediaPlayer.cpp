@@ -101,7 +101,15 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         if (AudioDeviceRole::Default == args.Role())
         {
-            Set(libvlc_audio_output_set, winrt::to_string(args.Id()).c_str());
+            // Set() captures its arguments by value and runs them later on the worker thread,
+            // so a const char* is copied as a pointer and not as characters. The temporary
+            // string from to_string dies at the end of this statement, leaving libvlc to read
+            // freed memory once the work item is finally dequeued. Own the string in the
+            // capture so it outlives the queue.
+            Write([this, id = winrt::to_string(args.Id())]
+                {
+                    libvlc_audio_output_set(m_player, id.c_str());
+                });
         }
     }
 
