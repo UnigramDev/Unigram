@@ -682,7 +682,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ReplyMarkupInlineButton">
-                    <Border Background="{TemplateBinding Background}">
+                    <Border CornerRadius="{TemplateBinding CornerRadius}"
+                            Background="{TemplateBinding Background}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -709,7 +710,6 @@
                         </VisualStateManager.VisualStateGroups>
 
                         <Grid x:Name="RootGrid"
-                              CornerRadius="{TemplateBinding CornerRadius}"
                               Padding="{TemplateBinding Padding}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -754,7 +754,7 @@
                                 </ContentPresenter>
                             </Grid>
 
-                            <TextBlock Margin="4"
+                            <TextBlock Margin="0"
                                        FontSize="12"
                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        HorizontalAlignment="Right"
