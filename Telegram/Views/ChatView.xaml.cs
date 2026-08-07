@@ -3318,12 +3318,13 @@ namespace Telegram.Views
                     flyout.CreateFlyoutItem(ViewModel.AddChecklistTask, message, Strings.AddTasks, Icons.AddCircle);
                 }
 
-                if (SettingsService.Current.Diagnostics.RichMessagesDebug && message.Content is MessageRichMessage richMessage)
-                {
-                    flyout.CreateFlyoutItem(() => {
-                        ViewModel.ShowPopup(new TextEditorRichPopup(ViewModel.ClientService, ViewModel.NavigationService, richMessage.Message));
-                        }, "Test");
-                }
+                //if (SettingsService.Current.Diagnostics.RichMessagesDebug && message.Content is MessageRichMessage richMessage)
+                //{
+                //    flyout.CreateFlyoutItem(() =>
+                //    {
+                //        ViewModel.ShowPopup(new TextEditorRichPopup(ViewModel.ClientService, ViewModel.NavigationService, richMessage.Message));
+                //    }, "Test");
+                //}
 
                 if (checklistTask != null)
                 {
