@@ -270,7 +270,7 @@ namespace Telegram.Controls.Messages.Content
 
         MessageViewModel IPageBlockContext.CreateMessage(long id, MessageContent content)
         {
-            return new MessageViewModel(_clientService ?? _message?.ClientService, _delegate, _message?.Chat, null, null, new Message { Id = id, Content = content });
+            return new MessageViewModel(_clientService ?? _message?.ClientService, _delegate, _message?.Chat, null, null, new Message { Id = id, Content = content, SchedulingState = new MessageSchedulingStateSendWhenOnline() });
         }
 
         void IPageBlockContext.TextEntityClick(FormattedTextBlock sender, TextEntityClickEventArgs args)

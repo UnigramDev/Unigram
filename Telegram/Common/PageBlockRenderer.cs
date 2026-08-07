@@ -1349,8 +1349,8 @@ namespace Telegram.Common
                 return null;
             }
 
-            var message = CreateMessage(clientService, block.VoiceNote.Voice.Id, new MessageAudio(new Audio(block.VoiceNote.Duration, string.Empty, string.Empty, string.Empty, string.Empty, null, null, null, block.VoiceNote.Voice), string.Empty.AsFormattedText()));
-            var content = new AudioContent(message);
+            var message = CreateMessage(clientService, block.VoiceNote.Voice.Id, new MessageVoiceNote(block.VoiceNote, string.Empty.AsFormattedText(), true));
+            var content = new VoiceNoteContent(message);
 #if INSTRUMENTATION
             _context.RegisterDebug(content);
 #endif
@@ -1780,35 +1780,6 @@ namespace Telegram.Common
 
                 previousBlock = block is PageBlockAnchor ? previousBlock : block;
             }
-        }
-
-        private double SpacingBetweenBlocks(PageBlock lower, IList<PageBlock> blocks, int index)
-        {
-            var upper = index > 0 ? blocks[index - 1] : null;
-            if (upper == null)
-            {
-                if (lower is PageBlockAnimation or PageBlockCollage or PageBlockCover or PageBlockMap or PageBlockPhoto or PageBlockSlideshow or PageBlockVideo or PageBlockAnchor)
-                {
-                    return 0;
-                }
-            }
-
-            if (upper is PageBlockParagraph && lower is PageBlockParagraph)
-            {
-                return 0;
-            }
-
-            if (upper is PageBlockAnchor && lower is PageBlockAnchor)
-            {
-                return 0;
-            }
-
-            if (upper is PageBlockDivider || lower is PageBlockDivider)
-            {
-                return 12;
-            }
-
-            return 8;
         }
 
         private double SpacingBetweenBlocks(PageBlock upper, PageBlock lower)

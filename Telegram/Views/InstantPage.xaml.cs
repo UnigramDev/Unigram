@@ -222,7 +222,7 @@ namespace Telegram.Views
 
         MessageViewModel IPageBlockContext.CreateMessage(long id, MessageContent content)
         {
-            return ViewModel.CreateMessage(new Message { Id = id, Content = content });
+            return ViewModel.CreateMessage(new Message { Id = id, Content = content, SchedulingState = new MessageSchedulingStateSendWhenOnline() });
         }
 
         void IPageBlockContext.TextEntityClick(FormattedTextBlock sender, TextEntityClickEventArgs args)
