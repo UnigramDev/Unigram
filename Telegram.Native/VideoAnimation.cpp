@@ -609,6 +609,13 @@ namespace winrt::Telegram::Native::implementation
                         }
                         avcodec_flush_buffers(video_dec_ctx);
                         waiting = Waiting::ReadFrame;
+
+                        // Cleared on the way round, as the drained branch below does.
+                        // It is what holds off the budget at the end of the loop, so
+                        // leaving it set means nothing is spent while the file is read
+                        // from the start again, and a read that returns end of file
+                        // straight after the seek arrives back here to seek once more.
+                        has_decoded_frames = false;
                         continue;
                     }
                     else
