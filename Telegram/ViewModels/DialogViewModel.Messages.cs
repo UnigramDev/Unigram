@@ -627,13 +627,13 @@ namespace Telegram.ViewModels
                     switch (message.Content)
                     {
                         case MessageAudio audio:
-                            ClientService.Send(new AddFileToDownloads(audio.Audio.AudioValue.Id, message.ChatId, message.Id, 32));
+                            ClientService.AddFileToDownloads(audio.Audio.AudioValue, message.ChatId, message.Id, 32);
                             break;
                         case MessageDocument document:
-                            ClientService.Send(new AddFileToDownloads(document.Document.DocumentValue.Id, message.ChatId, message.Id, 32));
+                            ClientService.AddFileToDownloads(document.Document.DocumentValue, message.ChatId, message.Id, 32);
                             break;
                         case MessageVideo video:
-                            ClientService.Send(new AddFileToDownloads(video.Video.VideoValue.Id, message.ChatId, message.Id, 32));
+                            ClientService.AddFileToDownloads(video.Video.VideoValue, message.ChatId, message.Id, 32);
                             break;
                     }
                 }
