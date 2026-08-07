@@ -219,36 +219,6 @@ namespace Telegram.Controls
             return false;
         }
 
-        private ImplicitAnimationCollection _implicitAnimations;
-
-        private ImplicitAnimationCollection EnsureImplicitAnimations()
-        {
-            if (_implicitAnimations == null && PowerSavingPolicy.AreSmoothTransitionsEnabled)
-            {
-                var compositor = BootStrapper.Current.Compositor;
-
-                var offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
-                offsetAnimation.Target = nameof(Visual.Offset);
-                offsetAnimation.InsertExpressionKeyFrame(1.0f, "this.FinalValue");
-                //offsetAnimation.Duration = Constants.FastAnimation;
-
-                //var rotationAnimation = compositor.CreateScalarKeyFrameAnimation();
-                //rotationAnimation.Target = nameof(Visual.RotationAngle);
-                //rotationAnimation.InsertKeyFrame(.5f, 0.160f);
-                //rotationAnimation.InsertKeyFrame(1f, 0f);
-                //rotationAnimation.Duration = TimeSpan.FromSeconds(400);
-
-                //var animationGroup = compositor.CreateAnimationGroup();
-                //animationGroup.Add(offsetAnimation);
-                //animationGroup.Add(rotationAnimation);
-
-                _implicitAnimations = compositor.CreateImplicitAnimationCollection();
-                _implicitAnimations[nameof(Visual.Offset)] = offsetAnimation;
-            }
-
-            return _implicitAnimations;
-        }
-
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.Item is not Chat chat)
@@ -256,17 +226,13 @@ namespace Telegram.Controls
                 return;
             }
 
-            var visual = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
-
             if (args.InRecycleQueue)
             {
                 _itemToSelector.Remove(chat.Id);
-                //visual.ImplicitAnimations = null;
             }
             else if (args.Phase == 0)
             {
                 _itemToSelector[chat.Id] = args.ItemContainer;
-                //visual.ImplicitAnimations ??= EnsureImplicitAnimations();
 
                 args.RegisterUpdateCallback(2, OnContainerContentChanging);
                 args.ItemContainer.ContentTemplateRoot.Opacity = 0;
