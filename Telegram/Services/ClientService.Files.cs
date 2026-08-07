@@ -77,6 +77,7 @@ namespace Telegram.Services
 
         private readonly HashSet<int> _canceledDownloads = new();
         private readonly HashSet<string> _completedDownloads = new();
+        private readonly HashSet<int> _explicitDownloads = new();
         private readonly object _downloadsLock = new();
 
         public Task<File> GetFileAsync(int fileId)
@@ -108,6 +109,10 @@ namespace Telegram.Services
             // as this method is being used by RemoteFileStream as well.
             if (completed)
             {
+                // Counts as asking for the file: the caller wants all of it, and on a file
+                // that is not in the cache this starts the download rather than checking it.
+                TrackExplicitDownload(file.Id);
+
                 await SendAsync(new DownloadFile(file.Id, 16, 0, 0, false));
             }
 
@@ -196,6 +201,8 @@ namespace Telegram.Services
 
         public async void AddFileToDownloads(File file, long chatId, long messageId, int priority = 30)
         {
+            TrackExplicitDownload(file.Id);
+
             Send(new AddFileToDownloads(file.Id, chatId, messageId, priority));
 
             if (ApiInfo.HasCacheOnly || !SettingsService.Current.IsDownloadFolderEnabled || Future.Contains(file.Remote.UniqueId, true) || await Future.ContainsAsync(file.Remote.UniqueId))
@@ -258,12 +265,40 @@ namespace Telegram.Services
             }
         }
 
-        public async void CancelDownloadFile(File file, bool onlyIfPending = false)
+        /// <param name="onlyIfStreaming">
+        /// Cancels the download only if nothing asked for the file itself, meaning the
+        /// download exists because a reader is streaming the file. Set by such a reader
+        /// when it closes, so that it takes back its own read ahead without stopping a
+        /// download the user is waiting for.
+        /// </param>
+        public async void CancelDownloadFile(File file, bool onlyIfPending = false, bool onlyIfStreaming = false)
         {
+            if (onlyIfStreaming)
+            {
+                lock (_downloadsLock)
+                {
+                    if (_explicitDownloads.Contains(file.Id))
+                    {
+                        return;
+                    }
+                }
+
+                // Nothing else to undo here: a download that exists only to feed a reader
+                // was never added to the download list nor staged in the download folder,
+                // and it must not be remembered as canceled, which would keep
+                // auto-download from ever picking the file up again.
+                Send(new CancelDownloadFile(file.Id, onlyIfPending));
+                return;
+            }
+
             lock (_downloadsLock)
             {
                 _canceledDownloads.Add(file.Id);
                 _completedDownloads.Remove(file.Remote.UniqueId);
+
+                // The download the user is cancelling is the one that made the file
+                // explicit, so a reader left streaming it now owns what remains of it.
+                _explicitDownloads.Remove(file.Id);
             }
 
             Send(new CancelDownloadFile(file.Id, onlyIfPending));
@@ -296,6 +331,26 @@ namespace Telegram.Services
             lock (_downloadsLock)
             {
                 return _canceledDownloads.Contains(fileId);
+            }
+        }
+
+        /// <summary>
+        /// Records that the file itself was asked for, by the user or by auto-download,
+        /// rather than a reader pulling in the parts it needs as it plays.
+        ///
+        /// A reader streaming a file stops the download when it closes, otherwise the last
+        /// window it asked for keeps running for a video nobody is watching. It may only
+        /// do that for a download nothing else wanted: the same file can be downloading
+        /// because the user asked for it, and closing a player must not cancel that.
+        ///
+        /// Streaming readers therefore send downloadFile themselves rather than going
+        /// through <see cref="DownloadFile"/>, which is what marks a file here.
+        /// </summary>
+        private void TrackExplicitDownload(int fileId)
+        {
+            lock (_downloadsLock)
+            {
+                _explicitDownloads.Add(fileId);
             }
         }
 

@@ -113,146 +113,25 @@ namespace winrt::Telegram::Native::Media::implementation
         return m_context;
     }
 
+    // Lives for one libvlc media, holding the source it reads through and the handle to
+    // the cache file the bytes land in.
+    //
+    // How far ahead of the read position to keep downloading used to be worked out here,
+    // from a media bitrate measured off the read sizes. RemoteFilePrefetch does it now:
+    // it measures the same thing without counting the time the reader spends blocked, it
+    // knows what TDLib does with the limit it is given, and being in C# it also serves
+    // the readers that never come through here.
     struct MediaContext
     {
-        static constexpr double alpha_ = 0.2;
-        static constexpr double update_interval_ = 0.1;
-        static constexpr double idle_timeout_ = 3.0;
-        static constexpr double warmup_seconds_ = 5.0;
-        static constexpr double bitrate_default_ = 2'000'000;
-        static constexpr double bitrate_maximum_ = 20'000'000;
-
         MediaContext(IAsyncMediaPlayerSource source)
             : source(source)
             , file(INVALID_HANDLE_VALUE)
-            , bitrate_last_(bitrate_default_)
-            , bitrate_estimate_(bitrate_default_)
-            , bitrate_accum_(0)
-            , bitrate_warmup_(0.0)
-            , initialized_(false)
         {
             source.Open();
-
-            auto duration = source.Duration();
-            if (duration > 0.0 && duration < 86400.0)
-            {
-                bitrate_last_ = static_cast<int64_t>(source.FileSize() / duration * 15.0);
-                bitrate_estimate_ = static_cast<int64_t>(source.FileSize() / duration * 15.0);
-                //bitrate_maximum_ = static_cast<int64_t>(source.FileSize() / duration * 60.0);
-            }
         }
 
         IAsyncMediaPlayerSource source;
         HANDLE file;
-
-        double Bitrate()
-        {
-            //if (!initialized_)
-            //{
-            //    return bitrate_default_;
-            //}
-
-            using namespace std::chrono;
-            auto now = steady_clock::now();
-            double idle = duration<double>(now - bitrate_time_).count();
-
-            if (idle > idle_timeout_)
-            {
-                initialized_ = false;
-                return bitrate_estimate_;
-            }
-
-            return bitrate_estimate_;
-        }
-
-        void DownloadStarted(int64_t bytes)
-        {
-            using namespace std::chrono;
-            auto now = steady_clock::now();
-
-            if (!initialized_)
-            {
-                bitrate_time_ = now;
-                bitrate_accum_ = bytes;
-                bitrate_warmup_ = 0;
-                initialized_ = true;
-                return;
-            }
-
-            double delta = duration<double>(now - bitrate_time_).count();
-
-            bitrate_warmup_ += delta;
-            bitrate_accum_ += bytes;
-
-            if (delta >= update_interval_)
-            {
-                double instant = (bitrate_accum_ * 8.0) / delta;
-                bitrate_estimate_ = alpha_ * instant + (1.0 - alpha_) * bitrate_estimate_;
-                bitrate_accum_ = 0;
-                bitrate_time_ = now;
-            }
-        }
-
-        int64_t PrefetchSize(double target_seconds)
-        {
-            if (bitrate_warmup_ < warmup_seconds_)
-                return bitrate_last_;
-
-            double media_br = Bitrate();
-            double dl_br = source.DownloadRate();
-
-            media_br = std::clamp(media_br, 1.0, bitrate_maximum_);
-
-            double target_bytes = (media_br * target_seconds) / 8.0;
-            double missing = target_bytes - static_cast<double>(source.DownloadedBytes());
-
-            if (missing > 0 && dl_br > 0 && dl_br < media_br)
-            {
-                target_bytes *= std::min(media_br / dl_br, 2.0);
-            }
-
-            bitrate_last_ = alpha_ * target_bytes + (1.0 - alpha_) * bitrate_last_;
-            return bitrate_last_;
-        }
-
-        void ReadCallback(int64_t count, int64_t& bytesRead)
-        {
-            DownloadStarted(count);
-
-            auto prefetch_size = PrefetchSize(30.0);
-
-            //std::wstring msg = L"Read callback start " + std::to_wstring(prefetch_size / 1024.0 / 1024.0) + L" MB\n";
-            //OutputDebugString(msg.c_str());
-
-            source.ReadCallback(count, prefetch_size, bytesRead);
-        }
-
-        void SeekCallback(int64_t offset)
-        {
-            //int64_t delta = std::abs(offset - source.Offset());
-
-            // bytes for duration
-            //double br = Bitrate();
-            //double bits_needed = br * 1.0; // seeked after 1 second of playback
-            //double threshold = std::min(bits_needed / 8.0, bitrate_maximum_);
-
-            //if (delta > threshold)
-            {
-                //initialized_ = false;
-            }
-
-            source.SeekCallback(offset);
-        }
-
-    private:
-        std::chrono::steady_clock::time_point bitrate_time_;
-        //double bitrate_maximum_;
-        double bitrate_estimate_;
-        double bitrate_last_;
-        double bitrate_warmup_;
-        int64_t bitrate_accum_;
-
-        bool initialized_;
     };
 
     static int OpenCallback(void* opaque, void** datap, uint64_t* sizep)
@@ -274,7 +153,11 @@ namespace winrt::Telegram::Native::Media::implementation
 
         int64_t offset = ctx->source.Offset();
         int64_t bytesRead;
-        ctx->ReadCallback(len, bytesRead);
+
+        // Zero window: a source played from here sizes its own, and ignores this. It is
+        // the sources serving one ranged request each, which have no rate to measure,
+        // that are handed a window by their caller.
+        ctx->source.ReadCallback(len, 0, bytesRead);
 
         if (ctx->file == INVALID_HANDLE_VALUE)
         {
@@ -306,7 +189,7 @@ namespace winrt::Telegram::Native::Media::implementation
     static int SeekCallback(void* opaque, uint64_t offset)
     {
         auto* ctx = static_cast<MediaContext*>(opaque);
-        ctx->SeekCallback(offset);
+        ctx->source.SeekCallback(offset);
 
         if (ctx->file != INVALID_HANDLE_VALUE)
         {
