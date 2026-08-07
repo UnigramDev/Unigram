@@ -36,7 +36,7 @@
       <td>Ctrl + F</td>
     </tr>
     <tr>
-      <td rowspan="13">Selected Text <br>in typing area</td>
+      <td rowspan="15">Selected Text <br>in typing area</td>
       <td>Undo</td>
       <td>Ctrl + Z</td>
     </tr>
@@ -61,6 +61,10 @@
       <td>Ctrl + A</td>
     </tr>
     <tr>
+      <td>Quote</td>
+      <td>Ctrl + Shift + . (Dot)</td>
+    </tr>
+    <tr>
       <td>Bold</td>
       <td>Ctrl + B</td>
     </tr>
@@ -69,8 +73,8 @@
       <td>Ctrl + I</td>
     </tr>
     <tr>
-      <td>Create Link</td>
-      <td>Ctrl + K</td>
+      <td>Underline</td>
+      <td>Ctrl + U</td>
     </tr>
     <tr>
       <td>Strikethrough</td>
@@ -85,7 +89,11 @@
       <td>Ctrl + Shift + P</td>
     </tr>
     <tr>
-      <td>Null / Plain Text</td>
+      <td>Create Link</td>
+      <td>Ctrl + K</td>
+    </tr>
+    <tr>
+      <td>Remove formatting (Regular text)</td>
       <td>Ctrl + Shift + N</td>
     </tr>
     <tr>
@@ -184,19 +192,19 @@
     <tr>
       <td rowspan="4">Calls</td>
       <td>Accept Incoming Call</td>
-      <td>Ctrl+Home</td>
+      <td>Ctrl + Home</td>
     </tr>
     <tr>
       <td>Reject Incoming Call</td>
-      <td>Ctrl+End</td>
+      <td>Ctrl + End</td>
     </tr>
     <tr>
       <td>Toggle Camera</td>
-      <td>Ctrl+PageUp</td>
+      <td>Ctrl + PageUp</td>
     </tr>
     <tr>
       <td>Toggle Microphone</td>
-      <td>Ctrl+PageDown</td>
+      <td>Ctrl + PageDown</td>
     </tr>
   </tbody>
 </table>
