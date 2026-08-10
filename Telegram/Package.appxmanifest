@@ -11,7 +11,7 @@
          xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
          xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
          IgnorableNamespaces="mp uap uap3 uap4 uap5 uap6 uap11 rescap desktop desktop4">
-  <Identity Name="38833FF26BA1D.UnigramExperimental" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="12.9.0.12195" />
+  <Identity Name="38833FF26BA1D.UnigramExperimental" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="12.9.1.12195" />
   <mp:PhoneIdentity PhoneProductId="bf16cc61-265a-4c8a-9ead-f4f77e6a0a97" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Unigram Experimental</DisplayName>
