@@ -504,12 +504,12 @@ namespace Telegram.Services.Calls
                 SoundEffects.Stop();
             }
 
-            Logger.Info(state);
-
             lock (_stateLock)
             {
                 if (_state != VoipState.Ready || _readyState != state)
                 {
+                    Logger.Info(state);
+
                     UpdateConnectionState(state, _signalBarsUpdatedArgs.Count);
 
                     if (state == VoipReadyState.Established)
