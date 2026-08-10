@@ -1233,26 +1233,12 @@ namespace Telegram.Controls.Messages
 
         private static FormattedText UpdateForumTopicCreated(MessageWithOwner message, MessageForumTopicCreated forumTopicCreated, bool history)
         {
-            // TopicWasCreatedAction
-            // TopicCreated
-            var content = string.Empty;
-            var entities = new List<TextEntity>();
-
-            if (true)
+            var topicName = new FormattedText($"\U0001F4C3 {forumTopicCreated.Name}", new[]
             {
-                var topicName = new FormattedText($"\U0001F4C3 {forumTopicCreated.Name}", new[]
-                {
-                    new TextEntity(0, 2, new TextEntityTypeCustomEmoji(forumTopicCreated.Icon.CustomEmojiId))
-                });
+                new TextEntity(0, 2, new TextEntityTypeCustomEmoji(forumTopicCreated.Icon.CustomEmojiId))
+            });
 
-                return ClientEx.Format(Strings.TopicWasCreatedAction, topicName);
-            }
-            else
-            {
-                content = Strings.TopicCreated;
-            }
-
-            return new FormattedText(content, entities);
+            return ClientEx.Format(Strings.TopicWasCreatedAction, topicName);
         }
 
         private static FormattedText UpdateForumTopicEdited(MessageWithOwner message, MessageForumTopicEdited forumTopicEdited, bool history)
@@ -1460,7 +1446,7 @@ namespace Telegram.Controls.Messages
         private static FormattedText UpdateInviteVideoChatParticipants(MessageWithOwner message, MessageInviteVideoChatParticipants inviteVideoChatParticipants, bool history)
         {
             long singleUserId = 0;
-            if (singleUserId == 0 && inviteVideoChatParticipants.UserIds.Count == 1)
+            if (inviteVideoChatParticipants.UserIds.Count == 1)
             {
                 singleUserId = inviteVideoChatParticipants.UserIds[0];
             }
@@ -1700,8 +1686,6 @@ namespace Telegram.Controls.Messages
 
         private static FormattedText UpdatePaymentSuccessful(MessageWithOwner message, MessagePaymentSuccessful paymentSuccessful, bool history)
         {
-            var content = string.Empty;
-
             var invoice = GetInvoice(message as MessageViewModel);
             var chat = message.Chat;
 
