@@ -1346,6 +1346,10 @@ namespace Telegram.Views
                         selector.SizeChanged -= _sizeChangedHandler;
                     }
                 }
+                else if (args.ItemContainer.ContentTemplateRoot is MessageService service)
+                {
+                    service.Recycle();
+                }
 
                 if (message.Content is MessageHeaderUnread)
                 {
