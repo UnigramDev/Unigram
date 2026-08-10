@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -6,11 +6,11 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text;
 using Telegram.Native;
 using Telegram.Services;
 using Telegram.Td;
@@ -69,7 +69,13 @@ namespace Telegram
             Log(LogLevel.Info, message, member, filePath, line);
         }
 
-        private static readonly List<string> _lastCalls = new();
+        // Ships with every crash report, so the size trades how much history a report
+        // carries against how large every report gets.
+        private const int TailCapacity = 200;
+
+        private static readonly string[] _lastCalls = new string[TailCapacity];
+        private static int _lastCallsHead;
+        private static int _lastCallsCount;
         private static readonly object _lock = new();
 
         [SuppressUnmanagedCodeSecurity]
@@ -112,11 +118,14 @@ namespace Telegram
 
             lock (_lock)
             {
-                _lastCalls.Add(entry);
+                // Overwrite the oldest slot instead of shifting the window down, which
+                // copied every retained entry on each call once the window was full.
+                _lastCalls[_lastCallsHead] = entry;
+                _lastCallsHead = (_lastCallsHead + 1) % TailCapacity;
 
-                if (_lastCalls.Count > 50)
+                if (_lastCallsCount < TailCapacity)
                 {
-                    _lastCalls.RemoveAt(0);
+                    _lastCallsCount++;
                 }
             }
 
@@ -139,17 +148,31 @@ namespace Telegram
 
         public static unsafe string Dump()
         {
+            // We use UtcNow instead of Now because Now is expensive.
+            long diff = 116444736000000000;
+            long time = 0;
+
+            GetSystemTimeAsFileTime(&time);
+
+            var builder = new StringBuilder();
+
             lock (_lock)
             {
-                // We use UtcNow instead of Now because Now is expensive.
-                long diff = 116444736000000000;
-                long time = 0;
+                // Once the window has wrapped, the slot due to be written next is the oldest.
+                var start = _lastCallsCount < TailCapacity ? 0 : _lastCallsHead;
 
-                GetSystemTimeAsFileTime(&time);
-
-                _lastCalls.Add(string.Format("[{0:F3}] Bump", (time - diff) / 10_000_000d));
-                return string.Join('\n', _lastCalls);
+                for (int i = 0; i < _lastCallsCount; i++)
+                {
+                    builder.Append(_lastCalls[(start + i) % TailCapacity]);
+                    builder.Append('\n');
+                }
             }
+
+            // Marks when the report was taken. Appended to the output rather than stored as
+            // an entry, so that dumping neither evicts a line nor leaves a trail of markers
+            // in the next dump.
+            builder.AppendFormat("[{0:F3}] Bump", (time - diff) / 10_000_000d);
+            return builder.ToString();
         }
     }
 
