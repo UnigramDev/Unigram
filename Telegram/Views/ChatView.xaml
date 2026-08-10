@@ -265,45 +265,7 @@
         </DataTemplate>
 
         <DataTemplate x:Name="ServiceMessageBackgroundTemplate">
-            <messages:MessageService x:Name="Service"
-                                     Click="ServiceMessage_Click"
-                                     Margin="0,8,0,0"
-                                     Padding="12,2,12,0"
-                                     Width="216">
-                <StackPanel>
-                    <chats:ChatBackgroundPresenter x:Name="Photo"
-                                                   IsEnabled="False"
-                                                   Width="120"
-                                                   Height="120"
-                                                   CornerRadius="60"
-                                                   Margin="0,10,0,12" />
-
-                    <controls:FormattedTextBlock x:Name="Text"
-                                                 Foreground="White"
-                                                 TextAlignment="Center"
-                                                 Style="{StaticResource CaptionFormattedTextBlockStyle}"
-                                                 FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                                 AutoFontSize="False"
-                                                 IsTextSelectionEnabled="False"
-                                                 HyperlinkStyle="None"
-                                                 HyperlinkForeground="#FFFFFF"
-                                                 HyperlinkFontWeight="SemiBold"
-                                                 Padding="0,0,0,4"
-                                                 Margin="0,0,0,8" />
-
-                    <Border x:Name="View"
-                            Background="{ThemeResource MessageServiceBackgroundBrush}"
-                            CornerRadius="12"
-                            HorizontalAlignment="Center"
-                            Padding="12,4,12,4"
-                            Margin="0,0,0,12">
-                        <TextBlock Text="{CustomResource ViewWallpaperAction}"
-                                   Foreground="#FFFFFF"
-                                   TextAlignment="Center"
-                                   Style="{StaticResource CaptionTextBlockStyle}" />
-                    </Border>
-                </StackPanel>
-            </messages:MessageService>
+            <service:MessageChatSetBackgroundContent />
         </DataTemplate>
 
         <DataTemplate x:Name="ServiceMessageGiftCodeTemplate">

@@ -417,6 +417,9 @@
     <Compile Include="Controls\Messages\Service\MessageChatHasProtectedContentDisableRequestedContent.xaml.cs">
       <DependentUpon>MessageChatHasProtectedContentDisableRequestedContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\Service\MessageChatSetBackgroundContent.xaml.cs">
+      <DependentUpon>MessageChatSetBackgroundContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Service\MessageGiftContent.xaml.cs">
       <DependentUpon>MessageGiftContent.xaml</DependentUpon>
     </Compile>
@@ -3269,6 +3272,10 @@
     <Page Include="Controls\Messages\Service\MessageChatHasProtectedContentDisableRequestedContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\Service\MessageChatSetBackgroundContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\Service\MessageGiftContent.xaml">
       <SubType>Designer</SubType>
