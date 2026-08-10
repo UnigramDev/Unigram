@@ -289,9 +289,12 @@ namespace Telegram.Common
             StopWatchingFocus();
             RebuildItems();
 
-            // Anchor at the press point. If the press isn't on a selectable (media,
-            // gap, ...), do nothing — let the press through.
-            if (!ResolvePosition(e, point.Position, out _anchor, out _anchorPosition, out var exact))
+            // Anchor at the press point, and only on a direct hit. ResolvePosition also
+            // clamps to the nearest selectable, which is what a drag past the end of a
+            // line needs, but starting a gesture from it captures the pointer over
+            // whatever was actually pressed — media stops receiving the sequence, and a
+            // drag out of PhotoContent never begins.
+            if (!ResolvePosition(e, point.Position, out _anchor, out _anchorPosition, out var exact) || !exact)
             {
                 _anchor = null;
                 return;
@@ -301,13 +304,8 @@ namespace Telegram.Common
             _pressPoint = point.Position;
 
             // Multi-tap (mouse only): 2 -> word, 3 -> paragraph; otherwise a caret-drag.
-            //
-            // Only a DIRECT hit inside a selectable takes part: a press in a gap (clamped to
-            // the nearest block) is a plain caret-drag AND breaks the sequence, so it can't
-            // count towards the next press's tap count — otherwise a click on media next to
-            // the text would turn the following click into a word/paragraph selection.
             _granularity = TextSelectionGranularity.Character;
-            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse && exact)
+            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
             {
                 var now = Logger.TickCount;
                 var near = _anchor == _lastTapControl
