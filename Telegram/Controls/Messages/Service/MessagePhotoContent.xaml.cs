@@ -11,7 +11,6 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Stories;
 using Windows.Foundation;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Messages.Service
 {
