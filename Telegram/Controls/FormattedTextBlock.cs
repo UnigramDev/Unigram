@@ -56,6 +56,15 @@ namespace Telegram.Controls
         public readonly Queue<IXamlDirectObject> Spans = new();
         public readonly Queue<IXamlDirectObject> Runs = new();
         //public readonly Queue<InlineUIContainer> Emoji = new();
+
+        public void Clear()
+        {
+            Paragraphs.Clear();
+            Hyperlinks.Clear();
+            Spans.Clear();
+            Runs.Clear();
+            //Emoji.Clear();
+        }
     }
 
     [ContentProperty(Name = "Blocks")]
