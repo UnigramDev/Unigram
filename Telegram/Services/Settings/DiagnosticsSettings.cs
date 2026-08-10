@@ -170,6 +170,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _bubbleRecyclingDebug, "BubbleRecyclingDebug", value);
         }
 
+        private bool? _bubbleContentRecyclingDebug;
+        public bool BubbleContentRecyclingDebug
+        {
+            get => _bubbleContentRecyclingDebug ??= GetValueOrDefault("BubbleContentRecyclingDebug", ApiInfo.IsPackagedRelease);
+            set => AddOrUpdateValue(ref _bubbleContentRecyclingDebug, "BubbleContentRecyclingDebug", value);
+        }
+
         private bool? _windowResizeDebug;
         public bool WindowResizeDebug
         {

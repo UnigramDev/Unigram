@@ -479,6 +479,7 @@
     <Compile Include="Services\Settings\ToolTipSettings.cs" />
     <Compile Include="Services\TextRecognitionService.cs" />
     <Compile Include="Services\Session.g.cs" />
+    <Compile Include="Controls\Messages\MessageContentRecyclePool.cs" />
     <Compile Include="Streams\MediaRange.cs" />
     <Compile Include="Streams\RemoteFilePrefetch.cs" />
     <Compile Include="Td\Api\FormattedText.cs" />

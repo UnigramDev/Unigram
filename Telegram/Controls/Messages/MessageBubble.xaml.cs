@@ -174,6 +174,13 @@ namespace Telegram.Controls.Messages
             }
         }
 
+        private MessageContentRecyclePool _contentRecyclePool;
+
+        public void UpdateContentRecyclePool(MessageContentRecyclePool recyclePool)
+        {
+            _contentRecyclePool = recyclePool;
+        }
+
         private FormattedTextBlockRecyclePool _recyclePool;
 
         public void UpdateRecyclePool(FormattedTextBlockRecyclePool recyclePool)
@@ -2082,7 +2089,18 @@ namespace Telegram.Controls.Messages
                 else
                 {
                     media.Recycle();
+                    _contentRecyclePool?.Put(media);
                 }
+            }
+
+            // A control of the right kind may already have been built for a message that
+            // has since scrolled away, in which case the template below is not inflated.
+            var recycled = _contentRecyclePool?.TryGet(content);
+            if (recycled is UIElement element)
+            {
+                recycled.UpdateMessage(message);
+                Media.Child = element;
+                return;
             }
 
             //if (Media.Child is StickerContent or VideoNoteContent)

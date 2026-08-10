@@ -1155,6 +1155,7 @@ namespace Telegram.Views
 
 
         private readonly FormattedTextBlockRecyclePool _textBlockRecyclePool = new();
+        private readonly MessageContentRecyclePool _contentRecyclePool = new();
 
         private readonly Dictionary<long, ChatHistoryViewItem> _albumIdToSelector = new();
         private readonly Dictionary<long, ChatHistoryViewItem> _messageIdToSelector = new();
@@ -1418,14 +1419,8 @@ namespace Telegram.Views
                             bubble.UpdateShadow(_shadow);
                         }
 
-                        if (SettingsService.Current.Diagnostics.BubbleRecyclingDebug)
-                        {
-                            bubble.UpdateRecyclePool(_textBlockRecyclePool);
-                        }
-                        else
-                        {
-                            bubble.UpdateRecyclePool(null);
-                        }
+                        bubble.UpdateRecyclePool(SettingsService.Current.Diagnostics.BubbleRecyclingDebug ? _textBlockRecyclePool : null);
+                        bubble.UpdateContentRecyclePool(SettingsService.Current.Diagnostics.BubbleContentRecyclingDebug ? _contentRecyclePool : null);
 
                         bubble.UpdateQuery(ViewModel.Search?.Query, false);
                         bubble.UpdateMessage(args.Item as MessageViewModel);
