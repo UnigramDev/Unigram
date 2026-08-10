@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using Telegram.Controls;
 using Telegram.Controls.Media;
+using Telegram.Controls.Messages;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Windows.Devices.Input;
@@ -289,12 +290,11 @@ namespace Telegram.Common
             StopWatchingFocus();
             RebuildItems();
 
-            // Anchor at the press point, and only on a direct hit. ResolvePosition also
-            // clamps to the nearest selectable, which is what a drag past the end of a
-            // line needs, but starting a gesture from it captures the pointer over
-            // whatever was actually pressed — media stops receiving the sequence, and a
-            // drag out of PhotoContent never begins.
-            if (!ResolvePosition(e, point.Position, out _anchor, out _anchorPosition, out var exact) || !exact)
+            // Anchor at the press point. ResolvePosition clamps to the nearest selectable
+            // when the pointer is past one, which is what the gap beside text needs, so
+            // the press is filtered by what it landed on rather than by the clamp.
+            if (!CanStartSelection(e.OriginalSource)
+                || !ResolvePosition(e, point.Position, out _anchor, out _anchorPosition, out var exact))
             {
                 _anchor = null;
                 return;
@@ -304,8 +304,10 @@ namespace Telegram.Common
             _pressPoint = point.Position;
 
             // Multi-tap (mouse only): 2 -> word, 3 -> paragraph; otherwise a caret-drag.
+            // A clamped press is a plain caret-drag and breaks the sequence, so a click
+            // beside the text can't turn the next one into a word selection.
             _granularity = TextSelectionGranularity.Character;
-            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
+            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse && exact)
             {
                 var now = Logger.TickCount;
                 var near = _anchor == _lastTapControl
@@ -351,6 +353,35 @@ namespace Telegram.Common
                 ApplySelection(index, _anchorStart, index, _anchorEnd);
                 e.Handled = true;
             }
+        }
+
+        /// <summary>
+        /// Whether a press landing on this element may begin a selection.
+        ///
+        /// Only a selectable, or the surface they sit on, may. A press inside any other
+        /// piece of content belongs to that content: the gesture captures the pointer on
+        /// the root, and whatever was pressed stops receiving the sequence — which is how
+        /// dragging an image out of a bubble came to do nothing.
+        /// </summary>
+        private bool CanStartSelection(object source)
+        {
+            var node = source as DependencyObject;
+
+            while (node != null && node != _root)
+            {
+                if (node is ISelectableControl)
+                {
+                    return true;
+                }
+                else if (node is IContent)
+                {
+                    return false;
+                }
+
+                node = VisualTreeHelper.GetParent(node);
+            }
+
+            return true;
         }
 
         private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
