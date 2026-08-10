@@ -383,22 +383,24 @@ namespace Telegram.Common
                                 entity.Type = new TextEntityTypeMentionName(reader.ReadInt64());
                                 break;
                             case 13:
-                                entity.Type = new TextEntityTypeDateTime(reader.ReadInt32(), reader.ReadByte() switch
                                 {
-                                    1 => new DateTimeFormattingTypeAbsolute(reader.ReadByte() switch
+                                    // The precisions are written DATE first, while the type takes
+                                    // TIME first — read them into locals so they don't get swapped.
+                                    var unixTime = reader.ReadInt32();
+                                    var formattingType = reader.ReadByte();
+
+                                    if (formattingType == 1)
                                     {
-                                        1 => new DateTimePartPrecisionLong(),
-                                        2 => new DateTimePartPrecisionShort(),
-                                        _ => new DateTimePartPrecisionNone()
-                                    }, reader.ReadByte() switch
+                                        var date = ReadDateTimePartPrecision(reader);
+                                        var time = ReadDateTimePartPrecision(reader);
+
+                                        entity.Type = new TextEntityTypeDateTime(unixTime, new DateTimeFormattingTypeAbsolute(time, date, reader.ReadBoolean()));
+                                    }
+                                    else
                                     {
-                                        1 => new DateTimePartPrecisionLong(),
-                                        2 => new DateTimePartPrecisionShort(),
-                                        _ => new DateTimePartPrecisionNone()
-                                    }, reader.ReadBoolean()),
-                                    2 => new DateTimeFormattingTypeRelative(),
-                                    _ => null
-                                });
+                                        entity.Type = new TextEntityTypeDateTime(unixTime, formattingType == 2 ? new DateTimeFormattingTypeRelative() : null);
+                                    }
+                                }
                                 break;
                         }
 
@@ -410,6 +412,16 @@ namespace Telegram.Common
             }
 
             return null;
+        }
+
+        private static DateTimePartPrecision ReadDateTimePartPrecision(DataReader reader)
+        {
+            return reader.ReadByte() switch
+            {
+                1 => new DateTimePartPrecisionLong(),
+                2 => new DateTimePartPrecisionShort(),
+                _ => new DateTimePartPrecisionNone()
+            };
         }
 
         public static bool AreTheSame(string bae, string url, out string fragment)
