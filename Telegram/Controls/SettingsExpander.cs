@@ -81,7 +81,9 @@ namespace Telegram.Controls
                 ExpandedChanged?.Invoke(this, EventArgs.Empty);
             }
 
-            var tracker = _tracker++;
+            // Pre-increment: the batch below compares this against _tracker to ignore its own
+            // completion once a newer toggle has started. Post-increment never matches.
+            var tracker = ++_tracker;
 
             _expanded = newValue;
             ActionButton.ChevronGlyph = IsExpanded ? Icons.ChevronUp16 : Icons.ChevronDown16;
