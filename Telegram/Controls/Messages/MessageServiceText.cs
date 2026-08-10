@@ -657,9 +657,11 @@ namespace Telegram.Controls.Messages
 
         private static FormattedText UpdatePollStopped(MessageWithOwner message, ChatEventPollStopped pollStopped, bool history)
         {
-            var fromUser = message.GetSender();
+            if (pollStopped.Message.Content is not MessagePoll poll)
+            {
+                return _emptyString;
+            }
 
-            var poll = pollStopped.Message.Content as MessagePoll;
             if (poll.Poll.Type is PollTypeRegular)
             {
                 return ReplaceWithLink(Strings.EventLogStopPoll, message.GetSender());
@@ -1931,7 +1933,10 @@ namespace Telegram.Controls.Messages
 
         private static FormattedText UpdateUpgradedGiftPurchaseOffer(MessageWithOwner message, MessageUpgradedGiftPurchaseOffer upgradedGift, bool history)
         {
-            message.ClientService.TryGetUser(message.Chat, out User user);
+            if (!message.ClientService.TryGetUser(message.Chat, out User user))
+            {
+                return _emptyString;
+            }
 
             var content = string.Empty;
 
@@ -1987,7 +1992,10 @@ namespace Telegram.Controls.Messages
 
         private static FormattedText UpdateUpgradedGiftPurchaseOfferRejected(MessageWithOwner message, MessageUpgradedGiftPurchaseOfferRejected upgradedGift, bool history)
         {
-            message.ClientService.TryGetUser(message.Chat, out User user);
+            if (!message.ClientService.TryGetUser(message.Chat, out User user))
+            {
+                return _emptyString;
+            }
 
             if (upgradedGift.WasExpired)
             {
@@ -2104,6 +2112,11 @@ namespace Telegram.Controls.Messages
 
         private static FormattedText UpdateChecklistTasksAdded(MessageWithOwner message, MessageChecklistTasksAdded checklistTasksAdded, bool history)
         {
+            if (checklistTasksAdded.Tasks.Count == 0)
+            {
+                return _emptyString;
+            }
+
             Checklist checklist = null;
             if (message is MessageViewModel { ReplyToItem: MessageViewModel { Content: MessageChecklist checklistContent } })
             {
@@ -2160,6 +2173,11 @@ namespace Telegram.Controls.Messages
             var taskIds = markedAsDone
                 ? checklistTasksDone.MarkedAsDoneTaskIds
                 : checklistTasksDone.MarkedAsNotDoneTaskIds;
+
+            if (taskIds.Count == 0)
+            {
+                return _emptyString;
+            }
 
             var taskId = taskIds[0];
 
@@ -2278,7 +2296,7 @@ namespace Telegram.Controls.Messages
 
             if (suggestedPostRefunded.Reason is SuggestedPostRefundReasonPostDeleted)
             {
-                if (message is MessageViewModel { ReplyToItem: MessageViewModel replyTo })
+                if (message is MessageViewModel { ReplyToItem: MessageViewModel { SuggestedPostInfo: not null } replyTo })
                 {
                     if (replyTo.SuggestedPostInfo.Price is SuggestedPostPriceStar priceStar)
                     {
@@ -2294,7 +2312,7 @@ namespace Telegram.Controls.Messages
                     return string.Format(Strings.SuggestedOfferRefundByAdminAmountUnknown, sender, message.Chat.Title).AsFormattedText();
                 }
             }
-            else if (message is MessageViewModel { ReplyToItem: MessageViewModel replyTo })
+            else if (message is MessageViewModel { ReplyToItem: MessageViewModel { SuggestedPostInfo: not null } replyTo })
             {
                 if (replyTo.SuggestedPostInfo.Price is SuggestedPostPriceStar priceStar)
                 {
