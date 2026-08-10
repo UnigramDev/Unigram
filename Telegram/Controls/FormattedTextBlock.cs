@@ -982,6 +982,7 @@ namespace Telegram.Controls
                         direct.SetEnumProperty(_fastRun, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
                     }
 
+                    // TODO: the if check is not correct here, as it should compare between computed sizes
                     if (_fontSize != prevFontSize)
                     {
                         // fontSize, not _fontSize: the latter is the raw value, which AutoFontSize
