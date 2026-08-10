@@ -1,0 +1,136 @@
+﻿<messages:MessageService x:Class="Telegram.Controls.Messages.Service.MessageGiftContent"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:local="using:Telegram.Controls.Messages.Service"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:messages="using:Telegram.Controls.Messages"
+                         xmlns:controls="using:Telegram.Controls"
+                         mc:Ignorable="d"
+                         d:DesignHeight="300"
+                         d:DesignWidth="400">
+
+    <Button.Template>
+        <ControlTemplate TargetType="Button">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ContentPresenter HorizontalContentAlignment="Stretch"
+                                  VerticalContentAlignment="Stretch" />
+                <messages:ReactionsPanel x:Name="Reactions"
+                                         MaxWidth="{StaticResource MessageMaxWidth}"
+                                         HorizontalAlignment="Stretch"
+                                         HorizontalContentAlignment="Center"
+                                         Padding="0,4,0,0"
+                                         Grid.Row="1" />
+            </Grid>
+        </ControlTemplate>
+    </Button.Template>
+    <StackPanel>
+        <messages:MessageService Click="Service_Click"
+                                 Margin="0,8,0,0"
+                                 Padding="12,2,12,0"
+                                 MaxWidth="480">
+            <controls:FormattedTextBlock x:Name="Text"
+                                         Foreground="#FFFFFF"
+                                         TextAlignment="Center"
+                                         Style="{StaticResource CaptionFormattedTextBlockStyle}"
+                                         FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                         AutoFontSize="False"
+                                         IsTextSelectionEnabled="False"
+                                         HyperlinkStyle="None"
+                                         HyperlinkForeground="#FFFFFF"
+                                         HyperlinkFontWeight="SemiBold"
+                                         Padding="0,0,0,4" />
+        </messages:MessageService>
+
+        <Grid Width="216">
+            <messages:MessageService x:Name="Service"
+                                     Click="Service_Click"
+                                     Margin="0,4,0,0"
+                                     Padding="12,2,12,0"
+                                     Width="216">
+                <StackPanel>
+                    <controls:AnimatedImage x:Name="Animation"
+                                            Width="120"
+                                            Height="120"
+                                            FrameSize="120,120"
+                                            DecodeFrameType="Logical"
+                                            IsViewportAware="True"
+                                            LoopCount="1"
+                                            Margin="0,-20,0,12" />
+
+                    <TextBlock x:Name="Title"
+                               Foreground="#FFFFFF"
+                               Text="{CustomResource BoostingCongratulations}"
+                               TextAlignment="Center"
+                               Style="{StaticResource SubtitleTextBlockStyle}"
+                               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                               FontSize="16" />
+
+                    <Border x:Name="Publisher"
+                            Background="{ThemeResource MessageServiceBackgroundBrush}"
+                            CornerRadius="12"
+                            HorizontalAlignment="Center"
+                            Padding="8,2,8,3"
+                            Margin="0,4,0,4"
+                            Visibility="Collapsed">
+                        <TextBlock x:Name="PublisherLabel"
+                                   Foreground="#DDFFFFFF"
+                                   TextAlignment="Center"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   TextWrapping="NoWrap" />
+                    </Border>
+
+                    <controls:FormattedTextBlock x:Name="Subtitle"
+                                                 Foreground="#FFFFFF"
+                                                 TextAlignment="Center"
+                                                 Style="{StaticResource CaptionFormattedTextBlockStyle}"
+                                                 FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                 AutoFontSize="False"
+                                                 IsTextSelectionEnabled="False"
+                                                 Padding="0,0,0,4"
+                                                 Margin="0,0,0,8" />
+
+                    <Border x:Name="View"
+                            Background="{ThemeResource MessageServiceBackgroundBrush}"
+                            CornerRadius="14"
+                            HorizontalAlignment="Center"
+                            Padding="12,3,12,5"
+                            Margin="0,0,0,12">
+                        <TextBlock x:Name="ViewLabel"
+                                   Text="{CustomResource BoostingReceivedGiftOpenBtn}"
+                                   Foreground="#FFFFFF"
+                                   TextAlignment="Center"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
+                    </Border>
+                </StackPanel>
+            </messages:MessageService>
+
+            <Grid x:Name="RibbonRoot"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Margin="0,2,-2,0"
+                  Width="72"
+                  Height="72">
+                <Path Data="M69.6569 41.1569L30.8431 2.34315C29.3429 0.842855 27.308 0 25.1863 0H2.82843C1.04662 0 0.154286 2.15429 1.41422 3.41422L68.5858 70.5858C69.8457 71.8457 72 70.9534 72 69.1716V46.8137C72 44.692 71.1571 42.6571 69.6569 41.1569Z"
+                      Fill="{StaticResource MessageServiceBackgroundBrush}" />
+
+                <Border Width="72"
+                        VerticalAlignment="Center"
+                        RenderTransformOrigin="0.5,0.5"
+                        Margin="0,-14,-14,0">
+                    <Border.RenderTransform>
+                        <RotateTransform Angle="45" />
+                    </Border.RenderTransform>
+                    <TextBlock x:Name="Ribbon"
+                               Foreground="#FFFFFF"
+                               TextAlignment="Center"
+                               FontSize="12" />
+                </Border>
+            </Grid>
+        </Grid>
+    </StackPanel>
+</messages:MessageService>
