@@ -420,6 +420,9 @@
     <Compile Include="Controls\Messages\Service\MessageGiftContent.xaml.cs">
       <DependentUpon>MessageGiftContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\Service\MessageGiveawayPrizeStarsContent.xaml.cs">
+      <DependentUpon>MessageGiveawayPrizeStarsContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Service\MessageUpgradedGiftContent.xaml.cs">
       <DependentUpon>MessageUpgradedGiftContent.xaml</DependentUpon>
     </Compile>
@@ -3269,6 +3272,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Messages\Service\MessageGiftContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Messages\Service\MessageGiveawayPrizeStarsContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
