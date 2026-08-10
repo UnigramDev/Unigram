@@ -984,7 +984,15 @@ namespace Telegram.Controls
 
                     if (_fontSize != prevFontSize)
                     {
-                        direct.SetDoubleProperty(_fastRun, XamlPropertyIndex.TextElement_FontSize, _fontSize);
+                        // 0 means "inherit", as in GetOrCreateRun — XAML rejects it as a FontSize.
+                        if (_fontSize > 0)
+                        {
+                            direct.SetDoubleProperty(_fastRun, XamlPropertyIndex.TextElement_FontSize, _fontSize);
+                        }
+                        else
+                        {
+                            direct.ClearProperty(_fastRun, XamlPropertyIndex.TextElement_FontSize);
+                        }
                     }
 
                     direct.SetStringProperty(_fastRun, XamlPropertyIndex.Run_Text, styled.Paragraphs[rangeStart].Text);
