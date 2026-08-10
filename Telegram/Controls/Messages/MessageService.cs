@@ -115,6 +115,25 @@ namespace Telegram.Controls.Messages
             UpdateMessageInteractionInfo(message);
         }
 
+        /// <summary>
+        /// Called when the container goes back on the recycle queue: releases what the
+        /// control holds, so a service message off screen doesn't keep its whole view model
+        /// (and the inlines its text built) alive.
+        ///
+        /// Overrides must also reset any template state <see cref="UpdateContent"/> only
+        /// sets conditionally — the same container comes back for another message of the
+        /// same type, and whatever isn't reset is inherited by it.
+        /// </summary>
+        public virtual void Recycle()
+        {
+            if (FindName("Text") is FormattedTextBlock content)
+            {
+                content.Clear();
+            }
+
+            _message = null;
+        }
+
         public void UpdateMessageTopic()
         {
             if (_message is not MessageViewModel message)
