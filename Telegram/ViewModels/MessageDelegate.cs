@@ -391,6 +391,11 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
+        public virtual void ExecuteServiceMessage(MessageViewModel message) { }
+
+        /// <summary>
+        /// Only available when created through DialogViewModel
+        /// </summary>
         public virtual void OpenReply(MessageViewModel message) { }
 
         /// <summary>
@@ -728,6 +733,8 @@ namespace Telegram.ViewModels
         public override void SummarizeMessage(MessageViewModel message) => _viewModel.SummarizeMessage(message);
 
         public override void ViewVisibleMessages() => _viewModel.ViewVisibleMessages();
+
+        public override void ExecuteServiceMessage(MessageViewModel message) => _viewModel.ExecuteServiceMessage(message);
 
         public override void OpenReply(MessageViewModel message) => _viewModel.OpenReply(message);
 
