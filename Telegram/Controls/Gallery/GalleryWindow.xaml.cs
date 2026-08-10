@@ -699,6 +699,12 @@ namespace Telegram.Controls.Gallery
 
         private string ConvertOf(GalleryMedia item, int index, int count)
         {
+            // Bindings.Update runs on Load, before SelectedItem has been set.
+            if (item == null)
+            {
+                return string.Empty;
+            }
+
             if (item.IsPersonal)
             {
                 return Strings.CustomAvatarTooltip;
