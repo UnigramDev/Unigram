@@ -1601,23 +1601,8 @@ namespace Telegram.Controls
 
         private UIElement CreateInlineButton(IClientService clientService, InlineButton button)
         {
-            var block = new FormattedTextBlock
-            {
-                AutoFontSize = true,
-                IgnoreSpoilers = false,
-                HorizontalTextAlignment = TextAlignment.DetectFromContent,
-                TextReadingOrder = TextReadingOrder.UseFlowDirection,
-                TextSelection = TextSelectionMode.Disabled,
-                AdjustLineEnding = false,
-            };
-
-            block.SetText(clientService, button.Text);
-
             var element = new ReplyMarkupInlineButton
             {
-                // The label is the button's own content, so unlike the page text around
-                // it, it *is* rendered here — it's just never harvested as page text.
-                Content = block,
                 Tag = button,
                 Padding = new Thickness(4, 0, 4, 0),
                 Margin = new Thickness(0, 0, 0, -4),
@@ -1630,7 +1615,27 @@ namespace Telegram.Controls
             element.SetButton(clientService, null, 0, button.Style, button.Type);
             element.Click += InlineButton_Click;
 
-            block.IconForeground = element.Foreground;
+            if (button.Text is RichTextPlain plain)
+            {
+                element.Content = plain.Text;
+            }
+            else
+            {
+                var block = new FormattedTextBlock
+                {
+                    AutoFontSize = true,
+                    IgnoreSpoilers = false,
+                    HorizontalTextAlignment = TextAlignment.DetectFromContent,
+                    TextReadingOrder = TextReadingOrder.UseFlowDirection,
+                    TextSelection = TextSelectionMode.Disabled,
+                    AdjustLineEnding = false,
+                };
+
+                block.IconForeground = element.Foreground;
+                block.SetText(clientService, button.Text);
+
+                element.Content = block;
+            }
 
             return new Border
             {

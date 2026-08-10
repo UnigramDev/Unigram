@@ -1071,24 +1071,6 @@ namespace Telegram.Common
 
         private ReplyMarkupInlineButton CreateInlineButton(IClientService clientService, InlineButton button)
         {
-            var block = new FormattedTextBlock
-            {
-                AutoFontSize = true,
-                IgnoreSpoilers = false,
-                HorizontalTextAlignment = TextAlignment.DetectFromContent,
-                TextReadingOrder = TextReadingOrder.UseFlowDirection,
-                TextSelection = TextSelectionMode.Disabled,
-                AdjustLineEnding = false,
-            };
-
-            Instrumentation.Register(block);
-
-#if INSTRUMENTATION
-            _context.RegisterDebug(block);
-#endif
-
-            block.SetText(clientService, button.Text);
-
             var element = new ReplyMarkupInlineButton
             {
                 // The label is the button's own content, so unlike the page text around
@@ -1096,7 +1078,6 @@ namespace Telegram.Common
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
                 CornerRadius = new CornerRadius(16),
-                Content = block,
                 Tag = button
             };
 
@@ -1107,7 +1088,34 @@ namespace Telegram.Common
             element.SetButton(clientService, null, 0, button.Style, button.Type);
             element.Click += InlineButton_Click;
 
-            block.IconForeground = element.Foreground;
+            if (button.Text is RichTextPlain plain)
+            {
+                element.Content = plain.Text;
+            }
+            else
+            {
+                var block = new FormattedTextBlock
+                {
+                    AutoFontSize = true,
+                    IgnoreSpoilers = false,
+                    HorizontalTextAlignment = TextAlignment.DetectFromContent,
+                    TextReadingOrder = TextReadingOrder.UseFlowDirection,
+                    TextSelection = TextSelectionMode.Disabled,
+                    AdjustLineEnding = false,
+                };
+
+                Instrumentation.Register(block);
+
+#if INSTRUMENTATION
+                _context.RegisterDebug(block);
+#endif
+
+                block.IconForeground = element.Foreground;
+                block.SetText(clientService, button.Text);
+
+                element.Content = block;
+            }
+
 
             return element;
         }
