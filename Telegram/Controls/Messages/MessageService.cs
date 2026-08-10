@@ -182,6 +182,14 @@ namespace Telegram.Controls.Messages
             AutomationProperties.SetName(this, title.Text);
         }
 
+        private void ClearGiftPublisher()
+        {
+            if (FindName("Publisher") is Border publisherRoot)
+            {
+                publisherRoot.Visibility = Visibility.Collapsed;
+            }
+        }
+
         protected virtual void UpdateContent(MessageViewModel message)
         {
             if (message.Content is MessageHeaderAccountInfo)
@@ -382,6 +390,10 @@ namespace Telegram.Controls.Messages
                 animation.Margin = new Thickness(0, -20, 0, 12);
                 animation.Source = DelayedFileSource.FromSticker(message.ClientService, premiumGiftCode.Sticker);
 
+                // Only MessageGift ever shows the publisher, but it shares this template:
+                // left alone, a recycled container carries the previous chip over.
+                ClearGiftPublisher();
+
                 ribbonRoot.Visibility = Visibility.Collapsed;
             }
             else if (message.Content is MessageGiftedPremium giftedPremium)
@@ -411,6 +423,8 @@ namespace Telegram.Controls.Messages
                 animation.Margin = new Thickness(0, -20, 0, 12);
                 animation.Source = DelayedFileSource.FromSticker(message.ClientService, giftedPremium.Sticker);
 
+                ClearGiftPublisher();
+
                 ribbonRoot.Visibility = Visibility.Collapsed;
             }
             else if (message.Content is MessageGiftedStars giftedStars)
@@ -438,6 +452,8 @@ namespace Telegram.Controls.Messages
                 animation.LoopCount = 1;
                 animation.Source = DelayedFileSource.FromSticker(message.ClientService, giftedStars.Sticker);
                 animation.Margin = new Thickness(0, -20, 0, 12);
+
+                ClearGiftPublisher();
 
                 ribbonRoot.Visibility = Visibility.Collapsed;
             }
