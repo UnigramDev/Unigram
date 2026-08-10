@@ -437,7 +437,7 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageCall call)
             {
-                return call.ToOutcomeText(message.IsOutgoing) + ", ";
+                return ToOutcomeText(call, message.IsOutgoing) + ", ";
             }
             else if (message.Content is MessageUnsupported)
             {
@@ -445,6 +445,21 @@ namespace Telegram.Common
             }
 
             return null;
+        }
+
+        // CallContent renders the duration into a TextBlock of its own, which a screen
+        // reader only reaches by navigating into the message. Naming it here is what gets
+        // it read out when the message takes focus.
+        private static string ToOutcomeText(MessageCall call, bool outgoing)
+        {
+            var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
+
+            if (call.Duration > 0 && !missed)
+            {
+                return call.ToOutcomeText(outgoing) + ", " + Locale.FormatCallDuration(call.Duration);
+            }
+
+            return call.ToOutcomeText(outgoing);
         }
 
         public static string GetSummary(IClientService clientService, Message message, bool details = false, bool addCaption = true, string altText = null)
@@ -760,7 +775,7 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageCall call)
             {
-                return call.ToOutcomeText(message.IsOutgoing) + ", ";
+                return ToOutcomeText(call, message.IsOutgoing) + ", ";
             }
             else if (message.Content is MessageUnsupported)
             {
