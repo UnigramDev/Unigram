@@ -1856,27 +1856,32 @@ namespace Telegram.Controls.Messages
 
         private static FormattedText UpdateSuggestProfilePhoto(MessageWithOwner message, MessageSuggestProfilePhoto suggestProfilePhoto, bool history)
         {
-            var content = string.Empty;
-            var entities = new List<TextEntity>();
+            string format;
+            User user;
 
             if (message.IsOutgoing)
             {
-                if (message.ClientService.TryGetUser(message.Chat, out User user))
-                {
-                    content = string.Format(Strings.ActionSuggestPhotoFromYouDescription, user.FirstName);
-                    entities?.Add(new TextEntity(Strings.ActionSuggestPhotoFromYouDescription.IndexOf("{0}"), user.FirstName.Length, new TextEntityTypeBold()));
-                }
+                format = Strings.ActionSuggestPhotoFromYouDescription;
+                message.ClientService.TryGetUser(message.Chat, out user);
             }
             else
             {
-                if (message.ClientService.TryGetUser(message.SenderId, out User user))
-                {
-                    content = string.Format(Strings.ActionSuggestPhotoToYouDescription, user.FirstName);
-                    entities?.Add(new TextEntity(Strings.ActionSuggestPhotoToYouDescription.IndexOf("{0}"), user.FirstName.Length, new TextEntityTypeBold()));
-                }
+                format = Strings.ActionSuggestPhotoToYouDescription;
+                message.ClientService.TryGetUser(message.SenderId, out user);
             }
 
-            return new FormattedText(content, entities);
+            if (user == null)
+            {
+                return _emptyString;
+            }
+
+            // A translation that dropped the placeholder would put the entity at -1.
+            var index = format.IndexOf("{0}");
+            var content = string.Format(format, user.FirstName);
+
+            return index < 0
+                ? content.AsFormattedText()
+                : new FormattedText(content, new[] { new TextEntity(index, user.FirstName.Length, new TextEntityTypeBold()) });
         }
 
         private static FormattedText UpdateSupergroupChatCreate(MessageWithOwner message, MessageSupergroupChatCreate supergroupChatCreate, bool history)
