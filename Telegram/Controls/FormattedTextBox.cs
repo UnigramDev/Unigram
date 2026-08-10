@@ -758,41 +758,41 @@ namespace Telegram.Controls
             {
                 relative = new CheckBox
                 {
-                    Content = "relative"
+                    Content = "r (relative)"
                 };
 
                 short_time = new CheckBox
                 {
-                    Content = "short_time"
+                    Content = "t (short time)"
                 };
 
                 long_time = new CheckBox
                 {
-                    Content = "long_time"
+                    Content = "T (long time)"
                 };
 
                 short_date = new CheckBox
                 {
-                    Content = "short_date"
+                    Content = "d (short date)"
                 };
 
                 long_date = new CheckBox
                 {
-                    Content = "long_date"
+                    Content = "D (long date)"
                 };
 
                 day_of_week = new CheckBox
                 {
-                    Content = "day_of_week"
+                    Content = "w (day of week)"
                 };
 
                 var panel = new StackPanel();
                 panel.Children.Add(relative);
-                panel.Children.Add(short_time);
-                panel.Children.Add(long_time);
+                panel.Children.Add(day_of_week);
                 panel.Children.Add(short_date);
                 panel.Children.Add(long_date);
-                panel.Children.Add(day_of_week);
+                panel.Children.Add(short_time);
+                panel.Children.Add(long_time);
 
                 popup.Footer = panel;
             }
@@ -819,42 +819,44 @@ namespace Telegram.Controls
 
             Document.BatchDisplayUpdates();
 
-            var url = $"tg-date://{popup.Value.ToTimestamp()}";
+            // The bot format string: r|w?[dD]?[tT]?. 'r' can't be combined with anything, and
+            // a part can only be short OR long, so the boxes are read in that priority.
+            var format = string.Empty;
 
             if (ApiInfo.IsPackagedRelease)
             {
                 if (relative.IsChecked is true)
                 {
-                    url += "?relative";
+                    format = "r";
                 }
-                else if (short_time.IsChecked is true || long_time.IsChecked is true || short_date.IsChecked is true || long_date.IsChecked is true || day_of_week.IsChecked is true)
+                else
                 {
-                    url += "?absolute";
-
-                    if (short_time.IsChecked is true)
+                    if (day_of_week.IsChecked is true)
                     {
-                        url += "&time=short";
-                    }
-                    else if (long_time.IsChecked is true)
-                    {
-                        url += "&time=long";
+                        format += "w";
                     }
 
                     if (short_date.IsChecked is true)
                     {
-                        url += "&date=short";
+                        format += "d";
                     }
                     else if (long_date.IsChecked is true)
                     {
-                        url += "&date=long";
+                        format += "D";
                     }
 
-                    if (day_of_week.IsChecked is true)
+                    if (short_time.IsChecked is true)
                     {
-                        url += "&day_of_week";
+                        format += "t";
+                    }
+                    else if (long_time.IsChecked is true)
+                    {
+                        format += "T";
                     }
                 }
             }
+
+            var url = TdExtensions.ToDateUrl(popup.Value.ToTimestamp(), format);
 
             range.SetText(TextSetOptions.Unlink, text);
             range.CharacterFormat = Document.GetDefaultCharacterFormat();
@@ -1013,7 +1015,7 @@ namespace Telegram.Controls
         protected bool TryGetDate(ITextRange range, out int date)
         {
             var link = range.Link.Trim('"');
-            if (link.StartsWith("tg-date://") && TdExtensions.TryParseDateTime(link, out TextEntityTypeDateTime dateTime))
+            if (TdExtensions.TryParseDateTime(link, out TextEntityTypeDateTime dateTime))
             {
                 date = dateTime.UnixTime;
                 return true;
@@ -1037,7 +1039,7 @@ namespace Telegram.Controls
                 type = new TextEntityTypeMentionName(userId);
                 return true;
             }
-            else if (link.StartsWith("tg-date://") && TdExtensions.TryParseDateTime(link, out TextEntityTypeDateTime dateTime))
+            else if (TdExtensions.TryParseDateTime(link, out TextEntityTypeDateTime dateTime))
             {
                 type = dateTime;
                 return true;

@@ -31,92 +31,165 @@ namespace Telegram.Td.Api
 {
     public static class TdExtensions
     {
+        // A date-time entity is described by the same format string bots use:
+        //   r|w?[dD]?[tT]?
+        // r (relative) cannot be combined with anything else, w shows the weekday, d/D the
+        // date (short/long) and t/T the time (short/long). An empty format means the text
+        // is shown as-is. The URL below is the editor's carrier for it, so it stores the
+        // format verbatim rather than a translation of it.
+        private const string DateScheme = "tg-time://";
+
         public static string ToUrl(this TextEntityTypeDateTime dateTime)
         {
-            var url = $"tg-date://{dateTime.UnixTime}";
+            return ToDateUrl(dateTime.UnixTime, dateTime.ToFormat());
+        }
 
+        public static string ToDateUrl(int unixTime, string format)
+        {
+            return string.IsNullOrEmpty(format)
+                ? DateScheme + unixTime
+                : DateScheme + unixTime + "?" + format;
+        }
+
+        public static string ToFormat(this TextEntityTypeDateTime dateTime)
+        {
             if (dateTime.FormattingType is DateTimeFormattingTypeRelative)
             {
-                url += "?relative";
+                return "r";
             }
             else if (dateTime.FormattingType is DateTimeFormattingTypeAbsolute absolute)
             {
-                url += "?absolute";
+                // The grammar fixes the order: weekday, then date, then time.
+                var format = string.Empty;
 
-                if (absolute.TimePrecision is DateTimePartPrecisionShort)
+                if (absolute.ShowDayOfWeek)
                 {
-                    url += "&time=short";
-                }
-                else if (absolute.TimePrecision is DateTimePartPrecisionLong)
-                {
-                    url += "&time=long";
+                    format += "w";
                 }
 
                 if (absolute.DatePrecision is DateTimePartPrecisionShort)
                 {
-                    url += "&date=short";
+                    format += "d";
                 }
                 else if (absolute.DatePrecision is DateTimePartPrecisionLong)
                 {
-                    url += "&date=long";
+                    format += "D";
                 }
 
-                if (absolute.ShowDayOfWeek)
+                if (absolute.TimePrecision is DateTimePartPrecisionShort)
                 {
-                    url += "&day_of_week";
+                    format += "t";
+                }
+                else if (absolute.TimePrecision is DateTimePartPrecisionLong)
+                {
+                    format += "T";
+                }
+
+                return format;
+            }
+
+            return string.Empty;
+        }
+
+        public static bool TryParseFormat(string format, out DateTimeFormattingType formattingType)
+        {
+            formattingType = null;
+
+            if (string.IsNullOrEmpty(format))
+            {
+                return true;
+            }
+
+            // Relative is the whole format or nothing, so 'r' is rejected by the loop below.
+            if (format is "r" or "R")
+            {
+                formattingType = new DateTimeFormattingTypeRelative();
+                return true;
+            }
+
+            var shortDate = false;
+            var longDate = false;
+            var shortTime = false;
+            var longTime = false;
+            var dayOfWeek = false;
+
+            foreach (var c in format)
+            {
+                switch (c)
+                {
+                    case 'd':
+                        shortDate = true;
+                        break;
+                    case 'D':
+                        longDate = true;
+                        break;
+                    case 't':
+                        shortTime = true;
+                        break;
+                    case 'T':
+                        longTime = true;
+                        break;
+                    case 'w':
+                    case 'W':
+                        dayOfWeek = true;
+                        break;
+                    default:
+                        return false;
                 }
             }
 
-            return url;
+            // Order and duplicates are tolerated, as TDLib does; when a part is given twice
+            // the short form wins, again matching how TDLib maps its flags back to a type.
+            DateTimePartPrecision date = new DateTimePartPrecisionNone();
+            DateTimePartPrecision time = new DateTimePartPrecisionNone();
+
+            if (shortDate)
+            {
+                date = new DateTimePartPrecisionShort();
+            }
+            else if (longDate)
+            {
+                date = new DateTimePartPrecisionLong();
+            }
+
+            if (shortTime)
+            {
+                time = new DateTimePartPrecisionShort();
+            }
+            else if (longTime)
+            {
+                time = new DateTimePartPrecisionLong();
+            }
+
+            formattingType = new DateTimeFormattingTypeAbsolute(time, date, dayOfWeek);
+            return true;
         }
 
         public static bool TryParseDateTime(string url, out TextEntityTypeDateTime dateTime)
         {
             dateTime = null;
 
-            var split = url.Split('?');
-
-            var link = split[0];
-            if (link.StartsWith("tg-date://") && int.TryParse(link.Substring("tg-date://".Length), out int unixTime))
+            if (!url.StartsWith(DateScheme))
             {
-                dateTime = new TextEntityTypeDateTime(unixTime, null);
+                return false;
             }
 
-            if (dateTime != null && split.Length > 0)
+            var value = url.Substring(DateScheme.Length);
+            var separator = value.IndexOf('?');
+
+            var format = separator < 0 ? string.Empty : value.Substring(separator + 1);
+            if (separator >= 0)
             {
-                var query = split[^1].ParseQueryString();
-                if (query.ContainsKey("relative"))
-                {
-                    dateTime.FormattingType = new DateTimeFormattingTypeRelative();
-                }
-                else if (query.ContainsKey("absolute"))
-                {
-                    var absolute = new DateTimeFormattingTypeAbsolute();
-
-                    query.TryGetValue("time", out string time);
-                    query.TryGetValue("date", out string date);
-
-                    absolute.TimePrecision = time?.ToLowerInvariant() switch
-                    {
-                        "short" => new DateTimePartPrecisionShort(),
-                        "long" => new DateTimePartPrecisionLong(),
-                        _ => new DateTimePartPrecisionNone()
-                    };
-
-                    absolute.DatePrecision = date?.ToLowerInvariant() switch
-                    {
-                        "short" => new DateTimePartPrecisionShort(),
-                        "long" => new DateTimePartPrecisionLong(),
-                        _ => new DateTimePartPrecisionNone()
-                    };
-
-                    absolute.ShowDayOfWeek = query.ContainsKey("day_of_week");
-
-                    dateTime.FormattingType = absolute;
-                }
+                value = value.Substring(0, separator);
             }
 
-            return dateTime != null;
+            if (int.TryParse(value, out int unixTime) && TryParseFormat(format, out var formattingType))
+            {
+                dateTime = new TextEntityTypeDateTime(unixTime, formattingType);
+                return true;
+            }
+
+            return false;
         }
 
         public static bool ShowCaptionAboveMedia(this MessageViewModel message)
