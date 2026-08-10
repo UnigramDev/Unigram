@@ -160,6 +160,14 @@ namespace Telegram.Common
 
         public static async void CopyText(XamlRoot xamlRoot, FormattedText text)
         {
+            // Callers pass a selection or an optional field: GetSelectedText returns null with
+            // nothing selected, and UserFullInfo.Note is null when there is no note. Copying
+            // nothing is a no-op, and this method is async void, so a throw here kills the app.
+            if (string.IsNullOrEmpty(text?.Text))
+            {
+                return;
+            }
+
             var dataPackage = new DataPackage();
             dataPackage.SetText(text.Text);
 
