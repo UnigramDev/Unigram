@@ -33,8 +33,12 @@
                                              MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
                                              Margin="-10,8,-10,4"
                                              CornerRadius="4">
-                            <Image x:Name="Texture"
-                                   Stretch="UniformToFill" />
+                            <controls:AspectView.Background>
+                                <ImageBrush x:Name="Texture"
+                                            Stretch="UniformToFill"
+                                            AlignmentX="Center"
+                                            AlignmentY="Center" />
+                            </controls:AspectView.Background>
                             <messages:InvoiceFooter x:Name="Footer"
                                                     Background="{ThemeResource MessageOverlayBackgroundBrush}"
                                                     Foreground="White"

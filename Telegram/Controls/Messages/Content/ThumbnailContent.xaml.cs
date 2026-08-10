@@ -21,6 +21,8 @@ namespace Telegram.Controls.Messages.Content
 
         private long _fileToken;
 
+        private ThumbnailController _thumbnailController;
+
         public ThumbnailContent(MessageViewModel message)
         {
             _message = message;
@@ -94,7 +96,8 @@ namespace Telegram.Controls.Messages.Content
                 var width = (int)(small.Width * ratio);
                 var height = (int)(small.Height * ratio);
 
-                Texture.ImageSource = UriEx.ToBitmap(file.Local.Path, width, height);
+                _thumbnailController ??= new ThumbnailController(Texture);
+                _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -105,6 +108,7 @@ namespace Telegram.Controls.Messages.Content
         public void Recycle()
         {
             _message = null;
+            _thumbnailController?.Recycle();
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
         }

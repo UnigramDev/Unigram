@@ -5,10 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -33,7 +35,9 @@ namespace Telegram.Controls.Messages.Content
         private TextBlock Description;
         private InvoiceFooter Footer;
         private AspectView Photo;
-        private Image Texture;
+        private ImageBrush Texture;
+
+        private ThumbnailController _thumbnailController;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -42,7 +46,7 @@ namespace Telegram.Controls.Messages.Content
             Description = GetTemplateChild(nameof(Description)) as TextBlock;
             Footer = GetTemplateChild(nameof(Footer)) as InvoiceFooter;
             Photo = GetTemplateChild(nameof(Photo)) as AspectView;
-            Texture = GetTemplateChild(nameof(Texture)) as Image;
+            Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
 
             _templateApplied = true;
 
@@ -68,7 +72,10 @@ namespace Telegram.Controls.Messages.Content
             TextBlockHelper.SetFormattedText(Description, invoice.ProductInfo.Description);
 
             Photo.Constraint = invoice.ProductInfo.Photo;
-            Texture.Source = null;
+
+            // Rebinding to another invoice: drop the previous image so it cannot show
+            // through until the new one is decoded.
+            _thumbnailController?.Recycle();
 
             if (invoice.Currency == "XTR")
             {
@@ -109,9 +116,11 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(MessageViewModel message, File file)
         {
+            _thumbnailController ??= new ThumbnailController(Texture);
+
             if (file.Local.IsDownloadingCompleted)
             {
-                Texture.Source = UriEx.ToBitmap(file.Local.Path);
+                _thumbnailController.Bitmap(file.Local.Path, hashCode: HashCode.Combine(message.ChatId, message.Id));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -122,6 +131,7 @@ namespace Telegram.Controls.Messages.Content
         public void Recycle()
         {
             _message = null;
+            _thumbnailController?.Recycle();
 
             UpdateManager.Unsubscribe(this, ref _thumbnailToken);
         }

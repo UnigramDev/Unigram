@@ -14,7 +14,6 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -26,6 +25,11 @@ namespace Telegram.Controls.Messages.Content
 
         private long _fileToken;
         private long _thumbnailToken;
+
+        private ThumbnailController _thumbnailController;
+
+        // The scrim under the button, needed only once the thumbnail is behind it.
+        private SolidColorBrush _scrim;
 
         public DocumentContent(MessageViewModel message)
         {
@@ -40,6 +44,7 @@ namespace Telegram.Controls.Messages.Content
         private AutomaticDragHelper ButtonDrag;
 
         private Border Texture;
+        private ImageBrush ThumbnailTexture;
         private FileButton Button;
         private TextBlock Title;
         private TextBlock TitleTrim;
@@ -49,6 +54,7 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             Texture = GetTemplateChild(nameof(Texture)) as Border;
+            ThumbnailTexture = Texture.Background as ImageBrush;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
             Title = GetTemplateChild(nameof(Title)) as TextBlock;
             TitleTrim = GetTemplateChild(nameof(TitleTrim)) as TextBlock;
@@ -92,14 +98,14 @@ namespace Telegram.Controls.Messages.Content
                 TitleTrim.Text = string.Empty;
             }
 
-            if (document.Thumbnail?.File.Id != null)
+            if (document.Thumbnail != null)
             {
                 UpdateManager.Subscribe(this, message, document.Thumbnail.File, ref _thumbnailToken, UpdateThumbnail, true);
                 UpdateThumbnail(message, document.Thumbnail, document.Thumbnail.File);
             }
             else
             {
-                UpdateThumbnail(null);
+                UpdateThumbnail(message, null, null);
             }
 
             UpdateManager.Subscribe(this, message, document.DocumentValue, ref _fileToken, UpdateFile);
@@ -185,10 +191,21 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
         {
-            if (thumbnail == null || thumbnail.File.Id != file.Id)
+            // No thumbnail at all, rather than one that has yet to arrive: whatever the
+            // control drew for the message before this one has to go.
+            if (thumbnail == null)
+            {
+                _thumbnailController?.Recycle();
+                Button.Background = null;
+                return;
+            }
+
+            if (thumbnail.File.Id != file.Id)
             {
                 return;
             }
+
+            _thumbnailController ??= new ThumbnailController(ThumbnailTexture);
 
             if (file.Local.IsDownloadingCompleted)
             {
@@ -199,11 +216,13 @@ namespace Telegram.Controls.Messages.Content
                 var width = (int)(thumbnail.Width * ratio);
                 var height = (int)(thumbnail.Height * ratio);
 
-                UpdateThumbnail(UriEx.ToBitmap(file.Local.Path, width, height));
+                _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
+                Button.Background = _scrim ??= new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
             }
             else
             {
-                UpdateThumbnail(null);
+                _thumbnailController.Recycle();
+                Button.Background = null;
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -212,36 +231,18 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(BitmapImage imageSource)
-        {
-            if (Texture.Background is ImageBrush imageBrush && imageSource != null)
-            {
-                imageBrush.ImageSource = imageSource;
-            }
-            else if (imageSource != null)
-            {
-                Button.Background = new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
-                Texture.Background = new ImageBrush
-                {
-                    ImageSource = imageSource,
-                    Stretch = Stretch.UniformToFill,
-                    AlignmentX = AlignmentX.Center,
-                    AlignmentY = AlignmentY.Center
-                };
-            }
-            else
-            {
-                Button.Background = null;
-                Texture.Background = null;
-            }
-        }
-
         public void Recycle()
         {
             _message = null;
+            _thumbnailController?.Recycle();
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
             UpdateManager.Unsubscribe(this, ref _thumbnailToken);
+
+            if (_templateApplied)
+            {
+                Button.Background = null;
+            }
         }
 
         public bool IsValid(MessageContent content, bool primary)

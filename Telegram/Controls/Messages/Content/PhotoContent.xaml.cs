@@ -296,6 +296,11 @@ namespace Telegram.Controls.Messages.Content
 
         private int _textureId;
 
+        // Separate from _thumbnailController, which drives the blurred placeholder behind
+        // this one. The _textureId check above stays: it skips the load outright, where the
+        // controller's hash only decides whether to clear what it already holds.
+        private ThumbnailController _textureController;
+
         private void UpdateTexture(MessageViewModel message, PhotoSize photoSize, Video video)
         {
             //if (video != null)
@@ -324,12 +329,14 @@ namespace Telegram.Controls.Messages.Content
                 }
 
                 _textureId = photoSize.Photo.Id;
-                Texture.ImageSource = UriEx.ToBitmap(photoSize.Photo.Local.Path, width, height);
+
+                _textureController ??= new ThumbnailController(Texture);
+                _textureController.Bitmap(photoSize.Photo.Local.Path, width, height, _textureId);
             }
             else
             {
                 _textureId = 0;
-                Texture.ImageSource = null;
+                _textureController?.Recycle();
             }
         }
 
@@ -393,7 +400,10 @@ namespace Telegram.Controls.Messages.Content
         public void Recycle()
         {
             _message = null;
+            _textureId = 0;
+
             _thumbnailController?.Recycle();
+            _textureController?.Recycle();
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
             UpdateManager.Unsubscribe(this, ref _thumbnailToken);
