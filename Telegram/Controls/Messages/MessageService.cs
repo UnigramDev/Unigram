@@ -220,45 +220,6 @@ namespace Telegram.Controls.Messages
                         : Strings.ViewPhotoAction;
                 }
             }
-            else if (message.Content is MessageSuggestBirthdate suggestBirthdate)
-            {
-                var dateRoot = FindName("DateRoot") as Grid;
-                var dayTitle = FindName("DateDayTitle") as TextBlock;
-                var monthTitle = FindName("DateMonthTitle") as TextBlock;
-                var yearTitle = FindName("DateYearTitle") as TextBlock;
-                var dayValue = FindName("DateDayValue") as TextBlock;
-                var monthValue = FindName("DateMonthValue") as TextBlock;
-                var yearValue = FindName("DateYearValue") as TextBlock;
-                var view = FindName("View") as Border;
-
-                LocaleService.Current.GetDatePositions(out int dayPosition, out int monthPosition, out int yearPosition);
-
-                Grid.SetColumn(dayTitle, dayPosition);
-                Grid.SetColumn(dayValue, dayPosition);
-
-                Grid.SetColumn(monthTitle, monthPosition);
-                Grid.SetColumn(monthValue, monthPosition);
-
-                Grid.SetColumn(yearTitle, yearPosition);
-                Grid.SetColumn(yearValue, yearPosition);
-
-                dayValue.Text = suggestBirthdate.Birthdate.Day.ToString();
-                monthValue.Text = LocaleService.Current.CurrentCulture.DateTimeFormat.GetMonthName(suggestBirthdate.Birthdate.Month);
-                yearValue.Text = suggestBirthdate.Birthdate.Year.ToString();
-
-                if (suggestBirthdate.Birthdate.Year == 0)
-                {
-                    dateRoot.ColumnDefinitions[yearPosition].Width = new GridLength(0, GridUnitType.Pixel);
-                }
-                else
-                {
-                    dateRoot.ColumnDefinitions[yearPosition].Width = new GridLength(1, GridUnitType.Star);
-                }
-
-                view.Visibility = message.IsOutgoing
-                    ? Visibility.Collapsed
-                    : Visibility.Visible;
-            }
             else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
             {
                 var segments = FindName("Segments") as ActiveStoriesSegments;
