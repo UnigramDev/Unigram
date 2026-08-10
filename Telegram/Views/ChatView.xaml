@@ -2039,6 +2039,8 @@
                                                   VerticalAlignment="Top"
                                                   Height="48"
                                                   Visibility="Collapsed"
+                                                  AutomationProperties.Name="{CustomResource AIEditor}"
+                                                  ToolTipService.ToolTip="{CustomResource AIEditor}"
                                                   Grid.Column="1"
                                                   Grid.Row="1" />
 
@@ -2259,6 +2261,8 @@
                                                       VerticalAlignment="Top"
                                                       Height="48"
                                                       Visibility="Collapsed"
+                                                      AutomationProperties.Name="{CustomResource ArticleEditor}"
+                                                      ToolTipService.ToolTip="{CustomResource ArticleEditor}"
                                                       Grid.Column="2" />
                             </Grid>
                         </Grid>
