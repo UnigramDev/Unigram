@@ -5,15 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System;
 using Telegram.Common;
-using Telegram.Controls.Cells;
-using Telegram.Controls.Chats;
-using Telegram.Controls.Media;
-using Telegram.Converters;
-using Telegram.Services;
-using Telegram.Streams;
-using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
@@ -134,71 +126,12 @@ namespace Telegram.Controls.Messages
             _message = null;
         }
 
-        public void UpdateMessageTopic()
-        {
-            if (_message is not MessageViewModel message)
-            {
-                return;
-            }
-
-            var title = FindName("TitleLabel") as TextBlock;
-            var photo = FindName("Photo") as ProfilePicture;
-            var iconRoot = FindName("IconRoot") as Grid;
-            var iconPath = FindName("IconPath") as Path;
-            var iconText = FindName("IconText") as TextBlock;
-            var typeIcon = FindName("TypeIcon") as IdentityIcon;
-
-            if (message.ClientService.TryGetForumTopic(message.ChatId, message.TopicId, out ForumTopic topic))
-            {
-                title.Text = topic.Info.Name;
-                photo.Source = null;
-
-                if (topic.Info.IsGeneral || topic.Info.Icon.CustomEmojiId != 0)
-                {
-                    typeIcon.SetStatus(message.ClientService, topic.Info.Icon);
-                    iconRoot.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    typeIcon.ClearStatus();
-                    iconRoot.Visibility = Visibility.Visible;
-
-                    var brush = ForumTopicCell.GetIconGradient(topic.Info.Icon);
-
-                    iconPath.Fill = brush;
-                    iconPath.Stroke = new SolidColorBrush(brush.GradientStops[1].Color);
-                    iconText.Text = InitialNameStringConverter.Convert(topic.Info.Name);
-                }
-            }
-            else if (message.ClientService.TryGetDirectMessagesChatTopic(message.ChatId, message.TopicId, out DirectMessagesChatTopic directMessagesChatTopic))
-            {
-                title.Text = message.ClientService.GetTitle(directMessagesChatTopic.SenderId);
-                photo.Source = ProfilePictureSource.MessageSender(message.ClientService, directMessagesChatTopic.SenderId);
-
-                typeIcon.ClearStatus();
-                iconRoot.Visibility = Visibility.Collapsed;
-            }
-
-            AutomationProperties.SetName(this, title.Text);
-        }
-
+        /// <summary>
+        /// Fills in whatever the subclass's own template shows; the base control only
+        /// knows how to render the message as text.
+        /// </summary>
         protected virtual void UpdateContent(MessageViewModel message)
         {
-            if (message.Content is MessageHeaderAccountInfo)
-            {
-                if (message.Chat.ActionBar is ChatActionBarReportAddBlock reportAddBlock && reportAddBlock.AccountInfo != null)
-                {
-                    if (message.ClientService.TryGetUser(message.Chat, out User user) && message.ClientService.TryGetUserFull(user.Id, out UserFullInfo fullInfo))
-                    {
-                        var info = FindName("AccountInfo") as ChatAccountInfo;
-                        info.Update(message.ClientService, user, fullInfo, reportAddBlock.AccountInfo);
-                    }
-                }
-            }
-            else if (message.Content is MessageHeaderMessageTopic)
-            {
-                UpdateMessageTopic();
-            }
         }
 
         public void UpdateMessageInteractionInfo(MessageViewModel message)

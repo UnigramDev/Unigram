@@ -73,7 +73,7 @@ namespace Telegram.ViewModels.Delegates
 
         void UpdateBubbleWithReplyToMessageId(long messageId, Action<MessageBubble, MessageViewModel> action);
 
-        void UpdateServiceWithForumTopic(int forumTopicId, Action<MessageService> action);
+        void UpdateServiceWithForumTopic(int forumTopicId);
 
         void ForEach(Action<MessageBubble, MessageViewModel> action);
         void ForEach(Action<MessageBubble> action);
