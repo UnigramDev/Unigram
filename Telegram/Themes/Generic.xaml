@@ -51,7 +51,6 @@
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/WallpaperContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/WebPageContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/ThumbnailContent.xaml" />
-        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/UnsupportedContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/InstantContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageBubble.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageForwardHeader.xaml" />
