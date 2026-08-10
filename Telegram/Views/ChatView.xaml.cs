@@ -8233,12 +8233,9 @@ namespace Telegram.Views
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            if (SettingsService.Current.Diagnostics.RichMessagesDebug)
-            {
-                ButtonMaximize.Visibility = e.NewSize.Height >= 84
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-            }
+            ButtonMaximize.Visibility = e.NewSize.Height >= 84
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private void ButtonEditor_Click(object sender, RoutedEventArgs e)
