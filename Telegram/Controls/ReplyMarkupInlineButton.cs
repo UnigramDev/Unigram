@@ -280,12 +280,17 @@ namespace Telegram.Controls
 
         protected override string GetNameCore()
         {
-            return Automation.GetNameCore(_owner);
+            return Automation.GetNameCore(_owner.ContentTemplateRoot ?? _owner) ?? base.GetNameCore();
         }
 
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
-            return AutomationControlType.ListItem;
+            if (_owner._owner != null)
+            {
+                return AutomationControlType.ListItem;
+            }
+
+            return AutomationControlType.Button;
         }
 
         protected override int GetPositionInSetCore()
