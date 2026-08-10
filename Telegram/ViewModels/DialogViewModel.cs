@@ -3193,7 +3193,7 @@ namespace Telegram.ViewModels
                     _ => null
                 };
 
-                if (caption.Text.StartsWith("/"))
+                if (caption?.Text.StartsWith("/") is true)
                 {
                     var split = caption.Text[1..].Split(' ');
                     split = split[0].Split('@');
