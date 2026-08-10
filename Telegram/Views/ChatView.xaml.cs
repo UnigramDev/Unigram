@@ -5012,14 +5012,6 @@ namespace Telegram.Views
             {
                 NavigateToMessageTopic(message.Chat, message.TopicId);
             }
-            else if (message.Content is MessageUnsupported)
-            {
-                // TODO: show skeleton
-
-                _ = UnsupportedContent.CheckForUpdatesAsync(XamlRoot, message.ClientService);
-
-                // TODO: hide skeleton
-            }
             else
             {
                 ViewModel.ExecuteServiceMessage(message);

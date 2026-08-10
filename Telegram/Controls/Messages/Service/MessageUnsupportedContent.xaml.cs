@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -9,72 +9,33 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Services;
-using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.ApplicationModel;
 using Windows.Services.Store;
 using Windows.System;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Controls.Messages.Content
+namespace Telegram.Controls.Messages.Service
 {
-    public sealed partial class UnsupportedContent : Control, IContent
+    public sealed partial class MessageUnsupportedContent : MessageService
     {
-        private MessageViewModel _message;
-        public MessageViewModel Message => _message;
-
-        public UnsupportedContent(MessageViewModel message)
+        public MessageUnsupportedContent()
         {
-            _message = message;
-
-            DefaultStyleKey = typeof(UnsupportedContent);
-            Telegram.Common.Instrumentation.Register(this);
+            InitializeComponent();
         }
 
-        #region InitializeComponent
-
-        private ButtonEx Button;
-        private bool _templateApplied;
-
-        protected override void OnApplyTemplate()
+        protected override void UpdateContent(MessageViewModel message)
         {
-            Button = GetTemplateChild(nameof(Button)) as ButtonEx;
-            Button.Content = Strings.UpdateApp.ToUpper();
-            Button.Click += Button_Click;
-
-            _templateApplied = true;
-
-            if (_message != null)
-            {
-                UpdateMessage(_message);
-            }
+            // The message has no content to show: the whole control is the update prompt.
         }
 
-        #endregion
-
-        public void UpdateMessage(MessageViewModel message)
+        private void Service_Click(object sender, RoutedEventArgs e)
         {
-            _message = message;
-        }
+            // TODO: show skeleton
 
-        public void Recycle()
-        {
-            _message = null;
-        }
+            _ = CheckForUpdatesAsync(XamlRoot, Message?.ClientService);
 
-        public bool IsValid(MessageContent content, bool primary)
-        {
-            return content is MessageUnsupported;
-        }
-
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Button.ShowSkeleton();
-
-            await CheckForUpdatesAsync(XamlRoot, _message?.ClientService);
-
-            Button.HideSkeleton();
+            // TODO: hide skeleton
         }
 
         public static async Task CheckForUpdatesAsync(XamlRoot xamlRoot, IClientService clientService)

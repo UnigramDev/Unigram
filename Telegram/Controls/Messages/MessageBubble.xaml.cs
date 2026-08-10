@@ -2126,7 +2126,6 @@ namespace Telegram.Controls.Messages
                 },
                 MessageAnimatedEmoji => new StickerContent(message),
                 MessageSponsored => new SponsoredContent(message),
-                MessageUnsupported => new UnsupportedContent(message),
                 _ => null
             };
         }

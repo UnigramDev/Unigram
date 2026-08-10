@@ -432,6 +432,9 @@
     <Compile Include="Controls\Messages\Service\MessageSuggestBirthdateContent.xaml.cs">
       <DependentUpon>MessageSuggestBirthdateContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\Service\MessageUnsupportedContent.xaml.cs">
+      <DependentUpon>MessageUnsupportedContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Service\MessageUpgradedGiftContent.xaml.cs">
       <DependentUpon>MessageUpgradedGiftContent.xaml</DependentUpon>
     </Compile>
@@ -651,9 +654,6 @@
     </Compile>
     <Compile Include="Controls\Gallery\GalleryWindow.xaml.cs">
       <DependentUpon>GalleryWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Messages\Content\UnsupportedContent.xaml.cs">
-      <DependentUpon>UnsupportedContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\Content\GiveawayContent.xaml.cs">
       <DependentUpon>GiveawayContent.xaml</DependentUpon>
@@ -3144,10 +3144,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Messages\Content\UnsupportedContent.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Controls\Messages\Content\GiveawayContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3293,6 +3289,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\Service\MessageSuggestBirthdateContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Messages\Service\MessageUnsupportedContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
