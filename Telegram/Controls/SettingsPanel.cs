@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -48,7 +49,10 @@ namespace Telegram.Controls
 
             if (IsHeader)
             {
-                return new Size(availableSize.Width, accumulated - 16);
+                // The -16 drops the trailing gap after the last child. With IsFooter the
+                // accumulator starts at 0, so a panel with nothing visible has no gap to
+                // drop and would report -16, which XAML rejects as a desired size.
+                return new Size(availableSize.Width, Math.Max(0, accumulated - 16));
             }
             else
             {
