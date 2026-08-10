@@ -1,0 +1,53 @@
+﻿<messages:MessageService x:Class="Telegram.Controls.Messages.Service.MessagePhotoContent"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:local="using:Telegram.Controls.Messages.Service"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:messages="using:Telegram.Controls.Messages"
+                         xmlns:controls="using:Telegram.Controls"
+                         Click="Service_Click"
+                         Margin="0,8,0,0"
+                         Padding="12,2,12,0"
+                         Width="216"
+                         mc:Ignorable="d"
+                         d:DesignHeight="300"
+                         d:DesignWidth="400">
+
+    <StackPanel>
+        <controls:ActiveStoriesSegments x:Name="Segments"
+                                        InteractionMode="Disabled"
+                                        IsEnabled="False"
+                                        Width="120"
+                                        Height="120"
+                                        Margin="0,10,0,12">
+            <controls:ProfilePicture x:Name="Photo"
+                                     Size="120" />
+        </controls:ActiveStoriesSegments>
+
+        <controls:FormattedTextBlock x:Name="Text"
+                                     Foreground="White"
+                                     TextAlignment="Center"
+                                     Style="{StaticResource CaptionFormattedTextBlockStyle}"
+                                     FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                     AutoFontSize="False"
+                                     IsTextSelectionEnabled="False"
+                                     HyperlinkStyle="None"
+                                     HyperlinkForeground="#FFFFFF"
+                                     HyperlinkFontWeight="SemiBold"
+                                     Padding="0,0,0,4" />
+
+        <Border x:Name="View"
+                Background="{ThemeResource MessageServiceBackgroundBrush}"
+                CornerRadius="12"
+                HorizontalAlignment="Center"
+                Padding="12,4,12,4"
+                Margin="0,8,0,12">
+            <TextBlock x:Name="ViewLabel"
+                       Text="{CustomResource ViewPhotoAction}"
+                       Foreground="#FFFFFF"
+                       TextAlignment="Center"
+                       Style="{StaticResource CaptionTextBlockStyle}" />
+        </Border>
+    </StackPanel>
+</messages:MessageService>

@@ -426,6 +426,9 @@
     <Compile Include="Controls\Messages\Service\MessageGiveawayPrizeStarsContent.xaml.cs">
       <DependentUpon>MessageGiveawayPrizeStarsContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\Service\MessagePhotoContent.xaml.cs">
+      <DependentUpon>MessagePhotoContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Service\MessageSuggestBirthdateContent.xaml.cs">
       <DependentUpon>MessageSuggestBirthdateContent.xaml</DependentUpon>
     </Compile>
@@ -3282,6 +3285,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\Service\MessageGiveawayPrizeStarsContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Messages\Service\MessagePhotoContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

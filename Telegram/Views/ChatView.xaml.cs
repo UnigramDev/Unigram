@@ -4992,7 +4992,7 @@ namespace Telegram.Views
             Messages.SetScrollingMode();
         }
 
-        private async void ServiceMessage_Click(object sender, RoutedEventArgs e)
+        private void ServiceMessage_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as MessageService;
             var message = button.Message;
@@ -5008,42 +5008,7 @@ namespace Telegram.Views
                 return;
             }
 
-            if (message.Content is MessageAsyncStory asyncStory && asyncStory.State != MessageStoryState.Expired)
-            {
-                var segments = button.FindName("Segments") as ActiveStoriesSegments;
-                if (segments != null)
-                {
-                    var transform = segments.TransformToVisual(null);
-                    var point = transform.TransformPoint(new Windows.Foundation.Point());
-
-                    var origin = new Rect(point.X + 4, point.Y + 4, 112, 112);
-
-                    var story = asyncStory.Story;
-                    story ??= await _viewModel.ClientService.SendAsync(new GetStory(asyncStory.StoryPosterChatId, asyncStory.StoryId, true)) as Story;
-
-                    if (story != null)
-                    {
-                        var activeStories = new ActiveStoriesViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, story);
-                        var viewModel = StoryListViewModel.Create(_viewModel.NavigationService, activeStories);
-
-                        var window = new StoriesWindow();
-                        window.Update(viewModel, activeStories, StoryOpenOrigin.Mention, origin, _ =>
-                        {
-                            var transform = segments.TransformToVisual(null);
-                            var point = transform.TransformPoint(new Windows.Foundation.Point());
-
-                            return new Rect(point.X + 4, point.Y + 4, 112, 112);
-                        });
-
-                        _ = window.ShowAsync(XamlRoot);
-                    }
-                    else
-                    {
-                        ToastPopup.Show(XamlRoot, Strings.StoryNotFound, ToastPopupIcon.ExpiredStory);
-                    }
-                }
-            }
-            else if (message.Content is MessageHeaderMessageTopic)
+            if (message.Content is MessageHeaderMessageTopic)
             {
                 NavigateToMessageTopic(message.Chat, message.TopicId);
             }
