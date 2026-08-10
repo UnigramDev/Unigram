@@ -2077,17 +2077,19 @@ namespace Telegram.Controls.Messages
         private static FormattedText UpdateUsersShared(MessageWithOwner message, MessageUsersShared usersShared, bool history)
         {
             var chat = message.Chat;
-            if (chat != null)
+            if (chat == null)
             {
-                var content = ReplaceWithLinks(Strings.ActionRequestedPeer, "un1", usersShared.Users.Select(x => x.UserId), message.ClientService);
-                return ReplaceWithLink(content, "un2", chat);
+                return _emptyString;
             }
-            else if (chat != null)
+
+            // Without a user to name, ActionRequestedPeer would read "You shared  with un2".
+            if (usersShared.Users.Count == 0)
             {
                 return ReplaceWithLink(Strings.ActionRequestedPeerUser, "un2", chat);
             }
 
-            return _emptyString;
+            var content = ReplaceWithLinks(Strings.ActionRequestedPeer, "un1", usersShared.Users.Select(x => x.UserId), message.ClientService);
+            return ReplaceWithLink(content, "un2", chat);
         }
 
         private static FormattedText UpdateWebAppDataSent(MessageWithOwner message, MessageWebAppDataSent webAppDataSent, bool history)
