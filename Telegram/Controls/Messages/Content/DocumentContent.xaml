@@ -27,7 +27,13 @@
                               Background="{ThemeResource MessageMediaBackgroundBrush}"
                               VerticalAlignment="Top">
                             <Border x:Name="Texture"
-                                    CornerRadius="24" />
+                                    CornerRadius="24">
+                                <Border.Background>
+                                    <ImageBrush Stretch="UniformToFill"
+                                                AlignmentX="Center"
+                                                AlignmentY="Center" />
+                                </Border.Background>
+                            </Border>
                             <controls:FileButton x:Name="Button"
                                                  Style="{StaticResource ImmersiveFileButtonStyle}" />
                         </Grid>

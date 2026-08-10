@@ -9,10 +9,10 @@ using System;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Native.Controls;
-using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -27,6 +27,11 @@ namespace Telegram.Controls.Messages.Content
 
         private long _fileToken;
         private long _thumbnailToken;
+
+        private ThumbnailController _thumbnailController;
+
+        // The scrim under the button, needed only once the cover is behind it.
+        private SolidColorBrush _scrim;
 
         public AudioContent(MessageViewModel message)
         {
@@ -46,6 +51,7 @@ namespace Telegram.Controls.Messages.Content
         private AutomaticDragHelper ButtonDrag;
 
         private Border Texture;
+        private ImageBrush ThumbnailTexture;
         private FileButton Button;
         private Grid DownloadPanel;
         private FileButton Download;
@@ -57,6 +63,7 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             Texture = GetTemplateChild(nameof(Texture)) as Border;
+            ThumbnailTexture = Texture.Background as ImageBrush;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
             DownloadPanel = GetTemplateChild(nameof(DownloadPanel)) as Grid;
             Download = GetTemplateChild(nameof(Download)) as FileButton;
@@ -160,8 +167,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                Texture.Background = null;
-                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                UpdateThumbnail(message, null, null);
             }
 
             UpdateManager.Subscribe(this, message, audio.AudioValue, ref _fileToken, UpdateFile);
@@ -383,10 +389,21 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
         {
+            // No cover at all, rather than one that has yet to arrive: whatever the control
+            // drew for the message before this one has to go.
+            if (thumbnail == null)
+            {
+                _thumbnailController?.Recycle();
+                Button.Background = null;
+                return;
+            }
+
             if (thumbnail.File.Id != file.Id)
             {
                 return;
             }
+
+            _thumbnailController ??= new ThumbnailController(ThumbnailTexture);
 
             if (file.Local.IsDownloadingCompleted)
             {
@@ -397,23 +414,15 @@ namespace Telegram.Controls.Messages.Content
                 var width = (int)(thumbnail.Width * ratio);
                 var height = (int)(thumbnail.Height * ratio);
 
-                try
-                {
-                    Texture.Background = new ImageBrush { ImageSource = UriEx.ToBitmap(file.Local.Path, width, height), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-                    Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
-                }
-                catch
-                {
-                    Texture.Background = null;
-                    Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
-                }
+                _thumbnailController.Bitmap(file.Local.Path, width, height, HashCode.Combine(message.ChatId, message.Id));
+                Button.Background = _scrim ??= new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 message.ClientService.DownloadFile(file.Id, 1);
 
-                Texture.Background = null;
-                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                _thumbnailController.Recycle();
+                Button.Background = null;
             }
         }
 
@@ -424,9 +433,15 @@ namespace Telegram.Controls.Messages.Content
             LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
 
             _message = null;
+            _thumbnailController?.Recycle();
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
             UpdateManager.Unsubscribe(this, ref _thumbnailToken);
+
+            if (_templateApplied)
+            {
+                Button.Background = null;
+            }
         }
 
         public bool IsValid(MessageContent content, bool primary)
