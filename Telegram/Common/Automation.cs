@@ -50,7 +50,12 @@ namespace Telegram.Common
                 builder.Append(peer.GetName());
             }
 
-            return builder.ToString();
+            if (builder.Length > 0)
+            {
+                return builder.ToString();
+            }
+
+            return null;
         }
 
         public static void SetToolTip(DependencyObject element, string text)

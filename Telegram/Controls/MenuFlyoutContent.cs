@@ -81,7 +81,7 @@ namespace Telegram.Controls
 
         protected override string GetNameCore()
         {
-            return Automation.GetNameCore(_owner);
+            return Automation.GetNameCore(_owner) ?? base.GetNameCore();
         }
     }
 }

@@ -46,7 +46,7 @@ namespace Telegram.Controls
                 return cell.GetAutomationName() ?? base.GetNameCore();
             }
 
-            return Automation.GetNameCore(_owner.ContentTemplateRoot ?? _owner);
+            return Automation.GetNameCore(_owner.ContentTemplateRoot ?? _owner) ?? base.GetNameCore();
         }
     }
 
@@ -72,7 +72,7 @@ namespace Telegram.Controls
 
         protected override string GetNameCore()
         {
-            return Automation.GetNameCore(_owner.ContentTemplateRoot ?? _owner);
+            return Automation.GetNameCore(_owner.ContentTemplateRoot ?? _owner) ?? base.GetNameCore();
         }
     }
 }
