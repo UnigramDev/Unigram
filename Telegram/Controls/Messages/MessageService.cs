@@ -207,50 +207,6 @@ namespace Telegram.Controls.Messages
                 var animation = FindName("Animation") as AnimatedImage;
                 animation.Source = DelayedFileSource.FromSticker(message.ClientService, giveawayPrizeStars.Sticker);
             }
-            else if (message.Content is MessageUpgradedGift upgradedGift)
-            {
-                var user = message.ClientService.GetUser(message.Chat);
-                var self = message.ClientService.GetUser(message.ClientService.Options.MyId);
-
-                if (user == null || self == null)
-                {
-                    return;
-                }
-
-                var centerColor = upgradedGift.Gift.Backdrop.Colors.CenterColor.ToColor();
-                var edgeColor = upgradedGift.Gift.Backdrop.Colors.EdgeColor.ToColor();
-
-                var ribbonTop = FindName("RibbonTop") as GradientStop;
-                var ribbonBottom = FindName("RibbonBottom") as GradientStop;
-
-                ribbonTop.Color = centerColor.Darken();
-                ribbonBottom.Color = edgeColor.Darken();
-
-                var pattern = FindName("Pattern") as PatternBackground;
-                pattern.Update(message.ClientService, upgradedGift.Gift);
-
-                var animation = FindName("Animation") as AnimatedImage;
-                animation.Source = DelayedFileSource.FromSticker(message.ClientService, upgradedGift.Gift.Model.Sticker);
-
-                var title = FindName("Title") as TextBlock;
-                var subtitle = FindName("Subtitle") as TextBlock;
-                var info = FindName("AttributeInfo") as TextBlock;
-                var text = FindName("AttributeText") as TextBlock;
-
-                if (upgradedGift.ReceiverId.IsUser(message.ClientService.Options.MyId) && upgradedGift.ReceiverId.AreTheSame(upgradedGift.SenderId))
-                {
-                    title.Text = Strings.Gift2ActionSelfTitle;
-                }
-                else
-                {
-                    title.Text = string.Format(Strings.Gift2UniqueTitle, message.IsOutgoing ? self.FirstName : user.FullName(true));
-                }
-
-                subtitle.Text = upgradedGift.Gift.ToName();
-
-                info.Text = Strings.Gift2AttributeModel + "\n" + Strings.Gift2AttributeBackdrop + "\n" + Strings.Gift2AttributeSymbol;
-                text.Text = upgradedGift.Gift.Model.Name + "\n" + upgradedGift.Gift.Backdrop.Name + "\n" + upgradedGift.Gift.Symbol.Name;
-            }
             else if (message.Content is MessageChatChangePhoto chatChangePhoto)
             {
                 var segments = FindName("Segments") as ActiveStoriesSegments;
