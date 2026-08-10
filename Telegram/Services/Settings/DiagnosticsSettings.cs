@@ -205,13 +205,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _connectedAnimationsDebug, "ConnectedAnimationsDebug", value);
         }
 
-        private bool? _richMessagesDebug;
-        public bool RichMessagesDebug
-        {
-            get => _richMessagesDebug ??= GetValueOrDefault("RichMessagesDebug", ApiInfo.IsPackagedRelease);
-            set => AddOrUpdateValue(ref _richMessagesDebug, "RichMessagesDebug", value);
-        }
-
         private bool? _useTlottieRenderer;
         public bool UseTLottieRenderer
         {

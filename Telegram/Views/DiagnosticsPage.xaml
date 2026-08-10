@@ -106,10 +106,6 @@
                               Content="Connected Animations Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.RichMessagesDebug, Mode=TwoWay}"
-                              Content="Rich Messages Debug"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
                     <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.UseTLottieRenderer, Mode=TwoWay}"
                               Content="Use TLottie Renderer"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
