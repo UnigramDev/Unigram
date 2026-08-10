@@ -1522,22 +1522,29 @@
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"
                                        FontSize="20"
-                                       Margin="0,0,2,0"
+                                       Margin="0,0,8,0"
                                        AutomationProperties.AccessibilityView="Raw" />
                             <controls:CustomEmojiIcon x:Name="EmojiPresenter"
                                                       x:Load="False"
                                                       Source="{TemplateBinding Source}"
                                                       ReplacementColor="{TemplateBinding Foreground}"
-                                                      Margin="0,0,2,0"
+                                                      Margin="0,0,8,0"
                                                       AutomationProperties.AccessibilityView="Raw" />
-                            <TextBlock x:Name="ContentPresenter"
-                                       Text="{TemplateBinding Text}"
-                                       TextWrapping="NoWrap"
-                                       TextTrimming="CharacterEllipsis"
-                                       Padding="{TemplateBinding Padding}"
-                                       VerticalAlignment="Center"
-                                       AutomationProperties.AccessibilityView="Raw"
-                                       Grid.Column="1" />
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              TextWrapping="NoWrap"
+                                              VerticalAlignment="Center"
+                                              AutomationProperties.AccessibilityView="Raw"
+                                              Grid.Column="1">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextTrimming"
+                                                Value="CharacterEllipsis" />
+                                        <Setter Property="TextWrapping"
+                                                Value="NoWrap" />
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
                         </Grid>
 
                         <TextBlock Margin="4"
@@ -1777,22 +1784,29 @@
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"
                                        FontSize="20"
-                                       Margin="0,0,2,0"
+                                       Margin="0,0,8,0"
                                        AutomationProperties.AccessibilityView="Raw" />
                             <controls:CustomEmojiIcon x:Name="EmojiPresenter"
                                                       x:Load="False"
                                                       Source="{TemplateBinding Source}"
                                                       ReplacementColor="{TemplateBinding Foreground}"
-                                                      Margin="0,0,2,0"
+                                                      Margin="0,0,8,0"
                                                       AutomationProperties.AccessibilityView="Raw" />
-                            <TextBlock x:Name="ContentPresenter"
-                                       Text="{TemplateBinding Text}"
-                                       TextWrapping="NoWrap"
-                                       TextTrimming="CharacterEllipsis"
-                                       Padding="{TemplateBinding Padding}"
-                                       VerticalAlignment="Center"
-                                       AutomationProperties.AccessibilityView="Raw"
-                                       Grid.Column="1" />
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              TextWrapping="NoWrap"
+                                              VerticalAlignment="Center"
+                                              AutomationProperties.AccessibilityView="Raw"
+                                              Grid.Column="1">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextTrimming"
+                                                Value="CharacterEllipsis" />
+                                        <Setter Property="TextWrapping"
+                                                Value="NoWrap" />
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
                         </Grid>
 
                         <TextBlock Margin="4"
@@ -2032,22 +2046,29 @@
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"
                                        FontSize="20"
-                                       Margin="0,0,2,0"
+                                       Margin="0,0,8,0"
                                        AutomationProperties.AccessibilityView="Raw" />
                             <controls:CustomEmojiIcon x:Name="EmojiPresenter"
                                                       x:Load="False"
                                                       Source="{TemplateBinding Source}"
                                                       ReplacementColor="{TemplateBinding Foreground}"
-                                                      Margin="0,0,2,0"
+                                                      Margin="0,0,8,0"
                                                       AutomationProperties.AccessibilityView="Raw" />
-                            <TextBlock x:Name="ContentPresenter"
-                                       Text="{TemplateBinding Text}"
-                                       TextWrapping="NoWrap"
-                                       TextTrimming="CharacterEllipsis"
-                                       Padding="{TemplateBinding Padding}"
-                                       VerticalAlignment="Center"
-                                       AutomationProperties.AccessibilityView="Raw"
-                                       Grid.Column="1" />
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              TextWrapping="NoWrap"
+                                              VerticalAlignment="Center"
+                                              AutomationProperties.AccessibilityView="Raw"
+                                              Grid.Column="1">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextTrimming"
+                                                Value="CharacterEllipsis" />
+                                        <Setter Property="TextWrapping"
+                                                Value="NoWrap" />
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
                         </Grid>
 
                         <TextBlock Margin="4"
