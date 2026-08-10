@@ -286,51 +286,6 @@ namespace Telegram.Controls.Messages
                     }
                 }
             }
-            else if (message.Content is MessageChatSetBackground chatSetBackground)
-            {
-                var photo = FindName("Photo") as ChatBackgroundPresenter;
-                var view = FindName("View") as Border;
-
-                if (photo == null)
-                {
-                    return;
-                }
-
-                photo.UpdateSource(message.ClientService, chatSetBackground.Background.Background, true);
-                view.Visibility = message.IsOutgoing || message.Chat.Type is not ChatTypePrivate
-                    ? Visibility.Collapsed
-                    : Visibility.Visible;
-
-                if (message.IsOutgoing || view.Child is not TextBlock label)
-                {
-                    return;
-                }
-
-                var userFull = message.ClientService.GetUserFull(message.Chat);
-                var sameBackground = chatSetBackground.Background.Background.Id == message.Chat.Background?.Background.Id;
-
-                if (sameBackground && (userFull == null || userFull.SetChatBackground))
-                {
-                    label.Text = Strings.RemoveWallpaperAction;
-                }
-                else
-                {
-                    label.Text = Strings.ViewWallpaperAction;
-                }
-            }
-            else if (message.Content is MessageChatEvent { Action: ChatEventBackgroundChanged backgroundChanged })
-            {
-                var photo = FindName("Photo") as ChatBackgroundPresenter;
-                var view = FindName("View") as Border;
-
-                if (photo == null || backgroundChanged.NewBackground == null)
-                {
-                    return;
-                }
-
-                photo.UpdateSource(message.ClientService, backgroundChanged.NewBackground.Background, true);
-                view.Visibility = Visibility.Collapsed;
-            }
         }
 
         public void UpdateMessageInteractionInfo(MessageViewModel message)
