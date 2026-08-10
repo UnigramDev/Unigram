@@ -45,6 +45,8 @@ namespace Telegram.ViewModels.Delegates
         void ForwardMessage(MessageViewModel message);
         void SummarizeMessage(MessageViewModel message);
 
+        void ExecuteServiceMessage(MessageViewModel message);
+
         void OpenReply(MessageViewModel message);
         void OpenThread(MessageViewModel message);
         void OpenSender(MessageViewModel message);
