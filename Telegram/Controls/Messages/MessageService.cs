@@ -199,14 +199,6 @@ namespace Telegram.Controls.Messages
             {
                 UpdateMessageTopic();
             }
-            else if (message.Content is MessageGiveawayPrizeStars giveawayPrizeStars)
-            {
-                var title = FindName("Title") as TextBlock;
-                title.Text = Strings.ActionStarGiveawayPrizeTitle;
-
-                var animation = FindName("Animation") as AnimatedImage;
-                animation.Source = DelayedFileSource.FromSticker(message.ClientService, giveawayPrizeStars.Sticker);
-            }
             else if (message.Content is MessageChatChangePhoto chatChangePhoto)
             {
                 var segments = FindName("Segments") as ActiveStoriesSegments;

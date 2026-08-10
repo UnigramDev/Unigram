@@ -1,0 +1,60 @@
+﻿<messages:MessageService x:Class="Telegram.Controls.Messages.Service.MessageGiveawayPrizeStarsContent"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:local="using:Telegram.Controls.Messages.Service"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:messages="using:Telegram.Controls.Messages"
+                         xmlns:controls="using:Telegram.Controls"
+                         Click="Service_Click"
+                         Margin="0,8,0,0"
+                         Padding="12,2,12,0"
+                         Width="216"
+                         mc:Ignorable="d"
+                         d:DesignHeight="300"
+                         d:DesignWidth="400">
+
+    <StackPanel>
+        <controls:AnimatedImage x:Name="Animation"
+                                Width="120"
+                                Height="120"
+                                FrameSize="120,120"
+                                DecodeFrameType="Logical"
+                                IsViewportAware="True"
+                                LoopCount="1"
+                                Margin="0,-20,0,12" />
+
+        <TextBlock x:Name="Title"
+                   Foreground="#FFFFFF"
+                   Text="{CustomResource BoostingCongratulations}"
+                   TextAlignment="Center"
+                   Style="{StaticResource SubtitleTextBlockStyle}"
+                   FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                   FontSize="16" />
+
+        <controls:FormattedTextBlock x:Name="Text"
+                                     Foreground="#FFFFFF"
+                                     TextAlignment="Center"
+                                     Style="{StaticResource CaptionFormattedTextBlockStyle}"
+                                     FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                     AutoFontSize="False"
+                                     IsTextSelectionEnabled="False"
+                                     HyperlinkStyle="None"
+                                     HyperlinkForeground="#FFFFFF"
+                                     HyperlinkFontWeight="SemiBold"
+                                     Padding="0,0,0,4"
+                                     Margin="0,0,0,8" />
+
+        <Border x:Name="View"
+                Background="{ThemeResource MessageServiceBackgroundBrush}"
+                CornerRadius="12"
+                HorizontalAlignment="Center"
+                Padding="12,4,12,4"
+                Margin="0,0,0,12">
+            <TextBlock Text="{CustomResource BoostingReceivedGiftOpenBtn}"
+                       Foreground="#FFFFFF"
+                       TextAlignment="Center"
+                       Style="{StaticResource CaptionTextBlockStyle}" />
+        </Border>
+    </StackPanel>
+</messages:MessageService>
