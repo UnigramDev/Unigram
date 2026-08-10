@@ -742,7 +742,24 @@ namespace Telegram.Common
                 case "Risorsa realizzata sulla destinazione di rendering errata.":
                 case "Die Ressource wurde auf dem falschen Renderziel erkannt.":
                 case "Kaynak yanlış işleme hedefinde gerçekleştirildi.":
+                case "La ressource a été réalisée sur la cible de rendu incorrecte.":
+                case "El recurso se produjo en el destino de representación incorrecto.":
+                case "Ресурс был реализован с использованием неправильной однобуферной прорисовки.":
                     return "The resource was realized on the wrong render target.";
+
+                case "Un fichier de polices n’a pas pu être ouvert car le fichier, répertoire, remplacement réseau, lecteur ou autre emplacement de stockage n’existe pas ou n’est pas disponible.":
+                case "Eine Schriftartdatei konnte nicht geöffnet werden, da die Datei, das Verzeichnis, die Netzwerkadresse, das Laufwerk oder ein anderer Speicherort nicht vorhanden bzw. verfügbar ist.":
+                case "No se pudo abrir un archivo de fuentes porque el archivo, directorio, ubicación de red, unidad u otra ubicación de almacenamiento no existe o no está disponible.":
+                case "Não foi possível abrir um arquivo de fonte porque o arquivo, o diretório, o local de rede, a unidade ou outro local de armazenamento não existe ou não está disponível.":
+                case "Impossibile aprire un file di tipi di carattere. Il file, la directory, il percorso di rete, l'unità o un'altra posizione di archiviazione non esiste o non è disponibile.":
+                case "Dosya, dizin, ağ konumu, sürücü veya başka bir depolama konumu olmadığından veya kullanılamıyor olduğundan, yazı tipi dosyası açılamadı.":
+                case "Не удалось открыть файл шрифта, так как файл, каталог, сетевое расположение, диск или другое место хранения не существует или недоступно.":
+                case "无法打开字体文件，原因是文件、目录、网络位置、驱动器或其他存储文字不存在或不可用。":
+                    return "A font file could not be opened because the file, directory, network location, drive, or other storage location does not exist or is unavailable.";
+
+                case "Un fichier de polices existe mais n’a pas pu être ouvert en raison d’un refus d’accès, d’une violation de partage ou d’une erreur similaire.":
+                case "Файл шрифта существует, но его не удалось открыть из-за отказа в доступе, нарушения общего доступа или аналогичной ошибки.":
+                    return "A font file exists but could not be opened due to access denied, sharing violation, or similar error.";
 
                 default:
                     return text;
