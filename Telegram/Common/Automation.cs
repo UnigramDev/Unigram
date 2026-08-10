@@ -128,7 +128,7 @@ namespace Telegram.Common
 
             if (message.Content.IsService() && clientService.TryGetChat(message.ChatId, out Chat chat))
             {
-                return MessageService.GetText(message) + ", ";
+                return MessageServiceText.GetText(message) + ", ";
             }
 
             if (message.Content is MessageAlbum album)
@@ -466,7 +466,7 @@ namespace Telegram.Common
         {
             if (message.Content.IsService() && clientService.TryGetChat(message.ChatId, out Chat chat))
             {
-                return MessageService.GetText(new MessageViewModel(clientService, null as IMessageDelegate, chat, null, null, message)) + ", ";
+                return MessageServiceText.GetText(new MessageViewModel(clientService, null as IMessageDelegate, chat, null, null, message)) + ", ";
             }
 
             if (message.Content is MessageAlbum album)

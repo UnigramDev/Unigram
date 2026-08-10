@@ -1104,7 +1104,7 @@ namespace Telegram.Controls.Messages
                 outgoing,
                 message.SenderId,
                 title,
-                MessageService.GetText(message),
+                MessageServiceText.GetText(message),
                 null,
                 false,
                 white);

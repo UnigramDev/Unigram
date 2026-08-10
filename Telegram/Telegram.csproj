@@ -1001,6 +1001,7 @@
       <DependentUpon>MessageSelector.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\MessageService.cs" />
+    <Compile Include="Controls\Messages\MessageServiceText.cs" />
     <Compile Include="Controls\Messages\Content\AnimationContent.xaml.cs">
       <DependentUpon>AnimationContent.xaml</DependentUpon>
     </Compile>
