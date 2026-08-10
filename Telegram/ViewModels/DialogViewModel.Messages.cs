@@ -377,7 +377,7 @@ namespace Telegram.ViewModels
             var chat = message.Chat;
             if (chat != null && ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
-                if (supergroup.IsChannel)
+                if (supergroup.IsChannel || ForumTopic?.Info.IsClosed is true)
                 {
                     return supergroup.Status is not ChatMemberStatusCreator and not ChatMemberStatusAdministrator
                         ? ShouldReplyInAnotherChatResult.True
