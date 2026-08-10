@@ -66,10 +66,13 @@ namespace Telegram.Common
         private TextSelectionGranularity _granularity;
 
         // Mouse multi-tap state: 2 taps = word, 3 = paragraph. Tracked by hand because the
-        // inner RichTextBlock's native double-tap word-select is off in Extended mode.
+        // inner RichTextBlock's native double-tap word-select is off in Extended mode. Only
+        // presses landing inside a selectable are tracked, and the sequence has to stay in
+        // the same one (_lastTapControl).
         private int _tapCount;
         private ulong _lastTapTime;
         private Point _lastTapPoint;
+        private ISelectableControl _lastTapControl;
 
         private bool _hasSelection; // a finalized selection is currently shown
         private bool _watchingFocus; // subscribed to the (static) FocusManager.LostFocus
@@ -175,6 +178,9 @@ namespace Telegram.Common
             // alive for as long as the manager does.
             ClearSelection();
             _items.Clear();
+
+            // Same reason: it's a control of the content being left behind.
+            _lastTapControl = null;
 
             _root.RemoveHandler(UIElement.PointerPressedEvent, _pointerPressed);
             _root.RemoveHandler(UIElement.PointerMovedEvent, _pointerMoved);
@@ -295,15 +301,22 @@ namespace Telegram.Common
             _pressPoint = point.Position;
 
             // Multi-tap (mouse only): 2 -> word, 3 -> paragraph; otherwise a caret-drag.
+            //
+            // Only a DIRECT hit inside a selectable takes part: a press in a gap (clamped to
+            // the nearest block) is a plain caret-drag AND breaks the sequence, so it can't
+            // count towards the next press's tap count — otherwise a click on media next to
+            // the text would turn the following click into a word/paragraph selection.
             _granularity = TextSelectionGranularity.Character;
-            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
+            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse && exact)
             {
                 var now = Logger.TickCount;
-                var near = Math.Abs(point.Position.X - _lastTapPoint.X) < TapSlop
+                var near = _anchor == _lastTapControl
+                        && Math.Abs(point.Position.X - _lastTapPoint.X) < TapSlop
                         && Math.Abs(point.Position.Y - _lastTapPoint.Y) < TapSlop;
                 _tapCount = near && now - _lastTapTime <= DoubleClickTime ? (_tapCount % 3) + 1 : 1;
                 _lastTapTime = now;
                 _lastTapPoint = point.Position;
+                _lastTapControl = _anchor;
                 _granularity = _tapCount switch
                 {
                     2 => TextSelectionGranularity.Word,
@@ -314,14 +327,8 @@ namespace Telegram.Common
             else
             {
                 _tapCount = 1;
-            }
-
-            // Word/paragraph selection only applies to a DIRECT hit — a press in a gap (clamped
-            // to the nearest block) falls back to a plain caret-drag instead of word-selecting
-            // the closest control.
-            if (!exact)
-            {
-                _granularity = TextSelectionGranularity.Character;
+                _lastTapTime = 0;
+                _lastTapControl = null;
             }
 
             // Anchor end snapped to the granularity (Character -> (pos, pos)).
