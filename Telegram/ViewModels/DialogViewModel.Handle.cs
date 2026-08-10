@@ -94,7 +94,7 @@ namespace Telegram.ViewModels
         {
             if (_chat?.Id == update.Info.ChatId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateServiceWithForumTopic(update.Info.ForumTopicId, service => service.UpdateMessageTopic()));
+                BeginOnUIThread(() => Delegate?.UpdateServiceWithForumTopic(update.Info.ForumTopicId));
             }
         }
 

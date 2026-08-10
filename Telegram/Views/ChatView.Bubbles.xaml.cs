@@ -17,6 +17,7 @@ using Telegram.Controls.Cells;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
+using Telegram.Controls.Messages.Service;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -1735,15 +1736,15 @@ namespace Telegram.Views
             }
         }
 
-        public void UpdateServiceWithForumTopic(int forumTopicId, Action<MessageService> action)
+        public void UpdateServiceWithForumTopic(int forumTopicId)
         {
             if (_messageTopicToSelectors.TryGetValue(forumTopicId, out var containers))
             {
                 foreach (var container in containers)
                 {
-                    if (container.ContentTemplateRoot is MessageService service)
+                    if (container.ContentTemplateRoot is MessageHeaderMessageTopicContent header)
                     {
-                        action(service);
+                        header.UpdateMessageTopic();
                     }
                 }
             }
