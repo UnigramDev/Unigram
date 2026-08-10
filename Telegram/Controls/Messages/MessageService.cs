@@ -48,7 +48,7 @@ namespace Telegram.Controls.Messages
         }
 
         public static readonly DependencyProperty ContentOpacityProperty =
-            DependencyProperty.Register("ContentOpacity", typeof(double), typeof(MessageService), new PropertyMetadata(1));
+            DependencyProperty.Register("ContentOpacity", typeof(double), typeof(MessageService), new PropertyMetadata(1d));
 
         #endregion
 
