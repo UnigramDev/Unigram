@@ -153,7 +153,9 @@ namespace Telegram.ViewModels
 
                 IsEmpty = false;
 
-                if (SelectedTab >= Tabs.Count)
+                // SelectedTab mirrors SelectedIndex, which is -1 whenever the selector has no
+                // selection — repopulating Tabs clears it while the user is still typing.
+                if (SelectedTab < 0 || SelectedTab >= Tabs.Count)
                 {
                     return;
                 }
