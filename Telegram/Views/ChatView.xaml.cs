@@ -467,6 +467,8 @@ namespace Telegram.Views
             if (navigation)
             {
                 Messages.Disconnect();
+
+                _contentRecyclePool.Clear();
             }
         }
 
