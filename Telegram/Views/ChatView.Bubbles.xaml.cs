@@ -1296,10 +1296,16 @@ namespace Telegram.Views
                 // See if we can fetch from the correct list.
                 if (relevantHashSet.Queue.Count > 0)
                 {
-                    // Unfortunately have to resort to LINQ here. There's no efficient way of getting an arbitrary
-                    // item from a hashset without knowing the item. Queue isn't usable for this scenario
-                    // because you can't remove a specific element (which is needed in the block above).
-                    args.ItemContainer = relevantHashSet.Queue.First();
+                    // A HashSet because the block above removes a specific container, which a
+                    // Queue cannot do. Taking an arbitrary one out is then a matter of stopping
+                    // at the first: First() cannot fast path a set and boxes its struct
+                    // enumerator, once for every container realized.
+                    foreach (var container in relevantHashSet.Queue)
+                    {
+                        args.ItemContainer = container;
+                        break;
+                    }
+
                     relevantHashSet.Queue.Remove(args.ItemContainer);
                 }
                 else
