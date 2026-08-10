@@ -2484,11 +2484,20 @@ namespace Telegram.Controls.Messages
                         id = null;
                     }
 
+                    // An entity that CONTAINS the placeholder has to grow instead of move:
+                    // the markdown paths parse their entities before substituting, so the
+                    // bold run wrapping a whole sentence spans the un1 it's about to get.
+                    var shift = name.Length - param.Length;
+
                     foreach (var entity in source.Entities)
                     {
                         if (entity.Offset > index)
                         {
-                            entity.Offset += name.Length - param.Length;
+                            entity.Offset += shift;
+                        }
+                        else if (entity.Offset + entity.Length > index)
+                        {
+                            entity.Length += shift;
                         }
                     }
 
@@ -2577,11 +2586,19 @@ namespace Telegram.Controls.Messages
                     entities.Add(new TextEntity(start, name.Length, new TextEntityTypeMentionName(user.Id)));
                 }
 
+                var shift = names.Length - param.Length;
+
                 foreach (var entity in source.Entities)
                 {
-                    if (entity.Offset > start)
+                    // Against index, not start: start is where the LAST name went, so
+                    // entities sitting between the placeholder and it were left behind.
+                    if (entity.Offset > index)
                     {
-                        entity.Offset += names.Length - param.Length;
+                        entity.Offset += shift;
+                    }
+                    else if (entity.Offset + entity.Length > index)
+                    {
+                        entity.Length += shift;
                     }
                 }
 
