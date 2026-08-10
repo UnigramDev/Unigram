@@ -153,9 +153,7 @@ namespace Telegram.ViewModels
 
                 IsEmpty = false;
 
-                // SelectedTab mirrors SelectedIndex, which is -1 whenever the selector has no
-                // selection — repopulating Tabs clears it while the user is still typing.
-                if (SelectedTab < 0 || SelectedTab >= Tabs.Count)
+                if (SelectedTab >= Tabs.Count)
                 {
                     return;
                 }
@@ -213,13 +211,20 @@ namespace Telegram.ViewModels
             get => _selectedTab;
             set
             {
+                // SelectedIndex is -1 whenever the selector holds no selection, which it
+                // reports while its ItemsSource is being attached — not because a tab was
+                // deselected. Set stores the value before returning, so accepting it here
+                // would leave the field out of range for every later reader, and the
+                // Tabs[value] below would already be reading at -1.
+                if (value < 0 || value >= Tabs.Count)
+                {
+                    // Push the retained index back so the selector re-syncs to it.
+                    RaisePropertyChanged();
+                    return;
+                }
+
                 if (Set(ref _selectedTab, value))
                 {
-                    if (value >= Tabs.Count)
-                    {
-                        return;
-                    }
-
                     _cancellation.Cancel();
                     _cancellation = new CancellationTokenSource();
 
