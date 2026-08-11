@@ -784,10 +784,13 @@ namespace Telegram.Services.Calls
         {
             if (_screenManager != null)
             {
-                _screenManager.SetEncryptDecrypt(null, null);
                 _screenManager.SetVideoCapture(null);
-
                 _screenManager.Stop();
+
+                // Clearing the delegates breaks the native to managed cycle that would
+                // otherwise leak the call, but it has to happen after Stop: until the
+                // instance is gone tgcalls can still ask us to transform a frame.
+                _screenManager.SetEncryptDecrypt(null, null);
                 _screenManager = null;
 
                 _screenSource = 0;
@@ -1113,10 +1116,11 @@ namespace Telegram.Services.Calls
                 _manager.VideoBroadcastPartRequested -= OnVideoBroadcastPartRequested;
                 _manager.MediaChannelDescriptionsRequested -= OnMediaChannelDescriptionsRequested;
 
-                _manager.SetEncryptDecrypt(null, null);
                 _manager.SetVideoCapture(null);
-
                 _manager.Stop();
+
+                // See EndScreenSharing: the delegates have to outlive the instance.
+                _manager.SetEncryptDecrypt(null, null);
                 _manager = null;
 
                 _source = 0;
