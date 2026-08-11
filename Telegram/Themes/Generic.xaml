@@ -5818,11 +5818,10 @@
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                       Storyboard.TargetName="DescriptionPresenter">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
+                                        <!--  DescriptionPresenter must NOT be animated here: it is x:Load="False" and
+                                              only realized when Description is set, and a Storyboard.TargetName that
+                                              cannot be resolved throws E_INVALIDARG out of the measure pass that
+                                              applies the template. It already draws in a disabled-looking brush.  -->
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
