@@ -364,8 +364,8 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   video layout changes, not per frame.
 
 - [x] **`Protocol()`'s comparator takes `std::string` by value** — `VoipManager.h:34`.
-  Now `const&`. The lexicographic sort still breaks at a two-digit major version — left
-  alone, since tgcalls' own version strings are what they are. → P4.
+  Now `const&`. The lexicographic sort it performed was a live bug, not a latent one —
+  see P4.
 
 - [ ] ~~**`RemoveSsrcs` iterator copy**~~ — `VoipGroupManager.cpp:173-179`. **Won't fix.**
   `GetMany` needs matching element types and this converts `int32_t` to `uint32_t`, so it
@@ -427,8 +427,12 @@ worth attention is the coupling, not the mechanism:
 - [ ] `enableAEC`/`enableNS`/`enableAGC` hard-coded `true` in 1:1 calls
       (`VoipManager.cpp:46-48`) while group calls honour the `IsNoiseSuppressionEnabled`
       setting. **Needs your call** — it is a product decision, not a defect.
-- [ ] `Protocol()` sorts versions lexicographically, which breaks at a two-digit major.
-      Not urgent while tgcalls' versions are single-digit, but it is a silent failure.
+- [x] `Protocol()` sorted versions lexicographically. **Filed as latent; it was live.**
+      I had assumed tgcalls' majors were single-digit. They are not — the registered set is
+      `2.7.7 5.0.0 7.0.0 8.0.0 9.0.0 10.0.0 11.0.0`, and a string sort orders that
+      `9 8 7 5 2.7.7 11 10`, putting the two newest protocols at the end of a list the
+      comment says the server reads newest first. Now compared component-wise as numbers,
+      checked against the real set plus the strict-weak-ordering properties.
 
 ---
 
@@ -460,4 +464,9 @@ and one thing that needs a device — nothing that can be closed by reading more
   steady-state depth over a long share before designing anything.
 
 **Left deliberately, with the reasoning recorded above:** `m_impl` being unguarded (P2),
-`RemoveSsrcs` (P3), the lexicographic version sort and unbounded log growth (P4).
+`RemoveSsrcs` (P3), unbounded log growth (P4).
+
+Every item that was a defect and did not need a decision, a device or a measurement is
+now fixed. Two of them were only found by re-reading commits already made — the
+`responseTimestamp` gap and this version sort — so the pass over one's own work earned
+its keep.

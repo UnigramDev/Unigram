@@ -25,8 +25,39 @@ namespace winrt::Telegram::Native::Calls::implementation
             auto maxLayer = tgcalls::Meta::MaxLayer();
             auto versions = tgcalls::Meta::Versions();
 
+            // Compared component by component as numbers. A plain string compare puts
+            // "10.0.0" and "11.0.0" below "9.0.0", which buried the two newest protocols
+            // at the wrong end of a list the server reads newest first.
             auto CompareVersions = [](std::string const& a, std::string const& b) {
-                return a > b;
+                size_t i = 0;
+                size_t j = 0;
+
+                while (i < a.size() || j < b.size())
+                {
+                    int left = 0;
+                    int right = 0;
+
+                    while (i < a.size() && a[i] >= '0' && a[i] <= '9')
+                    {
+                        left = left * 10 + (a[i++] - '0');
+                    }
+                    while (j < b.size() && b[j] >= '0' && b[j] <= '9')
+                    {
+                        right = right * 10 + (b[j++] - '0');
+                    }
+
+                    if (left != right)
+                    {
+                        return left > right;
+                    }
+
+                    // Step over the separator, whatever it turns out to be. One of the
+                    // two always advances, so this cannot spin.
+                    if (i < a.size()) i++;
+                    if (j < b.size()) j++;
+                }
+
+                return false;
             };
 
             // Server processes them newer to older
