@@ -41,7 +41,8 @@
                             <TextBlock x:Name="Icon"
                                        Foreground="#FFFFFF"
                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                       FontSize="20" />
+                                       FontSize="20"
+                                       AutomationProperties.AccessibilityView="Raw" />
 
                             <TextBlock x:Name="Limit"
                                        Margin="8,-1,8,1"
@@ -113,6 +114,7 @@
                     <TextBlock x:Name="Header"
                                Text="{CustomResource YourPublicCommunities}"
                                Style="{StaticResource BaseTextBlockStyle}"
+                               AutomationProperties.HeadingLevel="Level2"
                                Margin="0,24,0,2"
                                Grid.Row="2" />
                 </StackPanel>
@@ -128,22 +130,26 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
+                        <!-- The row is named as a whole in OnContainerContentChanging, so the
+                             text blocks are hidden from the accessibility tree to avoid repeating it. -->
                         <controls:ProfilePicture Size="36"
                                                  Margin="0,0,12,0"
                                                  IsHitTestVisible="False"
+                                                 AutomationProperties.AccessibilityView="Raw"
                                                  Grid.RowSpan="2" />
 
-                        <TextBlock Grid.Column="1"
-                                   VerticalAlignment="Bottom"
+                        <TextBlock VerticalAlignment="Bottom"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   Grid.Column="1"
                                    Grid.Row="0" />
-                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
                                    VerticalAlignment="Top"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   MaxLines="1"
                                    Grid.Column="1"
-                                   Grid.Row="1"
-                                   MaxLines="1" />
+                                   Grid.Row="1" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -167,6 +173,7 @@
                                     IsCachingEnabled="False"
                                     FrameSize="26,26"
                                     DecodeFrameType="Logical"
+                                    AutomationProperties.AccessibilityView="Raw"
                                     Margin="8,-3,-4,-5"
                                     Grid.Column="1" />
         </Grid>

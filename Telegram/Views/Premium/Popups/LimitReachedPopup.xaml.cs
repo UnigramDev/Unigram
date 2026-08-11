@@ -20,6 +20,7 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.Views.Host;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 
@@ -322,75 +323,19 @@ namespace Telegram.Views.Premium.Popups
             {
                 var title = content.Children[1] as TextBlock;
                 title.Text = _clientService.GetTitle(chat);
+
+                AutomationProperties.SetName(args.ItemContainer, title.Text);
             }
             else if (args.Phase == 1)
             {
-                if (chat.Type is ChatTypeSupergroup super)
-                {
-                    var supergroup = _clientService.GetSupergroup(super.SupergroupId);
-                    if (supergroup != null)
-                    {
-                        var subtitle = content.Children[2] as TextBlock;
+                var title = content.Children[1] as TextBlock;
+                var subtitle = content.Children[2] as TextBlock;
 
-                        if (_type is PremiumLimitTypeCreatedPublicChatCount)
-                        {
-                            subtitle.Text = MeUrlPrefixConverter.Convert(_clientService, supergroup.ActiveUsername(), true);
-                        }
-                        else if (_type is PremiumLimitTypeSupergroupCount)
-                        {
-                            // don't need to use result->dates_, because chat.last_message.date is more reliable
-                            if (chat.LastMessage != null)
-                            {
-                                var currentDate = DateTime.Now.ToTimestamp();
-                                int date = chat.LastMessage.Date;
-                                int daysDif = (currentDate - date) / 86400;
+                subtitle.Text = GetSubtitle(chat);
 
-                                String dateFormat;
-                                if (daysDif < 30)
-                                {
-                                    dateFormat = Locale.Declension(Strings.R.Days, daysDif);
-                                }
-                                else if (daysDif < 365)
-                                {
-                                    dateFormat = Locale.Declension(Strings.R.Months, daysDif / 30);
-                                }
-                                else
-                                {
-                                    dateFormat = Locale.Declension(Strings.R.Years, daysDif / 365);
-                                }
-
-                                if (supergroup.IsChannel || supergroup.IsBroadcastGroup)
-                                {
-                                    subtitle.Text = string.Format(Strings.InactiveChannelSignature, dateFormat);
-                                }
-                                else
-                                {
-                                    String members = Locale.Declension(Strings.R.Members, _clientService.GetMembersCount(chat));
-                                    subtitle.Text = string.Format(Strings.InactiveChatSignature, members, dateFormat);
-                                }
-                            }
-                            else if (_clientService.HasActiveUsername(chat, out _))
-                            {
-                                if (supergroup.IsChannel || supergroup.IsBroadcastGroup)
-                                {
-                                    subtitle.Text = Strings.ChannelPublic.ToLower();
-                                }
-                                else
-                                {
-                                    subtitle.Text = Strings.MegaPublic.ToLower();
-                                }
-                            }
-                            else if (supergroup.IsChannel || supergroup.IsBroadcastGroup)
-                            {
-                                subtitle.Text = Strings.ChannelPrivate.ToLower();
-                            }
-                            else
-                            {
-                                subtitle.Text = Strings.MegaPrivate.ToLower();
-                            }
-                        }
-                    }
-                }
+                AutomationProperties.SetName(args.ItemContainer, subtitle.Text.Length > 0
+                    ? title.Text + ", " + subtitle.Text
+                    : title.Text);
             }
             else if (args.Phase == 2)
             {
@@ -404,6 +349,74 @@ namespace Telegram.Views.Premium.Popups
             }
 
             args.Handled = true;
+        }
+
+        private string GetSubtitle(Chat chat)
+        {
+            if (chat.Type is not ChatTypeSupergroup super)
+            {
+                return string.Empty;
+            }
+
+            var supergroup = _clientService.GetSupergroup(super.SupergroupId);
+            if (supergroup == null)
+            {
+                return string.Empty;
+            }
+
+            if (_type is PremiumLimitTypeCreatedPublicChatCount)
+            {
+                return MeUrlPrefixConverter.Convert(_clientService, supergroup.ActiveUsername(), true);
+            }
+            else if (_type is not PremiumLimitTypeSupergroupCount)
+            {
+                return string.Empty;
+            }
+
+            // don't need to use result->dates_, because chat.last_message.date is more reliable
+            if (chat.LastMessage != null)
+            {
+                var currentDate = DateTime.Now.ToTimestamp();
+                int date = chat.LastMessage.Date;
+                int daysDif = (currentDate - date) / 86400;
+
+                string dateFormat;
+                if (daysDif < 30)
+                {
+                    dateFormat = Locale.Declension(Strings.R.Days, daysDif);
+                }
+                else if (daysDif < 365)
+                {
+                    dateFormat = Locale.Declension(Strings.R.Months, daysDif / 30);
+                }
+                else
+                {
+                    dateFormat = Locale.Declension(Strings.R.Years, daysDif / 365);
+                }
+
+                if (supergroup.IsChannel || supergroup.IsBroadcastGroup)
+                {
+                    return string.Format(Strings.InactiveChannelSignature, dateFormat);
+                }
+
+                var members = Locale.Declension(Strings.R.Members, _clientService.GetMembersCount(chat));
+                return string.Format(Strings.InactiveChatSignature, members, dateFormat);
+            }
+            else if (_clientService.HasActiveUsername(chat, out _))
+            {
+                if (supergroup.IsChannel || supergroup.IsBroadcastGroup)
+                {
+                    return Strings.ChannelPublic.ToLower();
+                }
+
+                return Strings.MegaPublic.ToLower();
+            }
+            else if (supergroup.IsChannel || supergroup.IsBroadcastGroup)
+            {
+                return Strings.ChannelPrivate.ToLower();
+            }
+
+            return Strings.MegaPrivate.ToLower();
         }
 
         #endregion
