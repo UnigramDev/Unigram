@@ -69,6 +69,31 @@ The two facts most of this rests on:
       is acyclic by accident, not design. A private lock object, or no chat lock at all,
       would be sturdier. See *Needs your call*.
 
+- [x] **The same bug outside the reviewed files, found by an app-wide sweep** **[live]**
+      → fixed in the commit that checked this box
+
+      `grep -rn "Monitor.Enter"` after the F1/D1 commit turned up four more files. Two are
+      fixed here:
+
+      - `Services/Calls/VoipGroupCallParticipants.cs:34/45`, `:55/62/112` — a **sixth** copy
+        of the paging method, `SetParticipantOrder` + `GetParticipantsAsyncImpl`, the same
+        two shapes as the five already converted. Same `int missing` restructure; its three
+        return paths (`null` on a non-`Ok`/`Error` response, `null` on a non-404 error, the
+        reentrant retry otherwise) are unchanged.
+      - `Td/Api/TdExtensions.cs:2950`, `:2972` — `GetPosition` and `GetOrder`, each with an
+        early `Monitor.Exit` inside a loop and another after it. These matter more than the
+        line count suggests: **they lock `chat`**, the very objects `ClientService.OnResult`
+        locks on the receive thread, so a throw in `AreTheSame` on the UI thread would have
+        wedged update delivery app-wide. `return` inside `lock` releases correctly, so both
+        collapse to one block with no early exit at all.
+
+      `using System.Threading;` dropped from both — it was there only for `Monitor`.
+
+      **Still open, same bug, not touched:** `Controls/DiceView.cs:239` and
+      `Controls/Messages/Content/VideoNoteContent.xaml.cs:580`. Both are single-`Enter`,
+      two-`Exit` shapes in UI code rather than on the receive thread, so they can wedge a
+      control but not the whole update pipeline. Worth doing, lower stakes.
+
 ---
 
 ## P1 — correctness
@@ -243,17 +268,19 @@ Ordered by measured reach, not by size of change.
 
 Worth doing only while already in the file.
 
-- [ ] **Five copies of the same paging algorithm** — `ChatList.cs:48`, `StoryList.cs:83`,
-      `SavedMessages.cs:105`, `ForumTopicService.cs:214`, `FeedbackChatTopicService.cs:141`
+- [ ] **Six copies of the same paging algorithm** — `ChatList.cs:48`, `StoryList.cs:83`,
+      `SavedMessages.cs:105`, `ForumTopicService.cs:214`, `FeedbackChatTopicService.cs:141`,
+      `Calls/VoipGroupCallParticipants.cs:51`
 
       ~55 near-identical lines each, differing only in the `SortedSet`, the `Load*`
-      function, and the return type. Five, not the three first written here — the two topic
-      services carry the same method.
+      function, and the return type. Six, not the three first written here — the count went
+      up twice as the sweep widened, which is itself the point.
 
-      The real argument for merging isn't the ~220 duplicated lines — it's that the P0 lock
-      leak and the P1 mutating-getter bug are *each present in all five*, so every fix is a
-      five-way fix until they're one method. Now demonstrated rather than argued: closing
-      the lock leak took two commits and the identical `int missing` restructure five times.
+      The real argument for merging isn't the ~275 duplicated lines — it's that the P0 lock
+      leak is present in *all six*, so every fix is a six-way fix until they're one method.
+      Now demonstrated rather than argued: closing the lock leak took three commits and the
+      identical `int missing` restructure six times, and the sixth copy was only found by
+      grepping the whole app rather than by reading the files anyone thought were involved.
 
 - [ ] **`GetAllReactionsAsync` is exactly `GetReactionsAsync(_activeReactions)`** — `ClientService.cs:1750` vs `:1774`
 
@@ -459,8 +486,8 @@ in better shape than `ForumTopicService`; `_topics` is a `ReaderWriterDictionary
   this doc and the one most worth confirming with a profile before and after, rather than
   taking on argument.
 
-**Suggested order:** ~~P0~~, ~~F1, D1~~ **done** — all 19 `Monitor` pairs across the five
-files are now `lock` →
+**Suggested order:** ~~P0~~, ~~F1, D1~~, ~~the sweep~~ **done** — 23 `Monitor` pairs across
+seven files are now `lock`; only `DiceView` and `VideoNoteContent` remain →
 **F2** (the unsynchronized collections, the worst thing in either topic service) →
 **F4 and F5**, both small and both leaving the topic list visibly wrong →
 `GetChatFromMessageSenderAsync` and `Clear()` from P1 → the `ConcurrentDictionary` swap →

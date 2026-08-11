@@ -11,7 +11,6 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Text;
-using System.Threading;
 using Telegram.Common;
 using Telegram.Controls.Chats;
 using Telegram.Converters;
@@ -2947,18 +2946,17 @@ namespace Telegram.Td.Api
                 return null;
             }
 
-            Monitor.Enter(chat);
-
-            for (int i = 0; i < chat.Positions.Count; i++)
+            lock (chat)
             {
-                if (chat.Positions[i].List.AreTheSame(chatList))
+                for (int i = 0; i < chat.Positions.Count; i++)
                 {
-                    Monitor.Exit(chat);
-                    return chat.Positions[i];
+                    if (chat.Positions[i].List.AreTheSame(chatList))
+                    {
+                        return chat.Positions[i];
+                    }
                 }
             }
 
-            Monitor.Exit(chat);
             return null;
         }
 
@@ -2969,18 +2967,17 @@ namespace Telegram.Td.Api
                 return 0;
             }
 
-            Monitor.Enter(chat);
-
-            for (int i = 0; i < chat.Positions.Count; i++)
+            lock (chat)
             {
-                if (chat.Positions[i].List.AreTheSame(chatList))
+                for (int i = 0; i < chat.Positions.Count; i++)
                 {
-                    Monitor.Exit(chat);
-                    return chat.Positions[i].Order;
+                    if (chat.Positions[i].List.AreTheSame(chatList))
+                    {
+                        return chat.Positions[i].Order;
+                    }
                 }
             }
 
-            Monitor.Exit(chat);
             return 0;
         }
 

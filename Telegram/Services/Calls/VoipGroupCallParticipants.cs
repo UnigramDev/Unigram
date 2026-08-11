@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 
@@ -31,18 +30,17 @@ namespace Telegram.Services
 
         private void SetParticipantOrder(GroupCallParticipant participant, string order)
         {
-            Monitor.Enter(_participants);
-
-            _participants.Remove(new OrderedParticipant(participant.ParticipantId, participant.Order));
-
-            participant.Order = order;
-
-            if (order.Length > 0)
+            lock (_participants)
             {
-                _participants.Add(new OrderedParticipant(participant.ParticipantId, order));
-            }
+                _participants.Remove(new OrderedParticipant(participant.ParticipantId, participant.Order));
 
-            Monitor.Exit(_participants);
+                participant.Order = order;
+
+                if (order.Length > 0)
+                {
+                    _participants.Add(new OrderedParticipant(participant.ParticipantId, order));
+                }
+            }
         }
 
         public Task<IList<GroupCallParticipant>> GetParticipantsAsync(int offset, int limit)
@@ -52,65 +50,73 @@ namespace Telegram.Services
 
         public async Task<IList<GroupCallParticipant>> GetParticipantsAsyncImpl(int offset, int limit, bool reentrancy)
         {
-            Monitor.Enter(_participants);
-
             var count = offset + limit;
-            var sorted = _participants;
 
-            if (!_haveFullParticipants && count > sorted.Count && !reentrancy)
+            // How many participants are still to be loaded, 0 when the cache can answer on
+            // its own. Decided under the lock, acted on outside it: awaiting is not allowed
+            // in there.
+            int missing;
+
+            lock (_participants)
             {
-                Monitor.Exit(_participants);
+                var sorted = _participants;
 
-                var response = await _clientService.SendAsync(new LoadGroupCallParticipants(_groupCallId, count - sorted.Count));
-                if (response is Ok or Error)
+                missing = !_haveFullParticipants && count > sorted.Count && !reentrancy
+                    ? count - sorted.Count
+                    : 0;
+
+                if (missing == 0)
                 {
-                    if (response is Error error)
+                    // Have enough chats in the chat list to answer request
+                    var result = new GroupCallParticipant[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
+                    var pos = 0;
+
+                    using (var iter = sorted.GetEnumerator())
                     {
-                        if (error.Code == 404)
+                        int max = Math.Min(count, sorted.Count);
+
+                        for (int i = 0; i < max; i++)
                         {
-                            _haveFullParticipants = true;
-                        }
-                        else
-                        {
-                            return null;
+                            iter.MoveNext();
+
+                            if (i >= offset)
+                            {
+                                if (_participantsCache.TryGetValue(iter.Current.ParticipantId, out var topic))
+                                {
+                                    result[pos++] = topic;
+                                }
+                                else
+                                {
+                                    pos++;
+                                }
+                            }
                         }
                     }
 
-                    // Chats have already been received through updates, let's retry request
-                    return await GetParticipantsAsyncImpl(offset, limit, true);
+                    return result;
                 }
-
-                return null;
             }
 
-            // Have enough chats in the chat list to answer request
-            var result = new GroupCallParticipant[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
-            var pos = 0;
-
-            using (var iter = sorted.GetEnumerator())
+            var response = await _clientService.SendAsync(new LoadGroupCallParticipants(_groupCallId, missing));
+            if (response is Ok or Error)
             {
-                int max = Math.Min(count, sorted.Count);
-
-                for (int i = 0; i < max; i++)
+                if (response is Error error)
                 {
-                    iter.MoveNext();
-
-                    if (i >= offset)
+                    if (error.Code == 404)
                     {
-                        if (_participantsCache.TryGetValue(iter.Current.ParticipantId, out var topic))
-                        {
-                            result[pos++] = topic;
-                        }
-                        else
-                        {
-                            pos++;
-                        }
+                        _haveFullParticipants = true;
+                    }
+                    else
+                    {
+                        return null;
                     }
                 }
+
+                // Chats have already been received through updates, let's retry request
+                return await GetParticipantsAsyncImpl(offset, limit, true);
             }
 
-            Monitor.Exit(_participants);
-            return result;
+            return null;
         }
 
         private readonly struct OrderedParticipant : IComparable<OrderedParticipant>
