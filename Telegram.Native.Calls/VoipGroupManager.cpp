@@ -97,20 +97,24 @@ namespace winrt::Telegram::Native::Calls::implementation
                 return;
             }
 
-            m_loopback.SetOutputSink([weakThis{ get_weak() }](std::vector<uint8_t>&& samples) {
+            m_loopback = Microsoft::WRL::Make<CLoopbackCapture>();
+            m_loopback->SetOutputSink([weakThis{ get_weak() }](std::vector<uint8_t>&& samples) {
                 if (auto strongThis = weakThis.get())
                 {
                     strongThis->AddExternalAudioSamples(std::move(samples));
                 }
                 });
 
-            if (audioProcessId == -1)
+            auto result = audioProcessId == -1
+                ? m_loopback->StartCaptureAsync(GetCurrentProcessId(), false)
+                : m_loopback->StartCaptureAsync(static_cast<DWORD>(audioProcessId), true);
+
+            if (FAILED(result))
             {
-                m_loopback.StartCaptureAsync(GetCurrentProcessId(), false);
-            }
-            else
-            {
-                m_loopback.StartCaptureAsync(audioProcessId, true);
+                // Process loopback is unavailable on older builds; share the screen
+                // without its audio rather than failing the whole capture.
+                m_loopback.Reset();
+                return;
             }
 
             m_impl->setIsMuted(false);
@@ -119,7 +123,11 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipGroupManager::Stop()
     {
-        m_loopback.StopCaptureAsync();
+        if (m_loopback)
+        {
+            m_loopback->StopCaptureAsync();
+            m_loopback.Reset();
+        }
 
         if (m_impl)
         {
