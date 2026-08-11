@@ -6,6 +6,7 @@
 #include <mfidl.h>
 
 #include <functional>
+#include <mutex>
 #include <vector>
 
 namespace winrt::Telegram::Native::Calls::implementation
@@ -47,7 +48,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         // Guards everything the capture queue touches against Stop. Held while the
         // handler runs, so Stop cannot pull the capture client out from under it.
-        slim_mutex m_lock;
+        std::mutex m_lock;
         bool m_capturing{ false };
 
         const SamplesHandler m_samples;

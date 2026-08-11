@@ -84,7 +84,7 @@ namespace winrt::Telegram::Native::Calls::implementation
             return result;
         }
 
-        slim_lock_guard const guard(m_lock);
+        std::lock_guard const guard(m_lock);
         m_capturing = true;
 
         return MFPutWaitingWorkItem(m_sampleReady.get(), 0, m_sampleReadyResult.get(), &m_sampleReadyKey);
@@ -187,7 +187,7 @@ namespace winrt::Telegram::Native::Calls::implementation
     void VoipLoopbackCapture::Stop() noexcept
     {
         {
-            slim_lock_guard const guard(m_lock);
+            std::lock_guard const guard(m_lock);
 
             if (m_capturing)
             {
@@ -233,7 +233,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     HRESULT __stdcall VoipLoopbackCapture::Invoke(IMFAsyncResult*) noexcept
     {
-        slim_lock_guard const guard(m_lock);
+        std::lock_guard const guard(m_lock);
 
         if (!m_capturing)
         {
