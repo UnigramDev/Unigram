@@ -63,9 +63,6 @@ namespace Telegram.Common
         /// every button type (it has a chat and a message id); an instant view can't.
         /// </summary>
         void OpenInlineButton(InlineButton button);
-
-        /// <summary>Records a created control for orphan analysis. No-op unless instrumented.</summary>
-        void RegisterDebug(object element);
     }
 
     /// <summary>
@@ -200,9 +197,6 @@ namespace Telegram.Common
             var message = CreateMessage(clientService, new MessageLocation(map.Location));
 
             var content = new LocationContent(message);
-#if INSTRUMENTATION
-            _context.RegisterDebug(content);
-#endif
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(FrameworkElement.MaxWidthProperty);
             content.ClearValue(FrameworkElement.MaxHeightProperty);
@@ -751,11 +745,6 @@ namespace Telegram.Common
 
             Instrumentation.Register(block);
 
-#if INSTRUMENTATION
-            _context.RegisterDebug(block);
-#endif
-
-            // TODO: subscribe-unsubscribe
             if (_context.IsConnected)
             {
                 block.TextEntityClick += Block_TextEntityClick;
@@ -1025,9 +1014,6 @@ namespace Telegram.Common
 
             var message = CreateMessage(clientService, block.Document.DocumentValue.Id, new MessageDocument(block.Document, string.Empty.AsFormattedText()));
             var content = new DocumentContent(message);
-#if INSTRUMENTATION
-            _context.RegisterDebug(content);
-#endif
             content.HorizontalAlignment = HorizontalAlignment.Left;
             content.ClearValue(FrameworkElement.MaxWidthProperty);
             content.ClearValue(FrameworkElement.MaxHeightProperty);
@@ -1113,16 +1099,11 @@ namespace Telegram.Common
 
                 Instrumentation.Register(block);
 
-#if INSTRUMENTATION
-                _context.RegisterDebug(block);
-#endif
-
                 block.IconForeground = element.Foreground;
                 block.SetText(clientService, button.Text);
 
                 element.Content = block;
             }
-
 
             return element;
         }
@@ -1224,9 +1205,6 @@ namespace Telegram.Common
             // list to keep in sync with what's on screen.
             var message = CreateMessage(clientService, new MessagePhoto(block.Photo, null, null, false, block.HasSpoiler, false));
             var content = new PhotoContent(message, album: parent is PageBlockCollage);
-#if INSTRUMENTATION
-            _context.RegisterDebug(content);
-#endif
             content.HorizontalAlignment = parent is PageBlockCollage ? HorizontalAlignment.Stretch : HorizontalAlignment.Center;
             content.ClearValue(FrameworkElement.MaxWidthProperty);
             content.ClearValue(FrameworkElement.MaxHeightProperty);
@@ -1260,9 +1238,6 @@ namespace Telegram.Common
             // See ProcessPhoto: the gallery is built on tap, not collected here.
             var message = CreateMessage(clientService, new MessageVideo(block.Video, Array.Empty<AlternativeVideo>(), Array.Empty<VideoStoryboard>(), null, 0, null, false, block.HasSpoiler, false));
             var content = new VideoContent(message, album: parent is PageBlockCollage);
-#if INSTRUMENTATION
-            _context.RegisterDebug(content);
-#endif
             content.HorizontalAlignment = parent is PageBlockCollage ? HorizontalAlignment.Stretch : HorizontalAlignment.Center;
             content.ClearValue(FrameworkElement.MaxWidthProperty);
             content.ClearValue(FrameworkElement.MaxHeightProperty);
@@ -1296,9 +1271,6 @@ namespace Telegram.Common
             // See ProcessPhoto: the gallery is built on tap, not collected here.
             var message = CreateMessage(clientService, new MessageAnimation(block.Animation, null, false, block.HasSpoiler, false));
             var content = new AnimationContent(message);
-#if INSTRUMENTATION
-            _context.RegisterDebug(content);
-#endif
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(FrameworkElement.MaxWidthProperty);
             content.ClearValue(FrameworkElement.MaxHeightProperty);
@@ -1336,9 +1308,6 @@ namespace Telegram.Common
 
             var message = CreateMessage(clientService, block.Audio.AudioValue.Id, new MessageAudio(block.Audio, string.Empty.AsFormattedText()));
             var content = new AudioContent(message);
-#if INSTRUMENTATION
-            _context.RegisterDebug(content);
-#endif
             content.HorizontalAlignment = HorizontalAlignment.Left;
             content.ClearValue(FrameworkElement.MaxWidthProperty);
             content.ClearValue(FrameworkElement.MaxHeightProperty);
@@ -1368,9 +1337,6 @@ namespace Telegram.Common
 
             var message = CreateMessage(clientService, block.VoiceNote.Voice.Id, new MessageVoiceNote(block.VoiceNote, string.Empty.AsFormattedText(), true));
             var content = new VoiceNoteContent(message);
-#if INSTRUMENTATION
-            _context.RegisterDebug(content);
-#endif
             content.HorizontalAlignment = HorizontalAlignment.Left;
             content.ClearValue(FrameworkElement.MaxWidthProperty);
             content.ClearValue(FrameworkElement.MaxHeightProperty);
@@ -1624,9 +1590,6 @@ namespace Telegram.Common
         private FrameworkElement ProcessCollage(IClientService clientService, PageBlockCollage block)
         {
             var content = new PageBlockCollageContent(block);
-#if INSTRUMENTATION
-            _context.RegisterDebug(content);
-#endif
 
             foreach (var item in block.Blocks)
             {

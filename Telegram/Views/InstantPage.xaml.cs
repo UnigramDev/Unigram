@@ -270,10 +270,6 @@ namespace Telegram.Views
             }
         }
 
-        void IPageBlockContext.RegisterDebug(object element)
-        {
-        }
-
         #endregion
 
         private double SpacingBetweenBlocks(PageBlock upper, PageBlock lower)
