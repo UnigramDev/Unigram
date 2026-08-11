@@ -98,21 +98,28 @@ The two facts most of this rests on:
 
 ## P1 — correctness
 
-- [ ] **`GetChatFromMessageSenderAsync` returns null for every chat sender** — `ClientService.cs:2225` **[live]**
+- [ ] **`GetChatFromMessageSenderAsync` has a vestigial first line** — `ClientService.cs:2225` · **P3, not P1**
 
-      ```csharp
-      TryGetChat(messageSender, out Chat chat);
-      if (chat == null && messageSender is MessageSenderUser senderUser) { … return chat; }
-      return null;                                    // ← chat found, thrown away
-      ```
+      **This was written up as a bug and it is not one — Fela's correction.** The original
+      claimed the method "returns null for every chat sender" as if the chat were meant to be
+      returned. Read on its own, the method does one coherent thing: resolve a **user** sender
+      to its private chat, creating it if needed, and return null for anything else. For a
+      `MessageSenderChat` both paths return null — found *or* not found — so there is no
+      inconsistency and nothing is dropped.
 
-      `TryGetChat(MessageSender, out Chat)` (`:2165`) only resolves `MessageSenderChat`, so
-      when it *succeeds* `chat != null`, the `if` is skipped, and the method returns null.
-      The success path is unreachable.
+      What is actually wrong is much smaller. `TryGetChat(messageSender, out Chat chat)` on
+      the first line has its return value discarded, and its `out` value can only be non-null
+      in exactly the case the following `if` excludes. It is dead on every path, and it is
+      what makes the method read as though chat senders were handled. Either delete it and
+      declare `Chat chat = null`, or rename the method to say user-only.
 
-      Both call sites are gift sending: `ReceivedGiftPopup.xaml.cs:1094` (gifting to a
-      channel) and `GiftCraftChoosePopup.xaml.cs:227` (which passes `null`, so it is null
-      either way — worth checking whether that call site means something else entirely).
+      Worth recording how the wrong conclusion was reached: the reasoning followed the
+      cached-chat branch, saw the value discarded, and stopped — without checking that the
+      *uncached* branch returns null too, which is what shows the behaviour is uniform and
+      therefore intended. Reading the call sites afterwards then made it look confirmed,
+      because a channel receiver really does end up with null. It just isn't a defect: the
+      purchase in `ReceivedGiftPopup.BuyResale` uses `_sendGiftTo` directly and succeeds, and
+      `chat` only selects which toast to show.
 
 - [x] **`Clear()` misses eight caches** — `ClientService.cs:914` **[live]**
       → fixed in the commit that checked this box
@@ -685,7 +692,7 @@ in better shape than `ForumTopicService`; `_topics` is a `ReaderWriterDictionary
 **Suggested order:** ~~P0~~, ~~F1, D1~~, ~~the sweep~~ **done** — 23 `Monitor` pairs across
 seven files are now `lock`; only `DiceView` and `VideoNoteContent` remain →
 **F2** (the unsynchronized collections, the worst thing in either topic service) →
-`Clear()` and `GetChatFromMessageSenderAsync` from P1 →
+~~`Clear()`~~ **done** →
 **F4 and F5**, both small and both leaving the topic list visibly wrong →
 `GetChatFolders` and `GetChats` (the two chat-list-render costs, which are allocation
 problems rather than lock problems and so survive the measurement above).
