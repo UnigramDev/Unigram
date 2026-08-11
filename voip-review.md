@@ -266,14 +266,30 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
     silence was being sent as whatever happened to be in memory. Now zeroed.
   - `m_samples` was invoked unguarded.
 
-- [ ] **`AUTOCONVERTPCM` is passed as the periodicity argument** —
+- [x] **`AUTOCONVERTPCM` is passed as the periodicity argument** —
   `VoipLoopbackCapture.cpp`, in `OnActivated`
 
-  `IAudioClient::Initialize` takes it in `StreamFlags`, but it sits in `hnsPeriodicity`,
-  where `0x80000000` means a ~214s period and shared mode wants 0 regardless. Inherited
-  verbatim from the Microsoft sample and preserved through the rewrite **on purpose** —
-  moving it changes what the audio engine is asked for, and screen-share audio works
-  today. Wants testing on a real capture, not reasoning. Left commented in place.
+  `IAudioClient::Initialize` takes it in `StreamFlags`, but it sat in `hnsPeriodicity`,
+  which the documentation says shared mode requires to be 0. Inherited verbatim from the
+  Microsoft sample.
+
+  **Measured before changing** — a standalone harness activated the same process-loopback
+  client and called `Initialize` three ways:
+
+  | Variant | Result |
+  |---|---|
+  | AUTOCONVERTPCM as `hnsPeriodicity` (what shipped) | `S_OK`, 480-frame buffer |
+  | AUTOCONVERTPCM in `StreamFlags`, periodicity 0 | `S_OK`, 480-frame buffer |
+  | no AUTOCONVERTPCM at all, periodicity 0 | `S_OK`, 480-frame buffer |
+
+  So shared mode ignores periodicity rather than validating it — the misplacement was
+  harmless and screen audio has been working for real, not by luck. The control run also
+  shows the flag does nothing here: process loopback converts to whatever format is asked
+  for regardless. Moved into `StreamFlags` with periodicity 0 as a correctness tidy-up,
+  with the measurement recorded in the comment so nobody re-derives it.
+
+  Incidental, and relevant to the clock-buffer item below: the buffer comes back as 480
+  frames, exactly one 10ms WebRTC quantum, despite a 20ms request.
 
 - [x] **Lock held across managed callbacks, and taken again by `add`/`remove`** —
   `VoipManager.cpp:415-458` vs `:463-571`; `VoipGroupManager.cpp:306-435` vs `:447-539`
@@ -482,8 +498,6 @@ what he decided and the three things still genuinely open.
 
 - **`m_impl` unguarded in `VoipGroupManager`** — see P2 above. Now known to be a real
   use-after-free rather than a theoretical one, and the three fixes are ranked there.
-- **`AUTOCONVERTPCM` in the periodicity argument** — to be tested together against a real
-  screen share.
 - The unmanaged buffer between the WASAPI and WebRTC clocks — worth logging the
   steady-state depth over a long share before designing anything.
 

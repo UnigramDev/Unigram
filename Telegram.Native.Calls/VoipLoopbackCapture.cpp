@@ -156,14 +156,14 @@ namespace winrt::Telegram::Native::Calls::implementation
         m_format.nBlockAlign = m_format.nChannels * m_format.wBitsPerSample / 8;
         m_format.nAvgBytesPerSec = m_format.nSamplesPerSec * m_format.nBlockAlign;
 
-        // AUTOCONVERTPCM sits in the periodicity argument rather than in the stream
-        // flags, which is where the Microsoft sample put it and how this has always
-        // shipped. Left alone deliberately: moving it changes what the audio engine is
-        // asked for, and that wants testing against a real capture, not reasoning.
+        // The Microsoft sample passes AUTOCONVERTPCM as the periodicity, which shared mode
+        // requires to be 0. Measured before moving it: the engine ignores periodicity here
+        // rather than rejecting it, so this was harmless — and process loopback converts to
+        // whatever format is asked for whether or not the flag is set at all.
         if (auto result = m_audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
-            AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_EVENTCALLBACK,
+            AUDCLNT_STREAMFLAGS_LOOPBACK | AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM,
             200000,
-            AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM,
+            0,
             &m_format,
             nullptr); FAILED(result))
         {
