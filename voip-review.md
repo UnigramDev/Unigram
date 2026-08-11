@@ -86,14 +86,25 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
 
 ## P1 — user-visible bugs
 
-- [ ] **Remote video sink can never be detached** — `VoipManager.cpp:276-283` **[live]**
+- [x] **Remote video sink registered over and over** — `VoipManager.cpp:271-278` **[live]**
 
-  `if (m_impl && sink)` silently ignores the null that `VoipCall.SetRemoteVideoOutput`
-  passes to detach (`VoipCall.cs:290`). The old sink keeps receiving decoded frames and
-  keeps its composition surface alive for the rest of the call.
+  Originally filed as "the null passed by `VoipCall.SetRemoteVideoOutput` is ignored, so
+  the sink is never detached". **Wrong on both halves.** tgcalls' `setIncomingVideoOutput`
+  takes a `weak_ptr` and `VideoSinkImpl::addSink` *appends*, pruning entries only as they
+  expire (`InstanceV2Impl.cpp:710-741`) — so a null sink was never how you detach, and
+  passing one through would just append a dead entry. Detaching already works, via
+  `VoipVideoOutputSink::Stop` dropping the `shared_ptr` (`VoipPage.xaml.cs:943`).
 
-  Fix: handle null like `SetVideoCapture` does. Check whether the same leak shows up in
-  the leak instrumentation harness.
+  The real bug is the reverse: `OnRemoteMediaStateChanged` re-sets the *same* output on
+  every state change where video is active (`VoipPage.xaml.cs:210-215`), and each call
+  appends the same sink again, so one frame is rendered N times — at 30fps, N times the
+  D2D and Composition work.
+
+  Fixed by remembering the last sink and skipping a repeat. The field is a `weak_ptr` on
+  purpose: a strong one would keep the sink alive and break detach-by-expiry.
+
+  Not an issue for `VoipGroupManager::AddIncomingVideoOutput` — every caller there builds
+  a fresh sink (`GroupCallPage.xaml.cs:2125`, `StoryContent.xaml.cs:844`).
 
 - [ ] **`done()` never latches `_done`, so a double deferral re-enters tgcalls** —
   `VoipGroupManager.h:128-148`, `:177-205`, `:234-242` **[live]**

@@ -121,6 +121,8 @@ namespace winrt::Telegram::Native::Calls::implementation
         std::unique_ptr<tgcalls::Instance> m_impl = nullptr;
         std::mutex m_lock;
 
+        std::weak_ptr<VoipVideoOutput> m_incomingVideoOutput;
+
         bool m_isMuted = false;
 
         void OnStateUpdated(tgcalls::State state);

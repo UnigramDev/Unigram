@@ -270,11 +270,24 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipManager::SetIncomingVideoOutput(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink)
     {
-        if (m_impl && sink)
+        if (m_impl == nullptr || sink == nullptr)
         {
-            auto implementation = winrt::get_self<VoipVideoOutputSink>(sink);
-            m_impl->setIncomingVideoOutput(implementation->Sink());
+            return;
         }
+
+        auto impl = winrt::get_self<VoipVideoOutputSink>(sink)->Sink();
+
+        // tgcalls appends sinks and only drops them once the weak_ptr expires, so handing
+        // it one it already holds renders every frame twice. The page re-sets the output
+        // on each remote media state change, which is the same sink every time.
+        if (m_incomingVideoOutput.lock() == impl)
+        {
+            return;
+        }
+
+        // Weak, so that VoipVideoOutputSink::Stop stays the way the output is detached.
+        m_incomingVideoOutput = impl;
+        m_impl->setIncomingVideoOutput(impl);
     }
 
 
