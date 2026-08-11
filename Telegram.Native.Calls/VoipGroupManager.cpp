@@ -117,7 +117,7 @@ namespace winrt::Telegram::Native::Calls::implementation
                 return;
             }
 
-            m_impl->setIsMuted(false);
+            IsMuted(false);
         }
     }
 
@@ -176,7 +176,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipGroupManager::AddIncomingVideoOutput(hstring endpointId, winrt::Telegram::Native::Calls::VoipVideoOutputSink sink)
     {
-        if (m_impl)
+        if (m_impl && sink)
         {
             auto implementation = winrt::get_self<VoipVideoOutputSink>(sink);
             m_impl->addIncomingVideoOutput(winrt::to_string(endpointId), implementation->Sink());
@@ -330,7 +330,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         case 125: scale = 3; break;
         }
 
-        VoipVideoChannelQuality qualityImpl;
+        VoipVideoChannelQuality qualityImpl = VoipVideoChannelQuality::Thumbnail;
         switch (quality)
         {
         case tgcalls::VideoChannelDescription::Quality::Thumbnail:

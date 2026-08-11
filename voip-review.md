@@ -134,24 +134,25 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   right below it as dead code — that is the C4702 the build used to warn about. Now the
   only line.
 
-- [ ] **`IsMuted` lies for screencast** — `VoipGroupManager.h:83`, `.cpp:102-129`
+- [x] **`IsMuted` lies for screencast** — `VoipGroupManager.h:83`, `.cpp:102-129`
 
-  Field defaults to `true`; the screencast path calls `m_impl->setIsMuted(false)` without
-  updating it. And `AudioProcessId == 0` returns early, skipping that call, so the mute
-  state depends on whether audio sharing was requested.
+  Field defaults to `true` and the screencast path called `m_impl->setIsMuted(false)`
+  directly, leaving it stale. Now routed through the `IsMuted(bool)` setter.
 
-  Fix: route through the `IsMuted(bool)` setter, and add a comment stating what a
-  screencast manager's mute state is supposed to mean.
+  Left alone: `AudioProcessId == 0` still returns early and stays muted, as does a loopback
+  that fails to start. That is the right meaning — a screencast with no audio to send *is*
+  muted — and it now reports itself honestly.
 
-- [ ] **Uninitialized `qualityImpl`** — `VoipGroupManager.cpp:353-365`
+- [x] **Uninitialized `qualityImpl`** — `VoipGroupManager.cpp:353-365`
 
-  Switch has no `default:`. Same shape at `:344-351` and `:378-385`, where an unknown
-  `period` silently means `scale = 0`.
+  Switch had no `default:`; now initialised to `Thumbnail`. The `scale` switches at
+  `:344-351` and `:378-385` also have no default, but 0 is the 1000ms case and tgcalls only
+  ever passes one of the four listed periods, so those are left as they are.
 
-- [ ] **`AddIncomingVideoOutput` has no null guard** — `VoipGroupManager.cpp:181-188`
+- [x] **`AddIncomingVideoOutput` has no null guard** — `VoipGroupManager.cpp:181-188`
 
   `get_self` on a null sink then `implementation->Sink()` is a null deref. `VoipManager`'s
-  equivalent does check.
+  equivalent already checked.
 
 - [x] **TURN entry with an empty host** — `VoipManager.cpp:118-131`
 
@@ -167,7 +168,14 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   to what is there, and the redundant copy through a stack `std::array` is gone.
 
 - [ ] **`RequestMediaChannelDescriptionTaskImpl::done` hardcodes `type = Audio`** —
-  `VoipGroupManager.h:140`. Video channel descriptions can never be returned.
+  `VoipGroupManager.h:140` — **not a bug; decide whether to keep it that way**
+
+  `VoipMediaChannelDescription` carries only `AudioSource` and `UserId`
+  (`Telegram.Native.Calls.idl:67-71`), so audio-only is the shape of the whole API rather
+  than a slip in this one line. It also looks correct: the path exists to resolve unknown
+  *audio* ssrcs (`maybeRequestUnknownSsrc`), while video endpoints arrive through
+  `SetRequestedVideoChannels`. Supporting video would mean extending the IDL and the
+  managed side — a feature, not a fix.
 
 - [x] **Empty-but-non-null broadcast part reported as `Success`** — `VoipGroupManager.h:185-197`
 
@@ -310,13 +318,18 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
 
 ## Next up
 
-P0 is done. Suggested order from here:
+P0 and P1 are done, apart from two items left open on purpose: the `type = Audio`
+question above (a feature, not a fix) and the duplicate-description pass in
+`OnMediaChannelDescriptionsRequested`.
 
-1. Remote video sink detach (P1) — likely visible in the leak harness.
-2. `_done` latching + the missing `return` in `OnMediaChannelDescriptionsRequested` (P1).
-3. `GetDebugInfo`, `IsMuted` for screencast, the missing `default:`, the null guard on
-   `AddIncomingVideoOutput` (P1) — each a few lines, all independent.
-4. The `m_lock` rework (P2) — one change that unblocks the E2E interop cost in P3.
-5. Then the interop cost on the E2E and audio-levels paths (P3).
+Suggested order from here:
 
-The `CLoopbackCapture` rewrite (P2) is its own piece of work and doesn't block any of these.
+1. The `m_lock` rework (P2) — the one structural change, and it unblocks 3.
+2. No destructor on either manager (P2) — small, and it pairs with the `m_lock` work since
+   both are about what happens around `Stop`.
+3. The interop cost on the E2E and audio-levels paths (P3), which is where the real
+   per-frame waste is.
+4. P4 whenever, though the header-scope `RegisterTag` is worth doing before anyone adds a
+   second TU that includes `VoipManager.h`.
+
+The `CLoopbackCapture` rewrite (P2) is its own piece of work and blocks none of these.
