@@ -146,6 +146,10 @@ namespace winrt::Telegram::Native::Calls::implementation
                 }
 
                 _done(std::move(result));
+
+                // tgcalls expects exactly one completion, and the deferral is handed out
+                // to managed code that can raise it more than once.
+                _done = nullptr;
             }
         }
 
@@ -203,6 +207,9 @@ namespace winrt::Telegram::Native::Calls::implementation
                 }
 
                 _done(std::move(broadcastPart));
+
+                // See RequestMediaChannelDescriptionTaskImpl::done.
+                _done = nullptr;
             }
         }
 
@@ -240,6 +247,9 @@ namespace winrt::Telegram::Native::Calls::implementation
             if (_done)
             {
                 _done(time);
+
+                // See RequestMediaChannelDescriptionTaskImpl::done.
+                _done = nullptr;
             }
         }
 

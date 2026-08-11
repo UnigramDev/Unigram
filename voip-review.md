@@ -106,15 +106,21 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   Not an issue for `VoipGroupManager::AddIncomingVideoOutput` — every caller there builds
   a fresh sink (`GroupCallPage.xaml.cs:2125`, `StoryContent.xaml.cs:844`).
 
-- [ ] **`done()` never latches `_done`, so a double deferral re-enters tgcalls** —
+- [x] **`done()` never latches `_done`, so a double deferral re-enters tgcalls** —
   `VoipGroupManager.h:128-148`, `:177-205`, `:234-242` **[live]**
 
-  `OnMediaChannelDescriptionsRequested` calls `args.Deferral(...)` on the null-participants
-  path and falls through without returning (`VoipGroupCall.cs:913-918`) — then NREs on
-  `participants.ToDictionary()` inside an `async void`.
+  `OnMediaChannelDescriptionsRequested` called `args.Deferral(...)` on the null-participants
+  path and fell through without returning (`VoipGroupCall.cs:913-918`) — so in practice it
+  NREd on `participants.ToDictionary()` inside an `async void` before it ever got as far as
+  deferring twice. Both halves fixed: `_done = nullptr` after firing in all three task
+  impls, and the missing `return`.
 
-  Fix (native): set `_done = nullptr` after invoking, in all three task impls.
-  Fix (managed): add the missing `return` at `VoipGroupCall.cs:916`.
+- [ ] **`OnMediaChannelDescriptionsRequested` can double-add a description** —
+  `VoipGroupCall.cs:952-962`
+
+  When any ssrc was unknown, the second pass walks *all* of `AudioSourceIds` again and
+  re-adds the ones the first pass already added. Harmless today only because tgcalls
+  requests a single ssrc at a time, which the comment above it relies on.
 
   Note while here: tgcalls never calls `cancel()` on these tasks (no `cancel` call exists
   in `GroupInstanceCustomImpl.cpp`), so the `cancel()` overrides are dead code. What keeps

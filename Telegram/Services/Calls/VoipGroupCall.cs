@@ -916,6 +916,7 @@ namespace Telegram.Services.Calls
             if (participants == null)
             {
                 args.Deferral(Array.Empty<VoipMediaChannelDescription>());
+                return;
             }
 
             var knownSources = participants.ToDictionary();
