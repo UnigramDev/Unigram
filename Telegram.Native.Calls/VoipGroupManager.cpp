@@ -381,18 +381,30 @@ namespace winrt::Telegram::Native::Calls::implementation
     std::vector<uint8_t> VoipGroupManager::OnE2EEncryptDecrypt(std::vector<uint8_t> const& message, int64_t userId, bool encrypt, int32_t unencryptedPrefixSize)
     {
         std::lock_guard const guard(m_lock);
+
+        // An empty result is how tgcalls is told the frame failed and must be dropped.
+        // Returning the input untouched would put plaintext on the wire when encrypting,
+        // and hand ciphertext to the decoder as if it were plaintext when decrypting.
+        // Both delegates are set after construction, so this window is real.
+        if (encrypt ? m_encryptData == nullptr : m_decryptData == nullptr)
+        {
+            return {};
+        }
+
         auto data = winrt::single_threaded_vector<uint8_t>(std::vector<uint8_t>(message));
 
         if (encrypt)
         {
-            if (m_encryptData)
-            {
-                data = m_encryptData(m_isScreencast ? VoipDataChannel::ScreenSharing : VoipDataChannel::Main, data, unencryptedPrefixSize);
-            }
+            data = m_encryptData(m_isScreencast ? VoipDataChannel::ScreenSharing : VoipDataChannel::Main, data, unencryptedPrefixSize);
         }
-        else if (m_decryptData)
+        else
         {
             data = m_decryptData(userId, data);
+        }
+
+        if (data == nullptr)
+        {
+            return {};
         }
 
         std::vector<uint8_t> result;
