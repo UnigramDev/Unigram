@@ -75,14 +75,15 @@ namespace winrt::Telegram::Native::Calls::implementation
             persistentState = vector_to_unmanaged<uint8_t, uint8_t>(descriptor.PersistentState());
         }
 
-        std::array<uint8_t, 256> encryptionKey = {};
-        for (int i = 0; i < 256; i++)
-        {
-            encryptionKey[i] = descriptor.EncryptionKey().GetAt(i);
-        }
-
         std::shared_ptr<std::array<uint8_t, 256>> encryptionKeyPointer
-            = std::make_shared<std::array<uint8_t, 256>>(encryptionKey);
+            = std::make_shared<std::array<uint8_t, 256>>();
+
+        if (auto encryptionKey = descriptor.EncryptionKey())
+        {
+            // One call rather than 256, and it clamps to what is there instead of
+            // throwing hresult_out_of_bounds out of Start on a short key.
+            encryptionKey.GetMany(0, *encryptionKeyPointer);
+        }
 
         auto rtc = std::vector<tgcalls::RtcServer>();
         auto ids = std::vector<long>();
@@ -115,6 +116,10 @@ namespace winrt::Telegram::Native::Calls::implementation
                 if (webRtc.SupportsTurn() && !username.empty() && !password.empty())
                 {
                     const auto pushTurn = [&](const std::string& host) {
+                        if (host.empty())
+                        {
+                            return;
+                        }
                         tgcalls::RtcServer server;
                         server.host = host;
                         server.port = port;

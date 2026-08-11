@@ -154,16 +154,18 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   `get_self` on a null sink then `implementation->Sink()` is a null deref. `VoipManager`'s
   equivalent does check.
 
-- [ ] **TURN entry with an empty host** — `VoipManager.cpp:118-131`
+- [x] **TURN entry with an empty host** — `VoipManager.cpp:118-131`
 
-  `pushStun` skips empty hosts, `pushTurn` doesn't. Related: the reflector loop
+  `pushStun` skipped empty hosts, `pushTurn` didn't, so a server with no IPv6 contributed
+  a TURN entry pointing at nothing. Still open, deliberately: the reflector loop
   (`:141-158`) ignores `Ipv6Address` entirely, and `RtcServer::id` is `uint8_t` while
-  `reflectorId` is a `ptrdiff_t`.
+  `reflectorId` is a `ptrdiff_t`. → P4.
 
-- [ ] **`EncryptionKey` read with no null/size check** — `VoipManager.cpp:81-88`
+- [x] **`EncryptionKey` read with no null/size check** — `VoipManager.cpp:81-88`
 
-  256 property calls + 256 `GetAt` calls; a short vector throws `hresult_out_of_bounds`
-  out of `Start`. Fix with `GetMany` into the array, plus a size check.
+  Was 256 property calls plus 256 `GetAt` calls, and a short vector would have thrown
+  `hresult_out_of_bounds` out of `Start`. One `GetMany` into the shared array, which clamps
+  to what is there, and the redundant copy through a stack `std::array` is gone.
 
 - [ ] **`RequestMediaChannelDescriptionTaskImpl::done` hardcodes `type = Audio`** —
   `VoipGroupManager.h:140`. Video channel descriptions can never be returned.
