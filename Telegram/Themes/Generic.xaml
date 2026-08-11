@@ -5865,8 +5865,14 @@
                                           Grid.Column="1"
                                           Grid.ColumnSpan="2" />
 
+                        <!--  Deferred with Lazy rather than x:Load, unlike the other optional parts: this one is
+                              a Storyboard.TargetName in the Disabled state, and x:Load leaves the target
+                              unresolvable until something realizes it, which throws E_INVALIDARG out of the
+                              measure pass that applies the template. Lazy realizes on reference instead, which
+                              is what the stock TextBox template relies on for HeaderContentPresenter.  -->
                         <ContentPresenter x:Name="DescriptionPresenter"
-                                          x:Load="False"
+                                          x:DeferLoadStrategy="Lazy"
+                                          Visibility="Collapsed"
                                           FontSize="12"
                                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
