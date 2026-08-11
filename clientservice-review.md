@@ -176,21 +176,48 @@ The two facts most of this rests on:
 
 Ordered by measured reach, not by size of change.
 
-- [ ] **`ReaderWriterDictionary` → `ConcurrentDictionary` on the entity caches** — `ClientService.cs:319-345` **[live]**
+- [x] **~~`ReaderWriterDictionary` → `ConcurrentDictionary` on the entity caches~~ — measured, and the answer is no** — `ClientService.cs:319-345`
 
-      `_chats`, `_users`, `_usersFull`, `_supergroups`, `_supergroupsFull`, `_basicGroups`,
-      `_basicGroupsFull`, `_secretChats`, `_usersToChats` all go through
-      `ReaderWriterLockSlim.EnterReadLock`/`ExitReadLock` per lookup
-      (`ReaderWriterDictionary.cs:88`) — thread-local bookkeeping, interlocked ops, spin.
+      **This was the biggest claim in the doc and it was wrong.** It ranked the swap as "the
+      largest measurable win in the file" by reasoning about per-operation cost without ever
+      asking what the operation *rate* was. Counting the rate reverses the recommendation.
 
-      These are overwhelmingly read; writes only happen on the receive thread.
-      `ConcurrentDictionary` makes `TryGetValue` a lock-free volatile read. The file already
-      uses `ConcurrentDictionary` for `_chatActions`, `_topicActions` and `_unreadCounts`, so
-      the precedent and the migration path both exist. Largest measurable win in the file.
+      Fan-out of one full `ChatCell` refresh (`ChatCell.xaml.cs:1273`), counting only calls
+      that reach a `ReaderWriterDictionary`:
 
-      While in there: `ReaderWriterDictionary.Find` (`:133`) is
+      | Call | Dictionary | Lookups |
+      |---|---|---|
+      | `UpdateChatTitle` → `GetTitle` → `GetUser(chat)` | `_users` | 1 |
+      | `UpdateChatEmojiStatus` → `TryGetUser` / `TryGetSupergroup` | `_users` / `_supergroups` | 1–2 |
+      | `UpdateFromLabel` → `ShowFrom` → `TryGetSavedMessagesTopic` | `_savedMessagesTopics` | 1 |
+      | `ShowFrom` → `TryGetUser(SenderId)` / `TryGetChat` | `_users` / `_chats` | 1–2 |
+      | `UpdateBriefLabel` → `TryGetMediaAlbum` | `_lastMessageAlbums` | 1 |
+      | `UpdateBriefLabel` → `GetSecretChat` / `GetTitle` | `_secretChats` / `_users` | 0–2 |
+      | `UpdateChatUnreadMentionCount` → `TryGetUser` | `_users` | 1 |
+      | `UpdateChatMessageAutoDeleteTime` → `TryGetUser` | `_users` | 1 |
+      | `UpdateBotOpen` → `TryGetUser` | `_users` | 1 |
+
+      ≈ **8–12 per cell** for an ordinary text message, more for service and forwarded ones.
+
+      The rate is bounded by UI control realization: a ~64 px row, a hard flick at 2–3 k px/s
+      → ~30–50 rows/s, plus aggregator refreshes of the ~14 visible cells. Call it 50–500
+      cell updates/s → **0.5–6 k lookups/s**. At the ~30 ns/lookup a lock-free read would
+      save, that is **0.015–0.18 ms per second, or 0.002 %–0.02 % of one core**. Wrong by
+      100× it still does not reach 2 %. At one operation per ~200 µs the multi-core
+      cache-line contention that motivated the idea never arises either.
+
+      `ConcurrentDictionary` costs a node allocation per entry — the axis this repo ranks
+      first — to buy that back. Bad trade. **The custom class stays.**
+
+      Two scoping corrections found while counting: `GetChatActions` is already a
+      `ConcurrentDictionary`, and `GetChatFolders` uses `_chatFolders2`, a plain `Dictionary`
+      under `_chatFoldersLock` — neither was ever in this item's scope.
+
+- [ ] **`ReaderWriterDictionary.Find` allocates per call** — `ReaderWriterDictionary.cs:133`
+
       `Values.FirstOrDefault(x => predicate(x))` — a closure wrapping the predicate plus a
-      LINQ enumerator per call, to do what a `foreach` does allocation-free.
+      LINQ enumerator every call, to do what a `foreach` does allocation-free. All that
+      survives of the item above, and it needs no type change.
 
 - [ ] **`GetChatFolders` — allocations and O(n² log n) per chat cell** — `ClientService.cs:1711` **[live]**
 
@@ -480,18 +507,22 @@ in better shape than `ForumTopicService`; `_topics` is a `ReaderWriterDictionary
   `PrepareLogs`. **I'd leave it alone** — splitting it is a large mechanical change across
   the whole app for legibility only.
 
-**Needs measuring, not reasoning:**
+**Measured, and closed:**
 
-- The `ReaderWriterDictionary` → `ConcurrentDictionary` swap (P2) is the biggest claim in
-  this doc and the one most worth confirming with a profile before and after, rather than
-  taking on argument.
+- The `ReaderWriterDictionary` → `ConcurrentDictionary` swap. A static fan-out count put the
+  lookup rate at 0.5–6 k/s, three to four orders of magnitude below where lock overhead is
+  visible. Recommendation reversed — see P2. The lesson worth keeping: a per-operation cost
+  means nothing without the operation *rate*, and the rate here is bounded by UI control
+  realization, not by anything inside the service. Cost to find out: one afternoon of
+  reading, versus a migration plus a profiler session.
 
 **Suggested order:** ~~P0~~, ~~F1, D1~~, ~~the sweep~~ **done** — 23 `Monitor` pairs across
 seven files are now `lock`; only `DiceView` and `VideoNoteContent` remain →
 **F2** (the unsynchronized collections, the worst thing in either topic service) →
+`Clear()` and `GetChatFromMessageSenderAsync` from P1 →
 **F4 and F5**, both small and both leaving the topic list visibly wrong →
-`GetChatFromMessageSenderAsync` and `Clear()` from P1 → the `ConcurrentDictionary` swap →
-`GetChatFolders` and `GetChats` (the two chat-list-render costs).
+`GetChatFolders` and `GetChats` (the two chat-list-render costs, which are allocation
+problems rather than lock problems and so survive the measurement above).
 
 **F6 needs your call before anyone touches it:** eight handlers that are stubs, not bugs.
 Implementing them is a feature; deleting them is a cleanup. Either is fine, but guessing
