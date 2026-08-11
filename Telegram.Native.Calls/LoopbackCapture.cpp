@@ -63,6 +63,7 @@ HRESULT CLoopbackCapture::InitializeLoopbackCapture()
 
     // Initialize MF
     RETURN_IF_FAILED(MFStartup(MF_VERSION, MFSTARTUP_LITE));
+    m_mfStarted = true;
 
     // Register MMCSS work queue
     DWORD dwTaskID = 0;
@@ -85,6 +86,14 @@ CLoopbackCapture::~CLoopbackCapture()
     if (m_dwQueueID != 0)
     {
         MFUnlockWorkQueue(m_dwQueueID);
+    }
+
+    // StopCaptureAsync is what normally pairs the MFStartup, but it is never reached
+    // when the start itself failed part way through.
+    if (m_mfStarted)
+    {
+        m_mfStarted = false;
+        MFShutdown();
     }
 }
 
@@ -229,6 +238,7 @@ HRESULT CLoopbackCapture::StopCaptureAsync()
     // Wait for capture to stop
     m_hCaptureStopped.wait();
 
+    m_mfStarted = false;
     return MFShutdown();
 }
 
@@ -247,7 +257,13 @@ HRESULT CLoopbackCapture::OnStopCapture(IMFAsyncResult* pResult)
         m_SampleReadyKey = 0;
     }
 
-    m_AudioClient->Stop();
+    // StopCaptureAsync also accepts the error state, which is where a failed activation
+    // leaves us — with no audio client to stop.
+    if (m_AudioClient)
+    {
+        m_AudioClient->Stop();
+    }
+
     m_SampleReadyAsyncResult.reset();
 
     return FinishCaptureAsync();

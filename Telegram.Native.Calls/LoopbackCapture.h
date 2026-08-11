@@ -134,6 +134,7 @@ private:
     // and the ActivateCompleted callback.
     HRESULT m_activateResult = E_UNEXPECTED;
 
+    bool m_mfStarted = false;
     DeviceState m_DeviceState{ DeviceState::Uninitialized };
     wil::unique_event_nothrow m_hActivateCompleted;
     wil::unique_event_nothrow m_hCaptureStopped;
