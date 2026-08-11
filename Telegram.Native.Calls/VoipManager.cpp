@@ -352,11 +352,6 @@ namespace winrt::Telegram::Native::Calls::implementation
     {
         if (m_impl)
         {
-            std::string log = m_impl->getDebugInfo();
-            size_t len = sizeof(wchar_t) * (log.length() + 1);
-            wchar_t* wlog = (wchar_t*)malloc(len);
-            MultiByteToWideChar(CP_UTF8, 0, log.c_str(), -1, wlog, len / sizeof(wchar_t));
-            return hstring(wlog);
             return winrt::to_hstring(m_impl->getDebugInfo());
         }
 

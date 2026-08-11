@@ -127,13 +127,12 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   a post-`Stop` deferral safe is that tgcalls' own completion lambdas capture a `weak_ptr`
   — worth a comment so nobody "simplifies" the null checks away.
 
-- [ ] **`GetDebugInfo` leaks and can return garbage** — `VoipManager.cpp:338-351`
+- [x] **`GetDebugInfo` leaks and can return garbage** — `VoipManager.cpp:338-351`
 
-  `malloc`'d `wlog` never freed; `MultiByteToWideChar` return unchecked (failure leaves the
-  buffer uninitialized); the correct implementation is already sitting there as dead code
-  on the next line.
-
-  Fix: `return winrt::to_hstring(m_impl->getDebugInfo());`
+  `malloc`'d `wlog` never freed, and the `MultiByteToWideChar` return went unchecked, so a
+  failure returned an uninitialized buffer. The correct implementation was already sitting
+  right below it as dead code — that is the C4702 the build used to warn about. Now the
+  only line.
 
 - [ ] **`IsMuted` lies for screencast** — `VoipGroupManager.h:83`, `.cpp:102-129`
 
