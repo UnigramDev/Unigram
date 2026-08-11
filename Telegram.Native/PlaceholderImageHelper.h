@@ -179,11 +179,18 @@ namespace winrt::Telegram::Native::implementation
 
         ~DeviceLostHelper()
         {
-            // Cancel any pending wait and drain in-flight callbacks before the helper dies, so a
-            // device-lost callback can't run RaiseDeviceLostEvent on a destroyed object. Safe to
-            // wait here because the destructor never runs on the threadpool callback thread
-            // (unlike StopWatchingCurrentDevice, which OnDeviceLost re-enters and so must not
-            // wait on itself).
+            Shutdown();
+        }
+
+        // Cancels any pending wait and drains in-flight callbacks, so a device-lost callback can't
+        // run RaiseDeviceLostEvent on an object that is going away. CloseThreadpoolWait on its own
+        // does not wait for a callback that is already running, which is why StopWatchingCurrentDevice
+        // is not enough on a teardown path.
+        //
+        // Must not be called from the callback itself -- that is what StopWatchingCurrentDevice is
+        // for, since waiting there would be waiting on ourselves.
+        void Shutdown()
+        {
             if (m_onDeviceLostHandler)
             {
                 ::SetThreadpoolWait(m_onDeviceLostHandler, nullptr, nullptr);
@@ -232,9 +239,10 @@ namespace winrt::Telegram::Native::implementation
                 // QI For the ID3D11Device4 interface.
                 auto d3dDevice{ m_dxgiDevice.as<::ID3D11Device4>() };
 
-                // Unregister from the device lost event.
-                ::CloseThreadpoolWait(m_onDeviceLostHandler);
+                // Unregister before closing the wait: the other order leaves a window where the
+                // event can still be signalled against a wait object we have already closed.
                 d3dDevice->UnregisterDeviceRemoved(m_cookie);
+                ::CloseThreadpoolWait(m_onDeviceLostHandler);
 
                 // Clear member variables.
                 m_onDeviceLostHandler = nullptr;
@@ -287,17 +295,22 @@ namespace winrt::Telegram::Native::implementation
         // Explicit dispose is needed because otherwise XamlRoot may get deleted before deconstructor is invoked
         void Close()
         {
+            // Shutdown, not StopWatchingCurrentDevice: a device-lost callback that is already
+            // running holds a raw pointer to this object and would outlive it otherwise.
+            m_deviceLostHelper.Shutdown();
+
             m_nineGridCache.clear();
             m_svgCacheList.clear();
             m_svgCacheIndex.clear();
-            m_deviceLostHelper.StopWatchingCurrentDevice();
         }
 
         HRESULT HandleDeviceLost()
         {
             std::lock_guard const guard(m_criticalSection);
 
-            if (FAILED(m_d3dDevice->GetDeviceRemovedReason()))
+            // The device is null when a previous attempt to create one failed, which happens while
+            // the display driver is still resetting.
+            if (m_d3dDevice == nullptr || FAILED(m_d3dDevice->GetDeviceRemovedReason()))
             {
                 return CreateDeviceResources();
             }

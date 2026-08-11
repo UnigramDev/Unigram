@@ -11,6 +11,7 @@
 
 #include <zlib.h>
 
+#include <format>
 #include <numbers>
 
 #include <src\webp\decode.h>
@@ -1011,6 +1012,11 @@ namespace winrt::Telegram::Native::implementation
         HRESULT result;
         UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
+        // The removed device has to go before a new one is created: com_ptr::put() overwrites the
+        // pointer without releasing it, so recreating over a live device strands it and everything
+        // the display driver holds behind it.
+        m_d3dDevice = nullptr;
+
         winrt::com_ptr<ID3D11DeviceContext> context;
         if (FAILED(D3D11CreateDevice(nullptr,               // specify null to use the default adapter
             D3D_DRIVER_TYPE_HARDWARE, 0,
@@ -1023,6 +1029,11 @@ namespace winrt::Telegram::Native::implementation
             context.put()									// returns the device immediate context
         )))
         {
+            // A failed D3D11CreateDevice can still have written the out parameters, and put()
+            // would overwrite them.
+            m_d3dDevice = nullptr;
+            context = nullptr;
+
             // Try again using WARP (software rendering)
             ReturnIfFailed(result, D3D11CreateDevice(nullptr,
                 D3D_DRIVER_TYPE_WARP, 0,
@@ -1074,11 +1085,15 @@ namespace winrt::Telegram::Native::implementation
         return S_OK;
     }
 
-    void PlaceholderImageHelper::OnDirect3DDeviceLost(DeviceLostHelper const* /* sender */, DeviceLostEventArgs const& args)
+    void PlaceholderImageHelper::OnDirect3DDeviceLost(DeviceLostHelper const* /* sender */, DeviceLostEventArgs const& /* args */)
     {
-        std::lock_guard const guard(m_criticalSection);
-
-        CreateDeviceResources();
+        // Deliberately does not recreate the device here. This runs on the threadpool callback for
+        // the device-removed event, so the display driver is still tearing itself down, and calling
+        // D3D11CreateDevice at that moment faults inside the vendor user-mode driver.
+        //
+        // PlaceholderHelper asks HandleDeviceLost() on every access to the singleton, so the device
+        // is rebuilt from the UI thread the next time it is actually needed.
+        LOGGER_ERROR(L"Direct3D device lost");
     }
 
     HRESULT PlaceholderImageHelper::CreateTextFormat(double fontSize)
