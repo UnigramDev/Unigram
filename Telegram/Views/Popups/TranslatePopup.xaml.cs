@@ -158,7 +158,7 @@ namespace Telegram.Views.Popups
             {
                 if (_message != null)
                 {
-                    task = _clientService.SendAsync(new TranslateRichMessage(null, _toLanguage, _tone));
+                    task = _clientService.SendAsync(new TranslateRichMessage(PageBlockHelper.ToInputRichMessage(_message), _toLanguage, _tone));
                 }
                 else
                 {
