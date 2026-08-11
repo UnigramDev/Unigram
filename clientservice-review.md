@@ -488,18 +488,37 @@ method, and from the UI thread through `TopicListViewModel.cs:691`, `:907`, `:91
       and fires `GetForumTopic(chatId, 2147483647)` at the server. It fires once per service
       instance — the id then sits in `_pendingNewTopics` forever — so the cost is one bogus
       round trip per forum opened plus a permanently poisoned pending entry, not a per-frame
-      storm. `DirectMessagesChatTopicService.GetTopics` has the identical omission
+      storm.
+
+      **Note the dependency on F4**: "not a per-frame storm" is only true because a 4xx
+      leaves the pending entry in place. F4 was fixed with that explicitly in mind rather
+      than by accident, but anyone loosening the retry rule there turns this item into one
+      request per enumeration. `DirectMessagesChatTopicService.GetTopics` has the identical omission
       (`FeedbackChatTopicService.cs:113-117`); it is harmless there today only because that
       `GetTopic` doesn't fetch.
 
-- [ ] **F4 · P1 · `UpdateNewTopic` leaks `_pendingNewTopics` on any failure** — `:437-447` **[live]**
+- [x] **F4 · P1 · `UpdateNewTopic` leaks `_pendingNewTopics` on any failure** — `:437-447` **[live]**
+      → fixed in the commit that checked this box
 
-      `if (newTopic == null) return;` at `:442` sits *before* the
-      `_pendingNewTopics.Remove` at `:447`. Any non-`ForumTopic` response — a transient
-      network failure as readily as a real 404 — leaves the id pending forever, and the
-      guard in `GetTopic` (`:176`) then never retries it: the method returns null for that
-      topic for the rest of the session. A topic that failed to load once stays missing from
-      the list until the app restarts.
+      `if (newTopic == null) return;` at `:442` sat *before* the `_pendingNewTopics.Remove`
+      at `:447`. Any non-`ForumTopic` response left the id pending forever, and the guard in
+      `GetTopic` (`:176`) then never retried it: the method returned null for that topic for
+      the rest of the session. A topic that failed to load once stayed missing until restart.
+
+      **The obvious fix is a worse bug.** Clearing the entry on every failure means a topic
+      that genuinely does not exist gets requested again on every enumeration — a request per
+      scroll, forever. That suppression is load-bearing, and it is also the only thing
+      currently stopping F3's bogus `int.MaxValue` request from repeating.
+
+      So retry is scoped to failures that repeating can actually fix: `Code >= 500` or
+      `Code < 0`, meaning server or transport. Every 4xx stays suppressed, because it says
+      the request is wrong or the topic is gone. Keying on 404 alone would not have been
+      enough — TDLib reports a missing object as `400` at least as often as `404`, so the
+      storm would have stayed open through the more common code.
+
+      `UpdateNewTopic` now takes the id it asked for, since a failure response carries none.
+      All three call sites pass it; the one inside `UpdateDeleteMessages` names its lambda
+      parameter `inner` because the enclosing callback already binds `response`.
 
 - [ ] **F5 · P1 · `UpdateDeleteMessages` stops at the first affected topic** — `:600` **[live]**
 

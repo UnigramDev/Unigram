@@ -212,7 +212,7 @@ namespace Telegram.Services
 
             if (request)
             {
-                _clientService.Send(new GetForumTopic(_chatId, id), UpdateNewTopic);
+                _clientService.Send(new GetForumTopic(_chatId, id), response => UpdateNewTopic(id, response));
             }
 
             return null;
@@ -492,13 +492,32 @@ namespace Telegram.Services
             }
         }
 
-        private void UpdateNewTopic(Object response)
+        /// <param name="forumTopicId">
+        /// The topic that was asked for. A failure carries no id of its own, and it is the
+        /// failure case that has to clear the pending entry.
+        /// </param>
+        private void UpdateNewTopic(int forumTopicId, Object response)
         {
             ForumTopic topic;
             ForumTopic newTopic = response as ForumTopic;
 
             if (newTopic == null)
             {
+                // Only a server or transport failure is retried. Leaving the pending entry
+                // set is what made one failed load hide a topic for the rest of the session,
+                // but clearing it for every failure is the worse bug: a topic that genuinely
+                // does not exist would then be asked for again on every enumeration. A 4xx
+                // says the request itself is wrong or the topic is gone, and repeating it
+                // cannot change that — TDLib reports a missing topic as 400 at least as often
+                // as 404, so keying on 404 alone would leave that storm open.
+                if (response is Error { Code: >= 500 or < 0 })
+                {
+                    lock (_lock)
+                    {
+                        _pendingNewTopics.Remove(forumTopicId);
+                    }
+                }
+
                 return;
             }
 
@@ -564,7 +583,7 @@ namespace Telegram.Services
             }
             else
             {
-                _clientService.Send(new GetForumTopic(_chatId, topicForum.ForumTopicId), UpdateNewTopic);
+                _clientService.Send(new GetForumTopic(_chatId, topicForum.ForumTopicId), response => UpdateNewTopic(topicForum.ForumTopicId, response));
             }
 
             if (message.SendingState is MessageSendingStatePending)
@@ -662,7 +681,7 @@ namespace Telegram.Services
 
                             if (topic.LastMessage == null && topic.Order != 0)
                             {
-                                _clientService.Send(new GetForumTopic(_chatId, topic.Info.ForumTopicId), UpdateNewTopic);
+                                _clientService.Send(new GetForumTopic(_chatId, topic.Info.ForumTopicId), inner => UpdateNewTopic(topic.Info.ForumTopicId, inner));
                             }
 
                             if (updatePinnedTopics)
