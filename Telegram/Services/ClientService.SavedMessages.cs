@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Td.Api;
@@ -36,18 +35,17 @@ namespace Telegram.Services
 
         private void SetSavedMessagesTopicOrder(SavedMessagesTopic topic, long order)
         {
-            Monitor.Enter(_savedMessages);
-
-            _savedMessages.Remove(new OrderedItem(topic.Id, topic.Order));
-
-            topic.Order = order;
-
-            if (order != 0)
+            lock (_savedMessages)
             {
-                _savedMessages.Add(new OrderedItem(topic.Id, order));
-            }
+                _savedMessages.Remove(new OrderedItem(topic.Id, topic.Order));
 
-            Monitor.Exit(_savedMessages);
+                topic.Order = order;
+
+                if (order != 0)
+                {
+                    _savedMessages.Add(new OrderedItem(topic.Id, order));
+                }
+            }
         }
 
         public int SavedMessagesTopicCount { get; private set; }
@@ -104,61 +102,68 @@ namespace Telegram.Services
 
         public async Task<Topics> GetSavedMessagesChatsAsyncImpl(int offset, int limit, bool reentrancy)
         {
-            Monitor.Enter(_savedMessages);
-
             var count = offset + limit;
-            var sorted = _savedMessages;
 
-            var haveFullList = _haveFullSavedMessages;
+            // How many topics are still to be loaded, 0 when the cache can answer on its own.
+            // Decided under the lock, acted on outside it: awaiting is not allowed in there.
+            int missing;
+
+            lock (_savedMessages)
+            {
+                var sorted = _savedMessages;
+
+                var haveFullList = _haveFullSavedMessages;
 
 #if MOCKUP
-            _haveFullChatList[index] = true;
+                _haveFullChatList[index] = true;
+                missing = 0;
 #else
-            if (count > sorted.Count && !haveFullList && !reentrancy)
-            {
-                Monitor.Exit(_savedMessages);
-
-                var response = await SendAsync(new LoadSavedMessagesTopics(count - sorted.Count));
-                if (response is Error error)
-                {
-                    if (error.Code == 404)
-                    {
-                        _haveFullSavedMessages = true;
-                    }
-                    else
-                    {
-                        return new Topics(0, Array.Empty<long>());
-                    }
-                }
-
-                // Chats have already been received through updates, let's retry request
-                return await GetSavedMessagesChatsAsyncImpl(offset, limit, true);
-            }
+                missing = count > sorted.Count && !haveFullList && !reentrancy
+                    ? count - sorted.Count
+                    : 0;
 #endif
 
-            // Have enough chats in the chat list to answer request
-            var result = new long[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
-            var pos = 0;
-
-            using (var iter = sorted.GetEnumerator())
-            {
-                int max = Math.Min(count, sorted.Count);
-
-                for (int i = 0; i < max; i++)
+                if (missing == 0)
                 {
-                    iter.MoveNext();
+                    // Have enough chats in the chat list to answer request
+                    var result = new long[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
+                    var pos = 0;
 
-                    if (i >= offset)
+                    using (var iter = sorted.GetEnumerator())
                     {
-                        result[pos++] = iter.Current.Id;
+                        int max = Math.Min(count, sorted.Count);
+
+                        for (int i = 0; i < max; i++)
+                        {
+                            iter.MoveNext();
+
+                            if (i >= offset)
+                            {
+                                result[pos++] = iter.Current.Id;
+                            }
+                        }
                     }
+
+                    haveFullList &= count >= sorted.Count;
+                    return new Topics(haveFullList ? -1 : 0, result);
                 }
             }
 
-            haveFullList &= count >= sorted.Count;
+            var response = await SendAsync(new LoadSavedMessagesTopics(missing));
+            if (response is Error error)
+            {
+                if (error.Code == 404)
+                {
+                    _haveFullSavedMessages = true;
+                }
+                else
+                {
+                    return new Topics(0, Array.Empty<long>());
+                }
+            }
 
-            Monitor.Exit(_savedMessages);
-            return new Topics(haveFullList ? -1 : 0, result);
+            // Chats have already been received through updates, let's retry request
+            return await GetSavedMessagesChatsAsyncImpl(offset, limit, true);
         }
     }
 }

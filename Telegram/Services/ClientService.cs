@@ -3152,34 +3152,33 @@ namespace Telegram.Services
                     {
                         if (_chats.TryGetValue(updateChatPosition.ChatId, out Chat value))
                         {
-                            Monitor.Enter(value);
-
-                            int i;
-                            for (i = 0; i < value.Positions.Count; i++)
+                            lock (value)
                             {
-                                if (ChatListEqualityComparer.Instance.Equals(value.Positions[i].List, updateChatPosition.Position.List))
+                                int i;
+                                for (i = 0; i < value.Positions.Count; i++)
                                 {
-                                    break;
+                                    if (ChatListEqualityComparer.Instance.Equals(value.Positions[i].List, updateChatPosition.Position.List))
+                                    {
+                                        break;
+                                    }
                                 }
-                            }
 
-                            var newPositions = new List<ChatPosition>(value.Positions.Count + (updateChatPosition.Position.Order == 0 ? 0 : 1) - (i < value.Positions.Count ? 1 : 0));
-                            if (updateChatPosition.Position.Order != 0)
-                            {
-                                newPositions.Add(updateChatPosition.Position);
-                            }
-
-                            for (int j = 0; j < value.Positions.Count; j++)
-                            {
-                                if (j != i)
+                                var newPositions = new List<ChatPosition>(value.Positions.Count + (updateChatPosition.Position.Order == 0 ? 0 : 1) - (i < value.Positions.Count ? 1 : 0));
+                                if (updateChatPosition.Position.Order != 0)
                                 {
-                                    newPositions.Add(value.Positions[j]);
+                                    newPositions.Add(updateChatPosition.Position);
                                 }
+
+                                for (int j = 0; j < value.Positions.Count; j++)
+                                {
+                                    if (j != i)
+                                    {
+                                        newPositions.Add(value.Positions[j]);
+                                    }
+                                }
+
+                                SetChatPositions(value, newPositions);
                             }
-
-                            SetChatPositions(value, newPositions);
-
-                            Monitor.Exit(value);
                         }
 
                         break;
@@ -3189,12 +3188,11 @@ namespace Telegram.Services
                     {
                         if (_chats.TryGetValue(updateChatLastMessage.ChatId, out Chat value))
                         {
-                            Monitor.Enter(value);
-
-                            UpdateChatLastMessage(value, updateChatLastMessage.LastMessage);
-                            SetChatPositions(value, updateChatLastMessage.Positions);
-
-                            Monitor.Exit(value);
+                            lock (value)
+                            {
+                                UpdateChatLastMessage(value, updateChatLastMessage.LastMessage);
+                                SetChatPositions(value, updateChatLastMessage.Positions);
+                            }
                         }
 
                         UpdateForumTopic(updateChatLastMessage.ChatId, false, manager => manager.UpdateChatLastMessage(updateChatLastMessage.LastMessage));
@@ -3221,12 +3219,11 @@ namespace Telegram.Services
                     {
                         _chats[updateNewChat.Chat.Id] = updateNewChat.Chat;
 
-                        Monitor.Enter(updateNewChat.Chat);
-
-                        UpdateChatLastMessage(updateNewChat.Chat, updateNewChat.Chat.LastMessage);
-                        SetChatPositions(updateNewChat.Chat, updateNewChat.Chat.Positions);
-
-                        Monitor.Exit(updateNewChat.Chat);
+                        lock (updateNewChat.Chat)
+                        {
+                            UpdateChatLastMessage(updateNewChat.Chat, updateNewChat.Chat.LastMessage);
+                            SetChatPositions(updateNewChat.Chat, updateNewChat.Chat.Positions);
+                        }
 
                         if (updateNewChat.Chat.Type is ChatTypePrivate privata)
                         {
@@ -3240,9 +3237,10 @@ namespace Telegram.Services
                     {
                         if (_savedMessagesTopics.TryGetValue(updateSavedMessagesTopic.Topic.Id, out SavedMessagesTopic topic))
                         {
-                            Monitor.Enter(topic);
-                            SetSavedMessagesTopicOrder(topic, updateSavedMessagesTopic.Topic.Order);
-                            Monitor.Exit(topic);
+                            lock (topic)
+                            {
+                                SetSavedMessagesTopicOrder(topic, updateSavedMessagesTopic.Topic.Order);
+                            }
 
                             topic.DraftMessage = updateSavedMessagesTopic.Topic.DraftMessage;
                             topic.LastMessage = updateSavedMessagesTopic.Topic.LastMessage;
@@ -3253,9 +3251,10 @@ namespace Telegram.Services
                         }
                         else
                         {
-                            Monitor.Enter(updateSavedMessagesTopic.Topic);
-                            SetSavedMessagesTopicOrder(updateSavedMessagesTopic.Topic, updateSavedMessagesTopic.Topic.Order);
-                            Monitor.Exit(updateSavedMessagesTopic.Topic);
+                            lock (updateSavedMessagesTopic.Topic)
+                            {
+                                SetSavedMessagesTopicOrder(updateSavedMessagesTopic.Topic, updateSavedMessagesTopic.Topic.Order);
+                            }
 
                             _savedMessagesTopics[updateSavedMessagesTopic.Topic.Id] = updateSavedMessagesTopic.Topic;
                         }
@@ -3321,9 +3320,11 @@ namespace Telegram.Services
                         _activeStories.TryGetValue(updateActiveStories.ActiveStories.ChatId, out ChatActiveStories value);
                         _activeStories[updateActiveStories.ActiveStories.ChatId] = updateActiveStories.ActiveStories;
 
-                        Monitor.Enter(updateActiveStories.ActiveStories);
-                        SetActiveStoriesPositions(updateActiveStories.ActiveStories, value);
-                        Monitor.Exit(updateActiveStories.ActiveStories);
+                        lock (updateActiveStories.ActiveStories)
+                        {
+                            SetActiveStoriesPositions(updateActiveStories.ActiveStories, value);
+                        }
+
                         break;
                     }
 
@@ -3438,12 +3439,11 @@ namespace Telegram.Services
                     {
                         if (_chats.TryGetValue(updateChatDraftMessage.ChatId, out Chat value))
                         {
-                            Monitor.Enter(value);
-
-                            value.DraftMessage = updateChatDraftMessage.DraftMessage;
-                            SetChatPositions(value, updateChatDraftMessage.Positions);
-
-                            Monitor.Exit(value);
+                            lock (value)
+                            {
+                                value.DraftMessage = updateChatDraftMessage.DraftMessage;
+                                SetChatPositions(value, updateChatDraftMessage.Positions);
+                            }
                         }
                         break;
                     }
