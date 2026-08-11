@@ -39,6 +39,14 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipManager::Start(VoipDescriptor descriptor)
     {
+        // Keep the call that is already running rather than replacing it: assigning over
+        // m_impl would destroy the previous instance without tgcalls' own teardown, and
+        // the second descriptor is for a call this one is already serving.
+        if (m_impl)
+        {
+            return;
+        }
+
         auto logPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path();
         logPath = logPath + hstring(L"\\tgcalls.txt");
 

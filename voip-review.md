@@ -207,7 +207,8 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   consistently milliseconds: `requestCurrentTime` genuinely is ms
   (`StreamingMediaContext.cpp:643`), so this one field was the odd one out, not the caller.
 
-  **Arithmetic is conclusive, behaviour is not — wants a live stream before trusting it.**
+  **Verified on a live stream** by Fela, 2026-08-11 — so the seconds reading is right, and
+  the `NotReady` + `segmentTimestamp == 0` startup path really does get exercised.
 
 ## P2 — lifetime and threading
 
@@ -305,8 +306,12 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   Destruction without `Stop()` destroyed the tgcalls instance without calling `stop()`, and
   left the loopback capture running. Both destructors call `Stop()`, which is idempotent.
 
-- [ ] **`VoipManager::Start` has no re-entrancy guard** — calling it twice destroys the
+- [x] **`VoipManager::Start` has no re-entrancy guard** — calling it twice destroyed the
   previous `Instance` without `stop()`.
+
+  Now a no-op when one is already running, rather than a stop-and-restart: the instance
+  in flight is serving the live call, and the second descriptor would be for the same one.
+  Completes the Start/Stop lifecycle work the destructors began.
 
 - [ ] **Verify `requestMediaChannelDescriptions` gating on `IsConference`** —
   `VoipGroupManager.cpp:69-83`
