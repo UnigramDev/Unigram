@@ -5865,11 +5865,13 @@
                                           Grid.Column="1"
                                           Grid.ColumnSpan="2" />
 
-                        <!--  Not x:Load="False", unlike the other optional parts: the Disabled state animates
-                              this one, and a Storyboard.TargetName that resolves to a part which has not been
-                              realized throws E_INVALIDARG out of the measure pass that applies the template.
-                              Collapsed costs one unmeasured ContentPresenter per button instead.  -->
+                        <!--  Deferred with Lazy rather than x:Load, unlike the other optional parts: this one is
+                              a Storyboard.TargetName in the Disabled state, and x:Load leaves the target
+                              unresolvable until something realizes it, which throws E_INVALIDARG out of the
+                              measure pass that applies the template. Lazy realizes on reference instead, which
+                              is what the stock TextBox template relies on for HeaderContentPresenter.  -->
                         <ContentPresenter x:Name="DescriptionPresenter"
+                                          x:DeferLoadStrategy="Lazy"
                                           Visibility="Collapsed"
                                           FontSize="12"
                                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"
