@@ -14,6 +14,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
@@ -54,32 +55,43 @@ namespace Telegram.Views.Popups
             var user = ViewModel.ClientService.GetUser(request.UserId);
             if (user == null)
             {
+                AutomationProperties.SetName(args.ItemContainer, string.Empty);
                 return;
             }
 
             if (args.Phase == 0)
             {
+                var fullName = user.FullName();
+
                 var title = content.Children[1] as TextBlock;
-                title.Text = user.FullName();
+                title.Text = fullName;
 
                 var stack = content.Children[4] as StackPanel;
                 var primary = stack.Children[0] as Button;
                 var secondary = stack.Children[1] as HyperlinkButton;
 
-                primary.CommandParameter = request;
-                primary.Command = ViewModel.AcceptCommand;
+                primary.Tag = request;
+                secondary.Tag = request;
 
-                secondary.CommandParameter = request;
-                secondary.Command = ViewModel.DismissCommand;
-
-                primary.Content = ViewModel.IsChannel
+                var action = ViewModel.IsChannel
                     ? Strings.AddToChannel
                     : Strings.AddToGroup;
+
+                primary.Content = action;
+
+                // Every row repeats the same two labels, so the name is the only thing
+                // telling a screen reader which request a button belongs to.
+                AutomationProperties.SetName(primary, action + ", " + fullName);
+                AutomationProperties.SetName(secondary, Strings.Dismiss + ", " + fullName);
                 //}
                 //else if (args.Phase == 1)
                 //{
                 var time = content.Children[2] as TextBlock;
                 time.Text = Formatter.DateExtended(request.Date);
+
+                // The visible date is abbreviated to fit the row ("Thu", "Aug 5"), which
+                // reads poorly, so the name spells it out instead.
+                var date = Formatter.LongDateAt(request.Date);
 
                 if (string.IsNullOrEmpty(request.Bio))
                 {
@@ -87,6 +99,8 @@ namespace Telegram.Views.Popups
                     subtitle.Visibility = Visibility.Collapsed;
 
                     Grid.SetRow(content.Children[4] as StackPanel, 1);
+
+                    AutomationProperties.SetName(args.ItemContainer, fullName + ", " + date);
                 }
                 else
                 {
@@ -95,6 +109,8 @@ namespace Telegram.Views.Popups
                     subtitle.Visibility = Visibility.Visible;
 
                     Grid.SetRow(content.Children[4] as StackPanel, 2);
+
+                    AutomationProperties.SetName(args.ItemContainer, fullName + ", " + date + ", " + request.Bio);
                 }
             }
             else if (args.Phase == 2)
@@ -120,18 +136,42 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void Animate_Click(object sender, RoutedEventArgs e)
+        private void Accept_Click(object sender, RoutedEventArgs e)
         {
-            //void handler(object sender, object e)
-            //{
-            //    ScrollingHost.LayoutUpdated -= handler;
-            //    ScrollingHost.ItemContainerTransitions.Clear();
-            //}
+            ProcessRequest(sender, true);
+        }
 
-            //ScrollingHost.ItemContainerTransitions.Clear();
-            //ScrollingHost.ItemContainerTransitions.Add(new AddDeleteThemeTransition());
+        private void Dismiss_Click(object sender, RoutedEventArgs e)
+        {
+            ProcessRequest(sender, false);
+        }
 
-            //ScrollingHost.LayoutUpdated += handler;
+        private void ProcessRequest(object sender, bool approve)
+        {
+            if (sender is not FrameworkElement button || button.Tag is not ChatJoinRequest request)
+            {
+                return;
+            }
+
+            var index = ViewModel.Items.IndexOf(request);
+            if (index >= 0)
+            {
+                Control neighbor = null;
+
+                if (index + 1 < ViewModel.Items.Count)
+                {
+                    neighbor = ScrollingHost.ContainerFromIndex(index + 1) as Control;
+                }
+
+                if (neighbor == null && index > 0)
+                {
+                    neighbor = ScrollingHost.ContainerFromIndex(index - 1) as Control;
+                }
+
+                neighbor?.Focus(FocusState.Programmatic);
+            }
+
+            ViewModel.Process(request, approve);
         }
     }
 }

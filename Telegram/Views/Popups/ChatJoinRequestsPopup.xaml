@@ -28,40 +28,45 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <controls:ProfilePicture VerticalAlignment="Top"
                                                  Size="36"
+                                                 AutomationProperties.AccessibilityView="Raw"
                                                  Margin="0,0,12,0"
                                                  Grid.RowSpan="2" />
 
                         <TextBlock TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis"
+                                   AutomationProperties.AccessibilityView="Raw"
                                    Grid.Column="1"
                                    VerticalAlignment="Bottom" />
                         <TextBlock VerticalAlignment="Bottom"
-                                   HorizontalAlignment="Right"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"
-                                   Grid.Column="1"
-                                   MaxLines="1" />
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   MaxLines="1"
+                                   Margin="8,0,0,0"
+                                   Grid.Column="2" />
                         <TextBlock VerticalAlignment="Top"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   MaxLines="1"
                                    Grid.Column="1"
-                                   Grid.Row="1"
-                                   MaxLines="1" />
+                                   Grid.ColumnSpan="2"
+                                   Grid.Row="1" />
 
                         <StackPanel Orientation="Horizontal"
                                     Margin="0,8,0,0"
                                     Grid.Column="1"
+                                    Grid.ColumnSpan="2"
                                     Grid.Row="2">
-                            <Button Click="Animate_Click"
+                            <Button Click="Accept_Click"
                                     Style="{StaticResource AccentButtonStyle}" />
-                            <HyperlinkButton Click="Animate_Click"
+                            <HyperlinkButton Click="Dismiss_Click"
                                              Content="{CustomResource Dismiss}" />
                         </StackPanel>
                     </Grid>

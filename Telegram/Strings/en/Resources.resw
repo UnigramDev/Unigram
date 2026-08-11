@@ -8827,6 +8827,12 @@ They can still join via an invite link as long as they are not on the Removed Us
   <data name="GuestBotFor" xml:space="preserve">
     <value>for</value>
   </data>
+  <data name="HasBeenAddedToChannel" xml:space="preserve">
+    <value>**{0}** added to the channel</value>
+  </data>
+  <data name="HasBeenAddedToGroup" xml:space="preserve">
+    <value>**{0}** added to the group</value>
+  </data>
   <data name="Hashtags" xml:space="preserve">
     <value>HASHTAGS</value>
   </data>

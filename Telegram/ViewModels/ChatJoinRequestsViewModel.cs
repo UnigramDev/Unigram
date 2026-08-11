@@ -7,7 +7,6 @@
 
 using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -27,31 +26,23 @@ namespace Telegram.ViewModels
             _inviteLink = inviteLink;
 
             Items = new IncrementalCollection<ChatJoinRequest>(this);
-
-            AcceptCommand = new RelayCommand<ChatJoinRequest>(Accept);
-            DismissCommand = new RelayCommand<ChatJoinRequest>(Dismiss);
         }
 
         public bool IsChannel => _chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
 
         public IncrementalCollection<ChatJoinRequest> Items { get; private set; }
 
-        public RelayCommand<ChatJoinRequest> AcceptCommand { get; }
-        private void Accept(ChatJoinRequest request)
-        {
-            Process(request, true);
-        }
-
-        public RelayCommand<ChatJoinRequest> DismissCommand { get; }
-        private void Dismiss(ChatJoinRequest request)
-        {
-            Process(request, false);
-        }
-
-        private void Process(ChatJoinRequest request, bool approve)
+        public async void Process(ChatJoinRequest request, bool approve)
         {
             Items.Remove(request);
-            ClientService.Send(new ProcessChatJoinRequest(_chat.Id, request.UserId, approve));
+
+            var response = await ClientService.SendAsync(new ProcessChatJoinRequest(_chat.Id, request.UserId, approve));
+            if (response is Ok && approve && ClientService.TryGetUser(request.UserId, out User user))
+            {
+                ShowToast(string.Format(IsChannel
+                    ? Strings.HasBeenAddedToChannel
+                    : Strings.HasBeenAddedToGroup, user.FullName(true)));
+            }
         }
 
         #region IIncrementalCollectionOwner

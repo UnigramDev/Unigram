@@ -4885,6 +4885,9 @@
 
     <string name="Dismiss">Dismiss</string>
 
+    <string name="HasBeenAddedToGroup">**{0}** added to the group</string>
+    <string name="HasBeenAddedToChannel">**{0}** added to the channel</string>
+
 
 
 
