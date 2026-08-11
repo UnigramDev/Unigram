@@ -1344,7 +1344,7 @@ namespace Telegram.ViewModels
 
                 foreach (var option in poll.Poll.Options)
                 {
-                    builder = FormattedText.Concat("\n\U0001F518 ", option.Text);
+                    builder = FormattedText.Concat(builder, "\n\U0001F518 ", option.Text);
                 }
 
                 text = builder;
@@ -1359,11 +1359,11 @@ namespace Telegram.ViewModels
                 {
                     if (task.CompletionDate != 0)
                     {
-                        builder = FormattedText.Concat("\n\u2611 ", task.Text);
+                        builder = FormattedText.Concat(builder, "\n\u2611 ", task.Text);
                     }
                     else
                     {
-                        builder = FormattedText.Concat("\n\u2610 ", task.Text);
+                        builder = FormattedText.Concat(builder, "\n\u2610 ", task.Text);
                     }
                 }
 
