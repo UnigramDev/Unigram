@@ -38,6 +38,8 @@ namespace Telegram.Controls.Messages
                 MessageBasicGroupChatCreate basicGroupChatCreate => UpdateBasicGroupChatCreate(message, basicGroupChatCreate, history),
                 MessageBotWriteAccessAllowed botWriteAccessAllowed => UpdateBotWriteAccessAllowed(message, botWriteAccessAllowed, history),
                 MessageChatAddMembers chatAddMembers => UpdateChatAddMembers(message, chatAddMembers, history),
+                MessageChatAddedToCommunity chatAddedToCommunity => UpdateChatAddedToCommunity(message, chatAddedToCommunity, history),
+                MessageChatRemovedFromCommunity chatRemovedFromCommunity => UpdateChatRemovedFromCommunity(message, chatRemovedFromCommunity, history),
                 MessageChatChangePhoto chatChangePhoto => UpdateChatChangePhoto(message, chatChangePhoto, history),
                 MessageChatChangeTitle chatChangeTitle => UpdateChatChangeTitle(message, chatChangeTitle, history),
                 MessageChatSetTheme chatSetTheme => UpdateChatSetTheme(message, chatSetTheme, history),
@@ -916,6 +918,130 @@ namespace Telegram.Controls.Messages
                 Logger.Info(message.Content);
                 throw;
             }
+        }
+
+        private static FormattedText UpdateChatAddedToCommunity(MessageWithOwner message, MessageChatAddedToCommunity chatAddedToCommunity, bool history)
+        {
+            var community = message.ClientService.GetCommunity(chatAddedToCommunity.CommunityId);
+            var name = community?.Name ?? string.Empty;
+
+            var member = GetCommunityMember(message);
+            var sender = GetCommunityActor(message);
+
+            FormattedText formatted;
+            if (sender != null && message.IsOutgoing)
+            {
+                formatted = ClientEx.Format(member switch
+                {
+                    CommunityMember.Channel => Strings.CommunityServiceMessageChannelYouAdded,
+                    CommunityMember.Bot => Strings.CommunityServiceMessageBotYouAdded,
+                    _ => Strings.CommunityServiceMessageGroupYouAdded
+                }, name);
+            }
+            else if (sender != null)
+            {
+                // un1 goes in as the sender placeholder: the name is substituted by
+                // ReplaceWithLink below, once the bold run around it has been parsed.
+                formatted = ClientEx.Format(member switch
+                {
+                    CommunityMember.Channel => Strings.CommunityServiceMessageChannelAdded,
+                    CommunityMember.Bot => Strings.CommunityServiceMessageBotAdded,
+                    _ => Strings.CommunityServiceMessageGroupAdded
+                }, "un1", name);
+            }
+            else
+            {
+                formatted = ClientEx.Format(member switch
+                {
+                    CommunityMember.Channel => Strings.CommunityServiceMessageChannelAddedUnknown,
+                    CommunityMember.Bot => Strings.CommunityServiceMessageBotAddedUnknown,
+                    _ => Strings.CommunityServiceMessageGroupAddedUnknown
+                }, name);
+            }
+
+            formatted = ClientEx.ParseMarkdown(formatted);
+
+            if (sender != null)
+            {
+                return ReplaceWithLink(formatted, sender);
+            }
+
+            return formatted;
+        }
+
+        private static FormattedText UpdateChatRemovedFromCommunity(MessageWithOwner message, MessageChatRemovedFromCommunity chatRemovedFromCommunity, bool history)
+        {
+            // The community isn't part of the update, so these strings don't name it.
+            var member = GetCommunityMember(message);
+            var sender = GetCommunityActor(message);
+
+            if (sender != null && message.IsOutgoing)
+            {
+                return ClientEx.ParseMarkdown(member switch
+                {
+                    CommunityMember.Channel => Strings.CommunityServiceMessageChannelYouRemoved,
+                    CommunityMember.Bot => Strings.CommunityServiceMessageBotYouRemoved,
+                    _ => Strings.CommunityServiceMessageGroupYouRemoved
+                });
+            }
+            else if (sender != null)
+            {
+                var formatted = ClientEx.Format(member switch
+                {
+                    CommunityMember.Channel => Strings.CommunityServiceMessageChannelRemoved,
+                    CommunityMember.Bot => Strings.CommunityServiceMessageBotRemoved,
+                    _ => Strings.CommunityServiceMessageGroupRemoved
+                }, "un1");
+
+                return ReplaceWithLink(ClientEx.ParseMarkdown(formatted), sender);
+            }
+
+            return ClientEx.ParseMarkdown(member switch
+            {
+                CommunityMember.Channel => Strings.CommunityServiceMessageChannelRemovedUnknown,
+                CommunityMember.Bot => Strings.CommunityServiceMessageBotRemovedUnknown,
+                _ => Strings.CommunityServiceMessageGroupRemovedUnknown
+            });
+        }
+
+        // Communities word these messages after what the member chat is.
+        private enum CommunityMember
+        {
+            Group,
+            Channel,
+            Bot
+        }
+
+        private static CommunityMember GetCommunityMember(MessageWithOwner message)
+        {
+            if (message.Chat?.Type is ChatTypeSupergroup { IsChannel: true })
+            {
+                return CommunityMember.Channel;
+            }
+            else if (message.ClientService.TryGetUser(message.Chat, out User user) && user.Type is UserTypeBot)
+            {
+                return CommunityMember.Bot;
+            }
+
+            return CommunityMember.Group;
+        }
+
+        // The sender is the chat itself whenever an admin acts as it, and naming it would
+        // read "This channel added this channel": those messages name no one instead.
+        private static object GetCommunityActor(MessageWithOwner message)
+        {
+            var sender = message.GetSender();
+
+            if (sender is Chat chat)
+            {
+                return chat.Id == message.Chat?.Id ? null : chat;
+            }
+            else if (sender is User user)
+            {
+                return message.Chat?.Type is ChatTypePrivate privata && privata.UserId == user.Id ? null : user;
+            }
+
+            return null;
         }
 
         private static FormattedText UpdateChatChangePhoto(MessageWithOwner message, MessageChatChangePhoto chatChangePhoto, bool history)

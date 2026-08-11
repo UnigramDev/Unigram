@@ -13716,5 +13716,25 @@
     <string name="WelcomeMessageOff">Off</string>
     <string name="WelcomeMessagesLimit_one">Limit of **{0}** message reached.</string>
     <string name="WelcomeMessagesLimit_other">Limit of **{0}** messages reached.</string>
+    <string name="CommunityServiceMessageGroupAdded">**{0}** added this group to the **{1}** community.</string>
+    <string name="CommunityServiceMessageGroupYouAdded">**You** added this group to the **{0}** community.</string>
+    <string name="CommunityServiceMessageGroupAddedUnknown">This group was added to the **{0}** community.</string>
+    <string name="CommunityServiceMessageGroupRemoved">**{0}** removed this group from the community</string>
+    <string name="CommunityServiceMessageGroupYouRemoved">**You** removed this group from the community</string>
+    <string name="CommunityServiceMessageGroupRemovedUnknown">This group was removed from the community</string>
+
+    <string name="CommunityServiceMessageChannelAdded">**{0}** added this channel to the **{1}** community.</string>
+    <string name="CommunityServiceMessageChannelYouAdded">**You** added this channel to the **{0}** community.</string>
+    <string name="CommunityServiceMessageChannelAddedUnknown">This channel was added to the **{0}** community.</string>
+    <string name="CommunityServiceMessageChannelRemoved">**{0}** removed this channel from the community</string>
+    <string name="CommunityServiceMessageChannelYouRemoved">**You** removed this channel from the community</string>
+    <string name="CommunityServiceMessageChannelRemovedUnknown">This channel was removed from the community</string>
+
+    <string name="CommunityServiceMessageBotAdded">**{0}** added this bot to the **{1}** community.</string>
+    <string name="CommunityServiceMessageBotYouAdded">**You** added this bot to the **{0}** community.</string>
+    <string name="CommunityServiceMessageBotAddedUnknown">This bot was added to the **{0}** community.</string>
+    <string name="CommunityServiceMessageBotRemoved">**{0}** removed this bot from the community</string>
+    <string name="CommunityServiceMessageBotYouRemoved">**You** removed this bot from the community</string>
+    <string name="CommunityServiceMessageBotRemovedUnknown">This bot was removed from the community</string>
 
 </resources>

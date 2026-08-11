@@ -5036,6 +5036,60 @@ handles AI tasks safely and efficiently.</value>
   <data name="CommonGroups_other" xml:space="preserve">
     <value>{0} groups in common</value>
   </data>
+  <data name="CommunityServiceMessageBotAdded" xml:space="preserve">
+    <value>**{0}** added this bot to the **{1}** community.</value>
+  </data>
+  <data name="CommunityServiceMessageBotAddedUnknown" xml:space="preserve">
+    <value>This bot was added to the **{0}** community.</value>
+  </data>
+  <data name="CommunityServiceMessageBotRemoved" xml:space="preserve">
+    <value>**{0}** removed this bot from the community</value>
+  </data>
+  <data name="CommunityServiceMessageBotRemovedUnknown" xml:space="preserve">
+    <value>This bot was removed from the community</value>
+  </data>
+  <data name="CommunityServiceMessageBotYouAdded" xml:space="preserve">
+    <value>**You** added this bot to the **{0}** community.</value>
+  </data>
+  <data name="CommunityServiceMessageBotYouRemoved" xml:space="preserve">
+    <value>**You** removed this bot from the community</value>
+  </data>
+  <data name="CommunityServiceMessageChannelAdded" xml:space="preserve">
+    <value>**{0}** added this channel to the **{1}** community.</value>
+  </data>
+  <data name="CommunityServiceMessageChannelAddedUnknown" xml:space="preserve">
+    <value>This channel was added to the **{0}** community.</value>
+  </data>
+  <data name="CommunityServiceMessageChannelRemoved" xml:space="preserve">
+    <value>**{0}** removed this channel from the community</value>
+  </data>
+  <data name="CommunityServiceMessageChannelRemovedUnknown" xml:space="preserve">
+    <value>This channel was removed from the community</value>
+  </data>
+  <data name="CommunityServiceMessageChannelYouAdded" xml:space="preserve">
+    <value>**You** added this channel to the **{0}** community.</value>
+  </data>
+  <data name="CommunityServiceMessageChannelYouRemoved" xml:space="preserve">
+    <value>**You** removed this channel from the community</value>
+  </data>
+  <data name="CommunityServiceMessageGroupAdded" xml:space="preserve">
+    <value>**{0}** added this group to the **{1}** community.</value>
+  </data>
+  <data name="CommunityServiceMessageGroupAddedUnknown" xml:space="preserve">
+    <value>This group was added to the **{0}** community.</value>
+  </data>
+  <data name="CommunityServiceMessageGroupRemoved" xml:space="preserve">
+    <value>**{0}** removed this group from the community</value>
+  </data>
+  <data name="CommunityServiceMessageGroupRemovedUnknown" xml:space="preserve">
+    <value>This group was removed from the community</value>
+  </data>
+  <data name="CommunityServiceMessageGroupYouAdded" xml:space="preserve">
+    <value>**You** added this group to the **{0}** community.</value>
+  </data>
+  <data name="CommunityServiceMessageGroupYouRemoved" xml:space="preserve">
+    <value>**You** removed this group from the community</value>
+  </data>
   <data name="ConferenceCallIncoming" xml:space="preserve">
     <value>Incoming Group Call</value>
   </data>

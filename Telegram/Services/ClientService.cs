@@ -247,6 +247,9 @@ namespace Telegram.Services
         bool TryGetSupergroupFull(long id, out SupergroupFullInfo value);
         bool TryGetSupergroupFull(Chat chat, out SupergroupFullInfo value);
 
+        Community GetCommunity(long id);
+        bool TryGetCommunity(long id, out Community value);
+
         GroupCall GetGroupCall(int id);
         bool TryGetGroupCall(int id, out GroupCall value);
         bool TryGetGroupCallMessageLevel(long paidMessageStarCount, out GroupCallMessageLevel value);
@@ -2575,6 +2578,21 @@ namespace Telegram.Services
 
             value = null;
             return false;
+        }
+
+        public Community GetCommunity(long id)
+        {
+            if (_communities.TryGetValue(id, out Community value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        public bool TryGetCommunity(long id, out Community value)
+        {
+            return _communities.TryGetValue(id, out value);
         }
 
 
