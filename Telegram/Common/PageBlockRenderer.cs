@@ -317,12 +317,10 @@ namespace Telegram.Common
         private FrameworkElement ProcessTable(IClientService clientService, PageBlockTable table, bool test = false)
         {
             // A table can arrive with no rows at all, and Max has nothing to reduce over. There is
-            // no grid to build either, so render just the caption -- and an empty Border when there
-            // isn't one, because InstantContent.UpdateView keeps its children index-aligned with
-            // the block list and so needs an element for every block.
+            // no grid to build either, so render just the caption.
             if (table.Cells.Count == 0)
             {
-                return ProcessText(clientService, table, true) ?? new Border();
+                return ProcessText(clientService, table, true);
             }
 
             var grid = new Grid
