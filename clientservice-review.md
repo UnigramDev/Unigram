@@ -335,16 +335,43 @@ Ordered by measured reach, not by size of change.
       every file whose download reports complete — a synchronous syscall on the single
       thread draining `td_receive`, on a path that fires constantly while media loads.
 
-- [ ] **Unbounded session-lifetime growth** — `Files.cs:78-80` **[live, reduced]**
+- [x] **~~Unbounded session-lifetime growth~~ — closed: `_files` is TDLib's model, the rest is noise** — `Files.cs:78-80`, `ClientService.cs:348`
 
-      `_explicitDownloads`, `_completedDownloads`, `_canceledDownloads` accumulate one entry
-      per file — nothing removes from them except an explicit cancel.
+      The original wording lumped four collections together and implied they were one
+      problem. They are two, and neither is worth code.
 
-      **Half-closed by the `Clear()` fix in P1**: they no longer survive an authorization
-      change. What remains is growth *within* one session, which for a long-running client on
-      a media-heavy account is still unbounded, just bounded by uptime rather than by process
-      lifetime. `_files` (`ClientService.cs:348`) is likewise never evicted; defensible for a
-      singleton `File` cache, but worth being deliberate about rather than incidental.
+      **`_files` cannot be evicted, and that is a constraint TDLib imposes.** The contract is
+      id→instance identity: `updateFile` carries a file id, and `ParseFile` looks the id up
+      and mutates *the existing instance in place* so every binding already holding that
+      `File` sees the change. TDLib never retires a file id within a session and never says
+      "this one is finished with." So if the app dropped id 123 and a later `updateFile` for
+      123 arrived, `ParseFile` would mint a *new* instance while the UI still held the old
+      one — that thumbnail or progress bar would silently stop updating forever. Eviction is
+      only safe when nothing holds the entry, which means weak references
+      (`Dictionary<int, WeakReference<File>>` or a `ConditionalWeakTable`), plus a sweep for
+      dead slots, plus a dereference per update on the receive thread. That is a lot of
+      machinery on a hot path for the size involved.
+
+      Size, since the original said "unbounded" without a number. Per the schema, one entry
+      is three objects plus three strings — `local.path`, `remote.id`, `remote.unique_id` —
+      and the strings dominate: roughly 700–1000 bytes. Note every photo contributes one id
+      *per size variant*. Ten thousand distinct files is on the order of 8 MB, a hundred
+      thousand about 80 MB. Real, worth knowing, and **nowhere near** the undiagnosed
+      multi-GB growth being chased separately — this is not that lead.
+
+      **The three download sets are Unigram's own but negligible.** `_explicitDownloads` is a
+      `HashSet<int>` at ~16 bytes an entry; `_canceledDownloads` only holds files the user
+      actually cancelled; `_completedDownloads` only holds files that went through the
+      Downloads folder. Hundreds of KB at the top end. They were only in this item because
+      they sat next to each other in the file.
+
+      Also already bounded by the `Clear()` fix in P1: all four are dropped on an
+      authorization change, so none of this survives a logout.
+
+      If a file cache ever does need bounding, the precedent is `EmojiCache` in
+      `memory-leaks.md`, which is the same shape — accumulates one entry per id ever seen,
+      never removes. Worth noting that that investigation looked for sustained growth across
+      the app and did not flag `_files`.
 
 ---
 
