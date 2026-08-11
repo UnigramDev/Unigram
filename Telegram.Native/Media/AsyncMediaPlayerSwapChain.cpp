@@ -7,6 +7,7 @@
 #include <winrt/Windows.UI.Xaml.Media.h>
 #include <windows.ui.xaml.media.dxinterop.h>
 
+#include <format>
 #include <sstream>
 #include <iomanip>
 #include <stdexcept>
@@ -67,7 +68,9 @@ namespace winrt::Telegram::Native::Media::implementation
     {
         if (!m_loaded)
         {
-            throw std::runtime_error("You must wait for the VideoView to be loaded before calling GetSwapChainOptions()");
+            // Not a lifecycle mistake, whatever the message inherited from LibVLCSharp said: the
+            // only way to get here is Create() having failed, and it logs which call went wrong.
+            throw std::runtime_error("The Direct3D swap chain is not available");
         }
 
         IVector<hstring> options = winrt::single_threaded_vector<hstring>();
@@ -91,6 +94,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
         winrt::com_ptr<IDXGIFactory2> dxgiFactory;
 
+        // Every call below is into the display driver and any of them can fail while the driver is
+        // resetting. The HRESULT on its own doesn't say which one did, and the whole function used
+        // to fail silently, so the failure only surfaced later as an unrelated-looking error from
+        // SwapChainOptions. Name the stage as we go and log it.
+        const wchar_t* stage = L"CreateDXGIFactory2";
+
         try
         {
             UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -110,7 +119,10 @@ namespace winrt::Telegram::Native::Media::implementation
             winrt::check_hresult(CreateDXGIFactory2(0, IID_PPV_ARGS(dxgiFactory.put())));
 #endif
 
+            stage = L"D3D11CreateDevice";
+
             m_d3d11Device = nullptr;
+            m_deviceContext = nullptr;
             UINT adapterIndex = 0;
 
             winrt::com_ptr<IDXGIAdapter1> adapter;
@@ -133,6 +145,11 @@ namespace winrt::Telegram::Native::Media::implementation
                     break;
                 }
 
+                // put() overwrites without releasing, so anything a failed attempt left behind has
+                // to go before the next adapter is tried.
+                m_d3d11Device = nullptr;
+                m_deviceContext = nullptr;
+
                 adapter = nullptr;
                 adapterIndex++;
             }
@@ -141,6 +158,8 @@ namespace winrt::Telegram::Native::Media::implementation
             {
                 throw std::runtime_error("Could not create Direct3D11 device: No compatible adapter found.");
             }
+
+            stage = L"IDXGIDevice1";
 
             winrt::com_ptr<IDXGIDevice1> device;
             winrt::check_hresult(m_d3d11Device->QueryInterface(IID_PPV_ARGS(device.put())));
@@ -159,6 +178,8 @@ namespace winrt::Telegram::Native::Media::implementation
             swapChainDesc.Flags = 0;
             swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED;
 
+            stage = L"CreateSwapChainForComposition";
+
             winrt::check_hresult(dxgiFactory->CreateSwapChainForComposition(
                 m_d3d11Device.get(),
                 &swapChainDesc,
@@ -167,8 +188,12 @@ namespace winrt::Telegram::Native::Media::implementation
 
             device->SetMaximumFrameLatency(1);
 
+            stage = L"IDXGIDevice3";
+
             // This is necessary so we can call Trim() on suspend
             winrt::check_hresult(device->QueryInterface(IID_PPV_ARGS(m_device3.put())));
+
+            stage = L"IDXGISwapChain2";
 
             winrt::check_hresult(m_swapChain->QueryInterface(IID_PPV_ARGS(m_swapChain2.put())));
 
@@ -186,11 +211,20 @@ namespace winrt::Telegram::Native::Media::implementation
 
             return true;
         }
+        catch (winrt::hresult_error const& ex)
+        {
+            LOGGER_ERROR(L"{} failed: 0x{:08X}, {}", stage, static_cast<uint32_t>(ex.code()), ex.message().c_str());
+            Close();
+        }
+        catch (std::exception const& ex)
+        {
+            LOGGER_ERROR(L"{} failed: {}", stage, winrt::to_hstring(ex.what()).c_str());
+            Close();
+        }
         catch (...)
         {
+            LOGGER_ERROR(L"{} failed", stage);
             Close();
-            // TODO: Add logging
-            // Telegram::Logger::Error(ex.ToString());
         }
 
         return false;

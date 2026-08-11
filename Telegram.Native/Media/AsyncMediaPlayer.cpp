@@ -40,12 +40,23 @@ namespace winrt::Telegram::Native::Media::implementation
             m_context = AsyncMediaPlayerSwapChain(true);
         }
 
-        if (m_context)
+        // A swap chain that failed to come up is not a reason to fail construction: players are
+        // created from XAML Loaded handlers, so throwing here is an unhandled exception, and the
+        // Direct3D device can legitimately be unavailable while the display driver is resetting.
+        // Play audio only instead -- AsyncMediaPlayerSwapChain::Create logs why it failed.
+        bool video = true;
+
+        if (m_context && m_context.IsLoaded())
         {
             for (const auto& opt : m_context.SwapChainOptions())
             {
                 argsStorage.push_back(winrt::to_string(opt));
             }
+        }
+        else if (m_context)
+        {
+            LOGGER_ERROR(L"swap chain unavailable, playing without video");
+            video = false;
         }
 
         argsStorage.push_back("--aout=winstore");
@@ -62,7 +73,7 @@ namespace winrt::Telegram::Native::Media::implementation
             argsStorage.push_back("--no-audio");
         }
 
-        if ((mode & AsyncMediaPlayerMode::Video) == AsyncMediaPlayerMode::None)
+        if ((mode & AsyncMediaPlayerMode::Video) == AsyncMediaPlayerMode::None || !video)
         {
             argsStorage.push_back("--no-video");
         }
