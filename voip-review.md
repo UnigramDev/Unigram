@@ -125,12 +125,15 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   deferring twice. Both halves fixed: `_done = nullptr` after firing in all three task
   impls, and the missing `return`.
 
-- [ ] **`OnMediaChannelDescriptionsRequested` can double-add a description** —
+- [x] **`OnMediaChannelDescriptionsRequested` can double-add a description** —
   `VoipGroupCall.cs:952-962`
 
-  When any ssrc was unknown, the second pass walks *all* of `AudioSourceIds` again and
-  re-adds the ones the first pass already added. Harmless today only because tgcalls
-  requests a single ssrc at a time, which the comment above it relies on.
+  When any ssrc was unknown, the second pass walked *all* of `AudioSourceIds` again and
+  re-added the ones the first pass had already resolved. It only stayed harmless because
+  tgcalls asks for one ssrc at a time — the assumption the comment above it leans on.
+
+  The second pass now walks `unknownSources`, which is both correct and the smaller loop:
+  it no longer re-reads the `IVector` across the ABI either.
 
   Note while here: tgcalls never calls `cancel()` on these tasks (no `cancel` call exists
   in `GroupInstanceCustomImpl.cpp`), so the `cancel()` overrides are dead code. What keeps

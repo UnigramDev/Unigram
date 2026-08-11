@@ -959,9 +959,12 @@ namespace Telegram.Services.Calls
 
                 knownSources = participants.ToDictionary();
 
-                foreach (var ssrc in args.AudioSourceIds)
+                // Only the ones that were missing: the first pass already added every
+                // source it could resolve, and walking the whole list again would add
+                // those a second time.
+                foreach (var ssrc in unknownSources)
                 {
-                    if (knownSources.TryGetValue((int)ssrc, out GroupCallParticipant participant))
+                    if (knownSources.TryGetValue(ssrc, out GroupCallParticipant participant))
                     {
                         result.Add(new VoipMediaChannelDescription
                         {
