@@ -196,14 +196,22 @@ namespace winrt::Telegram::Native::Calls::implementation
             {
                 auto broadcastPart = tgcalls::BroadcastPart();
 
+                // Both timestamps belong on every status, not just Success: NotReady is
+                // precisely where tgcalls reads responseTimestamp, to work out where to
+                // restart a stream that has not begun yet.
+                //
+                // And it reads it in seconds — it is the one value in this API that is
+                // not milliseconds, so the conversion happens here rather than leaving
+                // the delegate to disagree with its neighbours about units.
+                broadcastPart.responseTimestamp = response / 1000.0;
+                broadcastPart.timestampMilliseconds = time;
+
                 if (filePart && filePart.Size() > 0)
                 {
                     auto bytes = std::vector<uint8_t>(filePart.Size());
                     filePart.GetMany(0, bytes);
 
                     broadcastPart.data = std::move(bytes);
-                    broadcastPart.responseTimestamp = response;
-                    broadcastPart.timestampMilliseconds = time;
                     broadcastPart.status = tgcalls::BroadcastPart::Status::Success;
                 }
                 else

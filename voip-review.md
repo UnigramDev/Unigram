@@ -193,6 +193,22 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   copy with it (the P3 item below) since it was the same five lines: `GetMany` straight
   into the destination instead of an iterator copy followed by a `memcpy`.
 
+- [x] **`responseTimestamp` was only set on the `Success` path** — `VoipGroupManager.h:189-207`
+
+  Found by re-reviewing the commit above, which is also what made it matter: `NotReady` is
+  *precisely* the status tgcalls reads `responseTimestamp` on, to decide where to restart a
+  stream that has not begun yet (`StreamingMediaContext.cpp:857-860`). It arrived as 0. The
+  caller had been supplying it all along (`VoipGroupCall.cs:886`) and we dropped it.
+
+  Two bugs in one line, because the field is also in **seconds** while every other timestamp
+  in this API is milliseconds — tgcalls does `responseTimestamp * 1000.0` to get back to ms.
+  We passed `UnixTimeMilliseconds` straight through, 1000x too large. Converted at the
+  tgcalls boundary rather than changing the delegate, so the WinRT surface stays
+  consistently milliseconds: `requestCurrentTime` genuinely is ms
+  (`StreamingMediaContext.cpp:643`), so this one field was the odd one out, not the caller.
+
+  **Arithmetic is conclusive, behaviour is not — wants a live stream before trusting it.**
+
 ## P2 — lifetime and threading
 
 - [x] **Close the E2E delegate window** — carried over from P0 → `5356ebabb`
