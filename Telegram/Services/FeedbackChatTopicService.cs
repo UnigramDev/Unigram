@@ -111,6 +111,10 @@ namespace Telegram.Services
                 if (id == long.MaxValue)
                 {
                     yield return new DirectMessagesChatTopic(_chatId, 0, null, long.MaxValue, true, false, 0, 0, 0, 0, null, null);
+
+                    // The synthetic row is not a topic. Harmless here today only because this
+                    // GetTopic is cache-only, unlike the forum one that would fetch.
+                    continue;
                 }
 
                 var topic = GetTopic(id);

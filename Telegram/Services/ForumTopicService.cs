@@ -232,6 +232,11 @@ namespace Telegram.Services
                     {
                         yield return new ForumTopic(new ForumTopicInfo(_chatId, 0, Strings.AllTopicsShort, new ForumTopicIcon(), 0, null, false, false, false, false, false), null, long.MaxValue, false, 0, 0, 0, 0, 0, 0, new ChatNotificationSettings(), null);
                     }
+
+                    // This id is the synthetic row above, not a topic. Falling through asked
+                    // the server for topic 2147483647, and the miss then sat in
+                    // _pendingNewTopics for the life of the service.
+                    continue;
                 }
 
                 var topic = GetTopic(id);

@@ -481,7 +481,8 @@ method, and from the UI thread through `TopicListViewModel.cs:691`, `:907`, `:91
       does with `Chat` and `User`. This fixes container corruption, which is the part that
       spins forever; object-level tearing is a wider design question than one class.
 
-- [ ] **F3 · P1 · `GetTopics` is missing a `continue`** — `:189-199` **[live]**
+- [x] **F3 · P1 · `GetTopics` is missing a `continue`** — `:189-199` **[live]**
+      → fixed in the commit that checked this box, in both services
 
       For `id == int.MaxValue` it yields the synthetic "All topics" row and then *falls
       through* to `GetTopic(int.MaxValue)`, which adds `int.MaxValue` to `_pendingNewTopics`
@@ -490,10 +491,9 @@ method, and from the UI thread through `TopicListViewModel.cs:691`, `:907`, `:91
       round trip per forum opened plus a permanently poisoned pending entry, not a per-frame
       storm.
 
-      **Note the dependency on F4**: "not a per-frame storm" is only true because a 4xx
-      leaves the pending entry in place. F4 was fixed with that explicitly in mind rather
-      than by accident, but anyone loosening the retry rule there turns this item into one
-      request per enumeration. `DirectMessagesChatTopicService.GetTopics` has the identical omission
+      **The dependency on F4 is now moot for this path** — the request is no longer made at
+      all — but it still holds in general: if some other id ever fails to resolve, F4's rule
+      is what stops it being asked for once per enumeration. `DirectMessagesChatTopicService.GetTopics` has the identical omission
       (`FeedbackChatTopicService.cs:113-117`); it is harmless there today only because that
       `GetTopic` doesn't fetch.
 
@@ -577,11 +577,24 @@ method, and from the UI thread through `TopicListViewModel.cs:691`, `:907`, `:91
       unpicking it means restructuring the batch load, which is a different change from
       making the collections safe.
 
-- [ ] **F8 · P2 · `GetTopics` allocates a fresh synthetic topic per enumeration** — `:193`, `:197`
+- [x] **~~F8 · P2 · `GetTopics` allocates a fresh synthetic topic per enumeration~~ — closed: caching it would pin the language** — `:193`, `:197`
 
       `ForumTopic` + `ForumTopicInfo` + `ForumTopicIcon` + `ChatNotificationSettings` — four
-      allocations every time the topic list enumerates, on a UI path. It is a constant; hoist
-      it to a field built once per service.
+      allocations every time the topic list enumerates. The original wording called it "a
+      constant; hoist it to a field built once per service." **It is not a constant.**
+
+      Its label is `Strings.AllTopicsShort` or `Strings.BotForumNewTopic`, and
+      `Strings.AllTopicsShort => Resource.GetString("AllTopicsShort")` is a live lookup on
+      every access. The app handles `UpdateLanguagePackStrings` at runtime
+      (`ClientService.cs:3859`), and a `ForumTopicService` lives in `_forums` until logout —
+      so a hoisted field would show the *previous* language's label for the rest of the
+      session after an in-app language change.
+
+      Four allocations against a topic-list enumeration rate, versus a visible wrong-language
+      string. Not worth it. Left as it is.
+
+      (The two-branch `if`/`else` also matters and should stay: only the branch taken
+      realizes its resource string.)
 
 - [ ] **F9 · P3 · `ViewMessages` throws on an empty list** — `:87` **[latent]**
 
