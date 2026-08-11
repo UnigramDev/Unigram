@@ -221,6 +221,11 @@ namespace winrt::Telegram::Native::Calls::implementation
         m_impl = tgcalls::Meta::Create(descriptorImpl.version, std::move(descriptorImpl));
     }
 
+    VoipManager::~VoipManager()
+    {
+        Stop();
+    }
+
     void VoipManager::Stop()
     {
         if (m_impl)

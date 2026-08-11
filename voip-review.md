@@ -274,10 +274,10 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   reaches managed code, which is what that change was undoing. Wants either the contract
   written down in the header or an atomic-swap teardown, not a mutex.
 
-- [ ] **No destructor on either manager**
+- [x] **No destructor on either manager**
 
-  Destruction without `Stop()` destroys the tgcalls instance without calling `stop()`, and
-  leaves the loopback capture running. Add a destructor that calls `Stop()`.
+  Destruction without `Stop()` destroyed the tgcalls instance without calling `stop()`, and
+  left the loopback capture running. Both destructors call `Stop()`, which is idempotent.
 
 - [ ] **`VoipManager::Start` has no re-entrancy guard** — calling it twice destroys the
   previous `Instance` without `stop()`.

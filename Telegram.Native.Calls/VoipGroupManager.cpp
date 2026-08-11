@@ -122,6 +122,11 @@ namespace winrt::Telegram::Native::Calls::implementation
         }
     }
 
+    VoipGroupManager::~VoipGroupManager()
+    {
+        Stop();
+    }
+
     void VoipGroupManager::Stop()
     {
         if (m_loopback)

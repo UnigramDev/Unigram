@@ -17,6 +17,11 @@ namespace winrt::Telegram::Native::Calls::implementation
     {
         VoipGroupManager(VoipGroupDescriptor descriptor);
 
+        // Stop is what the managed side calls, but nothing guarantees it gets there on
+        // every path, and destroying the instance without stopping it first leaves the
+        // loopback capture running.
+        ~VoipGroupManager();
+
         void Stop();
 
         void SetConnectionMode(VoipGroupConnectionMode connectionMode, bool keepBroadcastIfWasEnabled, bool isUnifiedBroadcast);

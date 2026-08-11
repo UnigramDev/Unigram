@@ -48,6 +48,10 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         VoipManager() = default;
 
+        // See VoipGroupManager: destroying the instance without stopping it skips
+        // tgcalls' own teardown.
+        ~VoipManager();
+
         void Start(VoipDescriptor descriptor);
         void Stop();
 
