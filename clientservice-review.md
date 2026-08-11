@@ -226,48 +226,70 @@ Ordered by measured reach, not by size of change.
       `ConcurrentDictionary`, and `GetChatFolders` uses `_chatFolders2`, a plain `Dictionary`
       under `_chatFoldersLock` — neither was ever in this item's scope.
 
-- [ ] **`ReaderWriterDictionary.Find` allocates per call** — `ReaderWriterDictionary.cs:133`
+- [x] **`ReaderWriterDictionary.Find` allocates per call** — `ReaderWriterDictionary.cs:133`
+      → fixed in the commit that checked this box
 
       `Values.FirstOrDefault(x => predicate(x))` — a closure wrapping the predicate plus a
       LINQ enumerator every call, to do what a `foreach` does allocation-free. All that
-      survives of the item above, and it needs no type change.
+      survives of the item above, and it needed no type change. `System.Linq` stays: `Values`
+      still uses `ToArray`.
 
-- [ ] **`GetChatFolders` — allocations and O(n² log n) per chat cell** — `ClientService.cs:1711` **[live]**
+- [x] **`GetChatFolders` — a closure per chat cell** — `ClientService.cs:1711` **[live]**
+      → fixed in the commit that checked this box
 
-      Called from `ChatCell.xaml.cs:1312` on every row update when tags are enabled. Per
-      call: a `List<ChatFolderInfo>`, a closure capturing `this`, and
-      `result.Sort((x, y) => _chatFolders.IndexOf(x) - _chatFolders.IndexOf(y))` — a linear
-      scan per comparison. The existing `// TODO: can this be improved?` is right.
+      Called from `ChatCell.xaml.cs:1312` on every row update when tags are enabled.
 
-      It doesn't need a sort. Iterate `_chatFolders` in its own order and keep the ones the
-      chat belongs to; the result is ordered by construction and `_chatFolders2` drops out
-      of this path.
+      **The "O(n² log n)" in the original wording was overstated**, the same mistake as the
+      item above it: `_chatFolders` holds at most a few dozen entries and a chat is usually
+      in one or two, so `Sort` runs about one comparison. And when the chat is in no folder —
+      the common case — `result` stays null, nothing is allocated and the sort never runs.
 
-- [ ] **`OnResult` is 105 sequential type tests** — `ClientService.cs:3147-4047` **[live]**
+      What was real: `result.Sort((x, y) => …)` allocated a fresh closure over `this` on
+      every call that produced a result. Now a `Comparison<ChatFolderInfo>` field created
+      once, and the sort is skipped entirely below two elements.
 
-      Roslyn emits type patterns as a chain of `isinst`, so cost is proportional to
-      position. The ordering is partly deliberate — `UpdateChatPosition` and
-      `UpdateChatLastMessage` are first — but `UpdateNewMessage` sits at `:4017`, roughly
-      case 95 of 105, and is one of the highest-frequency updates in the protocol. Every
-      incoming message pays ~95 type checks on the thread that must not fall behind.
+      Rewriting it to walk `_chatFolders` in order instead — the "no sort at all" idea in the
+      original wording — would have been *slower*: it turns the common zero-folder case from
+      "scan the chat's two lists" into "scan every folder."
 
-      Cheap: hoist `UpdateNewMessage`, `UpdateChatAction`, `UpdateUserStatus`,
-      `UpdateMessageInteractionInfo`, `UpdateMessageEdited` to the top.
-      Better: a static `Dictionary<Type, Action<ClientService, Object>>` keyed on
-      `update.GetType()` — one hash lookup regardless of case count.
+- [x] **~~`OnResult` is 105 sequential type tests~~ — measured, not worth the dispatch table** — `ClientService.cs:3147-4047`
 
-- [ ] **`GetChats` has a side effect inside the enumerator** — `ClientService.cs:2245` **[live]**
+      Roslyn emits type patterns as a chain of `isinst`, so cost is proportional to position,
+      and `UpdateNewMessage` sits at roughly case 95 of 105. All true, and all irrelevant at
+      the rate this runs.
 
-      `UpdateMessageTopicNewChat` (`ForumTopics.cs:126`) runs per chat, per enumeration: a
-      supergroup lookup, two `ContainsKey` calls, and possibly the construction of a
-      `ForumTopicService`. This runs during chat-list rendering. Constructing services is
-      not something an enumeration should do — it belongs on `UpdateNewChat` /
-      `UpdateSupergroup`, where the state actually changes.
+      An `isinst` against a sealed type is a type-handle compare, so ~105 of them is on the
+      order of 100–200 ns. Updates arrive at maybe tens per second in normal use, and
+      thousands per second briefly during an initial sync. Even at 10 k/s that is **2 ms per
+      second, 0.2 % of the receive thread** — and normal use is a hundredth of that.
 
-      `GetRecentlyOpenedChats` (`:1397`) compounds it by running that enumeration while
-      holding `_recentChatsLock`.
+      Same trap as the `ConcurrentDictionary` item: a real per-operation cost, no rate behind
+      it. The `Dictionary<Type, …>` dispatch table is not worth the churn. Hoisting the five
+      hottest cases is five lines and free if anyone is in there anyway, but it buys nothing
+      measurable either.
 
-- [ ] **Serial round trips where a fan-out belongs** **[live]**
+- [x] **~~`GetChats` has a side effect inside the enumerator~~ — load-bearing, left alone** — `ClientService.cs:2245`
+
+      `UpdateMessageTopicNewChat` (`ForumTopics.cs:126`) runs per chat, per enumeration, and
+      may construct a `ForumTopicService`. Constructing services from an enumeration is a
+      genuine smell, and the original wording said it belongs on `UpdateNewChat` /
+      `UpdateSupergroup` instead.
+
+      **It can't move to `UpdateSupergroup` as things stand.** That update carries a
+      supergroup id, and there is no supergroup→chat index to get back to the `Chat` it needs
+      — only `_usersToChats` exists. So `GetChats` is the only path that notices a supergroup
+      that *became* a forum after its `updateNewChat`. Removing it would break late forum
+      conversion.
+
+      The cost is also smaller than the wording implied: for a non-supergroup — most of the
+      list — it is one type check and nothing else.
+
+      Worth revisiting only alongside a supergroup→chat index, which is a bigger change than
+      this buys. `GetRecentlyOpenedChats` (`:1397`) running that enumeration under
+      `_recentChatsLock` is still ugly and still true.
+
+- [x] **Serial round trips where a fan-out belongs** **[live]**
+      → fixed in the commit that checked this box
 
       | Method | Line | Items in practice |
       |---|---|---|
@@ -276,17 +298,36 @@ Ordered by measured reach, not by size of change.
       | `GetCustomEmojiStickerSets` | `:1204` | one per distinct set |
       | `GetMessageEffectsAsync` | `:1250` | one per uncached effect |
 
-      `GetMessagePropertiesAsync` is the visible one: selecting 100 messages costs 100
-      sequential request/response cycles before the selection toolbar can decide what's
-      enabled (`DialogViewModel.Messages.cs:586`, `ChatView.xaml.cs:3085`, and 8 more).
-      TDLib handles concurrent requests fine; `Task.WhenAll` over the cache misses collapses
-      this to one round-trip latency.
+      **The one P2 item the rate check strengthens rather than weakens**, because it is
+      latency, not throughput: selecting 100 messages cost 100 sequential request/response
+      cycles before the selection toolbar could decide what was enabled
+      (`DialogViewModel.Messages.cs:586`, `ChatView.xaml.cs:3085`, and 8 more). Nothing else
+      in P2 is on a path a person waits on.
 
-- [ ] **Property getters that fire network requests** — `ClientService.cs:1449`, `:1463` **[live]**
+      All four now issue their requests together and `Task.WhenAll` them. Notes:
 
-      `OwnedStarCount` and `OwnedGramCount` send a request on *every* read until the update
-      lands — and they are read from bindings, which re-evaluate. A `_requested` flag fixes
-      it; making the fetch explicit rather than a side effect of a getter fixes it better.
+      - `GetAllReactionsAsync` became `GetReactionsAsync(_activeReactions)` — it was a
+        verbatim copy.
+      - `GetMessageEffectsAsync` keeps its results **in request order**, indexed by position,
+        because the effect drawer and the reaction menu both display them in the order they
+        asked for. The obvious rewrite — cached first, fetched appended — silently reorders
+        them.
+      - `_cachedReactions` and `_effects` are still written after the `WhenAll` in a single
+        loop on one thread, so this does not worsen the open item about `_cachedReactions`
+        being an unsynchronized `Dictionary`.
+      - `GetReactionsAsync` now skips duplicate emoji in its input, which sequential awaits
+        used to absorb via the cache.
+
+- [x] **Property getters that fire network requests** — `ClientService.cs:1449`, `:1463` **[live]**
+      → fixed in the commit that checked this box
+
+      `OwnedStarCount` and `OwnedGramCount` sent a request on *every* read until the update
+      landed — and they are read from bindings, which re-evaluate. Now guarded by
+      `_requestedStarCount` / `_requestedGramCount`, both reset in `Clear()` so a new
+      authorization fetches again.
+
+      Making the fetch explicit rather than a side effect of a property getter would still be
+      better, but that changes every call site.
 
 - [ ] **Sync filesystem I/O on the receive thread** — `ClientService.cs:3015`, `Files.cs:379` **[live]**
 
@@ -294,13 +335,16 @@ Ordered by measured reach, not by size of change.
       every file whose download reports complete — a synchronous syscall on the single
       thread draining `td_receive`, on a path that fires constantly while media loads.
 
-- [ ] **Unbounded session-lifetime growth** — `Files.cs:78-80` **[live]**
+- [ ] **Unbounded session-lifetime growth** — `Files.cs:78-80` **[live, reduced]**
 
       `_explicitDownloads`, `_completedDownloads`, `_canceledDownloads` accumulate one entry
-      per file for the whole process lifetime — nothing removes from them except an explicit
-      cancel, and they survive `Clear()` (see P1). `_files` (`ClientService.cs:348`) is
-      likewise never evicted; defensible for a singleton `File` cache, but worth being
-      deliberate about rather than incidental.
+      per file — nothing removes from them except an explicit cancel.
+
+      **Half-closed by the `Clear()` fix in P1**: they no longer survive an authorization
+      change. What remains is growth *within* one session, which for a long-running client on
+      a media-heavy account is still unbounded, just bounded by uptime rather than by process
+      lifetime. `_files` (`ClientService.cs:348`) is likewise never evicted; defensible for a
+      singleton `File` cache, but worth being deliberate about rather than incidental.
 
 ---
 

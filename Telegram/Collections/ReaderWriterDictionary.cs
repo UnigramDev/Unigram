@@ -135,7 +135,17 @@ namespace Telegram.Collections
             _lock.EnterReadLock();
             try
             {
-                return _dictionary.Values.FirstOrDefault(x => predicate(x));
+                // Not FirstOrDefault: wrapping the predicate in a lambda allocated a closure
+                // and an enumerator on every call, for what the struct enumerator does free.
+                foreach (var value in _dictionary.Values)
+                {
+                    if (predicate(value))
+                    {
+                        return value;
+                    }
+                }
+
+                return default;
             }
             finally
             {

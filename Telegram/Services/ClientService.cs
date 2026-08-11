@@ -1013,6 +1013,8 @@ namespace Telegram.Services
             AvailableProfileColors = null;
             _ownedStarCount = null;
             _ownedGramCount = null;
+            _requestedStarCount = false;
+            _requestedGramCount = false;
             DefaultPaidReactionType = new PaidReactionTypeRegular();
             AgeVerificationParameters = null;
             SavedMessagesTopicCount = 0;
@@ -1226,11 +1228,19 @@ namespace Telegram.Services
                     setIds.Add(sticker.SetId);
                 }
 
-                var result = new List<StickerSetInfo>();
+                var tasks = new List<Task<Object>>(setIds.Count);
 
                 foreach (var setId in setIds)
                 {
-                    var response = await SendAsync(new GetStickerSet(setId));
+                    tasks.Add(SendAsync(new GetStickerSet(setId)));
+                }
+
+                // Together rather than in turn: one round trip per distinct set otherwise.
+                var responses = await Task.WhenAll(tasks);
+                var result = new List<StickerSetInfo>(responses.Length);
+
+                foreach (var response in responses)
+                {
                     if (response is StickerSet stickerSet)
                     {
                         result.Add(stickerSet.ToInfo());
@@ -1262,29 +1272,69 @@ namespace Telegram.Services
 
         public async Task<IList<MessageEffect>> GetMessageEffectsAsync(IEnumerable<long> effectIds)
         {
-            IList<MessageEffect> result = null;
+            List<long> ids = null;
 
             foreach (var id in effectIds)
             {
-                if (_effects.TryGetValue(id, out MessageEffect effect))
+                ids ??= new List<long>();
+                ids.Add(id);
+            }
+
+            if (ids == null)
+            {
+                return Array.Empty<MessageEffect>();
+            }
+
+            // Indexed by request position, because the effect drawer and the reaction menu
+            // both display these in the order they asked for.
+            var effects = new MessageEffect[ids.Count];
+
+            List<int> missing = null;
+            List<Task<Object>> tasks = null;
+
+            for (int i = 0; i < ids.Count; i++)
+            {
+                if (_effects.TryGetValue(ids[i], out MessageEffect effect))
                 {
-                    result ??= new List<MessageEffect>();
-                    result.Add(effect);
+                    effects[i] = effect;
                 }
                 else
                 {
-                    var response = await SendAsync(new GetMessageEffect(id));
-                    if (response is MessageEffect item)
-                    {
-                        _effects[id] = item;
+                    missing ??= new List<int>();
+                    tasks ??= new List<Task<Object>>();
 
-                        result ??= new List<MessageEffect>();
-                        result.Add(item);
+                    missing.Add(i);
+                    tasks.Add(SendAsync(new GetMessageEffect(ids[i])));
+                }
+            }
+
+            if (tasks != null)
+            {
+                // Together rather than in turn: one round trip per uncached effect otherwise.
+                var responses = await Task.WhenAll(tasks);
+
+                for (int i = 0; i < responses.Length; i++)
+                {
+                    if (responses[i] is MessageEffect item)
+                    {
+                        _effects[item.Id] = item;
+                        effects[missing[i]] = item;
                     }
                 }
             }
 
-            return result ?? Array.Empty<MessageEffect>();
+            List<MessageEffect> result = null;
+
+            foreach (var effect in effects)
+            {
+                if (effect != null)
+                {
+                    result ??= new List<MessageEffect>(effects.Length);
+                    result.Add(effect);
+                }
+            }
+
+            return (IList<MessageEffect>)result ?? Array.Empty<MessageEffect>();
         }
 
         public MessageEffect LoadMessageEffect(long effectId, bool preload)
@@ -1459,13 +1509,23 @@ namespace Telegram.Services
 
         public long UnixTimeMilliseconds => (long)(UnixTime * 1000);
 
+        // These two are read from bindings, which re-evaluate. Without the guards the getter
+        // sent a fresh request on every read until the update came back.
+        private bool _requestedStarCount;
+        private bool _requestedGramCount;
+
         public StarAmount OwnedStarCount
         {
             get
             {
                 if (_ownedStarCount == null)
                 {
-                    Send(new GetStarTransactions(MyId, string.Empty, null, string.Empty, 1));
+                    if (!_requestedStarCount)
+                    {
+                        _requestedStarCount = true;
+                        Send(new GetStarTransactions(MyId, string.Empty, null, string.Empty, 1));
+                    }
+
                     return new StarAmount(0, 0);
                 }
 
@@ -1479,7 +1539,12 @@ namespace Telegram.Services
             {
                 if (_ownedGramCount == null)
                 {
-                    Send(new GetTonTransactions(null, string.Empty, 1));
+                    if (!_requestedGramCount)
+                    {
+                        _requestedGramCount = true;
+                        Send(new GetTonTransactions(null, string.Empty, 1));
+                    }
+
                     return 0;
                 }
 
@@ -1721,9 +1786,17 @@ namespace Telegram.Services
             return string.Empty;
         }
 
+        // Allocated once. As a lambda inside GetChatFolders this was a fresh closure on every
+        // chat cell that showed a folder tag.
+        private Comparison<ChatFolderInfo> _chatFolderComparison;
+
+        private int CompareChatFolders(ChatFolderInfo x, ChatFolderInfo y)
+        {
+            return _chatFolders.IndexOf(x) - _chatFolders.IndexOf(y);
+        }
+
         public IList<ChatFolderInfo> GetChatFolders(Chat chat)
         {
-            // TODO: can this be improved?
             List<ChatFolderInfo> result = null;
 
             lock (_chatFoldersLock)
@@ -1747,7 +1820,12 @@ namespace Telegram.Services
 
                 if (result != null)
                 {
-                    result.Sort((x, y) => _chatFolders.IndexOf(x) - _chatFolders.IndexOf(y));
+                    if (result.Count > 1)
+                    {
+                        _chatFolderComparison ??= CompareChatFolders;
+                        result.Sort(_chatFolderComparison);
+                    }
+
                     return result;
                 }
             }
@@ -1760,33 +1838,17 @@ namespace Telegram.Services
             return _cachedReactions.TryGetValue(emoji, out value);
         }
 
-        public async Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync()
+        public Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync()
         {
-            var result = new Dictionary<string, EmojiReaction>();
-
-            foreach (var emoji in _activeReactions)
-            {
-                if (_cachedReactions.TryGetValue(emoji, out EmojiReaction cached))
-                {
-                    result[emoji] = cached;
-                }
-                else
-                {
-                    var response = await SendAsync(new GetEmojiReaction(emoji));
-                    if (response is EmojiReaction reaction)
-                    {
-                        _cachedReactions[emoji] = reaction;
-                        result[emoji] = reaction;
-                    }
-                }
-            }
-
-            return result;
+            return GetReactionsAsync(_activeReactions);
         }
 
         public async Task<IDictionary<string, EmojiReaction>> GetReactionsAsync(IEnumerable<string> reactions)
         {
             var result = new Dictionary<string, EmojiReaction>();
+
+            List<string> missing = null;
+            List<Task<Object>> tasks = null;
 
             foreach (var emoji in reactions)
             {
@@ -1794,14 +1856,31 @@ namespace Telegram.Services
                 {
                     result[emoji] = cached;
                 }
-                else
+                else if (missing == null || !missing.Contains(emoji))
                 {
-                    var response = await SendAsync(new GetEmojiReaction(emoji));
-                    if (response is EmojiReaction reaction)
-                    {
-                        _cachedReactions[emoji] = reaction;
-                        result[emoji] = reaction;
-                    }
+                    missing ??= new List<string>();
+                    tasks ??= new List<Task<Object>>();
+
+                    missing.Add(emoji);
+                    tasks.Add(SendAsync(new GetEmojiReaction(emoji)));
+                }
+            }
+
+            if (tasks == null)
+            {
+                return result;
+            }
+
+            // Requested together rather than one after another: this is called with the whole
+            // active set, so awaiting each in turn cost one round trip per emoji.
+            var responses = await Task.WhenAll(tasks);
+
+            for (int i = 0; i < responses.Length; i++)
+            {
+                if (responses[i] is EmojiReaction reaction)
+                {
+                    _cachedReactions[missing[i]] = reaction;
+                    result[missing[i]] = reaction;
                 }
             }
 
@@ -1812,12 +1891,33 @@ namespace Telegram.Services
         {
             var map = new Dictionary<MessageId, MessageProperties>();
 
+            List<MessageId> pending = null;
+            List<Task<Object>> tasks = null;
+
             foreach (var messageId in messageIds)
             {
-                var properties = await SendAsync(new GetMessageProperties(messageId.ChatId, messageId.Id)) as MessageProperties;
-                if (properties != null)
+                pending ??= new List<MessageId>();
+                tasks ??= new List<Task<Object>>();
+
+                pending.Add(messageId);
+                tasks.Add(SendAsync(new GetMessageProperties(messageId.ChatId, messageId.Id)));
+            }
+
+            if (tasks == null)
+            {
+                return map;
+            }
+
+            // A selection holds up to a hundred messages and nothing can decide which actions
+            // to offer until every one of them has answered, so these go out together. Awaiting
+            // them in turn made the menu wait for a hundred sequential round trips.
+            var responses = await Task.WhenAll(tasks);
+
+            for (int i = 0; i < responses.Length; i++)
+            {
+                if (responses[i] is MessageProperties properties)
                 {
-                    map[messageId] = properties;
+                    map[pending[i]] = properties;
                 }
             }
 
