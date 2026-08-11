@@ -628,9 +628,16 @@ namespace Telegram.Services
                 return;
             }
 
-            // Important
-            // Maybe update last message
-
+            // One delete can span several topics — clearing a chat's history, or deleting
+            // everything one member ever sent — and each of them needs its own last message
+            // back. Refreshing only the first left the rest showing a preview of a message
+            // that no longer exists, sorted by it too.
+            //
+            // Each _messages entry is handled at most once, because the entry is removed as
+            // it is handled and a later id in the batch resolves to a different one. Note
+            // that is per entry, not per topic: LoadForumTopicsAsync can leave a stale entry
+            // behind for a topic it reloads, which costs a redundant refresh here, never a
+            // wrong one.
             foreach (long messageId in messageIds)
             {
                 if (TryGetTopicByMessage(messageId, out ForumTopic topic))
@@ -689,8 +696,6 @@ namespace Telegram.Services
                                 UpdatePinnedTopics();
                             }
                         });
-
-                        break;
                     }
                 }
             }

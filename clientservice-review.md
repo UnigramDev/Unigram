@@ -520,12 +520,34 @@ method, and from the UI thread through `TopicListViewModel.cs:691`, `:907`, `:91
       All three call sites pass it; the one inside `UpdateDeleteMessages` names its lambda
       parameter `inner` because the enclosing callback already binds `response`.
 
-- [ ] **F5 · P1 · `UpdateDeleteMessages` stops at the first affected topic** — `:600` **[live]**
+- [x] **F5 · P1 · `UpdateDeleteMessages` stops at the first affected topic** — `:600` **[live]**
+      → fixed in the commit that checked this box
 
-      The `break` is inside `foreach (long messageId in messageIds)`, after refreshing the
+      The `break` sat inside `foreach (long messageId in messageIds)`, after refreshing the
       one topic whose last message was deleted. A delete batch spanning several topics —
-      deleting all of a user's messages, clearing history — refreshes only one of them; the
-      others keep a stale last-message preview and a stale sort order.
+      deleting all of a member's messages, clearing history — refreshed only one of them; the
+      others kept a stale last-message preview and a stale sort order.
+
+      `break` removed. Each `_messages` entry is still handled at most once, because the entry
+      is removed as it is handled, so a later id in the batch resolves to a different one.
+
+      Accepted cost: a delete that takes out the last message of *n* topics now issues *n*
+      `getForumTopic` calls instead of one. That is bounded by the number of topics actually
+      affected, and the alternative — one `getForumTopics` reload — is a much larger change
+      to the batch-load path.
+
+- [ ] **F14 · P2 · `LoadForumTopicsAsync` can leave a stale `_messages` entry** — `:345`
+
+      Found while checking F5's safety. It does `_topics[id] = topic` with a **fresh**
+      `ForumTopic` instance and then `_messages[topic.LastMessage.Id] = topic`, without
+      removing whatever key the previously cached instance was registered under. Every other
+      writer (`UpdateLastMessage`, `UpdateMessageSendSucceeded`, the `UpdateDeleteMessages`
+      callback) removes the old key first; this one doesn't.
+
+      So after a reload, `_messages` can hold two keys for one topic, the stale one pointing
+      at a discarded instance. Consequences are mild — a redundant `getForumTopic` in F5's
+      loop, and updates applied to an object no longer in `_topics` — which is why the
+      one-entry-per-topic property can't be relied on, and F5's comment says so explicitly.
 
 - [ ] **F6 · P2 · Eight `Update*` handlers are lookup-then-nothing** — `:659-793`
 
