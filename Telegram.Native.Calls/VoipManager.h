@@ -8,7 +8,6 @@
 #include "v2/InstanceV2Impl.h"
 #include "v2/InstanceV2ReferenceImpl.h"
 #include "VideoCaptureInterface.h"
-#include "SignalingDataEmittedEventArgs.h"
 #include "RemoteMediaStateUpdatedEventArgs.h"
 #include "VoipVideoOutput.h"
 
@@ -104,7 +103,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         //TrafficStats getTrafficStats();
         //PersistentState getPersistentState();
 
-        void ReceiveSignalingData(IVector<uint8_t> const data);
+        void ReceiveSignalingData(array_view<uint8_t const> data);
         //virtual void setVideoCapture(std::shared_ptr<VideoCaptureInterface> videoCapture) = 0;
         void SetVideoCapture(Telegram::Native::Calls::VoipCaptureBase videoCapture);
         void SetRequestedVideoAspect(float aspect);
@@ -141,15 +140,17 @@ namespace winrt::Telegram::Native::Calls::implementation
             float> const& value);
         void RemotePrefferedAspectRatioUpdated(winrt::event_token const& token);
 
-        winrt::event_token SignalingDataEmitted(Windows::Foundation::TypedEventHandler<
-            winrt::Telegram::Native::Calls::VoipManager,
-            winrt::Telegram::Native::Calls::SignalingDataEmittedEventArgs> const& value);
-        void SignalingDataEmitted(winrt::event_token const& token);
+        void SetSignalingDataEmitted(SignalingDataEmittedDelegate handler);
 
     private:
         std::unique_ptr<tgcalls::Instance> m_impl = nullptr;
 
         std::weak_ptr<VoipVideoOutput> m_incomingVideoOutput;
+
+        // Written from the UI thread, read from a tgcalls thread, so unlike the events
+        // below it does need guarding. Copied out rather than called under the lock.
+        std::mutex m_signalingLock;
+        SignalingDataEmittedDelegate m_signalingDataEmitted{ nullptr };
 
         bool m_isMuted = false;
 
@@ -183,9 +184,6 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipManager,
             float>> m_remotePrefferedAspectRatioUpdatedEventSource;
-        winrt::event<Windows::Foundation::TypedEventHandler<
-            winrt::Telegram::Native::Calls::VoipManager,
-            winrt::Telegram::Native::Calls::SignalingDataEmittedEventArgs>> m_signalingDataEmittedEventSource;
 
     };
 } // namespace winrt::Telegram::Native::Calls::implementation

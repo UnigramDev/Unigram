@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.props')" />
   <PropertyGroup Label="Globals">
@@ -218,9 +218,6 @@
       <DependentUpon>VoipManager.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="SignalingDataEmittedEventArgs.h">
-      <DependentUpon>SignalingDataEmittedEventArgs.idl</DependentUpon>
-    </ClInclude>
     <ClInclude Include="VoipScreenCapture.h">
       <DependentUpon>VoipScreenCapture.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -432,9 +429,6 @@
     <ClCompile Include="rnnoise\src\rnn_reader.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SignalingDataEmittedEventArgs.cpp">
-      <DependentUpon>SignalingDataEmittedEventArgs.idl</DependentUpon>
-    </ClCompile>
     <ClCompile Include="VoipCallProtocol.cpp">
       <DependentUpon>VoipCallProtocol.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -494,7 +488,6 @@
     </Midl>
     <Midl Include="MediaChannelDescriptionsRequestedEventArgs.idl" />
     <Midl Include="RemoteMediaStateUpdatedEventArgs.idl" />
-    <Midl Include="SignalingDataEmittedEventArgs.idl" />
     <Midl Include="Telegram.Native.Calls.idl" />
     <Midl Include="VoipCallProtocol.idl">
       <SubType>Designer</SubType>

@@ -395,14 +395,11 @@ namespace winrt::Telegram::Native::Calls::implementation
 
 
 
-    void VoipManager::ReceiveSignalingData(IVector<uint8_t> const data)
+    void VoipManager::ReceiveSignalingData(array_view<uint8_t const> data)
     {
         if (m_impl)
         {
-            auto bytes = std::vector<uint8_t>(data.Size());
-            data.GetMany(0, bytes);
-
-            m_impl->receiveSignalingData(bytes);
+            m_impl->receiveSignalingData(std::vector<uint8_t>(data.begin(), data.end()));
         }
     }
 
@@ -455,11 +452,27 @@ namespace winrt::Telegram::Native::Calls::implementation
         m_remotePrefferedAspectRatioUpdatedEventSource(*this, aspect);
     }
 
+    void VoipManager::SetSignalingDataEmitted(SignalingDataEmittedDelegate handler)
+    {
+        std::lock_guard const guard(m_signalingLock);
+        m_signalingDataEmitted = handler;
+    }
+
     void VoipManager::OnSignalingDataEmitted(std::vector<uint8_t> data)
     {
-        auto bytes = winrt::single_threaded_vector<uint8_t>(std::move(data));
-        auto args = winrt::make_self<SignalingDataEmittedEventArgs>(bytes);
-        m_signalingDataEmittedEventSource(*this, *args);
+        SignalingDataEmittedDelegate handler{ nullptr };
+
+        {
+            std::lock_guard const guard(m_signalingLock);
+            handler = m_signalingDataEmitted;
+        }
+
+        if (handler)
+        {
+            // The view is over tgcalls' own buffer; the projection copies it into the
+            // managed array once and nothing is allocated on this side.
+            handler(array_view<uint8_t const>(data.data(), data.data() + data.size()));
+        }
     }
 
 
@@ -545,19 +558,5 @@ namespace winrt::Telegram::Native::Calls::implementation
     void VoipManager::RemotePrefferedAspectRatioUpdated(winrt::event_token const& token)
     {
         m_remotePrefferedAspectRatioUpdatedEventSource.remove(token);
-    }
-
-
-
-    winrt::event_token VoipManager::SignalingDataEmitted(Windows::Foundation::TypedEventHandler<
-        winrt::Telegram::Native::Calls::VoipManager,
-        winrt::Telegram::Native::Calls::SignalingDataEmittedEventArgs> const& value)
-    {
-        return m_signalingDataEmittedEventSource.add(value);
-    }
-
-    void VoipManager::SignalingDataEmitted(winrt::event_token const& token)
-    {
-        m_signalingDataEmittedEventSource.remove(token);
     }
 } // namespace winrt::Telegram::Native::Calls::implementation

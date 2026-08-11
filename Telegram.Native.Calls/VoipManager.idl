@@ -1,12 +1,15 @@
 import "Telegram.Native.Calls.idl";
 import "RemoteMediaStateUpdatedEventArgs.idl";
-import "SignalingDataEmittedEventArgs.idl";
 import "VoipVideoCapture.idl";
 import "VoipDescriptor.idl";
 import "VoipCallProtocol.idl";
 
 namespace Telegram.Native.Calls
 {
+    // A plain delegate rather than an event: there is only ever one listener, and this
+    // way a packet costs no args object and no event bookkeeping.
+    delegate void SignalingDataEmittedDelegate(UInt8[] data);
+
     runtimeclass VoipManager
     {
         static VoipCallProtocol Protocol{ get; };
@@ -34,7 +37,7 @@ namespace Telegram.Native.Calls
         //TrafficStats getTrafficStats();
         //PersistentState getPersistentState();
 
-        void ReceiveSignalingData(Windows.Foundation.Collections.IVector<byte> data);
+        void ReceiveSignalingData(UInt8[] data);
         //virtual void setVideoCapture(std::shared_ptr<VideoCaptureInterface> videoCapture) = 0;
         void SetVideoCapture(VoipCaptureBase videoCapture);
         void SetRequestedVideoAspect(Single aspect);
@@ -49,6 +52,7 @@ namespace Telegram.Native.Calls
         event Windows.Foundation.TypedEventHandler<VoipManager, Boolean> RemoteBatteryLevelIsLowUpdated;
         event Windows.Foundation.TypedEventHandler<VoipManager, RemoteMediaStateUpdatedEventArgs> RemoteMediaStateUpdated;
         event Windows.Foundation.TypedEventHandler<VoipManager, Single> RemotePrefferedAspectRatioUpdated;
-        event Windows.Foundation.TypedEventHandler<VoipManager, SignalingDataEmittedEventArgs> SignalingDataEmitted;
+        // Set before Start, cleared after Stop — see SetEncryptDecrypt on the group manager.
+        void SetSignalingDataEmitted(SignalingDataEmittedDelegate handler);
     }
 } // namespace Telegram.Native.Calls

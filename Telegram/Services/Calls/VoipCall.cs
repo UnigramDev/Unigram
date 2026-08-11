@@ -176,7 +176,7 @@ namespace Telegram.Services.Calls
             Update(call, state);
         }
 
-        private readonly Queue<IList<byte>> _signalingData = new();
+        private readonly Queue<byte[]> _signalingData = new();
 
         private readonly object _managerLock = new();
         private VoipManager _manager;
@@ -360,7 +360,7 @@ namespace Telegram.Services.Calls
             ClientService.Send(new DiscardCall(Id, false, string.Empty, Duration, IsVideo, 0));
         }
 
-        public void ReceiveSignalingData(IList<byte> data)
+        public void ReceiveSignalingData(byte[] data)
         {
             lock (_managerLock)
             {
@@ -592,10 +592,9 @@ namespace Telegram.Services.Calls
             RemoteBatteryLevelIsLowChanged?.Invoke(this, new VoipCallRemoteBatteryLevelIsLowChangedEventArgs(remoteBatteryLevelIsLow));
         }
 
-        private void OnSignalingDataEmitted(VoipManager sender, SignalingDataEmittedEventArgs args)
+        private void OnSignalingDataEmitted(byte[] data)
         {
-            // TODO: Optimize IList<byte> to byte[]
-            ClientService.Send(new SendCallSignalingData(Id, args.Data.ToArray()));
+            ClientService.Send(new SendCallSignalingData(Id, data));
         }
 
         private void OnDeviceChanged(object sender, MediaDeviceChangedEventArgs e)
@@ -688,7 +687,9 @@ namespace Telegram.Services.Calls
             manager.AudioLevelUpdated += OnAudioLevelUpdated;
             manager.RemoteMediaStateUpdated += OnRemoteMediaStateUpdated;
             manager.RemoteBatteryLevelIsLowUpdated += OnRemoteBatteryLevelIsLowUpdated;
-            manager.SignalingDataEmitted += OnSignalingDataEmitted;
+
+            // Before Start: the instance can emit signaling data the moment it exists.
+            manager.SetSignalingDataEmitted(OnSignalingDataEmitted);
             manager.Start(descriptor);
 
             lock (_managerLock)
@@ -811,11 +812,14 @@ namespace Telegram.Services.Calls
                     _manager.AudioLevelUpdated -= OnAudioLevelUpdated;
                     _manager.RemoteMediaStateUpdated -= OnRemoteMediaStateUpdated;
                     _manager.RemoteBatteryLevelIsLowUpdated -= OnRemoteBatteryLevelIsLowUpdated;
-                    _manager.SignalingDataEmitted -= OnSignalingDataEmitted;
 
                     _manager.SetVideoCapture(null);
-
                     _manager.Stop();
+
+                    // After Stop, and for the same reason as the group call's encrypt
+                    // delegates: it has to outlive the instance, and clearing it breaks
+                    // the native to managed cycle that would otherwise leak the call.
+                    _manager.SetSignalingDataEmitted(null);
                     _manager = null;
                 }
             }

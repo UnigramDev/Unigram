@@ -418,28 +418,15 @@ namespace winrt::Telegram::Native::Calls::implementation
             return {};
         }
 
-        auto data = winrt::single_threaded_vector<uint8_t>(std::vector<uint8_t>(message));
+        // A view over the caller's buffer, so nothing is copied on this side: the
+        // projection marshals it straight into the managed array.
+        auto view = array_view<uint8_t const>(message.data(), message.data() + message.size());
 
-        if (encrypt)
-        {
-            data = encryptData(m_isScreencast ? VoipDataChannel::ScreenSharing : VoipDataChannel::Main, data, unencryptedPrefixSize);
-        }
-        else
-        {
-            data = decryptData(userId, data);
-        }
+        auto data = encrypt
+            ? encryptData(m_isScreencast ? VoipDataChannel::ScreenSharing : VoipDataChannel::Main, view, unencryptedPrefixSize)
+            : decryptData(userId, view);
 
-        if (data == nullptr)
-        {
-            return {};
-        }
-
-        // One call rather than two per byte: iterating an IVector goes through IIterator,
-        // and this runs on every frame of a conference call.
-        std::vector<uint8_t> result(data.Size());
-        data.GetMany(0, result);
-
-        return result;
+        return std::vector<uint8_t>(data.begin(), data.end());
     }
 
 

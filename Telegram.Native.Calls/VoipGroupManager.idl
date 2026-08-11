@@ -12,8 +12,10 @@ namespace Telegram.Native.Calls
 {
     delegate void EmitJsonPayloadDelegate(Int32 ssrc, String payload);
 
-    delegate Windows.Foundation.Collections.IVector<byte> EncryptGroupCallDataDelegate(VoipDataChannel dataChannel, Windows.Foundation.Collections.IVector<byte> data, Int32 unencryptedPrefixSize);
-    delegate Windows.Foundation.Collections.IVector<byte> DecryptGroupCallDataDelegate(Int64 userId, Windows.Foundation.Collections.IVector<byte> data);
+    // Arrays rather than IVector<byte>: this runs per frame, and the managed side hands
+    // the bytes straight to TDLib, which wants a byte[] to base64 into its JSON.
+    delegate UInt8[] EncryptGroupCallDataDelegate(VoipDataChannel dataChannel, UInt8[] data, Int32 unencryptedPrefixSize);
+    delegate UInt8[] DecryptGroupCallDataDelegate(Int64 userId, UInt8[] data);
 
     [default_interface]
     runtimeclass VoipGroupManager

@@ -400,36 +400,45 @@ namespace Telegram.Services.Calls
             }
         }
 
-        private IList<byte> EncryptData(VoipDataChannel dataChannel, IList<byte> data, int unencryptedPrefixSize)
+        private byte[] EncryptData(VoipDataChannel dataChannel, byte[] data, int unencryptedPrefixSize)
         {
+            return Transform(new EncryptGroupCallData(Id, null, data, unencryptedPrefixSize));
+        }
+
+        private byte[] DecryptData(long userId, byte[] data)
+        {
+            return Transform(new DecryptGroupCallData(Id, new MessageSenderUser(userId), new GroupCallDataChannelMain(), data));
+        }
+
+        // tgcalls transforms frames synchronously, so there is no way around blocking here
+        // until TDLib answers. The wait is per invocation on purpose: tgcalls builds one
+        // frame transformer per simulcast layer and one per incoming channel, each on its
+        // own thread, so several of these run at once as soon as a call has two people in
+        // it. A shared signal would pair a caller with someone else's answer.
+        private byte[] Transform(Function request)
+        {
+            var completed = new ManualResetEventSlim(false);
             Data response = null;
-            // TODO: optimize IList<byte> => byte[]
-            ClientService.Send(new EncryptGroupCallData(Id, null, data.ToArray(), unencryptedPrefixSize), result =>
+
+            ClientService.Send(request, result =>
             {
                 response = result as Data;
-                _encryptMutex.Release();
+                completed.Set();
             });
 
-            _encryptMutex.WaitOne();
+            // Never wait forever: this is a media thread, and an empty result is how
+            // tgcalls is told to drop the frame — far better than wedging the call.
+            // Deliberately not disposed, since a late answer would still Set() it.
+            if (!completed.Wait(TransformTimeout))
+            {
+                Logger.Error("Timed out waiting for TDLib to transform a frame");
+                return Array.Empty<byte>();
+            }
+
             return response?.DataValue ?? Array.Empty<byte>();
         }
 
-        private IList<byte> DecryptData(long userId, IList<byte> data)
-        {
-            Data response = null;
-            // TODO: optimize IList<byte> => byte[]
-            ClientService.Send(new DecryptGroupCallData(Id, new MessageSenderUser(userId), new GroupCallDataChannelMain(), data.ToArray()), result =>
-            {
-                response = result as Data;
-                _decryptMutex.Release();
-            });
-
-            _decryptMutex.WaitOne();
-            return response?.DataValue ?? Array.Empty<byte>();
-        }
-
-        private readonly Semaphore _encryptMutex = new(0, 1);
-        private readonly Semaphore _decryptMutex = new(0, 1);
+        private static readonly TimeSpan TransformTimeout = TimeSpan.FromSeconds(5);
 
         public event TypedEventHandler<VoipGroupCall, VoipGroupCallNetworkStateChangedEventArgs> NetworkStateChanged;
         public event TypedEventHandler<VoipGroupCall, VoipGroupCallJoinedStateChangedEventArgs> JoinedStateChanged;
