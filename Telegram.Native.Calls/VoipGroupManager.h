@@ -188,13 +188,10 @@ namespace winrt::Telegram::Native::Calls::implementation
             {
                 auto broadcastPart = tgcalls::BroadcastPart();
 
-                if (filePart)
+                if (filePart && filePart.Size() > 0)
                 {
-                    std::vector data(begin(filePart), end(filePart));
-
-                    const auto size = filePart.Size();
-                    auto bytes = std::vector<uint8_t>(size);
-                    memcpy(bytes.data(), data.data(), size);
+                    auto bytes = std::vector<uint8_t>(filePart.Size());
+                    filePart.GetMany(0, bytes);
 
                     broadcastPart.data = std::move(bytes);
                     broadcastPart.responseTimestamp = response;

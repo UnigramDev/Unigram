@@ -168,8 +168,11 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
 - [ ] **`RequestMediaChannelDescriptionTaskImpl::done` hardcodes `type = Audio`** —
   `VoipGroupManager.h:140`. Video channel descriptions can never be returned.
 
-- [ ] **Empty-but-non-null broadcast part reported as `Success`** — `VoipGroupManager.h:185-197`.
-  Should be `NotReady`.
+- [x] **Empty-but-non-null broadcast part reported as `Success`** — `VoipGroupManager.h:185-197`
+
+  Now `NotReady`, so tgcalls retries instead of decoding a zero-byte part. Took the double
+  copy with it (the P3 item below) since it was the same five lines: `GetMany` straight
+  into the destination instead of an iterator copy followed by a `memcpy`.
 
 ## P2 — lifetime and threading
 
@@ -267,9 +270,8 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   build a `std::vector` and hand ownership over once via
   `single_threaded_vector(std::move(vec))`.
 
-- [ ] **`BroadcastPartTaskImpl::done` copies the payload twice** — `VoipGroupManager.h:187-191`
-
-  Copies the `IVector` into `data`, then `memcpy`s into `bytes`. The first copy is waste.
+- [x] **`BroadcastPartTaskImpl::done` copies the payload twice** — `VoipGroupManager.h:187-191`.
+  Done alongside the `NotReady` fix in P1.
 
 - [ ] **`ReceiveSignalingData` push_backs per byte with no reserve** — `VoipManager.cpp:367-379`.
   Use `vector_to_unmanaged`.
