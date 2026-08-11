@@ -316,6 +316,13 @@ namespace Telegram.Common
 
         private FrameworkElement ProcessTable(IClientService clientService, PageBlockTable table, bool test = false)
         {
+            // A table can arrive with no rows at all, and Max has nothing to reduce over. There is
+            // no grid to build either, so render just the caption.
+            if (table.Cells.Count == 0)
+            {
+                return ProcessText(clientService, table, true);
+            }
+
             var grid = new Grid
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch
