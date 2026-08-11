@@ -943,11 +943,18 @@ namespace Telegram.Services
             _supergroups.Clear();
             _supergroupsFull.Clear();
 
+            _communities.Clear();
+
             _groupCalls.Clear();
+
+            _welcomeMessages.Clear();
 
             _forums.Clear();
             _directMessagesChats.Clear();
 
+            // _activeStories holds the story state itself; clearing only the ordering left
+            // the previous account's stories reachable through GetActiveStories.
+            _activeStories.Clear();
             _storyList.Clear();
             _haveFullStoryList.Clear();
 
@@ -972,6 +979,7 @@ namespace Telegram.Services
             _installedStickerSets = null;
             _installedMaskSets = null;
             _installedEmojiSets = null;
+            _textCompositionStyles = null;
 
             _chatFolders = Array.Empty<ChatFolderInfo>();
             _chatFolders2.Clear();
@@ -1025,6 +1033,11 @@ namespace Telegram.Services
             _waitGreetingSticker = false;
 
             _chatAccessibleUntil.Clear();
+
+            _preparedLogsFileIds = null;
+            _preparedLogsVerbosity = -1;
+
+            ClearDownloads();
 
             if (_cleanAfterClose)
             {

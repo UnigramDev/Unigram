@@ -80,6 +80,21 @@ namespace Telegram.Services
         private readonly HashSet<int> _explicitDownloads = new();
         private readonly object _downloadsLock = new();
 
+        /// <summary>
+        /// File ids and unique ids only mean anything within one session, so a new
+        /// authorization must not inherit them. They are also the only state here that
+        /// grows for as long as the process lives, one entry per file ever downloaded.
+        /// </summary>
+        private void ClearDownloads()
+        {
+            lock (_downloadsLock)
+            {
+                _canceledDownloads.Clear();
+                _completedDownloads.Clear();
+                _explicitDownloads.Clear();
+            }
+        }
+
         public Task<File> GetFileAsync(int fileId)
         {
             var tsc = new TaskCompletionSource<File>();

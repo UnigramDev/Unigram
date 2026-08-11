@@ -23,6 +23,16 @@ namespace Telegram.Services
 
         private readonly long _chatId;
 
+        // Every collection below is written from the TDLib thread, through the Update*
+        // methods, and read from the UI thread through GetTopic/GetTopics/UnreadCount —
+        // which also write, since GetTopic records a pending request. One lock for all of
+        // them, so there is no ordering to get wrong between them.
+        //
+        // It guards the containers, not the ForumTopic objects inside: those are handed out
+        // to the UI and mutated by the update methods, exactly as ClientService does with
+        // Chat and User. Publishing happens outside the lock.
+        private readonly object _lock = new();
+
         private readonly Dictionary<int, ForumTopic> _topics = new();
         private readonly Dictionary<long, ForumTopic> _messages = new();
 
@@ -37,6 +47,22 @@ namespace Telegram.Services
 
         private bool _haveFullList;
 
+        private bool TryGetTopic(int forumTopicId, out ForumTopic topic)
+        {
+            lock (_lock)
+            {
+                return _topics.TryGetValue(forumTopicId, out topic);
+            }
+        }
+
+        private bool TryGetTopicByMessage(long messageId, out ForumTopic topic)
+        {
+            lock (_lock)
+            {
+                return _messages.TryGetValue(messageId, out topic);
+            }
+        }
+
         public ForumTopicService(IClientService clientService, IEventAggregator aggregator, long chatId)
         {
             _clientService = clientService;
@@ -49,7 +75,7 @@ namespace Telegram.Services
         {
             get
             {
-                lock (_unreadTopicIds)
+                lock (_lock)
                 {
                     return _unreadTopicIds.Count;
                 }
@@ -58,10 +84,11 @@ namespace Telegram.Services
 
         private void UpdateTopicOrder(ForumTopic topic, bool publish)
         {
-            var order = Order(topic);
-
-            lock (_order)
+            lock (_lock)
             {
+                // Inside the lock: Order reads _deletedTopicIds and _pinnedTopicIds.
+                var order = Order(topic);
+
                 _order.Remove(new OrderedTopic(topic.Info.ForumTopicId, topic.Order));
 
                 topic.Order = order;
@@ -80,7 +107,7 @@ namespace Telegram.Services
 
         public void ViewMessages(int forumTopicId, IList<long> messageIds)
         {
-            if (_topics.TryGetValue(forumTopicId, out ForumTopic topic))
+            if (TryGetTopic(forumTopicId, out ForumTopic topic))
             {
                 UpdateLastReadInboxMessageId(topic, messageIds.Max());
             }
@@ -95,18 +122,21 @@ namespace Telegram.Services
 
             _clientService.Send(new SetPinnedForumTopics(_chatId, forumTopicIds));
 
-            lock (_order)
+            lock (_lock)
             {
                 _pinnedTopicIds.Clear();
                 _pinnedTopicIds.AddRange(forumTopicIds);
-
-                UpdatePinnedTopics();
             }
+
+            UpdatePinnedTopics();
         }
 
         private void UpdateLastReadInboxMessageId(ForumTopic topic, long lastReadInboxMessageId)
         {
-            _pendingLastReadInboxMessageId.Remove(lastReadInboxMessageId);
+            lock (_lock)
+            {
+                _pendingLastReadInboxMessageId.Remove(lastReadInboxMessageId);
+            }
 
             if (lastReadInboxMessageId > topic.LastReadInboxMessageId)
             {
@@ -142,7 +172,7 @@ namespace Telegram.Services
         {
             bool update;
             int count;
-            lock (_unreadTopicIds)
+            lock (_lock)
             {
                 update = unread
                     ? _unreadTopicIds.Add(topic.Info.ForumTopicId)
@@ -166,13 +196,22 @@ namespace Telegram.Services
 
         public ForumTopic GetTopic(int id)
         {
-            if (_topics.TryGetValue(id, out ForumTopic value))
+            // Called from the UI thread, and it writes: recording the pending request is
+            // what keeps a miss from sending one getForumTopic per enumeration.
+            bool request;
+
+            lock (_lock)
             {
-                return value;
+                if (_topics.TryGetValue(id, out ForumTopic value))
+                {
+                    return value;
+                }
+
+                request = _pendingNewTopics.Add(id);
             }
-            else if (!_pendingNewTopics.Contains(id))
+
+            if (request)
             {
-                _pendingNewTopics.Add(id);
                 _clientService.Send(new GetForumTopic(_chatId, id), UpdateNewTopic);
             }
 
@@ -216,7 +255,7 @@ namespace Telegram.Services
             // Decided under the lock, acted on outside it: awaiting is not allowed in there.
             int missing;
 
-            lock (_order)
+            lock (_lock)
             {
                 var sorted = _order;
 
@@ -287,7 +326,7 @@ namespace Telegram.Services
             {
                 Object result;
 
-                lock (_order)
+                lock (_lock)
                 {
                     if (response is ForumTopics forumTopics)
                     {
@@ -346,6 +385,7 @@ namespace Telegram.Services
             return tsc.Task;
         }
 
+        // Caller must hold _lock: reads _deletedTopicIds and _pinnedTopicIds.
         private long Order(ForumTopic topic)
         {
             if (_deletedTopicIds.Contains(topic.Info.ForumTopicId))
@@ -370,7 +410,7 @@ namespace Telegram.Services
 
         public void UpdateForumTopic(UpdateForumTopic update)
         {
-            if (_topics.TryGetValue(update.ForumTopicId, out ForumTopic topic))
+            if (TryGetTopic(update.ForumTopicId, out ForumTopic topic))
             {
                 if (!topic.NotificationSettings.AreTheSame(update.NotificationSettings))
                 {
@@ -401,11 +441,18 @@ namespace Telegram.Services
 
                     if (topic.IsPinned)
                     {
-                        _pinnedTopicIds.Insert(0, update.ForumTopicId);
+                        lock (_lock)
+                        {
+                            _pinnedTopicIds.Insert(0, update.ForumTopicId);
+                        }
                     }
                     else
                     {
-                        _pinnedTopicIds.Remove(update.ForumTopicId);
+                        lock (_lock)
+                        {
+                            _pinnedTopicIds.Remove(update.ForumTopicId);
+                        }
+
                         UpdateTopicOrder(topic, true);
                     }
 
@@ -416,14 +463,14 @@ namespace Telegram.Services
 
         public void UpdateForumTopicInfo(ForumTopicInfo info)
         {
-            if (_topics.TryGetValue(info.ForumTopicId, out ForumTopic topic))
+            if (TryGetTopic(info.ForumTopicId, out ForumTopic topic))
             {
                 topic.Info = info;
             }
             else if (_clientService.TryGetChat(_chatId, out Chat chat))
             {
                 // Preload empty topic to have info readily available
-                _topics[info.ForumTopicId] = new ForumTopic
+                var preloaded = new ForumTopic
                 {
                     DraftMessage = null,
                     NotificationSettings = chat.NotificationSettings,
@@ -437,6 +484,11 @@ namespace Telegram.Services
                     LastMessage = null,
                     Info = info
                 };
+
+                lock (_lock)
+                {
+                    _topics[info.ForumTopicId] = preloaded;
+                }
             }
         }
 
@@ -450,9 +502,12 @@ namespace Telegram.Services
                 return;
             }
 
-            _pendingNewTopics.Remove(newTopic.Info.ForumTopicId);
+            lock (_lock)
+            {
+                _pendingNewTopics.Remove(newTopic.Info.ForumTopicId);
+            }
 
-            if (_topics.TryGetValue(newTopic.Info.ForumTopicId, out topic))
+            if (TryGetTopic(newTopic.Info.ForumTopicId, out topic))
             {
                 topic.DraftMessage = newTopic.DraftMessage;
                 topic.NotificationSettings = newTopic.NotificationSettings;
@@ -476,11 +531,14 @@ namespace Telegram.Services
                 topic = newTopic;
             }
 
-            _topics[topic.Info.ForumTopicId] = topic;
-
-            if (topic.LastMessage != null)
+            lock (_lock)
             {
-                _messages[topic.LastMessage.Id] = topic;
+                _topics[topic.Info.ForumTopicId] = topic;
+
+                if (topic.LastMessage != null)
+                {
+                    _messages[topic.LastMessage.Id] = topic;
+                }
             }
 
             UpdateTopicOrder(topic, true);
@@ -500,7 +558,7 @@ namespace Telegram.Services
 
             _lastProcessedMessageId = message.Id;
 
-            if (_topics.TryGetValue(topicForum.ForumTopicId, out ForumTopic topic))
+            if (TryGetTopic(topicForum.ForumTopicId, out ForumTopic topic))
             {
                 UpdateLastMessage(topic, message);
             }
@@ -511,7 +569,10 @@ namespace Telegram.Services
 
             if (message.SendingState is MessageSendingStatePending)
             {
-                _pendingLastReadInboxMessageId.Add(message.Id);
+                lock (_lock)
+                {
+                    _pendingLastReadInboxMessageId.Add(message.Id);
+                }
             }
         }
 
@@ -521,14 +582,17 @@ namespace Telegram.Services
             {
                 // Update last message
                 // Deliver update UpdateForumTopicLastMessage;
-                if (topic.LastMessage != null)
+                lock (_lock)
                 {
-                    _messages.Remove(topic.LastMessage.Id);
-                }
+                    if (topic.LastMessage != null)
+                    {
+                        _messages.Remove(topic.LastMessage.Id);
+                    }
 
-                if (message != null)
-                {
-                    _messages[message.Id] = topic;
+                    if (message != null)
+                    {
+                        _messages[message.Id] = topic;
+                    }
                 }
 
                 topic.LastMessage = message;
@@ -550,13 +614,16 @@ namespace Telegram.Services
 
             foreach (long messageId in messageIds)
             {
-                if (_messages.TryGetValue(messageId, out ForumTopic topic))
+                if (TryGetTopicByMessage(messageId, out ForumTopic topic))
                 {
                     if (topic.LastMessage?.Id == messageId)
                     {
                         if (topic.LastMessage != null)
                         {
-                            _messages.Remove(topic.LastMessage.Id);
+                            lock (_lock)
+                            {
+                                _messages.Remove(topic.LastMessage.Id);
+                            }
                         }
 
                         // Update last message
@@ -565,7 +632,6 @@ namespace Telegram.Services
                         _clientService.Send(new GetForumTopic(_chatId, topic.Info.ForumTopicId), response =>
                         {
                             var updatePinnedTopics = false;
-                            var updateCurrentTopic = false;
 
                             if (response is ForumTopic newTopic)
                             {
@@ -573,12 +639,11 @@ namespace Telegram.Services
                             }
                             else if (response is Error { Code: 404 })
                             {
-                                _deletedTopicIds.Add(topic.Info.ForumTopicId);
-
-                                if (_pinnedTopicIds.Contains(topic.Info.ForumTopicId))
+                                lock (_lock)
                                 {
-                                    _pinnedTopicIds.Remove(topic.Info.ForumTopicId);
-                                    updatePinnedTopics = true;
+                                    _deletedTopicIds.Add(topic.Info.ForumTopicId);
+
+                                    updatePinnedTopics = _pinnedTopicIds.Remove(topic.Info.ForumTopicId);
                                 }
 
                                 topic.LastMessage = null;
@@ -587,7 +652,10 @@ namespace Telegram.Services
 
                             if (topic.LastMessage != null)
                             {
-                                _messages[topic.LastMessage.Id] = topic;
+                                lock (_lock)
+                                {
+                                    _messages[topic.LastMessage.Id] = topic;
+                                }
                             }
 
                             UpdateTopicOrder(topic, true);
@@ -611,9 +679,24 @@ namespace Telegram.Services
 
         private void UpdatePinnedTopics()
         {
-            foreach (var topicId in _pinnedTopicIds)
+            // Collected under the lock, reordered outside it: UpdateTopicOrder publishes.
+            List<ForumTopic> pinned = null;
+
+            lock (_lock)
             {
-                if (_topics.TryGetValue(topicId, out var topic))
+                foreach (var topicId in _pinnedTopicIds)
+                {
+                    if (_topics.TryGetValue(topicId, out var topic))
+                    {
+                        pinned ??= new List<ForumTopic>(_pinnedTopicIds.Count);
+                        pinned.Add(topic);
+                    }
+                }
+            }
+
+            if (pinned != null)
+            {
+                foreach (var topic in pinned)
                 {
                     UpdateTopicOrder(topic, true);
                 }
@@ -630,15 +713,18 @@ namespace Telegram.Services
             // Important
             // Maybe update last message
 
-            if (_messages.TryGetValue(oldMessageId, out ForumTopic topic))
+            if (TryGetTopicByMessage(oldMessageId, out ForumTopic topic))
             {
                 if (topic.LastMessage?.Id == oldMessageId)
                 {
                     // Update last message
                     // Deliver update UpdateForumTopicLastMessage;
 
-                    _messages.Remove(oldMessageId);
-                    _messages[message.Id] = topic;
+                    lock (_lock)
+                    {
+                        _messages.Remove(oldMessageId);
+                        _messages[message.Id] = topic;
+                    }
 
                     topic.LastMessage = message;
 
@@ -646,10 +732,20 @@ namespace Telegram.Services
                 }
             }
 
-            if (_pendingLastReadInboxMessageId.Contains(oldMessageId) && message.TopicId is MessageTopicForum topicForum)
+            if (message.TopicId is not MessageTopicForum topicForum)
             {
-                _pendingLastReadInboxMessageId.Remove(oldMessageId);
+                return;
+            }
 
+            bool pending;
+
+            lock (_lock)
+            {
+                pending = _pendingLastReadInboxMessageId.Remove(oldMessageId);
+            }
+
+            if (pending)
+            {
                 // There is a bug on backend that causes two distinct issues with topics read state:
                 // When a message is sent, the backend may accidentally consider it as an incoming message for the current user.
                 // When this happens, updateReadChannelDiscussionInbox is not received, and unread counter for the topic is increased by one.
@@ -667,7 +763,7 @@ namespace Telegram.Services
             // Important
             // Maybe update last message
 
-            if (_messages.TryGetValue(oldMessageId, out ForumTopic topic))
+            if (TryGetTopicByMessage(oldMessageId, out ForumTopic topic))
             {
                 if (topic.LastMessage?.Id == oldMessageId)
                 {
@@ -682,7 +778,7 @@ namespace Telegram.Services
             // Important
             // Maybe update last message
 
-            if (_messages.TryGetValue(messageId, out ForumTopic topic))
+            if (TryGetTopicByMessage(messageId, out ForumTopic topic))
             {
                 if (topic.LastMessage?.Id == messageId)
                 {
@@ -700,7 +796,7 @@ namespace Telegram.Services
         {
             // Maybe update last message
 
-            if (_messages.TryGetValue(messageId, out ForumTopic topic))
+            if (TryGetTopicByMessage(messageId, out ForumTopic topic))
             {
                 if (topic.LastMessage?.Id == messageId)
                 {
@@ -714,7 +810,7 @@ namespace Telegram.Services
         {
             // Maybe update last message
 
-            if (_messages.TryGetValue(messageId, out ForumTopic topic))
+            if (TryGetTopicByMessage(messageId, out ForumTopic topic))
             {
                 if (topic.LastMessage?.Id == messageId)
                 {
@@ -728,7 +824,7 @@ namespace Telegram.Services
         {
             // Maybe update last message
 
-            if (_messages.TryGetValue(messageId, out ForumTopic topic))
+            if (TryGetTopicByMessage(messageId, out ForumTopic topic))
             {
                 if (topic.LastMessage?.Id == messageId)
                 {
@@ -742,7 +838,7 @@ namespace Telegram.Services
         {
             // Maybe update last message
 
-            if (_messages.TryGetValue(messageId, out ForumTopic topic))
+            if (TryGetTopicByMessage(messageId, out ForumTopic topic))
             {
                 if (topic.LastMessage?.Id == messageId)
                 {
@@ -757,7 +853,7 @@ namespace Telegram.Services
             // Important
             // Update UnreadMentionCount
 
-            if (_messages.TryGetValue(messageId, out ForumTopic topic))
+            if (TryGetTopicByMessage(messageId, out ForumTopic topic))
             {
                 // Update topic unreadMentionCount
                 // Deliver update UpdateForumTopicMentionRead;
@@ -771,7 +867,7 @@ namespace Telegram.Services
 
             // Maybe update last message
 
-            if (_messages.TryGetValue(messageId, out ForumTopic topic))
+            if (TryGetTopicByMessage(messageId, out ForumTopic topic))
             {
                 if (topic.LastMessage?.Id == messageId)
                 {
@@ -788,7 +884,7 @@ namespace Telegram.Services
         {
             // Maybe update last message
 
-            if (_messages.TryGetValue(messageId, out ForumTopic topic))
+            if (TryGetTopicByMessage(messageId, out ForumTopic topic))
             {
                 if (topic.LastMessage?.Id == messageId)
                 {

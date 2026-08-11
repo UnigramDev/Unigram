@@ -114,21 +114,34 @@ The two facts most of this rests on:
       channel) and `GiftCraftChoosePopup.xaml.cs:227` (which passes `null`, so it is null
       either way — worth checking whether that call site means something else entirely).
 
-- [ ] **`Clear()` misses eight caches** — `ClientService.cs:914` **[live]**
+- [x] **`Clear()` misses eight caches** — `ClientService.cs:914` **[live]**
+      → fixed in the commit that checked this box
 
       Not cleared: `_communities`, `_welcomeMessages`, `_textCompositionStyles`,
       `_activeStories`, `_canceledDownloads`, `_completedDownloads`, `_explicitDownloads`,
       `_preparedLogsFileIds`.
 
-      `_activeStories` is the one that bites. `_storyList` and `_haveFullStoryList` *are*
-      cleared (`:951-952`), so after logout the ordering is gone but the previous account's
-      `ChatActiveStories` objects are still served by `GetActiveStories` and
+      `_activeStories` was the one that bit. `_storyList` and `_haveFullStoryList` *were*
+      cleared (`:951-952`), so after logout the ordering was gone but the previous account's
+      `ChatActiveStories` objects were still served by `GetActiveStories` and
       `TryGetActiveStoriesFromUser` — cross-account leakage of another user's story state.
 
-      Adding eight lines fixes today's misses. The eight misses are themselves the argument
-      that a hand-maintained field-by-field `Clear()` doesn't survive contact with new
-      fields; grouping the per-session caches into one object replaced wholesale would make
-      the next miss impossible. Your call whether that's worth it now — see *Needs your call*.
+      The three download sets moved into a `ClearDownloads` helper in `Files.cs`, since they
+      need `_downloadsLock` and the reason they must not survive an authorization is worth
+      stating where they are declared: file ids and unique ids only mean anything within one
+      session, and those sets are also the only state here that grows for the life of the
+      process, one entry per file ever downloaded.
+
+      Verified by enumerating every `private` field across the seven partials and diffing
+      against what `Clear()` touches: the only fields it now leaves alone are the injected
+      dependencies (`_client`, `_session`, `_aggregator`, `_locale`, `_deviceInfoService`)
+      and the lock objects. Worth re-running that check rather than re-reading the method
+      whenever a field is added.
+
+      Still true, and the reason the misses happened: a hand-maintained field-by-field
+      `Clear()` doesn't survive contact with new fields. Grouping the per-session caches into
+      one object replaced wholesale would make the next miss impossible — see
+      *Needs your call*.
 
 - [ ] **Plain `Dictionary` shared across threads — 3 fields** **[latent]**
 
@@ -362,19 +375,40 @@ method, and from the UI thread through `TopicListViewModel.cs:691`, `:907`, `:91
       The `_aggregator.Publish` at `:321` is still inside the lock — that is F7, left alone
       on purpose to keep this commit to one kind of change.
 
-- [ ] **F2 · P1 · Six unsynchronized collections shared across two threads** **[live]**
+- [x] **F2 · P1 · Six unsynchronized collections shared across two threads** **[live]**
+      → fixed in the commit that checked this box
 
       `_topics`, `_messages`, `_pinnedTopicIds`, `_deletedTopicIds`, `_pendingNewTopics`,
-      `_pendingLastReadInboxMessageId` (`:27-37`) are plain `Dictionary`/`List`/`HashSet`.
+      `_pendingLastReadInboxMessageId` (`:27-37`) were plain `Dictionary`/`List`/`HashSet`.
       Every `Update*` method writes them from the TDLib thread. `GetTopic` (`:170`) and
       `GetTopics` (`:185`) read them from the UI thread — and `GetTopic` *writes*
-      `_pendingNewTopics` at `:178`. Only `_unreadTopicIds` and `_order` are guarded at all.
+      `_pendingNewTopics` at `:178`. Only `_unreadTopicIds` and `_order` were guarded.
 
-      Concurrent mutation of a `Dictionary` doesn't throw, it spins. The sibling class
-      `DirectMessagesChatTopicService` uses a `ReaderWriterDictionary` for exactly this job
-      (`FeedbackChatTopicService.cs:24`), so the same problem was solved correctly once
-      already — this is the strongest argument that F2 is an oversight rather than a
-      deliberate call.
+      Concurrent mutation of a `Dictionary` doesn't throw, it spins.
+
+      Fixed with **one private `_lock` for all eight collections**, absorbing the two
+      existing lock objects (`_order`, `_unreadTopicIds`) so there is a single domain and no
+      ordering to get wrong. Critical sections stay small and **publishes stay outside them**,
+      so this does not enlarge F7.
+
+      Why one lock rather than `ReaderWriterDictionary`, which would match
+      `DirectMessagesChatTopicService` and `ClientService`: that type only covers the two
+      `Dictionary` fields. `_pinnedTopicIds` is a `List` (`IndexOf`/`Insert`/`AddRange`),
+      `_order` is a `SortedSet`, and three more are `HashSet`s — six of the eight would still
+      need a lock, leaving two domains and real cross-domain compounds (`UpdatePinnedTopics`
+      reads `_pinnedTopicIds` then `_topics`; `Order` reads `_deletedTopicIds` and
+      `_pinnedTopicIds`; `LoadForumTopicsAsync` touches four in one batch). One lock makes
+      those atomic and makes a lock cycle impossible. The measurement under P2 also removed
+      the performance argument for `ReaderWriterLockSlim` — at these rates a plain `Monitor`
+      is cheaper anyway.
+
+      The two `Dictionary` reads go through `TryGetTopic`/`TryGetTopicByMessage`, so the
+      backing store stays cheap to swap if that judgement is ever revisited.
+
+      Deliberately unchanged: the `ForumTopic` objects themselves are still handed to the UI
+      and mutated by the update methods without synchronisation, exactly as `ClientService`
+      does with `Chat` and `User`. This fixes container corruption, which is the part that
+      spins forever; object-level tearing is a wider design question than one class.
 
 - [ ] **F3 · P1 · `GetTopics` is missing a `continue`** — `:189-199` **[live]**
 
@@ -416,13 +450,20 @@ method, and from the UI thread through `TopicListViewModel.cs:691`, `:907`, `:91
       update, on the receive thread, to accomplish nothing. Worth deciding: implement, or
       delete the bodies and stop dispatching to them from `ClientService.OnResult`.
 
-- [ ] **F7 · P2 · Aggregator publishes while holding `_order`** — `:79`, `:105`, `:318`, `:321`
+- [ ] **F7 · P2 · Aggregator publishes while holding the lock** — `LoadForumTopicsAsync` only
 
-      `UpdateTopicOrder` publishes at `:79`, after its own `Monitor.Exit` at `:75` — but when
-      it is called from inside another `_order` critical section (`SetPinnedForumTopics` at
-      `:105` via `UpdatePinnedTopics`, and `LoadForumTopicsAsync` at `:318`), recursion
-      means that `Exit` only decrements the count. The publish, and every subscriber it
-      runs, therefore executes with `_order` still held.
+      Originally `UpdateTopicOrder` published after its own `Monitor.Exit`, but when called
+      from inside another `_order` critical section recursion meant that `Exit` only
+      decremented the count, so the publish ran with the lock still held.
+
+      **Mostly closed by F2**: `SetPinnedForumTopics` and `UpdatePinnedTopics` now collect
+      under the lock and reorder — and therefore publish — outside it.
+
+      What remains is `LoadForumTopicsAsync`, whose whole callback body is one critical
+      section, so its `UpdateChatUnreadTopicCount` publish and the nested
+      `UpdateTopicOrder(topic, false)` calls still run under the lock. Left alone on purpose:
+      unpicking it means restructuring the batch load, which is a different change from
+      making the collections safe.
 
 - [ ] **F8 · P2 · `GetTopics` allocates a fresh synthetic topic per enumeration** — `:193`, `:197`
 
