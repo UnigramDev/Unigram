@@ -245,25 +245,34 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   moving it changes what the audio engine is asked for, and screen-share audio works
   today. Wants testing on a real capture, not reasoning. Left commented in place.
 
-- [ ] **Lock held across managed callbacks, and taken again by `add`/`remove`** —
+- [x] **Lock held across managed callbacks, and taken again by `add`/`remove`** —
   `VoipManager.cpp:415-458` vs `:463-571`; `VoipGroupManager.cpp:306-435` vs `:447-539`
 
-  `winrt::event` is already thread-safe, so `m_lock` only serialises callbacks against
-  (un)subscription — at the price of a lock-order inversion with the C# side: the UI
-  thread takes `_managerLock` then unsubscribes (`VoipCall.cs:803-814` → wants `m_lock`),
-  while a tgcalls worker holds `m_lock` inside managed code that takes C# locks
-  (`_stateLock`, `VoipCall.cs:507`). No current handler closes the cycle; any handler
-  touching `_managerLock` would.
+  `winrt::event` synchronises itself, so `m_lock` only served to serialise callbacks
+  against (un)subscription — at the price of a lock-order inversion with the C# side: the
+  UI thread takes `_managerLock` then unsubscribes (`VoipCall.cs:803-814` → wanted
+  `m_lock`), while a tgcalls worker held `m_lock` inside managed code that takes C# locks
+  (`_stateLock`, `VoipCall.cs:507`). No handler closed the cycle, but any handler touching
+  `_managerLock` would have.
 
-  Fix: drop `m_lock` from the add/remove overloads, and snapshot the event before invoking
-  it outside the lock. In `VoipGroupManager` this also gets the per-packet E2E path off the
-  same mutex as event subscription (see P3).
+  Gone from all 41 sites. `VoipManager` has no lock at all now; `VoipGroupManager` keeps
+  one for the only state that is genuinely shared — the encrypt/decrypt delegates, written
+  from the UI thread and read per frame from a media thread.
 
-- [ ] **`m_impl` is not guarded by `m_lock`** — both managers
+  The bigger win is what came off that lock: the managed `EncryptData` blocks on a TDLib
+  round trip (`VoipGroupCall.cs:407-414`), and it used to do that while holding the same
+  mutex as every audio-level update and every subscribe. The delegates are now copied out
+  under the lock and invoked outside it.
+
+  A comment on the event fields records why there is no lock, so it does not come back.
+
+- [ ] **`m_impl` is not guarded** — both managers
 
   Every `if (m_impl)` is TOCTOU against `Stop()`'s `reset()`. Correct today only because
-  all callers are on the UI thread under `_managerLock`. Decide: either document that
-  contract in the header, or guard `m_impl` properly (a separate mutex from the event one).
+  all callers are on the UI thread under `_managerLock`. Deliberately *not* folded into the
+  lock rework above: taking a lock around `m_impl` would put one back on the path that
+  reaches managed code, which is what that change was undoing. Wants either the contract
+  written down in the header or an atomic-swap teardown, not a mutex.
 
 - [ ] **No destructor on either manager**
 

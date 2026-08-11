@@ -15,8 +15,6 @@
 //using namespace winrt::Windows::Foundation;
 //using namespace winrt::Windows::Foundation::Collections;
 
-#include <mutex>
-
 namespace winrt::Telegram::Native::Calls::implementation
 {
     const auto RegisterTag = tgcalls::Register<tgcalls::InstanceImpl>();
@@ -119,7 +117,6 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     private:
         std::unique_ptr<tgcalls::Instance> m_impl = nullptr;
-        std::mutex m_lock;
 
         std::weak_ptr<VoipVideoOutput> m_incomingVideoOutput;
 
@@ -133,6 +130,10 @@ namespace winrt::Telegram::Native::Calls::implementation
         void OnRemotePrefferedAspectRadioUpdated(float ratio);
         void OnSignalingDataEmitted(std::vector<uint8_t> data);
 
+        // winrt::event synchronises itself, so these need no lock of their own. Adding
+        // one back would reintroduce a deadlock: the callbacks below run on tgcalls
+        // threads and reach managed code that takes its own locks, while the UI thread
+        // unsubscribes from inside those same locks.
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipManager,
             VoipReadyState>> m_stateUpdatedEventSource;

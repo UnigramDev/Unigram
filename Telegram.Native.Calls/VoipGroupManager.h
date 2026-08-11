@@ -76,7 +76,10 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     private:
         std::unique_ptr<tgcalls::GroupInstanceCustomImpl> m_impl = nullptr;
-        std::mutex m_lock;
+
+        // Only the encrypt/decrypt delegates need guarding: they are written from the UI
+        // thread and read per frame from a media thread. The events guard themselves.
+        std::mutex m_encryptLock;
 
         // Ref-counted: the MF work item it queues holds a reference of its own, so it
         // must outlive us if a capture is still draining. Created only for screencast.

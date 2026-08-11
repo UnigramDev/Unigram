@@ -286,14 +286,12 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipGroupManager::OnNetworkStateUpdated(tgcalls::GroupNetworkState state)
     {
-        std::lock_guard const guard(m_lock);
         auto args = winrt::make_self<GroupNetworkStateChangedEventArgs>(state.isConnected, state.isTransitioningFromBroadcastToRtc);
         m_networkStateUpdated(*this, *args);
     }
 
     void VoipGroupManager::OnAudioLevelsUpdated(tgcalls::GroupLevelsUpdate const& levels)
     {
-        std::lock_guard const guard(m_lock);
         auto args = winrt::single_threaded_vector<winrt::Telegram::Native::Calls::VoipGroupParticipant>(/*std::move(levels)*/);
 
         for (const tgcalls::GroupLevelUpdate& x : levels.updates)
@@ -311,7 +309,6 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     std::shared_ptr<tgcalls::BroadcastPartTask> VoipGroupManager::OnRequestCurrentTime(std::function<void(int64_t)> done)
     {
-        std::lock_guard const guard(m_lock);
         auto task = std::make_shared<BroadcastTimeTaskImpl>(std::move(done));
         auto args = winrt::make_self<BroadcastTimeRequestedEventArgs>([task](int64_t time) { task->done(time); });
 
@@ -321,7 +318,6 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     std::shared_ptr<tgcalls::BroadcastPartTask> VoipGroupManager::OnRequestVideoBroadcastPart(int64_t time, int64_t period, int32_t channel, tgcalls::VideoChannelDescription::Quality quality, std::function<void(tgcalls::BroadcastPart&&)> done)
     {
-        std::lock_guard const guard(m_lock);
         int scale = 0;
         switch (period)
         {
@@ -355,7 +351,6 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     std::shared_ptr<tgcalls::BroadcastPartTask> VoipGroupManager::OnRequestAudioBroadcastPart(int64_t time, int64_t period, std::function<void(tgcalls::BroadcastPart&&)> done)
     {
-        std::lock_guard const guard(m_lock);
         int scale = 0;
         switch (period)
         {
@@ -375,7 +370,6 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     std::shared_ptr<tgcalls::RequestMediaChannelDescriptionTask> VoipGroupManager::OnRequestMediaChannelDescriptions(const std::vector<uint32_t>& ssrcs, std::function<void(std::vector<tgcalls::MediaChannelDescription>&&)> done)
     {
-        std::lock_guard const guard(m_lock);
 
         auto audioSourceIds = winrt::single_threaded_vector<uint32_t>(std::vector<uint32_t>(ssrcs));
 
@@ -389,13 +383,21 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     std::vector<uint8_t> VoipGroupManager::OnE2EEncryptDecrypt(std::vector<uint8_t> const& message, int64_t userId, bool encrypt, int32_t unencryptedPrefixSize)
     {
-        std::lock_guard const guard(m_lock);
+        // Taken by copy rather than held: this runs per frame on a media thread, and the
+        // managed delegates block on a TDLib round trip. The lock covers only the read.
+        EncryptGroupCallDataDelegate encryptData{ nullptr };
+        DecryptGroupCallDataDelegate decryptData{ nullptr };
+
+        {
+            std::lock_guard const guard(m_encryptLock);
+            encryptData = m_encryptData;
+            decryptData = m_decryptData;
+        }
 
         // An empty result is how tgcalls is told the frame failed and must be dropped.
         // Returning the input untouched would put plaintext on the wire when encrypting,
         // and hand ciphertext to the decoder as if it were plaintext when decrypting.
-        // Both delegates are set after construction, so this window is real.
-        if (encrypt ? m_encryptData == nullptr : m_decryptData == nullptr)
+        if (encrypt ? encryptData == nullptr : decryptData == nullptr)
         {
             return {};
         }
@@ -404,11 +406,11 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         if (encrypt)
         {
-            data = m_encryptData(m_isScreencast ? VoipDataChannel::ScreenSharing : VoipDataChannel::Main, data, unencryptedPrefixSize);
+            data = encryptData(m_isScreencast ? VoipDataChannel::ScreenSharing : VoipDataChannel::Main, data, unencryptedPrefixSize);
         }
         else
         {
-            data = m_decryptData(userId, data);
+            data = decryptData(userId, data);
         }
 
         if (data == nullptr)
@@ -431,7 +433,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipGroupManager::SetEncryptDecrypt(EncryptGroupCallDataDelegate encryptData, DecryptGroupCallDataDelegate decryptData)
     {
-        std::lock_guard const guard(m_lock);
+        std::lock_guard const guard(m_encryptLock);
         m_encryptData = encryptData;
         m_decryptData = decryptData;
     }
@@ -441,13 +443,11 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Telegram::Native::Calls::VoipGroupManager,
         winrt::Telegram::Native::Calls::GroupNetworkStateChangedEventArgs> const& value)
     {
-        std::lock_guard const guard(m_lock);
         return m_networkStateUpdated.add(value);
     }
 
     void VoipGroupManager::NetworkStateUpdated(winrt::event_token const& token)
     {
-        std::lock_guard const guard(m_lock);
         m_networkStateUpdated.remove(token);
     }
 
@@ -457,13 +457,11 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Telegram::Native::Calls::VoipGroupManager,
         IVector<winrt::Telegram::Native::Calls::VoipGroupParticipant>> const& value)
     {
-        std::lock_guard const guard(m_lock);
         return m_audioLevelsUpdated.add(value);
     }
 
     void VoipGroupManager::AudioLevelsUpdated(winrt::event_token const& token)
     {
-        std::lock_guard const guard(m_lock);
         m_audioLevelsUpdated.remove(token);
     }
 
@@ -473,13 +471,11 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Telegram::Native::Calls::VoipGroupManager,
         winrt::Telegram::Native::Calls::AudioBroadcastPartRequestedEventArgs> const& value)
     {
-        std::lock_guard const guard(m_lock);
         return m_audioBroadcastPartRequested.add(value);
     }
 
     void VoipGroupManager::AudioBroadcastPartRequested(winrt::event_token const& token)
     {
-        std::lock_guard const guard(m_lock);
         m_audioBroadcastPartRequested.remove(token);
     }
 
@@ -489,13 +485,11 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Telegram::Native::Calls::VoipGroupManager,
         winrt::Telegram::Native::Calls::VideoBroadcastPartRequestedEventArgs> const& value)
     {
-        std::lock_guard const guard(m_lock);
         return m_videoBroadcastPartRequested.add(value);
     }
 
     void VoipGroupManager::VideoBroadcastPartRequested(winrt::event_token const& token)
     {
-        std::lock_guard const guard(m_lock);
         m_videoBroadcastPartRequested.remove(token);
     }
 
@@ -505,13 +499,11 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Telegram::Native::Calls::VoipGroupManager,
         winrt::Telegram::Native::Calls::BroadcastTimeRequestedEventArgs> const& value)
     {
-        std::lock_guard const guard(m_lock);
         return m_broadcastTimeRequested.add(value);
     }
 
     void VoipGroupManager::BroadcastTimeRequested(winrt::event_token const& token)
     {
-        std::lock_guard const guard(m_lock);
         m_broadcastTimeRequested.remove(token);
     }
 
@@ -521,13 +513,11 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Telegram::Native::Calls::VoipGroupManager,
         winrt::Telegram::Native::Calls::MediaChannelDescriptionsRequestedEventArgs> const& value)
     {
-        std::lock_guard const guard(m_lock);
         return m_mediaChannelDescriptionsRequested.add(value);
     }
 
     void VoipGroupManager::MediaChannelDescriptionsRequested(winrt::event_token const& token)
     {
-        std::lock_guard const guard(m_lock);
         m_mediaChannelDescriptionsRequested.remove(token);
     }
 }
