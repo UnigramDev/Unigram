@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 
@@ -61,18 +60,17 @@ namespace Telegram.Services
         {
             var order = Order(topic);
 
-            Monitor.Enter(_order);
-
-            _order.Remove(new OrderedTopic(topic.Info.ForumTopicId, topic.Order));
-
-            topic.Order = order;
-
-            if (order != 0)
+            lock (_order)
             {
-                _order.Add(new OrderedTopic(topic.Info.ForumTopicId, order));
-            }
+                _order.Remove(new OrderedTopic(topic.Info.ForumTopicId, topic.Order));
 
-            Monitor.Exit(_order);
+                topic.Order = order;
+
+                if (order != 0)
+                {
+                    _order.Add(new OrderedTopic(topic.Info.ForumTopicId, order));
+                }
+            }
 
             if (publish)
             {
@@ -97,14 +95,13 @@ namespace Telegram.Services
 
             _clientService.Send(new SetPinnedForumTopics(_chatId, forumTopicIds));
 
-            Monitor.Enter(_order);
+            lock (_order)
+            {
+                _pinnedTopicIds.Clear();
+                _pinnedTopicIds.AddRange(forumTopicIds);
 
-            _pinnedTopicIds.Clear();
-            _pinnedTopicIds.AddRange(forumTopicIds);
-
-            UpdatePinnedTopics();
-
-            Monitor.Exit(_order);
+                UpdatePinnedTopics();
+            }
         }
 
         private void UpdateLastReadInboxMessageId(ForumTopic topic, long lastReadInboxMessageId)
@@ -213,61 +210,68 @@ namespace Telegram.Services
 
         public async Task<ForumTopics2> GetForumTopicsAsyncImpl(int offset, int limit, bool reentrancy)
         {
-            Monitor.Enter(_order);
-
             var count = offset + limit;
-            var sorted = _order;
 
-            var haveFullList = _haveFullList;
+            // How many topics are still to be loaded, 0 when the cache can answer on its own.
+            // Decided under the lock, acted on outside it: awaiting is not allowed in there.
+            int missing;
+
+            lock (_order)
+            {
+                var sorted = _order;
+
+                var haveFullList = _haveFullList;
 
 #if MOCKUP
-            _haveFullChatList[index] = true;
+                _haveFullChatList[index] = true;
+                missing = 0;
 #else
-            if (count > sorted.Count && !haveFullList && !reentrancy)
-            {
-                Monitor.Exit(_order);
-
-                var response = await LoadForumTopicsAsync(count - sorted.Count);
-                if (response is Error error)
-                {
-                    if (error.Code == 404)
-                    {
-                        _haveFullList = true;
-                    }
-                    else
-                    {
-                        return new ForumTopics2(0, Array.Empty<int>());
-                    }
-                }
-
-                // Chats have already been received through updates, let's retry request
-                return await GetForumTopicsAsyncImpl(offset, limit, true);
-            }
+                missing = count > sorted.Count && !haveFullList && !reentrancy
+                    ? count - sorted.Count
+                    : 0;
 #endif
 
-            // Have enough chats in the chat list to answer request
-            var result = new int[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
-            var pos = 0;
-
-            using (var iter = sorted.GetEnumerator())
-            {
-                int max = Math.Min(count, sorted.Count);
-
-                for (int i = 0; i < max; i++)
+                if (missing == 0)
                 {
-                    iter.MoveNext();
+                    // Have enough chats in the chat list to answer request
+                    var result = new int[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
+                    var pos = 0;
 
-                    if (i >= offset)
+                    using (var iter = sorted.GetEnumerator())
                     {
-                        result[pos++] = iter.Current.Id;
+                        int max = Math.Min(count, sorted.Count);
+
+                        for (int i = 0; i < max; i++)
+                        {
+                            iter.MoveNext();
+
+                            if (i >= offset)
+                            {
+                                result[pos++] = iter.Current.Id;
+                            }
+                        }
                     }
+
+                    haveFullList &= count >= sorted.Count;
+                    return new ForumTopics2(haveFullList ? -1 : 0, result);
                 }
             }
 
-            haveFullList &= count >= sorted.Count;
+            var response = await LoadForumTopicsAsync(missing);
+            if (response is Error error)
+            {
+                if (error.Code == 404)
+                {
+                    _haveFullList = true;
+                }
+                else
+                {
+                    return new ForumTopics2(0, Array.Empty<int>());
+                }
+            }
 
-            Monitor.Exit(_order);
-            return new ForumTopics2(haveFullList ? -1 : 0, result);
+            // Chats have already been received through updates, let's retry request
+            return await GetForumTopicsAsyncImpl(offset, limit, true);
         }
 
         private int _nextOffsetDate;
@@ -281,60 +285,62 @@ namespace Telegram.Services
 
             _clientService.Send(request, response =>
             {
-                Monitor.Enter(_order);
+                Object result;
 
-                if (response is ForumTopics forumTopics)
+                lock (_order)
                 {
-                    _nextOffsetDate = forumTopics.NextOffsetDate;
-                    _nextOffsetMessageId = forumTopics.NextOffsetMessageId;
-                    _nextOffsetForumTopicId = forumTopics.NextOffsetForumTopicId;
-
-                    var topics = new List<ForumTopic>(forumTopics.Topics.Count);
-
-                    foreach (var topic in forumTopics.Topics)
+                    if (response is ForumTopics forumTopics)
                     {
-                        _topics[topic.Info.ForumTopicId] = topic;
+                        _nextOffsetDate = forumTopics.NextOffsetDate;
+                        _nextOffsetMessageId = forumTopics.NextOffsetMessageId;
+                        _nextOffsetForumTopicId = forumTopics.NextOffsetForumTopicId;
 
-                        if (topic.LastMessage != null)
+                        var topics = new List<ForumTopic>(forumTopics.Topics.Count);
+
+                        foreach (var topic in forumTopics.Topics)
                         {
-                            _messages[topic.LastMessage.Id] = topic;
+                            _topics[topic.Info.ForumTopicId] = topic;
+
+                            if (topic.LastMessage != null)
+                            {
+                                _messages[topic.LastMessage.Id] = topic;
+                            }
+
+                            if (topic.IsPinned)
+                            {
+                                _pinnedTopicIds.Add(topic.Info.ForumTopicId);
+                            }
+
+                            if (topic.UnreadCount > 0)
+                            {
+                                _unreadTopicIds.Add(topic.Info.ForumTopicId);
+                            }
+
+                            topics.Add(topic);
                         }
 
-                        if (topic.IsPinned)
+                        foreach (var topic in topics)
                         {
-                            _pinnedTopicIds.Add(topic.Info.ForumTopicId);
+                            UpdateTopicOrder(topic, false);
                         }
 
-                        if (topic.UnreadCount > 0)
-                        {
-                            _unreadTopicIds.Add(topic.Info.ForumTopicId);
-                        }
+                        _aggregator.Publish(new UpdateChatUnreadTopicCount(_chatId, UnreadCount));
 
-                        topics.Add(topic);
-                    }
-
-                    foreach (var topic in topics)
-                    {
-                        UpdateTopicOrder(topic, false);
-                    }
-
-                    _aggregator.Publish(new UpdateChatUnreadTopicCount(_chatId, UnreadCount));
-
-                    if (forumTopics.Topics.Count > 0 && _order.Count < forumTopics.TotalCount + 1)
-                    {
-                        tsc.SetResult(new Ok());
+                        result = forumTopics.Topics.Count > 0 && _order.Count < forumTopics.TotalCount + 1
+                            ? new Ok()
+                            : new Error(404, string.Empty);
                     }
                     else
                     {
-                        tsc.SetResult(new Error(404, string.Empty));
+                        result = new Error(500, string.Empty);
                     }
                 }
-                else
-                {
-                    tsc.SetResult(new Error(500, string.Empty));
-                }
 
-                Monitor.Exit(_order);
+                // Completed outside the lock on purpose: the continuation waiting on this is
+                // GetForumTopicsAsyncImpl, which takes _order itself, and SetResult runs it
+                // inline. Recursion made that safe rather than deadlocked, but a throw in
+                // there would have skipped the Exit and wedged the topic list for good.
+                tsc.SetResult(result);
             });
 
             return tsc.Task;

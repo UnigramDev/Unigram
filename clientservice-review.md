@@ -1,9 +1,14 @@
 # ClientService review — to-do
 
-Read-through of the seven `Telegram/Services/ClientService.*.cs` partials (5,356 lines),
+Read-through of the seven `Telegram/Services/ClientService.*.cs` partials (5,356 lines) plus
+the two topic services they own — `ForumTopicService.cs` (960) and
+`FeedbackChatTopicService.cs` (329, which holds `DirectMessagesChatTopicService`) —
 cross-checked against `Telegram/Td/Client.cs`, `Telegram/Collections/ReaderWriterDictionary.cs`,
 and the call sites in `Controls/`, `Views/` and `ViewModels/` that decide whether a finding
 is hot or cold.
+
+Findings in the `ClientService` partials are grouped P0–P3 below. The two topic services have
+their own sections at the end, prefixed `F` and `D`, each item carrying its own priority.
 
 Line numbers are as of `03513e401` with a clean `Telegram/Services/`.
 
@@ -238,12 +243,17 @@ Ordered by measured reach, not by size of change.
 
 Worth doing only while already in the file.
 
-- [ ] **Three copies of the same paging algorithm** — `ChatList.cs:48`, `StoryList.cs:83`, `SavedMessages.cs:105`
+- [ ] **Five copies of the same paging algorithm** — `ChatList.cs:48`, `StoryList.cs:83`,
+      `SavedMessages.cs:105`, `ForumTopicService.cs:214`, `FeedbackChatTopicService.cs:141`
 
       ~55 near-identical lines each, differing only in the `SortedSet`, the `Load*`
-      function, and the return type. The real argument for merging isn't the ~110
-      duplicated lines — it's that the P0 lock leak and the P1 mutating-getter bug are
-      *each present in all three*, so every fix is a three-way fix until they're one method.
+      function, and the return type. Five, not the three first written here — the two topic
+      services carry the same method.
+
+      The real argument for merging isn't the ~220 duplicated lines — it's that the P0 lock
+      leak and the P1 mutating-getter bug are *each present in all five*, so every fix is a
+      five-way fix until they're one method. Now demonstrated rather than argued: closing
+      the lock leak took two commits and the identical `int missing` restructure five times.
 
 - [ ] **`GetAllReactionsAsync` is exactly `GetReactionsAsync(_activeReactions)`** — `ClientService.cs:1750` vs `:1774`
 
@@ -264,6 +274,166 @@ Worth doing only while already in the file.
       construction. Listed for completeness, not as a priority. Same for the sticker
       helpers (`IsStickerFavorite` etc., `:2736-2774`), whose linear `IList.Contains` is
       only reached from context-menu construction and is fine as it is.
+
+---
+
+## ForumTopicService (960 lines)
+
+`Services/ForumTopicService.cs`. One instance per forum chat, created and owned by
+`ClientService.ForumTopics.cs`. Reached from the TDLib thread through every `Update*`
+method, and from the UI thread through `TopicListViewModel.cs:691`, `:907`, `:919` and
+`ChatCell.xaml.cs:697`.
+
+- [x] **F1 · P0 · Four more `Monitor.Enter`/`Exit` pairs without `try`/`finally`** **[live]**
+      → fixed in the commit that checked this box
+
+      `:64/75` (`UpdateTopicOrder`) · `:100/107` (`SetPinnedForumTopics`) ·
+      `:216/228/269` (`GetForumTopicsAsyncImpl`) · `:284/337` (`LoadForumTopicsAsync`)
+
+      Same class as the P0 item already fixed, missed there because the review only covered
+      the `ClientService.*` partials.
+
+      `LoadForumTopicsAsync` was the worst of the four: `tsc.SetResult` was called *inside*
+      the monitor (`:325`, `:329`, `:334`), so the awaiting continuation — which is
+      `GetForumTopicsAsyncImpl`, which re-enters `_order` — ran inline while the lock was
+      held. `Monitor` is recursive, so it did not deadlock; but a throw in that continuation
+      would have skipped the outer `Monitor.Exit` at `:337` and wedged the topic list for
+      that chat for the rest of the session.
+
+      Fixed: `lock` at all four. `UpdateTopicOrder` keeps its publish *outside* the lock,
+      where the hand-written `Monitor.Exit` already put it. `GetForumTopicsAsyncImpl` got the
+      same `int missing` restructure as the three in the P0 commit. `LoadForumTopicsAsync`
+      now assigns an `Object result` under the lock and calls `SetResult` after releasing it.
+
+      The `_aggregator.Publish` at `:321` is still inside the lock — that is F7, left alone
+      on purpose to keep this commit to one kind of change.
+
+- [ ] **F2 · P1 · Six unsynchronized collections shared across two threads** **[live]**
+
+      `_topics`, `_messages`, `_pinnedTopicIds`, `_deletedTopicIds`, `_pendingNewTopics`,
+      `_pendingLastReadInboxMessageId` (`:27-37`) are plain `Dictionary`/`List`/`HashSet`.
+      Every `Update*` method writes them from the TDLib thread. `GetTopic` (`:170`) and
+      `GetTopics` (`:185`) read them from the UI thread — and `GetTopic` *writes*
+      `_pendingNewTopics` at `:178`. Only `_unreadTopicIds` and `_order` are guarded at all.
+
+      Concurrent mutation of a `Dictionary` doesn't throw, it spins. The sibling class
+      `DirectMessagesChatTopicService` uses a `ReaderWriterDictionary` for exactly this job
+      (`FeedbackChatTopicService.cs:24`), so the same problem was solved correctly once
+      already — this is the strongest argument that F2 is an oversight rather than a
+      deliberate call.
+
+- [ ] **F3 · P1 · `GetTopics` is missing a `continue`** — `:189-199` **[live]**
+
+      For `id == int.MaxValue` it yields the synthetic "All topics" row and then *falls
+      through* to `GetTopic(int.MaxValue)`, which adds `int.MaxValue` to `_pendingNewTopics`
+      and fires `GetForumTopic(chatId, 2147483647)` at the server. It fires once per service
+      instance — the id then sits in `_pendingNewTopics` forever — so the cost is one bogus
+      round trip per forum opened plus a permanently poisoned pending entry, not a per-frame
+      storm. `DirectMessagesChatTopicService.GetTopics` has the identical omission
+      (`FeedbackChatTopicService.cs:113-117`); it is harmless there today only because that
+      `GetTopic` doesn't fetch.
+
+- [ ] **F4 · P1 · `UpdateNewTopic` leaks `_pendingNewTopics` on any failure** — `:437-447` **[live]**
+
+      `if (newTopic == null) return;` at `:442` sits *before* the
+      `_pendingNewTopics.Remove` at `:447`. Any non-`ForumTopic` response — a transient
+      network failure as readily as a real 404 — leaves the id pending forever, and the
+      guard in `GetTopic` (`:176`) then never retries it: the method returns null for that
+      topic for the rest of the session. A topic that failed to load once stays missing from
+      the list until the app restarts.
+
+- [ ] **F5 · P1 · `UpdateDeleteMessages` stops at the first affected topic** — `:600` **[live]**
+
+      The `break` is inside `foreach (long messageId in messageIds)`, after refreshing the
+      one topic whose last message was deleted. A delete batch spanning several topics —
+      deleting all of a user's messages, clearing history — refreshes only one of them; the
+      others keep a stale last-message preview and a stale sort order.
+
+- [ ] **F6 · P2 · Eight `Update*` handlers are lookup-then-nothing** — `:659-793`
+
+      `UpdateMessageSendFailed`, `UpdateMessageEdited`, `UpdateMessageIsPinned`,
+      `UpdateMessageInteractionInfo`, `UpdateMessageContentOpened`, `UpdateMessageMentionRead`,
+      `UpdateMessageUnreadReactions`, `UpdateMessageFactCheck` each do a `_messages` lookup
+      and then contain only comments describing what they would do.
+
+      So a topic's last-message preview never refreshes when that message is edited, and
+      per-message mention/reaction updates never reach the topic's counters — only the
+      whole-topic `UpdateForumTopic` does. They also each cost a dictionary lookup per
+      update, on the receive thread, to accomplish nothing. Worth deciding: implement, or
+      delete the bodies and stop dispatching to them from `ClientService.OnResult`.
+
+- [ ] **F7 · P2 · Aggregator publishes while holding `_order`** — `:79`, `:105`, `:318`, `:321`
+
+      `UpdateTopicOrder` publishes at `:79`, after its own `Monitor.Exit` at `:75` — but when
+      it is called from inside another `_order` critical section (`SetPinnedForumTopics` at
+      `:105` via `UpdatePinnedTopics`, and `LoadForumTopicsAsync` at `:318`), recursion
+      means that `Exit` only decrements the count. The publish, and every subscriber it
+      runs, therefore executes with `_order` still held.
+
+- [ ] **F8 · P2 · `GetTopics` allocates a fresh synthetic topic per enumeration** — `:193`, `:197`
+
+      `ForumTopic` + `ForumTopicInfo` + `ForumTopicIcon` + `ChatNotificationSettings` — four
+      allocations every time the topic list enumerates, on a UI path. It is a constant; hoist
+      it to a field built once per service.
+
+- [ ] **F9 · P3 · `ViewMessages` throws on an empty list** — `:87` **[latent]**
+
+      `messageIds.Max()` on an empty sequence throws `InvalidOperationException`. Also a LINQ
+      allocation on a path that runs per read.
+
+- [ ] **F10 · P3 · Two update classes silently drop a constructor parameter**
+
+      `UpdateForumTopicReadInbox` (`:852-857`) accepts `unreadCount` and never assigns
+      `UnreadCount`; `UpdateDirectMessagesChatTopicReadInbox`
+      (`FeedbackChatTopicService.cs:249-254`) does the same.
+
+      **Checked, and it is not user-visible today:** both updates are consumed purely as
+      signals — `TopicListViewModel.cs:480` and `:524` ignore the payload and re-read the
+      live topic object, which the cell then reads. So nothing observes the dropped value.
+      It is a trap for whoever reads `update.UnreadCount` next and gets a silent 0.
+
+- [ ] **F11 · P3 · `UpdateUnreadCount` clamps the count to 0 or 1** — `:130-142`
+
+      Both branches force `UnreadCount` to 0 or 1, overwriting the real server count that
+      `UpdateNewTopic` assigns at `:455`. **Also not visible today**, because the badge is
+      presence-only: `ForumTopicCell.xaml.cs:269` has its `UnreadBadge.Text` assignment
+      commented out. It does still feed the `UnreadMentionCount == 1 && UnreadCount == 1`
+      branch at `:264`, and it means the field cannot be trusted by anything new.
+
+- [ ] **F12 · P3 · `SetPinnedForumTopics` silently no-ops over the limit** — `:93-96`
+
+      Returns without sending and without telling anyone; `ForumView.xaml.cs:509` has no way
+      to know the pin didn't happen.
+
+- [ ] **F13 · P3 · `internal class ForumTopicService` vs `public partial class DirectMessagesChatTopicService`**
+
+      Two classes with the same role and different visibility.
+
+---
+
+## DirectMessagesChatTopicService
+
+`Services/FeedbackChatTopicService.cs` — note the class and file names disagree. Smaller and
+in better shape than `ForumTopicService`; `_topics` is a `ReaderWriterDictionary` (`:24`).
+
+- [x] **D1 · P0 · Two `Monitor.Enter`/`Exit` pairs without `try`/`finally`** — `:90/101`, `:143/155/196` **[live]**
+      → fixed in the commit that checked this box, alongside F1
+
+- [ ] **D2 · P1 · A topic seen for the first time never publishes** — `:65` **[latent]**
+
+      The `else` branch calls `UpdateTopicOrder(newTopic, newTopic.Order, publish: false)`,
+      so a topic arriving for the first time raises no
+      `UpdateDirectMessagesChatTopicLastMessage`. `ForumTopicService.UpdateNewTopic` passes
+      `true` in the same situation (`:480`). Marked latent because the list may pick it up
+      through `GetDirectMessagesChatTopicsAsync` instead — worth confirming against
+      `TopicListViewModel` before changing.
+
+- [ ] **D3 · P1 · `_haveFullList` written outside the `_order` monitor** — `:162`
+
+      Same shape as the `_haveFullChatList` item in P1 above.
+
+- [ ] **D4 · P3** — missing `continue` in `GetTopics` (see F3) and the dropped `unreadCount`
+      (see F10).
 
 ---
 
@@ -289,6 +459,13 @@ Worth doing only while already in the file.
   this doc and the one most worth confirming with a profile before and after, rather than
   taking on argument.
 
-**Suggested order:** ~~P0~~ **done** → `GetChatFromMessageSenderAsync` and `Clear()` from P1
-(small, live call sites) → the `ConcurrentDictionary` swap → `GetChatFolders` and `GetChats`
-(the two chat-list-render costs).
+**Suggested order:** ~~P0~~, ~~F1, D1~~ **done** — all 19 `Monitor` pairs across the five
+files are now `lock` →
+**F2** (the unsynchronized collections, the worst thing in either topic service) →
+**F4 and F5**, both small and both leaving the topic list visibly wrong →
+`GetChatFromMessageSenderAsync` and `Clear()` from P1 → the `ConcurrentDictionary` swap →
+`GetChatFolders` and `GetChats` (the two chat-list-render costs).
+
+**F6 needs your call before anyone touches it:** eight handlers that are stubs, not bugs.
+Implementing them is a feature; deleting them is a cleanup. Either is fine, but guessing
+which you want would waste the work.
