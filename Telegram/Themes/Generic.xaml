@@ -5818,10 +5818,11 @@
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <!--  DescriptionPresenter must NOT be animated here: it is x:Load="False" and
-                                              only realized when Description is set, and a Storyboard.TargetName that
-                                              cannot be resolved throws E_INVALIDARG out of the measure pass that
-                                              applies the template. It already draws in a disabled-looking brush.  -->
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                       Storyboard.TargetName="DescriptionPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -5864,8 +5865,12 @@
                                           Grid.Column="1"
                                           Grid.ColumnSpan="2" />
 
+                        <!--  Not x:Load="False", unlike the other optional parts: the Disabled state animates
+                              this one, and a Storyboard.TargetName that resolves to a part which has not been
+                              realized throws E_INVALIDARG out of the measure pass that applies the template.
+                              Collapsed costs one unmeasured ContentPresenter per button instead.  -->
                         <ContentPresenter x:Name="DescriptionPresenter"
-                                          x:Load="False"
+                                          Visibility="Collapsed"
                                           FontSize="12"
                                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
