@@ -43,6 +43,26 @@ namespace winrt::Telegram::Native::Calls::implementation
             winrt::Telegram::Native::Calls::VoipScreenCapture,
             bool>> m_paused;
     };
+
+    // VoipCaptureBase is implemented by two unrelated runtime classes, so the ABI pointer
+    // must be probed before get_self: an unchecked cast reads m_impl at the wrong offset.
+    inline std::shared_ptr<tgcalls::VideoCaptureInterface> GetVideoCaptureImpl(VoipCaptureBase const& videoCapture)
+    {
+        if (videoCapture == nullptr)
+        {
+            return nullptr;
+        }
+        else if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>())
+        {
+            return winrt::get_self<VoipScreenCapture>(screen)->m_impl;
+        }
+        else if (auto video = videoCapture.try_as<winrt::default_interface<VoipVideoCapture>>())
+        {
+            return winrt::get_self<VoipVideoCapture>(video)->m_impl;
+        }
+
+        return nullptr;
+    }
 }
 
 namespace winrt::Telegram::Native::Calls::factory_implementation

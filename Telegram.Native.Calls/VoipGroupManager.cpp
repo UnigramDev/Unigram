@@ -83,19 +83,7 @@ namespace winrt::Telegram::Native::Calls::implementation
             };
         }
 
-        if (auto videoCapture = descriptor.VideoCapture())
-        {
-            if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>())
-            {
-                auto implementation = winrt::get_self<VoipScreenCapture>(screen);
-                impl.videoCapture = implementation->m_impl;
-            }
-            else if (auto video = videoCapture.try_as<winrt::default_interface<VoipVideoCapture>>())
-            {
-                auto implementation = winrt::get_self<VoipVideoCapture>(video);
-                impl.videoCapture = implementation->m_impl;
-            }
-        }
+        impl.videoCapture = GetVideoCaptureImpl(descriptor.VideoCapture());
 
         m_impl = std::make_unique<tgcalls::GroupInstanceCustomImpl>(std::move(impl));
 
@@ -234,23 +222,7 @@ namespace winrt::Telegram::Native::Calls::implementation
     {
         if (m_impl)
         {
-            if (videoCapture)
-            {
-                if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>())
-                {
-                    auto implementation = winrt::get_self<VoipScreenCapture>(screen);
-                    m_impl->setVideoCapture(implementation->m_impl);
-                }
-                else if (auto video = videoCapture.try_as<winrt::default_interface<VoipVideoCapture>>())
-                {
-                    auto implementation = winrt::get_self<VoipVideoCapture>(video);
-                    m_impl->setVideoCapture(implementation->m_impl);
-                }
-            }
-            else
-            {
-                m_impl->setVideoCapture(nullptr);
-            }
+            m_impl->setVideoCapture(GetVideoCaptureImpl(videoCapture));
         }
     }
 
