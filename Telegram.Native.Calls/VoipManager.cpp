@@ -69,13 +69,10 @@ namespace winrt::Telegram::Native::Calls::implementation
             .outputVolume = 1.f
         };
 
-        std::vector<uint8_t> persistentState = {};
+        std::vector<uint8_t> persistentState;
         if (descriptor.PersistentState())
         {
-            for (int i = 0; i < descriptor.PersistentState().Size(); i++)
-            {
-                persistentState[i] = descriptor.PersistentState().GetAt(i);
-            }
+            persistentState = vector_to_unmanaged<uint8_t, uint8_t>(descriptor.PersistentState());
         }
 
         std::array<uint8_t, 256> encryptionKey = {};
