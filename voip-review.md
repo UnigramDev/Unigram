@@ -101,7 +101,17 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   D2D and Composition work.
 
   Fixed by remembering the last sink and skipping a repeat. The field is a `weak_ptr` on
-  purpose: a strong one would keep the sink alive and break detach-by-expiry.
+  purpose: it exists only to recognise a repeat, and a strong one would keep the sink
+  alive and break detach-by-expiry.
+
+  **Corrected on a second pass** — the first version early-returned on a null sink, which
+  was wrong twice over. It left `m_incomingVideoOutput` pointing at a sink the caller had
+  just asked to detach, and it swallowed the one thing a null *is* good for:
+  `setIncomingVideoOutput` also assigns `_currentSink` (`InstanceV2Impl.cpp:2036`), which
+  a newly negotiated video channel gets handed on creation (`:1512`). Never clearing it
+  means a channel that appears after the detach re-attaches the old sink. Null now flows
+  through as an empty `shared_ptr`, and the dedupe check handles it for free — two nulls
+  in a row compare equal and do nothing.
 
   Not an issue for `VoipGroupManager::AddIncomingVideoOutput` — every caller there builds
   a fresh sink (`GroupCallPage.xaml.cs:2125`, `StoryContent.xaml.cs:844`).

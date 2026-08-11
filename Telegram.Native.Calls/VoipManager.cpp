@@ -282,12 +282,16 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipManager::SetIncomingVideoOutput(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink)
     {
-        if (m_impl == nullptr || sink == nullptr)
+        if (m_impl == nullptr)
         {
             return;
         }
 
-        auto impl = winrt::get_self<VoipVideoOutputSink>(sink)->Sink();
+        std::shared_ptr<VoipVideoOutput> impl;
+        if (sink)
+        {
+            impl = winrt::get_self<VoipVideoOutputSink>(sink)->Sink();
+        }
 
         // tgcalls appends sinks and only drops them once the weak_ptr expires, so handing
         // it one it already holds renders every frame twice. The page re-sets the output
@@ -297,8 +301,12 @@ namespace winrt::Telegram::Native::Calls::implementation
             return;
         }
 
-        // Weak, so that VoipVideoOutputSink::Stop stays the way the output is detached.
+        // Weak, so that releasing the sink stays the way frames stop being delivered.
+        // This is only here to recognise a repeat: it is not what keeps the sink alive.
         m_incomingVideoOutput = impl;
+
+        // A null sink still has to reach tgcalls. It clears the sink that a newly
+        // negotiated video channel would otherwise be handed on creation.
         m_impl->setIncomingVideoOutput(impl);
     }
 
