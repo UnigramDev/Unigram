@@ -4196,6 +4196,11 @@ namespace Telegram.Views
 
         private bool MessageQuote_Loaded(MessageQuote quote, MessageProperties properties)
         {
+            if (quote.Message.Content is MessageRichMessage)
+            {
+                return false;
+            }
+
             return MessageReply_Loaded(quote.Message, properties);
         }
 
