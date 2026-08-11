@@ -204,24 +204,46 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   screen sharing from main. Work out whether decrypting a remote screencast needs the
   other channel, or whether the receiving side genuinely only ever sees main.
 
-- [ ] **`StopCaptureAsync` blocks the caller with no timeout** — `LoopbackCapture.cpp:230`
+- [x] **`StopCaptureAsync` blocks the caller with no timeout** — `LoopbackCapture.cpp:230`
 
-  `m_hCaptureStopped.wait()` is unbounded and `VoipGroupManager::Stop()` runs on the UI
-  thread, so a work queue that never drains hangs the app. Carried over from P0.
+  `m_hCaptureStopped.wait()` was unbounded and `VoipGroupManager::Stop()` runs on the UI
+  thread, so a work queue that never drained hung the app. Gone with the rewrite below:
+  `Stop` now takes the lock the sample callback holds, so it waits for one packet read at
+  most and never for a work item that may never run.
 
-- [ ] **Rewrite `CLoopbackCapture` without WIL, C++/WinRT friendly** *(Fela)*
+- [x] **Rewrite `CLoopbackCapture` without WIL, C++/WinRT friendly** *(Fela)*
 
-  It is a near-verbatim copy of the Microsoft ApplicationLoopbackAudio sample: WRL
-  `RuntimeClass`, `wil::com_ptr_nothrow`/`unique_event`/`critical_section`, and the
-  `METHODASYNCCALLBACK` macro with its `offsetof`-based parent pointer. Everything else in
-  this project is C++/WinRT, so it is the odd one out and the reason the two P0 fixes above
-  had to be phrased in WRL terms.
+  Now `VoipLoopbackCapture` (`VoipLoopbackCapture.{h,cpp}`), matching how the rest of the
+  project names things. What changed:
 
-  Worth pinning down before starting: whether the four MF async callbacks can become
-  `winrt::implements` types (or one shared dispatcher), what replaces `wil::unique_event`
-  (`winrt::handle` + `CreateEventW`, or an `IAsyncAction`), and whether the blocking waits
-  in `ActivateAudioInterface` and `StopCaptureAsync` can become coroutines — which would
-  also settle the item above.
+  - WRL `RuntimeClass` → `winrt::implements`, which brings agility with it, so `FtmBase`
+    is gone too. `wil::com_ptr_nothrow` → `com_ptr`, `wil::unique_event` → `handle`,
+    `wil::critical_section` → `slim_mutex`, and the `RETURN_IF_FAILED` macros → plain
+    `if (auto result = …; FAILED(result))`.
+  - The `METHODASYNCCALLBACK` macro and its four `offsetof`-derived callback objects are
+    gone. Only the sample pump genuinely needs the MMCSS work queue, so start, stop and
+    finish are now direct calls and there is one `IMFAsyncCallback` left.
+  - No more `m_hCaptureStopped` handshake: a `slim_mutex` held across the sample callback
+    is what `Stop` synchronises against.
+  - The handler is a constructor argument rather than a settable sink, so it cannot be
+    missing when the first packet lands.
+
+  Three real bugs fell out of the rewrite, all in the packet loop:
+
+  - The byte count came from `GetNextPacketSize` but the copy ran after `GetBuffer`, which
+    is allowed to hand back a different frame count — an over-read whenever they differ.
+  - `AUDCLNT_BUFFERFLAGS_SILENT` was ignored. A silent buffer's contents are undefined, so
+    silence was being sent as whatever happened to be in memory. Now zeroed.
+  - `m_samples` was invoked unguarded.
+
+- [ ] **`AUTOCONVERTPCM` is passed as the periodicity argument** —
+  `VoipLoopbackCapture.cpp`, in `OnActivated`
+
+  `IAudioClient::Initialize` takes it in `StreamFlags`, but it sits in `hnsPeriodicity`,
+  where `0x80000000` means a ~214s period and shared mode wants 0 regardless. Inherited
+  verbatim from the Microsoft sample and preserved through the rewrite **on purpose** —
+  moving it changes what the audio engine is asked for, and screen-share audio works
+  today. Wants testing on a real capture, not reasoning. Left commented in place.
 
 - [ ] **Lock held across managed callbacks, and taken again by `add`/`remove`** —
   `VoipManager.cpp:415-458` vs `:463-571`; `VoipGroupManager.cpp:306-435` vs `:447-539`
@@ -294,6 +316,40 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
 - [ ] **`Protocol()`'s comparator takes `std::string` by value** — `VoipManager.h:34`.
   Two allocations per comparison. Also: lexicographic version sort breaks at a two-digit
   major.
+
+## How the loopback audio reaches WebRTC
+
+Checked while rewriting the capture, since "we just inject bytes" sounded like the wrong
+shape. It is not — the screencast path is already on the intended hook:
+
+- A screencast instance **never opens the microphone**. `createAudioDeviceModule` branches
+  on `VideoContentType::Screencast` and builds a `FakeAudioDeviceModule` over an
+  `ExternalAudioRecorder` (`GroupInstanceCustomImpl.cpp:4392-4397`). The loopback capture
+  *is* that instance's audio device.
+- `addExternalAudioSamples` converts int16 → float and appends to `_externalAudioSamples`
+  (`:3828`), and `ExternalAudioRecorder::Record` (`:958`) pulls 480 samples — 10ms of
+  48kHz mono — off the front each time WebRTC asks. That is why the capture format is
+  fixed at 1×48000×16.
+- The `AudioCapturePostProcessor` that *mixes* external samples into the microphone
+  (`:842-859`) is the **other** consumer, for the main instance. We never feed it.
+
+So there is no better hook to move to; a custom `AudioDeviceModule` via
+`createAudioDeviceModule` would just be reimplementing `FakeAudioDeviceModule`. What is
+worth attention is the coupling, not the mechanism:
+
+- [ ] **The buffer between the two clocks is unmanaged** — `GroupInstanceCustomImpl.cpp:3838`
+
+  WASAPI pushes on its capture clock, WebRTC pulls 10ms at a time on its own. Nothing
+  reconciles them: the buffer grows to 2 seconds and then drops from the *front*, so a
+  consumer that falls behind gets a permanent 2s lag plus a discontinuity, not a
+  resynchronisation. It is also the reason screen audio can drift out of sync with video
+  over a long share. Worth measuring the steady-state depth before deciding anything.
+
+- [ ] **Screencast audio is mono-only by construction** — `options.num_channels = 1`
+
+  Fine for speech, lossy for music or a game. Widening it means the descriptor, the
+  capture format and `ExternalAudioRecorder` all have to agree, so it is a tgcalls change
+  as much as ours.
 
 ## P4 — hygiene, worth doing while we're in here
 

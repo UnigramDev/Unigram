@@ -1,4 +1,11 @@
 ﻿#include "pch.h"
+
+// DEFINE_GUID reserves storage for CLSID_YUV420Effect only in the translation unit that
+// includes initguid.h ahead of it; every other one just gets the declaration. This is
+// that translation unit — it used to be whichever one happened to reach the initguid.h
+// that LoopbackCapture.h dragged in.
+#include <initguid.h>
+
 #include "VoipVideoOutputSink.h"
 #if __has_include("VoipVideoOutputSink.g.cpp")
 #include "VoipVideoOutputSink.g.cpp"

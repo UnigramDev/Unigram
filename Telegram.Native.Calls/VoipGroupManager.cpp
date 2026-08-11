@@ -97,23 +97,24 @@ namespace winrt::Telegram::Native::Calls::implementation
                 return;
             }
 
-            m_loopback = Microsoft::WRL::Make<CLoopbackCapture>();
-            m_loopback->SetOutputSink([weakThis{ get_weak() }](std::vector<uint8_t>&& samples) {
+            m_loopback = winrt::make_self<VoipLoopbackCapture>([weakThis{ get_weak() }](std::vector<uint8_t>&& samples) {
                 if (auto strongThis = weakThis.get())
                 {
                     strongThis->AddExternalAudioSamples(std::move(samples));
                 }
                 });
 
+            // -1 means everything this process is not rendering, i.e. the whole system
+            // minus ourselves; anything else is that process and its children.
             auto result = audioProcessId == -1
-                ? m_loopback->StartCaptureAsync(GetCurrentProcessId(), false)
-                : m_loopback->StartCaptureAsync(static_cast<DWORD>(audioProcessId), true);
+                ? m_loopback->Start(GetCurrentProcessId(), false)
+                : m_loopback->Start(static_cast<uint32_t>(audioProcessId), true);
 
             if (FAILED(result))
             {
                 // Process loopback is unavailable on older builds; share the screen
                 // without its audio rather than failing the whole capture.
-                m_loopback.Reset();
+                m_loopback = nullptr;
                 return;
             }
 
@@ -125,8 +126,8 @@ namespace winrt::Telegram::Native::Calls::implementation
     {
         if (m_loopback)
         {
-            m_loopback->StopCaptureAsync();
-            m_loopback.Reset();
+            m_loopback->Stop();
+            m_loopback = nullptr;
         }
 
         if (m_impl)

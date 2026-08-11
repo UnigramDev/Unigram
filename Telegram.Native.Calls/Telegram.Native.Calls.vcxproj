@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.3.0.260715.1\build\native\Microsoft.Windows.CppWinRT.props')" />
   <PropertyGroup Label="Globals">
@@ -178,7 +178,7 @@
       <DependentUpon>GroupNetworkStateChangedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="LoopbackCapture.h" />
+    <ClInclude Include="VoipLoopbackCapture.h" />
     <ClInclude Include="MediaChannelDescriptionsRequestedEventArgs.h" />
     <ClInclude Include="RemoteMediaStateUpdatedEventArgs.h">
       <DependentUpon>RemoteMediaStateUpdatedEventArgs.idl</DependentUpon>
@@ -406,7 +406,7 @@
       <DependentUpon>GroupNetworkStateChangedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="LoopbackCapture.cpp" />
+    <ClCompile Include="VoipLoopbackCapture.cpp" />
     <ClCompile Include="MediaChannelDescriptionsRequestedEventArgs.cpp" />
     <ClCompile Include="RemoteMediaStateUpdatedEventArgs.cpp">
       <DependentUpon>RemoteMediaStateUpdatedEventArgs.idl</DependentUpon>

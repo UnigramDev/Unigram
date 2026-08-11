@@ -5,7 +5,7 @@
 
 #include "rtc_base/synchronization/mutex.h"
 
-#include "LoopbackCapture.h"
+#include "VoipLoopbackCapture.h"
 
 #include <mutex>
 
@@ -78,9 +78,9 @@ namespace winrt::Telegram::Native::Calls::implementation
         std::unique_ptr<tgcalls::GroupInstanceCustomImpl> m_impl = nullptr;
         std::mutex m_lock;
 
-        // Ref-counted: the MF work items it queues hold references of their own, so it
+        // Ref-counted: the MF work item it queues holds a reference of its own, so it
         // must outlive us if a capture is still draining. Created only for screencast.
-        Microsoft::WRL::ComPtr<CLoopbackCapture> m_loopback;
+        com_ptr<VoipLoopbackCapture> m_loopback;
 
         bool m_isMuted = true;
         bool m_isNoiseSuppressionEnabled = true;
