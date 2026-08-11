@@ -18,8 +18,12 @@ namespace winrt::Telegram::Native::Calls::implementation
 {
     VoipGroupManager::VoipGroupManager(VoipGroupDescriptor descriptor)
     {
-        auto logPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path();
-        logPath = logPath + hstring(L"\\tgcalls_group.txt");
+        // Sharing a screen runs a second manager alongside the main one, and both would
+        // otherwise interleave into the same file.
+        auto logPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path()
+            + (VoipVideoContentType::Screencast == descriptor.VideoContentType()
+                ? hstring(L"\\tgcalls_screencast.txt")
+                : hstring(L"\\tgcalls_group.txt"));
 
         tgcalls::GroupConfig config = tgcalls::GroupConfig{
             true,
@@ -158,10 +162,10 @@ namespace winrt::Telegram::Native::Calls::implementation
                 completion(payload.audioSsrc, winrt::to_hstring(payload.json));
                 });
         }
-        else
-        {
-            completion(0, L"");
-        }
+
+        // Nothing to join with once the instance is gone. Completing with an empty
+        // payload only got the caller as far as a join the server would reject, and it
+        // did it on this thread rather than the one the success path answers on.
     }
 
     void VoipGroupManager::SetJoinResponsePayload(hstring payload)

@@ -30,6 +30,13 @@
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
+    // Every version tgcalls::Meta::Create can build. These have internal linkage, so they
+    // belong in exactly one translation unit: from a header, a second includer would
+    // register the whole set again.
+    const auto RegisterTag = tgcalls::Register<tgcalls::InstanceImpl>();
+    const auto RegisterTagV2_4_0_1 = tgcalls::Register<tgcalls::InstanceV2Impl>();
+    const auto RegisterTagV2_4_1_2 = tgcalls::Register<tgcalls::InstanceV2ReferenceImpl>();
+
     void VoipManager::Start(VoipDescriptor descriptor)
     {
         auto logPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path();
@@ -48,13 +55,8 @@ namespace winrt::Telegram::Native::Calls::implementation
             .enableAGC = true,
             .enableCallUpgrade = false,
             .enableVolumeControl = false,
-        #ifndef _WIN32
-            std::string logPath;
-            std::string statsLogPath;
-        #else
             .logPath = logPath.data(),
             .statsLogPath = L"",
-        #endif
             .maxApiLayer = 92,
             .enableHighBitrateVideo = false,
             .preferredVideoCodecs = std::vector<std::string>(),

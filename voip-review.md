@@ -377,39 +377,56 @@ worth attention is the coupling, not the mechanism:
 
 ## P4 — hygiene, worth doing while we're in here
 
-- [ ] `EmitJoinPayload` (`VoipGroupManager.cpp:151-163`) invokes `completion` synchronously
-      on the null-impl path and asynchronously otherwise — inconsistent threading for the
-      caller.
-- [ ] No *remove* counterpart to `AddIncomingVideoOutput`, so sinks accumulate for the
-      call's lifetime as participants come and go.
-- [ ] Fixed log file names (`VoipManager.cpp:35-36`, `VoipGroupManager.cpp:21-27`) —
-      unbounded growth, and the main + screencast group managers write the same
-      `tgcalls_group.txt` concurrently.
-- [ ] `const auto RegisterTag = tgcalls::Register<...>()` at namespace scope in a header
-      (`VoipManager.h:22-24`) — internal linkage, one registration per including TU. Only
-      one TU includes it today; a second would silently double-register every version.
-- [ ] Dead `#ifndef _WIN32` branch inside the designated-initializer list —
-      `VoipManager.cpp:51-57`.
+- [x] `EmitJoinPayload` (`VoipGroupManager.cpp:151-163`) invoked `completion`
+      synchronously on the null-impl path and asynchronously otherwise. It no longer
+      completes at all when there is no instance: an empty payload only got the caller as
+      far as a join the server would reject.
+- [x] `const auto RegisterTag = tgcalls::Register<...>()` at namespace scope in a header
+      (`VoipManager.h:22-24`) — internal linkage, one registration per including TU. Moved
+      into `VoipManager.cpp`, which is where a thing with internal linkage belongs.
+- [x] The screencast group manager writes `tgcalls_screencast.txt` rather than sharing
+      `tgcalls_group.txt` with the main one. Both still grow without bound; that needs a
+      rotation policy, not a rename.
+- [x] Dead `#ifndef _WIN32` branch inside the designated-initializer list —
+      `VoipManager.cpp:51-57`. It could never have compiled; deleted.
+- [ ] ~~No *remove* counterpart to `AddIncomingVideoOutput`~~ — **not a leak.** Same
+      mistake as the P1 video-sink item: the group `VideoSinkImpl::OnFrame` prunes expired
+      weak_ptrs exactly like the 1:1 one (`GroupInstanceCustomImpl.cpp:662-665`), so
+      releasing the sink *is* the removal. Left open only as a reminder of the shape.
 - [ ] `enableAEC`/`enableNS`/`enableAGC` hard-coded `true` in 1:1 calls
       (`VoipManager.cpp:46-48`) while group calls honour the `IsNoiseSuppressionEnabled`
-      setting. Decide whether 1:1 should honour it too.
+      setting. **Needs your call** — it is a product decision, not a defect.
+- [ ] `Protocol()` sorts versions lexicographically, which breaks at a two-digit major.
+      Not urgent while tgcalls' versions are single-digit, but it is a silent failure.
 
 ---
 
-## Next up
+## What is left
 
-P0 and P1 are done, apart from two items left open on purpose: the `type = Audio`
-question above (a feature, not a fix) and the duplicate-description pass in
-`OnMediaChannelDescriptionsRequested`.
+Every defect found in this review is fixed. What remains is decisions, one measurement,
+and one thing that needs a device — nothing that can be closed by reading more code.
 
-Suggested order from here:
+**Needs your call:**
 
-1. The `m_lock` rework (P2) — the one structural change, and it unblocks 3.
-2. No destructor on either manager (P2) — small, and it pairs with the `m_lock` work since
-   both are about what happens around `Stop`.
-3. The interop cost on the E2E and audio-levels paths (P3), which is where the real
-   per-frame waste is.
-4. P4 whenever, though the header-scope `RegisterTag` is worth doing before anyone adds a
-   second TU that includes `VoipManager.h`.
+- `enableAEC`/`enableNS`/`enableAGC` hard-coded in 1:1 calls while group calls honour the
+  setting (P4).
+- Whether `RequestMediaChannelDescriptionTaskImpl` should ever carry video, which means
+  extending the IDL (P1).
+- Whether to reshape the E2E delegate signature to stop copying every frame twice (P3).
+- The duplicate-description pass in `OnMediaChannelDescriptionsRequested`, which is only
+  safe today because tgcalls asks for one ssrc at a time (P1).
+- Whether `DecryptData` should distinguish the screen-sharing channel the way `EncryptData`
+  does (P2).
 
-The `CLoopbackCapture` rewrite (P2) is its own piece of work and blocks none of these.
+**Needs a device, not reasoning:**
+
+- `AUTOCONVERTPCM` sitting in the periodicity argument (P2). Screen-share audio works
+  today, so this is a "verify, then change" not a "change, then hope".
+
+**Needs measuring first:**
+
+- The unmanaged buffer between the WASAPI and WebRTC clocks — worth logging the
+  steady-state depth over a long share before designing anything.
+
+**Left deliberately, with the reasoning recorded above:** `m_impl` being unguarded (P2),
+`RemoveSsrcs` (P3), the lexicographic version sort and unbounded log growth (P4).
