@@ -29,7 +29,7 @@ namespace winrt::Telegram::Native::Calls::implementation
             auto maxLayer = tgcalls::Meta::MaxLayer();
             auto versions = tgcalls::Meta::Versions();
 
-            auto CompareVersions = [](std::string a, std::string b) {
+            auto CompareVersions = [](std::string const& a, std::string const& b) {
                 return a > b;
             };
 

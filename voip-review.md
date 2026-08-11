@@ -292,39 +292,54 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
 
 ## P3 — performance on hot paths
 
-- [ ] **`OnE2EEncryptDecrypt` does ~2 COM calls per byte, per packet** —
+- [x] **`OnE2EEncryptDecrypt` does ~2 COM calls per byte, per packet** —
   `VoipGroupManager.cpp:409-435`
 
-  `single_threaded_vector(std::vector(message))` copies the input, the C# delegate returns
-  an `IVector`, and the result is rebuilt with a `push_back` loop over a COM iterator.
-  Three copies plus per-element interop on every media packet of a conference call, all
-  under `m_lock`.
+  The return path rebuilt the result with a `push_back` loop over an `IIterator`, on every
+  frame of a conference call. Now one `GetMany` into a pre-sized buffer. The lock it all
+  used to run under is gone too, see P2.
 
-  Fix: `GetMany` into a pre-sized buffer. Ideally change the delegate signature so the
-  managed side writes into a buffer we own rather than returning an `IVector<byte>`.
+  Still there, and not fixable from this side: the input is copied into a
+  `single_threaded_vector` because the delegate takes an `IVector<byte>`, and the managed
+  side then calls `ToArray()` on it (`VoipGroupCall.cs:407`) — two copies before TDLib
+  even sees the frame. Removing them means changing the delegate signature in the IDL to
+  pass a buffer the managed side writes into. → below.
 
-- [ ] **`OnAudioLevelsUpdated` allocates per update** — `VoipGroupManager.cpp:313-329`
+- [ ] **The E2E delegate signature forces two copies per frame** — `VoipGroupManager.idl:15-16`
 
-  A fresh `IVector` plus one boxed element per participant, ~10x/s for the whole call, each
-  `Append` a COM call. The `/*std::move(levels)*/` comment says this was already spotted:
-  build a `std::vector` and hand ownership over once via
-  `single_threaded_vector(std::move(vec))`.
+  `IVector<byte>` in and out, on a per-frame path, with a `ToArray()` on the managed side
+  on top. Worth reshaping once someone is willing to touch the IDL and both call sites.
+
+- [x] **`OnAudioLevelsUpdated` allocates per update** — `VoipGroupManager.cpp:313-329`
+
+  One `Append` COM call per participant, ~10x/s for the whole call. Now filled into a
+  reserved `std::vector` and handed over once via `single_threaded_vector(std::move(vec))`
+  — which is what the `/*std::move(levels)*/` comment had been asking for.
+
+  Correcting my own earlier note: there was no boxing per element. `VoipGroupParticipant`
+  is an IDL struct, so the `IVector` holds it by value.
+
+  The remaining `IVector` allocation per update is fixed by the event signature.
 
 - [x] **`BroadcastPartTaskImpl::done` copies the payload twice** — `VoipGroupManager.h:187-191`.
   Done alongside the `NotReady` fix in P1.
 
-- [ ] **`ReceiveSignalingData` push_backs per byte with no reserve** — `VoipManager.cpp:367-379`.
-  Use `vector_to_unmanaged`.
+- [x] **`ReceiveSignalingData` push_backs per byte with no reserve** — `VoipManager.cpp:367-379`.
+  One `GetMany` into a pre-sized buffer.
 
-- [ ] **`RemoveSsrcs` iterator copy** — `VoipGroupManager.cpp:173-179`. Same fix.
+- [x] **`SetRequestedVideoChannels` builds the vector even when `m_impl` is null** —
+  `VoipGroupManager.cpp:273-302`. Early-out at the top, plus a `reserve`. It still walks
+  `SourceGroups()`/`SourceIds()` through COM iterators, which is fine: it runs when the
+  video layout changes, not per frame.
 
-- [ ] **`SetRequestedVideoChannels` builds the vector even when `m_impl` is null** —
-  `VoipGroupManager.cpp:273-302`. Also walks `SourceGroups()`/`SourceIds()` through COM
-  iterators. Move the null check to the top.
+- [x] **`Protocol()`'s comparator takes `std::string` by value** — `VoipManager.h:34`.
+  Now `const&`. The lexicographic sort still breaks at a two-digit major version — left
+  alone, since tgcalls' own version strings are what they are. → P4.
 
-- [ ] **`Protocol()`'s comparator takes `std::string` by value** — `VoipManager.h:34`.
-  Two allocations per comparison. Also: lexicographic version sort breaks at a two-digit
-  major.
+- [ ] ~~**`RemoveSsrcs` iterator copy**~~ — `VoipGroupManager.cpp:173-179`. **Won't fix.**
+  `GetMany` needs matching element types and this converts `int32_t` to `uint32_t`, so it
+  would trade the COM calls for a second allocation. It runs when a participant leaves,
+  with a handful of ssrcs — not a hot path, and the current form is the clearer one.
 
 ## How the loopback audio reaches WebRTC
 

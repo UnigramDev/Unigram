@@ -258,7 +258,13 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipGroupManager::SetRequestedVideoChannels(IVector<VoipVideoChannelInfo> descriptions)
     {
+        if (m_impl == nullptr)
+        {
+            return;
+        }
+
         auto impl = std::vector<tgcalls::VideoChannelDescription>();
+        impl.reserve(descriptions.Size());
 
         for (const VoipVideoChannelInfo& x : descriptions)
         {
@@ -281,10 +287,7 @@ namespace winrt::Telegram::Native::Calls::implementation
             impl.push_back(std::move(item));
         }
 
-        if (m_impl)
-        {
-            m_impl->setRequestedVideoChannels(std::move(impl));
-        }
+        m_impl->setRequestedVideoChannels(std::move(impl));
     }
 
 
@@ -297,11 +300,15 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipGroupManager::OnAudioLevelsUpdated(tgcalls::GroupLevelsUpdate const& levels)
     {
-        auto args = winrt::single_threaded_vector<winrt::Telegram::Native::Calls::VoipGroupParticipant>(/*std::move(levels)*/);
+        // Filled first and handed over whole: appending to the IVector would be a COM
+        // call per participant, and this arrives about ten times a second for the whole
+        // length of the call.
+        auto participants = std::vector<winrt::Telegram::Native::Calls::VoipGroupParticipant>();
+        participants.reserve(levels.updates.size());
 
         for (const tgcalls::GroupLevelUpdate& x : levels.updates)
         {
-            args.Append(winrt::Telegram::Native::Calls::VoipGroupParticipant{
+            participants.push_back(winrt::Telegram::Native::Calls::VoipGroupParticipant{
                 .AudioSource = static_cast<int32_t>(x.ssrc),
                     .Level = x.value.level,
                     .IsSpeaking = x.value.voice,
@@ -309,7 +316,7 @@ namespace winrt::Telegram::Native::Calls::implementation
                 });
         }
 
-        m_audioLevelsUpdated(*this, args);
+        m_audioLevelsUpdated(*this, winrt::single_threaded_vector(std::move(participants)));
     }
 
     std::shared_ptr<tgcalls::BroadcastPartTask> VoipGroupManager::OnRequestCurrentTime(std::function<void(int64_t)> done)
@@ -423,13 +430,10 @@ namespace winrt::Telegram::Native::Calls::implementation
             return {};
         }
 
-        std::vector<uint8_t> result;
-        result.reserve(data.Size());
-
-        for (auto const& value : data)
-        {
-            result.push_back(value);
-        }
+        // One call rather than two per byte: iterating an IVector goes through IIterator,
+        // and this runs on every frame of a conference call.
+        std::vector<uint8_t> result(data.Size());
+        data.GetMany(0, result);
 
         return result;
     }

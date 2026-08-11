@@ -381,11 +381,8 @@ namespace winrt::Telegram::Native::Calls::implementation
     {
         if (m_impl)
         {
-            auto bytes = std::vector<unsigned char>();
-            for (const uint8_t& x : data)
-            {
-                bytes.push_back(x);
-            }
+            auto bytes = std::vector<uint8_t>(data.Size());
+            data.GetMany(0, bytes);
 
             m_impl->receiveSignalingData(bytes);
         }
