@@ -7104,7 +7104,7 @@
         <Setter Property="FontFamily"
                 Value="{StaticResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize"
-                Value="{StaticResource GlyphLargeFontSize}" />
+                Value="20" />
         <Setter Property="FontWeight"
                 Value="Normal" />
         <Setter Property="Height"

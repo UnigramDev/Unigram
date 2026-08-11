@@ -141,6 +141,11 @@ namespace Telegram.Controls.Chats
             Unloaded += OnUnloaded;
         }
 
+        protected override bool IsRuntimeCompatible()
+        {
+            return Windows.Foundation.Metadata.ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 11);
+        }
+
         protected override void OnApplyTemplate()
         {
             Icon = GetTemplateChild(nameof(Icon)) as AnimatedIcon;

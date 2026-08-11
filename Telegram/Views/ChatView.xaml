@@ -1412,8 +1412,8 @@
                                       Canvas.ZIndex="1000">
                                     <chats:ChatRecordButton x:Name="btnVoiceMessage"
                                                             AllowFocusOnInteraction="False"
-                                                            Glyph="&#xE9E4;"
-                                                            CheckedGlyph="&#xE9E0;"
+                                                            Glyph="&#xE9D7;"
+                                                            CheckedGlyph="&#xE9D6;"
                                                             ManipulationMode="TranslateX,TranslateY"
                                                             Foreground="#FFFFFF">
                                         <controls:AnimatedIconToggleButton.Source>
