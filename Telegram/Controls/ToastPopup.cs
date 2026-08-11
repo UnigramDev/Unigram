@@ -21,6 +21,8 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
@@ -70,6 +72,36 @@ namespace Telegram.Controls
         public ToastPopup()
         {
             DefaultStyleKey = typeof(ToastPopup);
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ToastPopupAutomationPeer(this);
+        }
+
+        // On open TeachingTip announces "Press F6 to go to new notification from <app>, <name>",
+        // but the tip is in the app's own popup rather than the notification center, so the key
+        // leads nowhere (Narrator maps it to Caret Browsing) and the toast is never read out.
+        // TeachingTip only raises that when it finds a TeachingTipAutomationPeer of its own, so
+        // ToastPopupAutomationPeer suppresses it, and the text is announced here instead.
+        private void Announce(string text, string action)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
+
+            // TODO: ignoring action for now, as it is not focusable
+            //if (action != null)
+            //{
+            //    text += ", " + action;
+            //}
+
+            AutomationProperties.SetName(this, text);
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(this);
+            peer?.RaiseNotificationEvent(AutomationNotificationKind.Other,
+                AutomationNotificationProcessing.CurrentThenMostRecent, text, "ToastPopupOpened");
         }
 
         public static void ShowError(XamlRoot xamlRoot, Error error)
@@ -314,7 +346,7 @@ namespace Telegram.Controls
             return ShowImpl(target.XamlRoot, text, animated, placement, requestedTheme, dismissAfter, target);
         }
 
-        public static ToastPopup ShowImpl(XamlRoot xamlRoot, FormattedText text, FrameworkElement icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null, FrameworkElement target = null)
+        public static ToastPopup ShowImpl(XamlRoot xamlRoot, FormattedText text, FrameworkElement icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null, FrameworkElement target = null, string action = null)
         {
             var label = new TextBlock
             {
@@ -323,10 +355,12 @@ namespace Telegram.Controls
             };
 
             TextBlockHelper.SetFormattedText(label, text);
-            return ShowImpl(xamlRoot, label, icon, placement, requestedTheme, dismissAfter, target);
+            return ShowImpl(xamlRoot, label, icon, placement, requestedTheme, dismissAfter, target, action);
         }
 
-        public static ToastPopup ShowImpl(XamlRoot xamlRoot, FrameworkElement label, FrameworkElement icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null, FrameworkElement target = null)
+        // action is only used to announce the button ShowActionAsync appends once this returns:
+        // by then the toast is already open, and with it the only chance to read it out.
+        public static ToastPopup ShowImpl(XamlRoot xamlRoot, FrameworkElement label, FrameworkElement icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null, FrameworkElement target = null, string action = null)
         {
             Logger.Info();
             Grid.SetColumn(label, 1);
@@ -397,6 +431,8 @@ namespace Telegram.Controls
             }
 
             toast.IsOpen = true;
+            toast.Announce(label is TextBlock text ? text.Text : null, action);
+
             return toast;
         }
 
@@ -471,7 +507,7 @@ namespace Telegram.Controls
 
         public static Task<ContentDialogResult> ShowActionAsync(XamlRoot xamlRoot, FormattedText text, string action, FrameworkElement icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            var toast = ShowImpl(xamlRoot, text, icon, placement, requestedTheme, dismissAfter);
+            var toast = ShowImpl(xamlRoot, text, icon, placement, requestedTheme, dismissAfter, action: action);
             if (toast?.Content is Grid content)
             {
                 var tsc = new TaskCompletionSource<ContentDialogResult>();
@@ -515,7 +551,7 @@ namespace Telegram.Controls
 
         public static Task<ContentDialogResult> ShowActionAsync(XamlRoot xamlRoot, FrameworkElement text, string action, FrameworkElement icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null, CancellationToken cancellationToken = default)
         {
-            var toast = ShowImpl(xamlRoot, text, icon, placement, requestedTheme, dismissAfter);
+            var toast = ShowImpl(xamlRoot, text, icon, placement, requestedTheme, dismissAfter, action: action);
             if (toast?.Content is Grid content)
             {
                 toast.MaxWidth = 500;
@@ -642,6 +678,22 @@ namespace Telegram.Controls
         public void OnClick(string url)
         {
             Click?.Invoke(this, new TextUrlClickEventArgs(url));
+        }
+    }
+
+    // Deliberately not a TeachingTipAutomationPeer: that type is what makes TeachingTip
+    // announce and expose itself as a window. A toast is neither focusable nor navigable,
+    // so it reports as a pane and is read out by ToastPopup instead.
+    public partial class ToastPopupAutomationPeer : FrameworkElementAutomationPeer
+    {
+        public ToastPopupAutomationPeer(ToastPopup owner)
+            : base(owner)
+        {
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.Pane;
         }
     }
 }
