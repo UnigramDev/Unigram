@@ -296,13 +296,33 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
 
   A comment on the event fields records why there is no lock, so it does not come back.
 
-- [ ] **`m_impl` is not guarded** — both managers
+- [ ] **`m_impl` is not guarded** — reachable in `VoipGroupManager`, not in `VoipManager`
 
-  Every `if (m_impl)` is TOCTOU against `Stop()`'s `reset()`. Correct today only because
-  all callers are on the UI thread under `_managerLock`. Deliberately *not* folded into the
-  lock rework above: taking a lock around `m_impl` would put one back on the path that
-  reaches managed code, which is what that change was undoing. Wants either the contract
-  written down in the header or an atomic-swap teardown, not a mutex.
+  Every `if (m_impl)` is TOCTOU against `Stop()`'s `reset()`. Traced properly rather than
+  assumed, and the two managers turn out to differ:
+
+  - **`VoipManager` is safe.** Every managed call site, `Dispose` included, runs inside
+    `lock (_managerLock)` (`VoipCall.cs:365`, `:804`). The contract holds; it just is not
+    written down anywhere.
+  - **`VoipGroupManager` is not.** `VoipGroupCall` takes no such lock, and `Dispose` is
+    reached from `Update` on **TDLib's update thread** (`VoipCoordinator.cs:483` →
+    `VoipGroupCall.cs:1414`), while the UI thread calls `AddIncomingVideoOutput`,
+    `SetRequestedVideoChannels` and `SetVolume` unguarded. `Stop()` resetting `m_impl`
+    against any of those is a use-after-free, not merely a torn read.
+
+  Correcting my own earlier note: guarding `m_impl` would *not* put a lock back on the
+  path that reaches managed code. The callbacks never touch `m_impl` — only inbound calls
+  do, and those go to tgcalls, not to C#. That reasoning was wrong.
+
+  Three ways out, in the order I would rank them:
+
+  1. Give `VoipGroupCall` the `_managerLock` its sibling already has. Symmetric, keeps the
+     native contract simple, and is the pattern the codebase already uses.
+  2. A dedicated native mutex around `m_impl`. Watch the ordering: `Stop()` holding it
+     while it stops the loopback would deadlock against `AddExternalAudioSamples` coming
+     from the capture thread, so the loopback has to be stopped first.
+  3. An atomic `shared_ptr` swap, so a late caller keeps the instance alive instead of
+     blocking. No deadlock, but it allows calls on an instance that has already stopped.
 
 - [x] **No destructor on either manager**
 
@@ -441,28 +461,29 @@ worth attention is the coupling, not the mechanism:
 
 ## What is left
 
-Every defect found in this review is fixed. What remains is decisions, one measurement,
-and one thing that needs a device — nothing that can be closed by reading more code.
+Every defect is fixed. Fela ruled on the open questions on 2026-08-11; what follows is
+what he decided and the three things still genuinely open.
 
-**Needs your call:**
+**Decided — accepted as they are, not defects:**
 
+- The data channel that `EncryptData`/`DecryptData` discard. Native picks
+  `ScreenSharing` vs `Main` and the managed side sends `null` / `Main` regardless.
 - `enableAEC`/`enableNS`/`enableAGC` hard-coded in 1:1 calls while group calls honour the
-  setting (P4).
-- Whether `RequestMediaChannelDescriptionTaskImpl` should ever carry video, which means
-  extending the IDL (P1).
-- Whether to reshape the E2E delegate signature to stop copying every frame twice (P3).
-- The duplicate-description pass in `OnMediaChannelDescriptionsRequested`, which is only
-  safe today because tgcalls asks for one ssrc at a time (P1).
-- Whether `DecryptData` should distinguish the screen-sharing channel the way `EncryptData`
-  does (P2).
+  setting.
+- `RequestMediaChannelDescriptionTaskImpl` carrying only audio.
+- `requestMediaChannelDescriptions` gated on `IsConference` — confirmed correct.
+- The 5s transform timeout stays. Encryption is near-instantaneous, which is why tgcalls
+  made it synchronous in the first place; the timeout is there for a stuck TDLib, not a
+  slow one.
 
-**Needs a device, not reasoning:**
+**Deferred to an upstream pass:** mono-only screencast audio.
 
-- `AUTOCONVERTPCM` sitting in the periodicity argument (P2). Screen-share audio works
-  today, so this is a "verify, then change" not a "change, then hope".
+**Still open:**
 
-**Needs measuring first:**
-
+- **`m_impl` unguarded in `VoipGroupManager`** — see P2 above. Now known to be a real
+  use-after-free rather than a theoretical one, and the three fixes are ranked there.
+- **`AUTOCONVERTPCM` in the periodicity argument** — to be tested together against a real
+  screen share.
 - The unmanaged buffer between the WASAPI and WebRTC clocks — worth logging the
   steady-state depth over a long share before designing anything.
 
