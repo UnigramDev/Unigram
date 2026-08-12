@@ -15,12 +15,11 @@ Everything below is unfixed. Check an item off in the same commit as its fix.
       same went for `BatchDisplayUpdates`, which left the editor frozen. Split into
       `GetFormattedTextImpl` the way `SetText` already was, with both undone in a `finally`.
 
-- [ ] **`_undoGroup` drifts if anything between `BeginUndoGroup` and `EndUndoGroup` throws** —
-      pairs at `:346`, `:375`, `:1211`, `:1823`, `:1884`, `:2232`, `:2270`, `:2284`, none of them
-      in a `try`/`finally`. Once the counter is stuck above zero, `OnTextChanging` stops calling
-      `UpdateFormat` permanently (it's gated on `_undoGroup == 0`), so blockquote font sizes
-      silently stop being normalized. Either wrap every pair, or give the helper a disposable
-      scope so the pairing can't be skipped.
+- [x] **`_undoGroup` drifts if anything between `BeginUndoGroup` and `EndUndoGroup` throws** —
+      eight pairs, none of them in a `try`/`finally`. Once the counter was stuck above zero,
+      `OnTextChanging` stopped calling `UpdateFormat` permanently (it's gated on
+      `_undoGroup == 0`), so blockquote font sizes silently stopped being normalized.
+      `BeginUndoGroup` returns a disposable scope now, so the pairing can't be skipped.
 
 - [ ] **`CharacterReceived` can be subscribed more than once** — `FormattedTextBox.cs:294`
       subscribes in `Loaded` and `:299` unsubscribes in `Unloaded`. `Loaded` can fire again
