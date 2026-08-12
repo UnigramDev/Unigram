@@ -1853,25 +1853,12 @@ namespace Telegram.Views
             var text = TextField.Text;
             var embedded = viewModel.ComposerHeader;
 
-            if (string.IsNullOrEmpty(text))
+            // getLinkPreview means serializing the whole message to JSON, a trip through the
+            // TDLib queue and a dispatcher hop back, on every keystroke. A text that can't
+            // contain a URL can't produce a preview either, so it's asked for nothing.
+            if (string.IsNullOrEmpty(text) || (embedded?.LinkPreviewOptions?.Url == null && !MayContainUrl(text)))
             {
-                if (embedded != null)
-                {
-                    if (embedded.IsEmpty)
-                    {
-                        viewModel.ComposerHeader = null;
-                    }
-                    else if (embedded.LinkPreview != null)
-                    {
-                        viewModel.ComposerHeader = new MessageComposerHeader(viewModel.ClientService)
-                        {
-                            Editing = embedded.Editing,
-                            ReplyTo = embedded.ReplyTo,
-                            SuggestedPostInfo = embedded.SuggestedPostInfo,
-                        };
-                    }
-                }
-
+                ClearLinkPreview(viewModel, embedded);
                 return;
             }
 
@@ -1901,24 +1888,62 @@ namespace Telegram.Views
                             LinkPreviewUrl = linkPreview.Url,
                         };
                     }
-                    else if (embedded != null)
+                    else
                     {
-                        if (embedded.IsEmpty)
-                        {
-                            viewModel.ComposerHeader = null;
-                        }
-                        else if (embedded.LinkPreview != null)
-                        {
-                            viewModel.ComposerHeader = new MessageComposerHeader(viewModel.ClientService)
-                            {
-                                Editing = embedded.Editing,
-                                ReplyTo = embedded.ReplyTo,
-                                SuggestedPostInfo = embedded.SuggestedPostInfo,
-                            };
-                        }
+                        ClearLinkPreview(viewModel, embedded);
                     }
                 });
             });
+
+        }
+
+        private static void ClearLinkPreview(DialogViewModel viewModel, MessageComposerHeader embedded)
+        {
+            if (embedded == null)
+            {
+                return;
+            }
+
+            if (embedded.IsEmpty)
+            {
+                viewModel.ComposerHeader = null;
+            }
+            else if (embedded.LinkPreview != null)
+            {
+                viewModel.ComposerHeader = new MessageComposerHeader(viewModel.ClientService)
+                {
+                    Editing = embedded.Editing,
+                    ReplyTo = embedded.ReplyTo,
+                    SuggestedPostInfo = embedded.SuggestedPostInfo,
+                };
+            }
+        }
+
+        // The URL parser accepts these in place of a regular full stop
+        private const char IdeographicFullStop = (char)0x3002;
+        private const char FullwidthFullStop = (char)0xFF0E;
+
+        // Deliberately permissive: a URL always carries either an explicit scheme or a dot
+        // before its top level domain, so this can be wrong about a link being there, but
+        // never about one not being there.
+        private static bool MayContainUrl(string text)
+        {
+            for (int i = 0; i < text.Length - 1; i++)
+            {
+                if (text[i] is '.' or IdeographicFullStop or FullwidthFullStop)
+                {
+                    if (char.IsLetterOrDigit(text[i + 1]))
+                    {
+                        return true;
+                    }
+                }
+                else if (text[i] == ':' && text[i + 1] == '/')
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void TryGetWebPagePreview(IClientService clientService, Chat chat, string text, string url, Action<Object> result)
