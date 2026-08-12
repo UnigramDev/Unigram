@@ -38,7 +38,9 @@ Everything below is unfixed. Check an item off in the same commit as its fix.
       runs for every new query that doesn't match the previous `AutocompleteList`, so typing
       `/start` sent six identical requests. Answering the `// TODO: is this actually needed?`
       that sat on it: yes — `GetQuickReplyShortcuts` returns empty until the update it asks for
-      arrives, and the only other caller is a page the user may never open. Sent once now.
+      arrives, and the only other caller is a page the user may never open. It's an
+      `IClientService.LoadQuickReplyShortcuts()` now, asking once per session, so every caller
+      gets that rather than each tracking it.
 
 - [ ] **The whole draft is materialized on every selection change** — `ChatTextBox.cs:391`.
       This runs on every keystroke *and* every caret move. Only three paths need the string: the

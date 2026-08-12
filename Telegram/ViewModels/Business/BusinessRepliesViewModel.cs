@@ -61,7 +61,7 @@ namespace Telegram.ViewModels.Business
         {
             Items.ReplaceDiff(ClientService.GetQuickReplyShortcuts());
 
-            ClientService.Send(new LoadQuickReplyShortcuts());
+            ClientService.LoadQuickReplyShortcuts();
             return Task.CompletedTask;
         }
 

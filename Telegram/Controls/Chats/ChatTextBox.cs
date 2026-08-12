@@ -325,7 +325,6 @@ namespace Telegram.Controls.Chats
         }
 
         private ulong _lastKeystroke;
-        private bool _quickRepliesRequested;
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
         {
@@ -670,14 +669,7 @@ namespace Telegram.Controls.Chats
             }
             else if (ViewModel.ClientService.TryGetUser(ViewModel.Chat, out var user) && user.Type is UserTypeRegular)
             {
-                // It is needed: GetQuickReplyShortcuts stays empty until the update this asks
-                // for arrives, and the only other caller is the business replies page, which a
-                // user may never open. Once is enough though - this runs per typed character.
-                if (!_quickRepliesRequested)
-                {
-                    _quickRepliesRequested = true;
-                    ViewModel.ClientService.Send(new LoadQuickReplyShortcuts());
-                }
+                ViewModel.ClientService.LoadQuickReplyShortcuts();
 
                 var replies = ViewModel.ClientService.GetQuickReplyShortcuts();
 

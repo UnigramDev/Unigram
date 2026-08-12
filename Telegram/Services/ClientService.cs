@@ -158,6 +158,7 @@ namespace Telegram.Services
         QuickReplyShortcut GetQuickReplyShortcut(string name);
         IList<QuickReplyMessage> GetQuickReplyMessages(int id);
         IList<QuickReplyShortcut> GetQuickReplyShortcuts();
+        void LoadQuickReplyShortcuts();
         bool CheckQuickReplyShortcutName(string name);
 
         IList<WelcomeMessage> GetWelcomeMessages(long chatId);
@@ -1057,6 +1058,7 @@ namespace Telegram.Services
             SavedMessagesTopicCount = 0;
             _quickReplyShortcuts.Clear();
             _quickReplyShortcutIds = null;
+            _quickReplyShortcutsRequested = false;
             _selectedBackground = null;
             _selectedBackgroundDark = null;
 
@@ -2032,6 +2034,20 @@ namespace Telegram.Services
             }
 
             return Array.Empty<QuickReplyShortcut>();
+        }
+
+        // Nothing fills the two fields above until this is sent, and the shortcuts then arrive
+        // through updateQuickReplyShortcuts. Callers ask whenever they might display them, which
+        // for the composer is once per typed character, so the asking is tracked here.
+        public void LoadQuickReplyShortcuts()
+        {
+            if (_quickReplyShortcutsRequested)
+            {
+                return;
+            }
+
+            _quickReplyShortcutsRequested = true;
+            Send(new Td.Api.LoadQuickReplyShortcuts());
         }
 
         public bool CheckQuickReplyShortcutName(string name)
@@ -4226,6 +4242,7 @@ namespace Telegram.Services
 
         private readonly Dictionary<int, QuickReplyShortcutInfo> _quickReplyShortcuts = new();
         private IList<int> _quickReplyShortcutIds;
+        private bool _quickReplyShortcutsRequested;
     }
 
     public partial class QuickReplyShortcutInfo
