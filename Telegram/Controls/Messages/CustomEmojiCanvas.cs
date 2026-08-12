@@ -47,23 +47,25 @@ namespace Telegram.Controls.Messages
                         Children.Add(player);
                     }
 
-                    if (positions[i].FontSize == 9) // 12 * 0.75
+                    var position = positions[i];
+                    var size = position.FontSize == 9 ? 16 : 20; // 12 * 0.75
+
+                    if (player.Width != size)
                     {
-                        player.Width = 16;
-                        player.Height = 16;
-                        player.FrameSize = new Size(16, 16);
-                    }
-                    else
-                    {
-                        player.Width = 20;
-                        player.Height = 20;
-                        player.FrameSize = new Size(20, 20);
+                        player.Width = size;
+                        player.Height = size;
+                        player.FrameSize = new Size(size, size);
                     }
 
-                    player.Source = new CustomEmojiFileSource(clientService, positions[i].CustomEmojiId);
+                    // This is called on every keystroke, and a new source means a new
+                    // getCustomEmojiStickers request and a reload of the animation.
+                    if (player.Source is not CustomEmojiFileSource source || source.Id != position.CustomEmojiId)
+                    {
+                        player.Source = new CustomEmojiFileSource(clientService, position.CustomEmojiId);
+                    }
 
-                    SetTop(player, positions[i].Y);
-                    SetLeft(player, positions[i].X);
+                    SetTop(player, position.Y);
+                    SetLeft(player, position.X);
                 }
             }
         }
