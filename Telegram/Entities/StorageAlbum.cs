@@ -26,12 +26,20 @@ namespace Telegram.Entities
     {
         public IList<StorageMedia> Media { get; private set; }
 
-        public StorageAlbum(int ordinal, IList<StorageMedia> media)
+        public StorageAlbum(int ordinal, StorageAlbumType type, IList<StorageMedia> media)
             : base(null, 0)
         {
             Ordinal = ordinal;
+            Type = type;
             Media = media.ToList();
         }
+
+        /// <summary>
+        /// What the grouping decided this album is. Only <see cref="StorageAlbumType.Media"/> and
+        /// <see cref="StorageAlbumType.NotSupported"/> have a mosaic to draw; documents and audio
+        /// are grouped for sending but shown as plain rows.
+        /// </summary>
+        public StorageAlbumType Type { get; }
 
         /// <summary>
         /// Position among the albums of a view, and the album's identity while diffing: one that

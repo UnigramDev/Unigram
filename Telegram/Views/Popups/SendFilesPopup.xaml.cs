@@ -1108,64 +1108,64 @@ namespace Telegram.Views.Popups
                 : Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// Files mode marks everything with the document glyph, which is what the wrapper carries.
+        /// </summary>
+        private StorageMedia AsRow(StorageMedia item)
+        {
+            if (IsFilesSelected && item is not StorageDocument)
+            {
+                return new StorageDocument(item);
+            }
+
+            return item;
+        }
+
         private void UpdateCollection()
         {
             var view = new List<StorageMedia>();
 
-            if (IsMediaSelected)
-            {
-                var album = new List<StorageMedia>();
-                var ordinal = 0;
+            // The same grouping the send path uses, so an album on screen is a message that will
+            // be sent. The popup had its own, which split only on the ten-item limit and so showed
+            // one album where sending made two — it knew nothing of muted video, of the WEBP
+            // workaround, or of not mixing media with documents and audio.
+            //
+            // Permissions go in as allowed rather than as the chat's: everything in Items already
+            // cleared the guard in SendFilesAsync, and the edit path has no guard at all, so
+            // filtering here could only blank out an item the popup exists to show.
+            var grouped = ComposeViewModel.GetItemsView(Items, IsAlbum, IsFilesSelected, true, true, true, true);
 
-                void AddAlbum()
+            // Ordinals for the one-item albums below, kept out of the way of the grouping's own.
+            var standalone = 0;
+
+            foreach (var item in grouped)
+            {
+                if (item is StorageAlbum album)
                 {
-                    if (album.Count > 0)
+                    if (album.Type is StorageAlbumType.Media or StorageAlbumType.NotSupported)
                     {
-                        view.Add(new StorageAlbum(ordinal++, album));
-                        album = new List<StorageMedia>();
+                        view.Add(album);
+                        continue;
+                    }
+
+                    // Documents and audio have no mosaic, so their grouping is invisible either
+                    // way and they stay the rows they have always been.
+                    foreach (var media in album.Media)
+                    {
+                        view.Add(AsRow(media));
                     }
                 }
-
-                foreach (var item in Items)
+                else if (!IsFilesSelected && item is StoragePhoto or StorageVideo)
                 {
-                    if ((item is StoragePhoto && _photoAllowed) || (item is StorageVideo && _videoAllowed))
-                    {
-                        if (album.Count >= StorageAlbum.MAX_ITEMS)
-                        {
-                            AddAlbum();
-                        }
-
-                        album.Add(item);
-                    }
-                    else
-                    {
-                        AddAlbum();
-
-                        if (item is StorageDocument || (item is StoragePhoto && _photoAllowed) || (item is StorageVideo && _videoAllowed) || (item is StorageAudio && _audioAllowed))
-                        {
-                            view.Add(item);
-                        }
-                        else
-                        {
-                            view.Add(new StorageDocument(item));
-                        }
-                    }
+                    // The grouping leaves a muted video on its own because it is sent as its own
+                    // message. It is still a video though, so it gets a one-item album and keeps
+                    // its thumbnail rather than dropping to a file row. Sending cannot tell the
+                    // difference: a one-item album and a bare item take the same path.
+                    view.Add(new StorageAlbum(--standalone, StorageAlbumType.Media, new[] { item }));
                 }
-
-                AddAlbum();
-            }
-            else
-            {
-                foreach (var item in Items)
+                else
                 {
-                    if (item is StorageDocument)
-                    {
-                        view.Add(item);
-                    }
-                    else
-                    {
-                        view.Add(new StorageDocument(item));
-                    }
+                    view.Add(AsRow(item));
                 }
             }
 
@@ -1410,6 +1410,10 @@ namespace Telegram.Views.Popups
             {
                 button.IsChecked = !button.IsChecked == true;
                 video.IsMuted = button.IsChecked == true;
+
+                // Muting takes the video out of its album, since it is sent as its own message.
+                // Nothing binds IsMuted, so the grouping only changes if it is asked to.
+                UpdatePanel();
             }
         }
 
@@ -1483,8 +1487,10 @@ namespace Telegram.Views.Popups
 
                 var flyout = new MenuFlyout();
 
-                // If number of items is different from the view then there's some album
-                var itemsView = ComposeViewModel.GetItemsView(Items, true, false, _photoAllowed, _videoAllowed, _audioAllowed, _documentAllowed);
+                // If number of items is different from the view then there's some album.
+                // The real flags, not a fixed pair: this predicts what sending would do, so it has
+                // to ask the same question SendFilesAsync will.
+                var itemsView = ComposeViewModel.GetItemsView(Items, IsAlbum, IsFilesSelected, _photoAllowed, _videoAllowed, _audioAllowed, _documentAllowed);
                 if (itemsView.Count < Items.Count)
                 {
                     flyout.CreateFlyoutItem(SendWithoutGrouping, Strings.SendWithoutGrouping, "\uE90C");

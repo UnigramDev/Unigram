@@ -252,13 +252,45 @@ add/remove, even `SendFilesAlbumPanel_Loading`.
 - [x] **3.4** `StorageAlbumPanel.UpdateMessage` does `Children.Clear()` and a `new Button` with a
   fresh `Click` subscription per media, on every container realization. *Done as 2b.4.*
 
-## Task 4 — One grouping algorithm, not two
+## Task 4 — One grouping algorithm, not two — **done**
 
-- [ ] **4.1** `SendFilesPopup.UpdateCollection` and `ComposeViewModel.GetItemsView` both group into
+- [x] **4.1** `SendFilesPopup.UpdateCollection` and `ComposeViewModel.GetItemsView` both group into
   `StorageAlbum`s and disagree. `GetItemsView` splits on muted video, splits `.webp` documents (the
   server-side workaround), and tracks `albumType` so media/audio/documents never mix; `UpdateCollection`
   does none of that. The grouping previewed is not the grouping sent — and `Send_ContextRequested`
   already calls `GetItemsView`, comparing against a different grouping than the one on screen.
+
+`GetItemsView` is the source of truth and is now the only place a `StorageAlbum` is constructed.
+`UpdateCollection` calls it and adapts the result for display rather than grouping again.
+
+Three things the adaptation has to do, because grouping for sending and grouping for display are
+not quite the same question:
+
+- **Documents and audio albums expand into rows.** They are grouped for sending, but there is no
+  mosaic to draw for them, so the grouping is invisible either way and the rows are what the popup
+  always showed. Files mode wraps them in `StorageDocument` for the glyph, as before.
+- **A standalone photo or video gets a one-item album.** `GetItemsView` leaves a muted video bare
+  because it is sent as its own message; rendering that literally would drop it out of the mosaic
+  and into a file row the moment the user hits mute. Sending cannot tell the difference — a
+  one-item album and a bare item take the same path in `SendFilesAsync`.
+- **Permissions go in as allowed, not as the chat's.** `GetItemsView` silently drops an item whose
+  type is not permitted, which is right when sending and wrong when displaying. Everything in
+  `Items` already cleared the guard in `SendFilesAsync`, and the edit path has no guard at all, so
+  filtering here could only blank out an item the popup exists to show.
+
+`StorageAlbum` carries its `StorageAlbumType` now, so the popup can tell a mosaic from a row without
+re-deriving it.
+
+- [x] **4.2** `Send_ContextRequested` predicted the send with a hardcoded `albumAllowed: true,
+  forceDocuments: false`, so in files mode it decided whether to offer "Send without grouping" from
+  a grouping that was neither on screen nor the one that would be sent. It passes the real
+  `IsAlbum`/`IsFilesSelected` now, the same pair `SendFilesAsync` uses.
+- [x] **4.3** `Mute_Click` never refreshed anything. That was harmless while the popup did its own
+  grouping and ignored `IsMuted`; sharing the grouping makes muting move the video out of its
+  album, and nothing binds `IsMuted`, so it has to ask. Everything else `GetItemsView` reads is
+  either immutable (type, extension, `IsAnimated`) or already refreshes: `Items` through
+  `OnCollectionChanged`, `IsFilesSelected` through `ToggleIsFilesSelected` and `MakeContentPaid`,
+  `IsAlbum` only from `SendWithoutGrouping`, which hides the popup.
 
 ## Task 5 — Dead code in StorageVideo
 
