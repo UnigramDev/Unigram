@@ -45,6 +45,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views.Popups
@@ -55,6 +56,8 @@ namespace Telegram.Views.Popups
         public MvxObservableCollection<StorageMedia> Items { get; private set; }
 
         public DiffObservableCollection<StorageMedia> ItemsView { get; private set; }
+
+        private readonly StorageThumbnailCache _thumbnails = new();
 
         private IAutocompleteCollection _autocomplete;
         public IAutocompleteCollection Autocomplete
@@ -462,6 +465,16 @@ namespace Telegram.Views.Popups
         {
             if (args.InRecycleQueue)
             {
+                // The container keeps its template while queued, so the ImageBrush would go on
+                // rooting the decoded bitmap. Read the album off the panel rather than args.Item,
+                // which is not guaranteed to survive into the recycle notification.
+                if (args.ItemContainer.ContentTemplateRoot is Grid recycled
+                    && recycled.Children.Count > 0
+                    && recycled.Children[0] is StorageAlbumPanel recycledPanel)
+                {
+                    ReleaseThumbnails(recycledPanel);
+                }
+
                 return;
             }
 
@@ -627,6 +640,8 @@ namespace Telegram.Views.Popups
 
         private void UpdateTemplate(Grid root, StorageMedia storage)
         {
+            UpdateThumbnail(root, storage);
+
             var overlay = root.FindName("Overlay") as Border;
             overlay.Visibility = storage is StorageVideo ? Visibility.Visible : Visibility.Collapsed;
 
@@ -651,6 +666,48 @@ namespace Telegram.Views.Popups
 
             crop.Visibility = storage is StoragePhoto ? Visibility.Visible : Visibility.Collapsed;
             ttl.Visibility = IsTtlAvailable ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void UpdateThumbnail(Grid root, StorageMedia storage)
+        {
+            if (storage == null || root.Background is not ImageBrush brush)
+            {
+                return;
+            }
+
+            if (_thumbnails.TryGet(storage, out var cached))
+            {
+                brush.ImageSource = cached;
+                return;
+            }
+
+            brush.ImageSource = null;
+            LoadThumbnail(root, storage);
+        }
+
+        private async void LoadThumbnail(Grid root, StorageMedia storage)
+        {
+            var source = await _thumbnails.GetAsync(storage);
+
+            // The container may have been recycled onto another item, or torn down entirely,
+            // while the decode was in flight.
+            if (root.DataContext == storage && root.Background is ImageBrush brush)
+            {
+                brush.ImageSource = source;
+            }
+        }
+
+        private void ReleaseThumbnails(StorageAlbumPanel panel)
+        {
+            foreach (var child in panel.Children)
+            {
+                if (child is ContentControl { ContentTemplateRoot: Grid inner } && inner.Background is ImageBrush brush)
+                {
+                    brush.ImageSource = null;
+                }
+            }
+
+            _thumbnails.Release(panel.Album);
         }
 
         public void Accept()
@@ -1083,7 +1140,7 @@ namespace Telegram.Views.Popups
                 var confirm = await popup.ShowAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    media.Refresh();
+                    _thumbnails.Invalidate(media);
 
                     UpdateView();
                     UpdatePanel();
@@ -1104,7 +1161,7 @@ namespace Telegram.Views.Popups
             var confirm = await popup.ShowAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
-                args.Refresh();
+                _thumbnails.Invalidate(args);
 
                 UpdateView();
                 UpdatePanel();
@@ -1174,6 +1231,10 @@ namespace Telegram.Views.Popups
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+
+            // The items outlive the popup — they are handed to the send loop — so the thumbnails
+            // have to be dropped here rather than left to follow the models.
+            _thumbnails.Clear();
         }
 
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
@@ -1473,6 +1534,8 @@ namespace Telegram.Views.Popups
             Margin = new Thickness(0, 0, -StorageAlbum.ITEM_MARGIN, -StorageAlbum.ITEM_MARGIN);
         }
 
+        public StorageAlbum Album => _album;
+
         private (Rect[], Size) _positions;
 
         public void Invalidate()
@@ -1570,5 +1633,139 @@ namespace Telegram.Views.Popups
 
         public static readonly DependencyProperty ItemTemplateProperty =
             DependencyProperty.Register("ItemTemplate", typeof(DataTemplate), typeof(StorageAlbumPanel), new PropertyMetadata(null));
+    }
+
+    /// <summary>
+    /// Owns the thumbnails shown by <see cref="SendFilesPopup"/>, for the lifetime of the popup.
+    ///
+    /// They used to hang off StorageMedia, which is the wrong owner twice over: the models are
+    /// handed to the send loop and so outlive the popup, and nothing ever released a decoded
+    /// bitmap once it had been produced. A photo costs roughly a megabyte and a video twice that,
+    /// so a large drop retained tens of megabytes for the rest of the send.
+    ///
+    /// Entries are dropped as their album container is recycled, so the live set is bounded by
+    /// what the ListView has realized rather than by how many files the user picked.
+    ///
+    /// A decode already under way cannot be stopped — neither BitmapImage.SetSourceAsync nor the
+    /// video path takes a cancellation token — so closing the popup drops the result instead.
+    /// </summary>
+    public sealed partial class StorageThumbnailCache
+    {
+        // UI thread only: every entry point is a XAML callback or a continuation resumed on it.
+        private readonly Dictionary<StorageMedia, ImageSource> _cache = new();
+        private readonly Dictionary<StorageMedia, Task<ImageSource>> _inflight = new();
+
+        public bool TryGet(StorageMedia media, out ImageSource source)
+        {
+            return _cache.TryGetValue(media, out source);
+        }
+
+        /// <summary>
+        /// Returns null when there is no preview to show, and caches that so a file that cannot be
+        /// decoded is not retried on every realization.
+        /// </summary>
+        public Task<ImageSource> GetAsync(StorageMedia media)
+        {
+            if (_cache.TryGetValue(media, out var cached))
+            {
+                return Task.FromResult(cached);
+            }
+
+            // Several containers can ask for the same file before the first decode returns, and
+            // the album panel rebuilds all of its children on every UpdatePanel.
+            if (_inflight.TryGetValue(media, out var pending))
+            {
+                return pending;
+            }
+
+            var task = DecodeAsync(media);
+            _inflight[media] = task;
+
+            return task;
+        }
+
+        private async Task<ImageSource> DecodeAsync(StorageMedia media)
+        {
+            ImageSource source = null;
+
+            try
+            {
+                if (media.EditState is ImageGeneration editState && !editState.IsEmpty)
+                {
+                    try
+                    {
+                        // TODO: actual logical pixel size
+                        source = await ImageHelper.CropAndPreviewAsync(media, editState, 600);
+                    }
+                    catch
+                    {
+                        // Fall back to the unedited preview below.
+                    }
+                }
+
+                if (source == null)
+                {
+                    if (media is StorageVideo)
+                    {
+                        // TODO: actual logical pixel size
+                        source = await ImageHelper.GetPreviewBitmapAsync(media, 600);
+                    }
+                    else
+                    {
+                        var preview = new BitmapImage
+                        {
+                            DecodePixelWidth = 300,
+                            DecodePixelType = DecodePixelType.Logical
+                        };
+
+                        using var stream = await media.File.OpenReadAsync();
+                        await preview.SetSourceAsync(stream);
+
+                        source = preview;
+                    }
+                }
+            }
+            catch
+            {
+                // A file we cannot decode shows the type glyph instead.
+                source = null;
+            }
+
+            // Release, Invalidate or Clear may have dropped this request while it was in flight.
+            // Caching it now would either resurrect a bitmap nothing is left to release, or hand
+            // back the pre-crop image.
+            if (_inflight.Remove(media))
+            {
+                _cache[media] = source;
+            }
+
+            return source;
+        }
+
+        public void Invalidate(StorageMedia media)
+        {
+            _cache.Remove(media);
+            _inflight.Remove(media);
+        }
+
+        public void Release(StorageAlbum album)
+        {
+            if (album == null)
+            {
+                return;
+            }
+
+            foreach (var media in album.Media)
+            {
+                _cache.Remove(media);
+                _inflight.Remove(media);
+            }
+        }
+
+        public void Clear()
+        {
+            _cache.Clear();
+            _inflight.Clear();
+        }
     }
 }

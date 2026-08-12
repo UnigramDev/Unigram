@@ -189,9 +189,10 @@
                                  BorderThickness="1"
                                  BackgroundSizing="OuterBorderEdge"
                                  CornerRadius="4">
+                <!--  ImageSource is pushed by SendFilesPopup.UpdateThumbnail and cleared on recycle: the
+                      decoded bitmap must not outlive the container, and StorageMedia outlives the popup.  -->
                 <Grid.Background>
                     <ImageBrush x:Name="Preview"
-                                ImageSource="{x:Bind Preview, Mode=OneWay}"
                                 Stretch="UniformToFill"
                                 AlignmentX="Center"
                                 AlignmentY="Center" />

@@ -258,8 +258,8 @@ namespace Telegram.Common
         /// longer side.
         ///
         /// Single frame only: SoftwareBitmapSource holds one, so an animated GIF comes
-        /// back static. No GIF reaches this today — StorageMedia previews photos through
-        /// a BitmapImage with DecodePixelWidth and only calls the overload above for
+        /// back static. No GIF reaches this today — StorageThumbnailCache previews photos
+        /// through a BitmapImage with DecodePixelWidth and only calls the overload above for
         /// video, leaving its StoragePhoto branch untaken — but a caller that changes
         /// that needs a FrameCount > 1 branch returning a BitmapImage, which can carry
         /// the same bound through DecodePixelWidth and DecodePixelHeight.
@@ -473,7 +473,7 @@ namespace Telegram.Common
 
                 var frame = BufferSurface.Create((uint)(width * height * 4));
 
-                // Throws rather than returning null: StorageMedia.Refresh recovers by
+                // Throws rather than returning null: StorageThumbnailCache recovers by
                 // falling back to the unedited preview, and does so from a catch.
                 if (!await Task.Run(() => animation.RenderSync(frame, width, height, true, out _)))
                 {

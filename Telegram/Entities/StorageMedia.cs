@@ -14,8 +14,6 @@ using Telegram.Navigation;
 using Telegram.Td.Api;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Entities
 {
@@ -40,20 +38,6 @@ namespace Telegram.Entities
         public StorageFile File { get; private set; }
 
         public ulong Size { get; }
-
-        protected ImageSource _preview;
-        public ImageSource Preview
-        {
-            get
-            {
-                if (_preview == null)
-                {
-                    Refresh();
-                }
-
-                return _preview;
-            }
-        }
 
         protected MessageSelfDestructType _ttl;
         public MessageSelfDestructType Ttl
@@ -121,57 +105,6 @@ namespace Telegram.Entities
         }
 
         public bool IsEdited => !_editState?.IsEmpty ?? false;
-
-        public virtual async void Refresh()
-        {
-            if (_editState is ImageGeneration editState && !editState.IsEmpty)
-            {
-                try
-                {
-                    // TODO: actual logical pixel size
-                    _preview = await ImageHelper.CropAndPreviewAsync(this, editState, 600);
-                }
-                catch
-                {
-                    await RefreshAsync();
-                }
-            }
-            else
-            {
-                await RefreshAsync();
-            }
-
-            RaisePropertyChanged(nameof(Preview));
-        }
-
-        private async Task RefreshAsync()
-        {
-            try
-            {
-                if (this is StorageVideo)
-                {
-                    // TODO: actual logical pixel size
-                    _preview = await ImageHelper.GetPreviewBitmapAsync(this, 600);
-                }
-                else
-                {
-                    var preview = new BitmapImage
-                    {
-                        DecodePixelWidth = 300,
-                        DecodePixelType = DecodePixelType.Logical
-                    };
-
-                    using var stream = await File.OpenReadAsync();
-                    await preview.SetSourceAsync(stream);
-
-                    _preview = preview;
-                }
-            }
-            catch
-            {
-                _preview = new BitmapImage();
-            }
-        }
 
         public static async Task<StorageMedia> CreateAsync(StorageFile file, bool probe = true)
         {

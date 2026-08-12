@@ -86,12 +86,6 @@ namespace Telegram.Entities
             }
         }
 
-        public override void Refresh()
-        {
-            base.Refresh();
-            LoadPreview();
-        }
-
         public int TotalSeconds { get; }
 
         public string Duration
