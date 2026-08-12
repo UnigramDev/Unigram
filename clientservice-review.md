@@ -708,9 +708,25 @@ in better shape than `ForumTopicService`; `_topics` is a `ReaderWriterDictionary
       through `GetDirectMessagesChatTopicsAsync` instead — worth confirming against
       `TopicListViewModel` before changing.
 
-- [ ] **D3 · P1 · `_haveFullList` written outside the `_order` monitor** — `:162`
+- [x] **~~D3 · P1 · `_haveFullList` written outside the `_order` monitor~~ — no race exists** — `:162`
 
-      Same shape as the `_haveFullChatList` item in P1 above.
+      It said "same shape as the `_haveFullChatList` item in P1 above", and it was — including
+      being wrong for the same reason, so it inherited the correction rather than the bug.
+
+      `_haveFullList` is a plain `bool` with exactly three references: the declaration, one
+      read inside the lock, one write outside it. Its only caller is
+      `TopicListViewModel.cs:1052`, and with no `ConfigureAwait(false)` anywhere in the repo
+      that continuation resumes on the UI thread — the same thread that took the lock. No
+      second thread touches the field: the TDLib thread reaches this class only through
+      `UpdateDirectMessagesChatTopic`, which never reads or writes it.
+
+      Even granting a second thread, a `bool` write is atomic, so the worst case would be one
+      redundant `loadDirectMessagesChatTopics`, not corruption.
+
+      The same reasoning clears `ForumTopicService._haveFullList`, which has the identical
+      shape and was never raised as an item. Both `await`s complete on a
+      `TaskCompletionSource` set from the TDLib thread, but the continuation posts back to the
+      UI context, which is what makes the lock-then-unlocked-write sequence single-threaded.
 
 - [ ] **D4 · P3** — missing `continue` in `GetTopics` (see F3) and the dropped `unreadCount`
       (see F10).
