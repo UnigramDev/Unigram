@@ -1146,24 +1146,82 @@ namespace Telegram.Controls
                     var start = Document.Selection.StartPosition;
                     var length = Math.Abs(Document.Selection.Length);
 
-                    if (length > 0 && text.IsValidUrl())
+                    // A URL pasted over a selection labels it instead of replacing it
+                    if (length > 0 && text.IsValidUrl() && TryLinkSelection(text))
                     {
-                        Document.Selection.GetText(TextGetOptions.NoHidden, out string value);
-                        SetText(value, new[] { new TextEntity(0, value.Length, new TextEntityTypeTextUrl(text)) }, true);
+                        return;
                     }
-                    else
-                    {
-                        if (IsLongerThanMaxLength(text.Length, out int exceeding))
-                        {
-                            text = text.Substring(0, exceeding);
-                        }
 
+                    if (IsLongerThanMaxLength(text.Length, out int exceeding))
+                    {
+                        text = text.Substring(0, exceeding);
+                    }
+
+                    // Both calls below lay the document out, and moving the caret scrolls it
+                    // into view, so a large paste is worth one pass rather than two.
+                    Document.BatchDisplayUpdates();
+
+                    try
+                    {
                         Document.Selection.SetText(TextSetOptions.Unhide, text);
                         Document.Selection.SetRange(start + text.Length, start + text.Length);
+                    }
+                    finally
+                    {
+                        Document.ApplyDisplayUpdates();
                     }
                 }
             }
             catch { }
+        }
+
+        private bool TryLinkSelection(string url)
+        {
+            if ((AllowedEntities & FormattedTextEntity.TextUrl) == 0)
+            {
+                return false;
+            }
+
+            var selection = Document.Selection;
+
+            // A link keeps its URL in a hidden run and so does a custom emoji, so anything hidden
+            // under the selection means it isn't the plain text this is meant to label.
+            if (selection.CharacterFormat.Hidden != FormatEffect.Off)
+            {
+                return false;
+            }
+
+            var clone = selection.GetClone();
+            clone.StartOf(TextRangeUnit.Link, true);
+
+            if (clone.Link.Length > 0)
+            {
+                return false;
+            }
+
+            selection.GetText(TextGetOptions.NoHidden, out string value);
+
+            // The selection is a URL itself: the user is replacing that link, not labelling it.
+            // Nothing marks it as one while composing, so this is the only way to tell.
+            if (value.IsValidUrl() || !IsSafe(value))
+            {
+                return false;
+            }
+
+            BeginUndoGroup();
+
+            selection.CharacterFormat = Document.GetDefaultCharacterFormat();
+            selection.Link = $"\"{url}\"";
+            selection.Collapse(false);
+
+            EndUndoGroup();
+
+            if (_undoGroup == 0 && !_updateLocked)
+            {
+                TextChangedForRealNoCap?.Invoke(this, EventArgs.Empty);
+            }
+
+            return true;
         }
 
         private void ContextDelete_Click()

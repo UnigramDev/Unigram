@@ -1562,6 +1562,16 @@ namespace Telegram.Common
 
         public static bool IsValidUrl(this string text)
         {
+            // IsValidEntity only accepts an entity spanning the whole string, and a URL never
+            // spans whitespace, so this rejects without handing the text over to the parser.
+            foreach (var character in text)
+            {
+                if (char.IsWhiteSpace(character))
+                {
+                    return false;
+                }
+            }
+
             return IsValidEntity<TextEntityTypeUrl>(text);
         }
 
