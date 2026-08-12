@@ -27,14 +27,6 @@ Everything below is unfixed. Check an item off in the same commit as its fix.
       both replaced the emoticon twice per keystroke and pinned the control until the app exits.
       Guarded with a flag.
 
-- [ ] **`Text` includes hidden text** — `FormattedTextBox.cs:1249` reads with
-      `TextGetOptions.None`, and hidden runs are only dropped by `NoHidden`. The property
-      therefore returns custom emoji metadata (`<emoji>;00000000ABCDEF01`) and hyperlink URLs
-      interleaved with the visible text. Its one consumer is `ChatView.CheckMessageBoxEmpty`,
-      which feeds it to `getLinkPreview`. Carrying the hyperlink URLs may well be deliberate —
-      it's the only way a text-url entity gets a preview — but the emoji metadata isn't.
-      Decide which, then either switch to `NoHidden` or write down why not.
-
 ## Performance
 
 - [ ] **`DateTime.Now` twice per keystroke** — `ChatTextBox.cs:336` and `:339`, in the typing
@@ -88,6 +80,11 @@ Everything below is unfixed. Check an item off in the same commit as its fix.
       moves the range, so termination rests entirely on `FindText` continuing past its own match.
 
 ## Looked at, deliberately left alone
+
+- `Text` reads with `TextGetOptions.None`, so it carries hidden runs — hyperlink URLs and
+  custom emoji metadata — alongside the visible text. That is on purpose: its consumer is
+  `ChatView.CheckMessageBoxEmpty`, and the URL of a hyperlink lives *only* in that hidden run,
+  so `NoHidden` would mean no link preview for a text-url entity. Don't "fix" it.
 
 - `IsLongerThanMaxLength` returns `exceeding = length` when `IsReadOnly`
   (`FormattedTextBox.cs:1850`), so callers that truncate to `exceeding` insert the *whole* string
