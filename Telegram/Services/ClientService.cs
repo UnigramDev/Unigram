@@ -350,6 +350,14 @@ namespace Telegram.Services
         private readonly List<long> _recentChats = new();
         private readonly object _recentChatsLock = new();
 
+        // A lock rather than a ReaderWriterDictionary, which is what the rest of the caches
+        // use, because neither of the two things that make that work applies here: this is a
+        // set, not a dictionary, and the field is assigned null — so the operation that
+        // matters is compound. UpdateFile removes an id and, only if that emptied the set,
+        // restores the verbosity and clears the field; PrepareLogs creates the set and adds
+        // to it. A per-call lock inside a collection cannot make either atomic, and without
+        // that, a PrepareLogs landing between its own ??= and its Add dereferences null.
+        private readonly object _preparedLogsLock = new();
         private HashSet<int> _preparedLogsFileIds;
         private int _preparedLogsVerbosity = -1;
 
@@ -378,7 +386,7 @@ namespace Telegram.Services
         private UpdateAvailableMessageEffects _availableMessageEffects;
 
         private IList<string> _activeReactions = Array.Empty<string>();
-        private Dictionary<string, EmojiReaction> _cachedReactions = new();
+        private readonly ReaderWriterDictionary<string, EmojiReaction> _cachedReactions = new();
 
         private IList<AttachmentMenuBot> _attachmentMenuBots = Array.Empty<AttachmentMenuBot>();
 
@@ -1065,8 +1073,11 @@ namespace Telegram.Services
 
             _chatAccessibleUntil.Clear();
 
-            _preparedLogsFileIds = null;
-            _preparedLogsVerbosity = -1;
+            lock (_preparedLogsLock)
+            {
+                _preparedLogsFileIds = null;
+                _preparedLogsVerbosity = -1;
+            }
 
             ClearDownloads();
 
@@ -1188,7 +1199,7 @@ namespace Telegram.Services
 
 
 
-        private readonly Dictionary<long, DateTime> _chatAccessibleUntil = new();
+        private readonly ReaderWriterDictionary<long, DateTime> _chatAccessibleUntil = new();
 
         public async Task<Object> CheckChatInviteLinkAsync(string inviteLink)
         {
@@ -3259,20 +3270,27 @@ namespace Telegram.Services
 
         private void UpdateFile(File file)
         {
-            if (_preparedLogsFileIds != null && _preparedLogsFileIds.Contains(file.Id))
+            var restoreVerbosity = int.MinValue;
+
+            lock (_preparedLogsLock)
             {
-                if (file.Remote.UploadedSize > 0)
+                if (_preparedLogsFileIds != null && _preparedLogsFileIds.Contains(file.Id) && file.Remote.UploadedSize > 0)
                 {
                     _preparedLogsFileIds.Remove(file.Id);
 
                     if (_preparedLogsFileIds.Empty())
                     {
-                        Client.Execute(new SetLogVerbosityLevel(_preparedLogsVerbosity));
+                        restoreVerbosity = _preparedLogsVerbosity;
 
                         _preparedLogsFileIds = null;
                         _preparedLogsVerbosity = -1;
                     }
                 }
+            }
+
+            if (restoreVerbosity != int.MinValue)
+            {
+                Client.Execute(new SetLogVerbosityLevel(restoreVerbosity));
             }
 
             // TODO: move the message after track when figured out why WeakAction throws a NRE

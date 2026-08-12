@@ -150,7 +150,23 @@ The two facts most of this rests on:
       one object replaced wholesale would make the next miss impossible — see
       *Needs your call*.
 
-- [ ] **Plain `Dictionary` shared across threads — 3 fields** **[latent]**
+- [x] **Plain `Dictionary` shared across threads — 3 fields** **[latent]**
+      → fixed in the commit that checked this box
+
+      **The rule, since this came up twice:** a standalone dictionary whose operations are
+      single calls becomes a `ReaderWriterDictionary`, matching the rest of the caches. A
+      lock is only for what that type cannot express — a set rather than a dictionary, a
+      field that gets assigned null, or an operation that must be compound. By that rule
+      `_chatAccessibleUntil` and `_cachedReactions` are now `ReaderWriterDictionary` and lost
+      their explicit locks entirely, while `_preparedLogsFileIds` keeps one and says why in
+      place. The same rule is what put `ForumTopicService` on a single lock: six of its eight
+      collections are sets, a list and a sorted set, with compounds spanning them.
+
+      `_preparedLogsFileIds` was worse than "latent". `PrepareLogs` does `??= new()` then
+      `.Add()` on the UI thread while `UpdateFile` assigns the field null on the TDLib thread
+      — landing between those two statements is a null dereference, not just a torn read.
+      Its remove-then-maybe-reset is now one critical section, with the `Client.Execute` that
+      restores the verbosity hoisted out of it.
 
       - `_chatAccessibleUntil` (`:1147`) — written from the `CheckChatInviteLinkAsync`
         continuation, cleared on the TDLib thread, read from the UI thread

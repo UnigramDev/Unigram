@@ -371,12 +371,15 @@ namespace Telegram.Services
 
         public void PrepareLogs(int fileId, int verbosityLevel)
         {
-            _preparedLogsFileIds ??= new();
-            _preparedLogsFileIds.Add(fileId);
-
-            if (_preparedLogsVerbosity == -1)
+            lock (_preparedLogsLock)
             {
-                _preparedLogsVerbosity = verbosityLevel;
+                _preparedLogsFileIds ??= new();
+                _preparedLogsFileIds.Add(fileId);
+
+                if (_preparedLogsVerbosity == -1)
+                {
+                    _preparedLogsVerbosity = verbosityLevel;
+                }
             }
         }
 
