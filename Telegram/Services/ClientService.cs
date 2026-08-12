@@ -3133,6 +3133,8 @@ namespace Telegram.Services
             reader.Read();
 
             var id = reader.GetInt32();
+            var created = false;
+
             if (_files.TryGetValue(id, out File obj))
             {
                 //if (!updateFile)
@@ -3149,6 +3151,8 @@ namespace Telegram.Services
             }
             else
             {
+                created = true;
+
                 obj = new File();
                 obj.Id = id;
                 obj.Local = new();
@@ -3165,7 +3169,18 @@ namespace Telegram.Services
                 reader.Read();
             }
 
-            if (obj.Local.IsDownloadingCompleted && !NativeUtils.FileExists(obj.Local.Path))
+            // Only the first time this id is seen. This runs on the TDLib thread, and every
+            // parsed object carries files — a chat history page is hundreds of them, nearly
+            // all already cached — so checking on every update spent a syscall each time to
+            // re-answer a question already answered.
+            //
+            // Nothing is really lost: TDLib sends no update when a file disappears behind its
+            // back, so the repeat check only ever caught an external delete by luck, when some
+            // unrelated update happened to arrive for that same file. The reliable detection
+            // is GetFileAsync catching FileNotFoundException at the point of use. What the
+            // first-sight check is genuinely for is the cache being cleared between sessions,
+            // which it still covers.
+            if (created && obj.Local.IsDownloadingCompleted && !NativeUtils.FileExists(obj.Local.Path))
             {
                 Send(new DeleteFile(obj.Id));
             }

@@ -389,11 +389,25 @@ Ordered by measured reach, not by size of change.
       Making the fetch explicit rather than a side effect of a property getter would still be
       better, but that changes every call site.
 
-- [ ] **Sync filesystem I/O on the receive thread** — `ClientService.cs:3015`, `Files.cs:379` **[live]**
+- [x] **Sync filesystem I/O on the receive thread** — `ClientService.cs:3015`, `Files.cs:379` **[live]**
+      → fixed in the commit that checked this box
 
-      `ParseFile` and `ProcessFile` both call `NativeUtils.FileExists(file.Local.Path)` for
-      every file whose download reports complete — a synchronous syscall on the single
-      thread draining `td_receive`, on a path that fires constantly while media loads.
+      The framing was "sync I/O on the receive thread", as though it were inherent. It was
+      one path missing a guard the other had: `ProcessFile` did the check only for a file id
+      it had not seen, `ParseFile` did it after every parse, for known and new files alike.
+      `ParseFile` is the shipping path — and `ProcessFile` turned out to be dead code from the
+      TDLib/WinRT era, so the live parser was the wasteful one.
+
+      Now gated on first sight. Every parsed object carries files and a history page is
+      hundreds of them, nearly all already cached, so the syscall count drops from
+      per-file-per-update to once per file id per session.
+
+      Nothing real is lost. TDLib sends no update when a file vanishes behind its back, so the
+      repeated check only caught an external delete when an unrelated update happened to
+      arrive for that same file — luck, not detection. `GetFileAsync` catches
+      `FileNotFoundException` at the point of use (`Files.cs:125-128`), which is the reliable
+      path. First sight still covers what it is actually for: the cache having been cleared
+      between sessions.
 
 - [x] **~~Unbounded session-lifetime growth~~ — closed: `_files` is TDLib's model, the rest is noise** — `Files.cs:78-80`, `ClientService.cs:348`
 
