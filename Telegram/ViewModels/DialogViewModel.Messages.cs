@@ -968,6 +968,10 @@ namespace Telegram.ViewModels
                     input = animatedEmoji.Emoji.AsFormattedText();
                 }
             }
+            else if (message.Content is MessageRichMessage richMessage)
+            {
+                input = PageBlockHelper.GetFormattedText(richMessage.Message);
+            }
 
             if (input != null)
             {
