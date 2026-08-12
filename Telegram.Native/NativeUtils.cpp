@@ -345,7 +345,15 @@ namespace winrt::Telegram::Native::implementation
             {
                 if (!description.empty())
                 {
-                    error.StackTrace(description);
+                    // GetStowedException2 already put the record's own details here.
+                    std::wstring detail{ std::wstring_view(error.StackTrace()) };
+                    if (!detail.empty())
+                    {
+                        detail += L"\n";
+                    }
+
+                    detail += std::wstring_view(description);
+                    error.StackTrace(hstring(detail));
                 }
 
                 return error;
@@ -365,12 +373,21 @@ namespace winrt::Telegram::Native::implementation
 
     winrt::Telegram::Native::FatalError NativeUtils::GetStowedException2(STOWED_EXCEPTION_INFORMATION_V2* stowed)
     {
-        HRESULT result;
-
-        if (stowed != nullptr && stowed->ExceptionForm == 1 && stowed->Header.Signature == 'SE02')
+        if (stowed == nullptr || stowed->Header.Signature != 'SE02')
         {
-            auto frames = winrt::single_threaded_vector<FatalErrorFrame>();
+            return nullptr;
+        }
 
+        auto frames = winrt::single_threaded_vector<FatalErrorFrame>();
+
+        // ResultCode is the HRESULT the error was stowed with, before propagation flattened it to
+        // E_FAIL, and ThreadId is the thread it came from - not necessarily the one whose stack
+        // ends up in the report.
+        std::wstring detail = wstrprintf(L"Stowed HRESULT 0x%08X on thread %u",
+            (ULONG)stowed->ResultCode, (ULONG)stowed->ThreadId);
+
+        if (stowed->ExceptionForm == 1)
+        {
             for (int i = 0; i < stowed->StackTraceWords; ++i)
             {
                 PVOID pointer;
@@ -402,22 +419,24 @@ namespace winrt::Telegram::Native::implementation
                     //trace += wstrprintf(L"   at %s+0x%016llx\n", L"unknown", (uint64_t)pointer);
                 }
             }
-
-            if (frames.Size())
-            {
-                auto error = winrt::Telegram::Native::FatalError(L"", L"", L"", frames);
-
-                if (stowed->NestedExceptionType == STOWED_EXCEPTION_NESTED_TYPE_STOWED)
-                {
-                    error.InnerException(GetStowedException2((STOWED_EXCEPTION_INFORMATION_V2*)stowed->NestedException));
-                }
-
-                return error;
-            }
+        }
+        else if (stowed->ExceptionForm == 2 && stowed->ErrorText != nullptr)
+        {
+            // The text form carries no stack at all, so requiring form 1 discarded it whole.
+            detail += L"\n";
+            detail += stowed->ErrorText;
         }
 
-    Cleanup:
-        return nullptr;
+        // Returned even with no frames: ResultCode, ThreadId and the nested record are worth
+        // keeping on their own, and used to be dropped along with them.
+        auto error = winrt::Telegram::Native::FatalError(L"", L"", hstring(detail), frames);
+
+        if (stowed->NestedExceptionType == STOWED_EXCEPTION_NESTED_TYPE_STOWED)
+        {
+            error.InnerException(GetStowedException2((STOWED_EXCEPTION_INFORMATION_V2*)stowed->NestedException));
+        }
+
+        return error;
     }
 
     // From http://davidpritchard.org/archives/907
