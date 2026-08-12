@@ -60,6 +60,14 @@ namespace Telegram.Views.Popups
 
         private readonly StorageThumbnailCache _thumbnails = new();
 
+        // Compiling the effect graph is the expensive half of a blur and it never varies, so every
+        // spoiler brush comes from one factory. Per instance rather than static: the compositor
+        // belongs to the window.
+        private CompositionEffectFactory _blurFactory;
+
+        // A container walk is already waiting on layout; see UpdatePanel.
+        private bool _panelPending;
+
         private readonly StorageMediaSource _source;
         private readonly CancellationTokenSource _loadCancellation = new();
 
@@ -1152,44 +1160,38 @@ namespace Telegram.Views.Popups
 
                     UpdateTemplate(content, content.DataContext as StorageMedia);
 
-                    var particles = content.FindName("Particles") as AnimatedImage;
-                    particles?.Source = SendWithSpoiler || StarCount > 0
-                        ? new ParticlesImageSource()
-                        : null;
+                    var obscured = SendWithSpoiler || StarCount > 0;
 
-                    var border = content.FindName("BackDrop") as Border;
-                    if (border != null)
+                    // Both of these are reached on every interaction, so they only touch the tree
+                    // when the state they represent actually flipped.
+                    if (content.FindName("Particles") is AnimatedImage particles && (particles.Source is ParticlesImageSource) != obscured)
                     {
-                        if (SendWithSpoiler || StarCount > 0)
-                        {
-                            var graphicsEffect = new GaussianBlurEffect
-                            {
-                                Name = "Blur",
-                                BlurAmount = 3,
-                                BorderMode = EffectBorderMode.Hard,
-                                Source = new CompositionEffectSourceParameter("Backdrop")
-                            };
+                        particles.Source = obscured
+                            ? new ParticlesImageSource()
+                            : null;
+                    }
 
-                            var compositor = BootStrapper.Current.Compositor;
-                            var effectFactory = compositor.CreateEffectFactory(graphicsEffect, new[] { "Blur.BlurAmount" });
-                            var effectBrush = effectFactory.CreateBrush();
-                            var backdrop = compositor.CreateBackdropBrush();
-                            effectBrush.SetSourceParameter("Backdrop", backdrop);
-
-                            var blurVisual = compositor.CreateSpriteVisual();
-                            blurVisual.RelativeSizeAdjustment = Vector2.One;
-                            blurVisual.Brush = effectBrush;
-
-                            ElementCompositionPreview.SetElementChildVisual(border, blurVisual);
-                        }
-                        else
-                        {
-                            ElementCompositionPreview.SetElementChildVisual(border, null);
-                        }
+                    if (content.FindName("BackDrop") is Border border && (ElementCompositionPreview.GetElementChildVisual(border) != null) != obscured)
+                    {
+                        ElementCompositionPreview.SetElementChildVisual(border, obscured ? CreateBlurVisual() : null);
                     }
                 }
 
+                // One walk per layout pass. The album panels each raise Loading and every arriving
+                // batch raises this again, so the calls arrive in bursts — and the walk reads the
+                // live state rather than anything captured here, so the one already waiting covers
+                // whatever the callers behind it changed. The flag clears before the walk, so a
+                // call that arrives during it still gets one of its own.
+                if (_panelPending)
+                {
+                    return;
+                }
+
+                _panelPending = true;
+
                 await ScrollingHost.UpdateLayoutAsync();
+
+                _panelPending = false;
 
                 ScrollingHost.ForEach<StorageMedia>((selector, item) =>
                 {
@@ -1199,6 +1201,28 @@ namespace Telegram.Views.Popups
                     }
                 });
             }
+        }
+
+        private SpriteVisual CreateBlurVisual()
+        {
+            var compositor = BootStrapper.Current.Compositor;
+
+            _blurFactory ??= compositor.CreateEffectFactory(new GaussianBlurEffect
+            {
+                Name = "Blur",
+                BlurAmount = 3,
+                BorderMode = EffectBorderMode.Hard,
+                Source = new CompositionEffectSourceParameter("Backdrop")
+            }, new[] { "Blur.BlurAmount" });
+
+            var effectBrush = _blurFactory.CreateBrush();
+            effectBrush.SetSourceParameter("Backdrop", compositor.CreateBackdropBrush());
+
+            var blurVisual = compositor.CreateSpriteVisual();
+            blurVisual.RelativeSizeAdjustment = Vector2.One;
+            blurVisual.Brush = effectBrush;
+
+            return blurVisual;
         }
 
         private void UpdatePaidMedia(Grid root)

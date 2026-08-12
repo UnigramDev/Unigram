@@ -209,18 +209,32 @@ pending count there and logs the dimensions again once everything has landed.
   order) without it. The popup and its title still appear immediately, which was the actual
   complaint; and a drop with `media: false` is not chunked at all, since file rows do not reflow.
 
-## Task 3 — Stop rebuilding the world on every interaction
+## Task 3 — Stop rebuilding the world on every interaction — **done**
 
 `UpdatePanel()` is called from roughly a dozen places — mute, TTL, crop, spoiler toggle, item
 add/remove, even `SendFilesAlbumPanel_Loading`.
 
-- [ ] **3.1** `UpdateCollection()` rebuilds the whole view list and, in files-mode, allocates a fresh
-  `StorageDocument` wrapper for every item. New instances every time, so `CompareItems` falls back
-  to path comparison and the diff churns.
-- [ ] **3.2** `await ScrollingHost.UpdateLayoutAsync()` forces a synchronous layout pass per call.
-- [ ] **3.3** The container walk builds a **new** `GaussianBlurEffect`, effect factory,
+- [x] **3.1** ~~`UpdateCollection()` rebuilds the whole view list and, in files-mode, allocates a
+  fresh `StorageDocument` wrapper for every item. New instances every time, so `CompareItems` falls
+  back to path comparison and the diff churns.~~ **Wrong, and closed as won't-fix.** The fallback
+  compares path *and* type, which does match, so the diff saw no change and there was no churn. That
+  left only the allocation: a handful of small objects on a path that runs a few times per popup,
+  not per frame. A cache for that would have to be invalidated in two places to stay correct, which
+  is a standing bug risk bought for nothing measurable. The wrappers stay per-call.
+- [x] **3.2** ~~`await ScrollingHost.UpdateLayoutAsync()` forces a synchronous layout pass per call.~~
+  **Wrong.** It subscribes to `LayoutUpdated` once, completes a `TaskCompletionSource`, and
+  unsubscribes — it waits for the next layout pass rather than forcing one, and the container walk
+  genuinely has to happen after layout. The real cost is that concurrent calls each walk everything
+  after the *same* layout pass, and there are several: each album panel raises `Loading`, and every
+  arriving batch raises it again. A call that finds a walk already waiting now returns instead of
+  queuing another — the walk reads live state, so it already covers whatever the callers behind it
+  changed. The flag clears before the walk, so a call arriving during one still gets its own.
+- [x] **3.3** The container walk builds a **new** `GaussianBlurEffect`, effect factory,
   `CompositionEffectBrush`, backdrop brush and `SpriteVisual` per media item per call. Effect
   factories are expensive and meant to be created once and shared. Same for `new ParticlesImageSource()`.
+  The factory is now built once per popup (per instance, not static — the compositor belongs to the
+  window), and both the particles and the backdrop are only touched when the state they represent
+  actually flipped, instead of being reassigned on every pass.
 - [x] **3.4** `StorageAlbumPanel.UpdateMessage` does `Children.Clear()` and a `new Button` with a
   fresh `Click` subscription per media, on every container realization. *Done as 2b.4.*
 
@@ -259,3 +273,25 @@ add/remove, even `SendFilesAlbumPanel_Loading`.
   nothing with no feedback.
 - [ ] **6.8** `IsMediaAllowed` runs up to three LINQ passes and `TitleText` up to three more over
   `Items`, on every `UpdateView()`.
+
+## Task 7 — Reorder media inside an album (feature)
+
+- [ ] **7.1** The `ListView` already has `CanReorderItems`/`CanDragItems`, so the *rows* can be
+  dragged — an album as a whole, or a file row. There is no way to reorder the media **within** an
+  album, or to move one from one album to another, and order is what decides both the mosaic layout
+  and which ten photos end up in which message.
+
+Notes for whoever picks this up:
+
+- The media inside an album are `Button`s parented by `StorageAlbumPanel`, a bare `Grid` that
+  arranges them from `StorageAlbum.GetPositionsForWidth`. There is no items control involved, so
+  none of the ListView drag machinery applies — it needs its own pointer handling, hit-tested
+  against the mosaic rectangles the panel already computes in `MeasureOverride`.
+- Writing the result back is the easy half: `ItemsView_CollectionChanged` already rebuilds `Items`
+  by walking `ItemsView` and flattening `album.Media`, so mutating `Media` in place and re-running
+  that path keeps `Items` — the collection that actually gets sent — in step.
+- Dragging across an album boundary changes album membership, which changes every following album's
+  contents. `StorageAlbum.Ordinal` identity handles that: the albums stay the same items and
+  `UpdateItem` carries the new contents over, so nothing gets torn down.
+- Worth deciding first whether reorder should also be able to *split* an album, which is currently
+  only decided by `UpdateCollection` counting to `StorageAlbum.MAX_ITEMS`.
