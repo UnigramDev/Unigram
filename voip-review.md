@@ -312,7 +312,7 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
 
   A comment on the event fields records why there is no lock, so it does not come back.
 
-- [ ] **`m_impl` is not guarded** — reachable in `VoipGroupManager`, not in `VoipManager`
+- [x] **`m_impl` is not guarded** — reachable in `VoipGroupManager`, not in `VoipManager`
 
   Every `if (m_impl)` is TOCTOU against `Stop()`'s `reset()`. Traced properly rather than
   assumed, and the two managers turn out to differ:
@@ -330,15 +330,25 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   path that reaches managed code. The callbacks never touch `m_impl` — only inbound calls
   do, and those go to tgcalls, not to C#. That reasoning was wrong.
 
-  Three ways out, in the order I would rank them:
+  **Fixed the first way**: `VoipGroupCall` now takes the `_managerLock` it already
+  declared — the field existed but guarded nothing except a block of commented-out code
+  copied from `VoipCall`. Held around every call that reaches the tgcalls instance, and
+  around the teardown in `Dispose` and `EndScreenSharing`.
 
-  1. Give `VoipGroupCall` the `_managerLock` its sibling already has. Symmetric, keeps the
-     native contract simple, and is the pattern the codebase already uses.
-  2. A dedicated native mutex around `m_impl`. Watch the ordering: `Stop()` holding it
-     while it stops the loopback would deadlock against `AddExternalAudioSamples` coming
-     from the capture thread, so the loopback has to be stopped first.
-  3. An atomic `shared_ptr` swap, so a late caller keeps the instance alive instead of
-     blocking. No deadlock, but it allows calls on an instance that has already stopped.
+  Deliberately left outside the lock: the `IsMuted` and `IsNoiseSuppressionEnabled`
+  getters, which read a native field rather than touching `m_impl`, and the null checks
+  that only decide whether to start something.
+
+  Two places needed more than a wrapper. The `EmitJoinPayload` continuations in `Rejoin`
+  and `RejoinScreenSharing` run after awaits, so they take the lock again where they call
+  in — C# cannot hold one across an await. And `UpdateParticipant` dereferenced `_manager`
+  unconditionally on TDLib's update thread, which was a null reference waiting to happen
+  quite apart from the race.
+
+  The two alternatives, if this ever proves too coarse: a dedicated native mutex around
+  `m_impl` (watch the ordering — `Stop()` holding it while stopping the loopback would
+  deadlock against `AddExternalAudioSamples`), or an atomic `shared_ptr` swap so a late
+  caller keeps the instance alive instead of blocking.
 
 - [x] **No destructor on either manager**
 
@@ -519,8 +529,6 @@ what he decided and the three things still genuinely open.
 
 **Still open:**
 
-- **`m_impl` unguarded in `VoipGroupManager`** — see P2 above. Now known to be a real
-  use-after-free rather than a theoretical one, and the three fixes are ranked there.
 - The unmanaged buffer between the WASAPI and WebRTC clocks — worth logging the
   steady-state depth over a long share before designing anything.
 

@@ -51,6 +51,13 @@ namespace Telegram.Services.Calls
 
         private GroupCallParticipant _currentUser;
 
+        // Guards _manager and _screenManager against Dispose. Both are reached from more
+        // than one thread — the UI thread calls in while Update, and so Dispose, arrives
+        // on TDLib's update thread — and stopping a manager frees the tgcalls instance
+        // that another thread may be part way through calling into.
+        //
+        // Held only around calls that reach that instance. The IsMuted and
+        // IsNoiseSuppressionEnabled getters read a native field and are safe without it.
         private readonly object _managerLock = new();
 
         private VoipGroupManager _manager;
@@ -142,13 +149,16 @@ namespace Telegram.Services.Calls
                 IsNoiseSuppressionEnabled = Settings.VoIP.IsNoiseSuppressionEnabled
             };
 
-            _manager = new VoipGroupManager(descriptor);
-            _manager.NetworkStateUpdated += OnNetworkStateUpdated;
-            _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
-            _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
-            _manager.AudioBroadcastPartRequested += OnAudioBroadcastPartRequested;
-            _manager.VideoBroadcastPartRequested += OnVideoBroadcastPartRequested;
-            _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
+            lock (_managerLock)
+            {
+                _manager = new VoipGroupManager(descriptor);
+                _manager.NetworkStateUpdated += OnNetworkStateUpdated;
+                _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
+                _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
+                _manager.AudioBroadcastPartRequested += OnAudioBroadcastPartRequested;
+                _manager.VideoBroadcastPartRequested += OnVideoBroadcastPartRequested;
+                _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
+            }
 
             if (_isLiveStory)
             {
@@ -287,14 +297,17 @@ namespace Telegram.Services.Calls
                 IsNoiseSuppressionEnabled = Settings.VoIP.IsNoiseSuppressionEnabled
             };
 
-            _manager = new VoipGroupManager(descriptor);
-            _manager.NetworkStateUpdated += OnNetworkStateUpdated;
-            _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
-            _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
-            _manager.AudioBroadcastPartRequested += OnAudioBroadcastPartRequested;
-            _manager.VideoBroadcastPartRequested += OnVideoBroadcastPartRequested;
-            _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
-            _manager.SetEncryptDecrypt(EncryptData, DecryptData);
+            lock (_managerLock)
+            {
+                _manager = new VoipGroupManager(descriptor);
+                _manager.NetworkStateUpdated += OnNetworkStateUpdated;
+                _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
+                _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
+                _manager.AudioBroadcastPartRequested += OnAudioBroadcastPartRequested;
+                _manager.VideoBroadcastPartRequested += OnVideoBroadcastPartRequested;
+                _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
+                _manager.SetEncryptDecrypt(EncryptData, DecryptData);
+            }
 
             _ = JoinConferenceAsync();
         }
@@ -342,14 +355,17 @@ namespace Telegram.Services.Calls
                 IsNoiseSuppressionEnabled = Settings.VoIP.IsNoiseSuppressionEnabled
             };
 
-            _manager = new VoipGroupManager(descriptor);
-            _manager.NetworkStateUpdated += OnNetworkStateUpdated;
-            _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
-            _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
-            _manager.AudioBroadcastPartRequested += OnAudioBroadcastPartRequested;
-            _manager.VideoBroadcastPartRequested += OnVideoBroadcastPartRequested;
-            _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
-            _manager.SetEncryptDecrypt(EncryptData, DecryptData);
+            lock (_managerLock)
+            {
+                _manager = new VoipGroupManager(descriptor);
+                _manager.NetworkStateUpdated += OnNetworkStateUpdated;
+                _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
+                _manager.BroadcastTimeRequested += OnBroadcastTimeRequested;
+                _manager.AudioBroadcastPartRequested += OnAudioBroadcastPartRequested;
+                _manager.VideoBroadcastPartRequested += OnVideoBroadcastPartRequested;
+                _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
+                _manager.SetEncryptDecrypt(EncryptData, DecryptData);
+            }
 
             _ = JoinConferenceAsync();
         }
@@ -570,85 +586,94 @@ namespace Telegram.Services.Calls
         {
             _alias = alias;
 
-            _manager?.SetConnectionMode(VoipGroupConnectionMode.None, false, IsRtmpStream);
-            _manager?.EmitJoinPayload(async (ssrc, payload) =>
+            lock (_managerLock)
             {
-                if (_manager == null)
+                _manager?.SetConnectionMode(VoipGroupConnectionMode.None, false, IsRtmpStream);
+                _manager?.EmitJoinPayload(async (ssrc, payload) =>
                 {
-                    return;
-                }
-
-                if (IsRtmpStream)
-                {
-                    Participants = null;
-                }
-                else
-                {
-                    Participants ??= new GroupCallParticipantsCollection(this);
-                }
-
-                if (_inputGroupCallTask != null)
-                {
-                    await _inputGroupCallTask.Task;
-                }
-
-                var joinParameters = new GroupCallJoinParameters(ssrc, payload, _manager.IsMuted, _capturer != null);
-                Function request = _inputGroupCall != null
-                    ? new JoinGroupCall(_inputGroupCall, joinParameters)
-                    : _inviteUserIds != null
-                    ? new CreateGroupCall(joinParameters)
-                    : _isLiveStory
-                    ? new JoinLiveStory(Id, joinParameters)
-                    : new JoinVideoChat(Id, alias, joinParameters, _inviteHash);
-
-                var response = await ClientService.SendAsync(request);
-                if (response is GroupCallInfo info)
-                {
-                    Id = info.GroupCallId;
-                    response = new Text(info.JoinPayload);
-
-                    if (ClientService.TryGetGroupCall(info.GroupCallId, out GroupCall groupCall))
+                    if (_manager == null)
                     {
-                        _inputGroupCall ??= new InputGroupCallLink(groupCall.InviteLink);
-                        _inputGroupCallTask.TrySetResult(_inputGroupCall);
-                        Update(groupCall, out _);
+                        return;
                     }
 
-                    if (_inviteUserIds != null)
+                    if (IsRtmpStream)
                     {
-                        foreach (var userId in _inviteUserIds)
-                        {
-                            ClientService.Send(new InviteGroupCallParticipant(info.GroupCallId, userId, false));
-                        }
-
-                        _inviteUserIds = null;
-                    }
-                }
-
-                if (response is Text json && _manager != null)
-                {
-                    bool broadcast;
-                    if (JsonObject.TryParse(json.TextValue, out JsonObject data))
-                    {
-                        broadcast = data.GetNamedBoolean("stream", false);
+                        Participants = null;
                     }
                     else
                     {
-                        broadcast = false;
+                        Participants ??= new GroupCallParticipantsCollection(this);
                     }
 
-                    _source = ssrc;
-                    _manager.SetConnectionMode(broadcast ? VoipGroupConnectionMode.Broadcast : VoipGroupConnectionMode.Rtc, true, IsRtmpStream);
-                    _manager.SetJoinResponsePayload(json.TextValue);
+                    if (_inputGroupCallTask != null)
+                    {
+                        await _inputGroupCallTask.Task;
+                    }
 
-                    RejoinScreenSharing();
-                }
+                    var joinParameters = new GroupCallJoinParameters(ssrc, payload, _manager.IsMuted, _capturer != null);
+                    Function request = _inputGroupCall != null
+                        ? new JoinGroupCall(_inputGroupCall, joinParameters)
+                        : _inviteUserIds != null
+                        ? new CreateGroupCall(joinParameters)
+                        : _isLiveStory
+                        ? new JoinLiveStory(Id, joinParameters)
+                        : new JoinVideoChat(Id, alias, joinParameters, _inviteHash);
 
-                if (IsLiveStory && !IsRtmpStream)
-                {
-                    InitializeStreamer();
-                }
-            });
+                    var response = await ClientService.SendAsync(request);
+                    if (response is GroupCallInfo info)
+                    {
+                        Id = info.GroupCallId;
+                        response = new Text(info.JoinPayload);
+
+                        if (ClientService.TryGetGroupCall(info.GroupCallId, out GroupCall groupCall))
+                        {
+                            _inputGroupCall ??= new InputGroupCallLink(groupCall.InviteLink);
+                            _inputGroupCallTask.TrySetResult(_inputGroupCall);
+                            Update(groupCall, out _);
+                        }
+
+                        if (_inviteUserIds != null)
+                        {
+                            foreach (var userId in _inviteUserIds)
+                            {
+                                ClientService.Send(new InviteGroupCallParticipant(info.GroupCallId, userId, false));
+                            }
+
+                            _inviteUserIds = null;
+                        }
+                    }
+
+                    if (response is Text json && _manager != null)
+                    {
+                        bool broadcast;
+                        if (JsonObject.TryParse(json.TextValue, out JsonObject data))
+                        {
+                            broadcast = data.GetNamedBoolean("stream", false);
+                        }
+                        else
+                        {
+                            broadcast = false;
+                        }
+
+                        _source = ssrc;
+
+                        // Taken again here: this runs after the awaits above, long after
+                        // the lock around EmitJoinPayload was released.
+                        lock (_managerLock)
+                        {
+                            _manager?.SetConnectionMode(broadcast ? VoipGroupConnectionMode.Broadcast : VoipGroupConnectionMode.Rtc, true, IsRtmpStream);
+                            _manager?.SetJoinResponsePayload(json.TextValue);
+                        }
+
+                        RejoinScreenSharing();
+                    }
+
+                    if (IsLiveStory && !IsRtmpStream)
+                    {
+                        InitializeStreamer();
+                    }
+                });
+            }
         }
 
         private async void InitializeStreamer()
@@ -694,23 +719,26 @@ namespace Telegram.Services.Calls
 
         public void ToggleCapturing()
         {
-            if (_manager == null)
+            lock (_managerLock)
             {
-                return;
-            }
+                if (_manager == null)
+                {
+                    return;
+                }
 
-            if (_capturer != null)
-            {
-                _capturer.SetOutput(null);
-                _manager.SetVideoCapture(null);
+                if (_capturer != null)
+                {
+                    _capturer.SetOutput(null);
+                    _manager.SetVideoCapture(null);
 
-                _capturer.Stop();
-                _capturer = null;
-            }
-            else
-            {
-                _capturer = new VoipVideoCapture(_videoInputId);
-                _manager.SetVideoCapture(_capturer);
+                    _capturer.Stop();
+                    _capturer = null;
+                }
+                else
+                {
+                    _capturer = new VoipVideoCapture(_videoInputId);
+                    _manager.SetVideoCapture(_capturer);
+                }
             }
 
             ClientService.Send(new ToggleGroupCallIsMyVideoEnabled(Id, _capturer != null));
@@ -753,8 +781,11 @@ namespace Telegram.Services.Calls
                 AudioProcessId = item.ProcessId
             };
 
-            _screenManager = new VoipGroupManager(descriptor);
-            _screenManager.SetEncryptDecrypt(EncryptData, DecryptData);
+            lock (_managerLock)
+            {
+                _screenManager = new VoipGroupManager(descriptor);
+                _screenManager.SetEncryptDecrypt(EncryptData, DecryptData);
+            }
 
             RejoinScreenSharing();
         }
@@ -771,38 +802,49 @@ namespace Telegram.Services.Calls
 
         private void RejoinScreenSharing()
         {
-            _screenManager?.SetConnectionMode(VoipGroupConnectionMode.None, false, IsRtmpStream);
-            _screenManager?.EmitJoinPayload(async (ssrc, payload) =>
+            lock (_managerLock)
             {
-                var response = await ClientService.SendAsync(new StartGroupCallScreenSharing(Id, ssrc, payload));
-                if (response is Text json)
+                _screenManager?.SetConnectionMode(VoipGroupConnectionMode.None, false, IsRtmpStream);
+                _screenManager?.EmitJoinPayload(async (ssrc, payload) =>
                 {
-                    if (_screenManager == null)
+                    var response = await ClientService.SendAsync(new StartGroupCallScreenSharing(Id, ssrc, payload));
+                    if (response is Text json)
                     {
-                        return;
-                    }
+                        // See Rejoin: the lock around EmitJoinPayload is long gone by the
+                        // time this continuation runs.
+                        lock (_managerLock)
+                        {
+                            if (_screenManager == null)
+                            {
+                                return;
+                            }
 
-                    _screenSource = ssrc;
-                    _screenManager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true, IsRtmpStream);
-                    _screenManager.SetJoinResponsePayload(json.TextValue);
-                }
-            });
+                            _screenSource = ssrc;
+                            _screenManager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true, IsRtmpStream);
+                            _screenManager.SetJoinResponsePayload(json.TextValue);
+                        }
+                    }
+                });
+            }
         }
 
         public void EndScreenSharing()
         {
-            if (_screenManager != null)
+            lock (_managerLock)
             {
-                _screenManager.SetVideoCapture(null);
-                _screenManager.Stop();
+                if (_screenManager != null)
+                {
+                    _screenManager.SetVideoCapture(null);
+                    _screenManager.Stop();
 
-                // Clearing the delegates breaks the native to managed cycle that would
-                // otherwise leak the call, but it has to happen after Stop: until the
-                // instance is gone tgcalls can still ask us to transform a frame.
-                _screenManager.SetEncryptDecrypt(null, null);
-                _screenManager = null;
+                    // Clearing the delegates breaks the native to managed cycle that would
+                    // otherwise leak the call, but it has to happen after Stop: until the
+                    // instance is gone tgcalls can still ask us to transform a frame.
+                    _screenManager.SetEncryptDecrypt(null, null);
+                    _screenManager = null;
 
-                _screenSource = 0;
+                    _screenSource = 0;
+                }
             }
 
             if (_screenCapturer != null)
@@ -825,17 +867,26 @@ namespace Telegram.Services.Calls
 
         public void SetRequestedVideoChannels(IList<VoipVideoChannelInfo> descriptions)
         {
-            _manager?.SetRequestedVideoChannels(descriptions);
+            lock (_managerLock)
+            {
+                _manager?.SetRequestedVideoChannels(descriptions);
+            }
         }
 
         public void AddIncomingVideoOutput(string endpointId, VoipVideoOutputSink sink)
         {
-            _manager?.AddIncomingVideoOutput(endpointId, sink);
+            lock (_managerLock)
+            {
+                _manager?.AddIncomingVideoOutput(endpointId, sink);
+            }
         }
 
         public void AddScreenSharingVideoOutput(string endpointId, VoipVideoOutputSink sink)
         {
-            _screenManager?.AddIncomingVideoOutput(endpointId, sink);
+            lock (_managerLock)
+            {
+                _screenManager?.AddIncomingVideoOutput(endpointId, sink);
+            }
         }
 
         private async void OnBroadcastTimeRequested(VoipGroupManager sender, BroadcastTimeRequestedEventArgs args)
@@ -1120,31 +1171,36 @@ namespace Telegram.Services.Calls
             _devices.Changed -= OnDeviceChanged;
             _devices.Stop();
 
-            if (_manager != null)
+            // This runs on TDLib's update thread, not the UI thread, which is the whole
+            // reason the lock exists: the UI thread calls into the manager meanwhile.
+            lock (_managerLock)
             {
-                _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-                _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
-                _manager.BroadcastTimeRequested -= OnBroadcastTimeRequested;
-                _manager.AudioBroadcastPartRequested -= OnAudioBroadcastPartRequested;
-                _manager.VideoBroadcastPartRequested -= OnVideoBroadcastPartRequested;
-                _manager.MediaChannelDescriptionsRequested -= OnMediaChannelDescriptionsRequested;
+                if (_manager != null)
+                {
+                    _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
+                    _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
+                    _manager.BroadcastTimeRequested -= OnBroadcastTimeRequested;
+                    _manager.AudioBroadcastPartRequested -= OnAudioBroadcastPartRequested;
+                    _manager.VideoBroadcastPartRequested -= OnVideoBroadcastPartRequested;
+                    _manager.MediaChannelDescriptionsRequested -= OnMediaChannelDescriptionsRequested;
 
-                _manager.SetVideoCapture(null);
-                _manager.Stop();
+                    _manager.SetVideoCapture(null);
+                    _manager.Stop();
 
-                // See EndScreenSharing: the delegates have to outlive the instance.
-                _manager.SetEncryptDecrypt(null, null);
-                _manager = null;
+                    // See EndScreenSharing: the delegates have to outlive the instance.
+                    _manager.SetEncryptDecrypt(null, null);
+                    _manager = null;
 
-                _source = 0;
-            }
+                    _source = 0;
+                }
 
-            if (_capturer != null)
-            {
-                _capturer.SetOutput(null);
+                if (_capturer != null)
+                {
+                    _capturer.SetOutput(null);
 
-                _capturer.Stop();
-                _capturer = null;
+                    _capturer.Stop();
+                    _capturer = null;
+                }
             }
 
             EndScreenSharing();
@@ -1201,7 +1257,11 @@ namespace Telegram.Services.Calls
             set
             {
                 _devices.Track(MediaDeviceClass.AudioInput, value);
-                _manager?.SetAudioInputDevice(_audioInputId = value);
+
+                lock (_managerLock)
+                {
+                    _manager?.SetAudioInputDevice(_audioInputId = value);
+                }
             }
         }
 
@@ -1212,23 +1272,30 @@ namespace Telegram.Services.Calls
             set
             {
                 _devices.Track(MediaDeviceClass.AudioOutput, value);
-                _manager?.SetAudioOutputDevice(_audioOutputId = value);
+
+                lock (_managerLock)
+                {
+                    _manager?.SetAudioOutputDevice(_audioOutputId = value);
+                }
             }
         }
 
         private void OnDeviceChanged(object sender, MediaDeviceChangedEventArgs e)
         {
-            switch (e.DeviceClass)
+            lock (_managerLock)
             {
-                case MediaDeviceClass.VideoInput:
-                    _capturer?.SwitchToDevice(_videoInputId = e.DeviceId);
-                    break;
-                case MediaDeviceClass.AudioInput:
-                    _manager?.SetAudioInputDevice(_audioInputId = e.DeviceId);
-                    break;
-                case MediaDeviceClass.AudioOutput:
-                    _manager?.SetAudioOutputDevice(_audioOutputId = e.DeviceId);
-                    break;
+                switch (e.DeviceClass)
+                {
+                    case MediaDeviceClass.VideoInput:
+                        _capturer?.SwitchToDevice(_videoInputId = e.DeviceId);
+                        break;
+                    case MediaDeviceClass.AudioInput:
+                        _manager?.SetAudioInputDevice(_audioInputId = e.DeviceId);
+                        break;
+                    case MediaDeviceClass.AudioOutput:
+                        _manager?.SetAudioOutputDevice(_audioOutputId = e.DeviceId);
+                        break;
+                }
             }
         }
 
@@ -1237,10 +1304,25 @@ namespace Telegram.Services.Calls
             get => _manager?.IsMuted ?? true;
             set
             {
-                if (_manager != null && _currentUser != null && _manager.IsMuted != value)
+                GroupCallParticipant currentUser;
+
+                lock (_managerLock)
                 {
-                    _manager.IsMuted = value;
-                    ClientService.Send(new ToggleGroupCallParticipantIsMuted(Id, _currentUser.ParticipantId, value));
+                    currentUser = _currentUser;
+
+                    if (_manager != null && currentUser != null && _manager.IsMuted != value)
+                    {
+                        _manager.IsMuted = value;
+                    }
+                    else
+                    {
+                        currentUser = null;
+                    }
+                }
+
+                if (currentUser != null)
+                {
+                    ClientService.Send(new ToggleGroupCallParticipantIsMuted(Id, currentUser.ParticipantId, value));
                     MutedChanged?.Invoke(this, EventArgs.Empty);
 
                     _coordinator?.TryNotifyMutedChanged(value);
@@ -1260,7 +1342,10 @@ namespace Telegram.Services.Calls
             get => _manager?.IsNoiseSuppressionEnabled ?? false;
             set
             {
-                _manager?.IsNoiseSuppressionEnabled = value;
+                lock (_managerLock)
+                {
+                    _manager?.IsNoiseSuppressionEnabled = value;
+                }
 
                 Settings.VoIP.IsNoiseSuppressionEnabled = value;
             }
@@ -1270,7 +1355,13 @@ namespace Telegram.Services.Calls
         public double VolumeLevel
         {
             get => _volumeLevel;
-            set => _manager?.SetVolume(1, _volumeLevel = value);
+            set
+            {
+                lock (_managerLock)
+                {
+                    _manager?.SetVolume(1, _volumeLevel = value);
+                }
+            }
         }
 
         public bool IsClosed => _isClosed;
@@ -1433,15 +1524,23 @@ namespace Telegram.Services.Calls
                 // User got muted by admins, update local state
                 if (participant.IsMutedForAllUsers && !participant.CanUnmuteSelf)
                 {
-                    _manager.IsMuted = true;
-
-                    if (_currentUser?.VideoInfo != null && participant.VideoInfo == null && _capturer != null)
+                    lock (_managerLock)
                     {
-                        _capturer.SetOutput(null);
-                        _manager.SetVideoCapture(null);
+                        // Was an unconditional dereference: this runs on TDLib's update
+                        // thread and Dispose can have cleared the field already.
+                        if (_manager != null)
+                        {
+                            _manager.IsMuted = true;
+                        }
 
-                        _capturer.Stop();
-                        _capturer = null;
+                        if (_currentUser?.VideoInfo != null && participant.VideoInfo == null && _capturer != null)
+                        {
+                            _capturer.SetOutput(null);
+                            _manager?.SetVideoCapture(null);
+
+                            _capturer.Stop();
+                            _capturer = null;
+                        }
                     }
 
                     if (_currentUser?.ScreenSharingVideoInfo != null && participant.ScreenSharingVideoInfo == null && _screenCapturer != null)
@@ -1458,21 +1557,21 @@ namespace Telegram.Services.Calls
                 RaisePropertyChanged(nameof(CurrentUser));
             }
 
-            var manager = _manager;
-            if (manager == null)
+            // Reading into a local kept this from throwing, but not from calling into an
+            // instance Dispose had already stopped.
+            lock (_managerLock)
             {
-                return;
-            }
+                if (_manager == null)
+                {
+                    return;
+                }
 
-            if (participant.IsMutedForCurrentUser)
-            {
-                manager.SetVolume(participant.AudioSourceId, 0);
-                manager.SetVolume(participant.ScreenSharingAudioSourceId, 0);
-            }
-            else
-            {
-                manager.SetVolume(participant.AudioSourceId, participant.VolumeLevel / 10000d);
-                manager.SetVolume(participant.ScreenSharingAudioSourceId, participant.VolumeLevel / 10000d);
+                var volume = participant.IsMutedForCurrentUser
+                    ? 0
+                    : participant.VolumeLevel / 10000d;
+
+                _manager.SetVolume(participant.AudioSourceId, volume);
+                _manager.SetVolume(participant.ScreenSharingAudioSourceId, volume);
             }
         }
 
