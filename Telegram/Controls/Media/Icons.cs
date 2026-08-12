@@ -105,6 +105,7 @@ namespace Telegram.Controls.Media
         public const string MoveDown = "\uEA43";
         public const string Enlarge = "\uEA45";
         public const string Shrink = "\uEA46";
+        public const string News = "\uEB25";
 
         // TODO: wrong name
         public const string Location = "\uE1C4";

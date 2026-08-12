@@ -2068,6 +2068,7 @@ namespace Telegram.Views
 
                 if (messageRights)
                 {
+                    flyout.CreateFlyoutItem(ViewModel.SendRichMessage, Strings.AttachArticle, Icons.News);
                     flyout.CreateFlyoutItem(ViewModel.SendLocation, Strings.ChatLocation, Icons.Location);
                 }
 
@@ -8258,7 +8259,7 @@ namespace Telegram.Views
 
         private void ButtonMaximize_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.OpenRichTextEditor();
+            ViewModel.SendRichMessage();
         }
     }
 

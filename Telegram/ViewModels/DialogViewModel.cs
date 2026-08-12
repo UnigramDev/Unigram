@@ -3638,7 +3638,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void OpenRichTextEditor()
+        public async void SendRichMessage()
         {
             var text = GetFormattedText();
             var message = new RichMessage(PageBlockHelper.ToPageBlocks(text), false, true);
