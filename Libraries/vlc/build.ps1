@@ -46,8 +46,12 @@ if (Test-Path $RevisionFile) {
     if (-not (Test-Path $DestFolder)) {
         New-Item -ItemType Directory -Path $DestFolder -Force | Out-Null
     }
-    Copy-Item $RevisionFile -Destination $DestFolder -Force
-    Write-Host "Copied revision.txt to vlc/src/"
+    # Normalise rather than copy: the Makefile inside the container cats this file straight
+    # into a C string literal, so a CRLF here puts a bare CR inside the literal and
+    # src/revision.c fails to compile ("expected expression").
+    $Revision = (Get-Content $RevisionFile -Raw).Trim()
+    [System.IO.File]::WriteAllText((Join-Path $DestFolder "revision.txt"), $Revision + "`n")
+    Write-Host "Copied revision.txt to vlc/src/ ($Revision)"
 } else {
     Write-Host "revision.txt not found, skipping..."
 }
