@@ -1076,6 +1076,19 @@ namespace Telegram.Controls.Chats
             var flag = false;
             searchText = string.Empty;
 
+            // This runs on every keystroke, and without an inline bot to address none of the
+            // string work below can lead anywhere, so it's not worth an allocation.
+            var inlineBot = ViewModel.CurrentInlineBot;
+            if (inlineBot == null)
+            {
+                if (apply)
+                {
+                    ClearInlineBotResults();
+                }
+
+                return false;
+            }
+
             if (text.EndsWith('\r'))
             {
                 text = text.Substring(0, text.Length - 1);
@@ -1086,8 +1099,10 @@ namespace Telegram.Controls.Chats
                 text = text.Substring(1);
             }
 
-            var split = text.Split(' ');
-            if (split.Length >= 1 && ViewModel.CurrentInlineBot != null && ViewModel.CurrentInlineBot.HasActiveUsername(split[0], out string username))
+            var space = text.IndexOf(' ');
+            var first = space < 0 ? text : text.Substring(0, space);
+
+            if (inlineBot.HasActiveUsername(first, out string username))
             {
                 searchText = ReplaceFirst(text.TrimStart(), username, string.Empty);
                 if (searchText.StartsWith(" "))
