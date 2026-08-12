@@ -74,10 +74,21 @@ That one needs a `Telegram.Native` rebuild.
 
 Two latent bugs in the existing `Stop()` path, never exercised because nothing calls it:
 
-- [ ] **1.4** `stopped` is a plain `bool`, written by `Stop()` without taking `m_lock` and read from
-  the decode thread. Should be `std::atomic<bool>`.
-- [ ] **1.5** `readCallback` returns `0` when stopped rather than `AVERROR_EOF`. ffmpeg reads `0` as
-  "no bytes this call" and can spin instead of aborting.
+- [x] **1.4** `stopped` is a plain `bool`, written by `Stop()` without taking `m_lock` and read from
+  the decode thread. Should be `std::atomic<bool>`. Now `std::atomic<bool>`; every use is a plain
+  load or store, so only the declaration changed. `Stop()` still does not take `m_lock`, and that is
+  the point — taking it would block until the decode it is trying to interrupt had finished.
+- [x] **1.5** `readCallback` returns `0` when stopped rather than `AVERROR_EOF`. ffmpeg reads `0` as
+  "no bytes this call" and can spin instead of aborting. Fixed, and `seekCallback` had the same
+  shape: returning `0` there reports a successful seek to offset 0, sending the demuxer back to the
+  start rather than letting it fail out.
+
+**Not built.** `Telegram.Native` needs the vcpkg ffmpeg setup, so these three edits are unverified
+by a compiler. `std::atomic<bool>` needs `<atomic>`, which is now included.
+
+One thing left alone next door: in `seekCallback`'s non-stopped path, `return moved ? offset : 0;`
+reports a successful seek to 0 when `SetFilePointerEx` fails. Same class of bug, but on the live
+path rather than the abort path, so changing it belongs with someone who can run a video.
 
 Cost × rate says this does not pay for thumbnails alone — closing the popup mid-decode is rare. It
 pays as part of Task 2, whose cancel affordance needs the same plumbing, and whose probe pipeline is
@@ -91,10 +102,35 @@ what justifies the native `interrupt_callback` work.
   awaited before `new SendFilesPopup` is reached, with no feedback and no cancel.
 - [x] **2.2** The whole loop sits in **one** try/catch, so a single throwing file silently discards
   every remaining file in the drop. Needs to be per-file.
-- [ ] **2.3** Each media item is opened and probed twice: `StoragePhoto.CreateAsync` decodes for
+- [x] **2.3** Each media item is opened and probed twice: `StoragePhoto.CreateAsync` decodes for
   dimensions and the preview opens the file again; `StorageVideo.CreateAsync` builds a
   `VideoAnimation` for dimensions and `GetPreviewBitmapAsync` builds a second one for one frame.
-  *Left open — a separate change to the `Storage*` factories, not to the popup flow.*
+  **True, and closed as won't-fix: every way of collapsing it undoes Task 1.**
+
+  The two opens are not the same work at the same time. The probe answers *what is this and how
+  big*, and it has to answer before the item is published, because the mosaic cannot lay out
+  without dimensions and the type decides whether the item is a photo at all — `StoragePhoto.CreateAsync`
+  returning null is how a mis-named file becomes a `StorageDocument`. The thumbnail answers *what
+  does it look like*, on realization, and must stay releasable.
+
+  Fusing them means one of:
+
+  - decoding thumbnails during the probe — which is Task 1 in reverse, holding a decoded bitmap per
+    item whether or not it is ever on screen;
+  - holding the `VideoAnimation` open between the two — a file handle, a codec context and a 64 KB
+    IO buffer per video, for the life of the popup;
+  - deferring dimensions to thumbnail time — which needs placeholder rows, already rejected in 2.5.
+
+  For photos the duplication is cheap anyway: the probe is a header read, not a decode. For video it
+  is a real `avformat_open_input` plus `find_stream_info` twice, and that is the case worth revisiting
+  — but only via a different design, not by removing an open:
+
+  > **If it ever needs doing:** render the frame once during the probe and keep it *encoded* (a 600px
+  > JPEG is ~50 KB against ~2 MB decoded), letting the thumbnail cache decode from that blob without
+  > touching ffmpeg again. That trades a bounded ~50 KB per video for the second probe. It is not a
+  > clear win: it renders a frame for every video including the ones never scrolled to, so it is
+  > worse exactly where the current design is best — a large drop where most items are never
+  > realized. Needs a decision, and a measurement, not a refactor.
 - [x] **2.4** Pipeline the probes with bounded concurrency.
 - [x] **2.5** Open the popup first and append items as they resolve. **No placeholder rows** — Fela's
   call: in the vast majority of cases probing is instant, so a row that exists only to be replaced

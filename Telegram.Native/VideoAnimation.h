@@ -2,6 +2,7 @@
 
 #include <VideoAnimation.g.h>
 
+#include <atomic>
 #include <cstdint>
 #include <limits>
 #include <string>
@@ -294,7 +295,11 @@ namespace winrt::Telegram::Native::implementation
         bool closed = false;
         AVPacket* pkt;
         //AVPacket orig_pkt;
-        bool stopped = false;
+
+        // Written by Stop() from whichever thread wants to abort, read by the decode loop and by
+        // the IO callbacks running under it. Stop() deliberately does not take m_lock -- taking it
+        // would block until the decode it is trying to interrupt has finished.
+        std::atomic<bool> stopped{ false };
         bool seeking = false;
 
         uint8_t* dst_data;

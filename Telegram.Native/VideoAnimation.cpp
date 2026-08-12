@@ -136,7 +136,10 @@ namespace winrt::Telegram::Native::implementation
                 return AVERROR_EOF;
             }
         }
-        return 0;
+
+        // Not 0: ffmpeg reads that as "no bytes this call" and can keep asking, which would spin
+        // instead of unwinding the demuxer that Stop() is trying to abort.
+        return AVERROR_EOF;
     }
 
     int64_t VideoAnimation::seekCallback(void* opaque, int64_t offset, int whence)
@@ -173,7 +176,10 @@ namespace winrt::Telegram::Native::implementation
                 return offset;
             }
         }
-        return 0;
+
+        // Same reason as readCallback: a seek that reports success at offset 0 would send the
+        // demuxer back to the start rather than letting it fail out.
+        return AVERROR_EOF;
     }
 
     void VideoAnimation::RedirectLoggingOutputs(void* ptr, int level, const char* fmt, va_list vargs)
