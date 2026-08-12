@@ -1195,6 +1195,9 @@ namespace Telegram.Views
                 {
                     if (!MasterDetail.NavigationService.CanGoBack)
                     {
+                        MasterDetail.NavigationService.Navigate(typeof(BlankPage), Guid.NewGuid());
+                        MasterDetail.NavigationService.Frame.BackStack.Clear();
+                        MasterDetail.NavigationService.Frame.ForwardStack.Clear();
                         MasterDetail.NavigationService.ClearCache(true);
                     }
 
@@ -1237,10 +1240,14 @@ namespace Telegram.Views
         {
             var roots = new List<object>();
 
+            // The view itself, not its containers: descent reaches those through it now. Any
+            // OTHER ChatView still alive is therefore unreachable from the roots and gets
+            // reported -- which is the point, since its containers used to show up as orphans
+            // while the view that held them stayed invisible to the analysis.
             var chat = this.GetChild<ChatView>();
             if (chat != null)
             {
-                roots.AddRange(chat.DebugRoots());
+                roots.Add(chat);
             }
 
             roots.AddRange(Telegram.Controls.Gallery.GalleryWindow.DebugRoots());

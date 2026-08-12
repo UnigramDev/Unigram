@@ -1215,6 +1215,10 @@ namespace Telegram.Views
         {
             return node switch
             {
+                // A ChatView that is still alive owns its containers through the realized panel
+                // and the recycle queues, so descending into it reports them under it instead of
+                // as unparented orphans -- which is what a leaked view looked like before.
+                ChatView x => x.DebugRoots(),
                 ChatHistoryViewItem x => x.DebugChildren(),
                 MessageSelector x => x.DebugChildren(),
                 MessageBubble x => x.DebugChildren(),
