@@ -494,6 +494,13 @@ namespace Telegram.Controls.Chats
                     _recordingAudioVideo = false;
                     UpdateRecordingInterface();
                 }
+                else
+                {
+                    // The locked-mode send button lands here, and this is the only path that can
+                    // swallow it. Reported as "recorded with the locked button, can't be sent"
+                    // (#3262), which nobody has reproduced - so at least record that it happened.
+                    Logger.Warning("Locked recording released before the record runnable ran");
+                }
             }
         }
 
@@ -552,9 +559,12 @@ namespace Telegram.Controls.Chats
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                // TODO: notify user
+                Logger.Error(ex);
+
+                ToastPopup.Show(this, string.Format(Strings.UnknownErrorCode, ex.Message),
+                    TeachingTipPlacementMode.TopLeft, dismissAfter: TimeSpan.FromSeconds(5));
                 return false;
             }
         }
@@ -571,6 +581,7 @@ namespace Telegram.Controls.Chats
             if (access.CurrentStatus == DeviceAccessStatus.Unspecified)
             {
                 MediaCapture capture = null;
+                Exception failure = null;
                 try
                 {
                     capture = new MediaCapture();
@@ -580,11 +591,27 @@ namespace Telegram.Controls.Chats
                         : StreamingCaptureMode.Audio;
                     await capture.InitializeAsync(settings);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    failure = ex;
+                }
                 finally
                 {
                     capture?.Dispose();
                     capture = null;
+                }
+
+                // This press is consumed either way: it exists to raise the consent prompt, and
+                // recording starts on the next one. But an outright failure here - no capture
+                // device, one already in use, a driver that refuses - looks identical to that
+                // from the outside, and the button appears to do nothing at all, forever.
+                if (failure != null)
+                {
+                    Logger.Error(failure);
+
+                    this.BeginOnUIThread(() => ToastPopup.Show(this,
+                        string.Format(Strings.UnknownErrorCode, failure.Message),
+                        TeachingTipPlacementMode.TopLeft, dismissAfter: TimeSpan.FromSeconds(5)));
                 }
 
                 return false;
