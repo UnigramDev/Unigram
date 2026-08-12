@@ -1250,7 +1250,7 @@
                                   Grid.ColumnSpan="2"
                                   Grid.Row="1">
                                 <chats:ChatTextBox x:Name="TextField"
-                                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                   FontFamily="{ThemeResource EmojiTextThemeFontFamily}"
                                                    Background="Transparent"
                                                    ControlledList="{x:Bind ListAutocomplete}"
                                                    CreateLinkTarget="{x:Bind ButtonAttach}"
