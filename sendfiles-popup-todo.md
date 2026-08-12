@@ -121,16 +121,26 @@ what justifies the native `interrupt_callback` work.
     IO buffer per video, for the life of the popup;
   - deferring dimensions to thumbnail time — which needs placeholder rows, already rejected in 2.5.
 
-  For photos the duplication is cheap anyway: the probe is a header read, not a decode. For video it
-  is a real `avformat_open_input` plus `find_stream_info` twice, and that is the case worth revisiting
-  — but only via a different design, not by removing an open:
+  It is also cheaper than "twice" suggests, in both cases, because the probe is already the light
+  half. `VideoAnimation.LoadFromFile` takes `preview` and `probe` flags that exist for exactly this:
+  `preview` sets `AVFMT_FLAG_NOBUFFER` so nothing is buffered, and `probe` skips the frame and packet
+  allocation and the "no video stream" bail. `StorageVideo.CreateAsync` and `StorageAudio.CreateAsync`
+  both ask for `(preview: true, probe: true)` — headers only. The photo probe is the same shape:
+  `BitmapDecoder.CreateAsync` reads a header, it does not decode.
 
-  > **If it ever needs doing:** render the frame once during the probe and keep it *encoded* (a 600px
-  > JPEG is ~50 KB against ~2 MB decoded), letting the thumbnail cache decode from that blob without
-  > touching ffmpeg again. That trades a bounded ~50 KB per video for the second probe. It is not a
-  > clear win: it renders a frame for every video including the ones never scrolled to, so it is
-  > worse exactly where the current design is best — a large drop where most items are never
-  > realized. Needs a decision, and a measurement, not a refactor.
+  So what runs twice is a header read plus a real decode, not two decodes — which is about as good
+  as a lazy, releasable thumbnail gets.
+
+  > **If it ever needs revisiting:** render the frame once during the probe and keep it *encoded* (a
+  > 600px JPEG is ~50 KB against ~2 MB decoded), letting the thumbnail cache decode from that blob
+  > without touching ffmpeg again. It is not a clear win: it renders a frame for every video
+  > including the ones never scrolled to, so it is worse exactly where the current design is best —
+  > a large drop where most items are never realized. Needs a measurement, not a refactor.
+
+  One inconsistency noticed while checking, not acted on: `ImageHelper` asks for `preview: false`
+  when loading (so the format context *does* buffer) but passes `preview: true` to `RenderSync`,
+  which is what raises its retry count to 50. Whether `NOBUFFER` helps or hurts a single-frame grab
+  is a measurement, so it is left as an observation.
 - [x] **2.4** Pipeline the probes with bounded concurrency.
 - [x] **2.5** Open the popup first and append items as they resolve. **No placeholder rows** — Fela's
   call: in the vast majority of cases probing is instant, so a row that exists only to be replaced
