@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
@@ -304,23 +303,44 @@ namespace Telegram.Controls
 
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
         {
-            if (FocusState == FocusState.Unfocused || !IsReplaceEmojiEnabled || string.Equals(Document.Selection.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
+            if (FocusState == FocusState.Unfocused || !IsReplaceEmojiEnabled)
             {
                 return;
             }
 
-            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
+            // Emoticons are keyed by their last character, and the vast majority of keystrokes
+            // aren't one, so this runs before anything that costs an allocation or a text host call.
+            var character = args.KeyCode < 0x10000
+                ? (char)args.KeyCode
+                : (char)((args.KeyCode - 0x10000) / 0x400 + 0xD800);
 
             //var matches = Emoticon.Data.Keys.Where(x => x.EndsWith(character)).ToArray();
-            if (Emoticon.Matches.TryGetValue(character[0], out string[] matches))
+            if (Emoticon.Matches.TryGetValue(character, out string[] matches)
+                && !string.Equals(Document.Selection.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
             {
-                var length = matches.Max(x => x.Length);
+                var length = 0;
+
+                foreach (var match in matches)
+                {
+                    length = Math.Max(length, match.Length);
+                }
+
                 var start = Math.Max(Document.Selection.EndPosition - length, 0);
 
                 var range = Document.GetRange(start, Document.Selection.EndPosition);
                 range.GetText(TextGetOptions.NoHidden, out string value);
 
-                var emoticon = matches.FirstOrDefault(x => value.EndsWith(x));
+                var emoticon = default(string);
+
+                foreach (var match in matches)
+                {
+                    if (value.EndsWith(match, StringComparison.Ordinal))
+                    {
+                        emoticon = match;
+                        break;
+                    }
+                }
+
                 if (emoticon != null)
                 {
                     BeginUndoGroup();
