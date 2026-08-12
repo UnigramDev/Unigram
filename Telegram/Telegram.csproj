@@ -4734,6 +4734,10 @@
   <ItemGroup>
     <AdditionalFiles Include="$(ProjectDir)\..\Libraries\tdjson\td_api.tl" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\tdjson.dll" />
+    <!-- tdjson comes in as a copy-local path rather than a Reference, so RAR never runs its
+         related-file discovery and the .pdb has to be named explicitly. Without it the appxsym
+         carries no tdjson symbols and every crash inside TDLib is unresolvable. -->
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\tdjson.pdb" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\libcrypto-3$(OpenSSLPlatform).dll" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\libssl-3$(OpenSSLPlatform).dll" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\zlib1.dll" />
