@@ -49,6 +49,7 @@ namespace Telegram.Controls
 
         private ScrollViewer ScrollViewer;
         private Border Ghost;
+        private ItemsPresenter ItemsPresenter;
 
         public ChatListListView()
         {
@@ -184,8 +185,14 @@ namespace Telegram.Controls
         {
             ScrollViewer = GetTemplateChild(nameof(ScrollViewer)) as ScrollViewer;
             Ghost = GetTemplateChild(nameof(Ghost)) as Border;
+            ItemsPresenter = GetTemplateChild(nameof(ItemsPresenter)) as ItemsPresenter;
 
             base.OnApplyTemplate();
+
+            // Loaded does not imply the template has been applied: a control that is in the tree
+            // but never measured raises it with the template parts still null. Whichever of the
+            // two arrives second does the setup.
+            TryInitialize();
         }
 
         public bool TryGetChatAndCell(long chatId, out Chat chat, out ChatCell cell)
@@ -353,28 +360,36 @@ namespace Telegram.Controls
         private InteractionTracker _tracker;
         private VisualInteractionSource _interactionSource;
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void TryInitialize()
         {
-            if (_trackerOwner == null)
+            if (_trackerOwner != null || ItemsPresenter == null || !IsConnected)
             {
-                _visual = ElementComposition.GetElementVisual(ScrollViewer.ContentTemplateRoot);
-
-                _redirect = _visual.Compositor.CreateSpriteVisual();
-                _redirect.RelativeSizeAdjustment = Vector2.One;
-
-                _hitTest = _visual.Compositor.CreateSpriteVisual();
-                _hitTest.Brush = _visual.Compositor.CreateColorBrush(Colors.Transparent);
-                _hitTest.RelativeSizeAdjustment = Vector2.One;
-
-                _container = _visual.Compositor.CreateContainerVisual();
-                _container.Children.InsertAtBottom(_hitTest);
-                _container.RelativeSizeAdjustment = Vector2.One;
-
-                ElementCompositionPreview.SetElementChildVisual(Ghost, _redirect);
-                ElementCompositionPreview.SetElementChildVisual(this, _container);
-                ConfigureInteractionTracker();
+                return;
             }
 
+            _visual = ElementComposition.GetElementVisual(ItemsPresenter);
+
+            _redirect = _visual.Compositor.CreateSpriteVisual();
+            _redirect.RelativeSizeAdjustment = Vector2.One;
+
+            _hitTest = _visual.Compositor.CreateSpriteVisual();
+            _hitTest.Brush = _visual.Compositor.CreateColorBrush(Colors.Transparent);
+            _hitTest.RelativeSizeAdjustment = Vector2.One;
+
+            _container = _visual.Compositor.CreateContainerVisual();
+            _container.Children.InsertAtBottom(_hitTest);
+            _container.RelativeSizeAdjustment = Vector2.One;
+
+            ElementCompositionPreview.SetElementChildVisual(Ghost, _redirect);
+            ElementCompositionPreview.SetElementChildVisual(this, _container);
+            ConfigureInteractionTracker();
+
+            // OnLoaded may already have run and found nothing to subscribe to.
+            AttachTracker();
+        }
+
+        private void AttachTracker()
+        {
             if (_trackerOwner != null)
             {
                 _trackerOwner.ValuesChanged += OnValuesChanged;
@@ -382,6 +397,19 @@ namespace Telegram.Controls
                 _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
                 _trackerOwner.IdleStateEntered += OnIdleStateEntered;
                 _trackerOwner.CustomAnimationStateEntered += OnCustomAnimationStateEntered;
+            }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_trackerOwner == null)
+            {
+                // Subscribes as well, if the template got here first.
+                TryInitialize();
+            }
+            else
+            {
+                AttachTracker();
             }
 
             if (_itemsSource == null)

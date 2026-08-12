@@ -1008,7 +1008,8 @@
                                       BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
                                       CanContentRenderOutsideBounds="{TemplateBinding ScrollViewer.CanContentRenderOutsideBounds}"
                                       AutomationProperties.AccessibilityView="Raw">
-                            <ItemsPresenter Header="{TemplateBinding Header}"
+                            <ItemsPresenter x:Name="ItemsPresenter"
+                                            Header="{TemplateBinding Header}"
                                             HeaderTemplate="{TemplateBinding HeaderTemplate}"
                                             HeaderTransitions="{TemplateBinding HeaderTransitions}"
                                             Footer="{TemplateBinding Footer}"
