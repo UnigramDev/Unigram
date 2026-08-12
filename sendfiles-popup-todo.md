@@ -292,13 +292,26 @@ re-deriving it.
   `OnCollectionChanged`, `IsFilesSelected` through `ToggleIsFilesSelected` and `MakeContentPaid`,
   `IsAlbum` only from `SendWithoutGrouping`, which hides the popup.
 
-## Task 5 — Dead code in StorageVideo
+## Task 5 — Dead code in StorageVideo — **done**
 
-- [ ] **5.1** `Compression`, `MaxCompression`, `CanCompress`, `GetEncodingAsync`, `ToString()`,
+- [x] **5.1** `Compression`, `MaxCompression`, `CanCompress`, `GetEncodingAsync`, `ToString()`,
   `UpdateWidthHeightBitrateForCompression` and the `original*`/`videoDuration`/`rotationValue` fields
   have no consumer outside the file — only `GetGeneration()` is live. They cannot work either: every
   `original*` field is assigned only in commented-out lines, so they are permanently 0,
   `MaxCompression` is always 1, `CanCompress` always false, and `ToString()` divides by zero.
+
+299 lines out, one in. What is left is `Width`/`Height`, `TotalSeconds`, `Duration`, `IsMuted` and
+`GetGeneration`, which is the whole of what the app ever asked a `StorageVideo` for.
+
+Two knock-ons worth knowing:
+
+- `IsMuted`'s setter was resetting `Compression` and raising `CanCompress`; it is now just the set.
+- `LoadPreview()` went with it. It was called from the constructor and did nothing but compute the
+  dead compression values — which is why removing the `Refresh` override back in Task 1 was safe.
+
+The commented-out blocks in the constructor went too: they assign the `original*` fields, so
+leaving them would have described members that no longer exist. Anyone reviving video compression
+starts from the Android implementation rather than from this, which never worked.
 
 ## Task 6 — Smaller items
 
