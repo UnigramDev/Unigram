@@ -137,10 +137,10 @@ what justifies the native `interrupt_callback` work.
   > including the ones never scrolled to, so it is worse exactly where the current design is best —
   > a large drop where most items are never realized. Needs a measurement, not a refactor.
 
-  One inconsistency noticed while checking, not acted on: `ImageHelper` asks for `preview: false`
-  when loading (so the format context *does* buffer) but passes `preview: true` to `RenderSync`,
-  which is what raises its retry count to 50. Whether `NOBUFFER` helps or hurts a single-frame grab
-  is a measurement, so it is left as an observation.
+  `ImageHelper` asking for `preview: false` while passing `preview: true` to `RenderSync` is not an
+  oversight: unbuffered often fails to grab the first frame, which is the whole point there. The
+  flag is right for a header-only probe and wrong for a frame grab. Now commented at all three
+  call sites, since it is exactly the kind of thing someone "tidies up" later.
 - [x] **2.4** Pipeline the probes with bounded concurrency.
 - [x] **2.5** Open the popup first and append items as they resolve. **No placeholder rows** — Fela's
   call: in the vast majority of cases probing is instant, so a row that exists only to be replaced
@@ -428,6 +428,38 @@ gets worse, not better.
 - **6.7** telling the user a dropped folder was ignored. Needs a string, and strings come from the
   Android app through a generator that lives outside this repository — so it cannot be written and
   compiled in one sitting.
+
+## Task 8 — Enqueue shares as they are typed, rather than after
+
+- [ ] **8.1** `SendMessagesView` exists only to send what was shared. It still types the whole set
+  first — `CreateAsync(files)` — and only then builds and sends message after message. So nothing
+  reaches the network until the slowest file has been probed, which for a share of large videos is
+  the probe delaying the *upload*, not just the UI. Uploading the first file can start while the
+  last is still being read.
+
+  This is a better fit than it was for the popup: there, streaming fed a list a user looks at; here
+  it feeds a send queue, and the win is wall-clock on the transfer.
+
+**The shape.** `ChooseChatsViewModel.SendWithChat` resolves `options` and `topic` synchronously and
+does not look at the content at all, so it can be called once per chat up front and the results
+kept. `ProbeAsync` then reports files as they land, and each message goes out to every captured
+chat as soon as its `InputMessageContent` is built.
+
+**Four things that need deciding, not just wiring:**
+
+- **Grouping needs lookahead.** An album is only closed by the eleventh item or a type change, so a
+  run of settled items can emit every album *except* the trailing one, which might still grow. Same
+  contiguous-prefix logic as `Flush`, minus the display half.
+- **The caption is positional.** It currently rides on the last item, which streaming cannot know in
+  advance. `SendFilesAsync` already faces this and sends the caption as its own message when there
+  is more than one item; matching that is probably right, and `files.Count` is known up front so the
+  single-item case can still attach it.
+- **Progress would run backwards.** `UpdateFiles` divides by the sum over `_trackedFiles`, so a
+  denominator that grows as files arrive makes the bar drop. It needs to be weighted by the file
+  count known at the start, or to accept the jump.
+- **Cancel gets a wider window.** `Cancel()` already deletes tracked messages, which still works,
+  but it would also have to cancel the probe — the token from 1.3's survey, finally with a caller
+  that wants it.
 
 ## Task 7 — Reorder media inside an album (feature)
 

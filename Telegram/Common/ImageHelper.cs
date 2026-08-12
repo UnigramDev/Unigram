@@ -215,6 +215,9 @@ namespace Telegram.Common
                     var buffer = await Task.Run(async () =>
                     {
                         using var videoStream = await source.File.OpenReadAsync();
+                        // preview is false on purpose. It sets AVFMT_FLAG_NOBUFFER, which the header-only
+                        // probe in StorageVideo.CreateAsync wants -- but unbuffered often fails to grab the
+                        // first frame, which is the whole point here.
                         using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false, false);
 
                         var scaled = Clamp(animation.PixelWidth, animation.PixelHeight, requestedMinSide);
@@ -461,6 +464,9 @@ namespace Telegram.Common
             if (source is StorageVideo)
             {
                 using var videoStream = await source.File.OpenReadAsync();
+                // preview is false on purpose. It sets AVFMT_FLAG_NOBUFFER, which the header-only
+                // probe in StorageVideo.CreateAsync wants -- but unbuffered often fails to grab the
+                // first frame, which is the whole point here.
                 using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false, false));
 
                 if (generation.TrimStartTime is TimeSpan trimStart && trimStart > TimeSpan.Zero)
@@ -528,6 +534,9 @@ namespace Telegram.Common
                 return await Task.Run(async () =>
                 {
                     using var videoStream = await sourceFile.OpenReadAsync();
+                    // preview is false on purpose. It sets AVFMT_FLAG_NOBUFFER, which the header-only
+                    // probe in StorageVideo.CreateAsync wants -- but unbuffered often fails to grab the
+                    // first frame, which is the whole point here.
                     using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false, false);
 
                     if (trimStart > TimeSpan.Zero)
