@@ -18,8 +18,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
-using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Views
@@ -57,24 +55,9 @@ namespace Telegram.Controls.Views
             {
                 if (shareOperation.Data.AvailableFormats.Contains(StandardDataFormats.Bitmap))
                 {
-                    var bitmap = await shareOperation.Data.GetBitmapAsync();
-
-                    var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
-                    var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
-
-                    using (var source = await bitmap.OpenReadAsync())
-                    using (var destination = await cache.OpenAsync(FileAccessMode.ReadWrite))
-                    {
-                        await RandomAccessStream.CopyAsync(
-                            source.GetInputStreamAt(0),
-                            destination.GetOutputStreamAt(0));
-                    }
-
-                    var photo = await StorageMedia.CreateAsync(cache);
+                    var photo = await StorageMedia.CreateFromBitmapAsync(shareOperation.Data);
                     if (photo != null)
                     {
-                        photo.IsScreenshot = true;
-
                         var media = new List<StorageMedia>();
                         media.Add(photo);
 
@@ -83,14 +66,7 @@ namespace Telegram.Controls.Views
                 }
                 else if (shareOperation.Data.AvailableFormats.Contains(StandardDataFormats.StorageItems))
                 {
-                    var items = await shareOperation.Data.GetStorageItemsAsync();
-                    var files = new List<StorageFile>(items.Count);
-
-                    foreach (var file in items.OfType<StorageFile>())
-                    {
-                        files.Add(file);
-                    }
-
+                    var files = await StorageMedia.GetFilesAsync(shareOperation.Data);
                     var media = await StorageMedia.CreateAsync(files);
                     if (media.Count > 0)
                     {

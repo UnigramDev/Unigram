@@ -99,10 +99,24 @@ what justifies the native `interrupt_callback` work.
 - [x] **2.5** Open the popup first and append items as they resolve. **No placeholder rows** — Fela's
   call: in the vast majority of cases probing is instant, so a row that exists only to be replaced
   buys nothing and costs the popup having to tolerate a not-yet-typed item everywhere.
-- [ ] **2.6** `Add_Click` and the popup's own `HandlePackageAsync` still call the blocking
+- [x] **2.6** `Add_Click` and the popup's own `HandlePackageAsync` still call the blocking
   `CreateAsync`, so dropping onto an already-open popup stalls exactly the way the initial drop used
   to. They need the same pipeline, but `Probe` is single-shot and owns `_probeCount`, so it has to
   be generalised for a second batch first.
+
+  Generalised by splitting the two jobs the one counter was doing. `_allocated` is the next free
+  slot in the index space and only grows, so a batch appended later lands behind everything already
+  picked and the contiguous-run logic keeps working across batches. `_expected` is what the title
+  claims while items are in flight, and drops to zero when nothing is. Batches can overlap — files
+  dropped while the first batch is still typing — so `_isLoading` became a count.
+
+  `LoadAsync` takes one `initial` flag rather than a pile of behaviour switches: only the batch the
+  popup opened for runs the caller's guard and only that one closes the popup when it comes back
+  empty. An appended batch is deliberately no more checked than it was before it streamed, because
+  rejecting one late arrival would otherwise close a popup with a composed caption in it — see 6.6.
+
+  The editing branch of `HandlePackageAsync` still types its one file inline: it replaces a single
+  message, so there is nothing to stream.
 
 **How it landed.** `StorageMedia.ProbeAsync` types files concurrently — capped at
 `Math.Clamp(Environment.ProcessorCount, 2, 8)` so a large drop cannot open hundreds of decoders —
@@ -269,8 +283,13 @@ add/remove, even `SendFilesAlbumPanel_Loading`.
 - [ ] **6.5** `HandlePackageAsync`, `Add_Click` and `StorageMedia.CreateAsync` all `catch { }` silently.
 - [ ] **6.6** `Add_Click` and drop-into-popup bypass the permission and file-size checks that
   `SendFileExecute` applies to the initial set, and do not dedupe against files already listed.
+  Still open, and now deliberate: 2.6 routes appended files through the same pipeline, so `_validating`
+  *could* be applied to them, but the guard is all-or-nothing and would close a popup that already
+  has a caption in it. Doing this properly means dropping the offending item and saying why, which
+  is a behaviour decision rather than a wiring one.
 - [ ] **6.7** `StorageMedia.CreateAsync` uses `OfType<StorageFile>()`, so dropping a folder does
-  nothing with no feedback.
+  nothing with no feedback. `StorageMedia.GetFilesAsync` now carries the same limitation for the
+  package paths, and is the one place to fix it.
 - [ ] **6.8** `IsMediaAllowed` runs up to three LINQ passes and `TitleText` up to three more over
   `Items`, on every `UpdateView()`.
 

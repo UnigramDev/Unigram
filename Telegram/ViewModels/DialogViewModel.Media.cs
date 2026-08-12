@@ -182,24 +182,9 @@ namespace Telegram.ViewModels
 
                 if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
                 {
-                    var bitmap = await package.GetBitmapAsync();
-
-                    var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
-                    var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
-
-                    using (var source = await bitmap.OpenReadAsync())
-                    using (var destination = await cache.OpenAsync(FileAccessMode.ReadWrite))
-                    {
-                        await RandomAccessStream.CopyAsync(
-                            source.GetInputStreamAt(0),
-                            destination.GetOutputStreamAt(0));
-                    }
-
-                    var photo = await StorageMedia.CreateAsync(cache);
+                    var photo = await StorageMedia.CreateFromBitmapAsync(package);
                     if (photo != null)
                     {
-                        photo.IsScreenshot = true;
-
                         var header = _composerHeader;
                         if (header?.Editing != null)
                         {
@@ -229,13 +214,7 @@ namespace Telegram.ViewModels
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
                 {
-                    var items = await package.GetStorageItemsAsync();
-                    var files = new List<StorageFile>(items.Count);
-
-                    foreach (var file in items.OfType<StorageFile>())
-                    {
-                        files.Add(file);
-                    }
+                    var files = await StorageMedia.GetFilesAsync(package);
 
                     var header = _composerHeader;
                     if (header?.Editing != null && files.Count > 0)

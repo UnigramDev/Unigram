@@ -82,10 +82,20 @@ namespace Telegram.Views.Popups
         private bool _flushScheduled;
 
         private bool _loadStarted;
-        private bool _isLoading;
 
-        // What the source says is still coming. Zero once everything has arrived.
-        private int _expectedCount;
+        // Batches in flight. More than one when files are dropped onto the popup while the batch
+        // it opened for is still being typed.
+        private int _loading;
+        private bool IsLoading => _loading > 0;
+
+        // Next free slot in the index space. Only ever grows, so a batch appended later lands
+        // behind everything already picked.
+        private int _allocated;
+
+        // What the title claims while items are still arriving. Overstates by however many turn
+        // out to be untypable, and drops to zero once nothing is in flight so the title falls back
+        // to what is actually listed.
+        private int _expected;
         private bool _mediaRequested;
 
         private IAutocompleteCollection _autocomplete;
@@ -173,9 +183,9 @@ namespace Telegram.Views.Popups
             {
                 // Count what is still coming, or the title ticks upwards one item at a time. Their
                 // type is not known until they land, so they only count as files.
-                var count = Math.Max(Items.Count, _expectedCount);
+                var count = Math.Max(Items.Count, _expected);
 
-                if (IsMediaSelected && _expectedCount == 0)
+                if (IsMediaSelected && _expected == 0)
                 {
                     if (Items.All(x => x is StoragePhoto))
                     {
@@ -307,8 +317,10 @@ namespace Telegram.Views.Popups
             Items = new MvxObservableCollection<StorageMedia>(source.Ready);
             Items.CollectionChanged += OnCollectionChanged;
 
-            _isLoading = !source.IsComplete;
-            _expectedCount = source.IsComplete ? 0 : source.Count;
+            // Slots the source already filled are published; the rest are the load's to hand out.
+            _allocated = source.Ready.Count;
+            _published = source.Ready.Count;
+            _expected = source.IsComplete ? 0 : source.Count;
 
             // With nothing typed yet IsMediaAllowed cannot answer, so UpdateView re-derives the
             // mode as the first items land.
@@ -776,7 +788,7 @@ namespace Telegram.Views.Popups
         public void Accept()
         {
             // Reachable from Enter even while the send button is disabled.
-            if (_isLoading)
+            if (IsLoading)
             {
                 return;
             }
@@ -837,7 +849,7 @@ namespace Telegram.Views.Popups
         /// on screen, since a rejected item closes the popup and OpenAsync queues behind any other
         /// dialog, leaving an earlier Hide with nothing to close.
         /// </summary>
-        private async void Load()
+        private void Load()
         {
             // Loaded fires again whenever the popup is re-parented.
             if (_loadStarted || _source.IsComplete)
@@ -846,35 +858,74 @@ namespace Telegram.Views.Popups
             }
 
             _loadStarted = true;
+
+            // The source owns the first stretch of the index space; anything appended later
+            // continues past it, so appended files land behind what was already picked.
+            LoadAsync(_source.LoadAsync, _source.Count, true);
+        }
+
+        /// <summary>
+        /// Types a batch into the tail of the index space and publishes it as it lands. Batches can
+        /// overlap — dropping onto the popup while the first one is still going is ordinary — so
+        /// the loading state is a count rather than a flag.
+        /// </summary>
+        /// <param name="initial">
+        /// The batch the popup was opened for, which is the one the caller's guard applies to and
+        /// the only one whose emptiness closes the popup. A batch added afterwards leaves whatever
+        /// is already listed alone, and is no more checked than it was before it streamed — see
+        /// 6.6 in sendfiles-popup-todo.md.
+        /// </param>
+        private async void LoadAsync(Func<Action<int, StorageMedia>, CancellationToken, Task> load, int count, bool initial)
+        {
+            var offset = _allocated;
+
+            _allocated += count;
+            _expected = Math.Max(_expected, _allocated);
+            _loading++;
             UpdateLoading();
 
-            await _source.LoadAsync(OnResolved, _loadCancellation.Token);
+            void Resolved(int index, StorageMedia media)
+            {
+                OnResolved(offset + index, media, initial);
+            }
+
+            await load(Resolved, _loadCancellation.Token);
 
             if (_loadCancellation.IsCancellationRequested)
             {
                 return;
             }
 
-            // Publishes the tail, including a part-filled last album. Before the flag is cleared,
-            // so the last batch still reaches UpdateView with a load in progress and can settle
-            // the media/files mode.
+            // Publishes the tail, including a part-filled last album. Before the count drops, so
+            // the last batch still reaches UpdateView with a load in progress and can settle the
+            // media/files mode.
             Flush(true);
 
-            _isLoading = false;
-            _expectedCount = 0;
+            _loading--;
+
+            if (_loading == 0)
+            {
+                _expected = 0;
+            }
+
             UpdateLoading();
 
             LogContent(Items);
 
-            if (Items.Count == 0)
+            if (initial && Items.Count == 0)
             {
                 Hide();
             }
         }
 
-        private void OnResolved(int index, StorageMedia media)
+        private void AppendFiles(IReadOnlyList<StorageFile> files)
         {
-            if (media != null && _validating?.Invoke(media) == false)
+            LoadAsync((resolved, cancellationToken) => StorageMedia.ProbeAsync(files, resolved, cancellationToken), files.Count, false);
+        }
+
+        private void OnResolved(int index, StorageMedia media, bool validate)
+        {
+            if (validate && media != null && _validating?.Invoke(media) == false)
             {
                 _loadCancellation.Cancel();
                 Hide();
@@ -927,7 +978,7 @@ namespace Telegram.Views.Popups
 
             var count = run;
 
-            if (!final && _isLoading && _mediaRequested)
+            if (!final && IsLoading && _mediaRequested)
             {
                 // Everything that completes an album rather than one album per pass, so a drop
                 // that types quickly still lands in a single flush.
@@ -976,8 +1027,8 @@ namespace Telegram.Views.Popups
         private void UpdateLoading()
         {
             // Sending half a drop would silently drop the rest, so the button waits.
-            SendMessage.IsEnabled = !_isLoading;
-            PaidMessage.IsEnabled = !_isLoading;
+            SendMessage.IsEnabled = !IsLoading;
+            PaidMessage.IsEnabled = !IsLoading;
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TitleText)));
         }
@@ -988,24 +1039,9 @@ namespace Telegram.Views.Popups
             {
                 if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
                 {
-                    var bitmap = await package.GetBitmapAsync();
-
-                    var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
-                    var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
-
-                    using (var source = await bitmap.OpenReadAsync())
-                    using (var destination = await cache.OpenAsync(FileAccessMode.ReadWrite))
-                    {
-                        await RandomAccessStream.CopyAsync(
-                            source.GetInputStreamAt(0),
-                            destination.GetOutputStreamAt(0));
-                    }
-
-                    var photo = await StorageMedia.CreateAsync(cache);
+                    var photo = await StorageMedia.CreateFromBitmapAsync(package);
                     if (photo != null)
                     {
-                        photo.IsScreenshot = true;
-
                         if (_editing)
                         {
                             Items.ReplaceWith(new[] { photo });
@@ -1021,20 +1057,28 @@ namespace Telegram.Views.Popups
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
                 {
-                    var items = await package.GetStorageItemsAsync();
-                    var results = await StorageMedia.CreateAsync(items);
+                    var files = await StorageMedia.GetFilesAsync(package);
+                    if (files.Count == 0)
+                    {
+                        return;
+                    }
 
                     if (_editing)
                     {
-                        Items.ReplaceWith(results.Take(1));
+                        // Editing replaces one message, so there is nothing to stream in.
+                        var replacement = await StorageMedia.CreateAsync(files[0]);
+                        if (replacement != null)
+                        {
+                            Items.ReplaceWith(new[] { replacement });
+
+                            UpdateView();
+                            UpdatePanel();
+                        }
                     }
                     else
                     {
-                        Items.AddRange(results);
+                        AppendFiles(files);
                     }
-
-                    UpdateView();
-                    UpdatePanel();
                 }
             }
             catch { }
@@ -1047,7 +1091,7 @@ namespace Telegram.Views.Popups
 
             // The constructor could not honour the requested mode against an empty list, so it is
             // settled here instead — but only until the user picks a mode of their own.
-            if (_isLoading && _mediaRequested && !IsMediaSelected && IsMediaAllowed)
+            if (IsLoading && _mediaRequested && !IsMediaSelected && IsMediaAllowed)
             {
                 IsMediaSelected = true;
                 IsFilesSelected = false;
@@ -1751,14 +1795,9 @@ namespace Telegram.Views.Popups
                 picker.FileTypeFilter.Add("*");
 
                 var files = await picker.PickMultipleFilesAsync();
-                if (files != null && files.Count > 0)
+                if (files is { Count: > 0 })
                 {
-                    var results = await StorageMedia.CreateAsync(files);
-
-                    Items.AddRange(results);
-
-                    UpdateView();
-                    UpdatePanel();
+                    AppendFiles(files);
                 }
             }
             catch { }

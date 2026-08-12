@@ -13,8 +13,10 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Td.Api;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
+using Windows.Storage.Streams;
 
 namespace Telegram.Entities
 {
@@ -155,6 +157,52 @@ namespace Telegram.Entities
             }
 
             return new StorageDocument(file, basicProperties.Size);
+        }
+
+        /// <summary>
+        /// Copies a bitmap out of a data package into the temporary folder and types the result.
+        /// A pasted or dropped image arrives as pixels rather than a file, so one has to be made
+        /// before any of the send path can take it.
+        /// </summary>
+        public static async Task<StorageMedia> CreateFromBitmapAsync(DataPackageView package)
+        {
+            var bitmap = await package.GetBitmapAsync();
+
+            var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
+            var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
+
+            using (var source = await bitmap.OpenReadAsync())
+            using (var destination = await cache.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                await RandomAccessStream.CopyAsync(
+                    source.GetInputStreamAt(0),
+                    destination.GetOutputStreamAt(0));
+            }
+
+            var media = await CreateAsync(cache);
+            if (media != null)
+            {
+                media.IsScreenshot = true;
+            }
+
+            return media;
+        }
+
+        /// <summary>
+        /// The files a data package carries, in order. Folders are dropped — nothing downstream
+        /// expands them.
+        /// </summary>
+        public static async Task<IReadOnlyList<StorageFile>> GetFilesAsync(DataPackageView package)
+        {
+            var items = await package.GetStorageItemsAsync();
+            var files = new List<StorageFile>(items.Count);
+
+            foreach (StorageFile file in items.OfType<StorageFile>())
+            {
+                files.Add(file);
+            }
+
+            return files;
         }
 
         public static async Task<IList<StorageMedia>> CreateAsync(IEnumerable<IStorageItem> items)
