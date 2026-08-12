@@ -21,12 +21,11 @@ Everything below is unfixed. Check an item off in the same commit as its fix.
       `_undoGroup == 0`), so blockquote font sizes silently stopped being normalized.
       `BeginUndoGroup` returns a disposable scope now, so the pairing can't be skipped.
 
-- [ ] **`CharacterReceived` can be subscribed more than once** — `FormattedTextBox.cs:294`
-      subscribes in `Loaded` and `:299` unsubscribes in `Unloaded`. `Loaded` can fire again
-      without an intervening `Unloaded` (re-parenting), and `CoreWindow` lives for the whole
-      session, so a second subscription both replaces the emoticon twice per keystroke and pins
-      the control until the app exits. This is the case the project rules single out. Guard the
-      subscription with a flag.
+- [x] **`CharacterReceived` can be subscribed more than once** — it subscribed in `Loaded` and
+      unsubscribed in `Unloaded`. `Loaded` can fire again without an intervening `Unloaded`
+      (re-parenting), and `CoreWindow` lives for the whole session, so a second subscription
+      both replaced the emoticon twice per keystroke and pinned the control until the app exits.
+      Guarded with a flag.
 
 - [ ] **`Text` includes hidden text** — `FormattedTextBox.cs:1249` reads with
       `TextGetOptions.None`, and hidden runs are only dropped by `NoHidden`. The property

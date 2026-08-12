@@ -58,6 +58,7 @@ namespace Telegram.Controls
         private readonly MenuFlyoutSubItem _formattingFlyout;
 
         private bool _updateLocked;
+        private bool _characterReceived;
         private bool _fromTextChanging;
         private bool _isContentChanging;
         private int _undoGroup;
@@ -291,12 +292,25 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            // Loaded can come twice without an Unloaded in between, and CoreWindow lives as long
+            // as the session does: a second subscription would both replace the emoticon twice
+            // and hold this control for good.
+            if (_characterReceived)
+            {
+                return;
+            }
+
+            _characterReceived = true;
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            if (_characterReceived)
+            {
+                _characterReceived = false;
+                Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            }
         }
 
         public bool IsReplaceEmojiEnabled { get; set; } = true;
