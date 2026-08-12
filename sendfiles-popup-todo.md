@@ -118,6 +118,22 @@ what justifies the native `interrupt_callback` work.
   The editing branch of `HandlePackageAsync` still types its one file inline: it replaces a single
   message, so there is nothing to stream.
 
+- [x] **2.8** The batch `CreateAsync(IEnumerable)` overload was still the serial loop, and
+  `SendMessagesView` — the share target — had become its only remaining caller, so sharing many
+  files probed them one at a time before anything was sent. It is now an ordered wrapper over
+  `ProbeAsync`: concurrent, original order preserved, failures omitted. Same contract, no call site
+  changed.
+
+  Streaming does not apply there and was not attempted: the view is an `AnimatedImage` and a
+  `ProgressBar` swapped in *after* the chats are picked, so there is no list to append into. Order
+  also has to survive, since the caption is attached positionally and `GetItemsView` needs the whole
+  set before it can group.
+
+  Its second stage is untouched: `Initialize` still builds each `InputMessageContent` serially
+  through `MessageFactory`, which for a large share is plausibly the bigger delay. Parallelising
+  that touches TDLib generation, ordering and resource pressure at once, so it wants to be its own
+  change.
+
 **How it landed.** `StorageMedia.ProbeAsync` types files concurrently — capped at
 `Math.Clamp(Environment.ProcessorCount, 2, 8)` so a large drop cannot open hundreds of decoders —
 and reports each result through a callback as it lands, with the file's original index. Callbacks

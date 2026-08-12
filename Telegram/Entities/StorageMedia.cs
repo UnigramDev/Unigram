@@ -205,24 +205,27 @@ namespace Telegram.Entities
             return files;
         }
 
+        /// <summary>
+        /// Types every file, concurrently, and returns them in the order they were given. Files
+        /// that could not be typed are left out.
+        /// </summary>
         public static async Task<IList<StorageMedia>> CreateAsync(IEnumerable<IStorageItem> items)
         {
-            var results = new List<StorageMedia>();
+            var files = items.OfType<StorageFile>().ToArray();
 
-            foreach (StorageFile file in items.OfType<StorageFile>())
+            // Indexed rather than appended: probing finishes out of order, and callers rely on the
+            // order they gave — the share target attaches its caption to the last item.
+            var probed = new StorageMedia[files.Length];
+
+            await ProbeAsync(files, (index, media) => probed[index] = media, CancellationToken.None);
+
+            var results = new List<StorageMedia>(files.Length);
+
+            foreach (var media in probed)
             {
-                try
+                if (media != null)
                 {
-                    var media = await CreateAsync(file);
-                    if (media != null)
-                    {
-                        results.Add(media);
-                    }
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block, and
-                    // per-file: one unreadable item used to discard every file after it.
+                    results.Add(media);
                 }
             }
 
