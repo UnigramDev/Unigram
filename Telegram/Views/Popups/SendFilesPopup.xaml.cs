@@ -268,32 +268,16 @@ namespace Telegram.Views.Popups
             _source = source;
             _validating = validating;
 
-            var builder = new StringBuilder();
-
-            foreach (var item in source.Ready)
+            if (source.IsComplete)
             {
-                switch (item)
-                {
-                    case StoragePhoto photo:
-                        builder.Prepend(string.Format("photo {0}x{1}", photo.Width, photo.Height), ", ");
-                        break;
-                    case StorageVideo video:
-                        builder.Prepend(string.Format("video {0}x{1}", video.Width, video.Height), ", ");
-                        break;
-                    default:
-                        builder.Prepend("file", ", ");
-                        break;
-                }
+                LogContent(source.Ready);
             }
-
-            // Nothing is typed yet on the drop path, so record the size of what is coming — this
-            // line ships with crash reports and used to name every item.
-            if (!source.IsComplete)
+            else
             {
-                builder.Prepend(string.Format("{0} pending", source.Count), ", ");
+                // Nothing is typed yet, so only the size of what is coming can be recorded here.
+                // LogContent runs again once it has all landed.
+                Logger.Info(string.Format("{0} pending", source.Count));
             }
-
-            Logger.Info(builder);
 
             IsSavedMessages = savedMessages;
             CanSchedule = schedule;
@@ -358,6 +342,33 @@ namespace Telegram.Views.Popups
 
             UpdateView();
             UpdatePanel();
+        }
+
+        /// <summary>
+        /// Records the dimensions of every item. This line ships with crash reports and is what
+        /// album layout bugs get diagnosed from, so it has to name sizes rather than counts.
+        /// </summary>
+        private static void LogContent(IEnumerable<StorageMedia> items)
+        {
+            var builder = new StringBuilder();
+
+            foreach (var item in items)
+            {
+                switch (item)
+                {
+                    case StoragePhoto photo:
+                        builder.Prepend(string.Format("photo {0}x{1}", photo.Width, photo.Height), ", ");
+                        break;
+                    case StorageVideo video:
+                        builder.Prepend(string.Format("video {0}x{1}", video.Width, video.Height), ", ");
+                        break;
+                    default:
+                        builder.Prepend("file", ", ");
+                        break;
+                }
+            }
+
+            Logger.Info(builder);
         }
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -844,6 +855,8 @@ namespace Telegram.Views.Popups
             _expectedCount = 0;
             UpdateLoading();
 
+            LogContent(Items);
+
             if (Items.Count == 0)
             {
                 Hide();
@@ -995,12 +1008,13 @@ namespace Telegram.Views.Popups
             if (IsMediaSelected)
             {
                 var album = new List<StorageMedia>();
+                var ordinal = 0;
 
                 void AddAlbum()
                 {
                     if (album.Count > 0)
                     {
-                        view.Add(new StorageAlbum(album));
+                        view.Add(new StorageAlbum(ordinal++, album));
                         album = new List<StorageMedia>();
                     }
                 }
@@ -1325,6 +1339,10 @@ namespace Telegram.Views.Popups
             var button = sender as Button;
             if (button.Tag is StorageMedia media)
             {
+                // The album panel reuses its children now, so a removed item's thumbnail is no
+                // longer released by a container recycling underneath it.
+                _thumbnails.Invalidate(media);
+
                 Items.Remove(media);
             }
         }
@@ -1596,22 +1614,10 @@ namespace Telegram.Views.Popups
         {
             if (oldItem is StorageAlbum oldAlbum && newItem is StorageAlbum newAlbum)
             {
-                if (oldAlbum.Media.Count != newAlbum.Media.Count)
-                {
-                    return false;
-                }
-
-                for (int i = 0; i < oldAlbum.Media.Count; i++)
-                {
-                    if (CompareItems(oldAlbum.Media[i], newAlbum.Media[i]))
-                    {
-                        continue;
-                    }
-
-                    return false;
-                }
-
-                return true;
+                // Identity, not contents: comparing the media made a growing album a different
+                // item, so every batch of arriving photos rebuilt it from nothing. UpdateItem
+                // carries the new contents over instead.
+                return oldAlbum.Ordinal == newAlbum.Ordinal;
             }
             if (oldItem is StoragePhoto oldPhoto && newItem is StoragePhoto newPhoto)
             {
@@ -1632,15 +1638,26 @@ namespace Telegram.Views.Popups
 
         public void UpdateItem(StorageMedia oldItem, StorageMedia newItem)
         {
+            // The collection keeps the old instance, so the new contents have to be moved onto it.
             if (oldItem is StorageAlbum album)
             {
+                if (newItem is StorageAlbum updated)
+                {
+                    album.Update(updated.Media);
+                }
+                else
+                {
+                    album.Invalidate();
+                }
+
                 var container = ScrollingHost.ContainerFromItem(album) as SelectorItem;
                 var content = container?.ContentTemplateRoot as Grid;
 
+                // Nothing to do when it is not realized: OnContainerContentChanging reads the
+                // album again on the way in.
                 if (content != null && content.Children[0] is StorageAlbumPanel panel)
                 {
-                    album.Invalidate();
-                    panel.Invalidate();
+                    panel.UpdateMessage(album);
                 }
             }
         }
@@ -1751,17 +1768,47 @@ namespace Telegram.Views.Popups
 
         public event EventHandler<StorageMedia> ItemClick;
 
+        /// <summary>
+        /// Children are reused across calls. An album gains photos as a drop is typed, and this
+        /// runs again on every one of those: rebuilding it each time discards the templates and
+        /// makes every surviving item re-request the thumbnail it already had.
+        /// </summary>
         public void UpdateMessage(StorageAlbum album)
         {
             _album = album;
-            Children.Clear();
 
-            foreach (var pos in album.Media)
+            var media = album.Media;
+
+            while (Children.Count > media.Count)
             {
+                var index = Children.Count - 1;
+
+                if (Children[index] is Button removed)
+                {
+                    removed.Click -= Element_Click;
+                }
+
+                Children.RemoveAt(index);
+            }
+
+            for (int i = 0; i < media.Count; i++)
+            {
+                if (i < Children.Count)
+                {
+                    // Content drives the template root's DataContext, which is what the popup
+                    // hangs the thumbnail and the button visibility off.
+                    if (Children[i] is Button existing && existing.Content != media[i])
+                    {
+                        existing.Content = media[i];
+                    }
+
+                    continue;
+                }
+
                 var element = new Button
                 {
                     ContentTemplate = ItemTemplate,
-                    Content = pos,
+                    Content = media[i],
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
                     VerticalContentAlignment = VerticalAlignment.Stretch,
                     MinWidth = 0,
@@ -1777,6 +1824,8 @@ namespace Telegram.Views.Popups
 
                 Children.Add(element);
             }
+
+            Invalidate();
         }
 
         private void Element_Click(object sender, RoutedEventArgs e)

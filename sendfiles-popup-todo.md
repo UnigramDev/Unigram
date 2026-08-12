@@ -162,6 +162,31 @@ The guard is a constructor argument instead of a settable property, and the up-f
 rather than moving. The edit path passes `null`, which is honest: that item's permissions were
 checked when it was first sent.
 
+## Task 2b — Albums that grow instead of being rebuilt
+
+Pulled forward from Task 3, because incremental arrival made it much worse: a drop of 20 photos
+fills album 0 a batch at a time, then album 1, and each batch rebuilt the album from nothing.
+
+- [x] **2b.1** `CompareItems` compared album *contents*, so an album that gained a photo was a
+  different item and the diff removed and re-inserted it. `ChatDiffHandler` shows the intended
+  contract — `CompareItems` is identity, `UpdateItem` carries content over. `StorageAlbum` now has
+  an `Ordinal` (its position among the albums of a view) and that is what is compared.
+- [x] **2b.2** The remove/insert recycled the container, and the Task 1 recycle handler released the
+  album's thumbnails on the way out — so **every batch re-decoded every thumbnail in the album**.
+  This was the expensive half, not the remeasure. Fixed by 2b.1: the container survives.
+- [x] **2b.3** `UpdateItem` now moves the new media onto the retained album instance and refreshes
+  the realized panel, rather than only invalidating layout — which had left the panel showing the
+  old contents whenever it did fire.
+- [x] **2b.4** `StorageAlbumPanel.UpdateMessage` reuses its children instead of `Children.Clear()`
+  plus a fresh `Button` per item. Growth now only appends, and a surviving item keeps the thumbnail
+  it already had. (This was Task 3.4.)
+- [x] **2b.5** `Remove_Click` invalidates the removed item's thumbnail, since a container recycling
+  underneath it no longer does.
+
+Also restored: the constructor's `Logger.Info` line names each item's width and height, which is
+what album layout bugs get diagnosed from. On the drop path nothing is typed yet, so it logs the
+pending count there and logs the dimensions again once everything has landed.
+
 ## Task 3 — Stop rebuilding the world on every interaction
 
 `UpdatePanel()` is called from roughly a dozen places — mute, TTL, crop, spoiler toggle, item
@@ -174,8 +199,8 @@ add/remove, even `SendFilesAlbumPanel_Loading`.
 - [ ] **3.3** The container walk builds a **new** `GaussianBlurEffect`, effect factory,
   `CompositionEffectBrush`, backdrop brush and `SpriteVisual` per media item per call. Effect
   factories are expensive and meant to be created once and shared. Same for `new ParticlesImageSource()`.
-- [ ] **3.4** `StorageAlbumPanel.UpdateMessage` does `Children.Clear()` and a `new Button` with a
-  fresh `Click` subscription per media, on every container realization.
+- [x] **3.4** `StorageAlbumPanel.UpdateMessage` does `Children.Clear()` and a `new Button` with a
+  fresh `Click` subscription per media, on every container realization. *Done as 2b.4.*
 
 ## Task 4 — One grouping algorithm, not two
 

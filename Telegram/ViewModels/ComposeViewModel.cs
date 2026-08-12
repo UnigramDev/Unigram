@@ -590,12 +590,13 @@ namespace Telegram.ViewModels
             var view = new List<StorageMedia>();
             var album = new List<StorageMedia>();
             var albumType = StorageAlbumType.None;
+            var ordinal = 0;
 
             void AddAlbum()
             {
                 if (album.Count > 0)
                 {
-                    view.Add(new StorageAlbum(album));
+                    view.Add(new StorageAlbum(ordinal++, album));
                     album = new List<StorageMedia>();
                 }
             }

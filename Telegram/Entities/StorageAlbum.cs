@@ -24,12 +24,27 @@ namespace Telegram.Entities
 
     public partial class StorageAlbum : StorageMedia
     {
-        public IList<StorageMedia> Media { get; }
+        public IList<StorageMedia> Media { get; private set; }
 
-        public StorageAlbum(IList<StorageMedia> media)
+        public StorageAlbum(int ordinal, IList<StorageMedia> media)
             : base(null, 0)
         {
+            Ordinal = ordinal;
             Media = media.ToList();
+        }
+
+        /// <summary>
+        /// Position among the albums of a view, and the album's identity while diffing: one that
+        /// gains a photo is the same album with new contents rather than a different album. Without
+        /// that, every arriving photo tears its album's container down and builds it again, which
+        /// costs a full remeasure and throws away the thumbnails the containers were holding.
+        /// </summary>
+        public int Ordinal { get; }
+
+        public void Update(IList<StorageMedia> media)
+        {
+            Media = media.ToList();
+            Invalidate();
         }
 
         public const double ITEM_MARGIN = 2;
