@@ -422,48 +422,81 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void SendFileExecute(IReadOnlyList<StorageFile> files, FormattedText caption = null, bool media = true)
+        public void SendFileExecute(IReadOnlyList<StorageFile> files, FormattedText caption = null, bool media = true)
         {
-            var items = await StorageMedia.CreateAsync(files);
-            if (items.Count > 0)
+            if (files is { Count: > 0 })
             {
-                SendFileExecute(items, caption, media);
+                SendFilesAsync(null, files, caption, media);
             }
         }
 
-
-        public async void SendFileExecute(IList<StorageMedia> items, FormattedText caption = null, bool media = true)
+        public void SendFileExecute(IList<StorageMedia> items, FormattedText caption = null, bool media = true)
         {
-            if (Chat is not Chat chat || items.Empty())
+            if (items is { Count: > 0 })
+            {
+                SendFilesAsync(items, null, caption, media);
+            }
+        }
+
+        /// <summary>
+        /// Exactly one of <paramref name="items"/> and <paramref name="files"/> is given. Files are
+        /// typed after the popup is up, so the guard that used to run over the whole batch first
+        /// runs per item as it resolves — see <see cref="SendFilesPopup.Validating"/>.
+        /// </summary>
+        private async void SendFilesAsync(IList<StorageMedia> items, IReadOnlyList<StorageFile> files, FormattedText caption, bool media)
+        {
+            if (Chat is not Chat chat)
             {
                 return;
             }
 
             var permissions = ClientService.GetPermissions(chat, out bool restricted);
 
-            foreach (var item in items)
+            string restrictedError = null;
+            var sizeExceeded = false;
+
+            bool Validating(StorageMedia item)
             {
                 if (item is StoragePhoto && !permissions.CanSendPhotos)
                 {
-                    await ShowPopupAsync(restricted ? Strings.ErrorSendRestrictedPhoto : Strings.ErrorSendRestrictedPhotoAll, Strings.AppName, Strings.OK);
-                    return;
+                    restrictedError = restricted ? Strings.ErrorSendRestrictedPhoto : Strings.ErrorSendRestrictedPhotoAll;
                 }
                 else if (item is StorageVideo && !permissions.CanSendVideos)
                 {
-                    await ShowPopupAsync(restricted ? Strings.ErrorSendRestrictedVideo : Strings.ErrorSendRestrictedVideoAll, Strings.AppName, Strings.OK);
-                    return;
+                    restrictedError = restricted ? Strings.ErrorSendRestrictedVideo : Strings.ErrorSendRestrictedVideoAll;
                 }
                 else if (item is StorageAudio && !permissions.CanSendAudios)
                 {
-                    await ShowPopupAsync(restricted ? Strings.ErrorSendRestrictedMusic : Strings.ErrorSendRestrictedMusicAll, Strings.AppName, Strings.OK);
-                    return;
+                    restrictedError = restricted ? Strings.ErrorSendRestrictedMusic : Strings.ErrorSendRestrictedMusicAll;
                 }
                 else if (item is StorageDocument && !permissions.CanSendDocuments)
                 {
-                    await ShowPopupAsync(restricted ? Strings.ErrorSendRestrictedDocuments : Strings.ErrorSendRestrictedDocumentsAll, Strings.AppName, Strings.OK);
-                    return;
+                    restrictedError = restricted ? Strings.ErrorSendRestrictedDocuments : Strings.ErrorSendRestrictedDocumentsAll;
                 }
                 else if (item.Size > (4000L << 20) || (item.Size > (2000L << 20) && !IsPremium))
+                {
+                    sizeExceeded = true;
+                }
+
+                return restrictedError == null && !sizeExceeded;
+            }
+
+            if (items != null)
+            {
+                foreach (var item in items)
+                {
+                    if (!Validating(item))
+                    {
+                        break;
+                    }
+                }
+
+                if (restrictedError != null)
+                {
+                    await ShowPopupAsync(restrictedError, Strings.AppName, Strings.OK);
+                    return;
+                }
+                else if (sizeExceeded)
                 {
                     NavigationService.ShowLimitReached(new PremiumLimitTypeFileSize());
                     return;
@@ -479,15 +512,27 @@ namespace Telegram.ViewModels
 
             var self = ClientService.IsSavedMessages(chat);
 
-            var popup = new SendFilesPopup(this, items, media, permissions, chat.Type is ChatTypePrivate && !self, CanSchedule, self, false);
+            var popup = new SendFilesPopup(this, items ?? Array.Empty<StorageMedia>(), media, permissions, chat.Type is ChatTypePrivate && !self, CanSchedule, self, false);
             popup.Loaded += (s, args) =>
             {
                 popup.Caption = caption;
+
+                // Only once it is on screen: probing can abandon the drop, and OpenAsync queues
+                // behind any other dialog, so an earlier Hide would have nothing to close.
+                if (files != null)
+                {
+                    popup.Probe(files);
+                }
             };
 
             if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
             {
                 popup.HasPaidMediaAllowed = fullInfo.HasPaidMediaAllowed;
+            }
+
+            if (files != null)
+            {
+                popup.Validating = Validating;
             }
 
             var confirm = await popup.OpenAsync(XamlRoot);
@@ -496,6 +541,16 @@ namespace Telegram.ViewModels
                 if (formattedText != null)
                 {
                     SetFormattedText(formattedText);
+                }
+
+                // Raised while the popup was up, by an item that only typed itself once probed.
+                if (restrictedError != null)
+                {
+                    await ShowPopupAsync(restrictedError, Strings.AppName, Strings.OK);
+                }
+                else if (sizeExceeded)
+                {
+                    NavigationService.ShowLimitReached(new PremiumLimitTypeFileSize());
                 }
 
                 return;

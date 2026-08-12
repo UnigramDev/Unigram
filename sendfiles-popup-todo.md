@@ -47,27 +47,96 @@ drops the album's entries, and `OnUnloaded` clears everything. A decode that com
 one is dropped rather than cached — `DecodeAsync` only writes to the cache if its own `_inflight`
 entry is still there, which is also what stops a pre-crop image from landing after `Invalidate`.
 
-Caveat on 1.3: neither `BitmapImage.SetSourceAsync` nor the video path accepts a cancellation token,
-so a decode already running still runs to completion. Only the retention is fixed, not the CPU.
-Truly cancelling it would need a token threaded through `ImageHelper` and `VideoAnimation`.
+Caveat on 1.3: no decode already under way is stopped, so only the retention is fixed, not the CPU.
+See the cancellation survey below for what it would take — the first estimate here was too
+pessimistic.
 
-## Task 2 — Show the popup first, probe files after
+### Cancellation survey (1.3 follow-up)
 
-- [ ] **2.1** `StorageMedia.CreateAsync(IEnumerable)` is a serial `foreach`, and every iteration is
+Two levers already exist and neither is used.
+
+**`.AsTask(token)`** covers every WinRT stage: `StorageFile.OpenReadAsync`,
+`BitmapImage.SetSourceAsync`, `BitmapDecoder.CreateAsync`, `GetSoftwareBitmapAsync`,
+`SoftwareBitmapSource.SetBitmapAsync`. That is the whole photo path and the whole cropped-photo
+path. The repo calls `AsTask()` in three places and never with a token.
+
+**`VideoAnimation.Stop()`** is projected to C# (`VideoAnimation.idl`) and the `stopped` flag it sets
+is already checked in all three hot spots — `readCallback`, `seekCallback`, and the
+`while (!stopped && triesCount > 0)` loop in `RenderSync` (`VideoAnimation.cpp`). Nothing in the app
+has ever called it. `ImageHelper`'s two video branches build the animation inside a `Task.Run` and
+never expose it, so reaching `Stop()` is a C#-side restructure, not a native one.
+
+The one genuinely uncancellable stage is the probe. `VideoAnimation::LoadFromFile` constructs the
+instance and only then runs `avformat_open_input` and `avformat_find_stream_info`, so the caller has
+no handle while the expensive part runs. The fix is `fmt_ctx->interrupt_callback` pointed at the same
+`stopped` flag before `avformat_open_input`; ffmpeg polls it through open, probe, read and seek.
+That one needs a `Telegram.Native` rebuild.
+
+Two latent bugs in the existing `Stop()` path, never exercised because nothing calls it:
+
+- [ ] **1.4** `stopped` is a plain `bool`, written by `Stop()` without taking `m_lock` and read from
+  the decode thread. Should be `std::atomic<bool>`.
+- [ ] **1.5** `readCallback` returns `0` when stopped rather than `AVERROR_EOF`. ffmpeg reads `0` as
+  "no bytes this call" and can spin instead of aborting.
+
+Cost × rate says this does not pay for thumbnails alone — closing the popup mid-decode is rare. It
+pays as part of Task 2, whose cancel affordance needs the same plumbing, and whose probe pipeline is
+what justifies the native `interrupt_callback` work.
+
+## Task 2 — Show the popup first, probe files after — **done**
+
+- [x] **2.1** `StorageMedia.CreateAsync(IEnumerable)` is a serial `foreach`, and every iteration is
   expensive: a `GetBasicPropertiesAsync` RPC per file, plus `BitmapDecoder.CreateAsync` for photos
   and a full `VideoAnimation.LoadFromFile` (ffmpeg open + probe) for video and audio. All of it is
   awaited before `new SendFilesPopup` is reached, with no feedback and no cancel.
-- [ ] **2.2** The whole loop sits in **one** try/catch, so a single throwing file silently discards
+- [x] **2.2** The whole loop sits in **one** try/catch, so a single throwing file silently discards
   every remaining file in the drop. Needs to be per-file.
 - [ ] **2.3** Each media item is opened and probed twice: `StoragePhoto.CreateAsync` decodes for
   dimensions and the preview opens the file again; `StorageVideo.CreateAsync` builds a
   `VideoAnimation` for dimensions and `GetPreviewBitmapAsync` builds a second one for one frame.
-- [ ] **2.4** (2a) Pipeline the probes with bounded concurrency and add a busy/cancel affordance,
-  keeping the current "resolve, then show" shape.
-- [ ] **2.5** (2b) Open the popup immediately with placeholder rows (name + size) and upgrade them
-  in place as probing completes. Needs the popup to tolerate a not-yet-typed item, which touches
-  `IsMediaAllowed`, `TitleText`, the media/files toggle, album layout, and the permission/size
-  checks currently done up front in `SendFileExecute`.
+  *Left open — a separate change to the `Storage*` factories, not to the popup flow.*
+- [x] **2.4** Pipeline the probes with bounded concurrency.
+- [x] **2.5** Open the popup first and append items as they resolve. **No placeholder rows** — Fela's
+  call: in the vast majority of cases probing is instant, so a row that exists only to be replaced
+  buys nothing and costs the popup having to tolerate a not-yet-typed item everywhere.
+- [ ] **2.6** `Add_Click` and the popup's own `HandlePackageAsync` still call the blocking
+  `CreateAsync`, so dropping onto an already-open popup stalls exactly the way the initial drop used
+  to. They need the same pipeline, but `Probe` is single-shot and owns `_probeCount`, so it has to
+  be generalised for a second batch first.
+
+**How it landed.** `StorageMedia.ProbeAsync` types files concurrently — capped at
+`Math.Clamp(Environment.ProcessorCount, 2, 8)` so a large drop cannot open hundreds of decoders —
+and reports each result through a callback as it lands, with the file's original index. Callbacks
+arrive on the UI thread, since every await in the chain captures the caller's context.
+
+`ComposeViewModel.SendFileExecute` no longer probes. Both overloads now funnel into `SendFilesAsync`,
+which takes either already-typed items or raw files; with files it builds the popup empty and starts
+`Probe` from the `Loaded` handler. That hook matters: `OpenAsync` queues behind any other dialog and
+only creates its closing task once it reaches the front, so a `Hide` from a probe result that
+resolved earlier would have had nothing to close.
+
+Results are buffered and flushed on a low-priority dispatch, so everything resolving within one UI
+turn is appended by a single `AddRange` — one `CollectionChanged`, one `UpdateView`, one
+`UpdatePanel`. Each batch is sorted by original index, so the picked order survives whenever
+probing is fast enough to land in one flush; across batches items appear as they resolve.
+
+The guard moved rather than disappeared. `SendFilesAsync` keeps one `Validating` function holding
+the original messages: run as a loop up front for already-typed items, handed to the popup as a
+callback for probed ones. The first failure cancels probing and closes the popup, and the error is
+raised after `OpenAsync` returns — which is also where the caption is already restored.
+
+Three smaller consequences:
+
+- `TitleText` counts `Math.Max(Items.Count, _probeCount)` while probing, so it shows the drop's real
+  size instead of ticking up, and stays on the Files declension until types are known.
+- The requested media/files mode cannot be resolved against an empty list, so `UpdateView` settles it
+  as the first items arrive — until the user picks a mode themselves, which wins from then on.
+- Send is disabled while probing, and `Accept` returns early, since sending half a drop would
+  silently discard the rest.
+
+Known edge: if every file fails to probe, the popup appears briefly and then closes itself, where
+before it never appeared. The alternative is waiting for the first result, which is the stall this
+task removed.
 
 ## Task 3 — Stop rebuilding the world on every interaction
 

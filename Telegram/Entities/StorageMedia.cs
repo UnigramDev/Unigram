@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -160,9 +161,9 @@ namespace Telegram.Entities
         {
             var results = new List<StorageMedia>();
 
-            try
+            foreach (StorageFile file in items.OfType<StorageFile>())
             {
-                foreach (StorageFile file in items.OfType<StorageFile>())
+                try
                 {
                     var media = await CreateAsync(file);
                     if (media != null)
@@ -170,13 +171,73 @@ namespace Telegram.Entities
                         results.Add(media);
                     }
                 }
-            }
-            catch
-            {
-                // All the remote procedure calls must be wrapped in a try-catch block
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block, and
+                    // per-file: one unreadable item used to discard every file after it.
+                }
             }
 
             return results;
+        }
+
+        /// <summary>
+        /// Probes files concurrently, reporting each one through <paramref name="resolved"/> as it
+        /// lands so the caller can show a popup before anything has been typed. Results arrive out
+        /// of order — <c>index</c> is the file's position in <paramref name="files"/>.
+        /// </summary>
+        /// <remarks>
+        /// <paramref name="resolved"/> is invoked on the calling thread's context.
+        /// </remarks>
+        public static async Task ProbeAsync(IReadOnlyList<StorageFile> files, Action<int, StorageMedia> resolved, CancellationToken cancellationToken)
+        {
+            // A probe is a file open plus a header decode, or a whole ffmpeg open for video and
+            // audio. Running them one after another is what used to stall a large drop; the cap
+            // keeps that same drop from opening hundreds of decoders at once.
+            using var throttle = new SemaphoreSlim(Math.Clamp(Environment.ProcessorCount, 2, 8));
+
+            async Task ProbeOneAsync(int index)
+            {
+                try
+                {
+                    await throttle.WaitAsync(cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    return;
+                }
+
+                try
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    var media = await CreateAsync(files[index]);
+                    if (media != null && !cancellationToken.IsCancellationRequested)
+                    {
+                        resolved(index, media);
+                    }
+                }
+                catch
+                {
+                    // One unreadable file must not take the rest of the drop with it.
+                }
+                finally
+                {
+                    throttle.Release();
+                }
+            }
+
+            var probes = new Task[files.Count];
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                probes[i] = ProbeOneAsync(i);
+            }
+
+            await Task.WhenAll(probes);
         }
     }
 }
