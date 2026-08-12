@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Numerics;
 using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -114,14 +115,45 @@ namespace Telegram.Controls
             }
         }
 
+        // Children are stacked by composition rather than by ArrangeOverride (which puts every
+        // one of them at the origin), so a header sliding in can push the ones below it down
+        // without a layout pass per frame. Each visible child's Offset.Y follows the previous
+        // visible one through an expression animation.
+        //
+        // All of it is one-time-per-child setup, and measure runs on every header show/hide:
+        // establishing it per pass meant an animation allocation and a StartAnimation per child
+        // each time, and handed the element a new transform in the middle of the pass.
+        // Kept in index-parallel arrays instead of a dictionary, so the steady state is a
+        // reference comparison per child and nothing is retained once a child goes away.
+        private UIElement[] _children = Array.Empty<UIElement>();
+
+        // The hand-off visual is created once per element and outlives unload/reload, so it's
+        // safe to hold and saves an interop call per child per measure.
+        private Visual[] _visuals = Array.Empty<Visual>();
+
+        // Whose Offset.Y each child currently follows. null means no animation is running,
+        // which is the correct state for the topmost visible child.
+        private Visual[] _anchors = Array.Empty<Visual>();
+
+        private ExpressionAnimation _anchorAnimation;
+
         protected override Size MeasureOverride(Size availableSize)
         {
+            var count = Children.Count;
+
+            if (_children.Length != count)
+            {
+                Array.Resize(ref _children, count);
+                Array.Resize(ref _visuals, count);
+                Array.Resize(ref _anchors, count);
+            }
+
             var width = 0d;
             var height = 0d;
 
-            UIElement previous = null;
+            Visual previous = null;
 
-            for (int i = 0; i < Children.Count; i++)
+            for (int i = 0; i < count; i++)
             {
                 var child = Children[i];
                 child.Measure(availableSize);
@@ -129,25 +161,46 @@ namespace Telegram.Controls
                 width = Math.Max(width, child.DesiredSize.Width);
                 height += child.DesiredSize.Height;
 
-                ElementCompositionPreview.SetIsTranslationEnabled(child, true);
-
-                if (child.Visibility == Visibility.Visible)
+                if (_children[i] != child)
                 {
-                    if (previous != null)
-                    {
-                        var prev = ElementComposition.GetElementVisual(previous);
-                        var next = ElementComposition.GetElementVisual(child);
+                    _children[i] = child;
+                    _visuals[i] = ElementComposition.GetElementVisual(child);
+                    _anchors[i] = null;
 
-                        var animation = prev.Compositor.CreateExpressionAnimation("reference.Offset.Y + (reference.Size.Y > 0 ? reference.Translation.Y : 0) + reference.Size.Y");
-                        animation.SetReferenceParameter("reference", prev);
-                        //animation.SetScalarParameter("padding", (float)Padding.Top);
-
-                        next.StartAnimation("Offset.Y", animation);
-                    }
-
-                    previous = child;
+                    // Read by the expression below, on the previous child rather than this one,
+                    // so every child needs it whether or not it's visible right now.
+                    ElementCompositionPreview.SetIsTranslationEnabled(child, true);
                 }
 
+                if (child.Visibility != Visibility.Visible)
+                {
+                    continue;
+                }
+
+                var visual = _visuals[i];
+
+                if (_anchors[i] != previous)
+                {
+                    if (previous == null)
+                    {
+                        visual.StopAnimation("Offset.Y");
+                        visual.Offset = new Vector3(visual.Offset.X, 0, visual.Offset.Z);
+                    }
+                    else
+                    {
+                        // One instance reused: StartAnimation snapshots the expression and its
+                        // parameters, so the reference can be repointed for the next child.
+                        _anchorAnimation ??= previous.Compositor.CreateExpressionAnimation(
+                            "reference.Offset.Y + (reference.Size.Y > 0 ? reference.Translation.Y : 0) + reference.Size.Y");
+                        _anchorAnimation.SetReferenceParameter("reference", previous);
+
+                        visual.StartAnimation("Offset.Y", _anchorAnimation);
+                    }
+
+                    _anchors[i] = previous;
+                }
+
+                previous = visual;
             }
 
             return new Size(width, height);
