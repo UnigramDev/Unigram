@@ -164,14 +164,47 @@ The two facts most of this rests on:
       A concurrent read during a resize doesn't throw, it spins. All three are
       low-frequency, which is exactly why this would be a bug that never reproduces.
 
-- [ ] **`NewDictionary` / `DefaultDictionary` getters mutate** — `ChatList.cs:144-158`, `:170-185` **[latent]**
+- [ ] **`Clear()` empties lock-guarded collections without their locks** — `ClientService.cs:914` **[live]**
 
-      The indexer *getter* inserts on a miss, so every "read" is a write.
-      `_haveFullChatList[chatList] = true` (`ChatList.cs:69`) and
-      `_haveFullStoryList[storyList] = true` (`StoryList.cs:104`) both run **after**
-      `Monitor.Exit`, from an async continuation, against a dictionary another thread reads
-      — and therefore writes — under the monitor. Same hazard as the item above, but
-      disguised as a read.
+      **This replaces a mis-aimed item.** The original said `NewDictionary` /
+      `DefaultDictionary` getters mutate on a miss — true — and concluded that
+      `_haveFullChatList[chatList] = true` (`ChatList.cs:100`) racing outside the monitor was
+      the bug. It isn't. Every one of the seven `GetChatListAsync` / `GetStoryListAsync`
+      callers is UI-layer, the repo contains no `ConfigureAwait(false)`, so those
+      continuations resume on the UI thread. There is no second thread reading those
+      dictionaries under the monitor, and the mutating getter is only ever reached from
+      inside a `lock` — a trap for the next reader, not a defect. Demoted to P3 below.
+
+      The real cross-thread party is `Clear()`, which runs on the **TDLib receive thread**
+      (`OnResult` → `AuthorizationStateClosed`) and takes only two locks —
+      `_recentChatsLock`, and `_downloadsLock` via `ClearDownloads` — while emptying eight
+      collections that every other accessor guards:
+
+      | Collection | Guarded elsewhere by |
+      |---|---|
+      | `_chatList`, `_haveFullChatList` | `lock (_chatList)` |
+      | `_storyList`, `_haveFullStoryList` | `lock (_storyList)` |
+      | `_savedMessages` | `lock (_savedMessages)` |
+      | `_savedMessagesTags` | `lock (_savedMessagesTags)` |
+      | `_suggestedActions` | `lock (_suggestedActions)` |
+      | `_chatFolders2` | `_chatFoldersLock` |
+
+      So a logout landing while the UI has a chat-list load in flight clears a `SortedSet`
+      out from under an enumerator, or a `Dictionary` mid-lookup. Narrow window, real
+      corruption.
+
+      Fix is mechanical — wrap each group in the lock it already has. They are taken one
+      after another, never nested, so no ordering is introduced.
+
+      **This was missed by the earlier `Clear()` fix**, which audited *which* fields were
+      cleared and never asked whether clearing them was synchronized.
+
+- [ ] **`NewDictionary` / `DefaultDictionary` getters mutate** — `ChatList.cs:144-158`, `:170-185` · **P3, trap not defect**
+
+      The indexer *getter* inserts on a miss, so what reads like a read is a write. Every
+      current call site is inside a `lock`, so nothing is broken today. Worth either renaming
+      to something that says "get or create", or giving them an explicit `GetOrAdd` method,
+      so the next person to add a call site outside a lock isn't misled.
 
 - [ ] **`SetResult` → `TrySetResult`, and `RunContinuationsAsynchronously`** — `ClientService.cs:1085`, `Files.cs:83`, `ClientService.cs:397` **[latent]**
 
