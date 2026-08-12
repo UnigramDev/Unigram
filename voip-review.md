@@ -180,7 +180,7 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   `hresult_out_of_bounds` out of `Start`. One `GetMany` into the shared array, which clamps
   to what is there, and the redundant copy through a stack `std::array` is gone.
 
-- [ ] **`RequestMediaChannelDescriptionTaskImpl::done` hardcodes `type = Audio`** —
+- [x] **DECIDED, kept as is** — **`RequestMediaChannelDescriptionTaskImpl::done` hardcodes `type = Audio`** —
   `VoipGroupManager.h:140` — **not a bug; decide whether to keep it that way**
 
   `VoipMediaChannelDescription` carries only `AudioSource` and `UserId`
@@ -228,7 +228,7 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   Fixed by reordering — the clear only exists to break the native to managed cycle, which
   works just as well after the instance is gone. Not compiled; C# side, statement reorder.
 
-- [ ] **`DecryptData` ignores the data channel** — `VoipGroupCall.cs:421`
+- [x] **DECIDED, kept as is** — **`DecryptData` ignores the data channel** — `VoipGroupCall.cs:421`
 
   It always passes `new GroupCallDataChannelMain()`, while `EncryptData` distinguishes
   screen sharing from main. Work out whether decrypting a remote screencast needs the
@@ -352,7 +352,7 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   in flight is serving the live call, and the second descriptor would be for the same one.
   Completes the Start/Stop lifecycle work the destructors began.
 
-- [ ] **Verify `requestMediaChannelDescriptions` gating on `IsConference`** —
+- [x] **DECIDED, confirmed correct** — **`requestMediaChannelDescriptions` gating on `IsConference`** —
   `VoipGroupManager.cpp:69-83`
 
   The C# handler is subscribed unconditionally (`VoipGroupCall.cs:151`, `:296`, `:351`).
@@ -375,10 +375,33 @@ All five landed on `develop` as `4eda2af98..c4bbb77f6`, one fix per commit, buil
   even sees the frame. Removing them means changing the delegate signature in the IDL to
   pass a buffer the managed side writes into. → below.
 
-- [ ] **The E2E delegate signature forces two copies per frame** — `VoipGroupManager.idl:15-16`
+- [x] **The E2E delegate signature forces two copies per frame** — `VoipGroupManager.idl:15-16`
 
-  `IVector<byte>` in and out, on a per-frame path, with a `ToArray()` on the managed side
-  on top. Worth reshaping once someone is willing to touch the IDL and both call sites.
+  Reshaped to `UInt8[]` in and out, since every byte ends up base64 encoded into TDLib
+  JSON and an `IVector` was the wrong shape at both ends. The projection copies once each
+  way and the managed side hands the array straight to TDLib — two COM objects, two RCWs
+  and the `ToArray()` are gone. `ReceiveSignalingData` and the signaling callback got the
+  same treatment; the latter stopped being an event at the same time, since it only ever
+  had one listener, which deleted `SignalingDataEmittedEventArgs` outright.
+
+  It also exposed a live bug in the managed half — see the transform semaphore below.
+
+- [x] **The frame transform waited on a shared semaphore** — `VoipGroupCall.cs:403-432`
+
+  Found while reshaping the delegates above. `new Semaphore(0, 1)` was shared across every
+  invocation, but tgcalls builds one frame transformer per simulcast layer and one per
+  incoming channel, each on its own thread — so a second `Release()` before the first
+  `Wait()` throws `SemaphoreFullException` on TDLib's callback thread, and a waiter can be
+  woken by another frame's answer and return a null result, dropping a good frame.
+
+  **My own P2 change is what exposed it.** Holding `m_lock` across the managed delegate
+  used to serialise every encrypt and decrypt through one mutex, which accidentally made
+  the shared semaphore safe. Taking that lock off the callback path was right, but I did
+  not check what depended on the serialisation.
+
+  Each transform now waits on its own `ManualResetEventSlim`, with a 5s timeout so a stuck
+  TDLib drops the frame rather than wedging a media thread. Not disposed on purpose — a
+  late answer would still `Set()` it.
 
 - [x] **`OnAudioLevelsUpdated` allocates per update** — `VoipGroupManager.cpp:313-329`
 
@@ -439,7 +462,7 @@ worth attention is the coupling, not the mechanism:
   resynchronisation. It is also the reason screen audio can drift out of sync with video
   over a long share. Worth measuring the steady-state depth before deciding anything.
 
-- [ ] **Screencast audio is mono-only by construction** — `options.num_channels = 1`
+- [ ] **DEFERRED to an upstream pass** — **Screencast audio is mono-only by construction** — `options.num_channels = 1`
 
   Fine for speech, lossy for music or a game. Widening it means the descriptor, the
   capture format and `ExternalAudioRecorder` all have to agree, so it is a tgcalls change
@@ -463,7 +486,7 @@ worth attention is the coupling, not the mechanism:
       mistake as the P1 video-sink item: the group `VideoSinkImpl::OnFrame` prunes expired
       weak_ptrs exactly like the 1:1 one (`GroupInstanceCustomImpl.cpp:662-665`), so
       releasing the sink *is* the removal. Left open only as a reminder of the shape.
-- [ ] `enableAEC`/`enableNS`/`enableAGC` hard-coded `true` in 1:1 calls
+- [x] **DECIDED, kept as is** — `enableAEC`/`enableNS`/`enableAGC` hard-coded `true` in 1:1 calls
       (`VoipManager.cpp:46-48`) while group calls honour the `IsNoiseSuppressionEnabled`
       setting. **Needs your call** — it is a product decision, not a defect.
 - [x] `Protocol()` sorted versions lexicographically. **Filed as latent; it was live.**
