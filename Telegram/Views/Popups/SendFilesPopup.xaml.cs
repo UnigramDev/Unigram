@@ -67,10 +67,10 @@ namespace Telegram.Views.Popups
         // before the popup was shown. Null when the caller has nothing to enforce.
         private readonly Func<StorageMedia, bool> _validating;
 
-        // Resolved but not yet published. A drop of many files then costs a couple of UpdatePanel
-        // passes instead of one per file, since everything that lands within a single UI turn is
-        // appended together.
-        private readonly List<(int Index, StorageMedia Media)> _resolved = new();
+        // Resolved but not yet published, keyed by position in the source. Probing finishes out of
+        // order, so this holds results back until the run in front of them has settled.
+        private readonly Dictionary<int, StorageMedia> _resolved = new();
+        private int _published;
         private bool _flushScheduled;
 
         private bool _loadStarted;
@@ -847,9 +847,10 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            // Flush before clearing the flag: the last batch still needs UpdateView to see a load
-            // in progress so it can settle the media/files mode.
-            Flush();
+            // Publishes the tail, including a part-filled last album. Before the flag is cleared,
+            // so the last batch still reaches UpdateView with a load in progress and can settle
+            // the media/files mode.
+            Flush(true);
 
             _isLoading = false;
             _expectedCount = 0;
@@ -865,7 +866,7 @@ namespace Telegram.Views.Popups
 
         private void OnResolved(int index, StorageMedia media)
         {
-            if (_validating?.Invoke(media) == false)
+            if (media != null && _validating?.Invoke(media) == false)
             {
                 _loadCancellation.Cancel();
                 Hide();
@@ -873,7 +874,9 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            _resolved.Add((index, media));
+            // Null when the file could not be typed. The slot is still recorded, or the run would
+            // never get past it.
+            _resolved[index] = media;
 
             if (_flushScheduled)
             {
@@ -886,28 +889,80 @@ namespace Telegram.Views.Popups
 
         private void Flush()
         {
+            Flush(false);
+        }
+
+        /// <summary>
+        /// Publishes the longest run of items that have settled in source order. Out-of-order
+        /// results wait: album membership is positional, so a slot that has not settled could still
+        /// turn out to be a document and split the album behind it.
+        /// </summary>
+        /// <param name="final">
+        /// Publishes the tail. Until then, while media are still arriving, only whole albums are
+        /// published — otherwise an album visibly reflows as each photo lands.
+        /// </param>
+        private void Flush(bool final)
+        {
             _flushScheduled = false;
 
-            if (_resolved.Count == 0 || _loadCancellation.IsCancellationRequested)
+            if (_loadCancellation.IsCancellationRequested)
             {
                 return;
             }
 
-            // Within a batch the picked order is preserved. Across batches items land in the order
-            // they resolve, which is the whole point of not waiting for the slow ones.
-            _resolved.Sort(static (x, y) => x.Index.CompareTo(y.Index));
+            var run = 0;
 
-            var media = new StorageMedia[_resolved.Count];
-
-            for (int i = 0; i < _resolved.Count; i++)
+            while (_resolved.ContainsKey(_published + run))
             {
-                media[i] = _resolved[i].Media;
+                run++;
             }
 
-            _resolved.Clear();
+            var count = run;
 
-            // One CollectionChanged for the batch, so one UpdateView and one UpdatePanel.
-            Items.AddRange(media);
+            if (!final && _isLoading && _mediaRequested)
+            {
+                // Everything that completes an album rather than one album per pass, so a drop
+                // that types quickly still lands in a single flush.
+                count -= count % StorageAlbum.MAX_ITEMS;
+            }
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            var length = 0;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (_resolved[_published + i] != null)
+                {
+                    length++;
+                }
+            }
+
+            var media = new StorageMedia[length];
+            var next = 0;
+
+            for (int i = 0; i < count; i++)
+            {
+                var index = _published + i;
+
+                if (_resolved[index] is StorageMedia item)
+                {
+                    media[next++] = item;
+                }
+
+                _resolved.Remove(index);
+            }
+
+            _published += count;
+
+            if (length > 0)
+            {
+                // One CollectionChanged for the batch, so one UpdateView and one UpdatePanel.
+                Items.AddRange(media);
+            }
         }
 
         private void UpdateLoading()
@@ -1023,7 +1078,7 @@ namespace Telegram.Views.Popups
                 {
                     if ((item is StoragePhoto && _photoAllowed) || (item is StorageVideo && _videoAllowed))
                     {
-                        if (album.Count > 9)
+                        if (album.Count >= StorageAlbum.MAX_ITEMS)
                         {
                             AddAlbum();
                         }

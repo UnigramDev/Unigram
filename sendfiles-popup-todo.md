@@ -187,6 +187,28 @@ Also restored: the constructor's `Logger.Info` line names each item's width and 
 what album layout bugs get diagnosed from. On the drop path nothing is typed yet, so it logs the
 pending count there and logs the dimensions again once everything has landed.
 
+- [x] **2b.6** Publish in album-sized chunks, so an album appears complete instead of reflowing as
+  each photo lands.
+
+  This also fixed an ordering bug. `Flush` sorted *within* a batch but appended batches in arrival
+  order, so a slot that resolved late landed after everything behind it — the picked order was
+  wrong across batches, and album membership with it. Results are now buffered by source index and
+  only the longest settled run is published, which is required anyway: album membership is
+  positional, so a slot that has not settled could still turn out to be a document and split the
+  album behind it.
+
+  While loading, and only when the caller asked for media mode, the run is truncated to a multiple
+  of `StorageAlbum.MAX_ITEMS` — *every* complete album available, not one per pass, so a drop that
+  types quickly still lands in a single flush. `Flush(final: true)` at the end publishes the tail
+  including a part-filled last album.
+
+  `ProbeAsync` now reports every index, passing null for a file it could not type. Without that a
+  failed file would be a permanent hole and the run would never get past it.
+
+  Trade-off: a slow file holds back everything behind it, where before those items appeared (out of
+  order) without it. The popup and its title still appear immediately, which was the actual
+  complaint; and a drop with `media: false` is not chunked at all, since file rows do not reflow.
+
 ## Task 3 — Stop rebuilding the world on every interaction
 
 `UpdatePanel()` is called from roughly a dozen places — mute, TTL, crop, spoiler toggle, item

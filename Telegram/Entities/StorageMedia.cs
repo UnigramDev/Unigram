@@ -187,7 +187,9 @@ namespace Telegram.Entities
         /// of order — <c>index</c> is the file's position in <paramref name="files"/>.
         /// </summary>
         /// <remarks>
-        /// <paramref name="resolved"/> is invoked on the calling thread's context.
+        /// <paramref name="resolved"/> is invoked on the calling thread's context, and is invoked
+        /// for every index including the ones that could not be typed, where it gets null. A caller
+        /// reassembling the original order needs to know that a slot has settled either way.
         /// </remarks>
         public static async Task ProbeAsync(IReadOnlyList<StorageFile> files, Action<int, StorageMedia> resolved, CancellationToken cancellationToken)
         {
@@ -214,15 +216,21 @@ namespace Telegram.Entities
                         return;
                     }
 
-                    var media = await CreateAsync(files[index]);
-                    if (media != null && !cancellationToken.IsCancellationRequested)
+                    StorageMedia media = null;
+
+                    try
+                    {
+                        media = await CreateAsync(files[index]);
+                    }
+                    catch
+                    {
+                        // One unreadable file must not take the rest of the drop with it.
+                    }
+
+                    if (!cancellationToken.IsCancellationRequested)
                     {
                         resolved(index, media);
                     }
-                }
-                catch
-                {
-                    // One unreadable file must not take the rest of the drop with it.
                 }
                 finally
                 {

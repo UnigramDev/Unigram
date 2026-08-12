@@ -636,7 +636,7 @@ namespace Telegram.ViewModels
                             _ => forceDocuments ? StorageAlbumType.Documents : StorageAlbumType.Media
                         };
 
-                        if (album.Count > 9 || type == StorageAlbumType.NotSupported || (type != albumType && albumType != StorageAlbumType.None))
+                        if (album.Count >= StorageAlbum.MAX_ITEMS || type == StorageAlbumType.NotSupported || (type != albumType && albumType != StorageAlbumType.None))
                         {
                             AddAlbum();
                         }

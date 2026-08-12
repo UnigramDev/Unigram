@@ -47,6 +47,11 @@ namespace Telegram.Entities
             Invalidate();
         }
 
+        /// <summary>
+        /// Telegram groups at most ten media into one message.
+        /// </summary>
+        public const int MAX_ITEMS = 10;
+
         public const double ITEM_MARGIN = 2;
         public const double MAX_WIDTH = 420 + ITEM_MARGIN;
         public const double MAX_HEIGHT = 420 + ITEM_MARGIN;
