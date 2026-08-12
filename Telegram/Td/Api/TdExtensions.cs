@@ -1580,9 +1580,8 @@ namespace Telegram.Td.Api
                     return ToPlainText(underlineText.Text);
                 case RichTextUrl urlText:
                     return ToPlainText(urlText.Text);
-                case RichTextButton _:
-                    // TODO: decide if to extract text or not.
-                    return PageBlockHelper.PlaceholderButton;
+                case RichTextButton button:
+                    return ToPlainText(button.Button.Text);
                 default:
                     return null;
             }
@@ -2620,9 +2619,10 @@ namespace Telegram.Td.Api
                     }
                     return;
 
-                case RichTextButton _:
-                    // TODO: decide what to do here
-                    sb.Append(PageBlockHelper.PlaceholderButton);
+                // Unlike PageBlockHelper.Flatten there is no button entity to compete
+                // with here, so the label keeps whatever formatting it carries.
+                case RichTextButton button:
+                    Append(button.Button.Text, sb, entities);
                     return;
 
                 case RichTextAnchor _:

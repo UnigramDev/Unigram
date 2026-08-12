@@ -92,17 +92,6 @@ namespace Telegram.Common
         private const string PlaceholderChatLink = "[chat]";
         private const string PlaceholderDivider = "---";
 
-        // A button contributes no text of its own: its label belongs to the button,
-        // not to the page, so it is never harvested. This stands in for it wherever
-        // a flat projection needs *something* — and its length must stay stable,
-        // because streaming (DialogPendingTextMessage) computes offsets from it and
-        // a mismatch would truncate at the wrong position. Flatten additionally
-        // covers it with a TextEntityTypeButton carrying the button itself, so a
-        // renderer can substitute the real thing without needing the label here.
-        // internal: TdExtensions has its own RichText walkers that need the same
-        // stand-in. They fold into this class in the walker consolidation.
-        internal const string PlaceholderButton = "[button]";
-
         // =====================================================================
         // FindFirstMedia
         // =====================================================================
@@ -517,10 +506,9 @@ namespace Telegram.Common
                 case null:
                     return;
 
-                // No-link leaves. RichTextButton is one of them on purpose: a
-                // button is an action, not a link, and its label is not page
-                // content to be harvested — the same reason an inline keyboard
-                // never appears in GetLinks.
+                // No-link leaves. RichTextButton is one of them on purpose: its target
+                // is an action to invoke, not a link to follow — the same reason an
+                // inline keyboard never appears in GetLinks.
                 case RichTextButton _:
                 case RichTextPlain _:
                 case RichTextCustomEmoji _:
@@ -889,10 +877,6 @@ namespace Telegram.Common
                 case RichTextCustomEmoji ce:
                     if (ce.AlternativeText != null) sb.Append(ce.AlternativeText);
                     return;
-                // The label is the button's, not the page's — stand in for it.
-                case RichTextButton _:
-                    sb.Append(PlaceholderButton);
-                    return;
                 case RichTextMathematicalExpression me:
                     if (me.Expression != null) sb.Append(me.Expression);
                     return;
@@ -918,6 +902,7 @@ namespace Telegram.Common
                 case RichTextReferenceLink b: AppendPlainText(b.Text, sb); return;
                 case RichTextAnchorLink b: AppendPlainText(b.Text, sb); return;
                 case RichTextDateTime b: AppendPlainText(b.Text, sb); return;
+                case RichTextButton b: AppendPlainText(b.Button.Text, sb); return;
             }
         }
 
@@ -1083,19 +1068,13 @@ namespace Telegram.Common
                         return;
                     }
 
-                // Leaf whose text belongs to the button, not to the page: emit the
-                // placeholder so the entity has a non-zero length, and hand the
-                // whole button to the renderer through the entity. The label is
-                // reachable as Button.Text if the renderer wants it — nothing here
-                // harvests it into the page's text.
+                // The label carries the text, the entity carries the whole button, so a
+                // renderer can substitute the real thing and anything that doesn't still
+                // reads. Flattened like any other span: the server allows custom emoji
+                // and date-time inside a label, and both need their own entity.
                 case RichTextButton button:
-                    {
-                        int start = text.Length;
-                        text.Append(PlaceholderButton);
-                        entities.Add(new TextEntity(start, PlaceholderButton.Length,
-                            new TextEntityTypeButton(button.Button)));
-                        return;
-                    }
+                    EmitSpan(button.Button.Text, text, entities, new TextEntityTypeButton(button.Button));
+                    return;
 
                 case RichTextAnchor _:
                     // Skipped — see ObjectReplacementChar comment above.
