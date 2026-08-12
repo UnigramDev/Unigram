@@ -240,4 +240,63 @@ namespace Telegram.Entities
             await Task.WhenAll(probes);
         }
     }
+
+    /// <summary>
+    /// The content of a <c>SendFilesPopup</c>, which may not all exist yet.
+    ///
+    /// Callers either hand over items they have already typed, or the files behind them; the popup
+    /// takes one of these either way, so it cannot be handed a half-built set or be asked to start
+    /// loading as a separate step.
+    /// </summary>
+    public sealed partial class StorageMediaSource
+    {
+        private readonly IReadOnlyList<StorageFile> _files;
+
+        private StorageMediaSource(IReadOnlyList<StorageMedia> ready, IReadOnlyList<StorageFile> files)
+        {
+            Ready = ready;
+            _files = files;
+        }
+
+        public static StorageMediaSource FromMedia(IReadOnlyList<StorageMedia> items)
+        {
+            return new StorageMediaSource(items, null);
+        }
+
+        public static StorageMediaSource FromFiles(IReadOnlyList<StorageFile> files)
+        {
+            return new StorageMediaSource(Array.Empty<StorageMedia>(), files);
+        }
+
+        /// <summary>
+        /// Everything that exists before the popup is shown, so it can be seeded rather than filled
+        /// in. Empty when the files still have to be typed.
+        /// </summary>
+        public IReadOnlyList<StorageMedia> Ready { get; }
+
+        /// <summary>
+        /// How many items will arrive in total, known up front either way — the title can state the
+        /// size of a drop before any of it has been typed.
+        /// </summary>
+        public int Count => _files?.Count ?? Ready.Count;
+
+        /// <summary>
+        /// True when <see cref="Ready"/> is all there is, and <see cref="LoadAsync"/> has nothing
+        /// left to deliver.
+        /// </summary>
+        public bool IsComplete => _files == null;
+
+        /// <summary>
+        /// Delivers whatever <see cref="Ready"/> did not, reporting each item as it lands.
+        /// </summary>
+        public Task LoadAsync(Action<int, StorageMedia> resolved, CancellationToken cancellationToken)
+        {
+            if (_files == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            return StorageMedia.ProbeAsync(_files, resolved, cancellationToken);
+        }
+    }
 }

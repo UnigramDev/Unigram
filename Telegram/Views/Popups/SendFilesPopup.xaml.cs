@@ -60,24 +60,25 @@ namespace Telegram.Views.Popups
 
         private readonly StorageThumbnailCache _thumbnails = new();
 
-        private readonly CancellationTokenSource _probeCancellation = new();
+        private readonly StorageMediaSource _source;
+        private readonly CancellationTokenSource _loadCancellation = new();
 
-        // Probed but not yet published. A drop of many files then costs a couple of UpdatePanel
-        // passes instead of one per file, since everything that resolves within a single UI turn
-        // is appended together.
+        // Returning false abandons the whole drop, which is what the guard this replaced did
+        // before the popup was shown. Null when the caller has nothing to enforce.
+        private readonly Func<StorageMedia, bool> _validating;
+
+        // Resolved but not yet published. A drop of many files then costs a couple of UpdatePanel
+        // passes instead of one per file, since everything that lands within a single UI turn is
+        // appended together.
         private readonly List<(int Index, StorageMedia Media)> _resolved = new();
         private bool _flushScheduled;
 
-        private bool _probeStarted;
-        private bool _isProbing;
-        private int _probeCount;
-        private bool _mediaRequested;
+        private bool _loadStarted;
+        private bool _isLoading;
 
-        /// <summary>
-        /// Called on the UI thread for each item as it finishes probing. Returning false abandons
-        /// the whole drop, which is what the guard this replaced did before the popup was shown.
-        /// </summary>
-        public Func<StorageMedia, bool> Validating { get; set; }
+        // What the source says is still coming. Zero once everything has arrived.
+        private int _expectedCount;
+        private bool _mediaRequested;
 
         private IAutocompleteCollection _autocomplete;
         public IAutocompleteCollection Autocomplete
@@ -162,11 +163,11 @@ namespace Telegram.Views.Popups
         {
             get
             {
-                // While probing, count the files still to come — otherwise the title ticks upwards
-                // one item at a time. Their type is not known yet, so they only count as files.
-                var count = Math.Max(Items.Count, _probeCount);
+                // Count what is still coming, or the title ticks upwards one item at a time. Their
+                // type is not known until they land, so they only count as files.
+                var count = Math.Max(Items.Count, _expectedCount);
 
-                if (IsMediaSelected && _probeCount == 0)
+                if (IsMediaSelected && _expectedCount == 0)
                 {
                     if (Items.All(x => x is StoragePhoto))
                     {
@@ -260,13 +261,16 @@ namespace Telegram.Views.Popups
 
         public long PaidMessageStarCount { get; private set; }
 
-        public SendFilesPopup(ComposeViewModel viewModel, IEnumerable<StorageMedia> items, bool media, ChatPermissions permissions, bool ttlAllowed, bool schedule, bool savedMessages, bool editing)
+        public SendFilesPopup(ComposeViewModel viewModel, StorageMediaSource source, Func<StorageMedia, bool> validating, bool media, ChatPermissions permissions, bool ttlAllowed, bool schedule, bool savedMessages, bool editing)
         {
             InitializeComponent();
 
+            _source = source;
+            _validating = validating;
+
             var builder = new StringBuilder();
 
-            foreach (var item in items)
+            foreach (var item in source.Ready)
             {
                 switch (item)
                 {
@@ -280,6 +284,13 @@ namespace Telegram.Views.Popups
                         builder.Prepend("file", ", ");
                         break;
                 }
+            }
+
+            // Nothing is typed yet on the drop path, so record the size of what is coming — this
+            // line ships with crash reports and used to name every item.
+            if (!source.IsComplete)
+            {
+                builder.Prepend(string.Format("{0} pending", source.Count), ", ");
             }
 
             Logger.Info(builder);
@@ -299,11 +310,16 @@ namespace Telegram.Views.Popups
 
             ItemsView = new DiffObservableCollection<StorageMedia>(this, Constants.DiffOptions);
 
-            Items = new MvxObservableCollection<StorageMedia>(items);
+            // Seeded rather than loaded, so a caller handing over typed items can read Items back
+            // the moment the popup closes. Only what the source still owes arrives later.
+            Items = new MvxObservableCollection<StorageMedia>(source.Ready);
             Items.CollectionChanged += OnCollectionChanged;
 
-            // When the caller is going to probe, Items starts empty and IsMediaAllowed cannot
-            // answer yet. UpdateView re-derives the mode as the first items land.
+            _isLoading = !source.IsComplete;
+            _expectedCount = source.IsComplete ? 0 : source.Count;
+
+            // With nothing typed yet IsMediaAllowed cannot answer, so UpdateView re-derives the
+            // mode as the first items land.
             _mediaRequested = media;
             IsMediaSelected = media && IsMediaAllowed;
             IsFilesSelected = !IsMediaSelected;
@@ -741,7 +757,7 @@ namespace Telegram.Views.Popups
         public void Accept()
         {
             // Reachable from Enter even while the send button is disabled.
-            if (_isProbing)
+            if (_isLoading)
             {
                 return;
             }
@@ -797,40 +813,36 @@ namespace Telegram.Views.Popups
         }
 
         /// <summary>
-        /// Types <paramref name="files"/> in the background, appending each one as it resolves.
-        /// The popup is expected to be shown right after this returns — probing a large drop up
-        /// front is what used to leave the user staring at nothing.
+        /// Drains whatever the source did not hand over at construction, appending items as they
+        /// land. Driven from the popup's own Loaded so a caller cannot forget it — and only once
+        /// on screen, since a rejected item closes the popup and OpenAsync queues behind any other
+        /// dialog, leaving an earlier Hide with nothing to close.
         /// </summary>
-        public async void Probe(IReadOnlyList<StorageFile> files)
+        private async void Load()
         {
-            // Loaded can fire more than once.
-            if (_probeStarted)
+            // Loaded fires again whenever the popup is re-parented.
+            if (_loadStarted || _source.IsComplete)
             {
                 return;
             }
 
-            _probeStarted = true;
-            _isProbing = true;
+            _loadStarted = true;
+            UpdateLoading();
 
-            // The title counts what is coming rather than what has landed, so it does not tick up
-            // one file at a time.
-            _probeCount = files.Count;
-            UpdateProbing();
+            await _source.LoadAsync(OnResolved, _loadCancellation.Token);
 
-            await StorageMedia.ProbeAsync(files, OnResolved, _probeCancellation.Token);
-
-            if (_probeCancellation.IsCancellationRequested)
+            if (_loadCancellation.IsCancellationRequested)
             {
                 return;
             }
 
-            // Flush before clearing the flag: the last batch still needs UpdateView to see a
-            // probe in progress so it can settle the media/files mode.
+            // Flush before clearing the flag: the last batch still needs UpdateView to see a load
+            // in progress so it can settle the media/files mode.
             Flush();
 
-            _isProbing = false;
-            _probeCount = 0;
-            UpdateProbing();
+            _isLoading = false;
+            _expectedCount = 0;
+            UpdateLoading();
 
             if (Items.Count == 0)
             {
@@ -840,9 +852,9 @@ namespace Telegram.Views.Popups
 
         private void OnResolved(int index, StorageMedia media)
         {
-            if (Validating?.Invoke(media) == false)
+            if (_validating?.Invoke(media) == false)
             {
-                _probeCancellation.Cancel();
+                _loadCancellation.Cancel();
                 Hide();
 
                 return;
@@ -863,7 +875,7 @@ namespace Telegram.Views.Popups
         {
             _flushScheduled = false;
 
-            if (_resolved.Count == 0 || _probeCancellation.IsCancellationRequested)
+            if (_resolved.Count == 0 || _loadCancellation.IsCancellationRequested)
             {
                 return;
             }
@@ -885,11 +897,11 @@ namespace Telegram.Views.Popups
             Items.AddRange(media);
         }
 
-        private void UpdateProbing()
+        private void UpdateLoading()
         {
             // Sending half a drop would silently drop the rest, so the button waits.
-            SendMessage.IsEnabled = !_isProbing;
-            PaidMessage.IsEnabled = !_isProbing;
+            SendMessage.IsEnabled = !_isLoading;
+            PaidMessage.IsEnabled = !_isLoading;
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TitleText)));
         }
@@ -959,7 +971,7 @@ namespace Telegram.Views.Popups
 
             // The constructor could not honour the requested mode against an empty list, so it is
             // settled here instead — but only until the user picks a mode of their own.
-            if (_isProbing && _mediaRequested && !IsMediaSelected && IsMediaAllowed)
+            if (_isLoading && _mediaRequested && !IsMediaSelected && IsMediaAllowed)
             {
                 IsMediaSelected = true;
                 IsFilesSelected = false;
@@ -1366,6 +1378,8 @@ namespace Telegram.Views.Popups
         {
             CaptionInput.Focus(FocusState.Keyboard);
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+
+            Load();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -1378,7 +1392,7 @@ namespace Telegram.Views.Popups
 
             // Stops further files from being probed. Probes already running still finish; see the
             // cancellation survey in sendfiles-popup-todo.md.
-            _probeCancellation.Cancel();
+            _loadCancellation.Cancel();
         }
 
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)

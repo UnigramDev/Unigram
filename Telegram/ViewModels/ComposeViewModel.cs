@@ -426,24 +426,19 @@ namespace Telegram.ViewModels
         {
             if (files is { Count: > 0 })
             {
-                SendFilesAsync(null, files, caption, media);
+                SendFilesAsync(StorageMediaSource.FromFiles(files), caption, media);
             }
         }
 
-        public void SendFileExecute(IList<StorageMedia> items, FormattedText caption = null, bool media = true)
+        public void SendFileExecute(IReadOnlyList<StorageMedia> items, FormattedText caption = null, bool media = true)
         {
             if (items is { Count: > 0 })
             {
-                SendFilesAsync(items, null, caption, media);
+                SendFilesAsync(StorageMediaSource.FromMedia(items), caption, media);
             }
         }
 
-        /// <summary>
-        /// Exactly one of <paramref name="items"/> and <paramref name="files"/> is given. Files are
-        /// typed after the popup is up, so the guard that used to run over the whole batch first
-        /// runs per item as it resolves — see <see cref="SendFilesPopup.Validating"/>.
-        /// </summary>
-        private async void SendFilesAsync(IList<StorageMedia> items, IReadOnlyList<StorageFile> files, FormattedText caption, bool media)
+        private async void SendFilesAsync(StorageMediaSource source, FormattedText caption, bool media)
         {
             if (Chat is not Chat chat)
             {
@@ -481,26 +476,26 @@ namespace Telegram.ViewModels
                 return restrictedError == null && !sizeExceeded;
             }
 
-            if (items != null)
+            // Anything already typed is refused before the popup exists, as it always was. Files
+            // are refused as they land instead, from inside the popup — Ready is empty for those,
+            // so this loop simply does not run.
+            foreach (var item in source.Ready)
             {
-                foreach (var item in items)
+                if (!Validating(item))
                 {
-                    if (!Validating(item))
-                    {
-                        break;
-                    }
+                    break;
                 }
+            }
 
-                if (restrictedError != null)
-                {
-                    await ShowPopupAsync(restrictedError, Strings.AppName, Strings.OK);
-                    return;
-                }
-                else if (sizeExceeded)
-                {
-                    NavigationService.ShowLimitReached(new PremiumLimitTypeFileSize());
-                    return;
-                }
+            if (restrictedError != null)
+            {
+                await ShowPopupAsync(restrictedError, Strings.AppName, Strings.OK);
+                return;
+            }
+            else if (sizeExceeded)
+            {
+                NavigationService.ShowLimitReached(new PremiumLimitTypeFileSize());
+                return;
             }
 
             FormattedText formattedText = null;
@@ -512,27 +507,15 @@ namespace Telegram.ViewModels
 
             var self = ClientService.IsSavedMessages(chat);
 
-            var popup = new SendFilesPopup(this, items ?? Array.Empty<StorageMedia>(), media, permissions, chat.Type is ChatTypePrivate && !self, CanSchedule, self, false);
+            var popup = new SendFilesPopup(this, source, Validating, media, permissions, chat.Type is ChatTypePrivate && !self, CanSchedule, self, false);
             popup.Loaded += (s, args) =>
             {
                 popup.Caption = caption;
-
-                // Only once it is on screen: probing can abandon the drop, and OpenAsync queues
-                // behind any other dialog, so an earlier Hide would have nothing to close.
-                if (files != null)
-                {
-                    popup.Probe(files);
-                }
             };
 
             if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
             {
                 popup.HasPaidMediaAllowed = fullInfo.HasPaidMediaAllowed;
-            }
-
-            if (files != null)
-            {
-                popup.Validating = Validating;
             }
 
             var confirm = await popup.OpenAsync(XamlRoot);

@@ -401,8 +401,10 @@ namespace Telegram.ViewModels
 
             var permissions = ClientService.GetPermissions(chat, out _);
 
+            // Editing replaces a single message, so the item is always already typed and there is
+            // nothing to guard: the permission check happened when it was first sent.
             var items = new[] { storage };
-            var popup = new SendFilesPopup(this, items, mediaSelected, permissions, false, false, false, true);
+            var popup = new SendFilesPopup(this, StorageMediaSource.FromMedia(items), null, mediaSelected, permissions, false, false, false, true);
             popup.ShowCaptionAboveMedia = header.Editing.Message.ShowCaptionAboveMedia();
             popup.Caption = formattedText
                 .Substring(0, ClientService.Options.MessageCaptionLengthMax);

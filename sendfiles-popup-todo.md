@@ -138,6 +138,30 @@ Known edge: if every file fails to probe, the popup appears briefly and then clo
 before it never appeared. The alternative is waiting for the first result, which is the stall this
 task removed.
 
+### Follow-up: one input shape (Fela's review)
+
+The first cut left the popup with a three-step construction protocol — build with an empty list, set
+`Validating`, call `Probe` from the caller's `Loaded` — driven by a `SendFilesAsync(items, files, …)`
+null-pair. Miss a step and you get a silently empty popup or an unguarded send, with nothing
+enforcing it. The two construction sites differ enough that this was a real trap: the edit path
+passes exactly one already-typed item, has no guard at all, and reads `popup.Items[0]` back the
+moment the popup closes.
+
+- [x] **2.7** `StorageMediaSource` (in `StorageMedia.cs`, so no `.csproj` entry) is now the single
+  thing the popup is given. `FromMedia` exposes everything through `Ready`; `FromFiles` leaves
+  `Ready` empty and delivers through `LoadAsync`. `Count` is known up front either way.
+
+The constructor seeds `Items` from `source.Ready` — so the edit path still has its item before the
+popup opens and `Items[0]` cannot throw — and the popup calls `LoadAsync` from its own `OnLoaded`,
+which is a no-op for a complete source. Callers can no longer forget it. `_expectedCount` comes from
+`source.Count` at construction rather than being patched in later, so the title is right from the
+first frame.
+
+The guard is a constructor argument instead of a settable property, and the up-front loop in
+`SendFilesAsync` runs over `source.Ready` — empty for files, so the last flavour check disappeared
+rather than moving. The edit path passes `null`, which is honest: that item's permissions were
+checked when it was first sent.
+
 ## Task 3 — Stop rebuilding the world on every interaction
 
 `UpdatePanel()` is called from roughly a dozen places — mute, TTL, crop, spoiler toggle, item
