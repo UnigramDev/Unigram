@@ -51,6 +51,8 @@
         <AutoSuggestBox.TextBoxStyle>
             <Style TargetType="TextBox"
                    BasedOn="{StaticResource AutoSuggestBoxTextBoxStyle}">
+                <Setter Property="FontFamily"
+                        Value="{ThemeResource EmojiTextThemeFontFamily}" />
                 <Setter Property="Padding"
                         Value="38,5,6,6" />
             </Style>

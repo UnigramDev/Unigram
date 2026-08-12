@@ -82,13 +82,20 @@ namespace Telegram.Common
             if (xamlAutoFontFamilyDefault)
             {
                 XamlAutoFontFamily = emojiFontFamily;
-                this["EmojiTextThemeFontFamily"] = new FontFamily(emojiFontFamily + comma + xamlAutoFontFamilyValue);
             }
             else
             {
                 XamlAutoFontFamily = xamlAutoFontFamilyValue + comma + emojiFontFamily;
-                this["EmojiTextThemeFontFamily"] = new FontFamily(xamlAutoFontFamilyValue + comma + emojiFontFamily);
             }
+
+            // Text input only (TextBox, RichEditBox, ChatTextBox), and there the emoji font can't
+            // come first: the editor resolves the font once per run and it breaks runs at every
+            // space, so resolving each one against a packaged font file costs about a millisecond
+            // per word - seconds to paste a long text. Leading with the text font costs the emojis
+            // whose base character the text font already covers (keycaps, the copyright and
+            // trademark signs and so on) rendering as plain glyphs while composing. What gets
+            // sent is unaffected, and so is the bubble that renders it.
+            this["EmojiTextThemeFontFamily"] = new FontFamily(xamlAutoFontFamilyValue + comma + emojiFontFamily);
 
             this["ContentControlThemeFontFamily"] = new FontFamily(XamlAutoFontFamily);
             this["EmojiThemeFontFamily"] = new FontFamily(XamlAutoFontFamily);
