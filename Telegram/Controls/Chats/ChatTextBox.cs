@@ -392,25 +392,29 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            Document.GetText(TextGetOptions.NoHidden, out string text);
-
-            // This needs to run before text empty check as it cleans up
-            // some stuff it inline bot isn't found
-            if (SearchInlineBotResults(text, true, out string inlineQuery))
+            // This runs on every keystroke and every caret move, and the draft is the largest
+            // thing here, so only the branches that need it materialize it. Every path below
+            // still ends at ClearInlineBotResults, which is what the search did when it found
+            // nothing.
+            if (ViewModel.CurrentInlineBot != null)
             {
-                SetAutocomplete(null);
-                GetInlineBotResults(inlineQuery);
-                return;
+                Document.GetText(TextGetOptions.NoHidden, out string text);
+
+                if (SearchInlineBotResults(text, true, out string inlineQuery))
+                {
+                    SetAutocomplete(null);
+                    GetInlineBotResults(inlineQuery);
+                    return;
+                }
             }
 
-            if (string.IsNullOrEmpty(text) || Document.Selection.Length != 0)
+            if (IsEmpty || Document.Selection.Length != 0)
             {
                 ClearInlineBotResults();
                 SetAutocomplete(null);
                 return;
             }
 
-            var query = text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length));
             var selection = Document.Selection.GetClone();
 
             var prev = ViewModel.Autocomplete;
@@ -420,7 +424,7 @@ namespace Telegram.Controls.Chats
                 prev = collection.Source;
             }
 
-            if (TryGetAutocomplete(selection, text, query, prev, fromTextChanging, out var autocomplete, out bool recycle, out bool inline))
+            if (TryGetAutocomplete(selection, prev, fromTextChanging, out var autocomplete, out bool recycle, out bool inline))
             {
                 ClearInlineBotResults();
                 SetAutocomplete(autocomplete, recycle, inline);
@@ -431,18 +435,27 @@ namespace Telegram.Controls.Chats
                 CancelInlineBotToken();
 
                 var token = (_inlineBotToken = new CancellationTokenSource()).Token;
-                if (SearchByInlineBot(query, out string username, out _) && await ViewModel.ResolveInlineBotAsync(username, token))
-                {
-                    if (token.IsCancellationRequested)
-                    {
-                        return;
-                    }
 
-                    if (SearchInlineBotResults(text, true, out query))
+                // SearchByInlineBot only matches a username that starts the message, which one
+                // character answers without reading the rest of it
+                if (CharacterAt(0) == '@')
+                {
+                    Document.GetText(TextGetOptions.NoHidden, out string text);
+                    var query = text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length));
+
+                    if (SearchByInlineBot(query, out string username, out _) && await ViewModel.ResolveInlineBotAsync(username, token))
                     {
-                        SetAutocomplete(null);
-                        GetInlineBotResults(query);
-                        return;
+                        if (token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        if (SearchInlineBotResults(text, true, out query))
+                        {
+                            SetAutocomplete(null);
+                            GetInlineBotResults(query);
+                            return;
+                        }
                     }
                 }
 
@@ -450,7 +463,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private bool TryGetAutocomplete(ITextRange selection, string text, string query, IAutocompleteCollection prev, bool fromTextChanging, out IAutocompleteCollection autocomplete, out bool recycle, out bool inline)
+        private bool TryGetAutocomplete(ITextRange selection, IAutocompleteCollection prev, bool fromTextChanging, out IAutocompleteCollection autocomplete, out bool recycle, out bool inline)
         {
             autocomplete = null;
             recycle = false;
@@ -497,6 +510,9 @@ namespace Telegram.Controls.Chats
                 {
                     if (index == 0 && ViewModel.ComposerHeader?.Editing == null)
                     {
+                        // The message is a single emoji, so it is the sticker query
+                        Document.GetText(TextGetOptions.NoHidden, out string text);
+
                         ShowOrUpdateEmojiFlyout(0, new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, text, ViewModel.Chat?.Id ?? 0));
                         inline = true;
 

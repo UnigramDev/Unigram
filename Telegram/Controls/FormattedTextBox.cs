@@ -2051,6 +2051,13 @@ namespace Telegram.Controls
             return GetRange(ref _reusableProbe, startPosition, endPosition);
         }
 
+        // Shares the probe with the walk above, which is fine as long as this isn't called
+        // from inside one.
+        protected char CharacterAt(int position)
+        {
+            return GetReusableProbe(position, position + 1).Character;
+        }
+
         private ITextRange GetRange(ref ITextRange reusable, int startPosition, int endPosition)
         {
             if (reusable == null)

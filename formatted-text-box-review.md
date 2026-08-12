@@ -42,12 +42,13 @@ Everything below is unfixed. Check an item off in the same commit as its fix.
       `IClientService.LoadQuickReplyShortcuts()` now, asking once per session, so every caller
       gets that rather than each tracking it.
 
-- [ ] **The whole draft is materialized on every selection change** — `ChatTextBox.cs:391`.
-      This runs on every keystroke *and* every caret move. Only three paths need the string: the
-      inline-bot search (already skipped when there's no inline bot), the sticker branch of
-      `TryGetAutocomplete`, and `SearchByInlineBot` — which reads only up to the first space and
-      only matters when the message starts with `@`, something a one-character range read can
-      answer. Defer materializing it to those branches.
+- [x] **The whole draft is materialized on every selection change** — this runs on every
+      keystroke *and* every caret move. Only three paths needed the string: the inline-bot
+      search, which is dead without an inline bot to address; the sticker branch of
+      `TryGetAutocomplete`, which is reached only when the whole message is one emoji; and
+      `SearchByInlineBot`, which only matches a username starting the message — one character
+      answers that. `TryGetAutocomplete` never used the `text` and `query` it was handed, so
+      both parameters are gone.
 
 - [ ] **`UsernameCollection` re-queries `GetTopChats` for every autocomplete query** —
       `ChatTextBox.cs:719` and `:736`. Two round trips per `@` query; the top-chat lists barely
