@@ -34,11 +34,11 @@ Everything below is unfixed. Check an item off in the same commit as its fix.
       uses `Logger.TickCount` now: read once, and monotonic, so a clock correction can't leave
       the indicator silent until the clock catches up.
 
-- [ ] **`LoadQuickReplyShortcuts` is sent per keystroke while typing a command** —
-      `ChatTextBox.cs:669`. `GetCommands` runs for every new query that doesn't match the
-      previous `AutocompleteList`, so typing `/start` can send six identical requests. The
-      `// TODO: is this actually needed?` sitting on the line is the same question — answer it,
-      and if it is needed, send it once per chat rather than once per character.
+- [x] **`LoadQuickReplyShortcuts` is sent per keystroke while typing a command** — `GetCommands`
+      runs for every new query that doesn't match the previous `AutocompleteList`, so typing
+      `/start` sent six identical requests. Answering the `// TODO: is this actually needed?`
+      that sat on it: yes — `GetQuickReplyShortcuts` returns empty until the update it asks for
+      arrives, and the only other caller is a page the user may never open. Sent once now.
 
 - [ ] **The whole draft is materialized on every selection change** — `ChatTextBox.cs:391`.
       This runs on every keystroke *and* every caret move. Only three paths need the string: the
