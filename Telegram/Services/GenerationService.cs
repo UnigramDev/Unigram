@@ -374,8 +374,10 @@ namespace Telegram.Services
                     var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                     var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
-                    if (profile.Audio == null && generation.Mute && generation.TrimStartTime == null && generation.TrimStopTime == null)
+                    if (profile.Audio == null && generation.Mute && generation.TrimStartTime == null && generation.TrimStopTime == null && !generation.Transform)
                     {
+                        Logger.Info("No op, copying");
+
                         await CopyAsync(update, args);
                         return;
                     }
@@ -406,6 +408,8 @@ namespace Telegram.Services
 
                     if (generation.Transform)
                     {
+                        Logger.Info("Transcoding is needed");
+
                         var crop = generation.CropRectangle;
                         var empty = crop == default || (crop.Width == 0 && crop.Height == 0);
 
@@ -435,6 +439,8 @@ namespace Telegram.Services
                     var prepare = await transcoder.PrepareFileTranscodeAsync(file, temp, profile);
                     if (prepare.CanTranscode)
                     {
+                        Logger.Info("Can transcode");
+
                         var progress = prepare.TranscodeAsync();
                         //var progress = composition.RenderToFileAsync(temp, MediaTrimmingPreference.Precise, profile);
                         progress.Progress = (info, delta) =>
