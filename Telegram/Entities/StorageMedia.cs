@@ -273,9 +273,12 @@ namespace Telegram.Entities
                     {
                         media = await CreateAsync(files[index]);
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // One unreadable file must not take the rest of the drop with it.
+                        // One unreadable file must not take the rest of the drop with it. Worth
+                        // recording though: the per-type factories already return null for the
+                        // expected "this is not a photo" case, so reaching here is a surprise.
+                        Logger.Error(ex);
                     }
 
                     if (!cancellationToken.IsCancellationRequested)

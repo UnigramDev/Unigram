@@ -575,28 +575,15 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            if (root is AspectView aspect)
-            {
-                aspect.Constraint = new Size(storage.Width, storage.Height);
-            }
-
             var glyph = root.FindName("Glyph");
             if (glyph is AnimatedGlyphButton animated)
             {
                 animated.Tag = storage;
-                animated.Glyph = storage is StoragePhoto
-                    ? Icons.ImageFilled24
-                    : storage is StorageVideo or StorageAudio
-                    ? Icons.PlayFilled24
-                    : Icons.DocumentFilled24;
+                animated.Glyph = GlyphFor(storage);
             }
             else if (glyph is TextBlock text)
             {
-                text.Text = storage is StoragePhoto
-                    ? Icons.ImageFilled24
-                    : storage is StorageVideo or StorageAudio
-                    ? Icons.PlayFilled24
-                    : Icons.DocumentFilled24;
+                text.Text = GlyphFor(storage);
             }
 
             var title = root.FindName("Title") as TextBlock;
@@ -662,10 +649,9 @@ namespace Telegram.Views.Popups
         private void FileItem_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             var content = sender as Grid;
-            var storage = ScrollingHost.ItemFromContainer(content) as StorageMedia;
 
             var glyph = content.FindName("Glyph") as AnimatedGlyphButton;
-            glyph.Glyph = Icons.DeleteFilled24;
+            glyph?.Glyph = Icons.DeleteFilled24;
         }
 
         private void FileItem_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -674,7 +660,12 @@ namespace Telegram.Views.Popups
             var storage = content.DataContext as StorageMedia;
 
             var glyph = content.FindName("Glyph") as AnimatedGlyphButton;
-            glyph?.Glyph = storage is StoragePhoto
+            glyph?.Glyph = GlyphFor(storage);
+        }
+
+        private static string GlyphFor(StorageMedia storage)
+        {
+            return storage is StoragePhoto
                 ? Icons.ImageFilled24
                 : storage is StorageVideo or StorageAudio
                 ? Icons.PlayFilled24
@@ -1081,7 +1072,13 @@ namespace Telegram.Views.Popups
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                // The package is someone else's data and every read of it is a remote call, so
+                // this has to keep swallowing — but silently meant a paste that did nothing left
+                // nothing to look at.
+                Logger.Error(ex);
+            }
         }
 
         private void UpdateView()
@@ -1806,8 +1803,10 @@ namespace Telegram.Views.Popups
                     AppendFiles(files);
                 }
             }
-            catch { }
-
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
     }
 

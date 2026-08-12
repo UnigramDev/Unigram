@@ -329,19 +329,35 @@ The commented-out blocks in the constructor went too: they assign the `original*
 leaving them would have described members that no longer exist. Anyone reviving video compression
 starts from the Android implementation rather than from this, which never worked.
 
-## Task 6 — Smaller items
+## Task 6 — Smaller items — **done**
 
-- [ ] **6.1** `FileItem_PointerEntered`: `storage` is assigned and never used, and `content` is the
-  template root rather than the container, so `ItemFromContainer` returns null anyway.
-- [ ] **6.2** `OnContainerContentChanging`: the `root is AspectView` branch is unreachable. The
+Three of these did not survive a second look. They were written from reading, before measuring, and
+are corrected here rather than acted on — churning code for a cost that is not there is how a file
+gets worse, not better.
+
+- [x] **6.1** `FileItem_PointerEntered`: `storage` is assigned and never used, and `content` is the
+  template root rather than the container, so `ItemFromContainer` returns null anyway. Removed. Its
+  `glyph.Glyph` was also unguarded where the matching `PointerExited` uses `?.`; now both do.
+- [x] **6.2** `OnContainerContentChanging`: the `root is AspectView` branch is unreachable. The
   selector only returns `FileItemTemplate` or `AlbumTemplate`, both `Grid`-rooted; `MediaItemTemplate`
-  is only ever a `Button.ContentTemplate` inside `StorageAlbumPanel`.
-- [ ] **6.3** Six `root.FindName(...)` namescope walks per container realization, plus two `Substring`
-  allocations to split the filename extension.
-- [ ] **6.4** The constructor builds a log string with a `string.Format` per item and repeated
-  `StringBuilder.Prepend` (quadratic in characters) before the popup shows. `Logger.Info` is
-  unconditional, so this always runs.
-- [ ] **6.5** `HandlePackageAsync`, `Add_Click` and `StorageMedia.CreateAsync` all `catch { }` silently.
+  is only ever a `Button.ContentTemplate` inside `StorageAlbumPanel`. Removed.
+- [x] **6.3** ~~Six `root.FindName(...)` namescope walks per container realization, plus two
+  `Substring` allocations to split the filename extension.~~ **Overstated, closed as won't-fix.**
+  `FindName` on a template root is a namescope *table lookup*, not a tree walk, and the two
+  substrings are a few dozen bytes on a path that runs once per row realization — tens of times per
+  popup, not per frame. What was actually worth fixing there was duplication, not cost: the glyph
+  expression appeared three times and is now `GlyphFor`.
+- [x] **6.4** ~~The constructor builds a log string with a `string.Format` per item and repeated
+  `StringBuilder.Prepend` (quadratic in characters) before the popup shows.~~ **Wrong on both
+  counts, closed as won't-fix.** `Extensions.Prepend` is misnamed: it *appends*, writing the
+  separator first when the builder is non-empty. So it is linear, and the log is in natural order,
+  not reversed. That leaves one `string.Format` per item, once per popup.
+- [x] **6.5** `HandlePackageAsync`, `Add_Click` and `StorageMedia.CreateAsync` all `catch { }` silently.
+  The first two now log. So does the per-file catch in `ProbeAsync`, where reaching the handler is a
+  genuine surprise — the per-type factories already return null for the expected "this is not a
+  photo" case. The factories' own `catch { return null; }` is left alone deliberately: that is their
+  documented contract, and logging it would flood a 200-entry ring buffer that ships with crash
+  reports the moment someone shares a folder of unsupported files.
 - [ ] **6.6** `Add_Click` and drop-into-popup bypass the permission and file-size checks that
   `SendFileExecute` applies to the initial set, and do not dedupe against files already listed.
   Still open, and now deliberate: 2.6 routes appended files through the same pipeline, so `_validating`
@@ -351,8 +367,21 @@ starts from the Android implementation rather than from this, which never worked
 - [ ] **6.7** `StorageMedia.CreateAsync` uses `OfType<StorageFile>()`, so dropping a folder does
   nothing with no feedback. `StorageMedia.GetFilesAsync` now carries the same limitation for the
   package paths, and is the one place to fix it.
-- [ ] **6.8** `IsMediaAllowed` runs up to three LINQ passes and `TitleText` up to three more over
-  `Items`, on every `UpdateView()`.
+- [x] **6.8** ~~`IsMediaAllowed` runs up to three LINQ passes and `TitleText` up to three more over
+  `Items`, on every `UpdateView()`.~~ **Closed as won't-fix.** True as written and not worth acting
+  on: the lambdas are static, so the compiler caches them and nothing is allocated per call, and
+  `UpdateView` runs on the order of ten times per popup over at most a few hundred items. One pass
+  instead of three saves a few thousand type checks across the whole life of the popup. The
+  single-pass rewrite is not clearer either, so there is nothing left to buy.
+
+**Still open, both because they are decisions rather than wiring:**
+
+- **6.6** applying the permission guard to appended files. The guard is all-or-nothing, so wiring it
+  in as-is would close a popup that already holds a caption and a screen of files. Doing it properly
+  means dropping just the offending item and saying why.
+- **6.7** telling the user a dropped folder was ignored. Needs a string, and strings come from the
+  Android app through a generator that lives outside this repository — so it cannot be written and
+  compiled in one sitting.
 
 ## Task 7 — Reorder media inside an album (feature)
 
