@@ -287,6 +287,11 @@ namespace Telegram
         [HandleProcessCorruptedStateExceptions, SecurityCritical]
         private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs args)
         {
+            // A managed exception thrown inside a XAML callback comes back to whoever called into
+            // XAML as a failure HRESULT, so the crash reads as a bare COMException with no app frame
+            // beneath it. Handled below discards the original, and this is the last point it exists.
+            Logger.Error(args.Exception);
+
             args.Handled = args.Exception is not LayoutCycleException
                 && args.Exception.HResult != unchecked((int)0x8001010A);
 
