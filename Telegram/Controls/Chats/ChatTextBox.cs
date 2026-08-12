@@ -324,7 +324,7 @@ namespace Telegram.Controls.Chats
             Send();
         }
 
-        private DateTime _lastKeystroke;
+        private ulong _lastKeystroke;
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
         {
@@ -333,10 +333,14 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            var diff = DateTime.Now - _lastKeystroke;
-            if (diff.TotalSeconds > 4 || (_wasEmpty && !IsEmpty))
+            // Milliseconds since boot rather than the clock: this measures an interval, and
+            // DateTime.Now both resolves the time zone on every call and can jump backwards
+            // on a clock correction, which would leave the indicator silent until it caught up.
+            var timestamp = Logger.TickCount;
+
+            if (timestamp - _lastKeystroke > 4000 || (_wasEmpty && !IsEmpty))
             {
-                _lastKeystroke = DateTime.Now;
+                _lastKeystroke = timestamp;
                 ViewModel.ChatActionManager.SetTyping(new ChatActionTyping());
             }
         }

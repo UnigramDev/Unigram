@@ -29,10 +29,10 @@ Everything below is unfixed. Check an item off in the same commit as its fix.
 
 ## Performance
 
-- [ ] **`DateTime.Now` twice per keystroke** — `ChatTextBox.cs:336` and `:339`, in the typing
-      indicator. `Logger.cs` already documents that `Now` is expensive next to `UtcNow` (it
-      resolves the time zone on every call). `_lastKeystroke` is only ever compared against
-      itself, so `UtcNow` is a straight swap.
+- [x] **`DateTime.Now` twice per keystroke** — in the typing indicator. `Now` resolves the time
+      zone on every call, which `Logger.cs` already documents. It measures an interval, so it
+      uses `Logger.TickCount` now: read once, and monotonic, so a clock correction can't leave
+      the indicator silent until the clock catches up.
 
 - [ ] **`LoadQuickReplyShortcuts` is sent per keystroke while typing a command** —
       `ChatTextBox.cs:669`. `GetCommands` runs for every new query that doesn't match the
