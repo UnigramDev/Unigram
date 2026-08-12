@@ -8,11 +8,12 @@ Everything below is unfixed. Check an item off in the same commit as its fix.
 
 ## Bugs
 
-- [ ] **`_updateLocked` stays set if `GetFormattedText` throws** — `FormattedTextBox.cs:1263`
-      sets it and `:1479` clears it, with the whole TOM walk in between and no `try`/`finally`.
-      One exception disables `UpdateCustomEmoji` for the lifetime of the control (it early-returns
-      on `_updateLocked`), so custom emoji stop rendering in the box with no other symptom and no
-      way back. `SetText` already guards the same field this way at `:1596`-`:1612` — do the same.
+- [x] **`_updateLocked` stays set if `GetFormattedText` throws** — it set the field and cleared it
+      with the whole TOM walk in between and no `try`/`finally`. One exception disabled
+      `UpdateCustomEmoji` for the lifetime of the control (it early-returns on `_updateLocked`),
+      so custom emoji stopped rendering in the box with no other symptom and no way back. The
+      same went for `BatchDisplayUpdates`, which left the editor frozen. Split into
+      `GetFormattedTextImpl` the way `SetText` already was, with both undone in a `finally`.
 
 - [ ] **`_undoGroup` drifts if anything between `BeginUndoGroup` and `EndUndoGroup` throws** —
       pairs at `:346`, `:375`, `:1211`, `:1823`, `:1884`, `:2232`, `:2270`, `:2284`, none of them

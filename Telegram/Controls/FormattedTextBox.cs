@@ -1267,6 +1267,25 @@ namespace Telegram.Controls
                 Document.BatchDisplayUpdates();
             }
 
+            try
+            {
+                return GetFormattedTextImpl(clear, parseMarkdown, selection);
+            }
+            finally
+            {
+                // Leaving either of these set would be silent: the editor stays frozen, and
+                // UpdateCustomEmoji gives up for as long as the control lives.
+                _updateLocked = false;
+
+                if (clear)
+                {
+                    Document.ApplyDisplayUpdates();
+                }
+            }
+        }
+
+        private FormattedText GetFormattedTextImpl(bool clear, bool parseMarkdown, ITextRange selection)
+        {
             // TODO: reimplement using the same logic as UpdateFormat
 
             List<TextStyleRun> runs = null;
@@ -1473,10 +1492,7 @@ namespace Telegram.Controls
                 }
 
                 SelectionFlyout.Hide();
-                Document.ApplyDisplayUpdates();
             }
-
-            _updateLocked = false;
 
             var text = builder.ToString();
             var entities = TextStyleRun.GetEntities(text, runs);
