@@ -924,8 +924,15 @@ namespace Telegram.Services
             _cachedReactions.Clear();
 
             _chats.Clear();
-            _chatList.Clear();
-            _haveFullChatList.Clear();
+
+            // Clear() runs on the TDLib thread while the UI may have a list load in flight,
+            // so everything below takes the same lock its readers do. One after another and
+            // never nested, so no ordering is introduced.
+            lock (_chatList)
+            {
+                _chatList.Clear();
+                _haveFullChatList.Clear();
+            }
 
             _chatActions.Clear();
             _topicActions.Clear();
@@ -955,13 +962,25 @@ namespace Telegram.Services
             // _activeStories holds the story state itself; clearing only the ordering left
             // the previous account's stories reachable through GetActiveStories.
             _activeStories.Clear();
-            _storyList.Clear();
-            _haveFullStoryList.Clear();
 
-            _haveFullSavedMessages = false;
-            _savedMessages.Clear();
+            lock (_storyList)
+            {
+                _storyList.Clear();
+                _haveFullStoryList.Clear();
+            }
+
+            lock (_savedMessages)
+            {
+                _haveFullSavedMessages = false;
+                _savedMessages.Clear();
+            }
+
             _savedMessagesTopics.Clear();
-            _savedMessagesTags.Clear();
+
+            lock (_savedMessagesTags)
+            {
+                _savedMessagesTags.Clear();
+            }
 
             _settings.Notifications.Scope.Clear();
 
@@ -971,7 +990,10 @@ namespace Telegram.Services
 
             _groupCallMessageLevels = null;
 
-            _suggestedActions.Clear();
+            lock (_suggestedActions)
+            {
+                _suggestedActions.Clear();
+            }
 
             _savedAnimations = null;
             _recentStickers = null;
@@ -981,12 +1003,19 @@ namespace Telegram.Services
             _installedEmojiSets = null;
             _textCompositionStyles = null;
 
-            _chatFolders = Array.Empty<ChatFolderInfo>();
-            _chatFolders2.Clear();
+            lock (_chatFoldersLock)
+            {
+                _chatFolders = Array.Empty<ChatFolderInfo>();
+                _chatFolders2.Clear();
+            }
+
             _mainChatListPosition = 0;
             _areTagsEnabled = false;
 
-            _timezones.Clear();
+            lock (_timezones)
+            {
+                _timezones.Clear();
+            }
 
             _animationSearchParameters = null;
 

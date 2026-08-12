@@ -164,7 +164,8 @@ The two facts most of this rests on:
       A concurrent read during a resize doesn't throw, it spins. All three are
       low-frequency, which is exactly why this would be a bug that never reproduces.
 
-- [ ] **`Clear()` empties lock-guarded collections without their locks** — `ClientService.cs:914` **[live]**
+- [x] **`Clear()` empties lock-guarded collections without their locks** — `ClientService.cs:914` **[live]**
+      → fixed in the commit that checked this box
 
       **This replaces a mis-aimed item.** The original said `NewDictionary` /
       `DefaultDictionary` getters mutate on a miss — true — and concluded that
@@ -193,8 +194,11 @@ The two facts most of this rests on:
       out from under an enumerator, or a `Dictionary` mid-lookup. Narrow window, real
       corruption.
 
-      Fix is mechanical — wrap each group in the lock it already has. They are taken one
-      after another, never nested, so no ordering is introduced.
+      Fixed by wrapping each group in the lock it already has, taken one after another and
+      never nested, so no ordering is introduced. `_timezones` turned out to be a ninth
+      collection the table above missed — enumerating every `lock (_x)` target in the
+      partials found it, and that is the check to repeat rather than re-reading `Clear()`.
+      All nine lock objects are now held while their collection is emptied.
 
       **This was missed by the earlier `Clear()` fix**, which audited *which* fields were
       cleared and never asked whether clearing them was synchronized.
