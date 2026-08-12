@@ -146,7 +146,13 @@ namespace Telegram
                 {
                     stowed.Type = ex.GetType().Name;
                     stowed.Message = ex.Message;
-                    stowed.StackTrace = ex.StackTrace;
+
+                    // GetStowedException puts the originating description here when it can recover
+                    // one, and the cases where it can are exactly the ones where ex is a bare
+                    // E_FAIL - so keep both rather than letting the empty one win.
+                    stowed.StackTrace = string.IsNullOrEmpty(stowed.StackTrace)
+                        ? ex.StackTrace
+                        : stowed.StackTrace + "\n" + ex.StackTrace;
 
                     ProcessException(stowed, ex.HResult == unchecked((int)0x8001010A));
                 }

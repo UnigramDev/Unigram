@@ -286,7 +286,10 @@ namespace winrt::Telegram::Native::implementation
         //winrt::com_ptr<ILanguageExceptionErrorInfo2> info2;
         //winrt::com_ptr<IUnknown> language;
         winrt::com_ptr<IRestrictedErrorInfoContext> context;
-        STOWED_EXCEPTION_INFORMATION_V2* stowed;
+        STOWED_EXCEPTION_INFORMATION_V2* stowed = nullptr;
+
+        // Declared up here because CleanupIfFailed is a goto and cannot jump over an initialization.
+        hstring description;
 
         CleanupIfFailed(result, GetRestrictedErrorInfo(info.put()));
         //CleanupIfFailed(result, info->QueryInterface(info2.put()));
@@ -305,24 +308,56 @@ namespace winrt::Telegram::Native::implementation
 
         CleanupIfFailed(result, SetRestrictedErrorInfo(info.get()));
 
-        // TODO: Currently unused, we still propagate the managed exception and we get details from there
-        // Would be fine to use this method, but strings are a little messed up:
-        // "description" contains the exception message
-        // "restrictedDescription" contains the exception message + stack trace
-        //HRESULT error;
-        //BSTR description, restrictedDescription, capabilitySid;
-        //info->GetErrorDetails(&description, &error, &restrictedDescription, &capabilitySid);
+        // For a large family of failures the propagated managed exception is a bare E_FAIL with
+        // no message and a stack that only shows the watchdog rethrowing it, so this is the one
+        // place the originating description survives. "restrictedDescription" carries the message
+        // and its trace, "description" only the message.
+        {
+            HRESULT error;
+            BSTR bstrDescription = nullptr;
+            BSTR bstrRestricted = nullptr;
+            BSTR bstrCapabilitySid = nullptr;
 
-        CleanupIfFailed(result, info->QueryInterface(context.put()));
+            if (SUCCEEDED(info->GetErrorDetails(&bstrDescription, &error, &bstrRestricted, &bstrCapabilitySid)))
+            {
+                if (SysStringLen(bstrRestricted) > 0)
+                {
+                    description = hstring(bstrRestricted, SysStringLen(bstrRestricted));
+                }
+                else if (SysStringLen(bstrDescription) > 0)
+                {
+                    description = hstring(bstrDescription, SysStringLen(bstrDescription));
+                }
+            }
 
-        if (context == nullptr)
+            SysFreeString(bstrDescription);
+            SysFreeString(bstrRestricted);
+            SysFreeString(bstrCapabilitySid);
+        }
+
+        // Deliberately not CleanupIfFailed: the frames are the better signal, but losing them is
+        // no reason to throw the description away too.
+        if (SUCCEEDED(info->QueryInterface(context.put())) && context != nullptr
+            && SUCCEEDED(context->GetContext(&stowed)))
+        {
+            auto error = GetStowedException2(stowed);
+            if (error != nullptr)
+            {
+                if (!description.empty())
+                {
+                    error.StackTrace(description);
+                }
+
+                return error;
+            }
+        }
+
+        if (description.empty())
         {
             return nullptr;
         }
 
-        CleanupIfFailed(result, context->GetContext(&stowed));
-
-        return GetStowedException2(stowed);
+        return winrt::Telegram::Native::FatalError(L"", L"", description, winrt::single_threaded_vector<FatalErrorFrame>());
 
     Cleanup:
         return nullptr;
