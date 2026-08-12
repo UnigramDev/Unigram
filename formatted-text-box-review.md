@@ -53,9 +53,12 @@ Everything below is unfixed. Check an item off in the same commit as its fix.
       `ChatTextBox.cs:719` and `:736`. Two round trips per `@` query; the top-chat lists barely
       move within a session.
 
-- [ ] **A `CancellationTokenSource` per keystroke on the autocomplete path** —
-      `ChatTextBox.cs:365`, `:429`, `:558`. Each assignment drops the previous instance without
-      disposing it unless it happened to go through `CancelInlineBotToken`.
+- [x] **A `CancellationTokenSource` per keystroke on the autocomplete path** — `CancelEmoji`
+      both cancelled and allocated a replacement, and `SetAutocomplete` calls it on nearly every
+      keystroke with no query to hand the token to. It also dropped the cancelled source without
+      disposing it. Split into `CancelEmoji` and `BeginEmoji`, in `ChatTextBox` and in
+      `CaptionTextBox`, which carries a copy of the same code. `_inlineBotToken` was fine as it
+      was: every site that replaces it goes through `CancelInlineBotToken` first.
 
 ## Cleanup
 

@@ -173,7 +173,7 @@ namespace Telegram.Controls.Chats
                 {
                     _emojiQuery = null;
                     _emojiFlyout?.Hide();
-                    _emojiToken?.Cancel();
+                    CancelEmoji();
 
                     e.Handled = true;
                 }
@@ -556,11 +556,22 @@ namespace Telegram.Controls.Chats
         private string _emojiQuery;
         private CancellationTokenSource _emojiToken;
 
-        public CancellationTokenSource CancelEmoji()
+        public void CancelEmoji()
         {
-            _emojiToken?.Cancel();
-            _emojiToken = new();
-            return _emojiToken;
+            if (_emojiToken != null)
+            {
+                _emojiToken.Cancel();
+                _emojiToken.Dispose();
+                _emojiToken = null;
+            }
+        }
+
+        // Separate from cancelling, which happens on almost every keystroke and has no
+        // query of its own to hand a token to
+        private CancellationTokenSource BeginEmoji()
+        {
+            CancelEmoji();
+            return _emojiToken = new CancellationTokenSource();
         }
 
         private async void ShowOrUpdateEmojiFlyout(int index, IAutocompleteCollection collection)
@@ -570,7 +581,7 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            var token = CancelEmoji();
+            var token = BeginEmoji();
             var source = new AutocompleteCollection(collection);
 
             var result = await source.LoadMoreItemsAsync(0);
