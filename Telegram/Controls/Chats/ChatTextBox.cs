@@ -84,12 +84,81 @@ namespace Telegram.Controls.Chats
                     e.Handled = true;
                     await ViewModel.HandlePackageAsync(package);
                 }
+                // Rich content — from this app's editor, from Telegram Android, or from a
+                // browser — arrives as HTML. It becomes message text whenever it can be
+                // said with entities, and reopens the rich editor when it can't. The app's
+                // own inline format is preferred when both are on the clipboard: it carries
+                // exactly what the field can hold, so it never has to escalate.
+                else if (package.AvailableFormats.Contains(StandardDataFormats.Html)
+                    && !package.AvailableFormats.Contains("application/x-tl-field-tags"))
+                {
+                    e.Handled = true;
+
+                    if (!await TryPasteRichAsync(package))
+                    {
+                        base.OnPaste(e, package);
+                    }
+                }
                 else
                 {
                     base.OnPaste(e, package);
                 }
             }
             catch { }
+        }
+
+        /// <summary>
+        /// Pastes the clipboard's HTML as page blocks. Returns false when there is nothing
+        /// to paste that way, leaving the caller to fall back to plain text.
+        /// </summary>
+        private async Task<bool> TryPasteRichAsync(DataPackageView package)
+        {
+            IList<PageBlock> blocks;
+            bool own;
+
+            try
+            {
+                // CF_HTML wraps the markup in a header of byte offsets and a source URL.
+                var fragment = HtmlFormatHelper.GetStaticFragment(await package.GetHtmlFormatAsync());
+                own = RichHtml.IsOwnFragment(fragment);
+                blocks = RichHtml.Parse(fragment);
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (blocks.Count == 0)
+            {
+                return false;
+            }
+
+            // Everything a message can say: an ordinary formatted paste, entities and all.
+            if (PageBlockHelper.TryGetFormattedText(new RichMessage(blocks, false, true), out FormattedText text))
+            {
+                SetText(text.Text, text.Entities, true);
+                return true;
+            }
+
+            // Beyond that only our own content is worth a trip to the editor: it opens a
+            // separate window and it's a paid feature, so a heading copied from a web page
+            // falls back to a plain paste instead.
+            if (!own)
+            {
+                return false;
+            }
+
+            var start = Math.Min(Document.Selection.StartPosition, Document.Selection.EndPosition);
+            var end = Math.Max(Document.Selection.StartPosition, Document.Selection.EndPosition);
+
+            // What the field already held is split around the paste — the selection is
+            // replaced, as any paste would.
+            ViewModel.PasteRichMessage(
+                GetFormattedText(false, true, Document.GetRange(0, start)),
+                blocks,
+                GetFormattedText(false, true, Document.GetRange(end, TextConstants.MaxUnitCount)));
+
+            return true;
         }
 
         private OrientableListView _controlledList;

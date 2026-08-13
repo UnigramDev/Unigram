@@ -91,7 +91,7 @@ const FIGURE_TYPE = {
 
 // PageBlockHorizontalAlignment <-> the `align` attr, shared by table cells and
 // button rows.
-const alignType = (a) =>
+export const alignType = (a) =>
   a === "center" ? T("pageBlockHorizontalAlignmentCenter")
   : a === "right" ? T("pageBlockHorizontalAlignmentRight")
   : T("pageBlockHorizontalAlignmentLeft");
@@ -723,7 +723,7 @@ function blockFromTDLib(b, schema) {
   }
 }
 
-const alignName = (a) =>
+export const alignName = (a) =>
   a?.["@type"] === "pageBlockHorizontalAlignmentCenter" ? "center"
   : a?.["@type"] === "pageBlockHorizontalAlignmentRight" ? "right" : "left";
 const valignName = (v) =>

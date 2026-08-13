@@ -24,7 +24,7 @@
 
 import { DOMParser as PMDOMParser, DOMSerializer, Fragment, Slice } from "prosemirror-model";
 import { schema } from "./schema.js";
-import { richTextToPlain } from "./serialize.js";
+import { alignName, alignType, richTextToPlain } from "./serialize.js";
 
 // In-process registry of the media behind the last copy, keyed by file id.
 // Replaced wholesale on every copy (see RichClipboardSerializer below).
@@ -163,10 +163,15 @@ export const CLIPBOARD_NODES = {
         class: "pm-button",
         "data-button": json(node.attrs.button),
     }, richTextToPlain(node.attrs.button?.text) || ""],
+    // The whole block as TDLib JSON rather than its parts: the native side rebuilds
+    // it with ClientJson when this is pasted into a chat field (see RichHtml.cs).
     button_row: (node) => ["div", {
         class: "pm-button-row",
-        "data-buttons": json(node.attrs.buttons),
-        "data-align": node.attrs.align,
+        "data-block": json({
+            "@type": "pageBlockButtonRow",
+            buttons: node.attrs.buttons || [],
+            align: alignType(node.attrs.align),
+        }),
     }, ...(node.attrs.buttons || []).map(buttonLabel)],
 };
 
@@ -206,10 +211,26 @@ class RichClipboardSerializer extends DOMSerializer {
             const dom = super.serializeFragment(fragment, options, target);
             if (outermost) {
                 breakNewlines(dom, options.document || document);
+                markOrigin(dom);
             }
             return dom;
         } finally {
             this.depth--;
+        }
+    }
+}
+
+// Stamps the copy as this app's own. Pasting into a chat field only takes the rich
+// path — and only reopens the editor, a separate window and a premium feature — for
+// content the app itself wrote; a heading copied from a web page stays plain text.
+// Kept in sync with RichHtml.OriginAttribute on the native side.
+export const ORIGIN_ATTRIBUTE = "data-telegram-rich";
+
+function markOrigin(root) {
+    for (let node = root.firstChild; node; node = node.nextSibling) {
+        if (node.nodeType === 1) {
+            node.setAttribute(ORIGIN_ATTRIBUTE, "1");
+            return;
         }
     }
 }
@@ -363,8 +384,8 @@ export const CLIPBOARD_RULES = [
         tag: "div.pm-button-row",
         node: "button_row",
         getAttrs: (dom) => {
-            const buttons = parseJson(dom.getAttribute("data-buttons"));
-            return buttons ? { buttons, align: dom.getAttribute("data-align") || "left" } : false;
+            const block = parseJson(dom.getAttribute("data-block"));
+            return block?.buttons ? { buttons: block.buttons, align: alignName(block.align) } : false;
         },
     },
     { tag: "a[data-anchor]", node: "anchor", getAttrs: (dom) => ({ name: dom.getAttribute("data-anchor") || "" }) },

@@ -9,7 +9,7 @@ import { writeFileSync, mkdirSync } from "node:fs";
 mkdirSync("dist", { recursive: true });
 writeFileSync(
   "dist/_clipboard-entry.js",
-  'export { schema } from "../src/schema.js";\nexport { CLIPBOARD_NODES, CLIPBOARD_MARKS, CLIPBOARD_RULES, mediaClipboard, restoreNewlines } from "../src/clipboard.js";\n'
+  'export { schema } from "../src/schema.js";\nexport { CLIPBOARD_NODES, CLIPBOARD_MARKS, CLIPBOARD_RULES, mediaClipboard, restoreNewlines, ORIGIN_ATTRIBUTE } from "../src/clipboard.js";\n'
 );
 await build({
   entryPoints: ["dist/_clipboard-entry.js"],
@@ -19,7 +19,7 @@ await build({
   outfile: "dist/_clipboard.mjs",
   logLevel: "silent",
 });
-const { schema, CLIPBOARD_NODES, CLIPBOARD_MARKS, CLIPBOARD_RULES, mediaClipboard, restoreNewlines } =
+const { schema, CLIPBOARD_NODES, CLIPBOARD_MARKS, CLIPBOARD_RULES, mediaClipboard, restoreNewlines, ORIGIN_ATTRIBUTE } =
   await import("../dist/_clipboard.mjs?" + Date.now());
 
 let pass = 0, fail = 0;
@@ -55,6 +55,12 @@ ok("every node and mark in the schema has a clipboard spec", () => {
   const nodes = Object.keys(schema.nodes).filter((n) => n !== "doc" && !CLIPBOARD_NODES[n]);
   const marks = Object.keys(schema.marks).filter((n) => !CLIPBOARD_MARKS[n]);
   if (nodes.length || marks.length) throw new Error("missing: " + [...nodes, ...marks].join(", "));
+});
+
+ok("the origin marker matches the one the native side looks for", () => {
+  // RichHtml.OriginAttribute in Telegram/Common/RichHtml.cs. Only content carrying
+  // this reopens the rich editor on paste, so the two spellings must agree.
+  eq(ORIGIN_ATTRIBUTE, "data-telegram-rich", "attribute");
 });
 
 console.log("blocks:");
@@ -126,6 +132,22 @@ ok("a button keeps its label as text and the button in data-button", () => {
   eq(spec[0], "span", "tag");
   eq(spec[2], "Open", "label");
   eq(JSON.parse(spec[1]["data-button"]), button, "round-trip");
+});
+
+ok("a button row travels as the whole TDLib block, and comes back", () => {
+  const buttons = [{ "@type": "inlineButton", text: { "@type": "richTextPlain", text: "Go" } }];
+  const spec = CLIPBOARD_NODES.button_row(node("button_row", { buttons, align: "center" }));
+  const json = spec[1]["data-block"];
+  const block = JSON.parse(json);
+  // The native side rebuilds this with ClientJson, which needs a whole typed object.
+  eq(block["@type"], "pageBlockButtonRow", "block type");
+  eq(block.align["@type"], "pageBlockHorizontalAlignmentCenter", "align");
+  eq(block.buttons, buttons, "buttons");
+  eq(spec[2], ["span", { class: "pm-button" }, "Go"], "label");
+
+  const attrs = rule("div.pm-button-row").getAttrs(el("div", { "data-block": json }));
+  eq(attrs.align, "center", "align read back");
+  eq(attrs.buttons, buttons, "buttons read back");
 });
 
 console.log("media:");

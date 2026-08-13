@@ -2820,27 +2820,27 @@ namespace Telegram.ViewModels
 
         private DraftMessage _draft;
 
-        private async void ShowDraftMessage(Chat chat, bool force = true)
+        private DraftMessage GetDraftMessage()
         {
-            DraftMessage draft;
-
-            var thread = _thread;
             if (ForumTopic != null)
             {
-                draft = ForumTopic.DraftMessage;
+                return ForumTopic.DraftMessage;
             }
             else if (DirectMessagesChatTopic != null)
             {
-                draft = DirectMessagesChatTopic.DraftMessage;
+                return DirectMessagesChatTopic.DraftMessage;
             }
             else if (Thread != null)
             {
-                draft = Thread.DraftMessage;
+                return Thread.DraftMessage;
             }
-            else
-            {
-                draft = chat.DraftMessage;
-            }
+
+            return Chat.DraftMessage;
+        }
+
+        private async void ShowDraftMessage(Chat chat, bool force = true)
+        {
+            var draft = GetDraftMessage();
 
             if (!force)
             {
@@ -3640,10 +3640,51 @@ namespace Telegram.ViewModels
 
         public async void SendRichMessage()
         {
-            var text = GetFormattedText();
-            var message = new RichMessage(PageBlockHelper.ToPageBlocks(text), false, true);
+            RichMessage message;
+
+            var draft = GetDraftMessage();
+            if (draft?.Content is DraftMessageContentRichMessage richMessage)
+            {
+                message = richMessage.Message;
+            }
+            else
+            {
+                var text = GetFormattedText();
+                message = new RichMessage(PageBlockHelper.ToPageBlocks(text), false, true);
+            }
 
             // Carry the current reply into the editor; send options are picked with their defaults on send.
+            NavigationService.NavigateToTextEditor(ChatId, OutgoingTopicId, 0, message, GetReply(false));
+        }
+
+        /// <summary>
+        /// Opens the rich editor on what the text field held with <paramref name="blocks"/>
+        /// spliced in — where a paste ends up when the pasted content says more than a
+        /// message's text and entities can.
+        /// </summary>
+        public void PasteRichMessage(FormattedText before, IList<PageBlock> blocks, FormattedText after)
+        {
+            var composed = new List<PageBlock>();
+
+            // A rich draft holds more than the text field can show, so it — not the
+            // field — is what the paste lands in. Same source of truth as SendRichMessage.
+            var draft = GetDraftMessage();
+            if (draft?.Content is DraftMessageContentRichMessage richMessage)
+            {
+                composed.AddRange(richMessage.Message.Blocks);
+                composed.AddRange(blocks);
+            }
+            else
+            {
+                composed.AddRange(PageBlockHelper.ToPageBlocks(before));
+                composed.AddRange(blocks);
+                composed.AddRange(PageBlockHelper.ToPageBlocks(after));
+            }
+
+            var message = new RichMessage(composed, false, true);
+
+            // The field keeps its text: the editor is a separate window, and nothing is
+            // sent until it says so — same as SendRichMessage above.
             NavigationService.NavigateToTextEditor(ChatId, OutgoingTopicId, 0, message, GetReply(false));
         }
 
