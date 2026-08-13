@@ -240,6 +240,11 @@ namespace Telegram.Views.Popups
             return null;
         }
 
+        public void Focus()
+        {
+            _ = _webView.ExecuteScriptAsync("UnigramEditor.focus()");
+        }
+
         /// <summary>Loads a document into the editor. Round-trips with <see cref="GetModelAsync"/>.</summary>
         public void SetModel(RichMessage message)
         {

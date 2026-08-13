@@ -232,6 +232,7 @@
                     </Grid.ColumnDefinitions>
                     <controls:GlyphButton x:Name="UndoButton"
                                           Click="Undo_Click"
+                                          IsEnabled="False"
                                           AllowFocusOnInteraction="False"
                                           Width="40"
                                           Height="40"
@@ -240,6 +241,7 @@
                                           Padding="0" />
                     <controls:GlyphButton x:Name="RedoButton"
                                           Click="Redo_Click"
+                                          IsEnabled="False"
                                           AllowFocusOnInteraction="False"
                                           Width="40"
                                           Height="40"
@@ -408,6 +410,7 @@
         </Grid>
 
         <Grid x:Name="SelectionRoot"
+              Visibility="Collapsed"
               ColumnSpacing="8"
               Padding="12"
               Grid.Row="2">
