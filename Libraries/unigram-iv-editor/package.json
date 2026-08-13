@@ -12,7 +12,7 @@
     "build": "npm run bundle && npm run assemble",
     "build:shell": "npm run bundle && npm run assemble:shell",
     "dev": "npm run bundle:dev && npm run assemble:shell",
-    "test": "node test/serialize.test.mjs"
+    "test": "node test/serialize.test.mjs && node test/clipboard.test.mjs"
   },
   "dependencies": {
     "prosemirror-commands": "^1.7.1",

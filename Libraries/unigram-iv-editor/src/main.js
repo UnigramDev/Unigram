@@ -35,6 +35,7 @@ import {
   expandableTextView, expandableCreditView,
 } from "./nodeviews.js";
 import { toTDLib, toInputBlocks, fromTDLib } from "./serialize.js";
+import { clipboardParser, clipboardSerializer } from "./clipboard.js";
 
 const N = schema.nodes;
 const M = schema.marks;
@@ -1153,6 +1154,10 @@ export function mountEditor(mount, initialBlocks = []) {
 
   const view = new EditorView(mount, {
     state,
+    // Copy/paste speaks Android's RichHtml dialect rather than the editor's own
+    // render DOM, so a selection round-trips between the two clients.
+    clipboardSerializer,
+    clipboardParser,
     nodeViews: {
       custom_emoji: customEmojiView,
       // Double-click a formula -> emit { type:"mathExpression", ... } with the caret rect
