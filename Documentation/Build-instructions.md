@@ -1,11 +1,11 @@
 ## Requirements
 
 The following tools and SDKs are mandatory for the project development:
-* Visual Studio 2022, with
+* Visual Studio 2026, with
     * .NET desktop development
     * Desktop development with C++
     * Universal Windows Platform deveopment
-	    * Windows 11 SDK (10.0.22621.0)
+	    * Windows 11 SDK (10.0.26100.0)
  
 ## Getting started
 
@@ -33,60 +33,71 @@ namespace Telegram
 ## Dependencies
 
 Unigram uses NuGet for managed dependencies and vcpkg for unmanaged ones.
-Run the following commands to clone vcpkg:
+
+If the **vcpkg package manager** component is selected in the Visual Studio installer, there is
+nothing to do — the build finds the copy that ships with Visual Studio. Otherwise clone vcpkg
+next to this repository, so that `vcpkg` and `Unigram` are siblings:
 ```shell
 > git clone https://github.com/Microsoft/vcpkg.git
 > cd vcpkg
-> git checkout cff6ed45719c0162fa7065fdac90506a0add812c
 > ./bootstrap-vcpkg.bat
 ```
 
-Apply the patch contained in `Libraries\vcpkg.patch`.
+The build looks for vcpkg in that order, and `VCPKG_ROOT` overrides both if you keep it
+elsewhere.
 
-Now that vcpkg is ready, you must customize the **ffmpeg** port to be built with all the flags needed by the app:
-- Navigate to `vcpkg\ports\ffmpeg`
-- Open `portfile.cmake`
-- Locate `--enable-libvpx` and replace it with the following:
-```
---disable-everything --enable-protocol=file --enable-libopus --enable-libdav1d --enable-libvpx --enable-decoder=aac --enable-decoder=aac_at --enable-decoder=aac_fixed --enable-decoder=aac_latm --enable-decoder=aasc --enable-decoder=ac3 --enable-decoder=alac --enable-decoder=alac_at --enable-decoder=av1 --enable-decoder=eac3 --enable-decoder=flac --enable-decoder=gif --enable-decoder=h264 --enable-decoder=hevc --enable-decoder=libdav1d --enable-decoder=libvpx_vp8 --enable-decoder=libvpx_vp9 --enable-decoder=mp1 --enable-decoder=mp1float --enable-decoder=mp2 --enable-decoder=mp2float --enable-decoder=mp3 --enable-decoder=mp3adu --enable-decoder=mp3adufloat --enable-decoder=mp3float --enable-decoder=mp3on4 --enable-decoder=mp3on4float --enable-decoder=mpeg4 --enable-decoder=msmpeg4v2 --enable-decoder=msmpeg4v3 --enable-decoder=opus --enable-decoder=pcm_alaw --enable-decoder=pcm_alaw_at --enable-decoder=pcm_f32be --enable-decoder=pcm_f32le --enable-decoder=pcm_f64be --enable-decoder=pcm_f64le --enable-decoder=pcm_lxf --enable-decoder=pcm_mulaw --enable-decoder=pcm_mulaw_at --enable-decoder=pcm_s16be --enable-decoder=pcm_s16be_planar --enable-decoder=pcm_s16le --enable-decoder=pcm_s16le_planar --enable-decoder=pcm_s24be --enable-decoder=pcm_s24daud --enable-decoder=pcm_s24le --enable-decoder=pcm_s24le_planar --enable-decoder=pcm_s32be --enable-decoder=pcm_s32le --enable-decoder=pcm_s32le_planar --enable-decoder=pcm_s64be --enable-decoder=pcm_s64le --enable-decoder=pcm_s8 --enable-decoder=pcm_s8_planar --enable-decoder=pcm_u16be --enable-decoder=pcm_u16le --enable-decoder=pcm_u24be --enable-decoder=pcm_u24le --enable-decoder=pcm_u32be --enable-decoder=pcm_u32le --enable-decoder=pcm_u8 --enable-decoder=vorbis --enable-decoder=vp8 --enable-decoder=wavpack --enable-decoder=wmalossless --enable-decoder=wmapro --enable-decoder=wmav1 --enable-decoder=wmav2 --enable-decoder=wmavoice --enable-encoder=aac --enable-encoder=libopus --enable-parser=aac --enable-parser=aac_latm --enable-parser=flac --enable-parser=gif --enable-parser=h264 --enable-parser=hevc --enable-parser=mpeg4video --enable-parser=mpegaudio --enable-parser=opus --enable-parser=vorbis --enable-demuxer=aac --enable-demuxer=flac --enable-demuxer=gif --enable-demuxer=h264 --enable-demuxer=hevc --enable-demuxer=matroska --enable-demuxer=m4v --enable-demuxer=mov --enable-demuxer=mp3 --enable-demuxer=ogg --enable-demuxer=w64 --enable-demuxer=wav --enable-muxer=mp4 --enable-muxer=ogg --enable-muxer=opus
-```
-Now that everything is properly configured go back to the terminal and enter the following:
-```
-> ./vcpkg.exe install ffmpeg[dav1d,opus,vpx]:x64-uwp lz4:x64-uwp openssl:x64-uwp zlib:x64-uwp libogg:x64-uwp opus:x64-uwp boost-regex:x64-uwp
-> ./vcpkg.exe install ffmpeg[dav1d,opus,vpx]:arm64-uwp lz4:arm64-uwp openssl:arm64-uwp zlib:arm64-uwp libogg:arm64-uwp opus:arm64-uwp boost-regex:arm64-uwp
-> ./vcpkg.exe integrate install
-```
+Two things about that checkout matter:
 
-You can choose to install both `x64` and `arm64` or just opt for the architecture you need.
+- It must be **complete**. Manifest mode checks each port out of the vcpkg git history, so a
+  `--depth` or `--filter` clone fails with a confusing git error.
+- It must be **no older than the commit pinned in `vcpkg.json`**. vcpkg reads its version
+  database from the working tree rather than from the pinned commit, so an older checkout fails
+  with `no version database entry for <port> at <date>`. If you already have a vcpkg you have
+  used for something else, update it and re-bootstrap:
+  ```shell
+  > git fetch
+  > git checkout <the builtin-baseline commit from vcpkg.json>
+  > ./bootstrap-vcpkg.bat
+  ```
+  The build checks this before doing anything and tells you the exact commands if it is behind.
+
+That is the whole setup. There is no port to edit by hand, no patch to apply, and
+**do not** run `vcpkg integrate install` — the repository disables the machine-wide
+integration so that it always builds against its own pinned commit.
+
+Everything else comes from `vcpkg.json` in the repository root, which is a
+[manifest](https://learn.microsoft.com/vcpkg/consume/manifest-mode): it pins the vcpkg commit
+(`builtin-baseline`) and lists the libraries, and the build restores them on demand into
+`vcpkg_installed\<triplet>`.
+
+ffmpeg has to be built with a specific set of decoders, so it is vendored as an
+[overlay port](https://learn.microsoft.com/vcpkg/concepts/overlay-ports) in
+`Libraries\vcpkg-ports\ffmpeg`, taken from the vcpkg registry with the `--enable-*` list applied
+on top. It takes precedence over whichever ffmpeg version the pinned commit happens to carry.
+
+TDLib is built from the same manifest and the same installed tree, so the openssl and zlib it
+links are the ones the app ships.
 
 ### TDLib
-In order to communicate with Telegram servers, Unigram uses TDLib.
-Here is complete instruction for TDLib binaries building:
+In order to communicate with Telegram servers, Unigram uses TDLib. It comes as a submodule and is
+built by `Libraries\tdjson\build.ps1`, which exports `tdjson.dll`, its dependencies and
+`td_api.tl` into `Libraries\tdjson\<arch>` — the paths the app copies from.
 
-- Download and install Microsoft Visual Studio. Enable C++ and Windows 10 SDK support while installing.
-- Download and install CMake; choose "Add CMake to the system PATH" option while installing.
-- Download and install Git.
-- Download and unpack PHP. Add the path to php.exe to the PATH environment variable.
-- Close and re-open PowerShell if the PATH environment variable was changed.
-- Run these commands in PowerShell to build TDLib and to install it to td/tdlib:
+Two extra tools are needed for the code generation step:
+
+- **CMake** 4.4 or later, on PATH. Earlier versions have no Visual Studio 18 generator and will
+  silently fall back to an older toolset.
+- **PHP**, with `php.exe` on PATH.
+
+Then, from `Libraries\tdjson`:
 
 ```shell
-> git clone https://github.com/tdlib/td.git
-> cd td
-> git clone https://github.com/Microsoft/vcpkg.git
-> cd vcpkg
-> git checkout cff6ed45719c0162fa7065fdac90506a0add812c
-> ./bootstrap-vcpkg.bat
-> ./vcpkg.exe install gperf:x86-windows openssl:x64-uwp zlib:x64-uwp
-> ./vcpkg.exe install gperf:x86-windows openssl:arm64-uwp zlib:x64-uwp
-> cd ..
-> cd example/uwp
-> powershell -ExecutionPolicy ByPass ./build.ps1 -vcpkg_root ../../vcpkg -nupkg
+> powershell -ExecutionPolicy ByPass ./build.ps1 -arch x64,ARM64
 ```
 
-You can choose to install both `x64` and `arm64` or just opt for the architecture you need.
-Note that `gperf:x86-windows` is needed regardless of the architecture you choose.
-The resulting .nupkg file must be copied into Unigram\Libraries.
+The script picks up `VCPKG_ROOT` and builds against the manifest in the repository root, so
+openssl and zlib are the same builds the app links. You can choose to build both `x64` and
+`arm64` or just the architecture you need.
 
 ### LibVLC
 Unigram uses LibVLC to play videos and audio in the app. We can't use the system provided media player doesn't meet the app quality expectations.

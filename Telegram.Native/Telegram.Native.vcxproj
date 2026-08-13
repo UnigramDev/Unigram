@@ -43,7 +43,6 @@
     <CppWinRTNamespaceMergeDepth>2</CppWinRTNamespaceMergeDepth>
     <CppWinRTUsePrefixes>false</CppWinRTUsePrefixes>
     <CppWinRTOptimized>true</CppWinRTOptimized>
-    <VcpkgEnableClassic>true</VcpkgEnableClassic>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>

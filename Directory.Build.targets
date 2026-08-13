@@ -1,0 +1,63 @@
+<Project>
+
+  <Import Project="$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.targets"
+          Condition="'$(UnigramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.vcxproj' And Exists('$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.targets')" />
+
+  <Target Name="UnigramCheckVcpkgRoot" BeforeTargets="PrepareForBuild;BeforeBuild"
+          Condition="'$(UnigramUsesVcpkg)' == 'true'">
+    <Error Condition="'$(VcpkgRoot)' == ''"
+           Text="vcpkg was not found. Clone it next to this repository, install the vcpkg component in the Visual Studio installer, or set VCPKG_ROOT — see Documentation/Build-instructions.md." />
+    <Error Condition="'$(UnigramVcpkgTriplet)' == ''"
+           Text="No vcpkg triplet is defined for platform '$(Platform)'." />
+  </Target>
+
+  <!--
+    vcpkg reads the version database out of the checked-out working tree, not out of the commit
+    named by builtin-baseline, so a checkout older than the pin fails with "no version database
+    entry for <port> at <date>" — which does not hint at the real cause. Catch it up front.
+  -->
+  <Target Name="UnigramCheckVcpkgBaseline" BeforeTargets="PrepareForBuild;BeforeBuild"
+          DependsOnTargets="UnigramCheckVcpkgRoot"
+          Condition="'$(UnigramUsesVcpkg)' == 'true' And '$(VcpkgRoot)' != '' And Exists('$(VcpkgRoot)\.git')">
+    <PropertyGroup>
+      <_UnigramVcpkgBaseline>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(UnigramRoot)vcpkg.json')), '(?&lt;="builtin-baseline"\s*:\s*")[0-9a-f]{40}').Value)</_UnigramVcpkgBaseline>
+    </PropertyGroup>
+    <Exec Command="git -C &quot;$(VcpkgRoot)&quot; merge-base --is-ancestor $(_UnigramVcpkgBaseline) HEAD"
+          Condition="'$(_UnigramVcpkgBaseline)' != ''"
+          IgnoreExitCode="true" StandardOutputImportance="low" StandardErrorImportance="low">
+      <Output TaskParameter="ExitCode" PropertyName="_UnigramVcpkgBaselineExitCode" />
+    </Exec>
+    <!-- Only exit code 1 means "not an ancestor". Anything else (no git on PATH, a shallow clone)
+         is not something to fail the build over. -->
+    <Error Condition="'$(_UnigramVcpkgBaselineExitCode)' == '1'"
+           Text="The vcpkg checkout at $(VcpkgRoot) is older than the commit pinned in vcpkg.json. Run: git -C &quot;$(VcpkgRoot)&quot; fetch &amp;&amp; git -C &quot;$(VcpkgRoot)&quot; checkout $(_UnigramVcpkgBaseline) &amp;&amp; &quot;$(VcpkgRoot)\bootstrap-vcpkg.bat&quot;" />
+  </Target>
+
+  <!--
+    Put the vcpkg runtime DLLs both in the output folder (so F5 works) and in the package.
+    Both destinations are fed from ReferenceCopyLocalPaths: the native projects copy them next to
+    their own binary and hand them to the app through CopyLocalFilesOutputGroup, and the app adds
+    them again so its own output folder is self-contained.
+
+    This has to be a target rather than a plain ItemGroup: on a first build vcpkg_installed does
+    not exist yet at evaluation time, so a static glob would silently expand to nothing and
+    produce a package with missing DLLs. ResolveReferences runs after the project references have
+    been built, by which point vcpkg has restored the tree.
+
+    openssl and zlib are excluded: they are in the manifest for TDLib's sake, and tdjson.dll ships
+    the copies it was linked against from Libraries/tdjson, which Telegram.csproj already copies by
+    name. Letting both in would put two different builds of libcrypto-3-x64.dll under the same
+    name in the package. Neither native component links openssl.
+  -->
+  <Target Name="UnigramAddVcpkgRuntimeDlls" BeforeTargets="ResolveReferences"
+          Condition="'$(UnigramUsesVcpkg)' == 'true'">
+    <ItemGroup>
+      <UnigramVcpkgRuntimeDll Include="$(UnigramVcpkgBinDir)*.dll"
+                              Exclude="$(UnigramVcpkgBinDir)zlib1.dll;$(UnigramVcpkgBinDir)libcrypto-3*.dll;$(UnigramVcpkgBinDir)libssl-3*.dll;$(UnigramVcpkgBinDir)legacy.dll" />
+      <ReferenceCopyLocalPaths Include="@(UnigramVcpkgRuntimeDll)" />
+    </ItemGroup>
+    <Warning Condition="'@(UnigramVcpkgRuntimeDll)' == ''"
+             Text="No vcpkg runtime DLLs found in $(UnigramVcpkgBinDir). The package will be missing them at runtime." />
+  </Target>
+
+</Project>

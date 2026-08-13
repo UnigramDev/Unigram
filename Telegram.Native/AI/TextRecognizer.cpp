@@ -237,7 +237,7 @@ namespace winrt::Telegram::Native::AI::implementation
 
         DetachHook();
 
-        auto img = ZXing::ImageView(data + desc.StartIndex, cols, rows, ZXing::ImageFormat::BGRX, step);
+        auto img = ZXing::ImageView(data + desc.StartIndex, cols, rows, ZXing::ImageFormat::BGRA, step);
         auto opts = ZXing::ReaderOptions();
         opts.setTryHarder(true);
         opts.setTryRotate(true);

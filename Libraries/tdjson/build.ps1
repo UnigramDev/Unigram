@@ -1,5 +1,5 @@
 param (
-  [string]$vcpkg_root = $(throw "-vcpkg_root=<path to vcpkg> is required"),
+  [string]$vcpkg_root = $(if ($env:VCPKG_ROOT) { $env:VCPKG_ROOT } else { throw "-vcpkg_root=<path to vcpkg> is required, or set VCPKG_ROOT" }),
   [ValidateSet('x86', 'x64', 'ARM', 'ARM64', IgnoreCase = $false)]
   [string[]]$arch = @( "x86", "x64", "ARM", "ARM64" ),
   [string]$mode = "all"
@@ -11,6 +11,11 @@ $vcpkg_root = Resolve-Path $vcpkg_root
 $vcpkg_cmake="${vcpkg_root}\scripts\buildsystems\vcpkg.cmake"
 $arch_list = $arch
 $td_root = Resolve-Path "../tdlib"
+
+# TDLib and the app share one manifest and one installed tree, so that openssl and zlib cannot
+# drift between the tdjson.dll we ship and the copies the app links against.
+$manifest_root = Resolve-Path "../.."
+$installed_root = Join-Path $manifest_root "vcpkg_installed"
 
 function CheckLastExitCode {
   if ($LastExitCode -ne 0) {
@@ -52,7 +57,8 @@ function config {
     if ($arch -eq "x86") {
       $fixed_arch = "win32"
     }
-    cmake -A $fixed_arch -DCMAKE_SYSTEM_VERSION="10.0" -DCMAKE_SYSTEM_NAME="WindowsStore" -DCMAKE_TOOLCHAIN_FILE="$vcpkg_cmake" -DTD_ENABLE_MULTI_PROCESSOR_COMPILATION=ON "$td_root"
+    $triplet = "$($arch.ToLower())-uwp"
+    cmake -A $fixed_arch -DCMAKE_SYSTEM_VERSION="10.0" -DCMAKE_SYSTEM_NAME="WindowsStore" -DCMAKE_TOOLCHAIN_FILE="$vcpkg_cmake" -DVCPKG_MANIFEST_DIR="$manifest_root" -DVCPKG_INSTALLED_DIR="$installed_root" -DVCPKG_TARGET_TRIPLET="$triplet" -DTD_ENABLE_MULTI_PROCESSOR_COMPILATION=ON "$td_root"
     CheckLastExitCode
     cd ..
   }

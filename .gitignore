@@ -279,3 +279,6 @@ _Pvt_Extensions
 /Libraries/tdjson/td_api.tl
 /Libraries/tdjson/build-native
 /.claude/settings.local.json.bak
+
+# vcpkg manifest mode installs here
+/vcpkg_installed/

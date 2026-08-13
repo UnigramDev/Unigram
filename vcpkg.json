@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "unigram",
+  "version-string": "0.0.0",
+  "builtin-baseline": "c3867e714dd3a51c272826eea77267876517ed99",
+  "dependencies": [
+    "boost-regex",
+    {
+      "name": "ffmpeg",
+      "features": [ "dav1d", "opus", "vpx" ]
+    },
+    "libogg",
+    "libyuv",
+    "lz4",
+    "nu-book-zxing-cpp",
+    "openssl",
+    "opus",
+    "zlib"
+  ]
+}

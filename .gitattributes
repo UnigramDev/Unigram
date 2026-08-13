@@ -63,3 +63,12 @@
 #*.RTF   diff=astextplain
 
 Telegram/Strings/en/Resources.xml text eol=lf
+
+###############################################################################
+# vcpkg overlay ports
+#
+# vcpkg applies the .patch files with `git apply`, which rejects them if the
+# working tree copies have been converted to CRLF. Keep the whole port as it
+# comes from the vcpkg registry.
+###############################################################################
+Libraries/vcpkg-ports/** text eol=lf
