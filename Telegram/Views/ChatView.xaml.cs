@@ -125,6 +125,7 @@ namespace Telegram.Views
         private bool _isTextReadOnly = false;
 
         private bool _needActivation = true;
+        private bool _deactivated;
 
         public ChatView()
         {
@@ -432,6 +433,16 @@ namespace Telegram.Views
 
         public void Deactivate(bool navigation)
         {
+            // A preview hosted in a flyout tears down from both the flyout's Closed and the
+            // view's Unloaded, in whichever order they arrive: the second pass would touch
+            // peers the first one already released.
+            if (_deactivated)
+            {
+                return;
+            }
+
+            _deactivated = true;
+
             if (ViewModel != null)
             {
                 ViewModel.Dispose();
@@ -524,6 +535,8 @@ namespace Telegram.Views
 
         public void Activate(DialogViewModel viewModel)
         {
+            _deactivated = false;
+
             Logger.Info($"ItemsPanelRoot.Children.Count: {Messages.ItemsPanelRoot?.Children.Count}");
             Logger.Info($"Items.Count: {Messages.Items.Count}");
 

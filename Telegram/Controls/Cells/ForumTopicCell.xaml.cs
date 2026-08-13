@@ -695,16 +695,22 @@ namespace Telegram.Controls.Cells
             chatView.Activate(viewModel);
             _ = viewModel.NavigatedToAsync(new ChatMessageTopic(chat.Id, new MessageTopicForum(_topic.Info.ForumTopicId)), Windows.UI.Xaml.Navigation.NavigationMode.New, new Telegram.Navigation.Services.NavigationState());
 
+            // Unloaded doesn't fire for a view hosted in a flyout, so the flyout's own Closed
+            // is what tears the preview down; Unloaded stays subscribed in case it does arrive
+            // first, and Deactivate ignores whichever of the two comes second.
             void handler(object sender, object e)
             {
-                Logger.Info("Unloaded");
+                Logger.Info(sender == flyout ? "Closed" : "Unloaded");
 
-                flyout.Closing -= handler;
+                flyout.Closed -= handler;
+                chatView.Unloaded -= handler;
+
                 chatView.ViewModel.NavigatedFrom(null, false);
                 chatView.Deactivate(true);
             }
 
-            flyout.Closing += handler;
+            flyout.Closed += handler;
+            chatView.Unloaded += handler;
 
             var background = new ChatBackgroundControl();
             background.Update(_viewModel.ClientService, null);
