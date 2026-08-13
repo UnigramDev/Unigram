@@ -30,12 +30,14 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Core.Preview;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Popups
@@ -56,6 +58,10 @@ namespace Telegram.Views.Popups
 
         private bool _closedExpected;
 
+        // The popup's own window, not the chat's: focus has to be taken back when it activates.
+        private readonly WindowContext _window;
+        private bool _ready;
+
         private string _translateToLanguage;
 
         public TextEditorRichPopup(IClientService clientService, INavigationService navigationService, long chatId, MessageTopic topic, long messageId, RichMessage message, InputMessageReplyTo replyTo = null, MessageSendOptions sendOptions = null)
@@ -70,6 +76,7 @@ namespace Telegram.Views.Popups
             // to THIS window (forwards navigations — e.g. the premium promo — back to the source window),
             // like WebAppPage.
             _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, WindowContext.Current);
+            _window = WindowContext.Current;
             _chatId = chatId;
             _topic = topic;
             _messageId = messageId;
@@ -100,6 +107,11 @@ namespace Telegram.Views.Popups
                 EntityShadow.Shadow = shadow;
                 EntityShadow.Translation = translation;
             }
+
+            // The window is shown after its content exists, and activating it moves focus to
+            // the first focusable element in the tree — a toolbar button. Focusing the editor
+            // when it reports ready is undone by that, so take focus on activation too.
+            _window.Activated += OnWindowActivated;
 
             Initialize(message);
         }
@@ -140,6 +152,7 @@ namespace Telegram.Views.Popups
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Unloaded -= OnUnloaded;
+            _window.Activated -= OnWindowActivated;
             _aggregator?.Unsubscribe(this);
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
         }
@@ -229,6 +242,43 @@ namespace Telegram.Views.Popups
         {
         }
 
+        private void OnWindowActivated(object sender, WindowActivatedEventArgs e)
+        {
+            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+            {
+                // Low priority: XAML assigns its own initial focus while activating, and
+                // whichever runs last wins.
+                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, TryFocus);
+            }
+        }
+
+        private void TryFocus()
+        {
+            if (!_ready)
+            {
+                return;
+            }
+
+            // The window is activated as soon as its content exists (ViewService.OpenAsync),
+            // which is long before CoreWebView2 does: XAML's initial focus lands on the
+            // WebView2 while it has no controller to forward it to, and that GotFocus goes
+            // nowhere. Focusing it from here is then a no-op — it already has focus — so the
+            // caret only ever appeared after re-activating the window, which raises GotFocus
+            // again. Moving focus off and back does the same thing on a cold open.
+            if (ReferenceEquals(FocusManager.GetFocusedElement(XamlRoot), View))
+            {
+                FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
+            }
+
+            // Both halves, in this order. Focusing the control is what routes the keyboard
+            // into the web content; only then does focusing the document leave a caret
+            // behind. The other way round sets document.activeElement and nothing else.
+            if (View.Focus(FocusState.Programmatic))
+            {
+                _commands.Focus();
+            }
+        }
+
         private RichEditorState _state;
         private RichEditorCommands _commands;
 
@@ -256,6 +306,11 @@ namespace Telegram.Views.Popups
 
                     //PostEvent("setTheme", "accent", "#ff0000", "dark", false);
                     //PostEvent("setModel", _message.ToJson());
+
+                    // There is nothing to focus until the document exists, so the activation
+                    // handler waits on this — and this covers the window already being active.
+                    _ready = true;
+                    TryFocus();
                 }
                 else if (type == "result")
                 {

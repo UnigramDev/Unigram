@@ -174,8 +174,9 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <!-- No Source: Initialize navigates to the same file through the editor.unigram
+             virtual host, and setting both loads the whole editor twice. -->
         <muxc:WebView2 x:Name="View"
-                       Source="ms-appx-web:///Assets/editor.html"
                        Grid.Row="0"
                        Grid.RowSpan="3" />
 
