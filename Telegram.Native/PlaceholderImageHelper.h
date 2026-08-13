@@ -302,6 +302,16 @@ namespace winrt::Telegram::Native::implementation
             m_nineGridCache.clear();
             m_svgCacheList.clear();
             m_svgCacheIndex.clear();
+
+            // The DWrite factory is shared process-wide, so a loader that is never unregistered
+            // stays on it for the rest of the session, one per window thread. The collection goes
+            // first: the loader has to stay registered for as long as anything built from it lives.
+            if (m_customLoader && m_dwriteFactory)
+            {
+                m_fontCollection = nullptr;
+                m_dwriteFactory->UnregisterFontCollectionLoader(m_customLoader.get());
+                m_customLoader = nullptr;
+            }
         }
 
         HRESULT HandleDeviceLost()

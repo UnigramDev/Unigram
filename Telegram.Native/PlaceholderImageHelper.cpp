@@ -95,8 +95,9 @@ namespace winrt::Telegram::Native::implementation
             , m_index(0)
         {
             auto keys = static_cast<const wchar_t* const*>(collectionKey);
+            auto count = collectionKeySize / sizeof(const wchar_t*);
 
-            m_filenames = std::vector<const wchar_t*>(keys, keys + 2);
+            m_filenames = std::vector<const wchar_t*>(keys, keys + count);
             m_factory.copy_from(factory);
         }
 
@@ -130,7 +131,31 @@ namespace winrt::Telegram::Native::implementation
     class CustomFontLoader
         : public winrt::implements<CustomFontLoader, IDWriteFontCollectionLoader>
     {
+        // DWrite keeps its own copy of the collection key and hands it back to
+        // CreateEnumeratorFromKey whenever it needs to rebuild the collection, so the strings the
+        // key points at have to live as long as the loader is registered, not as long as the call
+        // that creates the collection.
+        hstring m_paths[2];
+        const wchar_t* m_key[2];
+
     public:
+        CustomFontLoader(hstring const& fontPath, hstring const& emojiPath)
+            : m_paths{ fontPath, emojiPath }
+            , m_key{ m_paths[0].c_str(), m_paths[1].c_str() }
+        {
+        }
+
+        void const* Key() const noexcept
+        {
+            return m_key;
+        }
+
+        // Byte count, as DWrite expects: it copies collectionKeySize bytes out of the key.
+        uint32_t KeySize() const noexcept
+        {
+            return static_cast<uint32_t>(sizeof(m_key));
+        }
+
         IFACEMETHODIMP2 CreateEnumeratorFromKey(
             IDWriteFactory* factory,
             void const* collectionKey,
@@ -989,19 +1014,13 @@ namespace winrt::Telegram::Native::implementation
 
         m_customEmoji = winrt::make_self<CustomEmojiInlineObject>();
 
-        hstring path1 = Package::Current().InstalledLocation().Path() + L"\\Assets\\Fonts\\Telegram.ttf";
-        hstring path2 = Package::Current().InstalledLocation().Path() + L"\\Assets\\Emoji\\apple.ttf";
+        hstring path = Package::Current().InstalledLocation().Path();
 
-        auto keySize = path1.size() + path2.size();
-        const wchar_t* keys[]
-        {
-            path1.c_str(),
-            path2.c_str()
-        };
+        auto loader = winrt::make_self<CustomFontLoader>(path + L"\\Assets\\Fonts\\Telegram.ttf", path + L"\\Assets\\Emoji\\apple.ttf");
+        m_customLoader = loader.as<IDWriteFontCollectionLoader>();
 
-        m_customLoader = winrt::make_self<CustomFontLoader>();
         ReturnIfFailed(result, m_dwriteFactory->RegisterFontCollectionLoader(m_customLoader.get()));
-        ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.get(), keys, keySize, m_fontCollection.put()));
+        ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.get(), loader->Key(), loader->KeySize(), m_fontCollection.put()));
         ReturnIfFailed(result, m_dwriteFactory->GetSystemFontCollection(m_systemCollection.put()));
 
         for (auto familyName : { L"Cascadia Mono", L"Consolas" })
