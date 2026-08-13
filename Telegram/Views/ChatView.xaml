@@ -1246,6 +1246,7 @@
                             </HyperlinkButton>
 
                             <Grid x:Name="TextFieldPanel"
+                                  SizeChanged="TextField_SizeChanged"
                                   Grid.Column="1"
                                   Grid.ColumnSpan="2"
                                   Grid.Row="1">
@@ -1265,8 +1266,7 @@
                                                    MaxHeight="192"
                                                    TextChanging="TextField_TextChanging"
                                                    Capture="TextField_Tapped"
-                                                   Sending="TextField_Sending"
-                                                   SizeChanged="TextField_SizeChanged" />
+                                                   Sending="TextField_Sending" />
                                 <contents:InstantContent x:Name="DraftField"
                                                          Margin="38,13,0,10" />
                             </Grid>
