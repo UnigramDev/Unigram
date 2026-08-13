@@ -15,13 +15,5 @@ namespace Telegram.Entities
             : base(file, fileSize)
         {
         }
-
-        public StorageDocument(StorageMedia original)
-            : base(original.File, original.Size)
-        {
-            Original = original;
-        }
-
-        public StorageMedia Original { get; }
     }
 }

@@ -408,7 +408,7 @@
                     <local:StorageMediaTemplateSelector.AlbumTemplate>
                         <DataTemplate>
                             <Grid>
-                                <local:StorageAlbumPanel ItemTemplate="{StaticResource MediaItemTemplate}"
+                                <local:MosaicPanel ItemTemplate="{StaticResource MediaItemTemplate}"
                                                          ItemClick="Album_ItemClick"
                                                          Margin="0,0,-2,6" />
 

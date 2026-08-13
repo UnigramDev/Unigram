@@ -463,22 +463,46 @@ chat as soon as its `InputMessageContent` is built.
 
 ## Task 7 — Reorder media inside an album (feature)
 
+- [x] **7.0** Split the row model out of the send model, as Task 7's precursor.
+
+  `StorageAlbum` was answering two questions at once. It means *one outgoing message*, which is
+  what `GetItemsView` produces — but the template selector was reading it as *a row that draws a
+  mosaic*, and those disagree in both directions. So `UpdateCollection` had to lie three times: a
+  standalone muted video got wrapped in a fake one-item album with a **negative ordinal** to keep
+  its thumbnail; a documents album got expanded and its grouping thrown away; and a files-mode row
+  got its item wrapped in a `StorageDocument` purely for the glyph — which `ItemsView_CollectionChanged`
+  then had to unwrap again with `Original ?? document`.
+
+  The list now holds `StorageRow`: `MosaicRow` (media drawn as a mosaic, 1..N) or `FileRow` (one
+  item, plus the `AsDocument` flag that used to be a wrapper object). The selector asks the question
+  it means. `StorageAlbum` goes back to being purely a send grouping — `Ordinal`, `Update`, the
+  mosaic layout and the display constants all moved to `MosaicRow`, and `StorageAlbumPanel` became
+  `MosaicPanel` so the naming stops contradicting itself.
+
+  **It fixed a live bug on the way.** `OnContainerContentChanging` set the delete button's `Tag` to
+  the *displayed* item, and `Remove_Click` looks that up in `Items` — but in files mode the
+  displayed item was a `StorageDocument` wrapper that was never in `Items`, so `Items.Remove` found
+  nothing. Deleting a photo or video row in "send as files" mode silently did nothing. `FileRow.Media`
+  is the item itself, so the lookup succeeds.
+
+  `StorageDocument`'s wrapping constructor and its `Original` property went with it: the popup was
+  their only consumer.
+
 - [ ] **7.1** The `ListView` already has `CanReorderItems`/`CanDragItems`, so the *rows* can be
   dragged — an album as a whole, or a file row. There is no way to reorder the media **within** an
   album, or to move one from one album to another, and order is what decides both the mosaic layout
   and which ten photos end up in which message.
 
-Notes for whoever picks this up:
+Notes for whoever picks this up, now that 7.0 has landed:
 
-- The media inside an album are `Button`s parented by `StorageAlbumPanel`, a bare `Grid` that
-  arranges them from `StorageAlbum.GetPositionsForWidth`. There is no items control involved, so
-  none of the ListView drag machinery applies — it needs its own pointer handling, hit-tested
-  against the mosaic rectangles the panel already computes in `MeasureOverride`.
-- Writing the result back is the easy half: `ItemsView_CollectionChanged` already rebuilds `Items`
-  by walking `ItemsView` and flattening `album.Media`, so mutating `Media` in place and re-running
-  that path keeps `Items` — the collection that actually gets sent — in step.
-- Dragging across an album boundary changes album membership, which changes every following album's
-  contents. `StorageAlbum.Ordinal` identity handles that: the albums stay the same items and
-  `UpdateItem` carries the new contents over, so nothing gets torn down.
-- Worth deciding first whether reorder should also be able to *split* an album, which is currently
-  only decided by `UpdateCollection` counting to `StorageAlbum.MAX_ITEMS`.
+- The media inside a row are `Button`s parented by `MosaicPanel`, a bare `Grid` that arranges them
+  from `MosaicRow.GetPositionsForWidth`. There is no items control involved, so none of the ListView
+  drag machinery applies — it needs its own pointer handling, hit-tested against the rectangles the
+  panel already computes in `MeasureOverride`.
+- The drag target is a `MosaicRow`: a display object that owns an ordered media list and knows its
+  rects. Reordering mutates `MosaicRow.Media` and `ItemsView_CollectionChanged` flattens it back
+  into `Items` — the collection that actually gets sent — with no pretending a message changed.
+- Telegram Desktop only reorders *within* one album, which is a real simplification and worth
+  copying: membership never changes, so no regrouping and no renumbering.
+- Worth deciding first whether reorder should also be able to *split* a row, which is currently
+  only decided by `GetItemsView` counting to `StorageAlbum.MAX_ITEMS`.

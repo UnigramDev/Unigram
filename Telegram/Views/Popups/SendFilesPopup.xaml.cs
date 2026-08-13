@@ -51,12 +51,12 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class SendFilesPopup : ContentPopup, IViewWithAutocomplete, INotifyPropertyChanged, IDiffHandler<StorageMedia>
+    public sealed partial class SendFilesPopup : ContentPopup, IViewWithAutocomplete, INotifyPropertyChanged, IDiffHandler<StorageRow>
     {
         public ComposeViewModel ViewModel { get; private set; }
         public MvxObservableCollection<StorageMedia> Items { get; private set; }
 
-        public DiffObservableCollection<StorageMedia> ItemsView { get; private set; }
+        public DiffObservableCollection<StorageRow> ItemsView { get; private set; }
 
         private readonly StorageThumbnailCache _thumbnails = new();
 
@@ -310,7 +310,7 @@ namespace Telegram.Views.Popups
             DataContext = viewModel;
             ViewModel = viewModel;
 
-            ItemsView = new DiffObservableCollection<StorageMedia>(this, Constants.DiffOptions);
+            ItemsView = new DiffObservableCollection<StorageRow>(this, Constants.DiffOptions);
 
             // Seeded rather than loaded, so a caller handing over typed items can read Items back
             // the moment the popup closes. Only what the source still owes arrives later.
@@ -541,11 +541,11 @@ namespace Telegram.Views.Popups
             if (args.InRecycleQueue)
             {
                 // The container keeps its template while queued, so the ImageBrush would go on
-                // rooting the decoded bitmap. Read the album off the panel rather than args.Item,
+                // rooting the decoded bitmap. Read the media off the panel rather than args.Item,
                 // which is not guaranteed to survive into the recycle notification.
                 if (args.ItemContainer.ContentTemplateRoot is Grid recycled
                     && recycled.Children.Count > 0
-                    && recycled.Children[0] is StorageAlbumPanel recycledPanel)
+                    && recycled.Children[0] is MosaicPanel recycledPanel)
                 {
                     ReleaseThumbnails(recycledPanel);
                 }
@@ -555,35 +555,42 @@ namespace Telegram.Views.Popups
 
             args.Handled = true;
 
-            var storage = args.Item as StorageMedia;
-            if (storage == null)
-            {
-                return;
-            }
-
             var root = args.ItemContainer.ContentTemplateRoot as Grid;
             if (root == null)
             {
                 return;
             }
 
-            if (root.Children[0] is StorageAlbumPanel albumPanel && storage is StorageAlbum album)
+            if (args.Item is MosaicRow mosaic)
             {
-                UpdatePaidMedia(root);
+                if (root.Children[0] is MosaicPanel panel)
+                {
+                    UpdatePaidMedia(root);
 
-                albumPanel.UpdateMessage(album);
+                    panel.UpdateMessage(mosaic);
+                }
+
                 return;
             }
+
+            if (args.Item is not FileRow file)
+            {
+                return;
+            }
+
+            var storage = file.Media;
 
             var glyph = root.FindName("Glyph");
             if (glyph is AnimatedGlyphButton animated)
             {
+                // The item itself, not a wrapper standing in for it: Remove_Click looks this up in
+                // Items, and in files mode the wrapper was never in there to be found.
                 animated.Tag = storage;
-                animated.Glyph = GlyphFor(storage);
+                animated.Glyph = GlyphFor(file);
             }
             else if (glyph is TextBlock text)
             {
-                text.Text = GlyphFor(storage);
+                text.Text = GlyphFor(file);
             }
 
             var title = root.FindName("Title") as TextBlock;
@@ -595,7 +602,8 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            if (storage is StorageAudio audio)
+            // Files mode names the file rather than the track, as it always has.
+            if (!file.AsDocument && storage is StorageAudio audio)
             {
                 if (string.IsNullOrEmpty(audio.Performer) || string.IsNullOrEmpty(audio.Title))
                 {
@@ -657,17 +665,24 @@ namespace Telegram.Views.Popups
         private void FileItem_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             var content = sender as Grid;
-            var storage = content.DataContext as StorageMedia;
 
             var glyph = content.FindName("Glyph") as AnimatedGlyphButton;
-            glyph?.Glyph = GlyphFor(storage);
+            if (content.DataContext is FileRow file)
+            {
+                glyph?.Glyph = GlyphFor(file);
+            }
         }
 
-        private static string GlyphFor(StorageMedia storage)
+        private static string GlyphFor(FileRow row)
         {
-            return storage is StoragePhoto
+            if (row.AsDocument)
+            {
+                return Icons.DocumentFilled24;
+            }
+
+            return row.Media is StoragePhoto
                 ? Icons.ImageFilled24
-                : storage is StorageVideo or StorageAudio
+                : row.Media is StorageVideo or StorageAudio
                 ? Icons.PlayFilled24
                 : Icons.DocumentFilled24;
         }
@@ -763,7 +778,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void ReleaseThumbnails(StorageAlbumPanel panel)
+        private void ReleaseThumbnails(MosaicPanel panel)
         {
             foreach (var child in panel.Children)
             {
@@ -773,7 +788,7 @@ namespace Telegram.Views.Popups
                 }
             }
 
-            _thumbnails.Release(panel.Album);
+            _thumbnails.Release(panel.Media);
         }
 
         public void Accept()
@@ -1105,22 +1120,9 @@ namespace Telegram.Views.Popups
                 : Visibility.Collapsed;
         }
 
-        /// <summary>
-        /// Files mode marks everything with the document glyph, which is what the wrapper carries.
-        /// </summary>
-        private StorageMedia AsRow(StorageMedia item)
-        {
-            if (IsFilesSelected && item is not StorageDocument)
-            {
-                return new StorageDocument(item);
-            }
-
-            return item;
-        }
-
         private void UpdateCollection()
         {
-            var view = new List<StorageMedia>();
+            var view = new List<StorageRow>();
 
             // The same grouping the send path uses, so an album on screen is a message that will
             // be sent. The popup had its own, which split only on the ten-item limit and so showed
@@ -1132,8 +1134,9 @@ namespace Telegram.Views.Popups
             // filtering here could only blank out an item the popup exists to show.
             var grouped = ComposeViewModel.GetItemsView(Items, IsAlbum, IsFilesSelected, true, true, true, true);
 
-            // Ordinals for the one-item albums below, kept out of the way of the grouping's own.
-            var standalone = 0;
+            // Counted over mosaic rows only, so a file row appearing or going between two of them
+            // does not renumber everything after it and force a rebuild.
+            var mosaics = 0;
 
             foreach (var item in grouped)
             {
@@ -1141,7 +1144,7 @@ namespace Telegram.Views.Popups
                 {
                     if (album.Type is StorageAlbumType.Media or StorageAlbumType.NotSupported)
                     {
-                        view.Add(album);
+                        view.Add(new MosaicRow(mosaics++, album.Media));
                         continue;
                     }
 
@@ -1149,20 +1152,18 @@ namespace Telegram.Views.Popups
                     // way and they stay the rows they have always been.
                     foreach (var media in album.Media)
                     {
-                        view.Add(AsRow(media));
+                        view.Add(new FileRow(media, IsFilesSelected));
                     }
                 }
                 else if (!IsFilesSelected && item is StoragePhoto or StorageVideo)
                 {
                     // The grouping leaves a muted video on its own because it is sent as its own
-                    // message. It is still a video though, so it gets a one-item album and keeps
-                    // its thumbnail rather than dropping to a file row. Sending cannot tell the
-                    // difference: a one-item album and a bare item take the same path.
-                    view.Add(new StorageAlbum(--standalone, StorageAlbumType.Media, new[] { item }));
+                    // message. It is still a video, so it draws as a mosaic of one.
+                    view.Add(new MosaicRow(mosaics++, new[] { item }));
                 }
                 else
                 {
-                    view.Add(AsRow(item));
+                    view.Add(new FileRow(item, IsFilesSelected));
                 }
             }
 
@@ -1184,11 +1185,11 @@ namespace Telegram.Views.Popups
             {
                 void UpdateSelectorItem(Grid content)
                 {
-                    if (content.Children[0] is StorageAlbumPanel album)
+                    if (content.Children[0] is MosaicPanel mosaic)
                     {
                         UpdatePaidMedia(content);
 
-                        foreach (var child in album.Children)
+                        foreach (var child in mosaic.Children)
                         {
                             if (child is ContentControl { ContentTemplateRoot: Grid inner })
                             {
@@ -1234,9 +1235,9 @@ namespace Telegram.Views.Popups
 
                 _panelPending = false;
 
-                ScrollingHost.ForEach<StorageMedia>((selector, item) =>
+                ScrollingHost.ForEach<StorageRow>((selector, item) =>
                 {
-                    if (item is StoragePhoto or StorageVideo or StorageAlbum && selector.ContentTemplateRoot is Grid content)
+                    if (item is MosaicRow && selector.ContentTemplateRoot is Grid content)
                     {
                         UpdateSelectorItem(content);
                     }
@@ -1293,19 +1294,15 @@ namespace Telegram.Views.Popups
         {
             var items = new List<StorageMedia>();
 
-            foreach (var item in ItemsView)
+            foreach (var row in ItemsView)
             {
-                if (item is StorageAlbum album)
+                if (row is MosaicRow mosaic)
                 {
-                    items.AddRange(album.Media);
+                    items.AddRange(mosaic.Media);
                 }
-                else if (item is StorageDocument document)
+                else if (row is FileRow file)
                 {
-                    items.Add(document.Original ?? document);
-                }
-                else
-                {
-                    items.Add(item);
+                    items.Add(file.Media);
                 }
             }
 
@@ -1736,54 +1733,40 @@ namespace Telegram.Views.Popups
             UpdatePanel();
         }
 
-        public bool CompareItems(StorageMedia oldItem, StorageMedia newItem)
+        public bool CompareItems(StorageRow oldItem, StorageRow newItem)
         {
-            if (oldItem is StorageAlbum oldAlbum && newItem is StorageAlbum newAlbum)
+            if (oldItem is MosaicRow oldMosaic && newItem is MosaicRow newMosaic)
             {
-                // Identity, not contents: comparing the media made a growing album a different
-                // item, so every batch of arriving photos rebuilt it from nothing. UpdateItem
-                // carries the new contents over instead.
-                return oldAlbum.Ordinal == newAlbum.Ordinal;
+                // Identity, not contents: comparing the media made a growing row a different item,
+                // so every batch of arriving photos rebuilt it from nothing. UpdateItem carries
+                // the new contents over instead.
+                return oldMosaic.Index == newMosaic.Index;
             }
-            if (oldItem is StoragePhoto oldPhoto && newItem is StoragePhoto newPhoto)
+            else if (oldItem is FileRow oldFile && newItem is FileRow newFile)
             {
-                // Compare crop etc
-                return oldPhoto.File.Path == newPhoto.File.Path;
+                return oldFile.Media.File?.Path == newFile.Media.File?.Path
+                    && oldFile.Media.GetType() == newFile.Media.GetType()
+                    && oldFile.AsDocument == newFile.AsDocument;
             }
-            else if (oldItem is StorageVideo oldVideo && newItem is StorageVideo newVideo)
-            {
-                // Compare crop etc
-                return oldVideo.File.Path == newVideo.File.Path;
-            }
-            else
-            {
-                return oldItem.File?.Path == newItem.File?.Path
-                    && oldItem.GetType() == newItem.GetType();
-            }
+
+            return false;
         }
 
-        public void UpdateItem(StorageMedia oldItem, StorageMedia newItem)
+        public void UpdateItem(StorageRow oldItem, StorageRow newItem)
         {
             // The collection keeps the old instance, so the new contents have to be moved onto it.
-            if (oldItem is StorageAlbum album)
+            if (oldItem is MosaicRow mosaic && newItem is MosaicRow updated)
             {
-                if (newItem is StorageAlbum updated)
-                {
-                    album.Update(updated.Media);
-                }
-                else
-                {
-                    album.Invalidate();
-                }
+                mosaic.Update(updated.Media);
 
-                var container = ScrollingHost.ContainerFromItem(album) as SelectorItem;
+                var container = ScrollingHost.ContainerFromItem(mosaic) as SelectorItem;
                 var content = container?.ContentTemplateRoot as Grid;
 
-                // Nothing to do when it is not realized: OnContainerContentChanging reads the
-                // album again on the way in.
-                if (content != null && content.Children[0] is StorageAlbumPanel panel)
+                // Nothing to do when it is not realized: OnContainerContentChanging reads the row
+                // again on the way in.
+                if (content != null && content.Children[0] is MosaicPanel panel)
                 {
-                    panel.UpdateMessage(album);
+                    panel.UpdateMessage(mosaic);
                 }
             }
         }
@@ -1810,6 +1793,133 @@ namespace Telegram.Views.Popups
         }
     }
 
+    /// <summary>
+    /// A row of the popup's list — what gets drawn, which is not the same question as what gets
+    /// sent. A <see cref="StorageAlbum"/> is one outgoing message; the two disagree in both
+    /// directions, so the list holds these instead of holding send objects and pretending.
+    /// </summary>
+    public abstract partial class StorageRow
+    {
+    }
+
+    /// <summary>
+    /// Media drawn as a mosaic. Usually one album's worth, but not always: the grouping leaves a
+    /// muted video standalone because it is sent on its own, and it is still a video.
+    /// </summary>
+    public sealed partial class MosaicRow : StorageRow
+    {
+        public MosaicRow(int index, IList<StorageMedia> media)
+        {
+            Index = index;
+            Media = media;
+        }
+
+        /// <summary>
+        /// Position among the rows, and this row's identity while diffing: one that gains a photo
+        /// is the same row with new contents rather than a different row. Without that, every
+        /// arriving photo tears its container down and builds it again, which costs a full
+        /// remeasure and throws away the thumbnails the containers were holding.
+        /// </summary>
+        public int Index { get; }
+
+        public IList<StorageMedia> Media { get; private set; }
+
+        public void Update(IList<StorageMedia> media)
+        {
+            Media = media;
+            Invalidate();
+        }
+
+        public const double ITEM_MARGIN = 2;
+        public const double MAX_WIDTH = 420 + ITEM_MARGIN;
+        public const double MAX_HEIGHT = 420 + ITEM_MARGIN;
+
+        private ((Rect, MosaicItemPosition)[], Size)? _positions;
+
+        public void Invalidate()
+        {
+            _positions = null;
+        }
+
+        public (Rect[], Size) GetPositionsForWidth(double w)
+        {
+            var positions = _positions ??= MosaicAlbumLayout.chatMessageBubbleMosaicLayout(MAX_WIDTH, MAX_HEIGHT, GetSizes());
+            if (positions.Item1.Length == 1)
+            {
+                var size = new Size(Media[0].ActualWidth, Media[0].ActualHeight);
+                var rect = new Rect(0, 0, size.Width, size.Height);
+
+                positions = (new[] { (rect, MosaicItemPosition.None) }, size);
+            }
+
+            var ratioX = w / positions.Item2.Width;
+            var ratioY = positions.Item2.Height * ratioX > MAX_HEIGHT ? MAX_HEIGHT / positions.Item2.Height : ratioX;
+
+            var rects = new Rect[positions.Item1.Length];
+
+            for (int i = 0; i < rects.Length; i++)
+            {
+                var rect = positions.Item1[i].Item1;
+                var x = Sanitize(rect.X * ratioX);
+                var y = Sanitize(rect.Y * ratioY);
+                var width = Sanitize(rect.Width * ratioX);
+                var height = Sanitize(rect.Height * ratioY);
+
+                if (rects.Length == 1)
+                {
+                    height = Math.Clamp(height, 98, MAX_HEIGHT);
+                }
+
+                rects[i] = new Rect(x, y, width, height);
+            }
+
+            var finalWidth = Sanitize(positions.Item2.Width * ratioX);
+            var finalHeight = Sanitize(positions.Item2.Height * ratioY);
+
+            if (rects.Length == 1)
+            {
+                finalHeight = Math.Clamp(finalHeight, 98, MAX_HEIGHT);
+            }
+
+            return (rects, new Size(finalWidth, finalHeight));
+        }
+
+        private static double Sanitize(double value)
+        {
+            value = Math.Max(0, value);
+            value = double.IsNaN(value) ? 0 : value;
+            value = double.IsInfinity(value) ? 0 : value;
+
+            return value;
+        }
+
+        private IEnumerable<Size> GetSizes()
+        {
+            foreach (var media in Media)
+            {
+                yield return new Size(media.ActualWidth, media.ActualHeight);
+            }
+        }
+    }
+
+    /// <summary>
+    /// One item drawn as a named row. <see cref="AsDocument"/> is the files-mode glyph, which used
+    /// to be carried by wrapping the item in a <see cref="StorageDocument"/> — a wrapper that then
+    /// had to be unwrapped again to get back to the item the popup actually holds.
+    /// </summary>
+    public sealed partial class FileRow : StorageRow
+    {
+        public FileRow(StorageMedia media, bool asDocument)
+        {
+            Media = media;
+            AsDocument = asDocument;
+        }
+
+        public StorageMedia Media { get; }
+
+        public bool AsDocument { get; }
+    }
+
     public partial class StorageMediaTemplateSelector : DataTemplateSelector
     {
         public DataTemplate FileTemplate { get; set; }
@@ -1820,23 +1930,23 @@ namespace Telegram.Views.Popups
         {
             return item switch
             {
-                StorageAlbum => AlbumTemplate,
+                MosaicRow => AlbumTemplate,
                 _ => FileTemplate
             };
         }
     }
 
-    public sealed partial class StorageAlbumPanel : Grid
+    public sealed partial class MosaicPanel : Grid
     {
-        private StorageAlbum _album;
+        private MosaicRow _row;
 
-        public StorageAlbumPanel()
+        public MosaicPanel()
         {
             // I don't like this much, but it's the easier way to add margins between children
-            Margin = new Thickness(0, 0, -StorageAlbum.ITEM_MARGIN, -StorageAlbum.ITEM_MARGIN);
+            Margin = new Thickness(0, 0, -MosaicRow.ITEM_MARGIN, -MosaicRow.ITEM_MARGIN);
         }
 
-        public StorageAlbum Album => _album;
+        public IList<StorageMedia> Media => _row?.Media;
 
         private (Rect[], Size) _positions;
 
@@ -1850,13 +1960,13 @@ namespace Telegram.Views.Popups
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var album = _album;
-            if (album == null || album.Media.Count < 1)
+            var row = _row;
+            if (row == null || row.Media.Count < 1)
             {
                 return base.MeasureOverride(availableSize);
             }
 
-            var positions = album.GetPositionsForWidth(availableSize.Width);
+            var positions = row.GetPositionsForWidth(availableSize.Width);
 
             for (int i = 0; i < Math.Min(positions.Item1.Length, Children.Count); i++)
             {
@@ -1869,8 +1979,8 @@ namespace Telegram.Views.Popups
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var album = _album;
-            if (album == null || album.Media.Count < 1)
+            var row = _row;
+            if (row == null || row.Media.Count < 1)
             {
                 return base.ArrangeOverride(finalSize);
             }
@@ -1896,11 +2006,11 @@ namespace Telegram.Views.Popups
         /// runs again on every one of those: rebuilding it each time discards the templates and
         /// makes every surviving item re-request the thumbnail it already had.
         /// </summary>
-        public void UpdateMessage(StorageAlbum album)
+        public void UpdateMessage(MosaicRow row)
         {
-            _album = album;
+            _row = row;
 
-            var media = album.Media;
+            var media = row.Media;
 
             while (Children.Count > media.Count)
             {
@@ -1936,9 +2046,9 @@ namespace Telegram.Views.Popups
                     VerticalContentAlignment = VerticalAlignment.Stretch,
                     MinWidth = 0,
                     MinHeight = 0,
-                    MaxWidth = StorageAlbum.MAX_WIDTH,
-                    MaxHeight = StorageAlbum.MAX_HEIGHT,
-                    Margin = new Thickness(0, 0, StorageAlbum.ITEM_MARGIN, StorageAlbum.ITEM_MARGIN),
+                    MaxWidth = MosaicRow.MAX_WIDTH,
+                    MaxHeight = MosaicRow.MAX_HEIGHT,
+                    Margin = new Thickness(0, 0, MosaicRow.ITEM_MARGIN, MosaicRow.ITEM_MARGIN),
                     Padding = new Thickness(0),
                     Style = BootStrapper.Current.Resources["EmptyButtonStyle"] as Style
                 };
@@ -1966,7 +2076,7 @@ namespace Telegram.Views.Popups
         }
 
         public static readonly DependencyProperty ItemTemplateProperty =
-            DependencyProperty.Register("ItemTemplate", typeof(DataTemplate), typeof(StorageAlbumPanel), new PropertyMetadata(null));
+            DependencyProperty.Register("ItemTemplate", typeof(DataTemplate), typeof(MosaicPanel), new PropertyMetadata(null));
     }
 
     /// <summary>
@@ -2082,14 +2192,14 @@ namespace Telegram.Views.Popups
             _inflight.Remove(media);
         }
 
-        public void Release(StorageAlbum album)
+        public void Release(IEnumerable<StorageMedia> items)
         {
-            if (album == null)
+            if (items == null)
             {
                 return;
             }
 
-            foreach (var media in album.Media)
+            foreach (var media in items)
             {
                 _cache.Remove(media);
                 _inflight.Remove(media);
