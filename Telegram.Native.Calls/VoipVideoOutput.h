@@ -536,6 +536,10 @@ private:
             return;
         }
 
+        // The effect and the three bitmaps were realized on the device that's being replaced:
+        // using them against a context from the new device fails with D2DERR_WRONG_RESOURCE_DOMAIN.
+        ReleaseShader();
+
         if (m_surface)
         {
             m_resourcesValid = true;
@@ -720,7 +724,7 @@ public:
 
         if (m_disposed.load()) return S_FALSE;
 
-        if (finalSize.cx != m_surfaceSize.cx || finalSize.cy != finalSize.cy)
+        if (finalSize.cx != m_surfaceSize.cx || finalSize.cy != m_surfaceSize.cy)
         {
             result = m_surface->Resize(finalSize);
             if (FAILED(result))
