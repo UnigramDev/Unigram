@@ -88,19 +88,30 @@ namespace Telegram.Views.Profile
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var topic = ScrollingHost.ItemFromContainer(sender) as SavedMessagesTopic;
+            if (ScrollingHost.ItemFromContainer(sender) is not ForumTopic topic)
+            {
+                return;
+            }
+
+            var viewModel = ViewModel?.TopicsTab;
+            if (viewModel?.Chat is not Chat chat)
+            {
+                return;
+            }
+
+            // ToggleForumTopicIsPinned and DeleteForumTopic both require CanManageTopics,
+            // as in ForumView's own topic menu.
+            var canManage = viewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup)
+                && supergroup.CanManageTopics();
+
             var flyout = new MenuFlyout();
 
-            if (topic.IsPinned)
+            if (canManage)
             {
-                flyout.CreateFlyoutItem(ViewModel.SavedChatsTab.UnpinTopic, topic, Strings.UnpinFromTop, Icons.PinOff);
+                // PinTopic toggles, there's no separate unpin command on the topics side.
+                flyout.CreateFlyoutItem(viewModel.PinTopic, topic, topic.IsPinned ? Strings.UnpinFromTop : Strings.PinToTop, topic.IsPinned ? Icons.PinOff : Icons.Pin);
+                flyout.CreateFlyoutItem(viewModel.DeleteTopic, topic, Strings.Delete, Icons.Delete, destructive: true);
             }
-            else
-            {
-                flyout.CreateFlyoutItem(ViewModel.SavedChatsTab.PinTopic, topic, Strings.PinToTop, Icons.Pin);
-            }
-
-            flyout.CreateFlyoutItem(ViewModel.SavedChatsTab.DeleteTopic, topic, Strings.Delete, Icons.Delete, destructive: true);
 
             flyout.ShowAt(sender, args);
         }
