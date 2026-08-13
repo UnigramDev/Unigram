@@ -113,6 +113,13 @@ namespace Telegram.Controls.Drawers
             // so we can safely clean up any kind of anything from here.
             _zoomer.Release();
             Bindings.StopTracking();
+
+            // Same as EmojiDrawer: the bindings' last value keeps a CollectionChanged handler
+            // on the view model's collections alive past UnloadObject, and the view model can
+            // still queue an Update from the aggregator.
+            List.ItemsSource = null;
+            StickersSource.Source = null;
+            Toolbar.ItemsSource = null;
         }
 
         public void LoadVisibleItems()
