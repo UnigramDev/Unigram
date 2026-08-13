@@ -59,6 +59,9 @@ namespace Telegram.Services
 
         private static readonly SemaphoreSlim _extractLock = new(1, 1);
 
+        // Presence of this file is what marks the model as ready, both here and in TextRecognizer.
+        private const string ModelFileName = "oneocr.onemodel";
+
         private long _fileToken;
 
         private long? _chatId;
@@ -88,7 +91,7 @@ namespace Telegram.Services
         {
             var destination = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Ocr", CreationCollisionOption.OpenIfExists);
 
-            var available = await destination.TryGetItemAsync("oneocr.onemodel");
+            var available = await destination.TryGetItemAsync(ModelFileName);
             if (available != null)
             {
                 return TryCreateRecognizer();
@@ -143,8 +146,12 @@ namespace Telegram.Services
                 var storage = await _clientService.GetFileAsync(document.Document.DocumentValue);
                 if (storage != null)
                 {
-                    await ExtractModelAsync(destination, storage, document.Document.DocumentValue);
-                    return TryCreateRecognizer();
+                    if (await ExtractModelAsync(destination, storage, document.Document.DocumentValue))
+                    {
+                        return TryCreateRecognizer();
+                    }
+
+                    return new TextRecognitionStatusUnavailable();
                 }
                 else
                 {
@@ -169,38 +176,75 @@ namespace Telegram.Services
             return new TextRecognitionStatusUnavailable();
         }
 
-        private async Task ExtractModelAsync(StorageFolder destination, StorageFile file, File document)
+        private async Task<bool> ExtractModelAsync(StorageFolder destination, StorageFile file, File document)
         {
             if (!_extractLock.Wait(0))
             {
                 // Already in progress
-                return;
+                return false;
             }
 
-            using (var zipStream = await file.OpenReadAsync())
-            using (var zipInput = System.IO.WindowsRuntimeStreamExtensions.AsStreamForRead(zipStream))
-            using (var archive = new System.IO.Compression.ZipArchive(zipInput))
+            try
             {
-                foreach (var entry in archive.Entries)
+                using (var zipStream = await file.OpenReadAsync())
+                using (var zipInput = System.IO.WindowsRuntimeStreamExtensions.AsStreamForRead(zipStream))
+                using (var archive = new System.IO.Compression.ZipArchive(zipInput))
                 {
-                    if (string.IsNullOrEmpty(entry.Name))
-                        continue;
-
-                    var entryPath = entry.FullName.Replace('/', '\\');
-                    var entryFile = await destination.CreateFileAsync(entryPath, CreationCollisionOption.ReplaceExisting);
-
-                    using (var entryStream = entry.Open())
-                    using (var outStream = await System.IO.WindowsRuntimeStorageExtensions.OpenStreamForWriteAsync(entryFile))
+                    foreach (var entry in archive.Entries)
                     {
-                        await entryStream.CopyToAsync(outStream);
+                        if (string.IsNullOrEmpty(entry.Name))
+                            continue;
+
+                        var entryPath = entry.FullName.Replace('/', '\\');
+                        var entryFile = await destination.CreateFileAsync(entryPath, CreationCollisionOption.ReplaceExisting);
+
+                        using (var entryStream = entry.Open())
+                        using (var outStream = await System.IO.WindowsRuntimeStorageExtensions.OpenStreamForWriteAsync(entryFile))
+                        {
+                            await entryStream.CopyToAsync(outStream);
+                        }
                     }
                 }
+
+                _clientService.Send(new DeleteFile(document.Id));
+                _aggregator.Publish(new UpdateTextRecognition());
+
+                return true;
             }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
 
-            _clientService.Send(new DeleteFile(document.Id));
-            _aggregator.Publish(new UpdateTextRecognition());
+                // The caller is async void, so anything thrown in here would take the app down.
+                // Drop the local archive as well, so that the next attempt downloads it again
+                // instead of extracting the same damaged copy forever.
+                _clientService.Send(new DeleteFile(document.Id));
+                await TryDeleteModelAsync(destination);
 
-            _extractLock.Release();
+                return false;
+            }
+            finally
+            {
+                _extractLock.Release();
+            }
+        }
+
+        private static async Task TryDeleteModelAsync(StorageFolder destination)
+        {
+            try
+            {
+                // A failure part way through leaves a truncated model behind, and EnsureReadyAsync
+                // would take it for a complete one and never extract again.
+                var item = await destination.TryGetItemAsync(ModelFileName);
+                if (item != null)
+                {
+                    await item.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
     }
 }
