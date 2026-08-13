@@ -3278,6 +3278,30 @@ namespace Telegram.Td.Api
             return false;
         }
 
+        public static bool AreTheSame(this BusinessOpeningHours x, BusinessOpeningHours y)
+        {
+            if (x == null || y == null)
+            {
+                return x == y;
+            }
+
+            if (string.Equals(x.TimeZoneId, y.TimeZoneId) && x.OpeningHours.Count == y.OpeningHours.Count)
+            {
+                for (int i = 0; i < x.OpeningHours.Count; i++)
+                {
+                    if (x.OpeningHours[i].StartMinute != y.OpeningHours[i].StartMinute
+                        || x.OpeningHours[i].EndMinute != y.OpeningHours[i].EndMinute)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool AreTheSame(this BusinessGreetingMessageSettings x, BusinessGreetingMessageSettings y)
         {
             if (x == null || y == null)
