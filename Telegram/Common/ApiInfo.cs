@@ -52,6 +52,11 @@ namespace Telegram.Common
         private static bool? _canCreateThemeShadow;
         public static bool CanCreateThemeShadow => IsWindows11 && (_canCreateThemeShadow ??= ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"));
 
+        // ListViewItemPresenter's Selected*BorderBrush properties live on IListViewItemPresenter4,
+        // added in UniversalApiContract 13.0 (22621), so setting them throws on anything older.
+        private static bool? _canSetSelectedBorderBrush;
+        public static bool CanSetSelectedBorderBrush => _canSetSelectedBorderBrush ??= ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.Primitives.ListViewItemPresenter", "SelectedBorderBrush");
+
         private static bool? _canAnimatePaths;
         public static bool CanAnimatePaths => _canAnimatePaths ??= IsBuildOrGreater(19043);
 
