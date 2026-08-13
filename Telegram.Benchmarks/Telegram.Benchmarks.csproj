@@ -1,0 +1,93 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- One project, two hosts. net10.0 is the desktop console with BenchmarkDotNet; the UWP target
+       runs the same Suite.cs under the UWP runtime so the two can be compared row for row. -->
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net10.0-windows10.0.26100.0</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
+    <Optimize>true</Optimize>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <NoWarn>$(NoWarn);CS0169;CS0649;CS8618;CS8601;CS8603</NoWarn>
+    <!-- Writes TdDotNetApi.g.cs to obj\, which is the point: the generated parser is the thing
+         under test and it should be readable. -->
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' != 'net10.0'">
+    <OutputType>WinExe</OutputType>
+    <UseUwp>true</UseUwp>
+    <DefineConstants>$(DefineConstants);UWP</DefineConstants>
+    <AppxPackage>true</AppxPackage>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <!-- UWP on .NET 9+ publishes with NativeAOT, which is the closest available stand-in for the
+         .NET Native toolchain the app itself still ships on. -->
+    <PublishAot>true</PublishAot>
+    <!-- CsWinRT 3.0 needs its matching SDK targeting package, and the .1 OS suffix is the TFM that
+         selects it - .0 stays on CsWinRT 2.x. Both halves are required; the generator emits code
+         against WinRT.Runtime 3.0 types that the 2.x runtime doesn't have. -->
+    <!-- CsWinRT 3.0 preview does not build a UWP XAML app yet; see the README. -->
+
+  </PropertyGroup>
+
+  <!-- BenchmarkDotNet spawns processes and emits IL, so it exists only on the desktop host. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <PackageReference Include="BenchmarkDotNet" Version="*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Uwp\**" />
+    <Compile Remove="ParseBenchmarks.cs" Condition="'$(TargetFramework)' != 'net10.0'" />
+    <Compile Remove="Program.cs" Condition="'$(TargetFramework)' != 'net10.0'" />
+    <Compile Include="Uwp\**\*.cs" Condition="'$(TargetFramework)' != 'net10.0'" />
+  </ItemGroup>
+
+  <!-- One-shot emitters, run with `dotnet run tools\GenCorpus.cs`. Not part of the build. -->
+  <ItemGroup>
+    <Compile Remove="tools\**" />
+    <None Include="tools\**" />
+  </ItemGroup>
+
+  <!-- The exact generator the app uses, fed the exact schema the app uses, so the code under
+       test is the generated code and not a copy of it. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Telegram.Generators\Telegram.Generators.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+    <AdditionalFiles Include="..\Libraries\tdjson\td_api.tl" />
+  </ItemGroup>
+
+  <!-- Linked, not copied: a fork would stop measuring the shipping code the day it drifts. -->
+  <ItemGroup>
+    <Compile Include="..\Telegram\Td\ClientJson.cs" Link="Linked\ClientJson.cs" />
+    <Compile Include="..\Telegram\Common\ArrayPoolBufferWriter.cs" Link="Linked\ArrayPoolBufferWriter.cs" />
+  </ItemGroup>
+
+  <!-- Embedded rather than copied, so the UWP host reads the same corpus with no file system. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Corpus\*.jsonl" />
+    <EmbeddedResource Include="Fixtures\*.json" />
+  </ItemGroup>
+
+  <!-- The UWP host loads tdjson from its own package, the way the app does. -->
+  <ItemGroup Condition="'$(TargetFramework)' != 'net10.0'">
+    <Content Include="..\Libraries\tdjson\x64\*.dll" Link="%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <AppxManifest Include="Uwp\Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <Content Include="Uwp\Assets\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
+

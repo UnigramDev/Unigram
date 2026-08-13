@@ -1,0 +1,471 @@
+# Telegram.Benchmarks
+
+Measures the TDLib JSON path — what `Client.Receive` and `ClientJson.FromJson` actually cost per
+payload — so changes to it can be argued from numbers instead of intuition.
+
+Not in `Telegram.sln` on purpose. It builds and runs on its own and never touches `Telegram.csproj`.
+
+Three hosts, one `Suite.cs`: this desktop console, a UWP app on .NET 10 / NativeAOT, and a UWP app
+on .NET Native — the last being what the shipping app runs, and the only one whose numbers should
+drive a decision.
+
+```
+dotnet run -f net10.0 -c Release -- --validate-only   # parse the corpus, check the results
+dotnet run -f net10.0 -c Release -- --plain           # the portable suite, incl. tdjson round trips
+dotnet run -f net10.0 -c Release -- --filter "*"      # BenchmarkDotNet, everything (~4 min)
+```
+
+`-f net10.0` is required now that the project multi-targets.
+
+Two harnesses on purpose. BenchmarkDotNet is the rigorous one and its numbers are the ones to
+quote — but it spawns processes and emits IL, so it can't run under an AOT UWP host. `--plain`
+runs `Suite.cs` through the hand-rolled `Harness`, which is exactly what the UWP host runs, so the
+two runtimes can be compared row for row.
+
+## The UWP host
+
+One project, two target frameworks: `net10.0` is this console, `net10.0-windows10.0.26100.0` with
+`<UseUwp>true</UseUwp>` is a UWP app that runs the same `Suite`. BenchmarkDotNet and `Program.cs`
+are compiled out of the UWP target; `Uwp\UwpHost.cs` replaces them. No XAML files — the whole app
+is one `TextBlock` — which keeps the XAML compiler out of the build.
+
+UWP on .NET 9+ publishes with NativeAOT, so this measures AOT codegen rather than the JIT:
+
+```
+dotnet publish -f net10.0-windows10.0.26100.0 -c Release -r win-x64
+pwsh tools\Stage.ps1                                        # loose-file package layout
+Add-AppxPackage -Register ...\win-x64\publish\AppxManifest.xml
+Start-Process "shell:appsFolder\Telegram.Benchmarks_k580v1fv7e4c6!App"
+```
+
+Results land in the app's `LocalState\report.txt` as well as on screen, because there's no console.
+`Add-AppxPackage` needs the app closed first, and the native link step needs `vswhere.exe` on PATH
+(`C:\Program Files (x86)\Microsoft Visual Studio\Installer`) or the ILCompiler can't find `link.exe`.
+
+Two things it does **not** answer. It's the .NET 10 UWP stack, not the .NET Native toolchain the app
+ships on today — so it says "where would we be", not "where are we". And because it's .NET 10, it
+gets System.Text.Json's in-box `net10.0` implementation, while the app resolves that same 10.0.10
+package's `netstandard2.0` asset. Isolating that difference still wants a reference to the
+netstandard2.0 DLL straight out of the NuGet cache.
+
+`tdjson.dll` is built for the store, so the package carries `vcruntime140_app.dll` and friends
+(`Stage.ps1` copies them). A real package would declare a `Microsoft.VCLibs.140.00` dependency
+instead. To uninstall: `Get-AppxPackage Telegram.Benchmarks | Remove-AppxPackage`.
+
+## What it measures against
+
+The real generated parser, not a copy of it: the project references `Telegram.Generators` as an
+analyzer and feeds it the same `Libraries\tdjson\td_api.tl`, then links `ClientJson.cs` and
+`ArrayPoolBufferWriter.cs` from the app. Change the generator and the numbers move. The generated
+`TdDotNetApi.g.cs` is written to `obj\Release\net10.0\generated\` if you want to read it.
+
+`Program.cs` validates before it measures: every corpus payload has to parse into the expected
+object, and any candidate parser has to agree with the current one field for field. A faster parser
+that returns different objects isn't a faster parser.
+
+## The corpus
+
+`Corpus\*.jsonl`, one payload per line. `synthetic.jsonl` is generated from `td_api.tl` and shows up
+in results with a `~` prefix. It's faithful in shape: TDLib's generated `to_json` writes *every*
+scalar field including `false` booleans and empty strings, and omits only null object pointers, so
+the synthetic payloads carry the same field count and the same ratio of noise to content as the
+wire does. It also includes the ~30 `; for bots only` fields the C# side deliberately drops, which
+is what exercises the unknown-field path.
+
+Real captures are better. Drop them in as `Corpus\capture.jsonl` (any name that isn't
+`synthetic*`) and they'll be picked up without the `~`. To capture, in `Client.Receive`, after the
+length is known and before `FromJson`:
+
+```csharp
+#if CAPTURE_CORPUS
+System.IO.File.AppendAllText(@"C:\capture.jsonl",
+    System.Text.Encoding.UTF8.GetString(_buffer, 0, length) + "\n");
+#endif
+```
+
+JSON can't contain a raw newline, so one payload per line always holds.
+
+## Results, 2026-08-13
+
+`net10.0`, x64 RyuJIT, i9-13950HX. **Read the .NET Native section below before acting on any of
+this** — that host runs ~3× slower and reverses one of the results outright.
+
+End to end, `ClientJson.FromJson`:
+
+| payload | bytes | mean | allocated |
+| --- | ---: | ---: | ---: |
+| `updateUserStatus` | 105 | 207 ns | 56 B |
+| `updateFile` | 482 | 759 ns | 184 B |
+| `updateNewMessage` | 1,401 | 2,773 ns | 1,088 B |
+| `messages` ×50 | 68,200 | 126,716 ns | 54,376 B |
+
+A whole message with text content, entities and sender parses in 2.8 µs here — but **7.4 µs on
+.NET Native**, and a 50-message page costs 443 µs rather than 127 µs. Even so a 10k-update cold sync
+spends on the order of 30–70 ms in JSON, so the parse is not where the app is losing its time.
+Allocation is the number worth watching — 1 KB per message, 54 KB per page — and no change of wire
+format moves it.
+
+### The NUL scan is ~10% of the parse, and it's free to delete
+
+`Client.Receive` finds the payload length with `while (*end != 0) end++;` over the whole payload.
+
+| size | scan | `IndexOf(0)` | length from the ABI |
+| ---: | ---: | ---: | ---: |
+| 482 | 88.7 ns | 7.7 ns | ~0 |
+| 1,401 | 247.3 ns | 25.0 ns | ~0 |
+| 68,200 | 11,834.7 ns | 1,277.1 ns | ~0 |
+
+Consistently 9–12% of total parse time. `json_receive` has the length already; the patched
+`td_receive` signature just doesn't return it.
+
+The `IndexOf` column does **not** hold on .NET Native, where it is slower than the naive loop — see
+below. Returning the length is the fix; swapping in `IndexOf` is not.
+
+### Field dispatch: real but small, and it depends on the type
+
+CRC32 of the property name into `switch (hash)`, against `switch (name.Length)` then an exact
+`SequenceEqual`:
+
+| type | fields | CRC32 | length + compare |
+| --- | ---: | ---: | ---: |
+| `localFile` | 8 | 314.9 ns | 251.6 ns (−20%) |
+| `message` | 42 | 2,236.1 ns | 2,211.4 ns (−1%, noise) |
+
+Worth having on small flat objects, worth nothing on a big one — `message` is dominated by its
+nested objects and value parsing, not by finding which field it's looking at. It also removes the
+possibility of an unknown field colliding with a known one's hash, which is the real argument for
+it. `AltParsers.g.cs` holds the candidate, emitted by `scratchpad/GenAltParsers.cs`; the change
+belongs in `SchemaGenerator.WriteToJson` if it's taken.
+
+### Pooled exact-size arrays instead of a growing List: rejected
+
+| | mean | allocated |
+| --- | ---: | ---: |
+| `List<T>` growing from 4 | 115.7 µs | 53.07 KB |
+| pooled scratch + exact array | 121.6 µs | 52.37 KB |
+
+5% slower for 1.3% less allocated. The 50 parsed `Message` objects dwarf the list's intermediate
+backing arrays. `IList<T>` → `T[]` is still worth doing for retained footprint and for reading, but
+not on parse-throughput grounds.
+
+### Round trips through the real tdjson.dll
+
+TDLib's own offline test methods (`testCallEmpty`, `testCallString`, `testCallBytes`,
+`testCallVectorInt`, `testCallVectorStringObject`) echo their argument back, need no account and no
+network, and so measure **both** halves of the JSON path — C# serialize, TDLib parse, TDLib
+serialize, C# parse — with no app involved. When a binary client exists, the same methods compare
+the two formats with nothing else changed.
+
+| | mean | allocated |
+| --- | ---: | ---: |
+| `testCallEmpty` | 32.6 µs | 48 B |
+| `testCallString` 1 KB | 38.5 µs | 2,120 B |
+| `testCallBytes` 1 KB | 45.3 µs | 1,096 B |
+| `testCallString` 64 KB | 346.6 µs | 131,144 B |
+| `testCallBytes` 64 KB | 444.2 µs | 65,608 B |
+| `testCallVectorInt` ×1000 | 243.1 µs | 8,504 B |
+| `testCallVectorStringObject` ×1000 | 672.9 µs | 72,648 B |
+
+`testCallEmpty` at 32.6 µs is the floor — that's TDLib's actor queue, not serialization, and it
+dwarfs the 2.8 µs it takes to parse a whole message. For *requests*, the wire format is noise.
+Updates don't pay it, since they're pushed rather than round-tripped.
+
+Subtracting the floor: base64 costs about 98 µs per 64 KB round trip, ~28% on top of the same
+payload as a string — that one is real and it's what binary TL would delete. 1000 ints cost ~210 µs
+(~210 ns each, both directions) in pure number formatting and parsing. 1000 one-field objects cost
+~640 µs, roughly 3× an int apiece, which is the per-object type-name emit and dispatch.
+
+### The pointer tokeniser prototype
+
+`Json\TdJsonReader.cs` — a pull reader over `td_receive`'s pointer, shaped like the slice of
+`Utf8JsonReader` the generated parser uses, reusing `JsonTokenType` so generated code needs no
+change beyond the reader type. Raw bytes for scanning; spans only handed to library helpers
+(`SequenceEqual`, `Utf8Parser`), never indexed in a loop.
+
+Same payloads, same work — read every token, compare each property name:
+
+| | .NET Native | | desktop JIT | |
+| --- | ---: | ---: | ---: | ---: |
+| | `Utf8JsonReader` | `TdJsonReader` | `Utf8JsonReader` | `TdJsonReader` |
+| `updateUserStatus` | 427.6 ns | **128.3 ns** (3.3×) | 102.7 ns | **74.4 ns** (1.4×) |
+| `updateFile` | 2.05 µs | **562.3 ns** (3.6×) | 374.9 ns | **289.4 ns** (1.3×) |
+| `updateNewMessage` | 5.39 µs | **1.47 µs** (3.7×) | 977.1 ns | **757.4 ns** (1.3×) |
+| `messages` ×50 | 318.4 µs | **74.9 µs** (4.3×) | 47.35 µs | **40.02 µs** (1.2×) |
+
+End to end on a real type — `localFile`, eight scalars, so it measures the reader rather than a
+graph of allocations — building the same object:
+
+| | .NET Native | desktop JIT |
+| --- | ---: | ---: |
+| `Utf8JsonReader` (generated) | 1.08 µs | 350.7 ns |
+| `TdJsonReader` (pointer) | **360.2 ns** (3.0×) | **322.0 ns** (1.09×) |
+
+Allocation is identical (71 B either way), so the parser stays copy- and allocation-free.
+
+Faster on **both** hosts, which is what makes it worth starting before a runtime migration rather
+than after. Tokenising is 60–70% of the current parse on .NET Native (5.39 µs of ~7.5 µs for
+`updateNewMessage`, 318 µs of ~440 µs for a page), so the full parse should land around **2–2.5×**
+once the generated parsers move over — better than the 1.5–1.8× estimated before measuring.
+
+#### Hardening pass: free on .NET Native, 43% on the JIT
+
+Bounds-checking every advance costs **43% on the desktop JIT** and **nothing on .NET Native**. Both
+measured three ways in a single process, so machine load cancels out.
+
+.NET Native, idle machine — the toolchain that ships:
+
+| | `Utf8JsonReader` | `TdJsonReader` | unchecked | speedup |
+| --- | ---: | ---: | ---: | ---: |
+| `updateUserStatus` | 473.4 ns | **154.8 ns** | 152.0 ns | 3.1× |
+| `updateFile` | 2.09 µs | **611.1 ns** | 632.4 ns | 3.4× |
+| `updateNewMessage` | 5.58 µs | **1.71 µs** | 1.64 µs | 3.3× |
+| `messages` ×50 | 300.0 µs | **81.3 µs** | 81.1 µs | 3.7× |
+| `updateOption` (escapes) | 651.1 ns | **190.7 ns** | 181.5 ns | 3.4× |
+
+Checked against unchecked is 0.3% on the 68 KB payload, and on `updateFile` the checked version is
+nominally *faster* — i.e. noise. Safety is free here.
+
+Desktop JIT, same three-way in one run:
+
+| `messages` ×50 | |
+| --- | ---: |
+| `Utf8JsonReader` | 140.99 µs |
+| `TdJsonReader`, bounds-checked | 214.40 µs |
+| `TdJsonReader`, checks stripped | 149.73 µs |
+
+The checks each end in `return Fail()`, and a call inside `ReadString`/`ReadNumber`/`Read` is enough
+to stop RyuJIT inlining them into the scan loop. UTC's whole-program inliner doesn't care. So the
+type's original comment — "one comparison per token" — was wrong on the JIT and right on .NET Native.
+
+The fix, when it matters: `td_receive` returns a **NUL-terminated** buffer, so the terminator works
+as a sentinel and the scan loops need no `_index < _length` test at all — safe *and* cheaper than
+the unchecked version. That's a migration-path concern rather than a shipping one: it buys nothing
+on .NET Native today, and recovers the 43% on whatever the app runs on after a move to .NET 10.
+
+End to end on a real type, .NET Native — `localFile`, same object out, same 71 B allocated:
+
+| | |
+| --- | ---: |
+| `Utf8JsonReader` (generated) | 991.3 ns |
+| `TdJsonReader` (pointer) | **389.8 ns** (2.5×) |
+
+Tokenising is 76% of the full `updateNewMessage` parse on .NET Native (5.58 µs of 7.02 µs) and 75%
+of a page (300 µs of 399 µs), so the generated parsers moving over should land around **2–2.5×** on
+the whole path.
+
+**Memory safety.** `StaysInsideItsBuffer` runs every prefix of every payload — 70,512 of them —
+with the byte after the last one on a `PAGE_NOACCESS` guard page, so an overrun access-violates
+instead of quietly reading whatever came next. All pass.
+
+The test was itself verified to fail: relaxing `ReadNumber`'s loop to `_index <= _length` produces
+an access violation with the stack pointing at `ReadNumber`. Worth knowing that removing the
+*literal* bounds check does **not** trip it — that check only advances the index and never
+dereferences, so it guards against accepting a truncated literal, not against an out-of-bounds read.
+
+**Correctness.** `Program.cs` requires the tokeniser to agree with `Utf8JsonReader` token for token
+*and* string for string over every corpus payload, and to produce a `LocalFile` identical to the
+generated parser's. `Corpus\synthetic-escapes.jsonl` exists for this: `\"`, `\\`, `\/`, `\n`, `\t`,
+a `` control escape, `é`, an astral surrogate pair, and literal multibyte UTF-8. Both
+checks pass.
+
+**All three hosts validate.** `Validation.cs` is host-independent and runs on the desktop console,
+the NativeAOT UWP host and the .NET Native one — the last being the one that matters, since it is
+the only host that resolves System.Text.Json's netstandard2.0 asset. Agreeing with the `net10.0`
+reader would have proved nothing about the reader the app actually parses against. All three report
+`validation ok`.
+
+Two things are deliberately desktop-only: the guard-page sweep, because `VirtualAlloc` isn't in the
+app container API set, and the reflection-based whole-object comparison, because .NET Native only
+keeps the metadata it is told to keep. The shared checks use explicit field comparisons instead.
+
+### Why .NET Native is 3× slower: `Span<T>` is not the runtime's span
+
+UWP resolves **`lib/netstandard2.0/System.Memory.dll`** as well as `lib/netstandard2.0/System.Text.Json.dll`
+(verified in `Telegram.Benchmarks.NetNative\obj\project.assets.json`), so `Span<T>` comes from the
+package, not from the runtime. Same 4 KB traversal, four ways:
+
+| | .NET Native | desktop JIT |
+| --- | ---: | ---: |
+| `byte[]` index | 629.6 ns | 1.22 µs |
+| `byte*` pointer | 616.6 ns | 1.26 µs |
+| `ReadOnlySpan<byte>` index | **7.93 µs** | 1.08 µs |
+| span + `MemoryMarshal.GetReference` + `Unsafe.Add` | **5.44 µs** | — |
+| `span.Slice()` ×256 | 1.73 µs | 116 ns |
+
+Element access through a span is **12.6× slower than the same loop over `byte[]`** on the shipping
+toolchain — where on the JIT the span is the *fastest* of the three. Arrays and raw pointers are
+indistinguishable from each other and, in absolute terms, quicker than the JIT manages.
+
+Taking the ref up front and walking it with `Unsafe.Add` recovers only 31% and is still 8.6× off
+`byte[]`, so this is not a bounds check that can be hoisted away — it's the portable span's
+representation. **On .NET Native you cannot fix span element access by accessing it differently;
+you can only stop using spans in hot loops.**
+
+Corelib helpers, by contrast, are merely slower, not pathological (.NET Native ÷ desktop):
+
+| | ratio |
+| --- | ---: |
+| `Utf8Parser.TryParse` int64 | 1.5× |
+| `Convert.FromBase64String` 1 KB | 1.3× |
+| `Encoding.UTF8.GetString` 59 B | 2.5× |
+| `MemoryExtensions.IndexOf` 4 KB | 2.7× |
+| `MemoryExtensions.SequenceEqual` 15 B | 3.6× |
+| **`Array.IndexOf` 4 KB** | **32.6×** |
+
+`Array.IndexOf<byte>` is the one to never call on this framework — that, not span search, is what
+the earlier "IndexOf is a trap" note was really measuring. `MemoryExtensions.IndexOf` is fine.
+
+### Reading the payload td_receive hands back
+
+Tokeniser-shaped workload (find every quote) over a native buffer, three ways:
+
+| | .NET Native | .NET 10 AOT |
+| --- | ---: | ---: |
+| `byte*` direct, 1,401 B | **632.7 ns** | 660.9 ns |
+| span over native, 1,401 B | 2.68 µs | 907.2 ns |
+| copy then `byte[]`, 1,401 B | 683.0 ns | 792.4 ns |
+| `byte*` direct, 68,200 B | **31.54 µs** | 28.66 µs |
+| span over native, 68,200 B | 128.69 µs | 45.03 µs |
+| copy then `byte[]`, 68,200 B | 32.35 µs | 39.62 µs |
+
+Reading the pointer directly beats copying into a managed array by 7% at 1.4 KB and 2.5% at 68 KB —
+the copy is genuinely cheap, ~50 ns and ~0.8 µs respectively. Wrapping the pointer in a span costs
+**4.2×**. That is the whole explanation for why removing the copy from `Client.Receive` made things
+slower: it traded a 50 ns memcpy for a 4× per-byte penalty.
+
+A `byte*` tokeniser can therefore skip the copy outright. Note the refinement this adds to the span
+result above: *indexing* a span in your own loop costs ~10×, but *handing* a span to a library
+helper is only 1.5–3.6× (`Utf8Parser` parses a 19-digit int64 in 17.7 ns, well under what per-byte
+span indexing would imply). So the design is to walk raw bytes and pass spans to `Utf8Parser`,
+`SequenceEqual` and friends — not to avoid spans entirely.
+
+### WinRT interop: MCG vs CsWinRT
+
+.NET Native marshals through MCG's compile-time stubs (`Telegram.McgInterop` in the app's obj tree);
+.NET 9+ uses CsWinRT projections. Thread-agile types, so this is the interop layer without XAML on
+top:
+
+| | .NET Native (MCG) | .NET 10 AOT (CsWinRT) |
+| --- | ---: | ---: |
+| property get, int | 13.6 ns | **8.9 ns** |
+| property get, string | 195.8 ns | **156.0 ns** |
+| method call, void | 68.6 ns | **59.5 ns** |
+| map read, boxed int | 223.3 ns | **84.0 ns** |
+| map write, boxed int | 1.08 µs | **666.7 ns** |
+
+**CsWinRT is faster on every operation measured**, by 1.15× to 2.7×. The hypothesis that it's where
+the new stack loses does not survive contact with the numbers.
+
+Two caveats. The `new Calendar()` row (76.6 µs vs 64.9 µs) measures Calendar loading globalization
+data, not activation plumbing — ignore it, and replace it with something cheaper to construct before
+quoting it. And the app's real COM traffic is XAML `DependencyProperty` access on the UI thread,
+which stacks XAML's own cost on top of this and wants a UI-thread harness to measure.
+
+#### CsWinRT 3.0 preview does not build a UWP XAML app yet
+
+The numbers above are CsWinRT 2.x, because 3.0 could not be made to work. Recorded so nobody
+repeats it — retry when a later preview lands.
+
+`3.0.0-preview.260319.2` needs both halves: the package *and* the matching SDK targeting package,
+selected by an OS TFM with a `.1` suffix (`net10.0-windows10.0.26100.1` for 3.0,
+`...26100.0` stays on 2.x), with `<WindowsSdkPackageVersion>10.0.26100.85-preview</WindowsSdkPackageVersion>`.
+Referencing the package alone fails at compile: the 3.0 generator emits `WinRTExposedTypeAttribute`
+and friends that the 2.x `WinRT.Runtime` doesn't define. With both halves the projections generate
+fine — and then:
+
+```
+RUNCSWINRTINTEROPGENERATOR : error CSWINRTINTEROPGEN0055: Failed to generate the type signature
+for type 'Windows.UI.Xaml.Controls.DatePickerValueChangedEventArgs'. Outer exception:
+'CSWINRTINTEROPGEN0011': 'Failed to generate marshalling code for delegate type
+'EventHandler`1<Windows.UI.Xaml.Controls.DatePickerValueChangedEventArgs>'.'
+```
+
+`-p:CsWinRTGenerateInteropAssembly2=false` gets past it (the property has to be a global property;
+set in the csproj it's overwritten by the package targets), and the build then succeeds — but
+publishing fails at the AOT step with `Failed to load assembly 'WinRT.Sdk.Xaml.Projection'`,
+because ILC wants the projection assembly that switch just suppressed. So the two states are
+"crashes generating XAML marshalling" and "can't link without it".
+
+Consistent with the release notes, which don't mention UWP. Also worth knowing: 3.0 drops
+netstandard2.0 support and removes `As<I>()`, `FromAbi(nint)` and `FromManaged(object)`, and defines
+a `CSWINRT3_0` constant for conditional compilation.
+
+### .NET Native — the toolchain the app actually ships
+
+`Telegram.Benchmarks.NetNative`, a legacy UWP project, `UseDotNetNativeToolchain`, .NET Native
+4.6.29511.0. Same `Suite.cs`. This is the only host that also gets System.Text.Json's
+`netstandard2.0` asset, which is what the app really runs.
+
+| | .NET Native | net10.0 JIT (BDN) | ratio |
+| --- | ---: | ---: | ---: |
+| `updateUserStatus` | 612.5 ns | 207.1 ns | 3.0× |
+| `updateFile` | 2.60 µs | 759.4 ns | 3.4× |
+| `updateNewMessage` | 7.36 µs | 2.77 µs | 2.7× |
+| `messages` ×50 | 442.6 µs | 126.7 µs | 3.5× |
+
+**The parse is about 3× slower than the desktop numbers suggested**, consistently across payload
+sizes. Some of that is codegen and some is the netstandard2.0 System.Text.Json; this host can't
+separate them, but it settles the question of which number to plan against. A 50-message page costs
+443 µs, not 127 µs.
+
+And a straight reversal:
+
+| | scan for NUL | `IndexOf` |
+| --- | ---: | ---: |
+| 482 B | 135.6 ns | 229.7 ns |
+| 1,401 B | 346.2 ns | 642.3 ns |
+| 68,200 B | 15.49 µs | 28.53 µs |
+
+`IndexOf` is **1.7–1.9× slower than the naive byte loop** here, where on the JIT it was 5–10×
+faster: .NET Native doesn't give `Array.IndexOf<byte>` the vectorised path. Getting the length from
+the ABI is still the right fix — it deletes the work rather than speeding it up — but "just use
+IndexOf" would have made things worse, and nothing but this host would have caught that.
+
+Field dispatch here: `message` 7.83 → 7.56 µs (−3%), `localFile` 1.19 → 1.09 µs (−8%). Same
+direction as everywhere else, smaller, and inside the noise band.
+
+Round trips: base64 costs 147 µs per 64 KB (98 µs desktop, 125 µs UWP AOT) — consistent.
+
+The allocation column is meaningless on this host: `GC.GetAllocatedBytesForCurrentThread` doesn't
+exist in the UWP framework, so `Harness` falls back to a heap-size delta. Timings are the point here.
+
+### UWP, NativeAOT, three runs of the same binary
+
+| | run 1 | run 2 | run 3 |
+| --- | ---: | ---: | ---: |
+| `updateNewMessage` | 2.86 µs | 3.78 µs | 5.17 µs |
+| `messages` ×50 | 132.4 µs | 198.1 µs | 267.6 µs |
+| `message` crc32 → length+compare | −14% | **+17%** | −8% |
+| `localFile` crc32 → length+compare | −21% | −18% | −22% |
+| scan for NUL vs `IndexOf` (68 KB) | 4.6× | 4.8× | 4.5× |
+
+Run 1 was on an idle machine and lands within 4% of the desktop JIT for the same work — **the parse
+path AOTs well**, which is the useful headline. Runs 2 and 3 were on a loaded one and drift by up to
+1.8×, so absolute numbers across runs mean nothing right now; only comparisons made *within* a run
+do.
+
+Read that way, two results are solid because they hold in every run on both runtimes: the NUL scan
+is 4–5× slower than a vectorised search, and the dispatch change is worth ~20% on a small flat
+object. The `message` dispatch comparison is **not resolved** — it changes sign between runs, so the
+effect is smaller than this machine's noise. That matches the desktop BenchmarkDotNet result (−1%,
+within its error bars) rather than contradicting it.
+
+Round trips inside the app container reproduce the base64 gap: 407.8 µs for a 64 KB string against
+533.1 µs for the same payload as bytes, +125 µs, against +98 µs on desktop.
+
+## Open
+
+- **The harness needs to beat the noise.** It reports the best of 5 rounds; that isn't enough when
+  the machine varies 1.8× between runs. Interleaving the A and B of each comparison within a round,
+  and reporting the paired difference rather than two independent minima, would make the dispatch
+  question answerable.
+- **The hosts disagree on ranking, not just on scale** — `IndexOf` wins by 5–10× on the JIT and
+  loses by ~1.8× on .NET Native. Nothing measured on the desktop host should be acted on until the
+  .NET Native host agrees.
+- **.NET Native's ~3× can't be attributed yet.** Codegen and the `netstandard2.0` System.Text.Json
+  are confounded in that host. Referencing the netstandard2.0 STJ DLL from the NuGet cache in the
+  desktop project would separate them.
+- **`--plain` was polluted before round trips moved to lazy init.** A live TDLib client keeps
+  background threads busy and they landed in every measurement above it; that was the 12.2 µs
+  `updateNewMessage` reading, not a harness defect. Worth remembering for anything else added here.
+

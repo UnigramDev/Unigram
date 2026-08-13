@@ -1,0 +1,2 @@
+{"@type":"updateOption","name":"quote\"back\\slash\/newline\ntab\tend","value":{"@type":"optionValueString","value":"bel[\u0007] acute[\u00e9] astral[\ud83d\ude00] done"}}
+{"@type":"updateOption","name":"literal-utf8","value":{"@type":"optionValueString","value":"café über naïve — éèê, 🎉 party, 日本語"}}
