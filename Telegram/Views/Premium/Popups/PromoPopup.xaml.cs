@@ -566,27 +566,28 @@ namespace Telegram.Views.Premium.Popups
                 : Strings.SubscribeToPremium, Locale.FormatCurrency(option.MonthCount == 12 ? option.Amount : option.Amount / option.MonthCount, option.Currency));
         }
 
-        private async void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (_giftCode != null)
             {
+                var deferral = args.GetDeferral();
+
                 var response = await ViewModel.ClientService.SendAsync(new ApplyPremiumGiftCode(_giftCode));
-                if (response is Ok)
+                if (response is Error error)
                 {
-                    Hide();
-                }
-                else if (response is Error error)
-                {
+                    args.Cancel = true;
+
                     var match = Regex.Match(error.Message, "PREMIUM_SUB_ACTIVE_UNTIL_(\\d+)");
                     if (match.Success && int.TryParse(match.Groups[1].Value, out int after))
                     {
                         ViewModel.ShowToast(string.Format("**{0}**\n{1}", Strings.GiftPremiumActivateErrorTitle, string.Format(Strings.GiftPremiumActivateErrorText, Formatter.Date(after))), ToastPopupIcon.Info);
                     }
                 }
+
+                deferral.Complete();
             }
             else
             {
-                Hide();
                 ViewModel.Purchase();
             }
         }

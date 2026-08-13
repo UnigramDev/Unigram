@@ -10,6 +10,7 @@
                        IsDismissButtonVisible="True"
                        PrimaryButtonText="{x:Bind ConvertPurchase(ViewModel.CanPurchase, ViewModel.IsPremium, ViewModel.Option), Mode=OneWay, FallbackValue=Empty}"
                        PrimaryButtonStyle="{StaticResource PremiumButtonStyle}"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        ButtonsLayout="Vertical">
 
     <Grid>
