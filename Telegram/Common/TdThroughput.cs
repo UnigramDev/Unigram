@@ -28,8 +28,10 @@ namespace Telegram.Common
         // Written from the UI thread when the checkbox changes, read on the TDLib thread.
         public static volatile bool Enabled;
 
-        // One writer, the TDLib thread that Client.Run owns. Readers get whatever they get: this is
-        // a rate meter, and an Interlocked per payload would be measuring the instrument.
+        // One writer each. Everything but the file-check pair is written by the TDLib thread that
+        // Client.Run owns; those two are written by ClientService's verification drain, of which
+        // only one runs at a time. Readers get whatever they get: this is a rate meter, and an
+        // Interlocked per payload would be measuring the instrument.
         private static long _payloads;
         private static long _bytes;
         private static long _ticks;
@@ -104,8 +106,10 @@ namespace Telegram.Common
         }
 
         /// <summary>
-        /// The existence check inside that, counted on its own because it is the one syscall on
-        /// this thread and the only part that cannot be made cheaper - only rarer or moved.
+        /// The existence checks, which now run on ClientService's drain rather than the TDLib
+        /// thread - so this time is no longer any part of Seconds, and is reported separately for
+        /// that reason. Counted because it is I/O: no build makes it cheaper, and it was a third of
+        /// the parse before it moved.
         /// </summary>
         public static void RecordFileCheck(long started)
         {

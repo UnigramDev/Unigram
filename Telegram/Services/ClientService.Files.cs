@@ -6,7 +6,9 @@
 //
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native;
@@ -18,6 +20,64 @@ namespace Telegram.Services
 {
     public partial class ClientService
     {
+        // Files TDLib believes are downloaded, waiting to be confirmed on disk.
+        //
+        // TDLib's own database goes out of sync with the file system - a download saved elsewhere,
+        // an upload whose source moved, or a user who opened the folder and cleaned it out - and
+        // the first time an id is seen is when that is worth noticing. The check itself is a
+        // syscall: 74 µs against a cold cache at startup, where parsing an entire update takes
+        // 10.7, and 1,152 of them at app start were a third of everything the TDLib thread spent
+        // parsing. See Telegram.Benchmarks/README.md.
+        //
+        // Nothing waits on the answer. The only outcome is a DeleteFile that TDLib acts on whenever
+        // it arrives, so the check does not have to happen in the middle of a parse - only before
+        // the app tries to use the file, which is a user action away.
+        private readonly ConcurrentQueue<(int Id, string Path)> _unverifiedFiles = new();
+        private int _verifyingFiles;
+
+        private void VerifyFileExists(int fileId, string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return;
+            }
+
+            _unverifiedFiles.Enqueue((fileId, path));
+
+            // One drain at a time. These arrive in bursts - a chat list is a thousand files in a
+            // few hundred milliseconds - and a work item each would be a thousand thread pool hops
+            // for syscalls that queue up behind one another on the disk regardless.
+            if (Interlocked.CompareExchange(ref _verifyingFiles, 1, 0) == 0)
+            {
+                Task.Run(VerifyFiles);
+            }
+        }
+
+        private void VerifyFiles()
+        {
+            do
+            {
+                while (_unverifiedFiles.TryDequeue(out var file))
+                {
+                    var started = TdThroughput.BeginHandler();
+                    var exists = NativeFile.Exists(file.Path);
+                    TdThroughput.RecordFileCheck(started);
+
+                    if (!exists)
+                    {
+                        Send(new DeleteFile(file.Id));
+                    }
+                }
+
+                Volatile.Write(ref _verifyingFiles, 0);
+            }
+            // Anything enqueued between the last dequeue and releasing the flag found the drain
+            // still running and did not start one, so it would sit here until the next file
+            // arrived. Whoever re-acquires the flag - this loop or that producer - runs; only one
+            // of them can.
+            while (!_unverifiedFiles.IsEmpty && Interlocked.CompareExchange(ref _verifyingFiles, 1, 0) == 0);
+        }
+
         /*
          * How does this work?
          * 
@@ -394,9 +454,9 @@ namespace Telegram.Services
             {
                 _files[file.Id] = file;
 
-                if (file.Local.IsDownloadingCompleted && !NativeUtils.FileExists(file.Local.Path))
+                if (file.Local.IsDownloadingCompleted)
                 {
-                    Send(new DeleteFile(file.Id));
+                    VerifyFileExists(file.Id, file.Local.Path);
                 }
 
                 return file;

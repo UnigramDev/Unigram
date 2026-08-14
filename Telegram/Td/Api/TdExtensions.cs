@@ -4691,8 +4691,10 @@ namespace Telegram.Td.Api
         {
             if (file.Local.IsDownloadingCompleted)
             {
+                // Synchronous, unlike ClientService's first-sight check: the caller is about to
+                // act on the answer rather than send a request about it.
                 file.Local.IsDownloadingCompleted = file.Local.Path.Length > 0
-                    && NativeUtils.FileExists(file.Local.Path);
+                    && NativeFile.Exists(file.Local.Path);
             }
 
             return file;

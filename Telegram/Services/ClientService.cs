@@ -3157,27 +3157,20 @@ namespace Telegram.Services
             // reading JSON - which is why it is timed separately.
             var started = TdThroughput.BeginHandler();
 
-            // Only the first time this id is seen. This runs on the TDLib thread, and every
-            // parsed object carries files — a chat history page is hundreds of them, nearly
-            // all already cached — so checking on every update spent a syscall each time to
-            // re-answer a question already answered.
+            // Only the first time this id is seen. Every parsed object carries files — a chat
+            // history page is hundreds of them, nearly all already cached — so checking on
+            // every update spent a syscall each time to re-answer a question already answered.
             //
             // Nothing is really lost: TDLib sends no update when a file disappears behind its
             // back, so the repeat check only ever caught an external delete by luck, when some
             // unrelated update happened to arrive for that same file. The reliable detection
-            // is GetFileAsync catching FileNotFoundException at the point of use. What the
-            // first-sight check is genuinely for is the cache being cleared between sessions,
-            // which it still covers.
+            // is GetFileAsync catching FileNotFoundException at the point of use.
+            //
+            // Queued rather than answered here — see VerifyFileExists. The syscall is seven
+            // times what this whole update costs to parse, and this is the TDLib thread.
             if (created && obj.Local.IsDownloadingCompleted)
             {
-                var checking = TdThroughput.BeginHandler();
-                var exists = NativeUtils.FileExists(obj.Local.Path);
-                TdThroughput.RecordFileCheck(checking);
-
-                if (!exists)
-                {
-                    Send(new DeleteFile(obj.Id));
-                }
+                VerifyFileExists(obj.Id, obj.Local.Path);
             }
 
             _files[obj.Id] = obj;
