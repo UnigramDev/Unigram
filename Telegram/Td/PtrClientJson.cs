@@ -19,7 +19,7 @@ namespace Telegram.Td.Api
     /// What the generated FromPtr_* parsers call, mirroring the Utf8JsonReader helpers in
     /// ClientJson.cs one for one.
     ///
-    /// Nothing here refers to generated code, so it compiles whether or not TdPointerParser is on.
+    /// Nothing here refers to generated code, so it compiles in any TdParsers mode.
     /// The one member that would - the FromPtr(byte*, int) entry point - is emitted beside
     /// DoFromPtr instead.
     /// </summary>

@@ -3179,6 +3179,7 @@ namespace Telegram.Services
             return obj;
         }
 
+#if TD_READER_PARSER
         public UpdateFile ParseUpdateFile(ref System.Text.Json.Utf8JsonReader reader)
         {
             ParseFile(ref reader, true);
@@ -3315,7 +3316,9 @@ namespace Telegram.Services
                 }
             }
         }
+#endif
 
+#if TD_POINTER_PARSER
         public UpdateFile ParseUpdateFile(ref TdJsonReader reader)
         {
             ParseFile(ref reader, true);
@@ -3472,6 +3475,7 @@ namespace Telegram.Services
                 reader.Read();
             }
         }
+#endif
 
         private void UpdateFile(File file)
         {

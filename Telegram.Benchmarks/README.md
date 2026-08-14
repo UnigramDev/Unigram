@@ -222,11 +222,11 @@ once the generated parsers move over — better than the 1.5–1.8× estimated b
 
 #### The generator emits both parsers
 
-`SchemaGenerator` now emits a second set, `FromPtr_*`, reading through `TdJsonReader` instead of
-`Utf8JsonReader`. Both come from the same schema, so they cannot drift. It is opt-in — set
-`<TdPointerParser>true</TdPointerParser>` plus `<CompilerVisibleProperty Include="TdPointerParser" />`
-— and with it off the generated file is byte for byte what it has always been, which is the check
-that makes changing the generator safe without being able to build the app.
+`SchemaGenerator` emits a second set, `FromPtr_*`, reading through `TdJsonReader` instead of
+`Utf8JsonReader`. Both come from the same schema, so they cannot drift. Which set it emits is
+`<TdParsers>` — `Reader`, `Pointer` or `Both`, plus `<CompilerVisibleProperty Include="TdParsers" />`
+— and unset means `Reader`, whose output is byte for byte what it has always been. That diff is the
+check that makes changing the generator safe without being able to build the app.
 
 Field dispatch uses name length then an exact compare rather than CRC32: few enough fields per class
 for that to be cheap, and an unknown field cannot collide with a known one. `@type` dispatch keeps
@@ -269,21 +269,37 @@ The interface lives in the app, so the reader moved with it: `Telegram/Td/TdJson
 `Telegram/Td/PtrClientJson.cs` are app files now, linked into all three benchmark hosts rather than
 the other way round. Nothing in `PtrClientJson.cs` refers to generated code — the one member that
 did, the `FromPtr(byte*, int)` entry point, is emitted beside `DoFromPtr` instead — so the app takes
-both files today with `TdPointerParser` off and nothing calling them.
+both files in any mode, whether or not anything calls them.
 
 Both files do get compiled by the .NET Native host, which is the same toolchain the app uses.
 `ClientService`'s half does not: nothing here builds `Telegram.csproj`, so the pointer
 `ParseFile`/`ParseUpdateFile` there are checked by reading them against the `Utf8JsonReader` pair
 and against what the generator emits for every other type, not by a compiler.
 
-#### The receive path, behind one switch
+#### The receive path, and one switch that picks a parser
 
-`<TdPointerParser>true</TdPointerParser>` in `Telegram.csproj` now does two things: the generator
-emits the `FromPtr_*` parsers, and `TD_POINTER_PARSER` is defined for `Client.cs`, where
-`Receive` and `Execute` parse straight off `td_receive`'s pointer. Set it to `false` and both halves
-go back to `Utf8JsonReader` — the old copy-then-parse code is still there, in the `#else`, not
-deleted. Nothing else in the app changes either way: `FromJson_*` is emitted in both modes, and
-`RichHtml` and `RichEditorCommands` still parse the instant view editor's JSON through it.
+`<TdParsers>` in `Telegram.csproj` decides which parser the app is built with, and it is a choice
+of one:
+
+| | generator emits | constants | `Client.Receive` parses |
+| --- | --- | --- | --- |
+| `Reader` | `FromJson_*` | `TD_READER_PARSER` | a copy of the payload, through `Utf8JsonReader` |
+| `Pointer` | `FromPtr_*` | `TD_POINTER_PARSER` | `td_receive`'s buffer, through `TdJsonReader` |
+| `Both` | both | both | the pointer path |
+
+The property is what the generator reads; the constants are what the hand-written code reads, so
+`ClientJson`, `Client` and `ClientService` compile exactly the half that was generated. Nothing is
+deleted to switch — the `Utf8JsonReader` code is still there under `#if`, which is the point: this
+is a build mode, not a migration you cannot walk back.
+
+`Both` exists for `Telegram.Benchmarks`, whose entire argument is the two parsers racing over one
+corpus and agreeing field for field. The app has no reason to carry both — 211,651 generated lines
+against 167,143 — and it is set to `Both` at the moment only because the pointer path has yet to be
+built and run even once.
+
+All three modes compile: `Reader`'s generated output is byte for byte what shipped, and a throwaway
+project outside the repo builds `Client.cs`, `ClientJson.cs`, `PtrClientJson.cs`, `TdJsonReader.cs`
+and the generated file in each of the three.
 
 On the pointer path `Receive` no longer copies into `_buffer` and no longer scans for the
 terminator. The scan was 9–12% of the old parse and would have been a fifth of this one; it goes
@@ -297,45 +313,34 @@ compiled and run before it is believed. `Client.cs` and the two `Td/` files do c
 a throwaway project outside the repo compiles them with the switch on and off — but `ClientService`
 and everything downstream of `Client.Receive` have only been read.
 
-#### Dropping the Utf8JsonReader parsers from the app
+#### What `Pointer` mode compiles out
 
-Carrying both sets is the worst of both — 211,651 generated lines against 149,712, for a second
-parser nothing calls. It is a temporary state, held only until the pointer path has been built and
-run once; the plan below is the whole job.
+Everything the `Utf8JsonReader` parsers need and nothing else:
 
-`ClientJson.FromJson(string)` is the piece that had to come first, and it is in: `RichHtml` and
-`RichEditorCommands` were the last callers outside `Client.cs`, each encoding its own span, and they
-now go through one entry point that follows the switch.
-
-What the app stops compiling:
-
+- the generated `DoFromJson` and every `FromJson_*` — 44,508 lines, the bulk of it;
 - `ClientJson.FromJson(ReadOnlySpan<byte>)`, `FromJson<T>`, `ParseObject`, the `FromHandler` and
-  `ParseHandler` delegates, `ComputeCrc32` with `Crc32Partial`/`ProcessUInt` and three of the four
-  tables, and the reader half of `Utf8JsonExtensions` — `ReadStartObject`, `GetInt64String`, the
-  `Get*Array` family. **The benchmark still links `ClientJson.cs`**, so these move to a file of
-  their own rather than being deleted; the app drops its `Compile` entry, the benchmark keeps
-  linking it.
-- `ClientResultHandler`'s two `Utf8JsonReader` overloads, and with them `ClientService`'s
-  `ParseUpdateFile`/`ParseFile`/`FromJson_LocalFile`/`FromJson_RemoteFile`, ~110 lines. The
-  benchmark declares its own `ClientResultHandler` in `Bridge.cs` and is unaffected.
-- The `#else` branches in `Client.Receive`/`Client.Execute`, `_buffer`, and the `#if` inside
-  `ClientJson.FromJson(string)`.
+  `ParseHandler` delegates, and the reading half of `Utf8JsonExtensions` — `ReadStartObject`,
+  `GetInt64String`, the `Get*Array` family. The writing half is unconditional: requests are
+  serialized with `Utf8JsonWriter` whichever parser was generated, so System.Text.Json does not go
+  anywhere. Only reading changes.
+- `ClientResultHandler`'s two `Utf8JsonReader` overloads and `ClientService`'s implementations of
+  them, ~110 lines;
+- the `#else` in `Client.Receive`/`Client.Execute`, and `_buffer` with it.
 
-What stays, and why:
+`ClientJson.FromJson(string)` is what made this possible: `RichHtml` and `RichEditorCommands` each
+encoded their own span into `FromJson`, and now go through one entry point that follows the switch
+like everything else.
 
-- **The generator keeps both emitters.** `TdPointerParser` becomes a mode rather than a flag — off,
-  both, pointer-only — because the benchmark's whole argument is that the two parsers agree over
-  the corpus and that one is 2.4× the other. Deleting the reference implementation would delete the
-  cross-check that says the pointer parsers are right.
-- `Utf8JsonWriter` and every `ToJson`. Requests are still serialized with System.Text.Json, so the
-  package reference does not go anywhere; only reading changes.
-- `crc32_table`, one of the four. `TdJsonReader.ValueCrc32` hashes `@type` with it.
+Generated size by mode: `Reader` 149,712 lines, `Pointer` 167,143, `Both` 211,651. Pointer-only
+lands ~12% above where the file started rather than below it — the pointer parsers are ~62k lines to
+the reader parsers' ~44.5k, because name-length grouping costs more source than a hash switch. If
+that matters, the TODO in `SchemaGenerator` about emitting parsers only for types that can actually
+be received is worth several times more than the choice of reader.
 
-Generated size afterwards: about 167k lines, against 211,651 with both sets and 149,712 with the
-reader set alone. The pointer parsers are ~62k lines to the reader parsers' ~44.5k — name-length
-grouping costs more source than a hash switch — so pointer-only lands ~12% above where the file
-started, not below it. If that matters, the TODO in `SchemaGenerator` about emitting parsers only
-for types that can actually be received is worth several times more than this.
+Two things stay in every mode. `crc32_table`, one of the four, because `TdJsonReader.ValueCrc32`
+hashes `@type` with it. And **both emitters in the generator**, which is what `Both` is for:
+delete the reference implementation and you delete the cross-check that says the pointer parsers
+are right.
 
 #### Hardening pass: free on .NET Native, 43% on the JIT
 
@@ -605,17 +610,21 @@ Round trips inside the app container reproduce the base64 gap: 407.8 µs for a 6
 
 ## Where this stands
 
-Everything below is committed on `develop`, and the app is now on the pointer path: `TdPointerParser`
-is on in `Telegram.csproj`, so `Client.Receive` and `Client.Execute` parse straight off TDLib's
-buffer. **This has not been built.** Nothing here can build `Telegram.csproj`, so the next thing
-that has to happen is a real build and a run; `<TdPointerParser>false</TdPointerParser>` puts every
-part of it back the way it was, in one edit, without deleting anything.
+Everything below is committed on `develop`, and the app is on the pointer path: `Client.Receive` and
+`Client.Execute` parse straight off TDLib's buffer. **This has not been built.** Nothing here can
+build `Telegram.csproj`, so the next thing that has to happen is a real build and a run.
 
-**Done.** A pointer-based reader (`Telegram/Td/TdJsonReader.cs`) and a generator mode that emits
-parsers against it, worth **2.0–2.9× on the full parse on .NET Native** with identical allocation.
-Three hosts running one suite. `SchemaGenerator` rewritten from spike to something with diagnostics.
-Files route through `ClientResultHandler` on both paths. The receive path reads TDLib's buffer
-directly: no copy, no terminator scan.
+`<TdParsers>` picks the parser, one or the other, and `Reader` puts every part of this back the way
+it was in a single edit — nothing was deleted to make room. It is set to `Both` today, which is a
+holding position rather than an end state: the app has no use for two parsers, and `Both` exists so
+the benchmark can race them.
+
+**Done.** A pointer-based reader (`Telegram/Td/TdJsonReader.cs`) and a generator that emits parsers
+against it, worth **2.0–2.9× on the full parse on .NET Native** with identical allocation. Three
+hosts running one suite. `SchemaGenerator` rewritten from spike to something with diagnostics. Files
+route through `ClientResultHandler` on both paths. The receive path reads TDLib's buffer directly:
+no copy, no terminator scan. A build mode that compiles one parser or the other, verified in all
+three settings.
 
 **Next:**
 
@@ -624,11 +633,9 @@ directly: no copy, no terminator scan.
    parser, and that time as a share of wall clock, which is the number that says whether any of this
    matters. `TdThroughput` holds the counters; off, it costs a static read per update. A cold sync
    is where a difference should show if it shows anywhere.
-2. The generated file goes from 149,712 lines to 211,651 (+41%) with both parser sets emitted, which
-   costs .NET Native compile time and binary size. The TODO below about emitting parsers only for
-   types that can actually be received is worth more now than it was; so is the question of whether
-   the `FromJson_*` set can eventually go, which needs `RichHtml` and `RichEditorCommands` — the
-   only other callers — to hand their JSON to the pointer reader as a NUL-terminated buffer.
+2. Then `<TdParsers>Pointer</TdParsers>`, and the `Utf8JsonReader` set stops being compiled at all —
+   44,508 generated lines and ~500 hand-written ones. One word, and the only step left that the
+   benchmark cannot check for you is `ClientService`, whose `#if` blocks nothing here compiles.
 
 **Independent of that, still open:**
 

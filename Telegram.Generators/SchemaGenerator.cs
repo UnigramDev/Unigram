@@ -40,20 +40,20 @@ namespace Telegram.Generators
                 .Where(f => f.Path.EndsWith("td_api.tl"))
                 .Select((file, _) => file.GetText()?.ToString());
 
-            // Opt-in, because the pointer parsers roughly double the generated code and only a
-            // project that has TdJsonReader can compile them. Off by default the output is byte for
-            // byte what it has always been.
+            //   <TdParsers>Pointer</TdParsers>
+            //   <CompilerVisibleProperty Include="TdParsers" />
             //
-            //   <TdPointerParser>true</TdPointerParser>
-            //   <CompilerVisibleProperty Include="TdPointerParser" />
-            var pointer = context.AnalyzerConfigOptionsProvider.Select((options, _) =>
-                options.GlobalOptions.TryGetValue("build_property.TdPointerParser", out var value) &&
-                string.Equals(value, "true", StringComparison.OrdinalIgnoreCase));
+            // Which set of parsers to emit - see TdParsers. Unset means Reader, which is what the
+            // app shipped for years and what the byte-for-byte diff is taken against.
+            var parsers = context.AnalyzerConfigOptionsProvider.Select((options, _) =>
+                options.GlobalOptions.TryGetValue("build_property.TdParsers", out var value)
+                    ? TdParsersExtensions.Parse(value)
+                    : TdParsers.Reader);
 
-            context.RegisterSourceOutput(content.Combine(pointer), (ctx, pair) => Execute(ctx, pair.Left, pair.Right));
+            context.RegisterSourceOutput(content.Combine(parsers), (ctx, pair) => Execute(ctx, pair.Left, pair.Right));
         }
 
-        private static void Execute(SourceProductionContext context, string text, bool pointer)
+        private static void Execute(SourceProductionContext context, string text, TdParsers parsers)
         {
             if (text is null)
             {
@@ -71,7 +71,7 @@ namespace Telegram.Generators
                     context.ReportDiagnostic(Diagnostic.Create(SchemaFailed, Location.None, error.Line, error.Message));
                 }
 
-                context.AddSource("TdDotNetApi.g.cs", Write(schema.Classes, pointer));
+                context.AddSource("TdDotNetApi.g.cs", Write(schema.Classes, parsers));
             }
             catch (Exception ex)
             {
@@ -79,8 +79,11 @@ namespace Telegram.Generators
             }
         }
 
-        private static string Write(List<SchemaClass> parsed, bool pointer)
+        private static string Write(List<SchemaClass> parsed, TdParsers parsers)
         {
+            var reader = parsers != TdParsers.Pointer;
+            var pointer = parsers != TdParsers.Reader;
+
             var classes = parsed
                 .OrderBy(x => x.IsFunction)
                 .ThenBy(x => x.Name)
@@ -151,10 +154,6 @@ namespace Telegram.Generators
 
             builder.AppendLine("public partial class ClientJson");
             builder.AppendLine("{");
-            builder.AppendLine("  private static Object DoFromJson(ref Utf8JsonReader reader, ClientResultHandler handler, uint hash)");
-            builder.AppendLine("  {");
-            builder.AppendLine("    switch (hash)");
-            builder.AppendLine("    {");
 
             // richMessageSourceBlocks is reachable only through richMessageSource, which no function
             // returns - but the instant view code parses it from a top-level payload, so it needs a
@@ -164,6 +163,33 @@ namespace Telegram.Generators
             {
                 returnTypes.Add(richMessageSourceBlocks);
             }
+
+            if (reader)
+            {
+                WriteReaderParsers(builder, classes, returnTypes, abstractTypes);
+            }
+
+            if (pointer)
+            {
+                WritePointerParsers(builder, classes, returnTypes, abstractTypes);
+            }
+
+            builder.AppendLine("}");
+            builder.AppendLine("}");
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// The Utf8JsonReader parsers, which is what the app shipped for years. Byte for byte what
+        /// this generator has always emitted, and the diff that proves a change to it is safe.
+        /// </summary>
+        private static void WriteReaderParsers(StringBuilder builder, List<SchemaClass> classes,
+            List<SchemaClass> returnTypes, Dictionary<string, List<SchemaClass>> abstractTypes)
+        {
+            builder.AppendLine("  private static Object DoFromJson(ref Utf8JsonReader reader, ClientResultHandler handler, uint hash)");
+            builder.AppendLine("  {");
+            builder.AppendLine("    switch (hash)");
+            builder.AppendLine("    {");
 
             foreach (var type in returnTypes)
             {
@@ -194,21 +220,12 @@ namespace Telegram.Generators
                     ApiEmitter.WriteFromJson(builder, type);
                 }
             }
-
-            if (pointer)
-            {
-                WritePointerParsers(builder, classes, returnTypes, abstractTypes);
-            }
-
-            builder.AppendLine("}");
-            builder.AppendLine("}");
-            return builder.ToString();
         }
 
         /// <summary>
-        /// A second set of parsers reading through TdJsonReader instead of Utf8JsonReader. Same
-        /// shape, same schema, different reader - emitted alongside rather than instead of, so the
-        /// two can be raced against each other before either is chosen.
+        /// The same parsers reading through TdJsonReader instead of Utf8JsonReader. Same shape,
+        /// same schema, different reader. Emitted alongside the reader set only for the benchmark,
+        /// which races them; the app compiles one or the other.
         /// </summary>
         private static void WritePointerParsers(StringBuilder builder, List<SchemaClass> classes,
             List<SchemaClass> returnTypes, Dictionary<string, List<SchemaClass>> abstractTypes)

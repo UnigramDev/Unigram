@@ -33,7 +33,7 @@
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <ProjectPriIndexName>Telegram.Benchmarks.NetNative</ProjectPriIndexName>
     <Nullable>enable</Nullable>
-    <TdPointerParser>true</TdPointerParser>
+    <TdParsers>Both</TdParsers>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>$(NoWarn);CS0169;CS0649;CS8618;CS8601;CS8603;CS8604;CS8625;2008</NoWarn>
   </PropertyGroup>
@@ -58,9 +58,12 @@
   </PropertyGroup>
 
   <!-- After the configuration blocks, which set DefineConstants outright. The property is what the
-       generator reads, the constant is what the hand-written code reads; the app pairs them the
+       generator reads, the constants are what the hand-written code reads; the app pairs them the
        same way. -->
-  <PropertyGroup Condition="'$(TdPointerParser)' == 'true'">
+  <PropertyGroup Condition="'$(TdParsers)' != 'Pointer'">
+    <DefineConstants>$(DefineConstants);TD_READER_PARSER</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TdParsers)' != 'Reader'">
     <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
   </PropertyGroup>
 
@@ -85,7 +88,7 @@
       <Name>Telegram.Generators</Name>
     </ProjectReference>
     <AdditionalFiles Include="..\Libraries\tdjson\td_api.tl" />
-    <CompilerVisibleProperty Include="TdPointerParser" />
+    <CompilerVisibleProperty Include="TdParsers" />
   </ItemGroup>
 
   <ItemGroup>

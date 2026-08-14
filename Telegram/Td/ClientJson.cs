@@ -123,6 +123,7 @@ namespace Telegram.Td.Api
 #endif
         }
 
+#if TD_READER_PARSER
         public static Object FromJson(ReadOnlySpan<byte> jsonData, ClientResultHandler? handler = null)
         {
             var reader = new Utf8JsonReader(jsonData);
@@ -192,6 +193,7 @@ namespace Telegram.Td.Api
 
             return obj;
         }
+#endif
 
         #region Crc32
 
@@ -420,8 +422,11 @@ namespace Telegram.Td.Api
         #endregion
     }
 
+    // Reading and writing both, and only the writing half is unconditional: requests are
+    // serialized with Utf8JsonWriter whichever parser was generated.
     public static class Utf8JsonExtensions
     {
+#if TD_READER_PARSER
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ReadStartObject(this ref Utf8JsonReader reader)
         {
@@ -454,6 +459,7 @@ namespace Telegram.Td.Api
 
             return reader.GetInt64();
         }
+#endif
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteNumberString(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, long value)
@@ -684,6 +690,7 @@ namespace Telegram.Td.Api
             writer.WriteEndArray();
         }
 
+#if TD_READER_PARSER
         public delegate T GetObjectArrayHandler<T>(ref Utf8JsonReader reader, ClientResultHandler handler);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -828,5 +835,6 @@ namespace Telegram.Td.Api
 
             return obj;
         }
+#endif
     }
 }

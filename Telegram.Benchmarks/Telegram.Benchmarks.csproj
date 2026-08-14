@@ -15,14 +15,17 @@
     <!-- Writes TdDotNetApi.g.cs to obj\, which is the point: the generated parser is the thing
          under test and it should be readable. -->
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <!-- Emits the FromPtr_* parsers alongside the FromJson_* ones, so the two readers can be
-         raced against each other over the same schema. -->
-    <TdPointerParser>true</TdPointerParser>
+    <!-- Both sets, which is what this project is for: the app builds one or the other, and this
+         one races them over the same corpus and checks they agree field for field. -->
+    <TdParsers>Both</TdParsers>
   </PropertyGroup>
 
-  <!-- The same pair the app sets: the property is what the generator reads, the constant is what
-       the hand-written code reads. ClientJson.cs is linked from the app and needs both. -->
-  <PropertyGroup Condition="'$(TdPointerParser)' == 'true'">
+  <!-- The same pair the app sets: the property is what the generator reads, the constants are what
+       the hand-written code reads. ClientJson.cs is linked from the app and needs them. -->
+  <PropertyGroup Condition="'$(TdParsers)' != 'Pointer'">
+    <DefineConstants>$(DefineConstants);TD_READER_PARSER</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TdParsers)' != 'Reader'">
     <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
   </PropertyGroup>
 
@@ -71,7 +74,7 @@
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
     <AdditionalFiles Include="..\Libraries\tdjson\td_api.tl" />
-    <CompilerVisibleProperty Include="TdPointerParser" />
+    <CompilerVisibleProperty Include="TdParsers" />
   </ItemGroup>
 
   <!-- Linked, not copied: a fork would stop measuring the shipping code the day it drifts. -->

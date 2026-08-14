@@ -4714,20 +4714,26 @@
     <OpenSSLPlatform>-$(Platform)</OpenSSLPlatform>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- Emits the FromPtr_* parsers, which read td_receive's buffer directly instead of through
-         Utf8JsonReader: 2.0-2.9x on the full parse on .NET Native, where indexing a Span costs
-         ~10x what a raw pointer does. See Telegram.Benchmarks/README.md.
-         Set it to false to put Client.Receive and Client.Execute back on Utf8JsonReader; nothing
-         else changes, because the FromJson_* parsers are still emitted either way and are still
-         what parses the JSON the instant view editor hands back. -->
-    <TdPointerParser>true</TdPointerParser>
+    <!-- Which JSON parser the app is built with, and it is one or the other: a second set for the
+         same schema is ~44k lines of .NET Native compile time for something nothing calls.
+           Reader  - Utf8JsonReader, what shipped for years.
+           Pointer - TdJsonReader over td_receive's buffer. 2.0-2.9x on the full parse on .NET
+                     Native, where indexing a Span costs ~10x what a raw pointer does.
+           Both    - only Telegram.Benchmarks, which races them.
+         See Telegram.Benchmarks/README.md. Currently Both while the pointer path has yet to be
+         built and run even once; Pointer is where this is going. -->
+    <TdParsers>Both</TdParsers>
   </PropertyGroup>
-  <!-- One switch, two consumers: the generator reads the property, Client.cs reads the constant. -->
-  <PropertyGroup Condition="'$(TdPointerParser)' == 'true'">
+  <!-- One switch, two consumers: the generator reads the property and emits parsers, the
+       hand-written code reads the constants and calls them. -->
+  <PropertyGroup Condition="'$(TdParsers)' != 'Pointer'">
+    <DefineConstants>$(DefineConstants);TD_READER_PARSER</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TdParsers)' != 'Reader'">
     <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <CompilerVisibleProperty Include="TdPointerParser" />
+    <CompilerVisibleProperty Include="TdParsers" />
     <AdditionalFiles Include="$(ProjectDir)\..\Libraries\tdjson\td_api.tl" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\tdjson.dll" />
     <!-- tdjson comes in as a copy-local path rather than a Reference, so RAR never runs its
