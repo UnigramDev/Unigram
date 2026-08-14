@@ -310,15 +310,58 @@ The three facts most of this rests on:
       it isn't, the highlighters now arrive on load instead of never. The ordering question
       itself stays open — this makes the answer stop mattering.
 
-- [ ] **Date-driven spoiler fix-up loses deltas and never touches the ranges** — `:2508-2519`
-      **[latent]**
+- [x] **Date-driven spoiler fix-up loses deltas and never touches the ranges** — `:2508-2519`
+      ~~**[latent]**~~ **[live]**
+      → fixed on the `formatted-text-block-dates` branch
 
       `TextDate.Update` re-derives each spoiler from `OriginalOffset` plus *its own* delta, so
       with two relative dates before the same spoiler the second update overwrites the first's
       shift. And the highlighter ranges themselves are left alone (the commented-out block at
       `:2521-2532`), so the transparent range drifts off the text whenever a date changes
-      length (`"59 seconds ago"` → `"1 minute ago"`). The existing `// TODO: get rid of _spoiler`
-      (`:1580`) is the real fix.
+      length (`"59 seconds ago"` → `"1 minute ago"`).
+
+      **Marked [latent] on a wrong reading.** I traced where `TextEntityTypeDateTime` is
+      constructed, found only Unigram's own sites (`TryParseDateTime` on a `tg://date` link and
+      the `x-tl-field-tags` clipboard reader, both feeding the composer, plus `PageBlockHelper`
+      for Instant View) and concluded the read view only saw dates in IV. It is a **TDLib type**
+      — `td_api.tl:5759` — so it arrives in ordinary message entities, and this is live on the
+      message path.
+
+      That also promotes a third consumer nobody was tracking: `_indexMap`. A date's segment
+      records `FormattedText.Length` at build time, so once the date is rewritten every segment
+      after it is off — which is selection and copy in any message containing a relative date,
+      independent of spoilers.
+
+      The three consumers are fixed by two different mechanisms, because they want different
+      things:
+
+      - **Geometry** (`_spoilers`) is now *derived*, not stored. `TextStyleSpoiler` keeps source
+        offsets and `DisplayedRange` computes the displayed range from the paragraph's runs at
+        the point of use: dates ending before the spoiler push it along, a date inside it
+        stretches it. Any number of dates, any order, no state to drift. The whole patch loop in
+        `TextDate.Update` is gone, along with the second constructor and the `dates` accumulator
+        in `SetText`.
+      - **Rendered space** (`_indexMap`, and the spoiler/marked/cached ranges) is *shifted*, by
+        `ShiftRenderedSpace(segment, delta)`. Each date carries the index of its own map segment,
+        captured when `SetText` mapped it, so a tick moves exactly what is downstream of it. The
+        delta is measured **since the last tick** — the old code measured against `Entity.Length`,
+        the source length, which is the total growth since first render, so applying it every
+        tick and once per date compounded.
+
+      Two things fixed on the way, both from the same root:
+
+      - A spoiler's rendered range was `Length = entity.Length` — the *source* length. A spoiler
+        wrapping a date renders longer than its source, so the cover was short from the first
+        render. The range is now measured from what was actually emitted (`offset` before and
+        after), which is right for emoji and math inside a spoiler too.
+      - The two branches of `UpdateSpoilers` disagreed about which space the offset was in: the
+        block branch measures against the date-expanded `GetParts` text, the inline branch
+        against raw `_text.Text`. The stored offset carried the date shift, so it was wrong in
+        the inline branch by construction. Deriving per branch settles it.
+
+      `// TODO: get rid of _spoiler` (`:1580`) is still the better end state — none of the
+      rendered-space shifting would be needed if the cover came from the geometry — but that is
+      a design change, and this makes the current design correct.
 
 ---
 

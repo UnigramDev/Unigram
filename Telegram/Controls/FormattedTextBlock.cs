@@ -99,12 +99,15 @@ namespace Telegram.Controls
         private List<IXamlDirectObject> _dates;
         private List<TextStyleSpoiler> _spoilers;
 
+        // Offset and Length are in the paragraph's SOURCE text, so they never go stale. The
+        // displayed position - which moves whenever a relative date in front of the spoiler is
+        // rewritten - is derived from the paragraph's runs at the point it is needed
+        // (UpdateSpoilers). It used to be stored here and patched on every date tick, which
+        // could not be right for more than one date.
         readonly struct TextStyleSpoiler
         {
             public readonly int Offset;
             public readonly int Length;
-            public readonly int OriginalOffset;
-            public readonly int OriginalLength;
             public readonly int ParagraphIndex;
 
             public TextStyleSpoiler(int offset, int length, int paragraphIndex)
@@ -112,18 +115,6 @@ namespace Telegram.Controls
                 Offset = offset;
                 Length = length;
                 ParagraphIndex = paragraphIndex;
-                OriginalOffset = offset;
-                OriginalLength = length;
-            }
-
-            public TextStyleSpoiler(int offset, int length, TextStyleSpoiler original)
-            {
-                Offset = offset;
-                Length = length;
-
-                OriginalOffset = original.OriginalOffset;
-                OriginalLength = original.OriginalLength;
-                ParagraphIndex = original.ParagraphIndex;
             }
         }
 
@@ -1116,7 +1107,6 @@ namespace Telegram.Controls
                 var partFontSize = fontSize;
 
                 var previous = 0;
-                var dates = 0;
 
                 IXamlDirectObject paragraph;
                 IXamlDirectObject inlines;
@@ -1225,6 +1215,12 @@ namespace Telegram.Controls
                         IXamlDirectObject parent = null;
                         IXamlDirectObject parentInlines = inlines;
 
+                        // A spoiler's rendered length is whatever its content turns out to
+                        // occupy - a date inside it renders longer than the source it came
+                        // from - so the range is written now and measured at the end.
+                        var spoilerRange = -1;
+                        var spoilerStart = offset;
+
                         if (paragraph != null)
                         {
                             if (_ignoreSpoilers is false && entity.HasFlag(Native.TextStyle.Spoiler))
@@ -1233,9 +1229,10 @@ namespace Telegram.Controls
                                 direct.SetObjectProperty(span, XamlPropertyIndex.TextElement_Foreground, null);
                                 direct.SetObjectProperty(span, XamlPropertyIndex.TextElement_FontFamily, BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily);
 
-                                (_spoilers ??= new List<TextStyleSpoiler>()).Add(new TextStyleSpoiler(entity.Offset + dates, entity.Length, new TextStyleSpoiler(entity.Offset, entity.Length, i - _first)));
+                                (_spoilers ??= new List<TextStyleSpoiler>()).Add(new TextStyleSpoiler(entity.Offset, entity.Length, i - _first));
 
                                 spoiler ??= new TextHighlighter();
+                                spoilerRange = spoiler.Ranges.Count;
                                 spoiler.Ranges.Add(new TextRange { StartIndex = offset, Length = entity.Length });
 
                                 parent = span;
@@ -1300,7 +1297,7 @@ namespace Telegram.Controls
                             direct.SetObjectProperty(span, XamlPropertyIndex.TextElement_Foreground, null);
                             direct.SetObjectProperty(span, XamlPropertyIndex.TextElement_FontFamily, BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily);
 
-                            (_spoilers ??= new List<TextStyleSpoiler>()).Add(new TextStyleSpoiler(entity.Offset + dates, entity.Length, i - _first));
+                            (_spoilers ??= new List<TextStyleSpoiler>()).Add(new TextStyleSpoiler(entity.Offset, entity.Length, i - _first));
 
                             if (textOffset == -1)
                             {
@@ -1308,6 +1305,7 @@ namespace Telegram.Controls
                             }
 
                             spoiler ??= new TextHighlighter();
+                            spoilerRange = spoiler.Ranges.Count;
                             spoiler.Ranges.Add(new TextRange { StartIndex = textOffset + offset, Length = entity.Length });
 
                             parent = span;
@@ -1444,12 +1442,14 @@ namespace Telegram.Controls
                             var run = GetOrCreateRun(direct, parentInlines, entity.FormattedText, direction, entity.Flags, null, partFontSize, false);
                             Map(part.Offset + entity.Offset, entity.FormattedText.Length, entity.Length); // displayed date <-> original
                             offset += entity.FormattedText.Length;
-                            dates += entity.FormattedText.Length - entity.Length;
 
                             if (date.FormattingType is DateTimeFormattingTypeRelative)
                             {
                                 (_dates ??= new List<IXamlDirectObject>()).Add(run);
-                                RelativeDateService.Subscribe(run, this, part, entity, date);
+
+                                // Map was called for this date immediately above, so its segment
+                                // is the last one - that is what a tick has to shift from.
+                                RelativeDateService.Subscribe(run, this, part, entity, date, _indexMap.Count - 1);
                             }
                         }
                         else if (_spanForInlines == null && entity.Type is TextEntityTypeMathematicalExpression mathematicalExpression)
@@ -1525,6 +1525,12 @@ namespace Telegram.Controls
                             GetOrCreateRun(direct, parentInlines, text, entity.Offset, entity.Length, direction, entity.Flags, null, partFontSize, false);
                             Map(part.Offset + entity.Offset, entity.Length, entity.Length);
                             offset += entity.Length;
+                        }
+
+                        if (spoilerRange >= 0 && offset > spoilerStart)
+                        {
+                            var range = spoiler.Ranges[spoilerRange];
+                            spoiler.Ranges[spoilerRange] = new TextRange { StartIndex = range.StartIndex, Length = offset - spoilerStart };
                         }
 
                         if (parent != null)
@@ -1726,6 +1732,98 @@ namespace Telegram.Controls
             }
         }
 
+        // A relative date rewrote itself, so the rendered space grew or shrank by `delta` at the
+        // end of `segment`. Everything downstream is expressed in that space and has to move
+        // with it: the index map the selection layer reads, and the highlighter ranges. Without
+        // this, one tick's worth of characters separates what is copied from what is shown, and
+        // the spoiler cover slides off its text.
+        private void ShiftRenderedSpace(int segment, int delta)
+        {
+            var map = _indexMap;
+            if (map == null || segment < 0 || segment >= map.Count)
+            {
+                return;
+            }
+
+            var date = map[segment];
+            var from = date.Rendered + date.RenderedLength;
+
+            map[segment] = new IndexSegment(date.Rendered, date.Styled, date.RenderedLength + delta, date.StyledLength);
+
+            for (int i = segment + 1; i < map.Count; i++)
+            {
+                var next = map[i];
+                map[i] = new IndexSegment(next.Rendered + delta, next.Styled, next.RenderedLength, next.StyledLength);
+            }
+
+            ShiftRanges(_spoiler, from, delta);
+            ShiftRanges(_marked, from, delta);
+            ShiftRanges(_cached, from, delta);
+
+            // A TextHighlighter does not repaint when its ranges change under it, and the query
+            // range is recomputed from the map this just fixed, so rebuild the lot.
+            ApplyHighlighters();
+        }
+
+        private static void ShiftRanges(TextHighlighter highlighter, int from, int delta)
+        {
+            var ranges = highlighter?.Ranges;
+
+            for (int i = 0; i < ranges?.Count; i++)
+            {
+                var range = ranges[i];
+
+                if (range.StartIndex >= from)
+                {
+                    ranges[i] = new TextRange { StartIndex = range.StartIndex + delta, Length = range.Length };
+                }
+                else if (range.StartIndex + range.Length >= from)
+                {
+                    // The date is inside this range - a spoiler wrapping it - so it stretches
+                    // rather than moves.
+                    ranges[i] = new TextRange { StartIndex = range.StartIndex, Length = range.Length + delta };
+                }
+            }
+        }
+
+        // A spoiler's range in the paragraph's DISPLAYED text: its source range, plus the growth
+        // of every relative date that has been rewritten. Dates before it push it along; a date
+        // inside it stretches it. Derived rather than stored, so any number of dates updating in
+        // any order lands in the same place.
+        private static void DisplayedRange(StyledParagraph styled, TextStyleSpoiler spoiler, out int offset, out int length)
+        {
+            var before = 0;
+            var inside = 0;
+
+            var runs = styled.Runs;
+            for (int i = 0; i < runs.Count; i++)
+            {
+                var run = runs[i];
+
+                // Mirrors what SetText renders as a date. A date with no FormattingType is drawn
+                // from its source text and never gets a FormattedText, so it displaces nothing -
+                // and FormattedText starts as an empty string rather than null, which would read
+                // as shrinking the paragraph to nothing.
+                if (run.Type is not TextEntityTypeDateTime { FormattingType: not null } || string.IsNullOrEmpty(run.FormattedText))
+                {
+                    continue;
+                }
+
+                var growth = run.FormattedText.Length - run.Length;
+                if (run.Offset + run.Length <= spoiler.Offset)
+                {
+                    before += growth;
+                }
+                else if (run.Offset >= spoiler.Offset && run.Offset + run.Length <= spoiler.Offset + spoiler.Length)
+                {
+                    inside += growth;
+                }
+            }
+
+            offset = spoiler.Offset + before;
+            length = spoiler.Length + inside;
+        }
+
         private void UpdateSpoilers()
         {
             if (_ignoreSpoilers || _spoilers == null || _spoilers.Count == 0)
@@ -1771,11 +1869,11 @@ namespace Telegram.Controls
                         continue;
                     }
 
-                    int xoffset = spoiler.Offset;
-                    int xlength = spoiler.Length;
+                    // GetParts hands back the date-expanded text, so the range has to be in that
+                    // space too.
+                    DisplayedRange(styled, spoiler, out int xoffset, out int xlength);
 
-                    var partial = _text.Text.Substring(styled.Offset, styled.Length);
-                    var entities = styled.GetParts(out partial) ?? TextStyleRun.NoParts;
+                    var entities = styled.GetParts(out var partial) ?? TextStyleRun.NoParts;
 
                     var size = styled.Type is TextParagraphTypeQuote
                         ? quoteSize
@@ -1828,6 +1926,9 @@ namespace Telegram.Controls
                 {
                     StyledParagraph styled = _text.Paragraphs[_first + spoiler.ParagraphIndex];
 
+                    // Measured against the raw text here, not the date-expanded one, so these
+                    // stay source offsets - the mismatch the stored displayed offset used to
+                    // introduce in this branch.
                     int xoffset = styled.Offset + spoiler.Offset;
                     int xlength = spoiler.Length;
 
@@ -2536,13 +2637,14 @@ namespace Telegram.Controls
             // Native doesn't do records anyway.
             class TextDate
             {
-                public TextDate(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun entity, TextEntityTypeDateTime entityType)
+                public TextDate(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun entity, TextEntityTypeDateTime entityType, int segment)
                 {
                     Element = element;
                     TextBlock = textBlock;
                     Paragraph = paragraph;
                     Entity = entity;
                     Date = Formatter.ToLocalTime(entityType.UnixTime);
+                    Segment = segment;
                 }
 
                 public IXamlDirectObject Element { get; }
@@ -2555,37 +2657,28 @@ namespace Telegram.Controls
 
                 public DateTime Date { get; }
 
+                // Where this date sits in the block's index map, captured when the block built
+                // it. Only valid until the next SetText, which resubscribes.
+                public int Segment { get; }
+
                 public ulong NextUpdateAt { get; set; }
 
                 public string Update()
                 {
+                    // How much the displayed date grew or shrank THIS tick. Measuring against
+                    // Entity.Length - the source length - is what made the old patching wrong:
+                    // it is the total growth since the first render, so applying it again on
+                    // every tick, and once per date, compounded.
+                    var before = string.IsNullOrEmpty(Entity.FormattedText) ? Entity.Length : Entity.FormattedText.Length;
                     var text = Entity.Update(Paragraph);
+                    var delta = (string.IsNullOrEmpty(text) ? Entity.Length : text.Length) - before;
 
-                    for (int i = 0; i < TextBlock._spoilers?.Count; i++)
+                    // Spoiler geometry needs nothing here: UpdateSpoilers derives it from the
+                    // paragraph's runs, which Update has just rewritten.
+                    if (delta != 0)
                     {
-                        var spoiler = TextBlock._spoilers[i];
-                        if (spoiler.OriginalOffset > Entity.Offset + Entity.Length)
-                        {
-                            TextBlock._spoilers[i] = new TextStyleSpoiler(spoiler.OriginalOffset + (Entity.FormattedText.Length - Entity.Length), spoiler.OriginalLength, spoiler);
-                        }
-                        else if (spoiler.OriginalOffset <= Entity.Offset && spoiler.Offset + spoiler.OriginalLength >= Entity.Offset + Entity.Length)
-                        {
-                            TextBlock._spoilers[i] = new TextStyleSpoiler(spoiler.OriginalOffset, spoiler.OriginalLength + (Entity.FormattedText.Length - Entity.Length), spoiler);
-                        }
+                        TextBlock.ShiftRenderedSpace(Segment, delta);
                     }
-
-                    //for (int i = 0; i < TextBlock._spoiler.Ranges.Count; i++)
-                    //{
-                    //    var spoiler = TextBlock._spoilers[i];
-                    //    if (spoiler.Offset > Yolo.Offset + Yolo.Length)
-                    //    {
-                    //        TextBlock._spoiler.Ranges[i] = new TextRange { StartIndex = spoiler.Offset + (Entity.FormattedText.Length - Yolo.Length), Length = spoiler.Length };
-                    //    }
-                    //    else if (spoiler.Offset <= Yolo.Offset && spoiler.Offset + spoiler.Length >= Yolo.Offset + Yolo.Length)
-                    //    {
-                    //        TextBlock._spoiler.Ranges[i] = new TextRange { StartIndex = spoiler.Offset, Length = spoiler.Length + (Entity.FormattedText.Length - Yolo.Length) };
-                    //    }
-                    //}
 
                     TextBlock.RegisterLayoutChanged();
 
@@ -2612,20 +2705,20 @@ namespace Telegram.Controls
                 _timer.Start();
             }
 
-            public static void Subscribe(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun run, TextEntityTypeDateTime entity)
+            public static void Subscribe(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun run, TextEntityTypeDateTime entity, int segment)
             {
                 _current ??= new();
-                _current.SubscribeImpl(element, textBlock, paragraph, run, entity);
+                _current.SubscribeImpl(element, textBlock, paragraph, run, entity, segment);
             }
 
-            private void SubscribeImpl(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun run, TextEntityTypeDateTime entity)
+            private void SubscribeImpl(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun run, TextEntityTypeDateTime entity, int segment)
             {
                 if (_dates.ContainsKey(element))
                 {
                     return;
                 }
 
-                _dates.Add(element, new TextDate(element, textBlock, paragraph, run, entity));
+                _dates.Add(element, new TextDate(element, textBlock, paragraph, run, entity, segment));
                 _timer.Stop();
 
                 _timer.Interval = GetNextUpdateInterval(_dates.Values, false);
