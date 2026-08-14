@@ -83,7 +83,18 @@ namespace Telegram.Views.Popups
 
         private async void FindLocation()
         {
-            var accessStatus = await Geolocator.RequestAccessAsync();
+            GeolocationAccessStatus accessStatus;
+
+            try
+            {
+                accessStatus = await Geolocator.RequestAccessAsync();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+                accessStatus = GeolocationAccessStatus.Denied;
+            }
+
             if (accessStatus == GeolocationAccessStatus.Allowed)
             {
                 if (_geolocator == null)
