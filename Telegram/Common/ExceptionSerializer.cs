@@ -199,10 +199,11 @@ namespace Telegram.Common
 
         private static ExceptionModel ProcessException(System.Exception exception, ExceptionModel outerException, Dictionary<long, ExceptionBinary> seenBinaries, StringBuilder hashBuilder)
         {
+            var type = exception.GetType().Name;
             var modelException = new ExceptionModel
             {
-                Type = exception.GetType().Name,
-                Message = TranslateMessage(exception.Message.Replace("\r\n", "\n")),
+                Type = type,
+                Message = TranslateMessage(exception.Message.Replace("\r\n", "\n"), type, exception.HResult),
                 StackTrace = exception.StackTrace?.Replace("\r\n", "\n")
             };
             if (exception is AggregateException aggregateException)
@@ -287,7 +288,9 @@ namespace Telegram.Common
             var modelException = new ExceptionModel
             {
                 Type = exception.Type,
-                Message = TranslateMessage(exception.Message.Replace("\r\n", "\n")),
+                // FatalError has no HRESULT of its own, so the lookup falls back to the one .NET
+                // printed into the message, when it printed one.
+                Message = TranslateMessage(exception.Message.Replace("\r\n", "\n"), exception.Type, 0),
                 StackTrace = exception.StackTrace?.Replace("\r\n", "\n")
             };
 
@@ -469,7 +472,7 @@ namespace Telegram.Common
             "zlib1",
         };
 
-        private static string TranslateMessage(string message)
+        private static string TranslateMessage(string message, string type, int hresult)
         {
             var parts = message.Split('\n');
             var builder = new StringBuilder();
@@ -492,14 +495,23 @@ namespace Telegram.Common
                 // Only the sentence is localised, so the HRESULT .NET appends has to come off
                 // before it can be matched and go back on afterwards.
                 var suffix = _hresultSuffix.Match(part);
-                if (suffix.Success)
+                var sentence = suffix.Success ? part.Substring(0, suffix.Index) : part;
+
+                // Only the first line can be the system text: when a WinRT error carries an
+                // originating description, .NET puts it on a line of its own after it, and that
+                // description is the part that says which call failed.
+                if (i == 0 && TryTranslateHResult(type, hresult, suffix, out string canonical))
                 {
-                    builder.Append(TranslateText(part.Substring(0, suffix.Index)));
-                    builder.Append(suffix.Value);
+                    builder.Append(canonical);
                 }
                 else
                 {
-                    builder.Append(TranslateText(part));
+                    builder.Append(TranslateText(sentence));
+                }
+
+                if (suffix.Success)
+                {
+                    builder.Append(suffix.Value);
                 }
             }
 
@@ -508,7 +520,119 @@ namespace Telegram.Common
 
         // Anchored at the end and matched in full, because the sentence in front can contain
         // parentheses of its own - the Portuguese RPC_E_WRONG_THREAD text says "(marshall)".
-        private static readonly Regex _hresultSuffix = new(@"\s*\(Exception from HRESULT: 0x[0-9A-Fa-f]{8}\)$", RegexOptions.Compiled);
+        private static readonly Regex _hresultSuffix = new(@"\s*\(Exception from HRESULT: 0x([0-9A-Fa-f]{8})\)$", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Rebuilds a message from its HRESULT, which is the same number in every language, rather
+        /// than matching the sentence Windows produced in the user's own.
+        /// </summary>
+        private static bool TryTranslateHResult(string type, int hresult, Match suffix, out string translated)
+        {
+            // The message of a managed exception is .NET's own text and only starts with the system
+            // wording, if at all: NullReferenceException carries E_POINTER, ArgumentException carries
+            // E_INVALIDARG, InvalidCastException carries E_NOINTERFACE. Rewriting those from the code
+            // would turn "Object reference not set to an instance of an object." into "Invalid
+            // pointer" and merge every one of them into a single group. Exception and COMException
+            // are the two whose message is the system text and nothing else.
+            if (type != "Exception" && type != "COMException")
+            {
+                translated = null;
+                return false;
+            }
+
+            // The FatalError path has no HRESULT to pass, so recover it from the message when .NET
+            // appended one there.
+            if (hresult == 0 && suffix.Success
+                && uint.TryParse(suffix.Groups[1].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint parsed))
+            {
+                hresult = (int)parsed;
+            }
+
+            translated = TranslateHResult((uint)hresult);
+            return translated != null;
+        }
+
+        /// <summary>
+        /// The English text Windows would have produced for a system error code.
+        /// </summary>
+        /// <remarks>
+        /// Only genuine system codes belong here. COR_E_* (0x8013xxxx) must never be added: it is
+        /// what an exception the app threw itself carries, and its message is one we wrote.
+        ///
+        /// E_FAIL is deliberately absent, and so are the DirectWrite and Direct2D codes.
+        /// CoreApplication.UnhandledErrorDetected flattens the propagated exception to E_FAIL while
+        /// the message keeps the wording of the original failure, so those reports arrive with a font
+        /// or render-target sentence and an HRESULT of 0x80004005 - and taking the code at its word
+        /// would replace the one meaningful part with "Unspecified error". Their sentences stay in
+        /// <see cref="TranslateText"/>, which is where those two families are actually handled.
+        /// </remarks>
+        private static string TranslateHResult(uint hresult)
+        {
+            switch (hresult)
+            {
+                // The old-style OLE codes, still returned by parts of the shell and of XAML.
+                case 0x80000005: return "Invalid pointer";
+                case 0x80000007: return "Operation aborted";
+                case 0x8000000B: return "The operation attempted to access data outside the valid range";
+                case 0x80000013: return "The object has been closed.";
+                case 0x80000016: return "The text associated with this error code could not be found.";
+                case 0x80000019: return "An async operation was not properly started.";
+
+                case 0x80004003: return "Invalid pointer";
+                case 0x80004004: return "Operation aborted";
+                case 0x8000FFFF: return "Catastrophic failure";
+
+                case 0x80010001: return "Call was rejected by callee.";
+                case 0x80010108: return "The object invoked has disconnected from its clients.";
+                case 0x8001010A: return "The message filter indicated that the application is busy.";
+                case 0x8001010E: return "The application called an interface that was marshalled for a different thread.";
+                case 0x8001011B: return "Access is denied.";
+                case 0x8002000A: return "Out of present range.";
+                case 0x8002802B: return "Element not found.";
+                case 0x80040153: return "Invalid value for registry";
+                case 0x80040154: return "Class not registered";
+                case 0x80040155: return "Interface not registered";
+                case 0x800401D4: return "CloseClipboard Failed";
+                case 0x80040201: return "An event was unable to invoke any of the subscribers";
+                case 0x80080005: return "Server execution failed";
+                case 0x80090027: return "The parameter is incorrect.";
+
+                case 0x80070002: return "The system cannot find the file specified.";
+                case 0x80070005: return "Access is denied.";
+                case 0x80070008: return "Not enough memory resources are available to process this command.";
+                case 0x8007000E: return "Not enough memory resources are available to complete this operation.";
+                case 0x80070020: return "The process cannot access the file because it is being used by another process.";
+                case 0x80070057: return "The parameter is incorrect.";
+                case 0x80070070: return "There is not enough space on the disk.";
+                case 0x8007007A: return "The data area passed to a system call is too small.";
+                case 0x8007007E: return "The specified module could not be found.";
+                case 0x800700C1: return "%1 is not a valid Win32 application.";
+                case 0x800703FA: return "Illegal operation attempted on a registry key that has been marked for deletion.";
+                case 0x80070422: return "The service cannot be started, either because it is disabled or because it has no enabled devices associated with it.";
+                case 0x80070459: return "No mapping for the Unicode character exists in the target multi-byte code page.";
+                case 0x80070490: return "Element not found.";
+                case 0x800705AA:
+                case 0x800705AB:
+                case 0x800705AC: return "Insufficient system resources exist to complete the requested service.";
+                case 0x800705AF: return "The paging file is too small for this operation to complete.";
+                case 0x800706BA: return "The RPC server is unavailable.";
+                case 0x800706BE: return "The remote procedure call failed.";
+                case 0x800710DD: return "The operation identifier is not valid.";
+                case 0x8007139F: return "The group or resource is not in the correct state to perform the requested operation.";
+                case 0x80073D5B: return "The package does not have a mutable directory.";
+
+                // Not in the system message table: XAML returns this for a failure raised while
+                // parsing or applying markup, and the wording is the one those reports arrive with.
+                case 0x800F1000: return "No installed components were detected.";
+
+                case 0x83750008: return "Invalid JSON number.";
+                case 0x887A0004: return "The specified device interface or feature level is not supported on this system.";
+                case 0x887A0005: return "The GPU device instance has been suspended. Use GetDeviceRemovedReason to determine the appropriate action.";
+                case 0xC00D3E82: return "A media source cannot go from the stopped state to the paused state.";
+
+                default: return null;
+            }
+        }
 
         // The labels around the IID and the method index are localised, but the GUID and the number
         // that follows it are not, so the two are matched structurally rather than by their wording.
