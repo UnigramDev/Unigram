@@ -82,6 +82,7 @@
                                                                  VerticalAlignment="Center"
                                                                  Width="36"
                                                                  Height="32"
+                                                                 IsEnabled="{x:Bind ConvertHasInviteLink(ViewModel.InviteLink), Mode=OneWay}"
                                                                  Grid.Column="2" />
 
                                             <Button Click="CopyLink_Click"
@@ -92,6 +93,7 @@
                                                     Padding="0"
                                                     Height="32"
                                                     Width="32"
+                                                    IsEnabled="{x:Bind ConvertHasInviteLink(ViewModel.InviteLink), Mode=OneWay}"
                                                     Grid.Column="3" />
                                             <Button Click="ShareLink_Click"
                                                     Content="&#xE914;"
@@ -101,6 +103,7 @@
                                                     Padding="0"
                                                     Height="32"
                                                     Width="32"
+                                                    IsEnabled="{x:Bind ConvertHasInviteLink(ViewModel.InviteLink), Mode=OneWay}"
                                                     Grid.Column="4" />
                                         </Grid>
                                     </controls:HeaderedControl>

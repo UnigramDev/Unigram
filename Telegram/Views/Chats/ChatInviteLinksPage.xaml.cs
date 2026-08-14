@@ -144,6 +144,13 @@ namespace Telegram.Views.Chats
             return inviteLink?.InviteLink.Replace("https://", string.Empty);
         }
 
+        // TDLib only fills in the primary invite link for the creator, so it stays null
+        // for anyone else and the header buttons would act on nothing.
+        private bool ConvertHasInviteLink(ChatInviteLink inviteLink)
+        {
+            return inviteLink != null;
+        }
+
         private string ConvertNewLinkFooter(int count, bool channel)
         {
             if (count > 0)

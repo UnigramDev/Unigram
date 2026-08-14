@@ -76,6 +76,10 @@ namespace Telegram.ViewModels.Chats
                 {
                     if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
                     {
+                        // Handle(UpdateSupergroupFullInfo) matches on this, and it's the only
+                        // way InviteLink ever arrives when full info isn't cached yet.
+                        _supergroupId = supergroup.Id;
+
                         _channel = supergroup.IsChannel;
                         _canCreateJoinRequests = !supergroup.IsPublic();
 
@@ -95,8 +99,10 @@ namespace Telegram.ViewModels.Chats
                             ClientService.Send(new GetSupergroupFullInfo(supergroup.Id));
                         }
                     }
-                    else
+                    else if (ClientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
                     {
+                        _basicGroupId = basicGroup.Id;
+
                         _channel = false;
                         _canCreateJoinRequests = true;
 
@@ -106,7 +112,7 @@ namespace Telegram.ViewModels.Chats
                         }
                         else
                         {
-                            ClientService.Send(new GetBasicGroupFullInfo(supergroup.Id));
+                            ClientService.Send(new GetBasicGroupFullInfo(basicGroup.Id));
                         }
                     }
                 }
