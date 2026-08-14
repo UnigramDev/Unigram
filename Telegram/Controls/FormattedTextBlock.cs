@@ -1923,6 +1923,12 @@ namespace Telegram.Controls
 
         private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
+            // Subscribed for any pre block, but only a tokenized one ever built brushes.
+            if (_brushes == null)
+            {
+                return;
+            }
+
             var resources = sender.ActualTheme == ElementTheme.Light ? _light : _dark;
 
             foreach (var item in _brushes)
@@ -2020,6 +2026,8 @@ namespace Telegram.Controls
 
         SolidColorBrush GetColor(string type)
         {
+            _brushes ??= new Dictionary<string, SolidColorBrush>();
+
             if (_brushes.TryGetValue(type, out var brush))
             {
                 return brush;
@@ -2028,14 +2036,19 @@ namespace Telegram.Controls
             var target = ActualTheme == ElementTheme.Light ? _light : _dark;
             if (target.TryGetValue(type, out var color))
             {
-                _brushes[type] = new SolidColorBrush(color);
-                return _brushes[type];
+                brush = new SolidColorBrush(color);
+                _brushes[type] = brush;
+                return brush;
             }
 
             return null;
         }
 
-        private readonly Dictionary<string, Color> _light = new()
+        // Static: the tables are constant and Color is a value type, so they cost nothing per
+        // block — as instance fields they were two ~28-entry dictionaries on every text block
+        // in the app, code or not. The brushes built from them can't be shared the same way
+        // (a DependencyObject belongs to the thread that created it, and the app runs several).
+        private static readonly Dictionary<string, Color> _light = new()
         {
             { "comment", Colors.SlateGray },
             { "block-comment", Colors.SlateGray },
@@ -2066,7 +2079,7 @@ namespace Telegram.Controls
             { "class-name", Color.FromArgb(0xFF, 0xDD, 0x4A, 0x68) },
         };
 
-        private readonly Dictionary<string, Color> _dark = new()
+        private static readonly Dictionary<string, Color> _dark = new()
         {
             { "comment", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
             { "block-comment", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
@@ -2099,7 +2112,8 @@ namespace Telegram.Controls
             // function-name 6196cc
         };
 
-        private readonly Dictionary<string, SolidColorBrush> _brushes = new();
+        // Only code blocks ever reach GetColor, so this stays null for everything else.
+        private Dictionary<string, SolidColorBrush> _brushes;
 
         #endregion
 

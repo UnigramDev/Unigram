@@ -97,7 +97,8 @@ The three facts most of this rests on:
 
 ## P1 — allocation on the hottest text surface in the app
 
-- [ ] **`_light` and `_dark` are instance fields** — `:2023` and `:2054` **[live]**
+- [x] **`_light` and `_dark` are instance fields** — `:2023` and `:2054` **[live]**
+      → fixed in the commit that checked this box
 
       Two `Dictionary<string, Color>` of 27–28 entries, built **per `FormattedTextBlock`**,
       i.e. per message block, whether or not the message contains code. Colors are structs and
@@ -107,6 +108,10 @@ The three facts most of this rests on:
       `_brushes` (`:2087`) must stay per-thread at least, because `SolidColorBrush` is
       thread-affine, but it can be allocated lazily on the first `GetColor` call instead of in
       the field initializer — only code blocks ever touch it.
+
+      Both done: the tables are `static readonly` (never mutated — `OnActualThemeChanged`
+      writes through to the *brushes*, not the tables), and `_brushes` is now null until
+      `GetColor` needs it, with the theme handler returning early when it is.
 
 - [x] **`monospaceFontFamily` is never assigned** — `:1060-1064` **[live]**
       → fixed in the commit that checked this box
