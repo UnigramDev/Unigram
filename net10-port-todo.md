@@ -352,7 +352,28 @@ carries the exception type, message and a stack. The Application event log only 
       `RPC_E_WRONG_THREAD` — which the XAML handler swallows, leaving a frozen window and no
       report.
 
-      Options, in the order I would try them:
+      **Fixed** by registering through the ABI instead: `CompositionTargetRendering` in
+      `Common/Interop.cs`, used by `AnimatedImageLoader`. Reported upstream as
+      [CsWinRT #2524](https://github.com/microsoft/CsWinRT/issues/2524).
+
+      What the measurements ruled out on the way, all of it in the throwaway app:
+
+      - `RoGetActivationFactory` returns the **same** statics object on both views, and it answers
+        `IAgileObject`, so there is no per-view statics to fetch and no marshalling on the call.
+        The ABI would happily register per view; it is the projection that does not.
+      - The tick counts gave it away in hindsight: both views' handlers reported *exactly* the same
+        count on every run (256/256, 258/258, 262/262). Two view render loops would drift; one
+        registration driving two delegates does not.
+      - Registering with `add_Rendering` through the ABI on the secondary view's thread puts the
+        callback on that view's thread — measured, on the same thread and in the same run where the
+        projected subscription still landed on the main view's.
+
+      Still on `CompositionTarget.Rendering` through the projection, and therefore still running on
+      the first view's thread in a secondary window: `CompositionVSync` (the call blobs, DiceView)
+      and `VisualUtilities`. They are not visibly broken because they only touch Composition
+      objects, which are agile — but they are a latent version of the same bug.
+
+      Options considered, for the record:
 
       1. **Marshal the frame work.** In `AnimatedImageLoader.OnRendering`, enqueue onto the
          presenter's dispatcher when `!HasThreadAccess`. One bool test on the main view, which is

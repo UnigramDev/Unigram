@@ -1342,25 +1342,10 @@ namespace Telegram.Controls
             {
                 _renderingSubscribed = true;
 
-                // This presenter's own loader, not Current. Current is [ThreadStatic], so a call
-                // from another view's thread would add the presenter to that view's rendering list
-                // and invalidate its WriteableBitmap from the wrong thread. .NET Native let that
-                // through; CsWinRT raises RPC_E_WRONG_THREAD, which is what breaks the call window.
-                if (_dispatcherQueue.HasThreadAccess)
-                {
-                    _loader.Rendering(this);
-                }
-                else
-                {
-                    Logger.Error("off the presenter's thread");
-                    _dispatcherQueue.TryEnqueue(RegisterRenderingImpl);
-                }
+                // This presenter's own loader, not the [ThreadStatic] Current, which would be a
+                // different loader if this ever ran on another view's thread.
+                _loader.Rendering(this);
             }
-        }
-
-        private void RegisterRenderingImpl()
-        {
-            _loader.Rendering(this);
         }
 
         #endregion
@@ -1816,11 +1801,21 @@ namespace Telegram.Controls
 
         private readonly List<AnimatedImagePresenter> _rendering = new();
 
+        private long _renderingToken;
+
         public void Rendering(AnimatedImagePresenter presenter)
         {
             if (_rendering.Count == 0)
             {
+#if NET9_0_OR_GREATER
+                // Not CompositionTarget.Rendering: subscribed through the projection, a secondary
+                // view's handler is invoked on the first view's thread, and DrawFrame then
+                // invalidates that view's WriteableBitmap from this one. See
+                // CompositionTargetRendering.
+                _renderingToken = CompositionTargetRendering.Subscribe(OnRendering);
+#else
                 Windows.UI.Xaml.Media.CompositionTarget.Rendering += OnRendering;
+#endif
             }
 
             _rendering.Add(presenter);
@@ -1850,7 +1845,11 @@ namespace Telegram.Controls
 
             if (_rendering.Count == 0)
             {
+#if NET9_0_OR_GREATER
+                CompositionTargetRendering.Unsubscribe(_renderingToken);
+#else
                 Windows.UI.Xaml.Media.CompositionTarget.Rendering -= OnRendering;
+#endif
 
                 if (_closed)
                 {

@@ -7,6 +7,7 @@
 
 using System;
 using System.Numerics;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Windows.UI.Composition;
 using Windows.UI.WindowManagement;
@@ -135,6 +136,97 @@ namespace Telegram.Common
     {
         unsafe void GetBuffer(out byte* buffer, out uint capacity);
     }
+
+#if NET9_0_OR_GREATER
+    // Windows.UI.Xaml.Media.ICompositionTargetStatics. Only the Rendering pair is declared, but the
+    // vtable continues with add_SurfaceContentsLost and remove_SurfaceContentsLost, so nothing may
+    // be inserted above them.
+    [GeneratedComInterface]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid("2b1af03d-1ed2-4b59-bd00-7594ee92832b")]
+    public partial interface ICompositionTargetStatics
+    {
+        [PreserveSig]
+        int GetIids(out uint iidCount, out IntPtr iids);
+        [PreserveSig]
+        int GetRuntimeClassName(out IntPtr className);
+        [PreserveSig]
+        int GetTrustLevel(out int trustLevel);
+
+        long add_Rendering(IntPtr handler);
+        void remove_Rendering(long token);
+    }
+
+    /// <summary>
+    /// CompositionTarget.Rendering, registered per view.
+    /// </summary>
+    /// <remarks>
+    /// CsWinRT keeps one event source per statics object for the whole process, so a second view's
+    /// <c>CompositionTarget.Rendering +=</c> does not produce a second <c>add_Rendering</c>: the
+    /// delegate is appended to the registration the first view made, and the handler is then
+    /// invoked on that view's thread. Frame callbacks in every other view arrive on the wrong
+    /// thread, which is invisible for Composition objects - they are agile - and fatal for XAML
+    /// ones: WriteableBitmap.Invalidate then throws RPC_E_WRONG_THREAD.
+    ///
+    /// Registering through the ABI gives each view its own registration. The statics object is a
+    /// process-wide agile singleton, so the call runs on the calling thread and registers there.
+    /// Measured: projected subscription from view 2 fires on view 1's thread, this one fires on
+    /// view 2's. See https://github.com/microsoft/CsWinRT/issues/2524.
+    /// </remarks>
+    public static class CompositionTargetRendering
+    {
+        [ThreadStatic]
+        private static ICompositionTargetStatics _statics;
+
+        // The delegate is what the CCW points at, and nothing else roots it for the view's lifetime.
+        [ThreadStatic]
+        private static Dictionary<long, EventHandler<object>> _handlers;
+
+        [DllImport("combase.dll", CharSet = CharSet.Unicode)]
+        private static extern int WindowsCreateString(string sourceString, int length, out IntPtr hstring);
+
+        [DllImport("combase.dll")]
+        private static extern int RoGetActivationFactory(IntPtr activatableClassId, ref Guid iid, out IntPtr factory);
+
+        private static Guid IID_ICompositionTargetStatics = new("2b1af03d-1ed2-4b59-bd00-7594ee92832b");
+
+        private static ICompositionTargetStatics Statics()
+        {
+            if (_statics == null)
+            {
+                const string name = "Windows.UI.Xaml.Media.CompositionTarget";
+
+                Marshal.ThrowExceptionForHR(WindowsCreateString(name, name.Length, out var hstring));
+                Marshal.ThrowExceptionForHR(RoGetActivationFactory(hstring, ref IID_ICompositionTargetStatics, out var factory));
+
+                var wrappers = new StrategyBasedComWrappers();
+                _statics = (ICompositionTargetStatics)wrappers.GetOrCreateObjectForComInstance(factory, CreateObjectFlags.None);
+            }
+
+            return _statics;
+        }
+
+        /// <summary>
+        /// Subscribes on the calling view. The token is only valid on that same thread.
+        /// </summary>
+        public static long Subscribe(EventHandler<object> handler)
+        {
+            var marshaler = ABI.System.EventHandler<object>.CreateMarshaler(handler);
+            var token = Statics().add_Rendering(ABI.System.EventHandler<object>.GetAbi(marshaler));
+
+            _handlers ??= new Dictionary<long, EventHandler<object>>();
+            _handlers[token] = handler;
+
+            return token;
+        }
+
+        public static void Unsubscribe(long token)
+        {
+            Statics().remove_Rendering(token);
+            _handlers?.Remove(token);
+        }
+    }
+#endif
 
 #if NET9_0_OR_GREATER
     [GeneratedComInterface]
