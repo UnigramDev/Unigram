@@ -232,8 +232,24 @@ The three facts most of this rests on:
 
       Most non-pooled hosts re-`SetText` on reuse, which is why this hasn't shown up; the ones to
       check are those that unload/reload without re-setting text (popups, pivots,
-      `ChatPinnedMessage`). Either move `ClearEntities()` behind the same early-out, or let
-      `OnLoaded` re-apply when `_text != null` regardless of `_pools`.
+      `ChatPinnedMessage`).
+
+      → **left open deliberately.** Both fixes the note proposes cost something real, and
+      picking between them blind is worse than leaving the bug:
+
+      - *Move `ClearEntities()` behind the early-out* — non-pooled blocks would keep their
+        tooltips, date subscriptions and viewport registration across an unload. But a block
+        that unloads and never comes back then stays subscribed to the thread-static
+        `RelativeDateService`, which pins the block and everything it references. Trading a
+        stale-state bug for a leak.
+      - *Let `OnLoaded` re-apply regardless of `_pools`* (drop `|| _pools == null` from `:864`)
+        — correct, but it puts a full `SetText` on every reload of every non-pooled block, and
+        the biggest population of those is `ChatCell.BriefText`. The chat list already re-sets
+        text on reuse, so that is a second full rebuild per recycled row on the app's hottest
+        list.
+
+      What decides it is which hosts actually reload without re-setting text. That is a repro
+      away, not an argument away.
 
 - [x] **Relative dates can stall for good** — `:2600-2648` **[live]**
       → fixed in the commit that checked this box
@@ -358,6 +374,26 @@ The three facts most of this rests on:
       `TextBlock.Blocks[0].FontSize`, so a multi-paragraph block keeps the old size on
       paragraphs 2..n; and on the fast path the `Run` carries its own `FontSize` (`:977`), which
       wins over the paragraph's, making the call a no-op there.
+      → **left open deliberately: it needs a decision, not a patch**
+
+      Looked at properly while working through the rest. The loop is the easy half; what stops
+      it being a safe change is what the method is *for*:
+
+      - Its one caller is `MessageBubble.xaml.cs:3770`, passing `Theme.Current.MessageFontSize`
+        — the same value `SetText` already resolves `AutoFontSize` to (`:944-947`). So today it
+        asks for the size the text already has, which is why nobody has noticed it not working.
+      - Making it reach every paragraph would newly overwrite **quote** paragraphs, which
+        `SetText` deliberately gave `Theme.Current.CaptionFontSize` (`:1127`). That is the
+        question your own TODO right above that line leaves open — *"quotes in RichMessage use
+        normal font size, quotes in formatted text small, decide what of the two we want to
+        keep"*. A quote is always its own single-paragraph block, so it is `Blocks[0]`, so it is
+        exactly what the current code already clobbers.
+      - Making it work on the fast path also means writing the size onto `_fastRun`, since a
+        `Run`'s own `FontSize` beats its paragraph's.
+
+      All three want the same answer first: is `SetFontSize` meant to override what `SetText`
+      computed, or only to fill in for blocks that have no `AutoFontSize`? Say which and it is a
+      few lines.
 
 - [x] **`Selectable.cs`'s header comment contradicts `WalkInlines`** — `Selectable.cs:38-40`
       says the highlighter space counts "1 per inline object (custom emoji, image, math)", but
@@ -396,6 +432,12 @@ The three facts most of this rests on:
       `IEnumerable<Inline>`. Indexing is not obviously better (each `[i]` is its own interop
       call) — measure before changing, but note it sits on the same path `_contentLength`
       (`:85-89`) was cached for.
+      → **left open: the one item here that wants a profiler.**
+
+      Both shapes are interop-bound and which wins depends on how the projection caches its
+      enumerator, which is not something to settle by reading. The cheap experiment is a drag
+      across a syntax-highlighted code block — the deepest inline tree the app builds, and the
+      case `_contentLength` was already cached for.
 
 - [x] **`OnHyperlinkForegroundChanged` and `OnCodeForegroundChanged` are identical** —
       `:2252-2261` and `:2281-2290`. Both walk **all** hyperlinks and recolor those whose
@@ -444,3 +486,7 @@ The three facts most of this rests on:
 - [ ] **`HasLineEnding`'s `InvalidateMeasure` is commented out** — `:173-184`, read by
       `MessageBubblePanel.cs:253`. Fine while `SetText` always precedes measure; a
       `SetText` after layout (spoiler reveal, relative-date rebuild) won't re-measure the bubble.
+      → **left open.** Uncommenting it is one line, but it puts an `InvalidateMeasure` on a
+      property that `SetText` writes on every render, and the panel that reads it is the message
+      bubble's own layout. Whoever commented it out was most likely avoiding exactly that, and
+      the layout-cycle audit is the place that question belongs.
