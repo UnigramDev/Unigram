@@ -233,14 +233,22 @@ namespace Telegram.ViewModels.Business
                     FillDay(Saturday);
                     FillDay(Sunday);
                 }
-                //}
-                //{
-                var response = await ClientService.SendAsync(new GetTimeZones());
-                if (response is TimeZones zones)
-                {
-                    TimeZone = zones.TimeZonesValue.FirstOrDefault(x => x.Id == hours.TimeZoneId);
-                }
             }
+
+            var response = await ClientService.SendAsync(new GetTimeZones());
+            if (response is TimeZones zones)
+            {
+                var offset = (int)DateTimeOffset.Now.Offset.TotalSeconds;
+
+                // Zones are identified by IANA name, which Windows doesn't expose, so a user who has
+                // never saved opening hours falls back to the first zone at the current UTC offset.
+                TimeZone = zones.TimeZonesValue.FirstOrDefault(x => x.Id == hours?.TimeZoneId)
+                    ?? zones.TimeZonesValue.FirstOrDefault(x => x.UtcTimeOffset == offset);
+            }
+
+            // Loading splits an interval that crosses midnight into one range per day, and saving
+            // writes the halves back out, so the cached object is round-tripped to compare like for like.
+            _cached = GetSettings();
         }
 
         private bool _isEnabled;
@@ -349,9 +357,66 @@ namespace Telegram.ViewModels.Business
             }
         }
 
-        protected override void ContinueImpl(NavigatingEventArgs args)
+        public override bool HasChanged => !_cached.AreTheSame(GetSettings());
+
+        protected override async void ContinueImpl(NavigatingEventArgs args)
         {
-            throw new NotImplementedException();
+            var settings = GetSettings();
+            if (settings.AreTheSame(_cached))
+            {
+                _completed = true;
+                NavigationService.GoBack(args);
+                return;
+            }
+
+            var response = await ClientService.SendAsync(new SetBusinessOpeningHours(settings));
+            if (response is Ok)
+            {
+                _completed = true;
+                NavigationService.GoBack(args);
+            }
+            else if (response is Error error)
+            {
+                ShowToast(error);
+            }
+        }
+
+        private BusinessOpeningHours _cached;
+        private BusinessOpeningHours GetSettings()
+        {
+            if (!IsEnabled)
+            {
+                return null;
+            }
+
+            var intervals = new List<BusinessOpeningHoursInterval>();
+
+            void FillDay(BusinessDay day)
+            {
+                foreach (var range in day.Ranges)
+                {
+                    // Ranges are relative to the day they belong to, and the end is allowed to spill
+                    // over into the next one, which is what businessOpeningHoursInterval expects.
+                    intervals.Add(new BusinessOpeningHoursInterval(
+                        day.StartMinute + (int)range.Start.TotalMinutes,
+                        day.StartMinute + (int)range.End.TotalMinutes));
+                }
+            }
+
+            FillDay(Monday);
+            FillDay(Tuesday);
+            FillDay(Wednesday);
+            FillDay(Thursday);
+            FillDay(Friday);
+            FillDay(Saturday);
+            FillDay(Sunday);
+
+            if (intervals.Count == 0)
+            {
+                return null;
+            }
+
+            return new BusinessOpeningHours(TimeZone?.Id ?? string.Empty, intervals);
         }
     }
 }
