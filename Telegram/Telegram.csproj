@@ -4723,7 +4723,7 @@
            Both    - only Telegram.Benchmarks, which races them.
          See Telegram.Benchmarks/README.md. Currently Both while the pointer path has yet to be
          built and run even once; Pointer is where this is going. -->
-    <TdParsers>Both</TdParsers>
+    <TdParsers>Pointer</TdParsers>
   </PropertyGroup>
   <!-- One switch, two consumers: the generator reads the property and emits parsers, the
        hand-written code reads the constants and calls them. -->

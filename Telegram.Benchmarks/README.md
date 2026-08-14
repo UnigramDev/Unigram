@@ -342,14 +342,38 @@ and are **34%** of it here, and they will keep growing as a share as the parser 
 **0.25 s of TDLib-thread time during an 8 s startup**, a third of it syscalls. Whether that is worth
 anything depends on what waits on the update pipeline before the chat list is usable.
 
-The obvious experiment now that both parsers are a build switch: run the same startup with
-`<TdParsers>Reader</TdParsers>` and read the same page. That measures the pointer reader's worth
-*in the app*, which no number in this file does — everything above is a corpus in a loop.
+#### The A/B, in the app: 1.56×, not 2.4×
 
-**What that A/B leaves out.** `TdThroughput.Begin` is called after the copy and the terminator scan
-on the `Reader` path, so both modes time the parse alone. The copy and the scan are work the pointer
-path deleted outright — 9–12% of the old parse by the corpus — and neither run will show it. The
-comparison is therefore parser against parser, and understates what the change did to `Receive`.
+Two startups, same page, same counters, the only difference being `<TdParsers>`:
+
+| | `Reader` | `Pointer` |
+| --- | ---: | ---: |
+| updates | 14,027 | 11,249 |
+| bytes | 26.0 MB (mean 1,943 B) | 22.7 MB (mean 2,115 B) |
+| parsing | 0.297 s | 0.166 s |
+| **throughput** | **87.4 MB/s** | **136.4 MB/s** |
+| per update | 21.2 µs of 21.9 | 14.8 µs of 15.4 |
+
+Compare the MB/s, not the µs: the payload mix differs between startups. **1.56×**, against the
+2.4× the corpus predicts for the same two parsers on the same toolchain. Both runs leave out the
+copy and the terminator scan that only the reader path pays, which adds about 0.24 ms/MB to its
+side — 2%, so call it 1.6× at the level of `Receive`. My earlier claim that this understates the
+change "significantly" was wrong: on .NET Native the scan is 3% of the parse, not the 9–12% the
+desktop numbers suggested.
+
+Why 1.56 and not 2.4: solving `p + S = 7.33 ms/MB` and `2.4p + S = 11.44 ms/MB` puts the
+reader-dependent part at 2.9 ms/MB and the shared part at **4.4 ms/MB — 60% of it**. That shared
+part is building the object graph, and above all the GC, which in the app promotes objects the app
+goes on to hold rather than sweeping them at gen0 the way a benchmark loop does. The corpus measures
+allocation identically for both parsers; what it cannot reproduce is a heap that grows and retains.
+
+In absolute terms, on a startup of this size the pointer reader saves **~105 ms of TDLib-thread
+time** (26 MB × 4.11 ms/MB), and the file-check deferral saved another ~85 ms. Together they take
+that startup's parse work from roughly 0.39 s to 0.19 s.
+
+**The lesson worth keeping**: a corpus ratio is an upper bound on what a parser change buys in
+situ, and the gap is whatever the change doesn't touch. Here that is allocation, and no reader is
+going to fix it — the parser produces the object graph the app asked for.
 
 #### After the file checks moved off the thread
 
@@ -683,10 +707,8 @@ startup, 151 MB/s, a third of it file existence syscalls.**
 
 **Next:**
 
-1. The same startup with `<TdParsers>Reader</TdParsers>`, which is the A/B the switch exists for and
-   the only measurement that says what the pointer reader is worth in the app rather than in a loop.
-   Extrapolating the corpus ratio, parsing should go from 0.165 s to something near 0.4 s — but that
-   is an extrapolation, and one run replaces it with a fact.
+1. ~~The A/B~~ — done, and above. **1.56× in the app**, 87.4 MB/s against 136.4, where the corpus
+   said 2.4×. ~105 ms of TDLib-thread time on a startup of that size.
 2. ~~Defer the file existence checks off the TDLib thread~~ — done. `ClientService.VerifyFileExists`
    queues the path and a single drain does the syscalls, so the same files are still checked and
    the same `DeleteFile` still goes out, just not mid-parse. Not a global check, either: `local.path`
