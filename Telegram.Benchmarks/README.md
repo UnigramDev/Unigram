@@ -414,6 +414,12 @@ the reader parsers' ~44.5k, because name-length grouping costs more source than 
 that matters, the TODO in `SchemaGenerator` about emitting parsers only for types that can actually
 be received is worth several times more than the choice of reader.
 
+**In the shipped package, though, only the reachable set counts.** Three x64 bundles built the same
+way: `Reader` 77,228,975 bytes, `Pointer` 77,754,662, `Both` 77,749,472. `Both` and `Pointer` are
+within 5 KB of each other, because ILC strips the parser set nothing calls — so carrying both costs
+compile time and not binary size. The 526 KB between `Reader` and `Pointer` is the pointer parsers
+genuinely being larger native code than the reader ones, which is the same 40% showing up again.
+
 Two things stay in every mode. `crc32_table`, one of the four, because `TdJsonReader.ValueCrc32`
 hashes `@type` with it. And **both emitters in the generator**, which is what `Both` is for:
 delete the reference implementation and you delete the cross-check that says the pointer parsers
