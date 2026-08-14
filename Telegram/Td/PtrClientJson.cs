@@ -17,8 +17,11 @@ namespace Telegram.Td.Api
 {
     /// <summary>
     /// What the generated FromPtr_* parsers call, mirroring the Utf8JsonReader helpers in
-    /// ClientJson.cs one for one. Lives beside the benchmark for now; when the app adopts the
-    /// pointer path this file moves to Telegram/Td/ unchanged.
+    /// ClientJson.cs one for one.
+    ///
+    /// Nothing here refers to generated code, so it compiles whether or not TdPointerParser is on.
+    /// The one member that would - the FromPtr(byte*, int) entry point - is emitted beside
+    /// DoFromPtr instead.
     /// </summary>
     public partial class ClientJson
     {
@@ -33,29 +36,6 @@ namespace Telegram.Td.Api
         public delegate T PtrParser<T>(ref TdJsonReader reader, ClientResultHandler handler);
 
         public delegate T PtrDispatch<T>(ref TdJsonReader reader, ClientResultHandler handler, uint hash);
-
-        /// <summary>Entry point: the whole payload, straight off td_receive's pointer.</summary>
-        public static unsafe Object FromPtr(byte* buffer, int length, ClientResultHandler handler = null)
-        {
-            var reader = new TdJsonReader(buffer, length);
-            reader.Read();
-
-            if (reader.TokenType == JsonTokenType.StartObject)
-            {
-                reader.Read();
-
-                if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals("@type"u8))
-                {
-                    reader.Read();
-                    var hash = reader.ValueCrc32();
-
-                    reader.Read();
-                    return DoFromPtr(ref reader, handler, hash);
-                }
-            }
-
-            return new Error(400, "Can't deserialize");
-        }
 
         /// <summary>
         /// Reads a nested object of an abstract type: its @type decides which parser runs.

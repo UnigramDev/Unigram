@@ -69,6 +69,48 @@ namespace Telegram.Td.Api
 
             return obj;
         }
+
+        // The pointer twin of the above, for the same reason: FromPtr_File hands File back to the
+        // handler, so the handler cannot ask the generated parser for one.
+        internal static File FromPtr_File_Bench(ref TdJsonReader reader, ClientResultHandler handler)
+        {
+            var obj = new File();
+            ReadStartObjectPtr(ref reader);
+
+            while (reader.TokenType == JsonTokenType.PropertyName)
+            {
+                var name = reader.ValueSpan;
+                reader.Read();
+
+                switch (name.Length)
+                {
+                    case 2:
+                        if (name.SequenceEqual("id"u8)) obj.Id = reader.GetInt32();
+                        break;
+                    case 4:
+                        if (name.SequenceEqual("size"u8)) obj.Size = reader.GetInt64();
+                        break;
+                    case 5:
+                        if (name.SequenceEqual("local"u8)) obj.Local = FromPtr_LocalFile(ref reader, handler);
+                        break;
+                    case 6:
+                        if (name.SequenceEqual("remote"u8)) obj.Remote = FromPtr_RemoteFile(ref reader, handler);
+                        break;
+                    case 13:
+                        if (name.SequenceEqual("expected_size"u8)) obj.ExpectedSize = reader.GetInt64();
+                        break;
+                }
+
+                if (reader.TokenType == JsonTokenType.StartObject || reader.TokenType == JsonTokenType.StartArray)
+                {
+                    reader.Skip();
+                }
+
+                reader.Read();
+            }
+
+            return obj;
+        }
     }
 }
 
@@ -82,6 +124,9 @@ namespace Telegram.Td
 
         UpdateFile ParseUpdateFile(ref Utf8JsonReader reader);
         Telegram.Td.Api.File ParseFile(ref Utf8JsonReader reader);
+
+        UpdateFile ParseUpdateFile(ref TdJsonReader reader);
+        Telegram.Td.Api.File ParseFile(ref TdJsonReader reader);
     }
 
     // FromJson_UpdateFile delegates to the handler, so the corpus can't be parsed without one.
@@ -124,6 +169,37 @@ namespace Telegram.Td
         public Telegram.Td.Api.File ParseFile(ref Utf8JsonReader reader)
         {
             return ClientJson.FromJson_File_Bench(ref reader, this);
+        }
+
+        public UpdateFile ParseUpdateFile(ref TdJsonReader reader)
+        {
+            var obj = new UpdateFile();
+            ClientJson.ReadStartObjectPtr(ref reader);
+
+            while (reader.TokenType == JsonTokenType.PropertyName)
+            {
+                var name = reader.ValueSpan;
+                reader.Read();
+
+                if (name.SequenceEqual("file"u8))
+                {
+                    obj.File = ParseFile(ref reader);
+                }
+
+                if (reader.TokenType == JsonTokenType.StartObject || reader.TokenType == JsonTokenType.StartArray)
+                {
+                    reader.Skip();
+                }
+
+                reader.Read();
+            }
+
+            return obj;
+        }
+
+        public Telegram.Td.Api.File ParseFile(ref TdJsonReader reader)
+        {
+            return ClientJson.FromPtr_File_Bench(ref reader, this);
         }
     }
 }

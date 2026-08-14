@@ -243,9 +243,29 @@ also compares the two object graphs field by field through reflection. Both repo
 including on .NET Native, so the pointer parsers agree with the netstandard2.0 System.Text.Json ones
 across nested objects, vectors, abstract dispatch, escapes and unknown fields.
 
-Not yet done: `updateFile` and `file` are routed through `ClientResultHandler` on the JSON path so
-the app can dedupe them, and the pointer path parses them inline instead. Matching that needs the
-interface to take a `TdJsonReader`, which belongs with wiring this into the app.
+#### Files go back through the handler on both paths
+
+`updateFile` and `file` are re-entered through `ClientResultHandler` rather than parsed inline, so a
+file is read into the instance the app already holds — they arrive by the hundred on every history
+page, nearly always for an id already seen, and that is the one place object identity pays. The
+interface now carries both overloads of `ParseUpdateFile`/`ParseFile`, and `ClientService`
+implements the pointer pair beside the reader pair; the dedupe, the first-sight existence check and
+the `UpdateFile` dispatch are shared between them.
+
+It costs nothing measurable. On .NET Native after the change, `updateFile` parses in 2.70 µs through
+`Utf8JsonReader` against **1.09 µs** through the pointer reader, and a 50-message page in 444.7 µs
+against **182.8 µs** — the same 2.4–2.5× as before the handler round trip existed on this path.
+
+The interface lives in the app, so the reader moved with it: `Telegram/Td/TdJsonReader.cs` and
+`Telegram/Td/PtrClientJson.cs` are app files now, linked into all three benchmark hosts rather than
+the other way round. Nothing in `PtrClientJson.cs` refers to generated code — the one member that
+did, the `FromPtr(byte*, int)` entry point, is emitted beside `DoFromPtr` instead — so the app takes
+both files today with `TdPointerParser` off and nothing calling them.
+
+Both files do get compiled by the .NET Native host, which is the same toolchain the app uses.
+`ClientService`'s half does not: nothing here builds `Telegram.csproj`, so the pointer
+`ParseFile`/`ParseUpdateFile` there are checked by reading them against the `Utf8JsonReader` pair
+and against what the generator emits for every other type, not by a compiler.
 
 #### Hardening pass: free on .NET Native, 43% on the JIT
 
@@ -515,23 +535,26 @@ Round trips inside the app container reproduce the base64 gap: 407.8 µs for a 6
 
 ## Where this stands
 
-Everything below is committed on `develop` and touches nothing the app compiles. The generated
-`FromJson_*` parsers the app uses are byte for byte unchanged.
+Everything below is committed on `develop`. The app now carries two new files and two new interface
+members, all of them unreachable until `TdPointerParser` is turned on; the generated `FromJson_*`
+parsers it actually runs are byte for byte unchanged, which is the check every generator change is
+made against.
 
-**Done.** A pointer-based reader (`Json/TdJsonReader.cs`) and a generator mode that emits parsers
-against it, worth **2.0–2.9× on the full parse on .NET Native** with identical allocation. Three
-hosts running one suite. `SchemaGenerator` rewritten from spike to something with diagnostics.
+**Done.** A pointer-based reader (`Telegram/Td/TdJsonReader.cs`) and a generator mode that emits
+parsers against it, worth **2.0–2.9× on the full parse on .NET Native** with identical allocation.
+Three hosts running one suite. `SchemaGenerator` rewritten from spike to something with diagnostics.
+Files route through `ClientResultHandler` on both paths, and the reader has moved into the app.
 
 **Next, to put the pointer parsers in the app:**
 
-1. `updateFile` and `file` route through `ClientResultHandler` on the JSON path so the app can
-   dedupe them; the pointer path parses them inline. Matching that means
-   `ParseUpdateFile`/`ParseFile` taking a `TdJsonReader` — `Client.cs` plus `ClientService`.
-2. `ClientJson.FromJson(byte*, int)` as the entry point, and `Client.Receive` passing
-   `td_receive`'s pointer straight through, dropping `_buffer` and its copy.
-3. Move `Json/TdJsonReader.cs` and `Json/PtrClientJson.cs` to `Telegram/Td/`. They are already in
-   the `Telegram.Td.Api` namespace, so the files move unchanged.
-4. Turn `TdPointerParser` on in `Telegram.csproj` and switch the receive path over.
+1. `ClientJson.FromPtr(byte*, int)` — already the entry point — reached from `Client.Receive`,
+   passing `td_receive`'s pointer straight through and dropping `_buffer` and its copy. That also
+   deletes the NUL scan: the reader stops at the terminator and never needs the length.
+2. Turn `TdPointerParser` on in `Telegram.csproj` and switch the receive path over. Note this
+   roughly doubles the generated code, which costs .NET Native compile time and binary size — the
+   TODO below about emitting parsers only for types that can be received is worth more once it does.
+3. `Client.Execute` is the same shape and can follow, or stay on `Utf8JsonReader`; it runs once per
+   synchronous call rather than per update, so it decides nothing.
 
 **Independent of that, still open:**
 

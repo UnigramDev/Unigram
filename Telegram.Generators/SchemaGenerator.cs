@@ -214,6 +214,32 @@ namespace Telegram.Generators
             List<SchemaClass> returnTypes, Dictionary<string, List<SchemaClass>> abstractTypes)
         {
             builder.AppendLine();
+            // The entry point lives here rather than beside the other pointer helpers so that
+            // PtrClientJson.cs refers to nothing generated, and can therefore be compiled by a
+            // project that has this mode switched off - which the app does until it switches over.
+            builder.AppendLine("  /// <summary>Entry point: the whole payload, straight off td_receive's pointer.</summary>");
+            builder.AppendLine("  public static unsafe Object FromPtr(byte* buffer, int length, ClientResultHandler? handler = null)");
+            builder.AppendLine("  {");
+            builder.AppendLine("    var reader = new TdJsonReader(buffer, length);");
+            builder.AppendLine("    reader.Read();");
+            builder.AppendLine();
+            builder.AppendLine("    if (reader.TokenType == JsonTokenType.StartObject)");
+            builder.AppendLine("    {");
+            builder.AppendLine("        reader.Read();");
+            builder.AppendLine();
+            builder.AppendLine("        if (reader.TokenType == JsonTokenType.PropertyName && reader.ValueTextEquals(\"@type\"u8))");
+            builder.AppendLine("        {");
+            builder.AppendLine("            reader.Read();");
+            builder.AppendLine("            var hash = reader.ValueCrc32();");
+            builder.AppendLine();
+            builder.AppendLine("            reader.Read();");
+            builder.AppendLine("            return DoFromPtr(ref reader, handler, hash);");
+            builder.AppendLine("        }");
+            builder.AppendLine("    }");
+            builder.AppendLine();
+            builder.AppendLine("    return new Error(400, \"Can't deserialize\");");
+            builder.AppendLine("  }");
+            builder.AppendLine();
             builder.AppendLine("  private static Object DoFromPtr(ref TdJsonReader reader, ClientResultHandler handler, uint hash)");
             builder.AppendLine("  {");
             builder.AppendLine("    switch (hash)");

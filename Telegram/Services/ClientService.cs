@@ -3126,65 +3126,31 @@ namespace Telegram.Services
             }
         }
 
-        public UpdateFile ParseUpdateFile(ref System.Text.Json.Utf8JsonReader reader)
+        /// <summary>
+        /// The instance a parsed file has to be read into. Files arrive by the hundred on every
+        /// history page, nearly always for an id already held, and the whole point of parsing them
+        /// here is that the app keeps handing out the same object.
+        /// </summary>
+        private File GetOrCreateFile(int id, out bool created)
         {
-            ParseFile(ref reader, true);
-            return null;
-        }
-
-        public File ParseFile(ref System.Text.Json.Utf8JsonReader reader)
-        {
-            return ParseFile(ref reader, false);
-        }
-
-        private File ParseFile(ref System.Text.Json.Utf8JsonReader reader, bool updateFile)
-        {
-            if (updateFile)
-            {
-                reader.ReadStartObject();
-                reader.Read();
-            }
-
-            reader.ReadStartObject();
-            reader.Read();
-
-            var id = reader.GetInt32();
-            var created = false;
-
             if (_files.TryGetValue(id, out File obj))
             {
-                //if (!updateFile)
-                //{
-                //    var depth = reader.CurrentDepth;
-
-                //    do
-                //    {
-                //        reader.Read();
-                //    }
-                //    while (depth <= reader.CurrentDepth);
-                //    return obj;
-                //}
+                created = false;
+                return obj;
             }
-            else
+
+            created = true;
+
+            return new File
             {
-                created = true;
+                Id = id,
+                Local = new(),
+                Remote = new()
+            };
+        }
 
-                obj = new File();
-                obj.Id = id;
-                obj.Local = new();
-                obj.Remote = new();
-            }
-
-            reader.Read();
-            while (reader.TokenType == System.Text.Json.JsonTokenType.PropertyName)
-            {
-                var hash = ClientJson.ComputeCrc32(reader.ValueSpan);
-
-                reader.Read();
-                Handler(ref reader, this, obj, hash);
-                reader.Read();
-            }
-
+        private File CommitFile(File obj, bool created, bool updateFile)
+        {
             // Only the first time this id is seen. This runs on the TDLib thread, and every
             // parsed object carries files — a chat history page is hundreds of them, nearly
             // all already cached — so checking on every update spent a syscall each time to
@@ -3209,6 +3175,55 @@ namespace Telegram.Services
             }
 
             return obj;
+        }
+
+        public UpdateFile ParseUpdateFile(ref System.Text.Json.Utf8JsonReader reader)
+        {
+            ParseFile(ref reader, true);
+            return null;
+        }
+
+        public File ParseFile(ref System.Text.Json.Utf8JsonReader reader)
+        {
+            return ParseFile(ref reader, false);
+        }
+
+        private File ParseFile(ref System.Text.Json.Utf8JsonReader reader, bool updateFile)
+        {
+            if (updateFile)
+            {
+                reader.ReadStartObject();
+                reader.Read();
+            }
+
+            reader.ReadStartObject();
+            reader.Read();
+
+            var obj = GetOrCreateFile(reader.GetInt32(), out bool created);
+
+            //if (!created && !updateFile)
+            //{
+            //    var depth = reader.CurrentDepth;
+
+            //    do
+            //    {
+            //        reader.Read();
+            //    }
+            //    while (depth <= reader.CurrentDepth);
+            //    return obj;
+            //}
+
+            reader.Read();
+            while (reader.TokenType == System.Text.Json.JsonTokenType.PropertyName)
+            {
+                var hash = ClientJson.ComputeCrc32(reader.ValueSpan);
+
+                reader.Read();
+                Handler(ref reader, this, obj, hash);
+                reader.Read();
+            }
+
+            return CommitFile(obj, created, updateFile);
 
             static bool Handler(ref System.Text.Json.Utf8JsonReader reader, ClientResultHandler handler, File obj, uint hash)
             {
@@ -3296,6 +3311,163 @@ namespace Telegram.Services
                         return true;
                     default: return false;
                 }
+            }
+        }
+
+        public UpdateFile ParseUpdateFile(ref TdJsonReader reader)
+        {
+            ParseFile(ref reader, true);
+            return null;
+        }
+
+        public File ParseFile(ref TdJsonReader reader)
+        {
+            return ParseFile(ref reader, false);
+        }
+
+        /// <summary>
+        /// The pointer reader's half of the same thing. Fields dispatch on name length and an exact
+        /// compare, matching what SchemaGenerator emits for every other type on this path — see
+        /// Telegram.Benchmarks/README.md for why the hash is not worth its collision risk here.
+        /// </summary>
+        private File ParseFile(ref TdJsonReader reader, bool updateFile)
+        {
+            if (updateFile)
+            {
+                ClientJson.ReadStartObjectPtr(ref reader);
+                reader.Read();
+            }
+
+            ClientJson.ReadStartObjectPtr(ref reader);
+            reader.Read();
+
+            // id is first because TDLib writes fields in scheme order, which is what makes the
+            // lookup possible before the rest of the object has been read.
+            var obj = GetOrCreateFile(reader.GetInt32(), out bool created);
+
+            reader.Read();
+            while (reader.TokenType == System.Text.Json.JsonTokenType.PropertyName)
+            {
+                var name = reader.ValueSpan;
+                reader.Read();
+
+                switch (name.Length)
+                {
+                    case 2:
+                        if (name.SequenceEqual("id"u8)) obj.Id = reader.GetInt32();
+                        break;
+                    case 4:
+                        if (name.SequenceEqual("size"u8)) obj.Size = reader.GetInt64();
+                        break;
+                    case 5:
+                        if (name.SequenceEqual("local"u8)) FromPtr_LocalFile(ref reader, obj);
+                        break;
+                    case 6:
+                        if (name.SequenceEqual("remote"u8)) FromPtr_RemoteFile(ref reader, obj);
+                        break;
+                    case 13:
+                        if (name.SequenceEqual("expected_size"u8)) obj.ExpectedSize = reader.GetInt64();
+                        break;
+                }
+
+                if (reader.TokenType == System.Text.Json.JsonTokenType.StartObject || reader.TokenType == System.Text.Json.JsonTokenType.StartArray)
+                {
+                    reader.Skip();
+                }
+
+                reader.Read();
+            }
+
+            return CommitFile(obj, created, updateFile);
+        }
+
+        /// <summary>
+        /// Reads into the file's existing LocalFile rather than returning a new one: the whole
+        /// point of routing files through here is that the instance the app holds is the instance
+        /// that gets updated.
+        /// </summary>
+        private static void FromPtr_LocalFile(ref TdJsonReader reader, File file)
+        {
+            var obj = file.Local;
+
+            ClientJson.ReadStartObjectPtr(ref reader);
+
+            while (reader.TokenType == System.Text.Json.JsonTokenType.PropertyName)
+            {
+                var name = reader.ValueSpan;
+                reader.Read();
+
+                switch (name.Length)
+                {
+                    case 4:
+                        if (name.SequenceEqual("path"u8)) obj.Path = reader.GetString();
+                        break;
+                    case 14:
+                        if (name.SequenceEqual("can_be_deleted"u8)) obj.CanBeDeleted = reader.GetBoolean();
+                        break;
+                    case 15:
+                        if (name.SequenceEqual("download_offset"u8)) obj.DownloadOffset = reader.GetInt64();
+                        else if (name.SequenceEqual("downloaded_size"u8)) obj.DownloadedSize = reader.GetInt64();
+                        break;
+                    case 17:
+                        if (name.SequenceEqual("can_be_downloaded"u8)) obj.CanBeDownloaded = reader.GetBoolean();
+                        break;
+                    case 21:
+                        if (name.SequenceEqual("is_downloading_active"u8)) obj.IsDownloadingActive = reader.GetBoolean();
+                        break;
+                    case 22:
+                        if (name.SequenceEqual("downloaded_prefix_size"u8)) obj.DownloadedPrefixSize = reader.GetInt64();
+                        break;
+                    case 24:
+                        if (name.SequenceEqual("is_downloading_completed"u8)) obj.IsDownloadingCompleted = reader.GetBoolean();
+                        break;
+                }
+
+                if (reader.TokenType == System.Text.Json.JsonTokenType.StartObject || reader.TokenType == System.Text.Json.JsonTokenType.StartArray)
+                {
+                    reader.Skip();
+                }
+
+                reader.Read();
+            }
+        }
+
+        private static void FromPtr_RemoteFile(ref TdJsonReader reader, File file)
+        {
+            var obj = file.Remote;
+
+            ClientJson.ReadStartObjectPtr(ref reader);
+
+            while (reader.TokenType == System.Text.Json.JsonTokenType.PropertyName)
+            {
+                var name = reader.ValueSpan;
+                reader.Read();
+
+                switch (name.Length)
+                {
+                    case 2:
+                        if (name.SequenceEqual("id"u8)) obj.Id = reader.GetString();
+                        break;
+                    case 9:
+                        if (name.SequenceEqual("unique_id"u8)) obj.UniqueId = reader.GetString();
+                        break;
+                    case 13:
+                        if (name.SequenceEqual("uploaded_size"u8)) obj.UploadedSize = reader.GetInt64();
+                        break;
+                    case 19:
+                        if (name.SequenceEqual("is_uploading_active"u8)) obj.IsUploadingActive = reader.GetBoolean();
+                        break;
+                    case 22:
+                        if (name.SequenceEqual("is_uploading_completed"u8)) obj.IsUploadingCompleted = reader.GetBoolean();
+                        break;
+                }
+
+                if (reader.TokenType == System.Text.Json.JsonTokenType.StartObject || reader.TokenType == System.Text.Json.JsonTokenType.StartArray)
+                {
+                    reader.Skip();
+                }
+
+                reader.Read();
             }
         }
 

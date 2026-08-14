@@ -24,8 +24,14 @@ namespace Telegram.Td
     {
         void OnResult(Object result);
 
+        // Files are the one place object identity pays - they arrive constantly during a download,
+        // always for an id the app already holds - so both readers hand them back here to be
+        // deduped rather than parsing them into a new instance.
         UpdateFile ParseUpdateFile(ref Utf8JsonReader reader);
         File ParseFile(ref Utf8JsonReader reader);
+
+        UpdateFile ParseUpdateFile(ref TdJsonReader reader);
+        File ParseFile(ref TdJsonReader reader);
     }
 
     public class Client

@@ -331,10 +331,11 @@ namespace Telegram.Generators.Emit
             builder.AppendLine("private static " + className + " FromPtr_" + className + "(ref TdJsonReader reader, ClientResultHandler handler)");
             builder.AppendLine("{");
 
-            // TODO: the Utf8JsonReader path routes these back through ClientResultHandler so the
-            // app can dedupe them. Doing the same here needs the interface to take a TdJsonReader,
-            // which is part of wiring this into the app rather than into the benchmark.
-            if (type.IsProxy)
+            if (IsHandledByClient(className))
+            {
+                builder.AppendLine("    return handler.Parse" + className + "(ref reader);");
+            }
+            else if (type.IsProxy)
             {
                 builder.AppendLine("    return FromPtr<" + className + ">(ref reader, handler, null);");
             }

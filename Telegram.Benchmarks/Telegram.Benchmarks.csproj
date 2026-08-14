@@ -71,6 +71,8 @@
   <!-- Linked, not copied: a fork would stop measuring the shipping code the day it drifts. -->
   <ItemGroup>
     <Compile Include="..\Telegram\Td\ClientJson.cs" Link="Linked\ClientJson.cs" />
+    <Compile Include="..\Telegram\Td\PtrClientJson.cs" Link="Linked\PtrClientJson.cs" />
+    <Compile Include="..\Telegram\Td\TdJsonReader.cs" Link="Linked\TdJsonReader.cs" />
     <Compile Include="..\Telegram\Common\ArrayPoolBufferWriter.cs" Link="Linked\ArrayPoolBufferWriter.cs" />
   </ItemGroup>
 

@@ -91,8 +91,8 @@
     <Compile Include="..\Telegram.Benchmarks\NativeTd.cs" Link="Linked\NativeTd.cs" />
     <Compile Include="..\Telegram.Benchmarks\Suite.cs" Link="Linked\Suite.cs" />
     <Compile Include="..\Telegram.Benchmarks\Validation.cs" Link="Linked\Validation.cs" />
-    <Compile Include="..\Telegram.Benchmarks\Json\TdJsonReader.cs" Link="Linked\TdJsonReader.cs" />
-    <Compile Include="..\Telegram.Benchmarks\Json\PtrClientJson.cs" Link="Linked\PtrClientJson.cs" />
+    <Compile Include="..\Telegram\Td\TdJsonReader.cs" Link="Linked\TdJsonReader.cs" />
+    <Compile Include="..\Telegram\Td\PtrClientJson.cs" Link="Linked\PtrClientJson.cs" />
     <Compile Include="..\Telegram.Benchmarks\Json\PointerParsers.cs" Link="Linked\PointerParsers.cs" />
     <Compile Include="..\Telegram.Benchmarks\Support.cs" Link="Linked\Support.cs" />
     <Compile Include="..\Telegram.Benchmarks\Uwp\UwpHost.cs" Link="Linked\UwpHost.cs" />

@@ -722,6 +722,8 @@
     <Compile Include="Td\Api\UpdateTextRecognition.cs" />
     <Compile Include="Td\Client.cs" />
     <Compile Include="Td\ClientJson.cs" />
+    <Compile Include="Td\PtrClientJson.cs" />
+    <Compile Include="Td\TdJsonReader.cs" />
     <Compile Include="Td\Api\UpdateChatMember.cs" />
     <Compile Include="TypeContainerGenerator.cs" />
     <Compile Include="TypeCrosserGenerator.cs" />
