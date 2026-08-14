@@ -138,21 +138,36 @@ weak evidence.
 
 There is no markdown for a date entity. Two ways to make one:
 
-1. **Composer** — type the text, select the part that should become the date, open the
+1. **The script** — `formatted-text-block-test-messages.py` sends every case below with explicit
+   entities. Run it immediately before testing, since the dates are anchored a few seconds
+   before send so they reformat while you watch:
+
+       python formatted-text-block-test-messages.py <bot-token> <chat-id>
+
+2. **Composer** — type the text, select the part that should become the date, open the
    formatting flyout, pick the calendar item (**Formatted date**), choose a time and tick
    *relative*. It stores a `tg-time://<unix>?r` link, which becomes the entity on send
    (`TdExtensions.cs:39-50`, `FormattedTextBox.cs:896`).
-2. **A bot**, if the entity survives the Bot API — see part D.
 
-Pick a timestamp **about 55 seconds in the past** for each of these. Within a minute the text
-goes from `55 seconds ago` to `1 minute ago`, i.e. **14 characters to 12**, and it is that
-length change that every one of these bugs rides on. `59 minutes ago` → `1 hour ago` works too
-if you want a slower one.
+The Bot API entity, confirmed by experiment:
 
-**First, confirm the entity survives the round trip.** Send one date-only message to Saved
-Messages. If the bubble shows a live relative date that reformats on its own, the round trip
-works and the rest of part C is testable. If it comes back as plain text or as a link, stop —
-the read view never sees a date entity that way, and the bot route is the only option.
+    {"type": "date_time", "offset": N, "length": L, "unix_time": <int>, "date_time_format": "r"}
+
+`date_time_format` is the grammar in `TdExtensions.cs:32-38` — `r` alone for relative, or `w`
+with `d`/`D` and `t`/`T`. Get the field name wrong and it is **silently ignored**, leaving the
+format empty, which renders the source text and never updates: it looks like the feature is
+broken rather than like the request was.
+
+Each date is anchored **55 seconds back**, so within a minute the text goes `55 seconds ago` →
+`1 minute ago`: **14 characters to 12**, and that length change is what every one of these bugs
+rides on. T11 also carries one at 59 minutes 55 seconds for a second, slower tick
+(`59 minutes ago` → `1 hour ago`, 14 to 10).
+
+**A spoiler cannot overlap a date.** Sending one that does, the server splits the spoiler
+around the date rather than rejecting the message — `spoiler("A ") date("X") spoiler(" B")`.
+So "a date inside a spoiler" is not a state the app can be given, and T10 tests the split
+instead, which is the better case anyway: one cover in front of the date that must not move,
+and one behind it that must.
 
 ### C1 — a date before a spoiler
 
@@ -163,15 +178,16 @@ Watch across the tick.
 **Wrong:** after the text reformats, the blur no longer sits exactly over `42` — it slides a
 couple of characters off, or the particles and the hidden text disagree.
 
-### C2 — a date **inside** a spoiler
+### C2 / T10 — a spoiler split around a date
 
-Text: `The answer is ||X||`, with `X` made a relative date.
+Text: `the answer is A X B and that is all`, spoiler over `A X B`, `X` a relative date. The
+server stores this as two spoilers with the date between them.
 
-This is the sharpest one: the source text is a single character and the displayed text is
-fourteen.
+The sharpest one, because the two covers have to do *different* things across the same tick.
 
-**Wrong:** the cover is one character wide over a fourteen-character date — wrong from the very
-first frame, before any tick. That is the range being built from the source length.
+**Wrong:** after the date reformats, the second cover no longer sits over `B` — it lags by the
+length change. Or the first cover moves, which it must not. Before the branch, neither moved at
+all, so the second one drifted off by two characters a minute.
 
 ### C3 — two dates before one spoiler
 
@@ -192,20 +208,22 @@ touches copy at all.
 
 ---
 
-## D. What a bot would add
+## D. Notes from building the set
 
-Markdown plus the composer covers everything above. A bot would be better for:
-
-- **Exact entity layouts** — C2 and C3 depend on a spoiler and a date overlapping in a specific
-  way. Doing that by hand in the composer works but is fiddly to reproduce identically.
-- **Repeatability** — the same message, byte for byte, after every change.
-- **Offsets we can't type** — a spoiler that starts mid-date, adjacent entities with no
-  separator, an entity at offset 0, and other boundaries the composer will not let you build.
-
-Open question worth one experiment: whether the Bot API can send the date entity at all.
-`TdExtensions.cs:32-38` says the format string is "the same format string bots use", which
-suggests yes, but I have not confirmed the field name — one `sendMessage` with an explicit
-entity would settle it.
+- The Bot API **does** carry the date entity, as `date_time` with `unix_time` and
+  `date_time_format`. Unknown extra fields are accepted and ignored, so a wrong field name
+  fails silently — see part C.
+- **A spoiler may not overlap a date.** The server splits the spoiler around it. That makes the
+  "date inside a spoiler" case unreachable, which in turn means the *stretch* branch of
+  `ShiftRanges` is never taken for a date. It is still reachable for the marked and cached
+  highlighters, which are built by the app rather than by the server and can span anything.
+- **Custom emoji inside a spoiler is still untested.** It is the other case where a spoiler's
+  rendered length differs from its source length — one container plus a ZWNJ against however
+  many source characters the placeholder has — and it is what the "measure the range from what
+  was emitted" change was really written for. Bots can only send `custom_emoji` entities for
+  sticker sets they can access, so this one wants a hand-composed message.
+- T14 is a deliberate negative: a date entity with an empty format renders its source text and
+  never updates. Nothing about it should ever move.
 
 ---
 
