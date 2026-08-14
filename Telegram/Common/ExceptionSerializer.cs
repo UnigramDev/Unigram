@@ -692,7 +692,7 @@ namespace Telegram.Common
                 case "記憶體資源不足，無法完成此作業。":
                 case "系统资源不足，无法完成请求的服务。":
                 case "Zur Verarbeitung dieses Befehls sind nicht genügend Speicherressourcen verfügbar.":
-                    return "Not enough memory resources are available to complete this operation.";
+                    return "Not enough memory resources are available to process this command.";
 
                 case "Le serveur RPC n’est pas disponible.":
                 case "O servidor RPC não está disponível.":
