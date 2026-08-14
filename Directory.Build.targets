@@ -3,6 +3,37 @@
   <Import Project="$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.targets"
           Condition="'$(UnigramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.vcxproj' And Exists('$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.targets')" />
 
+  <!--
+    With VcpkgAutoLink off, each project names the libraries it links. The lists below were
+    derived from the imports of the binaries built with autolink on, so they are what the linker
+    actually resolved rather than what the manifest happens to contain:
+
+      Telegram.Native        libvlc, avcodec, avformat, avutil, swscale, libyuv, lz4, ogg, opus,
+                             zlib, and ZXing (static, so it leaves no import to observe)
+      Telegram.Native.Calls  webrtc (static, and the source of its libyuv and opus), avcodec,
+                             avformat, avutil, zlib
+
+    boost-regex appears in neither: it is header-only at this version and produces no .lib, which
+    is why libprisma compiles against it without linking anything.
+
+    Only lz4 and zlib differ by configuration.
+  -->
+  <ItemDefinitionGroup Condition="'$(MSBuildProjectName)' == 'Telegram.Native'">
+    <Link>
+      <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swscale.lib;libvlc.lib;libvlccore.lib;libyuv.lib;ogg.lib;opus.lib;ZXing.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)' == 'Debug'">lz4d.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)' != 'Debug'">lz4.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup Condition="'$(MSBuildProjectName)' == 'Telegram.Native.Calls'">
+    <Link>
+      <AdditionalDependencies>webrtc.lib;avcodec.lib;avformat.lib;avutil.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)' == 'Debug'">zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)' != 'Debug'">zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
   <Target Name="UnigramCheckVcpkgRoot" BeforeTargets="PrepareForBuild;BeforeBuild"
           Condition="'$(UnigramUsesVcpkg)' == 'true'">
     <Error Condition="'$(VcpkgRoot)' == ''"
@@ -58,6 +89,27 @@
     </ItemGroup>
     <Warning Condition="'@(UnigramVcpkgRuntimeDll)' == ''"
              Text="No vcpkg runtime DLLs found in $(UnigramVcpkgBinDir). The package will be missing them at runtime." />
+  </Target>
+
+  <!--
+    libvlc's plugins are the one dependency that cannot be copied flat: their relative paths are
+    recorded in the generated plugins.dat cache, so they have to reach the package as
+    plugins\<category>\<name>.dll. ReferenceCopyLocalPaths flattens, hence Content with Link.
+
+    Only the app project packages content; libvlc.dll and libvlccore.dll themselves come from
+    bin\ through the flat copy above.
+  -->
+  <Target Name="UnigramAddVlcPlugins" BeforeTargets="ResolveReferences"
+          Condition="'$(UnigramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.csproj'">
+    <ItemGroup>
+      <_UnigramVlcPlugin Include="$(UnigramVcpkgInstalledDir)share\libvlc\plugins\**\*" />
+      <Content Include="@(_UnigramVlcPlugin)">
+        <Link>plugins\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+    <Warning Condition="'@(_UnigramVlcPlugin)' == ''"
+             Text="No libvlc plugins found in $(UnigramVcpkgInstalledDir)share\libvlc\plugins. Video playback will fail at runtime." />
   </Target>
 
 </Project>

@@ -10,11 +10,13 @@
       "features": [ "dav1d", "opus", "vpx" ]
     },
     "libogg",
+    "libvlc",
     "libyuv",
     "lz4",
     "nu-book-zxing-cpp",
     "openssl",
     "opus",
+    "webrtc",
     "zlib"
   ]
 }

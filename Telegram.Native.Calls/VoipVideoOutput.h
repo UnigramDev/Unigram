@@ -8,7 +8,7 @@
 #include <mutex>
 
 #include "api/video/i420_buffer.h"
-#include "libyuv.h"
+#include "third_party/libyuv/include/libyuv.h"
 
 #include "api/video/video_frame.h"
 #include "api/video/video_source_interface.h"

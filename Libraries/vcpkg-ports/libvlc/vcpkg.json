@@ -1,0 +1,8 @@
+{
+  "name": "libvlc",
+  "version": "3.0.23",
+  "description": "LibVLC built for UWP from UnigramDev/vlc, with the plugin set Unigram needs.",
+  "homepage": "https://github.com/UnigramDev/vlc",
+  "license": "LGPL-2.1-or-later",
+  "supports": "uwp & (x64 | arm64)"
+}

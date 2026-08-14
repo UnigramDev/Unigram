@@ -61,9 +61,8 @@ Two things about that checkout matter:
   ```
   The build checks this before doing anything and tells you the exact commands if it is behind.
 
-That is the whole setup. There is no port to edit by hand, no patch to apply, and
-**do not** run `vcpkg integrate install` — the repository disables the machine-wide
-integration so that it always builds against its own pinned commit.
+That is the whole setup. **Do not** run `vcpkg integrate install`: the repository disables the
+machine-wide integration so that it always builds against its own pinned commit.
 
 Everything else comes from `vcpkg.json` in the repository root, which is a
 [manifest](https://learn.microsoft.com/vcpkg/consume/manifest-mode): it pins the vcpkg commit
@@ -99,72 +98,21 @@ The script picks up `VCPKG_ROOT` and builds against the manifest in the reposito
 openssl and zlib are the same builds the app links. You can choose to build both `x64` and
 `arm64` or just the architecture you need.
 
-### LibVLC
-Unigram uses LibVLC to play videos and audio in the app. We can't use the system provided media player doesn't meet the app quality expectations.
-The app is currently using version `3.0.22-rc1` with some patches applied on top, and can be built by running the script `build.ps1` located in `Unigram repository\Libraries\vlc`.
+### LibVLC and WebRTC
 
-Building LibVLC requires [Docker](https://docs.docker.com/desktop/setup/install/windows-install/) to be installed and running.
+LibVLC plays video and audio, and WebRTC backs calls and video chats. Both arrive as prebuilt
+binaries through the same manifest as everything else, as overlay ports in
+`Libraries\vcpkg-ports`. The build downloads an archive for the architecture it is building,
+verifies it against a SHA512 recorded in the port, and caches it — so there is nothing to install
+or configure for either.
 
-```shell
-powershell -ExecutionPolicy ByPass ./build.ps1 -arch x64,ARM64
-```
+They are built from [UnigramDev/vlc](https://github.com/UnigramDev/vlc) and
+[UnigramDev/webrtc-uwp](https://github.com/UnigramDev/webrtc-uwp); the WebRTC fork follows
+[WinRTC](https://github.com/microsoft/winrtc/tree/master/patches_for_WebRTC_org/m84). Each
+release names the commit it was built from.
 
-The script will automatically apply the needed patches to libvlc (that comes as a submodule when you clone the repository) and create a NuGet package inside the `Libraries` folder.
-
-For reference, this is the list of VLC plugins currently needed by Unigram to properly work:
-- access\libhttps_plugin.dll
-- access\libhttp_plugin.dll
-- access\libimem_plugin.dll
-- audio_filter\libaudio_format_plugin.dll
-- audio_filter\libsamplerate_plugin.dll
-- audio_filter\libscaletempo_plugin.dll
-- audio_filter\libtrivial_channel_mixer_plugin.dll
-- audio_filter\libugly_resampler_plugin.dll
-- audio_mixer\libfloat_mixer_plugin.dll
-- audio_output\libwasapi_plugin.dll
-- audio_output\libwinstore_plugin.dll
-- codec\libavcodec_plugin.dll
-- codec\libd3d11va_plugin.dll
-- codec\libdav1d_plugin.dll
-- codec\libflac_plugin.dll
-- codec\libfaad_plugin.dll
-- codec\libmpg123_plugin.dll
-- codec\libopus_plugin.dll
-- demux\libes_plugin.dll
-- demux\libflacsys_plugin.dll
-- demux\libmp4_plugin.dll
-- demux\libogg_plugin.dll
-- demux\libps_plugin.dll
-- packetizer\libpacketizer_flac_plugin.dll
-- packetizer\libpacketizer_h264_plugin.dll
-- packetizer\libpacketizer_mpegaudio_plugin.dll
-- packetizer\libpacketizer_mpegvideo_plugin.dll
-- stream_filter\libcache_block_plugin.dll
-- stream_filter\libcache_read_plugin.dll
-- stream_filter\librecord_plugin.dll
-- stream_filter\libskiptags_plugin.dll
-- text_renderer\libtdummy_plugin.dll
-- video_chroma\libswscale_plugin.dll
-- video_chroma\libyuvp_plugin.dll
-- video_output\libdirect3d11_plugin.dll
-
-### WebRTC
-Unigram uses WebRTC for calls and video chats. Since WebRTC doesn't currently support UWP, you must use our fork to build it.
-1. Click on Start Menu → Visual Studio 2022 → x64 Native Tools Command Prompt for VS 2022.
-2. Navigate to .\Unigram\Libraries\webrtc
-3. Execute `.\acquire.cmd`. This will clone WebRTC source code to `C:\webrtc`, and it will take a while (~1.5h)
-4. Execute `.\build.cmd "$arch$" "$config$"`. Replace `$arch$` with either `x64`, `win32` or `arm64` depending on your build target. `$config$` can be set to either `release` or `debug`.
-
-⚠️ Note that WebRTC build instructions are based on [WinRTC](https://github.com/microsoft/winrtc/tree/master/patches_for_WebRTC_org/m84).
-
-### Building without WebRTC
-Since compiling WebRTC is time and resources consuming, it is possible to build the app without calls support:
-- Locate Telegram > References and remove `Telegram.Native.Calls` from the list.
-- From Telegram > Properties > Build, remove `ENABLE_CALLS` directive.
-- Exclude from the project the following files:
-  - Controls/Cells/GroupCallParticipantGridCell.xaml
-  - Views/Calls/*
-
+To change either one, see [UnigramDev/deps](https://github.com/UnigramDev/deps), which holds the
+build scripts, the patches and the packaging, and documents how to publish a new archive.
 
 ### Code fails to build?
 

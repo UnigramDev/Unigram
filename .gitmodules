@@ -16,9 +16,6 @@
 [submodule "Libraries/CoreWindowCustomDPI"]
 	path = Libraries/CoreWindowCustomDPI
 	url = https://github.com/ahmed605/CoreWindowCustomDPI.git
-[submodule "Libraries/vlc/vlc"]
-	path = Libraries/vlc/vlc
-	url = https://github.com/videolan/vlc.git
 [submodule "Libraries/tdlib"]
 	path = Libraries/tdlib
 	url = https://github.com/tdlib/td.git

@@ -48,6 +48,11 @@
          build, or a pass that only queries the project for its packaging outputs — and the DLLs
          then go missing from the appx with no error. -->
     <VcpkgApplocalDeps>false</VcpkgApplocalDeps>
+
+    <!-- Autolink puts every .lib in the installed tree on every link line, which since webrtc
+         arrived means Telegram.Native scans a 339 MB static library it has no reference into.
+         The libraries each project actually needs are listed in Directory.Build.targets. -->
+    <VcpkgAutoLink>false</VcpkgAutoLink>
   </PropertyGroup>
 
   <Import Project="$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.props"

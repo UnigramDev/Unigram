@@ -21,7 +21,7 @@
 #include "api/video/i420_buffer.h"
 #include "modules/video_capture/video_capture_factory.h"
 #include "modules/video_capture/windows/device_info_winrt.h"
-#include "libyuv.h"
+#include "third_party/libyuv/include/libyuv.h"
 
 #include "api/video/video_frame.h"
 #include "api/video/video_source_interface.h"
