@@ -348,6 +348,15 @@ The three facts most of this rests on:
         the source length, which is the total growth since first render, so applying it every
         tick and once per date compounded.
 
+      **A spoiler cannot actually contain a date**, found while building the test set: send one
+      that does and the server splits the spoiler around the date
+      (`spoiler("A ") date("X") spoiler(" B")`). So the "a date inside it stretches it" half of
+      `DisplayedRange`, and the stretch branch of `ShiftRanges`, are never taken for a date. They
+      stay live for the marked and cached highlighters, which the app builds itself and which can
+      span anything — but for spoilers the real case is the *split*, two covers either side of a
+      date, where the one in front must hold still while the one behind moves. That is what T10
+      in the test plan sends.
+
       Two things fixed on the way, both from the same root:
 
       - A spoiler's rendered range was `Length = entity.Length` — the *source* length. A spoiler
