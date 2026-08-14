@@ -522,6 +522,7 @@ namespace Telegram.Common
                 case "이 오류 코드와 연결된 텍스트를 찾을 수 없습니다.":
                 case "无法找到与此错误代码关联的文本。":
                 case "找不到與此錯誤碼關聯的文字。":
+                case "A hibakódhoz tartozó szöveg nem található.":
                     return "The text associated with this error code could not be found.";
 
                 case "L’objet invoqué s’est déconnecté de ses clients.":
@@ -570,6 +571,8 @@ namespace Telegram.Common
                 case "Impossibile trovare elemento.":
                 case "Eleman bulunamadı.":
                 case "Элемент не найден.":
+                case "Nie można odnaleźć elementu.":
+                case "元素找不到。":
                     return "Element not found.";
 
                 case "Falscher Parameter.":
@@ -596,6 +599,8 @@ namespace Telegram.Common
                 case "Ungültiger Zeiger":
                 case "Неправильный указатель":
                 case "잘못된 포인터입니다.":
+                case "Ponteiro inválido":
+                case "无效指针":
                     return "Invalid pointer";
 
                 case "Se cerró el objeto.":
@@ -645,6 +650,7 @@ namespace Telegram.Common
                 case "メモリ リソースが不足しているため、この操作を完了できません。":
                 case "記憶體資源不足，無法完成此作業。":
                 case "系统资源不足，无法完成请求的服务。":
+                case "Zur Verarbeitung dieses Befehls sind nicht genügend Speicherressourcen verfügbar.":
                     return "Not enough memory resources are available to complete this operation.";
 
                 case "Le serveur RPC n’est pas disponible.":
@@ -652,6 +658,8 @@ namespace Telegram.Common
                 case "Der RPC-Server ist nicht verfügbar.":
                 case "Serwer RPC jest niedostępny.":
                 case "Сервер RPC недоступен.":
+                case "El servidor RPC no está disponible.":
+                case "RPC sunucusu kullanılamıyor.":
                     return "The RPC server is unavailable.";
 
                 case "Zdalne wywołanie procedury nie powiodło się.":
@@ -677,6 +685,8 @@ namespace Telegram.Common
                 case "Операция прервана":
                 case "İşlem iptal edildi":
                 case "작업이 중단되었습니다.":
+                case "Vorgang abgebrochen":
+                case "Operacja przerwana.":
                     return "Operation aborted";
 
                 case "Défaillance irrémédiable":
@@ -687,9 +697,12 @@ namespace Telegram.Common
                 case "Разрушительный сбой":
                 case "灾难性故障":
                 case "오류입니다.":
+                case "災難性的失敗":
                     return "Catastrophic failure";
 
                 case "Асинхронная операция не запущена должным образом.":
+                case "Une opération asynchrone n’a pas démarré correctement.":
+                case "某个异步操作没有正常启动。":
                     return "An async operation was not properly started.";
 
                 case "Попытка произвести недопустимую операцию над параметром реестра, отмеченным для удаления.":
@@ -700,6 +713,7 @@ namespace Telegram.Common
                 case "Accès refusé.":
                 case "Отказано в доступе.":
                 case "拒绝访问。":
+                case "Erişim engellendi.":
                     return "Access is denied.";
 
                 case "Échec de l’exécution du serveur":
@@ -713,9 +727,12 @@ namespace Telegram.Common
                 case "Il filtro messaggi ha indicato che l'applicazione è impegnata.":
                 case "İleti filtresi uygulamanın kullanımda olduğunu belirledi.":
                 case "Фильтр сообщений выдал диагностику о занятости приложения.":
+                case "O filtro de mensagens indicou que a aplicação está ocupada.":
+                case "消息筛选器显示应用程序正在使用中。":
                     return "The message filter indicated that the application is busy.";
 
                 case "%1 не является приложением Win32.":
+                case "%1 n’est pas une application Win32 valide.":
                     return "%1 is not a valid Win32 application.";
 
                 case "Il gruppo o la risorsa non si trova nello stato appropriato per eseguire l'operazione richiesta.":
@@ -732,6 +749,7 @@ namespace Telegram.Common
 
                 case "Un événement n’a pu invoquer aucun des abonnés.":
                 case "Событие не смогло вызвать ни одного из абонентов":
+                case "Ein Ereignis konnte keinen Abonnenten aufrufen.":
                     return "An event was unable to invoke any of the subscribers";
 
                 case "Le package n'a pas de répertoire mutable.":
@@ -745,6 +763,10 @@ namespace Telegram.Common
                 case "La ressource a été réalisée sur la cible de rendu incorrecte.":
                 case "El recurso se produjo en el destino de representación incorrecto.":
                 case "Ресурс был реализован с использованием неправильной однобуферной прорисовки.":
+                case "O recurso foi realizado no destino de processamento errado.":
+                case "Zasób został zrealizowany na nieprawidłowym obiekcie docelowym renderowania.":
+                case "De bron is gerealiseerd op het verkeerde renderdoel.":
+                case "リソースが誤ったレンダー ターゲットで認識されました。":
                     return "The resource was realized on the wrong render target.";
 
                 case "Un fichier de polices n’a pas pu être ouvert car le fichier, répertoire, remplacement réseau, lecteur ou autre emplacement de stockage n’existe pas ou n’est pas disponible.":
@@ -755,11 +777,64 @@ namespace Telegram.Common
                 case "Dosya, dizin, ağ konumu, sürücü veya başka bir depolama konumu olmadığından veya kullanılamıyor olduğundan, yazı tipi dosyası açılamadı.":
                 case "Не удалось открыть файл шрифта, так как файл, каталог, сетевое расположение, диск или другое место хранения не существует или недоступно.":
                 case "无法打开字体文件，原因是文件、目录、网络位置、驱动器或其他存储文字不存在或不可用。":
+                case "Não foi possível abrir um ficheiro de tipos de letra, porque o ficheiro, diretório, localização de rede, unidade ou outra localização de armazenamento não existe ou não está disponível.":
+                case "Een lettertypebestand kan niet worden geopend omdat het bestand, de map, de netwerklocatie, het station of een andere opslaglocatie niet bestaat of niet beschikbaar is.":
+                case "Nie można otworzyć pliku czcionki, ponieważ plik, katalog, lokalizacja sieciowa, dysk lub inne miejsce przechowywania nie istnieje lub jest niedostępne.":
+                case "フォント ファイルを開くことができませんでした。ファイル、ディレクトリ、ネットワークの場所、またはドライブなどの記憶域の場所が存在しないか、利用できません。":
+                case "파일, 디렉터리, 네트워크 위치, 드라이브 또는 기타 저장소 위치가 존재하지 않거나 사용할 수 없으므로 글꼴 파일을 열 수 없습니다.":
+                case "無法開啟字型檔案，因為檔案、目錄、網路位置、磁碟機或其他存放裝置不存在或無法使用。":
                     return "A font file could not be opened because the file, directory, network location, drive, or other storage location does not exist or is unavailable.";
 
                 case "Un fichier de polices existe mais n’a pas pu être ouvert en raison d’un refus d’accès, d’une violation de partage ou d’une erreur similaire.":
                 case "Файл шрифта существует, но его не удалось открыть из-за отказа в доступе, нарушения общего доступа или аналогичной ошибки.":
+                case "El archivo de fuentes existe, pero no se pudo abrir debido a que se denegó el acceso, a una infracción de uso compartido o a error similar.":
+                case "Um arquivo de fonte existe porém não foi possível abri-lo devido a acesso negado, violação de compartilhamento ou erro semelhante.":
+                case "글꼴 파일은 있지만 액세스 거부, 공유 위반 또는 유사한 오류로 인해 열 수 없습니다.":
                     return "A font file exists but could not be opened due to access denied, sharing violation, or similar error.";
+
+                case "El sistema no puede encontrar el archivo especificado.":
+                    return "The system cannot find the file specified.";
+
+                case "Le processus ne peut pas accéder au fichier car ce fichier est utilisé par un autre processus.":
+                case "Proces nie może uzyskać dostępu do pliku, ponieważ jest on używany przez inny proces.":
+                    return "The process cannot access the file because it is being used by another process.";
+
+                case "Le fichier est en cours d’utilisation. Fermez le fichier avant de continuer.":
+                case "Plik jest używany. Zamknij go przed kontynuowaniem.":
+                    return "The file is in use. Please close the file before continuing.";
+
+                case "Espace insuffisant sur le disque.":
+                    return "There is not enough space on the disk.";
+
+                case "Файл подкачки слишком мал для завершения операции.":
+                    return "The paging file is too small for this operation to complete.";
+
+                case "Ressources système insuffisantes pour terminer le service demandé.":
+                case "Não existem recursos de sistema suficientes para concluir o serviço pedido.":
+                case "Недостаточно системных ресурсов для завершения операции.":
+                    return "Insufficient system resources exist to complete the requested service.";
+
+                case "Указанная служба не может быть запущена, так как отключена либо она сама, либо все связанные с ней устройства.":
+                    return "The service cannot be started, either because it is disabled or because it has no enabled devices associated with it.";
+
+                case "La zone de données passée à un appel système est insuffisante.":
+                    return "The data area passed to a system call is too small.";
+
+                case "L’identificateur d’opération n’est pas valide.":
+                case "Неверный идентификатор операции.":
+                    return "The operation identifier is not valid.";
+
+                case "La operación intentó tener acceso a datos fuera del rango válido":
+                    return "The operation attempted to access data outside the valid range";
+
+                case "Интерфейс не зарегистрирован":
+                    return "Interface not registered";
+
+                case "valor no válido para el Registro":
+                    return "Invalid value for registry";
+
+                case "Символ Юникода не имеет сопоставления в конечной многобайтовой кодовой странице.":
+                    return "No mapping for the Unicode character exists in the target multi-byte code page.";
 
                 default:
                     return text;
