@@ -325,8 +325,23 @@ When it crashes, the app's own reporter beats the event log: read the newest fil
 carries the exception type, message and a stack. The Application event log only gives
 `0xc000027b` in `Windows.UI.Xaml.dll`, which says "a managed exception" and nothing else.
 
-- [ ] Launch under CoreCLR. First attempt reached TDLib init and then hit the `CommonStyles.xaml`
-      content bug above; retrying with that fixed.
+- [x] Launch under CoreCLR. It runs. Verified by Fela: stickers, animations, WebView2, VLC video
+      and secondary windows all work.
+- [ ] **Calls.** In the call window — a `CoreApplication.CreateNewView()` secondary view — video
+      does not render and lottie does not animate. Exceptions are thrown and caught, so nothing
+      reaches `ErrorReports`.
+
+      What the evidence rules out: the frame driver. The call's blob waves animate, and they run
+      off `CompositionVSync` → `CompositionTarget.Rendering`, the same per-view static event
+      `AnimatedImage` uses. So `Rendering` does fire on that thread.
+
+      What is left is the surface path, which is what lottie and video share and the blobs do not:
+      the blobs are pure Composition geometry, while both of the broken ones draw through a
+      `CompositionDrawingSurface` off `Telegram.Native`'s `CompositionGraphicsDevice`.
+      `PlaceholderHelper.Foreground` is `[ThreadStatic]` and constructs
+      `new PlaceholderImageHelper(Window.Current)` per view, whose native constructor takes
+      `window.Compositor()` — the first thing to check is whether that construction is what
+      throws on the secondary view.
 - [ ] `{Binding}` is where the runtime differences will show. 180 occurrences across 32 of 481
       XAML files, against 1927 `x:Bind` which are compiled and free. Each managed binding source
       type needs `[GeneratedBindableCustomProperty]` and to be `partial`. Bindings whose source is
@@ -364,6 +379,15 @@ early, and it also catches the existing trap of adding a file and forgetting its
 
 - [ ] Parity script, run manually at first
 - [ ] Decide whether it becomes a build target or stays a script
+
+## Cleanups this turned up
+
+- [ ] Rename the `Unigram*` MSBuild properties and targets to `Telegram*`. They follow the product
+      name while everything else in the build — repo, projects, assembly, namespaces — says
+      Telegram. Fifteen names (`UnigramRoot`, `UnigramUsesVcpkg`, `UnigramVcpkg*`, `UnigramAdd*`,
+      `UnigramCheckVcpkg*`, `UnigramVlcPlugin`) live in `Directory.Build.props` and
+      `Directory.Build.targets`, and nothing else in the repository references them, so it is one
+      mechanical commit.
 
 ## Open questions
 
