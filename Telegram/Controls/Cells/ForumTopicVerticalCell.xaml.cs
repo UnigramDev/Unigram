@@ -539,7 +539,7 @@ namespace Telegram.Controls.Cells
 
             // Unloaded doesn't fire for a view hosted in a flyout, so the flyout's own Closed
             // is what tears the preview down; Unloaded stays subscribed in case it does arrive
-            // first, and Deactivate ignores whichever of the two comes second.
+            // first. Whichever comes first detaches both, so the teardown runs exactly once.
             void handler(object sender, object e)
             {
                 Logger.Info(sender == flyout ? "Closed" : "Unloaded");
