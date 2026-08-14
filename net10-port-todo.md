@@ -368,10 +368,15 @@ carries the exception type, message and a stack. The Application event log only 
         callback on that view's thread — measured, on the same thread and in the same run where the
         projected subscription still landed on the main view's.
 
-      Still on `CompositionTarget.Rendering` through the projection, and therefore still running on
-      the first view's thread in a secondary window: `CompositionVSync` (the call blobs, DiceView)
-      and `VisualUtilities`. They are not visibly broken because they only touch Composition
-      objects, which are agile — but they are a latent version of the same bug.
+      Every call site is unchanged: `CsWinRT.cs` aliases `CompositionTarget` to the stand-in on
+      .NET 9+ and to the real type otherwise, so `CompositionVSync` (the call blobs, DiceView),
+      `VisualUtilities`, both Premium controls and `GiftCraftPopup` are fixed too, without a line
+      of conditional compilation between them. Aliasing in both directions also settles the clash
+      with `Windows.UI.Composition.CompositionTarget`, which is the only reason those sites spelled
+      the namespace out — so the diff is shorter than what it replaced.
+
+      `Rendered` registers the same way, through `ICompositionTargetStatics3`
+      (`bc0a7cd9-6750-4708-994c-2028e0312ac8`).
 
       Options considered, for the record:
 
