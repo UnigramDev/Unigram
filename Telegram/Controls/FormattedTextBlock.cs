@@ -265,22 +265,35 @@ namespace Telegram.Controls
         public bool IsTextTrimmable { get; private set; }
         public event EventHandler IsTextTrimmableChanged;
 
+        // Inputs of the last MaxLines call, so a re-measure at the same width doesn't repeat it.
+        // The text is compared by reference: GetParts hands back the same instance until a
+        // relative date rewrites the paragraph, which is exactly when the answer can change.
+        private string _trimmableText;
+        private double _trimmableWidth;
+        private double _trimmableSize;
+
         protected override Size MeasureOverride(Size availableSize)
         {
-            if (_text != null && _first == _last && _text.Paragraphs[_first].Type is TextParagraphTypeQuote { IsExpandable: true })
+            if (_text != null && TextBlock != null && _first == _last && _text.Paragraphs[_first].Type is TextParagraphTypeQuote { IsExpandable: true })
             {
                 var styled = _text.Paragraphs[_first];
-                var partial = styled.Text;
-                var entities = styled.GetParts(out partial) ?? TextStyleRun.NoParts;
+                var entities = styled.GetParts(out var partial) ?? TextStyleRun.NoParts;
                 var quoteSize = (AutoFontSize ? Theme.Current.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
 
-                var metrics = PlaceholderHelper.Foreground.MaxLines(partial, 0, partial.Length, entities, quoteSize, availableSize.Width, false, 3);
-                var trimmable = metrics.TruncatedHeight < metrics.Height;
-
-                if (IsTextTrimmable != trimmable)
+                if (!ReferenceEquals(partial, _trimmableText) || availableSize.Width != _trimmableWidth || quoteSize != _trimmableSize)
                 {
-                    IsTextTrimmable = trimmable;
-                    IsTextTrimmableChanged?.Invoke(this, EventArgs.Empty);
+                    _trimmableText = partial;
+                    _trimmableWidth = availableSize.Width;
+                    _trimmableSize = quoteSize;
+
+                    var metrics = PlaceholderHelper.Foreground.MaxLines(partial, 0, partial.Length, entities, quoteSize, availableSize.Width, false, 3);
+                    var trimmable = metrics.TruncatedHeight < metrics.Height;
+
+                    if (IsTextTrimmable != trimmable)
+                    {
+                        IsTextTrimmable = trimmable;
+                        IsTextTrimmableChanged?.Invoke(this, EventArgs.Empty);
+                    }
                 }
             }
 

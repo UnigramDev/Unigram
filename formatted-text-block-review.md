@@ -168,13 +168,19 @@ The three facts most of this rests on:
       The remaining `CoreCursor` allocations (`Arrow` at `:316`/`:340`/`:346`, `Hand` at
       `:304`) are all edge-triggered already, so they're left alone.
 
-- [ ] **`MeasureOverride` runs a native text measure per pass for expandable quotes** —
+- [x] **`MeasureOverride` runs a native text measure per pass for expandable quotes** —
       `:256-277` **[live]**
+      → fixed in the commit that checked this box
 
       `PlaceholderHelper.Foreground.MaxLines(...)` on every measure, with no memo on
       (text, width, size). Quote blocks re-measure with the rest of the bubble on every window
-      resize and on every `InvalidateMeasure` from the panel. The inputs are all cheap to
-      compare — cache the last `(width, partial, size)` and reuse `IsTextTrimmable`.
+      resize and on every `InvalidateMeasure` from the panel.
+
+      Fixed by keeping those three inputs and skipping the call when they match. The text is
+      compared by reference, which is exact here rather than a heuristic: `GetParts` returns
+      the same string until a relative date rewrites the paragraph, and that is precisely when
+      the measurement can change. `TextBlock` is also null-checked now, since the `FontSize`
+      read on the `AutoFontSize == false` path had nothing guarding it.
 
       Related: `IsTextTrimmableChanged` is raised **from inside** `MeasureOverride` (`:271`) and
       `BlockQuote.OnIsTextTrimmableChanged` (`BlockQuote.cs:62`) reacts by changing state that
