@@ -29,6 +29,11 @@ namespace Telegram.Benchmarks
                 using var stream = assembly.GetManifestResourceStream(resource)!;
                 using var memory = new MemoryStream();
                 stream.CopyTo(memory);
+
+                // NUL-terminated, the way td_receive hands a payload over and the way
+                // TdJsonReader requires it. Corpus payloads already carry one; fixtures are read
+                // straight off disk, so it is added here.
+                memory.WriteByte(0);
                 return memory.ToArray();
             }
 

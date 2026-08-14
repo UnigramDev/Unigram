@@ -237,10 +237,30 @@ The checks each end in `return Fail()`, and a call inside `ReadString`/`ReadNumb
 to stop RyuJIT inlining them into the scan loop. UTC's whole-program inliner doesn't care. So the
 type's original comment — "one comparison per token" — was wrong on the JIT and right on .NET Native.
 
-The fix, when it matters: `td_receive` returns a **NUL-terminated** buffer, so the terminator works
-as a sentinel and the scan loops need no `_index < _length` test at all — safe *and* cheaper than
-the unchecked version. That's a migration-path concern rather than a shipping one: it buys nothing
-on .NET Native today, and recovers the 43% on whatever the app runs on after a move to .NET 10.
+#### The sentinel is in; the JIT gap is not explained
+
+`td_receive` returns a NUL-terminated buffer, so `TdJsonReader` now uses the terminator as its
+sentinel: the scan loops test only for content, and `_index <= _length` is checked once per token
+rather than once per byte. `Fixtures.Load` appends a terminator and `GuardedBuffer.Place` writes one
+inside the committed region, so the guard page still sits immediately after it.
+
+On .NET Native it is a small win — **4.1×** against `Utf8JsonReader` on the 68 KB payload, up from
+3.7×, and 2.9× end to end on `localFile`.
+
+On the desktop JIT it did **not** recover the 43%, and the reader is still ~1.65× slower than
+`Utf8JsonReader` there against 0.85× before the hardening pass. Two hypotheses have been measured
+and refuted:
+
+- *the bounds checks* — removing them left the reader still slower than the original relative to its
+  own `Utf8JsonReader` baseline, and the sentinel that removes them entirely changed nothing;
+- *`Fail()` calls inhibiting inlining of the scan methods* — marking it `AggressiveInlining` moved
+  nothing.
+
+So something else introduced in hardening costs roughly 2× on RyuJIT and nothing on UTC. The way to
+find it is a side-by-side of the pre-hardening reader against the current one in a single process,
+the way the checked/unchecked comparison was done — comparing across runs is what produced both
+wrong answers. **It does not affect the toolchain the app ships on**, so it is parked rather than
+chased.
 
 End to end on a real type, .NET Native — `localFile`, same object out, same 71 B allocated:
 

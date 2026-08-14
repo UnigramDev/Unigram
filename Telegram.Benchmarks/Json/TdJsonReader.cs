@@ -27,9 +27,18 @@ namespace Telegram.Benchmarks.Json
     /// Reuses System.Text.Json's JsonTokenType so generated code needs no change beyond the reader
     /// type. Only the grammar TDLib emits is accepted: no comments, no trailing commas, no NaN.
     ///
-    /// Reading past the buffer would be an out-of-bounds read of *native* memory, so every advance
-    /// is bounds-checked and malformed input ends the token stream rather than running off. That
-    /// costs one comparison per token, not per byte - see Failed.
+    /// **The buffer must be NUL-terminated at [length].** td_receive guarantees this - it returns
+    /// a C string - and the scanning loops rely on it: they test only for content, and the
+    /// terminator stops them. A raw NUL cannot appear inside JSON (it has to be written \u0000),
+    /// so it is unambiguous as an end marker, and reading past the buffer becomes impossible rather
+    /// than merely checked for. It also takes a comparison per byte out of every scan loop: 4.1x
+    /// against Utf8JsonReader on .NET Native, up from 3.7x when every byte was bounds-checked.
+    ///
+    /// On the desktop JIT the reader is slower than Utf8JsonReader and slower than this same code
+    /// was before the hardening pass. The cause is not understood - two hypotheses have been
+    /// measured and refuted. See the README; it does not affect the shipping toolchain.
+    ///
+    /// The one invariant to maintain is _index &lt;= _length, checked once per token in Read().
     /// </summary>
     internal unsafe ref struct TdJsonReader
     {
@@ -73,9 +82,16 @@ namespace Telegram.Benchmarks.Json
 
         public bool Read()
         {
+            // The only bounds test in the reader. Everything below is safe once this holds, because
+            // the terminator at [length] stops every scan.
+            if (_index > _length)
+            {
+                return Fail();
+            }
+
             // Commas and colons carry no information here - the token sequence is unambiguous
             // without them, which keeps this loop to one branch per byte.
-            while (_index < _length)
+            while (true)
             {
                 var c = _buffer[_index];
                 if (c == ' ' || c == ',' || c == ':' || c == '\n' || c == '\r' || c == '\t')
@@ -84,13 +100,13 @@ namespace Telegram.Benchmarks.Json
                     continue;
                 }
 
-                break;
-            }
+                if (c == 0)
+                {
+                    TokenType = JsonTokenType.None;
+                    return false;
+                }
 
-            if (_index >= _length)
-            {
-                TokenType = JsonTokenType.None;
-                return false;
+                break;
             }
 
             switch (_buffer[_index])
@@ -113,36 +129,23 @@ namespace Telegram.Benchmarks.Json
                     return true;
                 case (byte)'"':
                     return ReadString();
+                // A truncated literal can overshoot the terminator, which the check at the top of
+                // the next Read turns into a clean stop rather than a read past the end.
                 case (byte)'t':
-                    if (_index + 4 > _length) return Fail();
                     _index += 4;
                     TokenType = JsonTokenType.True;
                     return true;
                 case (byte)'f':
-                    if (_index + 5 > _length) return Fail();
                     _index += 5;
                     TokenType = JsonTokenType.False;
                     return true;
                 case (byte)'n':
-                    if (_index + 4 > _length) return Fail();
                     _index += 4;
                     TokenType = JsonTokenType.Null;
                     return true;
                 default:
                     return ReadNumber();
             }
-        }
-
-        private bool ReadLiteral(int length, JsonTokenType type)
-        {
-            if (_index + length > _length)
-            {
-                return Fail();
-            }
-
-            _index += length;
-            TokenType = type;
-            return true;
         }
 
         private bool Fail()
@@ -159,16 +162,20 @@ namespace Telegram.Benchmarks.Json
             _valueStart = _index;
             _escaped = false;
 
-            var closed = false;
-
-            while (_index < _length)
+            while (true)
             {
                 var c = _buffer[_index];
 
+                if (c == (byte)'"')
+                {
+                    break;
+                }
+
                 if (c == (byte)'\\')
                 {
-                    // The escape and the byte it escapes must both be inside the buffer.
-                    if (_index + 1 >= _length)
+                    // Skipping the escaped byte blind would step over a terminator that is the very
+                    // next byte, so this is the one place the sentinel needs help.
+                    if (_buffer[_index + 1] == 0)
                     {
                         return Fail();
                     }
@@ -178,18 +185,12 @@ namespace Telegram.Benchmarks.Json
                     continue;
                 }
 
-                if (c == (byte)'"')
+                if (c == 0)
                 {
-                    closed = true;
-                    break;
+                    return Fail(); // unterminated string: the buffer ended first
                 }
 
                 _index++;
-            }
-
-            if (!closed)
-            {
-                return Fail();
             }
 
             _valueLength = _index - _valueStart;
@@ -198,7 +199,7 @@ namespace Telegram.Benchmarks.Json
             // A string followed by a colon is a property name. Peeking is cheaper than tracking
             // container state, and the colon itself is skipped by the next Read.
             var peek = _index;
-            while (peek < _length)
+            while (true)
             {
                 var c = _buffer[peek];
                 if (c == ' ' || c == '\n' || c == '\r' || c == '\t')
@@ -210,7 +211,7 @@ namespace Telegram.Benchmarks.Json
                 break;
             }
 
-            TokenType = peek < _length && _buffer[peek] == (byte)':'
+            TokenType = _buffer[peek] == (byte)':'
                 ? JsonTokenType.PropertyName
                 : JsonTokenType.String;
 
@@ -221,10 +222,10 @@ namespace Telegram.Benchmarks.Json
         {
             _valueStart = _index;
 
-            while (_index < _length)
+            while (true)
             {
                 var c = _buffer[_index];
-                if (c == (byte)',' || c == (byte)'}' || c == (byte)']' ||
+                if (c == 0 || c == (byte)',' || c == (byte)'}' || c == (byte)']' ||
                     c == ' ' || c == '\n' || c == '\r' || c == '\t')
                 {
                     break;

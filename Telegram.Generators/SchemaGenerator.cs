@@ -98,6 +98,19 @@ namespace Telegram.Generators
             // Everything reachable from a request, which is the set that needs a ToJson.
             var serializable = FindReachable(classes, classes.Where(x => x.IsFunction));
 
+            // TODO: the mirror of this - emitting FromJson only for types that can actually be
+            // received - used to exist as `toJsonTypes.Except(referencedTypes)` and had to be
+            // removed because it stopped being correct. It would cut a large slice of the ~150k
+            // generated lines, which is worth real .NET Native compile time and binary size.
+            //
+            // What makes it hard is that "received" is not the same as "reachable from a function
+            // return type". Updates arrive unsolicited and only qualify because the scheme happens
+            // to declare `testUseUpdate = Update;`; richMessageSourceBlocks does not qualify at all
+            // and is patched in by hand below. Any type in that position is silently given no
+            // parser, and the failure shows up at runtime as a null rather than at build time.
+            // Restoring this needs a definition of "received" that does not depend on the scheme
+            // incidentally naming a type in a function signature.
+
             var builder = new StringBuilder();
             builder.AppendLine("using System.Collections.Generic;");
             builder.AppendLine("using System.Text.Json;");

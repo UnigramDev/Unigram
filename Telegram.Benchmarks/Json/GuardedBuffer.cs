@@ -43,7 +43,8 @@ namespace Telegram.Benchmarks.Json
         {
             const int PageSize = 4096;
 
-            var pages = (capacity + PageSize - 1) / PageSize;
+            // +1 for the terminator, which has to be inside the committed region.
+            var pages = (capacity + 1 + PageSize - 1) / PageSize;
             _dataSize = Math.Max(pages, 1) * PageSize;
 
             // Reserve the data pages plus one more, and commit only the data pages. The extra page
@@ -61,13 +62,15 @@ namespace Telegram.Benchmarks.Json
         }
 
         /// <summary>
-        /// Copies the first <paramref name="length"/> bytes so the last one is the last committed
-        /// byte - the next address is the guard page.
+        /// Copies the first <paramref name="length"/> bytes followed by the terminator TdJsonReader
+        /// requires, positioned so that the terminator is the last committed byte. Reading even one
+        /// byte beyond it hits the guard page.
         /// </summary>
         public byte* Place(byte[] payload, int length)
         {
-            var pointer = (byte*)_region + (_dataSize - length);
+            var pointer = (byte*)_region + (_dataSize - length - 1);
             Marshal.Copy(payload, 0, (IntPtr)pointer, length);
+            pointer[length] = 0;
             return pointer;
         }
 
