@@ -1554,9 +1554,7 @@ namespace Telegram.ViewModels
             {
                 if (oldIndex != -1)
                 {
-                    // We can't use Move because ListView seems to mess up a lot with this operationg
-                    Items.RemoveAt(oldIndex);
-                    Items.Insert(newIndex, message);
+                    MoveMessageInOrder(message, oldIndex);
                 }
                 else
                 {
@@ -1565,9 +1563,19 @@ namespace Telegram.ViewModels
             }
             else if (force && oldIndex != -1)
             {
-                Items.RemoveAt(oldIndex);
-                Items.Insert(oldIndex, message);
+                MoveMessageInOrder(message, oldIndex);
             }
+        }
+
+        // We can't use Move because ListView seems to mess up a lot with this operationg
+        private void MoveMessageInOrder(MessageViewModel message, int oldIndex)
+        {
+            Items.RemoveAt(oldIndex);
+
+            // MessageCollection.RemoveItem also drops the date or topic separator that the
+            // removal orphans, so any index computed before it can now be past the end:
+            // ask again, against the collection as it is now.
+            Items.Insert(NextIndexOf(message, 0, out _), message);
         }
 
         private int NextIndexOf(MessageViewModel message, long oldMessageId, out int oldIndex)
