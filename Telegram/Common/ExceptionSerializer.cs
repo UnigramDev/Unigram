@@ -489,11 +489,13 @@ namespace Telegram.Common
                     continue;
                 }
 
-                var index = part.IndexOf('(');
-                if (index > 0)
+                // Only the sentence is localised, so the HRESULT .NET appends has to come off
+                // before it can be matched and go back on afterwards.
+                var suffix = _hresultSuffix.Match(part);
+                if (suffix.Success)
                 {
-                    builder.Append(TranslateText(part.Substring(0, index - 1)));
-                    builder.Append(part.Substring(index - 1));
+                    builder.Append(TranslateText(part.Substring(0, suffix.Index)));
+                    builder.Append(suffix.Value);
                 }
                 else
                 {
@@ -503,6 +505,10 @@ namespace Telegram.Common
 
             return builder.ToString();
         }
+
+        // Anchored at the end and matched in full, because the sentence in front can contain
+        // parentheses of its own - the Portuguese RPC_E_WRONG_THREAD text says "(marshall)".
+        private static readonly Regex _hresultSuffix = new(@"\s*\(Exception from HRESULT: 0x[0-9A-Fa-f]{8}\)$", RegexOptions.Compiled);
 
         // The labels around the IID and the method index are localised, but the GUID and the number
         // that follows it are not, so the two are matched structurally rather than by their wording.
@@ -663,6 +669,7 @@ namespace Telegram.Common
 
                 case "L’application a appelé une interface qui était maintenue en ordre pour un thread différent.":
                 case "O aplicativo chamou uma interface marshalled para um outro thread.":
+                case "A aplicação chamou uma interface que estava empacotada (marshall) para outro módulo.":
                 case "La aplicación llamó a una interfaz que se aplanó para un diferente subproceso.":
                 case "L'applicazione ha chiamato un'interfaccia su cui era stato eseguito il marshalling per un thread differente.":
                 case "Eine Schnittstelle, die für einen anderen Thread marshalled war, wurde von der Anwendung aufgerufen.":
