@@ -24,7 +24,6 @@
     <VcpkgRoot Condition="'$(VcpkgRoot)' == '' And Exists('$(UnigramRoot)..\vcpkg\.vcpkg-root')">$([System.IO.Path]::GetFullPath('$(UnigramRoot)..\vcpkg'))</VcpkgRoot>
     <VcpkgRoot Condition="'$(VcpkgRoot)' == '' And Exists('$(MSBuildExtensionsPath)\..\VC\vcpkg\vcpkg.exe')">$([System.IO.Path]::GetFullPath('$(MSBuildExtensionsPath)\..\VC\vcpkg'))</VcpkgRoot>
 
-    <UnigramVcpkgTriplet Condition="'$(Platform)' == 'Win32' Or '$(Platform)' == 'x86'">x86-uwp</UnigramVcpkgTriplet>
     <UnigramVcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-uwp</UnigramVcpkgTriplet>
     <UnigramVcpkgTriplet Condition="'$(Platform)' == 'ARM64'">arm64-uwp</UnigramVcpkgTriplet>
 

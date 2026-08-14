@@ -11,7 +11,7 @@
          Microsoft.AppXPackage.Targets then asks the same projects for GetPackagingOutputs with
          both set explicitly, and MSBuild keys its cache on path plus global properties, so that
          is a second instance and a second full build, the first one against Telegram.csproj's
-         own default platform of x86.
+         own default platform.
          A Release x64 bundle built with this produces one compile and one .NET Native pass, but
          it has not been compared against a run without it, and it has only been exercised from
          the command line, not the Visual Studio packaging wizard. Telegram.Stub is what to watch:
@@ -20,14 +20,6 @@
     <ShouldUnsetParentConfigurationAndPlatform>false</ShouldUnsetParentConfigurationAndPlatform>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|x86">
-      <Configuration>Debug</Configuration>
-      <Platform>x86</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x86">
-      <Configuration>Release</Configuration>
-      <Platform>x86</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
@@ -68,10 +60,6 @@
     <!--<CreatePackageMakeAppxParameters>/pb artifacts.txt</CreatePackageMakeAppxParameters>
     <CreateResourcePackageMakeAppxParameters>/pb artifacts.txt</CreateResourcePackageMakeAppxParameters>-->
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <AppxBundle>Always</AppxBundle>
-    <DefaultLanguage>en</DefaultLanguage>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <AppxBundle>Always</AppxBundle>
     <DefaultLanguage>en</DefaultLanguage>
@@ -85,10 +73,6 @@
     <DefaultLanguage>en</DefaultLanguage>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <AppxBundle>Always</AppxBundle>
-    <DefaultLanguage>en</DefaultLanguage>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <AppxBundle>Always</AppxBundle>
     <DefaultLanguage>en</DefaultLanguage>
   </PropertyGroup>

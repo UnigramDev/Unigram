@@ -1,5 +1,5 @@
 param (
-  [string]$arch = "x86|x64|arm64",
+  [string]$arch = "x64|arm64",
   [string]$mode = "SideloadOnly"
 )
 
