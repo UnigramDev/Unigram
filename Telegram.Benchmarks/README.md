@@ -667,11 +667,14 @@ startup, 151 MB/s, a third of it file existence syscalls.**
    the only measurement that says what the pointer reader is worth in the app rather than in a loop.
    Extrapolating the corpus ratio, parsing should go from 0.165 s to something near 0.4 s — but that
    is an extrapolation, and one run replaces it with a fact.
-2. Defer the file existence checks off the TDLib thread. They are 34% of what it spends parsing,
-   they are I/O so no build makes them cheaper, and nothing consumes the answer synchronously — the
-   only consequence is a fire-and-forget `DeleteFile`. Not a global check: `local.path` can point
-   outside TDLib's cache, at an upload's source or somewhere a user has moved a file to, so the
-   per-file question is the right one and only the thread it runs on is wrong.
+2. ~~Defer the file existence checks off the TDLib thread~~ — done. `ClientService.VerifyFileExists`
+   queues the path and a single drain does the syscalls, so the same files are still checked and
+   the same `DeleteFile` still goes out, just not mid-parse. Not a global check, either: `local.path`
+   can point outside TDLib's cache, at an upload's source or somewhere a user has moved a file to,
+   so the per-file question was the right one and only the thread was wrong. `NativeFile.Exists`
+   also replaces the C++/WinRT hop with the P/Invoke it was wrapping. **Worth re-reading the page
+   after this**: file handling should fall to near nothing — it was 0.086 s of which 0.085 s was
+   these calls — and the checks now report their own time, off the parse entirely.
 3. Then `<TdParsers>Pointer</TdParsers>`, and the `Utf8JsonReader` set stops being compiled at all —
    44,508 generated lines and ~500 hand-written ones. One word, and the only step left that the
    benchmark cannot check for you is `ClientService`, whose `#if` blocks nothing here compiles.
