@@ -77,9 +77,6 @@
     <DefaultLanguage>en</DefaultLanguage>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>
-      powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)UpdateManifest.ps1" -path "$(ProjectDir)\" -config "$(ConfigurationName)" -mode "$(UapAppxPackageBuildMode)"
-    </PreBuildEvent>
     <PackageCertificateKeyFile>Telegram.Msix_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <ItemGroup>
