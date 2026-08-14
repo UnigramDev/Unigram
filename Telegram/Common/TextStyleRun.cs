@@ -74,11 +74,18 @@ namespace Telegram.Common
             }
         }
 
+        // Not Array.Empty: TextStylePart is a WinRT struct and the native side takes an
+        // IVector<TextStylePart>, so an array has to be boxed as IReferenceArray, which NativeAOT
+        // cannot synthesise - it throws NotSupportedException the moment the CCW is built. A List
+        // marshals through the generated path instead. Shared, so the empty case stays allocation
+        // free; nothing on either side of the ABI writes to it.
+        private static readonly List<TextStylePart> _noParts = new();
+
         public static IList<TextStylePart> GetParts(IList<TextEntity> entities)
         {
             if (entities == null)
             {
-                return Array.Empty<TextStylePart>();
+                return _noParts;
             }
 
             var items = new List<TextStylePart>(entities.Count);

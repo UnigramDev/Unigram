@@ -15,6 +15,7 @@ using Windows.UI.WindowManagement;
 
 #if NET9_0_OR_GREATER
 using System.Runtime.InteropServices.Marshalling;
+using WinRT;
 #endif
 
 namespace Telegram.Common
@@ -207,6 +208,7 @@ namespace Telegram.Common
         // Subscribing the same handler twice would lose the first token; nothing does that.
         [ThreadStatic]
         private static Dictionary<EventHandler<object>, long> _tokens;
+
 
         [ThreadStatic]
         private static Dictionary<EventHandler<RenderedEventArgs>, long> _renderedTokens;

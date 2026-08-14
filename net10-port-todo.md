@@ -409,7 +409,68 @@ carries the exception type, message and a stack. The Application event log only 
       type needs `[GeneratedBindableCustomProperty]` and to be `partial`. Bindings whose source is
       a XAML/WinRT type need nothing.
 
-## Phase 5 — AOT
+## Phase 5 — AOT (compiles, links, runs; three features still under repair)
+
+**It builds and links**: a 57 MB native `Telegram.exe`, **zero errors, zero trim warnings, zero
+`CsWinRT1028`**, and it launches and runs. The publish is a 50-file layout against 250 for CoreCLR,
+with every native dependency intact.
+
+Build and deploy exactly as in Phase 4, minus `-p:PublishAot` — the property lives in the project
+now. Three traps that cost real time, none of which announce themselves:
+
+- **`-p:PublishAot=true` on the command line is a global property**, so it flows into the
+  `ProjectReference` and `Telegram.Generators` (netstandard2.0) fails `NETSDK1207`.
+- **Without `-restore` the AOT step silently no-ops.** `Microsoft.DotNet.ILCompiler` is an implicit
+  package reference resolved at restore; with it missing the build is green, the layout is ordinary
+  managed output, and `Telegram.exe` is a 162 KB apphost. A CI job doing this would ship a non-AOT
+  package looking like success. Check for `native\` and an exe of tens of MB.
+- **`[Conditional("DEBUG")]` still binds the symbol**, so a type with a call site cannot be put
+  behind `#if DEBUG` — the call site has to go with it.
+
+### What the app needed
+
+- `TypeCrosserGenerator` deleted (dead), `TypeContainerGenerator` behind `#if DEBUG`: between them
+  they were the whole trim-warning surface, five warnings, all in code Release cannot reach.
+- Fourteen ABI-crossing classes marked `partial` (`CsWinRT1028`), two of them LottieGen output that
+  will lose the keyword when regenerated.
+
+### The failures that only appear at runtime
+
+None of these warn at build time. All were found by running a feature, and all but one are a
+missing entry in `CsWinRT.cs`, which is effectively the app's AOT manifest.
+
+| symptom | cause | fix |
+|---|---|---|
+| sticker panel empty, headers only | `CollectionViewSource.ItemsPath` resolves reflectively; the generated lookup existed, but `MvxObservableCollection<StickerViewModel>` had no marshalling support for that instantiation — the emoji drawer works because its group exposes `MvxObservableCollection<object>` | registered both sticker instantiations |
+| call window: no video, no lottie | `CompositionTarget.Rendering` subscribed from a secondary view is delivered to the **first** view's thread — [CsWinRT #2524](https://github.com/microsoft/CsWinRT/issues/2524) | `CompositionTargetImpl`, registered through the ABI per view |
+| hard crash on hovering a forward header | `TextStyleRun.GetParts` returned `Array.Empty<TextStylePart>()`; **a managed array cannot cross as `IVector<T>` when `T` is a native WinRT struct** — it boxes through `IReferenceArray`, which AOT cannot synthesise. `GeneratedWinRTExposedExternalType` does *not* help: it emits CCWs for managed types | return a shared empty `List` |
+| freeform gradient not drawn | same rule: `GetColors()` returns `Color[]` handed to `CreateFreeformGradient(IVector<Color>)`, and the throw was swallowed inside XAML brush creation | convert to `List<Color>` at the call site |
+| `CompositionVSync` NRE, killing calls | self-inflicted: through the ABI the rendering args arrive as a bare `IInspectable`, so `e as RenderingEventArgs` is null. Casting per frame would be a QueryInterface per frame | both consumers now read `Stopwatch.GetTimestamp()`; `VisualUtilities.Tilt` was silently reading a stale timestamp for the same reason |
+
+### Still open
+
+- [ ] **Group calls still crash.** No log line, no `ErrorReport`, and the tgcalls log stops
+      mid-line during ICE gathering: a managed exception in a callback invoked from a tgcalls
+      thread becomes an HRESULT at the CCW, resurfaces as `winrt::hresult_error` native side, and
+      fails fast (`0xC000027B`) past both `WatchDog` handlers. Nine callback entry points are
+      instrumented in the working tree (`VoipGroupCall`), and Fela is attaching the VS native
+      debugger with `Telegram.pdb`, breaking on first-chance C++ exceptions.
+- [ ] **Background pattern** does not draw over the gradient. The fill path works now; the pattern
+      goes through `CreateSurfaceBrush`/`UpdatePattern` and has not been looked at.
+- [ ] Diagnostics still in the working tree, to remove: callback entry logging in
+      `VoipGroupCall`, and the freeform probes in `ChatBackgroundBrush`.
+
+### Two things worth knowing about the harness
+
+- **Crash reports are uploaded and deleted on the next launch.** `HandleReportAsync` POSTs to
+  `integrations.telegram.org/ugram_crash_logs/`, so every AOT crash this evening went to the
+  production endpoint tagged 12.7.0.12195, and the local JSON was gone before it could be read.
+  Worth suppressing for this identity.
+- **At verbosity 4 the TDLib log rotates every couple of minutes**, taking the managed entries with
+  it. Drop it to 1 in Diagnostics before reproducing anything: `Logger.Error` is level 1 and the
+  gate is `level <= VerbosityLevel`.
+
+## Phase 5 — AOT, original plan
 
 - [ ] Turn on `PublishAot`, resolve trim and AOT warnings until clean.
 - [ ] `DisableRuntimeMarshalling` is in the template but leave it **off** at first. There are 43

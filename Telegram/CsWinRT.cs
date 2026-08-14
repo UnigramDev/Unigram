@@ -59,10 +59,13 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.TextEntity[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.UnreadReaction[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.UpgradedGiftAttributeId[]))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Native.TextStylePart[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<string>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.NameColor>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.ProfileColor>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.MvxObservableCollection<Telegram.Td.Api.PremiumFeature>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.MvxObservableCollection<Telegram.ViewModels.Drawers.StickerViewModel>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.MvxObservableCollection<Telegram.ViewModels.Drawers.StickerSetViewModel>))]
 #else
 namespace WinRT
 {

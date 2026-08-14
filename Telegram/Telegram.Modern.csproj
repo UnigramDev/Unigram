@@ -46,6 +46,10 @@
          ProjectReference, and Telegram.Generators is netstandard2.0, which cannot AOT
          (NETSDK1207). Publish with SelfContained and no -p:PublishAot to get a CoreCLR layout. -->
     <PublishAot>true</PublishAot>
+    <!-- The CsWinRT generators are the interesting output of this project: what they emit for
+         [GeneratedBindableCustomProperty] is what classic {Binding} and ItemsPath resolve
+         through once AOT has trimmed reflection away. -->
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 
     <!-- Properties\AssemblyInfo.cs stays with the legacy project (see the Compile Remove below);
          these carry its values over to the attributes the SDK generates in its place. -->

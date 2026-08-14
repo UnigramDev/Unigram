@@ -7,6 +7,7 @@
 
 using Microsoft.Graphics.Canvas.Effects;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Native;
@@ -255,6 +256,9 @@ namespace Telegram.Controls.Media
 
             if (Fill is BackgroundFillFreeformGradient freeform)
             {
+                // TEMPORARY: reached at all, and does the native surface come back with a brush?
+                Logger.Error($"freeform: {freeform.GetColors().Length} colors, surface {_freeform != null}");
+
                 if (_freeform != null)
                 {
                     _freeform.Colors = freeform.GetColors();
@@ -262,9 +266,13 @@ namespace Telegram.Controls.Media
                 else
                 {
                     _freeform?.Dispose();
-                    _freeform = PlaceholderHelper.Foreground.CreateFreeformGradient(freeform.GetColors());
+                    // A List, not the Color[] GetColors returns: Color is a WinRT struct, and an
+                    // array crossing as IVector<Color> needs IReferenceArray support that NativeAOT
+                    // cannot synthesise. Once per background, so the copy costs nothing that matters.
+                    _freeform = PlaceholderHelper.Foreground.CreateFreeformGradient(new List<Color>(freeform.GetColors()));
                 }
 
+                Logger.Error($"freeform: brush {_freeform?.Brush != null}");
                 return _freeform.Brush;
             }
             else if (Fill is BackgroundFillGradient gradient)

@@ -6,18 +6,23 @@
 //
 
 using System;
+using System.Diagnostics;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Composition
 {
     public partial class CompositionVSync
     {
-        private TimeSpan _interval;
-        private TimeSpan _elapsed;
+        // Stopwatch ticks rather than the frame's RenderingTime: reading that means casting the
+        // event args to RenderingEventArgs, and the args cross the ABI as a bare IInspectable, so
+        // on .NET 9+ the cast is a QueryInterface and a new wrapper on every frame, per subscriber.
+        // The args are passed as object for a reason.
+        private readonly long _interval;
+        private long _elapsed;
 
         public CompositionVSync(double framerate)
         {
-            _interval = TimeSpan.FromMilliseconds(1000 / framerate);
+            _interval = (long)(Stopwatch.Frequency / framerate);
         }
 
         private event EventHandler _rendering;
@@ -45,15 +50,14 @@ namespace Telegram.Composition
 
         private void OnRendering(object sender, object e)
         {
-            var args = e as RenderingEventArgs;
-            var diff = args.RenderingTime - _elapsed;
+            var timestamp = Stopwatch.GetTimestamp();
 
-            if (diff < _interval)
+            if (timestamp - _elapsed < _interval)
             {
                 return;
             }
 
-            _elapsed = args.RenderingTime;
+            _elapsed = timestamp;
             _rendering?.Invoke(sender, EventArgs.Empty);
         }
     }

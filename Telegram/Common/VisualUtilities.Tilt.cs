@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Telegram.Navigation;
@@ -450,7 +451,10 @@ namespace Telegram.Common
                 // back off a property set is unreliable, so it is eased again here
                 // against the frame clock. Wall time rather than a fixed step per frame,
                 // so the two agree on a slow frame.
-                var timestamp = e is RenderingEventArgs args ? args.RenderingTime : _timestamp;
+                // Stopwatch rather than the frame's RenderingTime: the args cross the ABI as a
+                // bare IInspectable on .NET 9+, so the cast would cost a QueryInterface per frame
+                // and, when it failed, silently freeze the ease at the previous timestamp.
+                var timestamp = TimeSpan.FromTicks(Stopwatch.GetTimestamp() * TimeSpan.TicksPerSecond / Stopwatch.Frequency);
 
                 // Clamped: the first frame has no predecessor, and a frame dropped
                 // behind a long layout pass must not snap the ease to its endpoint.
