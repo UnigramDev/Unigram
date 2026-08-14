@@ -745,7 +745,7 @@ namespace Telegram.Common
 
             Instrumentation.Register(block);
 
-            if (_context.IsConnected)
+            //if (_context.IsConnected)
             {
                 block.TextEntityClick += Block_TextEntityClick;
             }
