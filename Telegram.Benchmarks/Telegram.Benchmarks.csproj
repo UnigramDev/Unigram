@@ -15,6 +15,9 @@
     <!-- Writes TdDotNetApi.g.cs to obj\, which is the point: the generated parser is the thing
          under test and it should be readable. -->
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <!-- Emits the FromPtr_* parsers alongside the FromJson_* ones, so the two readers can be
+         raced against each other over the same schema. -->
+    <TdPointerParser>true</TdPointerParser>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
@@ -62,6 +65,7 @@
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
     <AdditionalFiles Include="..\Libraries\tdjson\td_api.tl" />
+    <CompilerVisibleProperty Include="TdPointerParser" />
   </ItemGroup>
 
   <!-- Linked, not copied: a fork would stop measuring the shipping code the day it drifts. -->

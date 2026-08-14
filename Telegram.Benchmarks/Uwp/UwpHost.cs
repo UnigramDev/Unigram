@@ -64,14 +64,18 @@ namespace Telegram.Benchmarks
             {
                 var harness = new Harness();
                 var failures = new System.Text.StringBuilder();
-
-                // Validated here as well as on the desktop, because this host resolves System.Text
-                // .Json's netstandard2.0 asset - agreeing with the net10.0 reader proves nothing
-                // about the one the app actually parses against.
-                var valid = Validation.Run(line => failures.AppendLine(line));
+                var valid = false;
 
                 try
                 {
+                    // Validated here as well as on the desktop, because this host resolves
+                    // System.Text.Json's netstandard2.0 asset - agreeing with the net10.0 reader
+                    // proves nothing about the one the app actually parses against.
+                    //
+                    // Inside the try: this ran outside it once, threw on .NET Native, and the app
+                    // sat on "running..." forever with no clue why.
+                    valid = Validation.Run(line => failures.AppendLine(line));
+
                     Suite.Run(harness, includeRoundTrips: true);
                 }
                 catch (Exception ex)

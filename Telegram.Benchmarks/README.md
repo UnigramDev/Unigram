@@ -207,6 +207,42 @@ than after. Tokenising is 60–70% of the current parse on .NET Native (5.39 µs
 `updateNewMessage`, 318 µs of ~440 µs for a page), so the full parse should land around **2–2.5×**
 once the generated parsers move over — better than the 1.5–1.8× estimated before measuring.
 
+#### The generator emits both parsers
+
+`SchemaGenerator` now emits a second set, `FromPtr_*`, reading through `TdJsonReader` instead of
+`Utf8JsonReader`. Both come from the same schema, so they cannot drift. It is opt-in — set
+`<TdPointerParser>true</TdPointerParser>` plus `<CompilerVisibleProperty Include="TdPointerParser" />`
+— and with it off the generated file is byte for byte what it has always been, which is the check
+that makes changing the generator safe without being able to build the app.
+
+Field dispatch uses name length then an exact compare rather than CRC32: few enough fields per class
+for that to be cheap, and an unknown field cannot collide with a known one. `@type` dispatch keeps
+the CRC32 switch — up to eighty constructors is the wrong shape for a compare chain — using
+`TdJsonReader.ValueCrc32`, which walks raw memory and must agree with the values the generator bakes
+in.
+
+Full parse on .NET Native, same payloads, same objects out:
+
+| | `FromJson` | `FromPtr` | |
+| --- | ---: | ---: | ---: |
+| `updateUserStatus` | 682.2 ns | **335.6 ns** | 2.0× |
+| `updateFile` | 2.78 µs | **1.12 µs** | 2.5× |
+| `updateNewMessage` | 8.15 µs | **3.76 µs** | 2.2× |
+| `messages` ×50 | 436.3 µs | **181.7 µs** | 2.4× |
+| `updateOption` (escapes) | 1.41 µs | **493.2 ns** | 2.9× |
+
+**2.0–2.9×**, matching the 2–2.5× predicted from the tokeniser numbers, with allocation identical to
+the byte. On the desktop JIT the two are at parity (97.2 µs against 97.8 µs for a page).
+
+`Validation` runs the same assertions over both readers' output on every host, and on the desktop
+also compares the two object graphs field by field through reflection. Both report `validation ok`
+including on .NET Native, so the pointer parsers agree with the netstandard2.0 System.Text.Json ones
+across nested objects, vectors, abstract dispatch, escapes and unknown fields.
+
+Not yet done: `updateFile` and `file` are routed through `ClientResultHandler` on the JSON path so
+the app can dedupe them, and the pointer path parses them inline instead. Matching that needs the
+interface to take a `TdJsonReader`, which belongs with wiring this into the app.
+
 #### Hardening pass: free on .NET Native, 43% on the JIT
 
 Bounds-checking every advance costs **43% on the desktop JIT** and **nothing on .NET Native**. Both

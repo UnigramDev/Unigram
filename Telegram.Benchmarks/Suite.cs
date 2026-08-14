@@ -294,17 +294,40 @@ namespace Telegram.Benchmarks
                 () => Json.PointerParsers.ParseLocalFile(localFilePtr, localFile.Length));
         }
 
-        private static void Parse(Harness harness)
+        /// <summary>
+        /// The whole parse, both generated readers, same payloads and same objects out. This is the
+        /// number the tokeniser work is ultimately for.
+        /// </summary>
+        private static unsafe void Parse(Harness harness)
         {
             foreach (var payload in Corpus.Load())
             {
                 var bytes = payload.Bytes;
                 var length = payload.Length;
 
+                var native = Marshal.AllocHGlobal(length + 1);
+                Marshal.Copy(bytes, 0, native, length);
+                ((byte*)native)[length] = 0; // the terminator TdJsonReader scans to
+                var ptr = (byte*)native;
+
                 harness.Measure("FromJson", payload.Name,
                     () => ClientJson.FromJson(new ReadOnlySpan<byte>(bytes, 0, length), BenchmarkResultHandler.Instance));
+                _native[payload.Name] = (IntPtr)ptr;
+            }
+
+            // A second pass rather than interleaved, so the report keeps each reader's rows
+            // together.
+            foreach (var payload in Corpus.Load())
+            {
+                var ptr = (byte*)_native[payload.Name];
+                var length = payload.Length;
+
+                harness.Measure("FromPtr", payload.Name,
+                    () => ClientJson.FromPtr(ptr, length, BenchmarkResultHandler.Instance));
             }
         }
+
+        private static readonly Dictionary<string, IntPtr> _native = new();
 
         private static void Dispatch(Harness harness)
         {

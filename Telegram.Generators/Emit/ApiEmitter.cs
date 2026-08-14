@@ -273,6 +273,189 @@ namespace Telegram.Generators.Emit
             builder.AppendLine("}");
         }
 
+        /// <summary>
+        /// The pointer-reader dispatcher for an abstract type. Same CRC32 cases as the
+        /// Utf8JsonReader version - TdJsonReader.ValueCrc32 computes the identical value.
+        /// </summary>
+        public static void WritePtrAbstractDispatcher(StringBuilder builder, string name, List<SchemaClass> classes)
+        {
+            var className = Naming.ToPascalCase(name);
+
+            builder.AppendLine("private static " + className + " FromPtr_" + className + "(ref TdJsonReader reader, ClientResultHandler handler)");
+            builder.AppendLine("{");
+            builder.AppendLine("    return FromPtr(ref reader, handler, Handler);");
+            builder.AppendLine();
+            builder.AppendLine("    static " + className + "? Handler(ref TdJsonReader reader, ClientResultHandler handler, uint hash)");
+            builder.AppendLine("    {");
+            builder.AppendLine("        switch(hash)");
+            builder.AppendLine("        {");
+
+            foreach (var clazz in classes)
+            {
+                if (clazz.IsFunction || clazz.IsProxy)
+                {
+                    continue;
+                }
+
+                builder.AppendLine("        case " + Crc32.Compute(clazz.Name) + ":");
+                builder.AppendLine("            return FromPtr_" + Naming.ToPascalCase(clazz.Name) + "(ref reader, handler);");
+            }
+
+            builder.AppendLine("            default: return null;");
+            builder.AppendLine("        }");
+            builder.AppendLine("    }");
+            builder.AppendLine("}");
+        }
+
+        public static void WritePtrDispatchCase(StringBuilder builder, SchemaClass type)
+        {
+            if (type.IsFunction || type.IsProxy)
+            {
+                return;
+            }
+
+            builder.AppendLine("        case " + Crc32.Compute(type.Name) + ":");
+            builder.AppendLine("            return FromPtr_" + Naming.ToPascalCase(type.Name) + "(ref reader, handler);");
+        }
+
+        /// <summary>
+        /// The pointer parser for one concrete type. Fields dispatch on name length then an exact
+        /// compare rather than a hash: there are few enough per class for that to be cheap, it
+        /// cannot collide with an unknown field, and it keeps the comparison inside a library call
+        /// instead of a hand-written loop over a span.
+        /// </summary>
+        public static void WriteFromPtr(StringBuilder builder, SchemaClass type)
+        {
+            var className = Naming.ToPascalCase(type.Name);
+
+            builder.AppendLine("private static " + className + " FromPtr_" + className + "(ref TdJsonReader reader, ClientResultHandler handler)");
+            builder.AppendLine("{");
+
+            // TODO: the Utf8JsonReader path routes these back through ClientResultHandler so the
+            // app can dedupe them. Doing the same here needs the interface to take a TdJsonReader,
+            // which is part of wiring this into the app rather than into the benchmark.
+            if (type.IsProxy)
+            {
+                builder.AppendLine("    return FromPtr<" + className + ">(ref reader, handler, null);");
+            }
+            else if (type.Properties.Count > 0)
+            {
+                builder.AppendLine("    var obj = new " + className + "();");
+                builder.AppendLine("    ReadStartObjectPtr(ref reader);");
+                builder.AppendLine();
+                builder.AppendLine("    while (reader.TokenType == JsonTokenType.PropertyName)");
+                builder.AppendLine("    {");
+                builder.AppendLine("        var name = reader.ValueSpan;");
+                builder.AppendLine("        reader.Read();");
+                builder.AppendLine();
+                builder.AppendLine("        switch (name.Length)");
+                builder.AppendLine("        {");
+
+                foreach (var group in GroupByNameLength(type.Properties))
+                {
+                    builder.AppendLine("            case " + group.Key + ":");
+
+                    var first = true;
+                    foreach (var prop in group.Value)
+                    {
+                        builder.AppendLine("                " + (first ? "if" : "else if") +
+                            " (name.SequenceEqual(\"" + prop.Name + "\"u8)) obj." + Naming.PropertyName(prop, className) +
+                            " = " + ReadPtrExpression(prop) + ";");
+                        first = false;
+                    }
+
+                    builder.AppendLine("                break;");
+                }
+
+                builder.AppendLine("        }");
+                builder.AppendLine();
+                builder.AppendLine("        if (reader.TokenType == JsonTokenType.StartObject || reader.TokenType == JsonTokenType.StartArray)");
+                builder.AppendLine("        {");
+                builder.AppendLine("            reader.Skip();");
+                builder.AppendLine("        }");
+                builder.AppendLine();
+                builder.AppendLine("        reader.Read();");
+                builder.AppendLine("    }");
+                builder.AppendLine();
+                builder.AppendLine("    return obj;");
+            }
+            else
+            {
+                builder.AppendLine("    ReadStartObjectPtr(ref reader);");
+                builder.AppendLine("    return new " + className + "();");
+            }
+
+            builder.AppendLine("}");
+        }
+
+        /// <summary>Fields bucketed by the byte length of their name, in ascending order.</summary>
+        private static List<KeyValuePair<int, List<SchemaProperty>>> GroupByNameLength(List<SchemaProperty> properties)
+        {
+            var groups = new SortedDictionary<int, List<SchemaProperty>>();
+
+            foreach (var property in properties)
+            {
+                // Field names are ASCII throughout the scheme, so length in bytes is length in
+                // chars - which is what the reader compares against.
+                if (!groups.TryGetValue(property.Name.Length, out var group))
+                {
+                    groups[property.Name.Length] = group = new List<SchemaProperty>();
+                }
+
+                group.Add(property);
+            }
+
+            return new List<KeyValuePair<int, List<SchemaProperty>>>(groups);
+        }
+
+        private static string ReadPtrExpression(SchemaProperty prop)
+        {
+            if (prop.IsVector)
+            {
+                switch (prop.Type)
+                {
+                    case "Bool":
+                        return "GetBooleanArrayPtr(ref reader)";
+                    case "int32":
+                        return "GetInt32ArrayPtr(ref reader)";
+                    case "int53":
+                        return "GetInt64ArrayPtr(ref reader)";
+                    case "int64":
+                        return "GetInt64StringArrayPtr(ref reader)";
+                    case "double":
+                        return "GetDoubleArrayPtr(ref reader)";
+                    case "string":
+                        return "GetStringArrayPtr(ref reader)";
+                    case "bytes":
+                        return "GetBase64StringArrayPtr(ref reader)";
+                    default:
+                        return prop.IsVectorOfVectors
+                            ? "GetObjectArrayArrayPtr(ref reader, handler, FromPtr_" + Naming.ToPascalCase(prop.Type) + ")"
+                            : "GetObjectArrayPtr(ref reader, handler, FromPtr_" + Naming.ToPascalCase(prop.Type) + ")";
+                }
+            }
+
+            switch (prop.Type)
+            {
+                case "Bool":
+                    return "reader.GetBoolean()";
+                case "int32":
+                    return "reader.GetInt32()";
+                case "int53":
+                    return "reader.GetInt64()";
+                case "int64":
+                    return "reader.GetInt64String()";
+                case "double":
+                    return "reader.GetDouble()";
+                case "string":
+                    return "reader.GetString()";
+                case "bytes":
+                    return "reader.GetBytesFromBase64()";
+                default:
+                    return "FromPtr_" + Naming.ToPascalCase(prop.Type) + "(ref reader, handler)";
+            }
+        }
+
         /// <summary>The reader call that produces one field's value.</summary>
         private static string ReadExpression(SchemaProperty prop)
         {

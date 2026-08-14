@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 
-namespace Telegram.Benchmarks.Json
+namespace Telegram.Td.Api
 {
     /// <summary>
     /// A pull reader over the pointer td_receive returns, shaped like the part of Utf8JsonReader
@@ -40,7 +40,7 @@ namespace Telegram.Benchmarks.Json
     ///
     /// The one invariant to maintain is _index &lt;= _length, checked once per token in Read().
     /// </summary>
-    internal unsafe ref struct TdJsonReader
+    public unsafe ref struct TdJsonReader
     {
         private readonly byte* _buffer;
         private readonly int _length;
@@ -275,6 +275,25 @@ namespace Telegram.Benchmarks.Json
         public bool ValueTextEquals(ReadOnlySpan<byte> text)
         {
             return _valueLength == text.Length && ValueSpan.SequenceEqual(text);
+        }
+
+        /// <summary>
+        /// CRC32 of the current token, walking raw memory. Field dispatch compares names exactly -
+        /// there are few enough per class for that to be cheap and it cannot collide - but a @type
+        /// switch covers up to eighty constructors, where a hash is the right shape. Must agree
+        /// with the values SchemaGenerator bakes into the switch.
+        /// </summary>
+        public uint ValueCrc32()
+        {
+            var table = ClientJson.Crc32Table;
+            var crc = 0xFFFFFFFF;
+
+            for (int i = 0; i < _valueLength; i++)
+            {
+                crc = table[(crc ^ _buffer[_valueStart + i]) & 0xFF] ^ (crc >> 8);
+            }
+
+            return crc ^ 0xFFFFFFFF;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

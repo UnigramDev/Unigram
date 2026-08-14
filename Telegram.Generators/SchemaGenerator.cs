@@ -40,10 +40,20 @@ namespace Telegram.Generators
                 .Where(f => f.Path.EndsWith("td_api.tl"))
                 .Select((file, _) => file.GetText()?.ToString());
 
-            context.RegisterSourceOutput(content, Execute);
+            // Opt-in, because the pointer parsers roughly double the generated code and only a
+            // project that has TdJsonReader can compile them. Off by default the output is byte for
+            // byte what it has always been.
+            //
+            //   <TdPointerParser>true</TdPointerParser>
+            //   <CompilerVisibleProperty Include="TdPointerParser" />
+            var pointer = context.AnalyzerConfigOptionsProvider.Select((options, _) =>
+                options.GlobalOptions.TryGetValue("build_property.TdPointerParser", out var value) &&
+                string.Equals(value, "true", StringComparison.OrdinalIgnoreCase));
+
+            context.RegisterSourceOutput(content.Combine(pointer), (ctx, pair) => Execute(ctx, pair.Left, pair.Right));
         }
 
-        private static void Execute(SourceProductionContext context, string text)
+        private static void Execute(SourceProductionContext context, string text, bool pointer)
         {
             if (text is null)
             {
@@ -61,7 +71,7 @@ namespace Telegram.Generators
                     context.ReportDiagnostic(Diagnostic.Create(SchemaFailed, Location.None, error.Line, error.Message));
                 }
 
-                context.AddSource("TdDotNetApi.g.cs", Write(schema.Classes));
+                context.AddSource("TdDotNetApi.g.cs", Write(schema.Classes, pointer));
             }
             catch (Exception ex)
             {
@@ -69,7 +79,7 @@ namespace Telegram.Generators
             }
         }
 
-        private static string Write(List<SchemaClass> parsed)
+        private static string Write(List<SchemaClass> parsed, bool pointer)
         {
             var classes = parsed
                 .OrderBy(x => x.IsFunction)
@@ -112,6 +122,15 @@ namespace Telegram.Generators
             // incidentally naming a type in a function signature.
 
             var builder = new StringBuilder();
+
+            if (pointer)
+            {
+                // MemoryExtensions.SequenceEqual, which the pointer parsers compare field names
+                // with. Added only in this mode so the default output stays byte for byte what it
+                // has always been.
+                builder.AppendLine("using System;");
+            }
+
             builder.AppendLine("using System.Collections.Generic;");
             builder.AppendLine("using System.Text.Json;");
             builder.AppendLine();
@@ -176,9 +195,57 @@ namespace Telegram.Generators
                 }
             }
 
+            if (pointer)
+            {
+                WritePointerParsers(builder, classes, returnTypes, abstractTypes);
+            }
+
             builder.AppendLine("}");
             builder.AppendLine("}");
             return builder.ToString();
+        }
+
+        /// <summary>
+        /// A second set of parsers reading through TdJsonReader instead of Utf8JsonReader. Same
+        /// shape, same schema, different reader - emitted alongside rather than instead of, so the
+        /// two can be raced against each other before either is chosen.
+        /// </summary>
+        private static void WritePointerParsers(StringBuilder builder, List<SchemaClass> classes,
+            List<SchemaClass> returnTypes, Dictionary<string, List<SchemaClass>> abstractTypes)
+        {
+            builder.AppendLine();
+            builder.AppendLine("  private static Object DoFromPtr(ref TdJsonReader reader, ClientResultHandler handler, uint hash)");
+            builder.AppendLine("  {");
+            builder.AppendLine("    switch (hash)");
+            builder.AppendLine("    {");
+
+            foreach (var type in returnTypes)
+            {
+                ApiEmitter.WritePtrDispatchCase(builder, type);
+            }
+
+            builder.AppendLine("        default: return null;");
+            builder.AppendLine("    }");
+            builder.AppendLine("  }");
+
+            foreach (var type in classes)
+            {
+                if (type.IsFunction)
+                {
+                    continue;
+                }
+
+                builder.AppendLine();
+
+                if (abstractTypes.TryGetValue(type.Name, out var constructors))
+                {
+                    ApiEmitter.WritePtrAbstractDispatcher(builder, type.Name, constructors);
+                }
+                else
+                {
+                    ApiEmitter.WriteFromPtr(builder, type);
+                }
+            }
         }
 
         /// <summary>
