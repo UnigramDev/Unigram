@@ -228,6 +228,17 @@ namespace Telegram.Controls.Drawers
             // so we can safely clean up any kind of anything from here.
             _zoomer.Release();
             Bindings.StopTracking();
+
+            // StopTracking doesn't clear what the bindings already pushed: the collection view
+            // source and the two toolbars still hold a CollectionChanged handler on the view
+            // model's collections, and UnloadObject is about to destroy their native peers.
+            // The view model outlives us (it stays subscribed to the aggregator, and Handle
+            // queues Update on the UI thread), so leaving them attached means the next
+            // ReplaceWith raises into a dead RCW.
+            List.ItemsSource = null;
+            EmojiCollection.Source = null;
+            Toolbar.ItemsSource = null;
+            Toolbar2.ItemsSource = null;
         }
 
         public void LoadVisibleItems()

@@ -66,6 +66,8 @@ namespace Telegram.Controls.Messages
 
         private readonly Popup _popup;
 
+        private EmojiDrawer _drawer;
+
         public event EventHandler<EmojiSelectedEventArgs> EmojiSelected;
         public event EventHandler<AvailableReaction> ItemClick;
 
@@ -88,13 +90,23 @@ namespace Telegram.Controls.Messages
             _areTags = reactions.AreTags;
 
             _popup = new Popup();
-            _popup.Closed += OnClosed;
 
             Initialize(message.ClientService, element, EmojiFlyoutAlignment.Center, viewModel);
         }
 
         private void OnClosed(object sender, object e)
         {
+            _popup.Closed -= OnClosed;
+
+            // The view model is resolved per flyout but stays subscribed to the aggregator,
+            // so it can queue an Update long after the popup is gone. Deactivate detaches the
+            // drawer's collection bindings, which is what keeps that update from raising into
+            // native peers that are no longer alive.
+            _drawer.ItemClick -= OnStatusClick;
+            _drawer.ItemContextRequested -= OnStatusContextRequested;
+            _drawer.Deactivate();
+            _drawer.DataContext = null;
+
             if (_bubble is FrameworkElement element && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
             {
                 var selector = element.GetParent<SelectorItem>();
@@ -186,6 +198,12 @@ namespace Telegram.Controls.Messages
             viewModel ??= EmojiDrawerViewModel.Create(clientService.Session, _mode);
 
             var view = new EmojiDrawer(_mode);
+            _drawer = view;
+
+            // Subscribed here rather than in the constructors, so that all three of them tear
+            // the drawer down and not just the message one.
+            _popup.Closed += OnClosed;
+
             view.DataContext = viewModel;
             view.VerticalAlignment = VerticalAlignment.Top;
             view.Width = width;
