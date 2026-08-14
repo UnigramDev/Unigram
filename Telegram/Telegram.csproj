@@ -4712,7 +4712,21 @@
     <!-- OpenSSL is the one copied dependency whose file name carries the architecture. -->
     <OpenSSLPlatform>-$(Platform)</OpenSSLPlatform>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- Emits the FromPtr_* parsers, which read td_receive's buffer directly instead of through
+         Utf8JsonReader: 2.0-2.9x on the full parse on .NET Native, where indexing a Span costs
+         ~10x what a raw pointer does. See Telegram.Benchmarks/README.md.
+         Set it to false to put Client.Receive and Client.Execute back on Utf8JsonReader; nothing
+         else changes, because the FromJson_* parsers are still emitted either way and are still
+         what parses the JSON the instant view editor hands back. -->
+    <TdPointerParser>true</TdPointerParser>
+  </PropertyGroup>
+  <!-- One switch, two consumers: the generator reads the property, Client.cs reads the constant. -->
+  <PropertyGroup Condition="'$(TdPointerParser)' == 'true'">
+    <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
+    <CompilerVisibleProperty Include="TdPointerParser" />
     <AdditionalFiles Include="$(ProjectDir)\..\Libraries\tdjson\td_api.tl" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\tdjson\$(Platform)\tdjson.dll" />
     <!-- tdjson comes in as a copy-local path rather than a Reference, so RAR never runs its

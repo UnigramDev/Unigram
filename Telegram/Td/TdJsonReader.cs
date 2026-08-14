@@ -42,6 +42,18 @@ namespace Telegram.Td.Api
     /// </summary>
     public unsafe ref struct TdJsonReader
     {
+        /// <summary>
+        /// The length to pass when the terminator is the only end marker there is: td_receive hands
+        /// back a C string and its patched signature does not say how long it is, and scanning for
+        /// the NUL to find out costs 10-25% of a parse this reader exists to make cheap.
+        ///
+        /// It gives up exactly one thing, the per-token _index &lt;= _length test, which catches a
+        /// literal truncated so near the end that skipping it steps over the terminator. TDLib
+        /// serializes whole objects, so a payload cannot end mid-literal; every other scan stops at
+        /// the terminator either way.
+        /// </summary>
+        public const int NulTerminated = int.MaxValue;
+
         private readonly byte* _buffer;
         private readonly int _length;
 

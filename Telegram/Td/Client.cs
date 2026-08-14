@@ -124,7 +124,23 @@ namespace Telegram.Td
             fixed (byte* source = request)
             {
                 var ptr = td_execute(source);
+                if (ptr == null || *ptr == 0)
+                {
+                    return new Error(400, "Can't deserialize");
+                }
 
+#if TD_POINTER_PARSER
+                try
+                {
+                    // Parsed where TDLib put it. The buffer belongs to TDLib and stays valid until
+                    // the next call on this thread, which is after this has returned.
+                    return ClientJson.FromPtr(ptr, TdJsonReader.NulTerminated);
+                }
+                finally
+                {
+                    _writer.Reset();
+                }
+#else
                 byte* end = ptr;
                 while (*end != 0)
                 {
@@ -132,10 +148,6 @@ namespace Telegram.Td
                 }
 
                 int length = (int)(end - ptr);
-                if (length == 0)
-                {
-                    return new Error(400, "Can't deserialize");
-                }
 
                 _writer.Resize(length);
 
@@ -154,6 +166,7 @@ namespace Telegram.Td
                 {
                     _writer.Reset();
                 }
+#endif
             }
         }
 
@@ -191,19 +204,34 @@ namespace Telegram.Td
 
         [ThreadStatic]
         private static ArrayPoolBufferWriter? _writer;
-        private static byte[] _buffer = new byte[1 << 18];
 
+#if !TD_POINTER_PARSER
+        private static byte[] _buffer = new byte[1 << 18];
+#endif
+
+        /// <summary>
+        /// With TD_POINTER_PARSER the update is parsed where TDLib put it: no copy into a managed
+        /// buffer, and no scan for the terminator to find out how long it is. Both are needed by the
+        /// Utf8JsonReader path below, which reads through a Span - and a Span over native memory
+        /// costs 4x per byte on .NET Native, which is why removing only the copy once made the
+        /// parse slower rather than faster. See Telegram.Benchmarks/README.md.
+        /// </summary>
         public static unsafe Object Receive(double timeout, out int clientId, out long requestId)
         {
             clientId = 0;
             requestId = 0;
 
             var ptr = td_receive(timeout, out clientId, out requestId);
-            if (ptr == null)
+            if (ptr == null || *ptr == 0)
             {
                 return new Error(400, "Can't deserialize");
             }
 
+            _updateHandlers.TryGetValue(clientId, out ClientResultHandler handler);
+
+#if TD_POINTER_PARSER
+            return ClientJson.FromPtr(ptr, TdJsonReader.NulTerminated, handler);
+#else
             byte* end = ptr;
             while (*end != 0)
             {
@@ -211,10 +239,6 @@ namespace Telegram.Td
             }
 
             int length = (int)(end - ptr);
-            if (length == 0)
-            {
-                return new Error(400, "Can't deserialize");
-            }
 
             if (_buffer.Length < length)
             {
@@ -228,8 +252,8 @@ namespace Telegram.Td
 
             var span = new ReadOnlySpan<byte>(_buffer, 0, length);
 
-            _updateHandlers.TryGetValue(clientId, out ClientResultHandler handler);
             return ClientJson.FromJson(span, handler);
+#endif
         }
 
         private static readonly object _logMutex = new();

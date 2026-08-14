@@ -141,6 +141,15 @@ possibility of an unknown field colliding with a known one's hash, which is the 
 it. `AltParsers.g.cs` holds the candidate, emitted by `scratchpad/GenAltParsers.cs`; the change
 belongs in `SchemaGenerator.WriteToJson` if it's taken.
 
+**Not taken for the `FromJson_*` parsers, and the reason is not the size of the win.** Measured a
+third time on .NET Native (2026-08-14): `message` 7.74 → 7.20 µs (−7%), `localFile` 1.08 µs →
+969.8 ns (−10%) — small, consistent, in the same direction everywhere. But the pointer parsers
+dispatch this way already, and they are what `Client.Receive` runs, so the payloads where it would
+pay no longer go through `FromJson_*` at all. What is left there is `Client.Execute` and the two
+instant view entry points, none of them hot. Changing it would also cost the check that makes the
+generator safe to touch — that its output with the pointer mode off is byte for byte what shipped —
+for a few percent of a path that isn't measured in this app's frame times.
+
 ### Pooled exact-size arrays instead of a growing List: rejected
 
 | | mean | allocated |
@@ -266,6 +275,27 @@ Both files do get compiled by the .NET Native host, which is the same toolchain 
 `ClientService`'s half does not: nothing here builds `Telegram.csproj`, so the pointer
 `ParseFile`/`ParseUpdateFile` there are checked by reading them against the `Utf8JsonReader` pair
 and against what the generator emits for every other type, not by a compiler.
+
+#### The receive path, behind one switch
+
+`<TdPointerParser>true</TdPointerParser>` in `Telegram.csproj` now does two things: the generator
+emits the `FromPtr_*` parsers, and `TD_POINTER_PARSER` is defined for `Client.cs`, where
+`Receive` and `Execute` parse straight off `td_receive`'s pointer. Set it to `false` and both halves
+go back to `Utf8JsonReader` — the old copy-then-parse code is still there, in the `#else`, not
+deleted. Nothing else in the app changes either way: `FromJson_*` is emitted in both modes, and
+`RichHtml` and `RichEditorCommands` still parse the instant view editor's JSON through it.
+
+On the pointer path `Receive` no longer copies into `_buffer` and no longer scans for the
+terminator. The scan was 9–12% of the old parse and would have been a fifth of this one; it goes
+because `TdJsonReader` needs no length when the buffer is NUL-terminated, which is what
+`TdJsonReader.NulTerminated` says at the call site. What that gives up is the per-token
+`_index <= _length` test, which only ever catches a literal truncated near the end of the buffer —
+TDLib serializes whole objects, so a payload cannot end mid-literal.
+
+**Not built.** `Telegram.csproj` is not built here, so this is the step where the app has to be
+compiled and run before it is believed. `Client.cs` and the two `Td/` files do compile both ways —
+a throwaway project outside the repo compiles them with the switch on and off — but `ClientService`
+and everything downstream of `Client.Receive` have only been read.
 
 #### Hardening pass: free on .NET Native, 43% on the JIT
 
@@ -535,26 +565,28 @@ Round trips inside the app container reproduce the base64 gap: 407.8 µs for a 6
 
 ## Where this stands
 
-Everything below is committed on `develop`. The app now carries two new files and two new interface
-members, all of them unreachable until `TdPointerParser` is turned on; the generated `FromJson_*`
-parsers it actually runs are byte for byte unchanged, which is the check every generator change is
-made against.
+Everything below is committed on `develop`, and the app is now on the pointer path: `TdPointerParser`
+is on in `Telegram.csproj`, so `Client.Receive` and `Client.Execute` parse straight off TDLib's
+buffer. **This has not been built.** Nothing here can build `Telegram.csproj`, so the next thing
+that has to happen is a real build and a run; `<TdPointerParser>false</TdPointerParser>` puts every
+part of it back the way it was, in one edit, without deleting anything.
 
 **Done.** A pointer-based reader (`Telegram/Td/TdJsonReader.cs`) and a generator mode that emits
 parsers against it, worth **2.0–2.9× on the full parse on .NET Native** with identical allocation.
 Three hosts running one suite. `SchemaGenerator` rewritten from spike to something with diagnostics.
-Files route through `ClientResultHandler` on both paths, and the reader has moved into the app.
+Files route through `ClientResultHandler` on both paths. The receive path reads TDLib's buffer
+directly: no copy, no terminator scan.
 
-**Next, to put the pointer parsers in the app:**
+**Next:**
 
-1. `ClientJson.FromPtr(byte*, int)` — already the entry point — reached from `Client.Receive`,
-   passing `td_receive`'s pointer straight through and dropping `_buffer` and its copy. That also
-   deletes the NUL scan: the reader stops at the terminator and never needs the length.
-2. Turn `TdPointerParser` on in `Telegram.csproj` and switch the receive path over. Note this
-   roughly doubles the generated code, which costs .NET Native compile time and binary size — the
-   TODO below about emitting parsers only for types that can be received is worth more once it does.
-3. `Client.Execute` is the same shape and can follow, or stay on `Utf8JsonReader`; it runs once per
-   synchronous call rather than per update, so it decides nothing.
+1. Build the app, run it, and watch the TDLib thread. Then measure it in place — none of the numbers
+   here come from the app itself, and a cold sync is where the difference should show if it shows
+   anywhere.
+2. The generated file goes from 149,712 lines to 211,651 (+41%) with both parser sets emitted, which
+   costs .NET Native compile time and binary size. The TODO below about emitting parsers only for
+   types that can actually be received is worth more now than it was; so is the question of whether
+   the `FromJson_*` set can eventually go, which needs `RichHtml` and `RichEditorCommands` — the
+   only other callers — to hand their JSON to the pointer reader as a NUL-terminated buffer.
 
 **Independent of that, still open:**
 
@@ -565,9 +597,10 @@ Files route through `ClientResultHandler` on both paths, and the reader has move
 - Omitting default-valued scalars in TDLib's `to_json` (~6 lines in `tl_json_converter.cpp`) would
   delete ~16 `false` booleans per message from both sides. Bools, ints and strings only — omitting
   an empty vector would turn an `IList<T>` into null.
-- Returning the payload length from `td_receive`. Note this and the NUL sentinel are alternatives:
-  the reader scans to `\0` and never needs the length, so the byte-at-a-time strlen in
-  `Client.Receive` disappears with step 2 anyway.
+- ~~Returning the payload length from `td_receive`~~ — settled by the sentinel instead. The reader
+  scans to `\0` and never needs the length, so the strlen in `Client.Receive` is gone without
+  patching TDLib. Worth revisiting only if the missing `_index <= _length` bound is ever wanted
+  back.
 - Emitting `FromJson` only for types that can be received — see the TODO in `SchemaGenerator`,
   which records why it stopped working rather than just the intent.
 
