@@ -8,9 +8,7 @@
 using Rg.DiffUtils;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
-using Telegram.Navigation;
 using Telegram.Services;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -34,9 +32,6 @@ namespace Telegram.Views.Popups
             ShareSystemAudio.Visibility = canShareAudio
                 ? Visibility.Visible
                 : Visibility.Collapsed;
-
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
         }
 
         class CaptureSessionItemDiffHandler : IDiffHandler<CaptureSessionItem>
@@ -61,20 +56,27 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        // The list is only correct for as long as the user stays here: they usually leave to
+        // arrange the window they want to share. Focus follows window activation, and unlike
+        // WindowContext it needs no XamlRoot - which is null by the time the popup unloads, so
+        // detaching from Activated there was itself a crash.
+        private bool _lostFocus;
+
+        protected override void OnLostFocus(RoutedEventArgs e)
         {
-            WindowContext.ForXamlRoot(XamlRoot).Activated += OnActivated;
+            base.OnLostFocus(e);
+            _lostFocus = true;
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override void OnGotFocus(RoutedEventArgs e)
         {
-            WindowContext.ForXamlRoot(XamlRoot).Activated -= OnActivated;
-        }
+            base.OnGotFocus(e);
 
-        private void OnActivated(object sender, WindowActivatedEventArgs e)
-        {
-            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+            // Only a pair counts. Enumerating every window on the system is not something to do
+            // on any focus change, and focus arrives here once simply by opening the popup.
+            if (_lostFocus)
             {
+                _lostFocus = false;
                 _items.ReplaceDiff(CaptureSessionService.FindAll());
             }
         }
