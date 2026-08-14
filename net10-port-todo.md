@@ -217,20 +217,24 @@ by-hand duplication and the first thing to check whenever the generated code sto
       the ABI is not. The spike hit it on a bare `Application` subclass, so the count in a codebase
       this size will not be small, and it is a trimming/AOT correctness warning rather than style.
 
-## Phase 3 — compile (C# is clean; XAML Pass2 is not)
+## Phase 3 — compile (done)
 
-`Telegram.Modern.csproj` exists and **the whole app compiles: zero C# errors across all 1250
-sources and all 473 XAML pages**, with `PublishAot` off. What is left is one crash inside the
-XAML compiler itself, in the pass that runs after the code compiles:
+**The app builds.** `Telegram.Modern.csproj` produces a 14.9 MB `Telegram.dll` from all 1250
+sources and all 473 XAML pages, zero errors, 474 `.xbf` — with `PublishAot` off. The warnings
+that remain are the app's own (`CS0162` unreachable, `CS0649` unassigned), not port damage.
+
+Build it with:
 
 ```
-Microsoft.Windows.UI.Xaml.Common.targets(456,5): Xaml Internal Error error WMC9999:
-Specified argument was out of the range of valid values.
+"C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe" ^
+  Telegram\Telegram.Modern.csproj -restore -p:Configuration=Release -p:Platform=x64
 ```
 
-- [ ] Isolate WMC9999. It names no file. The page compiled immediately before it is
-      `Controls\CountryBox.xaml`, which also produces `WMC1507` (named element `Emoji` colliding
-      with a field on the root data type `Telegram.Entities.Country`) — suggestive, not proven.
+One thing to watch, because it cost a detour: a run failed in the XAML pass with
+`WMC9999: Specified argument was out of the range of valid values`, an internal error naming no
+file, and it did not reproduce on the next pass over the same sources. It looks like incremental
+state rather than a real defect — a full `obj\modern` delete cured a similar mismatch earlier —
+but if it returns, that is the first thing to try.
 - [x] Whatever the modern stack rejects that .NET Native accepted goes behind
       `#if NET9_0_OR_GREATER`, so the shipping build stays green the whole way.
 
@@ -241,10 +245,11 @@ NET9_0_OR_GREATER` blocks written for this port and never compiled until now.
 
 | where | what | why |
 |---|---|---|
-| `InputPopup`, `InputTeachingTip`, `StakeDicePopup`, `SuggestPostPopup` | `GetUserDefaultLocaleName` took `Span<char>`, now takes `char*` behind a `fixed` | `SYSLIB1051`: the P/Invoke source generator only marshals `Span<T>` when runtime marshalling is disabled, and `char` is not blittable while it is enabled. Runtime marshalling stays at its UWP default, so the buffer crosses as a pointer. `ref char` is not enough — `char` is the problem, not the indirection. |
+| `Common\Locale.cs` | `GetUserDefaultLocaleName` hoisted out of four popups, and its `Span<char>` parameter became `char*` behind a `fixed` | `SYSLIB1051`: the P/Invoke source generator only marshals `Span<T>` when runtime marshalling is disabled, and `char` is not blittable while it is enabled. Runtime marshalling stays at its UWP default, so the buffer crosses as a pointer. `ref char` is not enough — `char` is the problem, not the indirection. |
 | `StakeDicePopup` | added `using System;` | its `NET9_0_OR_GREATER` block used `Span<char>` with no `using System;` |
 | `Common\Extensions.cs` | `using WinRT;`, guarded | `IBuffer.As<IBufferByteAccess>()` is `WinRT.CastExtensions`; the namespace does not exist under .NET Native, so the using has to be inside the `#if` |
 | `Common\PlaceholderHelper.cs` | `new PlaceholderImageHelper((Window)null)` | **CsWinRT gives every projected runtime class an `IObjectReference` constructor**, so a bare `null` is ambiguous. Expect this wherever the app passes `null` to a projected constructor. |
+| `Properties\AssemblyInfo.cs` | excluded from the modern project, its values carried over as `AssemblyTitle`/`Product`/`Copyright` | the SDK generates those attributes itself, and two sets is `CS0579`. Excluded rather than turning off `GenerateAssemblyInfo`, so the legacy project keeps the file it has always had |
 | `Common\Extensions.cs` | hoisted `CancellationTokenRegistration registration = default;` out of its initializer | the local function captures `registration` and is converted to a delegate inside the very expression that assigns it. Definite assignment rejects that at a modern `LangVersion`; the legacy project's `LangVersion 14.0` does not. |
 
 That is a small list for a codebase this size, and it is consistent with the reflection audit:
