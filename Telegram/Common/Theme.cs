@@ -32,10 +32,16 @@ namespace Telegram.Common
         {
             _isPrimary = Current == null;
 
+            // Publish before anything that can fail. Current is the only handle the app has on
+            // the theme of this view, and it is dereferenced unguarded all over the message
+            // tree; leaving it null because a setting could not be read turns a lost preference
+            // into a crash. ApplicationData is not always reachable this early - share target
+            // activation is driven before the view is initialized.
+            Current ??= this;
+
             try
             {
                 _isolatedStore = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
-                Current ??= this;
 
                 this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", 14d));
                 this.Add("ThreadStackLayout", new StackLayout());
@@ -43,7 +49,10 @@ namespace Telegram.Common
                 UpdateEmojiSet();
                 UpdateScrolls();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
 
             if (_isPrimary)
             {
