@@ -313,6 +313,39 @@ compiled and run before it is believed. `Client.cs` and the two `Td/` files do c
 a throwaway project outside the repo compiles them with the switch on and off — but `ClientService`
 and everything downstream of `Client.Receive` have only been read.
 
+#### In the app, at last: startup on .NET Native Release
+
+Diagnostics ▸ TDLib JSON, one cold start, pointer parsers:
+
+| | |
+| --- | ---: |
+| updates | 15,431 |
+| bytes | 25.0 MB (mean 1,699 B) |
+| parsing | 0.165 s — 10.7 µs each, 151.2 MB/s |
+| file handling | 0.086 s — 34% of the parse |
+| ...of which existence syscalls | 1,152 checks, 0.085 s, 74 µs each |
+| total | 0.25 s, 3.25% of an 8 s startup |
+
+Three things fall out of it.
+
+**The parse runs at 40% of its benchmark rate.** 151 MB/s here against 377 MB/s for a 1,401 B
+payload in the corpus loop. Same parser, same toolchain — the difference is the setting: a growing
+heap, a GC that runs, cold code, and a real mix of payloads rather than one payload over and over.
+Nothing here is wrong, but the corpus number is a ceiling, and it is 2.4× above what the app sees.
+
+**File existence checks did not get faster, so they got bigger.** 109 µs in Debug against 74 µs
+here — a third off, where the parse around them dropped 3.4×. That is the signature of I/O and an
+AppContainer access check rather than codegen, which settles what to do about them: they cannot be
+made cheaper, only rarer or asynchronous. They were 11% of the TDLib thread's parse work in Debug
+and are **34%** of it here, and they will keep growing as a share as the parser improves.
+
+**0.25 s of TDLib-thread time during an 8 s startup**, a third of it syscalls. Whether that is worth
+anything depends on what waits on the update pipeline before the chat list is usable.
+
+The obvious experiment now that both parsers are a build switch: run the same startup with
+`<TdParsers>Reader</TdParsers>` and read the same page. That measures the pointer reader's worth
+*in the app*, which no number in this file does — everything above is a corpus in a loop.
+
 #### What `Pointer` mode compiles out
 
 Everything the `Utf8JsonReader` parsers need and nothing else:
@@ -610,9 +643,10 @@ Round trips inside the app container reproduce the base64 gap: 407.8 µs for a 6
 
 ## Where this stands
 
-Everything below is committed on `develop`, and the app is on the pointer path: `Client.Receive` and
-`Client.Execute` parse straight off TDLib's buffer. **This has not been built.** Nothing here can
-build `Telegram.csproj`, so the next thing that has to happen is a real build and a run.
+Everything below is committed on `develop`, and the app runs on the pointer path: `Client.Receive`
+and `Client.Execute` parse straight off TDLib's buffer. **Built and run, Debug and .NET Native
+Release**, by Fela — nothing here can build `Telegram.csproj`, so that is the only evidence any of
+it works, and the startup numbers above are what it produced.
 
 `<TdParsers>` picks the parser, one or the other, and `Reader` puts every part of this back the way
 it was in a single edit — nothing was deleted to make room. It is set to `Both` today, which is a
@@ -624,16 +658,21 @@ against it, worth **2.0–2.9× on the full parse on .NET Native** with identica
 hosts running one suite. `SchemaGenerator` rewritten from spike to something with diagnostics. Files
 route through `ClientResultHandler` on both paths. The receive path reads TDLib's buffer directly:
 no copy, no terminator scan. A build mode that compiles one parser or the other, verified in all
-three settings.
+three settings. And the app measures itself: **0.25 s of TDLib-thread parsing across a 15,431-update
+startup, 151 MB/s, a third of it file existence syscalls.**
 
 **Next:**
 
-1. Build the app, run it, and watch the TDLib thread. Then measure it in place: Diagnostics ▸ TDLib
-   JSON ▸ Measure Deserialization counts what `Client.Receive` parses — updates, bytes, time in the
-   parser, and that time as a share of wall clock, which is the number that says whether any of this
-   matters. `TdThroughput` holds the counters; off, it costs a static read per update. A cold sync
-   is where a difference should show if it shows anywhere.
-2. Then `<TdParsers>Pointer</TdParsers>`, and the `Utf8JsonReader` set stops being compiled at all —
+1. The same startup with `<TdParsers>Reader</TdParsers>`, which is the A/B the switch exists for and
+   the only measurement that says what the pointer reader is worth in the app rather than in a loop.
+   Extrapolating the corpus ratio, parsing should go from 0.165 s to something near 0.4 s — but that
+   is an extrapolation, and one run replaces it with a fact.
+2. Defer the file existence checks off the TDLib thread. They are 34% of what it spends parsing,
+   they are I/O so no build makes them cheaper, and nothing consumes the answer synchronously — the
+   only consequence is a fire-and-forget `DeleteFile`. Not a global check: `local.path` can point
+   outside TDLib's cache, at an upload's source or somewhere a user has moved a file to, so the
+   per-file question is the right one and only the thread it runs on is wrong.
+3. Then `<TdParsers>Pointer</TdParsers>`, and the `Utf8JsonReader` set stops being compiled at all —
    44,508 generated lines and ~500 hand-written ones. One word, and the only step left that the
    benchmark cannot check for you is `ClientService`, whose `#if` blocks nothing here compiles.
 
