@@ -3,6 +3,10 @@
 Measures the TDLib JSON path — what `Client.Receive` and `ClientJson.FromJson` actually cost per
 payload — so changes to it can be argued from numbers instead of intuition.
 
+**Picking this up again? Read [Where this stands](#where-this-stands) at the bottom first.** It has
+the state of the work and what is next; everything between here and there is how the numbers were
+arrived at.
+
 Not in `Telegram.sln` on purpose. It builds and runs on its own and never touches `Telegram.csproj`.
 
 Three hosts, one `Suite.cs`: this desktop console, a UWP app on .NET 10 / NativeAOT, and a UWP app
@@ -509,19 +513,62 @@ within its error bars) rather than contradicting it.
 Round trips inside the app container reproduce the base64 gap: 407.8 µs for a 64 KB string against
 533.1 µs for the same payload as bytes, +125 µs, against +98 µs on desktop.
 
-## Open
+## Where this stands
 
-- **The harness needs to beat the noise.** It reports the best of 5 rounds; that isn't enough when
-  the machine varies 1.8× between runs. Interleaving the A and B of each comparison within a round,
-  and reporting the paired difference rather than two independent minima, would make the dispatch
-  question answerable.
-- **The hosts disagree on ranking, not just on scale** — `IndexOf` wins by 5–10× on the JIT and
-  loses by ~1.8× on .NET Native. Nothing measured on the desktop host should be acted on until the
-  .NET Native host agrees.
-- **.NET Native's ~3× can't be attributed yet.** Codegen and the `netstandard2.0` System.Text.Json
-  are confounded in that host. Referencing the netstandard2.0 STJ DLL from the NuGet cache in the
-  desktop project would separate them.
-- **`--plain` was polluted before round trips moved to lazy init.** A live TDLib client keeps
-  background threads busy and they landed in every measurement above it; that was the 12.2 µs
-  `updateNewMessage` reading, not a harness defect. Worth remembering for anything else added here.
+Everything below is committed on `develop` and touches nothing the app compiles. The generated
+`FromJson_*` parsers the app uses are byte for byte unchanged.
+
+**Done.** A pointer-based reader (`Json/TdJsonReader.cs`) and a generator mode that emits parsers
+against it, worth **2.0–2.9× on the full parse on .NET Native** with identical allocation. Three
+hosts running one suite. `SchemaGenerator` rewritten from spike to something with diagnostics.
+
+**Next, to put the pointer parsers in the app:**
+
+1. `updateFile` and `file` route through `ClientResultHandler` on the JSON path so the app can
+   dedupe them; the pointer path parses them inline. Matching that means
+   `ParseUpdateFile`/`ParseFile` taking a `TdJsonReader` — `Client.cs` plus `ClientService`.
+2. `ClientJson.FromJson(byte*, int)` as the entry point, and `Client.Receive` passing
+   `td_receive`'s pointer straight through, dropping `_buffer` and its copy.
+3. Move `Json/TdJsonReader.cs` and `Json/PtrClientJson.cs` to `Telegram/Td/`. They are already in
+   the `Telegram.Td.Api` namespace, so the files move unchanged.
+4. Turn `TdPointerParser` on in `Telegram.csproj` and switch the receive path over.
+
+**Independent of that, still open:**
+
+- `ParseObject` in `ClientJson.cs` skips an unknown *object* field but not an unknown *array*, so
+  one would truncate the rest of the object. Latent — every field the generator drops today is a
+  scalar — but it fires on the first bots-only vector TDLib adds, or on version skew. One line. The
+  pointer parsers already handle it.
+- Omitting default-valued scalars in TDLib's `to_json` (~6 lines in `tl_json_converter.cpp`) would
+  delete ~16 `false` booleans per message from both sides. Bools, ints and strings only — omitting
+  an empty vector would turn an `IList<T>` into null.
+- Returning the payload length from `td_receive`. Note this and the NUL sentinel are alternatives:
+  the reader scans to `\0` and never needs the length, so the byte-at-a-time strlen in
+  `Client.Receive` disappears with step 2 anyway.
+- Emitting `FromJson` only for types that can be received — see the TODO in `SchemaGenerator`,
+  which records why it stopped working rather than just the intent.
+
+## Open questions, and traps worth not re-learning
+
+- **The jank harness was never built.** Everything measured here is throughput. The .NET 10
+  migration question is about smoothness and deadlocks, which none of these numbers speak to. A
+  second thread ticking at 60 Hz while the parse workload runs, reporting p99 lateness, would say
+  something real and runs on all three hosts.
+- **The JIT regression is unexplained.** `TdJsonReader` is ~1.65× slower than `Utf8JsonReader` on
+  the desktop JIT, against 0.85× before the hardening pass. Two hypotheses measured and refuted.
+  Doesn't affect the shipping toolchain.
+- **Compare within a run, never across runs.** This machine varies up to 1.8×, and every wrong
+  conclusion in this file came from comparing two numbers taken at different times. The
+  checked-vs-unchecked answer only fell out when both ran in one process.
+- **The hosts disagree on ranking, not just scale.** `Array.IndexOf<byte>` is 32× slower on .NET
+  Native than on the JIT while `MemoryExtensions.IndexOf` is only 2.7×. Nothing measured on the
+  desktop should be acted on until .NET Native agrees.
+- **.NET Native's 3× is still confounded** between codegen and the netstandard2.0 System.Text.Json.
+  Referencing the netstandard2.0 STJ DLL from the NuGet cache in the desktop project would separate
+  them — and the span result makes the library the likely answer.
+- **Allocation on .NET Native reads `-1`** when a background collection lands mid-window.
+- **`new Calendar()`** in the interop group measures Calendar loading globalization data, not
+  activation. Replace it before quoting that row.
+- **A live TDLib client pollutes everything measured after it** — its background threads land in
+  every subsequent row. That is why round trips initialise lazily and run last.
 
