@@ -576,9 +576,20 @@ namespace Telegram.Controls.Gallery
                                     Hide();
                                 }
 
-                                animation.Completed += handler;
                                 animation.Configuration = new DirectConnectedAnimationConfiguration();
                                 translate = animation.TryStart(element);
+
+                                if (translate)
+                                {
+                                    animation.Completed += handler;
+                                }
+                                else
+                                {
+                                    // Completed never fires for an animation that didn't start, so the
+                                    // handler would pin the window through the animation service, and
+                                    // the prepared animation would be picked up by the next gallery.
+                                    animation.Cancel();
+                                }
                             }
                         }
                     }
@@ -593,16 +604,25 @@ namespace Telegram.Controls.Gallery
             if (translate)
             {
                 _layout.StartAnimation("Offset.Y", CreateScalarAnimation(_layout.Offset.Y, ActualSize.Y, false));
-                batch.Completed += (s, args) =>
-                {
-                    Hide();
-                };
             }
 
+            // The fade always runs, so hiding on its batch is the one path that is taken no
+            // matter which closing animation was used: the connected animation may never start.
+            batch.Completed += OnClosingCompleted;
             batch.End();
 
             Dispose();
             Unload();
+        }
+
+        private void OnClosingCompleted(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            if (sender is CompositionScopedBatch batch)
+            {
+                batch.Completed -= OnClosingCompleted;
+            }
+
+            Hide();
         }
 
         private void Preview_ImageOpened(object sender, RoutedEventArgs e)
@@ -834,6 +854,11 @@ namespace Telegram.Controls.Gallery
                 ViewModel.Aggregator.Unsubscribe(this);
                 ViewModel.PlaybackStopped();
             }
+
+            // Closing is animated and Hide() only runs when the animation completes, so the
+            // window is still on screen after this point. Nothing below it can serve a click
+            // without a view model, so stop taking input rather than guarding every handler.
+            IsHitTestVisible = false;
 
             DataContext = null;
             Bindings.StopTracking();
@@ -1434,7 +1459,15 @@ namespace Telegram.Controls.Gallery
 
         private void Caption_TextEntityClick(object sender, TextEntityClickEventArgs e)
         {
-            var delegato = new MessageDelegate(ViewModel);
+            // A focused hyperlink can still be invoked from the keyboard or by automation
+            // while the window closes, neither of which hit tests.
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            var delegato = new MessageDelegate(viewModel);
             if (e.Type is TextEntityTypeBotCommand && e.Text is string command)
             {
                 delegato.SendBotCommand(command);
