@@ -40,6 +40,8 @@ namespace Telegram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            UpdateDeserialization();
+
             var calls = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls.txt") as StorageFile;
             if (calls != null)
             {
@@ -241,6 +243,58 @@ namespace Telegram.ViewModels
         public void SendLog()
         {
             SendFile("tdlib_log.txt", true);
+        }
+
+        // Read when the page is opened rather than bound live: the counters are written on the
+        // TDLib thread, and a ticking readout would be a second observer of the thing it measures.
+        private string _deserialized;
+        public string Deserialized
+        {
+            get => _deserialized;
+            private set => Set(ref _deserialized, value);
+        }
+
+        private string _deserializationRate;
+        public string DeserializationRate
+        {
+            get => _deserializationRate;
+            private set => Set(ref _deserializationRate, value);
+        }
+
+        private string _deserializationShare;
+        public string DeserializationShare
+        {
+            get => _deserializationShare;
+            private set => Set(ref _deserializationShare, value);
+        }
+
+        private void UpdateDeserialization()
+        {
+            var payloads = TdThroughput.Payloads;
+            if (payloads == 0)
+            {
+                var idle = TdThroughput.Enabled ? "nothing yet" : "off";
+
+                Deserialized = idle;
+                DeserializationRate = idle;
+                DeserializationShare = idle;
+                return;
+            }
+
+            var megabytes = TdThroughput.Bytes / 1048576d;
+            var seconds = TdThroughput.Seconds;
+
+            Deserialized = string.Format("{0:N0} updates, {1:N1} MB", payloads, megabytes);
+            DeserializationRate = string.Format("{0:N1} MB/s, {1:N1} µs each",
+                megabytes / seconds, seconds * 1000000d / payloads);
+            DeserializationShare = string.Format("{0:N2}% of {1:N0}s",
+                seconds * 100 / TdThroughput.WallSeconds, TdThroughput.WallSeconds);
+        }
+
+        public void ResetDeserialization(object sender, RoutedEventArgs e)
+        {
+            TdThroughput.Reset();
+            UpdateDeserialization();
         }
 
         public void SendLogOld(object sender, RoutedEventArgs e)

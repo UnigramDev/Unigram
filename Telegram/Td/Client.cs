@@ -230,7 +230,13 @@ namespace Telegram.Td
             _updateHandlers.TryGetValue(clientId, out ClientResultHandler handler);
 
 #if TD_POINTER_PARSER
-            return ClientJson.FromPtr(ptr, TdJsonReader.NulTerminated, handler);
+            var started = TdThroughput.Begin();
+            var update = ClientJson.FromPtr(ptr, TdJsonReader.NulTerminated, handler);
+
+            // The length costs a scan on this path, so it is measured rather than known - which is
+            // why the timestamp closes first, inside Record.
+            TdThroughput.Record(started, ptr);
+            return update;
 #else
             byte* end = ptr;
             while (*end != 0)
@@ -252,7 +258,11 @@ namespace Telegram.Td
 
             var span = new ReadOnlySpan<byte>(_buffer, 0, length);
 
-            return ClientJson.FromJson(span, handler);
+            var started = TdThroughput.Begin();
+            var update = ClientJson.FromJson(span, handler);
+
+            TdThroughput.Record(started, length);
+            return update;
 #endif
         }
 

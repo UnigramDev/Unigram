@@ -100,6 +100,20 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _showMemoryUsage, "ShowMemoryUsage", value);
         }
 
+        private bool? _measureDeserialization;
+        public bool MeasureDeserialization
+        {
+            get => _measureDeserialization ??= GetValueOrDefault("MeasureDeserialization", false);
+            set
+            {
+                AddOrUpdateValue(ref _measureDeserialization, "MeasureDeserialization", value);
+
+                // Assigned here as well as at startup so the checkbox takes effect on the next
+                // update rather than the next session.
+                TdThroughput.Enabled = value;
+            }
+        }
+
         private bool? _showIds;
         public bool ShowIds
         {

@@ -297,6 +297,46 @@ compiled and run before it is believed. `Client.cs` and the two `Td/` files do c
 a throwaway project outside the repo compiles them with the switch on and off — but `ClientService`
 and everything downstream of `Client.Receive` have only been read.
 
+#### Dropping the Utf8JsonReader parsers from the app
+
+Carrying both sets is the worst of both — 211,651 generated lines against 149,712, for a second
+parser nothing calls. It is a temporary state, held only until the pointer path has been built and
+run once; the plan below is the whole job.
+
+`ClientJson.FromJson(string)` is the piece that had to come first, and it is in: `RichHtml` and
+`RichEditorCommands` were the last callers outside `Client.cs`, each encoding its own span, and they
+now go through one entry point that follows the switch.
+
+What the app stops compiling:
+
+- `ClientJson.FromJson(ReadOnlySpan<byte>)`, `FromJson<T>`, `ParseObject`, the `FromHandler` and
+  `ParseHandler` delegates, `ComputeCrc32` with `Crc32Partial`/`ProcessUInt` and three of the four
+  tables, and the reader half of `Utf8JsonExtensions` — `ReadStartObject`, `GetInt64String`, the
+  `Get*Array` family. **The benchmark still links `ClientJson.cs`**, so these move to a file of
+  their own rather than being deleted; the app drops its `Compile` entry, the benchmark keeps
+  linking it.
+- `ClientResultHandler`'s two `Utf8JsonReader` overloads, and with them `ClientService`'s
+  `ParseUpdateFile`/`ParseFile`/`FromJson_LocalFile`/`FromJson_RemoteFile`, ~110 lines. The
+  benchmark declares its own `ClientResultHandler` in `Bridge.cs` and is unaffected.
+- The `#else` branches in `Client.Receive`/`Client.Execute`, `_buffer`, and the `#if` inside
+  `ClientJson.FromJson(string)`.
+
+What stays, and why:
+
+- **The generator keeps both emitters.** `TdPointerParser` becomes a mode rather than a flag — off,
+  both, pointer-only — because the benchmark's whole argument is that the two parsers agree over
+  the corpus and that one is 2.4× the other. Deleting the reference implementation would delete the
+  cross-check that says the pointer parsers are right.
+- `Utf8JsonWriter` and every `ToJson`. Requests are still serialized with System.Text.Json, so the
+  package reference does not go anywhere; only reading changes.
+- `crc32_table`, one of the four. `TdJsonReader.ValueCrc32` hashes `@type` with it.
+
+Generated size afterwards: about 167k lines, against 211,651 with both sets and 149,712 with the
+reader set alone. The pointer parsers are ~62k lines to the reader parsers' ~44.5k — name-length
+grouping costs more source than a hash switch — so pointer-only lands ~12% above where the file
+started, not below it. If that matters, the TODO in `SchemaGenerator` about emitting parsers only
+for types that can actually be received is worth several times more than this.
+
 #### Hardening pass: free on .NET Native, 43% on the JIT
 
 Bounds-checking every advance costs **43% on the desktop JIT** and **nothing on .NET Native**. Both
@@ -579,9 +619,11 @@ directly: no copy, no terminator scan.
 
 **Next:**
 
-1. Build the app, run it, and watch the TDLib thread. Then measure it in place — none of the numbers
-   here come from the app itself, and a cold sync is where the difference should show if it shows
-   anywhere.
+1. Build the app, run it, and watch the TDLib thread. Then measure it in place: Diagnostics ▸ TDLib
+   JSON ▸ Measure Deserialization counts what `Client.Receive` parses — updates, bytes, time in the
+   parser, and that time as a share of wall clock, which is the number that says whether any of this
+   matters. `TdThroughput` holds the counters; off, it costs a static read per update. A cold sync
+   is where a difference should show if it shows anywhere.
 2. The generated file goes from 149,712 lines to 211,651 (+41%) with both parser sets emitted, which
    costs .NET Native compile time and binary size. The TODO below about emitting parsers only for
    types that can actually be received is worth more now than it was; so is the question of whether

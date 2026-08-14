@@ -132,6 +132,22 @@
                                              Click="{x:Bind ViewModel.VideoInfo}" />
                 </controls:HeaderedControl>
 
+                <controls:HeaderedControl Header="TDLib JSON"
+                                          Footer="Counts what Client.Receive parses. Off it costs nothing; on it reads a timestamp per update and scans each payload for its length, which the parser itself no longer does.">
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.MeasureDeserialization, Mode=TwoWay}"
+                              Content="Measure Deserialization"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <controls:SettingsButton Content="Parsed"
+                                             Badge="{x:Bind ViewModel.Deserialized, Mode=OneWay}" />
+                    <controls:SettingsButton Content="Throughput"
+                                             Badge="{x:Bind ViewModel.DeserializationRate, Mode=OneWay}" />
+                    <controls:SettingsButton Content="Share of wall clock"
+                                             Badge="{x:Bind ViewModel.DeserializationShare, Mode=OneWay}" />
+                    <controls:SettingsButton Content="Reset"
+                                             Click="{x:Bind ViewModel.ResetDeserialization}" />
+                </controls:HeaderedControl>
+
                 <controls:HeaderedControl Header="TDLib Logs"
                                           Footer="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well.">
                     <controls:SettingsButton Content="Verbosity Level">
