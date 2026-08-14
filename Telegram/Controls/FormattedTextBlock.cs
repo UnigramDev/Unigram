@@ -422,6 +422,10 @@ namespace Telegram.Controls
             return false;
         }
 
+        // Resets what a recycled container would otherwise inherit (MessageService.Recycle and
+        // the service contents that override it). All four highlighter sources go, and
+        // ApplyHighlighters takes them off the RichTextBlock - dropping the fields alone left
+        // the previous message's spoiler and highlights painted on the next one.
         public void Clear()
         {
             //_clientService = null;
@@ -429,9 +433,13 @@ namespace Telegram.Controls
 
             _query = null;
             _spoiler = null;
+            _cached = null;
+            _marked = null;
+            _selection = null;
             _ignoreSpoilers = false;
 
             ClearEntities();
+            ApplyHighlighters();
         }
 
         private void ClearEntities()

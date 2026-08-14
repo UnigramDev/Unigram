@@ -321,10 +321,24 @@ The three facts most of this rests on:
       `Run_Text` line and its own native call, and the 60 lines of property resetting between
       them is now written once. Net -59 lines, no behaviour change.
 
-- [ ] **`Clear()` has no callers** — `:386-396`. Everything now goes through
-      `MessageTextBlock.Clear` → `ClearBlocks`. It is also wrong if resurrected: it nulls
-      `_query`/`_spoiler` without calling `ApplyHighlighters`, so the stale highlighters stay on
-      the `RichTextBlock`, and it leaves `_cached`/`_marked`/`_selection` alone.
+- [x] **~~`Clear()` has no callers~~ — `Clear()` doesn't clear** — `:386-396` **[live]**
+      → fixed in the commit that checked this box
+
+      **This entry was wrong.** `Clear()` is not dead: `MessageService.Recycle` calls it on the
+      `Text` block of every service message (`MessageService.cs:121-124`), and
+      `MessageGiftContent` calls it on `Subtitle`. The original grep looked for the control's
+      field names and missed a `FindName("Text") is FormattedTextBlock content` and a
+      `Subtitle.Clear()`.
+
+      That turns the second half of the note from a hypothetical into a live bug, and against
+      the contract written directly above the call site — *"whatever isn't reset is inherited by
+      it"*. `Clear` nulled `_query` and `_spoiler` but never touched
+      `TextBlock.TextHighlighters`, and left `_cached`/`_marked`/`_selection` entirely, so a
+      recycled service-message container could show the **previous** message's spoiler cover and
+      highlights over the new text.
+
+      Fixed by dropping all four sources and calling `ApplyHighlighters`, which is what takes
+      them off the control.
 
 - [x] **The `SetQuery(string.Empty)` calls in the cells are now no-ops** —
       `ChatCell.xaml.cs:1526`, `ForumTopicCell.xaml.cs:557`,
