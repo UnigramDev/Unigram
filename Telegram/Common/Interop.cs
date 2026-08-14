@@ -10,6 +10,7 @@ using System.Numerics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Windows.UI.Composition;
+using Windows.UI.Xaml.Media;
 using Windows.UI.WindowManagement;
 
 #if NET9_0_OR_GREATER
@@ -157,30 +158,58 @@ namespace Telegram.Common
         void remove_Rendering(long token);
     }
 
+    // Windows.UI.Xaml.Media.ICompositionTargetStatics3, which is where Rendered lives. Its vtable
+    // after IInspectable is add_Rendered, remove_Rendered.
+    [GeneratedComInterface]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid("bc0a7cd9-6750-4708-994c-2028e0312ac8")]
+    public partial interface ICompositionTargetStatics3
+    {
+        [PreserveSig]
+        int GetIids(out uint iidCount, out IntPtr iids);
+        [PreserveSig]
+        int GetRuntimeClassName(out IntPtr className);
+        [PreserveSig]
+        int GetTrustLevel(out int trustLevel);
+
+        long add_Rendered(IntPtr handler);
+        void remove_Rendered(long token);
+    }
+
     /// <summary>
-    /// CompositionTarget.Rendering, registered per view.
+    /// Stands in for <see cref="Windows.UI.Xaml.Media.CompositionTarget"/>, which CsWinRT cannot
+    /// subscribe correctly from more than one view. <c>CsWinRT.cs</c> aliases the name to this, so
+    /// call sites are unchanged and .NET Native keeps using the real one.
     /// </summary>
     /// <remarks>
     /// CsWinRT keeps one event source per statics object for the whole process, so a second view's
-    /// <c>CompositionTarget.Rendering +=</c> does not produce a second <c>add_Rendering</c>: the
-    /// delegate is appended to the registration the first view made, and the handler is then
-    /// invoked on that view's thread. Frame callbacks in every other view arrive on the wrong
-    /// thread, which is invisible for Composition objects - they are agile - and fatal for XAML
-    /// ones: WriteableBitmap.Invalidate then throws RPC_E_WRONG_THREAD.
+    /// <c>Rendering +=</c> never reaches <c>add_Rendering</c>: the delegate is appended to the
+    /// registration the first view made, and the handler is then invoked on that view's thread.
+    /// Frame callbacks in every other view arrive on the wrong thread, which is invisible for
+    /// Composition objects - they are agile - and fatal for XAML ones, where
+    /// WriteableBitmap.Invalidate throws RPC_E_WRONG_THREAD.
     ///
     /// Registering through the ABI gives each view its own registration. The statics object is a
     /// process-wide agile singleton, so the call runs on the calling thread and registers there.
-    /// Measured: projected subscription from view 2 fires on view 1's thread, this one fires on
+    /// Measured: a projected subscription from view 2 fires on view 1's thread, this one fires on
     /// view 2's. See https://github.com/microsoft/CsWinRT/issues/2524.
     /// </remarks>
-    public static class CompositionTargetRendering
+    public static class CompositionTargetImpl
     {
         [ThreadStatic]
         private static ICompositionTargetStatics _statics;
 
-        // The delegate is what the CCW points at, and nothing else roots it for the view's lifetime.
         [ThreadStatic]
-        private static Dictionary<long, EventHandler<object>> _handlers;
+        private static ICompositionTargetStatics3 _statics3;
+
+        // One registration per handler, which is what the projected event does, so a handler that
+        // throws does not starve the others. The keys also root the delegates the CCWs point at.
+        // Subscribing the same handler twice would lose the first token; nothing does that.
+        [ThreadStatic]
+        private static Dictionary<EventHandler<object>, long> _tokens;
+
+        [ThreadStatic]
+        private static Dictionary<EventHandler<RenderedEventArgs>, long> _renderedTokens;
 
         [DllImport("combase.dll", CharSet = CharSet.Unicode)]
         private static extern int WindowsCreateString(string sourceString, int length, out IntPtr hstring);
@@ -189,41 +218,65 @@ namespace Telegram.Common
         private static extern int RoGetActivationFactory(IntPtr activatableClassId, ref Guid iid, out IntPtr factory);
 
         private static Guid IID_ICompositionTargetStatics = new("2b1af03d-1ed2-4b59-bd00-7594ee92832b");
+        private static Guid IID_ICompositionTargetStatics3 = new("bc0a7cd9-6750-4708-994c-2028e0312ac8");
+
+        private static object ActivationFactory(ref Guid iid)
+        {
+            const string name = "Windows.UI.Xaml.Media.CompositionTarget";
+
+            Marshal.ThrowExceptionForHR(WindowsCreateString(name, name.Length, out var hstring));
+            Marshal.ThrowExceptionForHR(RoGetActivationFactory(hstring, ref iid, out var factory));
+
+            var wrappers = new StrategyBasedComWrappers();
+            return wrappers.GetOrCreateObjectForComInstance(factory, CreateObjectFlags.None);
+        }
 
         private static ICompositionTargetStatics Statics()
         {
-            if (_statics == null)
+            return _statics ??= (ICompositionTargetStatics)ActivationFactory(ref IID_ICompositionTargetStatics);
+        }
+
+        private static ICompositionTargetStatics3 Statics3()
+        {
+            return _statics3 ??= (ICompositionTargetStatics3)ActivationFactory(ref IID_ICompositionTargetStatics3);
+        }
+
+        public static event EventHandler<object> Rendering
+        {
+            add
             {
-                const string name = "Windows.UI.Xaml.Media.CompositionTarget";
+                var marshaler = ABI.System.EventHandler<object>.CreateMarshaler(value);
+                var token = Statics().add_Rendering(ABI.System.EventHandler<object>.GetAbi(marshaler));
 
-                Marshal.ThrowExceptionForHR(WindowsCreateString(name, name.Length, out var hstring));
-                Marshal.ThrowExceptionForHR(RoGetActivationFactory(hstring, ref IID_ICompositionTargetStatics, out var factory));
-
-                var wrappers = new StrategyBasedComWrappers();
-                _statics = (ICompositionTargetStatics)wrappers.GetOrCreateObjectForComInstance(factory, CreateObjectFlags.None);
+                _tokens ??= new Dictionary<EventHandler<object>, long>();
+                _tokens[value] = token;
             }
-
-            return _statics;
+            remove
+            {
+                if (_tokens != null && _tokens.Remove(value, out var token))
+                {
+                    Statics().remove_Rendering(token);
+                }
+            }
         }
 
-        /// <summary>
-        /// Subscribes on the calling view. The token is only valid on that same thread.
-        /// </summary>
-        public static long Subscribe(EventHandler<object> handler)
+        public static event EventHandler<RenderedEventArgs> Rendered
         {
-            var marshaler = ABI.System.EventHandler<object>.CreateMarshaler(handler);
-            var token = Statics().add_Rendering(ABI.System.EventHandler<object>.GetAbi(marshaler));
+            add
+            {
+                var marshaler = ABI.System.EventHandler<RenderedEventArgs>.CreateMarshaler(value);
+                var token = Statics3().add_Rendered(ABI.System.EventHandler<RenderedEventArgs>.GetAbi(marshaler));
 
-            _handlers ??= new Dictionary<long, EventHandler<object>>();
-            _handlers[token] = handler;
-
-            return token;
-        }
-
-        public static void Unsubscribe(long token)
-        {
-            Statics().remove_Rendering(token);
-            _handlers?.Remove(token);
+                _renderedTokens ??= new Dictionary<EventHandler<RenderedEventArgs>, long>();
+                _renderedTokens[value] = token;
+            }
+            remove
+            {
+                if (_renderedTokens != null && _renderedTokens.Remove(value, out var token))
+                {
+                    Statics3().remove_Rendered(token);
+                }
+            }
         }
     }
 #endif

@@ -1801,21 +1801,11 @@ namespace Telegram.Controls
 
         private readonly List<AnimatedImagePresenter> _rendering = new();
 
-        private long _renderingToken;
-
         public void Rendering(AnimatedImagePresenter presenter)
         {
             if (_rendering.Count == 0)
             {
-#if NET9_0_OR_GREATER
-                // Not CompositionTarget.Rendering: subscribed through the projection, a secondary
-                // view's handler is invoked on the first view's thread, and DrawFrame then
-                // invalidates that view's WriteableBitmap from this one. See
-                // CompositionTargetRendering.
-                _renderingToken = CompositionTargetRendering.Subscribe(OnRendering);
-#else
-                Windows.UI.Xaml.Media.CompositionTarget.Rendering += OnRendering;
-#endif
+                CompositionTarget.Rendering += OnRendering;
             }
 
             _rendering.Add(presenter);
@@ -1845,11 +1835,7 @@ namespace Telegram.Controls
 
             if (_rendering.Count == 0)
             {
-#if NET9_0_OR_GREATER
-                CompositionTargetRendering.Unsubscribe(_renderingToken);
-#else
-                Windows.UI.Xaml.Media.CompositionTarget.Rendering -= OnRendering;
-#endif
+                CompositionTarget.Rendering -= OnRendering;
 
                 if (_closed)
                 {

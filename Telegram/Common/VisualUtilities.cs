@@ -196,7 +196,7 @@ namespace Telegram.Common
             //var weak = new WeakReference(callback);
             void handler(object sender, object e)
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendering -= handler;
+                CompositionTarget.Rendering -= handler;
 
                 //if (weak.Target is Action callback)
                 {
@@ -206,7 +206,7 @@ namespace Telegram.Common
 
             try
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendering += handler;
+                CompositionTarget.Rendering += handler;
             }
             catch
             {
@@ -219,13 +219,13 @@ namespace Telegram.Common
             var tsc = new TaskCompletionSource<bool>();
             void handler(object sender, object e)
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendering -= handler;
+                CompositionTarget.Rendering -= handler;
                 tsc.SetResult(true);
             }
 
             try
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendering += handler;
+                CompositionTarget.Rendering += handler;
             }
             catch
             {
@@ -252,7 +252,7 @@ namespace Telegram.Common
             //var weak = new WeakReference(callback);
             void handler(object sender, object e)
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendered -= handler;
+                CompositionTarget.Rendered -= handler;
 
                 //if (weak.Target is Action callback)
                 {
@@ -262,7 +262,7 @@ namespace Telegram.Common
 
             try
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendered += handler;
+                CompositionTarget.Rendered += handler;
             }
             catch
             {
@@ -275,13 +275,13 @@ namespace Telegram.Common
             var tsc = new TaskCompletionSource<bool>();
             void handler(object sender, object e)
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendered -= handler;
+                CompositionTarget.Rendered -= handler;
                 tsc.SetResult(true);
             }
 
             try
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendered += handler;
+                CompositionTarget.Rendered += handler;
             }
             catch
             {

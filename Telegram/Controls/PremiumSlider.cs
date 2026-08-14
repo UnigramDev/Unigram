@@ -214,7 +214,7 @@ namespace Telegram.Controls
                 _thumbRoot.RotationAngleInDegrees = 0;
                 _rendering = null;
 
-                Windows.UI.Xaml.Media.CompositionTarget.Rendering -= OnRendering;
+                CompositionTarget.Rendering -= OnRendering;
             }
         }
 
@@ -250,7 +250,7 @@ namespace Telegram.Controls
 
             if (_rendering == null)
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendering += _rendering = new EventHandler<object>(OnRendering);
+                CompositionTarget.Rendering += _rendering = new EventHandler<object>(OnRendering);
             }
         }
 

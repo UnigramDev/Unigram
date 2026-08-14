@@ -5,6 +5,16 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+// CsWinRT cannot subscribe Windows.UI.Xaml.Media.CompositionTarget from more than one view:
+// every view's handler ends up on the first one's thread. CompositionTargetImpl registers
+// through the ABI instead, and the alias keeps every call site written the way it always was.
+// Aliasing it in both directions also settles the ambiguity with Windows.UI.Composition's own
+// CompositionTarget, which is why those call sites used to spell the namespace out.
+#if NET9_0_OR_GREATER
+global using CompositionTarget = Telegram.Common.CompositionTargetImpl;
+#else
+global using CompositionTarget = Windows.UI.Xaml.Media.CompositionTarget;
+#endif
 global using DispatcherQueue = Windows.System.DispatcherQueue;
 global using Object = Telegram.Td.Api.Object;
 global using Point = Windows.Foundation.Point;

@@ -733,7 +733,7 @@ namespace Telegram.Views.Gifts.Popups
                 }
                 else if (_faceIndex >= _faces.Length)
                 {
-                    Windows.UI.Xaml.Media.CompositionTarget.Rendering -= OnRendering;
+                    CompositionTarget.Rendering -= OnRendering;
                     TransitionToCompleted();
                 }
             }
@@ -1316,7 +1316,7 @@ namespace Telegram.Views.Gifts.Popups
             _tickCount = Logger.TickCount;
 
             _spinning = true;
-            Windows.UI.Xaml.Media.CompositionTarget.Rendering += OnRendering;
+            CompositionTarget.Rendering += OnRendering;
 
             var receivedGiftIds = _items.Where(x => x != null).Select(x => x.ReceivedGiftId).ToList();
             var craftGifts = new CraftGift(receivedGiftIds);
@@ -1350,7 +1350,7 @@ namespace Telegram.Views.Gifts.Popups
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
             _spinning = false;
-            Windows.UI.Xaml.Media.CompositionTarget.Rendering -= OnRendering;
+            CompositionTarget.Rendering -= OnRendering;
 
             ElementCompositionPreview.SetElementChildVisual(Success, null);
 

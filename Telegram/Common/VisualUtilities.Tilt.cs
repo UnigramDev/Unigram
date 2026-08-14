@@ -390,8 +390,7 @@ namespace Telegram.Common
                 {
                     _rendering = true;
                     _timestamp = TimeSpan.Zero;
-                    // Qualified: Windows.UI.Composition also declares CompositionTarget.
-                    Windows.UI.Xaml.Media.CompositionTarget.Rendering += OnRendering;
+                    CompositionTarget.Rendering += OnRendering;
                 }
             }
 
@@ -436,7 +435,7 @@ namespace Telegram.Common
                 if (_rendering)
                 {
                     _rendering = false;
-                    Windows.UI.Xaml.Media.CompositionTarget.Rendering -= OnRendering;
+                    CompositionTarget.Rendering -= OnRendering;
                 }
             }
 
