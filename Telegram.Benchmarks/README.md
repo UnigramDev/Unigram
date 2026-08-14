@@ -346,6 +346,26 @@ The obvious experiment now that both parsers are a build switch: run the same st
 `<TdParsers>Reader</TdParsers>` and read the same page. That measures the pointer reader's worth
 *in the app*, which no number in this file does — everything above is a corpus in a loop.
 
+**What that A/B leaves out.** `TdThroughput.Begin` is called after the copy and the terminator scan
+on the `Reader` path, so both modes time the parse alone. The copy and the scan are work the pointer
+path deleted outright — 9–12% of the old parse by the corpus — and neither run will show it. The
+comparison is therefore parser against parser, and understates what the change did to `Receive`.
+
+#### After the file checks moved off the thread
+
+Same page, next startup — 11,249 updates, 22.7 MB, mean 2,115 B:
+
+| | before | after |
+| --- | ---: | ---: |
+| file handling | 0.086 s, 34% of the parse | **0.007 s, 4%** |
+| existence checks | 1,152, 0.085 s, on the TDLib thread | 1,080, 0.094 s, **off it** |
+| per update | 16.3 µs | 15.4 µs |
+
+The checks cost the same — they are the same syscalls — they are simply no longer in the pipeline.
+What is left of file handling is the dictionary, the publish and the enqueue: 6.7 ms across 11,249
+updates, 0.6 µs each. Throughput reads lower here (136.4 MB/s against 151.2) but the payloads are
+24% larger, so the two startups are not directly comparable; only the within-run figures are.
+
 #### What `Pointer` mode compiles out
 
 Everything the `Utf8JsonReader` parsers need and nothing else:
