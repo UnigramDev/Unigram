@@ -1341,8 +1341,26 @@ namespace Telegram.Controls
             if (!_renderingSubscribed)
             {
                 _renderingSubscribed = true;
-                AnimatedImageLoader.Current.Rendering(this);
+
+                // This presenter's own loader, not Current. Current is [ThreadStatic], so a call
+                // from another view's thread would add the presenter to that view's rendering list
+                // and invalidate its WriteableBitmap from the wrong thread. .NET Native let that
+                // through; CsWinRT raises RPC_E_WRONG_THREAD, which is what breaks the call window.
+                if (_dispatcherQueue.HasThreadAccess)
+                {
+                    _loader.Rendering(this);
+                }
+                else
+                {
+                    Logger.Error("off the presenter's thread");
+                    _dispatcherQueue.TryEnqueue(RegisterRenderingImpl);
+                }
             }
+        }
+
+        private void RegisterRenderingImpl()
+        {
+            _loader.Rendering(this);
         }
 
         #endregion
