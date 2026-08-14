@@ -72,7 +72,8 @@ The three facts most of this rests on:
       by the `entity.Length + entity.Offset > text.Length` guard at `:1141`), which takes the
       same fallback.
 
-- [ ] **`ProcessCodeBlock`'s execution guard is an ABA** — `:941`, `:886`, `:1931` **[live]**
+- [x] **`ProcessCodeBlock`'s execution guard is an ABA** — `:941`, `:886`, `:1931` **[live]**
+      → fixed in the commit that checked this box
 
       `var execution = ++_templateExecuted;` (`:941`) versus `_templateExecuted = 0;` in
       `OnUnloaded` (`:886`). The counter restarts, so `execution == 1` is handed out again after
@@ -87,9 +88,10 @@ The three facts most of this rests on:
       spans. Only pooled blocks (message bubbles) are affected, which is also the only place
       code blocks scroll fast.
 
-      Fix: don't reuse the counter as an identity. Either keep a second, never-reset
-      `_generation` field for the async guard, or capture a `new object()` per `SetText` and
-      compare by reference.
+      Fixed with a second, never-reset `_generation` counter for the async guard.
+      `_templateExecuted` kept only its other job — the "text already applied" flag `OnLoaded`
+      tests, which is exactly why it has to be cleared on unload — so it became
+      `bool _textApplied`.
 
 ---
 

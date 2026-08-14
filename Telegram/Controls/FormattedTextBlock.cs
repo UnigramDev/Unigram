@@ -164,7 +164,13 @@ namespace Telegram.Controls
         private RichTextBlock TextBlock;
 
         private bool _templateApplied;
-        private int _templateExecuted;
+        private bool _textApplied;
+
+        // Identifies the current content for work that outlives SetText (ProcessCodeBlock's
+        // tokenization). Never reset — _textApplied is cleared on unload, so a flag or a
+        // restarting counter would match again on the next render and let a stale
+        // tokenization write into inlines already recycled into another block.
+        private int _generation;
 
         public FormattedTextBlock()
         {
@@ -867,7 +873,7 @@ namespace Telegram.Controls
             }
 
             // Don't reapply the text if it was just applied by OnApplyTemplate
-            if (_templateExecuted > 0 || _pools == null)
+            if (_textApplied || _pools == null)
             {
                 return;
             }
@@ -889,7 +895,7 @@ namespace Telegram.Controls
                 }
             }
 
-            _templateExecuted = 0;
+            _textApplied = false;
             ClearEntities();
 
             if (!_templateApplied || _pools == null || (_fastRun != null && _plain))
@@ -947,7 +953,9 @@ namespace Telegram.Controls
                 return;
             }
 
-            var execution = ++_templateExecuted;
+            _textApplied = true;
+
+            var generation = ++_generation;
 
             var xamlFontSize = TextBlock.FontSize;
             if (AutoFontSize && fontSize == 0)
@@ -1187,7 +1195,7 @@ namespace Telegram.Controls
 
                                 if (entity.Type is TextEntityTypePreCode preCode && preCode.Language.Length > 0)
                                 {
-                                    ProcessCodeBlock(direct, inlines, placeholder, data, preCode.Language, execution);
+                                    ProcessCodeBlock(direct, inlines, placeholder, data, preCode.Language, generation);
                                 }
                             }
                         }
@@ -1930,14 +1938,16 @@ namespace Telegram.Controls
 
         #region PreCode
 
-        private async void ProcessCodeBlock(XamlDirect direct, IXamlDirectObject inlines, IXamlDirectObject placeholder, string text, string language, int execution)
+        private async void ProcessCodeBlock(XamlDirect direct, IXamlDirectObject inlines, IXamlDirectObject placeholder, string text, string language, int generation)
         {
             try
             {
                 var tokens = await SyntaxToken.TokenizeAsync(language.ToLowerInvariant(), text);
 
-                // Only apply if text block is still loaded
-                if (_templateExecuted == execution)
+                // Only apply if we're still rendering the content this was started for:
+                // `inlines` belongs to a Paragraph that Recycle may have handed to another
+                // block by now, and ClearCollection would wipe whatever it holds instead.
+                if (_generation == generation)
                 {
                     // We need to manually recycle the Run or we'll lose track of it
                     if (_pools != null && _activeRuns.Contains(placeholder))
