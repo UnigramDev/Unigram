@@ -9,7 +9,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Controls
 {
-    public class SettingsRadioButton : FauxRadioButton
+    public partial class SettingsRadioButton : FauxRadioButton
     {
         private UIElement DescriptionPresenter;
 

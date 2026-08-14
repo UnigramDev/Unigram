@@ -703,7 +703,6 @@
     <Compile Include="Td\TdJsonReader.cs" />
     <Compile Include="Td\Api\UpdateChatMember.cs" />
     <Compile Include="TypeContainerGenerator.cs" />
-    <Compile Include="TypeCrosserGenerator.cs" />
     <Compile Include="ViewModels\Business\BusinessFeatureViewModelBase.cs" />
     <Compile Include="ViewModels\Business\BusinessLocationViewModel.cs" />
     <Compile Include="ViewModels\Business\BusinessChatLinksViewModel.cs" />

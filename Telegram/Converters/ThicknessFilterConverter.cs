@@ -20,7 +20,7 @@ namespace Telegram.Converters
         Bottom = 1 << 4
     }
 
-    public class ThicknessFilterConverter : DependencyObject, IValueConverter
+    public partial class ThicknessFilterConverter : DependencyObject, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

@@ -63,7 +63,7 @@ namespace Telegram.Assets.Icons
     // | #FF0000        | Color_FF0000 | Color |  #FFFF0000 Red  |
     // | #FFFFFF        | Color_FFFFFF | Color | #FFFFFFFF White |
     // -----------------------------------------------------------
-    public sealed class PollSelect
+    public sealed partial class PollSelect
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -219,7 +219,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class PollSelect_AnimatedVisual_UAPv15
+        sealed partial class PollSelect_AnimatedVisual_UAPv15
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 2500000;
@@ -660,7 +660,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class PollSelect_AnimatedVisual_UAPv7
+        sealed partial class PollSelect_AnimatedVisual_UAPv7
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 2500000;

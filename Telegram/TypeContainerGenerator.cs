@@ -26,6 +26,10 @@ using Telegram.ViewModels.Stars;
 using Telegram.ViewModels.Supergroups;
 using Telegram.ViewModels.Users;
 
+// Debug-only: every entry point is [Conditional("DEBUG")], so Release strips the calls
+// but not the bodies, and their reflection is the only thing NativeAOT has to warn about
+// in the whole app - GetTypes, GetConstructors and GetProperties over the TDLib types.
+#if DEBUG
 namespace Telegram
 {
     public partial class TypeContainerGenerator
@@ -446,3 +450,4 @@ namespace Telegram
         }
     }
 }
+#endif

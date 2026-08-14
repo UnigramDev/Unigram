@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
-    public class RichMathImage : AnimatedImageBase
+    public partial class RichMathImage : AnimatedImageBase
     {
         private Image LayoutRoot;
 

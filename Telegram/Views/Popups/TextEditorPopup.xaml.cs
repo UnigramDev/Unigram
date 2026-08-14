@@ -431,7 +431,7 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public class TabStylePanel : Panel
+    public partial class TabStylePanel : Panel
     {
         protected override Size MeasureOverride(Size availableSize)
         {

@@ -69,8 +69,6 @@ namespace Telegram
         /// </summary>
         public App()
         {
-            TypeCrosserGenerator.Generate();
-
             SettingsService.Current.Initialize();
             GarbageCollectionMonitor.Initialize(GC.Collect, SettingsService.Current.Diagnostics.DisableXamlGcCollect, SettingsService.Current.Diagnostics.DisableMemoryPressure);
             WatchDog.Initialize();

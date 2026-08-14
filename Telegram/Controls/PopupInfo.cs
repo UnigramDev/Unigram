@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class PopupInfo : Control
+    public partial class PopupInfo : Control
     {
         public PopupInfo()
         {

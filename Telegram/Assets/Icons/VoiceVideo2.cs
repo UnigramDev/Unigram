@@ -64,7 +64,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #FFFFFF        | Foreground | Color | #FFFFFFFF White |
     // -----------------------------------------------------------
-    public sealed class VoiceVideo2
+    public sealed partial class VoiceVideo2
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -202,7 +202,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class VoiceVideo2_AnimatedVisual_UAPv15
+        sealed partial class VoiceVideo2_AnimatedVisual_UAPv15
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 10000000;
@@ -3268,7 +3268,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class VoiceVideo2_AnimatedVisual_UAPv11
+        sealed partial class VoiceVideo2_AnimatedVisual_UAPv11
             : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 10000000;

@@ -53,7 +53,7 @@ namespace Telegram.Views.Popups
             ScrollingHost2.ItemsSource = child;
         }
 
-        public class UserProfileAudioCollection : ObservableCollection<PlaybackItem>, ISupportIncrementalLoading
+        public partial class UserProfileAudioCollection : ObservableCollection<PlaybackItem>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private bool _hasMoreItems = true;
@@ -91,7 +91,7 @@ namespace Telegram.Views.Popups
             public bool HasMoreItems => _hasMoreItems;
         }
 
-        public class SharedAudioCollection : ObservableCollection<PlaybackItem>, ISupportIncrementalLoading
+        public partial class SharedAudioCollection : ObservableCollection<PlaybackItem>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly UserProfileAudioCollection _child;

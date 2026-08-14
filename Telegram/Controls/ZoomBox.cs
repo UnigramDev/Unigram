@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Media;
 namespace Telegram.Controls
 {
     [TemplatePart(Name = "ContentPresenter", Type = typeof(UIElement))]
-    public class ZoomBox : ContentControl
+    public partial class ZoomBox : ContentControl
     {
         private readonly ScaleTransform _transform = new()
         {

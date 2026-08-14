@@ -444,6 +444,16 @@ early, and it also catches the existing trap of adding a file and forgetting its
 
 ## Cleanups this turned up
 
+- [ ] Rewrite `TypeContainerGenerator` as a source generator, beside the one in
+      `Telegram.Generators`. It builds the dependency container — the `_globals`, `_singletons`,
+      `_lazySingletons` and `_instances` tables and the constructor calls for them — by reflecting
+      over the app's own types (`GetConstructors`, `GetProperties`) and returning C# as a string,
+      from a `[Conditional("DEBUG")]` method that is run by hand and whose output is pasted back
+      into source. A generator would emit it at build time, keep it in step with the types by
+      construction, and take the last reflection out of the app: those three calls were the whole
+      of NativeAOT's trim warnings once `TypeCrosserGenerator` was deleted, and the only reason
+      the file now needs `#if DEBUG`.
+
 - [ ] Rename the `Unigram*` MSBuild properties and targets to `Telegram*`. They follow the product
       name while everything else in the build — repo, projects, assembly, namespaces — says
       Telegram. Fifteen names (`UnigramRoot`, `UnigramUsesVcpkg`, `UnigramVcpkg*`, `UnigramAdd*`,
