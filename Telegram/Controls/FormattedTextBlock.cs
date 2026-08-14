@@ -337,8 +337,19 @@ namespace Telegram.Controls
                 var hyperlink = TextBlock.GetHyperlinkFromPoint(e.GetCurrentPoint(TextBlock).Position);
                 if (hyperlink == null)
                 {
-                    _textSelectionIBeam = true;
-                    Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.IBeam, 0);
+                    // Only on the way in: this runs at pointer sample rate, and setting
+                    // PointerCursor is a marshalled call on top of the allocation.
+                    if (!_textSelectionIBeam)
+                    {
+                        _textSelectionIBeam = true;
+                        Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.IBeam, 0);
+                    }
+                }
+                else
+                {
+                    // The Hyperlink puts its own Hand cursor up, so ours is gone: forget it, or
+                    // moving back onto text would leave the Hand there.
+                    _textSelectionIBeam = false;
                 }
             }
         }

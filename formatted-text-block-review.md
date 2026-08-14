@@ -146,7 +146,8 @@ The three facts most of this rests on:
       render instead of dropping to the system default. Deliberate, but it is a rendering
       change — say so if you'd rather keep two chains.
 
-- [ ] **`OnPointerMoved` re-sets the cursor on every sample** — `:322-331` **[live]**
+- [x] **`OnPointerMoved` re-sets the cursor on every sample** — `:322-331` **[live]**
+      → fixed in the commit that checked this box
 
       ```csharp
       if (hyperlink == null)
@@ -157,10 +158,15 @@ The three facts most of this rests on:
       ```
 
       `_textSelectionIBeam` is written but never tested, so moving over message text allocates a
-      `CoreCursor` and writes `CoreWindow.PointerCursor` at pointer sample rate. Guard on
-      `!_textSelectionIBeam` (the flag already exists for exactly this) and keep one cursor
-      instance per type — the two `Arrow` sites at `:316`/`:340`/`:346` and the `Hand` at `:304`
-      allocate too, though those are edge-triggered.
+      `CoreCursor` and writes `CoreWindow.PointerCursor` at pointer sample rate.
+
+      Fixed by testing the flag — with the part the note missed: the flag also has to be
+      **cleared** over a hyperlink. The `Hyperlink` puts its own `Hand` cursor up, so ours is
+      no longer on screen, and gating on a flag that stayed `true` would skip restoring the
+      I-beam on the way back onto text and leave the `Hand` there.
+
+      The remaining `CoreCursor` allocations (`Arrow` at `:316`/`:340`/`:346`, `Hand` at
+      `:304`) are all edge-triggered already, so they're left alone.
 
 - [ ] **`MeasureOverride` runs a native text measure per pass for expandable quotes** —
       `:256-277` **[live]**
