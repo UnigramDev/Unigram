@@ -4679,27 +4679,6 @@ namespace Telegram.Td.Api
             return false;
         }
 
-        public static void Update(this File file, File update)
-        {
-            file.ExpectedSize = update.ExpectedSize;
-            file.Size = update.Size;
-            file.Local = update.Local;
-            file.Remote = update.Remote;
-        }
-
-        public static File Update(this File file)
-        {
-            if (file.Local.IsDownloadingCompleted)
-            {
-                // Synchronous, unlike ClientService's first-sight check: the caller is about to
-                // act on the answer rather than send a request about it.
-                file.Local.IsDownloadingCompleted = file.Local.Path.Length > 0
-                    && NativeFile.Exists(file.Local.Path);
-            }
-
-            return file;
-        }
-
         public static File GetLocalFile(string path, string uniqueId = "")
         {
             return new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation.Path, path), false, false, false, true, 0, 0, 0), new RemoteFile(string.Empty, uniqueId, false, false, 0));

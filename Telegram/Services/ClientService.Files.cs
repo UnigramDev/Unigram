@@ -442,26 +442,6 @@ namespace Telegram.Services
                 }
             }
         }
-
-        private File ProcessFile(File file)
-        {
-            if (_files.TryGetValue(file.Id, out File singleton))
-            {
-                singleton.Update(file);
-                return singleton;
-            }
-            else
-            {
-                _files[file.Id] = file;
-
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    VerifyFileExists(file.Id, file.Local.Path);
-                }
-
-                return file;
-            }
-        }
     }
 }
 
