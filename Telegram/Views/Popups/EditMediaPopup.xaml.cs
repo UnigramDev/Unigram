@@ -217,9 +217,10 @@ namespace Telegram.Views.Popups
                     pixelHeight = animation.PixelWidth;
                 }
 
-                double ratioX = (double)40 / pixelWidth;
-                double ratioY = (double)40 / pixelHeight;
-                double ratio = Math.Max(ratioY, ratioY);
+                // A single row of frames 40 tall, each as wide as its aspect makes it, so the
+                // height is what the scale is pinned to. Fitting inside 40 square instead would
+                // leave a portrait video too short to fill the strip.
+                double ratio = 40d / pixelHeight;
 
                 var width = (int)(pixelWidth * ratio);
                 var height = (int)(pixelHeight * ratio);
