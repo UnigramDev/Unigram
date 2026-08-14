@@ -2553,13 +2553,28 @@ namespace Telegram.Controls
 
         public class RelativeDateService
         {
-            record TextDate(IXamlDirectObject Element, FormattedTextBlock TextBlock, StyledParagraph Paragraph, TextStyleRun Entity, TextEntityTypeDateTime EntityType, DateTime Date)
+            // A dictionary value keyed by Element, so it never needs value equality - and .NET
+            // Native doesn't do records anyway.
+            class TextDate
             {
-                public TextDate(IXamlDirectObject Element, FormattedTextBlock TextBlock, StyledParagraph Paragraph, TextStyleRun Entity, TextEntityTypeDateTime EntityType)
-                    : this(Element, TextBlock, Paragraph, Entity, EntityType, Formatter.ToLocalTime(EntityType.UnixTime))
+                public TextDate(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun entity, TextEntityTypeDateTime entityType)
                 {
-
+                    Element = element;
+                    TextBlock = textBlock;
+                    Paragraph = paragraph;
+                    Entity = entity;
+                    Date = Formatter.ToLocalTime(entityType.UnixTime);
                 }
+
+                public IXamlDirectObject Element { get; }
+
+                public FormattedTextBlock TextBlock { get; }
+
+                public StyledParagraph Paragraph { get; }
+
+                public TextStyleRun Entity { get; }
+
+                public DateTime Date { get; }
 
                 public ulong NextUpdateAt { get; set; }
 
@@ -2698,8 +2713,13 @@ namespace Telegram.Controls
                     }
                     else
                     {
-                        // Item doesn't need rescheduling, but still consider its existing schedule
-                        var remainingSeconds = (long)(item.NextUpdateAt - tickCount) / 1000;
+                        // Item doesn't need rescheduling, but still consider its existing schedule.
+                        // Round up, never down to zero: an item due in under a second used to be
+                        // dropped from the minimum entirely, and if every item was in that state
+                        // - which is the norm for the one-second bucket, where the timer can fire
+                        // a hair early - nothing set the minimum and the next tick was scheduled
+                        // int.MaxValue seconds out.
+                        var remainingSeconds = ((long)(item.NextUpdateAt - tickCount) + 999) / 1000;
                         if (remainingSeconds > 0 && remainingSeconds < minSeconds)
                         {
                             minSeconds = (int)remainingSeconds;
@@ -2707,7 +2727,9 @@ namespace Telegram.Controls
                     }
                 }
 
-                return TimeSpan.FromSeconds(minSeconds);
+                // An empty set leaves the minimum untouched; a second is the shortest the
+                // buckets below ever ask for anyway.
+                return TimeSpan.FromSeconds(minSeconds == int.MaxValue ? 1 : minSeconds);
             }
 
             private static int GetNextUpdateIntervalSeconds(DateTime currentTime, DateTime relativeTime)

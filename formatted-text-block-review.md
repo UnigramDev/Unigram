@@ -235,7 +235,8 @@ The three facts most of this rests on:
       `ChatPinnedMessage`). Either move `ClearEntities()` behind the same early-out, or let
       `OnLoaded` re-apply when `_text != null` regardless of `_pools`.
 
-- [ ] **Relative dates can stall for good** — `:2600-2648` **[live]**
+- [x] **Relative dates can stall for good** — `:2600-2648` **[live]**
+      → fixed in the commit that checked this box
 
       In `GetNextUpdateInterval`, an item that isn't due yet contributes
       `remainingSeconds = (long)(item.NextUpdateAt - tickCount) / 1000` (`:2640`) and is skipped
@@ -245,15 +246,20 @@ The three facts most of this rests on:
       **68 years out**. Nothing else restarts it, so every relative timestamp on the thread
       freezes until another `Subscribe` happens.
 
-      Use `Math.Max(1, ...)` (or ceil the division) for the not-due branch, and clamp the final
-      interval before `TimeSpan.FromSeconds`.
+      Fixed both ways the note suggests, because they cover different holes: the not-due branch
+      rounds up instead of truncating, and the return clamps `int.MaxValue` to a second so an
+      empty or fully-skipped set can't arm the timer past the heat death of the sun.
 
-- [ ] **`record TextDate`** — `:2494` **[live]**
+- [x] **`record TextDate`** — `:2494` **[live]**
+      → fixed in the commit that checked this box
 
       The project rule is that .NET Native has no records. It is also the wrong shape: it's a
       mutable dictionary *value* (`NextUpdateAt { get; set; }`) that never needs value equality,
       and the generated `Equals`/`GetHashCode`/`PrintMembers` walk five reference members. A
       plain class is smaller and generates nothing.
+
+      Now a plain class. `EntityType` went with it: it was a positional member only because the
+      constructor needs it to compute `Date`, and nothing ever read it back.
 
 - [ ] **Revealing a spoiler wipes the search highlight** — `:435-436` **[live]**
 
