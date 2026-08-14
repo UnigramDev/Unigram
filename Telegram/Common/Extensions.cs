@@ -22,6 +22,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Telegram.Controls;
+#if NET9_0_OR_GREATER
+using WinRT;
+#endif
 using Telegram.Controls.Media;
 using Telegram.Entities;
 using Telegram.Native;
@@ -1816,7 +1819,11 @@ namespace Telegram.Common
             }
 
             var tcs = new TaskCompletionSource<bool>();
-            var registration = token.Register(() =>
+            // layoutUpdated below captures registration, and converting a local function to a
+            // delegate requires everything it captures to be definitely assigned - which it is
+            // not inside the very expression that assigns it.
+            CancellationTokenRegistration registration = default;
+            registration = token.Register(() =>
             {
                 element.LayoutUpdated -= layoutUpdated;
                 tcs.TrySetResult(false);

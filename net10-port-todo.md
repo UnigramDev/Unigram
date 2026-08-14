@@ -1,0 +1,300 @@
+# Porting the app to .NET 10, keeping .NET Native alive
+
+Written 2026-08-14. Plan and resume point for building the app a second way — UWP XAML on
+.NET 10 with CsWinRT and NativeAOT — while `Telegram.csproj` keeps shipping on .NET Native.
+
+The online documentation for this is stale. Everything below that is stated as fact was read
+out of the installed toolchain or out of this repository, and the source is named so it can be
+re-checked when the toolchain moves.
+
+## The shape
+
+A second project file, `Telegram/Telegram.Modern.csproj`, beside the existing one, in the same
+directory so every relative path, `Assets\`, XAML and `Strings\` reference resolves unchanged.
+
+There is no multi-targeting option. `UseDotNetNativeToolchain` exists only in the legacy UWP
+project system and `UseUwp` only in SDK-style, and neither project format can produce the other's
+output — the same wall `Telegram.Benchmarks.NetNative` hit, and for the same reason, recorded in
+its header comment.
+
+Ground truth for the new file is the template Visual Studio 18 installs at
+`Common7\IDE\ProjectTemplates\CSharp\Windows UAP\1033\Windows_UAP_NET_WAP_BlankXamlApplication\`,
+which is the packaged-by-a-wapproj variant — the layout this repository already has:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
+    <UseUwp>true</UseUwp>
+    <Platforms>x64;arm64</Platforms>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <PublishAot>true</PublishAot>
+    <PublishProfile>win-$(Platform).pubxml</PublishProfile>
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+  </PropertyGroup>
+</Project>
+```
+
+`EnableMsixTooling` is the single-project-MSIX variant and is deliberately absent here: packaging
+stays in `Telegram.Msix`, which also carries `Telegram.Stub`.
+
+What the toolchain does with those properties, from
+`dotnet\sdk\10.0.302\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.Windows.targets`:
+
+- `UseUwp` adds the `Microsoft.Windows.SDK.NET.Ref.Xaml` framework reference — the
+  `Windows.UI.Xaml.*` projections — and turns on `CsWinRTUseWindowsUIXamlProjections`.
+- `UseUwpTools` follows `UseUwp` by default and brings in the XAML compiler and MSIX tooling.
+- **The Windows SDK revision digit picks the CsWinRT major version.** A `.0` revision
+  (`10.0.26100.0`) selects CsWinRT 2.x; a `.1` revision selects the 3.0 preview. Stay on `.0`:
+  CsWinRT 3.0 could not be made to build a UWP XAML app, which is written up under
+  "CsWinRT 3.0 preview does not build a UWP XAML app yet" in `Telegram.Benchmarks/README.md`.
+
+Item globbing comes from
+`MSBuild\Microsoft\WindowsXaml\v18.0\8.21\Microsoft.Windows.UI.Xaml.CSharp.ModernNET.DefaultItems.Props`:
+`App.xaml` becomes `ApplicationDefinition`, every other `**/*.xaml` becomes a `Page`, and `.cs`
+files come from the ordinary SDK glob. That matters because `Telegram.csproj` lists **1250
+`Compile` and 473 `Page` entries by hand**; a second hand-written copy would be stale within a
+week. The new project globs, and only needs to subtract.
+
+Measured against disk, the legacy project omits exactly eight files, seven of them not built at
+all and one built differently:
+
+| file | why |
+|---|---|
+| `Common\HeapSizeCalculator.cs` | not built |
+| `Common\HttpServer.cs` | not built |
+| `Common\MediaHttpServer.cs` | not built |
+| `Controls\SettingsCheckBox.cs` | not built |
+| `Entities\SourceGenerationContext.cs` | not built |
+| `Streams\DiceFileSource.cs` | not built |
+| `Td\Api\ChatProjection.cs` | not built |
+| `Common\CommonStyles.xaml` | `Content`, not `Page` — loaded at runtime through `ms-appx:///` from `App.xaml` |
+
+Nothing listed in the project is missing from disk.
+
+## Why this is a smaller job than it looks
+
+| what | state |
+|---|---|
+| Reflection in app code | none — every `GetProperty`/`Activator` hit in the tree is inside `bin\*\ilc\PInvoke.g.cs`, which is .NET Native's own output |
+| `System.Text.Json` | every call site goes through a `JsonSerializerContext`; no reflection-based serializer anywhere |
+| CsWinRT preparation | `Telegram/CsWinRT.cs` already carries ~40 `[assembly: GeneratedWinRTExposedExternalType]` entries under `#if NET9_0_OR_GREATER`, and `Common/Interop.cs` already has CsWinRT-era `[CustomMarshaller]` code |
+| `Default.rd.xml` | its one directive, `MessageSelector.UpdateSelection`, is obsolete — the method is only ever called from C# |
+| WinUI 2 | `Microsoft.UI.Xaml` 2.8.7 ships a `net8.0-windows10.0.22621.0` asset |
+| Win2D | `Win2D.uwp` 1.28.3 ships a `net8.0-windows10.0.19041.0` asset |
+| Publish profiles | `Telegram/Properties/PublishProfiles/win-*.pubxml` already exist and match the template |
+| Modern toolchain in-repo | `Telegram.Stub` already builds `net10.0-windows10.0.18362.0` with `PublishAot` |
+
+The usual hard part of an AOT port — hunting reflection out of a large app — is already done here.
+
+## Phase 0 — drop x86 (done, unbuilt)
+
+Unrelated to the port but a prerequisite for not carrying dead configurations into a new project
+file. x64 and ARM64 are the only supported architectures.
+
+- [x] `Telegram.slnx`: the `x86` platform and its two project mappings
+- [x] `Telegram/Telegram.csproj`: default platform to x64, the `Debug|x86` and `Release|x86`
+      property groups, and the dead `TelegramTdPlatform`/`Win32` conditions (`$(Platform)` in a
+      C# project is never `Win32`, so those branches never evaluated)
+- [x] `Telegram.Msix/Telegram.Msix.wapproj`: the two x86 project configurations and their
+      property groups
+- [x] `Telegram.Native.vcxproj`, `Telegram.Native.Calls.vcxproj`: the `Win32` configurations
+- [x] `Directory.Build.props`: the `x86-uwp` vcpkg triplet
+- [x] `Build.ps1`: `$arch` default
+- [x] `Telegram/Properties/PublishProfiles/win-x86.pubxml`
+- [x] `Libraries/rlottie/x86/RLottie.winmd` — the only x86 file left there, with no `.dll` or
+      `.pri` beside it
+
+Left alone deliberately: `Libraries/tdjson/build.ps1` still knows how to build x86 tdlib. That is
+a capability of a dependency build script, not a stale reference. Also noted while passing:
+`Build.ps1` still invokes `Telegram.sln`, which no longer exists.
+
+Turned up while doing it, and relevant to Phase 6: **`.gitignore` ignores `*.pubxml`**, so the
+publish profiles under `Telegram/Properties/PublishProfiles` exist only on this machine. The
+modern wapproj references one per platform by path, so they have to be tracked before that build
+works anywhere else.
+
+## Phase 1 — spikes (done, all three pass)
+
+Each of these could have invalidated the plan, so each got its own throwaway project rather than
+being discovered halfway through a 1250-file compile. They live in the scratchpad, not the repo.
+
+**Build them with Visual Studio's MSBuild, not the dotnet CLI.** Modern UWP XAML support is
+imported from VS's own `ImportBefore`/`ImportAfter` hooks, which the SDK's MSBuild does not have:
+
+```
+"C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe" ^
+  Spike.csproj -restore -p:Configuration=Release -p:Platform=x64 ^
+  -p:RuntimeIdentifier=win-x64 -p:SelfContained=true -p:PublishAot=true
+```
+
+The AOT link step also needs `vswhere.exe` on PATH, the same trap the benchmark README records.
+
+- [x] **Baseline.** A minimal UWP XAML app (`App.xaml` + a page) on `net10.0-windows10.0.26100.0`
+      with `UseUwp` builds, with nothing beyond the template properties.
+- [x] **WebView2 — supported outright, no workarounds.** The package itself branches on
+      `UseUwpTools`: `build\Common.targets` sets `WebView2EnableCsWinRTProjection`, references the
+      prebuilt `lib_manual\net8.0-windows10.0.17763.0\Microsoft.Web.WebView2.Core.Projection.dll`,
+      copies `runtimes\win-x64\native_uap\Microsoft.Web.WebView2.Core.dll`, and feeds the winmd to
+      `CsWinRTInputs`. A page using `muxc:WebView2` and a representative slice of the app's
+      `CoreWebView2` surface — `SetVirtualHostNameToFolderMapping`, `AddWebResourceRequestedFilter`,
+      `Profile.PreferredColorScheme`, `CallDevToolsProtocolMethodAsync`, the seven event handlers —
+      compiles, and AOT-publishes with **zero warnings** to a 5.6 MB native exe.
+- [x] **WinUI 2 — supported, and it came for free with the above.** `Microsoft.UI.Xaml` 2.8.7
+      resolves a prebuilt `lib\net8.0-windows10.0.22621.0\Microsoft.UI.Xaml.Projection.dll`.
+      `XamlControlsResources` merged in `App.xaml` and an `InfoBar` both compile and AOT.
+- [x] **Local WinRT components — need a projection, and generating it in-project works.**
+      A bare `<Reference>` to a winmd, which is what `Telegram.csproj` does today for RLottie, is
+      rejected outright: `NETSDK1130: Referencing a Windows Metadata component directly when
+      targeting .NET 5 or higher is not supported`. The replacement:
+
+      ```xml
+      <PropertyGroup>
+        <CsWinRTIncludes>RLottie;Telegram.Native</CsWinRTIncludes>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
+        <CsWinRTInputs Include="...\rlottie\x64\RLottie.winmd" />
+        <CsWinRTInputs Include="...\x64\Release\Telegram.Native\Telegram.Native.winmd" />
+        <CsWinRTInputs Include="...\win2d.uwp\1.28.3\lib\uap10.0\Microsoft.Graphics.Canvas.winmd" />
+      </ItemGroup>
+      ```
+
+      Everything in `CsWinRTInputs` is passed to `cswinrt.exe` as `-input` and read for metadata;
+      only the namespaces named in `CsWinRTIncludes` are emitted. That distinction is what the
+      third line is for — both components have Win2D types in their signatures
+      (`RLottie.ILottieAnimation` takes a `CanvasBitmap`), and without its winmd cswinrt fails
+      with `Type 'Microsoft.Graphics.Canvas.CanvasBitmap' could not be found`; with it, Win2D
+      still comes from its own package projection rather than being projected twice.
+      This generated ~22k lines across RLottie and seven `Telegram.Native.*` namespaces, compiled,
+      and AOT-published with **zero warnings** to a 4.4 MB native exe.
+- [x] **Windows Desktop Extensions — no SDKReference needed.** `FullTrustProcessLauncher`,
+      `StartupTask`, `StartupTaskState` and `ApiInformation` all compile with no reference beyond
+      `UseUwp`. The `<SDKReference Include="WindowsDesktop" />` in `Telegram.csproj` has no
+      equivalent in the new project because the modern projections already carry those types.
+
+Spiked with the app's real API shapes but not with the app's real code, and nothing was *run* —
+these are compile and AOT-link results, not runtime ones.
+
+## Phase 2 — the project file (done)
+
+`Telegram/Telegram.Modern.csproj`. Two traps cost a build each and are worth keeping:
+
+**`Sdk.props` is imported by hand rather than through the `Sdk` attribute.** Three properties have
+to be set before it, and setting them in the body is too late: `BaseIntermediateOutputPath` and
+`BaseOutputPath`, so the two projects do not share `obj\` and `bin\`, and `DefaultItemExcludes`,
+because the SDK's `**/*.cs` glob otherwise compiles **Telegram.csproj's own generated output** —
+its `XamlTypeInfo.g.cs`, every page's `.g.cs`, and the .NET Native ilc sources under `bin\` — as
+app source. That produced 417 errors that looked like toolchain incompatibility and were not.
+
+**The `TdParsers` switch has to be mirrored.** The generator reads the property, the hand-written
+code reads `TD_READER_PARSER`/`TD_POINTER_PARSER`, and if the two projects disagree the generated
+parser calls helpers that were compiled out — 3055 errors, all in one generated file. It is a
+by-hand duplication and the first thing to check whenever the generated code stops compiling.
+
+- [x] `Telegram/Telegram.Modern.csproj` from the WAP template, plus the output paths,
+      `AllowUnsafeBlocks` and `LangVersion`.
+- [x] Mirror `DefineConstants`, now without `ENABLE_CALLS`. `NET9_0_OR_GREATER` arrives for free
+      and is already the switch the source uses.
+- [x] Subtract the seven unbuilt files; `<Page Remove>` `Common\CommonStyles.xaml` and add it back
+      as `Content`. Compiling it as a `Page` instead would be a real change (XBF rather than
+      runtime-parsed XAML) and should be a separate, deliberate one.
+- [x] Same source generator wiring: `Telegram.Generators` as an analyzer, `td_api.tl` as an
+      `AdditionalFiles`.
+- [x] Packages. Drop `Microsoft.NETCore.UniversalWindowsPlatform`, `System.ValueTuple`,
+      `System.Memory`, `Microsoft.Bcl.HashCode`, `PolySharp`, and `System.Reflection.Metadata`
+      (nothing in the app references it). Keep the rest. `Rg.DiffUtils` is `netstandard1.0` and
+      will at least warn.
+- [ ] Delete `Properties/Default.rd.xml` from the new project's world; the legacy project can
+      drop it too, since its only directive is obsolete.
+- [x] Project `Telegram.Native.Calls` the same way as the other two. The spike only wired
+      `Telegram.Native` and `RLottie`; the third component is the same shape, and its winmd may
+      pull in further metadata the way Win2D did.
+- [ ] Expect `CsWinRT1028` — *"implements WinRT interfaces but it or a parent type isn't marked
+      partial"* — across the app. XAML classes are already `partial`; anything else that crosses
+      the ABI is not. The spike hit it on a bare `Application` subclass, so the count in a codebase
+      this size will not be small, and it is a trimming/AOT correctness warning rather than style.
+
+## Phase 3 — compile (C# is clean; XAML Pass2 is not)
+
+`Telegram.Modern.csproj` exists and **the whole app compiles: zero C# errors across all 1250
+sources and all 473 XAML pages**, with `PublishAot` off. What is left is one crash inside the
+XAML compiler itself, in the pass that runs after the code compiles:
+
+```
+Microsoft.Windows.UI.Xaml.Common.targets(456,5): Xaml Internal Error error WMC9999:
+Specified argument was out of the range of valid values.
+```
+
+- [ ] Isolate WMC9999. It names no file. The page compiled immediately before it is
+      `Controls\CountryBox.xaml`, which also produces `WMC1507` (named element `Emoji` colliding
+      with a field on the root data type `Telegram.Entities.Country`) — suggestive, not proven.
+- [x] Whatever the modern stack rejects that .NET Native accepted goes behind
+      `#if NET9_0_OR_GREATER`, so the shipping build stays green the whole way.
+
+### What the app source needed, and why
+
+Five sites, all of which also still compile under .NET Native. Three were in `#if
+NET9_0_OR_GREATER` blocks written for this port and never compiled until now.
+
+| where | what | why |
+|---|---|---|
+| `InputPopup`, `InputTeachingTip`, `StakeDicePopup`, `SuggestPostPopup` | `GetUserDefaultLocaleName` took `Span<char>`, now takes `char*` behind a `fixed` | `SYSLIB1051`: the P/Invoke source generator only marshals `Span<T>` when runtime marshalling is disabled, and `char` is not blittable while it is enabled. Runtime marshalling stays at its UWP default, so the buffer crosses as a pointer. `ref char` is not enough — `char` is the problem, not the indirection. |
+| `StakeDicePopup` | added `using System;` | its `NET9_0_OR_GREATER` block used `Span<char>` with no `using System;` |
+| `Common\Extensions.cs` | `using WinRT;`, guarded | `IBuffer.As<IBufferByteAccess>()` is `WinRT.CastExtensions`; the namespace does not exist under .NET Native, so the using has to be inside the `#if` |
+| `Common\PlaceholderHelper.cs` | `new PlaceholderImageHelper((Window)null)` | **CsWinRT gives every projected runtime class an `IObjectReference` constructor**, so a bare `null` is ambiguous. Expect this wherever the app passes `null` to a projected constructor. |
+| `Common\Extensions.cs` | hoisted `CancellationTokenRegistration registration = default;` out of its initializer | the local function captures `registration` and is converted to a delegate inside the very expression that assigns it. Definite assignment rejects that at a modern `LangVersion`; the legacy project's `LangVersion 14.0` does not. |
+
+That is a small list for a codebase this size, and it is consistent with the reflection audit:
+nothing here was a design problem, only interop and language-version detail.
+
+## Phase 4 — run it
+
+- [ ] Launch under CoreCLR. This is the point of the exercise for day-to-day work: no .NET Native
+      pass, and XAML/C# hot reload.
+- [ ] `{Binding}` is where the runtime differences will show. 180 occurrences across 32 of 481
+      XAML files, against 1927 `x:Bind` which are compiled and free. Each managed binding source
+      type needs `[GeneratedBindableCustomProperty]` and to be `partial`. Bindings whose source is
+      a XAML/WinRT type need nothing.
+
+## Phase 5 — AOT
+
+- [ ] Turn on `PublishAot`, resolve trim and AOT warnings until clean.
+- [ ] `DisableRuntimeMarshalling` is in the template but leave it **off** at first. There are 43
+      `DllImport`s, mostly `kernel32` with `CharSet.Unicode`, plus tdjson's cdecl entry points; it
+      changes their marshalling. Turn it on afterwards, as a measured change.
+- [ ] Compare startup and working set against the .NET Native build. `Telegram.Benchmarks` already
+      has both hosts wired up if a narrower measurement is wanted.
+
+## Phase 6 — packaging
+
+The template's wapproj differs from `Telegram.Msix` in ways that are all mechanical, but all
+required:
+
+- [ ] `<DebuggerType>CoreClr</DebuggerType>`
+- [ ] The project reference carries `UseLowTrustEntryPoint`, `SkipGetTargetFrameworkProperties`
+      and `PublishProfile=Properties\PublishProfiles\win-$(Platform).pubxml`
+- [ ] `Microsoft.Windows.SDK.BuildTools` package reference
+- [ ] `EntryPointProjectUniqueName` points at the new project
+
+Whether that is a second wapproj or a conditioned property in the existing one is open. A second
+one duplicates the manifest and the signing setup; a conditioned one risks the packaging path that
+`ShouldUnsetParentConfigurationAndPlatform` already made delicate.
+
+## Keeping both green
+
+The two projects must build the same set of files, and nothing enforces that. A parity check —
+compare the glob against the legacy project's item lists, fail on divergence — is worth writing
+early, and it also catches the existing trap of adding a file and forgetting its `Compile` entry.
+
+- [ ] Parity script, run manually at first
+- [ ] Decide whether it becomes a build target or stays a script
+
+## Open questions
+
+- Project name. `Telegram.Modern.csproj` is a placeholder.
+- How long both are kept. Everything above assumes indefinitely; if the modern build is only ever
+  a development-time convenience the packaging phase can be skipped entirely.
+- Store submission on the modern stack has not been looked at at all.

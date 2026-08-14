@@ -1,0 +1,175 @@
+<!--
+  Sdk.props is imported by hand rather than through the Sdk attribute because three properties
+  have to be set before it: the two output paths, so this project does not share obj\ and bin\
+  with Telegram.csproj, and DefaultItemExcludes, because the default globs would otherwise
+  compile Telegram.csproj's own generated output - its XamlTypeInfo.g.cs, every page's .g.cs, and
+  the .NET Native ilc sources under bin\ - as if they were app source.
+-->
+<Project>
+
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>obj\modern\</BaseIntermediateOutputPath>
+    <BaseOutputPath>bin\modern\</BaseOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);obj\**;bin\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <!--
+    The same app on UWP XAML over .NET 10, CsWinRT and NativeAOT, built beside Telegram.csproj
+    rather than replacing it: UseDotNetNativeToolchain exists only in the legacy project system
+    and UseUwp only in SDK-style, and neither format can produce the other's output.
+
+    Build with Visual Studio's MSBuild, never the dotnet CLI - modern UWP XAML support is imported
+    from VS's own ImportBefore/ImportAfter hooks, which the SDK's MSBuild does not have:
+
+      "%ProgramFiles%\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe" ^
+        Telegram.Modern.csproj -restore -p:Configuration=Debug -p:Platform=x64
+
+    net10-port-todo.md at the repository root is the plan this belongs to.
+  -->
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
+    <RootNamespace>Telegram</RootNamespace>
+    <AssemblyName>Telegram</AssemblyName>
+    <DefaultLanguage>en</DefaultLanguage>
+    <UseUwp>true</UseUwp>
+    <Platforms>x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>preview</LangVersion>
+
+    <!-- PublishAot comes later, once it compiles and runs on CoreCLR. -->
+    <PublishAot>false</PublishAot>
+
+    <!-- Properties\AssemblyInfo.cs stays with the legacy project (see the Compile Remove below);
+         these carry its values over to the attributes the SDK generates in its place. -->
+    <AssemblyTitle>Unigram</AssemblyTitle>
+    <Product>Unigram</Product>
+    <Copyright>Copyright ©  2015</Copyright>
+
+    <!-- The .NET Native project's constants, minus the ones that were only ever about it.
+         NET9_0_OR_GREATER arrives on its own and is what the source already switches on. -->
+    <DefineConstants>$(DefineConstants);NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <NoWarn>$(NoWarn);2008</NoWarn>
+  </PropertyGroup>
+
+  <!--
+    Compile and Page are globbed, against Telegram.csproj's 1250 hand-listed Compile and 473 Page
+    entries. The two lists agree today except for the seven files below, which are on disk and not
+    in the legacy project; a parity check between the glob and that list is still to be written.
+  -->
+  <ItemGroup>
+    <Compile Remove="Common\HeapSizeCalculator.cs" />
+    <Compile Remove="Common\HttpServer.cs" />
+    <Compile Remove="Common\MediaHttpServer.cs" />
+    <Compile Remove="Controls\SettingsCheckBox.cs" />
+    <Compile Remove="Entities\SourceGenerationContext.cs" />
+    <Compile Remove="Streams\DiceFileSource.cs" />
+    <Compile Remove="Td\Api\ChatProjection.cs" />
+    <!-- The SDK generates these attributes itself, and two sets of them is CS0579. -->
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+
+  <!-- App.xaml loads this through ms-appx:/// at runtime, so it ships as loose XAML rather than
+       compiled XBF. The modern default items would otherwise sweep it up as a Page. -->
+  <ItemGroup>
+    <Page Remove="Common\CommonStyles.xaml" />
+    <Content Include="Common\CommonStyles.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <PRIResource Include="Strings\**\*.resw" />
+  </ItemGroup>
+
+  <!-- TODO: Assets\** is 360 files where Telegram.csproj lists 266 of them. Harmless while this
+       is a development build, wrong for a package; reconcile before anything ships. -->
+  <ItemGroup>
+    <Content Include="Assets\**\*.*" />
+    <Content Include="..\Libraries\unigram-iv-editor\editor.html" Link="Assets\editor.html" />
+    <Content Include="..\Libraries\libprisma\libprisma\grammars.dat" Link="Assets\grammars.dat" />
+    <Content Include="..\Libraries\MicroTeX\res\fonts\**\*.ttf" Link="res\fonts\%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Include="Assets\i420.hlsl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Clipper2" Version="1.5.4" />
+    <PackageReference Include="Markdig" Version="1.3.2" />
+    <PackageReference Include="Microsoft.UI.Xaml" Version="2.8.7" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4129.50" />
+    <PackageReference Include="Rg.DiffUtils" Version="1.0.0" />
+    <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3" Version="2.1.11" />
+    <PackageReference Include="System.Text.Json" Version="10.0.10" />
+    <PackageReference Include="System.Threading.Channels" Version="10.0.10" />
+    <PackageReference Include="Win2D.uwp" Version="1.28.3" />
+    <!-- Dropped against Telegram.csproj: Microsoft.NETCore.UniversalWindowsPlatform, System.Memory,
+         System.ValueTuple, Microsoft.Bcl.HashCode, PolySharp, System.Reflection.Metadata. The first
+         five are in-box on net10.0; the last is referenced by nothing in the app. -->
+  </ItemGroup>
+
+  <!--
+    The three local WinRT components. A bare winmd Reference, which is what Telegram.csproj uses
+    for RLottie, is rejected here with NETSDK1130, so CsWinRT generates the projections instead.
+    Everything in CsWinRTInputs is read for metadata; only the namespaces in CsWinRTIncludes are
+    emitted - which is why Win2D's winmd is an input (both components have Win2D types in their
+    signatures) while Win2D itself still comes from its own package projection.
+  -->
+  <PropertyGroup>
+    <CsWinRTIncludes>RLottie;Telegram.Native</CsWinRTIncludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
+    <CsWinRTInputs Include="..\Libraries\rlottie\$(Platform)\RLottie.winmd" />
+    <CsWinRTInputs Include="..\$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.winmd" />
+    <CsWinRTInputs Include="..\$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.winmd" />
+    <CsWinRTInputs Include="$(NuGetPackageRoot)win2d.uwp\1.28.3\lib\uap10.0\Microsoft.Graphics.Canvas.winmd" />
+  </ItemGroup>
+
+  <!-- Kept in step with Telegram.csproj by hand: the generator reads TdParsers and emits parsers,
+       the hand-written code reads the constants and calls them, so the two projects must agree or
+       the generated file calls helpers that were compiled out. -->
+  <PropertyGroup>
+    <TdParsers>Both</TdParsers>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TdParsers)' != 'Pointer'">
+    <DefineConstants>$(DefineConstants);TD_READER_PARSER</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TdParsers)' != 'Reader'">
+    <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Telegram.Generators\Telegram.Generators.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+    <AdditionalFiles Include="..\Libraries\tdjson\td_api.tl" />
+    <CompilerVisibleProperty Include="TdParsers" />
+  </ItemGroup>
+
+  <!-- Same copy-local set as Telegram.csproj, including tdjson.pdb by name: it arrives as a copy
+       local path rather than a Reference, so RAR never runs its related-file discovery and without
+       this the symbols are missing from every TDLib crash. -->
+  <PropertyGroup>
+    <OpenSSLPlatform>-$(Platform)</OpenSSLPlatform>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\RLottie.dll" />
+    <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\RLottie.pri" />
+    <ReferenceCopyLocalPaths Include="..\Libraries\tdjson\$(Platform)\tdjson.dll" />
+    <ReferenceCopyLocalPaths Include="..\Libraries\tdjson\$(Platform)\tdjson.pdb" />
+    <ReferenceCopyLocalPaths Include="..\Libraries\tdjson\$(Platform)\libcrypto-3$(OpenSSLPlatform).dll" />
+    <ReferenceCopyLocalPaths Include="..\Libraries\tdjson\$(Platform)\libssl-3$(OpenSSLPlatform).dll" />
+    <ReferenceCopyLocalPaths Include="..\Libraries\tdjson\$(Platform)\zlib1.dll" />
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+</Project>
