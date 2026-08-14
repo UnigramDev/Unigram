@@ -327,9 +327,45 @@ carries the exception type, message and a stack. The Application event log only 
 
 - [x] Launch under CoreCLR. It runs. Verified by Fela: stickers, animations, WebView2, VLC video
       and secondary windows all work.
-- [ ] **Calls.** In the call window — a `CoreApplication.CreateNewView()` secondary view — video
-      does not render and lottie does not animate. Exceptions are thrown and caught, so nothing
-      reaches `ErrorReports`.
+- [ ] **Calls: `CompositionTarget.Rendering` is delivered to the wrong view.** This is a defect in
+      the Windows SDK XAML projection, not in the app.
+
+      Measured in a throwaway app: a handler subscribed on a secondary view's thread runs on the
+      **main** view's thread (`Rendering handlers ran on: main 4, secondary 4`, where the secondary
+      view is thread 5). The app agrees — its own log pairs
+      `resources thread 23, drawing on 4, dispatcher access False` for the presenter in the call
+      window, against `resources thread 4, drawing on 4` for the ones in the main window.
+
+      Why: `Microsoft.Windows.UI.Xaml.dll` caches the statics object in a plain static field,
+      `__objRef_global__Windows_UI_Xaml_Media_ICompositionTargetStatics`, and the whole assembly
+      contains **no** `ThreadStaticAttribute` or `ThreadLocal` at all. The first view to touch
+      `CompositionTarget` wins it for the process, so `add_Rendering` from any other view registers
+      against the first view's core. `Window.Current` is unaffected because `get_Current` is itself
+      thread-aware; it is registration that binds to the wrong thread. There is no CsWinRT switch
+      for it — the configuration knobs in `WinRT.Runtime.dll` cover dynamic objects, `IReference`,
+      `IDynamicInterfaceCastable`, custom type mappings and the XAML projection choice, nothing
+      about statics caching.
+
+      Consequences: everything frame-driven in a secondary window runs on the main thread. The
+      call's blob waves survive it because `Windows.UI.Composition` objects are agile. Lottie and
+      call video do not, because `WriteableBitmap` is thread-affine, so `Invalidate()` is
+      `RPC_E_WRONG_THREAD` — which the XAML handler swallows, leaving a frozen window and no
+      report.
+
+      Options, in the order I would try them:
+
+      1. **Marshal the frame work.** In `AnimatedImageLoader.OnRendering`, enqueue onto the
+         presenter's dispatcher when `!HasThreadAccess`. One bool test on the main view, which is
+         where the hundreds of animations are; a per-frame enqueue only for secondary views.
+         Smallest change, and it leaves the pacing on a real vsync tick.
+      2. **Ask for the statics per thread.** `RoGetActivationFactory` for
+         `Windows.UI.Xaml.Media.CompositionTarget` with
+         `IID_ICompositionTargetStatics = 2b1af03d-1ed2-4b59-bd00-7594ee92832b` (taken from the
+         .NET Native interop this repository already generates), then add and remove the handler
+         through that. Registers against the right core, and fits the hand-written COM interop
+         already in `Common/Interop.cs`. Unproven — worth a spike before committing to it.
+      3. Report it to microsoft/CsWinRT either way. Any per-view static WinRT **event** is affected,
+         so this is bigger than animations.
 
       What the evidence rules out: the frame driver. The call's blob waves animate, and they run
       off `CompositionVSync` → `CompositionTarget.Rendering`, the same per-view static event
