@@ -3,8 +3,8 @@
     python formatted-text-block-test-messages.py <bot-token> <chat-id>
 
 Run it immediately before testing rather than once and for all: the relative dates are anchored
-a few seconds before send so that they reformat while you are looking at them, and a set sent
-yesterday reformats once a day.
+a few seconds old so they tick while you are looking at them, and a set sent yesterday changes
+width once a day.
 
 Entities are given explicitly instead of through markdown because the interesting cases -
 a date inside a spoiler, two dates in front of one spoiler - have no markdown spelling.
@@ -39,7 +39,24 @@ def at(text, sub, **kwargs):
     return entity
 
 
-def date(text, sub, seconds_ago, fmt='r'):
+# Every date is anchored a few seconds old, because the relative formatter counts seconds
+# (Formatter.RelativeDateAgo ends in Declension(SecondsAgo, value)). The text therefore
+# re-renders every second, and changes WIDTH at each of these:
+#
+#     1 -> 2s     "1 second ago" (12)   -> "2 seconds ago" (13)    +1
+#     9 -> 10s    "9 seconds ago" (13)  -> "10 seconds ago" (14)   +1
+#     59 -> 60s   "59 seconds ago" (14) -> "a minute ago" (12)     -2
+#     2 min       "a minute ago" (12)   -> "2 minutes ago" (13)    +1
+#     10 min      "9 minutes ago" (13)  -> "10 minutes ago" (14)   +1
+#     1 hour      "59 minutes ago" (14) -> "an hour ago" (11)      -3
+#
+# Only a width change moves anything, so the default of 8 seconds gives three of them inside
+# two minutes - at +2s, +52s and +112s - with the counter visibly ticking in between.
+SECONDS, TEN_MINUTES, HOUR = 8, 590, 3590
+
+
+def date(text, sub, seconds_ago=SECONDS, fmt='r'):
+    """A date entity anchored `seconds_ago` in the past."""
     return at(text, sub, type='date_time', unix_time=int(time.time()) - seconds_ago,
               date_time_format=fmt)
 
@@ -125,7 +142,7 @@ def messages():
     # fourteen of displayed text, so the shift is impossible to miss.
     text = '[T9] meeting X and the answer is 42'
     out.append(('T9', text, [
-        date(text, 'X', 55),
+        date(text, 'X'),
         at(text, '42', type='spoiler'),
     ]))
 
@@ -135,21 +152,23 @@ def messages():
     text = '[T10] the answer is A X B and that is all'
     out.append(('T10', text, [
         at(text, 'A X B', type='spoiler'),
-        date(text, 'X', 55),
+        date(text, 'X'),
     ]))
 
     # T11 - two dates in front of one spoiler, the case a single per-date delta cannot express.
+    # Both dates cross at the same moment, by different amounts (+4 and +1), which is the
+    # case a single delta per date could not represent: the spoiler has to move by five.
     text = '[T11] from X until Y the answer is 42'
     out.append(('T11', text, [
-        date(text, 'X', 55),
-        date(text, 'Y', 3595),
+        date(text, 'X'),
+        date(text, 'Y', TEN_MINUTES),
         at(text, '42', type='spoiler'),
     ]))
 
     # T12 - no spoiler at all: this one is about copy after the date reformats.
     text = '[T12] X and then the last word'
     out.append(('T12', text, [
-        date(text, 'X', 55),
+        date(text, 'X', HOUR),
     ]))
 
     # T13 - a spoiler starting exactly where the date ends, with no gap. That is the boundary
@@ -157,7 +176,7 @@ def messages():
     # does not.
     text = '[T13] Xhidden and the rest of the line'
     out.append(('T13', text, [
-        date(text, 'X', 55),
+        date(text, 'X'),
         at(text, 'hidden', type='spoiler'),
     ]))
 

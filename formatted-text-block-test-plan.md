@@ -158,10 +158,23 @@ with `d`/`D` and `t`/`T`. Get the field name wrong and it is **silently ignored*
 format empty, which renders the source text and never updates: it looks like the feature is
 broken rather than like the request was.
 
-Each date is anchored **55 seconds back**, so within a minute the text goes `55 seconds ago` →
-`1 minute ago`: **14 characters to 12**, and that length change is what every one of these bugs
-rides on. T11 also carries one at 59 minutes 55 seconds for a second, slower tick
-(`59 minutes ago` → `1 hour ago`, 14 to 10).
+The relative formatter **counts seconds** — `Formatter.RelativeDateAgo` ends in
+`Declension(SecondsAgo, value)` — so the text re-renders every second. Only a change of
+*width* moves anything, and those happen here:
+
+| at | from | to | Δ |
+|---|---|---|---|
+| 2s | `1 second ago` (12) | `2 seconds ago` (13) | **+1** |
+| 10s | `9 seconds ago` (13) | `10 seconds ago` (14) | **+1** |
+| 60s | `59 seconds ago` (14) | `a minute ago` (12) | **−2** |
+| 2min | `a minute ago` (12) | `2 minutes ago` (13) | **+1** |
+| 10min | `9 minutes ago` (13) | `10 minutes ago` (14) | **+1** |
+| 1h | `59 minutes ago` (14) | `an hour ago` (11) | **−3** |
+
+The script anchors most dates **8 seconds** old, which gives three width changes inside two
+minutes — at roughly +2s, +52s and +112s from send — with the counter ticking visibly in
+between. T11 carries a second date at 9m50s (crosses at +10s) and T12 one at 59m50s
+(crosses at +10s), so have the chat open when you run it.
 
 **A spoiler cannot overlap a date.** Sending one that does, the server splits the spoiler
 around the date rather than rejecting the message — `spoiler("A ") date("X") spoiler(" B")`.
