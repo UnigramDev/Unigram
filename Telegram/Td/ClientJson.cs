@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using Telegram.Common;
@@ -97,6 +98,29 @@ namespace Telegram.Td.Api
             _writer.Reset(_buffer);
 
             return buffer.NullTerminated();
+        }
+
+        /// <summary>
+        /// JSON that arrives as text rather than in a buffer TDLib owns — the instant view editor
+        /// hands its document back through a WebView, so there is a string either way.
+        /// </summary>
+        public static unsafe Object FromJson(string json, ClientResultHandler? handler = null)
+        {
+#if TD_POINTER_PARSER
+            var count = Encoding.UTF8.GetByteCount(json);
+
+            // One byte longer than the text: TdJsonReader stops at the terminator instead of
+            // testing an index on every byte, and a string carries no such thing.
+            var buffer = new byte[count + 1];
+            Encoding.UTF8.GetBytes(json, 0, json.Length, buffer, 0);
+
+            fixed (byte* ptr = buffer)
+            {
+                return FromPtr(ptr, count, handler);
+            }
+#else
+            return FromJson(Encoding.UTF8.GetBytes(json), handler);
+#endif
         }
 
         public static Object FromJson(ReadOnlySpan<byte> jsonData, ClientResultHandler? handler = null)

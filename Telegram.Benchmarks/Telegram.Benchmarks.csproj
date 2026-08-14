@@ -20,6 +20,12 @@
     <TdPointerParser>true</TdPointerParser>
   </PropertyGroup>
 
+  <!-- The same pair the app sets: the property is what the generator reads, the constant is what
+       the hand-written code reads. ClientJson.cs is linked from the app and needs both. -->
+  <PropertyGroup Condition="'$(TdPointerParser)' == 'true'">
+    <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
     <OutputType>Exe</OutputType>
   </PropertyGroup>

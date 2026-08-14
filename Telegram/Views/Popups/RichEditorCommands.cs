@@ -9,7 +9,6 @@ using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Windows.Data.Json;
@@ -218,8 +217,7 @@ namespace Telegram.Views.Popups
                 return null;
             }
 
-            ReadOnlySpan<byte> bytes = Encoding.UTF8.GetBytes(json);
-            return ClientJson.FromJson(bytes, handler) as RichMessage;
+            return ClientJson.FromJson(json, handler) as RichMessage;
         }
 
         public async Task<InputRichMessage> GetInputModelAsync()
@@ -230,8 +228,7 @@ namespace Telegram.Views.Popups
                 return null;
             }
 
-            ReadOnlySpan<byte> bytes = Encoding.UTF8.GetBytes(json);
-            var blocks = ClientJson.FromJson(bytes) as RichMessageSourceBlocks;
+            var blocks = ClientJson.FromJson(json) as RichMessageSourceBlocks;
             if (blocks != null)
             {
                 return new InputRichMessage(blocks, false, true);

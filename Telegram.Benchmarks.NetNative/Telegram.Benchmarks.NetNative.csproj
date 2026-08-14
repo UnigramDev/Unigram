@@ -57,6 +57,13 @@
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
 
+  <!-- After the configuration blocks, which set DefineConstants outright. The property is what the
+       generator reads, the constant is what the hand-written code reads; the app pairs them the
+       same way. -->
+  <PropertyGroup Condition="'$(TdPointerParser)' == 'true'">
+    <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>

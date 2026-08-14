@@ -1043,7 +1043,7 @@ namespace Telegram.Common
             {
                 // Returns an Error rather than throwing on anything it doesn't recognize,
                 // so the pattern match at the call site is the real guard.
-                return ClientJson.FromJson(Encoding.UTF8.GetBytes(json));
+                return ClientJson.FromJson(json);
             }
             catch
             {
