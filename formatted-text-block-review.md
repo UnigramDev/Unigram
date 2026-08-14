@@ -370,30 +370,20 @@ The three facts most of this rests on:
       a cell, and where it costs one string comparison that returns immediately. Deleting seven
       lines across seven files to save that is the wrong trade.
 
-- [ ] **`SetFontSize` only reaches the first paragraph** — `:451-459`. It sets
+- [x] **`SetFontSize` only reaches the first paragraph** — `:451-459`. It sets
       `TextBlock.Blocks[0].FontSize`, so a multi-paragraph block keeps the old size on
       paragraphs 2..n; and on the fast path the `Run` carries its own `FontSize` (`:977`), which
       wins over the paragraph's, making the call a no-op there.
-      → **left open deliberately: it needs a decision, not a patch**
+      → closed as **by design** (Fela), no code change
 
-      Looked at properly while working through the rest. The loop is the easy half; what stops
-      it being a safe change is what the method is *for*:
+      The method exists for the mockup bubbles only: its single caller is
+      `MessageBubble.UpdateMockup` (`MessageBubble.xaml.cs:3712`, the call at `:3770`), which
+      renders the fake conversation in appearance settings where the font-size slider has to
+      take effect without going back through `SetText`. Those messages are one plain paragraph
+      each, so "the first paragraph" is the whole text and there is nothing for a loop to reach.
 
-      - Its one caller is `MessageBubble.xaml.cs:3770`, passing `Theme.Current.MessageFontSize`
-        — the same value `SetText` already resolves `AutoFontSize` to (`:944-947`). So today it
-        asks for the size the text already has, which is why nobody has noticed it not working.
-      - Making it reach every paragraph would newly overwrite **quote** paragraphs, which
-        `SetText` deliberately gave `Theme.Current.CaptionFontSize` (`:1127`). That is the
-        question your own TODO right above that line leaves open — *"quotes in RichMessage use
-        normal font size, quotes in formatted text small, decide what of the two we want to
-        keep"*. A quote is always its own single-paragraph block, so it is `Blocks[0]`, so it is
-        exactly what the current code already clobbers.
-      - Making it work on the fast path also means writing the size onto `_fastRun`, since a
-        `Run`'s own `FontSize` beats its paragraph's.
-
-      All three want the same answer first: is `SetFontSize` meant to override what `SetText`
-      computed, or only to fill in for blocks that have no `AutoFontSize`? Say which and it is a
-      few lines.
+      Which also settles the quote half: `SetFontSize` never sees a quote, so it cannot clobber
+      the caption size, and the TODO at `:1127` stays a question about `SetText` alone.
 
 - [x] **`Selectable.cs`'s header comment contradicts `WalkInlines`** — `Selectable.cs:38-40`
       says the highlighter space counts "1 per inline object (custom emoji, image, math)", but
