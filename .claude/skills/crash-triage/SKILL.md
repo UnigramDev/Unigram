@@ -65,6 +65,35 @@ request. Read the output in this order:
 `--json` for structured output, `--offline` to skip the Microsoft symbol server when triaging
 in bulk.
 
+### A message in the wrong language is a bug of its own — fix it
+
+The grouping hash includes the message, and Windows returns system error text **in the user's
+language**. So one fault splits into a group per locale, and every one of them looks small.
+Under `--limit` truncation the tail of that spread is invisible.
+
+`ExceptionSerializer.TranslateText` (`Telegram/Common/ExceptionSerializer.cs`) exists to undo
+this: a `switch` mapping each localised string onto its canonical English text, applied before
+the report is sent. It is only ever as complete as the last person who looked.
+
+**Whenever you see a non-English message, add it.** Same PR as the fix if there is one, its own
+PR if there isn't — it costs nothing and it stops the group fragmenting further:
+
+```
+crashctl list --days 28 --status all --limit 5000 --json
+```
+
+then filter for messages containing non-ASCII text. Map each to the English wording the same
+fault already produces (find the English group for the same HRESULT — do not invent a
+translation), and add the `case` beside its siblings.
+
+Two things this does *not* fix, so check for them before assuming translation is enough:
+
+- **Volatile substrings.** Some messages embed a thread id, IID or path, so every crash is its
+  own group no matter the language — the ASTA "application is busy" text is the standing
+  example. Those need the variable tail stripped, which is a different change.
+- **User data.** Messages can contain file paths, and paths contain names. `--public` rewrites
+  account names, but a message quoted from `list` output has not been through it.
+
 ### The log tail is where the cause usually is
 
 The stack says *where* the app died. The log tail says *what it was doing*, which is what you
