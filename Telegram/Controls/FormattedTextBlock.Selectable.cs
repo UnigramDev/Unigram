@@ -274,13 +274,14 @@ namespace Telegram.Controls
         // Rendered/highlighter index -> StyledText.Text offset, via _indexMap (built by
         // SetText). Segments are rendered-contiguous; text segments are linear, while
         // emoji/date segments differ in length and snap to their start/end. A null map
-        // (plain single run / fast path) is an exact 1:1 mapping.
+        // (plain single run / fast path) is 1:1 from _origin — which is NOT 0 when the block
+        // renders a middle paragraph of a shared StyledText.
         private int RenderedToStyled(int rendered)
         {
             var map = _indexMap;
             if (map == null || map.Count == 0)
             {
-                return rendered;
+                return rendered + _origin;
             }
 
             var styledEnd = 0;
@@ -307,13 +308,14 @@ namespace Telegram.Controls
 
         // Inverse of RenderedToStyled: an absolute StyledText.Text offset -> this block's
         // rendered/highlighter index, via _indexMap. A null map is the fast path (plain,
-        // full range) where rendered == styled. Used to place the search-query highlight.
+        // single paragraph), where the block's own paragraph starts at _origin. Used to place
+        // the search-query highlight.
         private int StyledToRendered(int styled)
         {
             var map = _indexMap;
             if (map == null || map.Count == 0)
             {
-                return styled;
+                return Math.Max(0, styled - _origin);
             }
 
             var renderedEnd = 0;

@@ -154,6 +154,12 @@ namespace Telegram.Controls
 
         private List<IndexSegment> _indexMap;
 
+        // The StyledText offset that rendered index 0 maps to. The map holds absolute offsets,
+        // so this is only read on the no-map fallback — where the block can still be rendering
+        // a paragraph that doesn't start at 0, since MessageTextBlock hands out slices of one
+        // shared StyledText. Zero for a block that renders from the first paragraph.
+        private int _origin;
+
         private Canvas Below;
         private RichTextBlock TextBlock;
 
@@ -932,6 +938,9 @@ namespace Telegram.Controls
             _first = rangeStart;
             _last = rangeEnd;
             _contentLength = -1;
+            _origin = styled != null && rangeStart <= rangeEnd && rangeStart < styled.Paragraphs.Count
+                ? styled.Paragraphs[rangeStart].Offset
+                : 0;
 
             if (!_templateApplied)
             {
@@ -1002,8 +1011,8 @@ namespace Telegram.Controls
                     direct.SetStringProperty(_fastRun, XamlPropertyIndex.Run_Text, styled.Paragraphs[rangeStart].Text);
                 }
 
-                // Plain single run: rendered index == styled offset, so the converter's
-                // 1:1 fallback is exact — no map needed.
+                // Plain single run: rendered index == styled offset shifted by _origin, which
+                // the converters' no-map fallback applies — no map needed.
                 _indexMap = null;
 
                 // Plain text has no spoiler/cached/marked; only the query may apply.
