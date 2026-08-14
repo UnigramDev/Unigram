@@ -572,10 +572,19 @@ namespace Telegram.Controls
                     : -1;
                 if (find != -1)
                 {
+                    // Inline mode renders into a Span the host owns, behind whatever it put in
+                    // front (a sender name), and highlighter indices count from the start of
+                    // the whole RichTextBlock. Same correction the spoiler ranges apply.
+                    var start = StyledToRendered(find);
+                    if (_spanForInlines != null)
+                    {
+                        start += _spanForInlines.ContentStart.OffsetToIndex(TextBlock);
+                    }
+
                     var highligher = new TextHighlighter();
                     highligher.Foreground = new SolidColorBrush(Colors.White);
                     highligher.Background = new SolidColorBrush(Colors.Orange);
-                    highligher.Ranges.Add(new TextRange { StartIndex = StyledToRendered(find), Length = _query.Length });
+                    highligher.Ranges.Add(new TextRange { StartIndex = start, Length = _query.Length });
 
                     TextBlock.TextHighlighters.Add(highligher);
                 }

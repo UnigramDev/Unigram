@@ -367,12 +367,17 @@ The three facts most of this rests on:
       → fixed in the commit that checked this box; the comment now says an inline object counts
       0 and explains why (the ZWNJ beside it is the unit that stands in for it).
 
-- [ ] **Inline mode misses `textOffset` on the query highlight** — `:505` vs `:1280`
+- [x] **Inline mode misses `textOffset` on the query highlight** — `:505` vs `:1280`
       **[latent]**. The spoiler branch adds `_spanForInlines.ContentStart.OffsetToIndex(TextBlock)`
       to its ranges; the query branch doesn't, so a search highlight in a `ChatCell` brief would
       land short by the length of the `"Fela: "` prefix. Latent only because no caller passes a
       non-empty query to an inline-mode block today (the only real query is
       `MessageBubble` → `MessageTextBlock`).
+      → fixed in the commit that checked this box
+
+      Fixed to match the spoiler branch. Worth knowing it is **unexercised**: no caller and
+      no test reaches it, so it is right by symmetry with code that works, not by
+      observation. If chat-list search highlighting is ever wired up, check that line first.
 
 - [x] **`RenderedToStyled`/`StyledToRendered` are linear** — `Selectable.cs:278/311`. One
       segment per run, scanned per pointer move during a drag (`GetSelectionBoundary`,
