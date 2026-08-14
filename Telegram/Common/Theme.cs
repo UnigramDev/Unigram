@@ -111,9 +111,15 @@ namespace Telegram.Common
             this["EmojiThemeFontFamilyWithSymbols"] = new FontFamily(XamlAutoFontFamily + comma + "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
             this["EmojiThemeFontFamilyWithRounded"] = new FontFamily(XamlAutoFontFamily + comma + "ms-appx:///Assets/Fonts/Nunito.ttf#Nunito Bold" + comma + "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
             this["EmojiThemeFontFamilyWithSerif"] = new FontFamily(emojiFontFamily + comma + "Times New Roman");
+
+            // Code spans and blocks. The text fallback comes last so a character the monospace
+            // faces don't cover - an emoji inside a code span - still renders.
+            MonospaceFontFamily = new FontFamily("Cascadia Mono, Consolas" + comma + XamlAutoFontFamily);
         }
 
         public string XamlAutoFontFamily { get; private set; }
+
+        public FontFamily MonospaceFontFamily { get; private set; }
 
         private bool _legacyScrollBars;
         private ResourceDictionary _scrollBars;

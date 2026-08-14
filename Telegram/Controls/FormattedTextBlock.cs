@@ -1074,11 +1074,6 @@ namespace Telegram.Controls
             TextParagraphType lastType = null;
             TextParagraphType firstType = null;
 
-            FontFamily monospaceFontFamily = null;
-            FontFamily GetMonospaceFontFamily()
-            {
-                return monospaceFontFamily ?? new FontFamily("Cascadia Mono, Consolas, " + Theme.Current.XamlAutoFontFamily);
-            }
 
             var alignment = TextAlignment;
             var offset = 0;
@@ -1177,7 +1172,7 @@ namespace Telegram.Controls
                                 var native = direct.GetXamlDirectObject(hyperlink);
                                 var collection = direct.GetXamlDirectObjectProperty(native, XamlPropertyIndex.Span_Inlines);
 
-                                GetOrCreateRun(direct, collection, data, direction, Native.TextStyle.None, GetMonospaceFontFamily(), partFontSize, false);
+                                GetOrCreateRun(direct, collection, data, direction, Native.TextStyle.None, Theme.Current.MonospaceFontFamily, partFontSize, false);
                                 Map(part.Offset + entity.Offset, data.Length, data.Length);
                                 offset += data.Length;
 
@@ -1185,7 +1180,7 @@ namespace Telegram.Controls
                             }
                             else
                             {
-                                direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, GetMonospaceFontFamily());
+                                direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, Theme.Current.MonospaceFontFamily);
 
                                 var placeholder = GetOrCreateRun(direct, inlines, data, direction, Native.TextStyle.None, null, 0, false);
                                 Map(part.Offset + entity.Offset, data.Length, data.Length);
@@ -1201,7 +1196,7 @@ namespace Telegram.Controls
                         }
                         else
                         {
-                            GetOrCreateRun(direct, inlines, data, direction, Native.TextStyle.None, GetMonospaceFontFamily(), 0, false);
+                            GetOrCreateRun(direct, inlines, data, direction, Native.TextStyle.None, Theme.Current.MonospaceFontFamily, 0, false);
                             Map(part.Offset + entity.Offset, data.Length, data.Length);
                             offset += data.Length;
                         }
@@ -1972,7 +1967,8 @@ namespace Telegram.Controls
 
         private void ProcessCodeBlock(XamlDirect direct, IXamlDirectObject inlines, IList<Token> tokens)
         {
-            var fontFamily = new FontFamily("Cascadia Mono, Consolas, " + Theme.Current.XamlAutoFontFamily);
+            // Recursive: a new FontFamily here was one per node of the token tree.
+            var fontFamily = Theme.Current.MonospaceFontFamily;
 
             foreach (var token in tokens)
             {

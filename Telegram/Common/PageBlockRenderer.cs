@@ -722,7 +722,7 @@ namespace Telegram.Common
                     textBlock.FontWeight = FontWeights.SemiBold;
                     break;
                 case PageBlockPreformatted:
-                    textBlock.FontFamily = new FontFamily("Cascadia Mono, Consolas, " + Theme.Current.XamlAutoFontFamily);
+                    textBlock.FontFamily = Theme.Current.MonospaceFontFamily;
                     break;
             }
         }

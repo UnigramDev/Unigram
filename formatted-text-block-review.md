@@ -108,7 +108,8 @@ The three facts most of this rests on:
       thread-affine, but it can be allocated lazily on the first `GetColor` call instead of in
       the field initializer — only code blocks ever touch it.
 
-- [ ] **`monospaceFontFamily` is never assigned** — `:1060-1064` **[live]**
+- [x] **`monospaceFontFamily` is never assigned** — `:1060-1064` **[live]**
+      → fixed in the commit that checked this box
 
       ```csharp
       FontFamily monospaceFontFamily = null;
@@ -119,17 +120,26 @@ The three facts most of this rests on:
       ```
 
       The local is only ever read, so the memoization does nothing: every inline-code entity in
-      the paragraph allocates a fresh `FontFamily` plus the concatenated string. `??=` fixes the
-      per-`SetText` case; a `[ThreadStatic]` cache keyed on `Theme.Current.XamlAutoFontFamily`
-      fixes it app-wide.
+      the paragraph allocates a fresh `FontFamily` plus the concatenated string.
 
       Same in the recursive `ProcessCodeBlock` (`:1956`) — `new FontFamily(...)` is built once
-      per **token node**, so a syntax-highlighted block allocates one per span in the tree. It
-      should take the family as a parameter (or read the shared cache).
+      per **token node**, so a syntax-highlighted block allocates one per span in the tree.
 
       Worth remembering that a font chain is not free at use either: see the
       "packaged font fallback cost" note — RichEdit pays ~1 ms per run for a chain whose first
       entry misses.
+
+      Fixed one level up, on Fela's call: the chain is now `Theme.MonospaceFontFamily`, built in
+      `UpdateEmojiSet` beside the other families — which is also the only place it can change —
+      and every site in the app reads it. That covers the eight other call sites, six of which
+      (`TextBlockHelper.cs:226/347`, `GameContent.xaml.cs:240/245`,
+      `ProfileHeader.xaml.cs:1735/1740`) were allocating one `FontFamily` **per code entity
+      inside a render loop**.
+
+      Those six built `"Cascadia Mono, Consolas"` with no fallback tail, so they now inherit
+      one: a character the monospace faces don't cover (an emoji in a code span in a bio) will
+      render instead of dropping to the system default. Deliberate, but it is a rendering
+      change — say so if you'd rather keep two chains.
 
 - [ ] **`OnPointerMoved` re-sets the cursor on every sample** — `:322-331` **[live]**
 
