@@ -17,20 +17,6 @@ using Windows.Storage;
 using Windows.System.Profile;
 using AutoDownloadSettings = Telegram.Services.Settings.AutoDownloadSettings;
 
-#if !ENABLE_CALLS
-
-namespace Telegram.Native.Calls
-{
-    public enum VoipDataSaving
-    {
-        Never,
-        Mobile,
-        Always,
-    }
-}
-
-#endif
-
 namespace Telegram.Services
 {
     public interface ISettingsService
