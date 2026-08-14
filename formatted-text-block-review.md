@@ -261,7 +261,8 @@ The three facts most of this rests on:
       Now a plain class. `EntityType` went with it: it was a positional member only because the
       constructor needs it to compute `Date`, and nothing ever read it back.
 
-- [ ] **Revealing a spoiler wipes the search highlight** — `:435-436` **[live]**
+- [x] **Revealing a spoiler wipes the search highlight** — `:435-436` **[live]**
+      → fixed in the commit that checked this box
 
       ```csharp
       SetText(_clientService, _text, _first, _last, _fontSize);
@@ -272,8 +273,9 @@ The three facts most of this rests on:
       not needed to repaint — it only sets `_query = ""`, dropping the in-message search
       highlight (`MessageBubble.xaml.cs:147`) when the user taps a spoiler. Delete the line.
 
-- [ ] **`ApplyHighlighters` silently drops everything when the inner block isn't loaded** —
+- [x] **`ApplyHighlighters` silently drops everything when the inner block isn't loaded** —
       `:482` **[live, but pre-existing]**
+      → fixed in the commit that checked this box
 
       The `!TextBlock.IsLoaded` early-out predates the refactor (it was `SetQuery`'s), but it now
       gates the spoiler/cached/marked highlighters too, and there is **no re-apply on load**:
@@ -286,6 +288,11 @@ The three facts most of this rests on:
       guard is dead weight; worth confirming, then either dropping the guard or setting a
       `_highlightersPending` flag that `OnLoaded` honours. As written the behaviour depends on
       an undocumented ordering.
+
+      Took the flag rather than dropping the guard, since that is the option that is right
+      either way: if `IsLoaded` is already true at template time nothing changes at all, and if
+      it isn't, the highlighters now arrive on load instead of never. The ordering question
+      itself stays open — this makes the answer stop mattering.
 
 - [ ] **Date-driven spoiler fix-up loses deltas and never touches the ranges** — `:2508-2519`
       **[latent]**

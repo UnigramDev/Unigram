@@ -131,6 +131,8 @@ namespace Telegram.Controls
         private TextHighlighter _marked;
         private TextHighlighter _spoiler;
 
+        private bool _highlightersPending;
+
         // Map between the rendered/highlighter index space (the `offset` SetText builds,
         // and the space TextHighlighter.Ranges use) and StyledText.Text offsets. Built
         // by SetText as it emits runs; used by the selection layer (FormattedTextBlock.
@@ -477,8 +479,9 @@ namespace Telegram.Controls
 
                 if (value)
                 {
+                    // SetText reapplies the highlighters; SetQuery(string.Empty) used to follow
+                    // it for that, and only had the side effect of dropping the search term.
                     SetText(_clientService, _text, _first, _last, _fontSize);
-                    SetQuery(string.Empty);
 
                     if (Below == null || _spoilerPresenter == null)
                     {
@@ -526,9 +529,13 @@ namespace Telegram.Controls
         {
             if (TextBlock == null || !TextBlock.IsLoaded)
             {
+                // Everything SetText just computed - spoiler included - would be lost, and
+                // nothing else would put it back, so remember to run again once we're loaded.
+                _highlightersPending = true;
                 return;
             }
 
+            _highlightersPending = false;
             TextBlock.TextHighlighters.Clear();
 
             if (_text != null && _query?.Length > 0 && _last >= _first)
@@ -903,6 +910,14 @@ namespace Telegram.Controls
                 }
 
                 hyperlink.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
+            }
+
+            // OnApplyTemplate runs before we're loaded, so the highlighters it computed may
+            // have been dropped. This is the only chance to put them back for a block that
+            // returns below.
+            if (_highlightersPending)
+            {
+                ApplyHighlighters();
             }
 
             // Don't reapply the text if it was just applied by OnApplyTemplate
