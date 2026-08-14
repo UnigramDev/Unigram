@@ -275,6 +275,13 @@ namespace Telegram.ViewModels
             private set => Set(ref _deserializationHandler, value);
         }
 
+        private string _deserializationFileChecks;
+        public string DeserializationFileChecks
+        {
+            get => _deserializationFileChecks;
+            private set => Set(ref _deserializationFileChecks, value);
+        }
+
         private void UpdateDeserialization()
         {
             var payloads = TdThroughput.Payloads;
@@ -286,6 +293,7 @@ namespace Telegram.ViewModels
                 DeserializationRate = idle;
                 DeserializationShare = idle;
                 DeserializationHandler = idle;
+                DeserializationFileChecks = idle;
                 return;
             }
 
@@ -302,6 +310,12 @@ namespace Telegram.ViewModels
                 megabytes / parsing, parsing * 1000000d / payloads, seconds * 1000000d / payloads);
             DeserializationHandler = string.Format("{0:N2}s, {1:N0}% of the parse",
                 handler, handler * 100 / seconds);
+
+            var checks = TdThroughput.FileChecks;
+            DeserializationFileChecks = checks == 0
+                ? "none"
+                : string.Format("{0:N0} checks, {1:N2}s, {2:N0} µs each",
+                    checks, TdThroughput.FileCheckSeconds, TdThroughput.FileCheckSeconds * 1000000d / checks);
             DeserializationShare = string.Format("{0:N2}% of {1:N0}s",
                 seconds * 100 / TdThroughput.WallSeconds, TdThroughput.WallSeconds);
         }

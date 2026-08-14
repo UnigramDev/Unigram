@@ -34,6 +34,8 @@ namespace Telegram.Common
         private static long _bytes;
         private static long _ticks;
         private static long _handlerTicks;
+        private static long _fileChecks;
+        private static long _fileCheckTicks;
         private static long _since = Stopwatch.GetTimestamp();
 
         /// <summary>
@@ -101,6 +103,19 @@ namespace Telegram.Common
             }
         }
 
+        /// <summary>
+        /// The existence check inside that, counted on its own because it is the one syscall on
+        /// this thread and the only part that cannot be made cheaper - only rarer or moved.
+        /// </summary>
+        public static void RecordFileCheck(long started)
+        {
+            if (started != 0)
+            {
+                _fileCheckTicks += Stopwatch.GetTimestamp() - started;
+                _fileChecks++;
+            }
+        }
+
         public static long Payloads => _payloads;
 
         public static long Bytes => _bytes;
@@ -113,6 +128,10 @@ namespace Telegram.Common
 
         /// <summary>The part of it that was file dedupe rather than reading JSON.</summary>
         public static double HandlerSeconds => _handlerTicks / (double)Stopwatch.Frequency;
+
+        public static long FileChecks => _fileChecks;
+
+        public static double FileCheckSeconds => _fileCheckTicks / (double)Stopwatch.Frequency;
 
         /// <summary>
         /// Time since the last reset. Parsing as a share of this is the number that says whether
@@ -127,6 +146,8 @@ namespace Telegram.Common
             _bytes = 0;
             _ticks = 0;
             _handlerTicks = 0;
+            _fileChecks = 0;
+            _fileCheckTicks = 0;
             _since = Stopwatch.GetTimestamp();
         }
     }

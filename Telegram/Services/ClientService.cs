@@ -3168,9 +3168,16 @@ namespace Telegram.Services
             // is GetFileAsync catching FileNotFoundException at the point of use. What the
             // first-sight check is genuinely for is the cache being cleared between sessions,
             // which it still covers.
-            if (created && obj.Local.IsDownloadingCompleted && !NativeUtils.FileExists(obj.Local.Path))
+            if (created && obj.Local.IsDownloadingCompleted)
             {
-                Send(new DeleteFile(obj.Id));
+                var checking = TdThroughput.BeginHandler();
+                var exists = NativeUtils.FileExists(obj.Local.Path);
+                TdThroughput.RecordFileCheck(checking);
+
+                if (!exists)
+                {
+                    Send(new DeleteFile(obj.Id));
+                }
             }
 
             _files[obj.Id] = obj;
