@@ -16,6 +16,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using Telegram.Native;
 using Telegram.Services;
 using Windows.ApplicationModel;
@@ -482,6 +483,12 @@ namespace Telegram.Common
 
                 var part = parts[i];
 
+                if (TryTranslateAstaCall(part, out string asta))
+                {
+                    builder.Append(asta);
+                    continue;
+                }
+
                 var index = part.IndexOf('(');
                 if (index > 0)
                 {
@@ -495,6 +502,33 @@ namespace Telegram.Common
             }
 
             return builder.ToString();
+        }
+
+        // The labels around the IID and the method index are localised, but the GUID and the number
+        // that follows it are not, so the two are matched structurally rather than by their wording.
+        private static readonly Regex _astaCall = new(@"(\{[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\})[^)0-9]{0,64}([0-9]+)", RegexOptions.Compiled);
+
+        // RPC_E_SERVERCALL_RETRYLATER carries a detail sentence naming the ASTA thread, and that id is
+        // different on every hang, so each report would otherwise land in a group of its own. Only the
+        // IID and the method index say anything about which call hung, so they're all that's kept.
+        private static bool TryTranslateAstaCall(string text, out string translated)
+        {
+            // "ASTA" is left untranslated in every locale seen, and restricts the match to this message.
+            if (text.Contains("ASTA"))
+            {
+                var match = _astaCall.Match(text);
+                if (match.Success)
+                {
+                    translated = string.Format(CultureInfo.InvariantCulture,
+                        "The message filter indicated that the application is busy. A COM call (IID: {0}, method index: {1}) to an ASTA appears deadlocked and was timed out.",
+                        match.Groups[1].Value.ToUpperInvariant(),
+                        match.Groups[2].Value);
+                    return true;
+                }
+            }
+
+            translated = null;
+            return false;
         }
 
         private static string TranslateText(string text)
