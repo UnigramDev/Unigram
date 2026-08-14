@@ -1409,7 +1409,11 @@ namespace Telegram.Controls.Chats
                     var token = Cancel();
 
                     await incremental.LoadMoreItemsAsync(0);
-                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
+                    // Snapshot on the UI thread: the diff runs on the pool, and these keep growing.
+                    var oldItems = this.ToArray();
+                    var newItems = source.ToArray();
+
+                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(oldItems, newItems, DefaultDiffHandler, DefaultOptions));
 
                     if (token.IsCancellationRequested)
                     {
@@ -1439,7 +1443,11 @@ namespace Telegram.Controls.Chats
                     _loading = true;
 
                     var token = Cancel();
-                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
+                    // Snapshot on the UI thread: the diff runs on the pool, and these keep growing.
+                    var oldItems = this.ToArray();
+                    var newItems = source.ToArray();
+
+                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(oldItems, newItems, DefaultDiffHandler, DefaultOptions));
 
                     if (token.IsCancellationRequested)
                     {
@@ -1467,7 +1475,11 @@ namespace Telegram.Controls.Chats
                     _loading = true;
 
                     var token = Cancel();
-                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
+                    // Snapshot on the UI thread: the diff runs on the pool, and these keep growing.
+                    var oldItems = this.ToArray();
+                    var newItems = source.ToArray();
+
+                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(oldItems, newItems, DefaultDiffHandler, DefaultOptions));
 
                     if (token.IsCancellationRequested)
                     {
@@ -1502,7 +1514,11 @@ namespace Telegram.Controls.Chats
 
                 if (result.Count > 0 && !token.IsCancellationRequested)
                 {
-                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, _source, DefaultDiffHandler, DefaultOptions));
+                    // Snapshot on the UI thread: the diff runs on the pool, and these keep growing.
+                    var oldItems = this.ToArray();
+                    var newItems = _source.ToArray();
+
+                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(oldItems, newItems, DefaultDiffHandler, DefaultOptions));
 
                     if (token.IsCancellationRequested)
                     {

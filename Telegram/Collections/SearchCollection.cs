@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -111,7 +112,13 @@ namespace Telegram.Collections
                     var token = Cancel();
 
                     await incremental.LoadMoreItemsAsync(0);
-                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
+                    // The diff runs on the thread pool, but both collections belong to the UI thread
+                    // and keep growing while it runs - reading one as another thread appends to it is
+                    // what threw out of Array.Copy. Snapshot first; the diff only needs the sequences.
+                    var oldItems = this.ToArray();
+                    var newItems = source.ToArray();
+
+                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(oldItems, newItems, DefaultDiffHandler, DefaultOptions));
 
                     if (token.IsCancellationRequested)
                     {
