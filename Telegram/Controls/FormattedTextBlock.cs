@@ -243,15 +243,28 @@ namespace Telegram.Controls
                 TextBlock.IsTextSelectionEnabled = TextSelection == TextSelectionMode.Enabled;
             }
 
-            for (int i = 0; i < _blocks?.Count; i++)
+            // The XAML-declared Blocks, handed over once. Dropped afterwards because a second
+            // OnApplyTemplate - a style or theme change - would otherwise re-parent Paragraphs
+            // that already belong to a RichTextBlock. Blocks reads through to TextBlock.Blocks
+            // from here on.
+            if (TextBlock != null && _blocks != null)
             {
-                var block = _blocks[i] as Paragraph;
-                TextBlock.Blocks.Add(block);
-
-                if (i == _blocks.Count - 1 && block.Inlines.Count > 0 && block.Inlines[^1] is Span spanForInlines)
+                for (int i = 0; i < _blocks.Count; i++)
                 {
-                    _spanForInlines = spanForInlines;
+                    if (_blocks[i] is not Paragraph block)
+                    {
+                        continue;
+                    }
+
+                    TextBlock.Blocks.Add(block);
+
+                    if (i == _blocks.Count - 1 && block.Inlines.Count > 0 && block.Inlines[^1] is Span spanForInlines)
+                    {
+                        _spanForInlines = spanForInlines;
+                    }
                 }
+
+                _blocks = null;
             }
 
             _templateApplied = true;
@@ -1207,16 +1220,16 @@ namespace Telegram.Controls
                         {
                             if (_ignoreSpoilers is false && entity.HasFlag(Native.TextStyle.Spoiler))
                             {
-                                var hyperlink = GetOrCreateSpan(direct);
-                                direct.SetObjectProperty(hyperlink, XamlPropertyIndex.TextElement_Foreground, null);
-                                direct.SetObjectProperty(hyperlink, XamlPropertyIndex.TextElement_FontFamily, BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily);
+                                var span = GetOrCreateSpan(direct);
+                                direct.SetObjectProperty(span, XamlPropertyIndex.TextElement_Foreground, null);
+                                direct.SetObjectProperty(span, XamlPropertyIndex.TextElement_FontFamily, BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily);
 
                                 (_spoilers ??= new List<TextStyleSpoiler>()).Add(new TextStyleSpoiler(entity.Offset + dates, entity.Length, new TextStyleSpoiler(entity.Offset, entity.Length, i - _first)));
 
                                 spoiler ??= new TextHighlighter();
                                 spoiler.Ranges.Add(new TextRange { StartIndex = offset, Length = entity.Length });
 
-                                parent = hyperlink;
+                                parent = span;
                                 parentInlines = direct.GetXamlDirectObjectProperty(parent, XamlPropertyIndex.Span_Inlines);
                             }
                             else if ((entity.HasFlag(Native.TextStyle.Mention) || entity.HasFlag(Native.TextStyle.Url)))
@@ -1274,9 +1287,9 @@ namespace Telegram.Controls
                         }
                         else if (_ignoreSpoilers is false && entity.HasFlag(Native.TextStyle.Spoiler))
                         {
-                            var hyperlink = GetOrCreateSpan(direct);
-                            direct.SetObjectProperty(hyperlink, XamlPropertyIndex.TextElement_Foreground, null);
-                            direct.SetObjectProperty(hyperlink, XamlPropertyIndex.TextElement_FontFamily, BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily);
+                            var span = GetOrCreateSpan(direct);
+                            direct.SetObjectProperty(span, XamlPropertyIndex.TextElement_Foreground, null);
+                            direct.SetObjectProperty(span, XamlPropertyIndex.TextElement_FontFamily, BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily);
 
                             (_spoilers ??= new List<TextStyleSpoiler>()).Add(new TextStyleSpoiler(entity.Offset + dates, entity.Length, i - _first));
 
@@ -1288,8 +1301,8 @@ namespace Telegram.Controls
                             spoiler ??= new TextHighlighter();
                             spoiler.Ranges.Add(new TextRange { StartIndex = textOffset + offset, Length = entity.Length });
 
-                            parent = hyperlink;
-                            parentInlines = direct.GetXamlDirectObjectProperty(hyperlink, XamlPropertyIndex.Span_Inlines);
+                            parent = span;
+                            parentInlines = direct.GetXamlDirectObjectProperty(span, XamlPropertyIndex.Span_Inlines);
                         }
 
                         if (_spanForInlines == null && entity.HasFlag(TextStyle.Marked))
@@ -1738,10 +1751,10 @@ namespace Telegram.Controls
             if (_spanForInlines == null)
             {
                 // Would be cool to optimize this for contiguous paragraphs
-                foreach (var hyperlink in _spoilers)
+                foreach (var spoiler in _spoilers)
                 {
-                    StyledParagraph styled = _text.Paragraphs[_first + hyperlink.ParagraphIndex];
-                    Paragraph paragraph = TextBlock.Blocks[hyperlink.ParagraphIndex] as Paragraph;
+                    StyledParagraph styled = _text.Paragraphs[_first + spoiler.ParagraphIndex];
+                    Paragraph paragraph = TextBlock.Blocks[spoiler.ParagraphIndex] as Paragraph;
 
                     if (paragraph == null)
                     {
@@ -1749,8 +1762,8 @@ namespace Telegram.Controls
                         continue;
                     }
 
-                    int xoffset = hyperlink.Offset;
-                    int xlength = hyperlink.Length;
+                    int xoffset = spoiler.Offset;
+                    int xlength = spoiler.Length;
 
                     var partial = _text.Text.Substring(styled.Offset, styled.Length);
                     var entities = styled.GetParts(out partial) ?? TextStyleRun.NoParts;
@@ -1802,12 +1815,12 @@ namespace Telegram.Controls
                 }
 
                 // Would be cool to optimize this for contiguous paragraphs
-                foreach (var hyperlink in _spoilers)
+                foreach (var spoiler in _spoilers)
                 {
-                    StyledParagraph styled = _text.Paragraphs[_first + hyperlink.ParagraphIndex];
+                    StyledParagraph styled = _text.Paragraphs[_first + spoiler.ParagraphIndex];
 
-                    int xoffset = styled.Offset + hyperlink.Offset;
-                    int xlength = hyperlink.Length;
+                    int xoffset = styled.Offset + spoiler.Offset;
+                    int xlength = spoiler.Length;
 
                     var partial = _text.Text.Replace('\n', ' ');
                     var entities = _text.Parts;
@@ -2272,10 +2285,13 @@ namespace Telegram.Controls
 
         private static void OnHyperlinkForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((FormattedTextBlock)d).OnHyperlinkForegroundChanged((Brush)e.NewValue, (Brush)e.OldValue);
+            ((FormattedTextBlock)d).RecolorHyperlinks((Brush)e.NewValue, (Brush)e.OldValue);
         }
 
-        private void OnHyperlinkForegroundChanged(Brush newValue, Brush oldValue)
+        // Both foregrounds land on Hyperlinks and the code ones are not tracked separately, so
+        // this recolours by identity: only the links still carrying the outgoing brush. If the
+        // two properties were ever set to the same Brush instance, one change would move both.
+        private void RecolorHyperlinks(Brush newValue, Brush oldValue)
         {
             foreach (var child in _activeHyperlinks)
             {
@@ -2301,19 +2317,9 @@ namespace Telegram.Controls
 
         private static void OnCodeForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((FormattedTextBlock)d).OnCodeForegroundChanged((Brush)e.NewValue, (Brush)e.OldValue);
+            ((FormattedTextBlock)d).RecolorHyperlinks((Brush)e.NewValue, (Brush)e.OldValue);
         }
 
-        private void OnCodeForegroundChanged(Brush newValue, Brush oldValue)
-        {
-            foreach (var child in _activeHyperlinks)
-            {
-                if (child.Foreground == oldValue)
-                {
-                    child.Foreground = newValue;
-                }
-            }
-        }
 
         #endregion
 
@@ -2597,20 +2603,20 @@ namespace Telegram.Controls
                 _timer.Start();
             }
 
-            public static void Subscribe(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun Yolo, TextEntityTypeDateTime entity)
+            public static void Subscribe(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun run, TextEntityTypeDateTime entity)
             {
                 _current ??= new();
-                _current.SubscribeImpl(element, textBlock, paragraph, Yolo, entity);
+                _current.SubscribeImpl(element, textBlock, paragraph, run, entity);
             }
 
-            private void SubscribeImpl(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun Yolo, TextEntityTypeDateTime entity)
+            private void SubscribeImpl(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun run, TextEntityTypeDateTime entity)
             {
                 if (_dates.ContainsKey(element))
                 {
                     return;
                 }
 
-                _dates.Add(element, new TextDate(element, textBlock, paragraph, Yolo, entity));
+                _dates.Add(element, new TextDate(element, textBlock, paragraph, run, entity));
                 _timer.Stop();
 
                 _timer.Interval = GetNextUpdateInterval(_dates.Values, false);

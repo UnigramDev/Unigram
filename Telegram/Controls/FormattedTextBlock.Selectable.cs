@@ -33,12 +33,13 @@ namespace Telegram.Controls
     //
     // Indices are in TextHighlighter.Ranges space: GetPositionFromPoint resolves a
     // point to a TextPointer and GetHighlightIndex maps it there. That space counts
-    // only content units — characters in Runs, plus 1 per inline object (custom emoji,
-    // image, math) and per line break — and does NOT count paragraph breaks (the
-    // shift correction in SetText exists for exactly that reason). The ZWNJ workaround
-    // characters FormattedTextBlock injects are real Run chars, so they're counted and
-    // highlighting them is harmless (zero width). Copy, which needs FormattedText/
-    // StyledText offsets, is a separate layer.
+    // only content units — characters in Runs, plus 1 per line break — and does NOT
+    // count paragraph breaks (the shift correction in SetText exists for exactly that
+    // reason). An inline object (custom emoji, image, math) counts 0: the ZWNJ that
+    // SetText always emits next to one is the unit that stands in for it, which is what
+    // the index map records. The ZWNJ workaround characters are real Run chars, so
+    // they're counted and highlighting them is harmless (zero width). Copy, which needs
+    // FormattedText/StyledText offsets, is a separate layer.
     public partial class FormattedTextBlock : ISelectableControl
     {
         private TextHighlighter _selection;

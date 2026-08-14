@@ -359,11 +359,13 @@ The three facts most of this rests on:
       paragraphs 2..n; and on the fast path the `Run` carries its own `FontSize` (`:977`), which
       wins over the paragraph's, making the call a no-op there.
 
-- [ ] **`Selectable.cs`'s header comment contradicts `WalkInlines`** — `Selectable.cs:38-40`
+- [x] **`Selectable.cs`'s header comment contradicts `WalkInlines`** — `Selectable.cs:38-40`
       says the highlighter space counts "1 per inline object (custom emoji, image, math)", but
       `case InlineUIContainer: break;` (`:394-395`) counts 0, which is what `SetText`'s
       `Map(..., 1, entity.Length) // emoji (container=0 rendered) + ZWNJ` (`:1406`) assumes. The
       code is self-consistent; the comment is the thing that will mislead.
+      → fixed in the commit that checked this box; the comment now says an inline object counts
+      0 and explains why (the ZWNJ beside it is the unit that stands in for it).
 
 - [ ] **Inline mode misses `textOffset` on the query highlight** — `:505` vs `:1280`
       **[latent]**. The spoiler branch adds `_spanForInlines.ContentStart.OffsetToIndex(TextBlock)`
@@ -372,11 +374,17 @@ The three facts most of this rests on:
       non-empty query to an inline-mode block today (the only real query is
       `MessageBubble` → `MessageTextBlock`).
 
-- [ ] **`RenderedToStyled`/`StyledToRendered` are linear** — `Selectable.cs:278/311`. One
+- [x] **`RenderedToStyled`/`StyledToRendered` are linear** — `Selectable.cs:278/311`. One
       segment per run, scanned per pointer move during a drag (`GetSelectionBoundary`,
       `GetSelectedText`). Segments are sorted and non-overlapping in both spaces, so a binary
       search is a two-line change; worth it for long code blocks, where the segment count is the
       token count.
+      → closed as **not worth it**, no code change
+
+      The last sentence was wrong, and it was the whole argument. `_indexMap` is built by
+      `SetText`'s entity loop only — `ProcessCodeBlock` adds spans and runs but never segments,
+      so a syntax-highlighted block contributes **one** segment, not one per token. Real maps run
+      to a handful of entries, where a linear scan beats a binary search. Left alone.
 
 - [ ] **`WalkInlines` allocates an enumerator per level, per pointer move** —
       `Selectable.cs:367`. `foreach` over `InlineCollection` goes through the projected
@@ -384,27 +392,49 @@ The three facts most of this rests on:
       call) — measure before changing, but note it sits on the same path `_contentLength`
       (`:85-89`) was cached for.
 
-- [ ] **`OnHyperlinkForegroundChanged` and `OnCodeForegroundChanged` are identical** —
+- [x] **`OnHyperlinkForegroundChanged` and `OnCodeForegroundChanged` are identical** —
       `:2252-2261` and `:2281-2290`. Both walk **all** hyperlinks and recolor those whose
       `Foreground` matches the old value, so if the link brush and the code brush are ever the
       same instance, one property change recolors both kinds. Tag the hyperlink kind, or keep
       the code links in their own list.
+      → merged into one `RecolorHyperlinks` in the commit that checked this box
 
-- [ ] **Naming, while in here** — `var hyperlink = GetOrCreateSpan(direct)` for spoilers
+      Only the duplication is fixed. Tagging the kind would mean a second list on a hot path to
+      close a case that needs the two brushes to be the *same instance*, which no style in the
+      app does — so the comment says it instead of the code paying for it.
+
+- [x] **Naming, while in here** — `var hyperlink = GetOrCreateSpan(direct)` for spoilers
       (`:1201`, `:1268`), `foreach (var hyperlink in _spoilers)` over `TextStyleSpoiler` structs
       (`:1732`, `:1796`), and `TextStyleRun Yolo` in the `RelativeDateService` signatures
-      (`:2559`, `:2565`). Also `GetNextUpdateInterval` (`:2600`) updates the run texts as a side
-      effect of a `Get`.
+      (`:2559`, `:2565`).
+      → renamed to `span`, `spoiler` and `run` in the commit that checked this box
 
-- [ ] **`Blocks` + re-templating** — `:208-212` / `:231-240`. `_blocks` is never cleared after
+      `GetNextUpdateInterval` still updates the run texts as a side effect of a `Get`, which is
+      more than a rename — that call is the only thing driving the updates at all, so moving it
+      means restructuring the timer, not renaming a method.
+
+- [x] **`Blocks` + re-templating** — `:208-212` / `:231-240`. `_blocks` is never cleared after
       its paragraphs move into `TextBlock.Blocks`, and the loop casts with `as Paragraph`
       without a null check, so a second `OnApplyTemplate` (theme/style change) would either
       re-parent the same `Paragraph`s or add `null`.
+      → fixed in the commit that checked this box
 
-- [ ] **`TextBlock` is assumed non-null outside `SetText`** — `MeasureOverride:263`,
+      `_blocks` is dropped once handed over, which is safe because `Blocks` reads through to
+      `TextBlock.Blocks` from that point on, and a non-`Paragraph` entry is skipped rather than
+      added as null.
+
+- [x] **`TextBlock` is assumed non-null outside `SetText`** — `MeasureOverride:263`,
       `UpdateSpoilers:1713`, `InvalidateSkeleton:2426`. All three read `TextBlock.FontSize` only
       when `AutoFontSize` is false, which is why it hasn't fired; `SetText` guards with
       `_templateApplied` but these don't.
+      → guarded in `MeasureOverride` only (with the measure-memo commit); the other two closed
+      as **unreachable**
+
+      `UpdateSpoilers` and `InvalidateSkeleton` run only from `OnLayoutUpdated`, which fires from
+      a `LayoutUpdated`/`SizeChanged` registration made on `m_textBlock` itself
+      (`FormattedTextBlockBase.cpp:37-43`). With no template child, `RegisterLayoutChanged` would
+      have dereferenced null in C++ long before either could run. `MeasureOverride` is the one
+      XAML can reach on its own, so it is the one that got a check.
 
 - [ ] **`HasLineEnding`'s `InvalidateMeasure` is commented out** — `:173-184`, read by
       `MessageBubblePanel.cs:253`. Fine while `SetText` always precedes measure; a
