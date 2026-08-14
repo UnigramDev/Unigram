@@ -9,7 +9,6 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -76,7 +75,7 @@ namespace Telegram.Views.Popups
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
 
-            if (Constants.VideoTypes.Contains(media.File.FileType.ToLower()))
+            if (media.File.HasExtension(Constants.VideoTypes))
             {
                 FindName(nameof(TrimToolbar));
                 TrimToolbar.Visibility = Visibility.Visible;

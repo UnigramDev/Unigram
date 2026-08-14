@@ -124,7 +124,7 @@ namespace Telegram.Services.Factories
 
             var thumbnail = new InputThumbnail(await file.ToGeneratedAsync(ConversionType.DocumentThumbnail), 0, 0);
 
-            if (!forceDocument && file.FileType.Equals(".webp", StringComparison.OrdinalIgnoreCase))
+            if (!forceDocument && file.HasExtension(".webp"))
             {
                 try
                 {
@@ -141,7 +141,7 @@ namespace Telegram.Services.Factories
                     // Not really a sticker, go on sending as a file
                 }
             }
-            else if (!forceDocument && file.FileType.Equals(".tgs", StringComparison.OrdinalIgnoreCase))
+            else if (!forceDocument && file.HasExtension(".tgs"))
             {
                 // TODO
             }

@@ -571,9 +571,19 @@ namespace Telegram.Common
 
         public static bool HasExtension(this IStorageFile file, params string[] extensions)
         {
+            // A file dragged straight out of a ZIP archive arrives with an empty FileType, though
+            // its Name still carries the extension. Falling back rather than always reading Name
+            // keeps the exact-match behaviour everywhere FileType is populated.
+            var type = file.FileType;
+
+            if (string.IsNullOrEmpty(type))
+            {
+                return file.Name.HasExtension(extensions);
+            }
+
             foreach (var ext in extensions)
             {
-                if (file.FileType.Equals(ext, StringComparison.OrdinalIgnoreCase))
+                if (type.Equals(ext, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
