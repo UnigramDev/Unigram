@@ -255,10 +255,70 @@ NET9_0_OR_GREATER` blocks written for this port and never compiled until now.
 That is a small list for a codebase this size, and it is consistent with the reflection audit:
 nothing here was a design problem, only interop and language-version detail.
 
+## Identity
+
+The modern build installs as **`38833FF26BA1D.UnigramNet10`, "Unigram .NET 10"**, beside the two
+identities that already exist — `UnigramExperimental` (what F5 on `Telegram.csproj` deploys) and
+`TelegramFZ-LLC.Windows` (the store package `Telegram.Msix` builds). A different package family
+also means a separate `LocalState`, so the two builds do not share an account and the port cannot
+corrupt a real profile.
+
+It is not a second manifest. `Telegram.Modern.csproj` copies `Package.appxmanifest` into `obj\` at
+build time and `XmlPoke`s three values — `Identity/@Name`, `Properties/DisplayName` and
+`VisualElements/@DisplayName`. The manifest is 108 lines of capabilities, extensions and file
+associations, and a copy would drift the first time one of them changes.
+
+**The destination path must come from `BaseIntermediateOutputPath`, not `IntermediateOutputPath`.**
+The latter is still empty where the property is evaluated, which collapses the destination onto
+`Package.appxmanifest` itself — so the first run rewrote the real manifest in place, reformatting
+it and giving `Telegram.csproj` the modern identity. There is now an `Error` in the target that
+fires if the two paths ever resolve to the same file.
+
+Two more things the packaging path needed:
+
+- **`EnableMsixTooling`, not a bare `AppxPackage`.** Without it the PRI targets are half
+  configured and fail on a missing `IntermediateExtension`. With it, `Strings\**\*.resw` are
+  globbed as `PRIResource` automatically — listing them as well is `NETSDK1022`.
+- **The C++/WinRT binaries have to be copied by hand.** They are consumed as projections rather
+  than `ProjectReference`s, so nothing brings `Telegram.Native.dll` and friends along. They come
+  out of the same `x64\Release\...` folders the winmds are read from, which also means the
+  solution has to have built them first. `zlib1.dll` and `Microsoft.Graphics.Canvas.dll` are
+  excluded there because they also arrive with tdjson and from the Win2D package: the legacy
+  build copies both over each other, publish calls it `NETSDK1152`.
+- **The downloaded tdjson binaries carry the mark of the web**, which the PRI step refuses
+  (`MSB3821`). `Unblock-File` on `Libraries\tdjson\x64\tdjson.dll` and `.pdb` clears it.
+- **`Content` needs `CopyToOutputDirectory`.** The legacy UWP project system deployed `Content`
+  implicitly; SDK-style does not, and nothing says so at build time. The app started, initialised
+  TDLib, wrote its databases — and then died on
+  `XamlParseException: Cannot locate resource from 'ms-appx:///Common/CommonStyles.xaml'`, because
+  neither that file nor anything under `Assets\` had been laid down. `Assets\**` is auto-included
+  by the MSIX tooling, so it takes `Content Update` rather than a second `Include`.
+
 ## Phase 4 — run it
 
-- [ ] Launch under CoreCLR. This is the point of the exercise for day-to-day work: no .NET Native
-      pass, and XAML/C# hot reload.
+How to get it onto the machine — a loose layout, registered, no signing:
+
+```
+msbuild Telegram\Telegram.Modern.csproj -t:Publish -restore -p:Configuration=Release ^
+  -p:Platform=x64 -p:RuntimeIdentifier=win-x64 -p:SelfContained=true -p:PublishAot=false
+copy ...\win-x64\AppxManifest.xml ...\win-x64\publish\
+Add-AppxPackage -Register ...\win-x64\publish\AppxManifest.xml
+Start-Process "shell:appsFolder\38833FF26BA1D.UnigramNet10_g9c9v27vpyspw!App"
+```
+
+`AppxManifest.xml` is generated one directory above `publish\` and has to be copied in. The
+package declares no `Microsoft.VCLibs.140.00` dependency, so the store CRT (`vcruntime140_app.dll`
+and friends, out of the VCLibs extension SDK appx) is copied into the layout the same way
+`Telegram.Benchmarks.NetNative\Stage.ps1` does it. Uninstall with
+`Get-AppxPackage 38833FF26BA1D.UnigramNet10 | Remove-AppxPackage`.
+
+When it crashes, the app's own reporter beats the event log: read the newest file under
+`%LOCALAPPDATA%\Packages\38833FF26BA1D.UnigramNet10_*\LocalState\ErrorReports\*.json`, which
+carries the exception type, message and a stack. The Application event log only gives
+`0xc000027b` in `Windows.UI.Xaml.dll`, which says "a managed exception" and nothing else.
+
+- [ ] Launch under CoreCLR. First attempt reached TDLib init and then hit the `CommonStyles.xaml`
+      content bug above; retrying with that fixed.
 - [ ] `{Binding}` is where the runtime differences will show. 180 occurrences across 32 of 481
       XAML files, against 1927 `x:Bind` which are compiled and free. Each managed binding source
       type needs `[GeneratedBindableCustomProperty]` and to be `partial`. Bindings whose source is

@@ -78,23 +78,73 @@
        compiled XBF. The modern default items would otherwise sweep it up as a Page. -->
   <ItemGroup>
     <Page Remove="Common\CommonStyles.xaml" />
-    <Content Include="Common\CommonStyles.xaml" />
   </ItemGroup>
 
+  <!--
+    A separate identity, so this installs beside the .NET Native build instead of replacing it -
+    different package family means a separate LocalState too, so the two do not share an account.
+    Patched into obj rather than kept as a second manifest: the real one is 108 lines of
+    capabilities, extensions and file associations, and a copy would drift the first time one of
+    them changes.
+  -->
+  <PropertyGroup>
+    <!-- Single-project MSIX, so this project can deploy and run on its own while the port is in
+         progress. Telegram.Msix still packages the shipping build; Phase 6 decides whether the
+         modern one joins it there or keeps packaging itself. Without EnableMsixTooling the PRI
+         targets are half-configured and fail on IntermediateExtension. -->
+    <AppxPackage>true</AppxPackage>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <ModernPackageIdentity>38833FF26BA1D.UnigramNet10</ModernPackageIdentity>
+    <ModernPackageDisplayName>Unigram .NET 10</ModernPackageDisplayName>
+    <!-- BaseIntermediateOutputPath, not IntermediateOutputPath: the latter is still empty when
+         this evaluates, which collapses the destination onto Package.appxmanifest itself and
+         rewrites the source manifest in place. The guard below is there because that happened. -->
+    <ModernAppxManifest>$(BaseIntermediateOutputPath)Package.appxmanifest</ModernAppxManifest>
+    <ModernManifestNamespaces>&lt;Namespace Prefix='f' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;&lt;Namespace Prefix='uap' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10' /&gt;</ModernManifestNamespaces>
+  </PropertyGroup>
+
+  <Target Name="PatchModernAppxManifest"
+          BeforeTargets="PrepareForBuild"
+          Inputs="Package.appxmanifest;$(MSBuildThisFileFullPath)"
+          Outputs="$(ModernAppxManifest)">
+    <PropertyGroup>
+      <_ModernManifestFull>$([System.IO.Path]::GetFullPath('$(ModernAppxManifest)'))</_ModernManifestFull>
+      <_SourceManifestFull>$([System.IO.Path]::GetFullPath('Package.appxmanifest'))</_SourceManifestFull>
+    </PropertyGroup>
+    <Error Condition="'$(_ModernManifestFull)' == '$(_SourceManifestFull)'"
+           Text="ModernAppxManifest resolves to the source manifest; patching it would rewrite Telegram.csproj's own identity." />
+    <Copy SourceFiles="Package.appxmanifest" DestinationFiles="$(ModernAppxManifest)" />
+    <XmlPoke XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
+             Query="/f:Package/f:Identity/@Name" Value="$(ModernPackageIdentity)" />
+    <XmlPoke XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
+             Query="/f:Package/f:Properties/f:DisplayName" Value="$(ModernPackageDisplayName)" />
+    <XmlPoke XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
+             Query="/f:Package/f:Applications/f:Application/uap:VisualElements/@DisplayName" Value="$(ModernPackageDisplayName)" />
+  </Target>
+
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest">
-      <SubType>Designer</SubType>
-    </AppxManifest>
-    <PRIResource Include="Strings\**\*.resw" />
+    <!-- The .resw under Strings\ need no PRIResource items: with the MSIX tooling on, the SDK
+         globs them itself, and listing them as well is NETSDK1022. -->
+    <AppxManifest Include="$(ModernAppxManifest)" />
   </ItemGroup>
 
-  <!-- TODO: Assets\** is 360 files where Telegram.csproj lists 266 of them. Harmless while this
-       is a development build, wrong for a package; reconcile before anything ships. -->
+  <!--
+    Content needs CopyToOutputDirectory here. The legacy UWP project system packaged Content
+    implicitly; SDK-style does not, and without it the app starts, initialises TDLib, and then
+    dies on `Cannot locate resource from 'ms-appx:///Common/CommonStyles.xaml'` because nothing
+    under Assets\ or Common\ was ever laid down.
+
+    Assets\** is auto-included by the MSIX tooling, so it is updated rather than included.
+
+    TODO: Assets\** is 360 files where Telegram.csproj lists 266 of them. Harmless while this is a
+    development build, wrong for a package; reconcile before anything ships.
+  -->
   <ItemGroup>
-    <Content Include="Assets\**\*.*" />
-    <Content Include="..\Libraries\unigram-iv-editor\editor.html" Link="Assets\editor.html" />
-    <Content Include="..\Libraries\libprisma\libprisma\grammars.dat" Link="Assets\grammars.dat" />
-    <Content Include="..\Libraries\MicroTeX\res\fonts\**\*.ttf" Link="res\fonts\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Update="Assets\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Common\CommonStyles.xaml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Libraries\unigram-iv-editor\editor.html" Link="Assets\editor.html" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Libraries\libprisma\libprisma\grammars.dat" Link="Assets\grammars.dat" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Libraries\MicroTeX\res\fonts\**\*.ttf" Link="res\fonts\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="Assets\i420.hlsl" />
   </ItemGroup>
 
@@ -105,12 +155,11 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4129.50" />
     <PackageReference Include="Rg.DiffUtils" Version="1.0.0" />
     <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3" Version="2.1.11" />
-    <PackageReference Include="System.Text.Json" Version="10.0.10" />
-    <PackageReference Include="System.Threading.Channels" Version="10.0.10" />
     <PackageReference Include="Win2D.uwp" Version="1.28.3" />
     <!-- Dropped against Telegram.csproj: Microsoft.NETCore.UniversalWindowsPlatform, System.Memory,
-         System.ValueTuple, Microsoft.Bcl.HashCode, PolySharp, System.Reflection.Metadata. The first
-         five are in-box on net10.0; the last is referenced by nothing in the app. -->
+         System.ValueTuple, Microsoft.Bcl.HashCode, PolySharp, System.Text.Json,
+         System.Threading.Channels (all in-box on net10.0, and NU1510 for the last two), and
+         System.Reflection.Metadata, which nothing in the app references. -->
   </ItemGroup>
 
   <!--
@@ -159,6 +208,22 @@
   <PropertyGroup>
     <OpenSSLPlatform>-$(Platform)</OpenSSLPlatform>
   </PropertyGroup>
+
+  <!-- The two C++/WinRT components are consumed as projections rather than ProjectReferences, so
+       nothing copies their binaries the way a project reference would. They come from the same
+       build output the winmds are read from, which is also why this project does not build them:
+       Telegram.Native has to have been built by the solution first. Calls only adds its own two
+       files; the rest of its folder is the same ffmpeg set. -->
+  <ItemGroup>
+    <!-- zlib1 and Win2D also arrive with tdjson and from the Win2D package respectively. The
+         legacy build copies both copies over each other and lets the last one win; publish here
+         calls that NETSDK1152, so the native folder's are the ones dropped. -->
+    <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native\*.dll"
+                             Exclude="..\$(Platform)\$(Configuration)\Telegram.Native\zlib1.dll;..\$(Platform)\$(Configuration)\Telegram.Native\Microsoft.Graphics.Canvas.dll" />
+    <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.pri" />
+    <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.dll" />
+    <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.pri" />
+  </ItemGroup>
 
   <ItemGroup>
     <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\RLottie.dll" />
