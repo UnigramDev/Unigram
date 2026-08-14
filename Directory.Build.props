@@ -2,9 +2,11 @@
 
   <PropertyGroup>
     <UnigramRoot>$(MSBuildThisFileDirectory)</UnigramRoot>
-    <!-- Only these three consume vcpkg: the two native components link against it, and the app
-         needs the runtime DLLs in its output and its package. -->
-    <UnigramUsesVcpkg Condition="'$(MSBuildProjectName)' == 'Telegram.Native' Or '$(MSBuildProjectName)' == 'Telegram.Native.Calls' Or '$(MSBuildProjectName)' == 'Telegram'">true</UnigramUsesVcpkg>
+    <!-- Only these consume vcpkg: the two native components link against it, and the app needs
+         the runtime DLLs in its output and its package - both builds of it, since Telegram.Modern
+         packages the same dependencies. Without it there libvlc loads and then dies, its plugins
+         never having been copied. -->
+    <UnigramUsesVcpkg Condition="'$(MSBuildProjectName)' == 'Telegram.Native' Or '$(MSBuildProjectName)' == 'Telegram.Native.Calls' Or '$(MSBuildProjectName)' == 'Telegram' Or '$(MSBuildProjectName)' == 'Telegram.Modern'">true</UnigramUsesVcpkg>
   </PropertyGroup>
 
   <!-- Where vcpkg lives, in order of preference: an explicit override, the VCPKG_ROOT variable,

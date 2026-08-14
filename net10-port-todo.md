@@ -287,6 +287,14 @@ Two more things the packaging path needed:
   build copies both over each other, publish calls it `NETSDK1152`.
 - **The downloaded tdjson binaries carry the mark of the web**, which the PRI step refuses
   (`MSB3821`). `Unblock-File` on `Libraries\tdjson\x64\tdjson.dll` and `.pdb` clears it.
+- **`UnigramUsesVcpkg` matches on project name**, so `Telegram.Modern` was invisible to it and got
+  neither the vcpkg runtime DLLs nor libvlc's plugin tree — video died natively, with no managed
+  error report to show for it, because libvlc loads and then finds no plugins. The project is now
+  in that list in `Directory.Build.props`, which also means the plugins keep their
+  `plugins\<category>\<name>.dll` shape, as `plugins.dat` records those paths.
+  Consequence: the vcpkg runtime DLLs then collide with the same sixteen ffmpeg/libvlc files if
+  they are also copied out of `x64\Release\Telegram.Native\`. Only the components themselves come
+  from there now; the shared set comes from vcpkg, exactly as for `Telegram.csproj`.
 - **`Content` needs `CopyToOutputDirectory`.** The legacy UWP project system deployed `Content`
   implicitly; SDK-style does not, and nothing says so at build time. The app started, initialised
   TDLib, wrote its databases — and then died on

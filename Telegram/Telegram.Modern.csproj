@@ -215,11 +215,11 @@
        Telegram.Native has to have been built by the solution first. Calls only adds its own two
        files; the rest of its folder is the same ffmpeg set. -->
   <ItemGroup>
-    <!-- zlib1 and Win2D also arrive with tdjson and from the Win2D package respectively. The
-         legacy build copies both copies over each other and lets the last one win; publish here
-         calls that NETSDK1152, so the native folder's are the ones dropped. -->
-    <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native\*.dll"
-                             Exclude="..\$(Platform)\$(Configuration)\Telegram.Native\zlib1.dll;..\$(Platform)\$(Configuration)\Telegram.Native\Microsoft.Graphics.Canvas.dll" />
+    <!-- Only the components themselves. Their folders also hold the whole ffmpeg/libvlc set, but
+         those come from vcpkg through Directory.Build.targets, as they do for Telegram.csproj -
+         copying both is NETSDK1152, sixteen files deep. Same for Win2D, which comes from its
+         package, and Telegram.Td.dll, which the shipping package does not carry at all. -->
+    <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.dll" />
     <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.pri" />
     <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.dll" />
     <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.pri" />
