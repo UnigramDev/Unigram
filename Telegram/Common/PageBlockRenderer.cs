@@ -871,14 +871,20 @@ namespace Telegram.Common
 
             var row = 0;
 
+            // TODO: spacing between rows?
+            panel.RowSpacing = 4;
+
             foreach (var item in block.Items)
             {
+                // TODO: checkbox label here would need to be aligned to the baseline of the RichTextBlock,
+                // but this isn't really possible by just using XAML.
                 FrameworkElement label;
                 if (item.HasCheckbox)
                 {
                     label = new CheckBox
                     {
                         IsChecked = item.IsChecked,
+                        VerticalAlignment = VerticalAlignment.Top,
                         Margin = new Thickness(0, -6, 4, 4),
                         Padding = new Thickness(0),
                         MinWidth = 0,
@@ -891,6 +897,7 @@ namespace Telegram.Common
                     {
                         Text = item.Label,
                         TextAlignment = TextAlignment.Right,
+                        VerticalAlignment = VerticalAlignment.Top,
                         Margin = new Thickness(0, 0, 8, 0)
                     };
                 }
