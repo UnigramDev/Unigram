@@ -3,6 +3,22 @@
   <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '15.0'">
     <VisualStudioVersion>15.0</VisualStudioVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- EXPERIMENTAL: revert this first if packaging starts behaving oddly.
+         Meant to stop Telegram being compiled twice. Building a solution or building in Visual
+         Studio defaults this to true, which drops Configuration and Platform from the globals
+         used to build the referenced projects (Microsoft.Common.CurrentVersion.targets).
+         Microsoft.AppXPackage.Targets then asks the same projects for GetPackagingOutputs with
+         both set explicitly, and MSBuild keys its cache on path plus global properties, so that
+         is a second instance and a second full build, the first one against Telegram.csproj's
+         own default platform of x86.
+         A Release x64 bundle built with this produces one compile and one .NET Native pass, but
+         it has not been compared against a run without it, and it has only been exercised from
+         the command line, not the Visual Studio packaging wizard. Telegram.Stub is what to watch:
+         the solution deliberately maps it away from the parent platform, and unsetting the parent
+         configuration is what that mapping used to rely on. -->
+    <ShouldUnsetParentConfigurationAndPlatform>false</ShouldUnsetParentConfigurationAndPlatform>
+  </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x86">
       <Configuration>Debug</Configuration>

@@ -33,6 +33,15 @@
     <LangVersion>14.0</LangVersion>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <ProjectPriIndexName>Telegram</ProjectPriIndexName>
+    <!-- EXPERIMENTAL: revert this first if builds in Visual Studio get noticeably slower.
+         Visual Studio's fast up to date check decides whether to invoke MSBuild at all, using its
+         own heuristic rather than the targets' Inputs and Outputs, and it does not track the
+         generated XAML files well. The symptom is a .g.cs older than the .xaml it came from, so
+         the build compiles yesterday's generated code against today's source and fails on types
+         that no longer exist. Seen on SendFilesPopup.g.cs, 17 hours behind its .xaml, and cleared
+         only by deleting obj. This makes Visual Studio ask MSBuild instead of deciding by itself,
+         at the cost of a second or two per build of an up to date project. -->
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <PackageCertificateThumbprint>
     </PackageCertificateThumbprint>
   </PropertyGroup>
