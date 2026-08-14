@@ -667,78 +667,85 @@ namespace Telegram.Controls
             return span;
         }
 
+        // Resets a pooled Run to the requested style. Every property the build loop can set has
+        // to be cleared when it is not wanted, or it would carry over from whatever the Run said
+        // last time. NativeUtils.AddRunToCollection does the same for a Run it creates.
+        private static void ApplyRunProperties(XamlDirect direct, IXamlDirectObject run, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize, bool transparent)
+        {
+            direct.SetEnumProperty(run, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
+
+            if ((style & TextStyle.Bold) != TextStyle.None)
+            {
+                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, FontWeights.SemiBold);
+            }
+            else
+            {
+                direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontWeight);
+            }
+
+            if ((style & TextStyle.Italic) != TextStyle.None)
+            {
+                direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
+            }
+            else
+            {
+                direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontStyle);
+            }
+
+            var decorations = TextDecorations.None;
+            if ((style & TextStyle.Underline) != TextStyle.None)
+            {
+                decorations |= TextDecorations.Underline;
+            }
+            if ((style & TextStyle.Strikethrough) != TextStyle.None)
+            {
+                decorations |= TextDecorations.Strikethrough;
+            }
+
+            if (decorations != TextDecorations.None)
+            {
+                direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_TextDecorations, (uint)decorations);
+            }
+            else
+            {
+                direct.ClearProperty(run, XamlPropertyIndex.TextElement_TextDecorations);
+            }
+
+            if (fontFamily != null)
+            {
+                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
+            }
+            else
+            {
+                direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontFamily);
+            }
+
+            if (fontSize > 0)
+            {
+                direct.SetDoubleProperty(run, XamlPropertyIndex.TextElement_FontSize, fontSize);
+            }
+            else
+            {
+                direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontSize);
+            }
+
+            // TODO: removed once fixed by Microsoft
+            if (transparent)
+            {
+                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_Foreground, null);
+            }
+            else
+            {
+                direct.ClearProperty(run, XamlPropertyIndex.TextElement_Foreground);
+            }
+        }
+
         private IXamlDirectObject GetOrCreateRun(XamlDirect direct, IXamlDirectObject inlines, string text, int offset, int length, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize, bool transparent)
         {
             if (_pools != null && _pools.Runs.TryDequeue(out var run))
             {
                 direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text.Substring(offset, length));
-                direct.SetEnumProperty(run, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
-
-                if ((style & TextStyle.Bold) != TextStyle.None)
-                {
-                    direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, FontWeights.SemiBold);
-                }
-                else
-                {
-                    direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontWeight);
-                }
-
-                if ((style & TextStyle.Italic) != TextStyle.None)
-                {
-                    direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
-                }
-                else
-                {
-                    direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontStyle);
-                }
-
-                var decorations = TextDecorations.None;
-                if ((style & TextStyle.Underline) != TextStyle.None)
-                {
-                    decorations |= TextDecorations.Underline;
-                }
-                if ((style & TextStyle.Strikethrough) != TextStyle.None)
-                {
-                    decorations |= TextDecorations.Strikethrough;
-                }
-
-                if (decorations != TextDecorations.None)
-                {
-                    direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_TextDecorations, (uint)decorations);
-                }
-                else
-                {
-                    direct.ClearProperty(run, XamlPropertyIndex.TextElement_TextDecorations);
-                }
-
-                if (fontFamily != null)
-                {
-                    direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
-                }
-                else
-                {
-                    direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontFamily);
-                }
-
-                if (fontSize > 0)
-                {
-                    direct.SetDoubleProperty(run, XamlPropertyIndex.TextElement_FontSize, fontSize);
-                }
-                else
-                {
-                    direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontSize);
-                }
-
-                // TODO: removed once fixed by Microsoft
-                if (transparent)
-                {
-                    direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_Foreground, null);
-                }
-                else
-                {
-                    direct.ClearProperty(run, XamlPropertyIndex.TextElement_Foreground);
-                }
-
+                ApplyRunProperties(direct, run, direction, style, fontFamily, fontSize, transparent);
                 direct.AddToCollection(inlines, run);
 
                 _activeRuns.Add(run);
@@ -755,73 +762,7 @@ namespace Telegram.Controls
             if (_pools != null && _pools.Runs.TryDequeue(out var run))
             {
                 direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
-                direct.SetEnumProperty(run, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
-
-                if ((style & TextStyle.Bold) != TextStyle.None)
-                {
-                    direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, FontWeights.SemiBold);
-                }
-                else
-                {
-                    direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontWeight);
-                }
-
-                if ((style & TextStyle.Italic) != TextStyle.None)
-                {
-                    direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
-                }
-                else
-                {
-                    direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontStyle);
-                }
-
-                var decorations = TextDecorations.None;
-                if ((style & TextStyle.Underline) != TextStyle.None)
-                {
-                    decorations |= TextDecorations.Underline;
-                }
-                if ((style & TextStyle.Strikethrough) != TextStyle.None)
-                {
-                    decorations |= TextDecorations.Strikethrough;
-                }
-
-                if (decorations != TextDecorations.None)
-                {
-                    direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_TextDecorations, (uint)decorations);
-                }
-                else
-                {
-                    direct.ClearProperty(run, XamlPropertyIndex.TextElement_TextDecorations);
-                }
-
-                if (fontFamily != null)
-                {
-                    direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
-                }
-                else
-                {
-                    direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontFamily);
-                }
-
-                if (fontSize > 0)
-                {
-                    direct.SetDoubleProperty(run, XamlPropertyIndex.TextElement_FontSize, fontSize);
-                }
-                else
-                {
-                    direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontSize);
-                }
-
-                // TODO: removed once fixed by Microsoft
-                if (transparent)
-                {
-                    direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_Foreground, null);
-                }
-                else
-                {
-                    direct.ClearProperty(run, XamlPropertyIndex.TextElement_Foreground);
-                }
-
+                ApplyRunProperties(direct, run, direction, style, fontFamily, fontSize, transparent);
                 direct.AddToCollection(inlines, run);
 
                 _activeRuns.Add(run);

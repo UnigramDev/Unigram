@@ -308,23 +308,37 @@ The three facts most of this rests on:
 
 ## P3 — cleanup, naming, dead code
 
-- [ ] **The two `GetOrCreateRun` overloads are the same 80 lines twice** — `:618-699` and
+- [x] **The two `GetOrCreateRun` overloads are the same 80 lines twice** — `:618-699` and
       `:701-782`. The only difference is `text.Substring(offset, length)` vs `text` on the
       pooled path; the non-pooled path already forwards to two `NativeUtils` overloads. The
       range overload can call the other with the substring, or both can share a private
       `ApplyRunProperties(direct, run, ...)`.
+      → fixed in the commit that checked this box
+
+      Took the shared helper, not the forwarding, because forwarding would have cost the range
+      overload its one real advantage: on the path that builds a new `Run`, `NativeUtils` takes
+      the offset and length and never materializes the substring. Each overload keeps its own
+      `Run_Text` line and its own native call, and the 60 lines of property resetting between
+      them is now written once. Net -59 lines, no behaviour change.
 
 - [ ] **`Clear()` has no callers** — `:386-396`. Everything now goes through
       `MessageTextBlock.Clear` → `ClearBlocks`. It is also wrong if resurrected: it nulls
       `_query`/`_spoiler` without calling `ApplyHighlighters`, so the stale highlighters stay on
       the `RichTextBlock`, and it leaves `_cached`/`_marked`/`_selection` alone.
 
-- [ ] **The `SetQuery(string.Empty)` calls in the cells are now no-ops** —
+- [x] **The `SetQuery(string.Empty)` calls in the cells are now no-ops** —
       `ChatCell.xaml.cs:1526`, `ForumTopicCell.xaml.cs:557`,
       `BusinessChatLinkCell.xaml.cs:37`, `ChatPinnedMessage.xaml.cs:422`,
       `MessageReply.xaml.cs:433`, `ProfileHeader.xaml.cs:1054/1391`. With `_query` null, the
       guard at `:466` returns immediately; they only existed to trigger the old "apply
       highlighters" pass.
+      → closed as **keep**, no code change
+
+      They are only no-ops because nothing gives those controls a query today — the one live
+      query in the app is `MessageBubble` → `MessageTextBlock` (`:147`). Each of these sits on
+      a recycle path, where the call is the reset that would matter the moment a query reached
+      a cell, and where it costs one string comparison that returns immediately. Deleting seven
+      lines across seven files to save that is the wrong trade.
 
 - [ ] **`SetFontSize` only reaches the first paragraph** — `:451-459`. It sets
       `TextBlock.Blocks[0].FontSize`, so a multi-paragraph block keeps the old size on
