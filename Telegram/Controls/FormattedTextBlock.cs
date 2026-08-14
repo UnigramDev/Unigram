@@ -94,9 +94,10 @@ namespace Telegram.Controls
 
         private Span _spanForInlines;
 
-        private readonly List<Hyperlink> _links = new();
-        private readonly List<IXamlDirectObject> _dates = new();
-        private readonly List<TextStyleSpoiler> _spoilers = new();
+        // Null until the text actually carries one of these, which for most blocks is never.
+        private List<Hyperlink> _links;
+        private List<IXamlDirectObject> _dates;
+        private List<TextStyleSpoiler> _spoilers;
 
         readonly struct TextStyleSpoiler
         {
@@ -433,19 +434,27 @@ namespace Telegram.Controls
 
         private void ClearEntities()
         {
-            foreach (var link in _links)
+            if (_links != null)
             {
-                ToolTipService.SetToolTip(link, null);
+                foreach (var link in _links)
+                {
+                    ToolTipService.SetToolTip(link, null);
+                }
+
+                _links.Clear();
             }
 
-            foreach (var date in _dates)
+            if (_dates != null)
             {
-                RelativeDateService.Unsubscribe(date);
+                foreach (var date in _dates)
+                {
+                    RelativeDateService.Unsubscribe(date);
+                }
+
+                _dates.Clear();
             }
 
-            _links.Clear();
-            _dates.Clear();
-            _spoilers.Clear();
+            _spoilers?.Clear();
 
             if (_effectiveViewportChanged != null)
             {
@@ -588,10 +597,10 @@ namespace Telegram.Controls
             SetText(clientService, TextStyleRun.GetText(text));
         }
 
-        private readonly HashSet<IXamlDirectObject> _activeParagraphs = new();
-        private readonly HashSet<Hyperlink> _activeHyperlinks = new();
-        private readonly HashSet<IXamlDirectObject> _activeSpans = new();
-        private readonly HashSet<IXamlDirectObject> _activeRuns = new();
+        private readonly List<IXamlDirectObject> _activeParagraphs = new();
+        private readonly List<Hyperlink> _activeHyperlinks = new();
+        private readonly List<IXamlDirectObject> _activeSpans = new();
+        private readonly List<IXamlDirectObject> _activeRuns = new();
         //private readonly HashSet<InlineUIContainer> _activeEmojis = new();
 
         private IXamlDirectObject GetOrCreateParagraph(XamlDirect direct)
@@ -1238,7 +1247,7 @@ namespace Telegram.Controls
                                 direct.SetObjectProperty(hyperlink, XamlPropertyIndex.TextElement_Foreground, null);
                                 direct.SetObjectProperty(hyperlink, XamlPropertyIndex.TextElement_FontFamily, BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily);
 
-                                _spoilers.Add(new TextStyleSpoiler(entity.Offset + dates, entity.Length, new TextStyleSpoiler(entity.Offset, entity.Length, i - _first)));
+                                (_spoilers ??= new List<TextStyleSpoiler>()).Add(new TextStyleSpoiler(entity.Offset + dates, entity.Length, new TextStyleSpoiler(entity.Offset, entity.Length, i - _first)));
 
                                 spoiler ??= new TextHighlighter();
                                 spoiler.Ranges.Add(new TextRange { StartIndex = offset, Length = entity.Length });
@@ -1257,7 +1266,7 @@ namespace Telegram.Controls
 
                                         if (textUrl.Url.StartsWith("http"))
                                         {
-                                            _links.Add(hyperlink);
+                                            (_links ??= new List<Hyperlink>()).Add(hyperlink);
                                             ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                                         }
                                     }
@@ -1288,7 +1297,7 @@ namespace Telegram.Controls
 
                                     if (entity.Type is TextEntityTypeDateTime dateTime)
                                     {
-                                        _links.Add(hyperlink);
+                                        (_links ??= new List<Hyperlink>()).Add(hyperlink);
                                         ToolTipService.SetToolTip(hyperlink, Formatter.LongDateAt(dateTime.UnixTime));
                                     }
 
@@ -1305,7 +1314,7 @@ namespace Telegram.Controls
                             direct.SetObjectProperty(hyperlink, XamlPropertyIndex.TextElement_Foreground, null);
                             direct.SetObjectProperty(hyperlink, XamlPropertyIndex.TextElement_FontFamily, BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily);
 
-                            _spoilers.Add(new TextStyleSpoiler(entity.Offset + dates, entity.Length, i - _first));
+                            (_spoilers ??= new List<TextStyleSpoiler>()).Add(new TextStyleSpoiler(entity.Offset + dates, entity.Length, i - _first));
 
                             if (textOffset == -1)
                             {
@@ -1453,7 +1462,7 @@ namespace Telegram.Controls
 
                             if (date.FormattingType is DateTimeFormattingTypeRelative)
                             {
-                                _dates.Add(run);
+                                (_dates ??= new List<IXamlDirectObject>()).Add(run);
                                 RelativeDateService.Subscribe(run, this, part, entity, date);
                             }
                         }
@@ -1733,7 +1742,7 @@ namespace Telegram.Controls
 
         private void UpdateSpoilers()
         {
-            if (_ignoreSpoilers || _spoilers.Empty())
+            if (_ignoreSpoilers || _spoilers == null || _spoilers.Count == 0)
             {
                 if (_spoilerPresenter != null)
                 {
@@ -2558,7 +2567,7 @@ namespace Telegram.Controls
                 {
                     var text = Entity.Update(Paragraph);
 
-                    for (int i = 0; i < TextBlock._spoilers.Count; i++)
+                    for (int i = 0; i < TextBlock._spoilers?.Count; i++)
                     {
                         var spoiler = TextBlock._spoilers[i];
                         if (spoiler.OriginalOffset > Entity.Offset + Entity.Length)

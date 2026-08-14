@@ -188,7 +188,8 @@ The three facts most of this rests on:
       (`MessageTextBlock.cs:445`). That is the shape the layout-cycle audit is about; worth
       checking it can't re-enter.
 
-- [ ] **Seven collections per instance, before any content** — `:97-99` and `:555-558`
+- [x] **Seven collections per instance, before any content** — `:97-99` and `:555-558`
+      → fixed in the commit that checked this box
 
       `_links`, `_dates`, `_spoilers` + four `HashSet`s for the active elements. The vast
       majority of blocks have no hyperlink, no spoiler and no date. Lazy `??=` at the first
@@ -198,6 +199,16 @@ The three facts most of this rests on:
       `_activeRuns` (`:1934`, the async code path). `List<T>` is cheaper to fill and to
       enumerate for the other three, and `_activeRuns`' single linear scan happens once per
       tokenized code block.
+
+      Done, with the split the note implies: `_links`/`_dates`/`_spoilers` are lazy (they have
+      an `Add` site and a teardown site each, so the guards are few), while `_activeRuns` and
+      `_activeParagraphs` stay eager because every rendered block fills them — laziness there
+      would be six null checks for nothing. All four became `List<T>`.
+
+      The set → list swap rests on elements never being added twice, which holds: each is
+      either newly constructed or dequeued from the pool (so removed from it), `Recycle` clears
+      the lists, and the one place that hands an element back mid-render
+      (`ProcessCodeBlock`'s placeholder) removes it from the list before enqueuing it.
 
 ---
 
