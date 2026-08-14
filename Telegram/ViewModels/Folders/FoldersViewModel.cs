@@ -92,13 +92,20 @@ namespace Telegram.ViewModels.Folders
                 Icon = new ChatFolderIcon("All")
             });
 
-            Items.ReplaceDiff(folders);
             CanCreateNew = Items.Count < ClientService.Options.ChatFolderCountMax;
+
+            var response = await ClientService.SendAsync(new GetPremiumLimit(new PremiumLimitTypeChatFolderCount()));
+            if (response is PremiumLimit limit)
+            {
+                CanCreateNew = Items.Count < limit.PremiumValue;
+            }
+
+            Items.ReplaceDiff(folders);
 
             if (ClientService.Options.ChatFolderCountMax > Items.Count)
             {
-                var response = await ClientService.SendAsync(new GetRecommendedChatFolders());
-                if (response is RecommendedChatFolders recommended)
+                var response2 = await ClientService.SendAsync(new GetRecommendedChatFolders());
+                if (response2 is RecommendedChatFolders recommended)
                 {
                     Recommended.ReplaceDiff(recommended.ChatFolders);
                 }
