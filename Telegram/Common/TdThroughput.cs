@@ -33,6 +33,7 @@ namespace Telegram.Common
         private static long _payloads;
         private static long _bytes;
         private static long _ticks;
+        private static long _handlerTicks;
         private static long _since = Stopwatch.GetTimestamp();
 
         /// <summary>
@@ -80,12 +81,38 @@ namespace Telegram.Common
             _payloads++;
         }
 
+        /// <summary>
+        /// Files do not just parse: ClientResultHandler is re-entered mid-payload to dedupe them,
+        /// and that work - a dictionary, a FileExists syscall the first time an id is seen, and an
+        /// EventAggregator publish - happens inside the interval Record measures. It is charged to
+        /// the parser unless it is subtracted, and at startup a chat list is hundreds of files that
+        /// have never been seen before.
+        /// </summary>
+        public static long BeginHandler()
+        {
+            return Enabled ? Stopwatch.GetTimestamp() : 0;
+        }
+
+        public static void RecordHandler(long started)
+        {
+            if (started != 0)
+            {
+                _handlerTicks += Stopwatch.GetTimestamp() - started;
+            }
+        }
+
         public static long Payloads => _payloads;
 
         public static long Bytes => _bytes;
 
-        /// <summary>Time spent inside the parser, which is what the rates are over.</summary>
+        /// <summary>
+        /// Time inside Client.Receive's parse, file handling included - which is the honest number
+        /// for what an update costs, and the wrong one for what the reader costs.
+        /// </summary>
         public static double Seconds => _ticks / (double)Stopwatch.Frequency;
+
+        /// <summary>The part of it that was file dedupe rather than reading JSON.</summary>
+        public static double HandlerSeconds => _handlerTicks / (double)Stopwatch.Frequency;
 
         /// <summary>
         /// Time since the last reset. Parsing as a share of this is the number that says whether
@@ -99,6 +126,7 @@ namespace Telegram.Common
             _payloads = 0;
             _bytes = 0;
             _ticks = 0;
+            _handlerTicks = 0;
             _since = Stopwatch.GetTimestamp();
         }
     }

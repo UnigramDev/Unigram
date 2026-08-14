@@ -3153,6 +3153,10 @@ namespace Telegram.Services
 
         private File CommitFile(File obj, bool created, bool updateFile)
         {
+            // Everything below runs inside the parse, on the TDLib thread, and none of it is
+            // reading JSON - which is why it is timed separately.
+            var started = TdThroughput.BeginHandler();
+
             // Only the first time this id is seen. This runs on the TDLib thread, and every
             // parsed object carries files — a chat history page is hundreds of them, nearly
             // all already cached — so checking on every update spent a syscall each time to
@@ -3176,6 +3180,7 @@ namespace Telegram.Services
                 UpdateFile(obj);
             }
 
+            TdThroughput.RecordHandler(started);
             return obj;
         }
 

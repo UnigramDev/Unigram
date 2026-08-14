@@ -268,6 +268,13 @@ namespace Telegram.ViewModels
             private set => Set(ref _deserializationShare, value);
         }
 
+        private string _deserializationHandler;
+        public string DeserializationHandler
+        {
+            get => _deserializationHandler;
+            private set => Set(ref _deserializationHandler, value);
+        }
+
         private void UpdateDeserialization()
         {
             var payloads = TdThroughput.Payloads;
@@ -278,15 +285,23 @@ namespace Telegram.ViewModels
                 Deserialized = idle;
                 DeserializationRate = idle;
                 DeserializationShare = idle;
+                DeserializationHandler = idle;
                 return;
             }
 
             var megabytes = TdThroughput.Bytes / 1048576d;
             var seconds = TdThroughput.Seconds;
 
+            // Rates are over the parse with file handling taken out, because that is the part the
+            // benchmark is comparable to. The total is still what an update costs.
+            var handler = TdThroughput.HandlerSeconds;
+            var parsing = seconds - handler;
+
             Deserialized = string.Format("{0:N0} updates, {1:N1} MB", payloads, megabytes);
-            DeserializationRate = string.Format("{0:N1} MB/s, {1:N1} µs each",
-                megabytes / seconds, seconds * 1000000d / payloads);
+            DeserializationRate = string.Format("{0:N1} MB/s, {1:N1} µs each of {2:N1}",
+                megabytes / parsing, parsing * 1000000d / payloads, seconds * 1000000d / payloads);
+            DeserializationHandler = string.Format("{0:N2}s, {1:N0}% of the parse",
+                handler, handler * 100 / seconds);
             DeserializationShare = string.Format("{0:N2}% of {1:N0}s",
                 seconds * 100 / TdThroughput.WallSeconds, TdThroughput.WallSeconds);
         }

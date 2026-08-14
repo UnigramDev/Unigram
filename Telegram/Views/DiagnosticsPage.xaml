@@ -142,6 +142,8 @@
                                              Badge="{x:Bind ViewModel.Deserialized, Mode=OneWay}" />
                     <controls:SettingsButton Content="Throughput"
                                              Badge="{x:Bind ViewModel.DeserializationRate, Mode=OneWay}" />
+                    <controls:SettingsButton Content="File handling"
+                                             Badge="{x:Bind ViewModel.DeserializationHandler, Mode=OneWay}" />
                     <controls:SettingsButton Content="Share of wall clock"
                                              Badge="{x:Bind ViewModel.DeserializationShare, Mode=OneWay}" />
                     <controls:SettingsButton Content="Reset"
