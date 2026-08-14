@@ -108,8 +108,7 @@ namespace Telegram.Views.Gifts.Popups
                     content.UpdateSymbol(_clientService, _selectedBackdrop, symbol);
                 }
 
-                var presenter = VisualTreeHelper.GetChild(args.ItemContainer, 0) as ListViewItemPresenter;
-                if (presenter != null)
+                if (ApiInfo.CanSetSelectedBorderBrush && VisualTreeHelper.GetChild(args.ItemContainer, 0) is ListViewItemPresenter presenter)
                 {
                     var brush = new SolidColorBrush(color);
 
