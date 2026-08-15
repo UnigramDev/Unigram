@@ -2068,7 +2068,9 @@ namespace Telegram.Views.Calls
                 sink.Value.Stop();
             }
 
-            _call?.SetRequestedVideoChannels(descriptions.Values.ToArray());
+            // ToList, not ToArray: a managed array crossing as IVector<T> is boxed through
+            // IReferenceArray, which NativeAOT cannot synthesise for a projected WinRT type.
+            _call?.SetRequestedVideoChannels(descriptions.Values.ToList());
         }
 
         private void ConnectVisual(GroupCallParticipantGridCell cell, string endpointId, bool mirrored, Action<string, VoipVideoOutputSink> connect)

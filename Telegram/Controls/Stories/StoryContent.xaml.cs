@@ -921,7 +921,9 @@ namespace Telegram.Controls.Stories
             {
                 var channelInfo = new VoipVideoChannelInfo(participant.AudioSourceId, participant.ParticipantId.ToId(), participant.VideoInfo.EndpointId, participant.VideoInfo.SourceGroups.ToCalls(), VoipVideoChannelQuality.Full, VoipVideoChannelQuality.Full);
 
-                _call.SetRequestedVideoChannels([channelInfo]);
+                // A List, not a collection expression: the compiler synthesises its own read-only
+                // list type for those, and CsWinRT has no CCW for it to hand across as IVector<T>.
+                _call.SetRequestedVideoChannels(new List<VoipVideoChannelInfo> { channelInfo });
                 _call.AddIncomingVideoOutput(channelInfo.EndpointId, _unifiedVideo = VoipVideoOutput.CreateSink(LayoutRoot, uniformToFill: true));
 
                 _unifiedVideo.FrameReceived += OnFrameReceived;
