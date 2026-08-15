@@ -1,7 +1,7 @@
 <Project>
 
   <Import Project="$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.targets"
-          Condition="'$(UnigramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.vcxproj' And Exists('$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.targets')" />
+          Condition="'$(TelegramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.vcxproj' And Exists('$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.targets')" />
 
   <!--
     With VcpkgAutoLink off, each project names the libraries it links. The lists below were
@@ -34,11 +34,11 @@
     </Link>
   </ItemDefinitionGroup>
 
-  <Target Name="UnigramCheckVcpkgRoot" BeforeTargets="PrepareForBuild;BeforeBuild"
-          Condition="'$(UnigramUsesVcpkg)' == 'true'">
+  <Target Name="TelegramCheckVcpkgRoot" BeforeTargets="PrepareForBuild;BeforeBuild"
+          Condition="'$(TelegramUsesVcpkg)' == 'true'">
     <Error Condition="'$(VcpkgRoot)' == ''"
            Text="vcpkg was not found. Clone it next to this repository, install the vcpkg component in the Visual Studio installer, or set VCPKG_ROOT — see Documentation/Build-instructions.md." />
-    <Error Condition="'$(UnigramVcpkgTriplet)' == ''"
+    <Error Condition="'$(TelegramVcpkgTriplet)' == ''"
            Text="No vcpkg triplet is defined for platform '$(Platform)'." />
   </Target>
 
@@ -47,21 +47,21 @@
     named by builtin-baseline, so a checkout older than the pin fails with "no version database
     entry for <port> at <date>" — which does not hint at the real cause. Catch it up front.
   -->
-  <Target Name="UnigramCheckVcpkgBaseline" BeforeTargets="PrepareForBuild;BeforeBuild"
-          DependsOnTargets="UnigramCheckVcpkgRoot"
-          Condition="'$(UnigramUsesVcpkg)' == 'true' And '$(VcpkgRoot)' != '' And Exists('$(VcpkgRoot)\.git')">
+  <Target Name="TelegramCheckVcpkgBaseline" BeforeTargets="PrepareForBuild;BeforeBuild"
+          DependsOnTargets="TelegramCheckVcpkgRoot"
+          Condition="'$(TelegramUsesVcpkg)' == 'true' And '$(VcpkgRoot)' != '' And Exists('$(VcpkgRoot)\.git')">
     <PropertyGroup>
-      <_UnigramVcpkgBaseline>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(UnigramRoot)vcpkg.json')), '(?&lt;="builtin-baseline"\s*:\s*")[0-9a-f]{40}').Value)</_UnigramVcpkgBaseline>
+      <_TelegramVcpkgBaseline>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(TelegramRoot)vcpkg.json')), '(?&lt;="builtin-baseline"\s*:\s*")[0-9a-f]{40}').Value)</_TelegramVcpkgBaseline>
     </PropertyGroup>
-    <Exec Command="git -C &quot;$(VcpkgRoot)&quot; merge-base --is-ancestor $(_UnigramVcpkgBaseline) HEAD"
-          Condition="'$(_UnigramVcpkgBaseline)' != ''"
+    <Exec Command="git -C &quot;$(VcpkgRoot)&quot; merge-base --is-ancestor $(_TelegramVcpkgBaseline) HEAD"
+          Condition="'$(_TelegramVcpkgBaseline)' != ''"
           IgnoreExitCode="true" StandardOutputImportance="low" StandardErrorImportance="low">
-      <Output TaskParameter="ExitCode" PropertyName="_UnigramVcpkgBaselineExitCode" />
+      <Output TaskParameter="ExitCode" PropertyName="_TelegramVcpkgBaselineExitCode" />
     </Exec>
     <!-- Only exit code 1 means "not an ancestor". Anything else (no git on PATH, a shallow clone)
          is not something to fail the build over. -->
-    <Error Condition="'$(_UnigramVcpkgBaselineExitCode)' == '1'"
-           Text="The vcpkg checkout at $(VcpkgRoot) is older than the commit pinned in vcpkg.json. Run: git -C &quot;$(VcpkgRoot)&quot; fetch &amp;&amp; git -C &quot;$(VcpkgRoot)&quot; checkout $(_UnigramVcpkgBaseline) &amp;&amp; &quot;$(VcpkgRoot)\bootstrap-vcpkg.bat&quot;" />
+    <Error Condition="'$(_TelegramVcpkgBaselineExitCode)' == '1'"
+           Text="The vcpkg checkout at $(VcpkgRoot) is older than the commit pinned in vcpkg.json. Run: git -C &quot;$(VcpkgRoot)&quot; fetch &amp;&amp; git -C &quot;$(VcpkgRoot)&quot; checkout $(_TelegramVcpkgBaseline) &amp;&amp; &quot;$(VcpkgRoot)\bootstrap-vcpkg.bat&quot;" />
   </Target>
 
   <!--
@@ -80,15 +80,15 @@
     name. Letting both in would put two different builds of libcrypto-3-x64.dll under the same
     name in the package. Neither native component links openssl.
   -->
-  <Target Name="UnigramAddVcpkgRuntimeDlls" BeforeTargets="ResolveReferences"
-          Condition="'$(UnigramUsesVcpkg)' == 'true'">
+  <Target Name="TelegramAddVcpkgRuntimeDlls" BeforeTargets="ResolveReferences"
+          Condition="'$(TelegramUsesVcpkg)' == 'true'">
     <ItemGroup>
-      <UnigramVcpkgRuntimeDll Include="$(UnigramVcpkgBinDir)*.dll"
-                              Exclude="$(UnigramVcpkgBinDir)zlib1.dll;$(UnigramVcpkgBinDir)libcrypto-3*.dll;$(UnigramVcpkgBinDir)libssl-3*.dll;$(UnigramVcpkgBinDir)legacy.dll" />
-      <ReferenceCopyLocalPaths Include="@(UnigramVcpkgRuntimeDll)" />
+      <TelegramVcpkgRuntimeDll Include="$(TelegramVcpkgBinDir)*.dll"
+                              Exclude="$(TelegramVcpkgBinDir)zlib1.dll;$(TelegramVcpkgBinDir)libcrypto-3*.dll;$(TelegramVcpkgBinDir)libssl-3*.dll;$(TelegramVcpkgBinDir)legacy.dll" />
+      <ReferenceCopyLocalPaths Include="@(TelegramVcpkgRuntimeDll)" />
     </ItemGroup>
-    <Warning Condition="'@(UnigramVcpkgRuntimeDll)' == ''"
-             Text="No vcpkg runtime DLLs found in $(UnigramVcpkgBinDir). The package will be missing them at runtime." />
+    <Warning Condition="'@(TelegramVcpkgRuntimeDll)' == ''"
+             Text="No vcpkg runtime DLLs found in $(TelegramVcpkgBinDir). The package will be missing them at runtime." />
   </Target>
 
   <!--
@@ -99,17 +99,17 @@
     Only the app project packages content; libvlc.dll and libvlccore.dll themselves come from
     bin\ through the flat copy above.
   -->
-  <Target Name="UnigramAddVlcPlugins" BeforeTargets="ResolveReferences"
-          Condition="'$(UnigramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.csproj'">
+  <Target Name="TelegramAddVlcPlugins" BeforeTargets="ResolveReferences"
+          Condition="'$(TelegramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.csproj'">
     <ItemGroup>
-      <_UnigramVlcPlugin Include="$(UnigramVcpkgInstalledDir)share\libvlc\plugins\**\*" />
-      <Content Include="@(_UnigramVlcPlugin)">
+      <_TelegramVlcPlugin Include="$(TelegramVcpkgInstalledDir)share\libvlc\plugins\**\*" />
+      <Content Include="@(_TelegramVlcPlugin)">
         <Link>plugins\%(RecursiveDir)%(Filename)%(Extension)</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
-    <Warning Condition="'@(_UnigramVlcPlugin)' == ''"
-             Text="No libvlc plugins found in $(UnigramVcpkgInstalledDir)share\libvlc\plugins. Video playback will fail at runtime." />
+    <Warning Condition="'@(_TelegramVlcPlugin)' == ''"
+             Text="No libvlc plugins found in $(TelegramVcpkgInstalledDir)share\libvlc\plugins. Video playback will fail at runtime." />
   </Target>
 
 </Project>

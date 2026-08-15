@@ -1,12 +1,12 @@
 <Project>
 
   <PropertyGroup>
-    <UnigramRoot>$(MSBuildThisFileDirectory)</UnigramRoot>
+    <TelegramRoot>$(MSBuildThisFileDirectory)</TelegramRoot>
     <!-- Only these consume vcpkg: the two native components link against it, and the app needs
          the runtime DLLs in its output and its package - both builds of it, since Telegram.Modern
          packages the same dependencies. Without it there libvlc loads and then dies, its plugins
          never having been copied. -->
-    <UnigramUsesVcpkg Condition="'$(MSBuildProjectName)' == 'Telegram.Native' Or '$(MSBuildProjectName)' == 'Telegram.Native.Calls' Or '$(MSBuildProjectName)' == 'Telegram' Or '$(MSBuildProjectName)' == 'Telegram.Modern'">true</UnigramUsesVcpkg>
+    <TelegramUsesVcpkg Condition="'$(MSBuildProjectName)' == 'Telegram.Native' Or '$(MSBuildProjectName)' == 'Telegram.Native.Calls' Or '$(MSBuildProjectName)' == 'Telegram' Or '$(MSBuildProjectName)' == 'Telegram.Modern'">true</TelegramUsesVcpkg>
   </PropertyGroup>
 
   <!-- Where vcpkg lives, in order of preference: an explicit override, the VCPKG_ROOT variable,
@@ -21,28 +21,28 @@
     <VCPkgLocalAppDataDisabled>true</VCPkgLocalAppDataDisabled>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(UnigramUsesVcpkg)' == 'true'">
+  <PropertyGroup Condition="'$(TelegramUsesVcpkg)' == 'true'">
     <VcpkgRoot Condition="'$(VcpkgRoot)' == '' And '$(VCPKG_ROOT)' != ''">$(VCPKG_ROOT)</VcpkgRoot>
-    <VcpkgRoot Condition="'$(VcpkgRoot)' == '' And Exists('$(UnigramRoot)..\vcpkg\.vcpkg-root')">$([System.IO.Path]::GetFullPath('$(UnigramRoot)..\vcpkg'))</VcpkgRoot>
+    <VcpkgRoot Condition="'$(VcpkgRoot)' == '' And Exists('$(TelegramRoot)..\vcpkg\.vcpkg-root')">$([System.IO.Path]::GetFullPath('$(TelegramRoot)..\vcpkg'))</VcpkgRoot>
     <VcpkgRoot Condition="'$(VcpkgRoot)' == '' And Exists('$(MSBuildExtensionsPath)\..\VC\vcpkg\vcpkg.exe')">$([System.IO.Path]::GetFullPath('$(MSBuildExtensionsPath)\..\VC\vcpkg'))</VcpkgRoot>
 
-    <UnigramVcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-uwp</UnigramVcpkgTriplet>
-    <UnigramVcpkgTriplet Condition="'$(Platform)' == 'ARM64'">arm64-uwp</UnigramVcpkgTriplet>
+    <TelegramVcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-uwp</TelegramVcpkgTriplet>
+    <TelegramVcpkgTriplet Condition="'$(Platform)' == 'ARM64'">arm64-uwp</TelegramVcpkgTriplet>
 
     <!-- Left to itself the MSBuild integration appends the triplet twice (it passes
          vcpkg_installed\<triplet> as the install root and vcpkg creates <triplet> inside it),
          which would not match the layout CMake uses for the TDLib build. Pin it so both land in
          the same tree and openssl is built once. -->
-    <VcpkgInstalledDir>$(UnigramRoot)vcpkg_installed\</VcpkgInstalledDir>
-    <UnigramVcpkgInstalledDir>$(VcpkgInstalledDir)$(UnigramVcpkgTriplet)\</UnigramVcpkgInstalledDir>
-    <UnigramVcpkgBinDir Condition="'$(Configuration)' == 'Debug'">$(UnigramVcpkgInstalledDir)debug\bin\</UnigramVcpkgBinDir>
-    <UnigramVcpkgBinDir Condition="'$(UnigramVcpkgBinDir)' == ''">$(UnigramVcpkgInstalledDir)bin\</UnigramVcpkgBinDir>
+    <VcpkgInstalledDir>$(TelegramRoot)vcpkg_installed\</VcpkgInstalledDir>
+    <TelegramVcpkgInstalledDir>$(VcpkgInstalledDir)$(TelegramVcpkgTriplet)\</TelegramVcpkgInstalledDir>
+    <TelegramVcpkgBinDir Condition="'$(Configuration)' == 'Debug'">$(TelegramVcpkgInstalledDir)debug\bin\</TelegramVcpkgBinDir>
+    <TelegramVcpkgBinDir Condition="'$(TelegramVcpkgBinDir)' == ''">$(TelegramVcpkgInstalledDir)bin\</TelegramVcpkgBinDir>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(UnigramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.vcxproj'">
+  <PropertyGroup Condition="'$(TelegramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.vcxproj'">
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
     <VcpkgEnableClassic>false</VcpkgEnableClassic>
-    <VcpkgManifestRoot>$(UnigramRoot)</VcpkgManifestRoot>
+    <VcpkgManifestRoot>$(TelegramRoot)</VcpkgManifestRoot>
 
     <!-- The runtime DLLs are declared explicitly in Directory.Build.targets instead. vcpkg's own
          applocal step is skipped whenever the linker does not run — an up-to-date incremental
@@ -57,6 +57,6 @@
   </PropertyGroup>
 
   <Import Project="$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.props"
-          Condition="'$(UnigramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.vcxproj' And Exists('$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.props')" />
+          Condition="'$(TelegramUsesVcpkg)' == 'true' And '$(MSBuildProjectExtension)' == '.vcxproj' And Exists('$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.props')" />
 
 </Project>
