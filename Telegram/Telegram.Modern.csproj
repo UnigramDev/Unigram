@@ -46,6 +46,15 @@
          ProjectReference, and Telegram.Generators is netstandard2.0, which cannot AOT
          (NETSDK1207). Publish with SelfContained and no -p:PublishAot to get a CoreCLR layout. -->
     <PublishAot>true</PublishAot>
+    <!-- Turns off the runtime's marshalling subsystem for this assembly: only blittable types may
+         cross a P/Invoke, and everything else is marshalled by the LibraryImport generator in C#
+         instead. The SDK turns this property into the assembly attribute.
+
+         Safe here only because every DllImport now has a LibraryImport counterpart and both
+         delegates handed to native code became function pointers. It is deliberately absent from
+         Telegram.csproj: .NET Native keeps the #else branches and the runtime marshalling they
+         rely on. -->
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
     <!-- The CsWinRT generators are the interesting output of this project: what they emit for
          [GeneratedBindableCustomProperty] is what classic {Binding} and ItemsPath resolve
          through once AOT has trimmed reflection away. -->
