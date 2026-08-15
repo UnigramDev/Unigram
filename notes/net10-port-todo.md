@@ -436,20 +436,59 @@ now. Three traps that cost real time, none of which announce themselves:
 
 ### The failures that only appear at runtime
 
-None of these warn at build time. All were found by running a feature, and all but one are a
-missing entry in `CsWinRT.cs`, which is effectively the app's AOT manifest.
+None of these warned at build time. All were found by running a feature, and all but one are a
+missing entry in `CsWinRT.cs`, which is effectively the app's AOT manifest. `TG1001`/`TG1002` now
+catch the whole class at compile time — see [the analyzer](#the-analyzer) below.
 
 | symptom | cause | fix |
 |---|---|---|
 | sticker panel empty, headers only | `CollectionViewSource.ItemsPath` resolves reflectively; the generated lookup existed, but `MvxObservableCollection<StickerViewModel>` had no marshalling support for that instantiation — the emoji drawer works because its group exposes `MvxObservableCollection<object>` | registered both sticker instantiations |
 | call window: no video, no lottie | `CompositionTarget.Rendering` subscribed from a secondary view is delivered to the **first** view's thread — [CsWinRT #2524](https://github.com/microsoft/CsWinRT/issues/2524) | `CompositionTargetImpl`, registered through the ABI per view |
-| hard crash on hovering a forward header | `TextStyleRun.GetParts` returned `Array.Empty<TextStylePart>()`; **a managed array cannot cross as `IVector<T>` when `T` is a native WinRT struct** — it boxes through `IReferenceArray`, which AOT cannot synthesise. `GeneratedWinRTExposedExternalType` does *not* help: it emits CCWs for managed types | return a shared empty `List` |
+| hard crash on hovering a forward header | `TextStyleRun.GetParts` returned `Array.Empty<TextStylePart>()`; **a managed array cannot cross as `IVector<T>` when `T` is a value type that is not a WinRT fundamental** — it boxes through `IReferenceArray`, which AOT cannot synthesise. `GeneratedWinRTExposedExternalType` does *not* help: it emits CCWs for managed types. An array of a *runtimeclass* is fine, marshalling as an array of pointers: `MessageSelector` hands `ConfigurePositionXInertiaModifiers` one and it works | return a shared empty `List` |
 | freeform gradient not drawn | same rule: `GetColors()` returns `Color[]` handed to `CreateFreeformGradient(IVector<Color>)`, and the throw was swallowed inside XAML brush creation | convert to `List<Color>` at the call site |
 | `CompositionVSync` NRE, killing calls | self-inflicted: through the ABI the rendering args arrive as a bare `IInspectable`, so `e as RenderingEventArgs` is null. Casting per frame would be a QueryInterface per frame | both consumers now read `Stopwatch.GetTimestamp()`; `VisualUtilities.Tilt` was silently reading a stale timestamp for the same reason |
 | chat background: gradient but no pattern | the **setter** `_freeform.Colors = GetColors()` still handed a `Color[]`; only the constructor call had been converted | build the `List<Color>` once, use it on both branches |
 | …then still no pattern | `CreateEffectFactory(effect, ["Intensity.Opacity"])` — a **collection expression** synthesises `<>z__ReadOnlySingleElementList<string>`, which has no CCW at all. A third rule, independent of the element type | `new[] { … }`, as every other call site already used |
 | hard crash joining a group call | `MessagesHost.ItemsSource = new ObservableCollection<GroupCallMessage>(…)`. **External** generic instantiations get no CCW vtable — the generator only emits those for the app's own partial types — so XAML's QI for `IBindableIterable` fails and `set_ItemsSource` returns `E_INVALIDARG`. On a `DispatcherQueueHandler` that is a fail-fast | registered the instantiation in `CsWinRT.cs` |
 | leaving a call from the call window did nothing | `ContentPopup` completes the task `ShowQueuedAsync` awaits from a `CompositionTarget.Rendered` callback. Subscribing threw `NotSupportedException: Cannot provide IReference support for delegate type 'EventHandler<RenderedEventArgs>'` — nothing roots that marshaller, because `CompositionTargetImpl` bypasses the projection that would have — and `QueueCallbackForCompositionRendered` swallowed it. Every dialog on that view was dead | `CompositionTargetImpl.Rendered` marshals `EventHandler<object>`, like `Rendering`; no caller reads the args |
+
+### The analyzer
+
+`Telegram.Generators\WinRTExposedTypeAnalyzer.cs`. Two rules, both warnings, both silent on .NET
+Native — `GeneratedWinRTExposedExternalTypeAttribute` does not exist there, and neither does the
+problem, so the analyzer resolves the attribute and switches itself off when it is missing.
+
+- **TG1001** — a concrete array or constructed generic boxed into a WinRT `object`, or into
+  `IEnumerable`/`IList` without an element type: `ItemsSource`, `Tag`, `Content`, `SetValue`. The
+  runtime has only the concrete type to go on and needs a vtable for it. The message names the
+  attribute to paste.
+- **TG1002** — an array of a value type that is not a WinRT fundamental, passed to a typed
+  collection. `IReferenceArray<T>`, which AOT cannot synthesise. The message names the `List<T>`.
+
+The dividing line between the two is whether the compiler can see the conversion. A parameter typed
+`IEnumerable<T>` is a conversion in source, so CsWinRT generates the marshaller for that
+instantiation and any concrete type reaches it. A parameter typed `object` is not. Elements are the
+same question one level down, at a point no call site corresponds to — which is how
+`List<IList<Rect>>` marshals and then throws when the native side calls `GetAt` — so both rules
+follow initializers into a collection when the signature only names an interface.
+
+Two things it taught immediately:
+
+- **Nine of thirteen** entries in the ItemsSource block of `CsWinRT.cs` were mine from a grep sweep;
+  two named the wrong type entirely, because what those popups assign is the
+  `DiffObservableCollection` and the `List` beside it is only the backing store. That block is now
+  the analyzer's output. **Rerun it rather than adding entries by hand.**
+- The forward-header crash was not fixed, only moved: `MessageForwardHeader` builds its own
+  `TextStylePart[]` rather than going through `GetParts`.
+
+Detecting the WinRT boundary is by CsWinRT's own `[WindowsRuntimeType]`/`[ProjectedRuntimeClass]`
+attributes, not by namespace: the projection for a referenced C++/WinRT component is generated
+**into** the consuming assembly, so `Telegram.Native.PlaceholderImageHelper` is a type of this
+compilation and looks managed by every other measure.
+
+Blind spot: classic `{Binding}` assigns `ItemsSource` inside the framework, with no C# anywhere.
+`x:Bind` is covered — it emits the assignment into a `.g.cs`, which is why the analyzer opts into
+analysing generated code.
 
 ### Still open
 
