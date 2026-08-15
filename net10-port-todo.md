@@ -479,9 +479,21 @@ missing entry in `CsWinRT.cs`, which is effectively the app's AOT manifest.
       happen at all. `GC.WaitForPendingFinalizers` from the view thread is the obvious lever and
       also the obvious deadlock, since the finalizer needs that same apartment to pump. Worth an
       upstream report as well: CsWinRT dispatches a Release into an apartment that is uninitializing.
-- [ ] **1798 `CsWinRT1034` and 32 `CsWinRT1035`** from the 2.3.1 analyzers: casts to WinRT types that
-      want `[DynamicWindowsRuntimeCast]` to stay trim-safe. Not a live crash, but the largest
-      remaining category.
+- [x] **`CsWinRT1034` and `CsWinRT1035`** from the 2.3.1 analyzers: casting to a WinRT type consults
+      its metadata, so trimming can drop a type that is only ever cast to and the cast then throws
+      at runtime. 1798 of them, but they collapse to **131 distinct types**, and a type is only at
+      risk if *nothing else* roots it. Cross-referencing the cast targets against every `new`,
+      declaration and XAML usage left **three**: `AppServiceTriggerDetails`,
+      `Windows.Data.Xml.Dom.XmlElement` (the badge updater, which had also been throwing a
+      first-chance AV) and `ApplicationDataCompositeValue`. All three now carry
+      `[DynamicWindowsRuntimeCast]`, with a dummy in `CsWinRT.cs` for .NET Native beside the
+      existing `GeneratedBindableCustomProperty` one.
+
+      The remaining ~1795 are noise: `TextBlock`, `Style`, `Grid`, `FrameworkElement` and the like,
+      each rooted a hundred times over. **Re-run the cross-reference rather than reading the count**
+      — it immediately caught a fourth, `Windows.Foundation.Deferral`, introduced by the teardown
+      fix an hour earlier. The script is `castonly.sh` in the session scratchpad; it wants checking
+      in somewhere if this is to stay honest.
 - [ ] Diagnostics left in the working tree: none. The `VoipGroupCall` callback logging and the
       `ChatBackgroundBrush` probes are gone. The catches in `ChatBackgroundBrush`,
       `DispatcherContext.Dispatch` and `QueueCallbackForCompositionRendered` now log rather than

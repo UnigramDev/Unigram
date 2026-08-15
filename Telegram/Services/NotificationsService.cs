@@ -109,6 +109,7 @@ namespace Telegram.Services
                 .Subscribe<UpdateActiveNotifications>(Handle);
         }
 
+        [WinRT.DynamicWindowsRuntimeCast(typeof(Windows.Data.Xml.Dom.XmlElement))]
         private void UpdateUnreadCount(int count)
         {
             try

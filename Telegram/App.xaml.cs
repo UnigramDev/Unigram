@@ -93,6 +93,7 @@ namespace Telegram
             }
         }
 
+        [WinRT.DynamicWindowsRuntimeCast(typeof(AppServiceTriggerDetails))]
         protected override async void OnBackgroundActivated(BackgroundActivatedEventArgs args)
         {
             base.OnBackgroundActivated(args);

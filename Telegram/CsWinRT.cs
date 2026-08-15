@@ -87,5 +87,17 @@ namespace WinRT
 
         }
     }
+
+    // Likewise. Marks a cast to a WinRT type whose metadata nothing else keeps alive, so that
+    // trimming leaves it in place - without it the cast throws at runtime even though the object
+    // really is that type.
+    [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Field, AllowMultiple = true, Inherited = false)]
+    public partial class DynamicWindowsRuntimeCastAttribute : Attribute
+    {
+        public DynamicWindowsRuntimeCastAttribute(Type type)
+        {
+
+        }
+    }
 }
 #endif

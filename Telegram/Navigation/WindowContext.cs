@@ -319,6 +319,7 @@ namespace Telegram.Navigation
                 .ContinueWith(OnDrained, deferral, TaskScheduler.Default);
         }
 
+        [WinRT.DynamicWindowsRuntimeCast(typeof(Deferral))]
         private static void OnDrained(Task task, object state)
         {
             (state as Deferral)?.Complete();
