@@ -826,6 +826,8 @@ namespace Telegram.Controls
         private ScrollViewer _backScrollingHost;
         private FrameworkElement _backScrollingContent;
         private double _backScrollingContentMinHeight;
+        private Panel _backScrollingContentPanel;
+        private SolidColorBrush _backTransparent;
         private InteractionTracker _backTracker;
         private WeakInteractionTrackerOwner _backTrackerOwner;
 
@@ -937,6 +939,19 @@ namespace Telegram.Controls
 
             scrollingHost.SizeChanged += OnBackScrollingHostSizeChanged;
             child.MinHeight = scrollingHost.ViewportHeight;
+
+            // And height alone buys nothing: SettingsPanel is a bare Panel, and a Panel with no
+            // Background does not hit-test its own area at all. The rows hit-test themselves, which
+            // is why the gesture always worked on a page long enough to be all rows and nowhere on
+            // the empty part of a short one. Transparent is what makes that area exist for input;
+            // it paints the same as null.
+            if (child is Panel { Background: null } panel)
+            {
+                _backTransparent ??= new SolidColorBrush(Windows.UI.Colors.Transparent);
+                _backScrollingContentPanel = panel;
+
+                panel.Background = _backTransparent;
+            }
         }
 
         private void OnBackScrollingHostSizeChanged(object sender, SizeChangedEventArgs e)
@@ -962,6 +977,13 @@ namespace Telegram.Controls
                 // Pages are cached, so this one may come back with the gesture switched off.
                 _backScrollingContent.MinHeight = _backScrollingContentMinHeight;
                 _backScrollingContent = null;
+            }
+
+            if (_backScrollingContentPanel != null)
+            {
+                // Only ever set where it was null, so null is what it goes back to.
+                _backScrollingContentPanel.Background = null;
+                _backScrollingContentPanel = null;
             }
 
             if (_backContentSource != null)
@@ -1053,14 +1075,15 @@ namespace Telegram.Controls
         {
             if (DetailFrame is { CanGoBack: true })
             {
-                // The gesture pulls from the left, so the page it uncovers arrives from the left -
-                // the mirror of the FromRight slide TLNavigationService uses going forward. The
-                // default entrance transition reads as unrelated to the finger that asked for it.
+                // FromRight, and it does slide in from the left: the frame inverts the effect on a
+                // back navigation, so this is the same value TLNavigationService passes going
+                // forward. The default entrance transition reads as unrelated to the finger that
+                // asked for it.
                 //
                 // Gated on the policy because FrameFacade only applies it to Navigate, not GoBack,
                 // so nothing else would stop this one from animating.
                 NavigationService?.GoBack(null, PowerSavingPolicy.AreSmoothTransitionsEnabled
-                    ? new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromLeft }
+                    ? new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight }
                     : null);
             }
         }
