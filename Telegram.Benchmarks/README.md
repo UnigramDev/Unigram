@@ -628,6 +628,21 @@ Consistent with the release notes, which don't mention UWP. Also worth knowing: 
 netstandard2.0 support and removes `As<I>()`, `FromAbi(nint)` and `FromManaged(object)`, and defines
 a `CSWINRT3_0` constant for conditional compilation.
 
+**Re-checked 2026-08-15.** Still the only 3.0 package on NuGet, so there is nothing new to try — but
+`staging/3.0` is 108 commits ahead of the tag and committed to daily, most recently the day before.
+Two of them land on the failures above. `Port the projection generator from C++ to C# (#2440)` is a
+reimplementation of the generator that crashed on `EventHandler<DatePickerValueChangedEventArgs>`,
+and `Build and ship a reference assembly for WinRT.Runtime (#2453)` added
+`src/Tests/SmokeTests/WindowsSdkXamlProjection`, an end-to-end test that generates the
+`Windows.UI.Xaml` reference projection the way the UWP XAML package is produced — guarding
+`WinRT.Sdk.Xaml.Projection`, the assembly ILC could not load. Its own comment notes that XAML
+reference-projection codegen regressions "were the bulk of them".
+
+So the next preview is worth trying rather than merely worth waiting for. Two costs to price first,
+neither of which the previews will remove: `Point`, `Rect` and `Size` are projected as `float` in
+3.0 rather than `double`, which reaches most of the layout code, and `As<I>()` has six call sites,
+all of them the hand-rolled COM interfaces in `Common/Interop.cs`.
+
 ### .NET Native — the toolchain the app actually ships
 
 `Telegram.Benchmarks.NetNative`, a legacy UWP project, `UseDotNetNativeToolchain`, .NET Native
