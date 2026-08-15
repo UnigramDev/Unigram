@@ -99,7 +99,8 @@ it was `MinPosition` being pinned to 0.
       mask over the effect, drawn through a `CompositionVisualSurface` to keep the
       antialiasing a geometric clip would have thrown away.
 - [x] Fixed *most* settings pages, where the gesture only worked in the title strip, by
-      adding a source inside the scrolling host.
+      adding a source inside the scrolling host — since deleted, the scroll mode having
+      turned out to be the real cause.
 - [x] Fixed `SettingsAdvancedPage` and `SettingsPowerSavingPage`, which failed whenever
       their content did not overflow: `ScrollMode.Auto` turns the manipulation off when
       there is nothing to scroll. **Confirmed working by Fela.**
@@ -138,10 +139,10 @@ ever got the gesture where no scroller sat in the way — the header. The chat h
 never evidence to the contrary: what works there is `MessageSelector`'s source, which is a
 *descendant* of the scroller and so wins the contact.
 
-Fix is the same trick, applied deliberately: on navigation, `ConfigureBackGestureContent`
-puts a second `VisualInteractionSource` on the scrolling host's own content element and adds
-it to the same tracker. Rails and an X-only source mode leave vertical panning to the
-`ScrollViewer`, exactly as they already do in the chat history.
+The fix tried at the time was a second `VisualInteractionSource` inside the scrolling host's
+content, on the same tracker. It has since been deleted — see below — but the round is worth
+keeping, because the reasoning was plausible and wrong in a way that took three more passes
+to see.
 
 That fixed the long pages and nothing else, and everything after it was wrong. Recorded
 here so nobody spends the same rounds again.
@@ -181,13 +182,17 @@ out, so nobody spends the rounds again:
 - *`x:Load` and `NavigationMode`.* Privacy has four `x:Load` and works, Advanced has one and
   fails; every page here is `NavigationMode="Root"` bar Stickers.
 
-`_backContentSource` is kept, still unproven. It was added under the scroller theory, and
-Stickers — which works with no source of its own — casts doubt on whether it earns anything
-now that the scroll mode is the known cause. Worth deleting to see if anything changes; do
-not treat it as load-bearing.
+`_backContentSource` — a second `VisualInteractionSource` placed inside the scrolling host's
+content — was the scroller theory's leftover, and has since been **deleted**. Once the
+manipulation is held open, an ancestor source is reached over the content: that is exactly
+what `SettingsStickersPage` demonstrates, working on nothing but the `DetailRoot` source,
+its `TableListView` host never having been given one. So the only thing
+`ConfigureBackGestureHost` needs to do is hold `VerticalScrollMode` open, and it no longer
+has to reach the host's content element at all.
 
-A `ListViewBase` host still gets neither the source nor the scroll-mode change. Those are
-scrollable in practice, so it may never matter, but it is the remaining known gap.
+A `ListViewBase` host is deliberately left alone. Those scroll in practice, so their
+manipulation is live already, and the chat history — the one that matters — is served by
+`MessageSelector`'s own source rather than by anything here.
 
 Only `ScrollViewer` hosts are covered. A `ListViewBase` host would need its
 `ItemsPanelRoot`, which does not exist until the list realises, and the one that matters —

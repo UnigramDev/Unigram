@@ -122,7 +122,7 @@ namespace Telegram.Controls
             }
 
             DetachBackGesture(null);
-            DetachBackGestureContent();
+            DetachBackGestureHost();
 
             if (DetailFrame?.Content is HostedPage hosted)
             {
@@ -550,7 +550,7 @@ namespace Telegram.Controls
             // its tracker never reaches idle and nothing else would release the binding.
             DetachBackGesture(null);
             ConfigureBackGesture();
-            ConfigureBackGestureContent(e.Content);
+            ConfigureBackGestureHost(e.Content);
 
             if (e.Content is HostedPage hosted)
             {
@@ -826,7 +826,6 @@ namespace Telegram.Controls
         private const float BackIndicatorSize = 30;
 
         private VisualInteractionSource _backSource;
-        private VisualInteractionSource _backContentSource;
         private ScrollViewer _backScrollingHost;
         private ScrollMode _backScrollingMode;
         private InteractionTracker _backTracker;
@@ -890,69 +889,49 @@ namespace Telegram.Controls
         }
 
         /// <summary>
-        /// Adds a second source inside the page's scrolling host, if it has one.
+        /// Holds the page's scrolling host manipulable, so the source on DetailRoot can be reached
+        /// over it.
         /// </summary>
         /// <remarks>
-        /// The source on DetailRoot is an ancestor of the page, and a scroller can take the
-        /// touchpad pan before an ancestor sees it - a source on a descendant of the scroller wins
-        /// the contact instead, which is why MessageSelector's works inside the chat history. Rails
-        /// and an X-only mode leave vertical panning to the ScrollViewer, as they already do there.
-        ///
-        /// It also forces the host's VerticalScrollMode on, for the reason given below.
+        /// ScrollMode.Auto turns the manipulation off entirely when there is nothing to scroll, and
+        /// a touchpad pan over an element that cannot be manipulated is never classified as one -
+        /// so no interaction source is consulted anywhere up the tree and the gesture is absent
+        /// rather than misrouted. Every settings page declares Auto, which made this work or not
+        /// depending on the window size rather than on anything in the markup. Enabled costs
+        /// nothing: there is still no extent, so nothing becomes scrollable that was not.
         /// </remarks>
-        private void ConfigureBackGestureContent(object content)
+        private void ConfigureBackGestureHost(object content)
         {
-            // Drops the previous page's source first: this is the only place it can happen, since
+            // Restores the previous page first: this is the only place it can happen, since
             // OnNavigating is never subscribed and nothing else runs as a page is left.
-            DetachBackGestureContent();
+            DetachBackGestureHost();
 
             if (_backTracker == null || !SettingsService.Current.SwipeToGoBack)
             {
                 return;
             }
 
-            // Only a ScrollViewer for now. A ListViewBase host would need its ItemsPanelRoot, which
-            // does not exist until the list realises - and the one that matters, the chat history,
-            // is already covered by MessageSelector.
+            // A ListViewBase host is left alone: those scroll in practice, so their manipulation is
+            // live already, and the chat history - the one that matters - is served by
+            // MessageSelector's own source rather than by anything here.
             if (content is not HostedPage hosted
-                || hosted.FindName("ScrollingHost") is not ScrollViewer scrollingHost
-                || scrollingHost.Content is not UIElement child)
+                || hosted.FindName("ScrollingHost") is not ScrollViewer scrollingHost)
             {
                 return;
             }
 
-            _backContentSource = VisualInteractionSource.Create(ElementComposition.GetElementVisual(child));
-            _backContentSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
-            _backContentSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
-            _backContentSource.PositionXChainingMode = InteractionChainingMode.Never;
-            _backContentSource.IsPositionXRailsEnabled = true;
-
-            _backTracker.InteractionSources.Add(_backContentSource);
-
-            // ScrollMode.Auto turns the manipulation off entirely when there is nothing to scroll,
-            // and then a touchpad pan is never classified as one - so no interaction source is
-            // consulted and the gesture is simply absent. That is the whole difference between the
-            // settings pages that worked and the two that did not: identical markup, and only
-            // whether the content happened to overflow. Enabled keeps it on regardless of extent,
-            // which costs nothing here since there is still no extent to scroll.
             _backScrollingHost = scrollingHost;
             _backScrollingMode = scrollingHost.VerticalScrollMode;
 
             scrollingHost.VerticalScrollMode = ScrollMode.Enabled;
         }
 
-        private void DetachBackGestureContent()
+        private void DetachBackGestureHost()
         {
             if (_backScrollingHost != null)
             {
                 _backScrollingHost.VerticalScrollMode = _backScrollingMode;
                 _backScrollingHost = null;
-            }
-
-            if (_backContentSource != null)
-            {
-                _backTracker?.InteractionSources.Remove(_backContentSource);
-                _backContentSource = null;
             }
         }
 
@@ -1060,7 +1039,6 @@ namespace Telegram.Controls
 
             var sprite = compositor.CreateSpriteVisual();
             sprite.Size = new Vector2(BackIndicatorSize);
-            sprite.CenterPoint = new Vector3(BackIndicatorSize / 2);
 
             var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/ArrowLeft.png"));
             void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
@@ -1077,7 +1055,9 @@ namespace Telegram.Controls
             _backIndicator = compositor.CreateContainerVisual();
             _backIndicator.Children.InsertAtBottom(_backIndicatorCircle);
             _backIndicator.Children.InsertAtTop(sprite);
-            _backIndicator.Size = new Vector2(BackIndicatorSize);
+
+            // Mirroring turns on the X scale, so the centre has to be the circle's, not the
+            // corner - otherwise the flip also moves it half its width to the left.
             _backIndicator.CenterPoint = new Vector3(BackIndicatorSize / 2);
             _backIndicator.Opacity = 0;
 
