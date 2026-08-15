@@ -552,7 +552,7 @@ namespace Telegram.Services
             {
                 if (_activeCall is VoipGroupCall groupCall && groupCall.Id == update.GroupCallId && groupCall.ClientService == clientService)
                 {
-                    //groupCall.Update(update.Message);
+                    groupCall.Handle(update);
                     return false;
                 }
             }
@@ -566,7 +566,7 @@ namespace Telegram.Services
             {
                 if (_activeCall is VoipGroupCall groupCall && groupCall.Id == update.GroupCallId && groupCall.ClientService == clientService)
                 {
-                    //groupCall.Update(update.Message);
+                    groupCall.UpdateMessagesDeleted(update.MessageIds);
                     return false;
                 }
             }
@@ -580,7 +580,7 @@ namespace Telegram.Services
             {
                 if (_activeCall is VoipGroupCall groupCall && groupCall.Id == update.GroupCallId && groupCall.ClientService == clientService)
                 {
-                    //groupCall.Update(update.Message);
+                    groupCall.UpdateNewMessage(update.Message);
                     return false;
                 }
             }
@@ -594,7 +594,7 @@ namespace Telegram.Services
             {
                 if (_activeCall is VoipGroupCall groupCall && groupCall.Id == update.GroupCallId && groupCall.ClientService == clientService)
                 {
-                    //groupCall.Update(update.Message);
+                    groupCall.Handle(update);
                     return false;
                 }
             }
