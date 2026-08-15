@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Common.Recording;
 using Telegram.Entities;
 using Telegram.Services;
 using Telegram.Td;
@@ -733,6 +734,18 @@ namespace Telegram.Controls.Chats
 
             private MediaFrameReader _reader;
 
+            private readonly AudioWaveform _waveform = new();
+
+            // Set only when the capture format can be encoded as it arrives. Otherwise the
+            // recording goes through MediaCapture's own encoder and is transcoded when sent.
+            private VoiceSink _sink;
+
+            private float[] _samples;
+            private uint _channels;
+            private uint _bitsPerSample;
+
+            private bool _paused;
+
             public Recorder()
             {
                 _recordQueue = new ConcurrentQueueWorker(1);
@@ -766,16 +779,14 @@ namespace Telegram.Controls.Chats
 
                     try
                     {
-                        // Create a new temporary file for the recording
-                        var fileName = string.Format(mode == ChatRecordMode.Video
-                            ? "video_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.mp4"
-                            : "voice_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.oga", DateTime.Now);
-                        var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName);
-
                         _mode = mode;
-                        _file = file;
                         _chat = chat;
-                        _recorder = new OpusRecorder(file, mode == ChatRecordMode.Video);
+                        _paused = false;
+                        _channels = 0;
+                        _bitsPerSample = 0;
+                        _waveform.Reset();
+
+                        _recorder = new OpusRecorder(mode == ChatRecordMode.Video);
 
                         _recorder.m_mediaCapture = new MediaCapture();
                         _recorder.m_mediaCapture.Failed += OnFailed;
@@ -809,12 +820,33 @@ namespace Telegram.Controls.Chats
 
                         Logger.Debug("Devices initialized, starting");
 
-                        if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+                        // For a voice message the reader is the recording, so it always runs. For
+                        // a video message it only feeds the blob, and keeps the gate it had.
+                        var reader = mode == ChatRecordMode.Voice
+                            || (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths);
+
+                        var streaming = reader && await PrepareReaderAsync() && mode == ChatRecordMode.Voice;
+
+                        _file = await CreateFileAsync(mode, streaming);
+
+                        if (streaming)
                         {
-                            await InitializeQuantumAsync();
+                            _sink = new VoiceSink(_file.Path);
+
+                            if (!_sink.IsValid)
+                            {
+                                throw new InvalidOperationException("Opus encoder couldn't open " + _file.Path);
+                            }
+                        }
+                        else
+                        {
+                            Logger.Info("Recording through MediaCapture, the file will be transcoded when sent");
+                            await _recorder.StartAsync(_file);
                         }
 
-                        await _recorder.StartAsync();
+                        // Started last, so that no sample arrives before there is something to
+                        // write it to.
+                        await StartReaderAsync();
 
                         Logger.Debug("Recording started at " + DateTime.Now);
                     }
@@ -829,6 +861,9 @@ namespace Telegram.Controls.Chats
                             _reader.Dispose();
                             _reader = null;
                         }
+
+                        _sink?.Dispose();
+                        _sink = null;
 
                         _recorder?.Dispose();
                         _recorder = null;
@@ -845,7 +880,24 @@ namespace Telegram.Controls.Chats
                 Logger.Debug(errorEventArgs.Message);
             }
 
-            public async Task InitializeQuantumAsync()
+            private static Task<StorageFile> CreateFileAsync(ChatRecordMode mode, bool streaming)
+            {
+                var fileName = string.Format(mode == ChatRecordMode.Video
+                    ? "video_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.mp4"
+                    : streaming
+                    ? "voice_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.oga"
+                    : "voice_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.wav", DateTime.Now);
+
+                // Unique rather than fail: the name is only second-accurate, and two recordings
+                // within the same second is a tap away.
+                return ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName).AsTask();
+            }
+
+            /// <summary>
+            /// Creates the audio frame reader, and reports whether its samples can be handed to
+            /// the encoder as they are.
+            /// </summary>
+            private async Task<bool> PrepareReaderAsync()
             {
                 try
                 {
@@ -853,29 +905,68 @@ namespace Telegram.Controls.Chats
                     if (frameSource.Value == null)
                     {
                         Logger.Info("No audio frame source was found.");
-                        return;
+                        return false;
                     }
 
-                    var format = frameSource.Value.CurrentFormat;
-                    if (format.Subtype != MediaEncodingSubtypes.Float)
+                    var source = frameSource.Value;
+                    var format = source.CurrentFormat;
+
+                    // The encoder is 48kHz: at any other rate the samples would play back at the
+                    // wrong speed, so ask for one and give up on streaming if there isn't one.
+                    if (format.AudioEncodingProperties?.SampleRate != VoiceSink.SampleRate)
                     {
-                        Logger.Info("No audio frame source was found.");
-                        return;
+                        var match = source.SupportedFormats.FirstOrDefault(x => x.AudioEncodingProperties?.SampleRate == VoiceSink.SampleRate && IsSupportedSubtype(x.Subtype));
+                        if (match != null)
+                        {
+                            await source.SetFormatAsync(match);
+                            format = source.CurrentFormat;
+                        }
                     }
 
-                    var mediaFrameReader = await _recorder.m_mediaCapture.CreateFrameReaderAsync(frameSource.Value);
+                    var reader = await _recorder.m_mediaCapture.CreateFrameReaderAsync(source);
 
-                    // Optionally set acquisition mode. Buffered is the default mode for audio.
-                    mediaFrameReader.AcquisitionMode = MediaFrameReaderAcquisitionMode.Realtime;
-                    mediaFrameReader.FrameArrived += OnAudioFrameArrived;
+                    // Buffered rather than Realtime: a dropped frame used to cost a blob update,
+                    // it now costs a gap in the recording.
+                    reader.AcquisitionMode = MediaFrameReaderAcquisitionMode.Buffered;
+                    reader.FrameArrived += OnAudioFrameArrived;
 
-                    var status = await mediaFrameReader.StartAsync();
+                    _reader = reader;
+
+                    var properties = format.AudioEncodingProperties;
+                    if (properties == null)
+                    {
+                        return false;
+                    }
+
+                    _channels = properties.ChannelCount;
+                    _bitsPerSample = properties.BitsPerSample;
+
+                    return properties.SampleRate == VoiceSink.SampleRate
+                        && IsSupportedSubtype(format.Subtype)
+                        && (_bitsPerSample == 32 || _bitsPerSample == 16)
+                        && _channels > 0;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Info("The audio frame reader couldn't be created: " + ex);
+                    return false;
+                }
+            }
+
+            private async Task StartReaderAsync()
+            {
+                if (_reader == null)
+                {
+                    return;
+                }
+
+                try
+                {
+                    var status = await _reader.StartAsync();
                     if (status != MediaFrameReaderStartStatus.Success)
                     {
                         Logger.Info("The MediaFrameReader couldn't start.");
                     }
-
-                    _reader = mediaFrameReader;
                 }
                 catch
                 {
@@ -883,32 +974,27 @@ namespace Telegram.Controls.Chats
                 }
             }
 
-            private readonly float[] _compressedWaveformSamples = new float[200];
-            private int _compressedWaveformPosition = 0;
-
-            private float _currentPeak;
-            private int _currentPeakCount;
-            private int _peakCompressionFactor = 1;
-
-            private float _micLevelPeak = 0;
-            private int _micLevelPeakCount = 0;
-
-            private ulong _lastUpdateTime;
+            private static bool IsSupportedSubtype(string subtype)
+            {
+                // 32-bit float and 16-bit PCM are the two the sink knows how to read.
+                return string.Equals(subtype, MediaEncodingSubtypes.Float, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(subtype, MediaEncodingSubtypes.Pcm, StringComparison.OrdinalIgnoreCase);
+            }
 
             private unsafe void OnAudioFrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
             {
                 using var reference = sender.TryAcquireLatestFrame();
-                if (reference?.SourceKind != MediaFrameSourceKind.Audio)
+                if (reference?.SourceKind != MediaFrameSourceKind.Audio || _paused)
                 {
                     return;
                 }
 
-                if (Logger.TickCount - _lastUpdateTime < 64)
+                // The reader can be running with a format we never managed to read, in which case
+                // there is nothing to say about how to interpret its bytes.
+                if (_channels == 0 || _bitsPerSample == 0)
                 {
                     return;
                 }
-
-                _lastUpdateTime = Logger.TickCount;
 
                 using var frame = reference.AudioMediaFrame.GetAudioFrame();
 
@@ -918,116 +1004,77 @@ namespace Telegram.Controls.Chats
                 // Get the buffer from the AudioFrame
                 bufferReference.Buffer(out byte* buffer, out uint capacity);
 
-                var samples = (float*)buffer;
-                var count = capacity / 4;
+                var samples = ReadSamples(buffer, Math.Min(audioBuffer.Length, capacity));
 
-                for (int i = 0; i < count; i++)
+                // Every frame is folded in, and only the notification is rate-limited: this
+                // callback is the recording now, so it can't afford to skip one.
+                if (_waveform.Add(samples))
                 {
-                    var sample = samples[i];
-                    if (sample < 0)
-                    {
-                        sample = Math.Abs(sample);
-                    }
-
-                    _currentPeak = Math.Max(_currentPeak, sample);
-                    _currentPeakCount++;
-
-                    if (_currentPeakCount == _peakCompressionFactor)
-                    {
-                        _compressedWaveformSamples[_compressedWaveformPosition++] = _currentPeak;
-
-                        _currentPeakCount = 0;
-
-                        if (_compressedWaveformPosition == _compressedWaveformSamples.Length)
-                        {
-                            for (int j = 0; j < _compressedWaveformSamples.Length / 2; j++)
-                            {
-                                _compressedWaveformSamples[j] = Math.Max(_compressedWaveformSamples[j * 2 + 0], _compressedWaveformSamples[j * 2 + 1]);
-                            }
-
-                            _compressedWaveformPosition = _compressedWaveformSamples.Length / 2;
-                            _peakCompressionFactor *= 2;
-                        }
-
-                    }
-
-                    if (_micLevelPeak < sample)
-                    {
-                        _micLevelPeak = sample;
-                    }
-
-                    _micLevelPeakCount += 1;
-
-                    if (_micLevelPeakCount >= 1200)
-                    {
-                        QuantumProcessed?.Invoke(_micLevelPeak);
-
-                        _micLevelPeak = 0;
-                        _micLevelPeakCount = 0;
-                    }
+                    QuantumProcessed?.Invoke(_waveform.Level);
                 }
+
+                _sink?.Write(samples);
             }
 
-            public unsafe byte[] GetWaveform()
+            /// <summary>
+            /// Presents the captured buffer as mono 32-bit float, which is what both the waveform
+            /// and the encoder read.
+            /// </summary>
+            private unsafe ReadOnlySpan<float> ReadSamples(byte* buffer, uint length)
             {
-                var count = _compressedWaveformPosition;
-                var scaledSamples = new short[100];
+                var channels = (int)_channels;
+                var count = (int)(length / (_bitsPerSample / 8 * _channels));
 
-                for (int i = 0; i < count; i++)
+                // Mono float is the common case and needs no conversion at all.
+                if (_bitsPerSample == 32 && channels == 1)
                 {
-                    var sample = _compressedWaveformSamples[i] * short.MaxValue;
-                    var index = i * 100 / count;
-                    if (scaledSamples[index] < sample)
+                    return new ReadOnlySpan<float>(buffer, count);
+                }
+
+                if (_samples == null || _samples.Length < count)
+                {
+                    _samples = new float[count];
+                }
+
+                var target = _samples.AsSpan(0, count);
+
+                if (_bitsPerSample == 32)
+                {
+                    var source = (float*)buffer;
+
+                    for (int i = 0; i < count; i++)
                     {
-                        scaledSamples[index] = (short)sample;
+                        var sum = 0f;
+                        for (int j = 0; j < channels; j++)
+                        {
+                            sum += source[i * channels + j];
+                        }
+
+                        target[i] = sum / channels;
+                    }
+                }
+                else
+                {
+                    var source = (short*)buffer;
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        var sum = 0f;
+                        for (int j = 0; j < channels; j++)
+                        {
+                            sum += source[i * channels + j] / 32768f;
+                        }
+
+                        target[i] = sum / channels;
                     }
                 }
 
-                short peak = 0;
-                long sumSamples = 0;
-                for (int i = 0; i < 100; i++)
-                {
-                    var sample = scaledSamples[i];
-                    if (peak < sample)
-                    {
-                        peak = sample;
-                    }
-                    sumSamples += sample;
-                }
+                return target;
+            }
 
-                var calculatedPeak = (ushort)(sumSamples * 1.8 / 100.0);
-                if (calculatedPeak < 2500)
-                {
-                    calculatedPeak = 2500;
-                }
-
-                for (int i = 0; i < 100; i++)
-                {
-                    uint sample = (ushort)scaledSamples[i];
-                    var minPeak = Math.Min(sample, calculatedPeak);
-                    var resultPeak = minPeak * 31 / calculatedPeak;
-                    scaledSamples[i] = (short)/*clamping:*/ Math.Min(31, resultPeak);
-                }
-
-                var bitstreamLength = scaledSamples.Length * 5 / 8 + 1;
-                var result = new byte[bitstreamLength];
-
-                fixed (byte* data = result)
-                {
-                    static void set_bits(byte* bytes, int bitOffset, int value)
-                    {
-                        bytes += bitOffset / 8;
-                        bitOffset %= 8;
-                        *(int*)bytes |= value << bitOffset;
-                    }
-
-                    for (int i = 0; i < scaledSamples.Length; i++)
-                    {
-                        set_bits(data, i * 5, scaledSamples[i] & 31);
-                    }
-                }
-
-                return result;
+            public byte[] GetWaveform()
+            {
+                return _waveform.GetWaveform();
             }
 
             public async Task<ChatRecordResult> PauseAsync()
@@ -1044,6 +1091,21 @@ namespace Telegram.Controls.Chats
                     if (recorder == null)
                     {
                         Logger.Debug("recorder or file == null, abort");
+
+                        // Setting it is what releases the caller: it awaits this task.
+                        tsc.SetResult(null);
+                        return;
+                    }
+
+                    if (_sink != null)
+                    {
+                        // Nothing to pause: the frames keep arriving and are dropped, which keeps
+                        // the device warm and resuming instant.
+                        _paused = !_paused;
+
+                        tsc.SetResult(_paused
+                            ? new ChatRecordResult(_sink.Duration, GetWaveform())
+                            : null);
                         return;
                     }
 
@@ -1132,10 +1194,36 @@ namespace Telegram.Controls.Chats
                         QuantumProcessed?.Invoke(0);
                     }
 
-                    var result = await recorder.StopAsync();
-                    var duration = result?.RecordDuration ?? TimeSpan.Zero;
+                    var sink = _sink;
+                    var waveform = Array.Empty<byte>();
 
-                    Logger.Debug("recorder stopped, duration: " + result?.RecordDuration);
+                    TimeSpan duration;
+
+                    if (sink != null)
+                    {
+                        sink.Complete();
+
+                        // Counted from the samples that were actually encoded, so it matches the
+                        // file rather than the moment the user pressed the button.
+                        duration = sink.Duration;
+                        waveform = GetWaveform();
+
+                        sink.Dispose();
+
+                        await recorder.StopAsync();
+                    }
+                    else
+                    {
+                        var result = await recorder.StopAsync();
+                        duration = result?.RecordDuration ?? TimeSpan.Zero;
+
+                        if (mode == ChatRecordMode.Voice)
+                        {
+                            waveform = GetWaveform();
+                        }
+                    }
+
+                    Logger.Debug("recorder stopped, duration: " + duration);
 
                     if (cancel == true || duration.TotalMilliseconds < 700)
                     {
@@ -1158,7 +1246,7 @@ namespace Telegram.Controls.Chats
 
                         if (cancel == false)
                         {
-                            Send(viewModel, mode, chat, file, recorder._mirroringPreview, (int)duration.TotalSeconds);
+                            Send(viewModel, mode, chat, file, recorder._mirroringPreview, duration, waveform, sink != null);
                         }
                     }
 
@@ -1166,10 +1254,11 @@ namespace Telegram.Controls.Chats
                     _file = null;
 
                     _reader = null;
+                    _sink = null;
                 });
             }
 
-            private async void Send(ComposeViewModel viewModel, ChatRecordMode mode, Chat chat, StorageFile file, bool mirroring, int duration)
+            private async void Send(ComposeViewModel viewModel, ChatRecordMode mode, Chat chat, StorageFile file, bool mirroring, TimeSpan duration, byte[] waveform, bool encoded)
             {
                 var selfDestructType = IsViewOnce
                         ? new MessageSelfDestructTypeImmediately()
@@ -1222,9 +1311,14 @@ namespace Telegram.Controls.Chats
                 }
                 else
                 {
+                    // Already Ogg/Opus when the sink wrote it, so there is nothing to convert.
+                    var conversion = encoded
+                        ? ConversionType.Copy
+                        : ConversionType.Opus;
+
                     try
                     {
-                        _dispatcherQueue.TryEnqueue(() => _ = viewModel.SendVoiceNoteAsync(file, duration, null, selfDestructType));
+                        _dispatcherQueue.TryEnqueue(() => _ = viewModel.SendVoiceNoteAsync(file, conversion, duration, waveform, null, selfDestructType));
                     }
                     catch { }
                 }
@@ -1236,7 +1330,6 @@ namespace Telegram.Controls.Chats
             {
                 private readonly bool m_isVideo;
 
-                private readonly StorageFile m_file;
                 private LowLagMediaRecording m_lowLag;
                 private bool m_paused;
 
@@ -1250,9 +1343,8 @@ namespace Telegram.Controls.Chats
                 //// Rotation Helper to simplify handling rotation compensation for the camera streams
                 //public CameraRotationHelper _rotationHelper;
 
-                public OpusRecorder(StorageFile file, bool video)
+                public OpusRecorder(bool video)
                 {
-                    m_file = file;
                     m_isVideo = video;
                     InitializeSettings();
                 }
@@ -1280,7 +1372,7 @@ namespace Telegram.Controls.Chats
                     return desiredDevice ?? allVideoDevices.FirstOrDefault();
                 }
 
-                public async Task StartAsync()
+                public async Task StartAsync(StorageFile file)
                 {
                     MediaEncodingProfile profile;
                     if (m_isVideo)
@@ -1295,7 +1387,7 @@ namespace Telegram.Controls.Chats
                         profile.Audio.ChannelCount = 1;
                     }
 
-                    m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
+                    m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, file);
                     await m_lowLag.StartAsync();
                 }
 
@@ -1326,8 +1418,12 @@ namespace Telegram.Controls.Chats
                     MediaCaptureStopResult result = null;
                     try
                     {
-                        result = await m_lowLag.StopWithResultAsync();
-                        await m_lowLag.FinishAsync();
+                        // Null when the sink did the recording: there is only the device to close.
+                        if (m_lowLag != null)
+                        {
+                            result = await m_lowLag.StopWithResultAsync();
+                            await m_lowLag.FinishAsync();
+                        }
                     }
                     catch { }
                     finally

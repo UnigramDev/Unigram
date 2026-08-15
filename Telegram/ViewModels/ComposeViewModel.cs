@@ -724,7 +724,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async Task SendVoiceNoteAsync(StorageFile file, int duration, FormattedText caption, MessageSelfDestructType selfDestructType)
+        public async Task SendVoiceNoteAsync(StorageFile file, ConversionType conversion, TimeSpan duration, byte[] waveform, FormattedText caption, MessageSelfDestructType selfDestructType)
         {
             var options = await PickMessageSendOptionsAsync();
             if (options == null)
@@ -734,7 +734,7 @@ namespace Telegram.ViewModels
 
             // TODO: 172 selfDestructType
             var reply = GetReply(true);
-            var input = new InputMessageVoiceNote(new InputVoiceNote(await file.ToGeneratedAsync(ConversionType.Opus), duration, Array.Empty<byte>()), caption, selfDestructType);
+            var input = new InputMessageVoiceNote(new InputVoiceNote(await file.ToGeneratedAsync(conversion), (int)Math.Round(duration.TotalSeconds), waveform), caption, selfDestructType);
 
             await SendMessageAsync(reply, input, options);
         }

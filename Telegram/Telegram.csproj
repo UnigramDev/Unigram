@@ -212,6 +212,8 @@
     <Compile Include="Common\NativeMethodChecker.cs" />
     <Compile Include="Common\PageBlockHelper.cs" />
     <Compile Include="Common\Profiler.cs" />
+    <Compile Include="Common\Recording\AudioWaveform.cs" />
+    <Compile Include="Common\Recording\VoiceSink.cs" />
     <Compile Include="Common\RichHtml.cs" />
     <Compile Include="Common\SliderHelper.cs" />
     <Compile Include="Common\TdThroughput.cs" />
