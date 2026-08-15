@@ -6,14 +6,18 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls.Chats;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Views;
 using Windows.UI.Composition;
+using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -107,6 +111,15 @@ namespace Telegram.Controls
             {
                 AdaptivePanel.ViewStateChanged -= OnViewStateChanged;
             }
+
+            if (_backTrackerOwner != null)
+            {
+                _backTrackerOwner.InteractingStateEntered -= OnBackInteractingStateEntered;
+                _backTrackerOwner.InertiaStateEntered -= OnBackInertiaStateEntered;
+                _backTrackerOwner.IdleStateEntered -= OnBackIdleStateEntered;
+            }
+
+            DetachBackGesture(null);
 
             if (DetailFrame?.Content is HostedPage hosted)
             {
@@ -403,6 +416,8 @@ namespace Telegram.Controls
                 catch { }
             }
 
+            ConfigureBackGesture();
+
             if (ActualWidth > 0 && CurrentState != MasterDetailState.Minimal)
             {
                 OnViewStateChanged();
@@ -527,6 +542,11 @@ namespace Telegram.Controls
             {
                 NavigationService.InsertToBackStack(0, BlankPageType);
             }
+
+            // The container that was driving the chip may have gone with the page, in which case
+            // its tracker never reaches idle and nothing else would release the binding.
+            DetachBackGesture(null);
+            ConfigureBackGesture();
 
             if (e.Content is HostedPage hosted)
             {
@@ -790,6 +810,210 @@ namespace Telegram.Controls
         private bool _isMinimal = false;
         private bool IsMinimal =>
             AdaptivePanel?.CurrentState == MasterDetailState.Minimal;
+
+        #region Back gesture
+
+        // Chrome's desktop back gesture: only the chip travels, the page stays where it is. That
+        // is what makes this affordable here - the master is collapsed while a chat is open in
+        // Minimal, so revealing it would force a measure of the whole chat list at the moment the
+        // finger starts moving, and a Frame navigation cannot be scrubbed anyway.
+        private const float BackGestureThreshold = 72;
+
+        private VisualInteractionSource _backSource;
+        private InteractionTracker _backTracker;
+        private WeakInteractionTrackerOwner _backTrackerOwner;
+
+        private ContainerVisual _backIndicator;
+        private InteractionTracker _backDriver;
+
+        /// <summary>
+        /// Creates, then enables or disables, the source carrying the gesture everywhere the detail
+        /// is not a message bubble: the chat header, the composer, profile and settings pages.
+        /// </summary>
+        private void ConfigureBackGesture()
+        {
+            var enabled = SettingsService.Current.SwipeToGoBack;
+
+            if (_backTracker == null)
+            {
+                if (!enabled || DetailRoot == null)
+                {
+                    return;
+                }
+
+                var visual = ElementComposition.GetElementVisual(DetailRoot);
+                var compositor = visual.Compositor;
+
+                _backSource = VisualInteractionSource.Create(visual);
+                _backSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
+                _backSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
+                _backSource.PositionXChainingMode = InteractionChainingMode.Never;
+                _backSource.IsPositionXRailsEnabled = true;
+
+                _backTrackerOwner = new WeakInteractionTrackerOwner();
+                _backTrackerOwner.InteractingStateEntered += OnBackInteractingStateEntered;
+                _backTrackerOwner.InertiaStateEntered += OnBackInertiaStateEntered;
+                _backTrackerOwner.IdleStateEntered += OnBackIdleStateEntered;
+
+                _backTracker = InteractionTracker.CreateWithOwner(compositor, _backTrackerOwner);
+                _backTracker.InteractionSources.Add(_backSource);
+
+                // Only the back direction travels, and it runs negative to match the sign
+                // MessageSelector's tracker already uses for a left-to-right drag.
+                _backTracker.MaxPosition = Vector3.Zero;
+                _backTracker.MinPosition = new Vector3(-BackGestureThreshold, 0, 0);
+
+                var neutralX = InteractionTrackerInertiaRestingValue.Create(compositor);
+                neutralX.Condition = compositor.CreateExpressionAnimation("true");
+                neutralX.RestingValue = compositor.CreateExpressionAnimation("0");
+
+                // A List, not an array: InteractionTrackerInertiaModifier is a WinRT runtimeclass,
+                // and an array of one boxes through IReferenceArray, which NativeAOT cannot synthesise.
+                _backTracker.ConfigurePositionXInertiaModifiers(new List<InteractionTrackerInertiaModifier> { neutralX });
+            }
+
+            // Re-read on every navigation, so switching the setting off takes effect at once.
+            _backSource.PositionXSourceMode = enabled
+                ? InteractionSourceMode.EnabledWithInertia
+                : InteractionSourceMode.Disabled;
+        }
+
+        /// <summary>
+        /// Points the chip at whichever tracker owns the gesture: MessageSelector's over a message
+        /// bubble, this control's everywhere else. An ExpressionAnimation may reference a tracker
+        /// from anywhere in the compositor, so the chip runs without per-frame work on this thread.
+        /// </summary>
+        public void AttachBackGesture(InteractionTracker tracker)
+        {
+            if (tracker == null || _backDriver == tracker || DetailRoot == null)
+            {
+                return;
+            }
+
+            if (DetailFrame is not { CanGoBack: true } || !SettingsService.Current.SwipeToGoBack)
+            {
+                return;
+            }
+
+            EnsureBackIndicator();
+            _backDriver = tracker;
+
+            var compositor = _backIndicator.Compositor;
+            var root = ElementComposition.GetElementVisual(DetailRoot);
+
+            var progress = $"clamp(-tracker.Position.X / {BackGestureThreshold}, 0, 1)";
+
+            // Matching ChatListListView's indicator, bar the mirroring: ArrowLeft.png already
+            // points the way a left-edge back chip needs it to.
+            var offset = compositor.CreateExpressionAnimation($"vector3(-30 + {progress} * 55, (root.Size.Y - 30) / 2, 0)");
+            offset.SetReferenceParameter("tracker", tracker);
+            offset.SetReferenceParameter("root", root);
+
+            var scale = compositor.CreateExpressionAnimation($"vector3(0.8 + {progress} * 0.2, 0.8 + {progress} * 0.2, 1)");
+            scale.SetReferenceParameter("tracker", tracker);
+
+            var opacity = compositor.CreateExpressionAnimation(progress);
+            opacity.SetReferenceParameter("tracker", tracker);
+
+            _backIndicator.StartAnimation("Offset", offset);
+            _backIndicator.StartAnimation("Scale", scale);
+            _backIndicator.StartAnimation("Opacity", opacity);
+        }
+
+        /// <summary>
+        /// Releases the chip. Passing null releases it whatever it is bound to.
+        /// </summary>
+        public void DetachBackGesture(InteractionTracker tracker)
+        {
+            if (_backDriver == null || (tracker != null && _backDriver != tracker))
+            {
+                return;
+            }
+
+            _backDriver = null;
+
+            // Left bound, the expressions would hold a recycled container's tracker alive, and the
+            // chip would sit at whatever progress the gesture happened to end on.
+            _backIndicator.StopAnimation("Offset");
+            _backIndicator.StopAnimation("Scale");
+            _backIndicator.StopAnimation("Opacity");
+            _backIndicator.Opacity = 0;
+        }
+
+        public void CommitBackGesture()
+        {
+            // Through the navigation service rather than DetailFrame.GoBack, so that a page
+            // answering its own back button (INavigablePage) still gets the chance to.
+            if (DetailFrame is { CanGoBack: true })
+            {
+                NavigationService?.GoBack();
+            }
+        }
+
+        private void EnsureBackIndicator()
+        {
+            if (_backIndicator != null)
+            {
+                return;
+            }
+
+            var compositor = ElementComposition.GetElementVisual(DetailRoot).Compositor;
+
+            var sprite = compositor.CreateSpriteVisual();
+            sprite.Size = new Vector2(30, 30);
+            sprite.CenterPoint = new Vector3(15);
+
+            var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/ArrowLeft.png"));
+            void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
+            {
+                s.LoadCompleted -= handler;
+                sprite.Brush = compositor.CreateSurfaceBrush(s);
+            }
+
+            surface.LoadCompleted += handler;
+
+            var ellipse = compositor.CreateEllipseGeometry();
+            ellipse.Radius = new Vector2(15);
+
+            var ellipseShape = compositor.CreateSpriteShape(ellipse);
+            ellipseShape.FillBrush = compositor.CreateColorBrush((Windows.UI.Color)BootStrapper.Current.Resources["MessageServiceBackgroundColor"]);
+            ellipseShape.Offset = new Vector2(15);
+
+            var shape = compositor.CreateShapeVisual();
+            shape.Shapes.Add(ellipseShape);
+            shape.Size = new Vector2(30, 30);
+
+            _backIndicator = compositor.CreateContainerVisual();
+            _backIndicator.Children.InsertAtBottom(shape);
+            _backIndicator.Children.InsertAtTop(sprite);
+            _backIndicator.Size = new Vector2(30, 30);
+            _backIndicator.CenterPoint = new Vector3(15);
+            _backIndicator.Opacity = 0;
+
+            // Drawn over the detail content, and clipped to it by the inset clip already on
+            // DetailPresenter's parent, so the chip appears to come in from the edge.
+            ElementComposition.SetElementChildVisual(DetailRoot, _backIndicator);
+        }
+
+        private void OnBackInteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
+        {
+            AttachBackGesture(sender);
+        }
+
+        private void OnBackInertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
+        {
+            if (sender.Position.X <= -BackGestureThreshold)
+            {
+                CommitBackGesture();
+            }
+        }
+
+        private void OnBackIdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
+        {
+            DetachBackGesture(sender);
+        }
+
+        #endregion
 
         #region Public methods
 

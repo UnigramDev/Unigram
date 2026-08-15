@@ -234,6 +234,10 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.SwipeToReply, Mode=TwoWay}"
                               Content="{CustomResource SwipeReply}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.SwipeToGoBack, Mode=TwoWay}"
+                              Content="{CustomResource SwipeGoBack}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource ChatDoubleClickAction}"

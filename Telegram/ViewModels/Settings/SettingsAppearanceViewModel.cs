@@ -290,6 +290,16 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
+        public bool SwipeToGoBack
+        {
+            get => Settings.SwipeToGoBack;
+            set
+            {
+                Settings.SwipeToGoBack = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool DoubleClickToReply
         {
             get => Settings.Appearance.IsQuickReplySelected;

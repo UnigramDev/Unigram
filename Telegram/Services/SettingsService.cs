@@ -78,6 +78,7 @@ namespace Telegram.Services
 
         bool SwipeToShare { get; set; }
         bool SwipeToReply { get; set; }
+        bool SwipeToGoBack { get; set; }
         bool FullScreenGallery { get; set; }
         bool UseSystemSpellChecker { get; set; }
 
@@ -487,6 +488,13 @@ namespace Telegram.Services
         {
             get => _swipeToReply ??= GetValueOrDefault(_local, "SwipeToReply", true);
             set => AddOrUpdateValue(ref _swipeToReply, _local, "SwipeToReply", value);
+        }
+
+        private static bool? _swipeToGoBack;
+        public bool SwipeToGoBack
+        {
+            get => _swipeToGoBack ??= GetValueOrDefault(_local, "SwipeToGoBack", true);
+            set => AddOrUpdateValue(ref _swipeToGoBack, _local, "SwipeToGoBack", value);
         }
 
         private static bool? _fullScreenGallery;

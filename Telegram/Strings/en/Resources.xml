@@ -11167,6 +11167,7 @@
     <string name="StoryShownHint">**{0}** will be able to see your stories again.</string>
     <string name="SwipeReply">Reply</string>
     <string name="SwipeShare">Share</string>
+    <string name="SwipeGoBack">Go back</string>
     <string name="SystemIntegration">System Integration</string>
     <string name="TabsView">Tabs view</string>
     <string name="TabsViewInfo">If you have many folders, try moving tabs on the left.</string>
