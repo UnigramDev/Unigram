@@ -60,11 +60,54 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.UnreadReaction[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.UpgradedGiftAttributeId[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Native.TextStylePart[]))]
-// Set as ItemsSource in GroupCallPage's constructor. External generic instantiations get no CCW
-// vtable of their own - the generator only emits those for the app's own partial types - so XAML
-// fails the QI for IBindableIterable and set_ItemsSource returns E_INVALIDARG. On the UI thread's
-// DispatcherQueue that is a fail-fast, not an exception.
+// Boxed into a WinRT object somewhere - ItemsSource, SelectedItem, Content. A constructed generic
+// or an array gets no CCW vtable of its own, so XAML fails the QI for IBindableIterable and
+// set_ItemsSource returns E_INVALIDARG, which on the UI thread's DispatcherQueue is a fail-fast
+// rather than an exception.
+//
+// This list is the TG1001 output, not a hand sweep: grepping for ItemsSource found the wrong type
+// twice, because what the popups assign is a DiffObservableCollection and the List beside it is
+// only the backing store. Rerun the analyzer rather than adding entries by hand.
+[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Entities.Country>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Services.CaptureSessionItem>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Services.PlaybackItem>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Td.Api.AvailableGift>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Td.Api.CountryInfo>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Td.Api.TimeZone>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Rg.DiffUtils.DiffObservableCollection<Telegram.Views.Popups.TranslateToLanguage>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Controls.StorageChartItem>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.BusinessFeature>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.Chat>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.ChatBoostLevelFeatures>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.ChatBoostSlot>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.LanguagePackInfo>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.PremiumGiftPaymentOption>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.User>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.ViewModels.Folders.FolderFlag>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.ViewModels.Settings.ChatThemeViewModel>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Views.Popups.PollResultViewModel>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Views.Popups.SettingsOptionItem<int>>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Windows.UI.Xaml.FrameworkElement>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ObservableCollection<Telegram.Td.Api.GroupCallMessage>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ObservableCollection<Telegram.ViewModels.Business.BusinessHoursRange>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ObservableCollection<Telegram.Views.Chats.Popups.SelectionValue>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ObservableCollection<Telegram.Views.Premium.Popups.GiftGroup>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(object[]))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<object>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<Telegram.Td.Api.Chat>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<Telegram.Td.Api.ChatInviteLinkMember>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<Telegram.ViewModels.Settings.ChatThemeViewModel>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollection<Telegram.ViewModels.Stories.StoryViewModel>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.IncrementalCollectionView<Telegram.Td.Api.ReceivedGift, Telegram.ViewModels.Profile.ProfileGiftsTabViewModel.ReceivedGiftsCollection>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.MvxObservableCollection<object>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.SortedObservableCollection<Telegram.Td.Api.GroupCallMessage>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Collections.SynchronizedList<Telegram.ViewModels.MessageViewModel>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Common.EmojiSkinData[]))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.PremiumGiftPaymentOption[]))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.ViewModels.ChatFolderIcon2[]))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Views.Popups.SettingsOptionItem<int>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Views.Stories.Popups.StealthPopup.StealthModeFeature[]))]
+
 // GetReplyMarkupClip and GetRoundedPolygon take IVector<IVector<Rect>>. The outer list marshals on
 // its own, because the generator can see it at the call site; the inner one it never sees, since
 // that CCW is only needed when the native side calls GetAt. So the failure waits for a message with

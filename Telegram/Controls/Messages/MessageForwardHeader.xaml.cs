@@ -69,7 +69,10 @@ namespace Telegram.Controls.Messages
                 var current = new List<Rect>();
                 var last = default(Rect);
 
-                var entities = new[]
+                // A List rather than an array: TextStylePart is a WinRT struct, so an array of them
+                // can only cross as IVector<T> by boxing through IReferenceArray, which AOT cannot
+                // synthesise.
+                var entities = new List<TextStylePart>
                 {
                     new TextStylePart
                     {

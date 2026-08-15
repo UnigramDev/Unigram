@@ -23,7 +23,9 @@ namespace Telegram.Views.Stories.Popups
 
         private readonly bool _opening;
 
-        enum StealthModeFeature
+        // Internal rather than private so that CsWinRT.cs can name the array in a
+        // GeneratedWinRTExposedExternalType attribute; it is the ItemsSource below.
+        internal enum StealthModeFeature
         {
             HideRecentViews,
             HideNextViews
