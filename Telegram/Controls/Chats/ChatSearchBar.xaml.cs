@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Cells;
@@ -39,6 +40,9 @@ namespace Telegram.Controls.Chats
                 ListAutocomplete.Shadow = new ThemeShadow();
                 ListAutocomplete.Translation = new Vector3(0, 0, 32);
             }
+
+            ListAutocomplete.RegisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, OnAutocompleteChanged);
+            OnAutocompleteChanged(null, null);
 
             _debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Field.TextChanged += new TextChangedEventHandler(handler));
             _debouncer.Invoked += (s, args) =>
@@ -469,15 +473,25 @@ namespace Telegram.Controls.Chats
             RootAutocomplete.Visibility = Visibility.Collapsed;
         }
 
-        private Visibility ConvertAutocompleteVisibility(object autocomplete)
+        // Height comes from the number of rows, never from the content: a list that measures its
+        // own content hands the virtualizing panel a viewport that moves as it realizes items, and
+        // against a source that loads incrementally a viewport that grows asks for more items and
+        // grows again, which is a layout that never settles. Rows are uniform, so counting them
+        // settles it before layout runs.
+        private void OnAutocompleteChanged(DependencyObject sender, DependencyProperty dp)
         {
-            //var visible = ListAutocomplete.ActualWidth > 0 && ListAutocomplete.ActualHeight >= 2;
-            //visible &= autocomplete != null;
-            //Field.CornerRadius = new CornerRadius(4, 4, visible ? 0 : 4, visible ? 0 : 4);
+            var count = ListAutocomplete.ItemsSource is ICollection collection ? collection.Count : 0;
+            var visible = count > 0;
 
-            return autocomplete != null
+            var border = ListAutocomplete.BorderThickness;
+            ListAutocomplete.Height = Math.Min(ListAutocomplete.MaxHeight, count * AutocompleteRowHeight + border.Top + border.Bottom);
+            ListAutocomplete.Visibility = visible
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+
+            Field.CornerRadius = new CornerRadius(4, 4, visible ? 0 : 4, visible ? 0 : 4);
         }
+
+        private const double AutocompleteRowHeight = 64;
     }
 }
