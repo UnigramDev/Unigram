@@ -65,6 +65,13 @@ using WinRT;
 // fails the QI for IBindableIterable and set_ItemsSource returns E_INVALIDARG. On the UI thread's
 // DispatcherQueue that is a fail-fast, not an exception.
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ObservableCollection<Telegram.Td.Api.GroupCallMessage>))]
+// GetReplyMarkupClip and GetRoundedPolygon take IVector<IVector<Rect>>. The outer list marshals on
+// its own, because the generator can see it at the call site; the inner one it never sees, since
+// that CCW is only needed when the native side calls GetAt. So the failure waits for a message with
+// an inline keyboard to be arranged and then throws out of ArrangeOverride.
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Windows.Foundation.Rect>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<System.Collections.Generic.IList<Windows.Foundation.Rect>>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<System.Collections.Generic.List<Windows.Foundation.Rect>>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<string>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.NameColor>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.ProfileColor>))]
