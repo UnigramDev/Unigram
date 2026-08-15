@@ -823,6 +823,9 @@ namespace Telegram.Controls
 
         private VisualInteractionSource _backSource;
         private VisualInteractionSource _backContentSource;
+        private ScrollViewer _backScrollingHost;
+        private FrameworkElement _backScrollingContent;
+        private double _backScrollingContentMinHeight;
         private InteractionTracker _backTracker;
         private WeakInteractionTrackerOwner _backTrackerOwner;
 
@@ -909,7 +912,7 @@ namespace Telegram.Controls
             // is already covered by MessageSelector.
             if (content is not HostedPage hosted
                 || hosted.FindName("ScrollingHost") is not ScrollViewer scrollingHost
-                || scrollingHost.Content is not UIElement child)
+                || scrollingHost.Content is not FrameworkElement child)
             {
                 return;
             }
@@ -921,10 +924,46 @@ namespace Telegram.Controls
             _backContentSource.IsPositionXRailsEnabled = true;
 
             _backTracker.InteractionSources.Add(_backContentSource);
+
+            // The source reaches only as far as the content does, and a ScrollViewer arranges
+            // content shorter than the viewport at its desired height - so on a short page like
+            // Advanced the gesture worked over the rows and died in the empty space beneath them,
+            // where the bare scroller takes the pan. Growing the content to the viewport gives the
+            // source the whole visible area, and costs nothing: the extent still matches the
+            // viewport, so the page stays unscrollable.
+            _backScrollingHost = scrollingHost;
+            _backScrollingContent = child;
+            _backScrollingContentMinHeight = child.MinHeight;
+
+            scrollingHost.SizeChanged += OnBackScrollingHostSizeChanged;
+            child.MinHeight = scrollingHost.ViewportHeight;
+        }
+
+        private void OnBackScrollingHostSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // ViewportHeight is still 0 when the page is first navigated to, so this is where the
+            // height actually lands, not only where it is kept up to date.
+            if (_backScrollingContent != null && _backScrollingHost != null)
+            {
+                _backScrollingContent.MinHeight = _backScrollingHost.ViewportHeight;
+            }
         }
 
         private void DetachBackGestureContent()
         {
+            if (_backScrollingHost != null)
+            {
+                _backScrollingHost.SizeChanged -= OnBackScrollingHostSizeChanged;
+                _backScrollingHost = null;
+            }
+
+            if (_backScrollingContent != null)
+            {
+                // Pages are cached, so this one may come back with the gesture switched off.
+                _backScrollingContent.MinHeight = _backScrollingContentMinHeight;
+                _backScrollingContent = null;
+            }
+
             if (_backContentSource != null)
             {
                 _backTracker?.InteractionSources.Remove(_backContentSource);
@@ -1012,11 +1051,17 @@ namespace Telegram.Controls
 
         public void CommitBackGesture()
         {
-            // Through the navigation service rather than DetailFrame.GoBack, so that a page
-            // answering its own back button (INavigablePage) still gets the chance to.
             if (DetailFrame is { CanGoBack: true })
             {
-                NavigationService?.GoBack();
+                // The gesture pulls from the left, so the page it uncovers arrives from the left -
+                // the mirror of the FromRight slide TLNavigationService uses going forward. The
+                // default entrance transition reads as unrelated to the finger that asked for it.
+                //
+                // Gated on the policy because FrameFacade only applies it to Navigate, not GoBack,
+                // so nothing else would stop this one from animating.
+                NavigationService?.GoBack(null, PowerSavingPolicy.AreSmoothTransitionsEnabled
+                    ? new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromLeft }
+                    : null);
             }
         }
 

@@ -86,7 +86,12 @@ it was `MinPosition` being pinned to 0.
       threshold — scale pops to 1.15 and opacity goes to full — so releasing feels
       committed. All still pure expression, no per-frame work.
 - [x] Fixed the settings pages, where the gesture only worked in the title strip — the
-      page's `ScrollViewer` was taking the pan. Unverified: needs another run.
+      page's `ScrollViewer` was taking the pan. Took two passes; the second is the one that
+      reaches short pages. Unverified: needs another run.
+- [x] Commit navigates with `SlideNavigationTransitionInfo` `FromLeft`, mirroring the
+      `FromRight` slide `TLNavigationService` uses going forward. Gated on
+      `PowerSavingPolicy.AreSmoothTransitionsEnabled`, since `FrameFacade` applies that
+      policy to `Navigate` but not to `GoBack`.
 
 ## Touch is deliberately only half-covered
 
@@ -121,6 +126,19 @@ Fix is the same trick, applied deliberately: on navigation, `ConfigureBackGestur
 puts a second `VisualInteractionSource` on the scrolling host's own content element and adds
 it to the same tracker. Rails and an X-only source mode leave vertical panning to the
 `ScrollViewer`, exactly as they already do in the chat history.
+
+That alone fixed only the long pages. Privacy and Security worked, Power Saving and
+Advanced did not — and those are the two shortest settings pages in the app (49 and 128
+lines of XAML against 200). A `ScrollViewer` arranges content shorter than the viewport at
+its *desired* height, so the source reached the rows and stopped: everything below the last
+one is bare scroller, which takes the pan. The source has to be inside the scrolled content
+— that is the whole point of it — so the content is what has to cover the viewport.
+`ConfigureBackGestureContent` now sets the content's `MinHeight` from the host's
+`ViewportHeight` and keeps it there on `SizeChanged`. Nothing else moves: the extent still
+matches the viewport, so a short page stays unscrollable.
+
+Sequencing note: `ViewportHeight` is 0 at `OnNavigated`, so `SizeChanged` is where the
+height actually first lands, not merely where it is maintained.
 
 Only `ScrollViewer` hosts are covered. A `ListViewBase` host would need its
 `ItemsPanelRoot`, which does not exist until the list realises, and the one that matters —
