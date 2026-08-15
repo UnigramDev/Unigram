@@ -22,8 +22,13 @@ namespace Telegram.Common
     // This is supposedly the source code of what happens when you set CanDrag to true.
     public partial class AutomaticDragHelper
     {
+#if NET9_0_OR_GREATER
+        [LibraryImport("user32.dll")]
+        private static partial int GetSystemMetrics(int nIndex);
+#else
         [DllImport("user32.dll")]
         private static extern int GetSystemMetrics(int nIndex);
+#endif
 
         private const int SM_CXDRAG = 68;
         private const int SM_CYDRAG = 69;

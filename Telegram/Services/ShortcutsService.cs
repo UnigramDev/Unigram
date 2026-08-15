@@ -213,8 +213,6 @@ namespace Telegram.Services
             return null;
         }
 
-        //[DllImport("user32.dll")]
-        //static extern int MapVirtualKey(uint uCode, uint uMapType);
 
         //int nonVirtualKey = MapVirtualKey((uint)args.VirtualKey, 2);
         //char mappedChar = Convert.ToChar(nonVirtualKey);

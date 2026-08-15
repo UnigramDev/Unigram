@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -7,11 +7,49 @@
 
 using System;
 using System.Runtime.InteropServices;
+#if NET9_0_OR_GREATER
+using System.Runtime.InteropServices.Marshalling;
+#endif
 
 namespace Telegram.Common
 {
-    public static class NativeMethodInvoker
+    /// <summary>
+    /// Resolves an export by name, for entry points that may not exist on the running version of
+    /// Windows and so cannot be imported statically.
+    /// </summary>
+    public static partial class NativeMethodInvoker
     {
+        // The address, not a delegate: Marshal.GetDelegateForFunctionPointer is runtime marshalling,
+        // which DisableRuntimeMarshalling turns off. Callers invoke through a function pointer.
+        public static IntPtr GetNativeMethod(string moduleName, string functionName)
+        {
+            var moduleHandle = GetModuleHandle(moduleName);
+
+            if (moduleHandle == IntPtr.Zero)
+            {
+                moduleHandle = LoadLibrary(moduleName);
+            }
+
+            if (moduleHandle == IntPtr.Zero)
+            {
+                return IntPtr.Zero;
+            }
+
+            return GetProcAddress(moduleHandle, functionName);
+        }
+
+#if NET9_0_OR_GREATER
+        [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+        private static partial IntPtr GetModuleHandle(string lpModuleName);
+
+        [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+        private static partial IntPtr LoadLibrary(string lpFileName);
+
+        // Ansi, and deliberately: GetProcAddress has no wide form, so the name is bytes either way.
+        [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Custom,
+            StringMarshallingCustomType = typeof(AnsiStringMarshaller), SetLastError = true)]
+        private static partial IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+#else
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern IntPtr GetModuleHandle(string lpModuleName);
 
@@ -20,100 +58,6 @@ namespace Telegram.Common
 
         [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
         private static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool FreeLibrary(IntPtr hModule);
-
-        public static bool IsNativeMethodAvailable(string moduleName, string functionName, bool loadIfNotPresent = true)
-        {
-            IntPtr moduleHandle = GetModuleHandle(moduleName);
-            bool shouldFreeLibrary = false;
-
-            if (moduleHandle == IntPtr.Zero && loadIfNotPresent)
-            {
-                moduleHandle = LoadLibrary(moduleName);
-                shouldFreeLibrary = true;
-            }
-
-            if (moduleHandle == IntPtr.Zero)
-            {
-                return false;
-            }
-
-            try
-            {
-                IntPtr procAddress = GetProcAddress(moduleHandle, functionName);
-                return procAddress != IntPtr.Zero;
-            }
-            finally
-            {
-                if (shouldFreeLibrary)
-                {
-                    FreeLibrary(moduleHandle);
-                }
-            }
-        }
-
-        public static TDelegate GetNativeMethod<TDelegate>(string moduleName, string functionName)
-            where TDelegate : Delegate
-        {
-            IntPtr moduleHandle = GetModuleHandle(moduleName);
-
-            if (moduleHandle == IntPtr.Zero)
-            {
-                moduleHandle = LoadLibrary(moduleName);
-            }
-
-            if (moduleHandle == IntPtr.Zero)
-            {
-                return null;
-            }
-
-            IntPtr procAddress = GetProcAddress(moduleHandle, functionName);
-
-            if (procAddress == IntPtr.Zero)
-            {
-                return null;
-            }
-
-            return Marshal.GetDelegateForFunctionPointer<TDelegate>(procAddress);
-        }
-
-        public static bool TryInvokeNativeMethod<TDelegate>(
-            string moduleName,
-            string functionName,
-            Action<TDelegate> invokeAction)
-            where TDelegate : Delegate
-        {
-            var method = GetNativeMethod<TDelegate>(moduleName, functionName);
-
-            if (method == null)
-            {
-                return false;
-            }
-
-            invokeAction(method);
-            return true;
-        }
-
-        public static bool TryInvokeNativeMethod<TDelegate, TResult>(
-            string moduleName,
-            string functionName,
-            Func<TDelegate, TResult> invokeFunc,
-            out TResult result)
-            where TDelegate : Delegate
-        {
-            var method = GetNativeMethod<TDelegate>(moduleName, functionName);
-
-            if (method == null)
-            {
-                result = default;
-                return false;
-            }
-
-            result = invokeFunc(method);
-            return true;
-        }
+#endif
     }
 }

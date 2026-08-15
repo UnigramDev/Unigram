@@ -78,15 +78,25 @@ namespace Telegram
         private static int _lastCallsCount;
         private static readonly object _lock = new();
 
+#if NET9_0_OR_GREATER
+        [LibraryImport("kernel32.dll")]
+        private static partial ulong GetTickCount64();
+#else
         [SuppressUnmanagedCodeSecurity]
         [DllImport("kernel32.dll")]
         private static extern ulong GetTickCount64();
+#endif
 
         public static ulong TickCount => GetTickCount64();
 
+#if NET9_0_OR_GREATER
+        [LibraryImport("kernel32.dll")]
+        private unsafe static partial void GetSystemTimeAsFileTime(long* pSystemTimeAsFileTime);
+#else
         [SuppressUnmanagedCodeSecurity]
         [DllImport("kernel32.dll")]
         private unsafe static extern void GetSystemTimeAsFileTime(long* pSystemTimeAsFileTime);
+#endif
 
         static Logger()
         {

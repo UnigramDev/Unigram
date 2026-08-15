@@ -6,6 +6,9 @@
 //
 
 using System;
+#if NET9_0_OR_GREATER
+using System.Runtime.CompilerServices;
+#endif
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text.Json;
@@ -37,14 +40,39 @@ namespace Telegram.Td
 #endif
     }
 
-    public class Client
+    public partial class Client
     {
+#if NET9_0_OR_GREATER
+        // A function pointer, not a delegate: handing a managed delegate to native code is runtime
+        // marshalling. The callback below is [UnmanagedCallersOnly] to match, which is why it has
+        // to stay static and capture nothing.
+        [LibraryImport("tdjson.dll")]
+        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+        private static unsafe partial void td_set_log_message_callback(int max_verbosity_level,
+            delegate* unmanaged[Cdecl]<int, IntPtr, void> callback);
+
+        [LibraryImport("tdjson.dll")]
+        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+        private static partial int td_create_client_id();
+
+        [LibraryImport("tdjson.dll")]
+        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+        private static unsafe partial void td_send(int client_id, long request_id, byte* request);
+
+        [LibraryImport("tdjson.dll")]
+        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+        private static unsafe partial byte* td_execute(byte* request);
+
+        [LibraryImport("tdjson.dll")]
+        [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+        private static unsafe partial byte* td_receive(double timeout, out int client_id, out long request_id);
+#else
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void TdLogMessageCallback(int verbosity_level, IntPtr message);
 
         [SuppressUnmanagedCodeSecurity]
         [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void td_set_log_message_callback(int max_verbosity_level, TdLogMessageCallback? callback);
+        private static extern void td_set_log_message_callback(int max_verbosity_level, TdLogMessageCallback? callback);
 
         [SuppressUnmanagedCodeSecurity]
         [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -61,6 +89,7 @@ namespace Telegram.Td
         [SuppressUnmanagedCodeSecurity]
         [DllImport("tdjson.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern unsafe byte* td_receive(double timeout, out int client_id, out long request_id);
+#endif
 
         private static long _currentRequestId = 0;
         private static readonly ReaderWriterDictionary<long, Action<Object>> _handlers = new();
@@ -278,17 +307,28 @@ namespace Telegram.Td
             {
                 if (callback == null)
                 {
-                    td_set_log_message_callback(max_verbosity_level, null);
                     _logMessageCallback = null;
+#if NET9_0_OR_GREATER
+                    unsafe { td_set_log_message_callback(max_verbosity_level, null); }
+#else
+                    td_set_log_message_callback(max_verbosity_level, null);
+#endif
                 }
                 else
                 {
                     _logMessageCallback = callback;
+#if NET9_0_OR_GREATER
+                    unsafe { td_set_log_message_callback(max_verbosity_level, &LogMessageCallbackWrapper); }
+#else
                     td_set_log_message_callback(max_verbosity_level, LogMessageCallbackWrapper);
+#endif
                 }
             }
         }
 
+#if NET9_0_OR_GREATER
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
+#endif
         private static void LogMessageCallbackWrapper(int verbosity_level, IntPtr message)
         {
             var callback = _logMessageCallback;

@@ -120,20 +120,33 @@ namespace Telegram.Common
             }
         }
 
-        private static readonly Lazy<WebAuthNGetApiVersionNumber> _webAuthNGetApiVersionNumber = new(() => NativeMethodInvoker.GetNativeMethod<WebAuthNGetApiVersionNumber>("webauthn.dll", "WebAuthNGetApiVersionNumber"));
+        // webauthn.dll is not present on every version of Windows, so this is resolved by name and
+        // the absence answers the question.
+        private static readonly Lazy<IntPtr> _webAuthNGetApiVersionNumber = new(() => NativeMethodInvoker.GetNativeMethod("webauthn.dll", "WebAuthNGetApiVersionNumber"));
 
+#if !NET9_0_OR_GREATER
         [UnmanagedFunctionPointer(CallingConvention.Winapi)]
         private delegate int WebAuthNGetApiVersionNumber();
+#endif
 
         public static bool IsPasskeySupported()
         {
-            var method = _webAuthNGetApiVersionNumber.Value;
-            if (method != null)
+            var address = _webAuthNGetApiVersionNumber.Value;
+            if (address == IntPtr.Zero)
             {
-                return method() >= 3;
+                return false;
             }
 
-            return false;
+#if NET9_0_OR_GREATER
+            // A function pointer rather than a delegate: turning an address into a delegate is
+            // runtime marshalling. Nothing to marshal here anyway - no arguments, an int back.
+            unsafe
+            {
+                return ((delegate* unmanaged[Stdcall]<int>)address)() >= 3;
+            }
+#else
+            return Marshal.GetDelegateForFunctionPointer<WebAuthNGetApiVersionNumber>(address)() >= 3;
+#endif
         }
 
         public static async Task<Object> AddLoginPasskeyAsync(IClientService clientService)

@@ -196,7 +196,7 @@ namespace Telegram.Common
     /// Measured: a projected subscription from view 2 fires on view 1's thread, this one fires on
     /// view 2's. See https://github.com/microsoft/CsWinRT/issues/2524.
     /// </remarks>
-    public static class CompositionTargetImpl
+    public static partial class CompositionTargetImpl
     {
         [ThreadStatic]
         private static ICompositionTargetStatics _statics;
@@ -218,11 +218,12 @@ namespace Telegram.Common
         [ThreadStatic]
         private static Dictionary<EventHandler<object>, long> _renderedTokens;
 
-        [DllImport("combase.dll", CharSet = CharSet.Unicode)]
-        private static extern int WindowsCreateString(string sourceString, int length, out IntPtr hstring);
+        // No #else pair for these two: the whole type is already NET9-only.
+        [LibraryImport("combase.dll", StringMarshalling = StringMarshalling.Utf16)]
+        private static partial int WindowsCreateString(string sourceString, int length, out IntPtr hstring);
 
-        [DllImport("combase.dll")]
-        private static extern int RoGetActivationFactory(IntPtr activatableClassId, ref Guid iid, out IntPtr factory);
+        [LibraryImport("combase.dll")]
+        private static partial int RoGetActivationFactory(IntPtr activatableClassId, ref Guid iid, out IntPtr factory);
 
         private static Guid IID_ICompositionTargetStatics = new("2b1af03d-1ed2-4b59-bd00-7594ee92832b");
         private static Guid IID_ICompositionTargetStatics3 = new("bc0a7cd9-6750-4708-994c-2028e0312ac8");
