@@ -24,6 +24,15 @@ namespace Telegram.Common
         AudioAndVideo
     }
 
+    /// <summary>
+    /// What the devices are wanted for. It only picks the wording of the denial.
+    /// </summary>
+    public enum MediaDevicePurpose
+    {
+        Call,
+        Record
+    }
+
     public partial class MediaDevicePermissions
     {
         public static bool IsUnsupported(XamlRoot xamlRoot)
@@ -40,7 +49,7 @@ namespace Telegram.Common
             return true;
         }
 
-        public static async Task<bool> CheckAccessAsync(XamlRoot xamlRoot, MediaDeviceAccess requestedAccess, ElementTheme requestedTheme = ElementTheme.Default)
+        public static async Task<bool> CheckAccessAsync(XamlRoot xamlRoot, MediaDeviceAccess requestedAccess, ElementTheme requestedTheme = ElementTheme.Default, MediaDevicePurpose purpose = MediaDevicePurpose.Call)
         {
             string[] capabilities;
 
@@ -74,45 +83,52 @@ namespace Telegram.Common
             {
                 if (audio != AppCapabilityAccessStatus.Allowed && video != AppCapabilityAccessStatus.Allowed)
                 {
-                    ShowPopup(xamlRoot, MediaDeviceAccess.AudioAndVideo, requestedTheme);
+                    ShowPopup(xamlRoot, MediaDeviceAccess.AudioAndVideo, purpose, requestedTheme);
                     return false;
                 }
                 else if (audio != AppCapabilityAccessStatus.Allowed)
                 {
-                    ShowPopup(xamlRoot, MediaDeviceAccess.Audio, requestedTheme);
+                    ShowPopup(xamlRoot, MediaDeviceAccess.Audio, purpose, requestedTheme);
                     return false;
                 }
                 else if (video != AppCapabilityAccessStatus.Allowed)
                 {
-                    ShowPopup(xamlRoot, MediaDeviceAccess.Video, requestedTheme);
+                    ShowPopup(xamlRoot, MediaDeviceAccess.Video, purpose, requestedTheme);
                     return false;
                 }
             }
             else if (requestedAccess == MediaDeviceAccess.Audio && audio != AppCapabilityAccessStatus.Allowed)
             {
-                ShowPopup(xamlRoot, MediaDeviceAccess.Audio, requestedTheme);
+                ShowPopup(xamlRoot, MediaDeviceAccess.Audio, purpose, requestedTheme);
                 return false;
             }
             else if (requestedAccess == MediaDeviceAccess.Video && video != AppCapabilityAccessStatus.Allowed)
             {
-                ShowPopup(xamlRoot, MediaDeviceAccess.Video, requestedTheme);
+                ShowPopup(xamlRoot, MediaDeviceAccess.Video, purpose, requestedTheme);
                 return false;
             }
 
             return true;
         }
 
-        private static async void ShowPopup(XamlRoot xamlRoot, MediaDeviceAccess requestedAccess, ElementTheme requestedTheme = ElementTheme.Default)
+        private static async void ShowPopup(XamlRoot xamlRoot, MediaDeviceAccess requestedAccess, MediaDevicePurpose purpose, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var popup = new MessagePopup
             {
                 Title = Strings.AppName,
-                Message = requestedAccess switch
-                {
-                    MediaDeviceAccess.Audio => Strings.PermissionNoAudioCalls,
-                    MediaDeviceAccess.Video => Strings.PermissionNoVideoCalls,
-                    _ => Strings.PermissionNoAudioVideoCalls
-                },
+                Message = purpose == MediaDevicePurpose.Record
+                    ? requestedAccess switch
+                    {
+                        MediaDeviceAccess.Audio => Strings.PermissionNoAudio,
+                        MediaDeviceAccess.Video => Strings.PermissionNoCamera,
+                        _ => Strings.PermissionNoAudioVideo
+                    }
+                    : requestedAccess switch
+                    {
+                        MediaDeviceAccess.Audio => Strings.PermissionNoAudioCalls,
+                        MediaDeviceAccess.Video => Strings.PermissionNoVideoCalls,
+                        _ => Strings.PermissionNoAudioVideoCalls
+                    },
                 PrimaryButtonText = Strings.Settings,
                 SecondaryButtonText = Strings.OK,
                 RequestedTheme = requestedTheme

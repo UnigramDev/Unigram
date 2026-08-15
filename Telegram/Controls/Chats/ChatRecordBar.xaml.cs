@@ -11,6 +11,7 @@ using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Common.Recording;
 using Telegram.Composition;
 using Telegram.Controls.Media;
 using Telegram.Native.Controls;
@@ -75,17 +76,22 @@ namespace Telegram.Controls.Chats
 
             _elapsedTimer = new DispatcherTimer();
             _elapsedTimer.Interval = TimeSpan.FromMilliseconds(100);
-            _elapsedTimer.Tick += (s, args) =>
-            {
-                ElapsedLabel.Text = ControlledButton.Elapsed.ToString("m\\:ss\\.ff");
-            };
+            _elapsedTimer.Tick += OnElapsedTimerTick;
 
             _blobVisual = new CompositionBlobVisual(Blob, 160, 160, 4);
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
         protected override void OnDisconnectVisualChildren()
         {
             _blobVisual.StopAnimating();
+        }
+
+        private void OnElapsedTimerTick(object sender, object e)
+        {
+            ElapsedLabel.Text = ControlledButton.Elapsed.ToString("m\\:ss\\.ff");
         }
 
         private void ElapsedPanel_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -109,7 +115,7 @@ namespace Telegram.Controls.Chats
 
         private void ButtonCancelRecording_Click(object sender, RoutedEventArgs e)
         {
-            ControlledButton.StopRecording(true);
+            ControlledButton.Cancel();
         }
 
         private void OnQuantumProcessed(object sender, float amplitude)
@@ -119,7 +125,7 @@ namespace Telegram.Controls.Chats
 
         private void ChatRecordLocked_Click(object sender, RoutedEventArgs e)
         {
-            ControlledButton.Release();
+            ControlledButton.Complete();
         }
 
         private ChatRecordButton _controlledButton;
@@ -131,12 +137,30 @@ namespace Telegram.Controls.Chats
 
         private void SetControlledButton(ChatRecordButton value)
         {
-            if (_controlledButton != null)
+            if (_controlledButton == value)
             {
                 return;
             }
 
+            Detach();
             _controlledButton = value;
+
+            if (IsLoaded)
+            {
+                Attach();
+            }
+        }
+
+        private bool _attached;
+
+        private void Attach()
+        {
+            if (_controlledButton == null || _attached)
+            {
+                return;
+            }
+
+            _attached = true;
 
             _controlledButton.RecordingStarting += OnRecordingStarting;
             _controlledButton.RecordingStarted += OnRecordingStarted;
@@ -146,11 +170,38 @@ namespace Telegram.Controls.Chats
             _controlledButton.ManipulationDelta += OnManipulationDelta;
         }
 
-        private async void OnRecordingStarted(object sender, EventArgs e)
+        private void Detach()
+        {
+            if (_controlledButton == null || !_attached)
+            {
+                return;
+            }
+
+            _attached = false;
+
+            _controlledButton.RecordingStarting -= OnRecordingStarting;
+            _controlledButton.RecordingStarted -= OnRecordingStarted;
+            _controlledButton.RecordingStopped -= OnRecordingStopped;
+            _controlledButton.RecordingLocked -= OnRecordingLocked;
+            _controlledButton.QuantumProcessed -= OnQuantumProcessed;
+            _controlledButton.ManipulationDelta -= OnManipulationDelta;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Attach();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Detach();
+        }
+
+        private async void OnRecordingStarted(object sender, MediaCapture mediaCapture)
         {
             try
             {
-                if (sender is not MediaCapture mediaCapture || mediaCapture.MediaCaptureSettings.StreamingCaptureMode == StreamingCaptureMode.Audio)
+                if (mediaCapture == null || mediaCapture.MediaCaptureSettings.StreamingCaptureMode == StreamingCaptureMode.Audio)
                 {
                     return;
                 }
@@ -548,7 +599,7 @@ namespace Telegram.Controls.Chats
             if (point.X < -80)
             {
                 e.Complete();
-                ControlledButton.StopRecording(true);
+                ControlledButton.Cancel();
                 return;
             }
 
@@ -560,7 +611,7 @@ namespace Telegram.Controls.Chats
             if (point.Y < -120)
             {
                 e.Complete();
-                ControlledButton.LockRecording();
+                ControlledButton.Lock();
             }
         }
 
@@ -620,7 +671,7 @@ namespace Telegram.Controls.Chats
         {
             _elapsedTimer.Stop();
 
-            var result = await ControlledButton.PauseRecording();
+            var result = await ControlledButton.TogglePauseAsync();
             if (result != null)
             {
                 _blobVisual.StopAnimating();
