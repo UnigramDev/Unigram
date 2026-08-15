@@ -89,8 +89,7 @@ it was `MinPosition` being pinned to 0.
       adding a source inside the scrolling host.
 - [x] Fixed `SettingsAdvancedPage` and `SettingsPowerSavingPage`, which failed whenever
       their content did not overflow: `ScrollMode.Auto` turns the manipulation off when
-      there is nothing to scroll. Unverified — needs a run with the window maximised, which
-      is the state that used to fail.
+      there is nothing to scroll. **Confirmed working by Fela.**
 - [x] Commit navigates with `SlideNavigationTransitionInfo`. The effect is `FromRight` —
       the frame inverts it on a back navigation, so that is the value that slides the
       uncovered page in from the left, and it is the same one `TLNavigationService` passes
@@ -186,6 +185,11 @@ Worth knowing while working here: `MasterDetailView.OnNavigating` exists but is 
 subscribed**. Anything that needs to run as a page is left has to go in `OnNavigated` for
 the next one instead, which is why `ConfigureBackGestureContent` drops the old source itself
 rather than relying on a teardown hook.
+
+## State
+
+Working, on Fela's build, across the chat history, profile and settings — including the
+pages that used to fail — with the `FromRight` slide on commit. Nothing below is a defect.
 
 ## Open
 
