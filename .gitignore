@@ -145,6 +145,10 @@ publish/
 *.pubxml
 *.publishproj
 
+# Except the modern project's, which the packaging project references by path: without them
+# tracked the build only works on the machine they happen to exist on.
+!Telegram/Properties/PublishProfiles/win-*.pubxml
+
 # NuGet Packages
 *.nupkg
 # The packages folder can be ignored because of Package Restore

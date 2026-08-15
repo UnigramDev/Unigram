@@ -548,20 +548,74 @@ frame into a source line. That is how `set_ItemsSource` was found after two sess
 - [ ] Compare startup and working set against the .NET Native build. `Telegram.Benchmarks` already
       has both hosts wired up if a narrower measurement is wanted.
 
-## Phase 6 — packaging
+## Phase 6 — packaging (x64 builds a signed bundle)
 
-The template's wapproj differs from `Telegram.Msix` in ways that are all mechanical, but all
-required:
+`Telegram.Msix.Modern` packages `Telegram.Modern.csproj` the way `Telegram.Msix` packages
+`Telegram.csproj`. A second project rather than a switch on the first, because the two have to be
+installable at once, which means different identities, which means different manifests — the one
+thing a single wapproj cannot condition cleanly. Nothing is duplicated but the project file: the
+manifest is generated from `Telegram.Msix\Package.appxmanifest` with the name and display name
+poked, the same trick `Telegram.Modern.csproj` uses for the loose layout.
 
-- [ ] `<DebuggerType>CoreClr</DebuggerType>`
-- [ ] The project reference carries `UseLowTrustEntryPoint`, `SkipGetTargetFrameworkProperties`
-      and `PublishProfile=Properties\PublishProfiles\win-$(Platform).pubxml`
-- [ ] `Microsoft.Windows.SDK.BuildTools` package reference
-- [ ] `EntryPointProjectUniqueName` points at the new project
+```powershell
+MSBuild.exe Telegram.slnx /target:Telegram_Msix_Modern `
+  /p:Configuration=Release /p:Platform=x64 /p:UapAppxPackageBuildMode=SideloadOnly `
+  /p:AppxBundlePlatforms=x64 /p:AppxBundle=Always /p:AppxPackageSigningEnabled=True /m
+```
 
-Whether that is a second wapproj or a conditioned property in the existing one is open. A second
-one duplicates the manifest and the signing setup; a conditioned one risks the packaging path that
-`ShouldUnsetParentConfigurationAndPlatform` already made delicate.
+Output: `Telegram.Msix.Modern\AppPackages\Telegram.Msix.Modern_<version>_Test\*.msixbundle`, 85 MB,
+signed, carrying `Telegram.Modern\Telegram.exe` at 58 MB — the real NativeAOT binary — and
+`Telegram.Stub\Telegram.Stub.exe`.
+
+**Three identities, one per deployment mechanism.** Windows cannot move an installed app between a
+registered loose layout and a bundle, any more than between an msix and an msixbundle, so any two
+sharing a name would leave whichever was installed first blocking the other:
+
+| identity | mechanism |
+|---|---|
+| `TelegramFZ-LLC.Windows` | the shipping bundle, .NET Native |
+| `38833FF26BA1D.UnigramNet10` | the loose layout, `Add-AppxPackage -Register`, for development |
+| `38833FF26BA1D.UnigramNet10Bundle` | the AOT bundle |
+
+**What the template's four bullets did not say**, all of it found by building:
+
+- **`PublishProfile` as `ProjectReference` metadata is inert outside Visual Studio.** Nothing in
+  DesktopBridge, AppxPackage or the .NET SDK reads it; only `$(PublishProfile)` as a property of
+  the project being built. Without passing it through `AdditionalProperties` as well, packaging
+  resolves the app at its no-RuntimeIdentifier output path and PRI generation fails looking for a
+  `resources.pri` that was never built there.
+- **The app does not land at the package root.** That exemption belongs to the legacy UWP project
+  system; an SDK-style reference is payload like any other and goes in a folder named after the
+  project. `Application` copes on its own — it says `$targetnametoken$.exe` and the packaging
+  rewrites it — but `startupTask` and `appExecutionAlias` spell `Telegram.exe` out, and MakeAppx
+  rejects the package because that path does not exist. The generated manifest rewrites both to
+  `Telegram.Modern\Telegram.exe`, derived from the project name rather than written out.
+- **Only one certificate in the repository is still valid.** `Telegram.Msix_TemporaryKey.pfx` runs
+  to 2027-04; the three beside it expired in March 2025, and signing with one fails `APPX0108`.
+- **Do not poke the publisher.** The packaging targets substitute the certificate's subject into
+  the generated manifest at package time, so the source manifest's `CN=Telegram FZ-LLC` is fine.
+- **Build through `Telegram.slnx`**, never the wapproj directly — `$(SolutionDir)` is empty
+  otherwise, the same trap the native `.vcxproj` files have.
+- From Git Bash use `-p:` switches, not `/p:` — MSYS strips the slash and turns `/nologo` into a
+  path, which surfaces as the unhelpful `MSB1008: Only one project can be specified`.
+
+The publish profiles are tracked now: `.gitignore` excludes `*.pubxml`, so they only existed on one
+machine, and the wapproj references one per platform by path. Their `PublishDir` had to move under
+`bin\modern\` — the template's default is `bin\$(Configuration)\`, which is where `Telegram.csproj`
+puts its .NET Native output.
+
+### Still to do
+
+- [ ] **ARM64 has never been built at all** — not the wapproj, not the app, not the native
+      projects. `AppxBundlePlatforms` is x64 only.
+- [ ] `UpdateManifest.ps1` before any bundle meant to supersede a previous one; it stamps the
+      version from `git rev-list --count HEAD`, and without it the new bundle overwrites the old
+      one at the same path.
+- [ ] The bundle has been verified by unpacking it, but never installed. Doing so needs the test
+      certificate trusted, which `Add-AppDevPackage.ps1` beside it handles.
+- [ ] Decide whether `Telegram.Msix.Modern` belongs in the default solution build. It is in
+      `Telegram.slnx` with `<Deploy />`, so a plain solution build now pays for a NativeAOT
+      compile.
 
 ## Keeping both green
 
