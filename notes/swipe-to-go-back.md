@@ -85,7 +85,8 @@ it was `MinPosition` being pinned to 0.
       `-40 → 36`, swings upright from -30°, and latches into an *armed* state at the
       threshold — scale pops to 1.15 and opacity goes to full — so releasing feels
       committed. All still pure expression, no per-frame work.
-- [ ] **Fails completely on the power saving settings page.** See below.
+- [x] Fixed the settings pages, where the gesture only worked in the title strip — the
+      page's `ScrollViewer` was taking the pan. Unverified: needs another run.
 
 ## Touch is deliberately only half-covered
 
@@ -101,36 +102,35 @@ So on a touchscreen the gesture works over the chat history and nowhere else. On
 trackpad — the actual target — it works everywhere, because touchpad panning is redirected
 automatically by hit-test with no pointer handling involved.
 
-## The power saving page
+## The scrolling host takes the pan
 
-Fails there and only there. Static comparison rules out the obvious: it is a plain
-`HostedPage` with `NavigationMode="Root"`, a vertical `ScrollingHost` and a
-`SettingsPanel`, navigated by `Navigate(typeof(SettingsPowerSavingPage))` exactly like
-`SettingsDataAndStoragePage`. No `SwipeControl`, no `ManipulationMode`, no interaction
-tracker of its own — `SettingsExpander` is pure keyframe animation and does not touch
-input.
+Reported first as "fails on the power saving page", which sent me looking for something
+peculiar to that page — it has the only large `IsEnabled`-bound region in the settings, and
+that was the wrong lead. Power saving was off, so nothing on it was disabled. What settled
+it was the rest of the report: it failed on **Advanced** too, and on both pages it worked in
+the *title strip* but nowhere in the page itself.
 
-The one structural thing that page has and the working ones do not:
+That is the whole diagnosis. Every settings page puts its content in
+`ScrollViewer x:Name="ScrollingHost"`, and a vertical `ScrollViewer` takes the touchpad pan
+before any ancestor sees it. `DetailRoot`'s source is an ancestor of the page, so it only
+ever got the gesture where no scroller sat in the way — the header. The chat history was
+never evidence to the contrary: what works there is `MessageSelector`'s source, which is a
+*descendant* of the scroller and so wins the contact.
 
-```xml
-<controls:HeaderedControl Header="{CustomResource LiteOptionsTitle}"
-                          IsEnabled="{x:Bind ViewModel.IsAutoDisabled, Mode=OneWay}">
-```
+Fix is the same trick, applied deliberately: on navigation, `ConfigureBackGestureContent`
+puts a second `VisualInteractionSource` on the scrolling host's own content element and adds
+it to the same tracker. Rails and an X-only source mode leave vertical panning to the
+`ScrollViewer`, exactly as they already do in the chat history.
 
-`IsAutoDisabled` is `PowerSavingPolicy.Status == PowerSavingStatus.Off`, so with power
-saving **on** that `HeaderedControl` — which is nearly the whole page — is disabled. A
-disabled subtree still hit-tests, but input over it may be dropped outright rather than
-walking up to an ancestor `VisualInteractionSource`, which would leave the `DetailRoot`
-tracker never seeing the manipulation.
+Only `ScrollViewer` hosts are covered. A `ListViewBase` host would need its
+`ItemsPanelRoot`, which does not exist until the list realises, and the one that matters —
+the chat history — is already served by `MessageSelector`. So a list-backed page that is
+not the chat history is still expected to fail; none has been reported yet.
 
-Unverified. The test that settles it: with power saving on, swipe over the top *Auto*
-checkbox panel, which stays enabled, and then over the disabled options below. If only the
-top strip works, it is the disabled subtree; if neither works, it is something else and
-the `IsEnabled` lead is a red herring.
-
-If it is confirmed, the source cannot simply be moved — the fix is either a transparent
-input overlay above the page content, or accepting that disabled regions do not carry the
-gesture.
+Worth knowing while working here: `MasterDetailView.OnNavigating` exists but is **never
+subscribed**. Anything that needs to run as a page is left has to go in `OnNavigated` for
+the next one instead, which is why `ConfigureBackGestureContent` drops the old source itself
+rather than relying on a teardown hook.
 
 ## Open
 

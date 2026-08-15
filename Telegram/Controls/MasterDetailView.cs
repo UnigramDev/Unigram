@@ -120,6 +120,7 @@ namespace Telegram.Controls
             }
 
             DetachBackGesture(null);
+            DetachBackGestureContent();
 
             if (DetailFrame?.Content is HostedPage hosted)
             {
@@ -547,6 +548,7 @@ namespace Telegram.Controls
             // its tracker never reaches idle and nothing else would release the binding.
             DetachBackGesture(null);
             ConfigureBackGesture();
+            ConfigureBackGestureContent(e.Content);
 
             if (e.Content is HostedPage hosted)
             {
@@ -820,6 +822,7 @@ namespace Telegram.Controls
         private const float BackGestureThreshold = 72;
 
         private VisualInteractionSource _backSource;
+        private VisualInteractionSource _backContentSource;
         private InteractionTracker _backTracker;
         private WeakInteractionTrackerOwner _backTrackerOwner;
 
@@ -877,6 +880,56 @@ namespace Telegram.Controls
             _backSource.PositionXSourceMode = enabled
                 ? InteractionSourceMode.EnabledWithInertia
                 : InteractionSourceMode.Disabled;
+        }
+
+        /// <summary>
+        /// Adds a second source inside the page's scrolling host, if it has one.
+        /// </summary>
+        /// <remarks>
+        /// The source on DetailRoot is an ancestor of the page, and a vertical ScrollViewer takes
+        /// the touchpad pan before any ancestor sees it - so on a settings page the gesture died
+        /// over the content and only worked in the header, which sits outside the scroller. A
+        /// source on a descendant of the scroller wins the contact instead, which is the same
+        /// reason MessageSelector's works inside the chat history. Rails and an X-only mode leave
+        /// vertical panning to the ScrollViewer, as they already do there.
+        /// </remarks>
+        private void ConfigureBackGestureContent(object content)
+        {
+            // Drops the previous page's source first: this is the only place it can happen, since
+            // OnNavigating is never subscribed and nothing else runs as a page is left.
+            DetachBackGestureContent();
+
+            if (_backTracker == null || !SettingsService.Current.SwipeToGoBack)
+            {
+                return;
+            }
+
+            // Only a ScrollViewer for now. A ListViewBase host would need its ItemsPanelRoot, which
+            // does not exist until the list realises - and the one that matters, the chat history,
+            // is already covered by MessageSelector.
+            if (content is not HostedPage hosted
+                || hosted.FindName("ScrollingHost") is not ScrollViewer scrollingHost
+                || scrollingHost.Content is not UIElement child)
+            {
+                return;
+            }
+
+            _backContentSource = VisualInteractionSource.Create(ElementComposition.GetElementVisual(child));
+            _backContentSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
+            _backContentSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
+            _backContentSource.PositionXChainingMode = InteractionChainingMode.Never;
+            _backContentSource.IsPositionXRailsEnabled = true;
+
+            _backTracker.InteractionSources.Add(_backContentSource);
+        }
+
+        private void DetachBackGestureContent()
+        {
+            if (_backContentSource != null)
+            {
+                _backTracker?.InteractionSources.Remove(_backContentSource);
+                _backContentSource = null;
+            }
         }
 
         /// <summary>
