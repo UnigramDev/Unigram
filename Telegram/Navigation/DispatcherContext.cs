@@ -179,7 +179,20 @@ namespace Telegram.Navigation
             {
                 try
                 {
-                    _dispatcher.TryEnqueue(priority, action);
+                    // The handler runs as a CCW: an exception escaping it reaches CoreMessaging as a
+                    // failure HRESULT, and it fails the process fast (0xC000027B) with nothing logged.
+                    // Every DispatchAsync overload already guards its handler; this one did not.
+                    _dispatcher.TryEnqueue(priority, () =>
+                    {
+                        try
+                        {
+                            action();
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex.ToString());
+                        }
+                    });
                 }
                 catch
                 {
