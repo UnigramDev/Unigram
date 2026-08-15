@@ -142,15 +142,21 @@ namespace winrt::Telegram::Native::Calls::implementation
             if (_done)
             {
                 auto result = std::vector<tgcalls::MediaChannelDescription>();
-                result.reserve(participants.Size());
 
-                for (auto const& value : participants)
+                // null is how the managed side says "nothing", so it does not have to allocate a
+                // collection to describe an empty answer on a path that runs per media request.
+                if (participants)
                 {
-                    result.push_back(tgcalls::MediaChannelDescription{
-                        .type = tgcalls::MediaChannelDescription::Type::Audio,
-                        .audioSsrc = uint32_t(value.AudioSource),
-                        .userId = value.UserId
-                        });
+                    result.reserve(participants.Size());
+
+                    for (auto const& value : participants)
+                    {
+                        result.push_back(tgcalls::MediaChannelDescription{
+                            .type = tgcalls::MediaChannelDescription::Type::Audio,
+                            .audioSsrc = uint32_t(value.AudioSource),
+                            .userId = value.UserId
+                            });
+                    }
                 }
 
                 _done(std::move(result));

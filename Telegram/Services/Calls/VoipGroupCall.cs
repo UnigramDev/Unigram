@@ -378,7 +378,9 @@ namespace Telegram.Services.Calls
             {
                 lock (_messagesLock)
                 {
-                    return [.. _messages];
+                    // ToList, not a collection expression: targeting IReadOnlyList<T> the compiler
+                    // synthesises its own type, which has no CCW and cannot cross to XAML.
+                    return _messages.ToList();
                 }
             }
         }
@@ -389,7 +391,7 @@ namespace Telegram.Services.Calls
             {
                 lock (_messagesLock)
                 {
-                    return [.. _pinnedMessages];
+                    return _pinnedMessages.ToList();
                 }
             }
         }
@@ -975,7 +977,7 @@ namespace Telegram.Services.Calls
             var participants = Participants;
             if (participants == null)
             {
-                args.Deferral(Array.Empty<VoipMediaChannelDescription>());
+                args.Deferral(null);
                 return;
             }
 
