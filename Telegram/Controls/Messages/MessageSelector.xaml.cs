@@ -136,7 +136,7 @@ namespace Telegram.Controls.Messages
         {
             EnsureTextSelectionManager();
 
-            if (_trackerOwner == null && RootGrid != null && IsTrackerEnabled && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare))
+            if (_trackerOwner == null && RootGrid != null && IsTrackerEnabled && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare || SettingsService.Current.SwipeToGoBack))
             {
                 _compositor = BootStrapper.Current.Compositor;
                 _container ??= _compositor.CreateContainerVisual();
@@ -168,6 +168,14 @@ namespace Telegram.Controls.Messages
             // Detached, not dropped: the container goes back to the pool and comes out again
             // with new content, and Detach leaves the manager clean for it.
             _textSelectionManager?.Detach();
+
+            // Recycled mid-gesture the tracker never reaches idle, and the chip would stay bound to
+            // a container already on its way back to the pool. Gated on _interacting: this runs for
+            // every container recycled while scrolling, and the walk to the root is not free.
+            if (_back && _interacting)
+            {
+                this.GetParent<MasterDetailView>()?.DetachBackGesture(_tracker);
+            }
 
             if (_trackerOwner != null)
             {
@@ -659,6 +667,7 @@ namespace Telegram.Controls.Messages
 
         private bool _share;
         private bool _reply;
+        private bool _back;
 
         private Grid RootGrid;
 
@@ -696,7 +705,7 @@ namespace Telegram.Controls.Messages
             _tracker.InteractionSources.Add(_interactionSource);
 
             _tracker.MaxPosition = new Vector3(_reply ? 72 : 0);
-            _tracker.MinPosition = new Vector3(_share ? -72 : 0);
+            _tracker.MinPosition = new Vector3(_share || _back ? -72 : 0);
 
             _tracker.Properties.InsertBoolean("CanReply", _reply);
             _tracker.Properties.InsertBoolean("CanShare", _share);
@@ -842,12 +851,22 @@ namespace Telegram.Controls.Messages
                 reply = SettingsService.Current.SwipeToReply && CanBeReplied(message);
             }
 
+            // Back takes the direction Share is not using. The precedence is deliberate: a user who
+            // wants to go back from anywhere turns Share off, and there is no state where a setting
+            // is on but silently does nothing. CanShare stays false either way, which is what keeps
+            // the bubble still under a back swipe - the offset expression already reads it.
+            var back = !share && SettingsService.Current.SwipeToGoBack;
+
             if (_tracker != null)
             {
                 if (_share != share)
                 {
                     _tracker.Properties.InsertBoolean("CanShare", share);
-                    _tracker.MinPosition = new Vector3(share ? -72 : 0);
+                }
+
+                if (_share != share || _back != back)
+                {
+                    _tracker.MinPosition = new Vector3(share || back ? -72 : 0);
                 }
 
                 if (_reply != reply)
@@ -876,11 +895,15 @@ namespace Telegram.Controls.Messages
 
             _share = share;
             _reply = reply;
+            _back = back;
         }
 
         private void OnValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
         {
-            if (_indicator == null && (sender.Position.X > 0.0001f || sender.Position.X < -0.0001f) /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
+            // Only for a direction that has something to show. A back swipe travels the same way a
+            // forward one would, and without the test it would build this indicator - and start a
+            // surface load for it - on every bubble it crosses, to then hold it at zero opacity.
+            if (_indicator == null && ((sender.Position.X > 0.0001f && _reply) || (sender.Position.X < -0.0001f && _share)))
             {
                 var sprite = _compositor.CreateSpriteVisual();
                 sprite.Size = new Vector2(30, 30);
@@ -947,10 +970,9 @@ namespace Telegram.Controls.Messages
                 {
                     _owner.ViewModel.ForwardMessage(Message);
                 }
-                else if (sender.Position.X <= -72)
+                else if (sender.Position.X <= -72 && _back)
                 {
-                    var master = this.GetParent<MasterDetailView>();
-                    master?.NavigationService.GoBack();
+                    this.GetParent<MasterDetailView>()?.CommitBackGesture();
                 }
             }
         }
@@ -958,6 +980,13 @@ namespace Telegram.Controls.Messages
         private void OnIdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
         {
             _interacting = false;
+
+            // Before the disconnected branch: OnUnloaded tears the container down, and from there
+            // the tree walk to the MasterDetailView no longer finds it.
+            if (_back)
+            {
+                this.GetParent<MasterDetailView>()?.DetachBackGesture(sender);
+            }
 
             if (IsDisconnected)
             {
@@ -974,8 +1003,15 @@ namespace Telegram.Controls.Messages
             _interacting = true;
             ConfigureAnimations(_visual);
 
-            //var master = this.GetParent<MasterDetailView>();
-            //master?.ConfigureAnimations(_tracker);
+            // The chip belongs to the MasterDetailView, which cannot win this manipulation for
+            // itself: our source claims the contact first, and chaining is off. So we hand it the
+            // tracker instead and it binds the chip to ours for the length of the gesture. Once per
+            // gesture, so the tree walk is not worth caching - and a cached root would outlive this
+            // container, which is pooled.
+            if (_back)
+            {
+                this.GetParent<MasterDetailView>()?.AttachBackGesture(sender);
+            }
         }
 
         #endregion
