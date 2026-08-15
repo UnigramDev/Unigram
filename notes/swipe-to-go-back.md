@@ -85,9 +85,10 @@ it was `MinPosition` being pinned to 0.
       `-40 → 36`, swings upright from -30°, and latches into an *armed* state at the
       threshold — scale pops to 1.15 and opacity goes to full — so releasing feels
       committed. All still pure expression, no per-frame work.
-- [x] Fixed the settings pages, where the gesture only worked in the title strip — the
-      page's `ScrollViewer` was taking the pan. Took two passes; the second is the one that
-      reaches short pages. Unverified: needs another run.
+- [x] Fixed *most* settings pages, where the gesture only worked in the title strip, by
+      adding a source inside the scrolling host.
+- [ ] **`SettingsAdvancedPage` and `SettingsPowerSavingPage` still fail outright**, over
+      content as well as empty space. Three theories tried and disproved — see below.
 - [x] Commit navigates with `SlideNavigationTransitionInfo`. The effect is `FromRight` —
       the frame inverts it on a back navigation, so that is the value that slides the
       uncovered page in from the left, and it is the same one `TLNavigationService` passes
@@ -128,31 +129,38 @@ puts a second `VisualInteractionSource` on the scrolling host's own content elem
 it to the same tracker. Rails and an X-only source mode leave vertical panning to the
 `ScrollViewer`, exactly as they already do in the chat history.
 
-That fixed the long pages and nothing else, and the third round of evidence showed why the
-scroller story was never the whole of it. `SettingsStickersPage` works — and its
-`ScrollingHost` is a `TableListView`, so none of the code above ever runs for it. An
-ancestor source *does* get the pan there.
+That fixed the long pages and nothing else, and everything after it was wrong. Recorded
+here so nobody spends the same rounds again.
 
-The real discriminator is hit-testing. **`SettingsPanel` is a bare `Panel`, and a `Panel`
-with a null `Background` does not hit-test its own area at all.** Its rows hit-test
-themselves, which is exactly why the gesture always worked on a page long enough to be all
-rows, and nowhere on the empty part of a short one. Stickers works for the same reason from
-the other direction: `ListViewItem`s are real hit-testable content. With no hit there is no
-element to walk up from, so no source is ever found.
+**Still unexplained.** `SettingsAdvancedPage` and `SettingsPowerSavingPage` fail; nothing
+tried so far has moved them.
 
-So the short-page fix is two things, and needs both: `MinHeight` from the host's
-`ViewportHeight` so the content covers the viewport, and `Background = Transparent` so that
-area exists for input at all. Transparent paints identically to null.
+What the evidence rules out:
 
-Sequencing note: `ViewportHeight` is 0 at `OnNavigated`, so `SizeChanged` is where the
-height actually first lands, not merely where it is maintained.
+- *The page's XAML.* Advanced, Power Saving, Privacy and Data & Storage declare
+  byte-identical scrollers — `ScrollViewer x:Name="ScrollingHost"` with
+  `VerticalScrollBarVisibility="Auto"` and `VerticalScrollMode="Auto"` — wrapping the same
+  `SettingsPanel`. Two of those work and two do not. Whatever the difference is, it is not
+  in the markup.
+- *A scroller always eating the pan.* `SettingsStickersPage` works and its host is a
+  `TableListView`, which `ConfigureBackGestureContent` skips entirely. An ancestor source is
+  evidently enough there.
+- *Short content, and hit-testing over empty areas.* Both were tried — `MinHeight` from
+  `ViewportHeight`, and `Background = Transparent` on the bare `SettingsPanel`, which really
+  does not hit-test its own area otherwise. Neither changed anything, and Fela reports the
+  gesture failing over text and buttons too, not only empty space. Both reverted; do not
+  re-add them without new evidence.
+- *`x:Load` and `NavigationMode`.* Privacy has four `x:Load` and works, Advanced has one and
+  fails; every page here is `NavigationMode="Root"` bar Stickers.
 
-**Possibly redundant now:** if an ancestor source is enough wherever the hit lands — which
-is what Stickers demonstrates — then `_backContentSource` earns nothing and `DetailRoot`
-alone would do. It was added under the scroller theory and kept because it is harmless and
-guarantees coverage. Worth testing by removing it once the pages are confirmed working;
-that would delete `ConfigureBackGestureContent`'s source entirely and leave only the
-`MinHeight` and `Background` adjustments.
+`_backContentSource` is kept, unproven. It was added under the scroller theory and Stickers
+casts doubt on whether it earns anything. Do not treat it as load-bearing.
+
+The next thing to establish is whether the chip appears on those pages at all — that splits
+the problem in half, between the tracker never seeing the gesture and the commit refusing
+it. Failing that, `Logger` calls in `ConfigureBackGestureContent`,
+`OnBackInteractingStateEntered`, `AttachBackGesture` and `CommitBackGesture` would settle it
+in one run.
 
 Only `ScrollViewer` hosts are covered. A `ListViewBase` host would need its
 `ItemsPanelRoot`, which does not exist until the list realises, and the one that matters —
