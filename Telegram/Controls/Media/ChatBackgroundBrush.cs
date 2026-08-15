@@ -7,7 +7,6 @@
 
 using Microsoft.Graphics.Canvas.Effects;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Native;
@@ -60,8 +59,13 @@ namespace Telegram.Controls.Media
             {
                 CreateResources();
             }
-            catch
+            catch (Exception ex)
             {
+                // Logged, not just swallowed: a device loss and an outright bug in the brush graph
+                // are indistinguishable from here, and the second kind leaves the chat looking fine
+                // bar a missing layer.
+                Logger.Error(ex.ToString());
+
                 OnDisconnected();
                 CreateResources();
             }
@@ -207,7 +211,7 @@ namespace Telegram.Controls.Media
                     Source = new CompositionEffectSourceParameter("Backdrop"),
                 };
 
-                _negativeFactory = BootStrapper.Current.Compositor.CreateEffectFactory(alphaMaskEffect, ["Intensity.Opacity"]);
+                _negativeFactory = BootStrapper.Current.Compositor.CreateEffectFactory(alphaMaskEffect, new[] { "Intensity.Opacity" });
             }
 
             return _negativeFactory.CreateBrush();
@@ -238,7 +242,7 @@ namespace Telegram.Controls.Media
                     Mode = BlendEffectMode.SoftLight
                 };
 
-                _positiveFactory = BootStrapper.Current.Compositor.CreateEffectFactory(blendEffect, ["Intensity.Opacity"]);
+                _positiveFactory = BootStrapper.Current.Compositor.CreateEffectFactory(blendEffect, new[] { "Intensity.Opacity" });
             }
 
             return _positiveFactory.CreateBrush();
@@ -256,23 +260,21 @@ namespace Telegram.Controls.Media
 
             if (Fill is BackgroundFillFreeformGradient freeform)
             {
-                // TEMPORARY: reached at all, and does the native surface come back with a brush?
-                Logger.Error($"freeform: {freeform.GetColors().Length} colors, surface {_freeform != null}");
+                // TDLib's own int[], handed straight across: Int32 is one of the few element types
+                // an array can cross the ABI as, and it saves widening each entry to a WinRT Color
+                // that the native side would only unpack again.
+                var colors = freeform.Colors;
 
                 if (_freeform != null)
                 {
-                    _freeform.Colors = freeform.GetColors();
+                    _freeform.Colors = colors;
                 }
                 else
                 {
                     _freeform?.Dispose();
-                    // A List, not the Color[] GetColors returns: Color is a WinRT struct, and an
-                    // array crossing as IVector<Color> needs IReferenceArray support that NativeAOT
-                    // cannot synthesise. Once per background, so the copy costs nothing that matters.
-                    _freeform = PlaceholderHelper.Foreground.CreateFreeformGradient(new List<Color>(freeform.GetColors()));
+                    _freeform = PlaceholderHelper.Foreground.CreateFreeformGradient(colors);
                 }
 
-                Logger.Error($"freeform: brush {_freeform?.Brush != null}");
                 return _freeform.Brush;
             }
             else if (Fill is BackgroundFillGradient gradient)
@@ -330,8 +332,10 @@ namespace Telegram.Controls.Media
                         _visual.Brush = brush;
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.Error(ex.ToString());
+
                     _recreate = true;
                     _effect = null;
                 }
@@ -394,8 +398,10 @@ namespace Telegram.Controls.Media
                         _visual.Brush = _brush;
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.Error(ex.ToString());
+
                     _recreate = true;
                     OnConnected();
                 }

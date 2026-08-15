@@ -365,7 +365,7 @@ namespace winrt::Telegram::Native::implementation
 
         IVector<hstring> GetSystemFontFamilies(IVector<hstring> localeNames);
 
-        winrt::Telegram::Native::FreeformGradientSurface CreateFreeformGradient(IVector<Color> colors);
+        winrt::Telegram::Native::FreeformGradientSurface CreateFreeformGradient(IVector<int32_t> colors);
 
         CompositionEffectBrush GetTail(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
         //CompositionPath GetOutline(IVector<ClosedVectorPath> contours);

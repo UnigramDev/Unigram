@@ -18,7 +18,7 @@ using namespace winrt::Windows::Graphics::DirectX;
 
 namespace winrt::Telegram::Native::implementation
 {
-    FreeformGradientSurface::FreeformGradientSurface(CompositionGraphicsDevice device, winrt::com_ptr<ID2D1Factory1> d2dFactory, Compositor compositor, CompositionDrawingSurface surface, IVector<Color> colors)
+    FreeformGradientSurface::FreeformGradientSurface(CompositionGraphicsDevice device, winrt::com_ptr<ID2D1Factory1> d2dFactory, Compositor compositor, CompositionDrawingSurface surface, IVector<int32_t> colors)
         : m_compositionDevice(device)
         , m_d2dFactory(d2dFactory)
         , m_compositor(compositor)
@@ -98,7 +98,7 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
-    inline void GenerateGradient(uint8_t* imageBytes, IVector<Color> colors, QuadPoints positions)
+    inline void GenerateGradient(uint8_t* imageBytes, IVector<int32_t> colors, QuadPoints positions)
     {
         auto width = 50;
         auto height = 50;
@@ -143,9 +143,14 @@ namespace winrt::Telegram::Native::implementation
                     distance = distance * distance * distance * distance;
                     distanceSum += distance;
 
-                    r += distance * colors.GetAt(i).R / 255.f;
-                    g += distance * colors.GetAt(i).G / 255.f;
-                    b += distance * colors.GetAt(i).B / 255.f;
+                    // 0x00RRGGBB, straight from TDLib: unpacked here rather than widened to
+                    // Windows.UI.Color on the managed side, which cost a conversion and a copy
+                    // per background change and could not cross the ABI as an array at all.
+                    auto color = colors.GetAt(i);
+
+                    r += distance * ((color >> 16) & 0xff) / 255.f;
+                    g += distance * ((color >> 8) & 0xff) / 255.f;
+                    b += distance * (color & 0xff) / 255.f;
                 }
 
                 auto pixelBytes = lineBytes + x * 4;
@@ -193,12 +198,12 @@ namespace winrt::Telegram::Native::implementation
         return m_surface->EndDraw();
     }
 
-    IVector<Color> FreeformGradientSurface::Colors()
+    IVector<int32_t> FreeformGradientSurface::Colors()
     {
         return m_colors;
     }
 
-    void FreeformGradientSurface::Colors(IVector<Color> value)
+    void FreeformGradientSurface::Colors(IVector<int32_t> value)
     {
         m_colors = value;
         Invalidate();

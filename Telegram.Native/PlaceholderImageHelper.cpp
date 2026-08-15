@@ -1708,7 +1708,7 @@ namespace winrt::Telegram::Native::implementation
         return families;
     }
 
-    winrt::Telegram::Native::FreeformGradientSurface PlaceholderImageHelper::CreateFreeformGradient(IVector<Color> colors)
+    winrt::Telegram::Native::FreeformGradientSurface PlaceholderImageHelper::CreateFreeformGradient(IVector<int32_t> colors)
     {
         auto surface = CreateDrawingSurface({ 50, 50 });
         if (surface)
