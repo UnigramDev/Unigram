@@ -18,8 +18,9 @@
   CN=D89C87B4, and the packaging targets substitute the certificate's subject into the generated
   manifest at package time.
 
-  Build it through Telegram.slnx, never this file directly - $(SolutionDir) is empty otherwise -
-  and see net10-port-todo.md for the bundle command.
+  Build it through Telegram.Modern.slnx, never this file directly - $(SolutionDir) is empty
+  otherwise - and see net10-port-todo.md for the bundle command. It has its own solution so that
+  a plain Telegram.slnx build does not pay for a NativeAOT compile.
 -->
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '15.0'">
