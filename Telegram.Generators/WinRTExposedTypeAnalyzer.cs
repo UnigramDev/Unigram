@@ -93,17 +93,6 @@ namespace Telegram.Generators
             "Windows.Foundation.Rect",
         };
 
-        // What CsWinRT stamps on a projected type. Matching on these rather than on the namespace
-        // because the projection for a referenced WinRT component is generated into the consuming
-        // assembly: Telegram.Native.PlaceholderImageHelper is a type of this compilation and looks
-        // managed by every other measure.
-        private static readonly string[] ProjectionAttributes =
-        {
-            "WindowsRuntimeTypeAttribute",
-            "ProjectedRuntimeClassAttribute",
-            "WindowsRuntimeHelperTypeAttribute",
-        };
-
         // What an untyped WinRT surface looks like once projected. IBindableIterable and
         // IBindableVector come through as the non-generic BCL interfaces and carry no element type
         // either, so they need the concrete vtable just as object does.
@@ -382,29 +371,7 @@ namespace Telegram.Generators
                     return false;
                 }
 
-                return _projected.GetOrAdd(type.OriginalDefinition, HasProjectionAttribute);
-            }
-
-            private static bool HasProjectionAttribute(ITypeSymbol type)
-            {
-                foreach (var attribute in type.GetAttributes())
-                {
-                    var declaring = attribute.AttributeClass;
-                    if (declaring?.ContainingNamespace?.Name != "WinRT")
-                    {
-                        continue;
-                    }
-
-                    foreach (var name in ProjectionAttributes)
-                    {
-                        if (declaring.Name == name)
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
+                return _projected.GetOrAdd(type.OriginalDefinition, WinRTProjection.IsProjected);
             }
         }
     }

@@ -186,7 +186,6 @@ namespace Telegram.Services
             }
         }
 
-        [WinRT.DynamicWindowsRuntimeCast(typeof(ApplicationDataCompositeValue))]
         public bool IsBasicType(object parameter)
         {
             // https://docs.microsoft.com/en-us/windows/uwp/design/app-settings/store-and-retrieve-app-data
