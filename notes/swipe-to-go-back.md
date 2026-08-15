@@ -18,11 +18,21 @@ of the design for us:
   scrubbed. Frame navigation is not interruptible, but we never ask it to be: the chip is
   a progress indicator and the commit is a plain `GoBack()`.
 
-The chip itself is `ChatListListView`'s indicator recipe — `ArrowLeft.png` in a 30px
-circle of `MessageServiceBackgroundColor`, sliding `-30 → 25`, scaling `0.8 → 1.0`,
-opacity `0 → 1` over 72px. Same asset, same vocabulary as the folder-switch gesture.
-Unlike that one the arrow is not mirrored: `ArrowLeft.png` already points the right way
-for a left-edge back chip.
+The indicator started as `ChatListListView`'s recipe — a circle with `ArrowLeft.png` that
+slides in — and Fela found it dull twice. It is now **a pill drawn out of the edge**: it
+begins as an 18px sliver whose right edge sits exactly on x=0, so there is nothing to see
+until the finger moves, and it lengthens as it is pulled. Height grows with it, `40 → 48`,
+so the shape reads as elastic rather than as something arriving at a fixed size. The corner
+radius is half the height throughout, so it is a true capsule the whole way and lands on a
+circle exactly when width and height meet at the threshold — which is also the moment its
+left edge clears x=0 and it detaches from the edge it grew from. That detach *is* the armed
+state, along with an 8% scale pop and full opacity. The arrow holds back until the pill is
+long enough to hold it, fading in over `0.3 → 0.7` and swinging upright from -25°.
+
+Every one of those is a single expression on the tracker, including the geometry's `Size`
+and `CornerRadius`, so the whole thing runs on the compositor with nothing per frame on the
+UI thread. `ArrowLeft.png` already points the right way for a left-edge back gesture, so
+unlike `ChatListListView`'s it is not mirrored.
 
 ## The gesture arbitration problem
 
@@ -81,10 +91,9 @@ it was `MinPosition` being pinned to 0.
 - [x] `MessageSelector`: open `MinPosition`, attach on interacting, commit on inertia
 - [x] Built and run by Fela. Works in the chat history and on other screens; vertical
       scrolling is not starved, so the shared-source worry was unfounded.
-- [x] Chip made more emphatic on his feedback: 40px rather than 30, travels the full
-      `-40 → 36`, swings upright from -30°, and latches into an *armed* state at the
-      threshold — scale pops to 1.15 and opacity goes to full — so releasing feels
-      committed. All still pure expression, no per-frame work.
+- [x] Indicator reworked twice on his feedback — first bigger and armed at the threshold,
+      then redrawn entirely as the elastic pill described above, the circle-sliding-in
+      version having still read as stock. Unverified.
 - [x] Fixed *most* settings pages, where the gesture only worked in the title strip, by
       adding a source inside the scrolling host.
 - [x] Fixed `SettingsAdvancedPage` and `SettingsPowerSavingPage`, which failed whenever

@@ -821,6 +821,12 @@ namespace Telegram.Controls
         // finger starts moving, and a Frame navigation cannot be scrubbed anyway.
         private const float BackGestureThreshold = 72;
 
+        // Width at rest and full stretch: the pill lands on a circle at the threshold, so the
+        // stretched width is the height. Anything past this and it stops reading as one shape.
+        private const float BackIndicatorHeight = 48;
+        private const float BackIndicatorMinWidth = 18;
+        private const float BackIndicatorGlyph = 24;
+
         private VisualInteractionSource _backSource;
         private VisualInteractionSource _backContentSource;
         private ScrollViewer _backScrollingHost;
@@ -829,6 +835,8 @@ namespace Telegram.Controls
         private WeakInteractionTrackerOwner _backTrackerOwner;
 
         private ContainerVisual _backIndicator;
+        private SpriteVisual _backIndicatorGlyph;
+        private CompositionRoundedRectangleGeometry _backIndicatorGeometry;
         private CompositionColorBrush _backIndicatorBrush;
         private InteractionTracker _backDriver;
 
@@ -982,30 +990,61 @@ namespace Telegram.Controls
             // and stays on until the finger comes back, rather than flickering at the boundary.
             var armed = $"{progress} >= 1";
 
-            // ArrowLeft.png already points the way a left-edge back chip needs it to, so unlike
-            // ChatListListView's indicator this one is not mirrored.
-            var offset = compositor.CreateExpressionAnimation($"vector3(-40 + {progress} * 76, (root.Size.Y - 40) / 2, 0)");
+            // A pill drawn out of the edge rather than a chip sliding in over the page: it starts
+            // as a sliver whose right edge sits exactly on x=0, so there is nothing to see until
+            // the finger moves, and it lengthens as it is pulled. Height grows with it, so the
+            // shape reads as elastic rather than as something arriving at a fixed size.
+            var width = $"({BackIndicatorMinWidth} + {progress} * {BackIndicatorHeight - BackIndicatorMinWidth})";
+            var height = $"({BackIndicatorHeight - 8} + {progress} * 8)";
+
+            var size = compositor.CreateExpressionAnimation($"vector2({width}, {height})");
+            size.SetReferenceParameter("tracker", tracker);
+
+            // Kept at half the height throughout, so the pill is a true capsule the whole way and
+            // lands on a circle exactly when width and height meet at the threshold.
+            var corner = compositor.CreateExpressionAnimation($"vector2({height} / 2, {height} / 2)");
+            corner.SetReferenceParameter("tracker", tracker);
+
+            // Left edge starts at -MinWidth, putting the far edge on the boundary, and ends clear
+            // of it - so arming is also the moment the pill detaches from the edge it grew from.
+            var offset = compositor.CreateExpressionAnimation(
+                $"vector3(-{BackIndicatorMinWidth} + {progress} * {BackIndicatorMinWidth + 12}, (root.Size.Y - {height}) / 2, 0)");
             offset.SetReferenceParameter("tracker", tracker);
             offset.SetReferenceParameter("root", root);
 
-            // Grows the whole way in, then pops past the threshold so releasing feels committed.
-            var scaled = $"({armed} ? 1.15 : 0.6 + {progress} * 0.4)";
-            var scale = compositor.CreateExpressionAnimation($"vector3({scaled}, {scaled}, 1)");
+            var center = compositor.CreateExpressionAnimation($"vector3({width} / 2, {height} / 2, 0)");
+            center.SetReferenceParameter("tracker", tracker);
+
+            var scale = compositor.CreateExpressionAnimation($"{armed} ? vector3(1.08, 1.08, 1) : vector3(1, 1, 1)");
             scale.SetReferenceParameter("tracker", tracker);
 
-            // Swings upright as it comes in.
-            var rotation = compositor.CreateExpressionAnimation($"(1 - {progress}) * -30");
-            rotation.SetReferenceParameter("tracker", tracker);
-
-            // Ramps ahead of the travel so the chip is legible early, and only reaches full opacity
-            // once armed - the last of the three cues that the gesture will be taken.
-            var opacity = compositor.CreateExpressionAnimation($"{armed} ? 1 : clamp({progress} * 1.8, 0, 1) * 0.85");
+            var opacity = compositor.CreateExpressionAnimation($"{armed} ? 1 : clamp({progress} * 2, 0, 1) * 0.9");
             opacity.SetReferenceParameter("tracker", tracker);
 
+            // The arrow holds back until the pill is long enough to hold it, then swings upright.
+            // ArrowLeft.png already points the way a left-edge back gesture needs it to, so unlike
+            // ChatListListView's indicator this one is not mirrored.
+            var glyphOffset = compositor.CreateExpressionAnimation(
+                $"vector3(({width} - {BackIndicatorGlyph}) / 2, ({height} - {BackIndicatorGlyph}) / 2, 0)");
+            glyphOffset.SetReferenceParameter("tracker", tracker);
+
+            var glyphOpacity = compositor.CreateExpressionAnimation($"clamp(({progress} - 0.3) / 0.4, 0, 1)");
+            glyphOpacity.SetReferenceParameter("tracker", tracker);
+
+            var glyphRotation = compositor.CreateExpressionAnimation($"(1 - {progress}) * -25");
+            glyphRotation.SetReferenceParameter("tracker", tracker);
+
+            _backIndicatorGeometry.StartAnimation("Size", size);
+            _backIndicatorGeometry.StartAnimation("CornerRadius", corner);
+
             _backIndicator.StartAnimation("Offset", offset);
+            _backIndicator.StartAnimation("CenterPoint", center);
             _backIndicator.StartAnimation("Scale", scale);
-            _backIndicator.StartAnimation("RotationAngleInDegrees", rotation);
             _backIndicator.StartAnimation("Opacity", opacity);
+
+            _backIndicatorGlyph.StartAnimation("Offset", glyphOffset);
+            _backIndicatorGlyph.StartAnimation("Opacity", glyphOpacity);
+            _backIndicatorGlyph.StartAnimation("RotationAngleInDegrees", glyphRotation);
         }
 
         /// <summary>
@@ -1021,11 +1060,19 @@ namespace Telegram.Controls
             _backDriver = null;
 
             // Left bound, the expressions would hold a recycled container's tracker alive, and the
-            // chip would sit at whatever progress the gesture happened to end on.
+            // pill would sit at whatever progress the gesture happened to end on.
+            _backIndicatorGeometry.StopAnimation("Size");
+            _backIndicatorGeometry.StopAnimation("CornerRadius");
+
             _backIndicator.StopAnimation("Offset");
+            _backIndicator.StopAnimation("CenterPoint");
             _backIndicator.StopAnimation("Scale");
-            _backIndicator.StopAnimation("RotationAngleInDegrees");
             _backIndicator.StopAnimation("Opacity");
+
+            _backIndicatorGlyph.StopAnimation("Offset");
+            _backIndicatorGlyph.StopAnimation("Opacity");
+            _backIndicatorGlyph.StopAnimation("RotationAngleInDegrees");
+
             _backIndicator.Opacity = 0;
         }
 
@@ -1055,43 +1102,42 @@ namespace Telegram.Controls
 
             var compositor = ElementComposition.GetElementVisual(DetailRoot).Compositor;
 
-            // Larger than the swipe indicators on the message and chat list gestures. Those only
-            // have to label a direction; this one is the whole feedback for the gesture, so it
-            // carries the arrow at a readable size.
-            var sprite = compositor.CreateSpriteVisual();
-            sprite.Size = new Vector2(24, 24);
-            sprite.Offset = new Vector3(8, 8, 0);
-            sprite.CenterPoint = new Vector3(12);
+            _backIndicatorGlyph = compositor.CreateSpriteVisual();
+            _backIndicatorGlyph.Size = new Vector2(BackIndicatorGlyph);
+            _backIndicatorGlyph.CenterPoint = new Vector3(BackIndicatorGlyph / 2);
 
+            var glyph = _backIndicatorGlyph;
             var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/ArrowLeft.png"));
             void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
             {
                 s.LoadCompleted -= handler;
-                sprite.Brush = compositor.CreateSurfaceBrush(s);
+                glyph.Brush = compositor.CreateSurfaceBrush(s);
             }
 
             surface.LoadCompleted += handler;
 
-            var ellipse = compositor.CreateEllipseGeometry();
-            ellipse.Radius = new Vector2(20);
-
-            // Held, so the colour can be refreshed per gesture: the chip is built once and would
+            // Held, so the colour can be refreshed per gesture: the pill is built once and would
             // otherwise keep the accent it was born under across a theme change.
             _backIndicatorBrush = compositor.CreateColorBrush();
 
-            var ellipseShape = compositor.CreateSpriteShape(ellipse);
-            ellipseShape.FillBrush = _backIndicatorBrush;
-            ellipseShape.Offset = new Vector2(20);
+            // Size and CornerRadius are driven per gesture; what is set here only decides what the
+            // first frame would look like if it were ever drawn before the expressions attach.
+            _backIndicatorGeometry = compositor.CreateRoundedRectangleGeometry();
+            _backIndicatorGeometry.Size = new Vector2(BackIndicatorMinWidth, BackIndicatorHeight - 8);
+            _backIndicatorGeometry.CornerRadius = new Vector2((BackIndicatorHeight - 8) / 2);
 
+            var pill = compositor.CreateSpriteShape(_backIndicatorGeometry);
+            pill.FillBrush = _backIndicatorBrush;
+
+            // A ShapeVisual clips to its own Size, so this has to hold the pill at full stretch.
             var shape = compositor.CreateShapeVisual();
-            shape.Shapes.Add(ellipseShape);
-            shape.Size = new Vector2(40, 40);
+            shape.Shapes.Add(pill);
+            shape.Size = new Vector2(BackIndicatorHeight);
 
             _backIndicator = compositor.CreateContainerVisual();
             _backIndicator.Children.InsertAtBottom(shape);
-            _backIndicator.Children.InsertAtTop(sprite);
-            _backIndicator.Size = new Vector2(40, 40);
-            _backIndicator.CenterPoint = new Vector3(20);
+            _backIndicator.Children.InsertAtTop(_backIndicatorGlyph);
+            _backIndicator.Size = new Vector2(BackIndicatorHeight);
             _backIndicator.Opacity = 0;
 
             // Drawn over the detail content, and clipped to it by the inset clip already on
