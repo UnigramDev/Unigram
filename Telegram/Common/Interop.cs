@@ -7,13 +7,14 @@
 
 using System;
 using System.Numerics;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Windows.UI.Composition;
-using Windows.UI.Xaml.Media;
 using Windows.UI.WindowManagement;
 
+// Guarded, or a code cleanup run against the .NET Native build would drop them as unused: nothing
+// outside CompositionTargetImpl needs them, and that whole type is NET9-only.
 #if NET9_0_OR_GREATER
+using System.Collections.Generic;
 using System.Runtime.InteropServices.Marshalling;
 using WinRT;
 #endif
@@ -210,8 +211,12 @@ namespace Telegram.Common
         private static Dictionary<EventHandler<object>, long> _tokens;
 
 
+        // EventHandler<object>, not EventHandler<RenderedEventArgs>: nothing roots the marshaller
+        // for that instantiation - we bypass the projection that would have - and CsWinRT falls
+        // through to boxing the delegate, which throws NotSupportedException on the subscription.
+        // No caller reads the args, and the ABI vtable is the same either way.
         [ThreadStatic]
-        private static Dictionary<EventHandler<RenderedEventArgs>, long> _renderedTokens;
+        private static Dictionary<EventHandler<object>, long> _renderedTokens;
 
         [DllImport("combase.dll", CharSet = CharSet.Unicode)]
         private static extern int WindowsCreateString(string sourceString, int length, out IntPtr hstring);
@@ -262,14 +267,14 @@ namespace Telegram.Common
             }
         }
 
-        public static event EventHandler<RenderedEventArgs> Rendered
+        public static event EventHandler<object> Rendered
         {
             add
             {
-                var marshaler = ABI.System.EventHandler<RenderedEventArgs>.CreateMarshaler(value);
-                var token = Statics3().add_Rendered(ABI.System.EventHandler<RenderedEventArgs>.GetAbi(marshaler));
+                var marshaler = ABI.System.EventHandler<object>.CreateMarshaler(value);
+                var token = Statics3().add_Rendered(ABI.System.EventHandler<object>.GetAbi(marshaler));
 
-                _renderedTokens ??= new Dictionary<EventHandler<RenderedEventArgs>, long>();
+                _renderedTokens ??= new Dictionary<EventHandler<object>, long>();
                 _renderedTokens[value] = token;
             }
             remove

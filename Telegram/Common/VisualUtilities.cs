@@ -264,9 +264,12 @@ namespace Telegram.Common
             {
                 CompositionTarget.Rendered += handler;
             }
-            catch
+            catch (Exception ex)
             {
-                // Bla bla
+                // Swallowing this drops the callback with no trace, and callers rely on it running:
+                // ContentPopup completes the task its ShowQueuedAsync awaits from here, so a lost
+                // subscription leaves every dialog on this view awaiting forever.
+                Logger.Error(ex.ToString());
             }
         }
 
