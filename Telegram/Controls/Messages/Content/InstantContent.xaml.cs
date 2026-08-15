@@ -322,13 +322,6 @@ namespace Telegram.Controls.Messages.Content
             _message.Delegate?.OpenInlineButton(_message, inline);
         }
 
-        void IPageBlockContext.RegisterDebug(object element)
-        {
-#if INSTRUMENTATION
-            _debugChildren.Add(element);
-#endif
-        }
-
         #endregion
     }
 }
