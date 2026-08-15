@@ -27,54 +27,16 @@ namespace Telegram.Common
     {
         private static readonly IDeviceInfoService _service = new DeviceInfoService();
 
-        public static string Serialize(System.Exception exception, string id, string userId, bool captureAllThreads, string logs)
+        public static string Serialize(System.Exception exception, string id, string userId, string logs)
         {
             var hashBuilder = new StringBuilder();
             var binaries = new Dictionary<long, ExceptionBinary>();
-            var modelThreads = default(List<ThreadModel>);
             var modelException = ProcessException(exception, null, binaries, hashBuilder);
-
-            if (captureAllThreads)
-            {
-                var stack = StackCapture.CaptureAllThreadStacks();
-                if (stack.Threads.Count > 0)
-                {
-                    modelThreads = new List<ThreadModel>(stack.Threads.Count);
-
-                    foreach (var module in stack.Modules)
-                    {
-                        var baseAddress = module.BaseAddress.ToInt64();
-                        if (binaries.ContainsKey(baseAddress))
-                        {
-                            continue;
-                        }
-
-                        var binary = ImageToBinary(module.BaseAddress);
-                        if (binary != null)
-                        {
-                            binaries[baseAddress] = binary;
-                        }
-                    }
-
-                    foreach (var thread in stack.Threads)
-                    {
-                        modelThreads.Add(new ThreadModel
-                        {
-                            Id = thread.ThreadId,
-                            Frames = thread.Frames.Select(x => new ExceptionStackFrame
-                            {
-                                Address = string.Format(CultureInfo.InvariantCulture, AddressFormat, x.ToInt64()),
-                            }).ToList()
-                        });
-                    }
-                }
-            }
 
             var error = new ErrorExceptionAndBinaries
             {
                 Binaries = binaries.Count > 0 ? binaries.Values.ToList() : null,
                 Exception = modelException,
-                Threads = modelThreads,
             };
 
             foreach (var binary in binaries.Values.OrderBy(x => x.Name))
@@ -85,54 +47,16 @@ namespace Telegram.Common
             return Serialize(error, id, userId, logs, hashBuilder);
         }
 
-        public static string Serialize(FatalError exception, string id, string userId, bool captureAllThreads, string logs)
+        public static string Serialize(FatalError exception, string id, string userId, string logs)
         {
             var hashBuilder = new StringBuilder();
             var binaries = new Dictionary<long, ExceptionBinary>();
-            var modelThreads = default(List<ThreadModel>);
             var modelException = ProcessException(exception, null, binaries, hashBuilder);
-
-            if (captureAllThreads)
-            {
-                var stack = StackCapture.CaptureAllThreadStacks();
-                if (stack.Threads.Count > 0)
-                {
-                    modelThreads = new List<ThreadModel>(stack.Threads.Count);
-
-                    foreach (var module in stack.Modules)
-                    {
-                        var baseAddress = module.BaseAddress.ToInt64();
-                        if (binaries.ContainsKey(baseAddress))
-                        {
-                            continue;
-                        }
-
-                        var binary = ImageToBinary(module.BaseAddress);
-                        if (binary != null)
-                        {
-                            binaries[baseAddress] = binary;
-                        }
-                    }
-
-                    foreach (var thread in stack.Threads)
-                    {
-                        modelThreads.Add(new ThreadModel
-                        {
-                            Id = thread.ThreadId,
-                            Frames = thread.Frames.Select(x => new ExceptionStackFrame
-                            {
-                                Address = string.Format(CultureInfo.InvariantCulture, AddressFormat, x.ToInt64()),
-                            }).ToList()
-                        });
-                    }
-                }
-            }
 
             var error = new ErrorExceptionAndBinaries
             {
                 Binaries = binaries.Count > 0 ? binaries.Values.ToList() : null,
                 Exception = modelException,
-                Threads = modelThreads
             };
 
             foreach (var binary in binaries.Values.OrderBy(x => x.Name))
@@ -1074,17 +998,6 @@ namespace Telegram.Common
 
         [JsonPropertyName("exception")]
         public ExceptionModel Exception { get; set; }
-
-        [JsonPropertyName("threads")]
-        public List<ThreadModel> Threads { get; set; }
-    }
-
-    public partial class ThreadModel
-    {
-        [JsonPropertyName("id")]
-        public uint Id { get; set; }
-
-        public List<ExceptionStackFrame> Frames { get; set; }
     }
 
     public partial class ExceptionModel

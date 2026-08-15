@@ -154,21 +154,21 @@ namespace Telegram
                         ? ex.StackTrace
                         : stowed.StackTrace + "\n" + ex.StackTrace;
 
-                    ProcessException(stowed, ex.HResult == unchecked((int)0x8001010A));
+                    ProcessException(stowed);
                 }
                 else
                 {
-                    ProcessException(ex, ex.HResult == unchecked((int)0x8001010A));
+                    ProcessException(ex);
                 }
             }
         }
 
-        private static void ProcessException(Exception ex, bool captureAllThreads)
+        private static void ProcessException(Exception ex)
         {
             if (_limiter.TryConsume())
             {
                 var reportId = Guid.NewGuid().ToString();
-                var report = ExceptionSerializer.Serialize(ex, reportId, _userId, captureAllThreads, BuildReport(ex.HResult));
+                var report = ExceptionSerializer.Serialize(ex, reportId, _userId, BuildReport(ex.HResult));
 
                 var reportPath = GetErrorReportPath(reportId);
 
@@ -179,12 +179,12 @@ namespace Telegram
             }
         }
 
-        private static void ProcessException(FatalError ex, bool captureAllThreads)
+        private static void ProcessException(FatalError ex)
         {
             if (_limiter.TryConsume())
             {
                 var reportId = Guid.NewGuid().ToString();
-                var report = ExceptionSerializer.Serialize(ex, reportId, _userId, captureAllThreads, BuildReport(0));
+                var report = ExceptionSerializer.Serialize(ex, reportId, _userId, BuildReport(0));
 
                 var reportPath = GetErrorReportPath(reportId);
 
@@ -197,12 +197,12 @@ namespace Telegram
 
         public static void TrackError(Exception ex)
         {
-            ProcessException(ex, false);
+            ProcessException(ex);
         }
 
         public static void TrackError(string message)
         {
-            ProcessException(NativeUtils.GetBackTrace("TrackErrorException", message), false);
+            ProcessException(NativeUtils.GetBackTrace("TrackErrorException", message));
         }
 
         private static void LoadReports()
@@ -373,7 +373,7 @@ namespace Telegram
 
         public static void FatalErrorCallback(FatalError error)
         {
-            ProcessException(error, false);
+            ProcessException(error);
         }
 
         public static void Launch(ApplicationExecutionState previousExecutionState)

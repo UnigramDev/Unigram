@@ -65,11 +65,10 @@
 
   <!--
     Compile and Page are globbed, against Telegram.csproj's 1250 hand-listed Compile and 473 Page
-    entries. The two lists agree today except for the seven files below, which are on disk and not
+    entries. The two lists agree today except for the six files below, which are on disk and not
     in the legacy project; a parity check between the glob and that list is still to be written.
   -->
   <ItemGroup>
-    <Compile Remove="Common\HeapSizeCalculator.cs" />
     <Compile Remove="Common\HttpServer.cs" />
     <Compile Remove="Common\MediaHttpServer.cs" />
     <Compile Remove="Controls\SettingsCheckBox.cs" />

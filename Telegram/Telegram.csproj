@@ -214,7 +214,6 @@
     <Compile Include="Common\Profiler.cs" />
     <Compile Include="Common\RichHtml.cs" />
     <Compile Include="Common\SliderHelper.cs" />
-    <Compile Include="Common\StackCapture.cs" />
     <Compile Include="Common\TdThroughput.cs" />
     <Compile Include="Common\TextSelectionCoordinator.cs" />
     <Compile Include="Common\ThemeShadowEx.cs" />

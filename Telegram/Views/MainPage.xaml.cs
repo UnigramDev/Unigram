@@ -156,7 +156,6 @@ namespace Telegram.Views
             var memoryUsage = Math.Round(Windows.System.MemoryManager.AppMemoryUsage / 1024.0 / 1024.0);
             var occurred = PollGC();
 
-            //var currentProcess = HeapSizeCalculator.GetHeapSizes(true);
             //double unmanaged = currentProcess.NativeHeap / 1024.0 / 1024.0;
             double managed = GC.GetTotalMemory(false) / 1024.0 / 1024.0; // currentProcess.ManagedHeap / 1024.0 / 1024.0;
 
