@@ -821,7 +821,11 @@ namespace Telegram.Controls
         // is what makes this affordable here - the master is collapsed while a chat is open in
         // Minimal, so revealing it would force a measure of the whole chat list at the moment the
         // finger starts moving, and a Frame navigation cannot be scrubbed anyway.
-        private const float BackGestureThreshold = 72;
+        // Deliberately longer than the 72 the reply and folder swipes use. Those are cheap to undo
+        // and cheap to trigger; this one leaves the page, so it has to be asked for rather than
+        // brushed into. Shared with MessageSelector, which clamps its own tracker to it whenever
+        // the back direction is the one in play.
+        public const float BackGestureThreshold = 120;
 
         private const float BackIndicatorSize = 30;
 

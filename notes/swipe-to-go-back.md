@@ -1,7 +1,7 @@
 # Swipe to go back
 
 A Chrome-style back gesture for the detail pane of `MasterDetailView`: a horizontal
-left-to-right swipe pulls a circular back chip in from the left edge, and past a 72px
+left-to-right swipe pulls a circular back chip in from the left edge, and past a 120px
 threshold it navigates back. The content does not move.
 
 Branch `worktree-swipe-to-go-back`, worktree `.claude/worktrees/swipe-to-go-back`.
@@ -62,6 +62,13 @@ which is exactly the Chrome behaviour, and it was already there. The only thing 
 it was `MinPosition` being pinned to 0.
 
 ## Decisions taken
+
+- **120px, not the 72 the other swipe gestures use.** At 72 it fired by accident. Reply and
+  forward are cheap to undo and cheap to trigger; leaving the page is neither, so it has to
+  be asked for. `MasterDetailView.BackGestureThreshold` is public for this: `MessageSelector`
+  clamps its own tracker to it whenever back has the left-to-right direction, and keeps 72
+  when share does — otherwise the indicator would read as incomplete over a bubble while
+  still committing.
 
 - **One new bool, `SwipeToGoBack`**, beside the existing `SwipeToShare` / `SwipeToReply`
   checkboxes under *Swipe Actions*. Not a three-way choice for the left-to-right

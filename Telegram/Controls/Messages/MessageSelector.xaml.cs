@@ -706,7 +706,7 @@ namespace Telegram.Controls.Messages
             _tracker.InteractionSources.Add(_interactionSource);
 
             _tracker.MaxPosition = new Vector3(_reply ? 72 : 0);
-            _tracker.MinPosition = new Vector3(_share || _back ? -72 : 0);
+            _tracker.MinPosition = new Vector3(BackMinPosition(_share, _back));
 
             _tracker.Properties.InsertBoolean("CanReply", _reply);
             _tracker.Properties.InsertBoolean("CanShare", _share);
@@ -719,6 +719,21 @@ namespace Telegram.Controls.Messages
                 _interacting = false;
                 _visual.Properties.InsertVector3("Translation", Vector3.Zero);
             }
+        }
+
+        /// <summary>
+        /// How far the left-to-right direction travels, for whichever action has it. Share stops at
+        /// the same 72 as reply; back is held to MasterDetailView's longer pull, since leaving the
+        /// page is not something to be brushed into.
+        /// </summary>
+        private static float BackMinPosition(bool share, bool back)
+        {
+            if (share)
+            {
+                return -72;
+            }
+
+            return back ? -MasterDetailView.BackGestureThreshold : 0;
         }
 
         private void ConfigureRestingPoints()
@@ -867,7 +882,7 @@ namespace Telegram.Controls.Messages
 
                 if (_share != share || _back != back)
                 {
-                    _tracker.MinPosition = new Vector3(share || back ? -72 : 0);
+                    _tracker.MinPosition = new Vector3(BackMinPosition(share, back));
                 }
 
                 if (_reply != reply)
@@ -965,7 +980,7 @@ namespace Telegram.Controls.Messages
                 {
                     _owner.ViewModel.ForwardMessage(Message);
                 }
-                else if (sender.Position.X <= -72 && _back)
+                else if (sender.Position.X <= -MasterDetailView.BackGestureThreshold && _back)
                 {
                     this.GetParent<MasterDetailView>()?.CommitBackGesture();
                 }
