@@ -823,6 +823,8 @@ namespace Telegram.Controls
 
         private VisualInteractionSource _backSource;
         private VisualInteractionSource _backContentSource;
+        private ScrollViewer _backScrollingHost;
+        private ScrollMode _backScrollingMode;
         private InteractionTracker _backTracker;
         private WeakInteractionTrackerOwner _backTrackerOwner;
 
@@ -891,10 +893,7 @@ namespace Telegram.Controls
         /// the contact instead, which is why MessageSelector's works inside the chat history. Rails
         /// and an X-only mode leave vertical panning to the ScrollViewer, as they already do there.
         ///
-        /// This is not the whole story: SettingsStickersPage works with no source of its own, its
-        /// host being a TableListView that this skips. So an ancestor source is evidently enough
-        /// somewhere, and why it is not enough on SettingsAdvancedPage - whose XAML matches the
-        /// pages that work - is still unexplained.
+        /// It also forces the host's VerticalScrollMode on, for the reason given below.
         /// </remarks>
         private void ConfigureBackGestureContent(object content)
         {
@@ -924,10 +923,27 @@ namespace Telegram.Controls
             _backContentSource.IsPositionXRailsEnabled = true;
 
             _backTracker.InteractionSources.Add(_backContentSource);
+
+            // ScrollMode.Auto turns the manipulation off entirely when there is nothing to scroll,
+            // and then a touchpad pan is never classified as one - so no interaction source is
+            // consulted and the gesture is simply absent. That is the whole difference between the
+            // settings pages that worked and the two that did not: identical markup, and only
+            // whether the content happened to overflow. Enabled keeps it on regardless of extent,
+            // which costs nothing here since there is still no extent to scroll.
+            _backScrollingHost = scrollingHost;
+            _backScrollingMode = scrollingHost.VerticalScrollMode;
+
+            scrollingHost.VerticalScrollMode = ScrollMode.Enabled;
         }
 
         private void DetachBackGestureContent()
         {
+            if (_backScrollingHost != null)
+            {
+                _backScrollingHost.VerticalScrollMode = _backScrollingMode;
+                _backScrollingHost = null;
+            }
+
             if (_backContentSource != null)
             {
                 _backTracker?.InteractionSources.Remove(_backContentSource);

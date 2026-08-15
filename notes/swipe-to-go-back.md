@@ -87,8 +87,10 @@ it was `MinPosition` being pinned to 0.
       committed. All still pure expression, no per-frame work.
 - [x] Fixed *most* settings pages, where the gesture only worked in the title strip, by
       adding a source inside the scrolling host.
-- [ ] **`SettingsAdvancedPage` and `SettingsPowerSavingPage` still fail outright**, over
-      content as well as empty space. Three theories tried and disproved — see below.
+- [x] Fixed `SettingsAdvancedPage` and `SettingsPowerSavingPage`, which failed whenever
+      their content did not overflow: `ScrollMode.Auto` turns the manipulation off when
+      there is nothing to scroll. Unverified — needs a run with the window maximised, which
+      is the state that used to fail.
 - [x] Commit navigates with `SlideNavigationTransitionInfo`. The effect is `FromRight` —
       the frame inverts it on a back navigation, so that is the value that slides the
       uncovered page in from the left, and it is the same one `TLNavigationService` passes
@@ -132,10 +134,24 @@ it to the same tracker. Rails and an X-only source mode leave vertical panning t
 That fixed the long pages and nothing else, and everything after it was wrong. Recorded
 here so nobody spends the same rounds again.
 
-**Still unexplained.** `SettingsAdvancedPage` and `SettingsPowerSavingPage` fail; nothing
-tried so far has moved them.
+**Cause, finally.** Fela settled it in one observation: the gesture works on Advanced and
+Power Saving *if the window is made small enough for the scroller to be scrollable*.
 
-What the evidence rules out:
+`ScrollMode.Auto` turns the manipulation off entirely when there is nothing to scroll, and
+a touchpad pan over a non-manipulable element is never classified as a manipulation — so no
+`VisualInteractionSource` is consulted anywhere up the tree and the gesture is simply
+absent, which is why no chip ever appeared. When the content does overflow, the
+manipulation is live, the vertical rails reject the horizontal component, and it falls
+through to the source.
+
+Every one of these pages declares `VerticalScrollMode="Auto"`. The only difference between
+Privacy and Advanced was whether the content happened to overflow — the markup was never
+the variable, the window size was. `ConfigureBackGestureContent` now forces
+`ScrollMode.Enabled` on the host and restores the declared value on the way out. It costs
+nothing: there is still no extent, so nothing becomes scrollable that was not.
+
+Three earlier theories, all wrong, all disproved by evidence Fela supplied. What they ruled
+out, so nobody spends the rounds again:
 
 - *The page's XAML.* Advanced, Power Saving, Privacy and Data & Storage declare
   byte-identical scrollers — `ScrollViewer x:Name="ScrollingHost"` with
@@ -153,14 +169,13 @@ What the evidence rules out:
 - *`x:Load` and `NavigationMode`.* Privacy has four `x:Load` and works, Advanced has one and
   fails; every page here is `NavigationMode="Root"` bar Stickers.
 
-`_backContentSource` is kept, unproven. It was added under the scroller theory and Stickers
-casts doubt on whether it earns anything. Do not treat it as load-bearing.
+`_backContentSource` is kept, still unproven. It was added under the scroller theory, and
+Stickers — which works with no source of its own — casts doubt on whether it earns anything
+now that the scroll mode is the known cause. Worth deleting to see if anything changes; do
+not treat it as load-bearing.
 
-The next thing to establish is whether the chip appears on those pages at all — that splits
-the problem in half, between the tracker never seeing the gesture and the commit refusing
-it. Failing that, `Logger` calls in `ConfigureBackGestureContent`,
-`OnBackInteractingStateEntered`, `AttachBackGesture` and `CommitBackGesture` would settle it
-in one run.
+A `ListViewBase` host still gets neither the source nor the scroll-mode change. Those are
+scrollable in practice, so it may never matter, but it is the remaining known gap.
 
 Only `ScrollViewer` hosts are covered. A `ListViewBase` host would need its
 `ItemsPanelRoot`, which does not exist until the list realises, and the one that matters —
