@@ -823,11 +823,6 @@ namespace Telegram.Controls
 
         private VisualInteractionSource _backSource;
         private VisualInteractionSource _backContentSource;
-        private ScrollViewer _backScrollingHost;
-        private FrameworkElement _backScrollingContent;
-        private double _backScrollingContentMinHeight;
-        private Panel _backScrollingContentPanel;
-        private SolidColorBrush _backTransparent;
         private InteractionTracker _backTracker;
         private WeakInteractionTrackerOwner _backTrackerOwner;
 
@@ -891,12 +886,15 @@ namespace Telegram.Controls
         /// Adds a second source inside the page's scrolling host, if it has one.
         /// </summary>
         /// <remarks>
-        /// The source on DetailRoot is an ancestor of the page, and a vertical ScrollViewer takes
-        /// the touchpad pan before any ancestor sees it - so on a settings page the gesture died
-        /// over the content and only worked in the header, which sits outside the scroller. A
-        /// source on a descendant of the scroller wins the contact instead, which is the same
-        /// reason MessageSelector's works inside the chat history. Rails and an X-only mode leave
-        /// vertical panning to the ScrollViewer, as they already do there.
+        /// The source on DetailRoot is an ancestor of the page, and a scroller can take the
+        /// touchpad pan before an ancestor sees it - a source on a descendant of the scroller wins
+        /// the contact instead, which is why MessageSelector's works inside the chat history. Rails
+        /// and an X-only mode leave vertical panning to the ScrollViewer, as they already do there.
+        ///
+        /// This is not the whole story: SettingsStickersPage works with no source of its own, its
+        /// host being a TableListView that this skips. So an ancestor source is evidently enough
+        /// somewhere, and why it is not enough on SettingsAdvancedPage - whose XAML matches the
+        /// pages that work - is still unexplained.
         /// </remarks>
         private void ConfigureBackGestureContent(object content)
         {
@@ -914,7 +912,7 @@ namespace Telegram.Controls
             // is already covered by MessageSelector.
             if (content is not HostedPage hosted
                 || hosted.FindName("ScrollingHost") is not ScrollViewer scrollingHost
-                || scrollingHost.Content is not FrameworkElement child)
+                || scrollingHost.Content is not UIElement child)
             {
                 return;
             }
@@ -926,66 +924,10 @@ namespace Telegram.Controls
             _backContentSource.IsPositionXRailsEnabled = true;
 
             _backTracker.InteractionSources.Add(_backContentSource);
-
-            // The source reaches only as far as the content does, and a ScrollViewer arranges
-            // content shorter than the viewport at its desired height - so on a short page like
-            // Advanced the gesture worked over the rows and died in the empty space beneath them,
-            // where the bare scroller takes the pan. Growing the content to the viewport gives the
-            // source the whole visible area, and costs nothing: the extent still matches the
-            // viewport, so the page stays unscrollable.
-            _backScrollingHost = scrollingHost;
-            _backScrollingContent = child;
-            _backScrollingContentMinHeight = child.MinHeight;
-
-            scrollingHost.SizeChanged += OnBackScrollingHostSizeChanged;
-            child.MinHeight = scrollingHost.ViewportHeight;
-
-            // And height alone buys nothing: SettingsPanel is a bare Panel, and a Panel with no
-            // Background does not hit-test its own area at all. The rows hit-test themselves, which
-            // is why the gesture always worked on a page long enough to be all rows and nowhere on
-            // the empty part of a short one. Transparent is what makes that area exist for input;
-            // it paints the same as null.
-            if (child is Panel { Background: null } panel)
-            {
-                _backTransparent ??= new SolidColorBrush(Windows.UI.Colors.Transparent);
-                _backScrollingContentPanel = panel;
-
-                panel.Background = _backTransparent;
-            }
-        }
-
-        private void OnBackScrollingHostSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            // ViewportHeight is still 0 when the page is first navigated to, so this is where the
-            // height actually lands, not only where it is kept up to date.
-            if (_backScrollingContent != null && _backScrollingHost != null)
-            {
-                _backScrollingContent.MinHeight = _backScrollingHost.ViewportHeight;
-            }
         }
 
         private void DetachBackGestureContent()
         {
-            if (_backScrollingHost != null)
-            {
-                _backScrollingHost.SizeChanged -= OnBackScrollingHostSizeChanged;
-                _backScrollingHost = null;
-            }
-
-            if (_backScrollingContent != null)
-            {
-                // Pages are cached, so this one may come back with the gesture switched off.
-                _backScrollingContent.MinHeight = _backScrollingContentMinHeight;
-                _backScrollingContent = null;
-            }
-
-            if (_backScrollingContentPanel != null)
-            {
-                // Only ever set where it was null, so null is what it goes back to.
-                _backScrollingContentPanel.Background = null;
-                _backScrollingContentPanel = null;
-            }
-
             if (_backContentSource != null)
             {
                 _backTracker?.InteractionSources.Remove(_backContentSource);
