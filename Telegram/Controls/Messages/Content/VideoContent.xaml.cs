@@ -59,6 +59,10 @@ namespace Telegram.Controls.Messages.Content
         private ProgressBar Indicator;
         private bool _templateApplied;
 
+        // ProgressBar is only ever cast to, never constructed, so trimming drops the metadata the
+        // cast needs and Indicator comes back null - which UpdatePosition then dereferences on every
+        // position change, inside a catch.
+        [WinRT.DynamicWindowsRuntimeCast(typeof(ProgressBar))]
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;

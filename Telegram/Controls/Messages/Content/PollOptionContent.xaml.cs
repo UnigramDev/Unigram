@@ -60,6 +60,9 @@ namespace Telegram.Controls.Messages.Content
 
         private bool _templateApplied;
 
+        // Same as VideoContent: nothing in the app constructs a ProgressBar, so the cast is all the
+        // trimmer has to go on and Votes would come back null.
+        [WinRT.DynamicWindowsRuntimeCast(typeof(Windows.UI.Xaml.Controls.ProgressBar))]
         protected override void OnApplyTemplate()
         {
             RootGrid = GetTemplateChild(nameof(RootGrid)) as Grid;
