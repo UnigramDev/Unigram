@@ -1464,7 +1464,7 @@ namespace Telegram.Views
             }
             else if (args.Key == VirtualKey.D && /*args.RepeatCount == 1 &&*/ modifiers == VirtualKeyModifiers.Control)
             {
-                btnVoiceMessage.StopRecording(true);
+                btnVoiceMessage.Cancel();
                 args.Handled = true;
             }
             else if (args.Key == VirtualKey.P && /*args.RepeatCount == 1 &&*/ modifiers == VirtualKeyModifiers.Control)

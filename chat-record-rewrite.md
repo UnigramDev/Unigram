@@ -222,18 +222,42 @@ Two knock-on moves:
 
 ---
 
-## Task 1 — Extract the state machine, no behaviour change
+## Task 1 — Extract the state machine, no behaviour change — **done, unbuilt**
 
-- [ ] **1.1** Move the flag soup and `UpdateRecordingInterface` into `ChatRecordSession` with an
+- [x] **1.1** Move the flag soup and `UpdateRecordingInterface` into `ChatRecordSession` with an
   explicit enum state and one transition method. Keep the existing engine (`Recorder`) behind it
   verbatim so the diff is mechanical and testable against the current behaviour.
-- [ ] **1.2** One session per host, created by ChatView/StoriesWindow and passed to both the button
-  and the bar. Drop `[ThreadStatic] Recorder.Current` and `Recorder.Release()`
-  (`Navigation/WindowContext.cs:297`).
-- [ ] **1.3** Pair every `+=` in `SetControlledButton` with a `-=`, and replace the `_timer.Tick`
+- [x] **1.2** ~~One session per host, created by ChatView/StoriesWindow and passed to both the
+  button and the bar.~~ The button owns one and exposes it — a button is already one per host, and
+  this way no XAML or host code changes. Dropped `[ThreadStatic] Recorder.Current` and
+  `Recorder.Release()` (`Navigation/WindowContext.cs:297`).
+- [x] **1.3** Pair every `+=` in `SetControlledButton` with a `-=`, and replace the `_timer.Tick`
   lambda with a named method.
-- [ ] **1.4** Delete `StopRecording(bool)`'s null-`cancel` path: `Cancel()` and `Complete()` as two
+- [x] **1.4** Delete `StopRecording(bool)`'s null-`cancel` path: `Cancel()` and `Complete()` as two
   methods, no tri-state.
+
+**How it landed.** `Telegram/Common/Recording/` gains `ChatRecordEngine` (the old nested
+`Recorder`, moved out whole and no longer thread-static) and `ChatRecordSession`, which owns the
+state, the clock and the engine. `ChatRecordButton` is down from 1355 lines to ~440 and holds the
+gesture and its own visuals; `ChatRecordBar` is unchanged apart from the renamed calls and the
+detach.
+
+`ChatRecordState` has three values, not four. The old interface state 3 — locked, then stopped —
+was only reachable through `StopRecording(false)`, which no caller ever passed. It went out with
+the tri-state rather than being carried over.
+
+**What the extraction fixed, beyond shape.**
+
+- Two chats no longer share one recording. The engine was `[ThreadStatic]`, and every loaded button
+  on the thread subscribed to it: a recording in a chat drove the state of the story composer too,
+  `QuantumProcessed` was a single field so whichever loaded last owned the level meter, and the
+  first to unload set it to null for the other.
+- `Elapsed` is off `Environment.TickCount64` rather than `DateTime.Now`, so a clock change during a
+  recording no longer moves it, and it stops while paused. It restarts when the device is actually
+  open, so it no longer counts the few hundred ms of `InitializeAsync` — the residue between it and
+  the sent duration is now the gap between the device opening and the first frame.
+- The pause state is reset when a recording ends, so it can't leak into the next one.
+- `ChatRecordBar` detaches from the button on unload.
 
 ## Task 2 — Voice: encode straight to Opus, no WAV — **done, unbuilt**
 
@@ -287,16 +311,24 @@ read-and-reasoned only. The two things most worth watching on first run: whether
 acquisition really delivers every frame through `TryAcquireLatestFrame`, and which path the log
 says it took.
 
-## Task 3 — Permissions and start-up
+## Task 3 — Permissions and start-up — **3.2 still open**
 
-- [ ] **3.1** Replace `CheckAccessAsync`/`CheckDeviceAccessAsync` (:534–613) with
+- [x] **3.1** Replace `CheckAccessAsync`/`CheckDeviceAccessAsync` (:534–613) with
   `MediaDevicePermissions.CheckAccessAsync`, so the first press after granting actually records.
-  Keep the Xbox special case if it's still needed — verify.
+  Keep the Xbox special case if it's still needed — verify. *Kept, and still unverified: the note
+  it came from was about `DeviceAccessInformation`, not `AppCapability`, so it may well be dead
+  weight. Cheaper to keep than to be wrong about, and it is three lines with a comment saying so.*
+  `MediaDevicePermissions` grew a `MediaDevicePurpose`, so the denial keeps the recording wording
+  (`PermissionNoAudio`) instead of borrowing the call one.
 - [ ] **3.2** Start the engine on press and discard on an early release, instead of waiting 300 ms
   to learn whether it was a hold. The mode-switch tap then cancels a session that already began
   warming the device, and the felt latency drops by the whole timer plus init.
-- [ ] **3.3** `MediaCapture.Failed` must fail the session and reset the UI (:843), not just log.
-- [ ] **3.4** Give `RecordingTooShort` a consumer — a toast, matching the Android/desktop wording.
+- [x] **3.3** `MediaCapture.Failed` must fail the session and reset the UI (:843), not just log.
+  It now cancels the recording and raises `RecordingFailed`, so unplugging the microphone ends the
+  recording instead of leaving the bar up forever.
+- [x] **3.4** Give `RecordingTooShort` a consumer — a toast, matching the Android/desktop wording.
+  *No new string: it shows `HoldToAudio`/`HoldToVideo`, the same hint the mode-switch tap shows,
+  which is what Android says when a press is too short to be a recording.*
 
 ## Task 4 — Video
 
@@ -320,7 +352,8 @@ says it took.
 - [ ] **5.1** Decide the sharing mode. `MediaCaptureSharingMode.SharedReadOnly` (:1267) forbids
   both `SetFormatAsync` on the audio frame source (Task 2.1) and stream properties on the camera
   (Task 4.1). Exclusive mode buys both and costs failing when another app holds the device.
-- [ ] **5.2** Reset the pause state on stop (:401) and stop `Elapsed` advancing while paused.
+- [x] **5.2** Reset the pause state on stop (:401) and stop `Elapsed` advancing while paused.
+  Both belong to `ChatRecordSession` now.
 - [ ] **5.3** The lock/pause/view-once visuals are ~250 lines of hand-built keyframe pairs that
   duplicate each other forward and backward (`Pause_Click`, both branches). Fold into one
   parameterised helper.

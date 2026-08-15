@@ -338,7 +338,6 @@ namespace Telegram.Navigation
             PlaceholderHelper.Release();
             AnimatedImageLoader.Release();
             ProfilePicture.Loader.Release();
-            ChatRecordButton.Recorder.Release();
 
             // TODO: needed? From some tests, this prevented the whole Window root from being garbage collected
             if (SynchronizationContext.Current is SecondaryViewSynchronizationContextDecorator decorator)
