@@ -168,6 +168,9 @@ namespace Telegram.Navigation
             window.CoreWindow.ResizeStarted += OnResizeStarted;
             window.CoreWindow.ResizeCompleted += OnResizeCompleted;
 
+#if NET9_0_OR_GREATER
+            window.CoreWindow.DispatcherQueue.ShutdownStarting += OnShutdownStarting;
+#endif
             window.CoreWindow.DispatcherQueue.ShutdownCompleted += OnShutdownCompleted;
 
             #region Legacy code
@@ -249,6 +252,13 @@ namespace Telegram.Navigation
             OnClosed(null, null);
             ClearTitleBar(sender);
 
+#if NET9_0_OR_GREATER
+            // Unroot the tree here rather than leaving it to the framework: until the content is
+            // dropped every element in it is still reachable, so the collect in OnShutdownStarting
+            // would have nothing to hand back and the releases would fall past the XAML core.
+            _window.Content = null;
+#endif
+
             // TODO: needed? From some tests, this prevented the whole Window root from being garbage collected
             if (SynchronizationContext.Current is SecondaryViewSynchronizationContextDecorator decorator)
             {
@@ -280,6 +290,40 @@ namespace Telegram.Navigation
             _window.CoreWindow.ResizeStarted -= OnResizeStarted;
             _window.CoreWindow.ResizeCompleted -= OnResizeCompleted;
         }
+
+#if NET9_0_OR_GREATER
+        // A stuck finalizer must not keep a closed window alive, so the drain is bounded.
+        private static readonly TimeSpan ShutdownDrainTimeout = TimeSpan.FromSeconds(2);
+
+        private void OnShutdownStarting(DispatcherQueue sender, Windows.System.DispatcherQueueShutdownStartingEventArgs args)
+        {
+            sender.ShutdownStarting -= OnShutdownStarting;
+
+            // This view's RCWs are context bound. Released from the finalizer thread they marshal
+            // back here through IContextCallback, and once the XAML core is gone unparenting one
+            // faults on a null CCoreServices - the access violation seen a moment after closing a
+            // window that held a FormattedTextBlock, whose runs are XamlDirect objects.
+            //
+            // So collect while this thread still pumps and XAML is still up. The deferral is what
+            // keeps it pumping; the wait has to run off-thread, because blocking here would block
+            // the very apartment the finalizer needs to call into.
+            var deferral = args.GetDeferral();
+
+            var drain = Task.Run(() =>
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            });
+
+            Task.WhenAny(drain, Task.Delay(ShutdownDrainTimeout))
+                .ContinueWith(OnDrained, deferral, TaskScheduler.Default);
+        }
+
+        private static void OnDrained(Task task, object state)
+        {
+            (state as Deferral)?.Complete();
+        }
+#endif
 
         private void OnShutdownCompleted(DispatcherQueue sender, object args)
         {
