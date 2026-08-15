@@ -2956,7 +2956,7 @@ namespace Telegram.Controls.Messages
                         }
 
                         var partial = message.Text.Text.Substring(styled.Offset, styled.Length);
-                        var entities = styled.Parts ?? Array.Empty<TextStylePart>();
+                        var entities = styled.Parts ?? TextStyleRun.NoParts;
 
                         var size = styled.Type is TextParagraphTypeQuote
                             ? quoteSize

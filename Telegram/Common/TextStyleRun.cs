@@ -79,13 +79,13 @@ namespace Telegram.Common
         // cannot synthesise - it throws NotSupportedException the moment the CCW is built. A List
         // marshals through the generated path instead. Shared, so the empty case stays allocation
         // free; nothing on either side of the ABI writes to it.
-        private static readonly List<TextStylePart> _noParts = new();
+        public static readonly IList<TextStylePart> NoParts = new List<TextStylePart>();
 
         public static IList<TextStylePart> GetParts(IList<TextEntity> entities)
         {
             if (entities == null)
             {
-                return _noParts;
+                return NoParts;
             }
 
             var items = new List<TextStylePart>(entities.Count);

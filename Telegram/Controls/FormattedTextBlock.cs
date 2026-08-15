@@ -259,7 +259,7 @@ namespace Telegram.Controls
             {
                 var styled = _text.Paragraphs[_first];
                 var partial = styled.Text;
-                var entities = styled.GetParts(out partial) ?? Array.Empty<TextStylePart>();
+                var entities = styled.GetParts(out partial) ?? TextStyleRun.NoParts;
                 var quoteSize = (AutoFontSize ? Theme.Current.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
 
                 var metrics = PlaceholderHelper.Foreground.MaxLines(partial, 0, partial.Length, entities, quoteSize, availableSize.Width, false, 3);
@@ -1744,7 +1744,7 @@ namespace Telegram.Controls
                     int xlength = hyperlink.Length;
 
                     var partial = _text.Text.Substring(styled.Offset, styled.Length);
-                    var entities = styled.GetParts(out partial) ?? Array.Empty<TextStylePart>();
+                    var entities = styled.GetParts(out partial) ?? TextStyleRun.NoParts;
 
                     var size = styled.Type is TextParagraphTypeQuote
                         ? quoteSize
@@ -2442,7 +2442,7 @@ namespace Telegram.Controls
                 }
 
                 var partial = _text.Text.Substring(styled.Offset, styled.Length);
-                var entities = styled.Parts ?? Array.Empty<TextStylePart>();
+                var entities = styled.Parts ?? TextStyleRun.NoParts;
 
                 var size = styled.Type is TextParagraphTypeQuote
                     ? quoteSize
