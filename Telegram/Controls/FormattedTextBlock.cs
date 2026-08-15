@@ -2713,12 +2713,11 @@ namespace Telegram.Controls
 
             private void SubscribeImpl(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun run, TextEntityTypeDateTime entity, int segment)
             {
-                if (_dates.ContainsKey(element))
-                {
-                    return;
-                }
-
-                _dates.Add(element, new TextDate(element, textBlock, paragraph, run, entity, segment));
+                // Replaces rather than skips. The key is a Run from the shared pool, so the same
+                // object comes back around attached to a different block, and a registration
+                // that outlived its block would otherwise make that Run unsubscribable - its new
+                // date silently never updating - for the rest of the session.
+                _dates[element] = new TextDate(element, textBlock, paragraph, run, entity, segment);
                 _timer.Stop();
 
                 _timer.Interval = GetNextUpdateInterval(_dates.Values, false);

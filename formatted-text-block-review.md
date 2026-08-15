@@ -372,6 +372,39 @@ The three facts most of this rests on:
       rendered-space shifting would be needed if the cover came from the geometry — but that is
       a design change, and this makes the current design correct.
 
+- [x] **Nothing guarantees a block ever releases its relative dates** — `MessageTextBlock.cs:294`,
+      `FormattedTextBlock.cs:909` **[live]** — raised by Fela, not found by the review
+      → fixed in the commit that checked this box
+
+      The review checked that `ClearEntities` unsubscribes and stopped there. It never asked
+      what guarantees `ClearEntities` runs, and for the blocks inside a `MessageTextBlock`,
+      nothing does. `ClearBlocks` drops them with `Children.Clear()` and leaves teardown to the
+      `Unloaded` event — its own comment says so.
+
+      `FrameworkElementEx` only raises `OnUnloaded` for an element it saw `Loaded` on
+      (`FrameworkElementEx.h:37-49`). A block subscribes during `SetText`, which runs from
+      `OnApplyTemplate`, which runs on the first **measure** — before `Loaded`. A block measured
+      and then dropped before its `Loaded` arrives therefore never releases anything, and what
+      it holds is a registration in the `[ThreadStatic]` `RelativeDateService`: that pins the
+      block, its `StyledParagraph`, its `TextStyleRun` and the run object for the rest of the
+      session, and the timer goes on ticking it and calling `RegisterLayoutChanged` on a control
+      that is not in the tree. Its runs never return to the pool either.
+
+      **The half that needs no assumption about `Loaded`:** the service is keyed by the *run
+      object*, and runs come from the shared pool. `SubscribeImpl` returned early when the key
+      already existed, so a single registration that outlives its block makes that pooled run
+      **permanently unsubscribable** — every later block that dequeues it has its date silently
+      never update. One leak poisons a pooled object for the session.
+
+      Fixed at both ends: `ClearBlocks` calls `Clear()` on each block before dropping it, so
+      teardown is deterministic instead of event-dependent, and `SubscribeImpl` replaces the
+      entry rather than skipping, since a run being resubscribed always means the old
+      registration is dead.
+
+      Left alone: the runs still return to the pool via `OnUnloaded` only. A missed pool return
+      costs an allocation, not a pinned graph, and making `Clear` recycle as well would put two
+      paths on the same pool — worth doing only with the recycling audit, not blind.
+
 ---
 
 ## P3 — cleanup, naming, dead code

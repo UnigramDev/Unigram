@@ -291,14 +291,23 @@ namespace Telegram.Controls.Messages
 
         // Drops all blocks. Removing them from Children unloads each FormattedTextBlock, whose
         // OnUnloaded returns its Runs/Paragraphs to the shared RecyclePool.
+        //
+        // Clear() is called explicitly rather than left to that: a block only receives Unloaded
+        // if it was Loaded first (FrameworkElementEx tracks the pair), and a block that was
+        // measured - which is when the template applies and SetText runs - but dropped before
+        // its Loaded arrived would never release. What it holds in that case is a relative date
+        // registration in the thread-static RelativeDateService, which pins the block, its
+        // paragraph and its runs for the rest of the session and goes on ticking them.
         private void ClearBlocks()
         {
-            if (_textEntityClick != null)
+            foreach (var block in _blocks)
             {
-                foreach (var block in _blocks)
+                if (_textEntityClick != null)
                 {
                     block.TextEntityClick -= OnBlockTextEntityClick;
                 }
+
+                block.Clear();
             }
 
             _blocks.Clear();
