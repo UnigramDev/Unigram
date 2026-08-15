@@ -1,5 +1,18 @@
 # FormattedTextBlock review — to-do
 
+> **Status: landed on `develop` 2026-08-15**, 24 of 27 items fixed. Fela tested the series in
+> the app against the message set below and confirmed the behaviour, including the relative
+> date and spoiler cases that were visibly broken beforehand.
+>
+> **Three items are still open**, all of them decisions rather than patches — the non-pooled
+> unload/reload teardown (P2), the `WalkInlines` enumerator (P3, wants a profiler) and
+> `HasLineEnding`'s commented-out `InvalidateMeasure` (P3, belongs with the layout-cycle
+> audit). Each says under its own entry what it is waiting on.
+>
+> `formatted-text-block-test-plan.md` and `formatted-text-block-test-messages.py` beside this
+> file reproduce the test set; run the script immediately before testing, since the relative
+> dates are anchored seconds old on purpose.
+
 Read-through of `Telegram/Controls/FormattedTextBlock.cs` (2,704 lines) and
 `Telegram/Controls/FormattedTextBlock.Selectable.cs` (405), cross-checked against
 `Telegram.Native/Controls/FormattedTextBlockBase.{h,cpp}`, the host
