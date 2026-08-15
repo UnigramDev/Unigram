@@ -824,6 +824,7 @@ namespace Telegram.Controls
         private WeakInteractionTrackerOwner _backTrackerOwner;
 
         private ContainerVisual _backIndicator;
+        private CompositionColorBrush _backIndicatorBrush;
         private InteractionTracker _backDriver;
 
         /// <summary>
@@ -897,26 +898,41 @@ namespace Telegram.Controls
 
             EnsureBackIndicator();
             _backDriver = tracker;
+            _backIndicatorBrush.Color = (Windows.UI.Color)BootStrapper.Current.Resources["MessageServiceBackgroundColor"];
 
             var compositor = _backIndicator.Compositor;
             var root = ElementComposition.GetElementVisual(DetailRoot);
 
             var progress = $"clamp(-tracker.Position.X / {BackGestureThreshold}, 0, 1)";
 
-            // Matching ChatListListView's indicator, bar the mirroring: ArrowLeft.png already
-            // points the way a left-edge back chip needs it to.
-            var offset = compositor.CreateExpressionAnimation($"vector3(-30 + {progress} * 55, (root.Size.Y - 30) / 2, 0)");
+            // The tracker is clamped at the threshold, so progress rests at exactly 1 for as long
+            // as the gesture is past it. That is what the armed state below tests: it latches on
+            // and stays on until the finger comes back, rather than flickering at the boundary.
+            var armed = $"{progress} >= 1";
+
+            // ArrowLeft.png already points the way a left-edge back chip needs it to, so unlike
+            // ChatListListView's indicator this one is not mirrored.
+            var offset = compositor.CreateExpressionAnimation($"vector3(-40 + {progress} * 76, (root.Size.Y - 40) / 2, 0)");
             offset.SetReferenceParameter("tracker", tracker);
             offset.SetReferenceParameter("root", root);
 
-            var scale = compositor.CreateExpressionAnimation($"vector3(0.8 + {progress} * 0.2, 0.8 + {progress} * 0.2, 1)");
+            // Grows the whole way in, then pops past the threshold so releasing feels committed.
+            var scaled = $"({armed} ? 1.15 : 0.6 + {progress} * 0.4)";
+            var scale = compositor.CreateExpressionAnimation($"vector3({scaled}, {scaled}, 1)");
             scale.SetReferenceParameter("tracker", tracker);
 
-            var opacity = compositor.CreateExpressionAnimation(progress);
+            // Swings upright as it comes in.
+            var rotation = compositor.CreateExpressionAnimation($"(1 - {progress}) * -30");
+            rotation.SetReferenceParameter("tracker", tracker);
+
+            // Ramps ahead of the travel so the chip is legible early, and only reaches full opacity
+            // once armed - the last of the three cues that the gesture will be taken.
+            var opacity = compositor.CreateExpressionAnimation($"{armed} ? 1 : clamp({progress} * 1.8, 0, 1) * 0.85");
             opacity.SetReferenceParameter("tracker", tracker);
 
             _backIndicator.StartAnimation("Offset", offset);
             _backIndicator.StartAnimation("Scale", scale);
+            _backIndicator.StartAnimation("RotationAngleInDegrees", rotation);
             _backIndicator.StartAnimation("Opacity", opacity);
         }
 
@@ -936,6 +952,7 @@ namespace Telegram.Controls
             // chip would sit at whatever progress the gesture happened to end on.
             _backIndicator.StopAnimation("Offset");
             _backIndicator.StopAnimation("Scale");
+            _backIndicator.StopAnimation("RotationAngleInDegrees");
             _backIndicator.StopAnimation("Opacity");
             _backIndicator.Opacity = 0;
         }
@@ -959,9 +976,13 @@ namespace Telegram.Controls
 
             var compositor = ElementComposition.GetElementVisual(DetailRoot).Compositor;
 
+            // Larger than the swipe indicators on the message and chat list gestures. Those only
+            // have to label a direction; this one is the whole feedback for the gesture, so it
+            // carries the arrow at a readable size.
             var sprite = compositor.CreateSpriteVisual();
-            sprite.Size = new Vector2(30, 30);
-            sprite.CenterPoint = new Vector3(15);
+            sprite.Size = new Vector2(24, 24);
+            sprite.Offset = new Vector3(8, 8, 0);
+            sprite.CenterPoint = new Vector3(12);
 
             var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/ArrowLeft.png"));
             void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
@@ -973,21 +994,25 @@ namespace Telegram.Controls
             surface.LoadCompleted += handler;
 
             var ellipse = compositor.CreateEllipseGeometry();
-            ellipse.Radius = new Vector2(15);
+            ellipse.Radius = new Vector2(20);
+
+            // Held, so the colour can be refreshed per gesture: the chip is built once and would
+            // otherwise keep the accent it was born under across a theme change.
+            _backIndicatorBrush = compositor.CreateColorBrush();
 
             var ellipseShape = compositor.CreateSpriteShape(ellipse);
-            ellipseShape.FillBrush = compositor.CreateColorBrush((Windows.UI.Color)BootStrapper.Current.Resources["MessageServiceBackgroundColor"]);
-            ellipseShape.Offset = new Vector2(15);
+            ellipseShape.FillBrush = _backIndicatorBrush;
+            ellipseShape.Offset = new Vector2(20);
 
             var shape = compositor.CreateShapeVisual();
             shape.Shapes.Add(ellipseShape);
-            shape.Size = new Vector2(30, 30);
+            shape.Size = new Vector2(40, 40);
 
             _backIndicator = compositor.CreateContainerVisual();
             _backIndicator.Children.InsertAtBottom(shape);
             _backIndicator.Children.InsertAtTop(sprite);
-            _backIndicator.Size = new Vector2(30, 30);
-            _backIndicator.CenterPoint = new Vector3(15);
+            _backIndicator.Size = new Vector2(40, 40);
+            _backIndicator.CenterPoint = new Vector3(20);
             _backIndicator.Opacity = 0;
 
             // Drawn over the detail content, and clipped to it by the inset clip already on
