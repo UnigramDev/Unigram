@@ -56,7 +56,10 @@ namespace Telegram
 
         public static void Exception(Exception exception, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
-            Log(LogLevel.Error, Environment.StackTrace, member, filePath, line);
+            // The exception, not just Environment.StackTrace: that only says where the catch is,
+            // which the caller attribution already gives. A caught exception logged without its
+            // own message and stack tells you nothing about what went wrong.
+            Log(LogLevel.Error, exception, member, filePath, line);
 
             if (Constants.RELEASE)
             {
