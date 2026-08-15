@@ -645,6 +645,45 @@ early, and it also catches the existing trap of adding a file and forgetting its
       `Directory.Build.targets`, and nothing else in the repository references them, so it is one
       mechanical commit.
 
+## Diagnosing RPC_E_SERVERCALL_RETRYLATER
+
+Not a port item — it outlives this work — but it is written down here because deleting
+`StackCapture` is what leaves the gap.
+
+`0x8001010A` is an ASTA refusing an incoming call because the target thread is not in a state to
+take one. `WatchDog` treats it specially: it is the only condition that ever passed
+`captureAllThreads: true`, which walked every thread's stack in-process through `dbghelp` and put
+the result in the crash report. Fela's assessment is that it never produced anything trustworthy,
+so it goes.
+
+What replaces it is the open question. Three things learned on 2026-08-15 bear on it:
+
+- **A dump answers this question completely and immediately.** The ASTA deadlock that day was
+  diagnosed from `~*k` over all 57 threads in about a minute: the UI thread parked in
+  `RhWaitForPendingFinalizers` inside `CoWaitForMultipleHandles`, the finalizer thread blocked in
+  `MTAThreadWaitForCall` on a context callback into that same apartment. That is exactly the
+  picture `StackCapture` was trying to build, and the debugger builds it correctly.
+- **In-process is the hard part.** Walking *other* threads' stacks from inside the process, while
+  they are running, is what was unreliable — not the idea. `MiniDumpWriteDump` from a watchdog
+  thread would get the same fidelity as the debugger, at the cost of a large artifact to store or
+  upload.
+- **The log is the wrong instrument, and not only here.** TDLib's file log is buffered, so a
+  fail-fast takes the tail with it. `Logger` already keeps its own ring buffer of the last N
+  entries with `Logger.Dump()`, which survives in memory and is already in the report.
+
+Worth investigating, roughly in order of cost:
+
+- [ ] Whether the ring buffer alone is enough. `0x8001010A` is raised on the *caller*; what is
+      wanted is what the *callee* was doing. A per-thread breadcrumb, or simply dumping the
+      existing buffer with thread ids attached, may answer it without walking anything.
+- [ ] `MiniDumpWriteDump` with `MiniDumpWithThreadInfo` on the watchdog thread, written to
+      `LocalState` and uploaded like the JSON reports are. Truthful and complete; the questions are
+      size and whether the endpoint will take it.
+- [ ] Whether the AOT build changes the shape of the problem at all. ASTA reentrancy rules are the
+      root cause of both the deadlock and this error, and they are a Windows behaviour, not a
+      runtime one - but CsWinRT marshals releases back into apartments in a way .NET Native did
+      not, which is what turned it into something reproducible.
+
 ## Open questions
 
 - Project name. `Telegram.Modern.csproj` is a placeholder.
