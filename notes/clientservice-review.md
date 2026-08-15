@@ -28,7 +28,7 @@ The two facts most of this rests on:
 ## P0 — can wedge the whole app — **done**
 
 - [x] **`Monitor.Enter`/`Monitor.Exit` without `try`/`finally` — 13 sites** **[live]**
-      → fixed in the commit that checked this box (`git log --follow clientservice-review.md`)
+      → fixed in the commit that checked this box (`git log --follow notes/clientservice-review.md`)
 
       `ClientService.cs:3155/3182`, `3192/3197`, `3224/3229`, `3243/3245`, `3256/3258`,
       `3324/3326`, `3441/3446` · `ChatList.cs:23/40`, `50/103` ·

@@ -1,6 +1,6 @@
 """Sends the FormattedTextBlock test messages described in formatted-text-block-test-plan.md.
 
-    python formatted-text-block-test-messages.py <bot-token> <chat-id>
+    python notes/formatted-text-block-test-messages.py <bot-token> <chat-id>
 
 Run it immediately before testing rather than once and for all: the relative dates are anchored
 a few seconds old so they tick while you are looking at them, and a set sent yesterday changes
