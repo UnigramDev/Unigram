@@ -11,6 +11,7 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls.Cells;
+using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -530,19 +531,13 @@ namespace Telegram.Controls
 
                 surface.LoadCompleted += handler;
 
-                var ellipse = _visual.Compositor.CreateEllipseGeometry();
-                ellipse.Radius = new Vector2(15);
-
-                var ellipseShape = _visual.Compositor.CreateSpriteShape(ellipse);
-                ellipseShape.FillBrush = _visual.Compositor.CreateColorBrush((Windows.UI.Color)Navigation.BootStrapper.Current.Resources["MessageServiceBackgroundColor"]);
-                ellipseShape.Offset = new Vector2(15);
-
-                var shape = _visual.Compositor.CreateShapeVisual();
-                shape.Shapes.Add(ellipseShape);
-                shape.Size = new Vector2(30, 30);
+                var circle = _visual.Compositor.CreateSpriteVisual();
+                circle.Size = new Vector2(30, 30);
+                circle.Brush = SolidGaussianBrush.CreateCircleBrush(_visual.Compositor, 15,
+                    (Windows.UI.Color)Navigation.BootStrapper.Current.Resources["MessageServiceBackgroundColor"]);
 
                 _indicator = _visual.Compositor.CreateContainerVisual();
-                _indicator.Children.InsertAtBottom(shape);
+                _indicator.Children.InsertAtBottom(circle);
                 _indicator.Children.InsertAtTop(sprite);
                 _indicator.Size = new Vector2(30, 30);
                 _indicator.CenterPoint = new Vector3(15);
