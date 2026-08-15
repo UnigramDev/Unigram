@@ -79,9 +79,13 @@ it was `MinPosition` being pinned to 0.
 - [x] Chip + `AttachBackGesture` / `DetachBackGesture` / `CommitBackGesture` on `MasterDetailView`
 - [x] `MasterDetailView`'s own `VisualInteractionSource` on `DetailRoot`
 - [x] `MessageSelector`: open `MinPosition`, attach on interacting, commit on inertia
-- [ ] Never compiled — Fela builds the app
-- [ ] Never run, so none of the feel is verified: threshold, chip position, whether the
-      `DetailRoot` source starves vertical scrolling on pages that have one
+- [x] Built and run by Fela. Works in the chat history and on other screens; vertical
+      scrolling is not starved, so the shared-source worry was unfounded.
+- [x] Chip made more emphatic on his feedback: 40px rather than 30, travels the full
+      `-40 → 36`, swings upright from -30°, and latches into an *armed* state at the
+      threshold — scale pops to 1.15 and opacity goes to full — so releasing feels
+      committed. All still pure expression, no per-frame work.
+- [ ] **Fails completely on the power saving settings page.** See below.
 
 ## Touch is deliberately only half-covered
 
@@ -96,6 +100,37 @@ pages. Not worth the regression for an input device that is a small minority her
 So on a touchscreen the gesture works over the chat history and nowhere else. On a
 trackpad — the actual target — it works everywhere, because touchpad panning is redirected
 automatically by hit-test with no pointer handling involved.
+
+## The power saving page
+
+Fails there and only there. Static comparison rules out the obvious: it is a plain
+`HostedPage` with `NavigationMode="Root"`, a vertical `ScrollingHost` and a
+`SettingsPanel`, navigated by `Navigate(typeof(SettingsPowerSavingPage))` exactly like
+`SettingsDataAndStoragePage`. No `SwipeControl`, no `ManipulationMode`, no interaction
+tracker of its own — `SettingsExpander` is pure keyframe animation and does not touch
+input.
+
+The one structural thing that page has and the working ones do not:
+
+```xml
+<controls:HeaderedControl Header="{CustomResource LiteOptionsTitle}"
+                          IsEnabled="{x:Bind ViewModel.IsAutoDisabled, Mode=OneWay}">
+```
+
+`IsAutoDisabled` is `PowerSavingPolicy.Status == PowerSavingStatus.Off`, so with power
+saving **on** that `HeaderedControl` — which is nearly the whole page — is disabled. A
+disabled subtree still hit-tests, but input over it may be dropped outright rather than
+walking up to an ancestor `VisualInteractionSource`, which would leave the `DetailRoot`
+tracker never seeing the manipulation.
+
+Unverified. The test that settles it: with power saving on, swipe over the top *Auto*
+checkbox panel, which stays enabled, and then over the disabled options below. If only the
+top strip works, it is the disabled subtree; if neither works, it is something else and
+the `IsEnabled` lead is a red herring.
+
+If it is confirmed, the source cannot simply be moved — the fix is either a transparent
+input overlay above the page content, or accepting that disabled regions do not carry the
+gesture.
 
 ## Open
 

@@ -15249,6 +15249,9 @@ list of viewers.</value>
   <data name="SupportStatus" xml:space="preserve">
     <value>support</value>
   </data>
+  <data name="SwipeGoBack" xml:space="preserve">
+    <value>Go back</value>
+  </data>
   <data name="SwipeReply" xml:space="preserve">
     <value>Reply</value>
   </data>
