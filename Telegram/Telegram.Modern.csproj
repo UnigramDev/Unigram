@@ -113,7 +113,11 @@
     <!-- BaseIntermediateOutputPath, not IntermediateOutputPath: the latter is still empty when
          this evaluates, which collapses the destination onto Package.appxmanifest itself and
          rewrites the source manifest in place. The guard below is there because that happened. -->
-    <ModernAppxManifest>$(BaseIntermediateOutputPath)Package.appxmanifest</ModernAppxManifest>
+    <!-- Alternative installs beside Telegram.csproj's package; Original replaces it. In the path
+         as well as the condition, because the target is incremental on the source manifest and
+         this file - flipping the property alone would leave the previous manifest in place. -->
+    <ModernIdentity Condition="'$(ModernIdentity)' == ''">Alternative</ModernIdentity>
+    <ModernAppxManifest>$(BaseIntermediateOutputPath)Package.$(ModernIdentity).appxmanifest</ModernAppxManifest>
     <ModernManifestNamespaces>&lt;Namespace Prefix='f' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;&lt;Namespace Prefix='uap' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10' /&gt;</ModernManifestNamespaces>
   </PropertyGroup>
 
@@ -128,11 +132,16 @@
     <Error Condition="'$(_ModernManifestFull)' == '$(_SourceManifestFull)'"
            Text="ModernAppxManifest resolves to the source manifest; patching it would rewrite Telegram.csproj's own identity." />
     <Copy SourceFiles="Package.appxmanifest" DestinationFiles="$(ModernAppxManifest)" />
-    <XmlPoke XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
+    <!-- -p:ModernIdentity=Original leaves the copy alone, so this deploys as the identity
+         Telegram.csproj uses and replaces it rather than installing beside it. -->
+    <XmlPoke Condition="'$(ModernIdentity)' != 'Original'"
+             XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
              Query="/f:Package/f:Identity/@Name" Value="$(ModernPackageIdentity)" />
-    <XmlPoke XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
+    <XmlPoke Condition="'$(ModernIdentity)' != 'Original'"
+             XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
              Query="/f:Package/f:Properties/f:DisplayName" Value="$(ModernPackageDisplayName)" />
-    <XmlPoke XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
+    <XmlPoke Condition="'$(ModernIdentity)' != 'Original'"
+             XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
              Query="/f:Package/f:Applications/f:Application/uap:VisualElements/@DisplayName" Value="$(ModernPackageDisplayName)" />
   </Target>
 

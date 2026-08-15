@@ -22,7 +22,13 @@ param(
     [string] $Platform = 'x64',
 
     [ValidateSet('Release', 'Debug')]
-    [string] $Configuration = 'Release'
+    [string] $Configuration = 'Release',
+
+    # Alternative installs beside the shipping bundle. Original carries Telegram.Msix's own
+    # identity, which is what a beta for testers wants - and which means it replaces the shipping
+    # app rather than sitting next to it.
+    [ValidateSet('Alternative', 'Original')]
+    [string] $Identity = 'Alternative'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -80,12 +86,13 @@ Invoke-MSBuild -Description 'Telegram.Native, Telegram.Native.Calls' -Arguments 
 
 # AppxBundle=Always and AppxBundlePlatforms are what produce a bundle rather than loose .msix files,
 # and the Store will not accept switching between the two once an app has shipped as one of them.
-Invoke-MSBuild -Description "Telegram.Msix.Modern ($Configuration|$Platform)" -Arguments (
+Invoke-MSBuild -Description "Telegram.Msix.Modern ($Configuration|$Platform, $Identity identity)" -Arguments (
     @($solution, '-target:Telegram_Msix_Modern', '-restore',
       '-p:UapAppxPackageBuildMode=SideloadOnly',
       "-p:AppxBundlePlatforms=$Platform",
       '-p:AppxBundle=Always',
-      '-p:AppxPackageSigningEnabled=True') + $common)
+      '-p:AppxPackageSigningEnabled=True',
+      "-p:ModernIdentity=$Identity") + $common)
 
 $packages = Join-Path $PSScriptRoot 'Telegram.Msix.Modern\AppPackages'
 $bundle = Get-ChildItem $packages -Recurse -Filter *.msixbundle -ErrorAction SilentlyContinue |

@@ -97,7 +97,11 @@
     <ModernPackageIdentity>38833FF26BA1D.UnigramNet10Bundle</ModernPackageIdentity>
     <ModernPackageDisplayName>Unigram .NET 10 (bundle)</ModernPackageDisplayName>
     <ModernSourceManifest>..\Telegram.Msix\Package.appxmanifest</ModernSourceManifest>
-    <ModernAppxManifest>$(BaseIntermediateOutputPath)Package.appxmanifest</ModernAppxManifest>
+    <!-- Alternative installs beside Telegram.Msix's bundle; Original is the identity to ship a
+         beta under. In the path as well as the condition, because the target is incremental on the
+         source manifest and this file - flipping the property alone would reuse the old manifest. -->
+    <ModernIdentity Condition="'$(ModernIdentity)' == ''">Alternative</ModernIdentity>
+    <ModernAppxManifest>$(BaseIntermediateOutputPath)Package.$(ModernIdentity).appxmanifest</ModernAppxManifest>
     <ModernManifestNamespaces>&lt;Namespace Prefix='f' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;&lt;Namespace Prefix='uap' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10' /&gt;&lt;Namespace Prefix='uap5' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10/5' /&gt;</ModernManifestNamespaces>
     <!-- The app does not land at the package root the way it does in the shipping bundle. The
          entry point exemption only applies to the legacy UWP project system; an SDK-style
@@ -115,11 +119,18 @@
           Outputs="$(ModernAppxManifest)">
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Copy SourceFiles="$(ModernSourceManifest)" DestinationFiles="$(ModernAppxManifest)" />
-    <XmlPoke XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
+    <!-- -p:ModernIdentity=Original leaves the copy alone, so the bundle carries the identity
+         Telegram.Msix ships - which is what a beta for testers wants, and which means it can no
+         longer be installed beside it. The Executable rewrite below is not part of this: that one
+         is about where the payload sits in the package and is always needed. -->
+    <XmlPoke Condition="'$(ModernIdentity)' != 'Original'"
+             XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
              Query="/f:Package/f:Identity/@Name" Value="$(ModernPackageIdentity)" />
-    <XmlPoke XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
+    <XmlPoke Condition="'$(ModernIdentity)' != 'Original'"
+             XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
              Query="/f:Package/f:Properties/f:DisplayName" Value="$(ModernPackageDisplayName)" />
-    <XmlPoke XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
+    <XmlPoke Condition="'$(ModernIdentity)' != 'Original'"
+             XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
              Query="/f:Package/f:Applications/f:Application/uap:VisualElements/@DisplayName" Value="$(ModernPackageDisplayName)" />
     <XmlPoke XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
              Query="//uap5:Extension[@Executable='Telegram.exe']/@Executable" Value="$(ModernAppFolder)\Telegram.exe" />
