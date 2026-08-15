@@ -820,12 +820,12 @@ namespace Telegram.Controls.Chats
 
                         Logger.Debug("Devices initialized, starting");
 
-                        // For a voice message the reader is the recording, so it always runs. For
-                        // a video message it only feeds the blob, and keeps the gate it had.
+                        // For a voice message the reader is the recording, so it always runs. A
+                        // video message animates the same blob and keeps the gate it had.
                         var reader = mode == ChatRecordMode.Voice
                             || (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths);
 
-                        var streaming = reader && await PrepareReaderAsync() && mode == ChatRecordMode.Voice;
+                        var streaming = reader && await PrepareReaderAsync(mode);
 
                         _file = await CreateFileAsync(mode, streaming);
 
@@ -897,7 +897,7 @@ namespace Telegram.Controls.Chats
             /// Creates the audio frame reader, and reports whether its samples can be handed to
             /// the encoder as they are.
             /// </summary>
-            private async Task<bool> PrepareReaderAsync()
+            private async Task<bool> PrepareReaderAsync(ChatRecordMode mode)
             {
                 try
                 {
@@ -913,7 +913,11 @@ namespace Telegram.Controls.Chats
 
                     // The encoder is 48kHz: at any other rate the samples would play back at the
                     // wrong speed, so ask for one and give up on streaming if there isn't one.
-                    if (format.AudioEncodingProperties?.SampleRate != VoiceSink.SampleRate)
+                    //
+                    // Only ever for a voice message. A video message records through MediaCapture,
+                    // and renegotiating the format of the source it is about to record from would
+                    // change what lands in the mp4 for the sake of a blob.
+                    if (mode == ChatRecordMode.Voice && format.AudioEncodingProperties?.SampleRate != VoiceSink.SampleRate)
                     {
                         var match = source.SupportedFormats.FirstOrDefault(x => x.AudioEncodingProperties?.SampleRate == VoiceSink.SampleRate && IsSupportedSubtype(x.Subtype));
                         if (match != null)
@@ -941,7 +945,8 @@ namespace Telegram.Controls.Chats
                     _channels = properties.ChannelCount;
                     _bitsPerSample = properties.BitsPerSample;
 
-                    return properties.SampleRate == VoiceSink.SampleRate
+                    return mode == ChatRecordMode.Voice
+                        && properties.SampleRate == VoiceSink.SampleRate
                         && IsSupportedSubtype(format.Subtype)
                         && (_bitsPerSample == 32 || _bitsPerSample == 16)
                         && _channels > 0;
