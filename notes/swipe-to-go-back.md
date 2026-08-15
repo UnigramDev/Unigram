@@ -18,21 +18,21 @@ of the design for us:
   scrubbed. Frame navigation is not interruptible, but we never ask it to be: the chip is
   a progress indicator and the commit is a plain `GoBack()`.
 
-The indicator started as `ChatListListView`'s recipe — a circle with `ArrowLeft.png` that
-slides in — and Fela found it dull twice. It is now **a pill drawn out of the edge**: it
-begins as an 18px sliver whose right edge sits exactly on x=0, so there is nothing to see
-until the finger moves, and it lengthens as it is pulled. Height grows with it, `40 → 48`,
-so the shape reads as elastic rather than as something arriving at a fixed size. The corner
-radius is half the height throughout, so it is a true capsule the whole way and lands on a
-circle exactly when width and height meet at the threshold — which is also the moment its
-left edge clears x=0 and it detaches from the edge it grew from. That detach *is* the armed
-state, along with an 8% scale pop and full opacity. The arrow holds back until the pill is
-long enough to hold it, fading in over `0.3 → 0.7` and swinging upright from -25°.
+The indicator is `ChatListListView`'s, on its numbers: `ArrowLeft.png` in a 30px circle,
+in from the edge over 55px, growing `0.8 → 1`, fading the whole way, and mirrored on X —
+that asset is drawn for the right-hand edge, and `ChatListListView` flips it the same way
+for the indicator it brings in from the left. Every property is one expression on the
+tracker, so nothing runs per frame on the UI thread.
 
-Every one of those is a single expression on the tracker, including the geometry's `Size`
-and `CornerRadius`, so the whole thing runs on the compositor with nothing per frame on the
-UI thread. `ArrowLeft.png` already points the right way for a left-edge back gesture, so
-unlike `ChatListListView`'s it is not mirrored.
+Two attempts to make it more interesting were rejected, and the second is worth recording
+so it is not tried again: an elastic pill drawn out of the edge that stretched as it was
+pulled and snapped to a circle at the threshold. It read as nasty in motion. **This gesture
+wants the app's existing vocabulary, not a new one.**
+
+What it does have over the original is the fill. The circle is a `SpriteVisual` painted
+with `SolidGaussianBrush`, so it is frosted over whatever is behind it rather than a flat
+40%-alpha grey — applied here and to the `ChatListListView` and `MessageSelector`
+indicators, which are the same 30px circle.
 
 ## The gesture arbitration problem
 
@@ -91,9 +91,13 @@ it was `MinPosition` being pinned to 0.
 - [x] `MessageSelector`: open `MinPosition`, attach on interacting, commit on inertia
 - [x] Built and run by Fela. Works in the chat history and on other screens; vertical
       scrolling is not starved, so the shared-source worry was unfounded.
-- [x] Indicator reworked twice on his feedback — first bigger and armed at the threshold,
-      then redrawn entirely as the elastic pill described above, the circle-sliding-in
-      version having still read as stock. Unverified.
+- [x] Indicator: two redesigns tried and both rejected, ending back on
+      `ChatListListView`'s, mirrored, with a `SolidGaussianBrush` fill. Unverified.
+- [x] `SolidGaussianBrush` grew a composition-side factory, so the same frosting is on the
+      `ChatListListView` and `MessageSelector` indicators too. A shape fill cannot carry an
+      effect brush — it takes colour and gradient brushes only — so the circle became a
+      mask over the effect, drawn through a `CompositionVisualSurface` to keep the
+      antialiasing a geometric clip would have thrown away.
 - [x] Fixed *most* settings pages, where the gesture only worked in the title strip, by
       adding a source inside the scrolling host.
 - [x] Fixed `SettingsAdvancedPage` and `SettingsPowerSavingPage`, which failed whenever

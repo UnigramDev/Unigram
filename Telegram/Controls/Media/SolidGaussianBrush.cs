@@ -7,6 +7,8 @@
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using System.Numerics;
+using Telegram.Common;
 using Telegram.Navigation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -17,6 +19,15 @@ namespace Telegram.Controls.Media
     public partial class SolidGaussianBrush : PowerSavingBrushBase
     {
         protected override CompositionBrush OnUpdateBrush()
+        {
+            return CreateBrush(BootStrapper.Current.Compositor, TintColor);
+        }
+
+        /// <summary>
+        /// The same effect graph this brush paints with, for callers drawing into Composition
+        /// directly rather than through XAML.
+        /// </summary>
+        public static CompositionBrush CreateBrush(Compositor compositor, Color tintColor)
         {
             var gaussianBlur = new GaussianBlurEffect
             {
@@ -37,7 +48,7 @@ namespace Telegram.Controls.Media
             var tintColorEffect = new ColorSourceEffect
             {
                 Name = "TintColor",
-                Color = TintColor
+                Color = tintColor
             };
 
             var compositeEffect = new CompositeEffect();
@@ -45,11 +56,51 @@ namespace Telegram.Controls.Media
             compositeEffect.Sources.Add(saturationEffect);
             compositeEffect.Sources.Add(tintColorEffect);
 
-            var effectFactory = BootStrapper.Current.Compositor.CreateEffectFactory(compositeEffect);
-            var backdrop = BootStrapper.Current.Compositor.CreateBackdropBrush();
+            var effectFactory = compositor.CreateEffectFactory(compositeEffect);
+            var backdrop = compositor.CreateBackdropBrush();
 
             var brush = effectFactory.CreateBrush();
             brush.SetSourceParameter("Backdrop", backdrop);
+
+            return brush;
+        }
+
+        /// <summary>
+        /// A circular brush for a SpriteVisual of the same diameter, frosted where materials are
+        /// allowed and flat where they are not.
+        /// </summary>
+        /// <remarks>
+        /// A circle drawn as a CompositionSpriteShape cannot carry this: shape fills take colour
+        /// and gradient brushes only. So the circle becomes a mask instead - drawn once into a
+        /// VisualSurface, which keeps the antialiasing a geometric clip would have thrown away -
+        /// and the effect is what it masks.
+        ///
+        /// The tint is baked into the effect graph, so a theme change needs a new brush rather
+        /// than a property set on this one.
+        /// </remarks>
+        public static CompositionBrush CreateCircleBrush(Compositor compositor, float radius, Color tintColor)
+        {
+            var ellipse = compositor.CreateEllipseGeometry();
+            ellipse.Radius = new Vector2(radius);
+
+            var ellipseShape = compositor.CreateSpriteShape(ellipse);
+            ellipseShape.FillBrush = compositor.CreateColorBrush(Colors.White);
+            ellipseShape.Offset = new Vector2(radius);
+
+            var shape = compositor.CreateShapeVisual();
+            shape.Shapes.Add(ellipseShape);
+            shape.Size = new Vector2(radius * 2);
+
+            var surface = compositor.CreateVisualSurface();
+            surface.SourceVisual = shape;
+            surface.SourceSize = new Vector2(radius * 2);
+
+            // Masked in both cases, so the fallback is still a circle and not a square.
+            var brush = compositor.CreateMaskBrush();
+            brush.Mask = compositor.CreateSurfaceBrush(surface);
+            brush.Source = PowerSavingPolicy.AreMaterialsEnabled
+                ? CreateBrush(compositor, tintColor)
+                : compositor.CreateColorBrush(tintColor);
 
             return brush;
         }
