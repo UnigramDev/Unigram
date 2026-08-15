@@ -446,19 +446,63 @@ missing entry in `CsWinRT.cs`, which is effectively the app's AOT manifest.
 | hard crash on hovering a forward header | `TextStyleRun.GetParts` returned `Array.Empty<TextStylePart>()`; **a managed array cannot cross as `IVector<T>` when `T` is a native WinRT struct** — it boxes through `IReferenceArray`, which AOT cannot synthesise. `GeneratedWinRTExposedExternalType` does *not* help: it emits CCWs for managed types | return a shared empty `List` |
 | freeform gradient not drawn | same rule: `GetColors()` returns `Color[]` handed to `CreateFreeformGradient(IVector<Color>)`, and the throw was swallowed inside XAML brush creation | convert to `List<Color>` at the call site |
 | `CompositionVSync` NRE, killing calls | self-inflicted: through the ABI the rendering args arrive as a bare `IInspectable`, so `e as RenderingEventArgs` is null. Casting per frame would be a QueryInterface per frame | both consumers now read `Stopwatch.GetTimestamp()`; `VisualUtilities.Tilt` was silently reading a stale timestamp for the same reason |
+| chat background: gradient but no pattern | the **setter** `_freeform.Colors = GetColors()` still handed a `Color[]`; only the constructor call had been converted | build the `List<Color>` once, use it on both branches |
+| …then still no pattern | `CreateEffectFactory(effect, ["Intensity.Opacity"])` — a **collection expression** synthesises `<>z__ReadOnlySingleElementList<string>`, which has no CCW at all. A third rule, independent of the element type | `new[] { … }`, as every other call site already used |
+| hard crash joining a group call | `MessagesHost.ItemsSource = new ObservableCollection<GroupCallMessage>(…)`. **External** generic instantiations get no CCW vtable — the generator only emits those for the app's own partial types — so XAML's QI for `IBindableIterable` fails and `set_ItemsSource` returns `E_INVALIDARG`. On a `DispatcherQueueHandler` that is a fail-fast | registered the instantiation in `CsWinRT.cs` |
+| leaving a call from the call window did nothing | `ContentPopup` completes the task `ShowQueuedAsync` awaits from a `CompositionTarget.Rendered` callback. Subscribing threw `NotSupportedException: Cannot provide IReference support for delegate type 'EventHandler<RenderedEventArgs>'` — nothing roots that marshaller, because `CompositionTargetImpl` bypasses the projection that would have — and `QueueCallbackForCompositionRendered` swallowed it. Every dialog on that view was dead | `CompositionTargetImpl.Rendered` marshals `EventHandler<object>`, like `Rendering`; no caller reads the args |
 
 ### Still open
 
-- [ ] **Group calls still crash.** No log line, no `ErrorReport`, and the tgcalls log stops
-      mid-line during ICE gathering: a managed exception in a callback invoked from a tgcalls
-      thread becomes an HRESULT at the CCW, resurfaces as `winrt::hresult_error` native side, and
-      fails fast (`0xC000027B`) past both `WatchDog` handlers. Nine callback entry points are
-      instrumented in the working tree (`VoipGroupCall`), and Fela is attaching the VS native
-      debugger with `Telegram.pdb`, breaking on first-chance C++ exceptions.
-- [ ] **Background pattern** does not draw over the gradient. The fill path works now; the pattern
-      goes through `CreateSurfaceBrush`/`UpdatePattern` and has not been looked at.
-- [ ] Diagnostics still in the working tree, to remove: callback entry logging in
-      `VoipGroupCall`, and the freeform probes in `ChatBackgroundBrush`.
+- [x] **Group calls crash on join** — fixed; see the table above. Diagnosed from a crash dump rather
+      than the log, with the recipe below.
+- [x] **Background pattern** — fixed; it was two further instances of the same rules.
+- [x] **Leaving a call from the call window did nothing** — fixed; the delegate marshaller row above.
+- [ ] **A secondary view's RCWs are released after its XAML core is gone.** Closing the call window
+      access-violates a while later, inside `RoUninitialize` on that view's thread. Fully diagnosed:
+      the .NET finalizer thread finalizes an `ObjectReferenceWithContext`, whose `Release` marshals
+      back to the creating apartment through `IContextCallback`; that apartment is mid teardown but
+      still pumping in `WaitForPendingGitRegistrations`, so it services the call, and XAML unparents
+      a `CRichTextBlock` whose `CCoreServices` is already null — `GetMainRootVisual` reads
+      `[rbx+0xD0]` with `rbx = 0`. The object is a `FormattedTextBlock`: it is built on a
+      RichTextBlock, and its paragraphs, spans and runs are XamlDirect objects, created through
+      XamlDirect whether or not a recycle pool is attached.
+
+      **Not specific to calls** — any secondary window hosting one is exposed, a chat opened in its
+      own window included. It only surfaced now because both preconditions are recent fixes: group
+      call messages started rendering (so that window had a FormattedTextBlock at all), and Leave
+      started working (so the window could close).
+
+      Nothing in the app holds these wrongly: `RelativeDateService._current` and the
+      `PlaceholderImageHelper` caches are already `[ThreadStatic]` and released from
+      `WindowContext.OnShutdownCompleted`, and `FormattedTextBlockRecyclePool` is an instance field.
+      A fix has to make the release happen on the owning thread while XAML is still alive, or not
+      happen at all. `GC.WaitForPendingFinalizers` from the view thread is the obvious lever and
+      also the obvious deadlock, since the finalizer needs that same apartment to pump. Worth an
+      upstream report as well: CsWinRT dispatches a Release into an apartment that is uninitializing.
+- [ ] **1798 `CsWinRT1034` and 32 `CsWinRT1035`** from the 2.3.1 analyzers: casts to WinRT types that
+      want `[DynamicWindowsRuntimeCast]` to stay trim-safe. Not a live crash, but the largest
+      remaining category.
+- [ ] Diagnostics left in the working tree: none. The `VoipGroupCall` callback logging and the
+      `ChatBackgroundBrush` probes are gone. The catches in `ChatBackgroundBrush`,
+      `DispatcherContext.Dispatch` and `QueueCallbackForCompositionRendered` now log rather than
+      swallow, which is worth keeping — each of them hid a crash for at least one session.
+
+### Reading a fail-fast out of a crash dump
+
+Worth more than any amount of logging here, because **the TDLib log is buffered and a fail-fast takes
+its tail with it** — the entries that would explain the crash are exactly the ones lost. The dump
+keeps everything. `cdb.exe` ships with the Windows Kits under
+`%ProgramFiles(x86)%\Windows Kits\10\Debuggers\x64`, and dumps land in `%LOCALAPPDATA%\CrashDumps`.
+Pass commands in a script file rather than `-c`, or `.sympath+` swallows the rest of the line:
+
+    cdb -z <dump> -y "srv*;<publish dir>" -cf script.txt
+
+`.ecxr` gives the exception record. For `0xC000027B` the first parameter is a pointer to an array of
+stowed exceptions and the second is the count. `dq` it to reach the `SE02` record: `ResultCode` at
++0x08 is the HRESULT (`!error` it), and the stack-trace pointer at +0x20 holds return addresses, so
+`dps <ptr> L<count>` against `Telegram.pdb` prints the **managed** stack and `ln <addr>` turns a
+frame into a source line. That is how `set_ItemsSource` was found after two sessions of guessing.
+`ln poi(<obj>)` on a suspect pointer resolves its C++ vftable, which names the XAML type.
 
 ### Two things worth knowing about the harness
 
@@ -466,9 +510,22 @@ missing entry in `CsWinRT.cs`, which is effectively the app's AOT manifest.
   `integrations.telegram.org/ugram_crash_logs/`, so every AOT crash this evening went to the
   production endpoint tagged 12.7.0.12195, and the local JSON was gone before it could be read.
   Worth suppressing for this identity.
-- **At verbosity 4 the TDLib log rotates every couple of minutes**, taking the managed entries with
-  it. Drop it to 1 in Diagnostics before reproducing anything: `Logger.Error` is level 1 and the
-  gate is `level <= VerbosityLevel`.
+- **Verbosity has to be exactly Warning (2) to see managed logging.** Two gates, not one:
+  `Logger.Log` passes if `level <= VerbosityLevel`, but it then calls `AddLogMessage(**2**, …)`,
+  and `Logging::add_message` clamps that hardcoded 2 into `VLOG(client)` — so below 2 TDLib
+  discards every managed entry, `WatchDog` included. Above it, at 4, the log rotates every couple
+  of minutes and takes them with it. Note the default is 4 here: `SettingsService` picks
+  `IsPackagedRelease ? 4 : 2`, and a sideloaded `-Register` package is Developer-signed, not Store.
+- **Visual Studio cannot F5 this project.** It starts `win-x64\Telegram.exe`, the 162 KB apphost,
+  as a bare process outside the package container, and a UWP XAML app fails fast either way
+  (`0xC0000409`). Use Debug → Other Debug Targets → **Debug Installed App Package**, pick
+  `38833FF26BA1D.UnigramNet10`, tick "do not launch, but debug my code when it starts", Native
+  Only; `Telegram.pdb` sits beside the exe in `publish\` so symbols resolve on their own.
+- **Publish needs `-p:SelfContained=true` and `vswhere.exe` on `PATH`.** Without the first,
+  `PublishAot` does not imply self-contained here and ILLink fails `NETSDK1102`; without the
+  second, ILC's linker lookup substitutes the shell's "not recognized" text into the `link.exe`
+  command line and fails `MSB3073` with exit code 123. `vswhere` lives in
+  `%ProgramFiles(x86)%\Microsoft Visual Studio\Installer`, which a plain shell does not have.
 
 ## Phase 5 — AOT, original plan
 

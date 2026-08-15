@@ -60,6 +60,11 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.UnreadReaction[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Td.Api.UpgradedGiftAttributeId[]))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(Telegram.Native.TextStylePart[]))]
+// Set as ItemsSource in GroupCallPage's constructor. External generic instantiations get no CCW
+// vtable of their own - the generator only emits those for the app's own partial types - so XAML
+// fails the QI for IBindableIterable and set_ItemsSource returns E_INVALIDARG. On the UI thread's
+// DispatcherQueue that is a fail-fast, not an exception.
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ObservableCollection<Telegram.Td.Api.GroupCallMessage>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<string>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.NameColor>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Telegram.Td.Api.ProfileColor>))]
