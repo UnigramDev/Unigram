@@ -731,17 +731,10 @@ namespace Telegram.ViewModels
 
                 foreach (var message in messages)
                 {
-                    switch (message.Content)
+                    var file = message.GetFile();
+                    if (file != null)
                     {
-                        case MessageAudio audio:
-                            ClientService.AddFileToDownloads(audio.Audio.AudioValue, message.ChatId, message.Id, 32);
-                            break;
-                        case MessageDocument document:
-                            ClientService.AddFileToDownloads(document.Document.DocumentValue, message.ChatId, message.Id, 32);
-                            break;
-                        case MessageVideo video:
-                            ClientService.AddFileToDownloads(video.Video.VideoValue, message.ChatId, message.Id, 32);
-                            break;
+                        ClientService.AddFileToDownloads(file, message.ChatId, message.Id, 32);
                     }
                 }
             }

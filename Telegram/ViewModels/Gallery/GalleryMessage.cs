@@ -84,8 +84,8 @@ namespace Telegram.ViewModels.Gallery
             HasProtectedContent = protectedChat || secret;
 
             CanBeViewed = true;
-            CanBeSaved = !protectedChat && !secret;
-            CanBeShared = CanBeSaved;
+            CanBeSaved  = true;
+            CanBeShared = !protectedChat && !secret;
             CanBeCopied = CanBeSaved && IsPhoto;
         }
 

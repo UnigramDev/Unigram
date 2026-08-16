@@ -224,6 +224,24 @@ namespace Telegram.Services
                 return await GetFileAsync(file, true);
             }
 
+            // A file copied to the Downloads folder remains available even if TDLib
+            // subsequently evicts its cache entry (for example, after media expires).
+            if (file.Remote.UniqueId.Length > 0)
+            {
+                try
+                {
+                    var permanent = await Future.GetFileAsync(file.Remote.UniqueId);
+                    if (permanent != null)
+                    {
+                        return permanent;
+                    }
+                }
+                catch
+                {
+                    Future.Remove(file.Remote.UniqueId);
+                }
+            }
+
             // Let's TDLib check the file integrity
             if (file.Local.IsDownloadingCompleted)
             {

@@ -4852,32 +4852,12 @@ namespace Telegram.Views
 
         private bool MessageSaveMedia_Loaded(MessageViewModel message)
         {
-            if (message.SelfDestructType is not null || !message.CanBeSaved)
-            {
-                return false;
-            }
-
             if (message.Content is MessageAlbum album)
             {
-                foreach (var item in album.Messages)
-                {
-                    var temp = item.GetFile();
-                    if (temp != null && !temp.Local.IsDownloadingCompleted)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+                return album.Messages.Any(item => item.GetFile() != null);
             }
 
-            var file = message.GetFile();
-            if (file != null)
-            {
-                return file.Local.IsDownloadingCompleted;
-            }
-
-            return false;
+            return message.GetFile() != null;
         }
 
         private bool MessageOpenMedia_Loaded(MessageViewModel message)
