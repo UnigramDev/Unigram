@@ -1,0 +1,113 @@
+name: Build sideload package
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [develop]
+    paths:
+      - ".github/workflows/build-sideload.yml"
+      - "Telegram/**"
+      - "Telegram.Msix/**"
+      - "Telegram.Native/**"
+      - "Telegram.Native.Calls/**"
+      - "Telegram.Stub/**"
+      - "Libraries/**"
+      - "Directory.Build.*"
+      - "vcpkg.json"
+      - "vcpkg-configuration.json"
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-latest
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}\vcpkg
+
+    steps:
+      - name: Check out source and submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Visual Studio MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Set up the Visual C++ build environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Install TDLib build tools
+        shell: powershell
+        run: choco install cmake php -y --no-progress
+
+      - name: Install the pinned vcpkg baseline
+        shell: powershell
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git $env:VCPKG_ROOT
+          $baseline = (Get-Content vcpkg.json -Raw | ConvertFrom-Json).builtin-baseline
+          git -C $env:VCPKG_ROOT checkout $baseline
+          & "$env:VCPKG_ROOT\bootstrap-vcpkg.bat" -disableMetrics
+
+      - name: Supply Telegram API credentials
+        shell: powershell
+        env:
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:TELEGRAM_API_ID) -or [string]::IsNullOrWhiteSpace($env:TELEGRAM_API_HASH)) {
+            throw "Add TELEGRAM_API_ID and TELEGRAM_API_HASH as repository Actions secrets before building."
+          }
+          @"
+          namespace Telegram
+          {
+              public static partial class Constants
+              {
+                  static Constants()
+                  {
+                      ApiId = $env:TELEGRAM_API_ID;
+                      ApiHash = `"$env:TELEGRAM_API_HASH`";
+                      AppChannel = `"`";
+                  }
+              }
+          }
+          "@ | Set-Content Telegram\Constants.Secret.cs -Encoding utf8
+
+      - name: Build TDLib
+        shell: powershell
+        run: |
+          Set-Location Libraries\tdjson
+          .\build.ps1 -arch x64
+
+      - name: Create a certificate for this sideload build
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          $password = [Guid]::NewGuid().ToString('N')
+          $securePassword = ConvertTo-SecureString -String $password -AsPlainText -Force
+          $certificate = New-SelfSignedCertificate -Type Custom -Subject 'CN=Unigram Custom Build' -KeyUsage DigitalSignature -KeyExportPolicy Exportable -HashAlgorithm SHA256 -CertStoreLocation Cert:\CurrentUser\My
+          Export-PfxCertificate -Cert $certificate -FilePath artifacts\UnigramCustom.pfx -Password $securePassword | Out-Null
+          Export-Certificate -Cert $certificate -FilePath artifacts\UnigramCustom.cer | Out-Null
+          "PACKAGE_CERT_PASSWORD=$password" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+          [xml]$manifest = Get-Content Telegram.Msix\Package.appxmanifest
+          $identity = $manifest.GetElementsByTagName('Identity')[0]
+          $identity.SetAttribute('Name', 'iamragavendrans.UnigramCustom')
+          $identity.SetAttribute('Publisher', 'CN=Unigram Custom Build')
+          $manifest.Save((Resolve-Path Telegram.Msix\Package.appxmanifest))
+
+      - name: Build the x64 MSIX bundle
+        shell: powershell
+        run: |
+          msbuild Telegram.Msix\Telegram.Msix.wapproj /restore /p:Configuration=Release /p:Platform=x64 /p:AppxBundle=Always /p:AppxBundlePlatforms=x64 /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=True /p:PackageCertificateKeyFile="$env:GITHUB_WORKSPACE\artifacts\UnigramCustom.pfx" /p:PackageCertificatePassword=$env:PACKAGE_CERT_PASSWORD
+
+      - name: Upload the installable package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unigram-custom-x64
+          path: |
+            Telegram.Msix\AppPackages\**\*
+            artifacts\UnigramCustom.cer
+          if-no-files-found: error
