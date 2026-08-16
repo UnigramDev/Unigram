@@ -22,8 +22,6 @@ permissions:
 jobs:
   package:
     runs-on: windows-latest
-    env:
-      VCPKG_ROOT: ${{ github.workspace }}\vcpkg
 
     steps:
       - name: Check out source and submodules
@@ -46,10 +44,12 @@ jobs:
       - name: Install the pinned vcpkg baseline
         shell: powershell
         run: |
-          git clone https://github.com/microsoft/vcpkg.git $env:VCPKG_ROOT
+          $repoVcpkg = Join-Path $env:GITHUB_WORKSPACE 'vcpkg'
+          git clone https://github.com/microsoft/vcpkg.git $repoVcpkg
           $baseline = (Get-Content vcpkg.json -Raw | ConvertFrom-Json).'builtin-baseline'
-          git -C $env:VCPKG_ROOT checkout $baseline
-          & "$env:VCPKG_ROOT\bootstrap-vcpkg.bat" -disableMetrics
+          git -C $repoVcpkg checkout $baseline
+          & "$repoVcpkg\bootstrap-vcpkg.bat" -disableMetrics
+          "VCPKG_ROOT=$repoVcpkg" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Supply Telegram API credentials
         shell: powershell
