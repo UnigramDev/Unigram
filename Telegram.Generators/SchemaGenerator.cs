@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Telegram.Generators.Emit;
@@ -34,6 +35,21 @@ namespace Telegram.Generators
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
+        private static readonly DiagnosticDescriptor VectorNotExposed = new DiagnosticDescriptor(
+            id: "TDAPI003",
+            title: "A vector instantiation is not exposed to WinRT",
+            messageFormat: "{0} vector instantiations are missing from CsWinRT.Vectors.cs, starting with: {1}",
+            category: "Telegram.Generators",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Bound to ItemsSource, a List<T> with no CCW vtable fails with E_INVALIDARG. The attributes have to be real source - CsWinRT's generator reads them, and a generator cannot see what another generator wrote.");
+
+        private static readonly SymbolDisplayFormat TypeFormat = new SymbolDisplayFormat(
+            globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
+            typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+            genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
+            miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
+
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             var content = context.AdditionalTextsProvider
@@ -51,6 +67,10 @@ namespace Telegram.Generators
                     : TdParsers.Reader);
 
             context.RegisterSourceOutput(content.Combine(parsers), (ctx, pair) => Execute(ctx, pair.Left, pair.Right));
+
+            // Only the attribute list, so an unrelated edit does not re-run the comparison.
+            var exposed = context.CompilationProvider.Select((compilation, _) => Exposed(compilation));
+            context.RegisterSourceOutput(content.Combine(exposed), (ctx, pair) => Verify(ctx, pair.Left, pair.Right));
         }
 
         private static void Execute(SourceProductionContext context, string text, TdParsers parsers)
@@ -72,7 +92,6 @@ namespace Telegram.Generators
                 }
 
                 context.AddSource("TdDotNetApi.g.cs", Write(schema.Classes, parsers));
-                context.AddSource("TdDotNetApi.WinRT.g.cs", WriteExposedVectors(schema.Classes));
             }
             catch (Exception ex)
             {
@@ -80,8 +99,58 @@ namespace Telegram.Generators
             }
         }
 
+        private static ImmutableHashSet<string> Exposed(Compilation compilation)
+        {
+            var attribute = compilation.GetTypeByMetadataName("WinRT.GeneratedWinRTExposedExternalTypeAttribute");
+            if (attribute == null)
+            {
+                // .NET Native: nothing to expose, and nothing to check.
+                return null;
+            }
+
+            var builder = ImmutableHashSet.CreateBuilder<string>(StringComparer.Ordinal);
+
+            foreach (var declared in compilation.Assembly.GetAttributes())
+            {
+                if (SymbolEqualityComparer.Default.Equals(declared.AttributeClass, attribute)
+                    && declared.ConstructorArguments.Length > 0
+                    && declared.ConstructorArguments[0].Value is ITypeSymbol type)
+                {
+                    builder.Add(type.ToDisplayString(TypeFormat));
+                }
+            }
+
+            return builder.ToImmutable();
+        }
+
+        private static void Verify(SourceProductionContext context, string text, ImmutableHashSet<string> exposed)
+        {
+            if (text is null || exposed is null)
+            {
+                return;
+            }
+
+            try
+            {
+                var missing = RequiredVectors(TlParser.Parse(text).Classes)
+                    .Where(x => !exposed.Contains(x))
+                    .ToList();
+
+                if (missing.Count > 0)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(VectorNotExposed, Location.None,
+                        missing.Count, string.Join(", ", missing.Take(3))));
+                }
+            }
+            catch
+            {
+                // Execute already reports whatever the parser choked on.
+            }
+        }
+
         /// <summary>
-        /// Exposes every vector instantiation the parsers can produce to WinRT.
+        /// Every vector instantiation the parsers can produce, as it must appear in
+        /// CsWinRT.Vectors.cs.
         /// </summary>
         /// <remarks>
         /// Both parsers materialise a vector as List&lt;T&gt;, and a List&lt;T&gt; boxed into a WinRT
@@ -94,7 +163,7 @@ namespace Telegram.Generators
         /// The property has to be reachable from XAML for this to matter, and most are not, but the
         /// schema cannot tell which - so all of them, at a vtable each.
         /// </remarks>
-        private static string WriteExposedVectors(List<SchemaClass> parsed)
+        private static SortedSet<string> RequiredVectors(List<SchemaClass> parsed)
         {
             var names = new SortedSet<string>(StringComparer.Ordinal);
 
@@ -127,21 +196,7 @@ namespace Telegram.Generators
                 }
             }
 
-            var builder = new StringBuilder();
-            builder.Append("// <auto-generated/>\r\n");
-            builder.Append("#pragma warning disable\r\n");
-            builder.Append("\r\n");
-            builder.Append("#if NET9_0_OR_GREATER\r\n");
-
-            foreach (var name in names)
-            {
-                builder.Append("[assembly: global::WinRT.GeneratedWinRTExposedExternalType(typeof(");
-                builder.Append(name);
-                builder.Append("))]\r\n");
-            }
-
-            builder.Append("#endif\r\n");
-            return builder.ToString();
+            return names;
         }
 
         private static string Write(List<SchemaClass> parsed, TdParsers parsers)

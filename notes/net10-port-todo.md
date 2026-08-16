@@ -493,9 +493,12 @@ compilation and looks managed by every other measure.
 Blind spot: a binding assigns through the property's **declared** type, so where that is an
 interface the concrete type is unknowable at compile time and no rule can fire. That is how
 `SettingsStoragePage` bound `Statistics.ByChat` and threw `E_INVALIDARG` with nothing to warn on.
-For TDLib it is closed from the other end - `TdDotNetApi.WinRT.g.cs` registers every vector
+For TDLib it is closed from the other end - `CsWinRT.Vectors.cs` registers every vector
 instantiation in the schema, both parsers materialising a vector as `List<T>` - but it stays open
-for any other property typed as an interface. Classic `{Binding}` is a second blind spot, having no
+for any other property typed as an interface. That file is **real source, not generated**: CsWinRT
+reads these attributes in its own generator, and a generator cannot see what another generator
+wrote. `TDAPI003` compares the schema against the attributes actually present and reports what a
+TDLib update has added. Classic `{Binding}` is a second blind spot, having no
 C# anywhere; `x:Bind` is covered, which is why the analyzer opts into analysing generated code.
 
 ### Still open
