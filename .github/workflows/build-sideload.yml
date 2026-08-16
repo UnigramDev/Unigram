@@ -47,7 +47,7 @@ jobs:
         shell: powershell
         run: |
           git clone https://github.com/microsoft/vcpkg.git $env:VCPKG_ROOT
-          $baseline = (Get-Content vcpkg.json -Raw | ConvertFrom-Json).builtin-baseline
+          $baseline = (Get-Content vcpkg.json -Raw | ConvertFrom-Json).'builtin-baseline'
           git -C $env:VCPKG_ROOT checkout $baseline
           & "$env:VCPKG_ROOT\bootstrap-vcpkg.bat" -disableMetrics
 
