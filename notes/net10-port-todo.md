@@ -437,7 +437,7 @@ now. Three traps that cost real time, none of which announce themselves:
 ### The failures that only appear at runtime
 
 None of these warned at build time. All were found by running a feature, and all but one are a
-missing entry in `CsWinRT.cs`, which is effectively the app's AOT manifest. `TG1001`/`TG1002` now
+missing entry in `CsWinRT.cs`, which is effectively the app's AOT manifest. `TG1001`/`TG1002`/`TG1003` now
 catch the whole class at compile time — see [the analyzer](#the-analyzer) below.
 
 | symptom | cause | fix |
@@ -448,7 +448,7 @@ catch the whole class at compile time — see [the analyzer](#the-analyzer) belo
 | freeform gradient not drawn | same rule: `GetColors()` returns `Color[]` handed to `CreateFreeformGradient(IVector<Color>)`, and the throw was swallowed inside XAML brush creation | convert to `List<Color>` at the call site |
 | `CompositionVSync` NRE, killing calls | self-inflicted: through the ABI the rendering args arrive as a bare `IInspectable`, so `e as RenderingEventArgs` is null. Casting per frame would be a QueryInterface per frame | both consumers now read `Stopwatch.GetTimestamp()`; `VisualUtilities.Tilt` was silently reading a stale timestamp for the same reason |
 | chat background: gradient but no pattern | the **setter** `_freeform.Colors = GetColors()` still handed a `Color[]`; only the constructor call had been converted | build the `List<Color>` once, use it on both branches |
-| …then still no pattern | `CreateEffectFactory(effect, ["Intensity.Opacity"])` — a **collection expression** synthesises `<>z__ReadOnlySingleElementList<string>`, which has no CCW at all. A third rule, independent of the element type | `new[] { … }`, as every other call site already used |
+| …then still no pattern | `CreateEffectFactory(effect, ["Intensity.Opacity"])` — a **collection expression targeting a read-only interface** (here `IIterable<String>` → `IEnumerable<string>`) synthesises a type that can never have a CCW. **Two** of them, picked by element count: `<>z__ReadOnlySingleElementList<T>` for one, `<>z__ReadOnlyArray<T>` for more — so a site that works with two elements can break when one is removed. `List<T>`, `IList<T>` and `ICollection<T>` are safe, being mutable: those give a real `List<T>` | `new[] { … }`, as every other call site already used |
 | hard crash joining a group call | `MessagesHost.ItemsSource = new ObservableCollection<GroupCallMessage>(…)`. **External** generic instantiations get no CCW vtable — the generator only emits those for the app's own partial types — so XAML's QI for `IBindableIterable` fails and `set_ItemsSource` returns `E_INVALIDARG`. On a `DispatcherQueueHandler` that is a fail-fast | registered the instantiation in `CsWinRT.cs` |
 | leaving a call from the call window did nothing | `ContentPopup` completes the task `ShowQueuedAsync` awaits from a `CompositionTarget.Rendered` callback. Subscribing threw `NotSupportedException: Cannot provide IReference support for delegate type 'EventHandler<RenderedEventArgs>'` — nothing roots that marshaller, because `CompositionTargetImpl` bypasses the projection that would have — and `QueueCallbackForCompositionRendered` swallowed it. Every dialog on that view was dead | `CompositionTargetImpl.Rendered` marshals `EventHandler<object>`, like `Rendering`; no caller reads the args |
 
@@ -464,8 +464,12 @@ problem, so the analyzer resolves the attribute and switches itself off when it 
   attribute to paste.
 - **TG1002** — an array of a value type that is not a WinRT fundamental, passed to a typed
   collection. `IReferenceArray<T>`, which AOT cannot synthesise. The message names the `List<T>`.
+- **TG1003** — a collection expression targeting a read-only interface. The synthesised type has no
+  CCW and cannot be given one, so it is the one case a registration does not fix. TG1001's reasoning
+  does not reach it: the target is typed, but the marshaller the generator emits still needs a CCW
+  for whatever concrete type turns up.
 
-The dividing line between the two is whether the compiler can see the conversion. A parameter typed
+The dividing line between the first two is whether the compiler can see the conversion. A parameter typed
 `IEnumerable<T>` is a conversion in source, so CsWinRT generates the marshaller for that
 instantiation and any concrete type reaches it. A parameter typed `object` is not. Elements are the
 same question one level down, at a point no call site corresponds to — which is how
@@ -486,9 +490,13 @@ attributes, not by namespace: the projection for a referenced C++/WinRT componen
 **into** the consuming assembly, so `Telegram.Native.PlaceholderImageHelper` is a type of this
 compilation and looks managed by every other measure.
 
-Blind spot: classic `{Binding}` assigns `ItemsSource` inside the framework, with no C# anywhere.
-`x:Bind` is covered — it emits the assignment into a `.g.cs`, which is why the analyzer opts into
-analysing generated code.
+Blind spot: a binding assigns through the property's **declared** type, so where that is an
+interface the concrete type is unknowable at compile time and no rule can fire. That is how
+`SettingsStoragePage` bound `Statistics.ByChat` and threw `E_INVALIDARG` with nothing to warn on.
+For TDLib it is closed from the other end - `TdDotNetApi.WinRT.g.cs` registers every vector
+instantiation in the schema, both parsers materialising a vector as `List<T>` - but it stays open
+for any other property typed as an interface. Classic `{Binding}` is a second blind spot, having no
+C# anywhere; `x:Bind` is covered, which is why the analyzer opts into analysing generated code.
 
 ### Still open
 
