@@ -108,9 +108,13 @@ namespace winrt::Telegram::Native::Composition::implementation
 		com_ptr<IUIElementStaticsPrivate> uiElementPrivate;
 		if (windows11 && (uiElementPrivate = try_get_activation_factory<UIElement, IUIElementStaticsPrivate>()))
 		{
-			LayerVisual layerVisual{ nullptr };
-			check_hresult(uiElementPrivate->GetElementLayerVisual(winrt::get_abi(element), put_abi(layerVisual)));
-			return layerVisual;
+			winrt::Windows::Foundation::IInspectable result{ nullptr };
+			if (SUCCEEDED(uiElementPrivate->GetElementLayerVisual(winrt::get_abi(element), put_abi(result))))
+			{
+				return result.try_as<LayerVisual>();
+			}
+
+			return nullptr;
 		}
 
 		// The code below definitely works on late Windows 10 builds, but it definitely crashes on 1909 and earlier
