@@ -446,8 +446,11 @@ namespace Telegram.ViewModels.Drawers
         public long ChatId { get; private set; }
     }
 
-    [GeneratedBindableCustomProperty(new[] { "Stickers" }, new[] { typeof(MvxObservableCollection<StickerViewModel>) })]
-    public partial class StickerSetViewModel
+    // Stickers is the one property resolved by name, by CollectionViewSource.ItemsPath; everything
+    // else these sets expose is bound through x:Bind. The second array is the parameter types of
+    // indexers to expose, not property types.
+    [GeneratedBindableCustomProperty(new[] { "Stickers" }, new Type[] { })]
+    public partial class StickerSetViewModel : IDrawerGroup
     {
         protected readonly IClientService _clientService;
 

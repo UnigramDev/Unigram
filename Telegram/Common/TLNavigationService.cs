@@ -159,7 +159,6 @@ namespace Telegram.Common
 
                 var tabViewItem = new TabViewItem
                 {
-                    Header = "Test",
                     Content = frame,
                     IconSource = new Microsoft.UI.Xaml.Controls.FontIconSource
                     {
@@ -168,12 +167,14 @@ namespace Telegram.Common
                     }
                 };
 
-                if (service.Content is Page page)
+                // A binding rather than an assignment: the title is only known once the article has
+                // loaded. InstantViewModel carries [GeneratedBindableCustomProperty] for it.
+                if (service.Content is InstantPage { ViewModel: { } viewModel })
                 {
                     tabViewItem.SetBinding(TabViewItem.HeaderProperty, new Binding
                     {
-                        Path = new PropertyPath("Title"),
-                        Source = page.DataContext
+                        Path = new PropertyPath(nameof(InstantViewModel.Title)),
+                        Source = viewModel
                     });
                 }
 

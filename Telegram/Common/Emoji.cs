@@ -211,7 +211,7 @@ namespace Telegram.Common
     }
 
     [GeneratedBindableCustomProperty]
-    public partial class EmojiGroup
+    public partial class EmojiGroup : IDrawerGroup
     {
         public string Title { get; set; }
         public string Glyph { get; set; }

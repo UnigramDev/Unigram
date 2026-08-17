@@ -67,6 +67,7 @@ using WinRT;
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.Generic.List<Windows.UI.Xaml.FrameworkElement>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ObservableCollection<Telegram.Td.Api.GroupCallMessage>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ObservableCollection<Telegram.ViewModels.Business.BusinessHoursRange>))]
+[assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ObservableCollection<Telegram.ViewModels.RevenueTabItem>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ObservableCollection<Telegram.Views.Chats.Popups.SelectionValue>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(System.Collections.ObjectModel.ObservableCollection<Telegram.Views.Premium.Popups.GiftGroup>))]
 [assembly: GeneratedWinRTExposedExternalType(typeof(object[]))]

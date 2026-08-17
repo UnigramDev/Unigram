@@ -6,6 +6,7 @@
              xmlns:common="using:Telegram.Common"
              xmlns:controls="using:Telegram.Controls"
              xmlns:selectors="using:Telegram.Selectors"
+             xmlns:viewModels="using:Telegram.ViewModels.Drawers"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="400">
@@ -141,31 +142,28 @@
             <GridView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
-                        <!--<DataTemplate x:DataType="common:EmojiGroup">
-                            <TextBlock Text="{x:Bind Title}"
-                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                       Style="{StaticResource CaptionTextBlockStyle}" />
-                        </DataTemplate>-->
-                        <DataTemplate>
-                            <Grid Visibility="{Binding Title, Converter={StaticResource NullToVisibilityConverter}}"
+                        <!-- Groups are EmojiGroup, RecentEmoji or StickerSetViewModel, so the
+                             template is typed on the interface the three share. -->
+                        <DataTemplate x:DataType="viewModels:IDrawerGroup">
+                            <Grid Visibility="{x:Bind Title, Converter={StaticResource NullToVisibilityConverter}}"
                                   Padding="0,6,0,4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding Title}"
+                                <TextBlock Text="{x:Bind Title}"
                                            TextWrapping="NoWrap"
                                            Style="{StaticResource InfoBodyTextBlockStyle}" />
 
                                 <controls:SettingsButton Content="{CustomResource Add}"
-                                                      Visibility="{Binding IsInstalled, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                                      Style="{StaticResource PillButtonStyle}"
-                                                      HorizontalAlignment="Right"
-                                                      VerticalAlignment="Center"
-                                                      Padding="12,1,12,2"
-                                                      CornerRadius="12"
-                                                      Margin="0,-6"
-                                                      Grid.Column="1" />
+                                                         Visibility="{x:Bind IsInstalled, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                                         Style="{StaticResource PillButtonStyle}"
+                                                         HorizontalAlignment="Right"
+                                                         VerticalAlignment="Center"
+                                                         Padding="12,1,12,2"
+                                                         CornerRadius="12"
+                                                         Margin="0,-6"
+                                                         Grid.Column="1" />
                             </Grid>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>

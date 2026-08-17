@@ -52,7 +52,6 @@
                         </Grid>
                         <Grid x:Name="LivePanel"
                               Padding="{ThemeResource MessageContentPadding}">
-                            <!-- Visibility="{Binding Self, Converter={StaticResource GeoLiveToVisibilityConverter}}" -->
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
@@ -78,7 +77,6 @@
                                            TextAlignment="Center"
                                            VerticalAlignment="Center"
                                            Margin="0,1,0,3" />
-                                <!--<controls:PeriodTimer x:Name="Period" Background="Transparent" Value="{Binding}" Period="{Binding Media.Period}" IsHitTestVisible="False"/>-->
                                 <controls:SelfDestructTimer x:Name="LiveRing"
                                                             Foreground="{ThemeResource MessageHeaderBorderBrush}"
                                                             Background="Transparent"

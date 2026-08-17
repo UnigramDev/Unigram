@@ -715,8 +715,17 @@ namespace Telegram.ViewModels.Drawers
         }
     }
 
+    // What EmojiDrawer's group header binds. The drawer mixes EmojiGroup, RecentEmoji and
+    // StickerSetViewModel in one list, and x:DataType needs a single type to bind against.
+    public interface IDrawerGroup
+    {
+        string Title { get; }
+
+        bool IsInstalled { get; }
+    }
+
     [GeneratedBindableCustomProperty]
-    public partial class RecentEmoji
+    public partial class RecentEmoji : IDrawerGroup
     {
         public string Title { get; }
 

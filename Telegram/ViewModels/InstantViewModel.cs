@@ -16,9 +16,13 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views;
 using Windows.UI.Xaml.Navigation;
+using WinRT;
 
 namespace Telegram.ViewModels
 {
+    // Title is resolved by name, by the tab header binding TLNavigationService.NavigateToInstant
+    // builds in code. Nothing else here is.
+    [GeneratedBindableCustomProperty(new[] { "Title" }, new Type[] { })]
     public partial class InstantViewModel : ViewModelBase
     {
         private readonly ITranslateService _translateService;

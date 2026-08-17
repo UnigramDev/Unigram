@@ -404,10 +404,12 @@ carries the exception type, message and a stack. The Application event log only 
       `new PlaceholderImageHelper(Window.Current)` per view, whose native constructor takes
       `window.Compositor()` — the first thing to check is whether that construction is what
       throws on the secondary view.
-- [ ] `{Binding}` is where the runtime differences will show. 180 occurrences across 32 of 481
-      XAML files, against 1927 `x:Bind` which are compiled and free. Each managed binding source
-      type needs `[GeneratedBindableCustomProperty]` and to be `partial`. Bindings whose source is
-      a XAML/WinRT type need nothing.
+- [x] `{Binding}` **audited and fixed — see `binding-audit.md`.** 108 occurrences across 26 of 475
+      files, against 2038 `x:Bind`, plus three bindings built in code and the by-name properties
+      (`DisplayMemberPath`, `ItemsPath`). Two mechanisms satisfy a classic binding and they are
+      disjoint here: `XamlTypeInfo.g.cs` emits accessors for any managed member reached from markup,
+      and `[GeneratedBindableCustomProperty]` covers the types the compiler cannot see because they
+      are only ever a runtime `DataContext`. Three live defects, all fixed.
 
 ## Phase 5 — AOT (compiles, links, runs; three features still under repair)
 

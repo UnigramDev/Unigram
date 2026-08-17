@@ -6,6 +6,7 @@
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:messages="using:Telegram.Controls.Messages"
                   xmlns:local="using:Telegram.Views"
+                  xmlns:viewModels="using:Telegram.ViewModels"
                   mc:Ignorable="d"
                   ShowHeaderBackground="False"
                   NavigationMode="Root">
@@ -53,9 +54,14 @@
                                                  ItemClick="Header_ItemClick"
                                                  ItemsSource="{x:Bind ViewModel.Items}"
                                                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-                                                 DisplayMemberPath="Text"
                                                  Height="40"
-                                                 Margin="8,4" />
+                                                 Margin="8,4">
+                                <controls:TopNavView.ItemTemplate>
+                                    <DataTemplate x:DataType="viewModels:RevenueTabItem">
+                                        <TextBlock Text="{x:Bind Text}" />
+                                    </DataTemplate>
+                                </controls:TopNavView.ItemTemplate>
+                            </controls:TopNavView>
                         </Grid>
 
                         <!--<controls:MoreButton x:Name="Menu"
