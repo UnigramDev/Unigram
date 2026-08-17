@@ -996,6 +996,7 @@ namespace Telegram.ViewModels
         public SearchResult(IClientService clientService, Chat chat, string query, SearchResultType type, bool canSendMessageToUser)
         {
             _clientService = clientService;
+            _canSendMessageToUser = canSendMessageToUser;
 
             Chat = chat;
             Query = query;
@@ -1005,6 +1006,7 @@ namespace Telegram.ViewModels
         public SearchResult(IClientService clientService, Chat chat, bool canSendMessageToUser)
         {
             _clientService = clientService;
+            _canSendMessageToUser = canSendMessageToUser;
 
             Chat = chat;
             Query = string.Empty;
@@ -1014,6 +1016,7 @@ namespace Telegram.ViewModels
         public SearchResult(IClientService clientService, User user, string query, SearchResultType type, bool canSendMessageToUser)
         {
             _clientService = clientService;
+            _canSendMessageToUser = canSendMessageToUser;
 
             User = user;
             Query = query;
