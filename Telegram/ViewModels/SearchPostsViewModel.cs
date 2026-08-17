@@ -31,6 +31,7 @@ namespace Telegram.ViewModels
         public SearchPostsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            _offline = new(Constants.LocalTypingTimeout, UpdateQueryOffline);
             _query = new(Constants.TypingTimeout, UpdateQuery, CanUpdateQuery);
             _query.Value = string.Empty;
 
@@ -49,6 +50,8 @@ namespace Telegram.ViewModels
         }
 
         public IncrementalCollection<Message> Items { get; }
+
+        private readonly DebouncedPropertyWithToken<string> _offline;
 
         private readonly DebouncedPropertyWithToken<string> _query;
         public string Query
@@ -86,7 +89,7 @@ namespace Telegram.ViewModels
                 return false;
             }
 
-            UpdateQueryOffline(_prevQuery = value, token);
+            _offline.Set(_prevQuery = value, token);
             return value.Length > 0;
         }
 
@@ -161,8 +164,10 @@ namespace Telegram.ViewModels
                     request = ClientService.SendPaymentAsync(limits.StarCount, new SearchPublicPosts(_prevQuery, string.Empty, 50, limits.StarCount));
                 }
 
+                // The token passed in, not the field: a newer query replaces _cancellation with a source
+                // that is not cancelled, so the field cannot tell a stale response from a live one.
                 var response = await request;
-                if (response is FoundPublicPosts posts && !_cancellation.IsCancellationRequested)
+                if (response is FoundPublicPosts posts && !token.IsCancellationRequested)
                 {
                     _nextOffset = string.IsNullOrEmpty(posts.NextOffset) ? null : posts.NextOffset;
                     Limits = posts.SearchLimits;
@@ -210,7 +215,7 @@ namespace Telegram.ViewModels
 
                 foreach (var message in posts.Messages)
                 {
-                    Items.AddRange(posts.Messages);
+                    Items.Add(message);
                     totalCount++;
                 }
             }
