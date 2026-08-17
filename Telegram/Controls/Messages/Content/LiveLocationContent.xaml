@@ -8,12 +8,12 @@
                     d:DesignHeight="300"
                     d:DesignWidth="320">
 
-    <Style TargetType="local:LocationContent">
+    <Style TargetType="local:LiveLocationContent">
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:LocationContent">
+                <ControlTemplate TargetType="local:LiveLocationContent">
                     <StackPanel>
                         <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                             <HyperlinkButton x:Name="Button"
