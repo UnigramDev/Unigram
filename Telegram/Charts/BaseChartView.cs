@@ -428,7 +428,10 @@ namespace Telegram.Charts
 
         private void OnPointerExited(object sender, PointerRoutedEventArgs e)
         {
+            // ClearSelection only drops the state: without a redraw the selection stays
+            // on screen until something else invalidates the chart.
             ClearSelection();
+            Invalidate();
         }
 
         protected override void OnGotFocus(RoutedEventArgs e)
@@ -1503,6 +1506,14 @@ namespace Telegram.Charts
             int dx = x - lastX;
             int dy = y - lastY;
 
+            // Moving with nothing in contact means the press ended without a release
+            // reaching us, capture having been lost to a scroll or a flyout. Left alone the
+            // drag never ends, and every later mouse move keeps moving the selection.
+            if (!point.IsInContact)
+            {
+                chartCaptured = false;
+            }
+
             if (pickerDelegate.Captured())
             {
                 bool rez = pickerDelegate.Move(x, y, 0);
@@ -1551,7 +1562,8 @@ namespace Telegram.Charts
                 }
                 SelectXOnChart(x, y);
             }
-            else if (chartArea.Contains(new Point(capturedX, capturedY)))
+            // A press that began outside the chart area and moved into it.
+            else if (point.IsInContact && chartArea.Contains(new Point(capturedX, capturedY)))
             {
                 int dxCaptured = capturedX - x;
                 int dyCaptured = capturedY - y;
@@ -1560,6 +1572,17 @@ namespace Telegram.Charts
                     chartCaptured = true;
                     SelectXOnChart(x, y);
                 }
+            }
+            // Hovering, which the touch original had no notion of: the point under the
+            // pointer is selected, and moving off the chart drops it again.
+            else if (chartArea.Contains(new Point(x, y)))
+            {
+                SelectXOnChart(x, y);
+            }
+            else if (legendShowing)
+            {
+                ClearSelection();
+                Invalidate();
             }
             return /*true*/;
         }
