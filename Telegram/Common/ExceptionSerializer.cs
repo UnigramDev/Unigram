@@ -444,7 +444,12 @@ namespace Telegram.Common
 
         // Anchored at the end and matched in full, because the sentence in front can contain
         // parentheses of its own - the Portuguese RPC_E_WRONG_THREAD text says "(marshall)".
-        private static readonly Regex _hresultSuffix = new(@"\s*\(Exception from HRESULT: 0x([0-9A-Fa-f]{8})\)$", RegexOptions.Compiled);
+        //
+        // Two spellings: .NET Native writes "(Exception from HRESULT: 0x80004005)", CsWinRT writes
+        // "(0x80004005)". Matching only the first left every message on the AOT build with its
+        // suffix still attached, so no sentence ever matched TranslateText and every language
+        // fragmented into its own group.
+        private static readonly Regex _hresultSuffix = new(@"\s*\((?:Exception from HRESULT: )?0x([0-9A-Fa-f]{8})\)$", RegexOptions.Compiled);
 
         /// <summary>
         /// Rebuilds a message from its HRESULT, which is the same number in every language, rather
