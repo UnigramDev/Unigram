@@ -850,9 +850,12 @@ namespace Telegram.Controls.Gallery
 
             if (ViewModel != null)
             {
-                ViewModel.Delegate = null;
                 ViewModel.Aggregator.Unsubscribe(this);
+
+                // PlaybackStopped clears the sponsored content through the delegate,
+                // so it has to run while the delegate is still attached.
                 ViewModel.PlaybackStopped();
+                ViewModel.Delegate = null;
             }
 
             // Closing is animated and Hide() only runs when the animation completes, so the

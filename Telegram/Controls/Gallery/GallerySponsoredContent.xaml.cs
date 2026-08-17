@@ -213,8 +213,16 @@ namespace Telegram.Controls.Gallery
 
         private void SponsoredMessage_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.ClientService.Send(new ClickVideoMessageAdvertisement(_advertisement.UniqueId));
-            MessageHelper.OpenUrl(ViewModel.ClientService, ViewModel.NavigationService, _advertisement.Sponsor.Url);
+            // A focused button can still be invoked from the keyboard or by automation,
+            // neither of which hit tests.
+            var viewModel = ViewModel;
+            if (viewModel == null || _advertisement == null)
+            {
+                return;
+            }
+
+            viewModel.ClientService.Send(new ClickVideoMessageAdvertisement(_advertisement.UniqueId));
+            MessageHelper.OpenUrl(viewModel.ClientService, viewModel.NavigationService, _advertisement.Sponsor.Url);
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
@@ -309,6 +317,10 @@ namespace Telegram.Controls.Gallery
 
             _collapsed = !show;
             Visibility = Visibility.Visible;
+
+            // Collapsing only happens when the fade completes, so the button stays visible
+            // for the whole animation, and by then the advertisement it serves is gone.
+            IsHitTestVisible = show;
 
             var visual = ElementComposition.GetElementVisual(this);
 
