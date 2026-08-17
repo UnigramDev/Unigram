@@ -389,7 +389,7 @@ namespace Telegram.Controls.Drawers
 
                             foreach (var item in group.Stickers)
                             {
-                                if (_itemIdToContent.TryGetValue(item, out Grid content))
+                                if (item.StickerValue != null && _itemIdToContent.TryGetValue(item, out Grid content))
                                 {
                                     var animation = content.Children[0] as AnimatedImage;
                                     animation.Source = new DelayedFileSource(ViewModel.ClientService, item);
