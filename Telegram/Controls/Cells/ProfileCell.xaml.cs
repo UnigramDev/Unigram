@@ -640,6 +640,18 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        // Thread static, not static: a Brush belongs to the view that created it, and this cell runs in
+        // secondary windows too. The accent one is rebuilt when its colour changes.
+        [ThreadStatic]
+        private static SolidColorBrush t_accent;
+        [ThreadStatic]
+        private static SolidColorBrush t_transparent;
+
+        [ThreadStatic]
+        private static Style t_bodyStyle;
+        [ThreadStatic]
+        private static Style t_secretStyle;
+
         private SearchResult _searchResult;
 
         public void UpdateSearchResult(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
@@ -652,7 +664,16 @@ namespace Telegram.Controls.Cells
             {
                 RecycleSearchResult();
 
-                TitleLabel.Style = BootStrapper.Current.Resources[result?.Chat?.Type is ChatTypeSecret ? "SecretBodyTextBlockStyle" : "BodyTextBlockStyle"] as Style;
+                // Once per view rather than per row: the lookup is a dictionary walk that ran for
+                // every result on every keystroke.
+                if (result?.Chat?.Type is ChatTypeSecret)
+                {
+                    TitleLabel.Style = t_secretStyle ??= BootStrapper.Current.Resources["SecretBodyTextBlockStyle"] as Style;
+                }
+                else
+                {
+                    TitleLabel.Style = t_bodyStyle ??= BootStrapper.Current.Resources["BodyTextBlockStyle"] as Style;
+                }
 
                 if (result.Chat != null)
                 {
@@ -760,18 +781,34 @@ namespace Telegram.Controls.Cells
                     SubtitleLabel.Text = string.Empty;
                 }
 
-                if (SubtitleLabel.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
+                // Not $"@{query}": the same comparison without the allocation, per row per keystroke.
+                if (SubtitleLabel.Text.Length > result.Query.Length
+                    && SubtitleLabel.Text[0] == '@'
+                    && string.Compare(SubtitleLabel.Text, 1, result.Query, 0, result.Query.Length, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    var highligher = new TextHighlighter();
-                    highligher.Foreground = new SolidColorBrush(ActualTheme == ElementTheme.Light
+                    // Rebuilt rather than mutated: every change to Ranges invalidates the text layout
+                    // anyway. The brushes are the part worth keeping.
+                    var accent = ActualTheme == ElementTheme.Light
                         ? Theme.AccentLight.Default
-                        : Theme.AccentDark.Default);
-                    highligher.Background = new SolidColorBrush(Colors.Transparent);
+                        : Theme.AccentDark.Default;
+
+                    if (t_accent == null || t_accent.Color != accent)
+                    {
+                        t_accent = new SolidColorBrush(accent);
+                    }
+
+                    var highligher = new TextHighlighter
+                    {
+                        Foreground = t_accent,
+                        Background = t_transparent ??= new SolidColorBrush(Colors.Transparent)
+                    };
+
                     highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
 
+                    SubtitleLabel.TextHighlighters.Clear();
                     SubtitleLabel.TextHighlighters.Add(highligher);
                 }
-                else
+                else if (SubtitleLabel.TextHighlighters.Count > 0)
                 {
                     SubtitleLabel.TextHighlighters.Clear();
                 }

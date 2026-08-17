@@ -36,6 +36,17 @@ namespace Telegram.Collections
             }
         }
 
+        // A group's header row *is* the group, and it renders the Key it was realized with, so a Key
+        // that changes has to be published as a change to that row.
+        public void InvalidateKey(IKeyedCollection collection)
+        {
+            var index = collection.Index;
+            if (collection.Count > 0 && collection.Key != null && index < Count && ReferenceEquals(this[index], collection))
+            {
+                this[index] = collection;
+            }
+        }
+
         public void AddInternal(IKeyedCollection collection)
         {
             _groups.Add(collection);

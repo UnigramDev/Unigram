@@ -588,7 +588,9 @@
     <Compile Include="Charts\StepChartView.cs" />
     <Compile Include="Collections\CollectionSeparator.cs" />
     <Compile Include="Collections\FlatteningCollection.cs" />
+    <Compile Include="Collections\DiffCollectionExtensions.cs" />
     <Compile Include="Collections\Handlers\ChatDiffHandler.cs" />
+    <Compile Include="Collections\Handlers\MessageDiffHandler.cs" />
     <Compile Include="Common\ListViewExtensions.cs" />
     <Compile Include="Common\BridgeApplicationContext.cs" />
     <Compile Include="Controls\ActiveStoriesSegments.cs" />

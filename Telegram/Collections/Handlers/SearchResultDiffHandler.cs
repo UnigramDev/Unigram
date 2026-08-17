@@ -19,6 +19,13 @@ namespace Telegram.Collections.Handlers
                 return false;
             }
 
+            // A public chat's subtitle is the @username the query selected, highlighted over the
+            // query's length, so the same chat found by a different query is not the same row.
+            if (oldItem.IsPublic && !string.Equals(oldItem.Query, newItem.Query))
+            {
+                return false;
+            }
+
             if (oldItem.Chat != null && newItem.Chat != null)
             {
                 return oldItem.Chat.Id == newItem.Chat.Id;

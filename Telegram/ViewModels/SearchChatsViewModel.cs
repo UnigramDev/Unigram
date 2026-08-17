@@ -48,11 +48,18 @@ namespace Telegram.ViewModels
 
     public partial class SearchChatsViewModel : MediaTabsViewModelBase, IIncrementalCollectionOwner
     {
+        // Neither local group pages, and a ListView is told about every row one notification at a
+        // time, so anything past what gets scrolled to is rows nobody sees. Messages page, so theirs
+        // is only the first screenful.
+        private const int RecentLimit = 50;
+        private const int SearchLimit = 30;
+        private const int MessagesLimit = 20;
+
         private readonly KeyedCollection<SearchResult> _recent = new(Strings.Recent, new SearchResultDiffHandler());
         private readonly KeyedCollection<SearchResult> _chatsAndContacts1 = new(Strings.ChatsAndContacts, new SearchResultDiffHandler());
         private readonly KeyedCollection<SearchResult> _chatsAndContacts2 = new(null as string, new SearchResultDiffHandler());
         private readonly KeyedCollection<SearchResult> _globalSearch = new(Strings.GlobalSearch, new SearchResultDiffHandler());
-        private readonly KeyedCollection<Message> _messages = new(Strings.SearchMessages, null);
+        private readonly KeyedCollection<Message> _messages = new(Strings.SearchMessages, new MessageDiffHandler());
 
         private readonly SearchChannelsViewModel _channels;
         private readonly SearchWebAppsViewModel _webApps;
@@ -76,6 +83,9 @@ namespace Telegram.ViewModels
             _tracker = new ChooseChatsTracker(clientService, true);
             _tracker.Options = ChooseChatsOptions.All;
 
+            // The local half gets its own, much shorter interval: it has to read as instant, but on the
+            // keystroke itself it cost three local requests and a re-render per character typed.
+            _offline = new(Constants.LocalTypingTimeout, UpdateQueryOffline);
             _query = new(Constants.TypingTimeout, UpdateQuery, CanUpdateQuery);
             _query.Value = string.Empty;
 
@@ -136,6 +146,8 @@ namespace Telegram.ViewModels
             }
         }
 
+        private readonly DebouncedPropertyWithToken<string> _offline;
+
         private readonly DebouncedPropertyWithToken<string> _query;
         public string Query
         {
@@ -195,6 +207,7 @@ namespace Telegram.ViewModels
                     _webApps.SynchronizeQuery(query);
                     _posts.SynchronizeQuery(query);
                 }
+
             }
         }
 
@@ -290,7 +303,7 @@ namespace Telegram.ViewModels
                 return false;
             }
 
-            UpdateQueryOffline(_prevQuery = value, token);
+            _offline.Set(_prevQuery = value, token);
             return value.Length > 0;
         }
 
@@ -299,12 +312,19 @@ namespace Telegram.ViewModels
             _nextOffset = null;
             _messagesToken = default;
 
-            _messages.ClearIfNotEmpty();
+            var query = value ?? string.Empty;
+
+            // Left alone for a query that will run: LoadMessagesAsync replaces the group once the
+            // response lands, instead of emptying it now and refilling it a debounce later. Nothing
+            // refreshes it without a query, or with messages hidden, so those two still clear.
+            if (query.Length == 0 || !Options.ShowMessages)
+            {
+                _messages.ClearIfNotEmpty();
+            }
+
             _messages.Key = Strings.SearchMessages;
 
             _tracker.Clear();
-
-            var query = value ?? string.Empty;
 
             if (string.IsNullOrEmpty(value))
             {
@@ -314,16 +334,28 @@ namespace Telegram.ViewModels
 
                 IsTopChatsVisible = true;
 
-                await LoadTopChatsAsync(token);
-                await LoadRecentAsync(query, token);
+                // Both sent before the first await: awaiting one before sending the other cost a round
+                // trip on every keystroke.
+                var topChats = ClientService.SendAsync(new GetTopChats(new TopChatCategoryUsers(), 30));
+                var recent = ClientService.SendAsync(new SearchRecentlyFoundChats(query, null, RecentLimit));
+
+                await LoadTopChatsAsync(topChats, token);
+                await LoadRecentAsync(recent, query, token);
             }
             else
             {
                 IsTopChatsVisible = false;
 
-                await LoadRecentAsync(query, token);
-                await LoadChatsAndContactsPart1Async(query, token);
+                // All three at once, for the same reason. The order they are *applied* in still
+                // matters: _tracker dedupes against what the earlier groups took.
+                var recent = ClientService.SendAsync(new SearchRecentlyFoundChats(query, null, RecentLimit));
+                var chats = ClientService.SendAsync(new SearchChats(query, null, SearchLimit));
+                var contacts = ClientService.SendAsync(new SearchContacts(query, SearchLimit));
+
+                await LoadRecentAsync(recent, query, token);
+                await LoadChatsAndContactsPart1Async(chats, contacts, query, token);
             }
+
         }
 
         public async void UpdateQuery(string value, CancellationToken token)
@@ -341,13 +373,14 @@ namespace Telegram.ViewModels
             }
 
             IsEmpty = Items.Empty();
+
         }
 
-        private async Task LoadTopChatsAsync(CancellationToken cancellationToken)
+        private async Task LoadTopChatsAsync(Task<Td.Api.Object> request, CancellationToken cancellationToken)
         {
             var temp = new List<Chat>();
 
-            var response = await ClientService.SendAsync(new GetTopChats(new TopChatCategoryUsers(), 30));
+            var response = await request;
             if (response is Td.Api.Chats chats && !cancellationToken.IsCancellationRequested)
             {
                 foreach (var chat in ClientService.GetChats(chats.ChatIds))
@@ -356,26 +389,27 @@ namespace Telegram.ViewModels
                 }
             }
 
-            ReplaceDiff(TopChats, temp);
+            TopChats.Replace(temp);
         }
 
-        private async Task LoadRecentAsync(string query, CancellationToken cancellationToken)
+        private async Task LoadRecentAsync(Task<Td.Api.Object> request, string query, CancellationToken cancellationToken)
         {
             var temp = new List<SearchResult>();
 
-            var response = await ClientService.SendAsync(new SearchRecentlyFoundChats(query, null, 50));
+            var response = await request;
             if (response is Td.Api.Chats chats && !cancellationToken.IsCancellationRequested)
             {
                 foreach (var chat in ClientService.GetChats(chats.ChatIds))
                 {
                     if (_tracker.Filter(chat))
                     {
-                        temp.Add(new SearchResult(ClientService, chat, query, SearchResultType.Recent, CanSendMessageToUser));
+                        temp.Add(_recent.Reuse(temp.Count, chat, null, query, SearchResultType.Recent)
+                            ?? new SearchResult(ClientService, chat, query, SearchResultType.Recent, CanSendMessageToUser));
                     }
                 }
             }
 
-            ReplaceDiff(_recent, temp);
+            _recent.Replace(temp);
         }
 
         private Chat LoadSavedMessages(string query, CancellationToken cancellationToken)
@@ -391,16 +425,13 @@ namespace Telegram.ViewModels
             return null;
         }
 
-        private async Task LoadChatsAndContactsPart1Async(string query, CancellationToken cancellationToken)
+        private async Task LoadChatsAndContactsPart1Async(Task<Td.Api.Object> chatsRequest, Task<Td.Api.Object> contactsRequest, string query, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(query))
             {
                 _chatsAndContacts1.ClearIfNotEmpty();
                 return;
             }
-
-            var task2 = ClientService.SendAsync(new SearchChats(query, null, 100));
-            var task3 = ClientService.SendAsync(new SearchContacts(query, 100));
 
             var temp = new List<SearchResult>();
 
@@ -409,40 +440,43 @@ namespace Telegram.ViewModels
             {
                 if (_tracker.Filter(savedMessages))
                 {
-                    temp.Add(new SearchResult(ClientService, savedMessages, query, SearchResultType.Chats, CanSendMessageToUser));
+                    temp.Add(_chatsAndContacts1.Reuse(temp.Count, savedMessages, null, query, SearchResultType.Chats)
+                        ?? new SearchResult(ClientService, savedMessages, query, SearchResultType.Chats, CanSendMessageToUser));
                 }
             }
 
-            var response2 = await task2;
+            var response2 = await chatsRequest;
             if (response2 is Td.Api.Chats chats && !cancellationToken.IsCancellationRequested)
             {
                 foreach (var chat in ClientService.GetChats(chats.ChatIds))
                 {
                     if (_tracker.Filter(chat))
                     {
-                        temp.Add(new SearchResult(ClientService, chat, query, SearchResultType.Chats, CanSendMessageToUser));
+                        temp.Add(_chatsAndContacts1.Reuse(temp.Count, chat, null, query, SearchResultType.Chats)
+                            ?? new SearchResult(ClientService, chat, query, SearchResultType.Chats, CanSendMessageToUser));
                     }
                 }
             }
 
-            var response3 = await task3;
+            var response3 = await contactsRequest;
             if (response3 is Td.Api.Users users && !cancellationToken.IsCancellationRequested)
             {
                 foreach (var user in ClientService.GetUsers(users.UserIds))
                 {
                     if (_tracker.Filter(user))
                     {
-                        temp.Add(new SearchResult(ClientService, user, query, SearchResultType.Contacts, CanSendMessageToUser));
+                        temp.Add(_chatsAndContacts1.Reuse(temp.Count, null, user, query, SearchResultType.Contacts)
+                            ?? new SearchResult(ClientService, user, query, SearchResultType.Contacts, CanSendMessageToUser));
                     }
                 }
             }
 
-            ReplaceDiff(_chatsAndContacts1, temp);
+            _chatsAndContacts1.Replace(temp);
         }
 
         private async Task LoadChatsAndContactsPart2Async(string query, CancellationToken cancellationToken)
         {
-            var response = await ClientService.SendAsync(new SearchChatsOnServer(query, null, 100));
+            var response = await ClientService.SendAsync(new SearchChatsOnServer(query, null, SearchLimit));
             if (response is Td.Api.Chats chats && !cancellationToken.IsCancellationRequested)
             {
                 var temp = new List<SearchResult>();
@@ -451,11 +485,12 @@ namespace Telegram.ViewModels
                 {
                     if (_tracker.Filter(chat))
                     {
-                        temp.Add(new SearchResult(ClientService, chat, query, SearchResultType.ChatsOnServer, CanSendMessageToUser));
+                        temp.Add(_chatsAndContacts2.Reuse(temp.Count, chat, null, query, SearchResultType.ChatsOnServer)
+                            ?? new SearchResult(ClientService, chat, query, SearchResultType.ChatsOnServer, CanSendMessageToUser));
                     }
                 }
 
-                ReplaceDiff(_chatsAndContacts2, temp);
+                _chatsAndContacts2.Replace(temp);
             }
         }
 
@@ -474,7 +509,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                ReplaceDiff(_globalSearch, temp);
+                _globalSearch.Replace(temp);
             }
         }
 
@@ -482,62 +517,31 @@ namespace Telegram.ViewModels
         {
             _messagesToken = cancellationToken;
 
-            var response = await ClientService.SendAsync(new SearchMessages(null, query, _nextOffset ?? string.Empty, 50, null, null, 0, 0));
+            var firstPage = string.IsNullOrEmpty(_nextOffset);
+
+            var response = await ClientService.SendAsync(new SearchMessages(null, query, _nextOffset ?? string.Empty, MessagesLimit, null, null, 0, 0));
             if (response is FoundMessages messages && !cancellationToken.IsCancellationRequested)
             {
-                if (string.IsNullOrEmpty(_nextOffset))
-                {
-                    _messages.Key = Locale.Declension(Strings.R.messages, messages.TotalCount);
-                }
-
                 _nextOffset = string.IsNullOrEmpty(messages.NextOffset) ? null : messages.NextOffset;
 
-                foreach (var message in messages.Messages)
+                // The first page replaces what the previous query left; later pages append.
+                if (firstPage)
                 {
-                    _messages.Add(message);
+                    var key = Locale.Declension(Strings.R.messages, messages.TotalCount);
+                    var changed = !string.Equals(_messages.Key, key);
+
+                    _messages.Key = key;
+
+                    _messages.Replace(messages.Messages);
+
+                    if (changed)
+                    {
+                        Items.InvalidateKey(_messages);
+                    }
                 }
-            }
-        }
-
-        private void ReplaceDiff<T>(DiffObservableCollection<T> destination, IList<T> source)
-        {
-            if (destination.Empty())
-            {
-                destination.AddRange(source);
-                return;
-            }
-            else if (source.Empty())
-            {
-                destination.ClearIfNotEmpty();
-                return;
-            }
-
-            var recycledItems = Math.Min(destination.Count, source.Count);
-            var changedItems = Math.Max(destination.Count, source.Count);
-
-            if (destination.Count > source.Count)
-            {
-                for (int i = recycledItems; i < changedItems; i++)
+                else
                 {
-                    destination.RemoveAt(recycledItems);
-                }
-            }
-            else if (source.Count > destination.Count)
-            {
-                for (int i = recycledItems; i < changedItems; i++)
-                {
-                    destination.Insert(i, source[i]);
-                }
-            }
-
-            for (int i = 0; i < recycledItems; i++)
-            {
-                var oldItem = destination[i];
-                var newItem = source[i];
-
-                if (destination.DefaultDiffHandler == null || !destination.DefaultDiffHandler.CompareItems(oldItem, newItem))
-                {
-                    destination[i] = newItem;
+                    _messages.AddRange(messages.Messages);
                 }
             }
         }

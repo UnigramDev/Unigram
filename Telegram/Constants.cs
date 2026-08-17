@@ -30,6 +30,9 @@ namespace Telegram
         public static readonly Size SecretSize = new(320, 200);
 
         public const int TypingTimeout = 300;
+        // For work that has to feel instant but still shouldn't run once per keystroke: a local
+        // search against TDLib's database, as opposed to the request that leaves the machine.
+        public const int LocalTypingTimeout = 50;
         public const int HoldingThrottle = 500;
         public const int AnimatedThrottle = 200;
 
