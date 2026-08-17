@@ -381,7 +381,7 @@ namespace Telegram.Common
                 node = VisualTreeHelper.GetParent(node);
             }
 
-            return true;
+            return false;
         }
 
         private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
