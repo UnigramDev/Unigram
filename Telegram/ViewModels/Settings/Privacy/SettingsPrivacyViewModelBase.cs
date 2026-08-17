@@ -225,13 +225,13 @@ namespace Telegram.ViewModels.Settings
 
             _cached = rules;
 
-            _restrictedUsers = restrictedUsers ?? new UserPrivacySettingRuleRestrictUsers(Array.Empty<long>());
-            _restrictedChatMembers = restrictedChatMembers ?? new UserPrivacySettingRuleRestrictChatMembers(Array.Empty<long>());
+            _restrictedUsers = restrictedUsers ?? new UserPrivacySettingRuleRestrictUsers([]);
+            _restrictedChatMembers = restrictedChatMembers ?? new UserPrivacySettingRuleRestrictChatMembers([]);
 
             _restrictedBots = restrictedBots;
 
-            _allowedUsers = allowedUsers ?? new UserPrivacySettingRuleAllowUsers(Array.Empty<long>());
-            _allowedChatMembers = allowedChatMembers ?? new UserPrivacySettingRuleAllowChatMembers(Array.Empty<long>());
+            _allowedUsers = allowedUsers ?? new UserPrivacySettingRuleAllowUsers([]);
+            _allowedChatMembers = allowedChatMembers ?? new UserPrivacySettingRuleAllowChatMembers([]);
 
             _allowedPremium = allowedPremium;
             _allowedBots = allowedBots;

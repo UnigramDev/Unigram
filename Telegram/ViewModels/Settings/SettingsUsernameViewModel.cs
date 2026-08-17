@@ -72,7 +72,7 @@ namespace Telegram.ViewModels.Settings
         {
             if (editable != null)
             {
-                static IList<string> ReplaceEditable(IList<string> usernames, string original, string editable)
+                static string[] ReplaceEditable(IList<string> usernames, string original, string editable)
                 {
                     if (usernames == null)
                     {
@@ -99,8 +99,8 @@ namespace Telegram.ViewModels.Settings
 
                 usernames = new Usernames
                 {
-                    ActiveUsernames = ReplaceEditable(usernames?.ActiveUsernames, usernames?.EditableUsername, editable),
-                    DisabledUsernames = ReplaceEditable(usernames?.DisabledUsernames, usernames?.EditableUsername, editable),
+                    ActiveUsernames = [.. ReplaceEditable(usernames?.ActiveUsernames, usernames?.EditableUsername, editable)],
+                    DisabledUsernames = [.. ReplaceEditable(usernames?.DisabledUsernames, usernames?.EditableUsername, editable)],
                     EditableUsername = editable
                 };
             }

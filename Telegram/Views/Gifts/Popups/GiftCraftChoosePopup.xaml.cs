@@ -243,7 +243,7 @@ namespace Telegram.Views.Gifts.Popups
                     if (response is GiftResaleResultOk ok)
                     {
                         //_aggregator.Publish(new UpdateGiftIsSold(_gift.ReceivedGiftId));
-                        SelectedGift = new ReceivedGift(ok.ReceivedGiftId, null, null, 0, false, false, false, false, false, false, 0, new SentGiftUpgraded(giftForResale.Gift), Array.Empty<int>(), 0, 0, false, 0, 0, 0, 0, 0, string.Empty, 0); ;
+                        SelectedGift = new ReceivedGift(ok.ReceivedGiftId, null, null, 0, false, false, false, false, false, false, 0, new SentGiftUpgraded(giftForResale.Gift), [], 0, 0, false, 0, 0, 0, 0, 0, string.Empty, 0); ;
                         Hide(ContentDialogResult.Primary);
 
                         //if (chat != null)

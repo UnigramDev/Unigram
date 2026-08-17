@@ -404,10 +404,16 @@ carries the exception type, message and a stack. The Application event log only 
       `new PlaceholderImageHelper(Window.Current)` per view, whose native constructor takes
       `window.Compositor()` — the first thing to check is whether that construction is what
       throws on the secondary view.
-- [ ] `{Binding}` is where the runtime differences will show. 180 occurrences across 32 of 481
-      XAML files, against 1927 `x:Bind` which are compiled and free. Each managed binding source
-      type needs `[GeneratedBindableCustomProperty]` and to be `partial`. Bindings whose source is
-      a XAML/WinRT type need nothing.
+- [x] `{Binding}` **audited — see `binding-audit.md`.** 108 occurrences across 26 of 475 files,
+      against 2038 `x:Bind`. Two mechanisms satisfy a classic binding and they are disjoint here:
+      `XamlTypeInfo.g.cs` emits real accessors for any managed member reached from markup (no
+      attribute, no registration, both projects), and `[GeneratedBindableCustomProperty]` covers the
+      types the compiler cannot see because they are only ever a runtime `DataContext`. So the risk
+      surface is just the second set. Three live defects fell out — `StickerSetViewModel.Title` and
+      `.IsInstalled` in the emoji drawer's group header, `RevenueTabItem.Text` behind
+      `DisplayMemberPath`, and `InstantViewModel.Title` behind the tab header's `SetBinding` — plus
+      eight occurrences that need a glance to confirm. The three bindings built in code-behind are
+      the worst of the surface: no markup, so nothing static sees them at all.
 
 ## Phase 5 — AOT (compiles, links, runs; three features still under repair)
 
@@ -437,7 +443,7 @@ now. Three traps that cost real time, none of which announce themselves:
 ### The failures that only appear at runtime
 
 None of these warned at build time. All were found by running a feature, and all but one are a
-missing entry in `CsWinRT.cs`, which is effectively the app's AOT manifest. `TG1001`/`TG1002` now
+missing entry in `CsWinRT.cs`, which is effectively the app's AOT manifest. `TG1001`/`TG1002`/`TG1003` now
 catch the whole class at compile time — see [the analyzer](#the-analyzer) below.
 
 | symptom | cause | fix |
@@ -448,7 +454,7 @@ catch the whole class at compile time — see [the analyzer](#the-analyzer) belo
 | freeform gradient not drawn | same rule: `GetColors()` returns `Color[]` handed to `CreateFreeformGradient(IVector<Color>)`, and the throw was swallowed inside XAML brush creation | convert to `List<Color>` at the call site |
 | `CompositionVSync` NRE, killing calls | self-inflicted: through the ABI the rendering args arrive as a bare `IInspectable`, so `e as RenderingEventArgs` is null. Casting per frame would be a QueryInterface per frame | both consumers now read `Stopwatch.GetTimestamp()`; `VisualUtilities.Tilt` was silently reading a stale timestamp for the same reason |
 | chat background: gradient but no pattern | the **setter** `_freeform.Colors = GetColors()` still handed a `Color[]`; only the constructor call had been converted | build the `List<Color>` once, use it on both branches |
-| …then still no pattern | `CreateEffectFactory(effect, ["Intensity.Opacity"])` — a **collection expression** synthesises `<>z__ReadOnlySingleElementList<string>`, which has no CCW at all. A third rule, independent of the element type | `new[] { … }`, as every other call site already used |
+| …then still no pattern | `CreateEffectFactory(effect, ["Intensity.Opacity"])` — a **collection expression targeting a read-only interface** (here `IIterable<String>` → `IEnumerable<string>`) synthesises a type that can never have a CCW. **Two** of them, picked by element count: `<>z__ReadOnlySingleElementList<T>` for one, `<>z__ReadOnlyArray<T>` for more — so a site that works with two elements can break when one is removed. `List<T>`, `IList<T>` and `ICollection<T>` are safe, being mutable: those give a real `List<T>` | `new[] { … }`, as every other call site already used |
 | hard crash joining a group call | `MessagesHost.ItemsSource = new ObservableCollection<GroupCallMessage>(…)`. **External** generic instantiations get no CCW vtable — the generator only emits those for the app's own partial types — so XAML's QI for `IBindableIterable` fails and `set_ItemsSource` returns `E_INVALIDARG`. On a `DispatcherQueueHandler` that is a fail-fast | registered the instantiation in `CsWinRT.cs` |
 | leaving a call from the call window did nothing | `ContentPopup` completes the task `ShowQueuedAsync` awaits from a `CompositionTarget.Rendered` callback. Subscribing threw `NotSupportedException: Cannot provide IReference support for delegate type 'EventHandler<RenderedEventArgs>'` — nothing roots that marshaller, because `CompositionTargetImpl` bypasses the projection that would have — and `QueueCallbackForCompositionRendered` swallowed it. Every dialog on that view was dead | `CompositionTargetImpl.Rendered` marshals `EventHandler<object>`, like `Rendering`; no caller reads the args |
 
@@ -464,8 +470,12 @@ problem, so the analyzer resolves the attribute and switches itself off when it 
   attribute to paste.
 - **TG1002** — an array of a value type that is not a WinRT fundamental, passed to a typed
   collection. `IReferenceArray<T>`, which AOT cannot synthesise. The message names the `List<T>`.
+- **TG1003** — a collection expression targeting a read-only interface. The synthesised type has no
+  CCW and cannot be given one, so it is the one case a registration does not fix. TG1001's reasoning
+  does not reach it: the target is typed, but the marshaller the generator emits still needs a CCW
+  for whatever concrete type turns up.
 
-The dividing line between the two is whether the compiler can see the conversion. A parameter typed
+The dividing line between the first two is whether the compiler can see the conversion. A parameter typed
 `IEnumerable<T>` is a conversion in source, so CsWinRT generates the marshaller for that
 instantiation and any concrete type reaches it. A parameter typed `object` is not. Elements are the
 same question one level down, at a point no call site corresponds to — which is how
@@ -486,9 +496,58 @@ attributes, not by namespace: the projection for a referenced C++/WinRT componen
 **into** the consuming assembly, so `Telegram.Native.PlaceholderImageHelper` is a type of this
 compilation and looks managed by every other measure.
 
-Blind spot: classic `{Binding}` assigns `ItemsSource` inside the framework, with no C# anywhere.
-`x:Bind` is covered — it emits the assignment into a `.g.cs`, which is why the analyzer opts into
-analysing generated code.
+Blind spot: a binding assigns through the property's **declared** type, so where that is an
+interface the concrete type is unknowable at compile time and no rule can fire. That is how
+`SettingsStoragePage` bound `Statistics.ByChat` and threw `E_INVALIDARG` with nothing to warn on.
+For TDLib it is closed from the other end - `CsWinRT.Vectors.cs` registers every vector
+instantiation in the schema, both parsers materialising a vector as `List<T>` - but it stays open
+for any other property typed as an interface. That file is **real source, not generated**: CsWinRT
+reads these attributes in its own generator, and a generator cannot see what another generator
+wrote. `TDAPI003` compares the schema against the attributes actually present and reports what a
+TDLib update has added. Classic `{Binding}` is a second blind spot, having no
+C# anywhere; `x:Bind` is covered, which is why the analyzer opts into analysing generated code.
+
+### IList<T> to List<T> on the generated API — ON A BRANCH
+
+Why: a binding assigns through the **declared** type, so with `IList<T>` no analyzer can ever see
+the concrete type, and `SettingsStoragePage` threw `E_INVALIDARG` with nothing to warn on. `List<T>`
+makes it visible, stops `foreach` boxing an enumerator (23 sites on `.Entities` alone, per render)
+and lets the indexer inline. Functions keep `IList<T>`: they are only written and serialised, never
+bound or iterated, and 93 of the 313 call-site errors were theirs alone.
+
+Three commits, on their own branch rather than on develop:
+
+- object **properties** are `List<T>`, constructors still take `IList<T>` and convert;
+- the analyzer follows x:Bind into `XamlBindingSetters`, which is how the 83 below became visible;
+- constructors take `List<T>` too, so `TdCollection.AsList` is gone.
+
+Call sites moved to `[x]` and `[]`, which allocates *less* than before - `AsList(new[] { x })` built
+an array and copied it. Four sites needed judgement:
+`TryGetColors` fills by `Add` rather than by index (capacity is not count - that is the crash that
+literal translation would give), `ClientService.ChatList`/`StoryList` the same, `VoipPage`'s
+gradients are `static readonly List<int>`, and `TextStyleRun` shares one empty list.
+
+Open, in the order I would take them:
+
+- **The shared empties are a footgun and a regression.** `TextStyleRun.NoEntities` and
+  `AnimatedImageSource.NoOutline` are shared *mutable* lists; one stray `Add` corrupts a
+  process-wide singleton. The old code failed fast, because `IList<T>.Add` on `Array.Empty<T>()`
+  throws `NotSupportedException`. Inheriting a `Frozen<T> : List<T>` cannot help - the members are
+  not virtual, so the guard is inert whenever the static type is `List<T>`, which it always is
+  (measured). Plan: return a fresh list from `GetEntities`, whose result callers may edit, keep the
+  shared instance only for stored-and-read fields, and add a `[Conditional("DEBUG")]` check that
+  the count is still zero.
+- **83 app collections still unregistered** - `DiffObservableCollection<T>`,
+  `IncrementalCollection<T>`, `ObservableCollection<T>`. Zero TDLib vectors remain, so this is now
+  a finite list rather than an open-ended blind spot. Each is a page that throws when opened.
+- **`CsWinRT.Vectors.cs` is now partly dead weight.** The analyzer can see TDLib vectors on its own,
+  so the 188 blanket registrations could shrink to the reachable set. Strip the file, rebuild, and
+  TG1001 names exactly what is needed.
+- **Nothing here is measured.** No binary-size or runtime figure for the change; NativeAOT
+  specialises per instantiation, so it may cost code size.
+
+`Telegram/Common/ThumbnailController.cs` is Fela's, unrelated, and in the same tree - not part of
+this.
 
 ### Still open
 

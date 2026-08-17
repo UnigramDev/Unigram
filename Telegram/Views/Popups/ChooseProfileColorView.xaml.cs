@@ -290,7 +290,7 @@ namespace Telegram.Views.Popups
                 ProfileColors colors;
                 if (upgradedGift != null)
                 {
-                    colors = new ProfileColors(new ProfileAccentColors(Array.Empty<int>(), new[] { upgradedGift.BackdropColors.EdgeColor, upgradedGift.BackdropColors.CenterColor }, Array.Empty<int>()));
+                    colors = new ProfileColors(new ProfileAccentColors([], [upgradedGift.BackdropColors.EdgeColor, upgradedGift.BackdropColors.CenterColor], []));
                 }
                 else if (_clientService.TryGetProfileColor(colorId, out ProfileColor color))
                 {

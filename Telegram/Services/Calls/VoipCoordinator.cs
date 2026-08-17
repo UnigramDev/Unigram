@@ -293,7 +293,7 @@ namespace Telegram.Services
 
             MessageSenders availableAliases;
             availableAliases = await clientService.SendAsync(new GetVideoChatAvailableParticipants(chatId)) as MessageSenders;
-            availableAliases ??= new MessageSenders(0, Array.Empty<MessageSender>());
+            availableAliases ??= new MessageSenders(0, []);
 
             var popup = new VideoChatAliasesPopup(clientService, chat, true, availableAliases.Senders);
 
@@ -355,7 +355,7 @@ namespace Telegram.Services
             {
                 MessageSenders availableAliases;
                 availableAliases = await clientService.SendAsync(new GetVideoChatAvailableParticipants(chat.Id)) as MessageSenders;
-                availableAliases ??= new MessageSenders(0, Array.Empty<MessageSender>());
+                availableAliases ??= new MessageSenders(0, []);
 
                 var popup = new VideoChatAliasesPopup(clientService, chat, false, availableAliases.Senders);
 

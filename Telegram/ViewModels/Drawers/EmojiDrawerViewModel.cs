@@ -400,9 +400,9 @@ namespace Telegram.ViewModels.Drawers
             var recentResponse = await ClientService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatusCustomEmojis;
             var defaulResponse = await ClientService.SendAsync(new GetDefaultEmojiStatuses()) as EmojiStatusCustomEmojis;
 
-            var themed = themedResponse?.CustomEmojiIds ?? Array.Empty<long>();
-            var recent = recentResponse?.CustomEmojiIds ?? Array.Empty<long>();
-            var defaul = defaulResponse?.CustomEmojiIds ?? Array.Empty<long>();
+            var themed = themedResponse?.CustomEmojiIds ?? Enumerable.Empty<long>();
+            var recent = recentResponse?.CustomEmojiIds ?? Enumerable.Empty<long>();
+            var defaul = defaulResponse?.CustomEmojiIds ?? Enumerable.Empty<long>();
 
             var emoji = new List<long>();
             var delay = new List<long>();
@@ -436,10 +436,10 @@ namespace Telegram.ViewModels.Drawers
 
             var disallowedResponse = await ClientService.SendAsync(new GetDisallowedChatEmojiStatuses()) as EmojiStatusCustomEmojis;
 
-            var themed = themedResponse?.CustomEmojiIds ?? Array.Empty<long>();
-            var recent = recentResponse?.CustomEmojiIds ?? Array.Empty<long>();
-            var defaul = defaulResponse?.CustomEmojiIds ?? Array.Empty<long>();
-            var disall = disallowedResponse?.CustomEmojiIds ?? Array.Empty<long>();
+            var themed = themedResponse?.CustomEmojiIds ?? Enumerable.Empty<long>();
+            var recent = recentResponse?.CustomEmojiIds ?? Enumerable.Empty<long>();
+            var defaul = defaulResponse?.CustomEmojiIds ?? Enumerable.Empty<long>();
+            var disall = disallowedResponse?.CustomEmojiIds ?? Enumerable.Empty<long>();
 
             var emoji = new List<long>();
             var delay = new List<long>();
@@ -546,8 +546,8 @@ namespace Telegram.ViewModels.Drawers
             var select = available.AllowCustomEmoji || sum > 7;
             var count = select ? 6 : 7;
 
-            IList<AvailableReaction> source = available.TopReactions.Take(count).ToList();
-            IList<AvailableReaction> additional = available.RecentReactions.Count > 0
+            List<AvailableReaction> source = available.TopReactions.Take(count).ToList();
+            List<AvailableReaction> additional = available.RecentReactions.Count > 0
                 ? available.RecentReactions
                 : available.PopularReactions;
 
@@ -605,7 +605,7 @@ namespace Telegram.ViewModels.Drawers
 
             var visible = new List<(AvailableReaction, Sticker)>();
 
-            void Populate(IList<AvailableReaction> source, List<(AvailableReaction, Sticker)> target)
+            void Populate(List<AvailableReaction> source, List<(AvailableReaction, Sticker)> target)
             {
                 foreach (var item in source)
                 {
@@ -632,7 +632,7 @@ namespace Telegram.ViewModels.Drawers
             return visible;
         }
 
-        private async void ContinueReactions(AvailableReactions available, IList<AvailableReaction> source, IList<AvailableReaction> sourceRecent)
+        private async void ContinueReactions(AvailableReactions available, List<AvailableReaction> source, List<AvailableReaction> sourceRecent)
         {
             if (available == null)
             {
@@ -664,7 +664,7 @@ namespace Telegram.ViewModels.Drawers
             var top = new List<StickerViewModel>();
             var recent = new List<StickerViewModel>();
 
-            void Populate(IList<AvailableReaction> source, List<StickerViewModel> target)
+            void Populate(List<AvailableReaction> source, List<StickerViewModel> target)
             {
                 foreach (var item in source)
                 {

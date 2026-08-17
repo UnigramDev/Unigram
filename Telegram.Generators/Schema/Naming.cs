@@ -65,18 +65,26 @@ namespace Telegram.Generators.Schema
         }
 
         /// <summary>The C# type for a field, including vector nesting and nullability.</summary>
-        public static string PropertyType(SchemaProperty property)
+        /// <remarks>
+        /// A vector is a List on an object and an IList on a function. Objects are read - bound to
+        /// ItemsSource, iterated per render - and List is what makes the concrete type visible to
+        /// the analyzer, keeps foreach from boxing an enumerator, and lets the indexer inline.
+        /// Functions are only ever written and serialised, so none of that applies and IList is the
+        /// friendlier parameter type.
+        /// </remarks>
+        public static string PropertyType(SchemaProperty property, bool function = true)
         {
             var name = ScalarType(property.Type);
+            var list = function ? "IList" : "List";
 
             if (property.IsVectorOfVectors)
             {
-                return "IList<IList<" + name + ">>";
+                return list + "<" + list + "<" + name + ">>";
             }
 
             if (property.IsVector)
             {
-                return "IList<" + name + ">";
+                return list + "<" + name + ">";
             }
 
             // The schema states nullability in prose rather than in the type, so this reads it back
@@ -87,6 +95,12 @@ namespace Telegram.Generators.Schema
             }
 
             return name;
+        }
+
+        /// <summary>The constructor parameter type, which matches the field.</summary>
+        public static string ParameterType(SchemaProperty property, bool function)
+        {
+            return PropertyType(property, function);
         }
 
         public static string ScalarType(string name)

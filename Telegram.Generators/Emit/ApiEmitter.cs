@@ -60,11 +60,11 @@ namespace Telegram.Generators.Emit
                 // from the wire without every consumer having to null-check.
                 if (prop.Type == "string" && !prop.IsVector)
                 {
-                    builder.AppendLine("    public " + Naming.PropertyType(prop) + " " + fieldName + " { get; set; } = string.Empty;");
+                    builder.AppendLine("    public " + Naming.PropertyType(prop, type.IsFunction) + " " + fieldName + " { get; set; } = string.Empty;");
                 }
                 else
                 {
-                    builder.AppendLine("    public " + Naming.PropertyType(prop) + " " + fieldName + " { get; set; }");
+                    builder.AppendLine("    public " + Naming.PropertyType(prop, type.IsFunction) + " " + fieldName + " { get; set; }");
                 }
             }
 
@@ -127,7 +127,7 @@ namespace Telegram.Generators.Emit
                 }
 
                 var property = type.Properties[i];
-                builder.Append(Naming.PropertyType(property) + " " + Naming.ParameterName(property));
+                builder.Append(Naming.ParameterType(property, type.IsFunction) + " " + Naming.ParameterName(property));
             }
 
             builder.AppendLine(")");

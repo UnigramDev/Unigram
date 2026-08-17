@@ -330,7 +330,7 @@ namespace Telegram.Common
             if (package.AvailableFormats.Contains(StandardDataFormats.Text))
             {
                 string text = await package.GetTextAsync();
-                IList<TextEntity> entities = null;
+                List<TextEntity> entities = null;
 
                 if (package.AvailableFormats.Contains("application/x-tl-field-tags"))
                 {
@@ -416,7 +416,7 @@ namespace Telegram.Common
                     }
                 }
 
-                return new FormattedText(text, entities ?? Array.Empty<TextEntity>());
+                return new FormattedText(text, entities ?? []);
             }
 
             return null;
@@ -1256,7 +1256,7 @@ namespace Telegram.Common
             if (response is UpgradedGift gift)
             {
                 var text = gift.OriginalDetails?.Text ?? string.Empty.AsFormattedText();
-                var receivedGift = new ReceivedGift(string.Empty, null, text, 0, true, false, false, false, false, false, 0, new SentGiftUpgraded(gift), Array.Empty<int>(), 0, 0, false, 0, 0, 0, 0, 0, string.Empty, 0);
+                var receivedGift = new ReceivedGift(string.Empty, null, text, 0, true, false, false, false, false, false, 0, new SentGiftUpgraded(gift), [], 0, 0, false, 0, 0, 0, 0, 0, string.Empty, 0);
 
                 navigation.ShowPopup(new ReceivedGiftPopup(clientService, navigation, receivedGift, null, null));
             }
@@ -2065,7 +2065,7 @@ namespace Telegram.Common
                 var message = Strings.RequestToJoinSent + Environment.NewLine + (channel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription);
                 var entity = new TextEntity(0, Strings.RequestToJoinSent.Length, new TextEntityTypeBold());
 
-                var text = new FormattedText(message, new[] { entity });
+                var text = new FormattedText(message, [entity]);
 
                 ToastPopup.Show(navigation.XamlRoot, text, ToastPopupIcon.JoinRequested);
             }

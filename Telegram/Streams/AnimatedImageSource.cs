@@ -21,7 +21,11 @@ namespace Telegram.Streams
 
         public bool NeedsRepainting { get; set; }
 
-        public IList<ClosedVectorPath> Outline { get; set; }
+        // AnimatedImage draws no shimmer at all when Outline is null, so having no outline has to
+        // be an empty list. Shared because it is only ever read - nothing may add to it.
+        public static readonly List<ClosedVectorPath> NoOutline = new();
+
+        public List<ClosedVectorPath> Outline { get; set; }
 
         // Needed for Outline
         public int Width { get; set; }

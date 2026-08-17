@@ -22,7 +22,7 @@ namespace Telegram.Services
 
         private readonly object _lock = new();
 
-        private readonly static FormattedText _emptyText = new(string.Empty, Array.Empty<TextEntity>());
+        private readonly static FormattedText _emptyText = new(string.Empty, []);
 
         private Queue<long> _queue = new();
         private bool _loading = true;

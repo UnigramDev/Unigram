@@ -192,7 +192,7 @@ namespace Telegram.Views.Supergroups.Popups
 
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
-            var empty = Array.Empty<AvailableReaction>();
+            List<AvailableReaction> empty = [];
             var reactions = ViewModel.ClientService.ActiveReactions
                 .Select(x => new AvailableReaction(new ReactionTypeEmoji(x), false))
                 .ToList();

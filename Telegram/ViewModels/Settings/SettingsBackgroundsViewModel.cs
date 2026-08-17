@@ -46,7 +46,7 @@ namespace Telegram.ViewModels.Settings
             }
 
             var dark = Settings.Appearance.IsDarkTheme();
-            var freeform = dark ? new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+            List<int> freeform = dark ? [0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258] : [0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884];
 
             var background = ClientService.DefaultBackground;
             var predefined = new Background(Constants.WallpaperColorId, true, dark, string.Empty,

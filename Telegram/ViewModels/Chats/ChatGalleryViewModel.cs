@@ -253,7 +253,7 @@ namespace Telegram.ViewModels.Chats
 
             if (message.Advertisements == null)
             {
-                message.Advertisements = new VideoMessageAdvertisements(Array.Empty<VideoMessageAdvertisement>(), -1, -1);
+                message.Advertisements = new VideoMessageAdvertisements([], -1, -1);
 
                 var response = await ClientService.SendAsync(new GetVideoMessageAdvertisements(message.ChatId, message.Id));
                 if (response is VideoMessageAdvertisements advertisements)

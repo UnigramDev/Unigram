@@ -649,7 +649,7 @@ namespace Telegram.Controls.Messages
 
         public async void Initialize(IClientService clientService)
         {
-            var empty = Array.Empty<AvailableReaction>();
+            List<AvailableReaction> empty = [];
             var reactions = clientService.ActiveReactions
                 .Select(x => new AvailableReaction(new ReactionTypeEmoji(x), false))
                 .ToList();
@@ -1123,7 +1123,7 @@ namespace Telegram.Controls.Messages
             }
             else if (ItemClick != null)
             {
-                var empty = Array.Empty<AvailableReaction>();
+                List<AvailableReaction> empty = [];
                 var reactions = _viewModel.ClientService.ActiveReactions
                     .Select(x => new AvailableReaction(new ReactionTypeEmoji(x), false))
                     .ToList();

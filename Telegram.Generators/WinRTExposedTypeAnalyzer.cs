@@ -65,6 +65,17 @@ namespace Telegram.Generators
             isEnabledByDefault: true,
             description: "An array of a reference type marshals as an array of pointers, but an array of a value type that is not a WinRT fundamental has to box through IReferenceArray<T>, which NativeAOT cannot synthesise. The call throws NotSupportedException at runtime, often inside a catch that hides it.");
 
+        public const string CollectionExpressionDiagnosticId = "TG1003";
+
+        private static readonly DiagnosticDescriptor CollectionExpressionRule = new DiagnosticDescriptor(
+            CollectionExpressionDiagnosticId,
+            "Collection expression cannot cross the WinRT ABI",
+            "A collection expression targeting '{0}' compiles to a synthesised read-only type, which can never have a CCW. Write new[] {{ … }} or new List<T> {{ … }} instead",
+            "Interoperability",
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Targeting a read-only interface, a collection expression compiles to <>z__ReadOnlySingleElementList<T> for one element and <>z__ReadOnlyArray<T> for more. Neither is a type anything can generate a vtable for, so the call fails at runtime with an InvalidCastException - and because the type depends on the element count, a site that works with two elements can break when one is removed. Targeting List<T> or IList<T> is safe: those produce a real List<T>.");
+
         // The type is only reachable in the CsWinRT build; on .NET Native the attribute does not
         // exist and neither does the problem, so the analyzer switches itself off there.
         private const string AttributeName = "WinRT.GeneratedWinRTExposedExternalTypeAttribute";
@@ -103,6 +114,17 @@ namespace Telegram.Generators
             "System.Collections.IList",
         };
 
+        // A collection expression targeting one of these does not produce a List: the interface is
+        // read-only, so the compiler is free to synthesise a type of its own, and does. Targeting
+        // List<T>, IList<T> or ICollection<T> is safe - a mutable interface needs a mutable
+        // instance, and that is a real List<T>.
+        private static readonly string[] ReadOnlySurfaces =
+        {
+            "System.Collections.Generic.IEnumerable`1",
+            "System.Collections.Generic.IReadOnlyList`1",
+            "System.Collections.Generic.IReadOnlyCollection`1",
+        };
+
         // Typed collections, which the generator handles at the call site. Listed only so that the
         // elements can be followed: those are boxed later, out of sight of any call site. Note
         // IEnumerable<T> rather than IIterable<T> - by the time Roslyn sees the signature the
@@ -124,7 +146,7 @@ namespace Telegram.Generators
             genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
             miscellaneousOptions: SymbolDisplayMiscellaneousOptions.ExpandNullable);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule, ReferenceArrayRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule, ReferenceArrayRule, CollectionExpressionRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -154,6 +176,7 @@ namespace Telegram.Generators
             private readonly HashSet<ITypeSymbol> _registered = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
             private readonly HashSet<ITypeSymbol> _untyped = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
             private readonly HashSet<ITypeSymbol> _typed = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
+            private readonly HashSet<ITypeSymbol> _readOnly = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
             private readonly HashSet<ITypeSymbol> _fundamental = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
 
             // Every argument of every call asks the same question of a few hundred types, and the
@@ -175,6 +198,7 @@ namespace Telegram.Generators
 
                 Populate(compilation, UntypedSurfaces, _untyped);
                 Populate(compilation, TypedSurfaces, _typed);
+                Populate(compilation, ReadOnlySurfaces, _readOnly);
                 Populate(compilation, FundamentalTypes, _fundamental);
             }
 
@@ -195,7 +219,7 @@ namespace Telegram.Generators
                 var operation = (IArgumentOperation)context.Operation;
                 var parameter = operation.Parameter;
 
-                if (parameter == null || !IsProjected(parameter.ContainingSymbol?.ContainingType))
+                if (parameter == null || !IsBoundary(parameter.ContainingSymbol))
                 {
                     return;
                 }
@@ -225,6 +249,15 @@ namespace Telegram.Generators
                 var type = value.Type;
                 if (type == null)
                 {
+                    return;
+                }
+
+                // Before anything else: the synthesised types have no CCW and never will, so the
+                // usual question of which instantiation to register does not apply.
+                if (value.Kind == OperationKind.CollectionExpression && IsReadOnly(target))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(CollectionExpressionRule, value.Syntax.GetLocation(),
+                        target.ToDisplayString(TypeFormat)));
                     return;
                 }
 
@@ -289,6 +322,33 @@ namespace Telegram.Generators
                     default:
                         return Enumerable.Empty<IOperation>();
                 }
+            }
+
+            /// <summary>
+            /// Whether crossing into this member means crossing into WinRT.
+            /// </summary>
+            /// <remarks>
+            /// x:Bind does not assign the property itself: it calls a Set_ on the XamlBindingSetters
+            /// the XAML compiler emits into the page, which takes the value as object and assigns it
+            /// one frame later. That class belongs to this assembly and is projected by nothing, so
+            /// following the call is the only way to see the concrete type - and the only reason the
+            /// concrete type is there to see is that the property is declared as a List.
+            /// </remarks>
+            private bool IsBoundary(ISymbol member)
+            {
+                var declaring = member?.ContainingType;
+                if (declaring == null)
+                {
+                    return false;
+                }
+
+                return IsProjected(declaring)
+                    || (declaring.Name == "XamlBindingSetters" && member.Name.StartsWith("Set_", System.StringComparison.Ordinal));
+            }
+
+            private bool IsReadOnly(ITypeSymbol type)
+            {
+                return type is INamedTypeSymbol named && _readOnly.Contains(named.OriginalDefinition);
             }
 
             private bool IsUntyped(ITypeSymbol type)

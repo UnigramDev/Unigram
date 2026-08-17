@@ -53,7 +53,7 @@ namespace Telegram.Common
         /// Parses an HTML fragment into page blocks. Returns an empty list when there is
         /// nothing to paste — the caller decides what an empty paste means.
         /// </summary>
-        public static IList<PageBlock> Parse(string html)
+        public static List<PageBlock> Parse(string html)
         {
             var blocks = new List<PageBlock>();
             if (string.IsNullOrEmpty(html))
@@ -417,7 +417,7 @@ namespace Telegram.Common
         private static void ParseTable(Node node, List<PageBlock> output)
         {
             var caption = EmptyText();
-            var rows = new List<IList<PageBlockTableCell>>();
+            var rows = new List<List<PageBlockTableCell>>();
             CollectRows(node, rows, ref caption);
 
             if (rows.Count == 0)
@@ -434,7 +434,7 @@ namespace Telegram.Common
             });
         }
 
-        private static void CollectRows(Node node, List<IList<PageBlockTableCell>> rows, ref RichText caption)
+        private static void CollectRows(Node node, List<List<PageBlockTableCell>> rows, ref RichText caption)
         {
             foreach (var child in node.Children)
             {
@@ -460,7 +460,7 @@ namespace Telegram.Common
             }
         }
 
-        private static IList<PageBlockTableCell> ParseRow(Node row)
+        private static List<PageBlockTableCell> ParseRow(Node row)
         {
             var cells = new List<PageBlockTableCell>();
 

@@ -240,7 +240,7 @@ namespace Telegram.ViewModels.Drawers
                 {
                     items.Add(new StickerSetViewModel(ClientService,
                         new StickerSetInfo(0, string.Empty, "emoji", null, null, false, false, false, false, new StickerTypeRegular(), false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
-                        new StickerSet(0, string.Empty, "emoji", null, null, false, false, false, false, new StickerTypeRegular(), false, false, false, stickers.StickersValue, Array.Empty<Emojis>())));
+                        new StickerSet(0, string.Empty, "emoji", null, null, false, false, false, false, new StickerTypeRegular(), false, false, false, stickers.StickersValue, [])));
                 }
             }
         }
@@ -755,7 +755,7 @@ namespace Telegram.ViewModels.Drawers
                     {
                         Add(new StickerSetViewModel(_clientService,
                             new StickerSetInfo(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
-                            new StickerSet(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue, Array.Empty<Emojis>())));
+                            new StickerSet(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue, [])));
                     }
                 }
                 else if (phase == 1 && _query.Length > 1 && !_emojiOnly)
@@ -767,7 +767,7 @@ namespace Telegram.ViewModels.Drawers
                         {
                             Add(new StickerSetViewModel(_clientService,
                                 new StickerSetInfo(0, _query, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
-                                new StickerSet(0, _query, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue, Array.Empty<Emojis>())));
+                                new StickerSet(0, _query, "emoji", null, null, false, false, false, false, _type, false, false, false, stickers.StickersValue, [])));
                         }
                     }
                     else
@@ -807,7 +807,7 @@ namespace Telegram.ViewModels.Drawers
 
                             Add(new StickerSetViewModel(_clientService,
                                 new StickerSetInfo(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, items.Count, items),
-                                new StickerSet(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, items, Array.Empty<Emojis>())));
+                                new StickerSet(0, string.Empty, "emoji", null, null, false, false, false, false, _type, false, false, false, items, [])));
                         }
                     }
                 }

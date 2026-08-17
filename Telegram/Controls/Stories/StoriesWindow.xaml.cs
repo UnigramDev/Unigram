@@ -1093,7 +1093,7 @@ namespace Telegram.Controls.Stories
                 var text = Strings.StealthModeOn + Environment.NewLine + Strings.StealthModeOnHint;
                 var entity = new TextEntity(0, Strings.StealthModeOn.Length, new TextEntityTypeBold());
 
-                ToastPopup.Show(XamlRoot, new FormattedText(text, new[] { entity }));
+                ToastPopup.Show(XamlRoot, new FormattedText(text, [entity]));
             }
             else if (story.ClientService.IsPremium)
             {

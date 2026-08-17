@@ -250,7 +250,7 @@ namespace Telegram.Td.Api
 
         public static CallProtocol ToTd(this VoipCallProtocol protocol)
         {
-            return new CallProtocol(protocol.UdpP2p, protocol.UdpReflector, protocol.MinLayer, protocol.MaxLayer, protocol.LibraryVersions);
+            return new CallProtocol(protocol.UdpP2p, protocol.UdpReflector, protocol.MinLayer, protocol.MaxLayer, [.. protocol.LibraryVersions]);
         }
 
         public static long ToId(this MessageSender sender)
@@ -493,7 +493,7 @@ namespace Telegram.Td.Api
         {
             if (suggestedPostInfo is SuggestedPostInfo { State: SuggestedPostStatePending } && !outgoing)
             {
-                return new ReplyMarkupInlineKeyboard(new List<IList<InlineKeyboardButton>>
+                return new ReplyMarkupInlineKeyboard(new List<List<InlineKeyboardButton>>
                 {
                     new List<InlineKeyboardButton>
                     {
@@ -1490,7 +1490,7 @@ namespace Telegram.Td.Api
             }
 
             var message = text.Text.Substring(startIndex, Math.Min(text.Text.Length - startIndex, length));
-            IList<TextEntity> sub = null;
+            List<TextEntity> sub = null;
 
             foreach (var entity in text.Entities)
             {
@@ -1506,10 +1506,10 @@ namespace Telegram.Td.Api
                 }
             }
 
-            return new FormattedText(message, sub ?? Array.Empty<TextEntity>());
+            return new FormattedText(message, sub ?? []);
         }
 
-        public static (string Text, IList<TextEntity> Entities) Substring(this string text, IList<TextEntity> entities, int startIndex, int length)
+        public static (string Text, List<TextEntity> Entities) Substring(this string text, List<TextEntity> entities, int startIndex, int length)
         {
             if (text.Length < length)
             {
@@ -1517,7 +1517,7 @@ namespace Telegram.Td.Api
             }
 
             var message = text.Substring(startIndex, Math.Min(text.Length - startIndex, length));
-            IList<TextEntity> sub = null;
+            List<TextEntity> sub = null;
 
             foreach (var entity in entities)
             {
@@ -1533,7 +1533,7 @@ namespace Telegram.Td.Api
                 }
             }
 
-            return (message, sub ?? Array.Empty<TextEntity>());
+            return (message, sub ?? TextStyleRun.NoEntities);
         }
 
         public static bool Intersect(this TextEntity x, TextEntity y)
@@ -2668,7 +2668,7 @@ namespace Telegram.Td.Api
 
         public static Photo ToPhoto(this ChatPhotoInfo chatPhoto)
         {
-            return new Photo(false, null, new PhotoSize[] { new("t", chatPhoto.Small, 160, 160, Array.Empty<int>()), new("i", chatPhoto.Big, 640, 640, Array.Empty<int>()) });
+            return new Photo(false, null, [ new("t", chatPhoto.Small, 160, 160, []), new("i", chatPhoto.Big, 640, 640, []) ]);
         }
 
         public static Photo ToPhoto(this ChatPhoto chatPhoto)
@@ -3758,7 +3758,7 @@ namespace Telegram.Td.Api
         /// reactions, and the list is usually empty, so the enumerator would be the only
         /// allocation on the common path.
         /// </summary>
-        public static void Discern(this IList<UnreadReaction> reactions, out bool paid, out HashSet<string> emoji, out HashSet<long> customEmoji)
+        public static void Discern(this List<UnreadReaction> reactions, out bool paid, out HashSet<string> emoji, out HashSet<long> customEmoji)
         {
             paid = false;
             emoji = null;
@@ -4692,9 +4692,9 @@ namespace Telegram.Td.Api
             var split = slug.Split('?');
             var query = slug.ParseQueryString();
 
-            if (TryGetColors(split[0], '-', 1, 2, out int[] linear))
+            if (TryGetColors(split[0], '-', 1, 2, out List<int> linear))
             {
-                if (linear.Length > 1)
+                if (linear.Count > 1)
                 {
                     query.TryGetValue("rotation", out string rotationKey);
                     int.TryParse(rotationKey ?? string.Empty, out int rotation);
@@ -4704,7 +4704,7 @@ namespace Telegram.Td.Api
 
                 return new BackgroundFillSolid(linear[0]);
             }
-            else if (TryGetColors(split[0], '~', 3, 4, out int[] freeform))
+            else if (TryGetColors(split[0], '~', 3, 4, out List<int> freeform))
             {
                 return new BackgroundFillFreeformGradient(freeform);
             }
@@ -4735,9 +4735,9 @@ namespace Telegram.Td.Api
             var slug = uri.Segments.Last();
             var query = uri.Query.ParseQueryString();
 
-            if (TryGetColors(slug, '-', 1, 2, out int[] linear))
+            if (TryGetColors(slug, '-', 1, 2, out List<int> linear))
             {
-                if (linear.Length > 1)
+                if (linear.Count > 1)
                 {
                     query.TryGetValue("rotation", out string rotationKey);
                     int.TryParse(rotationKey ?? string.Empty, out int rotation);
@@ -4747,7 +4747,7 @@ namespace Telegram.Td.Api
 
                 return new BackgroundTypeFill(new BackgroundFillSolid(linear[0]));
             }
-            else if (TryGetColors(slug, '~', 3, 4, out int[] freeform))
+            else if (TryGetColors(slug, '~', 3, 4, out List<int> freeform))
             {
                 return new BackgroundTypeFill(new BackgroundFillFreeformGradient(freeform));
             }
@@ -4759,9 +4759,9 @@ namespace Telegram.Td.Api
                 var modeSplit = modeKey?.ToLower().Split('+') ?? Array.Empty<string>();
 
                 BackgroundFill fill = null;
-                if (bg_colorKey != null && TryGetColors(bg_colorKey, '-', 1, 2, out int[] patternLinear))
+                if (bg_colorKey != null && TryGetColors(bg_colorKey, '-', 1, 2, out List<int> patternLinear))
                 {
-                    if (patternLinear.Length > 1)
+                    if (patternLinear.Count > 1)
                     {
                         query.TryGetValue("rotation", out string rotationKey);
                         int.TryParse(rotationKey ?? string.Empty, out int rotation);
@@ -4773,7 +4773,7 @@ namespace Telegram.Td.Api
                         fill = new BackgroundFillSolid(patternLinear[0]);
                     }
                 }
-                else if (bg_colorKey != null && TryGetColors(bg_colorKey, '~', 3, 4, out int[] patternFreeform))
+                else if (bg_colorKey != null && TryGetColors(bg_colorKey, '~', 3, 4, out List<int> patternFreeform))
                 {
                     fill = new BackgroundFillFreeformGradient(patternFreeform);
                 }
@@ -4792,18 +4792,18 @@ namespace Telegram.Td.Api
             }
         }
 
-        private static bool TryGetColors(string slug, char separator, int minimum, int maximum, out int[] colors)
+        private static bool TryGetColors(string slug, char separator, int minimum, int maximum, out List<int> colors)
         {
             var split = slug?.Split(separator);
             if (split != null && split.Length >= minimum && split.Length <= maximum)
             {
-                colors = new int[split.Length];
+                colors = new List<int>(split.Length);
 
                 for (int i = 0; i < split.Length; i++)
                 {
                     if (int.TryParse(split[i], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int color))
                     {
-                        colors[i] = color;
+                        colors.Add(color);
                     }
                     else
                     {

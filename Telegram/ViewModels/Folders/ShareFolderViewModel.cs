@@ -43,7 +43,7 @@ namespace Telegram.ViewModels.Folders
                 {
                     Name = folder.Name;
 
-                    var ids = new List<long>(data.Item2?.ChatIds ?? Array.Empty<long>());
+                    var ids = data.Item2?.ChatIds is { } chatIds ? new List<long>(chatIds) : new List<long>();
 
                     foreach (var id in folder.IncludedChatIds)
                     {

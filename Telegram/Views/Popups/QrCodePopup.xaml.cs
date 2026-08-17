@@ -43,28 +43,28 @@ namespace Telegram.Views.Popups
 
         private readonly Dictionary<string, BackgroundFillFreeformGradient> _lightBackgrounds = new()
         {
-            { "\uD83C\uDFE0", new BackgroundFillFreeformGradient( new int[]{ 0x71B654, 0x2C9077, 0x9ABB3E, 0x68B55E }) },
-            { "\uD83D\uDC25", new BackgroundFillFreeformGradient( new int[]{ 0x43A371, 0x8ABD4C, 0x9DB139, 0x85B950 }) },
-            { "\u26C4", new BackgroundFillFreeformGradient( new int[]{ 0x66A1FF, 0x59B5EE, 0x41BAD2, 0x8A97FF }) },
-            { "\uD83D\uDC8E", new BackgroundFillFreeformGradient( new int[]{ 0x5198F5, 0x4BB7D2, 0xAD79FB, 0xDF86C7 }) },
-            { "\uD83D\uDC68\u200D\uD83C\uDFEB", new BackgroundFillFreeformGradient( new int[]{ 0x9AB955, 0x48A896, 0x369ADD, 0x5DC67B }) },
-            { "\uD83C\uDF37", new BackgroundFillFreeformGradient( new int[]{ 0xEE8044, 0xE19B23, 0xE55D93, 0xCB75D7 }) },
-            { "\uD83D\uDC9C", new BackgroundFillFreeformGradient( new int[]{ 0xEE597E, 0xE35FB2, 0xAD69F2, 0xFF9257 }) },
-            { "\uD83C\uDF84", new BackgroundFillFreeformGradient( new int[]{ 0xEC7046, 0xF79626, 0xE3761C, 0xF4AA2A }) },
-            { "\uD83C\uDFAE", new BackgroundFillFreeformGradient( new int[]{ 0x19B3D2, 0xDC62F4, 0xE64C73, 0xECA222 }) },
+            { "\uD83C\uDFE0", new BackgroundFillFreeformGradient( [0x71B654, 0x2C9077, 0x9ABB3E, 0x68B55E]) },
+            { "\uD83D\uDC25", new BackgroundFillFreeformGradient( [0x43A371, 0x8ABD4C, 0x9DB139, 0x85B950]) },
+            { "\u26C4", new BackgroundFillFreeformGradient( [0x66A1FF, 0x59B5EE, 0x41BAD2, 0x8A97FF]) },
+            { "\uD83D\uDC8E", new BackgroundFillFreeformGradient( [0x5198F5, 0x4BB7D2, 0xAD79FB, 0xDF86C7]) },
+            { "\uD83D\uDC68\u200D\uD83C\uDFEB", new BackgroundFillFreeformGradient( [0x9AB955, 0x48A896, 0x369ADD, 0x5DC67B]) },
+            { "\uD83C\uDF37", new BackgroundFillFreeformGradient( [0xEE8044, 0xE19B23, 0xE55D93, 0xCB75D7]) },
+            { "\uD83D\uDC9C", new BackgroundFillFreeformGradient( [0xEE597E, 0xE35FB2, 0xAD69F2, 0xFF9257]) },
+            { "\uD83C\uDF84", new BackgroundFillFreeformGradient( [0xEC7046, 0xF79626, 0xE3761C, 0xF4AA2A]) },
+            { "\uD83C\uDFAE", new BackgroundFillFreeformGradient( [0x19B3D2, 0xDC62F4, 0xE64C73, 0xECA222]) },
         };
 
         private readonly Dictionary<string, BackgroundFillFreeformGradient> _darkBackgrounds = new()
         {
-            { "\uD83C\uDFE0", new BackgroundFillFreeformGradient( new int[]{ 0x157FD1, 0x4A6CF2, 0x1876CD, 0x2CA6CE }) },
-            { "\uD83D\uDC25", new BackgroundFillFreeformGradient( new int[]{ 0x57A518, 0x1E7650, 0x6D9B17, 0x3FAB55 }) },
-            { "\u26C4", new BackgroundFillFreeformGradient( new int[]{ 0x2B6EDA, 0x2F7CB6, 0x1DA6C9, 0x6B7CFF }) },
-            { "\uD83D\uDC8E", new BackgroundFillFreeformGradient( new int[]{ 0xB256B8, 0x6F52FF, 0x249AC2, 0x347AD5 }) },
-            { "\uD83D\uDC68\u200D\uD83C\uDFEB", new BackgroundFillFreeformGradient( new int[]{ 0x238B68, 0x73A163, 0x15AC7F, 0x0E8C95 }) },
-            { "\uD83C\uDF37", new BackgroundFillFreeformGradient( new int[]{ 0xD95454, 0xD2770F, 0xCE4661, 0xAC5FC8 }) },
-            { "\uD83D\uDC9C", new BackgroundFillFreeformGradient( new int[]{ 0xD058AA, 0xE0743E, 0xD85568, 0xA369D3 }) },
-            { "\uD83C\uDF84", new BackgroundFillFreeformGradient( new int[]{ 0xD6681F, 0xCE8625, 0xCE6D30, 0xC98A1D }) },
-            { "\uD83C\uDFAE", new BackgroundFillFreeformGradient( new int[]{ 0xC74343, 0xEC7F36, 0x06B0F9, 0xA347FF }) },
+            { "\uD83C\uDFE0", new BackgroundFillFreeformGradient( [0x157FD1, 0x4A6CF2, 0x1876CD, 0x2CA6CE]) },
+            { "\uD83D\uDC25", new BackgroundFillFreeformGradient( [0x57A518, 0x1E7650, 0x6D9B17, 0x3FAB55]) },
+            { "\u26C4", new BackgroundFillFreeformGradient( [0x2B6EDA, 0x2F7CB6, 0x1DA6C9, 0x6B7CFF]) },
+            { "\uD83D\uDC8E", new BackgroundFillFreeformGradient( [0xB256B8, 0x6F52FF, 0x249AC2, 0x347AD5]) },
+            { "\uD83D\uDC68\u200D\uD83C\uDFEB", new BackgroundFillFreeformGradient( [0x238B68, 0x73A163, 0x15AC7F, 0x0E8C95]) },
+            { "\uD83C\uDF37", new BackgroundFillFreeformGradient( [0xD95454, 0xD2770F, 0xCE4661, 0xAC5FC8]) },
+            { "\uD83D\uDC9C", new BackgroundFillFreeformGradient( [0xD058AA, 0xE0743E, 0xD85568, 0xA369D3]) },
+            { "\uD83C\uDF84", new BackgroundFillFreeformGradient( [0xD6681F, 0xCE8625, 0xCE6D30, 0xC98A1D]) },
+            { "\uD83C\uDFAE", new BackgroundFillFreeformGradient( [0xC74343, 0xEC7F36, 0x06B0F9, 0xA347FF]) },
         };
 
         public QrCodePopup(IClientService clientService, INavigationService navigationService, ISettingsService settingsService, User user)
@@ -121,7 +121,7 @@ namespace Telegram.Views.Popups
 
             static Background GetDefaultBackground(bool dark)
             {
-                var freeform = dark ? new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+                List<int> freeform = dark ? [0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258] : [0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884];
                 return new Background(0, true, dark, string.Empty,
                     new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
                     new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));

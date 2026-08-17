@@ -262,10 +262,9 @@ namespace Telegram.ViewModels.Settings
 
             if (first != -1 && last != -1)
             {
-                var formatted = new FormattedText(pattern, new[]
-                {
+                var formatted = new FormattedText(pattern, [
                     new TextEntity(first, last - first + 1, new TextEntityTypeSpoiler())
-                });
+                ]);
 
                 return formatted;
             }

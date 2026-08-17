@@ -965,7 +965,7 @@ namespace Telegram.ViewModels
                         return await ClientService.SendAsync(new AddChatMembers(chat.Id, users.ToArray()));
                     }
 
-                    IList<FailedToAddMember> members = null;
+                    List<FailedToAddMember> members = null;
 
                     foreach (var userId in users)
                     {
@@ -982,7 +982,7 @@ namespace Telegram.ViewModels
                         }
                     }
 
-                    return new FailedToAddMembers(members ?? Array.Empty<FailedToAddMember>());
+                    return new FailedToAddMembers(members ?? []);
                 }
 
                 var selected = chats.Select(x => ClientService.GetUser(x)).Where(x => x != null).ToList();

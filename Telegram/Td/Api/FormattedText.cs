@@ -99,7 +99,7 @@ namespace Telegram.Td.Api
 
             if (args == null || args.Length == 0)
             {
-                return new FormattedText(format, Array.Empty<TextEntity>());
+                return new FormattedText(format, []);
             }
 
             // Parse the format string to find placeholders

@@ -81,7 +81,7 @@ namespace Telegram.Common
         // free; nothing on either side of the ABI writes to it.
         public static readonly IList<TextStylePart> NoParts = new List<TextStylePart>();
 
-        public static IList<TextStylePart> GetParts(IList<TextEntity> entities)
+        public static IList<TextStylePart> GetParts(List<TextEntity> entities)
         {
             if (entities == null)
             {
@@ -126,7 +126,7 @@ namespace Telegram.Common
             return GetRuns(formatted.Text, formatted.Entities);
         }
 
-        public static IList<TextStyleRun> GetRuns(string text, IList<TextEntity> entities)
+        public static IList<TextStyleRun> GetRuns(string text, List<TextEntity> entities)
         {
             if (entities == null || entities.Count == 0)
             {
@@ -273,11 +273,15 @@ namespace Telegram.Common
             return (starts && ends) || text.IndexOfAny(_lineBreakChars, offset, length) >= 0;
         }
 
-        public static IList<TextEntity> GetEntities(string text, IList<TextStyleRun> runs)
+        // Shared because it is only ever read. Array.Empty was free; a List allocated per message
+        // would not be, and these sit on the render path.
+        public static readonly List<TextEntity> NoEntities = new();
+
+        public static List<TextEntity> GetEntities(string text, IList<TextStyleRun> runs)
         {
             if (runs == null)
             {
-                return Array.Empty<TextEntity>();
+                return NoEntities;
             }
 
             var results = new List<TextEntity>();
@@ -342,12 +346,12 @@ namespace Telegram.Common
             return results;
         }
 
-        private static void Create(int offset, int length, IList<TextEntity> entities, TextEntityType type)
+        private static void Create(int offset, int length, List<TextEntity> entities, TextEntityType type)
         {
             entities.Add(new TextEntity(offset, length, type));
         }
 
-        private static void CreateOrMerge(string text, int offset, int length, IList<TextEntity> entities, TextEntityType type)
+        private static void CreateOrMerge(string text, int offset, int length, List<TextEntity> entities, TextEntityType type)
         {
             var last = entities.LastOrDefault(x => x.Length + x.Offset == offset && AreTheSame(x.Type, type));
             if (last != null)
@@ -404,14 +408,14 @@ namespace Telegram.Common
             return new StyledText(text.Text, text.Entities, GetParagraphs(text.Text, text.Entities));
         }
 
-        public static StyledText GetText(string text, IList<TextEntity> entities)
+        public static StyledText GetText(string text, List<TextEntity> entities)
         {
             if (string.IsNullOrEmpty(text))
             {
                 return StyledText.Empty;
             }
 
-            return new StyledText(text, entities, GetParagraphs(text, entities ?? Array.Empty<TextEntity>()));
+            return new StyledText(text, entities, GetParagraphs(text, entities ?? NoEntities));
         }
 
         #region RichText
@@ -466,7 +470,7 @@ namespace Telegram.Common
             }
         }
 
-        private static IList<StyledParagraph> GetParagraphs(string text, IList<TextEntity> entities)
+        private static IList<StyledParagraph> GetParagraphs(string text, List<TextEntity> entities)
         {
             List<Break> indexes = null;
             var previous = 0;
@@ -552,15 +556,15 @@ namespace Telegram.Common
             };
         }
 
-        private static StyledParagraph Split(string text, IList<TextEntity> entities, int startIndex, int length, TextDirectionality? direction, int padding)
+        private static StyledParagraph Split(string text, List<TextEntity> entities, int startIndex, int length, TextDirectionality? direction, int padding)
         {
             if (length <= 0)
             {
-                return new StyledParagraph(string.Empty, startIndex, length, Array.Empty<TextEntity>());
+                return new StyledParagraph(string.Empty, startIndex, length, NoEntities);
             }
 
             var message = text.Substring(startIndex, Math.Min(text.Length - startIndex, length));
-            IList<TextEntity> sub = null;
+            List<TextEntity> sub = null;
 
             foreach (var entity in entities)
             {
@@ -620,7 +624,7 @@ namespace Telegram.Common
 
     public partial class StyledText
     {
-        public StyledText(string text, IList<TextEntity> entities, IList<StyledParagraph> paragraphs)
+        public StyledText(string text, List<TextEntity> entities, IList<StyledParagraph> paragraphs)
         {
             Text = text;
             Parts = TextStyleRun.GetParts(entities);
@@ -698,7 +702,7 @@ namespace Telegram.Common
             return new FormattedText(Text.Substring(start, end - start), entities);
         }
 
-        public static StyledText Empty = new(string.Empty, Array.Empty<TextEntity>(), Array.Empty<StyledParagraph>());
+        public static StyledText Empty = new(string.Empty, TextStyleRun.NoEntities, Array.Empty<StyledParagraph>());
     }
 
     public partial class StyledParagraph
@@ -706,18 +710,18 @@ namespace Telegram.Common
         private readonly bool _hasDates;
         private readonly bool _hasRelativeDates;
 
-        public StyledParagraph(string text, IList<TextEntity> entities)
+        public StyledParagraph(string text, List<TextEntity> entities)
             : this(text, 0, text.Length, entities)
         {
 
         }
 
-        public StyledParagraph(string text, int offset, int length, IList<TextEntity> entities, TextDirectionality? direction = null, int padding = 0)
+        public StyledParagraph(string text, int offset, int length, List<TextEntity> entities, TextDirectionality? direction = null, int padding = 0)
         {
             Text = text;
             Offset = offset;
             Length = length;
-            Entities = entities ?? Array.Empty<TextEntity>();
+            Entities = entities ?? TextStyleRun.NoEntities;
             Parts = TextStyleRun.GetParts(entities);
             Runs = TextStyleRun.GetRuns(text, entities);
             Direction = direction ?? NativeUtils.GetDirectionality(text);
@@ -749,7 +753,7 @@ namespace Telegram.Common
 
         public int Length { get; }
 
-        public IList<TextEntity> Entities { get; }
+        public List<TextEntity> Entities { get; }
 
         public IList<TextStylePart> Parts { get; }
 

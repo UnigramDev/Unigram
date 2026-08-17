@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Telegram.Generators.Emit;
@@ -34,6 +35,21 @@ namespace Telegram.Generators
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
+        private static readonly DiagnosticDescriptor VectorNotExposed = new DiagnosticDescriptor(
+            id: "TDAPI003",
+            title: "A vector instantiation is not exposed to WinRT",
+            messageFormat: "{0} vector instantiations are missing from CsWinRT.Vectors.cs, starting with: {1}",
+            category: "Telegram.Generators",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: "Bound to ItemsSource, a List<T> with no CCW vtable fails with E_INVALIDARG. The attributes have to be real source - CsWinRT's generator reads them, and a generator cannot see what another generator wrote.");
+
+        private static readonly SymbolDisplayFormat TypeFormat = new SymbolDisplayFormat(
+            globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
+            typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+            genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
+            miscellaneousOptions: SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
+
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             var content = context.AdditionalTextsProvider
@@ -51,6 +67,10 @@ namespace Telegram.Generators
                     : TdParsers.Reader);
 
             context.RegisterSourceOutput(content.Combine(parsers), (ctx, pair) => Execute(ctx, pair.Left, pair.Right));
+
+            // Only the attribute list, so an unrelated edit does not re-run the comparison.
+            var exposed = context.CompilationProvider.Select((compilation, _) => Exposed(compilation));
+            context.RegisterSourceOutput(content.Combine(exposed), (ctx, pair) => Verify(ctx, pair.Left, pair.Right));
         }
 
         private static void Execute(SourceProductionContext context, string text, TdParsers parsers)
@@ -77,6 +97,106 @@ namespace Telegram.Generators
             {
                 context.ReportDiagnostic(Diagnostic.Create(GeneratorCrashed, Location.None, ex.ToString()));
             }
+        }
+
+        private static ImmutableHashSet<string> Exposed(Compilation compilation)
+        {
+            var attribute = compilation.GetTypeByMetadataName("WinRT.GeneratedWinRTExposedExternalTypeAttribute");
+            if (attribute == null)
+            {
+                // .NET Native: nothing to expose, and nothing to check.
+                return null;
+            }
+
+            var builder = ImmutableHashSet.CreateBuilder<string>(StringComparer.Ordinal);
+
+            foreach (var declared in compilation.Assembly.GetAttributes())
+            {
+                if (SymbolEqualityComparer.Default.Equals(declared.AttributeClass, attribute)
+                    && declared.ConstructorArguments.Length > 0
+                    && declared.ConstructorArguments[0].Value is ITypeSymbol type)
+                {
+                    builder.Add(type.ToDisplayString(TypeFormat));
+                }
+            }
+
+            return builder.ToImmutable();
+        }
+
+        private static void Verify(SourceProductionContext context, string text, ImmutableHashSet<string> exposed)
+        {
+            if (text is null || exposed is null)
+            {
+                return;
+            }
+
+            try
+            {
+                var missing = RequiredVectors(TlParser.Parse(text).Classes)
+                    .Where(x => !exposed.Contains(x))
+                    .ToList();
+
+                if (missing.Count > 0)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(VectorNotExposed, Location.None,
+                        missing.Count, string.Join(", ", missing.Take(3))));
+                }
+            }
+            catch
+            {
+                // Execute already reports whatever the parser choked on.
+            }
+        }
+
+        /// <summary>
+        /// Every vector instantiation the parsers can produce, as it must appear in
+        /// CsWinRT.Vectors.cs.
+        /// </summary>
+        /// <remarks>
+        /// Both parsers materialise a vector as List&lt;T&gt;, and a List&lt;T&gt; boxed into a WinRT
+        /// object - which is what ItemsSource is - needs a CCW vtable for that exact instantiation
+        /// or the assignment fails with E_INVALIDARG. The analyzer cannot see these: a binding
+        /// assigns through the declared IList&lt;T&gt;, so the concrete type is only known at
+        /// runtime. Emitted from the schema instead, which is the only place that knows the whole
+        /// set - SettingsStoragePage bound ByChat and threw, with nothing to warn on.
+        ///
+        /// The property has to be reachable from XAML for this to matter, and most are not, but the
+        /// schema cannot tell which - so all of them, at a vtable each.
+        /// </remarks>
+        private static SortedSet<string> RequiredVectors(List<SchemaClass> parsed)
+        {
+            var names = new SortedSet<string>(StringComparer.Ordinal);
+
+            foreach (var type in parsed)
+            {
+                foreach (var property in type.Properties)
+                {
+                    if (!property.IsVector)
+                    {
+                        continue;
+                    }
+
+                    var element = Naming.ScalarType(property.Type);
+                    if (element != "byte[]" && char.IsUpper(element[0]))
+                    {
+                        // Scalars other than bytes are the fundamentals WinRT boxes on its own; the
+                        // rest are Telegram.Td.Api types, which the projection has never seen.
+                        element = "global::Telegram.Td.Api." + element;
+                    }
+
+                    var name = "global::System.Collections.Generic.List<" + element + ">";
+                    names.Add(name);
+
+                    if (property.IsVectorOfVectors)
+                    {
+                        // The outer list marshals at the call site; the inner one only when the
+                        // native side reads an element, and by then there is nothing to generate it.
+                        names.Add("global::System.Collections.Generic.List<" + name + ">");
+                    }
+                }
+            }
+
+            return names;
         }
 
         private static string Write(List<SchemaClass> parsed, TdParsers parsers)
@@ -144,6 +264,7 @@ namespace Telegram.Generators
             builder.AppendLine();
             builder.AppendLine("namespace Telegram.Td.Api");
             builder.AppendLine("{");
+
 
             foreach (var type in classes)
             {

@@ -212,9 +212,9 @@ namespace Telegram.Controls.Messages.Content
         }
 
         private IClientService _clientService;
-        private IList<PageBlock> _prevValue;
+        private List<PageBlock> _prevValue;
 
-        public void UpdateView(IClientService clientService, IList<PageBlock> blocks, bool part)
+        public void UpdateView(IClientService clientService, List<PageBlock> blocks, bool part)
         {
             // Kept for the whole lifetime, not just while the template is pending: the
             // renderer asks for a message back (IPageBlockContext.CreateMessage) outside
@@ -227,7 +227,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            var prev = _prevValue ?? Array.Empty<PageBlock>();
+            var prev = _prevValue ?? [];
             var diff = DiffUtil.CalculateDiff(prev, blocks, PageBlockHelper.Compare, Constants.DiffOptions);
 
             Logger.Info(string.Format("Steps: {0}, added: {1}, removed: {2}, moved: {3}", diff.Steps.Count, diff.AddedItems.Count, diff.RemovedItems.Count, diff.MovedItems.Count));

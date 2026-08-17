@@ -131,7 +131,7 @@ namespace Telegram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageAnimation(new InputAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInput(), Array.Empty<int>(), animation.Duration, animation.Width, animation.Height), null, false, false);
+            var input = new InputMessageAnimation(new InputAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInput(), [], animation.Duration, animation.Width, animation.Height), null, false, false);
 
             await SendMessageAsync(reply, input, options);
         }
@@ -686,7 +686,7 @@ namespace Telegram.ViewModels
             var factory = await MessageFactory.CreatePhotoAsync(file, caption, highQuality, captionAboveMedia, hasSpoiler, ttl, starCount);
             if (factory is InputPaidMedia inputPaidMedia)
             {
-                await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, new[] { inputPaidMedia }, caption, captionAboveMedia, string.Empty), options);
+                await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, [inputPaidMedia], caption, captionAboveMedia, string.Empty), options);
             }
             else if (factory is InputMessageContent input)
             {
@@ -699,7 +699,7 @@ namespace Telegram.ViewModels
             var factory = await MessageFactory.CreateVideoAsync(video, caption, animated, captionAboveMedia, hasSpoiler, ttl, starCount);
             if (factory is InputPaidMedia inputPaidMedia)
             {
-                await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, new[] { inputPaidMedia }, caption, captionAboveMedia, string.Empty), options);
+                await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, [inputPaidMedia], caption, captionAboveMedia, string.Empty), options);
             }
             else if (factory is InputMessageContent input)
             {
@@ -1087,7 +1087,7 @@ namespace Telegram.ViewModels
             return SendMessageAsync(formattedText?.Text, formattedText?.Entities, linkPreview, options, reply);
         }
 
-        public async Task<Object> SendMessageAsync(string text, IList<TextEntity> entities = null, LinkPreviewOptions linkPreview = null, MessageSendOptions options = null, InputMessageReplyTo reply = null)
+        public async Task<Object> SendMessageAsync(string text, List<TextEntity> entities = null, LinkPreviewOptions linkPreview = null, MessageSendOptions options = null, InputMessageReplyTo reply = null)
         {
             text ??= string.Empty;
             text = text.Replace('\v', '\n').Replace('\r', '\n');
@@ -1214,7 +1214,7 @@ namespace Telegram.ViewModels
             await SendMessageAsync(reply, new InputMessageRichMessage(richMessage, true), options);
         }
 
-        private bool TextStillContainsEmojis(IList<TextEntity> entities)
+        private bool TextStillContainsEmojis(List<TextEntity> entities)
         {
             if (entities.Count == 0 || !Settings.Stickers.DynamicPackOrder)
             {

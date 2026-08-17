@@ -473,7 +473,7 @@ namespace Telegram.Common
 
         private static void ConvertTable(Table table, List<PageBlock> output)
         {
-            var rows = new List<IList<PageBlockTableCell>>();
+            var rows = new List<List<PageBlockTableCell>>();
             var aligns = table.ColumnDefinitions;
 
             foreach (var child in table)

@@ -286,13 +286,13 @@ namespace Telegram.ViewModels
 
     public class DialogPendingRichMessage : DialogPendingMessage
     {
-        private IList<PageBlock> _text;
-        private IList<PageBlock> _pending;
+        private List<PageBlock> _text;
+        private List<PageBlock> _pending;
 
         public DialogPendingRichMessage(UpdatePendingMessage update, MessageViewModel message)
             : base(update, message)
         {
-            _text = Array.Empty<PageBlock>();
+            _text = [];
             _textLength = 0;
 
             if (update.Content is MessageRichMessage messageRich)
@@ -320,7 +320,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private void Update(IList<PageBlock> blocks)
+        private void Update(List<PageBlock> blocks)
         {
             //if (text == null)
             //{
@@ -371,7 +371,7 @@ namespace Telegram.ViewModels
 
     public static class PageBlockStreaming
     {
-        public static int Length(IList<PageBlock> blocks)
+        public static int Length(List<PageBlock> blocks)
         {
             int total = 0;
             if (blocks != null)
@@ -491,7 +491,7 @@ namespace Telegram.ViewModels
             return 0;
         }
 
-        private static int LengthListItems(IList<PageBlockListItem> items)
+        private static int LengthListItems(List<PageBlockListItem> items)
         {
             int total = 0;
             if (items != null)
@@ -504,7 +504,7 @@ namespace Telegram.ViewModels
             return total;
         }
 
-        private static int LengthTableCells(IList<IList<PageBlockTableCell>> rows)
+        private static int LengthTableCells(List<List<PageBlockTableCell>> rows)
         {
             int total = 0;
             if (rows != null)
@@ -521,7 +521,7 @@ namespace Telegram.ViewModels
             return total;
         }
 
-        private static int LengthRelatedArticles(IList<PageBlockRelatedArticle> articles)
+        private static int LengthRelatedArticles(List<PageBlockRelatedArticle> articles)
         {
             int total = 0;
             if (articles != null)
@@ -541,13 +541,13 @@ namespace Telegram.ViewModels
         // Substring
         // ============================================================
 
-        public static IList<PageBlock> Substring(IList<PageBlock> blocks, int length)
+        public static List<PageBlock> Substring(List<PageBlock> blocks, int length)
         {
             int remaining = length;
             return SubstringList(blocks, ref remaining);
         }
 
-        private static IList<PageBlock> SubstringList(IList<PageBlock> blocks, ref int remaining)
+        private static List<PageBlock> SubstringList(List<PageBlock> blocks, ref int remaining)
         {
             var result = new List<PageBlock>();
             if (blocks == null) return result;
@@ -859,7 +859,7 @@ namespace Telegram.ViewModels
             return new PageBlockCaption(text, credit);
         }
 
-        private static IList<PageBlockListItem> SubstringListItems(IList<PageBlockListItem> items, ref int remaining)
+        private static List<PageBlockListItem> SubstringListItems(List<PageBlockListItem> items, ref int remaining)
         {
             var result = new List<PageBlockListItem>();
             if (items == null) return result;
@@ -887,9 +887,9 @@ namespace Telegram.ViewModels
             return result;
         }
 
-        private static IList<IList<PageBlockTableCell>> SubstringTableCells(IList<IList<PageBlockTableCell>> rows, ref int remaining)
+        private static List<List<PageBlockTableCell>> SubstringTableCells(List<List<PageBlockTableCell>> rows, ref int remaining)
         {
-            var result = new List<IList<PageBlockTableCell>>();
+            var result = new List<List<PageBlockTableCell>>();
             if (rows == null) return result;
             foreach (var row in rows)
             {
@@ -917,7 +917,7 @@ namespace Telegram.ViewModels
             return result;
         }
 
-        private static IList<PageBlockRelatedArticle> SubstringRelatedArticles(IList<PageBlockRelatedArticle> articles, ref int remaining)
+        private static List<PageBlockRelatedArticle> SubstringRelatedArticles(List<PageBlockRelatedArticle> articles, ref int remaining)
         {
             var result = new List<PageBlockRelatedArticle>();
             if (articles == null) return result;

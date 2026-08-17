@@ -184,7 +184,7 @@ namespace Telegram.Controls.Messages
 
             if (accentColorChanged.OldBackgroundCustomEmojiId != 0)
             {
-                oldEmoji = new FormattedText("{0}", new[] { new TextEntity(0, 3, new TextEntityTypeCustomEmoji(accentColorChanged.OldBackgroundCustomEmojiId)) });
+                oldEmoji = new FormattedText("{0}", [new TextEntity(0, 3, new TextEntityTypeCustomEmoji(accentColorChanged.OldBackgroundCustomEmojiId))]);
             }
             else
             {
@@ -193,7 +193,7 @@ namespace Telegram.Controls.Messages
 
             if (accentColorChanged.NewBackgroundCustomEmojiId != 0)
             {
-                newEmoji = new FormattedText("{1}", new[] { new TextEntity(0, 3, new TextEntityTypeCustomEmoji(accentColorChanged.NewBackgroundCustomEmojiId)) });
+                newEmoji = new FormattedText("{1}", [new TextEntity(0, 3, new TextEntityTypeCustomEmoji(accentColorChanged.NewBackgroundCustomEmojiId))]);
             }
             else
             {
@@ -210,7 +210,7 @@ namespace Telegram.Controls.Messages
 
             if (profileAccentColorChanged.OldProfileBackgroundCustomEmojiId != 0)
             {
-                oldEmoji = new FormattedText("{0}", new[] { new TextEntity(0, 3, new TextEntityTypeCustomEmoji(profileAccentColorChanged.OldProfileBackgroundCustomEmojiId)) });
+                oldEmoji = new FormattedText("{0}", [new TextEntity(0, 3, new TextEntityTypeCustomEmoji(profileAccentColorChanged.OldProfileBackgroundCustomEmojiId))]);
             }
             else
             {
@@ -219,7 +219,7 @@ namespace Telegram.Controls.Messages
 
             if (profileAccentColorChanged.NewProfileBackgroundCustomEmojiId != 0)
             {
-                newEmoji = new FormattedText("{1}", new[] { new TextEntity(0, 3, new TextEntityTypeCustomEmoji(profileAccentColorChanged.NewProfileBackgroundCustomEmojiId)) });
+                newEmoji = new FormattedText("{1}", [new TextEntity(0, 3, new TextEntityTypeCustomEmoji(profileAccentColorChanged.NewProfileBackgroundCustomEmojiId))]);
             }
             else
             {
@@ -1359,10 +1359,9 @@ namespace Telegram.Controls.Messages
 
         private static FormattedText UpdateForumTopicCreated(MessageWithOwner message, MessageForumTopicCreated forumTopicCreated, bool history)
         {
-            var topicName = new FormattedText($"\U0001F4C3 {forumTopicCreated.Name}", new[]
-            {
+            var topicName = new FormattedText($"\U0001F4C3 {forumTopicCreated.Name}", [
                 new TextEntity(0, 2, new TextEntityTypeCustomEmoji(forumTopicCreated.Icon.CustomEmojiId))
-            });
+            ]);
 
             return ClientEx.Format(Strings.TopicWasCreatedAction, topicName);
         }
@@ -1838,7 +1837,7 @@ namespace Telegram.Controls.Messages
                 {
                     if (animatedEmoji.AnimatedEmoji.Sticker?.FullType is StickerFullTypeCustomEmoji customEmoji)
                     {
-                        var emoji = new FormattedText(animatedEmoji.Emoji, new[] { new TextEntity(0, animatedEmoji.Emoji.Length, new TextEntityTypeCustomEmoji(customEmoji.CustomEmojiId)) });
+                        var emoji = new FormattedText(animatedEmoji.Emoji, [new TextEntity(0, animatedEmoji.Emoji.Length, new TextEntityTypeCustomEmoji(customEmoji.CustomEmojiId))]);
                         return ReplaceWithLink(ClientEx.Format(Strings.ActionPinnedText, emoji), message.GetSender());
                     }
 
@@ -1991,7 +1990,7 @@ namespace Telegram.Controls.Messages
 
             return index < 0
                 ? content.AsFormattedText()
-                : new FormattedText(content, new[] { new TextEntity(index, user.FirstName.Length, new TextEntityTypeBold()) });
+                : new FormattedText(content, [new TextEntity(index, user.FirstName.Length, new TextEntityTypeBold())]);
         }
 
         private static FormattedText UpdateSupergroupChatCreate(MessageWithOwner message, MessageSupergroupChatCreate supergroupChatCreate, bool history)
@@ -2504,7 +2503,7 @@ namespace Telegram.Controls.Messages
             return ClientEx.ParseMarkdown(content);
         }
 
-        private readonly static FormattedText _emptyString = new(string.Empty, Array.Empty<TextEntity>());
+        private readonly static FormattedText _emptyString = new(string.Empty, []);
 
         private static FormattedText UpdateStory(MessageWithOwner message, MessageStory story, bool history)
         {
@@ -2531,11 +2530,6 @@ namespace Telegram.Controls.Messages
         public static FormattedText ReplaceWithLink(FormattedText source, params object[] args)
         {
             source.Text = source.Text.Replace("**", string.Empty);
-
-            if (source.Entities.IsReadOnly)
-            {
-                source.Entities = new List<TextEntity>(source.Entities);
-            }
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -2670,11 +2664,6 @@ namespace Telegram.Controls.Messages
 
         private static FormattedText ReplaceWithLinks(FormattedText source, string param, IEnumerable<long> uids, IClientService clientService)
         {
-            if (source.Entities.IsReadOnly)
-            {
-                source.Entities = new List<TextEntity>(source.Entities);
-            }
-
             int index;
             int start = index = source.Text.IndexOf(param);
             if (start >= 0)

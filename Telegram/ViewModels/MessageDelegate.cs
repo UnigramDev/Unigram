@@ -540,7 +540,7 @@ namespace Telegram.ViewModels
         /// the tapped element finds its own block by walking up the Tag chain. That's what
         /// lets one renderer serve both hosts.
         /// </summary>
-        protected void OpenPageBlockMedia(IList<PageBlock> blocks, PageBlockMediaKind kind, FrameworkElement target)
+        protected void OpenPageBlockMedia(List<PageBlock> blocks, PageBlockMediaKind kind, FrameworkElement target)
         {
             var gallery = new InstantGalleryViewModel(ClientService,
                 ClientService.Session.Resolve<IStorageService>(),
