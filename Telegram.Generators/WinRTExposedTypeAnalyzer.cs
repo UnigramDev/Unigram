@@ -219,7 +219,7 @@ namespace Telegram.Generators
                 var operation = (IArgumentOperation)context.Operation;
                 var parameter = operation.Parameter;
 
-                if (parameter == null || !IsProjected(parameter.ContainingSymbol?.ContainingType))
+                if (parameter == null || !IsBoundary(parameter.ContainingSymbol))
                 {
                     return;
                 }
@@ -322,6 +322,28 @@ namespace Telegram.Generators
                     default:
                         return Enumerable.Empty<IOperation>();
                 }
+            }
+
+            /// <summary>
+            /// Whether crossing into this member means crossing into WinRT.
+            /// </summary>
+            /// <remarks>
+            /// x:Bind does not assign the property itself: it calls a Set_ on the XamlBindingSetters
+            /// the XAML compiler emits into the page, which takes the value as object and assigns it
+            /// one frame later. That class belongs to this assembly and is projected by nothing, so
+            /// following the call is the only way to see the concrete type - and the only reason the
+            /// concrete type is there to see is that the property is declared as a List.
+            /// </remarks>
+            private bool IsBoundary(ISymbol member)
+            {
+                var declaring = member?.ContainingType;
+                if (declaring == null)
+                {
+                    return false;
+                }
+
+                return IsProjected(declaring)
+                    || (declaring.Name == "XamlBindingSetters" && member.Name.StartsWith("Set_", System.StringComparison.Ordinal));
             }
 
             private bool IsReadOnly(ITypeSymbol type)
