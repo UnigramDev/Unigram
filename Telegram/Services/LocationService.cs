@@ -124,11 +124,16 @@ namespace Telegram.Services
             var access = DeviceAccessInformation.CreateFromDeviceClass(DeviceClass.Location);
             if (access.CurrentStatus == DeviceAccessStatus.Unspecified)
             {
-                var accessStatus = await Geolocator.RequestAccessAsync();
-                if (accessStatus == GeolocationAccessStatus.Allowed)
+                try
                 {
-                    return true;
+                    // Throws ERROR_SERVICE_DISABLED when the system location service is disabled.
+                    var accessStatus = await Geolocator.RequestAccessAsync();
+                    if (accessStatus == GeolocationAccessStatus.Allowed)
+                    {
+                        return true;
+                    }
                 }
+                catch { }
 
                 return false;
             }
