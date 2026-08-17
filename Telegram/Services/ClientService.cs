@@ -100,7 +100,7 @@ namespace Telegram.Services
 
         ReactionType DefaultReaction { get; }
 
-        IList<ChatFolderInfo> ChatFolders { get; }
+        List<ChatFolderInfo> ChatFolders { get; }
         int MainChatListPosition { get; }
         bool AreTagsEnabled { get; }
 
@@ -141,7 +141,7 @@ namespace Telegram.Services
         string GetTitle(MessageOrigin origin, MessageImportInfo import);
         string GetTitle(MessageSender sender, bool firstName = false);
 
-        IList<ChatFolderInfo> GetChatFolders(Chat chat);
+        List<ChatFolderInfo> GetChatFolders(Chat chat);
 
         bool TryGetCachedReaction(string emoji, out EmojiReaction value);
         Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync();
@@ -156,12 +156,12 @@ namespace Telegram.Services
 
         QuickReplyShortcut GetQuickReplyShortcut(int id);
         QuickReplyShortcut GetQuickReplyShortcut(string name);
-        IList<QuickReplyMessage> GetQuickReplyMessages(int id);
+        List<QuickReplyMessage> GetQuickReplyMessages(int id);
         IList<QuickReplyShortcut> GetQuickReplyShortcuts();
         void LoadQuickReplyShortcuts();
         bool CheckQuickReplyShortcutName(string name);
 
-        IList<WelcomeMessage> GetWelcomeMessages(long chatId);
+        List<WelcomeMessage> GetWelcomeMessages(long chatId);
 
         Task<IList<MessageEffect>> GetMessageEffectsAsync(IEnumerable<long> effectIds);
         MessageEffect LoadMessageEffect(long effectId, bool preload);
@@ -339,7 +339,7 @@ namespace Telegram.Services
 
         private readonly ReaderWriterDictionary<int, GroupCall> _groupCalls = new();
 
-        private readonly ReaderWriterDictionary<long, IList<WelcomeMessage>> _welcomeMessages = new();
+        private readonly ReaderWriterDictionary<long, List<WelcomeMessage>> _welcomeMessages = new();
 
         private readonly ConcurrentDictionary<int, ChatListUnreadCount> _unreadCounts = new();
 
@@ -378,7 +378,7 @@ namespace Telegram.Services
 
         private ReactionType _defaultReaction;
 
-        private IList<ChatFolderInfo> _chatFolders = Array.Empty<ChatFolderInfo>();
+        private List<ChatFolderInfo> _chatFolders = [];
         private Dictionary<int, ChatFolderInfo> _chatFolders2 = new();
         private readonly object _chatFoldersLock = new();
         private int _mainChatListPosition = 0;
@@ -1016,7 +1016,7 @@ namespace Telegram.Services
 
             lock (_chatFoldersLock)
             {
-                _chatFolders = Array.Empty<ChatFolderInfo>();
+                _chatFolders = [];
                 _chatFolders2.Clear();
             }
 
@@ -1606,7 +1606,7 @@ namespace Telegram.Services
 
         public ReactionType DefaultReaction => _defaultReaction;
 
-        public IList<ChatFolderInfo> ChatFolders => _chatFolders;
+        public List<ChatFolderInfo> ChatFolders => _chatFolders;
 
         public int MainChatListPosition => _mainChatListPosition;
 
@@ -1839,7 +1839,7 @@ namespace Telegram.Services
             return _chatFolders.IndexOf(x) - _chatFolders.IndexOf(y);
         }
 
-        public IList<ChatFolderInfo> GetChatFolders(Chat chat)
+        public List<ChatFolderInfo> GetChatFolders(Chat chat)
         {
             List<ChatFolderInfo> result = null;
 
@@ -1874,7 +1874,7 @@ namespace Telegram.Services
                 }
             }
 
-            return Array.Empty<ChatFolderInfo>();
+            return [];
         }
 
         public bool TryGetCachedReaction(string emoji, out EmojiReaction value)
@@ -2008,14 +2008,14 @@ namespace Telegram.Services
                 .FirstOrDefault(x => x.Name == name);
         }
 
-        public IList<QuickReplyMessage> GetQuickReplyMessages(int id)
+        public List<QuickReplyMessage> GetQuickReplyMessages(int id)
         {
             if (_quickReplyShortcuts.TryGetValue(id, out var value))
             {
                 return value.Messages;
             }
 
-            return Array.Empty<QuickReplyMessage>();
+            return [];
         }
 
         public IList<QuickReplyShortcut> GetQuickReplyShortcuts()
@@ -2062,14 +2062,14 @@ namespace Telegram.Services
             return ClientEx.CheckQuickReplyShortcutName(name);
         }
 
-        public IList<WelcomeMessage> GetWelcomeMessages(long chatId)
+        public List<WelcomeMessage> GetWelcomeMessages(long chatId)
         {
             if (_welcomeMessages.TryGetValue(chatId, out var value))
             {
                 return value;
             }
 
-            return Array.Empty<WelcomeMessage>();
+            return [];
         }
 
         public bool IsSavedMessages(MessageSender sender)
@@ -4432,7 +4432,7 @@ namespace Telegram.Services
     {
         public QuickReplyShortcut Shortcut { get; set; }
 
-        public IList<QuickReplyMessage> Messages { get; set; }
+        public List<QuickReplyMessage> Messages { get; set; }
     }
 
     public partial class ChatListUnreadCount

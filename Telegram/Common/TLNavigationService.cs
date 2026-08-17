@@ -428,7 +428,7 @@ namespace Telegram.Common
                     var text = string.Format(Strings.ChannelAntiSpamInfo2, path);
                     var index = Strings.ChannelAntiSpamInfo2.IndexOf("{0}");
 
-                    var formatted = new FormattedText(text, new[] { new TextEntity(index, path.Length, new TextEntityTypeTextUrl("tg://")) });
+                    var formatted = new FormattedText(text, [new TextEntity(index, path.Length, new TextEntityTypeTextUrl("tg://"))]);
 
                     await ShowPopupAsync(formatted, Strings.AppName, Strings.OK);
                     return;

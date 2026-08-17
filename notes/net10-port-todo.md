@@ -404,10 +404,16 @@ carries the exception type, message and a stack. The Application event log only 
       `new PlaceholderImageHelper(Window.Current)` per view, whose native constructor takes
       `window.Compositor()` — the first thing to check is whether that construction is what
       throws on the secondary view.
-- [ ] `{Binding}` is where the runtime differences will show. 180 occurrences across 32 of 481
-      XAML files, against 1927 `x:Bind` which are compiled and free. Each managed binding source
-      type needs `[GeneratedBindableCustomProperty]` and to be `partial`. Bindings whose source is
-      a XAML/WinRT type need nothing.
+- [x] `{Binding}` **audited — see `binding-audit.md`.** 108 occurrences across 26 of 475 files,
+      against 2038 `x:Bind`. Two mechanisms satisfy a classic binding and they are disjoint here:
+      `XamlTypeInfo.g.cs` emits real accessors for any managed member reached from markup (no
+      attribute, no registration, both projects), and `[GeneratedBindableCustomProperty]` covers the
+      types the compiler cannot see because they are only ever a runtime `DataContext`. So the risk
+      surface is just the second set. Three live defects fell out — `StickerSetViewModel.Title` and
+      `.IsInstalled` in the emoji drawer's group header, `RevenueTabItem.Text` behind
+      `DisplayMemberPath`, and `InstantViewModel.Title` behind the tab header's `SetBinding` — plus
+      eight occurrences that need a glance to confirm. The three bindings built in code-behind are
+      the worst of the surface: no markup, so nothing static sees them at all.
 
 ## Phase 5 — AOT (compiles, links, runs; three features still under repair)
 
@@ -500,6 +506,48 @@ reads these attributes in its own generator, and a generator cannot see what ano
 wrote. `TDAPI003` compares the schema against the attributes actually present and reports what a
 TDLib update has added. Classic `{Binding}` is a second blind spot, having no
 C# anywhere; `x:Bind` is covered, which is why the analyzer opts into analysing generated code.
+
+### IList<T> to List<T> on the generated API — ON A BRANCH
+
+Why: a binding assigns through the **declared** type, so with `IList<T>` no analyzer can ever see
+the concrete type, and `SettingsStoragePage` threw `E_INVALIDARG` with nothing to warn on. `List<T>`
+makes it visible, stops `foreach` boxing an enumerator (23 sites on `.Entities` alone, per render)
+and lets the indexer inline. Functions keep `IList<T>`: they are only written and serialised, never
+bound or iterated, and 93 of the 313 call-site errors were theirs alone.
+
+Three commits, on their own branch rather than on develop:
+
+- object **properties** are `List<T>`, constructors still take `IList<T>` and convert;
+- the analyzer follows x:Bind into `XamlBindingSetters`, which is how the 83 below became visible;
+- constructors take `List<T>` too, so `TdCollection.AsList` is gone.
+
+Call sites moved to `[x]` and `[]`, which allocates *less* than before - `AsList(new[] { x })` built
+an array and copied it. Four sites needed judgement:
+`TryGetColors` fills by `Add` rather than by index (capacity is not count - that is the crash that
+literal translation would give), `ClientService.ChatList`/`StoryList` the same, `VoipPage`'s
+gradients are `static readonly List<int>`, and `TextStyleRun` shares one empty list.
+
+Open, in the order I would take them:
+
+- **The shared empties are a footgun and a regression.** `TextStyleRun.NoEntities` and
+  `AnimatedImageSource.NoOutline` are shared *mutable* lists; one stray `Add` corrupts a
+  process-wide singleton. The old code failed fast, because `IList<T>.Add` on `Array.Empty<T>()`
+  throws `NotSupportedException`. Inheriting a `Frozen<T> : List<T>` cannot help - the members are
+  not virtual, so the guard is inert whenever the static type is `List<T>`, which it always is
+  (measured). Plan: return a fresh list from `GetEntities`, whose result callers may edit, keep the
+  shared instance only for stored-and-read fields, and add a `[Conditional("DEBUG")]` check that
+  the count is still zero.
+- **83 app collections still unregistered** - `DiffObservableCollection<T>`,
+  `IncrementalCollection<T>`, `ObservableCollection<T>`. Zero TDLib vectors remain, so this is now
+  a finite list rather than an open-ended blind spot. Each is a page that throws when opened.
+- **`CsWinRT.Vectors.cs` is now partly dead weight.** The analyzer can see TDLib vectors on its own,
+  so the 188 blanket registrations could shrink to the reachable set. Strip the file, rebuild, and
+  TG1001 names exactly what is needed.
+- **Nothing here is measured.** No binary-size or runtime figure for the change; NativeAOT
+  specialises per instantiation, so it may cost code size.
+
+`Telegram/Common/ThumbnailController.cs` is Fela's, unrelated, and in the same tree - not part of
+this.
 
 ### Still open
 

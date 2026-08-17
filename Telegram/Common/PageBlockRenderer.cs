@@ -837,7 +837,7 @@ namespace Telegram.Common
             }
             else
             {
-                var formatted = new FormattedText(plain.Text, new[] { new TextEntity(0, plain.Text.Length, new TextEntityTypePreCode(block.Language)) });
+                var formatted = new FormattedText(plain.Text, [new TextEntity(0, plain.Text.Length, new TextEntityTypePreCode(block.Language))]);
                 var textBlock = CreateTextBlock();
                 textBlock.SetText(clientService, formatted);
 
@@ -1243,7 +1243,7 @@ namespace Telegram.Common
             }
 
             // See ProcessPhoto: the gallery is built on tap, not collected here.
-            var message = CreateMessage(clientService, new MessageVideo(block.Video, Array.Empty<AlternativeVideo>(), Array.Empty<VideoStoryboard>(), null, 0, null, false, block.HasSpoiler, false));
+            var message = CreateMessage(clientService, new MessageVideo(block.Video, [], [], null, 0, null, false, block.HasSpoiler, false));
             var content = new VideoContent(message, album: parent is PageBlockCollage);
             content.HorizontalAlignment = parent is PageBlockCollage ? HorizontalAlignment.Stretch : HorizontalAlignment.Center;
             content.ClearValue(FrameworkElement.MaxWidthProperty);
@@ -1716,7 +1716,7 @@ namespace Telegram.Common
         //   - last block (unless full media): 6px bottom
         // LayoutRoot.Children is kept 1:1 with blocks by the diff (null elements are
         // inserted as Border placeholders), so indices line up.
-        public void UpdateSpacing(Panel panel, IList<PageBlock> blocks, bool root)
+        public void UpdateSpacing(Panel panel, List<PageBlock> blocks, bool root)
         {
             var count = Math.Min(blocks.Count, panel.Children.Count);
 

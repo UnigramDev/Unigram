@@ -1602,12 +1602,12 @@ namespace Telegram.Controls.Cells
             {
                 if (formatted?.Text.Length > 0)
                 {
-                    var entities = new TextEntity[formatted.Entities.Count];
+                    var entities = new List<TextEntity>(formatted.Entities.Count);
 
                     for (int i = 0; i < formatted.Entities.Count; i++)
                     {
                         TextEntity entity = formatted.Entities[i];
-                        entities[i] = new TextEntity(entity.Offset + text.Length, entity.Length, entity.Type);
+                        entities.Add(new TextEntity(entity.Offset + text.Length, entity.Length, entity.Type));
                     }
 
                     return new FormattedText(text + formatted.Text, entities);

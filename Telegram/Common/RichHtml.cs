@@ -53,7 +53,7 @@ namespace Telegram.Common
         /// Parses an HTML fragment into page blocks. Returns an empty list when there is
         /// nothing to paste — the caller decides what an empty paste means.
         /// </summary>
-        public static IList<PageBlock> Parse(string html)
+        public static List<PageBlock> Parse(string html)
         {
             var blocks = new List<PageBlock>();
             if (string.IsNullOrEmpty(html))

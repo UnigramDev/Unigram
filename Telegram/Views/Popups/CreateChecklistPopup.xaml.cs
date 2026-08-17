@@ -140,11 +140,11 @@ namespace Telegram.Views.Popups
             }
         }
 
-        public IList<InputChecklistTask> Tasks => GetTasks(false);
+        public List<InputChecklistTask> Tasks => GetTasks(false);
 
-        public IList<InputChecklistTask> AddedTasks => GetTasks(true);
+        public List<InputChecklistTask> AddedTasks => GetTasks(true);
 
-        private IList<InputChecklistTask> GetTasks(bool addedTasksOnly)
+        private List<InputChecklistTask> GetTasks(bool addedTasksOnly)
         {
             var tasks = new List<InputChecklistTask>();
             var nextTaskId = Math.Max(0, Items.Max(x => x.Id));

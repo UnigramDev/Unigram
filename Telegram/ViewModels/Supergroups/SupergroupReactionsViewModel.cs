@@ -214,7 +214,7 @@ namespace Telegram.ViewModels.Supergroups
             ChatAvailableReactions value = _available switch
             {
                 SupergroupAvailableReactions.All => new ChatAvailableReactionsAll(),
-                SupergroupAvailableReactions.None => new ChatAvailableReactionsSome(Array.Empty<ReactionType>(), maxReactionCount),
+                SupergroupAvailableReactions.None => new ChatAvailableReactionsSome([], maxReactionCount),
                 SupergroupAvailableReactions.Some => new ChatAvailableReactionsSome(items, maxReactionCount),
                 _ => null
             };

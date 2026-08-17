@@ -363,12 +363,12 @@ namespace Telegram.Views.Stars.Popups
 
                 var senderName = clientService.GetTitle(gift.OriginalDetails.SenderId);
                 var senderText = senderName != null
-                    ? new FormattedText(senderName, new[] { new TextEntity(0, senderName.Length, gift.OriginalDetails.SenderId.ToTextEntityType()) })
+                    ? new FormattedText(senderName, [new TextEntity(0, senderName.Length, gift.OriginalDetails.SenderId.ToTextEntityType())])
                     : null;
 
                 var receiverName = clientService.GetTitle(gift.OriginalDetails.ReceiverId);
                 var receiverText = receiverName != null
-                    ? new FormattedText(receiverName, new[] { new TextEntity(0, receiverName.Length, gift.OriginalDetails.ReceiverId.ToTextEntityType()) })
+                    ? new FormattedText(receiverName, [new TextEntity(0, receiverName.Length, gift.OriginalDetails.ReceiverId.ToTextEntityType())])
                     : null;
 
                 var date = Formatter.Date(gift.OriginalDetails.Date);

@@ -113,7 +113,7 @@ namespace Telegram.Controls.Chats
         /// </summary>
         private async Task<bool> TryPasteRichAsync(DataPackageView package)
         {
-            IList<PageBlock> blocks;
+            List<PageBlock> blocks;
             bool own;
 
             try

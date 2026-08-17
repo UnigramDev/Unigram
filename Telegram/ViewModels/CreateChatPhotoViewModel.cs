@@ -23,14 +23,14 @@ namespace Telegram.ViewModels
         {
             Items = new ObservableCollection<BackgroundFill>
             {
-                new BackgroundFillFreeformGradient(new[] { 0x5A7FFF, 0x2CA0F2, 0x4DFF89, 0x6BFCEB }),
-                new BackgroundFillFreeformGradient(new[] { 0xFF011D, 0xFF530D, 0xFE64DC, 0xFFDC61 }),
-                new BackgroundFillFreeformGradient(new[] { 0xFE64DC, 0xFF6847, 0xFFDD02, 0xFFAE10 }),
-                new BackgroundFillFreeformGradient(new[] { 0x84EC00, 0x00B7C2, 0x00C217, 0xFFE600 }),
-                new BackgroundFillFreeformGradient(new[] { 0x86B0FF, 0x35FFCF, 0x69FFFF, 0x76DEFF }),
-                new BackgroundFillFreeformGradient(new[] { 0xFAE100, 0xFF54EE, 0xFC2B78, 0xFF52D9 }),
-                new BackgroundFillFreeformGradient(new[] { 0x73A4FF, 0x5F55FF, 0xFF49F8, 0xEC76FF }),
-                new BackgroundFillFreeformGradient(new[] { 0x73A4FF, 0x5F55FF, 0xFF49F8, 0xEC76FF }),
+                new BackgroundFillFreeformGradient([0x5A7FFF, 0x2CA0F2, 0x4DFF89, 0x6BFCEB]),
+                new BackgroundFillFreeformGradient([0xFF011D, 0xFF530D, 0xFE64DC, 0xFFDC61]),
+                new BackgroundFillFreeformGradient([0xFE64DC, 0xFF6847, 0xFFDD02, 0xFFAE10]),
+                new BackgroundFillFreeformGradient([0x84EC00, 0x00B7C2, 0x00C217, 0xFFE600]),
+                new BackgroundFillFreeformGradient([0x86B0FF, 0x35FFCF, 0x69FFFF, 0x76DEFF]),
+                new BackgroundFillFreeformGradient([0xFAE100, 0xFF54EE, 0xFC2B78, 0xFF52D9]),
+                new BackgroundFillFreeformGradient([0x73A4FF, 0x5F55FF, 0xFF49F8, 0xEC76FF]),
+                new BackgroundFillFreeformGradient([0x73A4FF, 0x5F55FF, 0xFF49F8, 0xEC76FF]),
             };
 
             SelectedBackground = Items[0];

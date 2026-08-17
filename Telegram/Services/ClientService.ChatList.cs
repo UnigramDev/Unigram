@@ -69,7 +69,7 @@ namespace Telegram.Services
                 if (missing == 0)
                 {
                     // Have enough chats in the chat list to answer request
-                    var result = new long[Math.Max(0, Math.Min(limit, sorted.Count - offset))];
+                    var result = new List<long>(Math.Max(0, Math.Min(limit, sorted.Count - offset)));
                     var pos = 0;
 
                     using (var iter = sorted.GetEnumerator())
@@ -82,7 +82,7 @@ namespace Telegram.Services
 
                             if (i >= offset)
                             {
-                                result[pos++] = iter.Current.Id;
+                                result.Add(iter.Current.Id);
                             }
                         }
                     }
@@ -101,7 +101,7 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    return new Chats(0, Array.Empty<long>());
+                    return new Chats(0, []);
                 }
             }
 

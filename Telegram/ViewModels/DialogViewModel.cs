@@ -632,7 +632,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void SetText(string text, IList<TextEntity> entities = null, bool focus = false)
+        public void SetText(string text, List<TextEntity> entities = null, bool focus = false)
         {
             var field = TextField;
             if (field == null)
@@ -1982,7 +1982,7 @@ namespace Telegram.ViewModels
                 else if (message.Content is MessageContact contact && contact.Contact.PhoneNumber == "999888777666")
                 {
                     message.SenderId = new MessageSenderUser(contact.Contact.UserId);
-                    message.Content = new MessageChatAddMembers(new[] { contact.Contact.UserId });
+                    message.Content = new MessageChatAddMembers([contact.Contact.UserId]);
                 }
 
                 if (message.EffectId != 0)
@@ -2226,7 +2226,7 @@ namespace Telegram.ViewModels
                         }
                         else if (story.Content is StoryContentVideo video)
                         {
-                            message.GeneratedContent = new MessageVideo(new Video((int)video.Video.Duration, video.Video.Width, video.Video.Height, "video.mp4", "video/mp4", video.Video.HasStickers, true, video.Video.Minithumbnail, video.Video.Thumbnail, video.Video.Video), Array.Empty<AlternativeVideo>(), Array.Empty<VideoStoryboard>(), null, 0, null, false, false, false);
+                            message.GeneratedContent = new MessageVideo(new Video((int)video.Video.Duration, video.Video.Width, video.Video.Height, "video.mp4", "video/mp4", video.Video.HasStickers, true, video.Video.Minithumbnail, video.Video.Thumbnail, video.Video.Video), [], [], null, 0, null, false, false, false);
                         }
                     }
                     else
@@ -3662,7 +3662,7 @@ namespace Telegram.ViewModels
         /// spliced in — where a paste ends up when the pasted content says more than a
         /// message's text and entities can.
         /// </summary>
-        public void PasteRichMessage(FormattedText before, IList<PageBlock> blocks, FormattedText after)
+        public void PasteRichMessage(FormattedText before, List<PageBlock> blocks, FormattedText after)
         {
             var composed = new List<PageBlock>();
 

@@ -1174,7 +1174,7 @@ namespace Telegram.ViewModels
                     }
                     else
                     {
-                        Handle(new UpdateDeleteMessages(update.ChatId, new[] { update.MessageId }, true, false));
+                        Handle(new UpdateDeleteMessages(update.ChatId, [update.MessageId], true, false));
                     }
                 }
                 else
@@ -1228,7 +1228,7 @@ namespace Telegram.ViewModels
         {
             if (update.Message.ChatId == _chat?.Id && Type == DialogType.History && update.Message.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed)
             {
-                Handle(new UpdateDeleteMessages(update.Message.ChatId, new[] { update.OldMessageId }, true, false));
+                Handle(new UpdateDeleteMessages(update.Message.ChatId, [update.OldMessageId], true, false));
                 BeginOnUIThread(() =>
                 {
                     NavigationService.NavigateToChat(_chat, update.Message.Id, scheduled: true);

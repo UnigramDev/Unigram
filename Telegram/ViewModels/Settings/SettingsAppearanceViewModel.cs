@@ -58,7 +58,7 @@ namespace Telegram.ViewModels.Settings
         {
             static Background GetDefaultBackground(bool dark)
             {
-                var freeform = dark ? new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+                List<int> freeform = dark ? [0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258] : [0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884];
                 return new Background(0, true, dark, string.Empty,
                     new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
                     new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));

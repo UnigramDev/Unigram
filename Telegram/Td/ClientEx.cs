@@ -33,7 +33,7 @@ namespace Telegram.Td
             return ParseMarkdown(new FormattedText(text, null));
         }
 
-        public static FormattedText ParseMarkdown(string text, IList<TextEntity> entities)
+        public static FormattedText ParseMarkdown(string text, List<TextEntity> entities)
         {
             return ParseMarkdown(new FormattedText(text, entities));
         }
@@ -54,7 +54,7 @@ namespace Telegram.Td
             return GetMarkdownText(new FormattedText(text, null));
         }
 
-        public static FormattedText GetMarkdownText(string text, IList<TextEntity> entities)
+        public static FormattedText GetMarkdownText(string text, List<TextEntity> entities)
         {
             return GetMarkdownText(new FormattedText(text, entities));
         }
@@ -70,7 +70,7 @@ namespace Telegram.Td
             return text;
         }
 
-        public static IList<TextEntity> GetTextEntities(string text)
+        public static List<TextEntity> GetTextEntities(string text)
         {
             var result = Client.Execute(new GetTextEntities(text));
             if (result is TextEntities entities)
@@ -81,7 +81,7 @@ namespace Telegram.Td
             return [];
         }
 
-        public static FormattedText MergeEntities(FormattedText text, IList<TextEntity> entities)
+        public static FormattedText MergeEntities(FormattedText text, List<TextEntity> entities)
         {
             if (entities.Count > 0 && text.Entities.Count > 0)
             {
@@ -115,17 +115,17 @@ namespace Telegram.Td
 
         public static FormattedText CustomEmoji(string emoji, long customEmojiId)
         {
-            return new FormattedText(emoji, new[] { new TextEntity(0, emoji.Length, new TextEntityTypeCustomEmoji(customEmojiId)) });
+            return new FormattedText(emoji, [new TextEntity(0, emoji.Length, new TextEntityTypeCustomEmoji(customEmojiId))]);
         }
 
         public static FormattedText CustomEmoji(long customEmojiId)
         {
-            return new FormattedText("\U0001F642", new[] { new TextEntity(0, 2, new TextEntityTypeCustomEmoji(customEmojiId)) });
+            return new FormattedText("\U0001F642", [new TextEntity(0, 2, new TextEntityTypeCustomEmoji(customEmojiId))]);
         }
 
         public static FormattedText CustomEmoji(string glyph)
         {
-            return new FormattedText(glyph, new[] { new TextEntity(0, 1, new TextEntityTypeCustomEmoji(-1)) });
+            return new FormattedText(glyph, [new TextEntity(0, 1, new TextEntityTypeCustomEmoji(-1))]);
         }
 
         public static FormattedText Format(string format, params object[] args)

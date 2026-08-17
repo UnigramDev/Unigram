@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Cells;
@@ -213,14 +214,14 @@ namespace Telegram.Views.Settings
             var clientService = ViewModel.ClientService;
             var senderId = new MessageSenderUser(clientService.Options.MyId);
 
-            var message = new Message(0, senderId, null, 0, null, null, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, null, null);
+            var message = new Message(0, senderId, null, 0, null, null, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, [], null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, null, null);
 
             var settings = clientService.Session.Resolve<ISettingsService>();
 
             var delegato = new ChatMessageDelegate(clientService, settings, null);
             var viewModel = new MessageViewModel(clientService, delegato, null, null, null, message, true);
 
-            Reaction.SetReaction(viewModel, new MessageReaction(reaction, 1, false, senderId, new MessageSender[] { }));
+            Reaction.SetReaction(viewModel, new MessageReaction(reaction, 1, false, senderId, [ ]));
 
             if (Reaction.IsLoaded)
             {
@@ -230,7 +231,7 @@ namespace Telegram.Views.Settings
 
         private void Reaction_Click(object sender, RoutedEventArgs e)
         {
-            var empty = Array.Empty<AvailableReaction>();
+            List<AvailableReaction> empty = [];
             var reactions = ViewModel.ClientService.ActiveReactions
                 .Select(x => new AvailableReaction(new ReactionTypeEmoji(x), false))
                 .ToList();

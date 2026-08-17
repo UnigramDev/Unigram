@@ -485,7 +485,7 @@ namespace Telegram.ViewModels.Chats
                         CanBeDeleted = canBeEdited
                     })
                     .ToList();
-                response = new Td.Api.Stories(0, items, Array.Empty<int>());
+                response = new Td.Api.Stories(0, items, []);
             }
 
             if (response is Td.Api.Stories stories)

@@ -226,7 +226,7 @@ namespace Telegram.ViewModels
             BeginOnUIThread(() => UpdateChatFolders(update.ChatFolders, update.MainChatListPosition));
         }
 
-        private void UpdateChatFolders(IList<ChatFolderInfo> chatFolders, int mainChatListPosition)
+        private void UpdateChatFolders(List<ChatFolderInfo> chatFolders, int mainChatListPosition)
         {
             if (chatFolders.Count > 0)
             {
@@ -277,7 +277,7 @@ namespace Telegram.ViewModels
             Chats.Delegate?.UpdateChatFoldersLayout();
         }
 
-        private void Merge(IList<ChatFolderViewModel> destination, IList<ChatFolderInfo> origin, int selectedFolderId, out bool updateSelection)
+        private void Merge(IList<ChatFolderViewModel> destination, List<ChatFolderInfo> origin, int selectedFolderId, out bool updateSelection)
         {
             updateSelection = false;
 
@@ -455,7 +455,7 @@ namespace Telegram.ViewModels
             var message = Strings.UnconfirmedAuthConfirmed + Environment.NewLine + Strings.UnconfirmedAuthConfirmedMessage;
             var entity = new TextEntity(0, Strings.RequestToJoinSent.Length, new TextEntityTypeBold());
 
-            var markdown = new FormattedText(message, new[] { entity });
+            var markdown = new FormattedText(message, [entity]);
             var text = ClientEx.ParseMarkdown(markdown);
 
             ToastPopup.Show(NavigationService.XamlRoot, text, ToastPopupIcon.Success);

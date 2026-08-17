@@ -290,11 +290,11 @@ namespace Telegram.ViewModels
             {
                 if (!_color3.IsEmpty && !_color4.IsEmpty)
                 {
-                    return new BackgroundFillFreeformGradient(new[] { _color1.Value, _color2.Value, _color3.Value, _color4.Value });
+                    return new BackgroundFillFreeformGradient([_color1.Value, _color2.Value, _color3.Value, _color4.Value]);
                 }
                 else if (!_color3.IsEmpty)
                 {
-                    return new BackgroundFillFreeformGradient(new[] { _color1.Value, _color2.Value, _color3.Value });
+                    return new BackgroundFillFreeformGradient([_color1.Value, _color2.Value, _color3.Value]);
                 }
 
                 return new BackgroundFillGradient(_color1.Value, _color2.Value, _rotation);

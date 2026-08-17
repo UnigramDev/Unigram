@@ -47,8 +47,8 @@ namespace Telegram.ViewModels.Users
                     Minithumbnail = userFull.Photo.Minithumbnail,
                     Sizes =
                     [
-                        new PhotoSize("x", user.ProfilePhoto.Small, 160, 160, Array.Empty<int>()),
-                        new PhotoSize("y", user.ProfilePhoto.Big, 640, 640, Array.Empty<int>())
+                        new PhotoSize("x", user.ProfilePhoto.Small, 160, 160, []),
+                        new PhotoSize("y", user.ProfilePhoto.Big, 640, 640, [])
                     ],
                     Animation = userFull.Photo.Animation,
                     SmallAnimation = userFull.Photo.SmallAnimation,

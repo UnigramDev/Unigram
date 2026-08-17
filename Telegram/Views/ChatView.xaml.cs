@@ -3812,7 +3812,7 @@ namespace Telegram.Views
 
         private async void LoadMessageViewers(MessageViewModel message, MessageProperties properties, MenuFlyout flyout)
         {
-            static async Task<IList<MessageViewer>> GetMessageViewersAsync(MessageViewModel message, MessageProperties properties)
+            static async Task<List<MessageViewer>> GetMessageViewersAsync(MessageViewModel message, MessageProperties properties)
             {
                 if (CanGetMessageViewers(message, properties, false))
                 {
@@ -3823,7 +3823,7 @@ namespace Telegram.Views
                     }
                 }
 
-                return Array.Empty<MessageViewer>();
+                return [];
             }
 
             var played = message.Content is MessageVoiceNote or MessageVideoNote;

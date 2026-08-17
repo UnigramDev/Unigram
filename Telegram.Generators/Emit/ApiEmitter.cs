@@ -127,7 +127,7 @@ namespace Telegram.Generators.Emit
                 }
 
                 var property = type.Properties[i];
-                builder.Append(Naming.ParameterType(property) + " " + Naming.ParameterName(property));
+                builder.Append(Naming.ParameterType(property, type.IsFunction) + " " + Naming.ParameterName(property));
             }
 
             builder.AppendLine(")");
@@ -135,16 +135,7 @@ namespace Telegram.Generators.Emit
 
             foreach (var property in type.Properties)
             {
-                var value = Naming.ParameterName(property);
-
-                if (property.IsVector && !type.IsFunction)
-                {
-                    // Parameter is the interface, field is the List. Free for a parsed response,
-                    // which arrives as a List already; a copy only for the arrays app code passes.
-                    value = "TdCollection.AsList(" + value + ")";
-                }
-
-                builder.AppendLine("        " + Naming.PropertyName(property, className) + " = " + value + ";");
+                builder.AppendLine("        " + Naming.PropertyName(property, className) + " = " + Naming.ParameterName(property) + ";");
             }
 
             builder.AppendLine("    }");

@@ -402,7 +402,7 @@ namespace Telegram.Controls
                 ProfileColors colors;
                 if (chat.EmojiStatus?.Type is EmojiStatusTypeUpgradedGift upgradedGift)
                 {
-                    colors = new ProfileColors(new ProfileAccentColors(Array.Empty<int>(), new[] { upgradedGift.BackdropColors.EdgeColor, upgradedGift.BackdropColors.CenterColor }, Array.Empty<int>()));
+                    colors = new ProfileColors(new ProfileAccentColors([], [upgradedGift.BackdropColors.EdgeColor, upgradedGift.BackdropColors.CenterColor], []));
                 }
                 else if (ViewModel.ClientService.TryGetProfileColor(chat.ProfileAccentColorId, out ProfileColor color))
                 {
@@ -1705,7 +1705,7 @@ namespace Telegram.Controls
             ReplaceEntities(DescriptionSpan, text.Text, text.Entities);
         }
 
-        private void ReplaceEntities(Span span, string text, IList<TextEntity> entities)
+        private void ReplaceEntities(Span span, string text, List<TextEntity> entities)
         {
             var previous = 0;
 

@@ -8,6 +8,7 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
@@ -44,9 +45,9 @@ namespace Telegram.Views.Calls
 
     public sealed partial class VoipPage : WindowEx, IPopupHost
     {
-        private static readonly int[] _pendingGradient = new[] { 0x568FD6, 0x626ED5, 0xA667D5, 0x7664DA };
-        private static readonly int[] _readyGradient = new[] { 0xACBD65, 0x459F8D, 0x53A4D1, 0x3E917A };
-        private static readonly int[] _errorGradient = new[] { 0xC0508D, 0xF09536, 0xCE5081, 0xFC7C4C };
+        private static readonly List<int> _pendingGradient = [0x568FD6, 0x626ED5, 0xA667D5, 0x7664DA];
+        private static readonly List<int> _readyGradient = [0xACBD65, 0x459F8D, 0x53A4D1, 0x3E917A];
+        private static readonly List<int> _errorGradient = [0xC0508D, 0xF09536, 0xCE5081, 0xFC7C4C];
 
         private readonly VoipCall _call;
 

@@ -1865,7 +1865,7 @@ namespace Telegram.Services.Calls
         /// <summary>
         /// At most 3 recently speaking users in the group call.
         /// </summary>
-        public IList<GroupCallRecentSpeaker> RecentSpeakers { get; private set; }
+        public List<GroupCallRecentSpeaker> RecentSpeakers { get; private set; }
 
         /// <summary>
         /// True, if all group call participants are loaded.

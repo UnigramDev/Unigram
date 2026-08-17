@@ -97,19 +97,10 @@ namespace Telegram.Generators.Schema
             return name;
         }
 
-        /// <summary>
-        /// The constructor parameter type. Always the interface, so that `new[] { x }` and
-        /// `[x]` both still bind - the property converts, and for a parsed response that is a cast
-        /// rather than a copy, both parsers building a List already.
-        /// </summary>
-        public static string ParameterType(SchemaProperty property)
+        /// <summary>The constructor parameter type, which matches the field.</summary>
+        public static string ParameterType(SchemaProperty property, bool function)
         {
-            if (property.IsVectorOfVectors)
-            {
-                return "IList<List<" + ScalarType(property.Type) + ">>";
-            }
-
-            return PropertyType(property, true);
+            return PropertyType(property, function);
         }
 
         public static string ScalarType(string name)

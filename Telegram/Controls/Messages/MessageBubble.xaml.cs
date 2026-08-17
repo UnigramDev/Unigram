@@ -2268,17 +2268,17 @@ namespace Telegram.Controls.Messages
                         var usupported = Strings.UnsupportedMessage;
                         var entity = new TextEntity(0, Strings.UnsupportedMessage.Length, new TextEntityTypeItalic());
 
-                        result = ReplaceEntities(message, new FormattedText(usupported, new[] { entity }));
+                        result = ReplaceEntities(message, new FormattedText(usupported, [entity]));
                         break;
                     }
 
                 case MessageVenue venue:
                     {
                         var venueText = $"{venue.Venue.Title}\n{venue.Venue.Address}";
-                        var venueEntities = new TextEntity[]
-                        {
-                    new(0, venue.Venue.Title.Length, new TextEntityTypeBold())
-                        };
+                        List<TextEntity> venueEntities =
+                        [
+                            new(0, venue.Venue.Title.Length, new TextEntityTypeBold())
+                        ];
 
                         result = ReplaceEntities(message, venueText, venueEntities);
                         break;
@@ -2325,7 +2325,7 @@ namespace Telegram.Controls.Messages
             return ReplaceEntities(message, text.Text, text.Entities, fontSize);
         }
 
-        private bool ReplaceEntities(MessageViewModel message, string text, IList<TextEntity> entities, double fontSize = 0)
+        private bool ReplaceEntities(MessageViewModel message, string text, List<TextEntity> entities, double fontSize = 0)
         {
             // TODO: this crashes due to an internal framework exception
             //Message.IsTextSelectionEnabled = !message.Chat.HasProtectedContent;
@@ -3201,7 +3201,7 @@ namespace Telegram.Controls.Messages
             Grid.SetRow(Message, 2);
             Panel.Placeholder = true;
 
-            Message.SetText(null, message, Array.Empty<TextEntity>());
+            Message.SetText(null, message, TextStyleRun.NoEntities);
 
             UpdateMockup(outgoing, first, last);
         }
@@ -3250,7 +3250,7 @@ namespace Telegram.Controls.Messages
             Grid.SetRow(Message, 2);
             Panel.Placeholder = true;
 
-            Message.SetText(null, message, Array.Empty<TextEntity>());
+            Message.SetText(null, message, TextStyleRun.NoEntities);
 
             UpdateMockup(outgoing, first, last);
         }
@@ -3324,7 +3324,7 @@ namespace Telegram.Controls.Messages
             Grid.SetRow(Message, 2);
             Panel.Placeholder = true;
 
-            Message.SetText(null, message, Array.Empty<TextEntity>());
+            Message.SetText(null, message, TextStyleRun.NoEntities);
 
             UpdateMockup(outgoing, first, last);
         }
@@ -3413,7 +3413,7 @@ namespace Telegram.Controls.Messages
             Grid.SetRow(Message, 2);
             Panel.Placeholder = false;
 
-            Message.SetText(null, message, Array.Empty<TextEntity>());
+            Message.SetText(null, message, TextStyleRun.NoEntities);
 
             LoadTemplateChild(ref HeaderPanel);
             LoadTemplateChild(ref HeaderLabel);
@@ -3550,7 +3550,7 @@ namespace Telegram.Controls.Messages
                 Media.Child = presenter;
             }
 
-            Message.SetText(null, caption, Array.Empty<TextEntity>());
+            Message.SetText(null, caption, TextStyleRun.NoEntities);
 
             UpdateMockup(outgoing, first, last);
         }
@@ -3605,7 +3605,7 @@ namespace Telegram.Controls.Messages
 
             if (sender != null)
             {
-                var message = new Message(chat.Id, sender, null, 0, null, null, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, null, null);
+                var message = new Message(chat.Id, sender, null, 0, null, null, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, [], null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, null, null);
                 var settings = clientService.Session.Resolve<ISettingsService>();
 
                 var delegato = new ChatMessageDelegate(clientService, settings, chat);

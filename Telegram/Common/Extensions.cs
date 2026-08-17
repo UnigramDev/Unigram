@@ -171,15 +171,14 @@ namespace Telegram.Common
 
         public static FormattedText AsFormattedText(this string str, bool allocate = true)
         {
-            return new FormattedText(str, allocate ? Array.Empty<TextEntity>() : null);
+            return new FormattedText(str, allocate ? [] : null);
         }
 
         public static FormattedText AsFormattedText(this string str, TextEntityType type)
         {
-            return new FormattedText(str, new[]
-            {
+            return new FormattedText(str, [
                 new TextEntity(0, str.Length, type)
-            });
+            ]);
         }
 
         public static bool TryGetValue(this CoreWebView2HttpRequestHeaders headers, string key, out string value)
