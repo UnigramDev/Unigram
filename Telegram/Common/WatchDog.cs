@@ -122,6 +122,10 @@ namespace Telegram
                 return;
             }
 
+#if NET9_0_OR_GREATER
+            AppDomain.CurrentDomain.FirstChanceException += OnFirstChanceException;
+#endif
+
             Read();
             LoadReports();
 
@@ -163,7 +167,75 @@ namespace Telegram
             }
         }
 
-        private static void ProcessException(Exception ex)
+#if NET9_0_OR_GREATER
+        // Re-entrancy: serialising a report throws often enough on its own, and a handler that
+        // reports its own failure never returns.
+        [ThreadStatic]
+        private static bool _reporting;
+
+        // One report per distinct failure. Some of these fire once per frame - the video position
+        // indicator managed 176 in a single session - and the point is to learn the exception
+        // exists, not to count it.
+        private static readonly HashSet<string> _firstChance = new();
+
+        // These draw on the token bucket real crashes use, 100 an hour, and a message can carry a
+        // path or an id that makes every occurrence a new signature. Cap the session so a
+        // first-chance flood cannot starve the report for an actual crash.
+        private const int MaxFirstChanceReports = 8;
+
+        /// <summary>
+        /// Reports the marshalling failures that no unhandled handler can see.
+        /// </summary>
+        /// <remarks>
+        /// Thrown inside a CCW callback, a managed exception never reaches UnhandledErrorDetected or
+        /// Application.UnhandledException: CsWinRT has to convert it to an HRESULT at the ABI
+        /// boundary, so the runtime counts it as handled. XAML then fails fast on the HRESULT, and
+        /// a fail-fast bypasses the native filter in dllmain.cpp as well - which is the whole point
+        /// of one. First chance is the only moment the exception is still an exception.
+        ///
+        /// Reports are written synchronously, so the record survives the fail-fast that follows.
+        /// </remarks>
+        private static void OnFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
+        {
+            // Narrow on purpose: these are the types CsWinRT throws when it cannot marshal
+            // something, and reporting everything would bury the real crashes in the dashboard
+            // under exceptions the app goes on to handle.
+            if (_reporting || e.Exception is not (NotSupportedException or InvalidCastException))
+            {
+                return;
+            }
+
+            lock (_firstChance)
+            {
+                if (_firstChance.Count >= MaxFirstChanceReports
+                    || !_firstChance.Add(e.Exception.GetType().Name + ": " + e.Exception.Message))
+                {
+                    return;
+                }
+            }
+
+            _reporting = true;
+
+            try
+            {
+                // The exception carries no stack yet - first chance is raised before one is
+                // captured - so take the native backtrace, which at this point is the throw site.
+                // The stowed exception is not an option: the CCW creates that on the way out, after
+                // this has run.
+                ProcessException(NativeUtils.GetBackTrace(e.Exception.GetType().Name, e.Exception.Message), false);
+            }
+            catch
+            {
+                // Nothing useful to do here, and throwing would take the process with it.
+            }
+            finally
+            {
+                _reporting = false;
+            }
+        }
+#endif
+
+        private static void ProcessException(Exception ex, bool fatal = true)
         {
             if (_limiter.TryConsume())
             {
@@ -172,14 +244,20 @@ namespace Telegram
 
                 var reportPath = GetErrorReportPath(reportId);
 
-                File.WriteAllText(_crashLog, reportId);
+                // crash.id is what marks the session as having crashed, so a first-chance report -
+                // which may well be an exception something goes on to handle - must not write it.
+                if (fatal)
+                {
+                    File.WriteAllText(_crashLog, reportId);
+                }
+
                 File.WriteAllText(reportPath, report);
 
                 _channel.Writer.TryWrite(reportPath);
             }
         }
 
-        private static void ProcessException(FatalError ex)
+        private static void ProcessException(FatalError ex, bool fatal = true)
         {
             if (_limiter.TryConsume())
             {
@@ -188,7 +266,11 @@ namespace Telegram
 
                 var reportPath = GetErrorReportPath(reportId);
 
-                File.WriteAllText(_crashLog, reportId);
+                if (fatal)
+                {
+                    File.WriteAllText(_crashLog, reportId);
+                }
+
                 File.WriteAllText(reportPath, report);
 
                 _channel.Writer.TryWrite(reportPath);
