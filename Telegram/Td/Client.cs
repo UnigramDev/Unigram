@@ -11,11 +11,13 @@ using System.Runtime.CompilerServices;
 #endif
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Text.Json;
 using System.Threading;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Td.Api;
+#if TD_READER_PARSER
+using System.Text.Json;
+#endif
 
 #nullable enable
 

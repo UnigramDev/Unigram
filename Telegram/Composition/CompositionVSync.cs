@@ -7,7 +7,6 @@
 
 using System;
 using System.Diagnostics;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Composition
 {

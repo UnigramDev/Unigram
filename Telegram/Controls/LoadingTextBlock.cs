@@ -9,7 +9,6 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using Telegram.Common;
-using Telegram.Native;
 using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.UI;

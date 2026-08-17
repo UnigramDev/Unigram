@@ -7,8 +7,6 @@
 
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Runtime.InteropServices;
-using System.Text;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;

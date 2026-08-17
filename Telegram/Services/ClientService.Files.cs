@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Native;
 using Telegram.Td.Api;
 using Windows.Storage;
 using Future = Telegram.Services.StorageService.Future;

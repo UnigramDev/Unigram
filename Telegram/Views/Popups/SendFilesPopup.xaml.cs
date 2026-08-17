@@ -33,7 +33,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.Storage.Streams;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;

@@ -6,7 +6,6 @@
 //
 
 using System;
-using Telegram.ViewModels;
 
 namespace Telegram.Services
 {
