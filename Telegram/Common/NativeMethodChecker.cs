@@ -39,10 +39,13 @@ namespace Telegram.Common
         }
 
 #if NET9_0_OR_GREATER
-        [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+        // Spelled out because LibraryImport always generates ExactSpelling: kernel32 exports the W
+        // and A forms, not the bare name, and DllImport only found it by probing for the suffix -
+        // which it does because ExactSpelling defaults to false once a CharSet is set.
+        [LibraryImport("kernel32.dll", EntryPoint = "GetModuleHandleW", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
         private static partial IntPtr GetModuleHandle(string lpModuleName);
 
-        [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+        [LibraryImport("kernel32.dll", EntryPoint = "LoadLibraryW", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
         private static partial IntPtr LoadLibrary(string lpFileName);
 
         // Ansi, and deliberately: GetProcAddress has no wide form, so the name is bytes either way.
