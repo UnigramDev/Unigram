@@ -504,7 +504,7 @@ namespace Telegram.ViewModels
             return total;
         }
 
-        private static int LengthTableCells(IList<IList<PageBlockTableCell>> rows)
+        private static int LengthTableCells(List<List<PageBlockTableCell>> rows)
         {
             int total = 0;
             if (rows != null)
@@ -887,9 +887,9 @@ namespace Telegram.ViewModels
             return result;
         }
 
-        private static IList<IList<PageBlockTableCell>> SubstringTableCells(IList<IList<PageBlockTableCell>> rows, ref int remaining)
+        private static List<List<PageBlockTableCell>> SubstringTableCells(List<List<PageBlockTableCell>> rows, ref int remaining)
         {
-            var result = new List<IList<PageBlockTableCell>>();
+            var result = new List<List<PageBlockTableCell>>();
             if (rows == null) return result;
             foreach (var row in rows)
             {

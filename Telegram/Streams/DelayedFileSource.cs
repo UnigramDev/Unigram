@@ -73,7 +73,7 @@ namespace Telegram.Streams
                         Width = 512,
                         Height = 512,
                         NeedsRepainting = stickerSet.NeedsRepainting,
-                        Outline = stickerSet.ThumbnailOutline?.Paths ?? Array.Empty<ClosedVectorPath>(),
+                        Outline = stickerSet.ThumbnailOutline?.Paths ?? NoOutline,
                     };
                 }
 
@@ -83,7 +83,7 @@ namespace Telegram.Streams
                     Width = stickerSet.Thumbnail.Width,
                     Height = stickerSet.Thumbnail.Height,
                     NeedsRepainting = stickerSet.NeedsRepainting,
-                    Outline = stickerSet.ThumbnailOutline?.Paths ?? Array.Empty<ClosedVectorPath>(),
+                    Outline = stickerSet.ThumbnailOutline?.Paths ?? NoOutline,
                 };
             }
 
@@ -119,7 +119,7 @@ namespace Telegram.Streams
                         Width = 512,
                         Height = 512,
                         NeedsRepainting = stickerSet.NeedsRepainting,
-                        Outline = stickerSet.ThumbnailOutline?.Paths ?? Array.Empty<ClosedVectorPath>(),
+                        Outline = stickerSet.ThumbnailOutline?.Paths ?? NoOutline,
                     };
                 }
 
@@ -129,7 +129,7 @@ namespace Telegram.Streams
                     Width = stickerSet.Thumbnail.Width,
                     Height = stickerSet.Thumbnail.Height,
                     NeedsRepainting = stickerSet.NeedsRepainting,
-                    Outline = stickerSet.ThumbnailOutline?.Paths ?? Array.Empty<ClosedVectorPath>(),
+                    Outline = stickerSet.ThumbnailOutline?.Paths ?? NoOutline,
                 };
             }
 

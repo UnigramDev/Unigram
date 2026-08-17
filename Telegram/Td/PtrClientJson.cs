@@ -99,9 +99,9 @@ namespace Telegram.Td.Api
             return items;
         }
 
-        public static List<IList<T>> GetObjectArrayArrayPtr<T>(ref TdJsonReader reader, ClientResultHandler handler, PtrParser<T> parser) where T : Object
+        public static List<List<T>> GetObjectArrayArrayPtr<T>(ref TdJsonReader reader, ClientResultHandler handler, PtrParser<T> parser) where T : Object
         {
-            var items = new List<IList<T>>();
+            var items = new List<List<T>>();
 
             reader.Read();
 

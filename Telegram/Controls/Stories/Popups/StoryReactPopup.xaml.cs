@@ -106,7 +106,7 @@ namespace Telegram.Controls.Stories.Popups
             var response = await _clientService.SendAsync(new GetLiveStoryTopDonors(_story.GroupCall.Id));
             if (response is LiveStoryDonors donors)
             {
-                _reactors = [.. donors.TopDonors ?? Array.Empty<PaidReactor>()];
+                _reactors = donors.TopDonors is { } topDonors ? [.. topDonors] : [];
 
                 if (_reactors.Count > 0)
                 {

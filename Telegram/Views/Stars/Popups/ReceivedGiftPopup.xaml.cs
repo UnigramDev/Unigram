@@ -787,14 +787,14 @@ namespace Telegram.Views.Stars.Popups
             var response = await _clientService.SendAsync(new GetGiftUpgradePreview(gift.Gift.Id));
             if (response is GiftUpgradePreview preview)
             {
-                foreach (var item in preview.Models.Reverse())
+                for (int i = preview.Models.Count - 1; i >= 0; i--)
                 {
-                    _clientService.DownloadFile(item.Sticker.StickerValue.Id, 32);
+                    _clientService.DownloadFile(preview.Models[i].Sticker.StickerValue.Id, 32);
                 }
 
-                foreach (var item in preview.Symbols.Reverse())
+                for (int i = preview.Symbols.Count - 1; i >= 0; i--)
                 {
-                    _clientService.DownloadFile(item.Sticker.StickerValue.Id, 31);
+                    _clientService.DownloadFile(preview.Symbols[i].Sticker.StickerValue.Id, 31);
                 }
 
                 _preview = preview;

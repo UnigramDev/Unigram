@@ -57,7 +57,9 @@ namespace Telegram.Views.Stars.Popups
 
                 StarCountSlider.Initialize(_starCount = 50, 1, clientService.Options.PaidReactionStarCountMax);
 
-                _reactors = new List<PaidReactor>(message.InteractionInfo?.Reactions?.PaidReactors ?? Array.Empty<PaidReactor>());
+                _reactors = message.InteractionInfo?.Reactions?.PaidReactors is { } paidReactors
+                    ? new List<PaidReactor>(paidReactors)
+                    : new List<PaidReactor>();
 
                 if (_reactors.Count > 0)
                 {

@@ -549,7 +549,7 @@ namespace Telegram.Td.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteArray<T>(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, IList<IList<T>>? obj) where T : Object
+        public static void WriteArray<T>(this Utf8JsonWriter writer, ReadOnlySpan<byte> utf8PropertyName, IList<List<T>>? obj) where T : Object
         {
             if (obj == null)
             {
@@ -717,9 +717,9 @@ namespace Telegram.Td.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static List<IList<T>> GetObjectArrayArray<T>(this ref Utf8JsonReader reader, ClientResultHandler client, GetObjectArrayHandler<T> handler) where T : Object
+        public static List<List<T>> GetObjectArrayArray<T>(this ref Utf8JsonReader reader, ClientResultHandler client, GetObjectArrayHandler<T> handler) where T : Object
         {
-            var obj = new List<IList<T>>();
+            var obj = new List<List<T>>();
 
             reader.Read();
             while (reader.TokenType == JsonTokenType.StartArray)

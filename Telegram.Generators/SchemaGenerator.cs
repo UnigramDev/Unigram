@@ -265,6 +265,17 @@ namespace Telegram.Generators
             builder.AppendLine("namespace Telegram.Td.Api");
             builder.AppendLine("{");
 
+            // Constructors take the interface so that arrays keep binding, fields hold the List.
+            // A response is already a List and only gets cast; an array gets copied once.
+            builder.AppendLine("internal static class TdCollection");
+            builder.AppendLine("{");
+            builder.AppendLine("    public static List<T> AsList<T>(IList<T> value)");
+            builder.AppendLine("    {");
+            builder.AppendLine("        return value == null ? null : value as List<T> ?? new List<T>(value);");
+            builder.AppendLine("    }");
+            builder.AppendLine("}");
+            builder.AppendLine();
+
             foreach (var type in classes)
             {
                 ApiEmitter.WriteClass(builder, type, serializable.Contains(type));

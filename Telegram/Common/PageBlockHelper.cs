@@ -2054,7 +2054,7 @@ namespace Telegram.Common
             return true;
         }
 
-        private static bool Compare(IList<IList<PageBlockTableCell>> a, IList<IList<PageBlockTableCell>> b)
+        private static bool Compare(List<List<PageBlockTableCell>> a, List<List<PageBlockTableCell>> b)
         {
             if (a.Count != b.Count)
             {

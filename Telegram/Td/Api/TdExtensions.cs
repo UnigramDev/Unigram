@@ -493,7 +493,7 @@ namespace Telegram.Td.Api
         {
             if (suggestedPostInfo is SuggestedPostInfo { State: SuggestedPostStatePending } && !outgoing)
             {
-                return new ReplyMarkupInlineKeyboard(new List<IList<InlineKeyboardButton>>
+                return new ReplyMarkupInlineKeyboard(new List<List<InlineKeyboardButton>>
                 {
                     new List<InlineKeyboardButton>
                     {

@@ -2532,11 +2532,6 @@ namespace Telegram.Controls.Messages
         {
             source.Text = source.Text.Replace("**", string.Empty);
 
-            if (source.Entities.IsReadOnly)
-            {
-                source.Entities = new List<TextEntity>(source.Entities);
-            }
-
             for (int i = 0; i < args.Length; i++)
             {
                 var obj = args[i];
@@ -2670,11 +2665,6 @@ namespace Telegram.Controls.Messages
 
         private static FormattedText ReplaceWithLinks(FormattedText source, string param, IEnumerable<long> uids, IClientService clientService)
         {
-            if (source.Entities.IsReadOnly)
-            {
-                source.Entities = new List<TextEntity>(source.Entities);
-            }
-
             int index;
             int start = index = source.Text.IndexOf(param);
             if (start >= 0)

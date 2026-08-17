@@ -86,10 +86,10 @@ namespace Telegram.ViewModels
 
                     if (_oldToNew)
                     {
-                        foreach (var message in messages.Messages.Reverse())
+                        for (int i = messages.Messages.Count - 1; i >= 0; i--)
                         {
                             stack ??= new List<long>();
-                            stack.Add(message.Id);
+                            stack.Add(messages.Messages[i].Id);
                         }
                     }
                     else

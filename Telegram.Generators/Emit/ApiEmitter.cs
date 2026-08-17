@@ -60,11 +60,11 @@ namespace Telegram.Generators.Emit
                 // from the wire without every consumer having to null-check.
                 if (prop.Type == "string" && !prop.IsVector)
                 {
-                    builder.AppendLine("    public " + Naming.PropertyType(prop) + " " + fieldName + " { get; set; } = string.Empty;");
+                    builder.AppendLine("    public " + Naming.PropertyType(prop, type.IsFunction) + " " + fieldName + " { get; set; } = string.Empty;");
                 }
                 else
                 {
-                    builder.AppendLine("    public " + Naming.PropertyType(prop) + " " + fieldName + " { get; set; }");
+                    builder.AppendLine("    public " + Naming.PropertyType(prop, type.IsFunction) + " " + fieldName + " { get; set; }");
                 }
             }
 
@@ -127,7 +127,7 @@ namespace Telegram.Generators.Emit
                 }
 
                 var property = type.Properties[i];
-                builder.Append(Naming.PropertyType(property) + " " + Naming.ParameterName(property));
+                builder.Append(Naming.ParameterType(property) + " " + Naming.ParameterName(property));
             }
 
             builder.AppendLine(")");
@@ -135,7 +135,16 @@ namespace Telegram.Generators.Emit
 
             foreach (var property in type.Properties)
             {
-                builder.AppendLine("        " + Naming.PropertyName(property, className) + " = " + Naming.ParameterName(property) + ";");
+                var value = Naming.ParameterName(property);
+
+                if (property.IsVector && !type.IsFunction)
+                {
+                    // Parameter is the interface, field is the List. Free for a parsed response,
+                    // which arrives as a List already; a copy only for the arrays app code passes.
+                    value = "TdCollection.AsList(" + value + ")";
+                }
+
+                builder.AppendLine("        " + Naming.PropertyName(property, className) + " = " + value + ";");
             }
 
             builder.AppendLine("    }");

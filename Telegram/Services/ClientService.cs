@@ -1694,9 +1694,9 @@ namespace Telegram.Services
 
         public AgeVerificationParameters AgeVerificationParameters { get; private set; }
 
-        public IList<CloseBirthdayUser> CloseBirthdayUsers => _contactCloseBirthdays?.CloseBirthdayUsers ?? Array.Empty<CloseBirthdayUser>();
+        public IList<CloseBirthdayUser> CloseBirthdayUsers => _contactCloseBirthdays?.CloseBirthdayUsers ?? (IList<CloseBirthdayUser>)Array.Empty<CloseBirthdayUser>();
 
-        public IList<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? Array.Empty<string>();
+        public IList<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? (IList<string>)Array.Empty<string>();
 
         public string AnimationSearchProvider => _animationSearchParameters?.Provider;
 
@@ -2962,7 +2962,7 @@ namespace Telegram.Services
             return value != null;
         }
 
-        public IList<EmojiChatTheme> ChatThemes => _chatThemes?.ChatThemes ?? Array.Empty<EmojiChatTheme>();
+        public IList<EmojiChatTheme> ChatThemes => _chatThemes?.ChatThemes ?? (IList<EmojiChatTheme>)Array.Empty<EmojiChatTheme>();
 
         public bool TryGetGroupCallMessageLevel(long paidMessageStarCount, out GroupCallMessageLevel value)
         {
