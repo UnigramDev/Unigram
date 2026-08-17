@@ -16,6 +16,7 @@ using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -63,6 +64,9 @@ namespace Telegram.Views.Chats
             root.Header = data.title;
             border.Children.Clear();
             border.Constraint = data;
+
+            // Without a name of its own, ListViewItem announces its content's ToString.
+            AutomationProperties.SetName(args.ItemContainer, data.title);
 
             args.Handled = true;
 
