@@ -19,6 +19,8 @@ using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -27,8 +29,13 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Charts
 {
-    public abstract class BaseChartView : Grid
+    // Takes keyboard focus, so it has to be a Control rather than a panel: focusable by
+    // construction, and FocusState and the key overrides come with it. The canvas and the
+    // legend live in LayoutRoot, which is the content.
+    public abstract class BaseChartView : ContentControl
     {
+        protected readonly Grid LayoutRoot = new();
+
         public const int TRANSITION_MODE_CHILD = 1;
         public const int TRANSITION_MODE_PARENT = 2;
         public const int TRANSITION_MODE_ALPHA_ENTER = 3;
@@ -81,6 +88,20 @@ namespace Telegram.Charts
         }
 
         public abstract long GetSelectedDate();
+
+        /// <summary>
+        /// The selected point as text, empty when there's no selection. The chart is drawn,
+        /// so this is the only representation of a value that an automation client can read.
+        /// </summary>
+        public string GetSelectionText()
+        {
+            return legendShowing ? legendSignatureView.ToPlainText() : string.Empty;
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ChartAutomationPeer(this);
+        }
 
         public virtual void UpdatePicker(ChartData chartData, long d)
         {
@@ -367,7 +388,16 @@ namespace Telegram.Charts
             //canvas.PointerCaptureLost += OnPointerReleased;
             canvas.PointerExited += OnPointerExited;
 
-            Children.Add(canvas);
+            Content = LayoutRoot;
+            HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            VerticalContentAlignment = VerticalAlignment.Stretch;
+
+            LayoutRoot.Children.Add(canvas);
+
+            // The chart is drawn, so selecting a point is the only way to read a value:
+            // it has to be reachable without a pointer.
+            IsTabStop = true;
+            UseSystemFocusVisuals = true;
 
             linePaint.StrokeWidth = LINE_WIDTH;
             selectedLinePaint.StrokeWidth = SELECTED_LINE_WIDTH;
@@ -387,7 +417,7 @@ namespace Telegram.Charts
             legendSignatureView = CreateLegendView();
             legendSignatureView.setVisibility(Visibility.Collapsed);
 
-            Children.Add(legendSignatureView);
+            LayoutRoot.Children.Add(legendSignatureView);
 
             whiteLinePaint.Color = Colors.White;
             whiteLinePaint.StrokeWidth = 3;
@@ -399,6 +429,73 @@ namespace Telegram.Charts
         private void OnPointerExited(object sender, PointerRoutedEventArgs e)
         {
             ClearSelection();
+        }
+
+        protected override void OnGotFocus(RoutedEventArgs e)
+        {
+            base.OnGotFocus(e);
+
+            // Arriving with the keyboard selects the most recent point, so that the arrows
+            // have somewhere to move from and landing on the chart reports a value.
+            if (FocusState == FocusState.Keyboard && selectedIndex < 0)
+            {
+                SelectIndexOnChart(endXIndex);
+            }
+        }
+
+        protected override void OnLostFocus(RoutedEventArgs e)
+        {
+            base.OnLostFocus(e);
+
+            if (legendShowing)
+            {
+                ClearSelection();
+                Invalidate();
+            }
+        }
+
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (chartData == null || e.Handled)
+            {
+                return;
+            }
+
+            // Arrows step one point, page keys a tenth of the visible range, as a slider does.
+            var page = Math.Max(1, (endXIndex - startXIndex) / 10);
+
+            switch (e.Key)
+            {
+                case VirtualKey.Left:
+                    e.Handled = SelectIndexOnChart(selectedIndex < 0 ? endXIndex : selectedIndex - 1);
+                    break;
+                case VirtualKey.Right:
+                    e.Handled = SelectIndexOnChart(selectedIndex < 0 ? startXIndex : selectedIndex + 1);
+                    break;
+                case VirtualKey.PageUp:
+                    e.Handled = SelectIndexOnChart(selectedIndex < 0 ? endXIndex : selectedIndex - page);
+                    break;
+                case VirtualKey.PageDown:
+                    e.Handled = SelectIndexOnChart(selectedIndex < 0 ? startXIndex : selectedIndex + page);
+                    break;
+                case VirtualKey.Home:
+                    e.Handled = SelectIndexOnChart(startXIndex);
+                    break;
+                case VirtualKey.End:
+                    e.Handled = SelectIndexOnChart(endXIndex);
+                    break;
+                case VirtualKey.Escape:
+                    if (legendShowing)
+                    {
+                        ClearSelection();
+                        Invalidate();
+
+                        e.Handled = true;
+                    }
+                    break;
+            }
         }
 
         protected virtual LegendSignatureView CreateLegendView()
@@ -1558,6 +1655,42 @@ namespace Telegram.Charts
             Invalidate();
         }
 
+        protected virtual bool SelectIndexOnChart(int index)
+        {
+            if (chartData == null || endXIndex < startXIndex || endXIndex >= chartData.xPercentage.Length)
+            {
+                return false;
+            }
+
+            index = Math.Clamp(index, startXIndex, endXIndex);
+
+            if (index == selectedIndex && legendShowing)
+            {
+                return true;
+            }
+
+            selectedIndex = index;
+            selectedCoordinate = chartData.xPercentage[index];
+
+            legendShowing = true;
+            AnimateLegend(true);
+            MoveLegend();
+            dateSelectionListener?.OnDateSelected(GetSelectedDate());
+            Invalidate();
+
+            AnnounceSelection();
+            return true;
+        }
+
+        private void AnnounceSelection()
+        {
+            // The legend is the only place the values exist as text, and it's positioned
+            // over the chart rather than read in place, so it has to be announced.
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(this);
+            peer?.RaiseNotificationEvent(AutomationNotificationKind.Other,
+                AutomationNotificationProcessing.MostRecent, GetSelectionText(), "ChartSelectionChanged");
+        }
+
         public override void AnimateLegend(bool show)
         {
             MoveLegend();
@@ -2276,5 +2409,45 @@ namespace Telegram.Charts
             //    _invalidate = true;
             //}
         }
+    }
+
+    public partial class ChartAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
+    {
+        private readonly BaseChartView _owner;
+
+        public ChartAutomationPeer(BaseChartView owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override object GetPatternCore(PatternInterface patternInterface)
+        {
+            if (patternInterface == PatternInterface.Value)
+            {
+                return this;
+            }
+
+            return base.GetPatternCore(patternInterface);
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.Custom;
+        }
+
+        protected override bool IsKeyboardFocusableCore()
+        {
+            return _owner.IsTabStop;
+        }
+
+        public void SetValue(string value)
+        {
+            // Not implemented
+        }
+
+        public bool IsReadOnly => true;
+
+        public string Value => _owner.GetSelectionText();
     }
 }

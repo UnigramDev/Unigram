@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 using Telegram.Common;
 using Telegram.Converters;
 using Windows.UI.Xaml;
@@ -197,6 +198,38 @@ namespace Telegram.Charts.DataView
             //    canGoZoom = false;
             //    chevron.setVisibility(View.GONE);
             //}
+        }
+
+        public string ToPlainText()
+        {
+            if (holdes == null)
+            {
+                return Time.Text;
+            }
+
+            var builder = new StringBuilder(Time.Text);
+
+            for (int i = 0; i < holdes.Length; i++)
+            {
+                if (holdes[i].Visibility == Visibility.Collapsed)
+                {
+                    continue;
+                }
+
+                builder.Append(", ");
+                builder.Append(holdes[i].Signature);
+                builder.Append(": ");
+                builder.Append(holdes[i].Value);
+
+                if (showPercentage)
+                {
+                    builder.Append(" (");
+                    builder.Append(holdes[i].Percentage);
+                    builder.Append(')');
+                }
+            }
+
+            return builder.ToString();
         }
 
         private string FormatDate(int date)

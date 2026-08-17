@@ -14,6 +14,7 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
@@ -102,6 +103,8 @@ namespace Telegram.Controls.Cells
 
             LayoutRoot.Children.Clear();
             LayoutRoot.Children.Add(chartView);
+
+            AutomationProperties.SetName(chartView, data.title);
 
             this.data = data;
             this.chartView = chartView;

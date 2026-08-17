@@ -419,6 +419,12 @@ namespace Telegram.Charts
             return new PieChartViewData(line);
         }
 
+        // A slice is selected here, not a date, so stepping through the x axis means nothing.
+        protected override bool SelectIndexOnChart(int index)
+        {
+            return false;
+        }
+
 
         protected override void SelectXOnChart(int x, int y)
         {
