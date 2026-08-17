@@ -220,7 +220,7 @@ namespace Telegram.Common
 
         public void Recycle()
         {
-            Recycle(0, 0);
+            Recycle(++_generation, 0);
         }
 
         private void Recycle(int generation, long hashCode)
