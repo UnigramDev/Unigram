@@ -58,6 +58,7 @@ namespace Telegram.Common
 
         private ISelectableControl _anchor;
         private int _anchorPosition;
+        private int _anchorHit;
 
         // The anchor end snapped to the gesture's granularity (a word/paragraph range, or
         // just the caret for Character). Fixed for the gesture; the moving end is snapped
@@ -294,7 +295,7 @@ namespace Telegram.Common
             // when the pointer is past one, which is what the gap beside text needs, so
             // the press is filtered by what it landed on rather than by the clamp.
             if (!CanStartSelection(e.OriginalSource)
-                || !ResolvePosition(e, point.Position, out _anchor, out _anchorPosition, out var exact))
+                || !ResolvePosition(e, point.Position, out _anchor, out _anchorPosition, out _anchorHit, out var exact))
             {
                 _anchor = null;
                 return;
@@ -332,7 +333,7 @@ namespace Telegram.Common
             }
 
             // Anchor end snapped to the granularity (Character -> (pos, pos)).
-            _anchor.GetSelectionBoundary(_anchorPosition, _granularity, out _anchorStart, out _anchorEnd);
+            _anchor.GetSelectionBoundary(_anchorPosition, _anchorHit, _granularity, out _anchorStart, out _anchorEnd);
 
             // Capture on the ROOT so the whole gesture (moves/release, even outside the
             // tree) is delivered here and no child runs its own selection.
@@ -496,7 +497,7 @@ namespace Telegram.Common
         private void UpdateSelection(PointerRoutedEventArgs e, Point rootPoint)
         {
             // Drag still clamps to the nearest block (exact is irrelevant here).
-            if (!ResolvePosition(e, rootPoint, out var current, out var currentPosition, out _) || _anchor == null)
+            if (!ResolvePosition(e, rootPoint, out var current, out var currentPosition, out var currentHit, out _) || _anchor == null)
             {
                 return;
             }
@@ -511,7 +512,7 @@ namespace Telegram.Common
             // Snap the moving end to the gesture granularity, then union with the (fixed)
             // anchor range in document order. Character granularity is a no-op snap, so this
             // reduces to the plain caret-to-caret behaviour.
-            current.GetSelectionBoundary(currentPosition, _granularity, out var curStart, out var curEnd);
+            current.GetSelectionBoundary(currentPosition, currentHit, _granularity, out var curStart, out var curEnd);
 
             int startPos, endPos, startIndex, endIndex;
             if (currentIndex > anchorIndex)
@@ -663,10 +664,11 @@ namespace Telegram.Common
         // control above; above everything -> start of the first control.
         // `exact` is true only when the pointer is DIRECTLY over a selectable; the clamp
         // fallbacks (gap/row/above) return true with exact=false.
-        private bool ResolvePosition(PointerRoutedEventArgs e, Point rootPoint, out ISelectableControl control, out int position, out bool exact)
+        private bool ResolvePosition(PointerRoutedEventArgs e, Point rootPoint, out ISelectableControl control, out int position, out int hit, out bool exact)
         {
             control = null;
             position = 0;
+            hit = SelectionHit.None;
             exact = false;
             if (_items.Count == 0)
             {
@@ -697,7 +699,7 @@ namespace Telegram.Common
                     if (local.X >= 0 && local.X <= element.ActualWidth)
                     {
                         control = item; // directly over it
-                        position = item.GetPositionFromPoint(local);
+                        position = item.GetPositionFromPoint(local, out hit);
                         exact = true;
                         return true;
                     }
@@ -718,14 +720,14 @@ namespace Telegram.Common
             {
                 control = rowLeftOf;
                 //position = rowLeftOf.ContentLength; // to the right of this cell -> its end
-                position = rowLeftOf.GetPositionFromPoint(e.GetCurrentPoint((FrameworkElement)rowLeftOf).Position);
+                position = rowLeftOf.GetPositionFromPoint(e.GetCurrentPoint((FrameworkElement)rowLeftOf).Position, out hit);
                 return true;
             }
             if (rowFirst != null)
             {
                 control = rowFirst;
                 //position = 0; // left of the first cell in the row -> its start
-                position = rowFirst.GetPositionFromPoint(e.GetCurrentPoint((FrameworkElement)rowFirst).Position);
+                position = rowFirst.GetPositionFromPoint(e.GetCurrentPoint((FrameworkElement)rowFirst).Position, out hit);
                 return true;
             }
 
@@ -737,13 +739,13 @@ namespace Telegram.Common
             if (clampBefore != null)
             {
                 control = clampBefore;
-                position = clampBefore.GetPositionFromPoint(e.GetCurrentPoint((FrameworkElement)clampBefore).Position);
+                position = clampBefore.GetPositionFromPoint(e.GetCurrentPoint((FrameworkElement)clampBefore).Position, out hit);
                 return true;
             }
             if (firstValid != null)
             {
                 control = firstValid; // above everything -> its first line at the pointer's X
-                position = firstValid.GetPositionFromPoint(e.GetCurrentPoint((FrameworkElement)firstValid).Position);
+                position = firstValid.GetPositionFromPoint(e.GetCurrentPoint((FrameworkElement)firstValid).Position, out hit);
                 return true;
             }
 

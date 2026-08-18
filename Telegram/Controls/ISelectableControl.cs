@@ -22,6 +22,16 @@ namespace Telegram.Controls
     }
 
     /// <summary>
+    /// Well-known values of the opaque hit token <see cref="ISelectableControl.GetPositionFromPoint"/>
+    /// returns; everything else is control-defined.
+    /// </summary>
+    public static class SelectionHit
+    {
+        /// <summary>Nothing was resolved: expand from the position alone.</summary>
+        public const int None = -1;
+    }
+
+    /// <summary>
     /// A control that can participate in a cross-block text selection driven by
     /// <see cref="Telegram.Common.TextSelectionManager"/>. Implementers are <c>FrameworkElement</c>s
     /// living in the manager's working tree (so the manager can read their geometry
@@ -44,16 +54,23 @@ namespace Telegram.Controls
         /// <summary>Number of selectable positions; <c>[0, ContentLength]</c> is everything.</summary>
         int ContentLength { get; }
 
-        /// <summary>Hit-test a point in THIS control's coordinate space to a position index (clamped).</summary>
-        int GetPositionFromPoint(Point point);
+        /// <summary>
+        /// Hit-test a point in THIS control's coordinate space to a position index (clamped).
+        /// <paramref name="hit"/> is an opaque, control-defined token identifying WHERE the
+        /// point landed, to be handed back to <see cref="GetSelectionBoundary"/>: a position
+        /// index alone can be ambiguous (a line's end and the next line's start are the same
+        /// index), and the difference decides which line a word/paragraph expands in.
+        /// </summary>
+        int GetPositionFromPoint(Point point, out int hit);
 
         /// <summary>
         /// Expand <paramref name="position"/> to the <c>[start, end)</c> of the word or
         /// paragraph it sits in (same index space as the other members), for double/triple
         /// tap and granular drag. <see cref="TextSelectionGranularity.Character"/> returns
-        /// <c>(position, position)</c>.
+        /// <c>(position, position)</c>, as does a <paramref name="hit"/> with nothing to
+        /// expand (an empty line).
         /// </summary>
-        void GetSelectionBoundary(int position, TextSelectionGranularity granularity, out int start, out int end);
+        void GetSelectionBoundary(int position, int hit, TextSelectionGranularity granularity, out int start, out int end);
 
         /// <summary>Show a selection highlight over <c>[start, end)</c>; the manager always passes <c>start &lt;= end</c>.</summary>
         void Select(int start, int end);

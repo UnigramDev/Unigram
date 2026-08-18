@@ -9,6 +9,7 @@ using System;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
@@ -94,7 +95,7 @@ namespace Telegram.Controls
             {
                 if (_contentLength < 0 && TextBlock != null)
                 {
-                    _contentLength = GetHighlightIndex(TextBlock.ContentEnd);
+                    _contentLength = GetHighlightIndex(TextBlock.ContentEnd, out _);
                 }
 
                 return _contentLength < 0 ? 0 : _contentLength;
@@ -106,15 +107,46 @@ namespace Telegram.Controls
             _contentLength = -1;
         }
 
-        public int GetPositionFromPoint(Point point)
+        // The hit token handed back to GetSelectionBoundary is the StyledText paragraph the
+        // point landed in, SelectionHit.None when it can't be told, or:
+        private const int HitNothing = -2; // an empty line: nothing to expand to
+
+        public int GetPositionFromPoint(Point point, out int hit)
         {
+            hit = SelectionHit.None;
+
             if (TextBlock == null)
             {
                 return 0;
             }
 
             var pointer = TextBlock.GetPositionFromPoint(point);
-            return pointer != null ? GetHighlightIndex(pointer) : 0;
+            if (pointer == null)
+            {
+                return 0;
+            }
+
+            var position = GetHighlightIndex(pointer, out var block);
+
+            // An empty paragraph holds no inline, so a point on that line resolves BETWEEN
+            // blocks and parents to the RichTextBlock rather than to a run. There's nothing on
+            // the line to expand to, and the index it flattens to is the one the NEXT paragraph
+            // starts at — which is why a double tap on a blank line selected the following
+            // line's first word. The end of the text parents to the RichTextBlock too, but it
+            // does sit in a paragraph, so keep the position-derived answer there.
+            if (pointer.Parent is RichTextBlock)
+            {
+                if (pointer.Offset < TextBlock.ContentEnd.Offset)
+                {
+                    hit = HitNothing;
+                }
+            }
+            else if (block >= 0)
+            {
+                hit = _first + block;
+            }
+
+            return position;
         }
 
         public void Select(int start, int end)
@@ -197,17 +229,34 @@ namespace Telegram.Controls
         // ProcessCodeBlock span tree and emoji workarounds don't perturb boundaries, then
         // maps back. A word never crosses a line, so it's clamped to the containing
         // StyledParagraph — which is also the Paragraph-granularity answer.
-        public void GetSelectionBoundary(int position, TextSelectionGranularity granularity, out int start, out int end)
+        public void GetSelectionBoundary(int position, int hit, TextSelectionGranularity granularity, out int start, out int end)
         {
             start = end = position;
 
-            if (granularity == TextSelectionGranularity.Character || _text == null || TextBlock == null)
+            if (granularity == TextSelectionGranularity.Character || _text == null || TextBlock == null || hit == HitNothing)
             {
                 return;
             }
 
             var offset = RenderedToStyled(position);
-            if (!ParagraphRange(offset, out var lo, out var hi) || hi <= lo)
+
+            int lo, hi;
+            if (hit >= 0 && hit < _text.Paragraphs.Count)
+            {
+                // The paragraph the point landed in, which the position alone can't give: a
+                // paragraph break takes no rendered unit, so the end of a line and the start of
+                // the next are the same index, and deriving it resolves to the latter — that is
+                // how a double tap past a line's last word selected the next line's first.
+                var paragraph = _text.Paragraphs[hit];
+                lo = paragraph.Offset;
+                hi = paragraph.Offset + paragraph.Length;
+            }
+            else if (!ParagraphRange(offset, out lo, out hi))
+            {
+                return;
+            }
+
+            if (hi <= lo)
             {
                 return;
             }
@@ -344,8 +393,14 @@ namespace Telegram.Controls
         // tree and counting content units up to the pointer. Paragraph breaks are NOT
         // counted (that's what the SetText 'shift' compensates for); inline objects and
         // line breaks count as 1, Run characters as their length.
-        private int GetHighlightIndex(TextPointer pointer)
+        //
+        // `block` is the index of the block the pointer resolved in (-1 when it resolved in
+        // none), which the returned index can't express — blocks are laid out one per
+        // rendered paragraph, so it maps to StyledText as _first + block.
+        private int GetHighlightIndex(TextPointer pointer, out int block)
         {
+            block = -1;
+
             if (TextBlock == null || pointer == null)
             {
                 return 0;
@@ -353,13 +408,17 @@ namespace Telegram.Controls
 
             var target = pointer.Offset;
             var index = 0;
+            var i = 0;
 
-            foreach (var block in TextBlock.Blocks)
+            foreach (var current in TextBlock.Blocks)
             {
-                if (block is Paragraph paragraph && WalkInlines(paragraph.Inlines, target, ref index))
+                if (current is Paragraph paragraph && WalkInlines(paragraph.Inlines, target, ref index))
                 {
+                    block = i;
                     return index;
                 }
+
+                i++;
             }
 
             return index;
