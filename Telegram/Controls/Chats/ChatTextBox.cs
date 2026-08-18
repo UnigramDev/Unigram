@@ -810,6 +810,15 @@ namespace Telegram.Controls.Chats
             {
                 return AsyncInfo.Run(async token =>
                 {
+                    // There are two askers - the list once it is measured, and whoever primes the
+                    // first page while it still is not - and _hasMore is cleared as this starts
+                    // rather than when it ends, so it doubles as the in-flight flag. Without this
+                    // the second one through would add every member a second time.
+                    if (!_hasMore)
+                    {
+                        return new LoadMoreItemsResult();
+                    }
+
                     count = 0;
                     _hasMore = false;
 

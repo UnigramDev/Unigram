@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Cells;
@@ -17,6 +18,7 @@ using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
@@ -473,18 +475,61 @@ namespace Telegram.Controls.Chats
             RootAutocomplete.Visibility = Visibility.Collapsed;
         }
 
+        private INotifyCollectionChanged _autocomplete;
+
+        private void OnAutocompleteChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            // A new source is handed over empty and filled asynchronously, so the assignment alone
+            // never reports a row: the collection has to be watched as well.
+            if (_autocomplete != null)
+            {
+                _autocomplete.CollectionChanged -= OnAutocompleteCollectionChanged;
+                _autocomplete = null;
+            }
+
+            var source = ListAutocomplete.ItemsSource;
+
+            if (source is INotifyCollectionChanged notifying)
+            {
+                _autocomplete = notifying;
+                _autocomplete.CollectionChanged += OnAutocompleteCollectionChanged;
+            }
+
+            UpdateAutocomplete();
+
+            // A collapsed list is never measured, so its panel never asks for a first page. Members
+            // are handed over as an empty collection, so nothing would ever ask on their behalf and
+            // the list would stay empty because it is empty. Search results arrive loaded already.
+            if (source is ISupportIncrementalLoading { HasMoreItems: true } incremental && source is ICollection { Count: 0 })
+            {
+                _ = incremental.LoadMoreItemsAsync(20);
+            }
+        }
+
+        private void OnAutocompleteCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateAutocomplete();
+        }
+
         // Height comes from the number of rows, never from the content: a list that measures its
         // own content hands the virtualizing panel a viewport that moves as it realizes items, and
         // against a source that loads incrementally a viewport that grows asks for more items and
         // grows again, which is a layout that never settles. Rows are uniform, so counting them
         // settles it before layout runs.
-        private void OnAutocompleteChanged(DependencyObject sender, DependencyProperty dp)
+        private void UpdateAutocomplete()
         {
             var count = ListAutocomplete.ItemsSource is ICollection collection ? collection.Count : 0;
+            var height = Math.Min(ListAutocomplete.MaxHeight, count * AutocompleteRowHeight + ListAutocomplete.BorderThickness.Top + ListAutocomplete.BorderThickness.Bottom);
+
+            // An incremental source adds one item at a time, and each row is a layout pass.
+            if (ListAutocomplete.Height == height)
+            {
+                return;
+            }
+
             var visible = count > 0;
 
-            var border = ListAutocomplete.BorderThickness;
-            ListAutocomplete.Height = Math.Min(ListAutocomplete.MaxHeight, count * AutocompleteRowHeight + border.Top + border.Bottom);
+            ListAutocomplete.Height = height;
             ListAutocomplete.Visibility = visible
                 ? Visibility.Visible
                 : Visibility.Collapsed;
@@ -492,6 +537,11 @@ namespace Telegram.Controls.Chats
             Field.CornerRadius = new CornerRadius(4, 4, visible ? 0 : 4, visible ? 0 : 4);
         }
 
-        private const double AutocompleteRowHeight = 64;
+        // The two templates are different heights, and neither is measured here: a member row is the
+        // 32px picture inside MentionTemplate's 6px padding, a result row is a ChatCell at its own
+        // MinHeight of 64. Both are declared in Themes/Messages.xaml.
+        private double AutocompleteRowHeight => ListAutocomplete.ItemsSource is UsernameCollection
+            ? 44
+            : 64;
     }
 }
