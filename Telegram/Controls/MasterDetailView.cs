@@ -550,7 +550,9 @@ namespace Telegram.Controls
             // its tracker never reaches idle and nothing else would release the binding.
             DetachBackGesture(null);
             ConfigureBackGesture();
-            ConfigureBackGestureHost(e.Content);
+
+            // Queued, never inline: see the remarks on ConfigureBackGestureHost.
+            VisualUtilities.QueueCallbackForCompositionRendered(ConfigureBackGestureHost);
 
             if (e.Content is HostedPage hosted)
             {
@@ -903,8 +905,14 @@ namespace Telegram.Controls
         /// rather than misrouted. Every settings page declares Auto, which made this work or not
         /// depending on the window size rather than on anything in the markup. Enabled costs
         /// nothing: there is still no extent, so nothing becomes scrollable that was not.
+        ///
+        /// Must not run inline from the navigation. Writing the scroll mode of a scroller that is
+        /// already laid out reconfigures its manipulation, and that runs a layout pass over the
+        /// whole tree - by which point the incoming page is the frame's content but NavigateToAsync
+        /// has not activated it yet. Arranging a page that has no view model throws, and the
+        /// exception unwinds the navigation, so it never gets activated at all.
         /// </remarks>
-        private void ConfigureBackGestureHost(object content)
+        private void ConfigureBackGestureHost()
         {
             // Restores the previous page first: this is the only place it can happen, since
             // OnNavigating is never subscribed and nothing else runs as a page is left.
@@ -915,10 +923,12 @@ namespace Telegram.Controls
                 return;
             }
 
+            // Read here rather than passed in: several navigations can land before this runs, and
+            // only the page that ends up current should be holding its scroller open.
             // A ListViewBase host is left alone: those scroll in practice, so their manipulation is
             // live already, and the chat history - the one that matters - is served by
             // MessageSelector's own source rather than by anything here.
-            if (content is not HostedPage hosted
+            if (DetailFrame?.Content is not HostedPage hosted
                 || hosted.FindName("ScrollingHost") is not ScrollViewer scrollingHost)
             {
                 return;
