@@ -17,6 +17,7 @@ using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using WM = Windows.Media;
@@ -207,9 +208,8 @@ namespace Telegram.Services
             _isRepeatEnabled = AppSettings.Playback.RepeatMode == PlaybackRepeatMode.Track
                 ? null
                 : AppSettings.Playback.RepeatMode == PlaybackRepeatMode.List;
+            _isShuffleEnabled = AppSettings.Playback.Shuffle;
             _playbackSpeed = AppSettings.Playback.AudioSpeed;
-
-            // TODO: System media transport controls are currently unsupported.
         }
 
         #region SystemMediaTransportControls
@@ -225,10 +225,51 @@ namespace Telegram.Services
             {
                 _transport = WM.SystemMediaTransportControls.GetForCurrentView();
                 _transportQueue = DispatcherQueue.GetForCurrentThread();
+
+                _transport.AutoRepeatMode = ToAutoRepeatMode(_isRepeatEnabled);
+                _transport.ShuffleEnabled = _isShuffleEnabled;
             }
             catch
             {
                 // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
+        private static WM.MediaPlaybackAutoRepeatMode ToAutoRepeatMode(bool? value)
+        {
+            return value == true
+                ? WM.MediaPlaybackAutoRepeatMode.List
+                : value == null
+                ? WM.MediaPlaybackAutoRepeatMode.Track
+                : WM.MediaPlaybackAutoRepeatMode.None;
+        }
+
+        /// <summary>
+        /// Runs an action against <see cref="_transport"/> on the thread of the view it was
+        /// acquired for, doing nothing if there is no transport.
+        /// </summary>
+        /// <remarks>
+        /// The transport belongs to one view, but playback is driven from whichever window
+        /// started it, from the player's own dispatcher, and from TDLib file updates. Those
+        /// are the same thread only until a Clear is followed by playback from another
+        /// window, at which point the player is recreated on that window's thread while the
+        /// transport stays behind on the first one.
+        /// </remarks>
+        private void RunOnTransport(Action action)
+        {
+            var queue = _transportQueue;
+            if (queue == null || _transport == null)
+            {
+                return;
+            }
+
+            if (queue.HasThreadAccess)
+            {
+                action();
+            }
+            else
+            {
+                queue.TryEnqueue(new DispatcherQueueHandler(action));
             }
         }
 
@@ -351,6 +392,11 @@ namespace Telegram.Services
 
         private void UpdateTransport(PlaybackItem item)
         {
+            RunOnTransport(() => UpdateTransportImpl(item));
+        }
+
+        private void UpdateTransportImpl(PlaybackItem item)
+        {
             var items = _items;
             var transport = _transport;
 
@@ -423,20 +469,7 @@ namespace Telegram.Services
 
         private void SetAlbumCover(PlaybackItem item, string path)
         {
-            var queue = _transportQueue;
-            if (queue == null)
-            {
-                return;
-            }
-
-            if (queue.HasThreadAccess)
-            {
-                SetAlbumCoverImpl(item, path);
-            }
-            else
-            {
-                queue.TryEnqueue(() => SetAlbumCoverImpl(item, path));
-            }
+            RunOnTransport(() => SetAlbumCoverImpl(item, path));
         }
 
         private async void SetAlbumCoverImpl(PlaybackItem item, string path)
@@ -494,12 +527,14 @@ namespace Telegram.Services
                     _playbackState = value;
                     StateChanged?.Invoke(this, null);
 
-                    _transport?.PlaybackStatus = value switch
+                    var status = value switch
                     {
                         PlaybackState.Playing => WM.MediaPlaybackStatus.Playing,
                         PlaybackState.Paused => WM.MediaPlaybackStatus.Paused,
                         PlaybackState.None or _ => WM.MediaPlaybackStatus.Stopped
                     };
+
+                    RunOnTransport(() => _transport.PlaybackStatus = status);
                 }
             }
         }
@@ -511,11 +546,13 @@ namespace Telegram.Services
             set
             {
                 _isRepeatEnabled = value;
-                //Execute(player => player.SystemMediaTransportControls.AutoRepeatMode = AppSettings.Playback.RepeatMode = value == true
-                //    ? MediaPlaybackAutoRepeatMode.List
-                //    : value == null
-                //    ? MediaPlaybackAutoRepeatMode.Track
-                //    : MediaPlaybackAutoRepeatMode.None);
+                AppSettings.Playback.RepeatMode = value == true
+                    ? PlaybackRepeatMode.List
+                    : value == null
+                    ? PlaybackRepeatMode.Track
+                    : PlaybackRepeatMode.None;
+
+                RunOnTransport(() => _transport.AutoRepeatMode = ToAutoRepeatMode(value));
             }
         }
 
@@ -533,7 +570,9 @@ namespace Telegram.Services
             set
             {
                 _isShuffleEnabled = value;
-                //Execute(player => player.SystemMediaTransportControls.ShuffleEnabled = value);
+                AppSettings.Playback.Shuffle = value;
+
+                RunOnTransport(() => _transport.ShuffleEnabled = value);
             }
         }
 
@@ -962,12 +1001,14 @@ namespace Telegram.Services
 
                 if (type == PlaybackPlaylistType.None)
                 {
-                    if (_transport != null)
+                    RunOnTransport(() =>
                     {
                         _transport.ButtonPressed -= Transport_ButtonPressed;
-                    }
+                        _transport.AutoRepeatModeChangeRequested -= Transport_AutoRepeatModeChangeRequested;
 
-                    UpdateManager.Unsubscribe(this, ref _albumCoverToken);
+                        UpdateManager.Unsubscribe(this, ref _albumCoverToken);
+                    });
+
                     _previous = null;
 
                     //_mediaPlayer.SystemMediaTransportControls.ButtonPressed -= Transport_ButtonPressed;
@@ -1041,36 +1082,43 @@ namespace Telegram.Services
             }
         }
 
+        // Every player owns a whole libvlc instance and its audio output, so two of them
+        // competing is not a benign duplicate. Play(XamlRoot, ...) reaches here without
+        // holding the lock Run takes, and a chat opened in a second window has its own UI
+        // thread, so two windows starting playback at once could each build one and leave
+        // the loser running with nothing left to Close it.
         private AsyncMediaPlayer Create()
         {
-            if (_player == null)
+            lock (_mediaPlayerLock)
             {
-                // TODO: currently music player doesn't have a toggle for mute/unmute
-                var options = new AsyncMediaPlayerOptions
+                if (_player == null)
                 {
-                    CreateSwapChain = true,
-                    Mute = false, //AppSettings.VolumeMuted,
-                    Volume = AppSettings.VolumeLevel,
-                    Debug = AppSettings.VerbosityLevel >= 4,
-                };
+                    // TODO: currently music player doesn't have a toggle for mute/unmute
+                    var options = new AsyncMediaPlayerOptions
+                    {
+                        CreateSwapChain = true,
+                        Mute = false, //AppSettings.VolumeMuted,
+                        Volume = AppSettings.VolumeLevel,
+                        Debug = AppSettings.VerbosityLevel >= 4,
+                    };
 
-                _player = new AsyncMediaPlayer(options);
-                //_mediaPlayer.SystemMediaTransportControls.AutoRepeatMode = AppSettings.Playback.RepeatMode;
-                //_mediaPlayer.SystemMediaTransportControls.ButtonPressed += Transport_ButtonPressed;
-                //_mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
-                _player.PositionChanged += OnTimeChanged;
-                _player.DurationChanged += OnLengthChanged;
-                _player.StateChanged += OnStateChanged;
-                _player.Buffering += OnBuffering;
-                //_mediaPlayer.CommandManager.IsEnabled = false;
+                    _player = new AsyncMediaPlayer(options);
+                    //_mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+                    _player.PositionChanged += OnTimeChanged;
+                    _player.DurationChanged += OnLengthChanged;
+                    _player.StateChanged += OnStateChanged;
+                    _player.Buffering += OnBuffering;
+                    //_mediaPlayer.CommandManager.IsEnabled = false;
 
-                if (_transport != null)
-                {
-                    _transport.ButtonPressed += Transport_ButtonPressed;
+                    RunOnTransport(() =>
+                    {
+                        _transport.ButtonPressed += Transport_ButtonPressed;
+                        _transport.AutoRepeatModeChangeRequested += Transport_AutoRepeatModeChangeRequested;
+                    });
                 }
-            }
 
-            return _player;
+                return _player;
+            }
         }
 
         public void Attach(SwapChainPanel panel)
