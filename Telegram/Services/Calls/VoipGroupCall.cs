@@ -860,30 +860,47 @@ namespace Telegram.Services.Calls
                 _screenSource = 0;
             }
 
-            if (screenManager != null)
-            {
-                screenManager.SetVideoCapture(null);
-                screenManager.Stop();
-
-                // Clearing the delegates breaks the native to managed cycle that would
-                // otherwise leak the call, but it has to happen after Stop: until the
-                // instance is gone tgcalls can still ask us to transform a frame.
-                screenManager.SetEncryptDecrypt(null, null);
-            }
-
-            if (_screenCapturer != null)
+            var screenCapturer = _screenCapturer;
+            if (screenCapturer != null)
             {
                 //_screenDebouncer.Invoked -= OnPaused;
                 //_screenDebouncer = null;
 
                 //_screenCapturer.SetOutput(null);
-                _screenCapturer.FatalErrorOccurred -= OnFatalErrorOccurred;
+                screenCapturer.FatalErrorOccurred -= OnFatalErrorOccurred;
 
-                _screenCapturer.Stop();
                 _screenCapturer = null;
             }
 
+            if (screenManager != null || screenCapturer != null)
+            {
+                StopOffThread(() =>
+                {
+                    if (screenManager != null)
+                    {
+                        screenManager.SetVideoCapture(null);
+                        screenManager.Stop();
+
+                        // Clearing the delegates breaks the native to managed cycle that would
+                        // otherwise leak the call, but it has to happen after Stop: until the
+                        // instance is gone tgcalls can still ask us to transform a frame.
+                        screenManager.SetEncryptDecrypt(null, null);
+                    }
+
+                    screenCapturer?.Stop();
+                });
+            }
+
             ClientService.Send(new EndGroupCallScreenSharing(Id));
+        }
+
+        // Stopping a manager waits for the tgcalls threads behind it to wind down, and one of
+        // them can be blocked in a frame transform. Dispose arrives on TDLib's update thread,
+        // which is the thread that would answer that transform, and EndScreenSharing is called
+        // from the UI thread, which nothing should keep waiting — so neither stops in place.
+        private static void StopOffThread(Action teardown)
+        {
+            _ = Task.Run(teardown);
         }
 
         #endregion
@@ -1225,18 +1242,29 @@ namespace Telegram.Services.Calls
                 manager.AudioBroadcastPartRequested -= OnAudioBroadcastPartRequested;
                 manager.VideoBroadcastPartRequested -= OnVideoBroadcastPartRequested;
                 manager.MediaChannelDescriptionsRequested -= OnMediaChannelDescriptionsRequested;
-
-                manager.SetVideoCapture(null);
-                manager.Stop();
-
-                // See EndScreenSharing: the delegates have to outlive the instance.
-                manager.SetEncryptDecrypt(null, null);
             }
 
-            if (capturer != null)
+            // Nothing can reach either of them through the fields any more, so the rest of
+            // the teardown is safe to finish on its own thread. See StopOffThread.
+            if (manager != null || capturer != null)
             {
-                capturer.SetOutput(null);
-                capturer.Stop();
+                StopOffThread(() =>
+                {
+                    if (manager != null)
+                    {
+                        manager.SetVideoCapture(null);
+                        manager.Stop();
+
+                        // See EndScreenSharing: the delegates have to outlive the instance.
+                        manager.SetEncryptDecrypt(null, null);
+                    }
+
+                    if (capturer != null)
+                    {
+                        capturer.SetOutput(null);
+                        capturer.Stop();
+                    }
+                });
             }
 
             EndScreenSharing();
