@@ -1102,12 +1102,22 @@ namespace Telegram.Services
             var item = new PlaybackItemProfileAudio(xamlRoot, audio);
             var items = new List<PlaybackItem>();
 
-            // A caller that already paged some of the profile in hands them over along with
-            // the source that loaded them, so the list keeps its real order and the service
-            // does not start again from the first page.
+            // A caller that already paged some of the profile in hands them over, so the list
+            // keeps its real order and the service does not start again from the first page.
             if (loaded != null)
             {
                 items.AddRange(loaded);
+            }
+
+            if (source == null)
+            {
+                source = new UserProfileAudioPlaybackSource(audio.ClientService, xamlRoot, audio.UserId);
+
+                // Handed the items but not the source that loaded them: paging is by position,
+                // so the cursor has to start past what was handed over or the first page
+                // repeats it. Counted before the item below may be inserted, which is the
+                // one case where the playlist holds something the source never yielded.
+                source.Skip(items.Count);
             }
 
             var index = items.FindIndex(x => audio.AreTheSame(x));
@@ -1128,7 +1138,7 @@ namespace Telegram.Services
             _provisional = loaded == null;
 
             _items = items;
-            _source = source ?? new UserProfileAudioPlaybackSource(audio.ClientService, xamlRoot, audio.UserId);
+            _source = source;
             _sessionId = audio.ClientService.SessionId;
             _userId = audio.UserId;
             _chatId = 0;

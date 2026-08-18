@@ -237,6 +237,11 @@ namespace Telegram.Services
         /// <summary>
         /// Moves the cursor past items the caller already loaded and is handing over.
         /// </summary>
+        /// <remarks>
+        /// Paging here is by position, so those items have to be the start of the profile
+        /// list and in its order: an offset that does not match what the caller holds does
+        /// not just repeat items, it skips the ones in between.
+        /// </remarks>
         public void Skip(int count)
         {
             _offset += count;
