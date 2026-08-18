@@ -69,10 +69,12 @@ namespace Telegram.Controls
             // We unsubscribe first to avoid duplicated notifications
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.SettingsChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
 
             LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
             LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.SettingsChanged += OnPlaybackStateChanged;
             LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
 
             UpdateGlyph();
@@ -82,6 +84,7 @@ namespace Telegram.Controls
         {
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.SettingsChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
         }
 
@@ -93,12 +96,14 @@ namespace Telegram.Controls
             // We unsubscribe first to avoid duplicated notifications
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.SettingsChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
 
             if (IsConnected)
             {
                 LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
                 LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
+                LifetimeService.Current.Playback.SettingsChanged += OnPlaybackStateChanged;
                 LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
 
                 UpdateGlyph();
@@ -185,17 +190,17 @@ namespace Telegram.Controls
                 if (message.Message.Content is MessageVoiceNote || message.Message.Content is MessageVideoNote || linkPreview?.Type is LinkPreviewTypeVoiceNote or LinkPreviewTypeVideoNote)
                 {
                     RepeatButton.Visibility = Visibility.Collapsed;
-                    //ShuffleButton.Visibility = Visibility.Collapsed;
+                    ShuffleButton.Visibility = Visibility.Collapsed;
 
                     UpdateSpeed(int.MaxValue);
                 }
                 else if (message.Message.Content is MessageAudio || linkPreview?.Type is LinkPreviewTypeAudio)
                 {
                     RepeatButton.Visibility = Visibility.Visible;
-                    //ShuffleButton.Visibility = Visibility.Visible;
+                    ShuffleButton.Visibility = Visibility.Visible;
 
                     UpdateSpeed(item.Duration);
-                    UpdateRepeat();
+                    UpdateModes();
                 }
             }
             else if (item is PlaybackItemProfileAudio audio)
@@ -210,10 +215,10 @@ namespace Telegram.Controls
                 }
 
                 RepeatButton.Visibility = Visibility.Visible;
-                //ShuffleButton.Visibility = Visibility.Visible;
+                ShuffleButton.Visibility = Visibility.Visible;
 
                 UpdateSpeed(item.Duration);
-                UpdateRepeat();
+                UpdateModes();
             }
         }
 
@@ -263,7 +268,7 @@ namespace Telegram.Controls
             _visual = visualShow;
         }
 
-        private void UpdateRepeat()
+        private void UpdateModes()
         {
             RepeatButton.IsChecked = LifetimeService.Current.Playback.IsRepeatEnabled;
             Automation.SetToolTip(RepeatButton, LifetimeService.Current.Playback.IsRepeatEnabled == null
@@ -271,6 +276,11 @@ namespace Telegram.Controls
                 : LifetimeService.Current.Playback.IsRepeatEnabled == true
                 ? Strings.AccDescrRepeatList
                 : Strings.AccDescrRepeatOff);
+
+            ShuffleButton.IsChecked = LifetimeService.Current.Playback.IsShuffleEnabled;
+            // Unlike tri-state repeat, the toggle state is announced on its own, so the name
+            // stays put rather than saying it twice.
+            Automation.SetToolTip(ShuffleButton, Strings.Shuffle);
         }
 
         private void UpdateSpeed(int duration)
@@ -356,13 +366,12 @@ namespace Telegram.Controls
         private void Repeat_Click(object sender, RoutedEventArgs e)
         {
             LifetimeService.Current.Playback.IsRepeatEnabled = RepeatButton.IsChecked;
-            UpdateRepeat();
+            UpdateModes();
         }
 
         private void Shuffle_Click(object sender, RoutedEventArgs e)
         {
-            //LifetimeService.Current.Playback.IsShuffleEnabled = ShuffleButton.IsChecked == true;
-            LifetimeService.Current.Playback.IsReversed = ShuffleButton.IsChecked == true;
+            LifetimeService.Current.Playback.IsShuffleEnabled = ShuffleButton.IsChecked == true;
         }
 
         private void Speed_Click(object sender, RoutedEventArgs e)
