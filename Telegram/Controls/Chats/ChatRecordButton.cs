@@ -237,7 +237,7 @@ namespace Telegram.Controls.Chats
 
             Logger.Debug("Permissions granted, mode: " + Mode);
 
-            _session.Start(Mode, ViewModel.Chat);
+            _session.Start(Mode, ViewModel);
         }
 
         private void UpdateVisualState()
@@ -311,7 +311,7 @@ namespace Telegram.Controls.Chats
         {
             // Sends whether or not the pointer is still down. A second Complete from the release
             // that follows finds nothing left to stop.
-            _session.Complete(ViewModel);
+            _session.Complete();
         }
 
         private void OnRecordingTooShort(object sender, EventArgs e)
@@ -396,7 +396,7 @@ namespace Telegram.Controls.Chats
             if (_session.IsLocked && (!_hasRecordVideo || _calledRecordRunnable))
             {
                 Logger.Debug("Completing a locked recording");
-                _session.Complete(ViewModel);
+                _session.Complete();
             }
         }
 
@@ -441,7 +441,7 @@ namespace Telegram.Controls.Chats
             else if (!_hasRecordVideo || _calledRecordRunnable)
             {
                 Logger.Debug("Timer has tick, stopping recording");
-                _session.Complete(ViewModel);
+                _session.Complete();
             }
 
             UpdateVisualState();

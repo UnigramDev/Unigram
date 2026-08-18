@@ -55,6 +55,8 @@ namespace Telegram.Common.Recording
         // for the microphone.
         private bool _lockRequested;
 
+        private ComposeViewModel _viewModel;
+
         // .NET Native has no Environment.TickCount64.
         private ulong _resumedAt;
         private TimeSpan _accumulated;
@@ -119,13 +121,14 @@ namespace Telegram.Common.Recording
         /// Begins capturing. The caller is expected to have settled permissions and chat rights
         /// already: by the time this runs the answer is yes.
         /// </summary>
-        public void Start(ChatRecordMode mode, Chat chat)
+        public void Start(ChatRecordMode mode, ComposeViewModel viewModel)
         {
             Mode = mode;
+            _viewModel = viewModel;
 
             LifetimeService.Current.Playback.Pause();
 
-            _engine.Start(mode, chat);
+            _engine.Start(mode, viewModel.Chat, (int)viewModel.ClientService.Options.SuggestedVideoNoteLength);
             Update();
         }
 
@@ -145,9 +148,9 @@ namespace Telegram.Common.Recording
             Update();
         }
 
-        public void Complete(ComposeViewModel viewModel)
+        public void Complete()
         {
-            _engine.Complete(viewModel);
+            _engine.Complete(_viewModel);
 
             _recording = false;
             Update();
