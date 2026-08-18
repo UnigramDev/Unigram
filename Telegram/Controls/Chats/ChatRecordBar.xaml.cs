@@ -237,8 +237,8 @@ namespace Telegram.Controls.Chats
                     Center = 272 / 2,
                     Radius = 272 / 2 - 3,
                     Background = new SolidColorBrush(Colors.Transparent),
-                    Maximum = 60,
-                    Value = DateTime.Now.AddMinutes(1)
+                    Maximum = ChatRecordSession.MaximumVideoDuration.TotalSeconds,
+                    Value = DateTime.Now + ChatRecordSession.MaximumVideoDuration
                 });
 
                 _videoPopup = new Popup

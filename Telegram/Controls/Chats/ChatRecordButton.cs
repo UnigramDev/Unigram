@@ -109,6 +109,7 @@ namespace Telegram.Controls.Chats
             _session.RecordingStopped += OnRecordingStopped;
             _session.RecordingLocked += OnRecordingLocked;
             _session.RecordingTooShort += OnRecordingTooShort;
+            _session.DurationLimitReached += OnDurationLimitReached;
             _session.QuantumProcessed += OnQuantumProcessed;
         }
 
@@ -304,6 +305,13 @@ namespace Telegram.Controls.Chats
         private void OnQuantumProcessed(object sender, float e)
         {
             QuantumProcessed?.Invoke(this, e);
+        }
+
+        private void OnDurationLimitReached(object sender, EventArgs e)
+        {
+            // Sends whether or not the pointer is still down. A second Complete from the release
+            // that follows finds nothing left to stop.
+            _session.Complete(ViewModel);
         }
 
         private void OnRecordingTooShort(object sender, EventArgs e)
