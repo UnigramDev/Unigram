@@ -277,7 +277,11 @@ the tri-state rather than being carried over.
 - [x] **2.4** Send the waveform: `GetWaveform()` into `InputVoiceNote` (`ComposeViewModel.cs:737`),
   and compute it unconditionally — untie it from `PowerSavingPolicy.AreMaterialsEnabled`.
 - [ ] **2.5** Mic selection through `MediaDeviceTracker`, including device-change handling
-  mid-recording.
+  mid-recording. **Blocked, and not on effort:** `MediaDeviceTracker` carries
+  `// TODO: implement storage of chosen devices`, so there is no app-wide chosen microphone to
+  follow — only the system default, which `MediaCapture` already uses. Wiring the tracker in
+  today would spin up three `DeviceWatcher`s per recording to arrive back at the same device.
+  This wants the device-preference storage first.
 - [x] **2.6** Restructure `OnAudioFrameArrived`: every frame is encoded and folded into the
   waveform; only the `QuantumProcessed` notification is rate-limited. Move the animation gate to
   the bar. The blob must look the same or smoother — check it against a recording made before the
@@ -337,8 +341,12 @@ says it took.
   `VideoGeneration` is a crop, not a full re-encode. This is what makes release-to-sent fast for
   video, streaming upload or not.
 - [ ] **4.2** Camera selection through `MediaDeviceTracker` instead of `Panel.Front` (:785).
-- [ ] **4.3** Enforce the 60 s limit the `SelfDestructTimer` ring already promises — stop and send
-  when it fills.
+  Blocked with 2.5, and worse: Windows has no default-camera concept to fall back on, so without
+  a stored preference there is nothing to select *by*.
+- [x] **4.3** Enforce the 60 s limit the `SelfDestructTimer` ring already promises — stop and send
+  when it fills. `ChatRecordSession.MaximumVideoDuration` is the one definition; the ring in the
+  bar reads it too, so the drawing and the cut-off can't drift apart. The check runs off `Elapsed`
+  rather than a deadline, so pausing pauses the limit.
 - [ ] **4.4** Preview: `CaptureElement` (`ChatRecordBar.xaml.cs:158`) pins `MediaCapture` to the UI
   thread and forces the "last frame" to go through `RenderTargetBitmap` + a PNG on disk
   (`SaveLastFrameAsync`). With a frame reader in play for 4.1 anyway, the preview can be a
@@ -394,8 +402,14 @@ touching anything above it.
 
 ## Decisions for you
 
-1. **Exclusive capture mode (5.1)?** Both the voice format fix and recording video at target size
-   need it. The cost is failing when another app holds the mic or camera, where today we'd share.
+1. **Exclusive capture mode (5.1)?** The voice format fix needs it. Video at target size may not:
+   `SharedReadOnly` forbids changing the *camera's* format, but the `MediaEncodingProfile` decides
+   what gets encoded, and Media Foundation scales into it. Encoding at ~384 on the short side
+   instead of 1080p would cut the write and make the send-time transcode nearly free without
+   touching the device. What I can't tell without a camera is how MF handles the aspect when the
+   profile doesn't match the source — letterbox, stretch or crop — and a stretched video message
+   is the kind of thing that ships unnoticed. Worth trying on a device before assuming 4.1 needs
+   exclusive mode at all.
 2. **How far does the preview rework go (4.4)?** Composition-surface preview is the better end
    state and makes 4.1 cheap, but it's the largest single piece here.
 3. **Does Task 6 get built at all?** Tasks 1–5 stand on their own: the encode win, the waveform,

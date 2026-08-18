@@ -35,8 +35,15 @@ namespace Telegram.Common.Recording
     /// </remarks>
     public partial class ChatRecordSession
     {
+        /// <summary>
+        /// How long a video message is allowed to be.
+        /// </summary>
+        public static readonly TimeSpan MaximumVideoDuration = TimeSpan.FromSeconds(60);
+
         private readonly ChatRecordEngine _engine = new();
         private readonly DispatcherQueue _dispatcherQueue;
+
+        private Windows.System.DispatcherQueueTimer _limitTimer;
 
         // The engine reports from its own queue, so these are written off the UI thread and read
         // on it, exactly as they were when they lived in the button.
@@ -100,6 +107,11 @@ namespace Telegram.Common.Recording
         public event EventHandler RecordingStopped;
         public event EventHandler RecordingLocked;
         public event EventHandler RecordingTooShort;
+
+        /// <summary>
+        /// A video message has run for as long as one is allowed to, and wants sending.
+        /// </summary>
+        public event EventHandler DurationLimitReached;
 
         public event EventHandler<float> QuantumProcessed;
 
@@ -262,7 +274,11 @@ namespace Telegram.Common.Recording
                     _accumulated = TimeSpan.Zero;
                     _resumedAt = Logger.TickCount;
 
-                    _dispatcherQueue.TryEnqueue(() => RecordingStarting?.Invoke(this, EventArgs.Empty));
+                    _dispatcherQueue.TryEnqueue(() =>
+                    {
+                        StartLimitTimer();
+                        RecordingStarting?.Invoke(this, EventArgs.Empty);
+                    });
                     break;
 
                 case ChatRecordState.Locked:
@@ -274,9 +290,42 @@ namespace Telegram.Common.Recording
                     _paused = false;
                     _lockRequested = false;
 
-                    _dispatcherQueue.TryEnqueue(() => RecordingStopped?.Invoke(this, EventArgs.Empty));
+                    _dispatcherQueue.TryEnqueue(() =>
+                    {
+                        _limitTimer?.Stop();
+                        RecordingStopped?.Invoke(this, EventArgs.Empty);
+                    });
                     break;
             }
+        }
+
+        private void StartLimitTimer()
+        {
+            if (Mode != ChatRecordMode.Video)
+            {
+                return;
+            }
+
+            if (_limitTimer == null)
+            {
+                _limitTimer = _dispatcherQueue.CreateTimer();
+                _limitTimer.Interval = TimeSpan.FromMilliseconds(250);
+                _limitTimer.Tick += OnLimitTick;
+            }
+
+            _limitTimer.Start();
+        }
+
+        private void OnLimitTick(Windows.System.DispatcherQueueTimer sender, object args)
+        {
+            // Elapsed rather than a deadline, so that pausing pauses the limit too.
+            if (Elapsed < MaximumVideoDuration)
+            {
+                return;
+            }
+
+            sender.Stop();
+            DurationLimitReached?.Invoke(this, EventArgs.Empty);
         }
     }
 }
