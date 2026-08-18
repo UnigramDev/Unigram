@@ -362,6 +362,11 @@ says it took.
 - [ ] **4.5** `_mirroringPreview` decides both the preview transform *and* the encoded flip
   (:1210). Confirm that a non-mirrored external camera still sends the right way round — the
   preview is hard-coded to `ScaleX = -1` (`ChatRecordBar.xaml.cs:165`) regardless.
+- [ ] **4.6** At sixty seconds, stop capturing but show the pause UI rather than sending. This is
+  what the official apps do, and 4.3 sends instead. The bar already has the state to show — its
+  public `Pause()` draws the waveform, the duration and the send glyph — so the limit becomes a
+  pause the user did not ask for, and the recording waits to be sent or thrown away. A recording
+  that is still held by the pointer has to lock first, or the release that follows would send it.
 
 ## Task 5 — The bar and the leftovers
 
@@ -405,6 +410,20 @@ touching anything above it.
   see whether MF's mp4 sink ever rewrites what it already wrote. If it doesn't, video reuses the
   same path. If it does, video keeps upload-on-release — owning the mp4 muxing to fix that is a
   separate project, not this one.
+
+## Task 7 — Voice and video message drafts
+
+Other clients keep an unsent recording as a draft: lock a recording, leave the chat, come back and
+it is still there, waiting to be sent. Unigram has no such thing — leaving throws the recording
+away. Nothing above depends on this, but 4.6 makes it the obvious next step, because after the
+sixty-second stop the app is already holding a finished recording that has not been sent.
+
+- [ ] **7.1** Establish what a draft is on the wire: whether the file lives in the temporary folder
+  or somewhere durable, and what survives a restart of the app.
+- [ ] **7.2** Persist the paused recording per chat — the file, the duration and the waveform —
+  and restore the bar into its paused state when the chat is opened again.
+- [ ] **7.3** Decide when a draft is discarded: sending it, the delete button, and whatever the
+  official apps do when a second recording is started in the same chat.
 
 ---
 
