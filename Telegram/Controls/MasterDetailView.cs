@@ -1091,6 +1091,14 @@ namespace Telegram.Controls
             var ripple = compositor.CreateExpressionAnimation($"vector3({scaled}, {scaled}, 1)");
             ripple.SetReferenceParameter("tracker", tracker);
 
+            // A burst from the gesture before this one may still be running, and it owns the chip's
+            // opacity while it does: a value set under a running animation is dropped, and the burst
+            // would then end on zero and stay there, since its own reset is skipped once a gesture
+            // has taken the chip back. Invisible for the whole gesture, which the tracker carries
+            // through to the navigation regardless.
+            _backCompleting = false;
+            _backIndicator.StopAnimation("Opacity");
+
             _backIndicator.Opacity = 1;
             _backIndicator.StartAnimation("Offset", offset);
             _backIndicatorRipple.StartAnimation("Scale", ripple);
