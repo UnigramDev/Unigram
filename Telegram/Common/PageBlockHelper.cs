@@ -1070,11 +1070,26 @@ namespace Telegram.Common
 
                 // The label carries the text, the entity carries the whole button, so a
                 // renderer can substitute the real thing and anything that doesn't still
-                // reads. Flattened like any other span: the server allows custom emoji
-                // and date-time inside a label, and both need their own entity.
+                // reads.
+                //
+                // The label goes in as PLAIN text: the button renders it itself, so an entity
+                // of its own inside the button's range would only compete with the button's —
+                // a run carrying both reports the inner type (GetRuns merges custom emoji over
+                // everything) and the button is never substituted, and an entity narrower than
+                // the label splits the range into several runs, i.e. several buttons.
                 case RichTextButton button:
-                    EmitSpan(button.Button.Text, text, entities, new TextEntityTypeButton(button.Button));
-                    return;
+                    {
+                        int start = text.Length;
+                        AppendPlainText(button.Button.Text, text);
+
+                        int length = text.Length - start;
+                        if (length > 0)
+                        {
+                            entities.Add(new TextEntity(start, length, new TextEntityTypeButton(button.Button)));
+                        }
+
+                        return;
+                    }
 
                 case RichTextAnchor _:
                     // Skipped — see ObjectReplacementChar comment above.
