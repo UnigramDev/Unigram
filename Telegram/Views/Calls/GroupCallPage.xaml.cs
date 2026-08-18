@@ -161,6 +161,8 @@ namespace Telegram.Views.Calls
 
         public void VideoInfoAdded(GroupCallParticipant participant, GroupCallParticipantVideoInfo[] videoInfos)
         {
+            GroupCallParticipantGridCell screenSharing = null;
+
             foreach (var item in videoInfos)
             {
                 if (item == null)
@@ -174,7 +176,12 @@ namespace Telegram.Views.Calls
                 }
                 else
                 {
-                    AddGridItem(participant, item, item == participant.ScreenSharingVideoInfo);
+                    cell = AddGridItem(participant, item, item == participant.ScreenSharingVideoInfo);
+
+                    if (cell != null && cell.IsScreenSharing)
+                    {
+                        screenSharing = cell;
+                    }
                 }
 
                 // LoadVideoInfo replays every participant, so the selected endpoint can be seen
@@ -188,6 +195,8 @@ namespace Telegram.Views.Calls
                     AddListItem(participant, item, item == participant.ScreenSharingVideoInfo);
                 }
             }
+
+            AutoSelectCell(screenSharing);
 
             _debouncerTimer.Stop();
             _debouncerTimer.Start();
@@ -543,6 +552,7 @@ namespace Telegram.Views.Calls
         }
 
         private string _selectedEndpointId;
+        private bool _selectedAutomatically;
         private ulong _selectedTimestamp;
 
         private void Resize_Click(object sender, RoutedEventArgs e)
@@ -1704,24 +1714,24 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private void AddGridItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
+        private GroupCallParticipantGridCell AddGridItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
         {
-            AddItem(participant, videoInfo, screenSharing, false);
+            return AddItem(participant, videoInfo, screenSharing, false);
         }
 
-        private void AddListItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
+        private GroupCallParticipantGridCell AddListItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
         {
-            AddItem(participant, videoInfo, screenSharing, true);
+            return AddItem(participant, videoInfo, screenSharing, true);
         }
 
-        private void AddItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing, bool list)
+        private GroupCallParticipantGridCell AddItem(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing, bool list)
         {
             var cells = list ? _listCells : _gridCells;
             var viewport = list ? ListViewport.Children : Viewport.Children;
 
-            if (cells.ContainsKey(videoInfo.EndpointId))
+            if (cells.TryGetValue(videoInfo.EndpointId, out var existing))
             {
-                return;
+                return existing;
             }
 
             var child = new GroupCallParticipantGridCell(_call.ClientService, participant, videoInfo, screenSharing);
@@ -1752,6 +1762,8 @@ namespace Telegram.Views.Calls
             ListViewport.Margin = new Thickness(-4, -2, -4, ListViewport.Children.Count > 0 ? 4 : 0);
 
             UpdateLayout(ActualSize, ActualSize, true);
+
+            return child;
         }
 
         private void RemoveGridItem(GroupCallParticipantGridCell cell)
@@ -1773,6 +1785,7 @@ namespace Telegram.Views.Calls
             if (unselected)
             {
                 _selectedEndpointId = null;
+                _selectedAutomatically = false;
             }
 
             cells.Remove(cell.EndpointId);
@@ -1796,9 +1809,10 @@ namespace Telegram.Views.Calls
 
             ListViewport.Margin = new Thickness(-4, -2, -4, ListViewport.Children.Count > 0 ? 4 : 0);
 
-            // The list only exists to hold the videos the selected cell covers, so it has to go
-            // with it. Leaving it up would show every remaining video twice, in both viewports.
-            if (unselected)
+            // The list only exists to hold the videos the selected cell covers: once it's gone either
+            // something else takes the slot, or the list has to be torn down. Leaving it up would show
+            // every remaining video twice, in both viewports.
+            if (unselected && !AutoSelectCell(FirstScreenSharingCell()))
             {
                 TransformList(ActualSize, ActualSize, _mode, _mode);
             }
@@ -1806,7 +1820,38 @@ namespace Telegram.Views.Calls
             UpdateLayout(ActualSize, ActualSize, true);
         }
 
-        private async void Participant_Click(object sender, RoutedEventArgs e)
+        private GroupCallParticipantGridCell FirstScreenSharingCell()
+        {
+            foreach (var cell in Viewport.Cells)
+            {
+                if (cell.IsScreenSharing)
+                {
+                    return cell;
+                }
+            }
+
+            return null;
+        }
+
+        // A screen share is pinned without the user asking for it, so it can't take over a cell
+        // they pinned themselves: an automatic selection only ever replaces another automatic one.
+        private bool AutoSelectCell(GroupCallParticipantGridCell cell)
+        {
+            if (cell == null || cell.EndpointId == _selectedEndpointId)
+            {
+                return false;
+            }
+
+            if (_selectedEndpointId != null && !_selectedAutomatically)
+            {
+                return false;
+            }
+
+            SelectCell(cell, true, true);
+            return true;
+        }
+
+        private void Participant_Click(object sender, RoutedEventArgs e)
         {
             //var view = ApplicationView.GetForCurrentView();
             //var size = view.VisibleBounds;
@@ -1827,7 +1872,12 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            cell.IsSelected = !cell.IsSelected;
+            SelectCell(cell, !cell.IsSelected, false);
+        }
+
+        private async void SelectCell(GroupCallParticipantGridCell cell, bool selected, bool automatic)
+        {
+            cell.IsSelected = selected;
 
             foreach (var child in Viewport.Cells)
             {
@@ -1844,6 +1894,7 @@ namespace Telegram.Views.Calls
             }
 
             _selectedEndpointId = cell.IsSelected ? cell.EndpointId : null;
+            _selectedAutomatically = cell.IsSelected && automatic;
             Viewport.InvalidateMeasure();
 
             TransformList(ActualSize, ActualSize, _mode, _mode);
@@ -1852,7 +1903,9 @@ namespace Telegram.Views.Calls
             await this.UpdateLayoutAsync();
             UpdateVisibleParticipants(false);
 
-            if (_mode == ParticipantsGridMode.Compact)
+            // Compact keeps the viewport in the list header, so a selection made by the user
+            // scrolls it into view. An automatic one must not move the list under them.
+            if (_mode == ParticipantsGridMode.Compact && !automatic)
             {
                 var scrollingHost = ScrollingHost.GetScrollViewer();
                 scrollingHost?.TryChangeView(null, 0, null, false);
