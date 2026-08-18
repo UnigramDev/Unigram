@@ -46,6 +46,13 @@
          ProjectReference, and Telegram.Generators is netstandard2.0, which cannot AOT
          (NETSDK1207). Publish with SelfContained and no -p:PublishAot to get a CoreCLR layout. -->
     <PublishAot>true</PublishAot>
+    <!-- PublishAot turns the trim analyzer on for every build, and it is 98% of the
+         analyzer time in the compile - 765 CPU-seconds, ~16s of wall clock. Nothing is
+         trimmed in a Debug build, and publish and Release still run it, so it gates
+         releases rather than the inner loop. -->
+    <EnableTrimAnalyzer Condition="'$(Configuration)' == 'Debug'">false</EnableTrimAnalyzer>
+    <EnableAotAnalyzer Condition="'$(Configuration)' == 'Debug'">false</EnableAotAnalyzer>
+    <EnableSingleFileAnalyzer Condition="'$(Configuration)' == 'Debug'">false</EnableSingleFileAnalyzer>
     <!-- Turns off the runtime's marshalling subsystem for this assembly: only blittable types may
          cross a P/Invoke, and everything else is marshalled by the LibraryImport generator in C#
          instead. The SDK turns this property into the assembly attribute.
@@ -62,8 +69,8 @@
 
     <!-- Properties\AssemblyInfo.cs stays with the legacy project (see the Compile Remove below);
          these carry its values over to the attributes the SDK generates in its place. -->
-    <AssemblyTitle>Unigram</AssemblyTitle>
-    <Product>Unigram</Product>
+    <AssemblyTitle>Telegram</AssemblyTitle>
+    <Product>Telegram</Product>
     <Copyright>Copyright ©  2015</Copyright>
 
     <!-- The .NET Native project's constants, minus the ones that were only ever about it.
@@ -213,9 +220,13 @@
 
   <!-- Kept in step with Telegram.csproj by hand: the generator reads TdParsers and emits parsers,
        the hand-written code reads the constants and calls them, so the two projects must agree or
-       the generated file calls helpers that were compiled out. -->
+       the generated file calls helpers that were compiled out.
+
+       Changing this needs obj's generated editorconfig deleted: the value reaches the
+       generator through it, and it is not rewritten when the property alone changes, so
+       the next build emits one parser set against the other's constants. -->
   <PropertyGroup>
-    <TdParsers>Both</TdParsers>
+    <TdParsers>Pointer</TdParsers>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TdParsers)' != 'Pointer'">
     <DefineConstants>$(DefineConstants);TD_READER_PARSER</DefineConstants>
@@ -243,26 +254,30 @@
        nothing copies their binaries the way a project reference would. They come from the same
        build output the winmds are read from, which is also why this project does not build them:
        Telegram.Native has to have been built by the solution first. Calls only adds its own two
-       files; the rest of its folder is the same ffmpeg set. -->
+       files; the rest of its folder is the same ffmpeg set.
+
+       $(TelegramRoot) rather than a relative path: these paths reach the .appxrecipe
+       verbatim, and Visual Studio resolves the recipe against its own working directory,
+       so a relative one fails deployment with DEP1000 even though the build copied it. -->
   <ItemGroup>
     <!-- Only the components themselves. Their folders also hold the whole ffmpeg/libvlc set, but
          those come from vcpkg through Directory.Build.targets, as they do for Telegram.csproj -
          copying both is NETSDK1152, sixteen files deep. Same for Win2D, which comes from its
          package, and Telegram.Td.dll, which the shipping package does not carry at all. -->
-    <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.dll" />
-    <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.pri" />
-    <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.dll" />
-    <ReferenceCopyLocalPaths Include="..\$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.pri" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native\Telegram.Native.pri" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)$(Platform)\$(Configuration)\Telegram.Native.Calls\Telegram.Native.Calls.pri" />
   </ItemGroup>
 
   <ItemGroup>
-    <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\RLottie.dll" />
-    <ReferenceCopyLocalPaths Include="..\Libraries\rlottie\$(Platform)\RLottie.pri" />
-    <ReferenceCopyLocalPaths Include="..\Libraries\tdjson\$(Platform)\tdjson.dll" />
-    <ReferenceCopyLocalPaths Include="..\Libraries\tdjson\$(Platform)\tdjson.pdb" />
-    <ReferenceCopyLocalPaths Include="..\Libraries\tdjson\$(Platform)\libcrypto-3$(OpenSSLPlatform).dll" />
-    <ReferenceCopyLocalPaths Include="..\Libraries\tdjson\$(Platform)\libssl-3$(OpenSSLPlatform).dll" />
-    <ReferenceCopyLocalPaths Include="..\Libraries\tdjson\$(Platform)\zlib1.dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\rlottie\$(Platform)\RLottie.dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\rlottie\$(Platform)\RLottie.pri" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\tdjson.pdb" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libcrypto-3$(OpenSSLPlatform).dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\libssl-3$(OpenSSLPlatform).dll" />
+    <ReferenceCopyLocalPaths Include="$(TelegramRoot)Libraries\tdjson\$(Platform)\zlib1.dll" />
   </ItemGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />

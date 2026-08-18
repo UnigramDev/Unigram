@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Telegram.Modern": {
+      "commandName": "MsixPackage"
+    }
+  }
+}
