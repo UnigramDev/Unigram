@@ -114,6 +114,13 @@ namespace Telegram.Collections
                         if (prevIndex >= 0)
                         {
                             RemoveAt(prevIndex);
+
+                            // The index was measured against the list still holding the participant,
+                            // so everything past its old position has just shifted up by one.
+                            if (prevIndex < nextIndex)
+                            {
+                                nextIndex--;
+                            }
                         }
 
                         _audioSources[participant.IsCurrentUser ? 0 : participant.AudioSourceId] = participant;

@@ -1621,11 +1621,11 @@ namespace Telegram.Views.Calls
                 {
                     status.Text = Icons.SmallScreencastFilled + Icons.SmallVideoFilled;
                 }
-                else if (participant.ScreenSharingVideoInfo != null && participant.VideoInfo != null)
+                else if (participant.ScreenSharingVideoInfo != null)
                 {
                     status.Text = Icons.SmallScreencastFilled;
                 }
-                else if (participant.VideoInfo != null)
+                else
                 {
                     status.Text = Icons.SmallVideoFilled;
                 }
