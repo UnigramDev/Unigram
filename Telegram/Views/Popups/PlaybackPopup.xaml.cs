@@ -81,7 +81,18 @@ namespace Telegram.Views.Popups
 
         public void UpdateItem(PlaybackItem oldItem, PlaybackItem newItem)
         {
-            // Do nothing
+            // An edited message keeps its id, so the diff treats the rebuilt item as the same
+            // one and leaves the old instance in place. It is the instance the row displays
+            // and the one a click hands back to the service, so it has to be swapped: the
+            // playlist no longer holds it, and playing it would start a track from outside.
+            if (oldItem != newItem)
+            {
+                var index = _items.IndexOf(oldItem);
+                if (index >= 0)
+                {
+                    _items[index] = newItem;
+                }
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -534,9 +545,13 @@ namespace Telegram.Views.Popups
             _navigationService.ShowPopup(new ChooseChatsPopup(), new ChooseChatsConfigurationPostMessage(audio.ToInputMessage()));
         }
 
-        private void SaveToProfile(PlaybackItem item)
+        private async void SaveToProfile(PlaybackItem item)
         {
-            _clientService.Send(new AddProfileAudio(new InputAudio(new InputFileId(item.Document.Id), null, 0, string.Empty, string.Empty)));
+            if (!await AddProfileAudioAsync(item))
+            {
+                return;
+            }
+
             _navigationService.ShowToast(Strings.AudioSaveToMyProfileSaved, ToastPopupIcon.SavedMessages);
 
             if (item.AreTheSame(LifetimeService.Current.Playback.CurrentItem))
@@ -722,20 +737,88 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void AddToProfile_Click(object sender, RoutedEventArgs e)
+        // A profile audio request is in flight. Both buttons stay visible and hit-testable
+        // through the swap animation, so without this a second click sends a second request
+        // and moves the playlist twice over.
+        private bool _profileAudioPending;
+
+        /// <summary>
+        /// Adds an audio to the current user's profile, telling the playback service only
+        /// once the server has taken it. Returns whether it did.
+        /// </summary>
+        /// <remarks>
+        /// Profile paging is positional, so an optimistic insert that the server then refuses
+        /// leaves a phantom item in the playlist and the paging cursor one off for the rest
+        /// of the session, repeating or skipping an audio on every page after it.
+        /// </remarks>
+        private async Task<bool> AddProfileAudioAsync(PlaybackItem item)
         {
-            if (LifetimeService.Current.Playback.CurrentItem is PlaybackItem item)
+            if (_profileAudioPending)
             {
-                _clientService.Send(new AddProfileAudio(new InputAudio(new InputFileId(item.Document.Id), null, 0, string.Empty, string.Empty)));
+                return false;
+            }
+
+            _profileAudioPending = true;
+
+            var response = await _clientService.SendAsync(new AddProfileAudio(new InputAudio(new InputFileId(item.Document.Id), null, 0, string.Empty, string.Empty)));
+
+            _profileAudioPending = false;
+
+            if (response is Error error)
+            {
+                ToastPopup.ShowError(XamlRoot, error);
+                return false;
+            }
+
+            LifetimeService.Current.Playback.ProfileAudioAdded(item);
+            return true;
+        }
+
+        private async Task<bool> RemoveProfileAudioAsync(PlaybackItem item)
+        {
+            if (_profileAudioPending)
+            {
+                return false;
+            }
+
+            _profileAudioPending = true;
+
+            var response = await _clientService.SendAsync(new RemoveProfileAudio(item.Document.Id));
+
+            _profileAudioPending = false;
+
+            if (response is Error error)
+            {
+                ToastPopup.ShowError(XamlRoot, error);
+                return false;
+            }
+
+            LifetimeService.Current.Playback.ProfileAudioRemoved(item.Document.Id);
+            return true;
+        }
+
+        private async void AddToProfile_Click(object sender, RoutedEventArgs e)
+        {
+            if (LifetimeService.Current.Playback.CurrentItem is not PlaybackItem item)
+            {
+                return;
+            }
+
+            if (await AddProfileAudioAsync(item) && item.AreTheSame(LifetimeService.Current.Playback.CurrentItem))
+            {
                 ShowHideRemove(true);
             }
         }
 
-        private void RemoveFromProfile_Click(object sender, TextUrlClickEventArgs e)
+        private async void RemoveFromProfile_Click(object sender, TextUrlClickEventArgs e)
         {
-            if (LifetimeService.Current.Playback.CurrentItem is PlaybackItem item)
+            if (LifetimeService.Current.Playback.CurrentItem is not PlaybackItem item)
             {
-                _clientService.Send(new RemoveProfileAudio(item.Document.Id));
+                return;
+            }
+
+            if (await RemoveProfileAudioAsync(item) && item.AreTheSame(LifetimeService.Current.Playback.CurrentItem))
+            {
                 ShowHideRemove(false);
             }
         }

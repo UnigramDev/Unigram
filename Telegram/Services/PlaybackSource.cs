@@ -89,6 +89,54 @@ namespace Telegram.Services
         public MessageTopic Topic => _topic;
 
         /// <summary>
+        /// Whether the newest message is the start of the playlist rather than its end.
+        /// </summary>
+        public bool NewestFirst => _newestFirst;
+
+        /// <summary>
+        /// Whether a message newer than everything else can be added straight away. Until
+        /// the newest end has actually been reached there are messages between it and the
+        /// playlist, and adding past them would move the cursor over the gap.
+        /// </summary>
+        public bool CanAddNewest => !HasMore(!_newestFirst);
+
+        /// <summary>
+        /// Whether a message belongs in this playlist at all.
+        /// </summary>
+        public bool Accepts(Message message)
+        {
+            if (message.ChatId != _chatId)
+            {
+                return false;
+            }
+
+            // No topic means the whole chat. Comparing anyway would reject everything, since
+            // in a forum every message carries a topic and AreTheSame(null, x) is false.
+            if (_topic != null && !_topic.AreTheSame(message.TopicId))
+            {
+                return false;
+            }
+
+            return Accepts(message.Content);
+        }
+
+        /// <summary>
+        /// Whether a content is one this playlist plays. An expired voice note, or media
+        /// edited into something else, is not.
+        /// </summary>
+        public bool Accepts(MessageContent content)
+        {
+            return _filter is SearchMessagesFilterAudio
+                ? content is MessageAudio
+                : content is MessageVoiceNote or MessageVideoNote;
+        }
+
+        public PlaybackItem Create(Message message)
+        {
+            return new PlaybackItemMessage(_xamlRoot, new MessageWithOwner(ClientService, message), _topic);
+        }
+
+        /// <summary>
         /// Records the message the session starts from, so the first page in either
         /// direction is searched from it rather than from the end of the chat.
         /// </summary>
@@ -240,11 +288,13 @@ namespace Telegram.Services
         /// <remarks>
         /// Paging here is by position, so those items have to be the start of the profile
         /// list and in its order: an offset that does not match what the caller holds does
-        /// not just repeat items, it skips the ones in between.
+        /// not just repeat items, it skips the ones in between. Which is also why adding or
+        /// removing an audio at the front has to move the cursor with it - hence negative
+        /// counts.
         /// </remarks>
         public void Skip(int count)
         {
-            _offset += count;
+            _offset = Math.Max(0, _offset + count);
         }
 
         public override bool HasMore(bool forward)
