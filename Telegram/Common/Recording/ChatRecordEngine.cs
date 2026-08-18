@@ -87,7 +87,7 @@ namespace Telegram.Common.Recording
 
         public bool IsViewOnce { get; set; }
 
-        public async void Start(ChatRecordMode mode, Chat chat)
+        public async void Start(ChatRecordMode mode, Chat chat, int videoNoteLength)
         {
             Logger.Debug("Start invoked, mode: " + mode);
 
@@ -169,7 +169,7 @@ namespace Telegram.Common.Recording
                     else
                     {
                         Logger.Info("Recording through MediaCapture, the file will be transcoded when sent");
-                        await _recorder.StartAsync(_file);
+                        await _recorder.StartAsync(_file, videoNoteLength);
                     }
 
                     // Started last, so that no sample arrives before there is something to
@@ -723,12 +723,13 @@ namespace Telegram.Common.Recording
                 return desiredDevice ?? allVideoDevices.FirstOrDefault();
             }
 
-            public async Task StartAsync(StorageFile file)
+            public async Task StartAsync(StorageFile file, int videoNoteLength)
             {
                 MediaEncodingProfile profile;
                 if (m_isVideo)
                 {
                     profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
+                    ScaleToVideoNote(profile, videoNoteLength);
                 }
                 else
                 {
@@ -738,8 +739,59 @@ namespace Telegram.Common.Recording
                     profile.Audio.ChannelCount = 1;
                 }
 
-                m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, file);
+                try
+                {
+                    m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, file);
+                }
+                catch when (m_isVideo)
+                {
+                    // Recording at whatever the camera offers beats not recording, if the encoder
+                    // won't take the size we asked for.
+                    Logger.Error("Falling back to the camera's own resolution");
+
+                    profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
+                    m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, file);
+                }
+
                 await m_lowLag.StartAsync();
+            }
+
+            /// <summary>
+            /// Encodes at the aspect the camera is giving us, scaled down to the size a video
+            /// message is sent at, so the send-time transcode is a crop rather than a resize of a
+            /// 1080p file.
+            /// </summary>
+            private void ScaleToVideoNote(MediaEncodingProfile profile, int videoNoteLength)
+            {
+                if (videoNoteLength <= 0 || profile.Video == null)
+                {
+                    return;
+                }
+
+                // A read, so it is allowed even though the sharing mode forbids changing the
+                // camera's own format.
+                if (m_mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoRecord) is not VideoEncodingProperties source)
+                {
+                    return;
+                }
+
+                var shortest = Math.Min(source.Width, source.Height);
+                if (shortest == 0 || shortest <= videoNoteLength)
+                {
+                    return;
+                }
+
+                var scale = videoNoteLength / (double)shortest;
+
+                profile.Video.Width = ToEven(source.Width * scale);
+                profile.Video.Height = ToEven(source.Height * scale);
+            }
+
+            // Odd dimensions are rejected by most H.264 encoders.
+            private static uint ToEven(double value)
+            {
+                var rounded = (uint)Math.Round(value);
+                return rounded % 2 == 0 ? rounded : rounded + 1;
             }
 
             public async Task<MediaCapturePauseResult> PauseAsync()

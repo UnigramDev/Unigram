@@ -336,10 +336,18 @@ says it took.
 
 ## Task 4 — Video
 
-- [ ] **4.1** Record near the target: pick the camera format closest to
+- [x] **4.1** Record near the target: ~~pick the camera format closest to~~
   `Options.SuggestedVideoNoteLength` and set the encoding profile to it, so the send-time
   `VideoGeneration` is a crop, not a full re-encode. This is what makes release-to-sent fast for
   video, streaming upload or not.
+
+  **The camera's format is never touched.** `SharedReadOnly` forbids that, but it doesn't forbid
+  *reading* it, and the encoding profile decides what lands in the file regardless. So the profile
+  is derived from the camera's own aspect — `VideoDeviceController.GetMediaStreamProperties`,
+  scaled so the short side is the video-note length, rounded to even. A 1080p camera records
+  682×384 instead of 1920×1080, and there is no letterbox or stretch to get wrong because the
+  aspect is the one the camera gave us. Never upscales, and falls back to `Auto` if the encoder
+  refuses the size. Decision 1 turned out not to gate this after all.
 - [ ] **4.2** Camera selection through `MediaDeviceTracker` instead of `Panel.Front` (:785).
   Blocked with 2.5, and worse: Windows has no default-camera concept to fall back on, so without
   a stored preference there is nothing to select *by*.
@@ -402,14 +410,11 @@ touching anything above it.
 
 ## Decisions for you
 
-1. **Exclusive capture mode (5.1)?** The voice format fix needs it. Video at target size may not:
-   `SharedReadOnly` forbids changing the *camera's* format, but the `MediaEncodingProfile` decides
-   what gets encoded, and Media Foundation scales into it. Encoding at ~384 on the short side
-   instead of 1080p would cut the write and make the send-time transcode nearly free without
-   touching the device. What I can't tell without a camera is how MF handles the aspect when the
-   profile doesn't match the source — letterbox, stretch or crop — and a stretched video message
-   is the kind of thing that ships unnoticed. Worth trying on a device before assuming 4.1 needs
-   exclusive mode at all.
+1. **Exclusive capture mode (5.1)?** Only the voice format fix wants it now — 4.1 landed without
+   it. It buys `SetFormatAsync` on the audio frame source, which is what would let a 44.1kHz
+   microphone take the streaming encode path instead of falling back to WAV-and-transcode. The
+   cost is failing when another app holds the device, where today we'd share. Worth knowing how
+   many microphones actually fall back before paying that.
 2. **How far does the preview rework go (4.4)?** Composition-surface preview is the better end
    state and makes 4.1 cheap, but it's the largest single piece here.
 3. **Does Task 6 get built at all?** Tasks 1–5 stand on their own: the encode win, the waveform,
