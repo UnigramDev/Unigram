@@ -8,15 +8,16 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls.Chats;
-using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Views;
+using Windows.Graphics.Display;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
@@ -823,13 +824,81 @@ namespace Telegram.Controls
         // is what makes this affordable here - the master is collapsed while a chat is open in
         // Minimal, so revealing it would force a measure of the whole chat list at the moment the
         // finger starts moving, and a Frame navigation cannot be scrubbed anyway.
-        // Deliberately longer than the 72 the reply and folder swipes use. Those are cheap to undo
-        // and cheap to trigger; this one leaves the page, so it has to be asked for rather than
-        // brushed into. Shared with MessageSelector, which clamps its own tracker to it whenever
-        // the back direction is the one in play.
-        public const float BackGestureThreshold = 120;
+        // Chrome's numbers, from OverscrollConfig and OverscrollController::DispatchEventCompletesAction:
+        // a touchpad pan commits at 30% of the display's larger edge, and the first 60 DIPs only serve
+        // to recognise the gesture - nothing is drawn over them. It is measured against the display and
+        // not the window, which is why the distance to go back feels the same maximized and in a small
+        // window. Shared with MessageSelector, which clamps its own tracker to it whenever the back
+        // direction is the one in play.
+        private const float BackGestureCompletePercent = 0.3f;
+        private const float BackGestureStartThreshold = 60;
 
-        private const float BackIndicatorSize = 30;
+        /// <summary>
+        /// The larger edge of the display the window is on, in DIPs: Chrome's max_size.
+        /// </summary>
+        private static float BackGestureDisplayEdge
+        {
+            get
+            {
+                var display = DisplayInformation.GetForCurrentView();
+                var scale = display.RawPixelsPerViewPixel;
+
+                var width = display.ScreenWidthInRawPixels / scale;
+                var height = display.ScreenHeightInRawPixels / scale;
+
+                return (float)Math.Max(width, height);
+            }
+        }
+
+        /// <summary>
+        /// The pan that commits the navigation.
+        /// </summary>
+        public static float BackGestureThreshold => BackGestureDisplayEdge * BackGestureCompletePercent;
+
+        /// <summary>
+        /// How far the pan is allowed to travel at all: Chrome caps the overscroll delta at the
+        /// display edge, and the pan between the threshold and here is what the chip's last 72px of
+        /// rubber band are spread over.
+        /// </summary>
+        public static float BackGestureMaxPosition => BackGestureDisplayEdge;
+
+        // How far the chip travels by the time the gesture commits, and how much further the rubber
+        // band carries it: kAffordanceActivationOffset and kAffordanceExtraOffset.
+        private const float BackIndicatorTravel = 146;
+        private const float BackIndicatorExtraTravel = 72;
+
+        // The affordance, to Chrome's measurements: a radius-20 circle carrying a 20px arrow over a
+        // ripple that grows from the circle's radius to 40, and bursts to 48 on commit. The layer is
+        // sized for the burst, so 96 square.
+        private const float BackIndicatorBackgroundRadius = 20;
+        private const float BackIndicatorRippleRadius = 40;
+        private const float BackIndicatorBurstRadius = 48;
+        // kArrowSize is 20, but that is the box of a vector icon drawn to its edges. ArrowLeft.png
+        // carries padding - a 13x10 glyph in a 30 bitmap - so the sprite is its native size, which
+        // draws the glyph at the 13x10 that Material's arrow_back comes to at 20.
+        private const float BackIndicatorArrowSize = 30;
+
+        // At rest the centre sits one background radius outside the edge, so nothing of it shows
+        // until the pan carries it in: Chrome's GetPaintedLayerOrigin.
+        private const float BackIndicatorOrigin = -(BackIndicatorBurstRadius + BackIndicatorBackgroundRadius);
+
+        // kBgShadowOffsetY, kBgShadowBlurRadius and the alpha of kBgShadowColor. Chrome draws it with
+        // the circle rather than under the ripple, so it falls between the two.
+        private const float BackIndicatorShadowOffset = 2;
+        private const float BackIndicatorShadowBlur = 8;
+        private const float BackIndicatorShadowOpacity = 0x4D / 255f;
+
+        // kRippleColor's alpha.
+        private const byte BackIndicatorRippleOpacity = 0x4C;
+
+        // FAST_OUT_SLOW_IN, which every one of these animations uses.
+        private static readonly Vector2 BackIndicatorEaseFrom = new(0.4f, 0);
+        private static readonly Vector2 BackIndicatorEaseTo = new(0.2f, 1);
+
+        // kRippleBurstAnimationDuration, and kAbortAnimationDuration - the abort is scaled by how
+        // far the chip had come, so a short pull snaps back and a long one is walked back.
+        private static readonly TimeSpan BackIndicatorBurstDuration = TimeSpan.FromMilliseconds(200);
+        private static readonly TimeSpan BackIndicatorAbortDuration = TimeSpan.FromMilliseconds(300);
 
         private VisualInteractionSource _backSource;
         private ScrollViewer _backScrollingHost;
@@ -838,8 +907,22 @@ namespace Telegram.Controls
         private WeakInteractionTrackerOwner _backTrackerOwner;
 
         private ContainerVisual _backIndicator;
-        private SpriteVisual _backIndicatorCircle;
-        private Color _backIndicatorColor;
+        private ShapeVisual _backIndicatorRipple;
+        private ShapeVisual _backIndicatorCircle;
+        private SpriteVisual _backIndicatorArrow;
+
+        // The activated pair sits on top of the plain one and is stepped in, rather than either being
+        // recoloured: an expression can drive an opacity off the tracker, but not a brush.
+        private ShapeVisual _backIndicatorCircleActivated;
+        private SpriteVisual _backIndicatorArrowActivated;
+        private SpriteVisual _backIndicatorShadow;
+        private LoadedImageSurface _backIndicatorArrowSurface;
+
+        private CompositionColorBrush _backIndicatorRippleBrush;
+        private CompositionColorBrush _backIndicatorCircleActivatedBrush;
+
+        private Color _backIndicatorAccentColor;
+        private bool _backCompleting;
         private InteractionTracker _backDriver;
 
         /// <summary>
@@ -877,7 +960,6 @@ namespace Telegram.Controls
                 // Only the back direction travels, and it runs negative to match the sign
                 // MessageSelector's tracker already uses for a left-to-right drag.
                 _backTracker.MaxPosition = Vector3.Zero;
-                _backTracker.MinPosition = new Vector3(-BackGestureThreshold, 0, 0);
 
                 var neutralX = InteractionTrackerInertiaRestingValue.Create(compositor);
                 neutralX.Condition = compositor.CreateExpressionAnimation("true");
@@ -888,7 +970,9 @@ namespace Telegram.Controls
                 _backTracker.ConfigurePositionXInertiaModifiers(new List<InteractionTrackerInertiaModifier> { neutralX });
             }
 
-            // Re-read on every navigation, so switching the setting off takes effect at once.
+            // Re-read on every navigation, so switching the setting off takes effect at once, and so
+            // the threshold follows the window onto a display of another size.
+            _backTracker.MinPosition = new Vector3(-BackGestureMaxPosition, 0, 0);
             _backSource.PositionXSourceMode = enabled
                 ? InteractionSourceMode.EnabledWithInertia
                 : InteractionSourceMode.Disabled;
@@ -972,37 +1056,122 @@ namespace Telegram.Controls
             var compositor = _backIndicator.Compositor;
             var root = ElementComposition.GetElementVisual(DetailRoot);
 
-            // The tint is baked into the effect graph, so a theme change means a new brush rather
-            // than a colour set on the old one. Once per gesture, and only when it has moved.
-            var color = (Color)BootStrapper.Current.Resources["MessageServiceBackgroundColor"];
-            if (_backIndicatorCircle.Brush == null || _backIndicatorColor != color)
+            // Once per gesture, and only when the theme has moved the accent under us.
+            if (_backIndicatorAccentColor != BackIndicatorAccentColor)
             {
-                _backIndicatorColor = color;
-                _backIndicatorCircle.Brush = SolidGaussianBrush.CreateCircleBrush(compositor, BackIndicatorSize / 2, color);
+                UpdateBackIndicatorBrushes(compositor);
             }
 
-            var progress = $"clamp(-tracker.Position.X / {BackGestureThreshold}, 0, 1)";
+            // Chrome's drag progress: the first 60 DIPs only recognise the gesture, so the chip does
+            // not stir over them, and 1 is the commit. Invariant because a computed float would be
+            // written with a comma on most of the world's machines, and the expression would not parse.
+            var start = BackGestureStartThreshold.ToString(CultureInfo.InvariantCulture);
+            var threshold = BackGestureThreshold.ToString(CultureInfo.InvariantCulture);
+            var span = (BackGestureThreshold - BackGestureStartThreshold).ToString(CultureInfo.InvariantCulture);
+            var overspan = (BackGestureMaxPosition - BackGestureThreshold).ToString(CultureInfo.InvariantCulture);
 
-            // ChatListListView's indicator, on the same numbers, since this is the same gesture
-            // language: in from the edge over 55px, growing 0.8 to 1, fading the whole way.
+            var progress = $"((-tracker.Position.X - {start}) / {span})";
+
+            // Past the commit the chip keeps 72px of rubber band, spread over the whole remaining
+            // pan. Chrome eases it with FAST_OUT_SLOW_IN, which the expression language has no bezier
+            // for; smoothstep is the same shape to within a pixel of the 72.
+            var extra = $"clamp((-tracker.Position.X - {threshold}) / {overspan}, 0, 1)";
+            var eased = $"({extra} * {extra} * (3 - 2 * {extra}))";
+
+            var travel = $"(clamp({progress}, 0, 1) * {BackIndicatorTravel} + {eased} * {BackIndicatorExtraTravel})";
+
             var offset = compositor.CreateExpressionAnimation(
-                $"vector3(-{BackIndicatorSize} + {progress} * 55, (root.Size.Y - {BackIndicatorSize}) / 2, 0)");
+                $"vector3({BackIndicatorOrigin} + {travel}, (root.Size.Y - {BackIndicatorBurstRadius * 2}) / 2, 0)");
             offset.SetReferenceParameter("tracker", tracker);
             offset.SetReferenceParameter("root", root);
 
-            // Negative on X, which mirrors the arrow: ArrowLeft.png is drawn for the right-hand
-            // edge, and ChatListListView flips it the same way for the indicator it brings in from
-            // the left.
-            var scaled = $"(0.8 + {progress} * 0.2)";
-            var scale = compositor.CreateExpressionAnimation($"vector3(-{scaled}, {scaled}, 1)");
-            scale.SetReferenceParameter("tracker", tracker);
+            // The ripple grows from the circle's own radius out to 40, which is the sprite, so the
+            // scale runs from 20/40 to 1.
+            var scaled = $"(({BackIndicatorBackgroundRadius} + clamp({progress}, 0, 1) * {BackIndicatorRippleRadius - BackIndicatorBackgroundRadius}) / {BackIndicatorRippleRadius})";
+            var ripple = compositor.CreateExpressionAnimation($"vector3({scaled}, {scaled}, 1)");
+            ripple.SetReferenceParameter("tracker", tracker);
 
-            var opacity = compositor.CreateExpressionAnimation(progress);
-            opacity.SetReferenceParameter("tracker", tracker);
-
+            _backIndicator.Opacity = 1;
             _backIndicator.StartAnimation("Offset", offset);
-            _backIndicator.StartAnimation("Scale", scale);
-            _backIndicator.StartAnimation("Opacity", opacity);
+            _backIndicatorRipple.StartAnimation("Scale", ripple);
+
+            // Chrome inverts the affordance the instant it activates, with no transition, so this is
+            // a step and not a fade. The plain pair steps out on the same frame rather than being
+            // left underneath: two stacked circles blend along their antialiased edge, and the white
+            // one reads as a rim around the accent.
+            var swap = compositor.CreateExpressionAnimation($"{progress} >= 1 ? 1 : 0");
+            swap.SetReferenceParameter("tracker", tracker);
+
+            var unswap = compositor.CreateExpressionAnimation($"{progress} >= 1 ? 0 : 1");
+            unswap.SetReferenceParameter("tracker", tracker);
+
+            _backIndicatorCircle.StartAnimation("Opacity", unswap);
+            _backIndicatorArrow.StartAnimation("Opacity", unswap);
+
+            _backIndicatorCircleActivated.StartAnimation("Opacity", swap);
+            _backIndicatorArrowActivated.StartAnimation("Opacity", swap);
+        }
+
+        /// <summary>
+        /// Chrome's palette with our accent standing in for Google Blue: a white circle carrying an
+        /// accent arrow, the two swapped the instant it activates, over an accent ripple.
+        /// </summary>
+        private Color BackIndicatorAccentColor => ActualTheme == ElementTheme.Light
+            ? Theme.AccentLight.Default
+            : Theme.AccentDark.Default;
+
+        private void UpdateBackIndicatorBrushes(Compositor compositor)
+        {
+            var accent = BackIndicatorAccentColor;
+            _backIndicatorAccentColor = accent;
+
+            _backIndicatorRippleBrush.Color = Color.FromArgb(BackIndicatorRippleOpacity, accent.R, accent.G, accent.B);
+            _backIndicatorCircleActivatedBrush.Color = accent;
+
+            // The surface only arrives asynchronously, and a theme change can beat it here.
+            if (_backIndicatorArrowSurface != null)
+            {
+                _backIndicatorArrow.Brush = CreateArrowBrush(compositor, accent);
+                _backIndicatorArrowActivated.Brush = CreateArrowBrush(compositor, Colors.White);
+            }
+        }
+
+        /// <summary>
+        /// A circle painted into a surface, which is what a DropShadow needs to take its shape from.
+        /// Only ever a mask, never anything drawn: a surface is a raster and does not survive being
+        /// scaled up, whether by the display or by the burst.
+        /// </summary>
+        private CompositionSurfaceBrush CreateCircleSurfaceBrush(Compositor compositor, float radius)
+        {
+            var ellipse = compositor.CreateEllipseGeometry();
+            ellipse.Radius = new Vector2(radius);
+
+            var shape = compositor.CreateSpriteShape(ellipse);
+            shape.FillBrush = compositor.CreateColorBrush(Colors.White);
+            shape.Offset = new Vector2(radius);
+
+            var visual = compositor.CreateShapeVisual();
+            visual.Shapes.Add(shape);
+            visual.Size = new Vector2(radius * 2);
+
+            var surface = compositor.CreateVisualSurface();
+            surface.SourceVisual = visual;
+            surface.SourceSize = new Vector2(radius * 2);
+
+            return compositor.CreateSurfaceBrush(surface);
+        }
+
+        /// <summary>
+        /// The arrow is a bitmap where Chrome's is a vector icon it can hand a colour to, so it is
+        /// tinted by using its own alpha as a mask over a flat colour.
+        /// </summary>
+        private CompositionMaskBrush CreateArrowBrush(Compositor compositor, Color color)
+        {
+            var brush = compositor.CreateMaskBrush();
+            brush.Mask = compositor.CreateSurfaceBrush(_backIndicatorArrowSurface);
+            brush.Source = compositor.CreateColorBrush(color);
+
+            return brush;
         }
 
         /// <summary>
@@ -1017,16 +1186,103 @@ namespace Telegram.Controls
 
             _backDriver = null;
 
+            // A commit has already taken the chip off the tracker, and its burst outlives both the
+            // gesture and the navigation that follows.
+            if (_backCompleting)
+            {
+                return;
+            }
+
             // Left bound, the expressions would hold a recycled container's tracker alive, and the
             // indicator would sit at whatever progress the gesture happened to end on.
             _backIndicator.StopAnimation("Offset");
-            _backIndicator.StopAnimation("Scale");
-            _backIndicator.StopAnimation("Opacity");
-            _backIndicator.Opacity = 0;
+            _backIndicatorRipple.StopAnimation("Scale");
+            _backIndicatorCircle.StopAnimation("Opacity");
+            _backIndicatorArrow.StopAnimation("Opacity");
+            _backIndicatorCircleActivated.StopAnimation("Opacity");
+            _backIndicatorArrowActivated.StopAnimation("Opacity");
+
+            var progress = (_backIndicator.Offset.X - BackIndicatorOrigin) / BackIndicatorTravel;
+            if (progress <= 0)
+            {
+                _backIndicator.Opacity = 0;
+                return;
+            }
+
+            // Chrome's abort: the chip retreats the way it came rather than blinking out.
+            var compositor = _backIndicator.Compositor;
+
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += OnBackIndicatorRetreated;
+
+            var offset = compositor.CreateVector3KeyFrameAnimation();
+            offset.InsertKeyFrame(1, new Vector3(BackIndicatorOrigin, _backIndicator.Offset.Y, 0),
+                compositor.CreateCubicBezierEasingFunction(BackIndicatorEaseFrom, BackIndicatorEaseTo));
+            offset.Duration = TimeSpan.FromMilliseconds(BackIndicatorAbortDuration.TotalMilliseconds * progress);
+
+            _backIndicator.StartAnimation("Offset", offset);
+
+            batch.End();
+        }
+
+        private void OnBackIndicatorRetreated(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            if (_backDriver == null && !_backCompleting)
+            {
+                _backIndicator.Opacity = 0;
+            }
+        }
+
+        private void OnBackIndicatorBurst(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            _backCompleting = false;
+
+            if (_backDriver == null)
+            {
+                _backIndicator.Opacity = 0;
+                _backIndicatorRipple.Scale = Vector3.One;
+                _backIndicatorCircle.Opacity = 1;
+                _backIndicatorArrow.Opacity = 1;
+                _backIndicatorCircleActivated.Opacity = 0;
+                _backIndicatorArrowActivated.Opacity = 0;
+            }
         }
 
         public void CommitBackGesture()
         {
+            // The chip finishes on its own: the navigation below pulls the page out from under it,
+            // and Chrome lets the burst play over whatever replaces it.
+            if (_backIndicator != null && !_backCompleting)
+            {
+                _backCompleting = true;
+
+                var compositor = _backIndicator.Compositor;
+                var easing = compositor.CreateCubicBezierEasingFunction(BackIndicatorEaseFrom, BackIndicatorEaseTo);
+
+                _backIndicator.StopAnimation("Offset");
+                _backIndicatorRipple.StopAnimation("Scale");
+                _backIndicatorCircle.StopAnimation("Opacity");
+                _backIndicatorArrow.StopAnimation("Opacity");
+                _backIndicatorCircleActivated.StopAnimation("Opacity");
+                _backIndicatorArrowActivated.StopAnimation("Opacity");
+
+                var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                batch.Completed += OnBackIndicatorBurst;
+
+                var ripple = compositor.CreateVector3KeyFrameAnimation();
+                ripple.InsertKeyFrame(1, new Vector3(BackIndicatorBurstRadius / BackIndicatorRippleRadius, BackIndicatorBurstRadius / BackIndicatorRippleRadius, 1), easing);
+                ripple.Duration = BackIndicatorBurstDuration;
+
+                var opacity = compositor.CreateScalarKeyFrameAnimation();
+                opacity.InsertKeyFrame(1, 0, easing);
+                opacity.Duration = BackIndicatorBurstDuration;
+
+                _backIndicatorRipple.StartAnimation("Scale", ripple);
+                _backIndicator.StartAnimation("Opacity", opacity);
+
+                batch.End();
+            }
+
             if (DetailFrame is { CanGoBack: true })
             {
                 // FromRight, and it does slide in from the left: the frame inverts the effect on a
@@ -1051,28 +1307,90 @@ namespace Telegram.Controls
 
             var compositor = ElementComposition.GetElementVisual(DetailRoot).Compositor;
 
-            var sprite = compositor.CreateSpriteVisual();
-            sprite.Size = new Vector2(BackIndicatorSize);
+            SpriteVisual Centered(float size)
+            {
+                var sprite = compositor.CreateSpriteVisual();
+                sprite.Size = new Vector2(size);
+                sprite.Offset = new Vector3(BackIndicatorBurstRadius - size / 2);
+                sprite.CenterPoint = new Vector3(size / 2);
+                return sprite;
+            }
 
-            var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/ArrowLeft.png"));
+            // Every circle is drawn as a shape rather than painted into a surface: a VisualSurface
+            // rasterises at its logical size once and is then sampled, which on a scaled display is
+            // an upscale. Shapes are re-rasterised at whatever transform they end up under, so they
+            // survive both the DPI and the burst's scale.
+            ShapeVisual Circle(float radius, out CompositionColorBrush fill)
+            {
+                var ellipse = compositor.CreateEllipseGeometry();
+                ellipse.Radius = new Vector2(radius);
+
+                fill = compositor.CreateColorBrush();
+
+                var shape = compositor.CreateSpriteShape(ellipse);
+                shape.FillBrush = fill;
+                shape.Offset = new Vector2(radius);
+
+                var visual = compositor.CreateShapeVisual();
+                visual.Shapes.Add(shape);
+                visual.Size = new Vector2(radius * 2);
+                visual.Offset = new Vector3(BackIndicatorBurstRadius - radius);
+                visual.CenterPoint = new Vector3(radius);
+                return visual;
+            }
+
+            // Sized for the ripple at rest, and scaled from there: 40 covers the drag, and the burst
+            // takes it to 48, which is exactly the layer.
+            _backIndicatorRipple = Circle(BackIndicatorRippleRadius, out _backIndicatorRippleBrush);
+
+            // The plain layer stays opaque and carries the shadow, so only the activated one has to
+            // be stepped in and the shadow is drawn once either way.
+            _backIndicatorCircle = Circle(BackIndicatorBackgroundRadius, out var circle);
+            _backIndicatorCircleActivated = Circle(BackIndicatorBackgroundRadius, out _backIndicatorCircleActivatedBrush);
+            _backIndicatorCircleActivated.Opacity = 0;
+
+            circle.Color = Colors.White;
+
+            // A ShapeVisual cannot cast one, so the shadow is a sprite of its own. It paints nothing:
+            // a surface is a raster, and on a scaled display the soft edge of the upscale crept out
+            // from under the vector circle as a pale rim. The shape it casts comes from the mask.
+            _backIndicatorShadow = Centered(BackIndicatorBackgroundRadius * 2);
+            _backIndicatorShadow.Brush = compositor.CreateColorBrush(Colors.Transparent);
+
+            var shadow = compositor.CreateDropShadow();
+            shadow.BlurRadius = BackIndicatorShadowBlur;
+            shadow.Offset = new Vector3(0, BackIndicatorShadowOffset, 0);
+            shadow.Opacity = BackIndicatorShadowOpacity;
+            shadow.Color = Colors.Black;
+
+            // Without a mask the shadow is the sprite's bounds, which is a square.
+            shadow.Mask = CreateCircleSurfaceBrush(compositor, BackIndicatorBackgroundRadius);
+
+            _backIndicatorShadow.Shadow = shadow;
+
+            // Not mirrored: the asset points left, which is the way back. ChatListListView flips it
+            // because the indicator it brings in from the left is the one that goes forward.
+            _backIndicatorArrow = Centered(BackIndicatorArrowSize);
+            _backIndicatorArrowActivated = Centered(BackIndicatorArrowSize);
+            _backIndicatorArrowActivated.Opacity = 0;
+
+            _backIndicatorArrowSurface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/ArrowLeft.png"));
             void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
             {
                 s.LoadCompleted -= handler;
-                sprite.Brush = compositor.CreateSurfaceBrush(s);
+                UpdateBackIndicatorBrushes(compositor);
             }
 
-            surface.LoadCompleted += handler;
-
-            _backIndicatorCircle = compositor.CreateSpriteVisual();
-            _backIndicatorCircle.Size = new Vector2(BackIndicatorSize);
+            _backIndicatorArrowSurface.LoadCompleted += handler;
 
             _backIndicator = compositor.CreateContainerVisual();
-            _backIndicator.Children.InsertAtBottom(_backIndicatorCircle);
-            _backIndicator.Children.InsertAtTop(sprite);
-
-            // Mirroring turns on the X scale, so the centre has to be the circle's, not the
-            // corner - otherwise the flip also moves it half its width to the left.
-            _backIndicator.CenterPoint = new Vector3(BackIndicatorSize / 2);
+            _backIndicator.Size = new Vector2(BackIndicatorBurstRadius * 2);
+            _backIndicator.Children.InsertAtBottom(_backIndicatorRipple);
+            _backIndicator.Children.InsertAtTop(_backIndicatorShadow);
+            _backIndicator.Children.InsertAtTop(_backIndicatorCircle);
+            _backIndicator.Children.InsertAtTop(_backIndicatorCircleActivated);
+            _backIndicator.Children.InsertAtTop(_backIndicatorArrow);
+            _backIndicator.Children.InsertAtTop(_backIndicatorArrowActivated);
             _backIndicator.Opacity = 0;
 
             // Drawn over the detail content, and clipped to it by the inset clip already on

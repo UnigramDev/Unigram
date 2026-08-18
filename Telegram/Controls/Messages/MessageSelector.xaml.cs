@@ -723,8 +723,9 @@ namespace Telegram.Controls.Messages
 
         /// <summary>
         /// How far the left-to-right direction travels, for whichever action has it. Share stops at
-        /// the same 72 as reply; back is held to MasterDetailView's longer pull, since leaving the
-        /// page is not something to be brushed into.
+        /// the same 72 as reply; back runs to MasterDetailView's cap, which is well past the pan
+        /// that commits it - the rest is the chip's rubber band, and leaving the page is not
+        /// something to be brushed into.
         /// </summary>
         private static float BackMinPosition(bool share, bool back)
         {
@@ -733,7 +734,7 @@ namespace Telegram.Controls.Messages
                 return -72;
             }
 
-            return back ? -MasterDetailView.BackGestureThreshold : 0;
+            return back ? -MasterDetailView.BackGestureMaxPosition : 0;
         }
 
         private void ConfigureRestingPoints()
