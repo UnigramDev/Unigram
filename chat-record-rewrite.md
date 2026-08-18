@@ -367,6 +367,10 @@ says it took.
   public `Pause()` draws the waveform, the duration and the send glyph — so the limit becomes a
   pause the user did not ask for, and the recording waits to be sent or thrown away. A recording
   that is still held by the pointer has to lock first, or the release that follows would send it.
+  **There is no resuming from it**: sixty seconds is all a video message gets, so `PauseRoot` has
+  to go rather than sit there showing its checked glyph. That makes it a different end state from
+  a pause the user asked for, not the same one reached another way — `Pause()` cannot simply be
+  called and left alone.
 
 ## Task 5 — The bar and the leftovers
 
