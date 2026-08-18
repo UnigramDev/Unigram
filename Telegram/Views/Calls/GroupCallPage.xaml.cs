@@ -177,11 +177,13 @@ namespace Telegram.Views.Calls
                     AddGridItem(participant, item, item == participant.ScreenSharingVideoInfo);
                 }
 
+                // LoadVideoInfo replays every participant, so the selected endpoint can be seen
+                // again here: it lives in the viewport alone and must never enter the list.
                 if (_listCells.TryGetValue(item.EndpointId, out cell))
                 {
                     cell.UpdateGroupCallParticipant(_call.ClientService, participant, item);
                 }
-                else if (_mode != ParticipantsGridMode.Compact && _selectedEndpointId != null)
+                else if (_mode != ParticipantsGridMode.Compact && _selectedEndpointId != null && _selectedEndpointId != item.EndpointId)
                 {
                     AddListItem(participant, item, item == participant.ScreenSharingVideoInfo);
                 }
@@ -465,6 +467,7 @@ namespace Telegram.Views.Calls
             {
                 _listCells.Clear();
                 ListViewport.Children.Clear();
+                ListViewport.Margin = new Thickness(-4, -2, -4, 0);
 
                 ShowHideParticipantsWithVideo(true);
             }
@@ -1766,7 +1769,8 @@ namespace Telegram.Views.Calls
             var cells = list ? _listCells : _gridCells;
             var viewport = list ? ListViewport.Children : Viewport.Children;
 
-            if (_selectedEndpointId == cell.EndpointId && !list)
+            var unselected = !list && _selectedEndpointId == cell.EndpointId;
+            if (unselected)
             {
                 _selectedEndpointId = null;
             }
@@ -1791,6 +1795,13 @@ namespace Telegram.Views.Calls
             }
 
             ListViewport.Margin = new Thickness(-4, -2, -4, ListViewport.Children.Count > 0 ? 4 : 0);
+
+            // The list only exists to hold the videos the selected cell covers, so it has to go
+            // with it. Leaving it up would show every remaining video twice, in both viewports.
+            if (unselected)
+            {
+                TransformList(ActualSize, ActualSize, _mode, _mode);
+            }
 
             UpdateLayout(ActualSize, ActualSize, true);
         }
