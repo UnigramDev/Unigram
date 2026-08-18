@@ -435,6 +435,11 @@ namespace Telegram.Services.Calls
         // it. A shared signal would pair a caller with someone else's answer.
         private byte[] Transform(Function request)
         {
+            if (_disposing.IsCancellationRequested)
+            {
+                return Array.Empty<byte>();
+            }
+
             var completed = new ManualResetEventSlim(false);
             Data response = null;
 
@@ -447,9 +452,16 @@ namespace Telegram.Services.Calls
             // Never wait forever: this is a media thread, and an empty result is how
             // tgcalls is told to drop the frame — far better than wedging the call.
             // Deliberately not disposed, since a late answer would still Set() it.
-            if (!completed.Wait(TransformTimeout))
+            try
             {
-                Logger.Error("Timed out waiting for TDLib to transform a frame");
+                if (!completed.Wait(TransformTimeout, _disposing.Token))
+                {
+                    Logger.Error("Timed out waiting for TDLib to transform a frame");
+                    return Array.Empty<byte>();
+                }
+            }
+            catch (OperationCanceledException)
+            {
                 return Array.Empty<byte>();
             }
 
@@ -457,6 +469,11 @@ namespace Telegram.Services.Calls
         }
 
         private static readonly TimeSpan TransformTimeout = TimeSpan.FromSeconds(5);
+
+        // Cancelled as Dispose begins, and never disposed itself, since a media thread can
+        // still be reading the token. Waiting out the timeout instead would hold Dispose and
+        // the transform against each other: TDLib answers on the one thread Dispose runs on.
+        private readonly CancellationTokenSource _disposing = new();
 
         public event TypedEventHandler<VoipGroupCall, VoipGroupCallNetworkStateChangedEventArgs> NetworkStateChanged;
         public event TypedEventHandler<VoipGroupCall, VoipGroupCallJoinedStateChangedEventArgs> JoinedStateChanged;
@@ -1162,6 +1179,10 @@ namespace Telegram.Services.Calls
             _isScheduled = false;
             _isConnected = false;
             _isClosed = true;
+
+            // Before anything below can block: a frame transform waiting on TDLib would
+            // never be answered, since this runs on the thread that answers.
+            _disposing.Cancel();
 
             _alias = null;
             _availableAliases = null;
