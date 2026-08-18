@@ -438,31 +438,20 @@
                                         IsOneWay="False"
                                         IsThreeState="True"
                                         Style="{StaticResource ThreeStateToggleStyle}" />
-            <controls:GlyphToggleButton x:Name="ShuffleButton"
-                                        Click="Shuffle_Click"
+            <controls:GlyphToggleButton x:Name="OrderButton"
+                                        Click="Order_Click"
                                         UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
                                         CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
                                         Glyph="&#xE8CB;"
                                         CheckedGlyph="&#xE8CB;"
+                                        IndeterminateGlyph="&#xE8B1;"
                                         Width="40"
                                         Height="40"
                                         Grid.Column="3"
                                         IsOneWay="False"
-                                        AutomationProperties.Name="{CustomResource ReverseOrder}"
-                                        ToolTipService.ToolTip="{CustomResource ReverseOrder}" />
+                                        IsThreeState="True"
+                                        Style="{StaticResource ThreeStateToggleStyle}" />
 
-            <!--<controls:GlyphToggleButton
-            x:Name="ShuffleButton"
-            Click="Shuffle_Click"
-            UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-            CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
-            Glyph="&#xE8B1;"
-            CheckedGlyph="&#xE8B1;"
-            Width="40"
-            Height="40"
-            Grid.Column="5"
-            AutomationProperties.Name="{CustomResource Shuffle}"
-            ToolTipService.ToolTip="{CustomResource Shuffle}"/>-->
             <controls:GlyphButton Click="Clear_Click"
                                   Glyph="&#xE711;"
                                   Width="48"

@@ -39,6 +39,13 @@ namespace Telegram.Services
         List
     }
 
+    public enum PlaybackOrderMode
+    {
+        Normal,
+        Reverse,
+        Shuffle
+    }
+
     public partial class PlaybackPositionChangedEventArgs
     {
         public TimeSpan Position { get; set; }
@@ -182,8 +189,12 @@ namespace Telegram.Services
 
 
         bool? IsRepeatEnabled { get; set; }
-        bool IsShuffleEnabled { get; set; }
-        bool IsReversed { get; set; }
+
+        /// <summary>
+        /// The order the playlist is played in. Audio only: voice and video notes are a
+        /// conversation, and always play in the order it happened.
+        /// </summary>
+        PlaybackOrderMode OrderMode { get; set; }
 
 
 
@@ -193,6 +204,13 @@ namespace Telegram.Services
         event TypedEventHandler<IPlaybackService, object> SourceChanged;
         event TypedEventHandler<IPlaybackService, PlaybackPositionChangedEventArgs> PositionChanged;
         event TypedEventHandler<IPlaybackService, object> PlaylistChanged;
+
+        /// <summary>
+        /// Repeat mode or shuffle changed. They can be changed from the system transport
+        /// controls as well as from the app, so the buttons cannot only be refreshed by
+        /// whoever pressed them.
+        /// </summary>
+        event TypedEventHandler<IPlaybackService, object> SettingsChanged;
     }
 
     public partial class PlaybackService : IPlaybackService
@@ -223,6 +241,13 @@ namespace Telegram.Services
 
         private List<PlaybackItem> _items;
 
+        // The order Next and Previous walk while shuffle is on. Holds the same items as the
+        // playlist, in a fixed order rather than a fresh pick each time, so Previous goes
+        // back to what was actually heard. Null when shuffle is off or the playlist is not
+        // one that can be shuffled. Only ever touched under the media player lock.
+        private List<PlaybackItem> _shuffled;
+        private readonly Random _random = new();
+
         private PlaybackSource _source;
 
         private bool _loadingStart;
@@ -242,6 +267,7 @@ namespace Telegram.Services
         public event TypedEventHandler<IPlaybackService, object> SourceChanged;
         public event TypedEventHandler<IPlaybackService, PlaybackPositionChangedEventArgs> PositionChanged;
         public event TypedEventHandler<IPlaybackService, object> PlaylistChanged;
+        public event TypedEventHandler<IPlaybackService, object> SettingsChanged;
 
         public PlaybackService()
         {
@@ -249,7 +275,7 @@ namespace Telegram.Services
             _isRepeatEnabled = AppSettings.Playback.RepeatMode == PlaybackRepeatMode.Track
                 ? null
                 : AppSettings.Playback.RepeatMode == PlaybackRepeatMode.List;
-            _isShuffleEnabled = AppSettings.Playback.Shuffle;
+            _orderMode = AppSettings.Playback.OrderMode;
             _playbackSpeed = AppSettings.Playback.AudioSpeed;
         }
 
@@ -268,7 +294,7 @@ namespace Telegram.Services
                 _transportQueue = DispatcherQueue.GetForCurrentThread();
 
                 _transport.AutoRepeatMode = ToAutoRepeatMode(_isRepeatEnabled);
-                _transport.ShuffleEnabled = _isShuffleEnabled;
+                _transport.ShuffleEnabled = _orderMode == PlaybackOrderMode.Shuffle;
             }
             catch
             {
@@ -321,6 +347,13 @@ namespace Telegram.Services
                 : args.RequestedAutoRepeatMode == WM.MediaPlaybackAutoRepeatMode.Track
                 ? null
                 : false;
+        }
+
+        private void Transport_ShuffleEnabledChangeRequested(WM.SystemMediaTransportControls sender, WM.ShuffleEnabledChangeRequestedEventArgs args)
+        {
+            OrderMode = args.RequestedShuffleEnabled
+                ? PlaybackOrderMode.Shuffle
+                : PlaybackOrderMode.Normal;
         }
 
         private void Transport_ButtonPressed(WM.SystemMediaTransportControls sender, WM.SystemMediaTransportControlsButtonPressedEventArgs args)
@@ -610,28 +643,42 @@ namespace Telegram.Services
                     : PlaybackRepeatMode.None;
 
                 RunOnTransport(() => _transport.AutoRepeatMode = ToAutoRepeatMode(value));
+                SettingsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        private bool _isReversed = false;
-        public bool IsReversed
+        private PlaybackOrderMode _orderMode;
+        public PlaybackOrderMode OrderMode
         {
-            get => _isReversed;
-            set => _isReversed = value;
-        }
-
-        private bool _isShuffleEnabled;
-        public bool IsShuffleEnabled
-        {
-            get => _isShuffleEnabled;
+            get => _orderMode;
             set
             {
-                _isShuffleEnabled = value;
-                AppSettings.Playback.Shuffle = value;
+                _orderMode = value;
+                AppSettings.Playback.OrderMode = value;
 
-                RunOnTransport(() => _transport.ShuffleEnabled = value);
+                lock (_mediaPlayerLock)
+                {
+                    // Leaving shuffle drops the order rather than remembering it: coming back
+                    // to a shuffle from an hour ago is not what anyone means by the button.
+                    BuildShuffled();
+                }
+
+                RunOnTransport(() => _transport.ShuffleEnabled = value == PlaybackOrderMode.Shuffle);
+                SettingsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
+        /// <summary>
+        /// The order actually in force, which is the stored one only where the playlist can be
+        /// reordered at all.
+        /// </summary>
+        /// <remarks>
+        /// A voice note playlist plays in its own order whatever is stored, rather than clearing
+        /// the setting, so the preference is still there for the next audio playlist.
+        /// </remarks>
+        private PlaybackOrderMode EffectiveOrderMode => CanReorder ? _orderMode : PlaybackOrderMode.Normal;
+
+        private bool IsReversed => EffectiveOrderMode == PlaybackOrderMode.Reverse;
 
         private double _playbackSpeed = 1.0;
         public double PlaybackSpeed
@@ -742,7 +789,9 @@ namespace Telegram.Services
         /// </param>
         private void OrphanCurrent(IList<long> deleted = null)
         {
-            var items = _items;
+            // The order being walked, not the playlist: with shuffle on, the track that
+            // follows the playing one is the one that follows it in the shuffled order.
+            var items = Order;
             var index = items?.IndexOf(_currentItem) ?? -1;
 
             if (index < 0)
@@ -799,14 +848,14 @@ namespace Telegram.Services
 
         public void MoveNextImpl(AsyncMediaPlayer player)
         {
-            var items = _items;
+            var items = Order;
             if (items == null)
             {
                 return;
             }
 
             var present = TryGetNeighbours(items, out var before, out var after);
-            var next = _isReversed ? before : after;
+            var next = IsReversed ? before : after;
 
             if (next >= 0 && next < items.Count)
             {
@@ -814,7 +863,7 @@ namespace Telegram.Services
             }
             else if (items.Count > 0 && CurrentItem is PlaybackItemMessage { Message.Content: MessageAudio } or PlaybackItemProfileAudio && _isRepeatEnabled == true)
             {
-                SetSource(player, items, _isReversed ? items.Count - 1 : 0);
+                SetSource(player, items, IsReversed ? items.Count - 1 : 0);
             }
             else if (!present || CurrentItem is PlaybackItemMessage { Message.Content: MessageVoiceNote or MessageVideoNote })
             {
@@ -835,14 +884,14 @@ namespace Telegram.Services
 
         public void MovePreviousImpl(AsyncMediaPlayer player)
         {
-            var items = _items;
+            var items = Order;
             if (items == null)
             {
                 return;
             }
 
             var present = TryGetNeighbours(items, out var before, out var after);
-            var previous = _isReversed ? after : before;
+            var previous = IsReversed ? after : before;
 
             if (previous >= 0 && previous < items.Count)
             {
@@ -850,7 +899,7 @@ namespace Telegram.Services
             }
             else if (items.Count > 0 && CurrentItem is PlaybackItemMessage { Message.Content: MessageAudio } or PlaybackItemProfileAudio && _isRepeatEnabled == true)
             {
-                SetSource(player, items, _isReversed ? 0 : items.Count - 1);
+                SetSource(player, items, IsReversed ? 0 : items.Count - 1);
             }
             else if (!present || CurrentItem is PlaybackItemMessage { Message.Content: MessageVoiceNote or MessageVideoNote })
             {
@@ -862,29 +911,52 @@ namespace Telegram.Services
             }
         }
 
-        private void SetSource(AsyncMediaPlayer player, List<PlaybackItem> items, int index)
+        private void SetSource(AsyncMediaPlayer player, List<PlaybackItem> order, int index)
         {
-            if (index >= 0 && index <= items.Count - 1)
+            if (index >= 0 && index <= order.Count - 1)
             {
-                SetSource(player, items[index]);
-
-                // Both ends are checked whichever way playback is going: IsReversed swaps
-                // what Next means, and the user can jump anywhere from the playlist popup.
-                if (index <= LoadMoreThreshold)
-                {
-                    _ = LoadMoreAsync(false);
-                }
-
-                if (index >= items.Count - 1 - LoadMoreThreshold)
-                {
-                    _ = LoadMoreAsync(true);
-                }
+                SetSource(player, order[index]);
+                LoadMoreAround(order[index]);
             }
         }
 
         // How close to an end of the playlist the current track has to get before the next
         // page is fetched. Enough to cover a few quick skips at the cost of one request.
         private const int LoadMoreThreshold = 3;
+
+        /// <summary>
+        /// Fetches the next page when the track is near either end of the playlist.
+        /// </summary>
+        /// <remarks>
+        /// Measured against the playlist and not the order being walked: shuffle reaches the
+        /// ends in an arbitrary order, so a position near the end of the shuffled list says
+        /// nothing about how much is left to load. Both ends are checked either way, since
+        /// reverse swaps what Next means and the popup can jump anywhere.
+        /// </remarks>
+        private void LoadMoreAround(PlaybackItem item)
+        {
+            var items = _items;
+            if (items == null)
+            {
+                return;
+            }
+
+            var index = items.IndexOf(item);
+            if (index < 0)
+            {
+                return;
+            }
+
+            if (index <= LoadMoreThreshold)
+            {
+                _ = LoadMoreAsync(false);
+            }
+
+            if (index >= items.Count - 1 - LoadMoreThreshold)
+            {
+                _ = LoadMoreAsync(true);
+            }
+        }
 
         private async Task LoadMoreAsync(bool forward)
         {
@@ -970,6 +1042,7 @@ namespace Telegram.Services
                 {
                     _items = items;
                     _orphanNext = null;
+                    BuildShuffled();
                 }
 
                 PlaylistChanged?.Invoke(this, EventArgs.Empty);
@@ -978,6 +1051,98 @@ namespace Telegram.Services
 
             return false;
         }
+
+        #region Order
+
+        /// <summary>
+        /// The order Next and Previous move through: the shuffled one while shuffling, and the
+        /// playlist itself otherwise. Reverse walks this same order backwards rather than
+        /// making one of its own.
+        /// </summary>
+        private List<PlaybackItem> Order => _shuffled ?? _items;
+
+        /// <summary>
+        /// Whether this playlist can be played in any order but its own. Voice and video notes
+        /// are a conversation in the order it happened, so they cannot: they play oldest first,
+        /// whatever is stored.
+        /// </summary>
+        private bool CanReorder => _type is PlaybackPlaylistType.Audio or PlaybackPlaylistType.ProfileAudio;
+
+        // Everything below runs under _mediaPlayerLock, which is what keeps _shuffled and
+        // _items holding the same items.
+
+        private void BuildShuffled()
+        {
+            var items = _items;
+
+            if (EffectiveOrderMode != PlaybackOrderMode.Shuffle || items == null)
+            {
+                _shuffled = null;
+                return;
+            }
+
+            var shuffled = new List<PlaybackItem>(items);
+
+            for (int i = shuffled.Count - 1; i > 0; i--)
+            {
+                var j = _random.Next(i + 1);
+                (shuffled[i], shuffled[j]) = (shuffled[j], shuffled[i]);
+            }
+
+            // The track playing has already been heard, so it belongs at the front rather
+            // than somewhere Next would reach again later.
+            var current = _currentItem;
+            if (current != null)
+            {
+                var index = shuffled.IndexOf(current);
+                if (index > 0)
+                {
+                    (shuffled[0], shuffled[index]) = (shuffled[index], shuffled[0]);
+                }
+            }
+
+            _shuffled = shuffled;
+        }
+
+        private void InsertShuffled(IList<PlaybackItem> added)
+        {
+            var shuffled = _shuffled;
+            if (shuffled == null)
+            {
+                return;
+            }
+
+            // Only past the current position: what is behind it has been heard, and dropping
+            // a new track in there would mean Previous replaying something never played.
+            var first = shuffled.IndexOf(_currentItem) + 1;
+
+            for (int i = 0; i < added.Count; i++)
+            {
+                shuffled.Insert(_random.Next(first, shuffled.Count + 1), added[i]);
+            }
+        }
+
+        private void RemoveShuffled(PlaybackItem item)
+        {
+            _shuffled?.Remove(item);
+        }
+
+        private void ReplaceShuffled(PlaybackItem oldItem, PlaybackItem newItem)
+        {
+            var shuffled = _shuffled;
+            if (shuffled == null)
+            {
+                return;
+            }
+
+            var index = shuffled.IndexOf(oldItem);
+            if (index >= 0)
+            {
+                shuffled[index] = newItem;
+            }
+        }
+
+        #endregion
 
         #region Reconciliation
 
@@ -1051,7 +1216,11 @@ namespace Telegram.Services
                 added = items != null && source.CanAddNewest;
                 if (added)
                 {
-                    items.Insert(source.NewestFirst ? 0 : items.Count, source.Create(message));
+                    var created = source.Create(message);
+
+                    items.Insert(source.NewestFirst ? 0 : items.Count, created);
+                    InsertShuffled(new[] { created });
+
                     source.Extend(message.Id);
                 }
             }
@@ -1100,6 +1269,7 @@ namespace Telegram.Services
                     }
 
                     removedCurrent |= items[i] == current;
+                    RemoveShuffled(items[i]);
                     items.RemoveAt(i);
                     removed = true;
                 }
@@ -1159,6 +1329,7 @@ namespace Telegram.Services
                     replacement = new PlaybackItemMessage(item.XamlRoot, item.Message, item.TopicId);
                     replacedCurrent = item == current;
 
+                    ReplaceShuffled(item, replacement);
                     items[index] = replacement;
                 }
                 else
@@ -1172,6 +1343,7 @@ namespace Telegram.Services
                         OrphanCurrent();
                     }
 
+                    RemoveShuffled(item);
                     items.RemoveAt(index);
                 }
             }
@@ -1219,6 +1391,7 @@ namespace Telegram.Services
                 }
 
                 items.Insert(0, added);
+                InsertShuffled(new[] { added });
 
                 // Paging is by position, so everything after it moved down one.
                 source.Skip(1);
@@ -1255,6 +1428,7 @@ namespace Telegram.Services
                     OrphanCurrent();
                 }
 
+                RemoveShuffled(items[index]);
                 items.RemoveAt(index);
                 source.Skip(-1);
             }
@@ -1308,6 +1482,8 @@ namespace Telegram.Services
                 {
                     items.InsertRange(0, page);
                 }
+
+                InsertShuffled(page);
             }
         }
 
@@ -1353,7 +1529,9 @@ namespace Telegram.Services
             if (_previous != null)
             {
                 _items = _previous.Items;
+                _shuffled = _previous.Shuffled;
                 _source = _previous.Source;
+                _type = _previous.Type;
                 _playbackSpeed = _previous.CurrentItem.CanChangePlaybackRate ? AppSettings.Playback.AudioSpeed : 1;
 
                 // Only a chat playlist has updates to reconcile against, matching what the
@@ -1423,6 +1601,10 @@ namespace Telegram.Services
             lock (_mediaPlayerLock)
             {
                 SetSource(_player, item);
+
+                // Under the lock like every other caller: it walks the playlist, which is
+                // only ever mutated under it.
+                LoadMoreAround(item);
             }
         }
 
@@ -1472,6 +1654,11 @@ namespace Telegram.Services
             SubscribeUpdates(message.ClientService);
 
             SetSource(null, item);
+
+            lock (_mediaPlayerLock)
+            {
+                BuildShuffled();
+            }
 
             // Both ends at once: the first page in either direction is what the playlist was
             // before it could grow, and waiting for one to decide the other would show the
@@ -1557,6 +1744,11 @@ namespace Telegram.Services
 
             SetSource(null, item);
 
+            lock (_mediaPlayerLock)
+            {
+                BuildShuffled();
+            }
+
             await LoadMoreAsync(true);
         }
 
@@ -1572,6 +1764,7 @@ namespace Telegram.Services
                     {
                         _transport.ButtonPressed -= Transport_ButtonPressed;
                         _transport.AutoRepeatModeChangeRequested -= Transport_AutoRepeatModeChangeRequested;
+                        _transport.ShuffleEnabledChangeRequested -= Transport_ShuffleEnabledChangeRequested;
 
                         UpdateManager.Unsubscribe(this, ref _albumCoverToken);
                     });
@@ -1610,6 +1803,7 @@ namespace Telegram.Services
             // Dropping the source is what makes a page still in flight for the playlist being
             // torn down land on nothing.
             _items = null;
+            _shuffled = null;
             _source = null;
             _provisional = false;
             _orphanNext = null;
@@ -1660,6 +1854,14 @@ namespace Telegram.Services
             /// </summary>
             public PlaybackSource Source { get; }
 
+            public List<PlaybackItem> Shuffled { get; }
+
+            /// <summary>
+            /// What the interrupted playlist was, so that coming back to it is coming back to
+            /// a playlist that can be shuffled and can be interrupted again in its turn.
+            /// </summary>
+            public PlaybackPlaylistType Type { get; }
+
             public PlaybackPreviousState(PlaybackService service, AsyncMediaPlayer player)
             {
                 Items = service._items.ToList();
@@ -1667,6 +1869,8 @@ namespace Telegram.Services
                 Position = player.Position;
                 State = service.PlaybackState;
                 Source = service._source;
+                Shuffled = service._shuffled;
+                Type = service._type;
             }
         }
 
@@ -1702,6 +1906,7 @@ namespace Telegram.Services
                     {
                         _transport.ButtonPressed += Transport_ButtonPressed;
                         _transport.AutoRepeatModeChangeRequested += Transport_AutoRepeatModeChangeRequested;
+                        _transport.ShuffleEnabledChangeRequested += Transport_ShuffleEnabledChangeRequested;
                     });
                 }
 

@@ -11433,6 +11433,7 @@
     <string name="AttachOnceAudio">One-time Voice Message</string>
     <string name="AttachOnceRound">One-time Video Message</string>
     <string name="ReverseOrder">Reverse Order</string>
+    <string name="NormalOrder">Normal Order</string>
 
     <string name="TranslateLanguageAR">Arabic</string>
     <string name="TranslateLanguageBE">Belarusian</string>
