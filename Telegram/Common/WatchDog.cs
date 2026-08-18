@@ -136,6 +136,21 @@ namespace Telegram
             //};
         }
 
+        // What OnUnhandledExceptionDetected just wrote. The fail-fast hook reports the same crash
+        // microseconds later on this same thread, with the stowed records this handler cannot
+        // reach - every report reaches the backend, so the richer one has to replace this report
+        // rather than describe the crash a second time. Thread-static because the whole sequence
+        // runs on the thread that raised the error; the timestamp is because nothing clears these
+        // when no fail-fast follows and the app simply carries on.
+        [ThreadStatic]
+        private static string _supersedeId;
+        [ThreadStatic]
+        private static string _supersedeType;
+        [ThreadStatic]
+        private static string _supersedeMessage;
+        [ThreadStatic]
+        private static long _supersedeTime;
+
         private static void OnUnhandledExceptionDetected(object sender, UnhandledErrorDetectedEventArgs e)
         {
             var stowed = NativeUtils.GetStowedException();
@@ -158,11 +173,11 @@ namespace Telegram
                         ? ex.StackTrace
                         : stowed.StackTrace + "\n" + ex.StackTrace;
 
-                    ProcessException(stowed);
+                    Supersede(ProcessException(stowed, defer: true), stowed.Type, stowed.Message);
                 }
                 else
                 {
-                    ProcessException(ex);
+                    Supersede(ProcessException(ex, defer: true), ex.GetType().Name, ex.Message);
                 }
             }
         }
@@ -222,7 +237,7 @@ namespace Telegram
                 // captured - so take the native backtrace, which at this point is the throw site.
                 // The stowed exception is not an option: the CCW creates that on the way out, after
                 // this has run.
-                ProcessException(NativeUtils.GetBackTrace(e.Exception.GetType().Name, e.Exception.Message), false);
+                ProcessException(NativeUtils.GetBackTrace(e.Exception.GetType().Name, e.Exception.Message));
             }
             catch
             {
@@ -235,7 +250,7 @@ namespace Telegram
         }
 #endif
 
-        private static void ProcessException(Exception ex, bool fatal = true)
+        private static string ProcessException(Exception ex, bool defer = false)
         {
             if (_limiter.TryConsume())
             {
@@ -244,37 +259,73 @@ namespace Telegram
 
                 var reportPath = GetErrorReportPath(reportId);
 
-                // crash.id is what marks the session as having crashed, so a first-chance report -
-                // which may well be an exception something goes on to handle - must not write it.
-                if (fatal)
-                {
-                    File.WriteAllText(_crashLog, reportId);
-                }
+                // crash.id names the report to blame if the process dies next, so every report
+                // writes it and the newest wins. Suspend deletes it, and that is the only
+                // proof an error was survivable - no handler can know it at the time.
+                File.WriteAllText(_crashLog, reportId);
 
                 File.WriteAllText(reportPath, report);
 
-                _channel.Writer.TryWrite(reportPath);
+                Queue(reportPath, defer);
+
+                return reportId;
             }
+
+            return null;
         }
 
-        private static void ProcessException(FatalError ex, bool fatal = true)
+        private static string ProcessException(FatalError ex, string supersede = null, bool defer = false)
         {
-            if (_limiter.TryConsume())
+            // A superseding report overwrites one already on disk, so it needs neither a token
+            // nor a new id: reusing both is what stops it becoming a second report.
+            if (supersede != null || _limiter.TryConsume())
             {
-                var reportId = Guid.NewGuid().ToString();
+                var reportId = supersede ?? Guid.NewGuid().ToString();
                 var report = ExceptionSerializer.Serialize(ex, reportId, _userId, BuildReport(0));
 
                 var reportPath = GetErrorReportPath(reportId);
 
-                if (fatal)
-                {
-                    File.WriteAllText(_crashLog, reportId);
-                }
+                File.WriteAllText(_crashLog, reportId);
 
                 File.WriteAllText(reportPath, report);
 
+                Queue(reportPath, defer);
+
+                return reportId;
+            }
+
+            return null;
+        }
+
+        // Reports go out as soon as they are queued, and the fail-fast hook only supersedes this
+        // one a moment later - long enough for the thin report to reach the backend first and for
+        // the crash to be described twice. Holding the queue write back leaves whichever report
+        // wins on disk as the one that gets sent; if the process dies first, LoadReports picks the
+        // file up on the next launch, so nothing is lost by waiting.
+        private static void Queue(string reportPath, bool defer)
+        {
+            if (defer)
+            {
+                _ = QueueDeferredAsync(reportPath);
+            }
+            else
+            {
                 _channel.Writer.TryWrite(reportPath);
             }
+        }
+
+        private static async Task QueueDeferredAsync(string reportPath)
+        {
+            await Task.Delay(2000);
+            _channel.Writer.TryWrite(reportPath);
+        }
+
+        private static void Supersede(string reportId, string type, string message)
+        {
+            _supersedeId = reportId;
+            _supersedeType = type;
+            _supersedeMessage = message;
+            _supersedeTime = MonotonicUnixTime.Now;
         }
 
         public static void TrackError(Exception ex)
@@ -455,7 +506,23 @@ namespace Telegram
 
         public static void FatalErrorCallback(FatalError error)
         {
-            ProcessException(error);
+            // Only OnUnhandledExceptionDetected sets this, and only just now: the fail-fast hook
+            // is reporting the crash that handler already wrote a thinner report for. Propagate
+            // named the exception and the stowed records did not, so take its identity along
+            // with its id and leave one report behind instead of two.
+            var supersede = _supersedeId != null && MonotonicUnixTime.Now - _supersedeTime < 5
+                ? _supersedeId
+                : null;
+
+            _supersedeId = null;
+
+            if (supersede != null && !string.IsNullOrEmpty(_supersedeType))
+            {
+                error.Type = _supersedeType;
+                error.Message = _supersedeMessage;
+            }
+
+            ProcessException(error, supersede);
         }
 
         public static void Launch(ApplicationExecutionState previousExecutionState)

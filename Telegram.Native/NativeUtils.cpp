@@ -10,6 +10,7 @@
 
 #include "FatalError.h"
 
+#include <atomic>
 #include <roerrorapi.h>
 #include <detours.h>
 
@@ -37,7 +38,14 @@ namespace winrt::Telegram::Native::implementation
         //Client::SetLogMessageCallback(0, &NativeUtils::LogMessageCallback);
         Callback = callback;
 
+        InstallFailFastHooks();
+
+        // WatchDog.Initialize runs from the App constructor, before LifetimeService brings TDLib
+        // up, and tdjson.dll is only loaded by the first P/Invoke into it - so GetModuleHandle
+        // alone finds nothing and TDLib's fatal messages never reach the callback at all.
         auto tdjson = GetModuleHandle(L"tdjson.dll");
+        if (!tdjson) tdjson = LoadLibrary(L"tdjson.dll");
+
         if (tdjson)
         {
             auto td_set_log_message_callback = reinterpret_cast<PFN_td_set_log_message_callback>(GetProcAddress(tdjson, "td_set_log_message_callback"));
@@ -276,6 +284,171 @@ namespace winrt::Telegram::Native::implementation
 
         direct.AddToCollection(inlines, run);
         return run;
+    }
+
+    // combase declares neither entry point in a public header, so these are the signatures its
+    // exports carry. Both are __cdecl/__stdcall as declared, which only matters on x86.
+    using PFN_RoFailFastWithErrorContextInternal2 = void(__cdecl*)(HRESULT, ULONG, STOWED_EXCEPTION_INFORMATION_V2**);
+    using PFN_RaiseFailFastException = void(WINAPI*)(PEXCEPTION_RECORD, PCONTEXT, DWORD);
+
+    static PFN_RoFailFastWithErrorContextInternal2 s_RoFailFastWithErrorContextInternal2 = nullptr;
+    static PFN_RaiseFailFastException s_RaiseFailFastException = nullptr;
+
+    // Set on the way into the first fail-fast and never cleared: one of these calls always
+    // reaches the other, so without it every WinRT fail-fast would be reported twice - the
+    // second time with only a native backtrace - and a fail-fast raised while reporting would
+    // recurse. Nothing here has to survive, the process is already going down.
+    static std::atomic<bool> s_failFasting = false;
+
+    void NativeUtils::InstallFailFastHooks()
+    {
+        static bool s_installed = false;
+        if (s_installed)
+        {
+            return;
+        }
+
+        s_installed = true;
+
+        if (auto combase = GetModuleHandle(L"combase.dll"))
+        {
+            s_RoFailFastWithErrorContextInternal2 = reinterpret_cast<PFN_RoFailFastWithErrorContextInternal2>(
+                GetProcAddress(combase, "RoFailFastWithErrorContextInternal2"));
+        }
+
+        if (auto kernelbase = GetModuleHandle(L"KernelBase.dll"))
+        {
+            s_RaiseFailFastException = reinterpret_cast<PFN_RaiseFailFastException>(
+                GetProcAddress(kernelbase, "RaiseFailFastException"));
+        }
+
+        DetourTransactionBegin();
+        DetourUpdateThread(GetCurrentThread());
+
+        if (s_RoFailFastWithErrorContextInternal2 != nullptr)
+        {
+            DetourAttach(reinterpret_cast<PVOID*>(&s_RoFailFastWithErrorContextInternal2), RoFailFastWithErrorContextInternal2Hook);
+        }
+
+        if (s_RaiseFailFastException != nullptr)
+        {
+            DetourAttach(reinterpret_cast<PVOID*>(&s_RaiseFailFastException), RaiseFailFastExceptionHook);
+        }
+
+        DetourTransactionCommit();
+    }
+
+    /// <summary>
+    /// XAML fails fast through this whenever an error reaches ReportUnhandledError, and it does so
+    /// even when the app marked the exception handled - ShouldForceFailFast overrules that flag.
+    /// The stowed records passed in are the only copy of the originating exception: by the time
+    /// UnhandledErrorDetected runs, Propagate has flattened it to a bare HRESULT, and a fail-fast
+    /// leaves nothing to unwind afterwards.
+    /// </summary>
+    void __cdecl NativeUtils::RoFailFastWithErrorContextInternal2Hook(HRESULT result, ULONG count, STOWED_EXCEPTION_INFORMATION_V2** stowed)
+    {
+        ReportFailFast(GetFailFastException(result, count, stowed));
+
+        s_RoFailFastWithErrorContextInternal2(result, count, stowed);
+    }
+
+    /// <summary>
+    /// The catch-all. Every fail-fast that is not a WinRT one - the runtime's, the CRT's, the V1
+    /// and plain RoFailFastWithErrorContext overloads - arrives here with no stowed records, so
+    /// all that can be recovered is the code and the stack it was raised from.
+    /// </summary>
+    void WINAPI NativeUtils::RaiseFailFastExceptionHook(PEXCEPTION_RECORD exceptionRecord, PCONTEXT contextRecord, DWORD flags)
+    {
+        if (Callback != nullptr && !s_failFasting)
+        {
+            auto code = exceptionRecord != nullptr ? exceptionRecord->ExceptionCode : 0;
+            ReportFailFast(GetBackTrace(L"FailFastException", hstring(wstrprintf(L"Fail-fast 0x%08X", (ULONG)code))));
+        }
+
+        s_RaiseFailFastException(exceptionRecord, contextRecord, flags);
+    }
+
+    winrt::Telegram::Native::FatalError NativeUtils::GetFailFastException(HRESULT result, ULONG count, STOWED_EXCEPTION_INFORMATION_V2** stowed)
+    {
+        winrt::Telegram::Native::FatalError root{ nullptr };
+        winrt::Telegram::Native::FatalError last{ nullptr };
+
+        // Capped because a bad count would have us walking off the end of the array, and on
+        // this path a wild read turns a legible crash into a confusing one. XAML stows a
+        // handful; the dumps that prompted this carried four and six.
+        if (count > 64)
+        {
+            count = 64;
+        }
+
+        for (ULONG i = 0; stowed != nullptr && i < count; i++)
+        {
+            auto error = GetStowedException2(stowed[i]);
+            if (error == nullptr)
+            {
+                continue;
+            }
+
+            if (root == nullptr)
+            {
+                root = error;
+            }
+            else
+            {
+                // GetStowedException2 fills InnerException from the record's own nested chain,
+                // so walk to the end of it rather than overwriting what it found.
+                while (last.InnerException() != nullptr)
+                {
+                    last = last.InnerException();
+                }
+
+                last.InnerException(error);
+            }
+
+            last = error;
+        }
+
+        // The records carry the frames, the thread's restricted error info carries the
+        // description, and one turns up without the other often enough to try both.
+        if (root == nullptr)
+        {
+            root = GetStowedException();
+        }
+
+        if (root == nullptr)
+        {
+            root = winrt::Telegram::Native::FatalError(L"", L"", L"", winrt::single_threaded_vector<FatalErrorFrame>());
+        }
+
+        if (root.Type().empty())
+        {
+            root.Type(L"FailFastException");
+        }
+
+        if (root.Message().empty())
+        {
+            root.Message(hstring(wstrprintf(L"Fail-fast with HRESULT 0x%08X", (ULONG)result)));
+        }
+
+        return root;
+    }
+
+    void NativeUtils::ReportFailFast(winrt::Telegram::Native::FatalError error)
+    {
+        if (error == nullptr || Callback == nullptr || s_failFasting.exchange(true))
+        {
+            return;
+        }
+
+        try
+        {
+            Callback(error);
+        }
+        catch (...)
+        {
+            // The process is failing fast either way; losing the report is the only thing left
+            // to lose, and throwing from here would take the original crash's identity with it.
+        }
     }
 
     winrt::Telegram::Native::FatalError NativeUtils::GetStowedException()
@@ -967,14 +1140,13 @@ namespace winrt::Telegram::Native::implementation
     void NativeUtils::Crash()
     {
         std::thread([]() {
-            int x = 1;
-            int y = 0;
-            int z = x / y;
+            // Both volatile on purpose. Release folded the constant division this used to do
+            // away entirely - the button did nothing at all - and without the second volatile
+            // the optimiser can prove the pointer null and emit something that is not an
+            // access violation.
+            volatile int* volatile address = nullptr;
+            *address = 42;
             }).detach();
-        return;
-
-        int32_t* ciao = nullptr;
-        *ciao = 42;
     }
 
     hstring NativeUtils::GetLogMessage(int64_t format, int64_t args)

@@ -79,6 +79,12 @@ namespace winrt::Telegram::Native::implementation
         static FatalErrorCallback Callback;
 
     private:
+        static void InstallFailFastHooks();
+        static winrt::Telegram::Native::FatalError GetFailFastException(HRESULT result, ULONG count, STOWED_EXCEPTION_INFORMATION_V2** stowed);
+        static void ReportFailFast(winrt::Telegram::Native::FatalError error);
+        static void __cdecl RoFailFastWithErrorContextInternal2Hook(HRESULT result, ULONG count, STOWED_EXCEPTION_INFORMATION_V2** stowed);
+        static void WINAPI RaiseFailFastExceptionHook(PEXCEPTION_RECORD exceptionRecord, PCONTEXT contextRecord, DWORD flags);
+
         static winrt::Telegram::Native::FatalError GetStowedException2(STOWED_EXCEPTION_INFORMATION_V2* stowed);
 
         static uint64_t GetDirectorySizeInternal(const std::wstring& path, const std::wstring& filter, uint64_t size);
