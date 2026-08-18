@@ -15,6 +15,9 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
+using Windows.Storage;
+using Windows.Storage.Streams;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using WM = Windows.Media;
@@ -176,6 +179,13 @@ namespace Telegram.Services
 
         private WM.SystemMediaTransportControls _transport;
 
+        // The transport belongs to the view it was acquired for, and its display updater is
+        // driven from file updates that arrive on a TDLib thread, so every call has to come
+        // back here first.
+        private DispatcherQueue _transportQueue;
+
+        private long _albumCoverToken;
+
         private PlaybackPreviousState _previous;
 
         private int _sessionId;
@@ -207,6 +217,24 @@ namespace Telegram.Services
         }
 
         #region SystemMediaTransportControls
+
+        private void EnsureTransport()
+        {
+            if (_transport != null)
+            {
+                return;
+            }
+
+            try
+            {
+                _transport = WM.SystemMediaTransportControls.GetForCurrentView();
+                _transportQueue = DispatcherQueue.GetForCurrentThread();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
 
         private void Transport_AutoRepeatModeChangeRequested(WM.SystemMediaTransportControls sender, WM.AutoRepeatModeChangeRequestedEventArgs args)
         {
@@ -334,6 +362,8 @@ namespace Telegram.Services
             {
                 if (items == null || item == null || transport == null /*|| item?.Stream?.File == null*/)
                 {
+                    UpdateAlbumCover(null);
+
                     transport?.IsEnabled = false;
                     transport?.DisplayUpdater.ClearAll();
                     return;
@@ -345,6 +375,8 @@ namespace Telegram.Services
                 transport.IsPreviousEnabled = true;
                 transport.IsNextEnabled = items.Count > 1;
 
+                // ClearAll also drops the thumbnail of the previous track, so the cover has to
+                // be re-applied after it -- UpdateAlbumCover does that once the file is there.
                 transport.DisplayUpdater.ClearAll();
                 transport.DisplayUpdater.Type = WM.MediaPlaybackType.Music;
 
@@ -352,8 +384,85 @@ namespace Telegram.Services
                 transport.DisplayUpdater.MusicProperties.Artist = item.Performer ?? string.Empty;
 
                 transport.DisplayUpdater.Update();
+
+                UpdateAlbumCover(item);
             }
             catch { }
+        }
+
+        private void UpdateAlbumCover(PlaybackItem item)
+        {
+            var cover = item?.AlbumCover;
+            if (cover == null)
+            {
+                // The subscription is keyed on the file, and this service outlives every track
+                // it plays: leaving it behind would keep one handler per played file alive.
+                UpdateManager.Unsubscribe(this, ref _albumCoverToken);
+                return;
+            }
+
+            UpdateManager.Subscribe(this, item.ClientService, cover.File, ref _albumCoverToken, UpdateAlbumCoverFile, true);
+
+            if (cover.File.Local.IsDownloadingCompleted)
+            {
+                SetAlbumCover(item, cover.File.Local.Path);
+            }
+            else if (cover.File.Local.CanBeDownloaded && !cover.File.Local.IsDownloadingActive)
+            {
+                item.ClientService.DownloadFile(cover.File.Id, 1);
+            }
+        }
+
+        private void UpdateAlbumCoverFile(object target, File file)
+        {
+            // Delivered on a TDLib thread: PlaybackService is neither a FrameworkElement nor a
+            // ViewModelBase, so the aggregator has nothing to marshal through.
+            var item = _currentItem;
+
+            if (file.Local.IsDownloadingCompleted && item?.AlbumCover?.File.Id == file.Id)
+            {
+                SetAlbumCover(item, file.Local.Path);
+            }
+        }
+
+        private void SetAlbumCover(PlaybackItem item, string path)
+        {
+            var queue = _transportQueue;
+            if (queue == null)
+            {
+                return;
+            }
+
+            if (queue.HasThreadAccess)
+            {
+                SetAlbumCoverImpl(item, path);
+            }
+            else
+            {
+                queue.TryEnqueue(() => SetAlbumCoverImpl(item, path));
+            }
+        }
+
+        private async void SetAlbumCoverImpl(PlaybackItem item, string path)
+        {
+            try
+            {
+                var file = await StorageFile.GetFileFromPathAsync(path);
+
+                // The track can have moved on while the file was being opened, and the transport
+                // would then be left showing the cover of a track that is no longer playing.
+                if (_currentItem != item || _transport == null)
+                {
+                    return;
+                }
+
+                _transport.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromFile(file);
+                _transport.DisplayUpdater.Update();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         public IReadOnlyList<PlaybackItem> Items => _items?.ToList() ?? (IReadOnlyList<PlaybackItem>)Array.Empty<PlaybackItem>();
@@ -389,7 +498,7 @@ namespace Telegram.Services
                     _playbackState = value;
                     StateChanged?.Invoke(this, null);
 
-                    _transport.PlaybackStatus = value switch
+                    _transport?.PlaybackStatus = value switch
                     {
                         PlaybackState.Playing => WM.MediaPlaybackStatus.Playing,
                         PlaybackState.Paused => WM.MediaPlaybackStatus.Paused,
@@ -711,14 +820,7 @@ namespace Telegram.Services
 
         public void Play(PlaybackItem item)
         {
-            try
-            {
-                _transport ??= WM.SystemMediaTransportControls.GetForCurrentView();
-            }
-            catch
-            {
-                // All the remote procedure calls must be wrapped in a try-catch block
-            }
+            EnsureTransport();
 
             lock (_mediaPlayerLock)
             {
@@ -728,14 +830,7 @@ namespace Telegram.Services
 
         public async void Play(XamlRoot xamlRoot, MessageWithOwner message, MessageTopic topic)
         {
-            try
-            {
-                _transport ??= WM.SystemMediaTransportControls.GetForCurrentView();
-            }
-            catch
-            {
-                // All the remote procedure calls must be wrapped in a try-catch block
-            }
+            EnsureTransport();
 
             if (message == null)
             {
@@ -811,14 +906,7 @@ namespace Telegram.Services
 
         public async void Play(XamlRoot xamlRoot, AudioWithOwner audio)
         {
-            try
-            {
-                _transport ??= WM.SystemMediaTransportControls.GetForCurrentView();
-            }
-            catch
-            {
-                // All the remote procedure calls must be wrapped in a try-catch block
-            }
+            EnsureTransport();
 
             if (audio == null)
             {
@@ -878,7 +966,12 @@ namespace Telegram.Services
 
                 if (type == PlaybackPlaylistType.None)
                 {
-                    _transport.ButtonPressed -= Transport_ButtonPressed;
+                    if (_transport != null)
+                    {
+                        _transport.ButtonPressed -= Transport_ButtonPressed;
+                    }
+
+                    UpdateManager.Unsubscribe(this, ref _albumCoverToken);
                     _previous = null;
 
                     //_mediaPlayer.SystemMediaTransportControls.ButtonPressed -= Transport_ButtonPressed;
@@ -975,7 +1068,10 @@ namespace Telegram.Services
                 _player.Buffering += OnBuffering;
                 //_mediaPlayer.CommandManager.IsEnabled = false;
 
-                _transport.ButtonPressed += Transport_ButtonPressed;
+                if (_transport != null)
+                {
+                    _transport.ButtonPressed += Transport_ButtonPressed;
+                }
             }
 
             return _player;
@@ -1003,9 +1099,58 @@ namespace Telegram.Services
         public string Title { get; protected set; }
         public string Performer { get; protected set; }
 
+        /// <summary>
+        /// Album cover to show in the system media transport controls; null for anything
+        /// that isn't music.
+        /// </summary>
+        public Thumbnail AlbumCover { get; protected set; }
+
         public int Duration { get; protected set; }
 
         public bool CanChangePlaybackRate { get; protected set; }
+
+        // The transport controls render the thumbnail at roughly this size, so a larger
+        // variant would be downloaded for nothing.
+        private const int AlbumCoverSize = 300;
+
+        /// <summary>
+        /// The cover embedded in the audio file if the sender provided one, otherwise the
+        /// external variant closest to what the transport controls actually display.
+        /// </summary>
+        protected static Thumbnail SelectAlbumCover(Thumbnail embedded, IList<Thumbnail> external)
+        {
+            if (embedded != null || external == null)
+            {
+                return embedded;
+            }
+
+            Thumbnail result = null;
+            var resultSize = 0;
+
+            for (int i = 0; i < external.Count; i++)
+            {
+                var cover = external[i];
+
+                // Everything else a Thumbnail can be (tgs, webm, mpeg4) is not something the
+                // transport controls know how to decode.
+                if (cover.Format is not ThumbnailFormatJpeg and not ThumbnailFormatPng)
+                {
+                    continue;
+                }
+
+                var size = Math.Max(cover.Width, cover.Height);
+
+                // Smallest variant that still covers the target, or the largest one when none
+                // of them reaches it.
+                if (result == null || (resultSize < AlbumCoverSize ? size > resultSize : size >= AlbumCoverSize && size < resultSize))
+                {
+                    result = cover;
+                    resultSize = size;
+                }
+            }
+
+            return result;
+        }
 
         public abstract InputMessageContent ToInputMessage();
     }
@@ -1034,6 +1179,7 @@ namespace Telegram.Services
                 Document = audio.Audio.AudioValue;
                 Duration = audio.Audio.Duration;
                 CanChangePlaybackRate = audio.Audio.Duration >= 10 * 60;
+                AlbumCover = SelectAlbumCover(audio.Audio.AlbumCoverThumbnail, audio.Audio.ExternalAlbumCovers);
 
                 if (string.IsNullOrEmpty(audio.Audio.Title))
                 {
@@ -1095,6 +1241,7 @@ namespace Telegram.Services
                     Document = previewAudio.Audio.AudioValue;
                     Duration = previewAudio.Audio.Duration;
                     CanChangePlaybackRate = previewAudio.Audio.Duration >= 10 * 60;
+                    AlbumCover = SelectAlbumCover(previewAudio.Audio.AlbumCoverThumbnail, previewAudio.Audio.ExternalAlbumCovers);
 
                     if (string.IsNullOrEmpty(previewAudio.Audio.Title))
                     {
@@ -1158,6 +1305,7 @@ namespace Telegram.Services
                     Document = blockAudio.Audio.AudioValue;
                     Duration = blockAudio.Audio.Duration;
                     CanChangePlaybackRate = blockAudio.Audio.Duration >= 10 * 60;
+                    AlbumCover = SelectAlbumCover(blockAudio.Audio.AlbumCoverThumbnail, blockAudio.Audio.ExternalAlbumCovers);
 
                     if (string.IsNullOrEmpty(blockAudio.Audio.Title))
                     {
@@ -1223,6 +1371,7 @@ namespace Telegram.Services
             Document = audio.AudioValue;
             Duration = audio.Duration;
             CanChangePlaybackRate = audio.Duration >= 10 * 60;
+            AlbumCover = SelectAlbumCover(audio.AlbumCoverThumbnail, audio.ExternalAlbumCovers);
 
             if (string.IsNullOrEmpty(audio.Title))
             {
