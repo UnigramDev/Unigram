@@ -1543,10 +1543,25 @@ namespace Telegram.Controls
             {
                 try
                 {
-                    Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
-                    Document.Selection.ParagraphFormat.SpaceAfter = 0;
-                    Document.Selection.ParagraphFormat.SpaceBefore = 0;
-                    Document.Selection.ParagraphFormat.SetIndents(0, 0, 0);
+                    var selection = Document.Selection;
+
+                    if (!IsDefault(selection.CharacterFormat))
+                    {
+                        selection.CharacterFormat = Document.GetDefaultCharacterFormat();
+                    }
+
+                    var paragraph = selection.ParagraphFormat;
+
+                    if (paragraph.SpaceAfter != 0 || paragraph.SpaceBefore != 0
+                        || paragraph.FirstLineIndent != 0 || paragraph.LeftIndent != 0 || paragraph.RightIndent != 0)
+                    {
+                        using (BeginUndoGroup())
+                        {
+                            paragraph.SpaceAfter = 0;
+                            paragraph.SpaceBefore = 0;
+                            paragraph.SetIndents(0, 0, 0);
+                        }
+                    }
                 }
                 catch
                 {
