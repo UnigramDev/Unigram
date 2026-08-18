@@ -23,6 +23,7 @@ using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -308,8 +309,7 @@ namespace Telegram.Controls
             return base.MeasureOverride(availableSize);
         }
 
-        private bool _textSelectionDisabled;
-        private bool _textSelectionIBeam;
+        private CoreCursorType _textSelectionCursor = CoreCursorType.Arrow;
 
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
         {
@@ -329,11 +329,11 @@ namespace Telegram.Controls
 
                 if (IsPointerWithinSpoiler(position))
                 {
-                    if (!_textSelectionDisabled)
+                    if (_textSelectionCursor != CoreCursorType.Hand)
                     {
-                        _textSelectionDisabled = true;
+                        _textSelectionCursor = CoreCursorType.Hand;
                         TextBlock.IsHitTestVisible = false;
-                        Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 0);
+                        Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 0);
                     }
 
                     e.Handled = true;
@@ -341,11 +341,11 @@ namespace Telegram.Controls
                 }
             }
 
-            if (_spanForInlines == null && _textSelectionDisabled)
+            if (_spanForInlines == null && _textSelectionCursor == CoreCursorType.Hand)
             {
-                _textSelectionDisabled = false;
+                _textSelectionCursor = CoreCursorType.Arrow;
                 TextBlock.IsHitTestVisible = true;
-                Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
+                Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
             }
 
             // Extended: native selection is off, so RichTextBlock won't show the I-beam.
@@ -359,34 +359,22 @@ namespace Telegram.Controls
                 {
                     // Only on the way in: this runs at pointer sample rate, and setting
                     // PointerCursor is a marshalled call on top of the allocation.
-                    if (!_textSelectionIBeam)
+                    if (_textSelectionCursor != CoreCursorType.IBeam)
                     {
-                        _textSelectionIBeam = true;
-                        Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.IBeam, 0);
+                        _textSelectionCursor = CoreCursorType.IBeam;
+                        Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.IBeam, 0);
                     }
-                }
-                else
-                {
-                    // The Hyperlink puts its own Hand cursor up, so ours is gone: forget it, or
-                    // moving back onto text would leave the Hand there.
-                    _textSelectionIBeam = false;
                 }
             }
         }
 
         protected override void OnPointerExited(PointerRoutedEventArgs e)
         {
-            if (_spanForInlines == null && _textSelectionDisabled)
+            if (_spanForInlines == null && _textSelectionCursor != CoreCursorType.Arrow)
             {
-                _textSelectionDisabled = false;
+                _textSelectionCursor = CoreCursorType.Arrow;
                 TextBlock.IsHitTestVisible = true;
-                Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
-            }
-            else if (_spanForInlines == null && _textSelectionIBeam)
-            {
-                // Restore the cursor when leaving an Extended block (we set IBeam on move).
-                _textSelectionIBeam = false;
-                Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
+                Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
             }
 
             try
