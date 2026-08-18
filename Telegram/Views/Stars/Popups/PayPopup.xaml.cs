@@ -70,7 +70,7 @@ namespace Telegram.Views.Stars.Popups
 
                 if (ViewModel.Media.Count > 1)
                 {
-                    UpdateMedia(ViewModel.Media[1], Thumbnail2, ref _media1Controller);
+                    UpdateMedia(ViewModel.Media[1], Thumbnail2, ref _media2Controller);
 
                     Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 }
