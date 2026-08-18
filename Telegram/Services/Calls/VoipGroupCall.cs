@@ -849,21 +849,26 @@ namespace Telegram.Services.Calls
 
         public void EndScreenSharing()
         {
+            // As in Dispose: the lock covers the fields, not the stopping.
+            VoipGroupManager screenManager;
+
             lock (_managerLock)
             {
-                if (_screenManager != null)
-                {
-                    _screenManager.SetVideoCapture(null);
-                    _screenManager.Stop();
+                screenManager = _screenManager;
+                _screenManager = null;
 
-                    // Clearing the delegates breaks the native to managed cycle that would
-                    // otherwise leak the call, but it has to happen after Stop: until the
-                    // instance is gone tgcalls can still ask us to transform a frame.
-                    _screenManager.SetEncryptDecrypt(null, null);
-                    _screenManager = null;
+                _screenSource = 0;
+            }
 
-                    _screenSource = 0;
-                }
+            if (screenManager != null)
+            {
+                screenManager.SetVideoCapture(null);
+                screenManager.Stop();
+
+                // Clearing the delegates breaks the native to managed cycle that would
+                // otherwise leak the call, but it has to happen after Stop: until the
+                // instance is gone tgcalls can still ask us to transform a frame.
+                screenManager.SetEncryptDecrypt(null, null);
             }
 
             if (_screenCapturer != null)
@@ -1196,34 +1201,42 @@ namespace Telegram.Services.Calls
 
             // This runs on TDLib's update thread, not the UI thread, which is the whole
             // reason the lock exists: the UI thread calls into the manager meanwhile.
+            // Only the fields are cleared under it — stopping takes as long as tgcalls
+            // needs, and the UI thread would be waiting on the lock all the while.
+            VoipGroupManager manager;
+            VoipVideoCapture capturer;
+
             lock (_managerLock)
             {
-                if (_manager != null)
-                {
-                    _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-                    _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
-                    _manager.BroadcastTimeRequested -= OnBroadcastTimeRequested;
-                    _manager.AudioBroadcastPartRequested -= OnAudioBroadcastPartRequested;
-                    _manager.VideoBroadcastPartRequested -= OnVideoBroadcastPartRequested;
-                    _manager.MediaChannelDescriptionsRequested -= OnMediaChannelDescriptionsRequested;
+                manager = _manager;
+                _manager = null;
 
-                    _manager.SetVideoCapture(null);
-                    _manager.Stop();
+                capturer = _capturer;
+                _capturer = null;
 
-                    // See EndScreenSharing: the delegates have to outlive the instance.
-                    _manager.SetEncryptDecrypt(null, null);
-                    _manager = null;
+                _source = 0;
+            }
 
-                    _source = 0;
-                }
+            if (manager != null)
+            {
+                manager.NetworkStateUpdated -= OnNetworkStateUpdated;
+                manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
+                manager.BroadcastTimeRequested -= OnBroadcastTimeRequested;
+                manager.AudioBroadcastPartRequested -= OnAudioBroadcastPartRequested;
+                manager.VideoBroadcastPartRequested -= OnVideoBroadcastPartRequested;
+                manager.MediaChannelDescriptionsRequested -= OnMediaChannelDescriptionsRequested;
 
-                if (_capturer != null)
-                {
-                    _capturer.SetOutput(null);
+                manager.SetVideoCapture(null);
+                manager.Stop();
 
-                    _capturer.Stop();
-                    _capturer = null;
-                }
+                // See EndScreenSharing: the delegates have to outlive the instance.
+                manager.SetEncryptDecrypt(null, null);
+            }
+
+            if (capturer != null)
+            {
+                capturer.SetOutput(null);
+                capturer.Stop();
             }
 
             EndScreenSharing();
