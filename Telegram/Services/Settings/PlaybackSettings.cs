@@ -21,11 +21,11 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _repeatMode, "RepeatMode", (int)value);
         }
 
-        private bool? _shuffle;
-        public bool Shuffle
+        private int? _orderMode;
+        public PlaybackOrderMode OrderMode
         {
-            get => _shuffle ??= GetValueOrDefault("Shuffle", false);
-            set => AddOrUpdateValue(ref _shuffle, "Shuffle", value);
+            get => (PlaybackOrderMode)(_orderMode ??= GetValueOrDefault("OrderMode", 0));
+            set => AddOrUpdateValue(ref _orderMode, "OrderMode", (int)value);
         }
 
         private double? _audioSpeed;

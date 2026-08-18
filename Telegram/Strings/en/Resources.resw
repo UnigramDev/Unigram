@@ -10680,6 +10680,9 @@ will appear here.</value>
     <value>There were no results for &quot;{0}&quot;.
 Try a new search.</value>
   </data>
+  <data name="NormalOrder" xml:space="preserve">
+    <value>Normal Order</value>
+  </data>
   <data name="NoRtmpStreamFromAppOwner" xml:space="preserve">
     <value>**Oops!** Telegram doesn&apos;t see any stream coming from your streaming app.
 

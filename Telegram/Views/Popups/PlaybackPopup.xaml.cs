@@ -56,6 +56,7 @@ namespace Telegram.Views.Popups
 
             LifetimeService.Current.Playback.SourceChanged += OnPlaybackStateChanged;
             LifetimeService.Current.Playback.StateChanged += OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.SettingsChanged += OnPlaybackStateChanged;
             LifetimeService.Current.Playback.PositionChanged += OnPositionChanged;
             LifetimeService.Current.Playback.PlaylistChanged += OnPlaylistChanged;
 
@@ -70,6 +71,7 @@ namespace Telegram.Views.Popups
         {
             LifetimeService.Current.Playback.SourceChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.StateChanged -= OnPlaybackStateChanged;
+            LifetimeService.Current.Playback.SettingsChanged -= OnPlaybackStateChanged;
             LifetimeService.Current.Playback.PositionChanged -= OnPositionChanged;
             LifetimeService.Current.Playback.PlaylistChanged -= OnPlaylistChanged;
         }
@@ -194,7 +196,7 @@ namespace Telegram.Views.Popups
                     NextButton.Visibility = Visibility.Collapsed;
 
                     RepeatButton.Visibility = Visibility.Collapsed;
-                    //ShuffleButton.Visibility = Visibility.Collapsed;
+                    OrderButton.Visibility = Visibility.Collapsed;
 
                     //UpdateSpeed(int.MaxValue);
                 }
@@ -219,10 +221,10 @@ namespace Telegram.Views.Popups
                     NextButton.Visibility = Visibility.Visible;
 
                     RepeatButton.Visibility = Visibility.Visible;
-                    //ShuffleButton.Visibility = Visibility.Visible;
+                    OrderButton.Visibility = Visibility.Visible;
 
                     //UpdateSpeed(audio.Duration);
-                    UpdateRepeat();
+                    UpdateModes();
                 }
             }
             else if (item is PlaybackItemProfileAudio audio)
@@ -255,14 +257,14 @@ namespace Telegram.Views.Popups
                 NextButton.Visibility = Visibility.Visible;
 
                 RepeatButton.Visibility = Visibility.Visible;
-                //ShuffleButton.Visibility = Visibility.Visible;
+                OrderButton.Visibility = Visibility.Visible;
 
                 //UpdateSpeed(audio.Audio.Duration);
-                UpdateRepeat();
+                UpdateModes();
             }
         }
 
-        private void UpdateRepeat()
+        private void UpdateModes()
         {
             RepeatButton.IsChecked = LifetimeService.Current.Playback.IsRepeatEnabled;
             Automation.SetToolTip(RepeatButton, LifetimeService.Current.Playback.IsRepeatEnabled == null
@@ -270,6 +272,17 @@ namespace Telegram.Views.Popups
                 : LifetimeService.Current.Playback.IsRepeatEnabled == true
                 ? Strings.AccDescrRepeatList
                 : Strings.AccDescrRepeatOff);
+
+            var order = LifetimeService.Current.Playback.OrderMode;
+
+            OrderButton.IsChecked = order == PlaybackOrderMode.Shuffle
+                ? (bool?)null
+                : order == PlaybackOrderMode.Reverse;
+            Automation.SetToolTip(OrderButton, order == PlaybackOrderMode.Shuffle
+                ? Strings.Shuffle
+                : order == PlaybackOrderMode.Reverse
+                ? Strings.ReverseOrder
+                : Strings.NormalOrder);
         }
 
         private async void UpdateIsProfileAudio(PlaybackItem item)
@@ -649,13 +662,19 @@ namespace Telegram.Views.Popups
         private void Repeat_Click(object sender, RoutedEventArgs e)
         {
             LifetimeService.Current.Playback.IsRepeatEnabled = RepeatButton.IsChecked;
-            UpdateRepeat();
+            UpdateModes();
         }
 
-        private void Shuffle_Click(object sender, RoutedEventArgs e)
+        private void Order_Click(object sender, RoutedEventArgs e)
         {
-            //LifetimeService.Current.Playback.IsShuffleEnabled = ShuffleButton.IsChecked == true;
-            LifetimeService.Current.Playback.IsReversed = ShuffleButton.IsChecked == true;
+            // The three-state toggle cycles itself, so the mode follows from where it landed.
+            LifetimeService.Current.Playback.OrderMode = OrderButton.IsChecked == null
+                ? PlaybackOrderMode.Shuffle
+                : OrderButton.IsChecked == true
+                ? PlaybackOrderMode.Reverse
+                : PlaybackOrderMode.Normal;
+
+            UpdateModes();
         }
 
         private void Slider_KeyDown(object sender, KeyRoutedEventArgs e)

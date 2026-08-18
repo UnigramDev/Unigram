@@ -357,18 +357,19 @@
                                   ToolTipService.ToolTip="{CustomResource Next}"
                                   Grid.Column="4" />
 
-            <controls:GlyphToggleButton x:Name="ShuffleButton"
-                                        Click="Shuffle_Click"
+            <controls:GlyphToggleButton x:Name="OrderButton"
+                                        Click="Order_Click"
                                         CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
                                         Glyph="&#xE8CB;"
                                         CheckedGlyph="&#xE8CB;"
+                                        IndeterminateGlyph="&#xE8B1;"
                                         CornerRadius="20"
                                         Margin="-4,0,0,0"
                                         Grid.Column="5"
                                         IsOneWay="False"
+                                        IsThreeState="True"
                                         HorizontalAlignment="Left"
-                                        AutomationProperties.Name="{CustomResource ReverseOrder}"
-                                        ToolTipService.ToolTip="{CustomResource ReverseOrder}" />
+                                        Style="{StaticResource ThreeStateToggleStyle}" />
 
             <controls:MoreButton Click="More_ContextRequested"
                                  HorizontalAlignment="Right"
