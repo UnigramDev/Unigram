@@ -311,6 +311,10 @@ namespace Telegram.Controls
 
         private CoreCursorType _textSelectionCursor = CoreCursorType.Arrow;
 
+        // Whether the Hand above is a spoiler's, which also takes the text out of hit-testing.
+        // Tracked apart from the cursor itself, as an inline button shows the Hand too.
+        private bool _spoilerCursor;
+
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
         {
             try
@@ -329,8 +333,9 @@ namespace Telegram.Controls
 
                 if (IsPointerWithinSpoiler(position))
                 {
-                    if (_textSelectionCursor != CoreCursorType.Hand)
+                    if (!_spoilerCursor)
                     {
+                        _spoilerCursor = true;
                         _textSelectionCursor = CoreCursorType.Hand;
                         TextBlock.IsHitTestVisible = false;
                         Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 0);
@@ -341,8 +346,9 @@ namespace Telegram.Controls
                 }
             }
 
-            if (_spanForInlines == null && _textSelectionCursor == CoreCursorType.Hand)
+            if (_spanForInlines == null && _spoilerCursor)
             {
+                _spoilerCursor = false;
                 _textSelectionCursor = CoreCursorType.Arrow;
                 TextBlock.IsHitTestVisible = true;
                 Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
@@ -353,25 +359,58 @@ namespace Telegram.Controls
             // and over a spoiler (handled above, which returns early).
             if (_spanForInlines == null && TextBlock != null && _textSelection == TextSelectionMode.Extended)
             {
-                // TODO: figure out how to avoid the IBeam when pointer is on a TextEntityTypeButton
                 var hyperlink = TextBlock.GetHyperlinkFromPoint(e.GetCurrentPoint(TextBlock).Position);
                 if (hyperlink == null)
                 {
+                    // There's no text to select over an inline button: it reads as a button
+                    // (Hand), or as nothing at all when it's disabled.
+                    var button = GetInlineButtonFromSource(e.OriginalSource);
+                    var cursor = button == null
+                        ? CoreCursorType.IBeam
+                        : button.IsEnabled ? CoreCursorType.Hand : CoreCursorType.Arrow;
+
                     // Only on the way in: this runs at pointer sample rate, and setting
                     // PointerCursor is a marshalled call on top of the allocation.
-                    if (_textSelectionCursor != CoreCursorType.IBeam)
+                    if (_textSelectionCursor != cursor)
                     {
-                        _textSelectionCursor = CoreCursorType.IBeam;
-                        Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.IBeam, 0);
+                        _textSelectionCursor = cursor;
+                        Window.Current.CoreWindow.PointerCursor = new CoreCursor(cursor, 0);
                     }
                 }
             }
+        }
+
+        // The inline button (TextEntityTypeButton) under the pointer, or null. The button is a
+        // real control inside an InlineUIContainer, so it — not the RichTextBlock — is what
+        // the pointer lands on; a disabled one takes no input at all, which is what the
+        // transparent wrapper in CreateInlineButton is for. Text hits report the RichTextBlock
+        // itself, where the walk ends immediately.
+        private ReplyMarkupInlineButton GetInlineButtonFromSource(object source)
+        {
+            var node = source as DependencyObject;
+
+            while (node != null && node != TextBlock && node != this)
+            {
+                if (node is ReplyMarkupInlineButton button)
+                {
+                    return button;
+                }
+                else if (node is Border wrapper && wrapper.Child is ReplyMarkupInlineButton disabled)
+                {
+                    return disabled;
+                }
+
+                node = VisualTreeHelper.GetParent(node);
+            }
+
+            return null;
         }
 
         protected override void OnPointerExited(PointerRoutedEventArgs e)
         {
             if (_spanForInlines == null && _textSelectionCursor != CoreCursorType.Arrow)
             {
+                _spoilerCursor = false;
                 _textSelectionCursor = CoreCursorType.Arrow;
                 TextBlock.IsHitTestVisible = true;
                 Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
@@ -1642,7 +1681,6 @@ namespace Telegram.Controls
             {
                 Tag = button,
                 Padding = new Thickness(4, 0, 4, 0),
-                Margin = new Thickness(0, 0, 0, -4),
                 BorderThickness = new Thickness(0),
                 CornerRadius = new CornerRadius(10),
                 Height = 20,
@@ -1674,10 +1712,24 @@ namespace Telegram.Controls
                 element.Content = block;
             }
 
-            return new Border
+            // The margin belongs out here rather than on the button: it lets the button hang
+            // below its line box either way, but on the button it would shrink the wrapper to
+            // less than what it renders, leaving that strip outside the background below.
+            var wrapper = new Border
             {
-                Child = element
+                Child = element,
+                Margin = new Thickness(0, 0, 0, -4)
             };
+
+            // A disabled control takes no pointer input, so the pointer falls through to the
+            // text behind the button and the cursor reads as an I-beam over it. A background
+            // makes the wrapper the target instead — see GetInlineButtonFromSource.
+            if (!element.IsEnabled)
+            {
+                wrapper.Background = new SolidColorBrush(Colors.Transparent);
+            }
+
+            return wrapper;
         }
 
         private void InlineButton_Click(object sender, RoutedEventArgs e)
