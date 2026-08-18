@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Native.Media;
@@ -140,6 +141,12 @@ namespace Telegram.Services
         void Play(XamlRoot xamlRoot, MessageWithOwner message, MessageTopic topic = null);
         void Play(XamlRoot xamlRoot, AudioWithOwner audio);
 
+        /// <summary>
+        /// Starts a profile audio playlist from what the caller has already loaded, handing
+        /// over the source that loaded it so the playlist keeps growing from there.
+        /// </summary>
+        void Play(XamlRoot xamlRoot, AudioWithOwner audio, UserProfileAudioPlaybackSource source, IList<PlaybackItem> loaded);
+
         void Play(PlaybackItem item);
 
         void Attach(SwapChainPanel panel);
@@ -195,6 +202,16 @@ namespace Telegram.Services
         private long _userId;
 
         private List<PlaybackItem> _items;
+
+        private PlaybackSource _source;
+
+        private bool _loadingStart;
+        private bool _loadingEnd;
+
+        // Set while the playlist is only the item playback started from, because nothing was
+        // handed over to say where it sits. The first page replaces it rather than being
+        // appended to it, so the list ends up in the order the source reports.
+        private bool _provisional;
 
         public event TypedEventHandler<IPlaybackService, object> MediaFailed;
         public event TypedEventHandler<IPlaybackService, object> StateChanged;
@@ -766,9 +783,135 @@ namespace Telegram.Services
             {
                 SetSource(player, items[index]);
 
-                if (index == 0 || index == items.Count - 1)
+                // Both ends are checked whichever way playback is going: IsReversed swaps
+                // what Next means, and the user can jump anywhere from the playlist popup.
+                if (index <= LoadMoreThreshold)
                 {
-                    // TODO: Load more items
+                    _ = LoadMoreAsync(false);
+                }
+
+                if (index >= items.Count - 1 - LoadMoreThreshold)
+                {
+                    _ = LoadMoreAsync(true);
+                }
+            }
+        }
+
+        // How close to an end of the playlist the current track has to get before the next
+        // page is fetched. Enough to cover a few quick skips at the cost of one request.
+        private const int LoadMoreThreshold = 3;
+
+        private async Task LoadMoreAsync(bool forward)
+        {
+            var source = _source;
+            if (source == null || !source.HasMore(forward))
+            {
+                return;
+            }
+
+            if (forward ? _loadingEnd : _loadingStart)
+            {
+                return;
+            }
+
+            if (forward)
+            {
+                _loadingEnd = true;
+            }
+            else
+            {
+                _loadingStart = true;
+            }
+
+            try
+            {
+                var page = await source.LoadMoreAsync(forward);
+
+                // Playback may have moved to another playlist entirely while the page was in
+                // flight, and the items in it belong to the one that asked for them.
+                if (_source != source || page.Count == 0)
+                {
+                    return;
+                }
+
+                if (forward && _provisional && ReplaceProvisional(page))
+                {
+                    return;
+                }
+
+                AddItems(page, forward);
+                PlaylistChanged?.Invoke(this, EventArgs.Empty);
+            }
+            finally
+            {
+                if (forward)
+                {
+                    _loadingEnd = false;
+                }
+                else
+                {
+                    _loadingStart = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Swaps a provisional playlist for the first page, when that page turns out to
+        /// contain the item playback started from. Returns whether it did.
+        /// </summary>
+        private bool ReplaceProvisional(IList<PlaybackItem> page)
+        {
+            _provisional = false;
+
+            var current = _currentItem;
+            if (current == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < page.Count; i++)
+            {
+                if (!page[i].AreTheSame(current))
+                {
+                    continue;
+                }
+
+                // Keep the instance that is already playing, so CurrentItem stays the object
+                // the playlist holds and playback is not restarted to say so.
+                var items = new List<PlaybackItem>(page);
+                items[i] = current;
+
+                lock (_mediaPlayerLock)
+                {
+                    _items = items;
+                }
+
+                PlaylistChanged?.Invoke(this, EventArgs.Empty);
+                return true;
+            }
+
+            return false;
+        }
+
+        // The list is read from the player's dispatcher and from whichever window drives
+        // playback, so it is only ever mutated under the lock those reads already take.
+        private void AddItems(IList<PlaybackItem> page, bool forward)
+        {
+            lock (_mediaPlayerLock)
+            {
+                var items = _items;
+                if (items == null)
+                {
+                    return;
+                }
+
+                if (forward)
+                {
+                    items.AddRange(page);
+                }
+                else
+                {
+                    items.InsertRange(0, page);
                 }
             }
         }
@@ -844,11 +987,21 @@ namespace Telegram.Services
 
         public void MoveTo(PlaybackItem item, int index)
         {
-            if (_items.Contains(item))
-            {
-                _items.Remove(item);
-                _items.Insert(index, item);
+            bool moved;
 
+            lock (_mediaPlayerLock)
+            {
+                var items = _items;
+
+                moved = items != null && items.Remove(item);
+                if (moved)
+                {
+                    items.Insert(Math.Clamp(index, 0, items.Count), item);
+                }
+            }
+
+            if (moved)
+            {
                 PlaylistChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -888,58 +1041,39 @@ namespace Telegram.Services
                 : PlaybackPlaylistType.Voice);
 
             var item = new PlaybackItemMessage(xamlRoot, message, topic);
-            var items = _items = new List<PlaybackItem>();
 
-            _items.Add(item);
-
+            _items = new List<PlaybackItem> { item };
             _sessionId = message.ClientService.SessionId;
             _chatId = message.ChatId;
             _topic = topic;
             _userId = 0;
 
-            SetSource(null, item);
-
             if (message.Content is MessageText)
             {
+                // The audio of a link preview belongs to no chat playlist.
+                SetSource(null, item);
                 return;
             }
 
-            var offset = -49;
-            var filter = message.Content is MessageAudio ? new SearchMessagesFilterAudio() : (SearchMessagesFilter)new SearchMessagesFilterVoiceAndVideoNote();
+            var source = new ChatPlaybackSource(message.ClientService, xamlRoot, message.ChatId, topic, message.Content is MessageAudio);
+            source.Seed(message.Id);
 
-            var response = await message.ClientService.SendAsync(new SearchChatMessages(message.ChatId, _topic, string.Empty, null, message.Id, offset, 100, filter));
-            if (response is FoundChatMessages messages)
-            {
-                foreach (var add in message.Content is MessageAudio ? messages.Messages.OrderBy(x => x.Id) : messages.Messages.OrderByDescending(x => x.Id))
-                {
-                    if (add.Id > message.Id && add.Content is MessageAudio)
-                    {
-                        items.Insert(0, new PlaybackItemMessage(xamlRoot, new MessageWithOwner(message.ClientService, add), topic));
-                    }
-                    else if (add.Id < message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
-                    {
-                        items.Insert(0, new PlaybackItemMessage(xamlRoot, new MessageWithOwner(message.ClientService, add), topic));
-                    }
-                }
+            _source = source;
 
-                foreach (var add in message.Content is MessageAudio ? messages.Messages.OrderByDescending(x => x.Id) : messages.Messages.OrderBy(x => x.Id))
-                {
-                    if (add.Id < message.Id && add.Content is MessageAudio)
-                    {
-                        items.Add(new PlaybackItemMessage(xamlRoot, new MessageWithOwner(message.ClientService, add), topic));
-                    }
-                    else if (add.Id > message.Id && (add.Content is MessageVoiceNote || add.Content is MessageVideoNote))
-                    {
-                        items.Add(new PlaybackItemMessage(xamlRoot, new MessageWithOwner(message.ClientService, add), topic));
-                    }
-                }
+            SetSource(null, item);
 
-                UpdateTransport(CurrentItem);
-                PlaylistChanged?.Invoke(this, EventArgs.Empty);
-            }
+            // Both ends at once: the first page in either direction is what the playlist was
+            // before it could grow, and waiting for one to decide the other would show the
+            // list filling in twice.
+            await Task.WhenAll(LoadMoreAsync(false), LoadMoreAsync(true));
         }
 
-        public async void Play(XamlRoot xamlRoot, AudioWithOwner audio)
+        public void Play(XamlRoot xamlRoot, AudioWithOwner audio)
+        {
+            Play(xamlRoot, audio, null, null);
+        }
+
+        public async void Play(XamlRoot xamlRoot, AudioWithOwner audio, UserProfileAudioPlaybackSource source, IList<PlaybackItem> loaded)
         {
             EnsureTransport();
 
@@ -966,10 +1100,35 @@ namespace Telegram.Services
             Dispose(PlaybackPlaylistType.ProfileAudio);
 
             var item = new PlaybackItemProfileAudio(xamlRoot, audio);
-            var items = _items = new List<PlaybackItem>();
+            var items = new List<PlaybackItem>();
 
-            _items.Add(item);
+            // A caller that already paged some of the profile in hands them over along with
+            // the source that loaded them, so the list keeps its real order and the service
+            // does not start again from the first page.
+            if (loaded != null)
+            {
+                items.AddRange(loaded);
+            }
 
+            var index = items.FindIndex(x => audio.AreTheSame(x));
+            if (index >= 0)
+            {
+                // Play the instance from the list rather than the one built here, so that
+                // CurrentItem is the object the list holds.
+                item = items[index] as PlaybackItemProfileAudio ?? item;
+                items[index] = item;
+            }
+            else
+            {
+                items.Insert(0, item);
+            }
+
+            // Nothing was handed over, so where this audio sits in the profile is unknown
+            // and the first page has to settle it.
+            _provisional = loaded == null;
+
+            _items = items;
+            _source = source ?? new UserProfileAudioPlaybackSource(audio.ClientService, xamlRoot, audio.UserId);
             _sessionId = audio.ClientService.SessionId;
             _userId = audio.UserId;
             _chatId = 0;
@@ -977,20 +1136,7 @@ namespace Telegram.Services
 
             SetSource(null, item);
 
-            var response = await audio.ClientService.SendAsync(new GetUserProfileAudios(audio.UserId, 0, 100));
-            if (response is Audios audios)
-            {
-                foreach (var add in audios.AudiosValue)
-                {
-                    if (add.AudioValue.Id != audio.AudioValue.Id)
-                    {
-                        items.Add(new PlaybackItemProfileAudio(xamlRoot, new AudioWithOwner(audio.ClientService, audio.UserId, add)));
-                    }
-                }
-
-                UpdateTransport(CurrentItem);
-                PlaylistChanged?.Invoke(this, EventArgs.Empty);
-            }
+            await LoadMoreAsync(true);
         }
 
         private void Dispose(PlaybackPlaylistType type)
@@ -1037,7 +1183,11 @@ namespace Telegram.Services
                 }
             }
 
+            // Dropping the source is what makes a page still in flight for the playlist being
+            // torn down land on nothing.
             _items = null;
+            _source = null;
+            _provisional = false;
             _type = type;
         }
 

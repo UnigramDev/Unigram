@@ -1786,6 +1786,7 @@
     <Compile Include="Services\Settings\PasscodeLockSettings.cs" />
     <Compile Include="Services\PasscodeService.cs" />
     <Compile Include="Services\PlaybackService.cs" />
+    <Compile Include="Services\PlaybackSource.cs" />
     <Compile Include="Services\ClientService.cs" />
     <Compile Include="Services\Session.cs" />
     <Compile Include="Services\SettingsService.cs" />
