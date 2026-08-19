@@ -1886,15 +1886,31 @@ namespace Telegram.Common
 
     public static class FocusManagerEx
     {
+        private static bool _reported;
+
         public static object TryGetFocusedElement()
         {
             try
             {
                 return FocusManager.GetFocusedElement();
             }
-            catch
+            catch (Exception ex)
             {
-                // All the remote procedure calls must be wrapped in a try-catch block
+                // All the remote procedure calls must be wrapped in a try-catch block.
+                // Logged rather than swallowed because this is the app-side face of the E_FAIL that
+                // also crashes from inside XAML, where no try-catch of ours can reach. The failure
+                // is permanent once it starts, so only the first one is uploaded - the rest stay in
+                // the log tail, where the run of them shows how long the app went on in that state.
+                if (_reported)
+                {
+                    Logger.Error(ex);
+                }
+                else
+                {
+                    _reported = true;
+                    Logger.Exception(ex);
+                }
+
                 return null;
             }
         }
