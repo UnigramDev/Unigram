@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -39,17 +39,23 @@ namespace Telegram.Controls.Drawers
                 _outlines = emoji.Emoji switch
                 {
                     "\U0001F91D" => ("\uE001", "\uE002"),
+                    "\U0001F46F\u200D\u2640\uFE0F" => ("\uE013", "\uE015"),
+                    "\U0001F46F" => ("\uE016", "\uE017"),
+                    "\U0001F46F\u200D\u2642\uFE0F" => ("\uE018", "\uE014"),
                     "\U0001F46B" => ("\uE003", "\uE004"),
                     "\U0001F46D" => ("\uE003", "\uE005"),
                     "\U0001F46C" => ("\uE006", "\uE004"),
                     "\U0001F469\u200D\u2764\uFE0F\u200D\U0001F468" => ("\uE007", "\uE008"),
                     "\U0001F469\u200D\u2764\uFE0F\u200D\U0001F469" => ("\uE007", "\uE009"),
-                    "\U0001F491" => ("\uE00A", "\uE00B"),
+                    "\U0001F9D1\u200D\u2764\uFE0F\u200D\U0001F9D1" => ("\uE00A", "\uE00B"),
                     "\U0001F468\u200D\u2764\uFE0F\u200D\U0001F468" => ("\uE00C", "\uE008"),
                     "\U0001F469\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F468" => ("\uE00D", "\uE00E"),
                     "\U0001F469\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F469" => ("\uE00D", "\uE00F"),
-                    "\U0001F48F" => ("\uEA5F", "\uEA60"),
-                    "\U0001F468\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F468" => ("\uE012", "\uE00E")
+                    "\U0001F9D1\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F9D1" => ("\uE010", "\uE011"),
+                    "\U0001F468\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F468" => ("\uE012", "\uE00E"),
+                    "\U0001F93C\u200D\u2640\uFE0F" => ("\uE019", "\uE01B"),
+                    "\U0001F93C" => ("\uE01C", "\uE01D"),
+                    "\U0001F93C\u200D\u2642\uFE0F" => ("\uE01E", "\uE01A")
                 };
 
                 var tone1 = new[]

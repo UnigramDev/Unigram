@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) Fela Ameghino 2015-2026
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -162,17 +162,19 @@ namespace Telegram.Common
             var result = Emoji switch
             {
                 "\U0001F91D" => tone1 != tone2 ? "\U0001FAF1{0}\u200D\U0001FAF2{1}" : Emoji + "{0}",
+                "\U0001F46F\u200D\u2640\uFE0F" => tone1 != tone2 ? "\U0001F469{0}\u200D\U0001F430\u200D\U0001F469{1}" : Emoji.Insert(2, "{0}"),
+                "\U0001F46F" => tone1 != tone2 ? "\U0001F9D1{0}\u200D\U0001F430\u200D\U0001F9D1{1}" : Emoji + "{0}",
+                "\U0001F46F\u200D\u2642\uFE0F" => tone1 != tone2 ? "\U0001F468{0}\u200D\U0001F430\u200D\U0001F468{1}" : Emoji.Insert(2, "{0}"),
                 "\U0001F46B" => tone1 != tone2 ? "\U0001F469{0}\u200D\U0001F91D\u200D\U0001F468{1}" : Emoji + "{0}",
                 "\U0001F46D" => tone1 != tone2 ? "\U0001F469{0}\u200D\U0001F91D\u200D\U0001F469{1}" : Emoji + "{0}",
                 "\U0001F46C" => tone1 != tone2 ? "\U0001F468{0}\u200D\U0001F91D\u200D\U0001F468{1}" : Emoji + "{0}",
-                //"\U0001F469\u200D\u2764\uFE0F\u200D\U0001F468" => "\U0001F469{0}\u200D\u2764\uFE0F\u200D\U0001F468{1}",
-                //"\U0001F469\u200D\u2764\uFE0F\u200D\U0001F469" => "\U0001F469{0}\u200D\u2764\uFE0F\u200D\U0001F469{1}",
-                "\U0001F491" => tone1 != tone2 ? "\U0001F9D1{0}\u200D\u2764\uFE0F\u200D\U0001F9D1{1}" : Emoji + "{0}",
-                //"\U0001F468\u200D\u2764\uFE0F\u200D\U0001F468" => "\U0001F468{0}\u200D\u2764\uFE0F\u200D\U0001F468{1}",
-                //"\U0001F469\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F468" => "\U0001F469{0}\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F468{1}",
-                //"\U0001F469\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F469" => "\U0001F469{0}\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F469{1}",
-                "\U0001F48F" => tone1 != tone2 ? "\U0001F9D1{0}\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F9D1{1}" : Emoji + "{0}",
-                //"\U0001F468\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F468" => "\U0001F468{0}\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F468{1}",
+                "\U0001F9D1\u200D\u2764\uFE0F\u200D\U0001F9D1" => tone1 != tone2 ? "\U0001F9D1{0}\u200D\u2764\uFE0F\u200D\U0001F9D1{1}" : "\U0001F491{0}",
+                "\U0001F9D1\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F9D1" => tone1 != tone2 ? "\U0001F9D1{0}\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F9D1{1}" : "\U0001F48F{0}",
+                "\U0001F93C\u200D\u2640\uFE0F" => tone1 != tone2 ? "\U0001F469{0}\u200D\U0001FAEF\u200D\U0001F469{1}" : Emoji.Insert(2, "{0}"),
+                "\U0001F93C" => tone1 != tone2 ? "\U0001F9D1{0}\u200D\U0001FAEF\u200D\U0001F9D1{1}" : Emoji + "{0}",
+                "\U0001F93C\u200D\u2642\uFE0F" => tone1 != tone2 ? "\U0001F468{0}\u200D\U0001FAEF\u200D\U0001F468{1}" : Emoji.Insert(2, "{0}"),
+                // The gendered couples have no precomposed form, so both tones
+                // always go into the sequence itself.
                 _ => Emoji.Insert(2, "{0}") + "{1}"
             };
 
