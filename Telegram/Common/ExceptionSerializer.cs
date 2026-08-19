@@ -81,7 +81,10 @@ namespace Telegram.Common
                 Message = error.Exception.Message,
                 ExitPoint = error.Exception.StackTrace,
                 StackTrace = error,
-                LogTail = logs,
+                // The backend's unescaping drops the backslash off \r and leaves the letter behind,
+                // so every CR has to come off before the report goes up - the same normalisation
+                // ProcessException already does to the message and the stack trace.
+                LogTail = logs?.Replace("\r\n", "\n"),
                 Time = MonotonicUnixTime.Now,
                 LaunchTime = WatchDog.LaunchTime
             };
