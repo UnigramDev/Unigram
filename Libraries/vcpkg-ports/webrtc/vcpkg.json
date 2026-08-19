@@ -1,6 +1,6 @@
 {
   "name": "webrtc",
-  "version-date": "2026-08-11",
+  "version-date": "2026-08-19",
   "description": "WebRTC built for UWP from UnigramDev/webrtc-uwp, as consumed by tgcalls.",
   "homepage": "https://github.com/UnigramDev/webrtc-uwp",
   "license": "BSD-3-Clause",

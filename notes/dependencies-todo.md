@@ -19,7 +19,7 @@ older than the pin and prints the fix if it is.
 |---|---|
 | ffmpeg 7.1.2 | overlay port, `Libraries/vcpkg-ports/ffmpeg`, carrying the `--enable-*` flag set |
 | libvlc 3.0.23 | overlay port downloading `libvlc-3.0.23-2` from UnigramDev/deps |
-| webrtc m123 | overlay port downloading `webrtc-2026-08-11-1` from UnigramDev/deps |
+| webrtc m123 | overlay port downloading `webrtc-2026-08-19-1` from UnigramDev/deps |
 | everything else | stock ports at the pinned baseline |
 
 **UnigramDev/deps** holds the build and packaging scripts, the webrtc patches, and the release
@@ -40,16 +40,15 @@ be a submodule is an ordinary clone at `C:\Source\vlc`.
 - The manifest resolves at the pinned commit with the overlay taking precedence.
 - tdjson builds for `arm64-uwp` against vcpkg at the latest baseline (a separate question, asked
   because TDLib was considering the move).
+- `deps/webrtc/build.ps1 -SkipAcquire` and `pack.ps1`, run 2026-08-19: all four configurations
+  built clean under Visual Studio 18 and were published as `webrtc-2026-08-19-1`. The acquire half
+  — fetch, sync, patch — is still unexercised.
 
 ## Not verified
 
 - **A build that downloads from the releases.** Every build so far resolved from archives seeded
   into `C:\Source\vcpkg\downloads`. Clearing those seven files and rebuilding is the test that a
   contributor can do this at all, and it takes minutes.
-- **`deps/webrtc/build.ps1`** has never been run. It replaces `acquire.cmd` and `build.cmd`, which
-  are now deleted here, so the only fallback is git history. Its riskiest parts are the VsDevCmd
-  environment import and the `gn`/`ninja` invocations. A `-SkipAcquire` run would exercise the
-  build half without a fetch.
 - **The packaging wizard.** The two experimental settings in `8aebeaa71` were only exercised from
   the command line.
 
