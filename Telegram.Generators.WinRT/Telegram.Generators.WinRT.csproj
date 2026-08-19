@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The CsWinRT half of the generators, split out of Telegram.Generators so that .NET Native
+       never loads it. Both pieces here answer questions only a trimmed CsWinRT build asks, and
+       both walk every cast in the app to do it: DynamicCastRootGenerator alone spent 13s per csc
+       invocation on Telegram.csproj - twice per build, since XamlPreCompile and CoreCompile each
+       run one - and then discarded the result, because there is nothing to root when nothing is
+       trimmed. A generator cannot opt out before its syntax pass runs, so the only way to stop
+       paying for it is to not hand .NET Native the assembly. -->
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>14.0</LangVersion>
+    <OutputItemType>Analyzer</OutputItemType>
+    <IncludeBuildOutput>true</IncludeBuildOutput>
+    <Nullable>disable</Nullable>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.6.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="5.6.0" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

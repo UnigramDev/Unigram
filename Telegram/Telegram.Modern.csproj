@@ -239,6 +239,9 @@
     <ProjectReference Include="..\Telegram.Generators\Telegram.Generators.csproj"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Telegram.Generators.WinRT\Telegram.Generators.WinRT.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
     <AdditionalFiles Include="..\Libraries\tdjson\td_api.tl" />
     <CompilerVisibleProperty Include="TdParsers" />
   </ItemGroup>
