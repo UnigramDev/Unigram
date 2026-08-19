@@ -668,7 +668,7 @@ namespace Telegram.Controls
 
         private bool UpdateRotation(ImageBrush source)
         {
-            if (LayoutRoot.Background is ImageBrush { ImageSource: WriteableBitmap bitmap, Transform: CompositeTransform composite })
+            if (source?.ImageSource is WriteableBitmap bitmap && source?.Transform is CompositeTransform composite)
             {
                 double pixelWidth;
                 double pixelHeight;
