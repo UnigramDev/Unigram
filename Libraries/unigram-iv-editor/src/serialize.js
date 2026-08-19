@@ -277,7 +277,7 @@ function tableToTDLib(node) {
     });
     rows.push(cells);
   });
-  return T("pageBlockTable", { caption: null, cells: rows, is_bordered: true, is_striped: false });
+  return T("pageBlockTable", { caption: null, cells: rows, is_bordered: true, is_striped: false, is_compact: false });
 }
 
 const valignType = (v) =>

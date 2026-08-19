@@ -226,7 +226,8 @@ namespace Telegram.ViewModels.Settings
                 var confirm = await TransferGiftPopup.ShowAsync(XamlRoot, ClientService, giftForResale, null);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    var response = await ClientService.SendPaymentAsync(giftForResale.Gift.ResaleParameters.StarCount, new SendResoldGift(giftForResale.Gift.Name, ClientService.MyId, new GiftResalePriceStar(giftForResale.Gift.ResaleParameters.StarCount)));
+                    // TODO: text, isPrivate
+                    var response = await ClientService.SendPaymentAsync(giftForResale.Gift.ResaleParameters.StarCount, new SendResoldGift(giftForResale.Gift.Name, ClientService.MyId, new GiftResalePriceStar(giftForResale.Gift.ResaleParameters.StarCount), string.Empty.AsFormattedText(), false));
                     if (response is GiftResaleResultOk)
                     {
                         ContinueImpl(giftForResale, null);

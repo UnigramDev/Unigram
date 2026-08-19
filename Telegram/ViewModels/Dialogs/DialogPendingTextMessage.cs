@@ -731,7 +731,7 @@ namespace Telegram.ViewModels
                         // Cells first (content), then caption.
                         var cells = SubstringTableCells(b.Cells, ref remaining);
                         var caption = SubstringRichText(b.Caption, ref remaining);
-                        return new PageBlockTable(caption, cells, b.IsBordered, b.IsStriped);
+                        return new PageBlockTable(caption, cells, b.IsBordered, b.IsStriped, b.IsCompact);
                     }
                 case PageBlockRelatedArticles b:
                     {

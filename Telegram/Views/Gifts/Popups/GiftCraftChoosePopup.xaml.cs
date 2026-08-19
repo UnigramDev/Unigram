@@ -239,7 +239,8 @@ namespace Telegram.Views.Gifts.Popups
                         price = new GiftResalePriceStar(giftForResale.Gift.ResaleParameters.StarCount);
                     }
 
-                    var response = await _clientService.SendPaymentAsync(giftForResale.Gift.ResaleParameters.StarCount, new SendResoldGift(giftForResale.Gift.Name, _clientService.MyId, price));
+                    // TODO: text, isPrivate
+                    var response = await _clientService.SendPaymentAsync(giftForResale.Gift.ResaleParameters.StarCount, new SendResoldGift(giftForResale.Gift.Name, _clientService.MyId, price, string.Empty.AsFormattedText(), false));
                     if (response is GiftResaleResultOk ok)
                     {
                         //_aggregator.Publish(new UpdateGiftIsSold(_gift.ReceivedGiftId));

@@ -1096,7 +1096,8 @@ namespace Telegram.Views.Stars.Popups
             var confirm = await TransferGiftPopup.ShowAsync(XamlRoot, _clientService, _gift, chat, true);
             if (confirm == ContentDialogResult.Primary)
             {
-                var response = await _clientService.SendPaymentAsync(upgraded.Gift.ResaleParameters.StarCount, new SendResoldGift(upgraded.Gift.Name, _sendGiftTo ?? _clientService.MyId, new GiftResalePriceStar(upgraded.Gift.ResaleParameters.StarCount)));
+                // TODO: text, isPrivate
+                var response = await _clientService.SendPaymentAsync(upgraded.Gift.ResaleParameters.StarCount, new SendResoldGift(upgraded.Gift.Name, _sendGiftTo ?? _clientService.MyId, new GiftResalePriceStar(upgraded.Gift.ResaleParameters.StarCount), string.Empty.AsFormattedText(), false));
                 if (response is GiftResaleResultOk)
                 {
                     _aggregator.Publish(new UpdateGiftIsSold(_gift.ReceivedGiftId));

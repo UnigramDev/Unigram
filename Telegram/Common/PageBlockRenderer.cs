@@ -323,6 +323,9 @@ namespace Telegram.Common
             };
 
             var thickness = table.IsBordered ? 1 : 0;
+            var padding = table.IsCompact
+                ? new Thickness(4, 2, 4, 2)
+                : new Thickness(8, 4, 8, 4);
 
             var columns = table.Cells.Max(row => row.Sum(cell => cell.Colspan));
             var rows = table.Cells.Count;
@@ -405,7 +408,7 @@ namespace Telegram.Common
                             lastColumn == columns - 1 && row == 0 ? 4 : 0,
                             lastColumn == columns - 1 && lastRow == rows - 1 ? 4 : 0,
                             column == 0 && lastRow == rows - 1 ? 4 : 0),
-                        Padding = new Thickness(8, 4, 8, 4),
+                        Padding = padding,
                         Child = textBlock
                     };
 
@@ -1014,11 +1017,6 @@ namespace Telegram.Common
 
         private FrameworkElement ProcessDocument(IClientService clientService, PageBlockDocument block)
         {
-            if (block.Document == null)
-            {
-                return null;
-            }
-
             var message = CreateMessage(clientService, block.Document.DocumentValue.Id, new MessageDocument(block.Document, string.Empty.AsFormattedText()));
             var content = new DocumentContent(message);
             content.HorizontalAlignment = HorizontalAlignment.Left;
@@ -1308,11 +1306,6 @@ namespace Telegram.Common
 
         private FrameworkElement ProcessAudio(IClientService clientService, PageBlockAudio block)
         {
-            if (block.Audio == null)
-            {
-                return null;
-            }
-
             var message = CreateMessage(clientService, block.Audio.AudioValue.Id, new MessageAudio(block.Audio, string.Empty.AsFormattedText()));
             var content = new AudioContent(message);
             content.HorizontalAlignment = HorizontalAlignment.Left;
@@ -1337,11 +1330,6 @@ namespace Telegram.Common
 
         private FrameworkElement ProcessVoiceNote(IClientService clientService, PageBlockVoiceNote block)
         {
-            if (block.VoiceNote == null)
-            {
-                return null;
-            }
-
             var message = CreateMessage(clientService, block.VoiceNote.Voice.Id, new MessageVoiceNote(block.VoiceNote, string.Empty.AsFormattedText(), true));
             var content = new VoiceNoteContent(message);
             content.HorizontalAlignment = HorizontalAlignment.Left;

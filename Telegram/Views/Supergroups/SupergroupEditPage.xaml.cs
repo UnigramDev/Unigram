@@ -190,6 +190,7 @@ namespace Telegram.Views.Supergroups
 
             var canChangeInfo = group.CanChangeInfo(chat);
             var canInviteUsers = group.CanInviteUsers(chat);
+            var canSendWelcomeMessages = group.CanSendWelcomeMessages();
             var canRestrictMembers = group.CanRestrictMembers();
             var canPostMessages = group.CanPostMessages();
             var hasActiveUsername = group.HasActiveUsername();
@@ -259,7 +260,7 @@ namespace Telegram.Views.Supergroups
             ChatLinked.Content = group.IsChannel ? Strings.Discussion : Strings.LinkedChannel;
             ChatLinked.Glyph = group.IsChannel ? Icons.ChatEmpty : Icons.Megaphone;
 
-            WelcomeMessages.Visibility = group.IsChannel || !canChangeInfo ? Visibility.Collapsed : Visibility.Visible;
+            WelcomeMessages.Visibility = canSendWelcomeMessages ? Visibility.Visible : Visibility.Collapsed;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
             Permissions.Visibility = group.IsChannel || !canRestrictMembers ? Visibility.Collapsed : Visibility.Visible;
@@ -305,6 +306,7 @@ namespace Telegram.Views.Supergroups
 
             var canChangeInfo = group.CanChangeInfo(chat);
             var canInviteUsers = group.CanInviteUsers(chat);
+            var canSendWelcomeMessages = group.CanSendWelcomeMessages();
 
             TitleLabel.IsReadOnly = !canChangeInfo;
             About.IsReadOnly = !canChangeInfo;
@@ -327,7 +329,7 @@ namespace Telegram.Views.Supergroups
 
             GroupTopics.Badge = Strings.TopicsDisabled;
 
-            WelcomeMessages.Visibility = !canChangeInfo ? Visibility.Collapsed : Visibility.Visible;
+            WelcomeMessages.Visibility = canSendWelcomeMessages ? Visibility.Visible : Visibility.Collapsed;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
             Permissions.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;

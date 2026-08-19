@@ -13717,6 +13717,11 @@
     <string name="WelcomeMessageOff">Off</string>
     <string name="WelcomeMessagesLimit_one">Limit of **{0}** message reached.</string>
     <string name="WelcomeMessagesLimit_other">Limit of **{0}** messages reached.</string>
+    <string name="EditAdminUserManageWelcomeMessages">Manage Welcome Messages</string>
+    <string name="EventLogPromotedManageWelcomeMessages">Manage welcome messages</string>
+    <string name="ActionJoinedFromCommunityUser">un2 joined the group via un1 community</string>
+    <string name="ActionJoinedFromCommunityYou">You joined the group via un1 community</string>
+    <string name="ActionJoinedFromCommunityYouChannel">You joined the channel via un1 community</string>
     <string name="CommunityServiceMessageGroupAdded">**{0}** added this group to the **{1}** community.</string>
     <string name="CommunityServiceMessageGroupYouAdded">**You** added this group to the **{0}** community.</string>
     <string name="CommunityServiceMessageGroupAddedUnknown">This group was added to the **{0}** community.</string>

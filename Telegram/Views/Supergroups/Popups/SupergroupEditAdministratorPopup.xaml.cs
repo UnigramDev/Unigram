@@ -110,6 +110,7 @@ namespace Telegram.Views.Supergroups.Popups
                 AddUsers.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 PinMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited && !chat.Permissions.CanPinMessages;
                 ManageTags.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited && !chat.Permissions.CanEditTag;
+                SendWelcomeMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 ManageTopics.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 ManageVideoChats.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 AddAdmins.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;

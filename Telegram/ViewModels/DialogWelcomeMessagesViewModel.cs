@@ -58,7 +58,7 @@ namespace Telegram.ViewModels
 
             var replied = update.Messages.OrderBy(x => x.Id).Select(x =>
             {
-                var message = new Message(x.Id, new MessageSenderChat(ChatId), new MessageSenderUser(ClientService.Options.MyId), ChatId, null, null, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, x.Content, null);
+                var message = new Message(x.Id, new MessageSenderChat(ChatId), new MessageSenderUser(ClientService.Options.MyId), ChatId, null, null, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, x.Content, null, null);
                 var model = new WelcomeMessageViewModel(ClientService, _messageDelegateWeak, _chat, message, true);
 
                 return model as MessageViewModel;
@@ -66,7 +66,7 @@ namespace Telegram.ViewModels
 
             if (replied.Count > 0)
             {
-                replied.Insert(0, new WelcomeMessageViewModel(ClientService, _messageDelegateWeak, _chat, new Message(0, new MessageSenderChat(chat.Id), null, chat.Id, null, null, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageCustomServiceAction(Locale.Declension(Strings.R.WelcomeMessageHint, replied.Count)), null)));
+                replied.Insert(0, new WelcomeMessageViewModel(ClientService, _messageDelegateWeak, _chat, new Message(0, new MessageSenderChat(chat.Id), null, chat.Id, null, null, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageCustomServiceAction(Locale.Declension(Strings.R.WelcomeMessageHint, replied.Count)), null, null)));
             }
 
             BeginOnUIThread(() =>

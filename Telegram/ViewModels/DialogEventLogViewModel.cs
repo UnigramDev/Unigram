@@ -232,7 +232,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return new Message(chatEvent.Id, sender, null, chatId, null, null, false, false, false, false, false, false, false, false, false, false, chatEvent.Date, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, null, null);
+            return new Message(chatEvent.Id, sender, null, chatId, null, null, false, false, false, false, false, false, false, false, false, false, chatEvent.Date, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, null, null, null);
         }
 
         private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)
@@ -826,6 +826,10 @@ namespace Telegram.ViewModels
                 if (o.CanInviteUsers != n.CanInviteUsers)
                 {
                     AppendChange(n.CanInviteUsers, Strings.EventLogPromotedAddUsers);
+                }
+                if (o.CanSendWelcomeMessages != n.CanSendWelcomeMessages)
+                {
+                    AppendChange(n.CanSendWelcomeMessages, Strings.EventLogPromotedManageWelcomeMessages);
                 }
                 if (!channel)
                 {

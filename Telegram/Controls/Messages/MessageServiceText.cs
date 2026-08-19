@@ -40,6 +40,7 @@ namespace Telegram.Controls.Messages
                 MessageChatAddMembers chatAddMembers => UpdateChatAddMembers(message, chatAddMembers, history),
                 MessageChatAddedToCommunity chatAddedToCommunity => UpdateChatAddedToCommunity(message, chatAddedToCommunity, history),
                 MessageChatRemovedFromCommunity chatRemovedFromCommunity => UpdateChatRemovedFromCommunity(message, chatRemovedFromCommunity, history),
+                MessageChatJoinFromCommunity chatJoinFromCommunity => UpdateChatJoinFromCommunity(message, chatJoinFromCommunity, history),
                 MessageChatChangePhoto chatChangePhoto => UpdateChatChangePhoto(message, chatChangePhoto, history),
                 MessageChatChangeTitle chatChangeTitle => UpdateChatChangeTitle(message, chatChangeTitle, history),
                 MessageChatSetTheme chatSetTheme => UpdateChatSetTheme(message, chatSetTheme, history),
@@ -967,6 +968,21 @@ namespace Telegram.Controls.Messages
             }
 
             return formatted;
+        }
+
+        private static FormattedText UpdateChatJoinFromCommunity(MessageWithOwner message, MessageChatJoinFromCommunity chatJoinFromCommunity, bool history)
+        {
+            var community = message.ClientService.GetCommunity(chatJoinFromCommunity.CommunityId);
+
+            if (message.IsOutgoing)
+            {
+                return ReplaceWithLink(GetCommunityMember(message) == CommunityMember.Channel
+                    ? Strings.ActionJoinedFromCommunityYouChannel
+                    : Strings.ActionJoinedFromCommunityYou, community);
+            }
+
+            // un1 is the community, un2 the member who joined.
+            return ReplaceWithLink(Strings.ActionJoinedFromCommunityUser, community, message.GetSender());
         }
 
         private static FormattedText UpdateChatRemovedFromCommunity(MessageWithOwner message, MessageChatRemovedFromCommunity chatRemovedFromCommunity, bool history)
@@ -2555,6 +2571,10 @@ namespace Telegram.Controls.Messages
                     else if (obj is Chat chat)
                     {
                         name = chat.Title;
+                    }
+                    else if (obj is Community community)
+                    {
+                        name = community.Name;
                     }
                     else if (obj is Game game)
                     {

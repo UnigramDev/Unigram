@@ -98,6 +98,7 @@ namespace Telegram.ViewModels.Supergroups
                     CanManageDirectMessages = administrator.Rights.CanManageDirectMessages;
                     CanPinMessages = administrator.Rights.CanPinMessages;
                     CanManageTags = administrator.Rights.CanManageTags;
+                    CanSendWelcomeMessages = administrator.Rights.CanSendWelcomeMessages;
                     CanPostMessages = administrator.Rights.CanPostMessages;
                     CanPostStories = administrator.Rights.CanPostStories;
                     CanEditStories = administrator.Rights.CanEditStories;
@@ -117,6 +118,7 @@ namespace Telegram.ViewModels.Supergroups
                     CanManageDirectMessages = true;
                     CanPinMessages = true;
                     CanManageTags = true;
+                    CanSendWelcomeMessages = true;
                     CanPostMessages = true;
                     CanPostStories = true;
                     CanEditStories = true;
@@ -190,6 +192,7 @@ namespace Telegram.ViewModels.Supergroups
                     (supergroup.IsChannel || _canManageTags) &&
                     (!supergroup.IsChannel || _canPostMessages) &&
                     (!supergroup.IsChannel || _canManageDirectMessages) &&
+                    _canSendWelcomeMessages &&
                     _canPostStories &&
                     _canEditStories &&
                     _canDeleteStories &&
@@ -476,6 +479,19 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
+        private bool _canSendWelcomeMessages;
+        public bool CanSendWelcomeMessages
+        {
+            get => _canSendWelcomeMessages;
+            set
+            {
+                if (Set(ref _canSendWelcomeMessages, value))
+                {
+                    RaisePropertyChanged(nameof(CanTransferOwnership));
+                }
+            }
+        }
+
         private bool _canManageVideoChats;
         public bool CanManageVideoChats
         {
@@ -585,6 +601,7 @@ namespace Telegram.ViewModels.Supergroups
                         CanManageDirectMessages = channel && _canManageDirectMessages,
                         CanPinMessages = !channel && _canPinMessages,
                         CanManageTags = !channel && _canManageTags,
+                        CanSendWelcomeMessages = _canSendWelcomeMessages,
                         CanPostMessages = channel && _canPostMessages,
                         CanPostStories = _canPostStories,
                         CanEditStories = _canEditStories,
@@ -608,6 +625,7 @@ namespace Telegram.ViewModels.Supergroups
                         && !administrator.Rights.CanEditMessages
                         && !administrator.Rights.CanInviteUsers
                         && !administrator.Rights.CanManageDirectMessages
+                        && !administrator.Rights.CanSendWelcomeMessages
                         && !administrator.Rights.CanPostMessages
                         && !administrator.Rights.CanPostStories
                         && !administrator.Rights.CanEditStories
@@ -623,6 +641,7 @@ namespace Telegram.ViewModels.Supergroups
                         && !administrator.Rights.CanInviteUsers
                         && !administrator.Rights.CanPinMessages
                         && !administrator.Rights.CanManageTags
+                        && !administrator.Rights.CanSendWelcomeMessages
                         && !administrator.Rights.CanPostStories
                         && !administrator.Rights.CanEditStories
                         && !administrator.Rights.CanDeleteStories

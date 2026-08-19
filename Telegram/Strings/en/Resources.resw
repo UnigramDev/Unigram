@@ -610,6 +610,15 @@
   <data name="ActionInviteYou" xml:space="preserve">
     <value>You joined the group via invite link</value>
   </data>
+  <data name="ActionJoinedFromCommunityUser" xml:space="preserve">
+    <value>un2 joined the group via un1 community</value>
+  </data>
+  <data name="ActionJoinedFromCommunityYou" xml:space="preserve">
+    <value>You joined the group via un1 community</value>
+  </data>
+  <data name="ActionJoinedFromCommunityYouChannel" xml:space="preserve">
+    <value>You joined the channel via un1 community</value>
+  </data>
   <data name="ActionKickUser" xml:space="preserve">
     <value>un1 removed un2</value>
   </data>
@@ -6035,6 +6044,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="EditAdminTransferSetPassword" xml:space="preserve">
     <value>Set Password</value>
   </data>
+  <data name="EditAdminUserManageWelcomeMessages" xml:space="preserve">
+    <value>Manage Welcome Messages</value>
+  </data>
   <data name="EditChannelAdminTransferAlertText" xml:space="preserve">
     <value>You can transfer this channel to **{0}** only if you have:</value>
   </data>
@@ -6604,6 +6616,9 @@ Learn more at telegram.org</value>
   </data>
   <data name="EventLogPromotedManageTopics" xml:space="preserve">
     <value>Manage topics</value>
+  </data>
+  <data name="EventLogPromotedManageWelcomeMessages" xml:space="preserve">
+    <value>Manage welcome messages</value>
   </data>
   <data name="EventLogPromotedPinMessages" xml:space="preserve">
     <value>Pin messages</value>

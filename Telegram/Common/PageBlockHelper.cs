@@ -1832,15 +1832,16 @@ namespace Telegram.Common
                 // Atomic
                 (PageBlockAnchor a, PageBlockAnchor b) => a.Name == b.Name,
                 (PageBlockDivider, PageBlockDivider) => true,
+                (PageBlockUnsupported, PageBlockUnsupported) => true,
                 (PageBlockChatLink a, PageBlockChatLink b) => a.Title == b.Title && a.Username == b.Username && a.AccentColorId == b.AccentColorId,
 
                 // Media + caption (scalar attributes + caption)
                 (PageBlockAnimation a, PageBlockAnimation b) => a.NeedAutoplay == b.NeedAutoplay && a.HasSpoiler == b.HasSpoiler && SameFile(a.Animation?.AnimationValue, b.Animation?.AnimationValue) && Compare(a.Caption, b.Caption),
-                (PageBlockAudio a, PageBlockAudio b) => SameFile(a.Audio?.AudioValue, b.Audio?.AudioValue) && Compare(a.Caption, b.Caption),
+                (PageBlockAudio a, PageBlockAudio b) => SameFile(a.Audio.AudioValue, b.Audio.AudioValue) && Compare(a.Caption, b.Caption),
                 (PageBlockPhoto a, PageBlockPhoto b) => string.Equals(a.Url, b.Url) && a.HasSpoiler == b.HasSpoiler && SamePhoto(a.Photo, b.Photo) && Compare(a.Caption, b.Caption),
                 (PageBlockVideo a, PageBlockVideo b) => a.NeedAutoplay == b.NeedAutoplay && a.IsLooped == b.IsLooped && a.HasSpoiler == b.HasSpoiler && SameFile(a.Video?.VideoValue, b.Video?.VideoValue) && Compare(a.Caption, b.Caption),
-                (PageBlockVoiceNote a, PageBlockVoiceNote b) => SameFile(a.VoiceNote?.Voice, b.VoiceNote?.Voice) && Compare(a.Caption, b.Caption),
-                (PageBlockDocument a, PageBlockDocument b) => string.Equals(a.Document?.FileName, b.Document?.FileName) && SameFile(a.Document?.DocumentValue, b.Document?.DocumentValue) && Compare(a.Caption, b.Caption),
+                (PageBlockVoiceNote a, PageBlockVoiceNote b) => SameFile(a.VoiceNote.Voice, b.VoiceNote.Voice) && Compare(a.Caption, b.Caption),
+                (PageBlockDocument a, PageBlockDocument b) => string.Equals(a.Document.FileName, b.Document.FileName) && SameFile(a.Document.DocumentValue, b.Document.DocumentValue) && Compare(a.Caption, b.Caption),
                 (PageBlockMap a, PageBlockMap b) => a.Zoom == b.Zoom && a.Width == b.Width && a.Height == b.Height && SameLocation(a.Location, b.Location) && Compare(a.Caption, b.Caption),
                 (PageBlockEmbedded a, PageBlockEmbedded b) => string.Equals(a.Url, b.Url) && string.Equals(a.Html, b.Html) && a.Width == b.Width && a.Height == b.Height && a.IsFullWidth == b.IsFullWidth && a.AllowScrolling == b.AllowScrolling && Compare(a.Caption, b.Caption),
 
@@ -1853,7 +1854,7 @@ namespace Telegram.Common
                 (PageBlockEmbeddedPost a, PageBlockEmbeddedPost b) => string.Equals(a.Url, b.Url) && string.Equals(a.Author, b.Author) && a.Date == b.Date && Compare(a.Blocks, b.Blocks) && Compare(a.Caption, b.Caption),
                 (PageBlockDetails a, PageBlockDetails b) => a.IsOpen == b.IsOpen && Compare(a.Header, b.Header) && Compare(a.Blocks, b.Blocks),
                 (PageBlockButtonRow a, PageBlockButtonRow b) => SameType(a.Align, b.Align) && Compare(a.Buttons, b.Buttons),
-                (PageBlockTable a, PageBlockTable b) => a.IsBordered == b.IsBordered && a.IsStriped == b.IsStriped && Compare(a.Caption, b.Caption) && Compare(a.Cells, b.Cells),
+                (PageBlockTable a, PageBlockTable b) => a.IsBordered == b.IsBordered && a.IsStriped == b.IsStriped && a.IsCompact == b.IsCompact && Compare(a.Caption, b.Caption) && Compare(a.Cells, b.Cells),
 
                 // PageBlockRelatedArticles is intentionally not diffed (always re-rendered).
                 _ => false,
@@ -2217,7 +2218,7 @@ namespace Telegram.Common
                 case PageBlockSlideshow x:
                     return new InputPageBlockSlideshow(ToInputBlocks(x.Blocks), x.Caption);
                 case PageBlockTable x:
-                    return new InputPageBlockTable(x.Caption, x.Cells, x.IsBordered, x.IsStriped);
+                    return new InputPageBlockTable(x.Caption, x.Cells, x.IsBordered, x.IsStriped, x.IsCompact);
                 case PageBlockDetails x:
                     return new InputPageBlockDetails(x.Header, ToInputBlocks(x.Blocks), x.IsOpen);
                 case PageBlockMap x:
@@ -2314,33 +2315,18 @@ namespace Telegram.Common
 
         private static InputAudio ToInputAudio(Audio audio)
         {
-            if (audio == null)
-            {
-                return null;
-            }
-
             return new InputAudio(ToInputFile(audio.AudioValue), ToInputThumbnail(audio.AlbumCoverThumbnail),
                 audio.Duration, audio.Title, audio.Performer);
         }
 
         private static InputDocument ToInputDocument(Document document)
         {
-            if (document == null)
-            {
-                return null;
-            }
-
             // The server already typed this file, so there's nothing to re-detect.
             return new InputDocument(ToInputFile(document.DocumentValue), ToInputThumbnail(document.Thumbnail), false);
         }
 
         private static InputVoiceNote ToInputVoiceNote(VoiceNote voice)
         {
-            if (voice == null)
-            {
-                return null;
-            }
-
             return new InputVoiceNote(ToInputFile(voice.Voice), voice.Duration, voice.Waveform);
         }
     }

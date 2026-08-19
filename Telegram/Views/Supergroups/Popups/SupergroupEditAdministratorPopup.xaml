@@ -110,6 +110,10 @@
                               IsChecked="{x:Bind ViewModel.CanManageTags, Mode=TwoWay}"
                               Content="{CustomResource EditAdminEditTags}" />
 
+                    <CheckBox x:Name="SendWelcomeMessages"
+                              IsChecked="{x:Bind ViewModel.CanSendWelcomeMessages, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminUserManageWelcomeMessages}" />
+
                     <CheckBox x:Name="ManageTopics"
                               IsChecked="{x:Bind ViewModel.CanManageTopics, Mode=TwoWay}"
                               Content="{CustomResource ManageTopicsPermission}" />

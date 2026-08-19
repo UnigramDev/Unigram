@@ -167,6 +167,7 @@ namespace Telegram.ViewModels
         public void Replace(Message message)
         {
             Content = message.Content;
+            EphemeralContent = message.EphemeralContent;
             ReplyMarkup = message.ReplyMarkup;
             MediaAlbumId = message.MediaAlbumId;
             InteractionInfo = message.InteractionInfo;
@@ -213,6 +214,7 @@ namespace Telegram.ViewModels
         public void Replace(MessageViewModel message)
         {
             Content = message.Content;
+            EphemeralContent = message.EphemeralContent;
             ReplyMarkup = message.ReplyMarkup;
             MediaAlbumId = message.MediaAlbumId;
             InteractionInfo = message.InteractionInfo;
@@ -472,6 +474,7 @@ namespace Telegram.ViewModels
             _chat = chat ?? clientService.GetChat(message.ChatId);
             _content = message.Content;
 
+            EphemeralContent = message.EphemeralContent;
             ReplyMarkup = message.ReplyMarkup;
             MediaAlbumId = message.MediaAlbumId;
             InteractionInfo = message.InteractionInfo;
@@ -596,6 +599,7 @@ namespace Telegram.ViewModels
         public RestrictionInfo RestrictionInfo { get; protected set; }
         public double AutoDeleteIn { get; protected set; }
         public string SummaryLanguageCode { get; protected set; }
+        public EphemeralMessageContent EphemeralContent { get; set; }
 
         public MessageEffect Effect { get; set; }
 
@@ -659,7 +663,7 @@ namespace Telegram.ViewModels
         // TODO: Get rid of this
         public Message Get()
         {
-            return new Message(Id, SenderId, ReceiverId, ChatId, SendingState, SchedulingState, IsOutgoing, IsPinned, IsFromOffline, CanBeSaved, HasTimestampedMedia, IsChannelPost, IsPaidStarSuggestedPost, IsPaidGramSuggestedPost, ContainsUnreadMention, ContainsUnreadPollVotes, Date, EditDate, ForwardInfo, ImportInfo, InteractionInfo, UnreadReactions, FactCheck, SuggestedPostInfo, ReplyTo, TopicId, SelfDestructType, SelfDestructIn, AutoDeleteIn, ViaBotUserId, GuestBotCallerId, SenderBusinessBotUserId, SenderBoostCount, SenderTag, PaidMessageStarCount, AuthorSignature, MediaAlbumId, EffectId, RestrictionInfo, SummaryLanguageCode, Content, ReplyMarkup);
+            return new Message(Id, SenderId, ReceiverId, ChatId, SendingState, SchedulingState, IsOutgoing, IsPinned, IsFromOffline, CanBeSaved, HasTimestampedMedia, IsChannelPost, IsPaidStarSuggestedPost, IsPaidGramSuggestedPost, ContainsUnreadMention, ContainsUnreadPollVotes, Date, EditDate, ForwardInfo, ImportInfo, InteractionInfo, UnreadReactions, FactCheck, SuggestedPostInfo, ReplyTo, TopicId, SelfDestructType, SelfDestructIn, AutoDeleteIn, ViaBotUserId, GuestBotCallerId, SenderBusinessBotUserId, SenderBoostCount, SenderTag, PaidMessageStarCount, AuthorSignature, MediaAlbumId, EffectId, RestrictionInfo, SummaryLanguageCode, Content, EphemeralContent, ReplyMarkup);
         }
 
         public virtual bool CanBeAddedToDownloads

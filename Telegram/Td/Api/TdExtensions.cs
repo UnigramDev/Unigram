@@ -4442,6 +4442,26 @@ namespace Telegram.Td.Api
             return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { Rights.CanManageVideoChats: true };
         }
 
+        public static bool CanSendWelcomeMessages(this Supergroup supergroup)
+        {
+            if (supergroup.Status == null)
+            {
+                return false;
+            }
+
+            return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { Rights.CanSendWelcomeMessages: true };
+        }
+
+        public static bool CanSendWelcomeMessages(this BasicGroup basicGroup)
+        {
+            if (basicGroup.Status == null)
+            {
+                return false;
+            }
+
+            return basicGroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator { Rights.CanSendWelcomeMessages: true };
+        }
+
         public static bool CanManageTopics(this Supergroup supergroup)
         {
             if (supergroup.Status == null)
