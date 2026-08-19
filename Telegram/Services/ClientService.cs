@@ -250,6 +250,8 @@ namespace Telegram.Services
 
         Community GetCommunity(long id);
         bool TryGetCommunity(long id, out Community value);
+        CommunityFullInfo GetCommunityFull(long id);
+        bool TryGetCommunityFull(long id, out CommunityFullInfo value);
 
         GroupCall GetGroupCall(int id);
         bool TryGetGroupCall(int id, out GroupCall value);
@@ -336,6 +338,7 @@ namespace Telegram.Services
         private readonly ReaderWriterDictionary<long, SupergroupFullInfo> _supergroupsFull = new(500);
 
         private readonly ReaderWriterDictionary<long, Community> _communities = new();
+        private readonly ReaderWriterDictionary<long, CommunityFullInfo> _communitiesFull = new();
 
         private readonly ReaderWriterDictionary<int, GroupCall> _groupCalls = new();
 
@@ -962,6 +965,7 @@ namespace Telegram.Services
             _supergroupsFull.Clear();
 
             _communities.Clear();
+            _communitiesFull.Clear();
 
             _groupCalls.Clear();
 
@@ -2751,6 +2755,8 @@ namespace Telegram.Services
             return false;
         }
 
+
+
         public Community GetCommunity(long id)
         {
             if (_communities.TryGetValue(id, out Community value))
@@ -2764,6 +2770,21 @@ namespace Telegram.Services
         public bool TryGetCommunity(long id, out Community value)
         {
             return _communities.TryGetValue(id, out value);
+        }
+
+        public CommunityFullInfo GetCommunityFull(long id)
+        {
+            if (_communitiesFull.TryGetValue(id, out CommunityFullInfo value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        public bool TryGetCommunityFull(long id, out CommunityFullInfo value)
+        {
+            return _communitiesFull.TryGetValue(id, out value);
         }
 
 
@@ -4096,6 +4117,9 @@ namespace Telegram.Services
                     break;
                 case UpdateCommunity updateCommunity:
                     _communities[updateCommunity.Community.Id] = updateCommunity.Community;
+                    break;
+                case UpdateCommunityFullInfo updateCommunityFullInfo:
+                    _communitiesFull[updateCommunityFullInfo.CommunityId] = updateCommunityFullInfo.CommunityFullInfo;
                     break;
                 case UpdateGroupCall updateGroupCall:
                     _groupCalls[updateGroupCall.GroupCall.Id] = updateGroupCall.GroupCall;
