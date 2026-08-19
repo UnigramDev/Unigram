@@ -166,6 +166,9 @@ namespace Telegram.Views
 
         private void Unlock()
         {
+            _window.Activated -= Window_Activated;
+            Field.LosingFocus -= Field_LosingFocus;
+
             _passcodeService.Unlock();
             _retryTimer.Stop();
         }
