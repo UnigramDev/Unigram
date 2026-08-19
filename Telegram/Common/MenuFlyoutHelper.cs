@@ -175,15 +175,15 @@ namespace Telegram.Common
 
         #endregion
 
-        public static MenuFlyoutSeparator CreateFlyoutSeparator(this MenuFlyout flyout)
+        public static MenuFlyoutSeparator CreateFlyoutSeparator(this MenuFlyout flyout, bool append = true)
         {
             if (flyout.Items.Count > 0)
             {
-                var previous = flyout.Items[^1];
+                var previous = flyout.Items[append ? ^1 : 0];
                 if (previous is not MenuFlyoutSeparator || previous is MenuFlyoutLabel)
                 {
                     var separator = new MenuFlyoutSeparator();
-                    flyout.Items.Add(separator);
+                    flyout.Items.Insert(append ? flyout.Items.Count : 0, separator);
                     return separator;
                 }
             }
@@ -191,15 +191,15 @@ namespace Telegram.Common
             return null;
         }
 
-        public static MenuFlyoutSeparator CreateFlyoutSeparator(this MenuFlyoutSubItem flyout)
+        public static MenuFlyoutSeparator CreateFlyoutSeparator(this MenuFlyoutSubItem flyout, bool append = true)
         {
             if (flyout.Items.Count > 0)
             {
-                var previous = flyout.Items[^1];
+                var previous = flyout.Items[append ? ^1 : 0];
                 if (previous is not MenuFlyoutSeparator || previous is MenuFlyoutLabel)
                 {
                     var separator = new MenuFlyoutSeparator();
-                    flyout.Items.Add(separator);
+                    flyout.Items.Insert(append ? flyout.Items.Count : 0, separator);
                     return separator;
                 }
             }

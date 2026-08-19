@@ -13633,6 +13633,7 @@
 
     <string name="EphemeralMessageVisibleToYou">Only visible to you</string>
     <string name="EphemeralMessageVisibleToOther">Only visible to {0}</string>
+    <string name="EphemeralWelcomeMessageMenuHint">This version of the message is only visible to you.</string>
     <string name="EphemeralMessageMenuHint">Only you see this message. It will disappear after you log in again.</string>
 
     <string name="AttachArticle">Article</string>
@@ -13717,6 +13718,8 @@
     <string name="WelcomeMessageOff">Off</string>
     <string name="WelcomeMessagesLimit_one">Limit of **{0}** message reached.</string>
     <string name="WelcomeMessagesLimit_other">Limit of **{0}** messages reached.</string>
+    <string name="WelcomeMessageRevert">Revert</string>
+    <string name="WelcomeMessageRevertInfo">restores the message to\nits original content</string>
     <string name="EditAdminUserManageWelcomeMessages">Manage Welcome Messages</string>
     <string name="EventLogPromotedManageWelcomeMessages">Manage welcome messages</string>
     <string name="ActionJoinedFromCommunityUser">un2 joined the group via un1 community</string>

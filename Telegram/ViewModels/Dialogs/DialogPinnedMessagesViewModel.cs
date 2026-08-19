@@ -304,6 +304,19 @@ namespace Telegram.ViewModels
             }
         }
 
+        public void UpdateMessageEphemeralContent(long messageId, EphemeralMessageContent newContent)
+        {
+            if (_messages.TryGetValue(messageId, out var message))
+            {
+                message.EphemeralContent = newContent;
+
+                if (_visibleId == messageId)
+                {
+                    _viewModel.BeginOnUIThread(UpdateMessageContent);
+                }
+            }
+        }
+
         private void UpdateMessageContent()
         {
             // This invalidates the current visible message, otherwise it won't update

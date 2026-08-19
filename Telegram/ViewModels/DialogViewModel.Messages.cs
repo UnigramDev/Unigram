@@ -390,6 +390,20 @@ namespace Telegram.ViewModels
 
         #endregion
 
+        #region Revert
+
+        public void RevertMessage(MessageViewModel message)
+        {
+            if (message == null)
+            {
+                return;
+            }
+
+            ClientService.Send(new DeleteMessageEphemeralContent(message.ChatId, message.Id));
+        }
+
+        #endregion
+
         #region Delete
 
         public void DeleteMessage(MessageViewModel message)

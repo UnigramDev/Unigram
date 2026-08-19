@@ -6347,6 +6347,9 @@ Learn more at telegram.org</value>
   <data name="EphemeralMessageVisibleToYou" xml:space="preserve">
     <value>Only visible to you</value>
   </data>
+  <data name="EphemeralWelcomeMessageMenuHint" xml:space="preserve">
+    <value>This version of the message is only visible to you.</value>
+  </data>
   <data name="ErrorOccurred" xml:space="preserve">
     <value>An error occurred.</value>
   </data>
@@ -17306,6 +17309,13 @@ when they join</value>
   </data>
   <data name="WelcomeMessageOff" xml:space="preserve">
     <value>Off</value>
+  </data>
+  <data name="WelcomeMessageRevert" xml:space="preserve">
+    <value>Revert</value>
+  </data>
+  <data name="WelcomeMessageRevertInfo" xml:space="preserve">
+    <value>restores the message to
+its original content</value>
   </data>
   <data name="WelcomeMessagesLimit_one" xml:space="preserve">
     <value>Limit of **{0}** message reached.</value>

@@ -52,6 +52,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateDeleteMessages>(Handle)
                 .Subscribe<UpdateMessageContent>(Handle)
                 .Subscribe<UpdateMessageContentOpened>(Handle)
+                .Subscribe<UpdateMessageEphemeralContent>(Handle)
                 .Subscribe<UpdateMessageMentionRead>(Handle)
                 .Subscribe<UpdateMessageUnreadReactions>(Handle)
                 .Subscribe<UpdateMessageContainsUnreadPollVotes>(Handle)
@@ -1024,20 +1025,6 @@ namespace Telegram.ViewModels
                 });
 
                 PinnedMessages.UpdateMessageContent(update.MessageId, update.NewContent);
-
-                //BeginOnUIThread(() =>
-                //{
-                //    for (int i = 0; i < PinnedMessages.Count; i++)
-                //    {
-                //        if (PinnedMessages[i].Id == update.MessageId)
-                //        {
-                //            PinnedMessages[i].Content = update.NewContent;
-                //            Delegate?.UpdatePinnedMessage();
-
-                //            break;
-                //        }
-                //    }
-                //});
             }
         }
 
@@ -1066,6 +1053,41 @@ namespace Telegram.ViewModels
                     return true;
                 },
                 (bubble, message) => bubble.UpdateMessageContentOpened(message));
+            }
+        }
+
+        public void Handle(UpdateMessageEphemeralContent update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                Handle(update.MessageId, message =>
+                {
+                    message.Reset();
+                    message.EphemeralContent = update.EphemeralContent;
+
+                    if (IsTranslating)
+                    {
+                        _translateService.Translate(message, Settings.Translate.To);
+                    }
+
+                    ProcessEmoji(message);
+                }, (bubble, message, reply) =>
+                {
+                    if (reply)
+                    {
+                        bubble.UpdateMessageReply(message);
+                    }
+                    else
+                    {
+                        bubble.UpdateMessageContent(message);
+                        Delegate?.ViewVisibleMessages();
+                    }
+                }, (service, message) =>
+                {
+                    service.UpdateMessage(message);
+                });
+
+                PinnedMessages.UpdateMessageEphemeralContent(update.MessageId, update.EphemeralContent);
             }
         }
 

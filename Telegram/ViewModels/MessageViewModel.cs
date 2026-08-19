@@ -48,13 +48,13 @@ namespace Telegram.ViewModels
 
             if (processText)
             {
-                if (message.Content is MessageRichMessage richMessage)
+                if (Content is MessageRichMessage richMessage)
                 {
                     Text = TextStyleRun.GetText(richMessage.Message);
                 }
                 else
                 {
-                    SetText(message.Content?.GetCaption());
+                    SetText(Content?.GetCaption());
                 }
             }
         }
@@ -69,13 +69,13 @@ namespace Telegram.ViewModels
 
             if (processText)
             {
-                if (message.Content is MessageRichMessage richMessage)
+                if (Content is MessageRichMessage richMessage)
                 {
                     Text = TextStyleRun.GetText(richMessage.Message);
                 }
                 else
                 {
-                    SetText(message.Content?.GetCaption());
+                    SetText(Content?.GetCaption());
                 }
             }
         }
@@ -166,9 +166,7 @@ namespace Telegram.ViewModels
 
         public void Replace(Message message)
         {
-            Content = message.Content;
-            EphemeralContent = message.EphemeralContent;
-            ReplyMarkup = message.ReplyMarkup;
+            Content = ApplyEphemeralContent(message);
             MediaAlbumId = message.MediaAlbumId;
             InteractionInfo = message.InteractionInfo;
             AuthorSignature = message.AuthorSignature;
@@ -190,10 +188,8 @@ namespace Telegram.ViewModels
             IsPaidStarSuggestedPost = message.IsPaidStarSuggestedPost;
             IsPaidGramSuggestedPost = message.IsPaidGramSuggestedPost;
             SuggestedPostInfo = message.SuggestedPostInfo;
-            CanBeSaved = message.CanBeSaved;
             IsOutgoing = message.IsOutgoing;
             IsPinned = message.IsPinned;
-            HasTimestampedMedia = message.HasTimestampedMedia;
             SchedulingState = message.SchedulingState;
             SendingState = message.SendingState;
             ChatId = message.ChatId;
@@ -213,8 +209,9 @@ namespace Telegram.ViewModels
 
         public void Replace(MessageViewModel message)
         {
+            _ephemeral = message._ephemeral;
+
             Content = message.Content;
-            EphemeralContent = message.EphemeralContent;
             ReplyMarkup = message.ReplyMarkup;
             MediaAlbumId = message.MediaAlbumId;
             InteractionInfo = message.InteractionInfo;
@@ -472,10 +469,8 @@ namespace Telegram.ViewModels
         {
             _clientService = clientService;
             _chat = chat ?? clientService.GetChat(message.ChatId);
-            _content = message.Content;
+            _content = ApplyEphemeralContent(message);
 
-            EphemeralContent = message.EphemeralContent;
-            ReplyMarkup = message.ReplyMarkup;
             MediaAlbumId = message.MediaAlbumId;
             InteractionInfo = message.InteractionInfo;
             AuthorSignature = message.AuthorSignature;
@@ -497,10 +492,8 @@ namespace Telegram.ViewModels
             IsPaidStarSuggestedPost = message.IsPaidStarSuggestedPost;
             IsPaidGramSuggestedPost = message.IsPaidGramSuggestedPost;
             SuggestedPostInfo = message.SuggestedPostInfo;
-            CanBeSaved = message.CanBeSaved;
             IsOutgoing = message.IsOutgoing;
             IsPinned = message.IsPinned;
-            HasTimestampedMedia = message.HasTimestampedMedia;
             SchedulingState = message.SchedulingState;
             SendingState = message.SendingState;
             ChatId = message.ChatId;
@@ -599,7 +592,95 @@ namespace Telegram.ViewModels
         public RestrictionInfo RestrictionInfo { get; protected set; }
         public double AutoDeleteIn { get; protected set; }
         public string SummaryLanguageCode { get; protected set; }
-        public EphemeralMessageContent EphemeralContent { get; set; }
+        
+        /// <summary>
+        /// What an ephemeral content hides. TDLib requires its content to be shown in place of the
+        /// message's own, so <see cref="Content"/> and the three properties beside it carry the
+        /// ephemeral values while one is applied and every reader gets the right thing without
+        /// asking for it. This holds what deleteMessageEphemeralContent reverts to, and stays null
+        /// - one reference, no allocation - for the messages that have no ephemeral content.
+        /// </summary>
+        protected sealed class EphemeralOverlay
+        {
+            public EphemeralMessageContent Ephemeral;
+            public MessageContent Content;
+            public ReplyMarkup ReplyMarkup;
+            public bool CanBeSaved;
+            public bool HasTimestampedMedia;
+        }
+
+        protected EphemeralOverlay _ephemeral;
+
+        public EphemeralMessageContent EphemeralContent
+        {
+            get => _ephemeral?.Ephemeral;
+            set => SetEphemeralContent(value);
+        }
+
+        /// <summary>
+        /// Splits a message into what has to be shown and what an ephemeral content hides, and
+        /// returns the content to show. The caller assigns it, so that reading a message costs one
+        /// assignment whether or not it carries an ephemeral content.
+        /// </summary>
+        protected MessageContent ApplyEphemeralContent(Message message)
+        {
+            var ephemeral = message.EphemeralContent;
+
+            _ephemeral = ephemeral == null ? null : new EphemeralOverlay
+            {
+                Ephemeral = ephemeral,
+                Content = message.Content,
+                ReplyMarkup = message.ReplyMarkup,
+                CanBeSaved = message.CanBeSaved,
+                HasTimestampedMedia = message.HasTimestampedMedia
+            };
+
+            ReplyMarkup = ephemeral?.ReplyMarkup ?? message.ReplyMarkup;
+            CanBeSaved = ephemeral?.CanBeSaved ?? message.CanBeSaved;
+            HasTimestampedMedia = ephemeral?.HasTimestampedMedia ?? message.HasTimestampedMedia;
+
+            return ephemeral?.Content ?? message.Content;
+        }
+
+        /// <summary>
+        /// Applies an ephemeral content over a message already read, or removes the applied one
+        /// when null: updateMessageEphemeralContent, and the revert that deletes it. Reading a
+        /// whole message goes through <see cref="ApplyEphemeralContent"/> instead, which also
+        /// drops the overlay the message replaces.
+        /// </summary>
+        private void SetEphemeralContent(EphemeralMessageContent value)
+        {
+            if (value == null)
+            {
+                if (_ephemeral == null)
+                {
+                    return;
+                }
+
+                Content = _ephemeral.Content;
+                ReplyMarkup = _ephemeral.ReplyMarkup;
+                CanBeSaved = _ephemeral.CanBeSaved;
+                HasTimestampedMedia = _ephemeral.HasTimestampedMedia;
+
+                _ephemeral = null;
+                return;
+            }
+
+            _ephemeral ??= new EphemeralOverlay
+            {
+                Content = _content,
+                ReplyMarkup = ReplyMarkup,
+                CanBeSaved = CanBeSaved,
+                HasTimestampedMedia = HasTimestampedMedia
+            };
+
+            _ephemeral.Ephemeral = value;
+
+            Content = value.Content;
+            ReplyMarkup = value.ReplyMarkup;
+            CanBeSaved = value.CanBeSaved;
+            HasTimestampedMedia = value.HasTimestampedMedia;
+        }
 
         public MessageEffect Effect { get; set; }
 
@@ -663,7 +744,10 @@ namespace Telegram.ViewModels
         // TODO: Get rid of this
         public Message Get()
         {
-            return new Message(Id, SenderId, ReceiverId, ChatId, SendingState, SchedulingState, IsOutgoing, IsPinned, IsFromOffline, CanBeSaved, HasTimestampedMedia, IsChannelPost, IsPaidStarSuggestedPost, IsPaidGramSuggestedPost, ContainsUnreadMention, ContainsUnreadPollVotes, Date, EditDate, ForwardInfo, ImportInfo, InteractionInfo, UnreadReactions, FactCheck, SuggestedPostInfo, ReplyTo, TopicId, SelfDestructType, SelfDestructIn, AutoDeleteIn, ViaBotUserId, GuestBotCallerId, SenderBusinessBotUserId, SenderBoostCount, SenderTag, PaidMessageStarCount, AuthorSignature, MediaAlbumId, EffectId, RestrictionInfo, SummaryLanguageCode, Content, EphemeralContent, ReplyMarkup);
+            // TODO: triple check ephemeral content
+
+            var overlay = _ephemeral;
+            return new Message(Id, SenderId, ReceiverId, ChatId, SendingState, SchedulingState, IsOutgoing, IsPinned, IsFromOffline, overlay?.CanBeSaved ?? CanBeSaved, overlay?.HasTimestampedMedia ?? HasTimestampedMedia, IsChannelPost, IsPaidStarSuggestedPost, IsPaidGramSuggestedPost, ContainsUnreadMention, ContainsUnreadPollVotes, Date, EditDate, ForwardInfo, ImportInfo, InteractionInfo, UnreadReactions, FactCheck, SuggestedPostInfo, ReplyTo, TopicId, SelfDestructType, SelfDestructIn, AutoDeleteIn, ViaBotUserId, GuestBotCallerId, SenderBusinessBotUserId, SenderBoostCount, SenderTag, PaidMessageStarCount, AuthorSignature, MediaAlbumId, EffectId, RestrictionInfo, SummaryLanguageCode, overlay?.Content ?? Content, EphemeralContent, overlay?.ReplyMarkup ?? ReplyMarkup);
         }
 
         public virtual bool CanBeAddedToDownloads

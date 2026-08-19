@@ -65,6 +65,7 @@ namespace Telegram.Controls.Media
         public const string ArrowDownLeft16 = "\uE928";
         public const string ArrowUpRight16 = "\uE9B7";
 
+        public const string ArrowReset = "\uEA09";
         public const string ArrowSync = "\uE981";
 
         public const string TicketDiagonal = "\uEA9D";

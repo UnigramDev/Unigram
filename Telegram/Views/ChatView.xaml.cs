@@ -3588,56 +3588,59 @@ namespace Telegram.Views
                     }
                 }
 
-                if (ViewModel.Type != DialogType.WelcomeMessages && message.ReceiverId != null && flyout.Items.Count > 0)
+                string messageInfo = null;
+                var messageInfoAsFooter = true;
+
+                if (ViewModel.Type != DialogType.WelcomeMessages && message.EphemeralContent != null)
                 {
+                    messageInfo = Strings.EphemeralWelcomeMessageMenuHint;
+                    messageInfoAsFooter = false;
+
                     flyout.CreateFlyoutSeparator();
-                    flyout.Items.Add(new MenuFlyoutLabel
-                    {
-                        Padding = new Thickness(12, 4, 12, 4),
-                        MaxWidth = 178,
-                        Text = Strings.EphemeralMessageMenuHint
-                    });
+
+                    // TODO: WelcomeMessageRevertInfo
+                    flyout.CreateFlyoutItem(ViewModel.RevertMessage, message, Strings.WelcomeMessageRevert, Icons.ArrowReset, destructive: true);
                 }
-                else if (message.CanBeSaved is false && message.Chat.HasProtectedContent && flyout.Items.Count > 0)
+                else if (ViewModel.Type != DialogType.WelcomeMessages && message.ReceiverId != null)
                 {
-                    string hasProtectedContent;
+                    messageInfo = Strings.EphemeralMessageMenuHint;
+                }
+                else if (message.CanBeSaved is false && message.Chat.HasProtectedContent)
+                {
                     if (message.IsChannelPost)
                     {
-                        hasProtectedContent = Strings.ForwardsRestrictedInfoChannel;
+                        messageInfo = Strings.ForwardsRestrictedInfoChannel;
                     }
                     else if (properties.HasProtectedContentByCurrentUser)
                     {
-                        hasProtectedContent = Strings.ForwardsRestrictedInfoUserBecauseYou;
+                        messageInfo = Strings.ForwardsRestrictedInfoUserBecauseYou;
                     }
                     else if (properties.HasProtectedContentByOtherUser)
                     {
-                        hasProtectedContent = string.Format(Strings.ForwardsRestrictedInfoUserBecauseUser, message.Chat.Title);
+                        messageInfo = string.Format(Strings.ForwardsRestrictedInfoUserBecauseUser, message.Chat.Title);
                     }
                     else if (message.Chat.Type is ChatTypePrivate)
                     {
-                        hasProtectedContent = Strings.ForwardsRestrictedInfoBot;
+                        messageInfo = Strings.ForwardsRestrictedInfoBot;
                     }
                     else
                     {
-                        hasProtectedContent = Strings.ForwardsRestrictedInfoGroup;
+                        messageInfo = Strings.ForwardsRestrictedInfoGroup;
                     }
-
-                    flyout.CreateFlyoutSeparator();
-                    flyout.Items.Add(new MenuFlyoutLabel
-                    {
-                        Padding = new Thickness(12, 4, 12, 4),
-                        MaxWidth = 178,
-                        Text = hasProtectedContent
-                    });
                 }
-                else if (message.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed && flyout.Items.Count > 0)
+                else if (message.SchedulingState is MessageSchedulingStateSendWhenVideoProcessed)
                 {
-                    flyout.CreateFlyoutSeparator();
-                    flyout.Items.Add(new MenuFlyoutLabel
+                    messageInfo = Strings.VideoConversionInfo;
+                }
+
+                if (messageInfo != null && flyout.Items.Count > 0)
+                {
+                    flyout.CreateFlyoutSeparator(messageInfoAsFooter);
+                    flyout.Items.Insert(messageInfoAsFooter ? flyout.Items.Count : 0, new MenuFlyoutLabel
                     {
                         Padding = new Thickness(12, 4, 12, 4),
                         MaxWidth = 178,
-                        Text = Strings.VideoConversionInfo
+                        Text = messageInfo
                     });
                 }
             }
