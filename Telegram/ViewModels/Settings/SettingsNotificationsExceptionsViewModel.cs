@@ -54,6 +54,7 @@ namespace Telegram.ViewModels.Settings
                 RaisePropertyChanged(nameof(Scope));
                 RaisePropertyChanged(nameof(Items));
 
+                Children.Clear();
                 Children.Add(Scope);
             }
 
