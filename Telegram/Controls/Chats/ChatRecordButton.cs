@@ -355,11 +355,14 @@ namespace Telegram.Controls.Chats
                     return;
                 }
 
+                _pressed = true;
                 ClickMode = ClickMode.Release;
 
                 var restricted = await ViewModel.VerifyRightsAsync(x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.GlobalAttachMediaRestricted, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted);
-                if (restricted)
+                if (restricted || !_pressed)
                 {
+                    // Let go while the rights were being checked, so there is no press left to
+                    // begin a recording for.
                     return;
                 }
 
@@ -417,6 +420,7 @@ namespace Telegram.Controls.Chats
 
         private void OnRelease()
         {
+            _pressed = false;
             ClickMode = ClickMode.Press;
 
             if (_session.IsLocked)
@@ -468,6 +472,9 @@ namespace Telegram.Controls.Chats
         private bool _pointerEntered;
         private bool _pointerReleased;
 
+        // The pointer is still down. Only meaningful across the rights check, which is awaited
+        // between the press and the recording.
+        private bool _pressed;
 
         public event EventHandler RecordingStarting;
         public event EventHandler<MediaCapture> RecordingStarted;
