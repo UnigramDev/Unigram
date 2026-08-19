@@ -216,9 +216,6 @@ namespace Telegram.Controls.Chats
 
         private async void StartRecording()
         {
-            _calledRecordRunnable = true;
-            _recordAudioVideoRunnableStarted = false;
-
             // Inherited from the permission check this replaced, which found consent status
             // always Unspecified on Xbox and gave up asking. Unverified against AppCapability,
             // and cheaper to keep than to be wrong about.
@@ -372,8 +369,6 @@ namespace Telegram.Controls.Chats
                 {
                     Logger.Debug("Can record videos, start timer to allow switch");
 
-                    _calledRecordRunnable = false;
-                    _recordAudioVideoRunnableStarted = true;
                     _timer.Start();
                 }
                 else
@@ -393,7 +388,7 @@ namespace Telegram.Controls.Chats
         /// </summary>
         public void Complete()
         {
-            if (_session.IsLocked && (!_hasRecordVideo || _calledRecordRunnable))
+            if (_session.IsLocked)
             {
                 Logger.Debug("Completing a locked recording");
                 _session.Complete();
@@ -429,7 +424,7 @@ namespace Telegram.Controls.Chats
                 Logger.Debug("Recording is locked, abort");
                 return;
             }
-            if (_recordAudioVideoRunnableStarted && _timer.IsEnabled)
+            if (_timer.IsEnabled)
             {
                 Logger.Debug("Timer should still tick, change mode to: " + (Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video));
 
@@ -438,7 +433,7 @@ namespace Telegram.Controls.Chats
 
                 ShowHoldHint();
             }
-            else if (!_hasRecordVideo || _calledRecordRunnable)
+            else
             {
                 Logger.Debug("Timer has tick, stopping recording");
                 _session.Complete();
@@ -473,8 +468,6 @@ namespace Telegram.Controls.Chats
         private bool _pointerEntered;
         private bool _pointerReleased;
 
-        private bool _calledRecordRunnable;
-        private bool _recordAudioVideoRunnableStarted;
 
         public event EventHandler RecordingStarting;
         public event EventHandler<MediaCapture> RecordingStarted;
