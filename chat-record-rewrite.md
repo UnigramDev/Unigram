@@ -315,7 +315,7 @@ read-and-reasoned only. The two things most worth watching on first run: whether
 acquisition really delivers every frame through `TryAcquireLatestFrame`, and which path the log
 says it took.
 
-## Task 3 — Permissions and start-up — **3.2 still open**
+## Task 3 — Permissions and start-up
 
 - [x] **3.1** Replace `CheckAccessAsync`/`CheckDeviceAccessAsync` (:534–613) with
   `MediaDevicePermissions.CheckAccessAsync`, so the first press after granting actually records.
@@ -324,15 +324,32 @@ says it took.
   weight. Cheaper to keep than to be wrong about, and it is three lines with a comment saying so.*
   `MediaDevicePermissions` grew a `MediaDevicePurpose`, so the denial keeps the recording wording
   (`PermissionNoAudio`) instead of borrowing the call one.
-- [ ] **3.2** Start the engine on press and discard on an early release, instead of waiting 300 ms
-  to learn whether it was a hold. The mode-switch tap then cancels a session that already began
-  warming the device, and the felt latency drops by the whole timer plus init.
+- [x] **3.2** ~~Start the engine on press and discard on an early release, instead of waiting 300 ms
+  to learn whether it was a hold.~~ **Built, tested, and rejected — see below. Don't try it again.**
 - [x] **3.3** `MediaCapture.Failed` must fail the session and reset the UI (:843), not just log.
   It now cancels the recording and raises `RecordingFailed`, so unplugging the microphone ends the
   recording instead of leaving the bar up forever.
 - [x] **3.4** Give `RecordingTooShort` a consumer — a toast, matching the Android/desktop wording.
   *No new string: it shows `HoldToAudio`/`HoldToVideo`, the same hint the mode-switch tap shows,
   which is what Android says when a press is too short to be a recording.*
+
+**Why 3.2 can't be had.** The session grew a second phase — a `Start(commit: false)` that opened
+the device silently, a `Commit()` that made the recording exist, a `Cancel()` that threw the warm-up
+away — so that device init ran underneath the 300 ms timer instead of after it. It worked, and it
+is not worth having: every tap that switches mode opens a device the user never asked to use. That
+is not a detail the app gets to decide is harmless. Windows puts the app in the camera's and the
+microphone's recently-accessed list on the open, and hardware with a privacy LED lights it — so
+switching from video to voice turns the webcam on for a moment.
+
+Nor is it a flicker that could be tuned away. `Cancel` goes onto the same single-slot queue as
+`Start`, so a release at 120 ms interrupts nothing: `InitializeAsync`, the frame reader and the
+file all finish first, and only then does the teardown run. The device is fully open and streaming
+before the cancel is even looked at.
+
+Warming only the microphone was considered and turned down for the same reason: an indicator that
+says a device is in use when it isn't is wrong whichever device it is. What survives the revert are
+the two things that never needed the warm-up — the flags the timer already answered for, and the
+press that carried on recording after being let go mid-check.
 
 ## Task 4 — Video
 
