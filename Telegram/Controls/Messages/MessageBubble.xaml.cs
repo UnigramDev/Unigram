@@ -262,7 +262,10 @@ namespace Telegram.Controls.Messages
             //ContentPanel.SizeChanged += OnSizeChanged;
             //Message.TextEntityClick += Message_TextEntityClick;
 
-            _layerVisual = CompositionDevice.GetElementLayerVisual(ContentPanel);
+            if (PowerSavingPolicy.AreMaterialsEnabled)
+            {
+                _layerVisual = CompositionDevice.GetElementLayerVisual(ContentPanel);
+            }
 
             // Forces ParentForTransform with LayerVisual
             ElementComposition.GetElementVisual(Media);
