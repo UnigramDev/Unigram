@@ -820,9 +820,9 @@ namespace Telegram.Views
                     //}
 
                     var head = TextArea.ActualSize.Y - 48;
-                    diff = owner.ActualSize.Y > 40
-                        ? owner.ActualSize.Y - head
-                        : owner.ActualSize.Y;
+                    diff = owner.ContentTemplateRoot.ActualSize.Y > 40
+                        ? owner.ContentTemplateRoot.ActualSize.Y - head
+                        : owner.ContentTemplateRoot.ActualSize.Y;
                 }
 
                 var outer = animateSendout ? 500 * 1 : 250;
