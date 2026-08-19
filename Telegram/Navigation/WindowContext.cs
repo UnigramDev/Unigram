@@ -377,7 +377,23 @@ namespace Telegram.Navigation
         {
             if (_content != null)
             {
+                // Focus has to leave the outgoing tree before it is detached. The focus manager goes
+                // on pointing at the element that went away, and every later GetFocusedElement then
+                // fails with E_FAIL - XAML's own included, from ContentDialog.ChangeVisualState and
+                // ListViewBase.FocusItem, where no try-catch of ours can reach. WindowControl is the
+                // one element that survives the swap, and it only accepts focus as a tab stop.
+                _content.IsTabStop = true;
+
+                if (!_content.Focus(FocusState.Programmatic))
+                {
+                    Logger.Warning("Focus did not leave the outgoing content");
+                }
+
                 _content.Content = content;
+
+                // Safe only here: clearing IsTabStop drops the focus it holds, and by now the tree
+                // that focus used to be in is already detached, so there is nothing left to dangle.
+                _content.IsTabStop = false;
             }
             else
             {
