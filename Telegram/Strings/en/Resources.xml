@@ -13746,4 +13746,9 @@
     <string name="CommunityServiceMessageBotYouRemoved">**You** removed this bot from the community</string>
     <string name="CommunityServiceMessageBotRemovedUnknown">This bot was removed from the community</string>
 
+    <string name="UnsupportedBlockMessage">Update Telegram to view this part of the message</string>
+    <string name="UnsupportedBlockTitle">Unsupported Block</string>
+    <string name="UnsupportedMessageMessage">Update Telegram to view this message</string>
+    <string name="UnsupportedMessageTitle">Unsupported Message</string>
+
 </resources>

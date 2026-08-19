@@ -16251,11 +16251,23 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UnsupportedAttachment" xml:space="preserve">
     <value>Unsupported attachment</value>
   </data>
+  <data name="UnsupportedBlockMessage" xml:space="preserve">
+    <value>Update Telegram to view this part of the message</value>
+  </data>
+  <data name="UnsupportedBlockTitle" xml:space="preserve">
+    <value>Unsupported Block</value>
+  </data>
   <data name="UnsupportedMedia" xml:space="preserve">
     <value>This message is not supported by your version of Telegram. Update the app to view: https://telegram.org/update</value>
   </data>
   <data name="UnsupportedMessage" xml:space="preserve">
     <value>This message is not supported by your version of Telegram. Update the app to view:</value>
+  </data>
+  <data name="UnsupportedMessageMessage" xml:space="preserve">
+    <value>Update Telegram to view this message</value>
+  </data>
+  <data name="UnsupportedMessageTitle" xml:space="preserve">
+    <value>Unsupported Message</value>
   </data>
   <data name="Unvote" xml:space="preserve">
     <value>Retract Vote</value>

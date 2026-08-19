@@ -37,10 +37,10 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <TextBlock Text="Unsupported message"
+            <TextBlock x:Name="Title"
                        FontWeight="SemiBold"
                        Foreground="#FFFFFF" />
-            <TextBlock Text="Update Telegram to view this message"
+            <TextBlock x:Name="Subtitle"
                        FontSize="12"
                        Foreground="#AAFFFFFF"
                        Grid.Row="1" />

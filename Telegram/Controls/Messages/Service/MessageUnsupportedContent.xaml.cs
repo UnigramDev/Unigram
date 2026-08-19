@@ -20,8 +20,20 @@ namespace Telegram.Controls.Messages.Service
     public sealed partial class MessageUnsupportedContent : MessageService
     {
         public MessageUnsupportedContent()
+            : this(false)
+        {
+        }
+
+        /// <param name="block">
+        /// A pageBlockUnsupported inside a rich message, rather than an unsupported message: the
+        /// rest of the message did render, so the prompt says so.
+        /// </param>
+        public MessageUnsupportedContent(bool block)
         {
             InitializeComponent();
+
+            Title.Text = block ? Strings.UnsupportedBlockTitle : Strings.UnsupportedMessageTitle;
+            Subtitle.Text = block ? Strings.UnsupportedBlockMessage : Strings.UnsupportedMessageMessage;
         }
 
         protected override void UpdateContent(MessageViewModel message)

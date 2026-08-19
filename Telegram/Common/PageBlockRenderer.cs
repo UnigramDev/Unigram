@@ -12,6 +12,7 @@ using System.Linq;
 using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages.Content;
+using Telegram.Controls.Messages.Service;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -145,7 +146,9 @@ namespace Telegram.Common
                 PageBlockAudio audio => ProcessAudio(clientService, audio),
                 PageBlockVoiceNote voiceNote => ProcessVoiceNote(clientService, voiceNote),
                 PageBlockMathematicalExpression math => ProcessMath(clientService, math),
-                _ => ProcessUnsupported(clientService, block),
+                // pageBlockUnsupported, or a block this renderer doesn't handle: either way
+                // the build is too old to show it.
+                _ => ProcessUnsupported(clientService),
             };
         }
 
@@ -818,9 +821,14 @@ namespace Telegram.Common
             return textBlock;
         }
 
-        private FrameworkElement ProcessUnsupported(IClientService clientService, PageBlock block)
+        private FrameworkElement ProcessUnsupported(IClientService clientService)
         {
-            return new TextBlock { Text = block.ToString() };
+            // The prompt needs a message only to reach the client service: without one it
+            // can't tell a sideloaded build (cloud update) from a Store one.
+            var content = new MessageUnsupportedContent(true);
+            content.UpdateMessage(CreateMessage(clientService, new MessageUnsupported()));
+
+            return content;
         }
 
         private FrameworkElement ProcessPreformatted(IClientService clientService, PageBlockPreformatted block)
