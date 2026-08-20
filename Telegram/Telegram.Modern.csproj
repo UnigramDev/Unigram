@@ -95,12 +95,6 @@
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
 
-  <!-- App.xaml loads this through ms-appx:/// at runtime, so it ships as loose XAML rather than
-       compiled XBF. The modern default items would otherwise sweep it up as a Page. -->
-  <ItemGroup>
-    <Page Remove="Common\CommonStyles.xaml" />
-  </ItemGroup>
-
   <!--
     A separate identity, so this installs beside the .NET Native build instead of replacing it -
     different package family means a separate LocalState too, so the two do not share an account.
@@ -161,17 +155,26 @@
   <!--
     Content needs CopyToOutputDirectory here. The legacy UWP project system packaged Content
     implicitly; SDK-style does not, and without it the app starts, initialises TDLib, and then
-    dies on `Cannot locate resource from 'ms-appx:///Common/CommonStyles.xaml'` because nothing
-    under Assets\ or Common\ was ever laid down.
+    dies on `Cannot locate resource from 'ms-appx:///Assets/grammars.dat'` because nothing
+    under Assets\ was ever laid down.
 
-    Assets\** is auto-included by the MSIX tooling, so it is updated rather than included.
-
-    TODO: Assets\** is 360 files where Telegram.csproj lists 266 of them. Harmless while this is a
-    development build, wrong for a package; reconcile before anything ships.
+    Assets\** is auto-included by the MSIX tooling, so it is updated rather than included - and it
+    sweeps in files that are source rather than payload, hence the removals below. What survives
+    them is Telegram.csproj's list exactly, plus the ten high-contrast tile logos it never listed.
   -->
   <ItemGroup>
+    <!-- The LottieGen inputs under Icons\ and the C# they generate (compiled, never shipped), the
+         mockup art that only theme_preview_image.jpg is used from, the icon font's glyph map, and
+         the shader sources beside the compiled i420.bin. -->
+    <Content Remove="Assets\Icons\**" />
+    <Content Remove="Assets\Mockup\**" />
+    <Content Include="Assets\Mockup\theme_preview_image.jpg" />
+    <Content Remove="Assets\Fonts\Telegram.json" />
+    <Content Remove="Assets\i420.bat" />
+    <Content Remove="Assets\i420.fxlib" />
+    <Content Remove="Assets\i420.hlsl" />
+
     <Content Update="Assets\**\*.*" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="Common\CommonStyles.xaml" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Libraries\unigram-iv-editor\editor.html" Link="Assets\editor.html" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Libraries\libprisma\libprisma\grammars.dat" Link="Assets\grammars.dat" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Libraries\MicroTeX\res\fonts\**\*.ttf" Link="res\fonts\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
