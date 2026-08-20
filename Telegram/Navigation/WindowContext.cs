@@ -13,7 +13,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Chats;
 using Telegram.Native;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -34,7 +33,6 @@ using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 #if NET9_0_OR_GREATER
 using WinRT;
 #endif
@@ -374,85 +372,11 @@ namespace Telegram.Navigation
             }
         }
 
-        /// <summary>
-        /// Swaps the window's content, handing focus over rather than letting it fall away with the
-        /// outgoing tree.
-        /// </summary>
-        /// <remarks>
-        /// Focus has to leave the outgoing tree before it is detached, or the focus manager goes on
-        /// pointing at an element that is no longer in the tree, and XAML can never resolve a peer
-        /// for it again: every later GetFocusedElement fails with E_FAIL, including its own, from
-        /// ContentDialog.ChangeVisualState and ListViewBase.FocusItem where no try-catch of ours can
-        /// reach. WindowControl is the one element that survives the swap, and it only takes focus
-        /// as a tab stop.
-        ///
-        /// Both moves are awaited because <see cref="Control.Focus"/> answers before the pipeline
-        /// has run and reports success even when a LosingFocus handler cancels the move underneath
-        /// it - which is what the passcode field does. The tab stop is given up only once the
-        /// incoming tree has taken focus, since clearing it drops whatever the root is holding.
-        /// </remarks>
-        private async Task SetContentAsync(UIElement content)
-        {
-            if (_content == null)
-            {
-                SetContent(content);
-                return;
-            }
-
-            _content.IsTabStop = true;
-
-            if (!await TryFocusAsync(_content))
-            {
-                Logger.Warning("Focus did not leave the outgoing content");
-            }
-
-            _content.Content = content;
-
-            if (content is Control control)
-            {
-                await TryFocusAsync(control);
-            }
-
-            _content.IsTabStop = false;
-
-            ApplyContentMaterial(content);
-        }
-
-        private static async Task<bool> TryFocusAsync(DependencyObject element)
-        {
-            try
-            {
-                var result = await FocusManager.TryFocusAsync(element, FocusState.Programmatic);
-                return result.Succeeded;
-            }
-            catch
-            {
-                // Never worth stranding a caller mid-swap over: the content still has to change.
-                return false;
-            }
-        }
-
         private void SetContent(UIElement content)
         {
             if (_content != null)
             {
-                // Focus has to leave the outgoing tree before it is detached. The focus manager goes
-                // on pointing at the element that went away, and every later GetFocusedElement then
-                // fails with E_FAIL - XAML's own included, from ContentDialog.ChangeVisualState and
-                // ListViewBase.FocusItem, where no try-catch of ours can reach. WindowControl is the
-                // one element that survives the swap, and it only accepts focus as a tab stop.
-                _content.IsTabStop = true;
-
-                if (!_content.Focus(FocusState.Programmatic))
-                {
-                    Logger.Warning("Focus did not leave the outgoing content");
-                }
-
                 _content.Content = content;
-
-                // Safe only here: clearing IsTabStop drops the focus it holds, and by now the tree
-                // that focus used to be in is already detached, so there is nothing left to dangle.
-                _content.IsTabStop = false;
             }
             else
             {
@@ -470,11 +394,6 @@ namespace Telegram.Navigation
                 _window.Content = _content;
             }
 
-            ApplyContentMaterial(content);
-        }
-
-        private void ApplyContentMaterial(UIElement content)
-        {
             if (!_contentMaterial && content is RootPage or StandalonePage or TabbedPage or WebAppPage)
             {
                 _contentMaterial = true;
@@ -695,10 +614,7 @@ namespace Telegram.Navigation
         private UIElement _lockedContent;
         private PasscodePage _locked;
 
-        // Both await the content swap, so _locked is assigned before it rather than after: it is
-        // what the guards above read, and a Lock arriving while an Unlock is still in flight would
-        // otherwise see the state the swap has not finished leaving behind.
-        public async void Lock(bool biometrics)
+        public void Lock(bool biometrics)
         {
             if (_locked != null)
             {
@@ -716,10 +632,10 @@ namespace Telegram.Navigation
             _locked = new PasscodePage(this, biometrics && IsInMainView);
             _lockedContent = _content?.Content;
 
-            await SetContentAsync(_locked);
+            SetContent(_locked);
         }
 
-        public async void Unlock()
+        public void Unlock()
         {
             if (_locked == null)
             {
@@ -728,16 +644,19 @@ namespace Telegram.Navigation
 
             Logger.Info("Hiding passcode lock");
 
-            var content = _lockedContent;
+            SetContent(_lockedContent);
 
             _locked = null;
             _lockedContent = null;
 
-            await SetContentAsync(content);
-
             if (_content.Content is IPopupHost popupHost)
             {
                 popupHost.PopupClosed();
+            }
+
+            if (_content.Content is Control control)
+            {
+                control.Focus(FocusState.Programmatic);
             }
         }
 
