@@ -30,6 +30,13 @@
                               Content="Show Stickers Panel on Pointer Over"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                     
+                    <controls:SettingsButton Content="Deleted Message Effect">
+                        <controls:SettingsButton.Badge>
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.MessageDustOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.MessageDust, Mode=TwoWay}" />
+                        </controls:SettingsButton.Badge>
+                    </controls:SettingsButton>
+
                     <CheckBox IsChecked="{x:Bind ViewModel.LegacyScrollBars, Mode=TwoWay}"
                               Content="Legacy ScrollBar Style"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

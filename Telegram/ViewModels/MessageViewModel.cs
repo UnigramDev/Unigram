@@ -107,7 +107,11 @@ namespace Telegram.ViewModels
 
         public IMessageDelegate Delegate => _delegate.Target as IMessageDelegate;
 
-        public bool IsInitial { get; set; } = true;
+        /// <summary>
+        /// Whether this message arrived while the view was live, and so is worth animating in or
+        /// out. Everything loaded with the history is <see cref="MessageAnimationState.None"/>.
+        /// </summary>
+        public MessageAnimationState AnimationState { get; set; }
 
         public bool IsFirst { get; set; } = true;
         public bool IsLast { get; set; } = true;
@@ -770,5 +774,25 @@ namespace Telegram.ViewModels
         Loading,
         Deleted,
         Hidden
+    }
+
+    public enum MessageAnimationState
+    {
+        /// <summary>
+        /// Loaded with the history, or replaced in place: it appears without a transition.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// Arrived while the view was live.
+        /// </summary>
+        Added,
+
+        /// <summary>
+        /// Deleted, as opposed to merely leaving the collection — which also happens when the
+        /// history is trimmed, when a pending message is replaced by the sent one, and when the
+        /// view model is torn down. Only this one is worth a send-off.
+        /// </summary>
+        Removed
     }
 }

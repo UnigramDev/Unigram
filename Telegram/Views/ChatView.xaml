@@ -1048,6 +1048,10 @@
                             </Border>
                         </StackPanel>
                     </messages:MessageService>
+
+                    <!-- The message dust bursts, which outlive the rows they were cut from. -->
+                    <Border x:Name="DustHost"
+                            IsHitTestVisible="False" />
                 </Grid>
 
                 <chats:ChatHistoryArrows x:Name="Arrows"

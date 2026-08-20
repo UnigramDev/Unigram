@@ -6,6 +6,7 @@
 //
 
 using Telegram.Common;
+using Telegram.Composition;
 
 namespace Telegram.Services.Settings
 {
@@ -14,6 +15,15 @@ namespace Telegram.Services.Settings
         public DiagnosticsSettings()
             : base("Diagnostics")
         {
+        }
+
+        private int? _messageDust;
+        public MessageDustEffect MessageDust
+        {
+            // On by default where an update can be pushed out quickly if it misbehaves, off in the
+            // Store build until it has been through a few releases.
+            get => (MessageDustEffect)(_messageDust ??= GetValueOrDefault("MessageDust", (int)(ApiInfo.IsPackagedRelease ? MessageDustEffect.Layers : MessageDustEffect.Disabled)));
+            set => AddOrUpdateValue(ref _messageDust, "MessageDust", (int)value);
         }
 
         private bool? _legacyScrollBars;

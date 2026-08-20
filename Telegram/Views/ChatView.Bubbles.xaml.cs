@@ -1519,11 +1519,11 @@ namespace Telegram.Views
             var selector = sender as MessageSelector;
 
             var message = selector?.Message;
-            if (message == null || message.IsInitial)
+            if (message == null || message.AnimationState != MessageAnimationState.Added)
             {
                 if (message != null && e.PreviousSize.Width > 0 && e.PreviousSize.Height > 0)
                 {
-                    message.IsInitial = false;
+                    message.AnimationState = MessageAnimationState.Added;
                 }
                 else
                 {

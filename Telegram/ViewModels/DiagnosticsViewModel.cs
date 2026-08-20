@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -214,6 +215,33 @@ namespace Telegram.ViewModels
             3,
             4,
             5,
+        };
+
+        public int MessageDust
+        {
+            get => Array.IndexOf(_messageDustIndexer, Settings.Diagnostics.MessageDust);
+            set
+            {
+                if (value >= 0 && value < _messageDustIndexer.Length && Settings.Diagnostics.MessageDust != _messageDustIndexer[value])
+                {
+                    Settings.Diagnostics.MessageDust = _messageDustIndexer[value];
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private readonly MessageDustEffect[] _messageDustIndexer = new[]
+        {
+            MessageDustEffect.Disabled,
+            MessageDustEffect.Particles,
+            MessageDustEffect.Layers,
+        };
+
+        public List<SettingsOptionItem<MessageDustEffect>> MessageDustOptions { get; } = new()
+        {
+            new SettingsOptionItem<MessageDustEffect>(MessageDustEffect.Disabled, nameof(MessageDustEffect.Disabled)),
+            new SettingsOptionItem<MessageDustEffect>(MessageDustEffect.Particles, nameof(MessageDustEffect.Particles)),
+            new SettingsOptionItem<MessageDustEffect>(MessageDustEffect.Layers, nameof(MessageDustEffect.Layers)),
         };
 
         public List<SettingsOptionItem<int>> VerbosityOptions { get; } = new()

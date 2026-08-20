@@ -738,7 +738,7 @@ namespace Telegram.ViewModels
             {
                 var message = CreateMessage(update.Message);
                 message.GeneratedContentUnread = true;
-                message.IsInitial = false;
+                message.AnimationState = MessageAnimationState.Added;
 
                 BeginOnUIThread(() =>
                 {
@@ -801,7 +801,7 @@ namespace Telegram.ViewModels
                 var content = update.Content;
                 var message = CreateMessage(new Message(long.MaxValue, new MessageSenderUser(user.Id), null, update.ChatId, null, null, false, false, false, false, false, false, false, false, false, false, DateTime.Now.ToTimestamp(), 0, null, null, null, null, null, null, null, topicId, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, content, null, null));
                 message.GeneratedContentUnread = true;
-                message.IsInitial = false;
+                message.AnimationState = MessageAnimationState.Added;
 
                 BeginOnUIThread(() =>
                 {
@@ -849,7 +849,7 @@ namespace Telegram.ViewModels
                 Handle(long.MaxValue, message =>
                 {
                     message.Replace(completed);
-                    message.IsInitial = true;
+                    message.AnimationState = MessageAnimationState.None;
                     message.GeneratedContentUnread = true;
 
                     if (message.Content is MessagePaidMedia paidMedia)
@@ -917,6 +917,8 @@ namespace Telegram.ViewModels
 
                                         _groupedMessages.TryRemove(message.MediaAlbumId, out _);
 
+                                        message.AnimationState = MessageAnimationState.Removed;
+
                                         toBeDeleted ??= new();
                                         toBeDeleted.Add(message);
                                     }
@@ -939,6 +941,8 @@ namespace Telegram.ViewModels
 
                         if (table.Contains(message.Id))
                         {
+                            message.AnimationState = MessageAnimationState.Removed;
+
                             toBeDeleted ??= new();
                             toBeDeleted.Add(message);
                         }
@@ -1226,7 +1230,7 @@ namespace Telegram.ViewModels
                 Handle(update.OldMessageId, message =>
                 {
                     message.Replace(update.Message);
-                    message.IsInitial = true;
+                    message.AnimationState = MessageAnimationState.None;
                     message.GeneratedContentUnread = true;
 
                     if (message.Content is MessagePaidMedia paidMedia)
@@ -1262,7 +1266,7 @@ namespace Telegram.ViewModels
                 Handle(update.OldMessageId, message =>
                 {
                     message.Replace(update.Message);
-                    message.IsInitial = true;
+                    message.AnimationState = MessageAnimationState.None;
                     message.GeneratedContentUnread = true;
 
                     if (message.Content is MessagePaidMedia paidMedia)

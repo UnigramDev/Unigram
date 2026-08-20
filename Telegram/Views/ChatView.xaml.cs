@@ -8,6 +8,7 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -19,6 +20,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Common.Chats;
+using Telegram.Composition;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Chats;
@@ -74,7 +76,7 @@ namespace Telegram.Views
         double HeaderHeight { get; set; }
     }
 
-    public sealed partial class ChatView : UserControlEx, INavigablePage, ISearchablePage, IDialogDelegate, IAutomationNameProvider
+    public sealed partial class ChatView : UserControlEx, INavigablePage, ISearchablePage, IDialogDelegate, IAutomationNameProvider, ISynchronizedListDelegate<MessageViewModel>
     {
         private DialogViewModel _viewModel;
         public DialogViewModel ViewModel => _viewModel ??= DataContext as DialogViewModel;
@@ -167,6 +169,13 @@ namespace Telegram.Views
 
             Messages.Delegate = this;
             Messages.ItemsSource = _messages;
+            _messages.Delegate = this;
+
+            // Built with the view rather than with the first deletion: the layers effect encodes its
+            // masks asynchronously, and creating it on the deletion it is meant to animate means the
+            // first one plays nothing.
+            _dustEffect = SettingsService.Current.Diagnostics.MessageDust;
+            _dust = CompositionDustVisual.Create(_dustEffect, DustHost);
             Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
             InitializeStickers();
@@ -432,6 +441,14 @@ namespace Telegram.Views
 
         public void Deactivate(bool navigation)
         {
+            // Not a frame: whatever the list still owes is applied now, and whatever was captured
+            // for it is dropped. A burst still in the air would otherwise play over the next chat.
+            _messages.Flush();
+            _dust?.Stop();
+
+            // Ranges measured against rows this view is about to stop showing.
+            _messagesShift.Clear();
+
             if (ViewModel != null)
             {
                 ViewModel.Dispose();
@@ -476,6 +493,173 @@ namespace Telegram.Views
         private readonly BidirectionalIncrementalLoader _loader;
         private readonly SynchronizedList<MessageViewModel> _messages = new();
         private readonly IndexShiftTracker _messagesShift = new();
+
+        #region Message dust
+
+        private readonly Dictionary<long, DustAnchor> _dustAnchors = new();
+
+        private CompositionDustVisual _dust;
+        private MessageDustEffect _dustEffect;
+
+        /// <summary>
+        /// Raised while the row is still realized, which is the only moment a snapshot can be taken:
+        /// the surface captures at the commit that follows, and by the next layout pass the
+        /// container is gone. Returning true is what makes the list hold the removal for a frame.
+        /// </summary>
+        public bool Capturing(MessageViewModel message)
+        {
+            // Rows leave the collection for all sorts of reasons: the history being trimmed, a
+            // pending message being replaced by the sent one, the view being torn down. Only a
+            // deletion gets a send-off.
+            if (message.AnimationState != MessageAnimationState.Removed || !IsLoaded)
+            {
+                return false;
+            }
+
+            var effect = SettingsService.Current.Diagnostics.MessageDust;
+            if (effect == MessageDustEffect.Disabled || !PowerSavingPolicy.AreMaterialsEnabled)
+            {
+                return false;
+            }
+
+            if (!_messageIdToSelector.TryGetValue(message.Id, out ChatHistoryViewItem selector)
+                || selector.ContentTemplateRoot is not MessageSelector { Content: MessageBubble bubble })
+            {
+                return false;
+            }
+
+            var size = bubble.ActualSize;
+            if (size.X < 1 || size.Y < 1)
+            {
+                return false;
+            }
+
+            var point = bubble.TransformToVisual(DustHost).TransformPoint(new Point());
+            var origin = new Vector2((float)point.X, (float)point.Y);
+
+            // Realized but scrolled out of sight: the snapshot would cost a realization of the
+            // bubble for a burst nobody can see.
+            if (origin.Y + size.Y < 0 || origin.Y > DustHost.ActualSize.Y)
+            {
+                return false;
+            }
+
+            if (_dust == null || _dustEffect != effect)
+            {
+                _dust = CompositionDustVisual.Create(effect, DustHost);
+                _dustEffect = effect;
+            }
+
+            if (_dust != null && _dust.Capture(message.Id, bubble))
+            {
+                _dustAnchors[message.Id] = new DustAnchor(origin, size, Messages.ScrollingHost?.VerticalOffset ?? 0);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Raised once the list has caught up, a frame later at the earliest, so the history may
+        /// have scrolled since the snapshot was taken and the burst has to be placed where the
+        /// bubble ended up rather than where it was.
+        /// </summary>
+        public void Captured(IList<MessageViewModel> items)
+        {
+            var scrolled = Messages.ScrollingHost?.VerticalOffset ?? 0;
+
+            foreach (var message in items)
+            {
+                if (!_dustAnchors.TryGetValue(message.Id, out DustAnchor anchor))
+                {
+                    continue;
+                }
+
+                _dustAnchors.Remove(message.Id);
+
+                var origin = new Vector2(anchor.Origin.X, anchor.Origin.Y + (float)(anchor.Offset - scrolled));
+                if (origin.Y + anchor.Size.Y < 0 || origin.Y > DustHost.ActualSize.Y)
+                {
+                    continue;
+                }
+
+                // Outgoing bubbles blow off the right edge, incoming off the left.
+                _dust?.Play(message.Id, origin, message.IsVisuallyOutgoing is false);
+            }
+        }
+
+        public void Discard()
+        {
+            _dustAnchors.Clear();
+            _dust?.Clear();
+        }
+
+        /// <summary>
+        /// Raised just before the list is told, whether that is now or a frame from now, so the
+        /// scroll compensation lines up with the pass the rows actually reflow on.
+        /// </summary>
+        public void Inserting(int index, IList items)
+        {
+            _messagesShift.RegisterInsert(index);
+        }
+
+        public void Removing(int index, IList items)
+        {
+            if (Messages.ItemsPanelRoot is not ItemsStackPanel panel)
+            {
+                return;
+            }
+
+            if (panel.FirstCacheIndex < index && panel.LastCacheIndex >= index)
+            {
+                var message = items[0] as MessageViewModel;
+
+                var translated = _messagesShift.Translate(index);
+                if (translated >= panel.FirstVisibleIndex && translated <= panel.LastVisibleIndex && _messageIdToSelector.TryGetValue(message.Id, out ChatHistoryViewItem selector))
+                {
+                    var direction = panel.ItemsUpdatingScrollMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
+                    var edge = (translated == panel.LastVisibleIndex && direction == 1) || (translated == panel.FirstVisibleIndex && direction == -1);
+
+                    var first = message.Delegate.IsSavedMessagesTab ? message.IsLast : message.IsFirst;
+                    var last = message.Delegate.IsSavedMessagesTab ? message.IsFirst : message.IsLast;
+
+                    var height = first && !last ? selector.ActualSize.Y - 6 : selector.ActualSize.Y;
+
+                    _messagesShift.RegisterRemove(translated, index, height, edge && !Messages.ScrollingHost.ViewportContains(selector));
+                }
+                else
+                {
+                    _messagesShift.RegisterRemove(index);
+                }
+            }
+            else
+            {
+                // Outside the realized range, so there is no row to measure, but it still shifts
+                // every index after it: whatever is pending no longer describes the rows it was
+                // measured against. This used to fall through to the else in OnCollectionChanged.
+                _messagesShift.Invalidate();
+            }
+        }
+
+        private readonly struct DustAnchor
+        {
+            public readonly Vector2 Origin;
+            public readonly Vector2 Size;
+
+            /// <summary>
+            /// Where the history was scrolled to when the snapshot was taken.
+            /// </summary>
+            public readonly double Offset;
+
+            public DustAnchor(Vector2 origin, Vector2 size, double offset)
+            {
+                Origin = origin;
+                Size = size;
+                Offset = offset;
+            }
+        }
+
+        #endregion
 
         private void OnInitialized(object sender, EventArgs e)
         {
@@ -713,35 +897,10 @@ namespace Telegram.Views
                 return;
             }
 
-            if (args.Action == NotifyCollectionChangedAction.Remove && panel.FirstCacheIndex < args.OldStartingIndex && panel.LastCacheIndex >= args.OldStartingIndex)
+            if (args.Action == NotifyCollectionChangedAction.Add)
             {
-                //UpdateDeleteMessages(args.OldItems[0] as MessageViewModel);
-                var message = args.OldItems[0] as MessageViewModel;
-
-                var index = _messagesShift.Translate(args.OldStartingIndex);
-                if (index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex && _messageIdToSelector.TryGetValue(message.Id, out ChatHistoryViewItem selector))
-                {
-                    var direction = panel.ItemsUpdatingScrollMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
-                    var edge = (index == panel.LastVisibleIndex && direction == 1) || (index == panel.FirstVisibleIndex && direction == -1);
-
-                    var first = message.Delegate.IsSavedMessagesTab ? message.IsLast : message.IsFirst;
-                    var last = message.Delegate.IsSavedMessagesTab ? message.IsFirst : message.IsLast;
-
-                    var height = first && !last ? selector.ActualSize.Y - 6 : selector.ActualSize.Y;
-
-                    _messagesShift.RegisterRemove(index, args.OldStartingIndex, height, edge && !Messages.ScrollingHost.ViewportContains(selector));
-                }
-                else
-                {
-                    _messagesShift.RegisterRemove(args.OldStartingIndex);
-                }
-            }
-            else if (args.Action == NotifyCollectionChangedAction.Add)
-            {
-                _messagesShift.RegisterInsert(args.NewStartingIndex);
-
                 var message = args.NewItems[0] as MessageViewModel;
-                if (message.IsInitial)
+                if (message.AnimationState != MessageAnimationState.Added)
                 {
                     return;
                 }
@@ -926,7 +1085,7 @@ namespace Telegram.Views
                     _backgroundControl?.UpdateBackground();
                 }
             }
-            else
+            else if (args.Action != NotifyCollectionChangedAction.Remove)
             {
                 _messagesShift.Invalidate();
             }

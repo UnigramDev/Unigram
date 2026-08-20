@@ -574,6 +574,9 @@
     <Compile Include="Composition\CompositionBlobVisual.cs" />
     <Compile Include="Composition\CompositionCurveVisual.cs" />
     <Compile Include="Composition\CompositionVSync.cs" />
+    <Compile Include="Composition\CompositionDustVisual.cs" />
+    <Compile Include="Composition\CompositionDustParticles.cs" />
+    <Compile Include="Composition\CompositionDustLayers.cs" />
     <Compile Include="Composition\Extensions.cs" />
     <Compile Include="Common\Interop.cs" />
     <Compile Include="Controls\Cells\ChatBoostFeaturesCell.xaml.cs">
