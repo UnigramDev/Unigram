@@ -1,0 +1,3 @@
+[bindings.csharp]
+cdylib_name = "wallet_engine"
+namespace = "WalletEngine"
