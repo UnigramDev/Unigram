@@ -479,7 +479,7 @@ namespace Telegram.Services
         private static bool? _swipeToShare;
         public bool SwipeToShare
         {
-            get => _swipeToShare ??= GetValueOrDefault(_local, "SwipeToShare", true);
+            get => _swipeToShare ??= GetValueOrDefault(_local, "SwipeToShare", false);
             set => AddOrUpdateValue(ref _swipeToShare, _local, "SwipeToShare", value);
         }
 
