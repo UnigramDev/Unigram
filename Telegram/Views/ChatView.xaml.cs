@@ -516,8 +516,13 @@ namespace Telegram.Views
                 return false;
             }
 
+            // Both, because the burst is both: a pile of composition work, which materials cover
+            // through AreEffectsFast, and motion, which transitions cover through the system's
+            // animation switch. Turning either off should take the effect with it.
             var effect = SettingsService.Current.Diagnostics.MessageDust;
-            if (effect == MessageDustEffect.Disabled || !PowerSavingPolicy.AreMaterialsEnabled)
+            if (effect == MessageDustEffect.Disabled
+                || !PowerSavingPolicy.AreMaterialsEnabled
+                || !PowerSavingPolicy.AreSmoothTransitionsEnabled)
             {
                 return false;
             }
