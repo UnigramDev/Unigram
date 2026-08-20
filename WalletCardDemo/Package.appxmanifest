@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+         IgnorableNamespaces="uap mp">
+
+  <Identity Name="6c1a0e52-9b3d-4c77-a0f2-51b9e2c4a311"
+            Publisher="CN=Fela"
+            Version="1.0.0.0" />
+
+  <mp:PhoneIdentity PhoneProductId="6c1a0e52-9b3d-4c77-a0f2-51b9e2c4a311"
+                    PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+
+  <Properties>
+    <DisplayName>Wallet Card Demo</DisplayName>
+    <PublisherDisplayName>Fela</PublisherDisplayName>
+    <Logo>Assets\Logos\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.18362.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-US" />
+  </Resources>
+
+  <Applications>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="WalletCardDemo.App">
+      <uap:VisualElements DisplayName="Wallet Card Demo"
+                          Square150x150Logo="Assets\Logos\Square150x150Logo.png"
+                          Square44x44Logo="Assets\Logos\Square44x44Logo.png"
+                          Description="Wallet card rendering test bed"
+                          BackgroundColor="#090A0E">
+        <uap:SplashScreen Image="Assets\Logos\SplashScreen.png" BackgroundColor="#090A0E" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient" />
+  </Capabilities>
+</Package>
