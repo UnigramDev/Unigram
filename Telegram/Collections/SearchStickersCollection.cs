@@ -85,6 +85,10 @@ namespace Telegram.Collections
                         }
                     }
                 }
+                else
+                {
+                    _hasMore = false;
+                }
 
                 return new LoadMoreItemsResult { Count = count };
             });
