@@ -136,6 +136,8 @@ namespace Telegram.Common
                 emoji = emoji.Replace(modifier, string.Empty);
             }
 
+            // Two-tone sequences spell the emoji out as two people joined by a symbol,
+            // which is nothing like the precomposed form the raw list holds.
             // TODO: should them rather be added to raw emojis?
             emoji = emoji switch
             {
@@ -143,8 +145,12 @@ namespace Telegram.Common
                 "\U0001F469\u200D\U0001F91D\u200D\U0001F468" => "\U0001F46B",
                 "\U0001F469\u200D\U0001F91D\u200D\U0001F469" => "\U0001F46D",
                 "\U0001F468\u200D\U0001F91D\u200D\U0001F468" => "\U0001F46C",
-                "\U0001F9D1\u200D\u2764\uFE0F\u200D\U0001F9D1" => "\U0001F491",
-                "\U0001F9D1\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F9D1" => "\U0001F48F",
+                "\U0001F469\u200D\U0001F430\u200D\U0001F469" => "\U0001F46F",
+                "\U0001F9D1\u200D\U0001F430\u200D\U0001F9D1" => "\U0001F46F",
+                "\U0001F468\u200D\U0001F430\u200D\U0001F468" => "\U0001F46F",
+                "\U0001F469\u200D\U0001FAEF\u200D\U0001F469" => "\U0001F93C",
+                "\U0001F9D1\u200D\U0001FAEF\u200D\U0001F9D1" => "\U0001F93C",
+                "\U0001F468\u200D\U0001FAEF\u200D\U0001F468" => "\U0001F93C",
                 _ => emoji
             };
 

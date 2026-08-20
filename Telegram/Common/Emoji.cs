@@ -168,8 +168,10 @@ namespace Telegram.Common
                 "\U0001F46B" => tone1 != tone2 ? "\U0001F469{0}\u200D\U0001F91D\u200D\U0001F468{1}" : Emoji + "{0}",
                 "\U0001F46D" => tone1 != tone2 ? "\U0001F469{0}\u200D\U0001F91D\u200D\U0001F469{1}" : Emoji + "{0}",
                 "\U0001F46C" => tone1 != tone2 ? "\U0001F468{0}\u200D\U0001F91D\u200D\U0001F468{1}" : Emoji + "{0}",
-                "\U0001F9D1\u200D\u2764\uFE0F\u200D\U0001F9D1" => tone1 != tone2 ? "\U0001F9D1{0}\u200D\u2764\uFE0F\u200D\U0001F9D1{1}" : "\U0001F491{0}",
-                "\U0001F9D1\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F9D1" => tone1 != tone2 ? "\U0001F9D1{0}\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F9D1{1}" : "\U0001F48F{0}",
+                // The precomposed couples left the emoji list with Unicode 17.0, so even for
+                // a single tone the neutral ones are spelled out like the gendered ones.
+                "\U0001F9D1\u200D\u2764\uFE0F\u200D\U0001F9D1" => "\U0001F9D1{0}\u200D\u2764\uFE0F\u200D\U0001F9D1{1}",
+                "\U0001F9D1\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F9D1" => "\U0001F9D1{0}\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F9D1{1}",
                 "\U0001F93C\u200D\u2640\uFE0F" => tone1 != tone2 ? "\U0001F469{0}\u200D\U0001FAEF\u200D\U0001F469{1}" : Emoji.Insert(2, "{0}"),
                 "\U0001F93C" => tone1 != tone2 ? "\U0001F9D1{0}\u200D\U0001FAEF\u200D\U0001F9D1{1}" : Emoji + "{0}",
                 "\U0001F93C\u200D\u2642\uFE0F" => tone1 != tone2 ? "\U0001F468{0}\u200D\U0001FAEF\u200D\U0001F468{1}" : Emoji.Insert(2, "{0}"),
@@ -407,11 +409,45 @@ namespace Telegram.Common
 
         public static void Assert()
         {
-            var stringify = string.Join(string.Empty, _rawEmojis);
+            var emojis = new List<string>(_rawEmojis);
+
+            // Skin tones are built here the way the flyout builds them, so that a sequence
+            // the picker can produce but RemoveModifiers can't fold back is caught.
+            foreach (var emoji in EmojiGroupInternal._skinEmojis)
+            {
+                var both = EmojiGroupInternal._doubleSkinEmojis.Contains(emoji);
+
+                for (var tone1 = EmojiSkinTone.Fitz12; tone1 <= EmojiSkinTone.Fitz6; tone1++)
+                {
+                    if (both)
+                    {
+                        for (var tone2 = EmojiSkinTone.Fitz12; tone2 <= EmojiSkinTone.Fitz6; tone2++)
+                        {
+                            emojis.Add(new EmojiSkinData(emoji, tone1, tone2).Value);
+                        }
+                    }
+                    else
+                    {
+                        emojis.Add(new EmojiSkinData(emoji, tone1).Value);
+                    }
+                }
+            }
+
+            var stringify = string.Join(string.Empty, emojis);
             var success = TryCountEmojis(stringify, out int count);
 
             Debug.Assert(success);
-            Debug.Assert(count == _rawEmojis.Count);
+            Debug.Assert(count == emojis.Count);
+
+            // The composer walks backwards from the caret, so each one has to come back
+            // whole that way too. Not over the joined string: a run of flags is ambiguous
+            // read right to left, and the list is one such run.
+            foreach (var emoji in emojis)
+            {
+                var last = EnumerateByComposedCharacterSequenceReverse(emoji).FirstOrDefault();
+
+                Debug.Assert(last != null && ContainsSingleEmoji(last), emoji);
+            }
         }
 
         public static IEnumerable<string> EnumerateByComposedCharacterSequence(string text)
@@ -505,9 +541,12 @@ namespace Telegram.Common
             {
                 if (i > 0 && (char.IsSurrogatePair(text, i - 1) || IsKeyCapCharacter(text, i - 1) || IsModifierCharacter(text, i - 1)))
                 {
-                    // skin modifier for emoji diversity acts as a joiner
-                    var skin = IsSkinModifierCharacter(text, i - i);
-                    if (!joiner && !skin)
+                    // skin modifier for emoji diversity acts as a joiner. Going backwards
+                    // it is met before the emoji it belongs to, so unlike the forward pass
+                    // it can't suppress the split: it has to arm the joiner for the next
+                    // iteration instead, or two toned emoji in a row are read as one.
+                    var skin = IsSkinModifierCharacter(text, i - 1);
+                    if (!joiner)
                     {
                         yield return last;
                         last = string.Empty;
@@ -519,7 +558,7 @@ namespace Telegram.Common
                         last = text[i - 1] + last;
                     }
 
-                    joiner = last.Length == 2 && IsRegionalIndicator(text, i - 3);
+                    joiner = skin || (last.Length == 2 && IsRegionalIndicator(text, i - 3));
                     joiner = joiner || IsTagIndicator(text, i - 3) || IsTagIndicator(text, i - 1);
                     i--;
                 }

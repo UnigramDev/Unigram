@@ -25,6 +25,11 @@ namespace Telegram.Common
     {
         private static readonly HashSet<char> _symbols = new() { ':', '#', '@', '/' };
 
+        // Longest sequence the emoji list can produce is a two-tone kiss, at 15 chars.
+        // Cutting the lookbehind shorter breaks the trailing emoji apart and no sticker
+        // is ever suggested for it.
+        private const int LongestEmoji = 16;
+
         public static AutocompleteEntity Search(ITextRange text, out string result, out int index)
         {
             TrySearch(text, out AutocompleteEntity entity, out result, out index);
@@ -124,13 +129,13 @@ namespace Telegram.Common
 
             if (entity == AutocompleteEntity.None)
             {
-                text.SetRange(end - hidden - 11, end - hidden);
+                text.SetRange(end - hidden - LongestEmoji, end - hidden);
                 text.GetText(TextGetOptions.NoHidden, out string shorter);
 
                 //var shorter = text;
-                if (shorter.Length > 11)
+                if (shorter.Length > LongestEmoji)
                 {
-                    shorter = shorter.Substring(shorter.Length - 11);
+                    shorter = shorter.Substring(shorter.Length - LongestEmoji);
                 }
 
                 var emoji = Emoji.EnumerateByComposedCharacterSequenceReverse(shorter);
