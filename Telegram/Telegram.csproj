@@ -2245,6 +2245,12 @@
     </Compile>
     <Compile Include="Common\VisualUtilities.Tilt.cs" />
     <Compile Include="Services\Wallet\Generated\wallet_engine.cs" />
+    <Compile Include="Services\Wallet\IProtectedSecretStore.cs" />
+    <Compile Include="Services\Wallet\IWalletJournal.cs" />
+    <Compile Include="Services\Wallet\WalletHttpHost.cs" />
+    <Compile Include="Services\Wallet\WalletPlatformHost.cs" />
+    <Compile Include="Services\Wallet\WalletJournalStore.cs" />
+    <Compile Include="Services\Wallet\WalletSecretStore.cs" />
     <Compile Include="Views\Users\UserEditPage.xaml.cs">
       <DependentUpon>UserEditPage.xaml</DependentUpon>
     </Compile>
