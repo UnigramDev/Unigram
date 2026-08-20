@@ -1232,6 +1232,8 @@
     <Compile Include="ViewModels\Supergroups\SupergroupReactionsViewModel.cs" />
     <Compile Include="ViewModels\Users\UserAffiliateViewModel.cs" />
     <Compile Include="ViewModels\Users\UserEditViewModel.cs" />
+    <Compile Include="ViewModels\Wallet\WalletBackupViewModel.cs" />
+    <Compile Include="ViewModels\Wallet\WalletViewModel.cs" />
     <Compile Include="Views\Authorization\AuthorizationCodePage.xaml.cs">
       <DependentUpon>AuthorizationCodePage.xaml</DependentUpon>
     </Compile>
@@ -1750,6 +1752,21 @@
     </Compile>
     <Compile Include="Views\Users\UserAffiliatePage.xaml.cs">
       <DependentUpon>UserAffiliatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletSharePopup.xaml.cs">
+      <DependentUpon>WalletSharePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletTestPopup.xaml.cs">
+      <DependentUpon>WalletTestPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\Popups\WalletImportPopup.xaml.cs">
+      <DependentUpon>WalletImportPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\WalletBackupPage.xaml.cs">
+      <DependentUpon>WalletBackupPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Wallet\WalletPage.xaml.cs">
+      <DependentUpon>WalletPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Host\WebAppWindow.xaml.cs">
       <DependentUpon>WebAppWindow.xaml</DependentUpon>
@@ -2571,6 +2588,8 @@
       <Link>res\fonts\maths\optional\dsrom10.ttf</Link>
     </Content>
     <Content Include="Assets\Ton\wordlist_en.txt" />
+    <Content Include="Assets\Animations\WalletImport.tgs" />
+    <Content Include="Assets\Animations\WalletTest.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -4212,6 +4231,26 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Users\UserAffiliatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletSharePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletTestPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Wallet\Popups\WalletImportPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Wallet\WalletBackupPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Wallet\WalletPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

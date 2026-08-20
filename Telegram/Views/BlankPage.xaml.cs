@@ -5,10 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Wallet;
 using Telegram.Td.Api;
 using Telegram.Views.Authorization;
+using Telegram.Views.Wallet;
+using Telegram.Views.Wallet.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -52,6 +57,37 @@ namespace Telegram.Views
                 var forDarkTheme = Frame.ActualTheme == ElementTheme.Dark;
                 var background = _clientService.GetDefaultBackground(forDarkTheme);
                 _aggregator.Publish(new UpdateDefaultBackground(forDarkTheme, background));
+            }
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var main = this.GetParent<MainPage>();
+            var wallet = main.ViewModel.NavigationService.Session.Resolve<IWalletService>();
+
+            var state = await wallet.RestoreAsync();
+
+            if (WindowContext.KeyModifiers(Windows.System.VirtualKeyModifiers.Shift))
+            {
+                await wallet.DeleteAsync();
+                state = wallet.State;
+            }
+
+            if (state.HasWallet)
+            {
+                main.ViewModel.NavigationService.Navigate(typeof(WalletPage));
+            }
+            else if (WindowContext.KeyModifiers(Windows.System.VirtualKeyModifiers.Control))
+            {
+                // Ctrl creates a fresh wallet rather than importing one. The recovery phrase is not
+                // shown here - RevealRecoveryPhraseAsync can produce it - so this is a developer
+                // affordance, not the eventual create flow.
+                var mnemonic = await wallet.CreateAsync();
+                main.ViewModel.NavigationService.Navigate(typeof(WalletPage));
+            }
+            else
+            {
+                main.ViewModel.NavigationService.ShowPopup(new WalletImportPopup(wallet, main.ViewModel.NavigationService));
             }
         }
     }

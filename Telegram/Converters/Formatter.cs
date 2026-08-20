@@ -7,6 +7,7 @@
 
 using System;
 using System.Globalization;
+using System.Numerics;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Services;
@@ -30,6 +31,61 @@ namespace Telegram.Converters
 
         //    Languages = languages;
         //}
+
+        /// <summary>Nanotons per TON: the amount is an exact integer of these.</summary>
+        private const int TonDecimals = 9;
+
+        /// <summary>
+        /// Splits an amount into the part before the decimal separator and the part
+        /// from the separator onwards, both in the app's language — "1,344" + ".02"
+        /// in en, "1.344" + ",02" in it. Kept apart so the two can be drawn at
+        /// different sizes, which is the only reason to want them separately.
+        ///
+        /// The split is done on the nanotons, never on a double or a decimal: the
+        /// amount is an exact integer and it stays one, so nothing can drift in the
+        /// last digits of a balance.
+        /// </summary>
+        /// <param name="decimals">
+        /// Fractional digits to keep, up to the 9 a TON has. Fixed rather than
+        /// trimmed — a balance that switches between "1,344" and "1,344.02" as it
+        /// changes jitters in the layout.
+        /// </param>
+        public static (string Integer, string Fraction) TonBalance(BigInteger nanograms, int decimals = 2)
+        {
+            var culture = LocaleService.Current.CurrentCulture;
+            var format = culture.NumberFormat;
+
+            var nanotons = nanograms;
+            var negative = nanotons.Sign < 0;
+
+            if (negative)
+            {
+                nanotons = -nanotons;
+            }
+
+            var whole = BigInteger.DivRem(nanotons, BigInteger.Pow(10, TonDecimals), out var rest);
+
+            var integer = whole.ToString("N0", culture);
+            if (negative)
+            {
+                // The sign is applied here rather than left to "N0", which would
+                // otherwise use the culture's negative pattern — parentheses in a
+                // few of them, which reads as an accounting figure, not a balance.
+                integer = format.NegativeSign + integer;
+            }
+
+            decimals = Math.Min(Math.Max(decimals, 0), TonDecimals);
+            if (decimals == 0)
+            {
+                return (integer, string.Empty);
+            }
+
+            // Truncated, not rounded. Rounding up would show a balance the user does
+            // not have, and they would find out when a transfer of it fails.
+            var digits = rest.ToString(CultureInfo.InvariantCulture).PadLeft(TonDecimals, '0');
+
+            return (integer, format.NumberDecimalSeparator + digits.Substring(0, decimals));
+        }
 
         public static string UtcTimeOffset(int value)
         {

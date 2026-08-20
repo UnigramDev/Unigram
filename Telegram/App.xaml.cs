@@ -26,6 +26,7 @@ using Telegram.ViewModels.Settings.Privacy;
 using Telegram.ViewModels.Stars;
 using Telegram.ViewModels.Supergroups;
 using Telegram.ViewModels.Users;
+using Telegram.ViewModels.Wallet;
 using Telegram.Views;
 using Telegram.Views.Authorization;
 using Telegram.Views.Business;
@@ -46,6 +47,7 @@ using Telegram.Views.Stories.Popups;
 using Telegram.Views.Supergroups;
 using Telegram.Views.Supergroups.Popups;
 using Telegram.Views.Users;
+using Telegram.Views.Wallet;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
@@ -449,6 +451,9 @@ namespace Telegram
                 BusinessChatLinksPage businessChatLinksPage => session.Resolve<BusinessChatLinksViewModel, IBusinessChatLinksDelegate>(businessChatLinksPage),
 
                 RevenuePage => session.Resolve<RevenueViewModel>(),
+
+                WalletPage => session.Resolve<WalletViewModel>(),
+                WalletBackupPage => session.Resolve<WalletBackupViewModel>(),
 
                 PaymentFormPage => session.Resolve<PaymentFormViewModel>(),
                 MessageStatisticsPage => session.Resolve<MessageStatisticsViewModel>(),
