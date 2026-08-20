@@ -446,6 +446,34 @@ sixty-second stop the app is already holding a finished recording that has not b
 - [ ] **7.3** Decide when a draft is discarded: sending it, the delete button, and whatever the
   official apps do when a second recording is started in the same chat.
 
+## Task 8 — Playing a paused recording back
+
+Pause a recording in the official apps and you can listen to it before deciding whether to send it.
+Unigram pauses and draws the waveform, but there is nothing to press — the only way to hear a
+recording is to send it and then play the message. 4.6 and Task 7 both end with the app holding a
+recording nobody has heard, which is what makes this worth having.
+
+- [ ] **8.1** Settle what actually gets played, which is the whole of the problem. Neither file is
+  finished at the pause: on the streaming path `ChatRecordEngine.PauseAsync` only stops feeding the
+  sink — frames keep arriving and are dropped, `VoiceSink` keeps `OpusOutput` open, and the ogg
+  stream on disk has no final page. On the fallback path the mp4 or wav is not a file until
+  `FinalizeAsync`. So either the encoded audio is kept as it is written and played from memory —
+  sixty seconds of Opus at 48 kbps is about 360 KB, which for voice is nothing — or the recording is
+  finalised at the pause and resuming opens a second segment to be joined at send. The first is
+  cheap for voice and hopeless for video; the second is the other way round.
+- [ ] **8.2** Do the recording that cannot be resumed first. 4.6 creates exactly that case: at sixty
+  seconds capture is over, so the file can simply be finalised and played from disk with none of
+  8.1's difficulty. A pause the user can resume from is the harder problem and deserves to be
+  treated as one, not folded in.
+- [ ] **8.3** Decide who plays it. `PlaybackService` is the shared player, owns the playlist and the
+  system transport controls, and has just been paused by the session in order to record — handing it
+  something that is not a message yet fits badly. A private `MediaPlayer` living as long as the bar
+  avoids all of it. The progress and scrub surface is a waveform that is already drawn, and the sent
+  voice note already has a control that does this; check whether it can be reused before rebuilding
+  it.
+- [ ] **8.4** Video: the preview has to show the clip instead of the camera. Cheap once 4.4 owns the
+  preview surface, awkward while it is a `CaptureElement` bound to `MediaCapture`.
+
 ---
 
 ## Decisions for you
