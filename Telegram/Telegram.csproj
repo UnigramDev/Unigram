@@ -2249,8 +2249,11 @@
     <Compile Include="Services\Wallet\IWalletJournal.cs" />
     <Compile Include="Services\Wallet\WalletHttpHost.cs" />
     <Compile Include="Services\Wallet\WalletPlatformHost.cs" />
+    <Compile Include="Services\Wallet\IWalletService.cs" />
     <Compile Include="Services\Wallet\WalletJournalStore.cs" />
     <Compile Include="Services\Wallet\WalletSecretStore.cs" />
+    <Compile Include="Services\Wallet\WalletService.cs" />
+    <Compile Include="Services\Wallet\WalletState.cs" />
     <Compile Include="Views\Users\UserEditPage.xaml.cs">
       <DependentUpon>UserEditPage.xaml</DependentUpon>
     </Compile>
@@ -2567,6 +2570,7 @@
     <Content Include="..\Libraries\MicroTeX\res\fonts\maths\optional\dsrom10.ttf">
       <Link>res\fonts\maths\optional\dsrom10.ttf</Link>
     </Content>
+    <Content Include="Assets\Ton\wordlist_en.txt" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />

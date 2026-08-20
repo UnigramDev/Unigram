@@ -56,6 +56,7 @@ namespace Telegram.Services
             typeof(Telegram.Services.ITranslateService), typeof(Telegram.Services.TranslateService),
             typeof(Telegram.Services.IProfilePhotoService), typeof(Telegram.Services.ProfilePhotoService),
             typeof(Telegram.Services.ITextRecognitionService), typeof(Telegram.Services.TextRecognitionService),
+            typeof(Telegram.Services.Wallet.IWalletService), typeof(Telegram.Services.Wallet.WalletService),
         },
         Instances = new Type[]
         {
@@ -195,6 +196,8 @@ namespace Telegram.Services
             typeof(Telegram.ViewModels.Business.BusinessIntroViewModel),
             typeof(Telegram.ViewModels.Business.BusinessChatLinksViewModel),
             typeof(Telegram.ViewModels.RevenueViewModel),
+            typeof(Telegram.ViewModels.Wallet.WalletViewModel),
+            typeof(Telegram.ViewModels.Wallet.WalletBackupViewModel),
         })]
     public partial class SessionImpl
     {
