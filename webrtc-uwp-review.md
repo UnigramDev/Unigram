@@ -62,8 +62,9 @@ the reported crash stacks were read closely.
 ## modules/video_coding/codecs/h264/win/encoder/h264_encoder_mf_impl.{h,cc} (119 + 705)
 
 Reviewed so far: header, ctor/dtor, `HeightToEncode`, `InitEncode` entry, `FromVideoFrame`,
-`ReleaseWriter`, the `_sampleAttributeQueue` call sites. Rate control, `InitWriter`,
-`ReconfigureSinkWriter` body and `OnH264Encoded`'s tail still to do.
+`ReleaseWriter`, the `_sampleAttributeQueue` call sites, and — since #78/#79/#92 — rate
+control (`SetRates`), `InitWriter` in full and the `ReconfigureSinkWriter` body.
+`OnH264Encoded`'s tail is the last part still to read closely.
 
 | # | Line | Sev | Finding | Status |
 |---|------|-----|---------|--------|
@@ -72,7 +73,7 @@ Reviewed so far: header, ctor/dtor, `HeightToEncode`, `InitEncode` entry, `FromV
 | 14 | .cc 366–376 | B | The attribute push is inside `if (SUCCEEDED(hr))` while the sample is returned regardless, so a failure at `SetSampleDuration` produces a sample with no queue entry — its later `pop` misses and `OnH264Encoded` discards the encoded frame. Same root as #13. | open |
 | 15 | .h 79–98 | B | `max_bitrate_`, `width_`, `height_`, `frame_rate_`, `target_bps_`, `max_qp_`, `mode_`, `frame_dropping_on_`, `key_frame_interval_`, `next_frame_rate_`, `next_target_bps_` have no initialiser, unlike their neighbours which use `{}`. Anything reading them before `InitEncode` completes reads indeterminate values. | fixed aa109157 |
 | 16 | .h 22 | C | `#include "H264_media_sink.h"` — the file is `h264_media_sink.h`. Compiles only because Windows filesystems are case-insensitive. | open |
-| 17 | .cc 70–73 | C | The constructor captures `MFStartup`'s HRESULT into `hr` and then discards it; the encoder proceeds as if Media Foundation had started. | open |
+| 17 | .cc 70–73 | C | The constructor captures `MFStartup`'s HRESULT into `hr` and then discards it; the encoder proceeds as if Media Foundation had started. See #91 — the consequence is worse than this row assumed. | fixed ca88e9db |
 | 18 | .cc 539 | **A** | `for (uint32_t i = 0; i < sendBuffer.size() - 5; ++i)` — `size()` is unsigned, so any sample of 1..4 bytes makes `size() - 5` wrap to ~2^64 and the NAL scan walks off the end of the heap buffer. `curLength == 0` is handled immediately above (with a "Got empty sample." warning, so degenerate samples do occur in practice), but 1..4 is not. This is an out-of-bounds read in the encoder output path and a candidate for the `VoipException: ACCESS_VIOLATION` groups. Suggested: `if (sendBuffer.size() > 5)` around the scan, or iterate with `size_t` and compare `i + 5 < size()`. | fixed d8725a66 |
 | 19 | .cc 521–524 | C | The comment "sendBuffer is not copied here" is wrong — `EncodedImageBuffer::Create(data, size)` allocates and copies. Harmless today, but the comment describes a contract under which `sendBuffer` going out of scope would leave `encodedImage` dangling. | open |
 | 20 | .cc 251 / 478 / 590 | B | `framePendingCount_` is incremented under `crit_` (478), decremented under `callbackCrit_` (590) and reset under `crit_` (251). Two different mutexes guarding one non-atomic int is a data race. | fixed c345d2a0 |
@@ -101,9 +102,9 @@ Reviewed so far: header, ctor/dtor, `HeightToEncode`, `InitEncode` entry, `FromV
 |---|------|-----|---------|--------|
 | 30 | .cc 478–481 | **A** | `OnDispatchWorkItem` does `spState.As(&pOp);` then `pOp->GetOp(&op);` with both HRESULTs discarded. A failed QI leaves `pOp` null and the very next line dereferences it. Third instance of this exact pattern (see #1, #24). | fixed ad748131 |
 | 31 | .cc 480 | B | `StreamOperation op;` is uninitialised and `GetOp`'s result is unchecked, so a failure leaves the following `switch` dispatching on an indeterminate value. | fixed ad748131 |
-| 32 | .cc 196–199 | B | `ProcessSample` pushes onto `sampleQueue_` and *then* calls `QueueAsyncOperation`. If queueing the work item fails, the sample is already in the list with nothing scheduled to drain it — it stays until `Stop`/`Shutdown`. The error is returned to the caller but the queue is not unwound. Since draining is strictly one sample per work item, every such failure permanently adds an entry. | open |
+| 32 | .cc 196-199 | B | `ProcessSample` pushes onto `sampleQueue_` and *then* calls `QueueAsyncOperation`. If queueing the work item fails, the sample is already in the list with nothing scheduled to drain it — it stays until `Stop`/`Shutdown`. The error is returned to the caller but the queue is not unwound. Since draining is strictly one sample per work item, every such failure permanently adds an entry. | fixed 801b0136 |
 | 33 | .cc 445 vs 527/601 | B | `encodingCallback_` is written under `cbCritSec_` in `RegisterEncodingCallback` (601) and read under `cbCritSec_` in the dispatch (527), but cleared under `critSec_` in `Shutdown` (445). Two different locks guard one pointer, and the racing pair is exactly shutdown against an in-flight `OnH264Encoded`. `H264EncoderMFImpl::ReleaseWriter` carries a comment about avoiding lock inversion between shutdown and this callback, so the hazard was known; the callback pointer itself was missed. | fixed f37cbd57 |
-| 34 | .h 155 | B | `std::list<ComPtr<IUnknown>> sampleQueue_` has no bound. In steady state it is self-limiting (one push per work item, one pop per work item), so it is not the source of the multi-gigabyte growth being chased — these are encoded frames, not raw. It is unbounded only via #32. | open |
+| 34 | .h 155 | B | `std::list<ComPtr<IUnknown>> sampleQueue_` has no bound. In steady state it is self-limiting (one push per work item, one pop per work item), so it is not the source of the multi-gigabyte growth being chased — these are encoded frames, not raw. It is unbounded only via #32. | bounded by 32 (801b0136) |
 | 35 | .h 170 | C | Include guard `THIRD_PARTY_H264_WINUWP_H264ENCODER_H264STREAMSINK_H_`, same inconsistency as #28. | open |
 
 ---
@@ -212,8 +213,8 @@ bounds every conversion and handles `WideCharToMultiByte` failure.
 |---|------|-----|---------|--------|
 | 76 | enc .cc 651-698 | B | `ReconfigureSinkWriter` is documented "must be called under crit_ lock" and both call sites hold it, yet it calls `ReleaseWriter()` and `InitWriter()`, which each take `crit_` again. **Not a deadlock on this build:** `WEBRTC_WIN` without `WEBRTC_ABSL_MUTEX` selects `mutex_critical_section.h`, and `CRITICAL_SECTION` is re-entrant. It is a latent trap all the same — `webrtc::Mutex` is documented as non-recursive, and building with `WEBRTC_ABSL_MUTEX` (absl::Mutex actively detects re-entry) would deadlock the encoder on the first rate adaptation. | open |
 | 77 | enc .cc 694, 699 | B | `ReconfigureSinkWriter` discards `InitWriter()`'s return value and unconditionally returns `WEBRTC_VIDEO_CODEC_OK`, so a failed re-initialisation is invisible and leaves the encoder with no sink writer. The caller's `if (FAILED(res))` at line 432 is consequently dead code. | fixed e47cb123 |
-| 78 | enc .cc 616 | B | `SetRates` reads `sinkWriter_ == nullptr` before taking `crit_`, then acts on it after. `ReleaseWriter` resets that pointer under the lock, so the check can pass and the pointer be cleared before `ReconfigureSinkWriter` runs. | open |
-| 79 | enc .cc 226-233 | B | When `InitWriter` fails partway, `mediaSink_` and `sinkWriter_` keep whatever was created and `inited_` stays false. A later `InitWriter` calls `MakeAndInitialize<H264MediaSink>(&mediaSink_)` over the top without shutting the old sink down — the same shape as #3 in the capture module. | open |
+| 78 | enc .cc 616 | B | `SetRates` reads `sinkWriter_ == nullptr` before taking `crit_`, then acts on it after. `ReleaseWriter` resets that pointer under the lock, so the check can pass and the pointer be cleared before `ReconfigureSinkWriter` runs. | fixed 56d28264 |
+| 79 | enc .cc 226-233 | B | When `InitWriter` fails partway, `mediaSink_` and `sinkWriter_` keep whatever was created and `inited_` stays false. A later `InitWriter` calls `MakeAndInitialize<H264MediaSink>(&mediaSink_)` over the top without shutting the old sink down — the same shape as #3 in the capture module. | fixed 56d28264 |
 | 80 | enc .cc 231 | C | On failure `InitWriter` returns a raw `HRESULT` from a function whose contract is a `WEBRTC_VIDEO_CODEC_*` code, so the specific value is meaningless to callers (it is at least non-zero). | open |
 | 81 | fac .cc 63-70 | B | The factory advertises four H.264 variants including `packetization-mode=0`, but `CreateVideoEncoder` ignores `format` and always returns the same encoder, which hardcodes `NonInterleaved` (mode 1) in `OnH264Encoded`. A peer that negotiates mode 0 receives mode-1 packetisation. | open |
 | 82 | fac .cc 91-92 | C | `auto test = builtin_video_decoder_factory_->CreateVideoDecoder(format); return test;` — leftover temporary. | open |
@@ -231,11 +232,21 @@ before `InitWriter` reads them at 212, so that change cannot alter live behaviou
 | 83 | ss .cc 48 | B | `spSink_ = reinterpret_cast<IMFMediaSink*>(pParent)` — `H264MediaSink` inherits `IMediaExtension`, `FtmBase`, `IMFMediaSink` and `IMFClockStateSink`, and `reinterpret_cast` skips the base offset, so the pointer addressed the wrong vtable. `AddRef`/`Release` survived because `IUnknown` occupies slots 0-2 of every COM vtable, but `GetMediaSink` hands the pointer to Media Foundation. `static_cast` needs the definition, which the TU lacked — that is why the original could not use it. | fixed d5f0b742 |
 | 84 | vc .cc 714 | B | `MultiByteToWideChar(..., device_id_w, sizeof(device_id_w))` in `VideoCaptureWinRT::Init` — character count, not bytes; the twin of #67. The converted string is never read, so nothing depended on it. | fixed c4aecd94 |
 | 85 | ss .h 33-39 / .cc 413-420 | B | `ValidStateMatrix` is declared `[State_Count][Op_Count]` with `Op_Count == 5`, but every initialiser row lists only four entries, so the `OpPlaceMarker` column is silently zero-filled to `FALSE`. Harmless today because `PlaceMarker` is the one operation that never calls `ValidateOperation`; adding that call would reject every marker. | open |
-| 86 | dec .cc 336-355 | **A** | The NV12 to I420 conversion trusts the output buffer's size completely: it checks only `cur_length > 0`, then reads `src_data + buffer_width * buffer_height` for the UV plane and converts a full frame. A short sample is read out of bounds. Same shape as #18 in the encoder. The visible-area width/height taken from `MF_MT_MINIMUM_DISPLAY_APERTURE` are likewise not validated against the buffer dimensions. | open |
+| 86 | dec .cc 336-355 | **A** | The NV12 to I420 conversion trusts the output buffer's size completely: it checks only `cur_length > 0`, then reads `src_data + buffer_width * buffer_height` for the UV plane and converts a full frame. A short sample is read out of bounds. Same shape as #18 in the encoder. The visible-area width/height taken from `MF_MT_MINIMUM_DISPLAY_APERTURE` are likewise not validated against the buffer dimensions. | fixed 52c01a6f |
 | 87 | ss .cc 371-382 | B | `GetMajorType` reads `spCurrentType_` without holding `critSec_`, while every other method on the class takes it; `SetCurrentMediaType` replaces that pointer under the lock. | open |
 | 88 | vc .cc 705 | B | `SetDeviceUniqueId` uses throwing `new char[]`; with exceptions disabled an allocation failure terminates rather than returning an error. Same class as #49. | open |
 | 89 | ss .cc 27-33, 48 | B | The stream sink holds a strong reference to its parent (`spSink_`) while the parent holds one to it (`outputStream_`). The cycle is broken only by `H264StreamSink::Shutdown` resetting `spSink_`, so any path that drops the sinks without shutting down leaks both objects and the serial work queue with them. Relates to #23. | open |
 | 90 | ss .cc 335-343 | C | Nested `if (SUCCEEDED(hr))` inside a block already guarded by the same condition. | open |
+| 91 | enc .cc 75-79 / dec .cc 45-50 | **A** | `MFShutdown()` is called from both destructors even when the matching `MFStartup()` failed. The pair is refcounted per process, so one failed startup decrements a reference belonging to another encoder or decoder instance and tears Media Foundation down while it is still in use. Supersedes #17, which saw only the discarded HRESULT. | fixed ca88e9db |
+| 92 | enc .cc 246-267 | **A** | `ReleaseWriter` drops the `IMFSinkWriter` without calling `Finalize()`, leaving whatever the encoder MFT has queued running on the Media Foundation work queue — and the destructor calls `MFShutdown()` immediately after. A hardware MFT schedules its own work there, so the queued item can execute against a platform being torn down. | fixed 7aa5f862 |
+
+| 93 | libyuv `convert.h` / `convert_to_i420.cc`, vc impl .cc 213 | B | The patch forks libyuv to add `src_stride_y`, `src_uv` and `src_stride_uv` to `ConvertToI420`. It does not need to. Those three parameters are read in exactly two places — the `FOURCC_NV12` and `FOURCC_NV21` branches — and the fork's only caller, `VideoCaptureImpl::IncomingFrame`, always passes `crop_x = crop_y = 0`. Substituting that in, the branch reduces to a plain `NV12ToI420Rotate(sample, src_stride_y, src_uv, src_stride_uv, dst…, crop_width, inv_crop_height, rotation)`, which is public libyuv API the patch leaves untouched; `need_buf` is false for NV12, so no temp-buffer path is involved either. Calling it directly from `video_capture_impl.cc` for `kNV12`, and leaving every other format on the stock function, removes a third-party fork from the rebase path on each webrtc roll. Carry `inv_crop_height = (src_height < 0) ? -abs(crop_height) : abs(crop_height)` over verbatim — it encodes the Windows bottom-up case. The strides themselves *are* needed: a `SoftwareBitmap` from `MediaFrameReader` reports real plane strides and a real UV `StartIndex`, while stock `ConvertToI420` assumes a packed buffer. | open, deliberately not acted on |
+
+Findings 91 and 92 came from crash telemetry rather than the read: an access violation inside
+`RtlEnterCriticalSection` in `nvEncMFTH264x` (NVIDIA's hardware H.264 encoder MFT) on an
+`RTWorkQ` threadpool callback, during a group call with screen sharing, with no frames of ours
+on the stack. Either defect produces that signature; the report cannot say which, or whether
+the cause is here at all.
 
 ---
 
@@ -245,7 +256,8 @@ Reviewed by targeted pattern scan (unchecked HRESULT then dereference, uninitial
 unsigned underflow, macro misuse, lock mismatches, missing null checks) rather than statement
 by statement. A full read of these could still turn up logic errors the scan cannot see:
 
-- `encoder/h264_encoder_mf_impl.cc` — rate control, `InitWriter`, `ReconfigureSinkWriter` body
+- `encoder/h264_encoder_mf_impl.cc` — `OnH264Encoded`'s tail (rate control, `InitWriter` and
+  the `ReconfigureSinkWriter` body were read for #78/#79/#92 and are no longer outstanding)
 - `encoder/h264_stream_sink.cc` — state matrix, event queue plumbing
 - `decoder/h264_decoder_mf_impl.cc` — the decode loop and output handling
 - remainder of `video_capture_winrt.cc`

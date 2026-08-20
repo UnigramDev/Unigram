@@ -580,11 +580,28 @@ frame into a source line. That is how `set_ItemsSource` was found after two sess
   discards every managed entry, `WatchDog` included. Above it, at 4, the log rotates every couple
   of minutes and takes them with it. Note the default is 4 here: `SettingsService` picks
   `IsPackagedRelease ? 4 : 2`, and a sideloaded `-Register` package is Developer-signed, not Store.
-- **Visual Studio cannot F5 this project.** It starts `win-x64\Telegram.exe`, the 162 KB apphost,
-  as a bare process outside the package container, and a UWP XAML app fails fast either way
-  (`0xC0000409`). Use Debug → Other Debug Targets → **Debug Installed App Package**, pick
-  `38833FF26BA1D.UnigramNet10`, tick "do not launch, but debug my code when it starts", Native
-  Only; `Telegram.pdb` sits beside the exe in `publish\` so symbols resolve on their own.
+- **F5 needs `Properties\launchSettings.json`.** It is the one piece of the VS template this
+  project never copied, and without it VS starts the build output's `Telegram.exe` as a bare
+  process outside the package container, where a UWP XAML app fails fast in `Windows.UI.Xaml.dll`
+  (`0xC0000409`, subcode 7) with no window, no log and no report. The tell is in the WER event:
+  the faulting path is the loose exe and the package full name is empty. The profile is one line,
+  `"commandName": "MsixPackage"`, which is what makes VS deploy the layout and activate the app
+  by identity rather than run the exe.
+- **Copy-local paths have to be absolute.** `ReferenceCopyLocalPaths` reaches the
+  `.appxrecipe` verbatim and Visual Studio resolves the recipe against its own working
+  directory, so the relative entries for the two C++/WinRT components and the tdjson set
+  built and packaged fine but failed the F5 layout copy with `DEP1000 ... 0x80070003`. They
+  are `$(TelegramRoot)`-rooted now.
+- **Never `Add-AppxPackage -Register` the build output directory itself.** VS deploys into
+  `net10.0-...\AppX` and registers that. Registering the directory the build writes to leaves
+  the deployment stack holding it - `microsoft.system.package.metadata` appears inside it, the
+  directory cannot even be renamed, and the next build fails in MakePri with
+  `PRI210: 0x800704c8` (ERROR_USER_MAPPED_FILE) moving its staging directory in. Unregistering
+  and deleting that folder clears it.
+- **To debug a published AOT build instead**, Debug → Other Debug Targets → **Debug Installed App
+  Package**, pick `38833FF26BA1D.UnigramNet10`, tick "do not launch, but debug my code when it
+  starts", Native Only; `Telegram.pdb` sits beside the exe in `publish\` so symbols resolve on
+  their own.
 - **Publish needs `-p:SelfContained=true` and `vswhere.exe` on `PATH`.** Without the first,
   `PublishAot` does not imply self-contained here and ILLink fails `NETSDK1102`; without the
   second, ILC's linker lookup substitutes the shell's "not recognized" text into the `link.exe`
