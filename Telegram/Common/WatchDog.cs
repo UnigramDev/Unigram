@@ -215,7 +215,12 @@ namespace Telegram
             // Narrow on purpose: these are the types CsWinRT throws when it cannot marshal
             // something, and reporting everything would bury the real crashes in the dashboard
             // under exceptions the app goes on to handle.
-            if (_reporting || e.Exception is not (NotSupportedException or InvalidCastException))
+            // RPC_E_WRONG_THREAD joins them for a different reason: it is survivable, so it arrives
+            // through UnhandledErrorDetected with nothing but Propagate's own frames, and no
+            // fail-fast follows to leave stowed records behind. Its message is constant, so the
+            // dedup below spends exactly one report per session on it.
+            if (_reporting || e.Exception is not (NotSupportedException or InvalidCastException
+                or COMException { HResult: unchecked((int)0x8001010E) }))
             {
                 return;
             }
