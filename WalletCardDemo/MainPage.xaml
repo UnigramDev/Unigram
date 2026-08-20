@@ -1,0 +1,11 @@
+<Page x:Class="WalletCardDemo.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:WalletCardDemo"
+      Background="#090A0E"
+      RequestedTheme="Dark">
+
+    <!-- ContentView.swift's ZStack: the backdrop and its radial glow are drawn
+         inside the card view itself, so this is just the host. -->
+    <Grid x:Name="LayoutRoot" />
+</Page>

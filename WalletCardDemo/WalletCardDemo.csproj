@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{6C1A0E52-9B3D-4C77-A0F2-51B9E2C4A311}</ProjectGuid>
+    <OutputType>AppContainerExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WalletCardDemo</RootNamespace>
+    <AssemblyName>WalletCardDemo</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion>10.0.26100.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
+    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <LangVersion>latest</LangVersion>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxBundle>Never</AppxBundle>
+    <ProjectPriIndexName>WalletCardDemo</ProjectPriIndexName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CardTextures.cs" />
+    <Compile Include="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WalletCardModel.cs" />
+    <Compile Include="WalletCardView.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <None Include="Properties\Default.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\card-gram-diamond.png" />
+    <Content Include="Assets\card-qr-glyph.png" />
+    <Content Include="Assets\card-usdt-diamond.png" />
+    <Content Include="Assets\Fonts\Nunito.ttf" />
+    <Content Include="Assets\Logos\SplashScreen.png" />
+    <Content Include="Assets\Logos\Square150x150Logo.png" />
+    <Content Include="Assets\Logos\Square44x44Logo.png" />
+    <Content Include="Assets\Logos\StoreLogo.png" />
+    <!-- Produced by the CompileCardShaders target below; listed so the
+         packaging step picks it up even on an incremental build. -->
+    <Content Include="Shaders\CardFront.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\CardFront.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>6.2.14</Version>
+    </PackageReference>
+    <PackageReference Include="Win2D.uwp">
+      <Version>1.28.3</Version>
+    </PackageReference>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
+    <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+
+  <!-- ==================================================================
+       Win2D's PixelShaderEffect takes a shader compiled for the D2D custom
+       effect ABI, which fxc has to produce. There is no MSBuild item type
+       for that, so drive fxc directly and let it run before the packaging
+       step that copies Content in.
+
+       ps_4_0 is deliberate: it is the floor D2D custom effects run on, and
+       PixelShaderEffect.IsSupported is false below feature level 10, which
+       WalletCardView already falls back for.
+       ================================================================== -->
+  <PropertyGroup>
+    <!-- WindowsSdkDir is not set for a UAP C# project, so go to the kit root
+         the same way the SDK targets do. -->
+    <WindowsKitsRoot10 Condition="'$(WindowsKitsRoot10)' == ''">$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Kits\Installed Roots', 'KitsRoot10', null, RegistryView.Registry32, RegistryView.Default))</WindowsKitsRoot10>
+    <FxcPath Condition="'$(FxcPath)' == ''">$(WindowsKitsRoot10)bin\$(TargetPlatformVersion)\x64\fxc.exe</FxcPath>
+    <D2DShaderIncludePath Condition="'$(D2DShaderIncludePath)' == ''">$(WindowsKitsRoot10)Include\$(TargetPlatformVersion)\um</D2DShaderIncludePath>
+  </PropertyGroup>
+  <Target Name="CompileCardShaders"
+          BeforeTargets="BeforeBuild"
+          Inputs="Shaders\CardFront.hlsl"
+          Outputs="Shaders\CardFront.bin">
+    <!-- D2D_ENTRY/D2D_FULL_SHADER are what make d2d1effecthelpers emit the
+         SV_TARGET wrapper around D2D_PS_ENTRY; without them fxc reports
+         "entrypoint not found". -->
+    <Exec Command="&quot;$(FxcPath)&quot; /nologo /T ps_4_0 /E main /D D2D_ENTRY=main /D D2D_FULL_SHADER /I &quot;$(D2DShaderIncludePath)&quot; /Fo &quot;Shaders\CardFront.bin&quot; &quot;Shaders\CardFront.hlsl&quot;" />
+  </Target>
+</Project>
