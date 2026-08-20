@@ -3,13 +3,13 @@
                     xmlns:controls="using:Telegram.Controls"
                     xmlns:messages="using:Telegram.Controls.Messages">
 
-    <Style x:Name="MessageCustomEmojiStyle"
+    <Style x:Key="MessageCustomEmojiStyle"
            TargetType="controls:CustomEmojiIcon">
         <Setter Property="ReplacementColor"
                 Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
     </Style>
 
-    <Style x:Name="InfoCustomEmojiStyle"
+    <Style x:Key="InfoCustomEmojiStyle"
            TargetType="controls:CustomEmojiIcon">
         <Setter Property="ReplacementColor"
                 Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
