@@ -79,7 +79,16 @@ namespace Telegram.Views
 
         private void Field_LosingFocus(UIElement sender, LosingFocusEventArgs args)
         {
-            args.TryCancel();
+            if (_passcodeService.IsLocked)
+            {
+                Logger.Info("canceled");
+
+                args.TryCancel();
+            }
+            else
+            {
+                Logger.Info();
+            }
         }
 
         private void Field_TextChanged(object sender, RoutedEventArgs e)
