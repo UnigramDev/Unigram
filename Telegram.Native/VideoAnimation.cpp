@@ -112,14 +112,18 @@ namespace winrt::Telegram::Native::implementation
                 if (info->fd == INVALID_HANDLE_VALUE)
                 {
                     info->fd = CreateFile2FromAppW(info->file.FilePath().data(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
-                
+                    if (info->fd == INVALID_HANDLE_VALUE)
+                    {
+                        return AVERROR_EOF;
+                    }
+
                     LARGE_INTEGER distancetoMove{};
                     distancetoMove.QuadPart = offset;
 
                     BOOL moved = SetFilePointerEx(info->fd, distancetoMove, NULL, FILE_BEGIN);
                     if (!moved)
                     {
-                        return 0;
+                        return AVERROR_EOF;
                     }
                 }
 
@@ -170,7 +174,7 @@ namespace winrt::Telegram::Native::implementation
                     distancetoMove.QuadPart = offset;
 
                     BOOL moved = SetFilePointerEx(info->fd, distancetoMove, NULL, FILE_BEGIN);
-                    return moved ? offset : 0;
+                    return moved ? offset : AVERROR_EOF;
                 }
 
                 return offset;
