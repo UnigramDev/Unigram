@@ -130,6 +130,8 @@ namespace Telegram.Common
 
         public static PowerSavingStatus Status => m_isPowerSavingMode ? PowerSavingStatus.On : PowerSavingStatus.Off;
 
+        public static bool IsDisabledByPolicy => m_isDisabledByPolicy;
+
         public static PowerSavingMode Mode
         {
             get => SettingsService.Current.IsPowerSavingEnabled ? PowerSavingMode.Auto : PowerSavingMode.Off;

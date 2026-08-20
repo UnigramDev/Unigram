@@ -24,6 +24,9 @@ using Windows.Devices.Enumeration;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
+using Windows.System.Power;
+using Windows.UI.Composition;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -37,11 +40,15 @@ namespace Telegram.ViewModels
         {
             Options = new MvxObservableCollection<DiagnosticsOption>();
             Tags = new MvxObservableCollection<DiagnosticsTag>();
+            PowerSaving = new MvxObservableCollection<DiagnosticsOption>();
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             UpdateDeserialization();
+            UpdatePowerSaving();
+
+            PowerSavingPolicy.Changed += OnPowerSavingChanged;
 
             var calls = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls.txt") as StorageFile;
             if (calls != null)
@@ -127,8 +134,63 @@ namespace Telegram.ViewModels
             }
         }
 
+        protected override void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
+        {
+            // Static event: this outlives the page otherwise.
+            PowerSavingPolicy.Changed -= OnPowerSavingChanged;
+        }
+
         public MvxObservableCollection<DiagnosticsOption> Options { get; private set; }
         public MvxObservableCollection<DiagnosticsTag> Tags { get; private set; }
+        public MvxObservableCollection<DiagnosticsOption> PowerSaving { get; private set; }
+
+        private void OnPowerSavingChanged(object sender, EventArgs e)
+        {
+            BeginOnUIThread(UpdatePowerSaving);
+        }
+
+        /// <summary>
+        /// What the policy reads, what it decided, and what each flag ends up as. A flag that does
+        /// not match the setting behind it says so, since that is the question this answers.
+        /// </summary>
+        private void UpdatePowerSaving()
+        {
+            var settings = SettingsService.Current;
+            var items = new List<DiagnosticsOption>
+            {
+                Flag("Mode", PowerSavingPolicy.Mode),
+                Flag("Status", PowerSavingPolicy.Status),
+                Flag("IsSupported", PowerSavingPolicy.IsSupported),
+                Flag("IsDisabledByPolicy", PowerSavingPolicy.IsDisabledByPolicy),
+            };
+
+            // The three inputs UpdatePolicy actually reads, plus the one AreSmoothTransitionsEnabled
+            // reads on its own.
+            try
+            {
+                items.Add(Flag("EnergySaverStatus", PowerManager.EnergySaverStatus));
+                items.Add(Flag("BatteryStatus", PowerManager.BatteryStatus));
+            }
+            catch
+            {
+                items.Add(Flag("EnergySaverStatus", "unavailable"));
+            }
+
+            var capabilities = CompositionCapabilities.GetForCurrentView();
+            var uiSettings = new UISettings();
+
+            items.Add(Flag("AreEffectsFast", capabilities.AreEffectsFast()));
+            items.Add(Flag("AreEffectsSupported", capabilities.AreEffectsSupported()));
+            items.Add(Flag("AdvancedEffectsEnabled", uiSettings.AdvancedEffectsEnabled));
+            items.Add(Flag("AnimationsEnabled", uiSettings.AnimationsEnabled));
+
+            PowerSaving.ReplaceWith(items);
+        }
+
+        private static DiagnosticsOption Flag(string name, object value)
+        {
+            return new DiagnosticsOption { Name = name, Value = value is bool boolean ? boolean ? "true" : "false" : value };
+        }
 
         public bool LegacyScrollBars
         {
