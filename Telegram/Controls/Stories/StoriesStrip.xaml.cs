@@ -448,13 +448,14 @@ namespace Telegram.Controls.Stories
             return title + search + padding;
         }
 
-        private void SetControlledList(FrameworkElement value)
+        private void SetControlledList(Control value)
         {
             var scrollViewer = value as ScrollViewer;
             if (scrollViewer == null && value != null)
             {
                 if (value.IsLoaded)
                 {
+                    value.ApplyTemplate();
                     scrollViewer = ControlledList.GetScrollViewer();
                 }
                 else
@@ -476,6 +477,12 @@ namespace Telegram.Controls.Stories
             }
 
             _scrollViewer = scrollViewer;
+
+            if (_scrollViewer == null)
+            {
+                Logger.Info("_scrollViewer is null");
+                return;
+            }
 
             _scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
             _scrollViewer.ViewChanging += Scroller_ViewChanging;
