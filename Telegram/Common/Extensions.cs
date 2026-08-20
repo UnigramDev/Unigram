@@ -1888,11 +1888,11 @@ namespace Telegram.Common
     {
         private static bool _reported;
 
-        public static object TryGetFocusedElement()
+        public static object TryGetFocusedElement(XamlRoot xamlRoot)
         {
             try
             {
-                return FocusManager.GetFocusedElement();
+                return FocusManager.GetFocusedElement(xamlRoot);
             }
             catch (Exception ex)
             {

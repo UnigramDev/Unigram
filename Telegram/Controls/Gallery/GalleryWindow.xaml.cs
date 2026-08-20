@@ -877,7 +877,7 @@ namespace Telegram.Controls.Gallery
 
         private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs args)
         {
-            var focused = FocusManagerEx.TryGetFocusedElement();
+            var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
             if (focused is Slider or TextBox or RichEditBox)
             {
                 return;

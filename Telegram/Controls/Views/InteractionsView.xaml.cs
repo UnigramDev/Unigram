@@ -169,7 +169,7 @@ namespace Telegram.Controls.Views
 
                 if (args.ItemIndex == 0 && args.Phase == 2)
                 {
-                    var element = FocusManagerEx.TryGetFocusedElement();
+                    var element = FocusManagerEx.TryGetFocusedElement(XamlRoot);
                     if (element is MenuFlyoutContent flyout)
                     {
                         args.ItemContainer.Focus(flyout.FocusState);

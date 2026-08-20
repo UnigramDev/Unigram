@@ -145,7 +145,7 @@ namespace Telegram.Views.Settings
                 }
                 else
                 {
-                    var focused = FocusManagerEx.TryGetFocusedElement();
+                    var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
                     if (focused is SelectorItem selector)
                     {
                         var proxy = ScrollingHost.ItemFromContainer(selector) as ProxyViewModel;
@@ -166,7 +166,7 @@ namespace Telegram.Views.Settings
                 }
                 else
                 {
-                    var focused = FocusManagerEx.TryGetFocusedElement();
+                    var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
                     if (focused is SelectorItem selector)
                     {
                         var proxy = ScrollingHost.ItemFromContainer(selector) as ProxyViewModel;

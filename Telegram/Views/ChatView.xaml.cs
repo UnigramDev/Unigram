@@ -1413,7 +1413,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                var element = FocusManagerEx.TryGetFocusedElement();
+                var element = FocusManagerEx.TryGetFocusedElement(XamlRoot);
                 if (element is not TextBox and not RichEditBox)
                 {
                     TrySetFocusState(FocusState.Programmatic, true);
@@ -1458,7 +1458,7 @@ namespace Telegram.Views
 
         public void Search()
         {
-            var focused = FocusManagerEx.TryGetFocusedElement();
+            var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
             if (focused is RichTextBlock textBlock)
             {
                 var message = textBlock.GetParent<MessageSelector>()?.Message;
@@ -1499,7 +1499,7 @@ namespace Telegram.Views
                 return;
             }
 
-            var focused = FocusManagerEx.TryGetFocusedElement();
+            var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
             if (focused is null or (not TextBox and not RichEditBox))
             {
                 foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
@@ -1547,7 +1547,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    var focused = FocusManagerEx.TryGetFocusedElement();
+                    var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
                     if (focused is MessageSelector selector && selector.Message != null && MessageCopy_Loaded(selector.Message))
                     {
                         if (selector.HasSelection)
@@ -1601,7 +1601,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    var focused = FocusManagerEx.TryGetFocusedElement();
+                    var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
                     if (focused is MessageSelector selector)
                     {
                         ViewModel.TryDeleteMessage(selector.Message);
@@ -1652,7 +1652,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                var focused = FocusManagerEx.TryGetFocusedElement();
+                var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
                 if (focused is Selector or SelectorItem or MessageSelector or MessageService or ItemsRepeater or ChatCell or PlaybackSlider)
                 {
                     return;
@@ -1695,7 +1695,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                var focused = FocusManagerEx.TryGetFocusedElement();
+                var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
                 if (focused is Selector or SelectorItem or MessageSelector or MessageService or ItemsRepeater or ChatCell or PlaybackSlider)
                 {
                     return;
