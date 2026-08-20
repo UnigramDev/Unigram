@@ -133,6 +133,16 @@ namespace Telegram.Controls.Chats
                 return false;
             }
 
+            // A <pre> with nothing inside it is what a browser wraps a text/plain
+            // document in — a log, a raw file — so pasting that as a code block is more
+            // often wrong than right. Anything the source marked up itself, a <code>
+            // child or the spans of a highlighter, parses to more than one leaf and
+            // keeps its block.
+            if (!own && blocks.Count == 1 && blocks[0] is PageBlockPreformatted { Text: RichTextPlain, Language.Length: 0 })
+            {
+                return false;
+            }
+
             // Everything a message can say: an ordinary formatted paste, entities and all.
             if (PageBlockHelper.TryGetFormattedText(new RichMessage(blocks, false, true), out FormattedText text))
             {
