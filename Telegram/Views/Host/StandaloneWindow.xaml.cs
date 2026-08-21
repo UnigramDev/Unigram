@@ -25,7 +25,7 @@ namespace Telegram.Views.Host
         }
     }
 
-    public sealed partial class StandaloneWindow : WindowContent, IPopupHost
+    public sealed partial class StandaloneWindow : WindowContent
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
@@ -59,15 +59,7 @@ namespace Telegram.Views.Host
 
         public INavigationService NavigationService => _navigationService;
 
-        public void PopupOpened()
-        {
-            NavigationService.Window.SetTitleBar(null);
-        }
-
-        public void PopupClosed()
-        {
-            NavigationService.Window.SetTitleBar(TitleBarHandle);
-        }
+        protected override UIElement TitleBarElement => TitleBarHandle;
 
         private void OnNavigating(object sender, NavigatingEventArgs e)
         {

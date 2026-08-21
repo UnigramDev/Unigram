@@ -35,7 +35,7 @@ namespace Telegram.Views.Host
     //    public event EventHandler IsBackButtonVisibleChanged;
     //}
 
-    public sealed partial class TabbedWindow : WindowContent, IPopupHost
+    public sealed partial class TabbedWindow : WindowContent
     {
         private readonly WindowContext _context;
 
@@ -77,15 +77,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        public void PopupOpened()
-        {
-            _context.SetTitleBar(null);
-        }
-
-        public void PopupClosed()
-        {
-            _context.SetTitleBar(Footer);
-        }
+        protected override UIElement TitleBarElement => Footer;
 
         private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

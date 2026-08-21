@@ -51,7 +51,7 @@ namespace Telegram.Views.Host
         void PopupClosed();
     }
 
-    public sealed partial class RootWindow : WindowContent, IPopupHost
+    public sealed partial class RootWindow : WindowContent
     {
         private readonly ILifetimeService _lifetime;
         private readonly WindowContext _context;
@@ -140,7 +140,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        public void PopupOpened()
+        protected override void OnPopupOpened()
         {
             if (_navigationService.Frame.Content is IRootContentPage content)
             {
@@ -148,7 +148,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        public void PopupClosed()
+        protected override void OnPopupClosed()
         {
             if (_navigationService.Frame.Content is IRootContentPage content)
             {

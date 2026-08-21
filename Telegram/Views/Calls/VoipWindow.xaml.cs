@@ -42,7 +42,7 @@ namespace Telegram.Views.Calls
         Remote,
     }
 
-    public sealed partial class VoipWindow : WindowContent, IPopupHost
+    public sealed partial class VoipWindow : WindowContent
     {
         private static readonly int[] _pendingGradient = new[] { 0x568FD6, 0x626ED5, 0xA667D5, 0x7664DA };
         private static readonly int[] _readyGradient = new[] { 0xACBD65, 0x459F8D, 0x53A4D1, 0x3E917A };
@@ -142,15 +142,7 @@ namespace Telegram.Views.Calls
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
         }
 
-        public void PopupOpened()
-        {
-            WindowContext.Current.SetTitleBar(null);
-        }
-
-        public void PopupClosed()
-        {
-            WindowContext.Current.SetTitleBar(TitleBar);
-        }
+        protected override UIElement TitleBarElement => TitleBar;
 
         private void InitializeBlob()
         {

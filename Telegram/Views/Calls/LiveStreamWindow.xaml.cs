@@ -31,7 +31,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Calls
 {
-    public sealed partial class LiveStreamWindow : WindowContent, IPopupHost
+    public sealed partial class LiveStreamWindow : WindowContent
     {
         private readonly VoipGroupCall _call;
 
@@ -80,15 +80,7 @@ namespace Telegram.Views.Calls
             OnPropertyChanged();
         }
 
-        public void PopupOpened()
-        {
-            WindowContext.Current.SetTitleBar(null);
-        }
-
-        public void PopupClosed()
-        {
-            WindowContext.Current.SetTitleBar(TitleArea);
-        }
+        protected override UIElement TitleBarElement => TitleArea;
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
         {
             _inactivityTimer.Stop();

@@ -46,7 +46,7 @@ namespace Telegram.Views
 {
     public partial record WebAppAgeVerificationCompletedEventArgs(bool Passed, double Age);
 
-    public sealed partial class WebAppWindow : WindowContent, IPopupHost
+    public sealed partial class WebAppWindow : WindowContent
     {
         private readonly WindowContext _context;
         private readonly IClientService _clientService;
@@ -208,15 +208,7 @@ namespace Telegram.Views
 
         #region IToastHost
 
-        public void PopupOpened()
-        {
-            _context.SetTitleBar(null);
-        }
-
-        public void PopupClosed()
-        {
-            _context.SetTitleBar(TitleBar);
-        }
+        protected override UIElement TitleBarElement => TitleBar;
 
         #endregion
 

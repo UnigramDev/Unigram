@@ -52,7 +52,7 @@ namespace Telegram.Views.Calls
         }
     }
 
-    public sealed partial class GroupCallWindow : WindowContent, IGroupCallDelegate, IPopupHost
+    public sealed partial class GroupCallWindow : WindowContent, IGroupCallDelegate
     {
         private bool _disposed;
 
@@ -149,15 +149,7 @@ namespace Telegram.Views.Calls
             //ViewportAspect.Constraint = new Size(16, 9);
         }
 
-        public void PopupOpened()
-        {
-            WindowContext.Current.SetTitleBar(null);
-        }
-
-        public void PopupClosed()
-        {
-            WindowContext.Current.SetTitleBar(TitleArea);
-        }
+        protected override UIElement TitleBarElement => TitleArea;
 
         public DispatcherQueue DispatcherQueue => _dispatcherQueue;
 
