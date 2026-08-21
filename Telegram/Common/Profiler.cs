@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 namespace Telegram.Common
 {
@@ -21,6 +22,9 @@ namespace Telegram.Common
     // Scopes nest and are reported indented, so an outer scope shows what it contains. End unwinds
     // to its own label, so a return between a pair reports the abandoned scopes rather than silently
     // charging the rest of the run to them.
+    //
+    // Tally closes a scope into a running total instead of logging it, for paths too short and too
+    // frequent to report one by one — where a line per call would cost more than the call.
     public static class Profiler
     {
         // Under this is noise: the paths worth probing run on every keystroke.
@@ -53,6 +57,122 @@ namespace Telegram.Common
                     break;
                 }
             }
+        }
+
+        // --- tally --------------------------------------------------------------
+
+        // Reports at 1, 10, 100 and 1000 samples and every 1000 after that. The first sample says
+        // the probe is live, which is otherwise indistinguishable from a path that never runs, and
+        // by the time the interval settles the means have too — cumulative and never reset, which
+        // is what makes two recordings comparable without putting the same content on screen twice.
+        private const int ReportEvery = 1000;
+
+        private sealed class Counter
+        {
+            public long Calls;
+            public long Ticks;
+            public long Min = long.MaxValue;
+            public long Max;
+        }
+
+        // Shared across windows (a second window is a second UI thread), unlike the scope stack.
+        private static readonly Dictionary<string, Counter> s_counters = new();
+        private static readonly object s_lock = new();
+        private static long s_samples;
+        private static long s_next = 1;
+
+        /// <summary>Closes a scope opened by <see cref="Begin"/> into the running total.</summary>
+        [Conditional("INSTRUMENTATION")]
+        public static void Tally(string label)
+        {
+            var now = Stopwatch.GetTimestamp();
+
+            while (t_scopes != null && t_scopes.Count > 0)
+            {
+                var scope = t_scopes.Pop();
+                Accumulate(scope.Label, now - scope.Timestamp);
+
+                if (scope.Label == label)
+                {
+                    break;
+                }
+            }
+        }
+
+        private static void Accumulate(string label, long ticks)
+        {
+            string report = null;
+
+            lock (s_lock)
+            {
+                if (!s_counters.TryGetValue(label, out var counter))
+                {
+                    s_counters[label] = counter = new Counter();
+                }
+
+                counter.Calls++;
+                counter.Ticks += ticks;
+
+                if (ticks < counter.Min) counter.Min = ticks;
+                if (ticks > counter.Max) counter.Max = ticks;
+
+                if (++s_samples >= s_next)
+                {
+                    s_next = s_next < ReportEvery ? s_next * 10 : s_next + ReportEvery;
+                    report = Format();
+                }
+            }
+
+            if (report != null)
+            {
+                Logger.Info(report);
+            }
+        }
+
+        // Calls, mean, min, max, total, and each total against the biggest one — which is the
+        // outermost scope being tallied, so that last column is the share an inner path is worth
+        // optimizing out of.
+        //
+        // Read the MIN, not the mean, to compare two recordings: one GC pause inside a scope with a
+        // few hundred samples moves its mean by more than any change we are measuring, and it moves
+        // the containing scope's with it. The min is what the path costs with nothing interfering,
+        // and max says how badly that particular label was disturbed. Totals and counts only mean
+        // something within one recording, since they follow whatever happened to be on screen.
+        private static string Format()
+        {
+            var reference = 1L;
+
+            foreach (var counter in s_counters.Values)
+            {
+                if (counter.Ticks > reference)
+                {
+                    reference = counter.Ticks;
+                }
+            }
+
+            var builder = new StringBuilder("profiler ").Append(s_samples).Append(" samples");
+
+            foreach (var pair in s_counters)
+            {
+                var counter = pair.Value;
+
+                builder.Append("\n  ");
+                builder.Append(pair.Key.PadRight(12));
+                builder.Append(counter.Calls.ToString().PadLeft(7));
+                builder.Append(" calls ");
+                builder.Append((counter.Ticks * 1000000d / Stopwatch.Frequency / counter.Calls).ToString("F1").PadLeft(9));
+                builder.Append("us mean ");
+                builder.Append((counter.Min * 1000000d / Stopwatch.Frequency).ToString("F1").PadLeft(8));
+                builder.Append("us min ");
+                builder.Append((counter.Max * 1000000d / Stopwatch.Frequency).ToString("F1").PadLeft(9));
+                builder.Append("us max ");
+                builder.Append((counter.Ticks * 1000d / Stopwatch.Frequency).ToString("F1").PadLeft(9));
+                builder.Append("ms ");
+                builder.Append((counter.Ticks * 100d / reference).ToString("F0").PadLeft(4));
+                builder.Append('%');
+            }
+
+            return builder.ToString();
         }
     }
 }
