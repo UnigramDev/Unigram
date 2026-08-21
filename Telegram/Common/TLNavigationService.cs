@@ -327,8 +327,7 @@ namespace Telegram.Common
                 PersistedId = "Payments",
                 Content = (control, window) =>
                 {
-                    // TODO: WinUI - control will be replaced by WindowContext.
-                    var nav = BootStrapper.Current.NavigationServiceFactory(Session, WindowContext.Current, BootStrapper.BackButton.Ignore, "Payments" + Guid.NewGuid(), false);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(Session, window, BootStrapper.BackButton.Ignore, "Payments" + Guid.NewGuid(), false);
                     nav.Navigate(typeof(PaymentFormPage), new PaymentFormArgs(inputInvoice, paymentForm, content));
 
                     return nav.Frame;
@@ -363,7 +362,7 @@ namespace Telegram.Common
                 PersistedId = "Payments",
                 Content = (control, window) =>
                 {
-                    var nav = BootStrapper.Current.NavigationServiceFactory(Session, WindowContext.Current, BootStrapper.BackButton.Ignore, "Payments" + Guid.NewGuid(), false);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(Session, window, BootStrapper.BackButton.Ignore, "Payments" + Guid.NewGuid(), false);
                     nav.Navigate(typeof(PaymentFormPage), paymentReceipt);
 
                     return nav.Frame;
