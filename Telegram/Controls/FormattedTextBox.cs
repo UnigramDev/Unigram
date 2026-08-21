@@ -23,7 +23,6 @@ using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -58,7 +57,6 @@ namespace Telegram.Controls
         private readonly MenuFlyoutSubItem _formattingFlyout;
 
         private bool _updateLocked;
-        private bool _characterReceived;
         private bool _fromTextChanging;
         private bool _isContentChanging;
         private int _undoGroup;
@@ -88,6 +86,12 @@ namespace Telegram.Controls
             Paste += OnPaste;
             PreviewKeyDown += OnPreviewKeyDown;
 
+            // RichEditBox consumes the character and marks the event handled, so a plain += never
+            // fires - handledEventsToo is the only way in. The character is already in the
+            // document by then, which is what the emoticon match below reads backwards from.
+            AddHandler(CharacterReceivedEvent,
+                new TypedEventHandler<UIElement, CharacterReceivedRoutedEventArgs>(OnCharacterReceived), true);
+
             _formattingFlyout = new MenuFlyoutSubItem
             {
                 Text = Strings.Formatting,
@@ -112,8 +116,6 @@ namespace Telegram.Controls
 
             DisabledFormattingAccelerators = DisabledFormattingAccelerators.All;
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
             SizeChanged += OnSizeChanged;
 
             TextChanging += OnTextChanging;
@@ -290,43 +292,18 @@ namespace Telegram.Controls
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            // Loaded can come twice without an Unloaded in between, and CoreWindow lives as long
-            // as the session does: a second subscription would both replace the emoticon twice
-            // and hold this control for good.
-            if (_characterReceived)
-            {
-                return;
-            }
-
-            _characterReceived = true;
-            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            if (_characterReceived)
-            {
-                _characterReceived = false;
-                Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
-            }
-        }
-
         public bool IsReplaceEmojiEnabled { get; set; } = true;
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
-            if (FocusState == FocusState.Unfocused || !IsReplaceEmojiEnabled)
+            if (!IsReplaceEmojiEnabled)
             {
                 return;
             }
 
             // Emoticons are keyed by their last character, and the vast majority of keystrokes
             // aren't one, so this runs before anything that costs an allocation or a text host call.
-            var character = args.KeyCode < 0x10000
-                ? (char)args.KeyCode
-                : (char)((args.KeyCode - 0x10000) / 0x400 + 0xD800);
+            var character = args.Character;
 
             //var matches = Emoticon.Data.Keys.Where(x => x.EndsWith(character)).ToArray();
             if (Emoticon.Matches.TryGetValue(character, out string[] matches)
