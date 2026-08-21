@@ -2580,6 +2580,16 @@ namespace Telegram.Common
             obj.SetValue(HyperlinkInfoProperty, value);
         }
 
+        // TODO: FormattedTextBlock should not need this. The write measured ~3.6us per link,
+        // which is a third of what building one costs, and the block can already map a point to a
+        // rendered index and on to the entity that covers it (FormattedTextBlock.Selectable.cs) -
+        // so the click could resolve its entity by offset and store nothing per link at all.
+        //
+        // Two things stand in the way. Hyperlink_ContextRequested above reads this from a hit test
+        // for a link the caller found on its own, so that path has to ask the block instead. And a
+        // ConditionalWeakTable is not a substitute: this lives on the native DependencyObject,
+        // while a table keyed on the projection dies with the wrapper - which nothing keeps alive
+        // for a Hyperlink no managed code holds, as SharedLinkCell and ProfileHeader build.
         public static readonly DependencyProperty HyperlinkInfoProperty =
             DependencyProperty.RegisterAttached("HyperlinkInfo", typeof(TextEntityClickEventArgs), typeof(MessageHelper), new PropertyMetadata(null));
 
