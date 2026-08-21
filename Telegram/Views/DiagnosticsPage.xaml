@@ -185,6 +185,17 @@
                                              Visibility="{x:Bind ViewModel.IsDatabaseDisabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </controls:HeaderedControl>
 
+                <controls:HeaderedControl Header="Power Saving"
+                                          Footer="What the policy reads, what it decided, and what each flag ends up as. A flag that disagrees with the setting behind it says so."
+                                          ItemsSource="{x:Bind ViewModel.PowerSaving}">
+                    <controls:HeaderedControl.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:DiagnosticsOption">
+                            <controls:SettingsButton Content="{x:Bind Name}"
+                                                     Badge="{x:Bind Value}" />
+                        </DataTemplate>
+                    </controls:HeaderedControl.ItemTemplate>
+                </controls:HeaderedControl>
+
                 <controls:HeaderedControl Header="TDLib Modules"
                                           ItemsSource="{x:Bind ViewModel.Tags}">
                     <controls:HeaderedControl.ItemTemplate>
@@ -195,17 +206,6 @@
                                                                SelectedIndex="{x:Bind Verbosity, Mode=TwoWay}" />
                                 </controls:SettingsButton.Badge>
                             </controls:SettingsButton>
-                        </DataTemplate>
-                    </controls:HeaderedControl.ItemTemplate>
-                </controls:HeaderedControl>
-
-                <controls:HeaderedControl Header="Power Saving"
-                                          Footer="What the policy reads, what it decided, and what each flag ends up as. A flag that disagrees with the setting behind it says so."
-                                          ItemsSource="{x:Bind ViewModel.PowerSaving}">
-                    <controls:HeaderedControl.ItemTemplate>
-                        <DataTemplate x:DataType="viewModels:DiagnosticsOption">
-                            <controls:SettingsButton Content="{x:Bind Name}"
-                                                     Badge="{x:Bind Value}" />
                         </DataTemplate>
                     </controls:HeaderedControl.ItemTemplate>
                 </controls:HeaderedControl>
