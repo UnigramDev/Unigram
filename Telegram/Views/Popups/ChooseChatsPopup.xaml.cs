@@ -29,7 +29,6 @@ using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Folders;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -2064,54 +2063,51 @@ namespace Telegram.Views.Popups
 
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
-            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+            CharacterReceived += OnCharacterReceived;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs args)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
-            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            CharacterReceived -= OnCharacterReceived;
         }
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
-            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character.Length == 0)
-            {
-                return;
-            }
-            else if (character != "\u0016" && character != "\r" && char.IsControl(character[0]))
-            {
-                return;
-            }
-            else if (character != "\u0016" && character != "\r" && char.IsWhiteSpace(character[0]))
+            var character = args.Character;
+            if (character != '\u0016' && character != '\r' && (char.IsControl(character) || char.IsWhiteSpace(character)))
             {
                 return;
             }
 
+            // The popup is its own subtree, so anything focused above it never bubbles here, and
+            // a focused TextBox or RichEditBox has already marked the character handled. Button
+            // and MenuFlyoutItem do not handle it, so those still have to be checked by hand.
             var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
-            if (focused is null or (not TextBox and not RichEditBox and not Button and not MenuFlyoutItem))
+            if (focused is Button or MenuFlyoutItem)
             {
-                if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
-                {
-                    CaptionInput.Focus(FocusState.Keyboard);
-                    CaptionInput.PasteFromClipboard();
-                }
-                else if (character == "\r" && _primaryButtonEnabled && (SearchPanel == null || SearchPanel.Visibility == Visibility.Collapsed))
-                {
-                    Accept();
-                }
-                else
-                {
-                    Search_Click(null, null);
-
-                    SearchField.Focus(FocusState.Keyboard);
-                    SearchField.Text = character;
-                    SearchField.SelectionStart = character.Length;
-                }
-
-                args.Handled = true;
+                return;
             }
+
+            if (character == '\u0016' && CaptionInput.CanPasteClipboardContent)
+            {
+                CaptionInput.Focus(FocusState.Keyboard);
+                CaptionInput.PasteFromClipboard();
+            }
+            else if (character == '\r' && _primaryButtonEnabled && (SearchPanel == null || SearchPanel.Visibility == Visibility.Collapsed))
+            {
+                Accept();
+            }
+            else
+            {
+                Search_Click(null, null);
+
+                SearchField.Focus(FocusState.Keyboard);
+                SearchField.Text = character.ToString();
+                SearchField.SelectionStart = 1;
+            }
+
+            args.Handled = true;
         }
 
         private void Accept()
