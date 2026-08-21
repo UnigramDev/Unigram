@@ -58,8 +58,8 @@ namespace Telegram.Native
 
         static UInt32 GetLastInputTime();
 
-        static Windows.UI.Xaml.Core.Direct.IXamlDirectObject AddRunToCollection(Windows.UI.Xaml.Core.Direct.XamlDirect direct, Windows.UI.Xaml.Core.Direct.IXamlDirectObject inlines, String text, Windows.UI.Xaml.FlowDirection direction, TextStyle style, Windows.UI.Xaml.Media.FontFamily fontFamily, Double fontSize, Boolean transparent);
-        static Windows.UI.Xaml.Core.Direct.IXamlDirectObject AddRunToCollection(Windows.UI.Xaml.Core.Direct.XamlDirect direct, Windows.UI.Xaml.Core.Direct.IXamlDirectObject inlines, String text, Int32 offset, Int32 length, Windows.UI.Xaml.FlowDirection direction, TextStyle style, Windows.UI.Xaml.Media.FontFamily fontFamily, Double fontSize, Boolean transparent);
+        static Windows.UI.Xaml.Core.Direct.IXamlDirectObject AddRunToCollection(Windows.UI.Xaml.Core.Direct.XamlDirect direct, Windows.UI.Xaml.Core.Direct.IXamlDirectObject inlines, String text, Windows.UI.Xaml.FlowDirection direction, TextStyle style, Windows.UI.Xaml.Media.FontFamily fontFamily, Double fontSize);
+        static Windows.UI.Xaml.Core.Direct.IXamlDirectObject AddRunToCollection(Windows.UI.Xaml.Core.Direct.XamlDirect direct, Windows.UI.Xaml.Core.Direct.IXamlDirectObject inlines, String text, Int32 offset, Int32 length, Windows.UI.Xaml.FlowDirection direction, TextStyle style, Windows.UI.Xaml.Media.FontFamily fontFamily, Double fontSize);
 
         //[DefaultOverload]
         static TextDirectionality GetDirectionality(String value);

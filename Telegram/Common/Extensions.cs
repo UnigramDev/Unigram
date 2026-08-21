@@ -1096,10 +1096,7 @@ namespace Telegram.Common
         {
             inline.Add(new Run
             {
-                Text = Icons.ZWNJ,
-
-                // TODO: remove once fixed by Microsoft
-                Foreground = null
+                Text = Icons.ZWNJ
             });
         }
 
@@ -1663,10 +1660,14 @@ namespace Telegram.Common
 
         public static Hyperlink GetHyperlinkFromPoint(this RichTextBlock text, Point point)
         {
-            var position = text.GetPositionFromPoint(point);
-            var hyperlink = GetHyperlink(position.Parent as TextElement);
+            return text.GetPositionFromPoint(point).GetHyperlinkFromPosition();
+        }
 
-            return hyperlink;
+        // The walk up from an already resolved position, for callers that need the position for
+        // something else too: it projects a TextElement per level, so it is worth doing once.
+        public static Hyperlink GetHyperlinkFromPosition(this TextPointer position)
+        {
+            return GetHyperlink(position?.Parent as TextElement);
         }
 
         private static Hyperlink GetHyperlink(TextElement parent)

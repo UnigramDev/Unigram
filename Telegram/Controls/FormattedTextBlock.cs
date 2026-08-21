@@ -50,10 +50,29 @@ namespace Telegram.Controls
         public string Text { get; }
     }
 
+    // A Hyperlink with its XamlDirect projection. It is the one element the block builds through
+    // the projection rather than through XamlDirect, because Click has no XamlEventIndex - and
+    // GetXamlDirectObject plus the Inlines lookup measured ~18us together, more than everything
+    // else the link path does. Both answers are stable for the life of the element, so they are
+    // taken once and travel with it through the pool.
+    public sealed class ProjectedHyperlink
+    {
+        public readonly Hyperlink Element;
+        public readonly IXamlDirectObject Native;
+        public readonly IXamlDirectObject Inlines;
+
+        public ProjectedHyperlink(XamlDirect direct, Hyperlink element)
+        {
+            Element = element;
+            Native = direct.GetXamlDirectObject(element);
+            Inlines = direct.GetXamlDirectObjectProperty(Native, XamlPropertyIndex.Span_Inlines);
+        }
+    }
+
     public class FormattedTextBlockRecyclePool
     {
         public readonly Queue<IXamlDirectObject> Paragraphs = new();
-        public readonly Queue<Hyperlink> Hyperlinks = new();
+        public readonly Queue<ProjectedHyperlink> Hyperlinks = new();
         public readonly Queue<IXamlDirectObject> Spans = new();
         public readonly Queue<IXamlDirectObject> Runs = new();
         //public readonly Queue<InlineUIContainer> Emoji = new();
@@ -315,6 +334,14 @@ namespace Telegram.Controls
         // Tracked apart from the cursor itself, as an inline button shows the Hand too.
         private bool _spoilerCursor;
 
+        // The answer to "is the pointer over a link", and the point it was resolved for. The
+        // hit test behind it costs ~13us at pointer sample rate, and a move of a pixel or two
+        // cannot change the answer except within that distance of a link's edge - where being a
+        // frame late in swapping the cursor is not something anyone can see.
+        private Point _cursorPoint;
+        private bool _cursorOverLink;
+        private bool _cursorResolved;
+
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
         {
             try
@@ -359,8 +386,22 @@ namespace Telegram.Controls
             // and over a spoiler (handled above, which returns early).
             if (_spanForInlines == null && TextBlock != null && _textSelection == TextSelectionMode.Extended)
             {
-                var hyperlink = TextBlock.GetHyperlinkFromPoint(e.GetCurrentPoint(TextBlock).Position);
-                if (hyperlink == null)
+                // Without a link in the message the pointer cannot be over one wherever it is,
+                // and the whole question - GetCurrentPoint included, the expensive half - is skipped.
+                if (_activeHyperlinks.Count > 0)
+                {
+                    var point = e.GetCurrentPoint(TextBlock).Position;
+                    if (!_cursorResolved
+                        || Math.Abs(point.X - _cursorPoint.X) >= 2
+                        || Math.Abs(point.Y - _cursorPoint.Y) >= 2)
+                    {
+                        _cursorOverLink = IsLinkAt(TextBlock.GetPositionFromPoint(point).Offset);
+                        _cursorPoint = point;
+                        _cursorResolved = true;
+                    }
+                }
+
+                if (!_cursorOverLink)
                 {
                     // There's no text to select over an inline button: it reads as a button
                     // (Hand), or as nothing at all when it's disabled.
@@ -653,7 +694,7 @@ namespace Telegram.Controls
         }
 
         private readonly List<IXamlDirectObject> _activeParagraphs = new();
-        private readonly List<Hyperlink> _activeHyperlinks = new();
+        private readonly List<ProjectedHyperlink> _activeHyperlinks = new();
         private readonly List<IXamlDirectObject> _activeSpans = new();
         private readonly List<IXamlDirectObject> _activeRuns = new();
         //private readonly HashSet<InlineUIContainer> _activeEmojis = new();
@@ -678,28 +719,53 @@ namespace Telegram.Controls
         // TODO: make sure all this event thing is needed
         private TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> _entityHandler;
 
-        private Hyperlink GetOrCreateHyperlink()
+        // Click is subscribed while the control is live and dropped again on Unloaded (see
+        // OnLoaded/OnUnloaded), rather than once when the link is built. Two reasons, and both
+        // have been paid for:
+        //
+        // OnApplyTemplate has no partner. A control whose template is applied but which never goes
+        // live never unloads either, so a handler registered there is never removed and the whole
+        // control leaks - reproducible by scrolling a ListView fast, or opening a page and leaving
+        // it immediately. Only Loaded/Unloaded are reliably paired.
+        //
+        // And the pool is shared between blocks (RecyclePool comes down from MessageBubble), so a
+        // Hyperlink carries no subscription into the next block that borrows it, where it would
+        // raise the previous block's handler.
+        private ProjectedHyperlink GetOrCreateHyperlink(XamlDirect direct)
         {
             if (_pools != null && _pools.Hyperlinks.TryDequeue(out var hyperlink))
             {
                 if (IsConnected)
                 {
-                    hyperlink.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
+                    hyperlink.Element.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
                 }
 
                 _activeHyperlinks.Add(hyperlink);
                 return hyperlink;
             }
 
-            hyperlink = new Hyperlink();
+            hyperlink = new ProjectedHyperlink(direct, new Hyperlink());
 
             if (IsConnected)
             {
-                hyperlink.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
+                hyperlink.Element.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
             }
 
             _activeHyperlinks.Add(hyperlink);
             return hyperlink;
+        }
+
+        // A link's appearance through XamlDirect rather than the projection: a managed DependencyProperty
+        // set measured ~7x the cost of the equivalent XamlDirect one, and every link carries three of
+        // them. Returns the projected object, which the caller needs for the Inlines anyway.
+        //
+        // The weight is set unconditionally, pooled links included: a Hyperlink coming back from the
+        // pool still carries whatever the last message set on it.
+        private void ApplyHyperlinkProperties(XamlDirect direct, ProjectedHyperlink hyperlink, Brush foreground, UnderlineStyle underline, FontWeight weight)
+        {
+            direct.SetObjectProperty(hyperlink.Native, XamlPropertyIndex.TextElement_Foreground, foreground);
+            direct.SetObjectProperty(hyperlink.Native, XamlPropertyIndex.TextElement_FontWeight, weight);
+            direct.SetEnumProperty(hyperlink.Native, XamlPropertyIndex.Hyperlink_UnderlineStyle, (uint)underline);
         }
 
         private IXamlDirectObject GetOrCreateSpan(XamlDirect direct)
@@ -711,6 +777,7 @@ namespace Telegram.Controls
             }
 
             span = direct.CreateInstance(XamlTypeIndex.Span);
+
             _activeSpans.Add(span);
             return span;
         }
@@ -718,7 +785,7 @@ namespace Telegram.Controls
         // Resets a pooled Run to the requested style. Every property the build loop can set has
         // to be cleared when it is not wanted, or it would carry over from whatever the Run said
         // last time. NativeUtils.AddRunToCollection does the same for a Run it creates.
-        private static void ApplyRunProperties(XamlDirect direct, IXamlDirectObject run, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize, bool transparent)
+        private static void ApplyRunProperties(XamlDirect direct, IXamlDirectObject run, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize)
         {
             direct.SetEnumProperty(run, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
 
@@ -777,47 +844,49 @@ namespace Telegram.Controls
                 direct.ClearProperty(run, XamlPropertyIndex.TextElement_FontSize);
             }
 
-            // TODO: removed once fixed by Microsoft
-            if (transparent)
-            {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_Foreground, null);
-            }
-            else
-            {
-                direct.ClearProperty(run, XamlPropertyIndex.TextElement_Foreground);
-            }
+            // Cleared rather than left alone: ProcessCodeBlock colours runs directly, and a
+            // pooled one would carry that colour into the next message's plain text.
+            direct.ClearProperty(run, XamlPropertyIndex.TextElement_Foreground);
         }
 
-        private IXamlDirectObject GetOrCreateRun(XamlDirect direct, IXamlDirectObject inlines, string text, int offset, int length, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize, bool transparent)
+        // `prefix` is the zero-width character an inline object left behind, carried on the front
+        // of the next plain run instead of in a Run of its own - see the emoji branch in SetText.
+        private IXamlDirectObject GetOrCreateRun(XamlDirect direct, IXamlDirectObject inlines, string text, int offset, int length, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize, string prefix = null)
         {
             if (_pools != null && _pools.Runs.TryDequeue(out var run))
             {
-                direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text.Substring(offset, length));
-                ApplyRunProperties(direct, run, direction, style, fontFamily, fontSize, transparent);
+                direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, prefix == null
+                    ? text.Substring(offset, length)
+                    : prefix + text.Substring(offset, length));
+                ApplyRunProperties(direct, run, direction, style, fontFamily, fontSize);
                 direct.AddToCollection(inlines, run);
 
                 _activeRuns.Add(run);
                 return run;
             }
 
-            run = NativeUtils.AddRunToCollection(direct, inlines, text, offset, length, direction, style, fontFamily, fontSize, transparent);
+            run = prefix == null
+                ? NativeUtils.AddRunToCollection(direct, inlines, text, offset, length, direction, style, fontFamily, fontSize)
+                : NativeUtils.AddRunToCollection(direct, inlines, prefix + text.Substring(offset, length), direction, style, fontFamily, fontSize);
+
             _activeRuns.Add(run);
             return run;
         }
 
-        private IXamlDirectObject GetOrCreateRun(XamlDirect direct, IXamlDirectObject inlines, string text, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize, bool transparent)
+        private IXamlDirectObject GetOrCreateRun(XamlDirect direct, IXamlDirectObject inlines, string text, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize)
         {
             if (_pools != null && _pools.Runs.TryDequeue(out var run))
             {
                 direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
-                ApplyRunProperties(direct, run, direction, style, fontFamily, fontSize, transparent);
+                ApplyRunProperties(direct, run, direction, style, fontFamily, fontSize);
                 direct.AddToCollection(inlines, run);
 
                 _activeRuns.Add(run);
                 return run;
             }
 
-            run = NativeUtils.AddRunToCollection(direct, inlines, text, direction, style, fontFamily, fontSize, transparent);
+            run = NativeUtils.AddRunToCollection(direct, inlines, text, direction, style, fontFamily, fontSize);
+
             _activeRuns.Add(run);
             return run;
         }
@@ -853,10 +922,10 @@ namespace Telegram.Controls
                 }
                 foreach (var hyperlink in _activeHyperlinks)
                 {
-                    hyperlink.Inlines.Clear();
+                    xd.ClearCollection(hyperlink.Inlines);
                     if (_entityHandler != null)
                     {
-                        hyperlink.Click -= _entityHandler;
+                        hyperlink.Element.Click -= _entityHandler;
                     }
                     _pools.Hyperlinks.Enqueue(hyperlink);
                 }
@@ -895,10 +964,10 @@ namespace Telegram.Controls
             {
                 if (_entityHandler != null)
                 {
-                    hyperlink.Click -= _entityHandler;
+                    hyperlink.Element.Click -= _entityHandler;
                 }
 
-                hyperlink.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
+                hyperlink.Element.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
             }
 
             // OnApplyTemplate runs before we're loaded, so the highlighters it computed may
@@ -928,7 +997,7 @@ namespace Telegram.Controls
             {
                 foreach (var hyperlink in _activeHyperlinks)
                 {
-                    hyperlink.Click -= _entityHandler;
+                    hyperlink.Element.Click -= _entityHandler;
                 }
             }
 
@@ -980,7 +1049,8 @@ namespace Telegram.Controls
             _fontSize = fontSize;
             _first = rangeStart;
             _last = rangeEnd;
-            _contentLength = -1;
+            InvalidateContentLength();
+            _cursorResolved = false;
             _origin = styled != null && rangeStart <= rangeEnd && rangeStart < styled.Paragraphs.Count
                 ? styled.Paragraphs[rangeStart].Offset
                 : 0;
@@ -1028,7 +1098,7 @@ namespace Telegram.Controls
                         inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
                     }
 
-                    _fastRun = GetOrCreateRun(direct, inlines, styled.Paragraphs[rangeStart].Text, direction, TextStyle.None, null, fontSize, false);
+                    _fastRun = GetOrCreateRun(direct, inlines, styled.Paragraphs[rangeStart].Text, direction, TextStyle.None, null, fontSize);
 
                     if (paragraph != null)
                     {
@@ -1111,7 +1181,6 @@ namespace Telegram.Controls
             TextParagraphType lastType = null;
             TextParagraphType firstType = null;
 
-
             var alignment = TextAlignment;
             var offset = 0;
 
@@ -1148,6 +1217,9 @@ namespace Telegram.Controls
                 }
             }
 
+            // No return between here and the matching Tally, or the scope would be closed by
+            // whatever runs next and charge its time to this label.
+
             for (int i = _first; i <= _last; i++)
             {
                 var part = styled.Paragraphs[i];
@@ -1157,6 +1229,13 @@ namespace Telegram.Controls
                 var partFontSize = fontSize;
 
                 var previous = 0;
+
+                // The ZWNJ an inline object leaves behind, not yet emitted: if plain text follows
+                // it rides on the front of that run instead of taking a Run of its own. Every
+                // iteration of the entity loop below either merges it or emits it, so it can never
+                // reach a branch that does not know about it - and it never crosses a paragraph,
+                // where it would move a content unit into the next block.
+                string pending = null;
 
                 IXamlDirectObject paragraph;
                 IXamlDirectObject inlines;
@@ -1168,6 +1247,7 @@ namespace Telegram.Controls
                 else
                 {
                     paragraph = GetOrCreateParagraph(direct);
+
                     inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
                 }
 
@@ -1204,9 +1284,16 @@ namespace Telegram.Controls
                     var entity = runs[j];
                     if (entity.Offset > previous)
                     {
-                        GetOrCreateRun(direct, inlines, text, previous, entity.Offset - previous, direction, Native.TextStyle.None, null, fontSize: partFontSize, false);
+                        GetOrCreateRun(direct, inlines, text, previous, entity.Offset - previous, direction, Native.TextStyle.None, null, fontSize: partFontSize, prefix: pending);
                         Map(part.Offset + previous, entity.Offset - previous, entity.Offset - previous);
                         offset += entity.Offset - previous;
+                        pending = null;
+                    }
+                    else if (pending != null)
+                    {
+                        // What follows is an object or a styled run, neither of which may carry it.
+                        GetOrCreateRun(direct, inlines, pending, direction, Native.TextStyle.None, null, partFontSize);
+                        pending = null;
                     }
 
                     if (entity.Length + entity.Offset > text.Length)
@@ -1222,26 +1309,22 @@ namespace Telegram.Controls
                         {
                             if (entity.Type is not TextEntityTypePre and not TextEntityTypePreCode)
                             {
-                                var hyperlink = GetOrCreateHyperlink();
-                                hyperlink.Foreground = CodeForeground;
-                                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                                var hyperlink = GetOrCreateHyperlink(direct);
+                                ApplyHyperlinkProperties(direct, hyperlink, CodeForeground, UnderlineStyle.None, FontWeights.Normal);
 
-                                MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(entity.Type, data));
+                                MessageHelper.SetHyperlinkInfo(hyperlink.Element, new TextEntityClickEventArgs(entity.Type, data));
 
-                                var native = direct.GetXamlDirectObject(hyperlink);
-                                var collection = direct.GetXamlDirectObjectProperty(native, XamlPropertyIndex.Span_Inlines);
-
-                                GetOrCreateRun(direct, collection, data, direction, Native.TextStyle.None, Theme.Current.MonospaceFontFamily, partFontSize, false);
+                                GetOrCreateRun(direct, hyperlink.Inlines, data, direction, Native.TextStyle.None, Theme.Current.MonospaceFontFamily, partFontSize);
                                 Map(part.Offset + entity.Offset, data.Length, data.Length);
                                 offset += data.Length;
 
-                                direct.AddToCollection(inlines, native);
+                                direct.AddToCollection(inlines, hyperlink.Native);
                             }
                             else
                             {
                                 direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, Theme.Current.MonospaceFontFamily);
 
-                                var placeholder = GetOrCreateRun(direct, inlines, data, direction, Native.TextStyle.None, null, 0, false);
+                                var placeholder = GetOrCreateRun(direct, inlines, data, direction, Native.TextStyle.None, null, 0);
                                 Map(part.Offset + entity.Offset, data.Length, data.Length);
                                 offset += data.Length;
 
@@ -1255,7 +1338,7 @@ namespace Telegram.Controls
                         }
                         else
                         {
-                            GetOrCreateRun(direct, inlines, data, direction, Native.TextStyle.None, Theme.Current.MonospaceFontFamily, 0, false);
+                            GetOrCreateRun(direct, inlines, data, direction, Native.TextStyle.None, Theme.Current.MonospaceFontFamily, 0);
                             Map(part.Offset + entity.Offset, data.Length, data.Length);
                             offset += data.Length;
                         }
@@ -1292,52 +1375,47 @@ namespace Telegram.Controls
                             {
                                 if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl)
                                 {
-                                    var hyperlink = GetOrCreateHyperlink();
+                                    var hyperlink = GetOrCreateHyperlink(direct);
                                     if (entity.Type is TextEntityTypeTextUrl textUrl)
                                     {
-                                        MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(entity.Type, textUrl.Url));
+                                        MessageHelper.SetHyperlinkInfo(hyperlink.Element, new TextEntityClickEventArgs(entity.Type, textUrl.Url));
 
                                         if (textUrl.Url.StartsWith("http"))
                                         {
-                                            (_links ??= new List<Hyperlink>()).Add(hyperlink);
-                                            ToolTipService.SetToolTip(hyperlink, textUrl.Url);
+                                            (_links ??= new List<Hyperlink>()).Add(hyperlink.Element);
+                                            ToolTipService.SetToolTip(hyperlink.Element, textUrl.Url);
                                         }
                                     }
                                     else
                                     {
-                                        MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(entity.Type));
+                                        MessageHelper.SetHyperlinkInfo(hyperlink.Element, new TextEntityClickEventArgs(entity.Type));
                                     }
 
-                                    hyperlink.Foreground = HyperlinkForeground;
-                                    hyperlink.UnderlineStyle = HyperlinkStyle;
-                                    hyperlink.FontWeight = HyperlinkFontWeight;
-                                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                                    ApplyHyperlinkProperties(direct, hyperlink, HyperlinkForeground, UnderlineStyle.None, HyperlinkFontWeight);
 
-                                    parent = direct.GetXamlDirectObject(hyperlink);
-                                    parentInlines = direct.GetXamlDirectObjectProperty(parent, XamlPropertyIndex.Span_Inlines);
+                                    parent = hyperlink.Native;
+                                    parentInlines = hyperlink.Inlines;
                                 }
                                 else
                                 {
-                                    var hyperlink = GetOrCreateHyperlink();
+                                    var hyperlink = GetOrCreateHyperlink(direct);
+
                                     var data = text.Substring(entity.Offset, entity.Length);
 
-                                    hyperlink.Foreground = HyperlinkForeground;
-                                    hyperlink.UnderlineStyle = HyperlinkStyle;
-                                    hyperlink.FontWeight = HyperlinkFontWeight;
-                                    hyperlink.UnderlineStyle = entity.Type is TextEntityTypeUrl
-                                        ? UnderlineStyle.Single
-                                        : UnderlineStyle.None;
+                                    ApplyHyperlinkProperties(direct, hyperlink, HyperlinkForeground,
+                                        entity.Type is TextEntityTypeUrl ? UnderlineStyle.Single : UnderlineStyle.None,
+                                        HyperlinkFontWeight);
 
                                     if (entity.Type is TextEntityTypeDateTime dateTime)
                                     {
-                                        (_links ??= new List<Hyperlink>()).Add(hyperlink);
-                                        ToolTipService.SetToolTip(hyperlink, Formatter.LongDateAt(dateTime.UnixTime));
+                                        (_links ??= new List<Hyperlink>()).Add(hyperlink.Element);
+                                        ToolTipService.SetToolTip(hyperlink.Element, Formatter.LongDateAt(dateTime.UnixTime));
                                     }
 
-                                    MessageHelper.SetHyperlinkInfo(hyperlink, new TextEntityClickEventArgs(entity.Type, data));
+                                    MessageHelper.SetHyperlinkInfo(hyperlink.Element, new TextEntityClickEventArgs(entity.Type, data));
 
-                                    parent = direct.GetXamlDirectObject(hyperlink);
-                                    parentInlines = direct.GetXamlDirectObjectProperty(parent, XamlPropertyIndex.Span_Inlines);
+                                    parent = hyperlink.Native;
+                                    parentInlines = hyperlink.Inlines;
                                 }
                             }
                         }
@@ -1406,6 +1484,7 @@ namespace Telegram.Controls
                             else
                             {
                                 var player = GetOrCreateEmoji(out inline);
+
                                 player.LoopCount = 0;
                                 player.HorizontalAlignment = HorizontalAlignment.Left;
                                 player.FlowDirection = FlowDirection.LeftToRight;
@@ -1475,13 +1554,13 @@ namespace Telegram.Controls
                                     ? direction == FlowDirection.RightToLeft ? Icons.RTL : Icons.LTR
                                     : Icons.ZWNJ;
 
-                                GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize, transparent: true);
+                                GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize);
                                 Map(part.Offset + entity.Offset, 1, 0); // leading mark, carries the object below
                                 offset++;
                             }
 
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
-                            GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize, true);
+                            pending = Icons.ZWNJ;
                             MapObject(part.Offset + entity.Offset, entity.Length); // alt-text
                             offset++;
                         }
@@ -1489,7 +1568,7 @@ namespace Telegram.Controls
                         {
                             entity.Update(part);
 
-                            var run = GetOrCreateRun(direct, parentInlines, entity.FormattedText, direction, entity.Flags, null, partFontSize, false);
+                            var run = GetOrCreateRun(direct, parentInlines, entity.FormattedText, direction, entity.Flags, null, partFontSize);
                             Map(part.Offset + entity.Offset, entity.FormattedText.Length, entity.Length); // displayed date <-> original
                             offset += entity.FormattedText.Length;
 
@@ -1525,19 +1604,19 @@ namespace Telegram.Controls
                                         ? direction == FlowDirection.RightToLeft ? Icons.RTL : Icons.LTR
                                         : Icons.ZWNJ;
 
-                                    GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize, transparent: true);
+                                    GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize);
                                     Map(part.Offset + entity.Offset, 1, 0); // leading mark, carries the object below
                                     offset++;
                                 }
 
                                 direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
-                                GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize, true);
+                                GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize);
                                 MapObject(part.Offset + entity.Offset, entity.Length); // expression
                                 offset++;
                             }
                             else
                             {
-                                GetOrCreateRun(direct, parentInlines, mathematicalExpression.Expression, entity.Offset, entity.Length, direction, entity.Flags, null, partFontSize, false);
+                                GetOrCreateRun(direct, parentInlines, mathematicalExpression.Expression, entity.Offset, entity.Length, direction, entity.Flags, null, partFontSize);
                                 Map(part.Offset + entity.Offset, entity.Length, entity.Length);
                                 offset += entity.Length;
                             }
@@ -1556,13 +1635,13 @@ namespace Telegram.Controls
                                     ? direction == FlowDirection.RightToLeft ? Icons.RTL : Icons.LTR
                                     : Icons.ZWNJ;
 
-                                GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize, transparent: true);
+                                GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize);
                                 Map(part.Offset + entity.Offset, 1, 0); // leading mark, carries the object below
                                 offset++;
                             }
 
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
-                            GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize, true);
+                            GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize);
                             MapObject(part.Offset + entity.Offset, entity.Length); // button text
                             offset++;
                         }
@@ -1572,7 +1651,7 @@ namespace Telegram.Controls
                         }
                         else
                         {
-                            GetOrCreateRun(direct, parentInlines, text, entity.Offset, entity.Length, direction, entity.Flags, null, partFontSize, false);
+                            GetOrCreateRun(direct, parentInlines, text, entity.Offset, entity.Length, direction, entity.Flags, null, partFontSize);
                             Map(part.Offset + entity.Offset, entity.Length, entity.Length);
                             offset += entity.Length;
                         }
@@ -1594,9 +1673,15 @@ namespace Telegram.Controls
 
                 if (text.Length > previous)
                 {
-                    _fastRun = GetOrCreateRun(direct, inlines, text, previous, text.Length - previous, direction, Native.TextStyle.None, null, partFontSize, false);
+                    _fastRun = GetOrCreateRun(direct, inlines, text, previous, text.Length - previous, direction, Native.TextStyle.None, null, partFontSize, prefix: pending);
                     Map(part.Offset + previous, text.Length - previous, text.Length - previous);
                     offset += text.Length - previous;
+                    pending = null;
+                }
+                else if (pending != null)
+                {
+                    GetOrCreateRun(direct, inlines, pending, direction, Native.TextStyle.None, null, partFontSize);
+                    pending = null;
                 }
 
                 if (paragraph != null)
@@ -1605,7 +1690,7 @@ namespace Telegram.Controls
                 }
                 else if (i < _last)
                 {
-                    GetOrCreateRun(direct, inlines, " ", direction, Native.TextStyle.None, null, 0, false);
+                    GetOrCreateRun(direct, inlines, " ", direction, Native.TextStyle.None, null, 0);
                     offset++;
                 }
 
@@ -1818,6 +1903,9 @@ namespace Telegram.Controls
                 var next = map[i];
                 map[i] = new IndexSegment(next.Rendered + delta, next.Styled, next.RenderedLength, next.StyledLength);
             }
+
+            // The date's Run changed length, so every TextPointer offset after it moved.
+            InvalidateContentLength();
 
             ShiftRanges(_spoiler, from, delta);
             ShiftRanges(_marked, from, delta);
@@ -2145,7 +2233,7 @@ namespace Telegram.Controls
 
                     // The inline tree changed (placeholder -> syntax spans); the cached
                     // selection length must be recomputed on next access.
-                    _contentLength = -1;
+                    InvalidateContentLength();
                 }
             }
             catch
@@ -2202,7 +2290,7 @@ namespace Telegram.Controls
                 }
                 else if (token is TextToken text)
                 {
-                    GetOrCreateRun(direct, inlines, text.Value, FlowDirection.LeftToRight, Native.TextStyle.None, fontFamily, 0, false);
+                    GetOrCreateRun(direct, inlines, text.Value, FlowDirection.LeftToRight, Native.TextStyle.None, fontFamily, 0);
                 }
             }
         }
@@ -2468,9 +2556,9 @@ namespace Telegram.Controls
         {
             foreach (var child in _activeHyperlinks)
             {
-                if (child.Foreground == oldValue)
+                if (child.Element.Foreground == oldValue)
                 {
-                    child.Foreground = newValue;
+                    child.Element.Foreground = newValue;
                 }
             }
         }
@@ -2492,7 +2580,6 @@ namespace Telegram.Controls
         {
             ((FormattedTextBlock)d).RecolorHyperlinks((Brush)e.NewValue, (Brush)e.OldValue);
         }
-
 
         #endregion
 

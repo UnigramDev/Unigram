@@ -183,7 +183,7 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
-    IXamlDirectObject NativeUtils::AddRunToCollection(XamlDirect direct, IXamlDirectObject inlines, hstring text, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize, bool transparent)
+    IXamlDirectObject NativeUtils::AddRunToCollection(XamlDirect direct, IXamlDirectObject inlines, hstring text, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize)
     {
         auto run = direct.CreateInstance(XamlTypeIndex::Run);
         direct.SetStringProperty(run, XamlPropertyIndex::Run_Text, text);
@@ -224,21 +224,17 @@ namespace winrt::Telegram::Native::implementation
             direct.SetDoubleProperty(run, XamlPropertyIndex::TextElement_FontSize, fontSize);
         }
 
-        // TODO: removed once fixed by Microsoft
-        if (transparent)
-        {
-            direct.SetObjectProperty(run, XamlPropertyIndex::TextElement_Foreground, nullptr);
-        }
-
         direct.AddToCollection(inlines, run);
         return run;
     }
 
-    IXamlDirectObject NativeUtils::AddRunToCollection(XamlDirect direct, IXamlDirectObject inlines, hstring text, int32_t offset, int32_t length, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize, bool transparent)
+    IXamlDirectObject NativeUtils::AddRunToCollection(XamlDirect direct, IXamlDirectObject inlines, hstring text, int32_t offset, int32_t length, FlowDirection direction, TextStyle style, FontFamily fontFamily, double fontSize)
     {
-        std::wstring wstr = text.c_str();
+        // The slice straight out of the source: a std::wstring of the whole paragraph, then a
+        // second copy for substr, was two allocations per run of a message that can be thousands
+        // of characters long.
         auto run = direct.CreateInstance(XamlTypeIndex::Run);
-        direct.SetStringProperty(run, XamlPropertyIndex::Run_Text, hstring(wstr.substr(offset, length)));
+        direct.SetStringProperty(run, XamlPropertyIndex::Run_Text, hstring(text.c_str() + offset, length));
         direct.SetEnumProperty(run, XamlPropertyIndex::Run_FlowDirection, (uint32_t)direction);
 
         if ((style & TextStyle::Bold) != TextStyle::None)
@@ -274,12 +270,6 @@ namespace winrt::Telegram::Native::implementation
         if (fontSize > 0)
         {
             direct.SetDoubleProperty(run, XamlPropertyIndex::TextElement_FontSize, fontSize);
-        }
-
-        // TODO: removed once fixed by Microsoft
-        if (transparent)
-        {
-            direct.SetObjectProperty(run, XamlPropertyIndex::TextElement_Foreground, nullptr);
         }
 
         direct.AddToCollection(inlines, run);

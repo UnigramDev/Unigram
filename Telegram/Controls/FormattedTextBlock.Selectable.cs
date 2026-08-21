@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Windows.UI;
@@ -99,7 +100,10 @@ namespace Telegram.Controls
             {
                 if (_contentLength < 0 && TextBlock != null)
                 {
-                    _contentLength = GetHighlightIndex(TextBlock.ContentEnd, out _, out _);
+                    var offsets = Offsets;
+                    var last = offsets.Length - 1;
+
+                    _contentLength = last < 0 ? 0 : offsets[last].Rendered + offsets[last].Length;
                 }
 
                 return _contentLength < 0 ? 0 : _contentLength;
@@ -109,6 +113,8 @@ namespace Telegram.Controls
         internal void InvalidateContentLength()
         {
             _contentLength = -1;
+            _offsets = null;
+            _blockRanges = null;
         }
 
         // The hit token handed back to GetSelectionBoundary is the StyledText paragraph the
@@ -125,33 +131,34 @@ namespace Telegram.Controls
             }
 
             var pointer = TextBlock.GetPositionFromPoint(point);
+
             if (pointer == null)
             {
                 return 0;
             }
 
-            var position = GetHighlightIndex(pointer, out var block, out var mark);
+            var position = GetHighlightIndex(pointer.Offset, out var block, out var mark);
 
             // The pointer tells the two sides of a custom emoji apart, but the index can't: the
             // object takes none of its own, so the position in front of it and the one past it
-            // both count the same characters. `mark` is the zero-width character SetText emits
-            // ahead of the object, whose index is the one that addresses its leading edge - so
-            // a pointer that stopped in front of the object belongs there. Without this a
+            // both count the same characters. `mark` says the pointer stopped in front of an
+            // object that has one of the zero-width characters SetText emits ahead of it, and
+            // that character's index is the one addressing its leading edge. Without this a
             // leading custom emoji can only ever be selected together with what follows it.
-            if (mark != null)
+            if (mark)
             {
                 position--;
             }
 
             // An empty paragraph holds no inline, so a point on that line resolves BETWEEN
-            // blocks and parents to the RichTextBlock rather than to a run. There's nothing on
-            // the line to expand to, and the index it flattens to is the one the NEXT paragraph
-            // starts at — which is why a double tap on a blank line selected the following
-            // line's first word. The end of the text parents to the RichTextBlock too, but it
-            // does sit in a paragraph, so keep the position-derived answer there.
-            if (pointer.Parent is RichTextBlock)
+            // blocks rather than inside one. There's nothing on the line to expand to, and the
+            // index it flattens to is the one the NEXT paragraph starts at — which is why a
+            // double tap on a blank line selected the following line's first word. The end of
+            // the text lands between blocks too, but it does sit in a paragraph, so keep the
+            // position-derived answer there.
+            if (IsBetweenBlocks(pointer.Offset))
             {
-                if (pointer.Offset < TextBlock.ContentEnd.Offset)
+                if (pointer.Offset < _contentEnd)
                 {
                     hit = HitNothing;
                 }
@@ -409,121 +416,254 @@ namespace Telegram.Controls
         // counted (that's what the SetText 'shift' compensates for); inline objects and
         // line breaks count as 1, Run characters as their length.
         //
-        // `block` is the index of the block the pointer resolved in (-1 when it resolved in
-        // none), which the returned index can't express — blocks are laid out one per
-        // rendered paragraph, so it maps to StyledText as _first + block.
-        //
-        // `mark` is the zero-width run in front of the inline object the pointer stopped in
-        // front of, null in every other case: its index is the one that addresses the object's
-        // leading edge.
-        private int GetHighlightIndex(TextPointer pointer, out int block, out Run mark)
+        // One entry per leaf inline (Run, inline object, LineBreak) in document order: where it
+        // begins in TextPointer space, and the highlighter index standing before it. Spans are
+        // not recorded - they carry no content unit, so a position at a span's start resolves to
+        // the same index as one at its first child's.
+        private readonly struct OffsetEntry
         {
-            block = -1;
-            mark = null;
+            public readonly int Start;         // ElementStart.Offset
+            public readonly int ContentStart;  // runs only
+            public readonly int ContentEnd;    // runs only
+            public readonly int End;           // ElementEnd.Offset
+            public readonly int Rendered;      // highlighter index before this element
+            public readonly int Length;        // content units this element contributes
+            public readonly int Block;         // index of the containing Block
+            public readonly bool Object;       // an InlineUIContainer, which counts nothing
+            public readonly bool Mark;         // a Run holding one of the zero-width characters
+            public readonly bool Link;         // sits inside a Hyperlink
 
-            if (TextBlock == null || pointer == null)
+            public OffsetEntry(int start, int contentStart, int contentEnd, int end, int rendered, int length, int block, bool inlineObject, bool mark, bool link)
             {
-                return 0;
+                Start = start;
+                ContentStart = contentStart;
+                ContentEnd = contentEnd;
+                End = end;
+                Rendered = rendered;
+                Length = length;
+                Block = block;
+                Object = inlineObject;
+                Mark = mark;
+                Link = link;
             }
-
-            var target = pointer.Offset;
-            var index = 0;
-            var i = 0;
-
-            foreach (var current in TextBlock.Blocks)
-            {
-                if (current is Paragraph paragraph && WalkInlines(paragraph.Inlines, target, ref index, ref mark))
-                {
-                    block = i;
-                    return index;
-                }
-
-                i++;
-            }
-
-            return index;
         }
 
-        // Walks inlines accumulating the content-unit count in `index`. Returns true
-        // once the pointer (`target` offset) is reached, leaving `index` at it.
-        //
-        // A pointer stopping in front of an inline object also reports the zero-width run
-        // SetText emitted ahead of that object in `mark` (an object opening a paragraph, one
-        // after a spoiler, and the ZWNJ trailing the object right before all qualify) — the
-        // index it lands on is the one PAST the object, since the object counts nothing, and
-        // the mark's is the one in front of it. Null with no such run: the object then has no
-        // index of its own and can only be addressed along with the character before it.
-        private static bool WalkInlines(InlineCollection inlines, int target, ref int index, ref Run mark)
+        private OffsetEntry[] _offsets;
+
+        // Where each Block begins and ends in TextPointer space. A position outside every one of
+        // them sits between blocks - an empty paragraph, which holds no inline to expand to - and
+        // that used to be read off pointer.Parent, at the cost of projecting one more object per
+        // pointer move. _contentEnd is the same story: TextBlock.ContentEnd allocates a
+        // TextPointer to answer, and the answer only changes when the text does.
+        private (int Start, int End)[] _blockRanges;
+        private int _contentEnd;
+
+        // Built on the first hit test after SetText rather than during it: rendering must not pay
+        // for a table only a pointer needs, and reading an offset means projecting a TextPointer
+        // per property, which is exactly the cost being moved out of the per-move path. Once
+        // built, resolving a point is a binary search with no calls into XAML at all.
+        private OffsetEntry[] Offsets
         {
-            Inline previous = null;
+            get
+            {
+                if (_offsets == null)
+                {
+                    var entries = new List<OffsetEntry>();
+                    var blocks = new List<(int, int)>();
+
+                    if (TextBlock != null)
+                    {
+                        var index = 0;
+                        var block = 0;
+
+                        foreach (var current in TextBlock.Blocks)
+                        {
+                            blocks.Add((current.ElementStart.Offset, current.ElementEnd.Offset));
+
+                            if (current is Paragraph paragraph)
+                            {
+                                CollectOffsets(paragraph.Inlines, entries, ref index, block, false);
+                            }
+
+                            block++;
+                        }
+
+                        _contentEnd = TextBlock.ContentEnd.Offset;
+                    }
+
+                    _blockRanges = blocks.ToArray();
+                    _offsets = entries.ToArray();
+                }
+
+                return _offsets;
+            }
+        }
+
+        private static void CollectOffsets(InlineCollection inlines, List<OffsetEntry> entries, ref int index, int block, bool link)
+        {
             var total = inlines.Count;
 
             for (int i = 0; i < total; i++)
             {
                 var inline = inlines[i];
 
-                if (inline is InlineUIContainer)
-                {
-                    // The object counts nothing, so `index` is already the position past it -
-                    // anything short of its very end resolved in front of it.
-                    if (target < inline.ElementEnd.Offset)
-                    {
-                        mark = ZeroWidth(previous);
-                        return true;
-                    }
-
-                    previous = inline;
-                    continue;
-                }
-
-                // Pointer is before this element: we're done, `index` is already correct.
-                if (target <= inline.ElementStart.Offset)
-                {
-                    return true;
-                }
-
                 switch (inline)
                 {
                     case Run run:
-                        if (target <= run.ContentEnd.Offset)
-                        {
-                            // Within the run: add the characters before the pointer.
-                            var count = target - run.ContentStart.Offset;
-                            index += count;
+                        var text = run.Text;
+                        var length = text != null ? text.Length : 0;
 
-                            // Past its start with an object right after it: the pointer stopped
-                            // in front of that object, not inside this run's text.
-                            if (count > 0 && i + 1 < total && inlines[i + 1] is InlineUIContainer)
-                            {
-                                mark = ZeroWidth(run);
-                            }
+                        entries.Add(new OffsetEntry(run.ElementStart.Offset, run.ContentStart.Offset, run.ContentEnd.Offset,
+                            run.ElementEnd.Offset, index, length, block, false, IsZeroWidth(text), link));
 
-                            return true;
-                        }
-                        index += run.Text != null ? run.Text.Length : 0;
+                        index += length;
                         break;
                     case Span span: // Bold/Italic/Underline/Hyperlink/... derive from Span
-                        if (WalkInlines(span.Inlines, target, ref index, ref mark))
-                        {
-                            return true;
-                        }
+                        CollectOffsets(span.Inlines, entries, ref index, block, link || span is Hyperlink);
+                        break;
+                    case InlineUIContainer:
+                        entries.Add(new OffsetEntry(inline.ElementStart.Offset, 0, 0, inline.ElementEnd.Offset,
+                            index, 0, block, true, false, link));
                         break;
                     case LineBreak:
+                        entries.Add(new OffsetEntry(inline.ElementStart.Offset, 0, 0, inline.ElementEnd.Offset,
+                            index, 1, block, false, false, link));
                         index += 1; // one object-replacement / break unit
                         break;
                 }
-
-                previous = inline;
             }
-
-            return false;
         }
 
-        // The run as one of the zero-width characters SetText emits around an inline object
-        // (the ZWNJ that stands in for it, or the RTL/LTR mark opening a paragraph), else null.
-        private static Run ZeroWidth(Inline inline)
+        // The last element beginning at or before the position; everything after it is
+        // irrelevant. -1 when the position precedes every element.
+        private int FindOffset(int target)
         {
-            return inline is Run run && run.Text is Icons.ZWNJ or Icons.LTR or Icons.RTL ? run : null;
+            var offsets = Offsets;
+            var found = -1;
+            var lo = 0;
+            var hi = offsets.Length - 1;
+
+            while (lo <= hi)
+            {
+                var mid = (lo + hi) / 2;
+                if (offsets[mid].Start <= target)
+                {
+                    found = mid;
+                    lo = mid + 1;
+                }
+                else
+                {
+                    hi = mid - 1;
+                }
+            }
+
+            return found;
+        }
+
+        // Whether a position lands inside a Hyperlink. Answered from the table rather than by
+        // walking up from pointer.Parent, which projects a TextElement per level - and this is
+        // asked on every pointer move, only to choose a cursor.
+        internal bool IsLinkAt(int target)
+        {
+            var found = FindOffset(target);
+            if (found < 0)
+            {
+                return false;
+            }
+
+            var entry = Offsets[found];
+            return entry.Link && target <= entry.End;
+        }
+
+        // A TextPointer offset -> the TextHighlighter.Ranges index, over the table above.
+        //
+        // `block` is the index of the block the position resolved in (-1 when it resolved past
+        // everything), which the returned index can't express — blocks are laid out one per
+        // rendered paragraph, so it maps to StyledText as _first + block.
+        //
+        // `mark` says the position stopped in front of an inline object that has a zero-width
+        // character ahead of it (an object opening a paragraph, one after a spoiler, and the ZWNJ
+        // trailing the object right before all qualify): the object counts nothing, so the
+        // position lands PAST it, and the character in front is what addresses its leading edge.
+        private int GetHighlightIndex(int target, out int block, out bool mark)
+        {
+            block = -1;
+            mark = false;
+
+            var offsets = Offsets;
+            if (offsets.Length == 0)
+            {
+                return 0;
+            }
+
+            var found = FindOffset(target);
+
+            if (found < 0)
+            {
+                // Before the first element: nothing precedes the position.
+                block = offsets[0].Block;
+                return 0;
+            }
+
+            var entry = offsets[found];
+
+            // In the order the tree walk tried them: an inline object claims a position
+            // anywhere up to its end - including the one it begins at, which is what the pointer
+            // reports for a hit on its leading half - and only then does a position at an
+            // element's start resolve in front of that element.
+            if (entry.Object && target < entry.End)
+            {
+                block = entry.Block;
+                mark = found > 0 && offsets[found - 1].Mark;
+                return entry.Rendered;
+            }
+            else if (target <= entry.Start)
+            {
+                block = entry.Block;
+                return entry.Rendered;
+            }
+            else if (entry.ContentEnd > 0 && target <= entry.ContentEnd)
+            {
+                var count = target - entry.ContentStart;
+
+                block = entry.Block;
+                mark = count > 0 && entry.Mark && found + 1 < offsets.Length && offsets[found + 1].Object;
+                return entry.Rendered + count;
+            }
+
+            // Past this element: the position belongs to whatever comes next, which adds nothing
+            // to the index of its own. Past the last one it resolves in no block at all.
+            if (found + 1 < offsets.Length)
+            {
+                block = offsets[found + 1].Block;
+            }
+
+            return entry.Rendered + entry.Length;
+        }
+
+        private bool IsBetweenBlocks(int target)
+        {
+            // Harvested with the offsets, so touching it first is what builds both.
+            _ = Offsets;
+
+            var blocks = _blockRanges;
+
+            for (int i = 0; i < blocks.Length; i++)
+            {
+                if (target > blocks[i].Start && target < blocks[i].End)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // One of the zero-width characters SetText emits around an inline object: the ZWNJ that
+        // stands in for it, or the RTL/LTR mark opening a paragraph.
+        private static bool IsZeroWidth(string text)
+        {
+            return text is Icons.ZWNJ or Icons.LTR or Icons.RTL;
         }
     }
 }
