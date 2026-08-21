@@ -31,7 +31,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Calls
 {
-    public sealed partial class LiveStreamPage : WindowEx, IPopupHost
+    public sealed partial class LiveStreamPage : WindowContent, IPopupHost
     {
         private readonly VoipGroupCall _call;
 
@@ -45,6 +45,8 @@ namespace Telegram.Views.Calls
         public LiveStreamPage(VoipGroupCall call)
         {
             InitializeComponent();
+
+            UseDarkCaptionButtons();
             Logger.Info();
 
             _inactivityTimer = new DispatcherTimer();

@@ -52,7 +52,7 @@ namespace Telegram.Views.Calls
         }
     }
 
-    public sealed partial class GroupCallPage : WindowEx, IGroupCallDelegate, IPopupHost
+    public sealed partial class GroupCallPage : WindowContent, IGroupCallDelegate, IPopupHost
     {
         private bool _disposed;
 
@@ -80,6 +80,8 @@ namespace Telegram.Views.Calls
         public GroupCallPage(VoipGroupCall call)
         {
             InitializeComponent();
+
+            UseDarkCaptionButtons();
             Logger.Info();
 
             _visual = new CompositionVoiceBlobVisual(AudioBlob, 150, 150, 1.5f);

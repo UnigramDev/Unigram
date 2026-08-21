@@ -619,6 +619,7 @@
     </Compile>
     <Compile Include="Controls\CorePage.cs" />
     <Compile Include="Controls\FrameworkElementEx.cs" />
+    <Compile Include="Controls\WindowContent.cs" />
     <Compile Include="Controls\MenuFlyoutReadDate.cs" />
     <Compile Include="Controls\Messages\Content\StickerContent.xaml.cs">
       <DependentUpon>StickerContent.xaml</DependentUpon>

@@ -42,7 +42,7 @@ namespace Telegram.Views.Calls
         Remote,
     }
 
-    public sealed partial class VoipPage : WindowEx, IPopupHost
+    public sealed partial class VoipPage : WindowContent, IPopupHost
     {
         private static readonly int[] _pendingGradient = new[] { 0x568FD6, 0x626ED5, 0xA667D5, 0x7664DA };
         private static readonly int[] _readyGradient = new[] { 0xACBD65, 0x459F8D, 0x53A4D1, 0x3E917A };
@@ -68,6 +68,8 @@ namespace Telegram.Views.Calls
         public VoipPage(VoipCall call)
         {
             InitializeComponent();
+
+            UseDarkCaptionButtons();
 
             _visual = new CompositionBlobVisual(Blob, 280, 280, 1.5f, ElementComposition.GetElementVisual(Photo))
             {
@@ -1351,55 +1353,5 @@ namespace Telegram.Views.Calls
         //}
 
         #endregion
-    }
-
-    public partial class WindowEx : UserControlEx
-    {
-        public WindowEx()
-        {
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonForegroundColor = Colors.White;
-            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            titleBar.ButtonInactiveForegroundColor = Colors.White;
-            titleBar.ButtonHoverBackgroundColor = ColorEx.FromHex(0x19FFFFFF);
-            titleBar.ButtonHoverForegroundColor = ColorEx.FromHex(0xCCFFFFFF);
-            titleBar.ButtonPressedBackgroundColor = ColorEx.FromHex(0x33FFFFFF);
-            titleBar.ButtonPressedForegroundColor = ColorEx.FromHex(0x99FFFFFF);
-        }
-
-        public async void Close()
-        {
-            try
-            {
-                if (XamlRoot.Content is WindowControl { Content: RootPage root })
-                {
-                    root.PresentContent(null);
-                    return;
-                }
-            }
-            catch
-            {
-                // XamlRoot.Content seems to throw a NullReferenceException
-                // whenever corresponding window has been already closed.
-            }
-
-            await WindowContext.Current.ConsolidateAsync();
-        }
-
-        protected async void RestoreWindow()
-        {
-            var applicationView = ApplicationView.GetForCurrentView();
-            if (applicationView.ViewMode != ApplicationViewMode.CompactOverlay)
-            {
-                return;
-            }
-
-            var restored = await applicationView.TryEnterViewModeAsync(ApplicationViewMode.Default);
-            if (restored)
-            {
-                applicationView.TryResizeView(new Size(720, 540));
-            }
-        }
     }
 }
