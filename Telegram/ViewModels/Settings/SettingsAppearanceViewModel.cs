@@ -249,7 +249,7 @@ namespace Telegram.ViewModels.Settings
             get => Settings.Appearance.ForceNightMode || Settings.Appearance.IsDarkTheme();
             set
             {
-                // TODO: this should be probably unified with the code in RootPage and might need some changes.
+                // TODO: this should be probably unified with the code in RootWindow and might need some changes.
                 if (Settings.Appearance.NightMode != NightMode.Disabled)
                 {
                     Settings.Appearance.NightMode = NightMode.Disabled;

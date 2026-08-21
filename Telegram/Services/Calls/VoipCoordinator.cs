@@ -497,7 +497,7 @@ namespace Telegram.Services
 
                 //    WindowContext.ForEach(window =>
                 //    {
-                //        if (window.Content is VoipPage page)
+                //        if (window.Content is VoipWindow page)
                 //        {
                 //            _ = JoinAsyncInternal(page.XamlRoot, chat, call.GroupCallId, null, string.Empty, true);
                 //        }

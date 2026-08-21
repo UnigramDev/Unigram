@@ -17,7 +17,7 @@ namespace Telegram.Controls
 {
     /// <summary>
     /// Base for anything assigned to <see cref="WindowContext.Content"/> - the root of a window,
-    /// though not a window itself. Was WindowEx, declared at the bottom of VoipPage.xaml.cs.
+    /// though not a window itself. Was WindowEx, declared at the bottom of VoipWindow.xaml.cs.
     ///
     /// The point of collecting these here is that every window-level event a root cares about -
     /// activation, close requests, visibility - is wired once, in one place, behind overridable
@@ -47,7 +47,7 @@ namespace Telegram.Controls
         {
             try
             {
-                if (XamlRoot.Content is WindowControl { Content: RootPage root })
+                if (XamlRoot.Content is WindowControl { Content: RootWindow root })
                 {
                     root.PresentContent(null);
                     return;

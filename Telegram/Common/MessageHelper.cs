@@ -1733,7 +1733,7 @@ namespace Telegram.Common
                                 frameworkElement.FlowDirection = LocaleService.Current.FlowDirection;
                             }
 
-                            if (window.Content is RootPage root)
+                            if (window.Content is RootWindow root)
                             {
                                 root.UpdateComponent();
                             }

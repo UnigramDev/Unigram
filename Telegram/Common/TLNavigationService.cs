@@ -98,7 +98,7 @@ namespace Telegram.Common
 
                 await WindowContext.ForEachAsync(window =>
                 {
-                    if (window.Content is WebAppPage webApp && webApp.AreTheSame(sourceLink))
+                    if (window.Content is WebAppWindow webApp && webApp.AreTheSame(sourceLink))
                     {
                         _ = ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
                         found = true;
@@ -117,7 +117,7 @@ namespace Telegram.Common
                 Height = 640,
                 PersistedId = "WebApp",
                 ViewMode = openMode is WebAppOpenModeFullScreen ? ViewServiceMode.FullScreen : ViewServiceMode.Default,
-                Content = (control, window) => new WebAppPage(window, ClientService, this, botUser, url, launchId, menuBot, source, sourceLink, buttonText)
+                Content = (control, window) => new WebAppWindow(window, ClientService, this, botUser, url, launchId, menuBot, source, sourceLink, buttonText)
             });
         }
 
@@ -128,7 +128,7 @@ namespace Telegram.Common
                 Width = 384,
                 Height = 640,
                 PersistedId = "WebApp",
-                Content = (control, window) => new WebAppPage(window, ClientService, this, botUser, url, title, gameChatId, gameMessageId)
+                Content = (control, window) => new WebAppWindow(window, ClientService, this, botUser, url, title, gameChatId, gameMessageId)
             });
         }
 
@@ -208,7 +208,7 @@ namespace Telegram.Common
 
                 await already.Dispatcher.DispatchAsync(() =>
                 {
-                    if (WindowContext.Current.Content is TabbedPage page)
+                    if (WindowContext.Current.Content is TabbedWindow page)
                     {
                         page.AddNewTab(newTab(already));
                     }
@@ -223,7 +223,7 @@ namespace Telegram.Common
                     Width = parameters.Width,
                     Height = parameters.Height,
                     PersistedId = parameters.PersistedId,
-                    Content = (control, window) => new TabbedPage(window, newTab(window), string.Equals(parameters.PersistedId, "WebApps"))
+                    Content = (control, window) => new TabbedWindow(window, newTab(window), string.Equals(parameters.PersistedId, "WebApps"))
                 });
             }
         }
@@ -737,7 +737,7 @@ namespace Telegram.Common
                                 ViewMode = ViewServiceMode.Default,
                                 Content = (control, window) =>
                                 {
-                                    var page = new WebAppPage(window, ClientService, this, botUser, webApp.Url, sourceLink: sourceLink);
+                                    var page = new WebAppWindow(window, ClientService, this, botUser, webApp.Url, sourceLink: sourceLink);
                                     void handler(object sender, WebAppAgeVerificationCompletedEventArgs args)
                                     {
                                         page.AgeVerificationCompleted -= handler;

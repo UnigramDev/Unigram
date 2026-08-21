@@ -84,7 +84,7 @@ namespace Telegram.Services
 
         private Task ConsolidateAsyncImpl()
         {
-            if (WindowContext.Current.Content is RootPage root)
+            if (WindowContext.Current.Content is RootWindow root)
             {
                 root.PresentContent(null);
                 return Task.CompletedTask;

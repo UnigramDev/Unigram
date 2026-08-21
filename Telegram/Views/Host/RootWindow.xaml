@@ -1,0 +1,276 @@
+﻿<controls:WindowContent x:Class="Telegram.Views.Host.RootWindow"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:icons="using:Telegram.Assets.Icons"
+                        xmlns:controls="using:Telegram.Controls"
+                        xmlns:converters="using:Telegram.Converters"
+                        xmlns:services="using:Telegram.Services"
+                        xmlns:settings="using:Telegram.Views.Settings"
+                        mc:Ignorable="d"
+                        d:DesignHeight="300"
+                        d:DesignWidth="400">
+
+    <controls:WindowContent.Resources>
+        <Style x:Key="NavigationViewExpanderStyle"
+               TargetType="CheckBox">
+            <Setter Property="Background"
+                    Value="{ThemeResource CheckBoxBackgroundUnchecked}" />
+            <Setter Property="Foreground"
+                    Value="{ThemeResource CheckBoxForegroundUnchecked}" />
+            <Setter Property="BorderBrush"
+                    Value="{ThemeResource CheckBoxBorderBrushUnchecked}" />
+            <Setter Property="Padding"
+                    Value="0" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Left" />
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Left" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Top" />
+            <Setter Property="FontFamily"
+                    Value="{ThemeResource ContentControlThemeFontFamily}" />
+            <Setter Property="FontSize"
+                    Value="{ThemeResource ControlContentThemeFontSize}" />
+            <Setter Property="MinWidth"
+                    Value="0" />
+            <Setter Property="MinHeight"
+                    Value="32" />
+            <Setter Property="UseSystemFocusVisuals"
+                    Value="True" />
+            <Setter Property="FocusVisualMargin"
+                    Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid x:Name="RootGrid"
+                              Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CombinedStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="UncheckedDisabled"
+                                                          To="CheckedDisabled"
+                                                          GeneratedDuration="0:0:0.2" />
+                                        <VisualTransition To="UncheckedDisabled"
+                                                          From="CheckedDisabled"
+                                                          GeneratedDuration="0:0:0.2" />
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="UncheckedDisabled" />
+                                    <VisualState x:Name="CheckedDisabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="CheckGlyphRotation"
+                                                             Storyboard.TargetProperty="Angle"
+                                                             To="180"
+                                                             Duration="0" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="IndeterminateDisabled" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                      Glyph="&#xE0E5;"
+                                      FontSize="20"
+                                      Foreground="{ThemeResource CheckBoxForegroundUnchecked}"
+                                      RenderTransformOrigin="0.5,0.5"
+                                      VerticalAlignment="Bottom">
+                                <FontIcon.RenderTransform>
+                                    <RotateTransform x:Name="CheckGlyphRotation" />
+                                </FontIcon.RenderTransform>
+                            </FontIcon>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Name="SessionItemTemplate"
+                      x:DataType="services:ISession">
+            <Grid Margin="0,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePicture Size="28"
+                                         Margin="10,0,10,0" />
+                <Rectangle x:Name="SelectionIndicator"
+                           HorizontalAlignment="Left"
+                           Margin="4,0,0,0"
+                           Width="3"
+                           Height="16"
+                           Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
+                           RadiusX="2"
+                           RadiusY="2" />
+
+                <Grid HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <controls:CustomEmojiIcon x:Name="BotVerified"
+                                              Visibility="Collapsed"
+                                              VerticalAlignment="Bottom"
+                                              Margin="0,-2,4,-2" />
+                    <TextBlock x:Name="TitleLabel"
+                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis"
+                               Grid.Column="1" />
+                    <controls:IdentityIcon x:Name="Identity"
+                                           VerticalAlignment="Bottom"
+                                           Margin="4,0,0,0"
+                                           Grid.Column="2" />
+                </Grid>
+
+                <controls:BadgeControl Text="{x:Bind converters:Formatter.ShortNumber(UnreadCount), Mode=OneWay}"
+                                       IsUnmuted="{x:Bind IsUnmuted, Mode=OneWay}"
+                                       Visibility="{x:Bind ShowCount, Mode=OneWay}"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,12,0"
+                                       Grid.Column="2" />
+            </Grid>
+        </DataTemplate>
+
+    </controls:WindowContent.Resources>
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="MainColumn" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <SplitView x:Name="Navigation"
+                   PaneOpening="Navigation_PaneOpening"
+                   PaneClosing="Navigation_PaneClosing"
+                   BorderBrush="{ThemeResource NavigationViewItemSeparatorForeground}"
+                   BorderThickness="0,0,1,0"
+                   CornerRadius="{Binding Source={ThemeResource OverlayCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                   PaneBackground="{ThemeResource NavigationViewDefaultPaneBackground}"
+                   OpenPaneLength="240"
+                   IsTabStop="False">
+            <SplitView.Pane>
+                <ListView x:Name="NavigationViewList"
+                          ItemClick="OnItemClick"
+                          IsItemClickEnabled="True"
+                          SelectionMode="None"
+                          AllowDrop="True"
+                          CanDragItems="True"
+                          CanReorderItems="False"
+                          DragItemsStarting="OnDragItemsStarting"
+                          DragItemsCompleted="OnDragItemsCompleted"
+                          ChoosingItemContainer="OnChoosingItemContainer"
+                          ContainerContentChanging="OnContainerContentChanging">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem"
+                               BasedOn="{StaticResource DefaultListViewItemStyle}">
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="Padding"
+                                    Value="0" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.Header>
+                        <Button x:Name="Accounts"
+                                Visibility="Collapsed"
+                                Click="Expand_Click"
+                                Background="Transparent"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Margin="0,32,0,-40"
+                                AutomationProperties.AccessibilityView="Raw"
+                                IsTabStop="False"
+                                Width="240">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </Button.Template>
+                            <Grid Background="Transparent"
+                                  Padding="12,0,12,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox x:Name="Expanded"
+                                          MinWidth="0"
+                                          IsEnabled="False"
+                                          IsHitTestVisible="False"
+                                          Style="{StaticResource NavigationViewExpanderStyle}"
+                                          Grid.Column="2" />
+
+                                <controls:ProfilePicture x:Name="Photo"
+                                                         Margin="0,0,12,0"
+                                                         Size="48" />
+
+                                <Grid x:Name="Info"
+                                      Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock x:Name="NameLabel"
+                                               TextWrapping="NoWrap"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Bottom"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                               Grid.Column="1" />
+                                    <TextBlock x:Name="PhoneLabel"
+                                               VerticalAlignment="Top"
+                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               Grid.Column="1"
+                                               Grid.Row="1"
+                                               MaxLines="1" />
+                                </Grid>
+                            </Grid>
+                        </Button>
+                    </ListView.Header>
+                </ListView>
+            </SplitView.Pane>
+        </SplitView>
+
+        <Border x:Name="Transition"
+                ActualThemeChanged="Theme_ActualThemeChanged" />
+
+        <controls:AnimatedIconToggleButton x:Name="Theme"
+                                           Click="Theme_Click"
+                                           Glyph="&#xE9EE;"
+                                           CheckedGlyph="&#xE9EA;"
+                                           Visibility="Collapsed"
+                                           VerticalAlignment="Top"
+                                           HorizontalAlignment="Left"
+                                           IsTabStop="False"
+                                           FontSize="{StaticResource GlyphMediumFontSize}"
+                                           Width="40"
+                                           Height="40">
+            <controls:AnimatedIconToggleButton.Source>
+                <icons:Sun />
+            </controls:AnimatedIconToggleButton.Source>
+        </controls:AnimatedIconToggleButton>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Border x:Name="ThemeShadow"
+                    Grid.RowSpan="2" />
+            <Border Background="{ThemeResource PageHeaderBackgroundBrush}" />
+            <settings:SettingsThemePage x:Name="ThemePage"
+                                        x:Load="False"
+                                        Width="320"
+                                        Grid.Row="1" />
+        </Grid>
+    </Grid>
+</controls:WindowContent>

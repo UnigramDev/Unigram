@@ -242,11 +242,11 @@ namespace Telegram.Services
 
                 WindowContext.ForEach(window =>
                 {
-                    if (window.Content is StandalonePage page && page.NavigationService?.Session == this)
+                    if (window.Content is StandaloneWindow page && page.NavigationService?.Session == this)
                     {
                         _ = window.ConsolidateAsync();
                     }
-                    else if (window.Content is RootPage root && root.NavigationService?.Session == this)
+                    else if (window.Content is RootWindow root && root.NavigationService?.Session == this)
                     {
                         root.NavigationService.Block();
                         ContentPopup.Block(root.NavigationService.XamlRoot);

@@ -157,7 +157,7 @@ namespace Telegram
                     {
                         LifetimeService.Current.ActiveItem = session;
 
-                        if (WindowContext.Current.Content is RootPage root)
+                        if (WindowContext.Current.Content is RootWindow root)
                         {
                             root.Switch(LifetimeService.Current.ActiveItem);
                         }
@@ -186,7 +186,7 @@ namespace Telegram
                     //view.TryResizeView(WindowContext.Current.Bounds.ToSize());
                 }
             }
-            else if (WindowContext.Current.Content is SharePage sharePage)
+            else if (WindowContext.Current.Content is ShareWindow sharePage)
             {
                 sharePage.Activate(share, navigation, state);
             }
@@ -208,13 +208,13 @@ namespace Telegram
 
             if (args is ShareTargetActivatedEventArgs)
             {
-                return new SharePage(window, activeSession)
+                return new ShareWindow(window, activeSession)
                 {
                     FlowDirection = LocaleService.Current.FlowDirection
                 };
             }
 
-            return new RootPage(window, navigationService)
+            return new RootWindow(window, navigationService)
             {
                 FlowDirection = LocaleService.Current.FlowDirection
             };
@@ -222,7 +222,7 @@ namespace Telegram
 
         public override UIElement CreateRootElement(INavigationService navigationService)
         {
-            return new StandalonePage(navigationService)
+            return new StandaloneWindow(navigationService)
             {
                 FlowDirection = LocaleService.Current.FlowDirection
             };

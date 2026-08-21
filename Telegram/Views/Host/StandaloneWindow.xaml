@@ -1,0 +1,99 @@
+﻿<controls:WindowContent x:Class="Telegram.Views.Host.StandaloneWindow"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                        xmlns:controls="using:Telegram.Controls"
+                        xmlns:navigation="using:Telegram.Navigation.Services"
+                        mc:Ignorable="d"
+                        Loaded="OnLoaded"
+                        Unloaded="OnUnloaded">
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid x:Name="TitleBarrr"
+              Height="40"
+              Margin="12,0,0,0"
+              Background="Transparent"
+              Grid.Column="1"
+              Canvas.ZIndex="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Border x:Name="TitleBarHandle"
+                    Background="Transparent"
+                    Grid.Column="2" />
+
+            <muxc:ProgressBar x:Name="State"
+                              VerticalAlignment="Top"
+                              Background="Transparent"
+                              IsHitTestVisible="False"
+                              Grid.ColumnSpan="5" />
+
+            <HyperlinkButton x:Name="TitleBarLogo"
+                             Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                             IsTabStop="False"
+                             Margin="-10,0,4,0"
+                             Width="40"
+                             Height="40"
+                             Grid.Column="1">
+                <Grid Background="Transparent">
+                    <Border x:Name="LogoBasic"
+                            Width="20"
+                            Height="20"
+                            CornerRadius="10">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="4.44444,3.33333"
+                                                 EndPoint="18.8889,16.6667"
+                                                 MappingMode="Absolute">
+                                <LinearGradientBrush.GradientStops>
+                                    <GradientStopCollection>
+                                        <GradientStop Color="#29C3FF" />
+                                        <GradientStop Offset="1"
+                                                      Color="#2052CB" />
+                                    </GradientStopCollection>
+                                </LinearGradientBrush.GradientStops>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Path Data="M4.52684 9.89446C7.44204 8.62435 9.38597 7.78702 10.3586 7.38246C13.1357 6.22737 13.7128 6.02672 14.0889 6.02009C14.1716 6.01863 14.3566 6.03913 14.4764 6.13635C14.5776 6.21844 14.6054 6.32934 14.6187 6.40717C14.632 6.485 14.6486 6.6623 14.6354 6.80083C14.485 8.38207 13.8338 12.2193 13.5025 13.9903C13.3623 14.7397 13.0863 14.991 12.8191 15.0156C12.2384 15.069 11.7974 14.6318 11.2349 14.2631C10.3548 13.6861 9.85759 13.327 9.00328 12.764C8.01596 12.1134 8.656 11.7558 9.21866 11.1714C9.36592 11.0184 11.9246 8.69115 11.9741 8.48003C11.9803 8.45362 11.986 8.3552 11.9276 8.30323C11.8691 8.25126 11.7828 8.26903 11.7205 8.28316C11.6322 8.3032 10.2262 9.23253 7.50246 11.0711C7.10337 11.3452 6.74188 11.4787 6.418 11.4717C6.06095 11.464 5.37413 11.2698 4.86355 11.1039C4.23729 10.9003 3.73956 10.7927 3.7829 10.4469C3.80548 10.2669 4.05346 10.0827 4.52684 9.89446Z"
+                              Fill="#FFFFFF" />
+                    </Border>
+
+                    <controls:CustomEmojiIcon x:Name="LogoEmoji"
+                                              x:Load="False"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                </Grid>
+            </HyperlinkButton>
+
+            <TextBlock x:Name="StateLabel"
+                       VerticalAlignment="Center"
+                       TextLineBounds="TrimToCapHeight"
+                       TextWrapping="NoWrap"
+                       AutomationProperties.LiveSetting="Assertive"
+                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       IsHitTestVisible="False"
+                       Margin="0,2,6,0"
+                       Grid.Column="2" />
+        </Grid>
+
+        <controls:MasterDetailView x:Name="MasterDetail"
+                                   Grid.Row="2">
+            <controls:MasterDetailView.Banner>
+                <Grid SizeChanged="Banner_SizeChanged">
+                    <controls:PlaybackHeader x:Name="Playback"
+                                             x:Load="False" />
+                </Grid>
+            </controls:MasterDetailView.Banner>
+        </controls:MasterDetailView>
+    </Grid>
+</controls:WindowContent>

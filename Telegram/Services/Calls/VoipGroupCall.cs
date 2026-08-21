@@ -2030,7 +2030,7 @@ namespace Telegram.Services.Calls
             {
                 WindowContext.ForEach(window =>
                 {
-                    if (window.Content is VoipPage)
+                    if (window.Content is VoipWindow)
                     {
                         window.Content = CreatePresentation(null, window);
                     }
@@ -2069,8 +2069,8 @@ namespace Telegram.Services.Calls
             }
 
             return IsRtmpStream
-                ? new LiveStreamPage(this)
-                : new GroupCallPage(this);
+                ? new LiveStreamWindow(this)
+                : new GroupCallWindow(this);
         }
 
         public override void Show/*Window*/()

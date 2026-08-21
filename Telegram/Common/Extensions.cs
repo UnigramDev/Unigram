@@ -106,7 +106,7 @@ namespace Telegram.Common
             }
         }
 
-        // TODO: this is a duplicat of INavigationService.ShowPopupAsync, and it's needed by GamePage, GroupCallPage and LiveStreamPage.
+        // TODO: this is a duplicat of INavigationService.ShowPopupAsync, and it's needed by GamePage, GroupCallWindow and LiveStreamWindow.
         // Must be removed at some point.
         public static void ShowPopup(this UserControl frame, ISession session, ContentPopup popup, object parameter = null)
         {

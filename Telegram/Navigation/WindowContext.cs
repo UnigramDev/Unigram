@@ -476,7 +476,7 @@ namespace Telegram.Navigation
                     SetContent(value);
                 }
 
-                IsCallInProgress = value is VoipPage or GroupCallPage or LiveStreamPage;
+                IsCallInProgress = value is VoipWindow or GroupCallWindow or LiveStreamWindow;
             }
         }
 
@@ -507,7 +507,7 @@ namespace Telegram.Navigation
                 _window.Content = _content;
             }
 
-            if (!_contentMaterial && content is RootPage or StandalonePage or TabbedPage or WebAppPage)
+            if (!_contentMaterial && content is RootWindow or StandaloneWindow or TabbedWindow or WebAppWindow)
             {
                 _contentMaterial = true;
                 BackdropMaterial.SetApplyToRootOrPageBackground(_content, true);
@@ -680,11 +680,11 @@ namespace Telegram.Navigation
                 content = contentControl.Content;
             }
 
-            if (content is RootPage rootPage && rootPage.NavigationService != null)
+            if (content is RootWindow rootPage && rootPage.NavigationService != null)
             {
                 return rootPage.NavigationService;
             }
-            else if (content is StandalonePage standalonePage && standalonePage.NavigationService != null)
+            else if (content is StandaloneWindow standalonePage && standalonePage.NavigationService != null)
             {
                 return standalonePage.NavigationService;
             }
@@ -738,7 +738,7 @@ namespace Telegram.Navigation
         #region Lock
 
         private UIElement _lockedContent;
-        private PasscodePage _locked;
+        private PasscodeWindow _locked;
 
         public void Lock(bool biometrics)
         {
@@ -755,7 +755,7 @@ namespace Telegram.Navigation
             Logger.Info("Showing passcode lock");
 
             // TODO: Transition from splash screen to passcode
-            _locked = new PasscodePage(this, biometrics && IsInMainView);
+            _locked = new PasscodeWindow(this, biometrics && IsInMainView);
             _lockedContent = _content?.Content;
 
             SetContent(_locked);

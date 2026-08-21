@@ -273,7 +273,7 @@ namespace Telegram.Services
                         window.Unlock();
                     }
 
-                    if (window.Content is RootPage root && replace != null)
+                    if (window.Content is RootWindow root && replace != null)
                     {
                         root.Switch(replace);
                     }

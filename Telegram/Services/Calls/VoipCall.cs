@@ -772,7 +772,7 @@ namespace Telegram.Services.Calls
                 }
             }
 
-            return new VoipPage(this);
+            return new VoipWindow(this);
         }
 
         public override void Show()

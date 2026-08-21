@@ -74,7 +74,7 @@ namespace Telegram.Views.Popups
             // NavigationService is window-specific: `navigationService` belongs to the originating chat
             // window, but this popup runs in its own window. Wrap it in a SecondaryNavigationService bound
             // to THIS window (forwards navigations — e.g. the premium promo — back to the source window),
-            // like WebAppPage.
+            // like WebAppWindow.
             _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, WindowContext.Current);
             _window = WindowContext.Current;
             _chatId = chatId;

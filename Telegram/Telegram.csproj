@@ -1263,11 +1263,11 @@
     <Compile Include="Views\Business\Popups\BusinessFeaturesPopup.xaml.cs">
       <DependentUpon>BusinessFeaturesPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Calls\GroupCallPage.xaml.cs">
-      <DependentUpon>GroupCallPage.xaml</DependentUpon>
+    <Compile Include="Views\Calls\GroupCallWindow.xaml.cs">
+      <DependentUpon>GroupCallWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Calls\LiveStreamPage.xaml.cs">
-      <DependentUpon>LiveStreamPage.xaml</DependentUpon>
+    <Compile Include="Views\Calls\LiveStreamWindow.xaml.cs">
+      <DependentUpon>LiveStreamWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Calls\Popups\ShareGroupCallPopup.xaml.cs">
       <DependentUpon>ShareGroupCallPopup.xaml</DependentUpon>
@@ -1275,8 +1275,8 @@
     <Compile Include="Views\Calls\Popups\VideoChatAliasesPopup.xaml.cs">
       <DependentUpon>VideoChatAliasesPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Calls\VoipPage.xaml.cs">
-      <DependentUpon>VoipPage.xaml</DependentUpon>
+    <Compile Include="Views\Calls\VoipWindow.xaml.cs">
+      <DependentUpon>VoipWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatWelcomeMessagesPage.xaml.cs">
       <DependentUpon>ChatWelcomeMessagesPage.xaml</DependentUpon>
@@ -1344,11 +1344,11 @@
       <DependentUpon>GiftCraftChoosePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HostedPage.cs" />
-    <Compile Include="Views\Host\SharePage.xaml.cs">
-      <DependentUpon>SharePage.xaml</DependentUpon>
+    <Compile Include="Views\Host\ShareWindow.xaml.cs">
+      <DependentUpon>ShareWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Host\TabbedPage.xaml.cs">
-      <DependentUpon>TabbedPage.xaml</DependentUpon>
+    <Compile Include="Views\Host\TabbedWindow.xaml.cs">
+      <DependentUpon>TabbedWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Monetization\Popups\AboutAdsPopup.xaml.cs">
       <DependentUpon>AboutAdsPopup.xaml</DependentUpon>
@@ -1722,8 +1722,8 @@
     <Compile Include="Views\Users\UserAffiliatePage.xaml.cs">
       <DependentUpon>UserAffiliatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\WebAppPage.xaml.cs">
-      <DependentUpon>WebAppPage.xaml</DependentUpon>
+    <Compile Include="Views\WebAppWindow.xaml.cs">
+      <DependentUpon>WebAppWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ZoomableMediaPopup.xaml.cs">
       <DependentUpon>ZoomableMediaPopup.xaml</DependentUpon>
@@ -1922,14 +1922,14 @@
     <Compile Include="Views\Folders\FoldersPage.xaml.cs">
       <DependentUpon>FoldersPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Host\RootPage.xaml.cs">
-      <DependentUpon>RootPage.xaml</DependentUpon>
+    <Compile Include="Views\Host\RootWindow.xaml.cs">
+      <DependentUpon>RootWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Host\StandalonePage.xaml.cs">
-      <DependentUpon>StandalonePage.xaml</DependentUpon>
+    <Compile Include="Views\Host\StandaloneWindow.xaml.cs">
+      <DependentUpon>StandaloneWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PasscodePage.xaml.cs">
-      <DependentUpon>PasscodePage.xaml</DependentUpon>
+    <Compile Include="Views\PasscodeWindow.xaml.cs">
+      <DependentUpon>PasscodeWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\CalendarPopup.xaml.cs">
       <DependentUpon>CalendarPopup.xaml</DependentUpon>
@@ -3560,11 +3560,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Calls\GroupCallPage.xaml">
+    <Page Include="Views\Calls\GroupCallWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Calls\LiveStreamPage.xaml">
+    <Page Include="Views\Calls\LiveStreamWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3576,7 +3576,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Calls\VoipPage.xaml">
+    <Page Include="Views\Calls\VoipWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3664,11 +3664,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Host\SharePage.xaml">
+    <Page Include="Views\Host\ShareWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Host\TabbedPage.xaml">
+    <Page Include="Views\Host\TabbedWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4160,7 +4160,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\WebAppPage.xaml">
+    <Page Include="Views\WebAppWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4216,11 +4216,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Host\RootPage.xaml">
+    <Page Include="Views\Host\RootWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Host\StandalonePage.xaml">
+    <Page Include="Views\Host\StandaloneWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4232,7 +4232,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PasscodePage.xaml">
+    <Page Include="Views\PasscodeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

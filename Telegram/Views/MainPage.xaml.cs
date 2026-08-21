@@ -55,7 +55,7 @@ namespace Telegram.Views
         private MainViewModel _viewModel;
         public MainViewModel ViewModel => _viewModel ??= DataContext as MainViewModel;
 
-        public RootPage Root { get; set; }
+        public RootWindow Root { get; set; }
 
         private readonly IClientService _clientService;
 
@@ -1267,7 +1267,7 @@ namespace Telegram.Views
             }
 
             roots.AddRange(Telegram.Controls.Gallery.GalleryWindow.DebugRoots());
-            roots.AddRange(WebAppPage.DebugRoots());
+            roots.AddRange(WebAppWindow.DebugRoots());
 
             return Telegram.Common.Instrumentation.Analyze(roots, DebugChildrenOf);
         }
@@ -1284,7 +1284,7 @@ namespace Telegram.Views
                 yield return child;
             }
 
-            foreach (var child in WebAppPage.DebugChildrenOf(node))
+            foreach (var child in WebAppWindow.DebugChildrenOf(node))
             {
                 yield return child;
             }

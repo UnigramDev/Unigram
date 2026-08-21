@@ -214,7 +214,7 @@ namespace Telegram.ViewModels.Settings
             await SetThemeAsync(theme);
 
             //NavigationService.Navigate(typeof(SettingsThemePage), theme.Path);
-            if (WindowContext.Current.Content is Views.Host.RootPage root)
+            if (WindowContext.Current.Content is Views.Host.RootWindow root)
             {
                 root.ShowEditor(theme);
             }
