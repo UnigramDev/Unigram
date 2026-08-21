@@ -12,7 +12,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Security.Credentials.UI;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -154,7 +153,7 @@ namespace Telegram.Views
         {
             _window.SetTitleBar(TitleBar);
 
-            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+            if (e.IsActive)
             {
                 Field.Focus(FocusState.Keyboard);
             }

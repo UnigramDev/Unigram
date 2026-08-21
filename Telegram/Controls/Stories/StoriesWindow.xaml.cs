@@ -850,9 +850,9 @@ namespace Telegram.Controls.Stories
             _stealthTimer.Stop();
         }
 
-        private void OnActivated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
+        private void OnActivated(object sender, WindowActivatedEventArgs e)
         {
-            if (e.WindowActivationState != Windows.UI.Core.CoreWindowActivationState.Deactivated)
+            if (e.IsActive)
             {
                 ActiveCard.Resume(StoryPauseSource.Window);
             }

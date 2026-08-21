@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Native;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -46,6 +47,22 @@ namespace Telegram.Navigation
         public bool IsActive { get; }
 
         public PopupActivatedEventArgs(bool isActive)
+        {
+            IsActive = isActive;
+        }
+    }
+
+    /// <summary>
+    /// Raised by <see cref="WindowContext.Activated"/>. Deliberately not the UWP
+    /// <c>Windows.UI.Core.WindowActivatedEventArgs</c>: that one carries a
+    /// <c>CoreWindowActivationState</c>, and an island host has no CoreWindow. Every consumer
+    /// only ever asked whether the state was Deactivated, so the args carry the answer.
+    /// </summary>
+    public class WindowActivatedEventArgs : EventArgs
+    {
+        public bool IsActive { get; }
+
+        public WindowActivatedEventArgs(bool isActive)
         {
             IsActive = isActive;
         }
@@ -413,6 +430,7 @@ namespace Telegram.Navigation
             ThemeOutgoing.Release();
 
             PlaceholderHelper.Release();
+            MessageBubbleBrush.Release();
             AnimatedImageLoader.Release();
             ProfilePicture.Loader.Release();
 
@@ -552,13 +570,15 @@ namespace Telegram.Navigation
 
         public event EventHandler<WindowActivatedEventArgs> Activated;
 
-        private void OnActivated(object sender, WindowActivatedEventArgs e)
+        // The UWP args stop here: everything downstream sees Telegram.Navigation's own.
+        private void OnActivated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
         {
-            Activated?.Invoke(sender, e);
+            var isActive = e.WindowActivationState != CoreWindowActivationState.Deactivated;
+            Activated?.Invoke(this, new WindowActivatedEventArgs(isActive));
 
             lock (_activeLock)
             {
-                if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+                if (isActive)
                 {
                     Active = this;
                 }

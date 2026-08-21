@@ -27,7 +27,6 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -1281,11 +1280,11 @@ namespace Telegram.Controls
         {
             if (_presentation.IsPopup)
             {
-                OnActivated(args.WindowActivationState != CoreWindowActivationState.Deactivated);
+                OnActivated(args.IsActive);
             }
             else
             {
-                OnActivated(args.WindowActivationState != CoreWindowActivationState.Deactivated && !WindowContext.Current.IsPopupOpened);
+                OnActivated(args.IsActive && !WindowContext.Current.IsPopupOpened);
             }
         }
 

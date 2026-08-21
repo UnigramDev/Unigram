@@ -91,7 +91,7 @@ namespace Telegram.Navigation
             base.OnWindowCreated(args);
         }
 
-        private void OnActivated(object sender, WindowActivatedEventArgs e)
+        private void OnActivated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
         {
             if (sender is Window window)
             {

@@ -31,7 +31,6 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Core.Preview;
 using Windows.UI.StartScreen;
 using Windows.UI.ViewManagement;
@@ -370,7 +369,7 @@ namespace Telegram.Views
 
         private void OnActivated(object sender, WindowActivatedEventArgs e)
         {
-            PostEvent("visibility_changed", "is_visible", e.WindowActivationState != CoreWindowActivationState.Deactivated);
+            PostEvent("visibility_changed", "is_visible", e.IsActive);
         }
 
         private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)

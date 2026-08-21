@@ -1400,7 +1400,7 @@ namespace Telegram.Views
             FlyoutArea = null;
         }
 
-        private void Window_Activated(object sender, WindowActivatedEventArgs e)
+        private void Window_Activated(object sender, Navigation.WindowActivatedEventArgs e)
         {
             // This window, not Window.Current: the event is raised by the window this view
             // belongs to, which in a secondary view is not the current one.

@@ -242,9 +242,9 @@ namespace Telegram.Views.Popups
         {
         }
 
-        private void OnWindowActivated(object sender, WindowActivatedEventArgs e)
+        private void OnWindowActivated(object sender, Navigation.WindowActivatedEventArgs e)
         {
-            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+            if (e.IsActive)
             {
                 // Low priority: XAML assigns its own initial focus while activating, and
                 // whichever runs last wins.
