@@ -1720,7 +1720,7 @@ namespace winrt::Telegram::Native::implementation
         return nullptr;
     }
 
-    CompositionEffectBrush PlaceholderImageHelper::GetTail(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+    winrt::com_ptr<MessageBubbleNineGrid> PlaceholderImageHelper::GetNineGrid(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
     {
         // Pack 4 radius values into one int
         // Each value needs only 5 bits (0-31 range), so 4 values fit in 20 bits
@@ -1729,7 +1729,7 @@ namespace winrt::Telegram::Native::implementation
         auto it = m_nineGridCache.find(key);
         if (it != m_nineGridCache.end())
         {
-            return it->second->Effect();
+            return it->second;
         }
         else if (m_compositionDevice)
         {
@@ -1748,7 +1748,7 @@ namespace winrt::Telegram::Native::implementation
                         auto effect = m_alphaMaskFactory.CreateBrush();
                         auto nineGrid = winrt::make_self<MessageBubbleNineGrid>(m_compositionDevice, m_d2dFactory, m_compositor, xamlRoot, surface, effect, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
                         m_nineGridCache[key] = nineGrid;
-                        return nineGrid->Effect();
+                        return nineGrid;
                     }
                 }
             }
@@ -1756,6 +1756,20 @@ namespace winrt::Telegram::Native::implementation
 
         // XamlRoot is not ready
         return nullptr;
+    }
+
+    CompositionEffectBrush PlaceholderImageHelper::GetTail(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+    {
+        auto nineGrid = GetNineGrid(topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
+        return nineGrid ? nineGrid->Effect() : nullptr;
+    }
+
+    // The alpha mask of GetTail, for callers that paint the silhouette rather than mask a layer:
+    // a CompositionMaskBrush over this costs no offscreen intermediate, a LayerVisual effect does.
+    CompositionNineGridBrush PlaceholderImageHelper::GetTailMask(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+    {
+        auto nineGrid = GetNineGrid(topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
+        return nineGrid ? nineGrid->Mask() : nullptr;
     }
 
     CompositionDrawingSurface PlaceholderImageHelper::CreateDrawingSurface(SizeInt32 size)

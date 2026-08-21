@@ -360,6 +360,7 @@
     <Compile Include="Controls\GlassToggleButton.cs" />
     <Compile Include="Controls\ImageTextSelection.cs" />
     <Compile Include="Controls\Media\LinearGaussianBrush.cs" />
+    <Compile Include="Controls\Media\MessageBubbleBrush.cs" />
     <Compile Include="Controls\Media\PowerSavingBrushBase.cs" />
     <Compile Include="Controls\MenuFlyoutContent.cs" />
     <Compile Include="Composition\CompositionColorSource.cs" />

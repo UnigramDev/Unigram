@@ -368,6 +368,7 @@ namespace winrt::Telegram::Native::implementation
         winrt::Telegram::Native::FreeformGradientSurface CreateFreeformGradient(IVector<int32_t> colors);
 
         CompositionEffectBrush GetTail(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
+        CompositionNineGridBrush GetTailMask(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
         //CompositionPath GetOutline(IVector<ClosedVectorPath> contours);
         CompositionPath GetEllipticalClip(float width, float height, float radius, float x, float y);
         CompositionPath GetReplyMarkupClip(IVector<IVector<Windows::Foundation::Rect>> rows, float bottomRightRadius, float bottomLeftRadius);
@@ -402,6 +403,8 @@ namespace winrt::Telegram::Native::implementation
         void OnDirect3DDeviceLost(DeviceLostHelper const* /* sender */, DeviceLostEventArgs const& /* args */);
 
         CompositionDrawingSurface CreateDrawingSurface(SizeInt32 size);
+
+        winrt::com_ptr<winrt::Telegram::Native::implementation::MessageBubbleNineGrid> GetNineGrid(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
 
         HRESULT DrawBlurredImpl(IWICBitmapSource* wicBitmapSource, float blurAmount, SoftwareBitmap& bitmap, bool minithumbnail);
         HRESULT SaveImageToStream(ID2D1Image* image, REFGUID wicFormat, IRandomAccessStream randomAccessStream);

@@ -4,5 +4,6 @@ namespace Telegram.Native
     runtimeclass MessageBubbleNineGrid 
     {
         Windows.UI.Composition.CompositionEffectBrush Effect{ get; };
+        Windows.UI.Composition.CompositionNineGridBrush Mask{ get; };
     }
 }

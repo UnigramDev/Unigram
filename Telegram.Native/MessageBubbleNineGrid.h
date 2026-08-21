@@ -40,6 +40,7 @@ namespace winrt::Telegram::Native::implementation
         ~MessageBubbleNineGrid();
 
         CompositionEffectBrush Effect();
+        CompositionNineGridBrush Mask();
 
         static constexpr float s_width = 40.f;
         static constexpr float s_height = 40.f;

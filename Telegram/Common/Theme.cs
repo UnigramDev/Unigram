@@ -14,6 +14,7 @@ using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using AcrylicBrush = Microsoft.UI.Xaml.Media.AcrylicBrush;
@@ -706,10 +707,45 @@ namespace Telegram.Common
             { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0x33, 0x39, 0x3F), new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x39, 0x3F))) },
         };
 
+        [ThreadStatic]
+        private static CompositionColorBrush _lightBackground;
+        [ThreadStatic]
+        private static CompositionColorBrush _darkBackground;
+
+        // Composition mirror of MessageBackgroundBrush, for brushes that paint the bubble fill
+        // through the compositor. One instance per theme, so that a colour change stays the single
+        // assignment it already is for the SolidColorBrush.
+        public static CompositionColorBrush Background(TelegramTheme parent)
+        {
+            if (parent == TelegramTheme.Light)
+            {
+                return _lightBackground ??= BootStrapper.Current.Compositor.CreateColorBrush(Light["MessageBackgroundBrush"].Brush.Color);
+            }
+
+            return _darkBackground ??= BootStrapper.Current.Compositor.CreateColorBrush(Dark["MessageBackgroundBrush"].Brush.Color);
+        }
+
+        private static void UpdateBackground(TelegramTheme parent)
+        {
+            if (parent == TelegramTheme.Light)
+            {
+                if (_lightBackground != null)
+                {
+                    _lightBackground.Color = Light["MessageBackgroundBrush"].Brush.Color;
+                }
+            }
+            else if (_darkBackground != null)
+            {
+                _darkBackground.Color = Dark["MessageBackgroundBrush"].Brush.Color;
+            }
+        }
+
         public static void Release()
         {
             _light = null;
             _dark = null;
+            _lightBackground = null;
+            _darkBackground = null;
         }
 
         public ThemeOutgoing()
@@ -753,6 +789,8 @@ namespace Telegram.Common
                     value.Value.Brush.Color = value.Value.Color;
                 }
             }
+
+            UpdateBackground(parent);
         }
 
         public static void Update(TelegramTheme parent)
@@ -771,6 +809,8 @@ namespace Telegram.Common
                     value.Value.Brush.Color = value.Value.Color;
                 }
             }
+
+            UpdateBackground(parent);
         }
     }
 
@@ -826,10 +866,45 @@ namespace Telegram.Common
             { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0x33, 0x39, 0x3F), new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x39, 0x3F))) },
         };
 
+        [ThreadStatic]
+        private static CompositionColorBrush _lightBackground;
+        [ThreadStatic]
+        private static CompositionColorBrush _darkBackground;
+
+        // Composition mirror of MessageBackgroundBrush, for brushes that paint the bubble fill
+        // through the compositor. One instance per theme, so that a colour change stays the single
+        // assignment it already is for the SolidColorBrush.
+        public static CompositionColorBrush Background(TelegramTheme parent)
+        {
+            if (parent == TelegramTheme.Light)
+            {
+                return _lightBackground ??= BootStrapper.Current.Compositor.CreateColorBrush(Light["MessageBackgroundBrush"].Brush.Color);
+            }
+
+            return _darkBackground ??= BootStrapper.Current.Compositor.CreateColorBrush(Dark["MessageBackgroundBrush"].Brush.Color);
+        }
+
+        private static void UpdateBackground(TelegramTheme parent)
+        {
+            if (parent == TelegramTheme.Light)
+            {
+                if (_lightBackground != null)
+                {
+                    _lightBackground.Color = Light["MessageBackgroundBrush"].Brush.Color;
+                }
+            }
+            else if (_darkBackground != null)
+            {
+                _darkBackground.Color = Dark["MessageBackgroundBrush"].Brush.Color;
+            }
+        }
+
         public static void Release()
         {
             _light = null;
             _dark = null;
+            _lightBackground = null;
+            _darkBackground = null;
         }
 
         public ThemeIncoming()
@@ -873,6 +948,8 @@ namespace Telegram.Common
                     value.Value.Brush.Color = value.Value.Color;
                 }
             }
+
+            UpdateBackground(parent);
         }
 
         public static void Update(TelegramTheme parent)
@@ -891,6 +968,8 @@ namespace Telegram.Common
                     value.Value.Brush.Color = value.Value.Color;
                 }
             }
+
+            UpdateBackground(parent);
         }
     }
 }

@@ -168,4 +168,9 @@ namespace winrt::Telegram::Native::implementation
     {
         return m_effect;
     }
+
+    CompositionNineGridBrush MessageBubbleNineGrid::Mask()
+    {
+        return m_brush;
+    }
 }
