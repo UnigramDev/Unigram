@@ -27,10 +27,6 @@ namespace Telegram.Views
 
         private readonly DispatcherTimer _retryTimer;
 
-        // Unlock() used to unsubscribe from Activated; the base owns that subscription now,
-        // so the handler bows out on this instead.
-        private bool _unlocked;
-
         public PasscodeWindow(WindowContext window, bool biometrics)
         {
             InitializeComponent();
@@ -153,7 +149,9 @@ namespace Telegram.Views
 
         protected override void OnWindowActivated(bool active)
         {
-            if (_unlocked)
+            // Unlock() used to unsubscribe from Activated; the base owns that subscription
+            // now, so the handler bows out on the state Unlock() already sets.
+            if (!_passcodeService.IsLocked)
             {
                 return;
             }
@@ -179,7 +177,6 @@ namespace Telegram.Views
 
         private void Unlock()
         {
-            _unlocked = true;
             Field.LosingFocus -= Field_LosingFocus;
 
             _passcodeService.Unlock();
