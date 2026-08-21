@@ -29,7 +29,6 @@ using Telegram.Views.Popups;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -267,11 +266,11 @@ namespace Telegram.Controls.Gallery
 
             if (show)
             {
-                Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
+                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
             }
             else
             {
-                Window.Current.CoreWindow.PointerCursor = null;
+                WindowContext.SetPointerCursor(PointerCursorType.Hidden);
             }
 
             var parent = ElementComposition.GetElementVisual(BottomPanel);
@@ -872,7 +871,7 @@ namespace Telegram.Controls.Gallery
             Element1.Unload();
             Element2.Unload();
 
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
+            WindowContext.SetPointerCursor(PointerCursorType.Arrow);
         }
 
         private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs args)

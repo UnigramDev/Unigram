@@ -23,7 +23,6 @@ using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -328,7 +327,7 @@ namespace Telegram.Controls
             return base.MeasureOverride(availableSize);
         }
 
-        private CoreCursorType _textSelectionCursor = CoreCursorType.Arrow;
+        private PointerCursorType _textSelectionCursor = PointerCursorType.Arrow;
 
         // Whether the Hand above is a spoiler's, which also takes the text out of hit-testing.
         // Tracked apart from the cursor itself, as an inline button shows the Hand too.
@@ -363,9 +362,9 @@ namespace Telegram.Controls
                     if (!_spoilerCursor)
                     {
                         _spoilerCursor = true;
-                        _textSelectionCursor = CoreCursorType.Hand;
+                        _textSelectionCursor = PointerCursorType.Hand;
                         TextBlock.IsHitTestVisible = false;
-                        Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 0);
+                        WindowContext.SetPointerCursor(PointerCursorType.Hand);
                     }
 
                     e.Handled = true;
@@ -376,9 +375,9 @@ namespace Telegram.Controls
             if (_spanForInlines == null && _spoilerCursor)
             {
                 _spoilerCursor = false;
-                _textSelectionCursor = CoreCursorType.Arrow;
+                _textSelectionCursor = PointerCursorType.Arrow;
                 TextBlock.IsHitTestVisible = true;
-                Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
+                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
             }
 
             // Extended: native selection is off, so RichTextBlock won't show the I-beam.
@@ -407,15 +406,15 @@ namespace Telegram.Controls
                     // (Hand), or as nothing at all when it's disabled.
                     var button = GetInlineButtonFromSource(e.OriginalSource);
                     var cursor = button == null
-                        ? CoreCursorType.IBeam
-                        : button.IsEnabled ? CoreCursorType.Hand : CoreCursorType.Arrow;
+                        ? PointerCursorType.IBeam
+                        : button.IsEnabled ? PointerCursorType.Hand : PointerCursorType.Arrow;
 
                     // Only on the way in: this runs at pointer sample rate, and setting
                     // PointerCursor is a marshalled call on top of the allocation.
                     if (_textSelectionCursor != cursor)
                     {
                         _textSelectionCursor = cursor;
-                        Window.Current.CoreWindow.PointerCursor = new CoreCursor(cursor, 0);
+                        WindowContext.SetPointerCursor(cursor);
                     }
                 }
             }
@@ -449,12 +448,12 @@ namespace Telegram.Controls
 
         protected override void OnPointerExited(PointerRoutedEventArgs e)
         {
-            if (_spanForInlines == null && _textSelectionCursor != CoreCursorType.Arrow)
+            if (_spanForInlines == null && _textSelectionCursor != PointerCursorType.Arrow)
             {
                 _spoilerCursor = false;
-                _textSelectionCursor = CoreCursorType.Arrow;
+                _textSelectionCursor = PointerCursorType.Arrow;
                 TextBlock.IsHitTestVisible = true;
-                Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
+                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
             }
 
             try

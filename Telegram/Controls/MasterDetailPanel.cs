@@ -7,9 +7,9 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using Telegram.Navigation;
 using Telegram.Services;
 using Windows.Foundation;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -194,28 +194,26 @@ namespace Telegram.Controls
             return result;
         }
 
-        private static readonly CoreCursor _defaultCursor = new(CoreCursorType.Arrow, 1);
-        private static readonly CoreCursor _resizeCursor = new(CoreCursorType.SizeWestEast, 1);
 
         private bool _pointerPressed;
         private double _pointerDelta;
 
         private void Grip_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = _resizeCursor;
+            WindowContext.SetPointerCursor(PointerCursorType.SizeWestEast);
         }
 
         private void Grip_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             if (!_pointerPressed)
             {
-                Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
             }
         }
 
         private void Grip_Unloaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+            WindowContext.SetPointerCursor(PointerCursorType.Arrow);
         }
 
         private void Grip_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -279,7 +277,7 @@ namespace Telegram.Controls
             var point = e.GetCurrentPoint(grip);
             if (point.Position.X is < 0 or > 8)
             {
-                Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
             }
         }
 

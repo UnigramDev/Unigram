@@ -49,6 +49,22 @@ namespace Telegram.Navigation
         }
     }
 
+    /// <summary>
+    /// The cursors the app actually uses, so call sites do not name <c>CoreCursorType</c>.
+    /// <see cref="Hidden"/> is the gallery's chrome-less mode.
+    /// </summary>
+    public enum PointerCursorType
+    {
+        Arrow,
+        Hand,
+        IBeam,
+        SizeWestEast,
+        SizeNorthSouth,
+        SizeNorthwestSoutheast,
+        SizeNortheastSouthwest,
+        Hidden
+    }
+
     public partial class WindowControl : Page, IPopupHost, IToastHost
     {
         private readonly WindowContext _context;
@@ -113,9 +129,42 @@ namespace Telegram.Navigation
         private readonly InputListener _inputListener;
         public InputListener InputListener => _inputListener;
 
-        public static implicit operator Window(WindowContext window) => window._window;
-
         public CoreWindow CoreWindow => _window.CoreWindow;
+
+        #region Pointer cursor
+
+        // One CoreCursor per type, shared. Every call site used to allocate a fresh one, and
+        // FormattedTextBlock does this at pointer sample rate; CoreCursor is immutable and its
+        // id argument only means anything for CoreCursorType.Custom, so sharing is safe.
+        // Indexed by PointerCursorType, which is why Hidden - the null cursor - is last.
+        private static readonly CoreCursor[] _cursors = new CoreCursor[(int)PointerCursorType.Hidden];
+
+        public static void SetPointerCursor(PointerCursorType cursor)
+        {
+            Window.Current.CoreWindow.PointerCursor = GetPointerCursor(cursor);
+        }
+
+        private static CoreCursor GetPointerCursor(PointerCursorType cursor)
+        {
+            if (cursor == PointerCursorType.Hidden)
+            {
+                return null;
+            }
+
+            // UI thread only, so a lost race would just allocate one extra cursor.
+            return _cursors[(int)cursor] ??= new CoreCursor(cursor switch
+            {
+                PointerCursorType.Hand => CoreCursorType.Hand,
+                PointerCursorType.IBeam => CoreCursorType.IBeam,
+                PointerCursorType.SizeWestEast => CoreCursorType.SizeWestEast,
+                PointerCursorType.SizeNorthSouth => CoreCursorType.SizeNorthSouth,
+                PointerCursorType.SizeNorthwestSoutheast => CoreCursorType.SizeNorthwestSoutheast,
+                PointerCursorType.SizeNortheastSouthwest => CoreCursorType.SizeNortheastSouthwest,
+                _ => CoreCursorType.Arrow
+            }, 0);
+        }
+
+        #endregion
 
         public int Id { get; }
 

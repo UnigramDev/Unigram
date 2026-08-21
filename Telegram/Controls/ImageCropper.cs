@@ -10,10 +10,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Entities;
+using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -272,7 +272,7 @@ namespace Telegram.Controls
 
         private void Thumb_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
+            WindowContext.SetPointerCursor(PointerCursorType.Arrow);
         }
 
         private void Thumb_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -634,22 +634,22 @@ namespace Telegram.Controls
 
         private void NWSEThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.SizeNorthwestSoutheast, 1);
+            WindowContext.SetPointerCursor(PointerCursorType.SizeNorthwestSoutheast);
         }
 
         private void NESWThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.SizeNortheastSouthwest, 1);
+            WindowContext.SetPointerCursor(PointerCursorType.SizeNortheastSouthwest);
         }
 
         private void WEThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.SizeWestEast, 1);
+            WindowContext.SetPointerCursor(PointerCursorType.SizeWestEast);
         }
 
         private void NSThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.SizeNorthSouth, 1);
+            WindowContext.SetPointerCursor(PointerCursorType.SizeNorthSouth);
         }
 
         #endregion

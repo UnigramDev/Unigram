@@ -15,7 +15,6 @@ using Telegram.Navigation;
 using Windows.Devices.Input;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
@@ -38,9 +37,6 @@ namespace Telegram.Controls
 
     public partial class ImageTextSelection : Control
     {
-        private static readonly CoreCursor _defaultCursor = new(CoreCursorType.Arrow, 1);
-        private static readonly CoreCursor _selectCursor = new(CoreCursorType.IBeam, 1);
-        private static readonly CoreCursor _handCursor = new(CoreCursorType.Hand, 1);
 
         private ulong _expandSelectionDeadline;
 
@@ -188,15 +184,15 @@ namespace Telegram.Controls
 
             if (_selectionPressed == RecognizedTextSelectionType.Text)
             {
-                Window.Current.CoreWindow.PointerCursor = _selectCursor;
+                WindowContext.SetPointerCursor(PointerCursorType.IBeam);
             }
             else if (_selectionPressed == RecognizedTextSelectionType.Link)
             {
-                Window.Current.CoreWindow.PointerCursor = _handCursor;
+                WindowContext.SetPointerCursor(PointerCursorType.Hand);
             }
             else
             {
-                Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+                WindowContext.SetPointerCursor(PointerCursorType.Arrow);
             }
         }
 
@@ -212,26 +208,26 @@ namespace Telegram.Controls
 
             if (_selectionPressed == RecognizedTextSelectionType.Text)
             {
-                Window.Current.CoreWindow.PointerCursor = _selectCursor;
+                WindowContext.SetPointerCursor(PointerCursorType.IBeam);
             }
             else if (_selectionPressed == RecognizedTextSelectionType.Link)
             {
-                Window.Current.CoreWindow.PointerCursor = _handCursor;
+                WindowContext.SetPointerCursor(PointerCursorType.Hand);
             }
             else
             {
                 var type = _selection.IsPointWithinText(endPoint);
                 if (type == RecognizedTextSelectionType.Text)
                 {
-                    Window.Current.CoreWindow.PointerCursor = _selectCursor;
+                    WindowContext.SetPointerCursor(PointerCursorType.IBeam);
                 }
                 else if (type == RecognizedTextSelectionType.Link)
                 {
-                    Window.Current.CoreWindow.PointerCursor = _handCursor;
+                    WindowContext.SetPointerCursor(PointerCursorType.Hand);
                 }
                 else
                 {
-                    Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+                    WindowContext.SetPointerCursor(PointerCursorType.Arrow);
                 }
             }
         }
