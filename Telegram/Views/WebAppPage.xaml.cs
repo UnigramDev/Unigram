@@ -49,6 +49,7 @@ namespace Telegram.Views
 
     public sealed partial class WebAppPage : UserControlEx, IPopupHost
     {
+        private readonly WindowContext _context;
         private readonly IClientService _clientService;
         private readonly SecondaryNavigationService _navigationService;
         private readonly IEventAggregator _aggregator;
@@ -81,13 +82,14 @@ namespace Telegram.Views
         private ShapeVisual _placeholderVisual;
 
         // TODO: constructor should take a function and URL should be loaded asynchronously
-        public WebAppPage(IClientService clientService, INavigationService navigationService, User botUser, WebAppUrl url, long launchId = 0, AttachmentMenuBot menuBot = null, OpenUrlSource source = null, InternalLinkType sourceLink = null, string buttonText = null)
+        public WebAppPage(WindowContext context, IClientService clientService, INavigationService navigationService, User botUser, WebAppUrl url, long launchId = 0, AttachmentMenuBot menuBot = null, OpenUrlSource source = null, InternalLinkType sourceLink = null, string buttonText = null)
         {
             InitializeComponent();
             RegisterInstance();
 
             _clientService = clientService;
-            _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, WindowContext.Current);
+            _context = context;
+            _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, context);
             _aggregator = clientService.Session.Resolve<IEventAggregator>();
 
             _aggregator.Subscribe<UpdateWebAppMessageSent>(this, Handle)
@@ -111,7 +113,7 @@ namespace Telegram.Views
 
             ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
-            WindowContext.Current.SetTitleBar(TitleBar, true);
+            _context.SetTitleBar(TitleBar, true);
 
             LoadPlaceholder();
         }
@@ -178,13 +180,14 @@ namespace Telegram.Views
             return false;
         }
 
-        public WebAppPage(IClientService clientService, INavigationService navigationService, User botUser, string url, string title, long gameChatId = 0, long gameMessageId = 0)
+        public WebAppPage(WindowContext context, IClientService clientService, INavigationService navigationService, User botUser, string url, string title, long gameChatId = 0, long gameMessageId = 0)
         {
             InitializeComponent();
             RegisterInstance();
 
             _clientService = clientService;
-            _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, WindowContext.Current);
+            _context = context;
+            _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, context);
             _aggregator = clientService.Session.Resolve<IEventAggregator>();
 
             _botUser = botUser;
@@ -201,19 +204,19 @@ namespace Telegram.Views
 
             ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
-            WindowContext.Current.SetTitleBar(TitleBar, true);
+            _context.SetTitleBar(TitleBar, true);
         }
 
         #region IToastHost
 
         public void PopupOpened()
         {
-            WindowContext.Current.SetTitleBar(null);
+            _context.SetTitleBar(null);
         }
 
         public void PopupClosed()
         {
-            WindowContext.Current.SetTitleBar(TitleBar);
+            _context.SetTitleBar(TitleBar);
         }
 
         #endregion
@@ -269,9 +272,9 @@ namespace Telegram.Views
 
             _closed = true;
 
-            if (WindowContext.Current != null)
+            if (_context != null)
             {
-                _ = WindowContext.Current.ConsolidateAsync();
+                _ = _context.ConsolidateAsync();
             }
             else
             {
@@ -342,7 +345,7 @@ namespace Telegram.Views
         /// </summary>
         protected override void OnLoaded()
         {
-            WindowContext.Current.Activated += OnActivated;
+            _context.Activated += OnActivated;
 
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
             ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
@@ -351,7 +354,7 @@ namespace Telegram.Views
 
         protected override void OnUnloaded()
         {
-            WindowContext.Current.Activated -= OnActivated;
+            _context.Activated -= OnActivated;
 
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
             ApplicationView.GetForCurrentView().Consolidated -= OnConsolidated;

@@ -36,10 +36,13 @@ namespace Telegram.Views.Host
 
     public sealed partial class TabbedPage : UserControl, IPopupHost
     {
-        public TabbedPage(TabViewItem newTab, bool forWebApps)
+        private readonly WindowContext _context;
+
+        public TabbedPage(WindowContext context, TabViewItem newTab, bool forWebApps)
         {
+            _context = context;
             InitializeComponent();
-            WindowContext.Current.SetTitleBar(Footer);
+            _context.SetTitleBar(Footer);
 
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;
@@ -75,12 +78,12 @@ namespace Telegram.Views.Host
 
         public void PopupOpened()
         {
-            WindowContext.Current.SetTitleBar(null);
+            _context.SetTitleBar(null);
         }
 
         public void PopupClosed()
         {
-            WindowContext.Current.SetTitleBar(Footer);
+            _context.SetTitleBar(Footer);
         }
 
         private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -206,7 +209,7 @@ namespace Telegram.Views.Host
             }
             else
             {
-                _ = WindowContext.Current.ConsolidateAsync();
+                _ = _context.ConsolidateAsync();
             }
         }
     }

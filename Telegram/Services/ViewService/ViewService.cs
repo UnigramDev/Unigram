@@ -50,7 +50,7 @@ namespace Telegram.Services
         public double Width { get; set; }
         public double Height { get; set; }
 
-        public Func<ViewLifetimeControl, UIElement> Content { get; set; }
+        public Func<ViewLifetimeControl, WindowContext, UIElement> Content { get; set; }
 
         public string PersistedId { get; set; }
     }
@@ -117,9 +117,10 @@ namespace Telegram.Services
 
             await CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
-                if (WindowContext.Current.Content is RootPage root)
+                var window = WindowContext.Current;
+                if (window.Content is RootPage root)
                 {
-                    root.PresentContent(options.Content(null));
+                    root.PresentContent(options.Content(null, window));
                     await ApplicationViewSwitcher.TryShowAsStandaloneAsync(ApplicationView.GetForCurrentView().Id);
                 }
 
@@ -149,7 +150,7 @@ namespace Telegram.Services
                     newWindow.PersistedId = options.PersistedId ?? string.Empty;
 
                     var control = ViewLifetimeControl.GetForCurrentView();
-                    newWindow.Content = options.Content(control);
+                    newWindow.Content = options.Content(control, newWindow);
                     newWindow.Activate();
 
                     tsc.SetResult(control);

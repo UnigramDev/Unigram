@@ -164,7 +164,7 @@ namespace Telegram.Views.Host
             }
             else if (command == ShortcutCommand.Close)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                await _navigationService.Window.ConsolidateAsync();
             }
             else if (command == ShortcutCommand.MediaStop)
             {

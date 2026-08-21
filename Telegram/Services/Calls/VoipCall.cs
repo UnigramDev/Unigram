@@ -756,7 +756,7 @@ namespace Telegram.Services.Calls
             _ = service.OpenAsync(options);
         }
 
-        private UIElement CreatePresentation(ViewLifetimeControl control)
+        private UIElement CreatePresentation(ViewLifetimeControl control, WindowContext window)
         {
             // Initialize video now, so that permissions are asked on the right window
             // TODO: this won't work for now, because WebRTC always initializes MediaCapture on the main thread

@@ -85,7 +85,7 @@ namespace Telegram.Common
                 Height = 640,
                 PersistedId = "TextEditor",
                 ViewMode = ViewServiceMode.Default,
-                Content = control => new TextEditorRichPopup(ClientService, this, chatId, topic, messageId, message, replyTo, sendOptions)
+                Content = (control, window) => new TextEditorRichPopup(ClientService, this, chatId, topic, messageId, message, replyTo, sendOptions)
             });
         }
 
@@ -117,7 +117,7 @@ namespace Telegram.Common
                 Height = 640,
                 PersistedId = "WebApp",
                 ViewMode = openMode is WebAppOpenModeFullScreen ? ViewServiceMode.FullScreen : ViewServiceMode.Default,
-                Content = control => new WebAppPage(ClientService, this, botUser, url, launchId, menuBot, source, sourceLink, buttonText)
+                Content = (control, window) => new WebAppPage(window, ClientService, this, botUser, url, launchId, menuBot, source, sourceLink, buttonText)
             });
         }
 
@@ -128,7 +128,7 @@ namespace Telegram.Common
                 Width = 384,
                 Height = 640,
                 PersistedId = "WebApp",
-                Content = control => new WebAppPage(ClientService, this, botUser, url, title, gameChatId, gameMessageId)
+                Content = (control, window) => new WebAppPage(window, ClientService, this, botUser, url, title, gameChatId, gameMessageId)
             });
         }
 
@@ -223,7 +223,7 @@ namespace Telegram.Common
                     Width = parameters.Width,
                     Height = parameters.Height,
                     PersistedId = parameters.PersistedId,
-                    Content = control => new TabbedPage(newTab(WindowContext.Current), string.Equals(parameters.PersistedId, "WebApps"))
+                    Content = (control, window) => new TabbedPage(window, newTab(window), string.Equals(parameters.PersistedId, "WebApps"))
                 });
             }
         }
@@ -325,7 +325,7 @@ namespace Telegram.Common
                 Width = 380,
                 Height = 580,
                 PersistedId = "Payments",
-                Content = control =>
+                Content = (control, window) =>
                 {
                     // TODO: WinUI - control will be replaced by WindowContext.
                     var nav = BootStrapper.Current.NavigationServiceFactory(Session, WindowContext.Current, BootStrapper.BackButton.Ignore, "Payments" + Guid.NewGuid(), false);
@@ -361,7 +361,7 @@ namespace Telegram.Common
                 Width = 380,
                 Height = 580,
                 PersistedId = "Payments",
-                Content = control =>
+                Content = (control, window) =>
                 {
                     var nav = BootStrapper.Current.NavigationServiceFactory(Session, WindowContext.Current, BootStrapper.BackButton.Ignore, "Payments" + Guid.NewGuid(), false);
                     nav.Navigate(typeof(PaymentFormPage), paymentReceipt);
@@ -736,9 +736,9 @@ namespace Telegram.Common
                                 Height = 640,
                                 PersistedId = "WebApp",
                                 ViewMode = ViewServiceMode.Default,
-                                Content = control =>
+                                Content = (control, window) =>
                                 {
-                                    var page = new WebAppPage(ClientService, this, botUser, webApp.Url, sourceLink: sourceLink);
+                                    var page = new WebAppPage(window, ClientService, this, botUser, webApp.Url, sourceLink: sourceLink);
                                     void handler(object sender, WebAppAgeVerificationCompletedEventArgs args)
                                     {
                                         page.AgeVerificationCompleted -= handler;

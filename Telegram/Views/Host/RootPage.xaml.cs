@@ -284,7 +284,7 @@ namespace Telegram.Views.Host
                 content.Dispose();
             }
 
-            var detail = WindowContext.Current.NavigationServices.GetByFrameId($"Main{master.FrameFacade.FrameId}");
+            var detail = _context.NavigationServices.GetByFrameId($"Main{master.FrameFacade.FrameId}");
             if (detail != null)
             {
                 detail.Suspend();
@@ -296,8 +296,8 @@ namespace Telegram.Views.Host
             master.FrameFacade.ShortcutInvoked -= OnShortcutInvoked;
             master.Suspend();
 
-            WindowContext.Current.NavigationServices.Remove(master);
-            WindowContext.Current.NavigationServices.Remove(detail);
+            _context.NavigationServices.Remove(master);
+            _context.NavigationServices.Remove(detail);
         }
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
