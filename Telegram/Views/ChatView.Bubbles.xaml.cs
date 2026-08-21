@@ -27,7 +27,6 @@ using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Gallery;
 using Windows.Foundation;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -223,7 +222,7 @@ namespace Telegram.Views
             var stickyAbove = false;
             var stickyBelow = false;
 
-            var playAnimations = !intermediate && ViewModel.NavigationService.Window.ActivationMode != CoreWindowActivationMode.Deactivated;
+            var playAnimations = !intermediate && ViewModel.NavigationService.Window.IsActive;
 
             for (int i = panel.FirstVisibleIndex; i <= Math.Min(panel.LastVisibleIndex + 1, Messages.Items.Count - 1); i++)
             {
@@ -695,7 +694,7 @@ namespace Telegram.Views
             }
 
             // Read and play messages logic:
-            if (_viewVisibleMessages.Count > 0 && ViewModel.NavigationService.Window.ActivationMode != CoreWindowActivationMode.Deactivated && !FromPreview)
+            if (_viewVisibleMessages.Count > 0 && ViewModel.NavigationService.Window.IsActive && !FromPreview)
             {
                 MessageSource source = ViewModel.Type switch
                 {

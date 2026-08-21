@@ -1244,7 +1244,7 @@ namespace Telegram.Controls
             _foregroundPrev = new PixelBuffer(new WriteableBitmap(width, height));
             _backgroundNext = new PixelBuffer(new WriteableBitmap(width, height));
 
-            _activated = Window.Current.CoreWindow.ActivationMode != CoreWindowActivationMode.Deactivated;
+            _activated = WindowContext.Current.IsActive;
 
             // Automatically pause only if looping
             if (_presentation.LoopCount != 1)
@@ -1269,11 +1269,11 @@ namespace Telegram.Controls
         {
             if (_presentation.IsPopup)
             {
-                OnActivated(WindowContext.Current.ActivationMode != CoreWindowActivationMode.Deactivated);
+                OnActivated(WindowContext.Current.IsActive);
             }
             else
             {
-                OnActivated(WindowContext.Current.ActivationMode != CoreWindowActivationMode.Deactivated && !args.IsActive);
+                OnActivated(WindowContext.Current.IsActive && !args.IsActive);
             }
         }
 

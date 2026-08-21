@@ -1402,8 +1402,10 @@ namespace Telegram.Views
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
         {
-            var mode = Window.Current.CoreWindow.ActivationMode;
-            if (mode == CoreWindowActivationMode.ActivatedInForeground)
+            // This window, not Window.Current: the event is raised by the window this view
+            // belongs to, which in a secondary view is not the current one.
+            var window = ViewModel.NavigationService.Window;
+            if (window.IsForeground)
             {
                 ViewVisibleMessages(true);
 
@@ -1419,7 +1421,7 @@ namespace Telegram.Views
                     TrySetFocusState(FocusState.Programmatic, true);
                 }
             }
-            else if (mode == CoreWindowActivationMode.Deactivated)
+            else if (!window.IsActive)
             {
                 ViewModel.SaveDraft();
             }

@@ -344,6 +344,8 @@ namespace Telegram.Navigation
         // A stuck finalizer must not keep a closed window alive, so the drain is bounded.
         private static readonly TimeSpan ShutdownDrainTimeout = TimeSpan.FromSeconds(2);
 
+        private Task _drain;
+
         private void OnShutdownStarting(DispatcherQueue sender, Windows.System.DispatcherQueueShutdownStartingEventArgs args)
         {
             sender.ShutdownStarting -= OnShutdownStarting;
@@ -358,18 +360,38 @@ namespace Telegram.Navigation
             // the very apartment the finalizer needs to call into.
             var deferral = args.GetDeferral();
 
-            var drain = Task.Run(() =>
-            {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-            });
+            _drain = Task.Run(Drain);
 
-            Task.WhenAny(drain, Task.Delay(ShutdownDrainTimeout))
+            Task.WhenAny(_drain, Task.Delay(ShutdownDrainTimeout))
                 .ContinueWith(OnDrained, deferral, TaskScheduler.Default);
         }
 
-        private static void OnDrained(Task task, object state)
+        // DIAGNOSTIC: the releases still fault after this drain, and the two explanations want
+        // opposite fixes - either the drain lost its race against a few hundred blocking
+        // cross-apartment releases, or the peers were still reference-tracked by the native tree
+        // and there was nothing here to collect. A pass that finishes in milliseconds means the
+        // second; one that hits the timeout means the first. Logger's tail ships with the crash.
+        private static void Drain()
         {
+            var started = Logger.TickCount;
+            var before = GC.GetTotalMemory(false);
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            var first = Logger.TickCount - started;
+
+            // A release freed by the first pass can unroot the next wrapper along.
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            Logger.Info($"first pass {first}ms, second {Logger.TickCount - started - first}ms, heap {before >> 10}K -> {GC.GetTotalMemory(false) >> 10}K");
+        }
+
+        private void OnDrained(Task task, object state)
+        {
+            Logger.Info(_drain.IsCompleted ? "drained" : $"timed out after {ShutdownDrainTimeout.TotalMilliseconds}ms");
+
             (state as Deferral)?.Complete();
         }
 #endif
@@ -377,6 +399,11 @@ namespace Telegram.Navigation
         private void OnShutdownCompleted(DispatcherQueue sender, object args)
         {
             sender.ShutdownCompleted -= OnShutdownCompleted;
+
+            // DIAGNOSTIC: timestamps the far side of the drain, so the tail in a crash report
+            // says how much of the teardown ran after it.
+            Logger.Info();
+
             _current = null;
 
             Theme.Current = null;
@@ -499,7 +526,18 @@ namespace Telegram.Navigation
 
         public double RasterizationScale => _content?.XamlRoot?.RasterizationScale ?? 1;
 
-        public CoreWindowActivationMode ActivationMode => _window.CoreWindow.ActivationMode;
+        /// <summary>
+        /// The window is activated, foreground or not. Every caller of the old
+        /// <c>ActivationMode</c> but one was asking this.
+        /// </summary>
+        public bool IsActive => _window.CoreWindow.ActivationMode != CoreWindowActivationMode.Deactivated;
+
+        /// <summary>
+        /// The window is the foreground one. Distinct from <see cref="IsActive"/>: a window can be
+        /// activated without being in the foreground, and that middle state is deliberately
+        /// neither - see ChatView.Window_Activated, the only caller that needs the difference.
+        /// </summary>
+        public bool IsForeground => _window.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
 
         public bool IsPopupOpened { get; private set; }
 
@@ -1104,16 +1142,6 @@ namespace Telegram.Navigation
 
         [ThreadStatic]
         private static WindowContext _current;
-
-#if NET9_0_OR_GREATER
-        // True from Consolidated onwards, so from before the tree is dropped. Read by the
-        // controls that hold XamlDirect handles: theirs have to go while this view's XAML core
-        // is still up, and the drain in OnShutdownStarting is the wrong side of that line for
-        // anything the tree is still rooting.
-        //
-        // Never true for the main view, which is what OnConsolidated returns early on.
-        public static bool IsClosing => _current != null && _current._consolidated;
-#endif
 
         public static WindowContext Current
         {
