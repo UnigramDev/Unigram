@@ -33,6 +33,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 #if NET9_0_OR_GREATER
 using WinRT;
 #endif
@@ -403,6 +404,18 @@ namespace Telegram.Navigation
         private bool _contentMaterial;
 
         private WindowControl _content;
+        /// <summary>
+        /// Characters typed into this window that nothing in the tree consumed. Raised from the
+        /// window's root element, so it replaces <c>CoreWindow.CharacterReceived</c> without
+        /// needing a CoreWindow - which a XAML island does not have.
+        /// </summary>
+        public event TypedEventHandler<WindowContext, CharacterReceivedRoutedEventArgs> CharacterReceived;
+
+        private void OnContentCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
+        {
+            CharacterReceived?.Invoke(this, args);
+        }
+
         public UIElement Content
         {
             get => _locked != null ? _lockedContent : _content?.Content;
@@ -439,6 +452,11 @@ namespace Telegram.Navigation
 
                 _content.Loading += OnLoading;
                 _content.Loaded += OnLoaded;
+
+                // Deliberately +=, not AddHandler(handledEventsToo): a focused TextBox or
+                // RichEditBox marks the character handled, so it never reaches here - which is
+                // what the type-to-search sites used to approximate with a FocusManager check.
+                _content.CharacterReceived += OnContentCharacterReceived;
 
                 _window.Content = _content;
             }
@@ -1086,6 +1104,16 @@ namespace Telegram.Navigation
 
         [ThreadStatic]
         private static WindowContext _current;
+
+#if NET9_0_OR_GREATER
+        // True from Consolidated onwards, so from before the tree is dropped. Read by the
+        // controls that hold XamlDirect handles: theirs have to go while this view's XAML core
+        // is still up, and the drain in OnShutdownStarting is the wrong side of that line for
+        // anything the tree is still rooting.
+        //
+        // Never true for the main view, which is what OnConsolidated returns early on.
+        public static bool IsClosing => _current != null && _current._consolidated;
+#endif
 
         public static WindowContext Current
         {

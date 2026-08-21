@@ -1271,7 +1271,7 @@ namespace Telegram.Views
             ViewModel.NavigationService.Window.Activated += Window_Activated;
             ViewModel.NavigationService.Window.VisibilityChanged += Window_VisibilityChanged;
 
-            ViewModel.NavigationService.Window.CoreWindow.CharacterReceived += OnCharacterReceived;
+            ViewModel.NavigationService.Window.CharacterReceived += OnCharacterReceived;
 
             ViewVisibleMessages();
 
@@ -1289,7 +1289,7 @@ namespace Telegram.Views
             ViewModel.NavigationService.Window.Activated -= Window_Activated;
             ViewModel.NavigationService.Window.VisibilityChanged -= Window_VisibilityChanged;
 
-            ViewModel.NavigationService.Window.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            ViewModel.NavigationService.Window.CharacterReceived -= OnCharacterReceived;
 
             _updateThemeTask?.TrySetResult(true);
 
@@ -1491,39 +1491,31 @@ namespace Telegram.Views
             ViewModel.SearchExecute(string.Empty);
         }
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        private void OnCharacterReceived(WindowContext sender, CharacterReceivedRoutedEventArgs args)
         {
-            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character.Length == 0 || (char.IsControl(character[0]) && character != "\u0016") || char.IsWhiteSpace(character[0]))
+            var character = args.Character;
+            if ((char.IsControl(character) && character != '\u0016') || char.IsWhiteSpace(character))
             {
                 return;
             }
 
-            var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
-            if (focused is null or (not TextBox and not RichEditBox))
+            // The focus check and the popup allow-list are both gone: the event is raised from
+            // the window root, so a focused TextBox or RichEditBox has already handled it, and a
+            // popup only swallows it when it took focus. That is what the allow-list encoded by
+            // hand - a ToolTip or a TeachingTip takes no focus, so typing over one still lands here.
+            TextField.Focus(FocusState.Keyboard);
+
+            // For some reason, this is paste
+            if (character == '\u0016')
             {
-                foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
-                {
-                    if (popup.Child is not ToolTip and not Grid { Name: "TeachingTipRootGrid" or "ReactionAnimation" } and not Grid { Children.Count: 0 })
-                    {
-                        return;
-                    }
-                }
-
-                TextField.Focus(FocusState.Keyboard);
-
-                // For some reason, this is paste
-                if (character == "\u0016")
-                {
-                    TextField.PasteFromClipboard();
-                }
-                else
-                {
-                    TextField.InsertText(character);
-                }
-
-                args.Handled = true;
+                TextField.PasteFromClipboard();
             }
+            else
+            {
+                TextField.InsertText(character.ToString());
+            }
+
+            args.Handled = true;
         }
 
         private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs args)

@@ -38,7 +38,6 @@ using Telegram.Views.Settings;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
@@ -1034,7 +1033,7 @@ namespace Telegram.Views
             var context = WindowContext.ForXamlRoot(XamlRoot);
             if (context != null)
             {
-                context.CoreWindow.CharacterReceived += OnCharacterReceived;
+                context.CharacterReceived += OnCharacterReceived;
             }
 
             OnStateChanged(null, null);
@@ -1145,7 +1144,7 @@ namespace Telegram.Views
             var context = WindowContext.ForXamlRoot(this);
             if (context != null)
             {
-                context.CoreWindow.CharacterReceived -= OnCharacterReceived;
+                context.CharacterReceived -= OnCharacterReceived;
             }
 
             Bindings.StopTracking();
@@ -1155,35 +1154,28 @@ namespace Telegram.Views
             LeakTest(false);
         }
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        private void OnCharacterReceived(WindowContext sender, CharacterReceivedRoutedEventArgs args)
         {
             if (MasterDetail.NavigationService?.Frame.Content is not BlankPage)
             {
                 return;
             }
 
-            var character = System.Text.Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character.Length == 0 || char.IsControl(character[0]) || char.IsWhiteSpace(character[0]))
+            var character = args.Character;
+            if (char.IsControl(character) || char.IsWhiteSpace(character))
             {
                 return;
             }
 
-            var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
-            if (focused is null or (not TextBox and not RichEditBox))
-            {
-                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
-                if (popups.Count > 0)
-                {
-                    return;
-                }
+            // Neither a focus check nor a popup check: the event is raised from the window
+            // root, so a focused TextBox or RichEditBox has already marked it handled, and a
+            // popup that took focus never bubbles here at all.
+            Search_Click(null, null);
+            SearchField.Focus(FocusState.Keyboard);
+            SearchField.Text = character.ToString();
+            SearchField.SelectionStart = 1;
 
-                Search_Click(null, null);
-                SearchField.Focus(FocusState.Keyboard);
-                SearchField.Text = character;
-                SearchField.SelectionStart = character.Length;
-
-                args.Handled = true;
-            }
+            args.Handled = true;
         }
 
         private static Task CollectAsync()
