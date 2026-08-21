@@ -2069,8 +2069,8 @@ namespace Telegram.Services.Calls
             }
 
             return IsRtmpStream
-                ? new LiveStreamWindow(this)
-                : new GroupCallWindow(this);
+                ? new LiveStreamWindow(window, this)
+                : new GroupCallWindow(window, this);
         }
 
         public override void Show/*Window*/()

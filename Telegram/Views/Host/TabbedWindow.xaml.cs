@@ -37,13 +37,12 @@ namespace Telegram.Views.Host
 
     public sealed partial class TabbedWindow : WindowContent
     {
-        private readonly WindowContext _context;
 
         public TabbedWindow(WindowContext context, TabViewItem newTab, bool forWebApps)
+            : base(context)
         {
-            _context = context;
             InitializeComponent();
-            _context.SetTitleBar(Footer);
+            Window.SetTitleBar(Footer);
 
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;
@@ -202,7 +201,7 @@ namespace Telegram.Views.Host
             }
             else
             {
-                _ = _context.ConsolidateAsync();
+                _ = Window.ConsolidateAsync();
             }
         }
     }

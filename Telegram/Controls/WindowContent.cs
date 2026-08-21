@@ -54,14 +54,17 @@ namespace Telegram.Controls
     /// </summary>
     public partial class WindowContent : UserControlEx, IPopupHost
     {
-        private WindowContext _window;
-
         /// <summary>
-        /// The window this is the root of. Resolved from the XamlRoot rather than read off a
-        /// thread-static, so it stays correct once several windows share a thread. Null until
-        /// the content is in a tree, hence the retry rather than a cached null.
+        /// The window this is the root of. Required at construction rather than resolved from
+        /// the XamlRoot: every root is created with `new` and never reparented, and XamlRoot is
+        /// null until the content is in a tree - which is later than some roots need it.
         /// </summary>
-        public WindowContext Window => _window ??= WindowContext.ForXamlRoot(this);
+        public WindowContext Window { get; }
+
+        protected WindowContent(WindowContext context)
+        {
+            Window = context;
+        }
 
         /// <summary>
         /// The element acting as the draggable caption, if this root has one. Declared here so

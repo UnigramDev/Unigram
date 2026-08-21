@@ -59,12 +59,12 @@ namespace Telegram.Views.Host
         private bool _closedExpected;
 
         // The popup's own window, not the chat's: focus has to be taken back when it activates.
-        private readonly WindowContext _window;
         private bool _ready;
 
         private string _translateToLanguage;
 
-        public RichTextWindow(IClientService clientService, INavigationService navigationService, long chatId, MessageTopic topic, long messageId, RichMessage message, InputMessageReplyTo replyTo = null, MessageSendOptions sendOptions = null)
+        public RichTextWindow(WindowContext window, IClientService clientService, INavigationService navigationService, long chatId, MessageTopic topic, long messageId, RichMessage message, InputMessageReplyTo replyTo = null, MessageSendOptions sendOptions = null)
+            : base(window)
         {
             InitializeComponent();
 
@@ -75,8 +75,7 @@ namespace Telegram.Views.Host
             // window, but this popup runs in its own window. Wrap it in a SecondaryNavigationService bound
             // to THIS window (forwards navigations — e.g. the premium promo — back to the source window),
             // like WebAppWindow.
-            _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, WindowContext.Current);
-            _window = WindowContext.Current;
+            _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, Window);
             _chatId = chatId;
             _topic = topic;
             _messageId = messageId;
@@ -1080,9 +1079,9 @@ namespace Telegram.Views.Host
         {
             _closedExpected = true;
 
-            if (WindowContext.Current != null)
+            if (Window != null)
             {
-                _ = WindowContext.Current.ConsolidateAsync();
+                _ = Window.ConsolidateAsync();
             }
             else
             {

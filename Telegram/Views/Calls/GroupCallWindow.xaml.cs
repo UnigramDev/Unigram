@@ -77,7 +77,8 @@ namespace Telegram.Views.Calls
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         private bool _docked = true;
 
-        public GroupCallWindow(VoipGroupCall call)
+        public GroupCallWindow(WindowContext window, VoipGroupCall call)
+            : base(window)
         {
             InitializeComponent();
 
@@ -125,7 +126,7 @@ namespace Telegram.Views.Calls
             MessageField.MaxLength = (int)_call.ClientService.Options.GroupCallMessageTextLengthMax;
             MessageReactions.Initialize(_call.ClientService);
 
-            WindowContext.Current.SetTitleBar(TitleArea);
+            Window.SetTitleBar(TitleArea);
 
             Update(call, call.CurrentUser);
 

@@ -42,7 +42,8 @@ namespace Telegram.Views.Calls
 
         private readonly DisplayRequest _displayRequest = new();
 
-        public LiveStreamWindow(VoipGroupCall call)
+        public LiveStreamWindow(WindowContext window, VoipGroupCall call)
+            : base(window)
         {
             InitializeComponent();
 
@@ -69,7 +70,7 @@ namespace Telegram.Views.Calls
             _call.PropertyChanged += OnPropertyChanged;
             _call.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport));
 
-            WindowContext.Current.SetTitleBar(TitleArea);
+            Window.SetTitleBar(TitleArea);
 
             ElementCompositionPreview.SetIsTranslationEnabled(Viewport, true);
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedInfo, true);

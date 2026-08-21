@@ -85,7 +85,7 @@ namespace Telegram.Common
                 Height = 640,
                 PersistedId = "TextEditor",
                 ViewMode = ViewServiceMode.Default,
-                Content = (control, window) => new RichTextWindow(ClientService, this, chatId, topic, messageId, message, replyTo, sendOptions)
+                Content = (control, window) => new RichTextWindow(window, ClientService, this, chatId, topic, messageId, message, replyTo, sendOptions)
             });
         }
 

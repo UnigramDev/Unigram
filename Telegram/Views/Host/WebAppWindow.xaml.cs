@@ -46,7 +46,6 @@ namespace Telegram.Views.Host
 
     public sealed partial class WebAppWindow : WindowContent
     {
-        private readonly WindowContext _context;
         private readonly IClientService _clientService;
         private readonly SecondaryNavigationService _navigationService;
         private readonly IEventAggregator _aggregator;
@@ -80,12 +79,12 @@ namespace Telegram.Views.Host
 
         // TODO: constructor should take a function and URL should be loaded asynchronously
         public WebAppWindow(WindowContext context, IClientService clientService, INavigationService navigationService, User botUser, WebAppUrl url, long launchId = 0, AttachmentMenuBot menuBot = null, OpenUrlSource source = null, InternalLinkType sourceLink = null, string buttonText = null)
+            : base(context)
         {
             InitializeComponent();
             RegisterInstance();
 
             _clientService = clientService;
-            _context = context;
             _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, context);
             _aggregator = clientService.Session.Resolve<IEventAggregator>();
 
@@ -110,7 +109,7 @@ namespace Telegram.Views.Host
 
             ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
-            _context.SetTitleBar(TitleBar, true);
+            Window.SetTitleBar(TitleBar, true);
 
             LoadPlaceholder();
         }
@@ -178,12 +177,12 @@ namespace Telegram.Views.Host
         }
 
         public WebAppWindow(WindowContext context, IClientService clientService, INavigationService navigationService, User botUser, string url, string title, long gameChatId = 0, long gameMessageId = 0)
+            : base(context)
         {
             InitializeComponent();
             RegisterInstance();
 
             _clientService = clientService;
-            _context = context;
             _navigationService = new SecondaryNavigationService(clientService.Session, navigationService, context);
             _aggregator = clientService.Session.Resolve<IEventAggregator>();
 
@@ -201,7 +200,7 @@ namespace Telegram.Views.Host
 
             ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
-            _context.SetTitleBar(TitleBar, true);
+            Window.SetTitleBar(TitleBar, true);
         }
 
         #region IToastHost
@@ -261,9 +260,9 @@ namespace Telegram.Views.Host
 
             _closed = true;
 
-            if (_context != null)
+            if (Window != null)
             {
-                _ = _context.ConsolidateAsync();
+                _ = Window.ConsolidateAsync();
             }
             else
             {

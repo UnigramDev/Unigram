@@ -23,13 +23,11 @@ namespace Telegram.Views.Host
 {
     public sealed partial class ShareWindow : WindowContent
     {
-        private readonly WindowContext _window;
 
         public ShareWindow(WindowContext window, ISession session)
+            : base(window)
         {
             InitializeComponent();
-
-            _window = window;
 
             Background.Update(session.Resolve<IClientService>());
 
@@ -74,7 +72,7 @@ namespace Telegram.Views.Host
             popup.Closed += OnClosed;
             popup.AccountClick += OnAccountClick;
 
-            var service = new TLNavigationService(session, _window, null, "Share");
+            var service = new TLNavigationService(session, Window, null, "Share");
 
             service.ShowPopup(popup, new ChooseChatsConfigurationShareOperation(shareOperation));
         }

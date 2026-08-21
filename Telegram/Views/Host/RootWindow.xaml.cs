@@ -54,7 +54,6 @@ namespace Telegram.Views.Host
     public sealed partial class RootWindow : WindowContent
     {
         private readonly ILifetimeService _lifetime;
-        private readonly WindowContext _context;
 
         private NavigationService _navigationService;
 
@@ -65,11 +64,11 @@ namespace Telegram.Views.Host
         private long _menuBots;
 
         public RootWindow(WindowContext context, NavigationService service)
+            : base(context)
         {
             InitializeComponent();
 
             _lifetime = LifetimeService.Current;
-            _context = context;
 
             _navigationViewSelected = RootDestination.Chats;
             _navigationViewItems = new MvxObservableCollection<object>
@@ -218,10 +217,10 @@ namespace Telegram.Views.Host
 
             Navigation.IsPaneOpen = false;
 
-            var service = _context.NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
+            var service = Window.NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
             if (service == null)
             {
-                service = BootStrapper.Current.NavigationServiceFactory(session, _context, BootStrapper.BackButton.Attach, new Frame { CacheSize = 0 }, $"{session.Id}", true) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(session, Window, BootStrapper.BackButton.Attach, new Frame { CacheSize = 0 }, $"{session.Id}", true) as NavigationService;
                 service.Frame.Navigating += OnNavigating;
                 service.Frame.Navigated += OnNavigated;
                 service.FrameFacade.ShortcutInvoked += OnShortcutInvoked;
@@ -284,7 +283,7 @@ namespace Telegram.Views.Host
                 content.Dispose();
             }
 
-            var detail = _context.NavigationServices.GetByFrameId($"Main{master.FrameFacade.FrameId}");
+            var detail = Window.NavigationServices.GetByFrameId($"Main{master.FrameFacade.FrameId}");
             if (detail != null)
             {
                 detail.Suspend();
@@ -296,8 +295,8 @@ namespace Telegram.Views.Host
             master.FrameFacade.ShortcutInvoked -= OnShortcutInvoked;
             master.Suspend();
 
-            _context.NavigationServices.Remove(master);
-            _context.NavigationServices.Remove(detail);
+            Window.NavigationServices.Remove(master);
+            Window.NavigationServices.Remove(detail);
         }
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
@@ -790,7 +789,7 @@ namespace Telegram.Views.Host
                     GC.Collect();
                 };
 
-                Window.Current.Content = butt;
+                Window.Content = butt;
             };
 
             var rest = new Button();

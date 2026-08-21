@@ -31,6 +31,7 @@ namespace Telegram.Views.Host
         private readonly INavigationService _navigationService;
 
         public StandaloneWindow(INavigationService navigationService)
+            : base(navigationService.Window)
         {
             InitializeComponent();
 

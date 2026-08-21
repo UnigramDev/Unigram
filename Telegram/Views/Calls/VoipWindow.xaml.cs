@@ -64,7 +64,8 @@ namespace Telegram.Views.Calls
 
         private VoipConnectionState _background;
 
-        public VoipWindow(VoipCall call)
+        public VoipWindow(WindowContext window, VoipCall call)
+            : base(window)
         {
             InitializeComponent();
 
@@ -137,7 +138,7 @@ namespace Telegram.Views.Calls
             var weakNetwork = ElementComposition.GetElementVisual(WeakNetwork);
             weakNetwork.Opacity = 0;
 
-            WindowContext.Current.SetTitleBar(TitleBar);
+            Window.SetTitleBar(TitleBar);
         }
 
         protected override UIElement TitleBarElement => TitleBar;
@@ -934,7 +935,7 @@ namespace Telegram.Views.Calls
             _remoteVideo.StateChanged -= OnVideoStateChanged;
             _remoteVideo.Stop();
 
-            WindowContext.Current.SetTitleBar(null);
+            Window.SetTitleBar(null);
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)

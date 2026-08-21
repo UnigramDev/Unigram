@@ -20,7 +20,6 @@ namespace Telegram.Views.Host
 {
     public sealed partial class PasscodeWindow : WindowContent
     {
-        private readonly WindowContext _window;
 
         private readonly IPasscodeService _passcodeService;
         private readonly bool _biometrics;
@@ -28,11 +27,10 @@ namespace Telegram.Views.Host
         private readonly DispatcherTimer _retryTimer;
 
         public PasscodeWindow(WindowContext window, bool biometrics)
+            : base(window)
         {
             InitializeComponent();
-
-            _window = window;
-            _window.SetTitleBar(TitleBar);
+            Window.SetTitleBar(TitleBar);
 
             _passcodeService = LifetimeService.Current.Passcode;
             _biometrics = biometrics;
@@ -156,7 +154,7 @@ namespace Telegram.Views.Host
                 return;
             }
 
-            _window.SetTitleBar(TitleBar);
+            Window.SetTitleBar(TitleBar);
 
             if (active)
             {
