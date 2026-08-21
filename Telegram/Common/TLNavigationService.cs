@@ -67,7 +67,7 @@ namespace Telegram.Common
 
             await WindowContext.ForEachAsync(window =>
             {
-                if (window.Content is TextEditorRichPopup textEditor && textEditor.AreTheSame(chatId, messageId))
+                if (window.Content is RichTextWindow textEditor && textEditor.AreTheSame(chatId, messageId))
                 {
                     _ = ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
                     found = true;
@@ -85,7 +85,7 @@ namespace Telegram.Common
                 Height = 640,
                 PersistedId = "TextEditor",
                 ViewMode = ViewServiceMode.Default,
-                Content = (control, window) => new TextEditorRichPopup(ClientService, this, chatId, topic, messageId, message, replyTo, sendOptions)
+                Content = (control, window) => new RichTextWindow(ClientService, this, chatId, topic, messageId, message, replyTo, sendOptions)
             });
         }
 

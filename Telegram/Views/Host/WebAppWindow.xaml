@@ -1,4 +1,4 @@
-﻿<controls:WindowContent x:Class="Telegram.Views.WebAppWindow"
+﻿<controls:WindowContent x:Class="Telegram.Views.Host.WebAppWindow"
                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:local="using:Telegram.Views.Popups"

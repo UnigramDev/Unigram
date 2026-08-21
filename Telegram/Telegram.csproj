@@ -1387,8 +1387,8 @@
     <Compile Include="Views\Popups\FormulaPopup.xaml.cs">
       <DependentUpon>FormulaPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\TextEditorRichPopup.xaml.cs">
-      <DependentUpon>TextEditorRichPopup.xaml</DependentUpon>
+    <Compile Include="Views\Host\RichTextWindow.xaml.cs">
+      <DependentUpon>RichTextWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\RichEditorCommands.cs" />
     <Compile Include="Views\Popups\RichEditorState.cs" />
@@ -1722,7 +1722,7 @@
     <Compile Include="Views\Users\UserAffiliatePage.xaml.cs">
       <DependentUpon>UserAffiliatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\WebAppWindow.xaml.cs">
+    <Compile Include="Views\Host\WebAppWindow.xaml.cs">
       <DependentUpon>WebAppWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ZoomableMediaPopup.xaml.cs">
@@ -1928,7 +1928,7 @@
     <Compile Include="Views\Host\StandaloneWindow.xaml.cs">
       <DependentUpon>StandaloneWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PasscodeWindow.xaml.cs">
+    <Compile Include="Views\Host\PasscodeWindow.xaml.cs">
       <DependentUpon>PasscodeWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\CalendarPopup.xaml.cs">
@@ -3720,7 +3720,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Popups\TextEditorRichPopup.xaml">
+    <Page Include="Views\Host\RichTextWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -4160,7 +4160,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\WebAppWindow.xaml">
+    <Page Include="Views\Host\WebAppWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4232,7 +4232,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PasscodeWindow.xaml">
+    <Page Include="Views\Host\PasscodeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

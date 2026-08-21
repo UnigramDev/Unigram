@@ -1,4 +1,4 @@
-<controls:WindowContent x:Class="Telegram.Views.PasscodeWindow"
+<controls:WindowContent x:Class="Telegram.Views.Host.PasscodeWindow"
                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

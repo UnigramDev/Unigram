@@ -41,7 +41,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
-namespace Telegram.Views
+namespace Telegram.Views.Host
 {
     public partial record WebAppAgeVerificationCompletedEventArgs(bool Passed, double Age);
 

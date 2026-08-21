@@ -25,6 +25,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.Views.Chats;
 using Telegram.Views.Create;
+using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings.Popups;
 using Telegram.Views.Stars.Popups;
@@ -1569,7 +1570,7 @@ namespace Telegram.ViewModels
 
             NavigationService.NavigateToTextEditor(message.ChatId, null, message.Id, richMessage.Message);
 
-            //var popup = new TextEditorRichPopup(ClientService, NavigationService, richMessage.Message);
+            //var popup = new RichTextWindow(ClientService, NavigationService, richMessage.Message);
             //var confirm = await ShowPopupAsync(popup);
             //if (confirm != ContentDialogResult.Primary || popup.Input == null)
             //{

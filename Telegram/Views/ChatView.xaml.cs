@@ -41,6 +41,7 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Business;
+using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Stars.Popups;
@@ -3518,7 +3519,7 @@ namespace Telegram.Views
                 //{
                 //    flyout.CreateFlyoutItem(() =>
                 //    {
-                //        ViewModel.ShowPopup(new TextEditorRichPopup(ViewModel.ClientService, ViewModel.NavigationService, richMessage.Message));
+                //        ViewModel.ShowPopup(new RichTextWindow(ViewModel.ClientService, ViewModel.NavigationService, richMessage.Message));
                 //    }, "Test");
                 //}
 

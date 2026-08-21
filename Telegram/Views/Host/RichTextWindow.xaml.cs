@@ -25,6 +25,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
+using Telegram.Views.Popups;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Data.Json;
@@ -39,9 +40,9 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Telegram.Views.Popups
+namespace Telegram.Views.Host
 {
-    public sealed partial class TextEditorRichPopup : WindowContent
+    public sealed partial class RichTextWindow : WindowContent
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
@@ -63,7 +64,7 @@ namespace Telegram.Views.Popups
 
         private string _translateToLanguage;
 
-        public TextEditorRichPopup(IClientService clientService, INavigationService navigationService, long chatId, MessageTopic topic, long messageId, RichMessage message, InputMessageReplyTo replyTo = null, MessageSendOptions sendOptions = null)
+        public RichTextWindow(IClientService clientService, INavigationService navigationService, long chatId, MessageTopic topic, long messageId, RichMessage message, InputMessageReplyTo replyTo = null, MessageSendOptions sendOptions = null)
         {
             InitializeComponent();
 
