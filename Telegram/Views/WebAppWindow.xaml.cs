@@ -31,7 +31,6 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Core.Preview;
 using Windows.UI.StartScreen;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -336,18 +335,16 @@ namespace Telegram.Views
         /// </summary>
         protected override void OnLoaded()
         {
-            _context.Activated += OnActivated;
+            base.OnLoaded();
 
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
             ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
             ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
         }
 
         protected override void OnUnloaded()
         {
-            _context.Activated -= OnActivated;
+            base.OnUnloaded();
 
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
             ApplicationView.GetForCurrentView().Consolidated -= OnConsolidated;
             ApplicationView.GetForCurrentView().VisibleBoundsChanged -= OnVisibleBoundsChanged;
 
@@ -359,12 +356,12 @@ namespace Telegram.Views
             View.Close();
         }
 
-        private void OnActivated(object sender, WindowActivatedEventArgs e)
+        protected override void OnWindowActivated(bool active)
         {
-            PostEvent("visibility_changed", "is_visible", e.IsActive);
+            PostEvent("visibility_changed", "is_visible", active);
         }
 
-        private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        protected override async void OnWindowCloseRequested(WindowCloseRequestedEventArgs e)
         {
             if (_closeNeedConfirmation)
             {

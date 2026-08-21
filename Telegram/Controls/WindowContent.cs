@@ -11,11 +11,39 @@ using Telegram.Navigation;
 using Telegram.Views.Host;
 using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Telegram.Controls
 {
+    /// <summary>
+    /// Raised by <see cref="WindowContent.OnWindowCloseRequested"/>. Wraps the UWP args rather
+    /// than exposing them, so a root only ever sees Handled and a deferral - the two things
+    /// every caller actually used, and the two an island host can supply by other means.
+    /// </summary>
+    public class WindowCloseRequestedEventArgs : EventArgs
+    {
+        private readonly SystemNavigationCloseRequestedPreviewEventArgs _args;
+
+        internal WindowCloseRequestedEventArgs(SystemNavigationCloseRequestedPreviewEventArgs args)
+        {
+            _args = args;
+        }
+
+        public bool Handled
+        {
+            get => _args.Handled;
+            set => _args.Handled = value;
+        }
+
+        public Deferral GetDeferral()
+        {
+            return _args.GetDeferral();
+        }
+    }
+
     /// <summary>
     /// Base for anything assigned to <see cref="WindowContext.Content"/> - the root of a window,
     /// though not a window itself. Was WindowEx, declared at the bottom of VoipWindow.xaml.cs.
@@ -61,6 +89,57 @@ namespace Telegram.Controls
             {
                 Window?.SetTitleBar(TitleBarElement);
             }
+        }
+
+        // Wired once, here, rather than in each root: what raises these is the part that differs
+        // between a CoreWindow and an island host, and this is the only place that should know.
+        protected override void OnLoaded()
+        {
+            if (Window is WindowContext window)
+            {
+                window.Activated += OnWindowActivatedCore;
+                window.VisibilityChanged += OnWindowVisibilityChangedCore;
+            }
+
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequestedCore;
+        }
+
+        protected override void OnUnloaded()
+        {
+            if (Window is WindowContext window)
+            {
+                window.Activated -= OnWindowActivatedCore;
+                window.VisibilityChanged -= OnWindowVisibilityChangedCore;
+            }
+
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequestedCore;
+        }
+
+        private void OnWindowActivatedCore(object sender, WindowActivatedEventArgs args)
+        {
+            OnWindowActivated(args.IsActive);
+        }
+
+        private void OnWindowVisibilityChangedCore(object sender, VisibilityChangedEventArgs args)
+        {
+            OnWindowVisibilityChanged(args.Visible);
+        }
+
+        private void OnCloseRequestedCore(object sender, SystemNavigationCloseRequestedPreviewEventArgs args)
+        {
+            OnWindowCloseRequested(new WindowCloseRequestedEventArgs(args));
+        }
+
+        protected virtual void OnWindowActivated(bool active)
+        {
+        }
+
+        protected virtual void OnWindowVisibilityChanged(bool visible)
+        {
+        }
+
+        protected virtual void OnWindowCloseRequested(WindowCloseRequestedEventArgs args)
+        {
         }
 
         /// <summary>

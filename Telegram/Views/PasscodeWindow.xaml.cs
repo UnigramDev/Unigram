@@ -27,6 +27,10 @@ namespace Telegram.Views
 
         private readonly DispatcherTimer _retryTimer;
 
+        // Unlock() used to unsubscribe from Activated; the base owns that subscription now,
+        // so the handler bows out on this instead.
+        private bool _unlocked;
+
         public PasscodeWindow(WindowContext window, bool biometrics)
         {
             InitializeComponent();
@@ -123,7 +127,6 @@ namespace Telegram.Views
 
         private async void OnLoaded(object sender, RoutedEventArgs args)
         {
-            _window.Activated += Window_Activated;
             Field.LosingFocus += Field_LosingFocus;
 
             if (_passcodeService.IsBiometricsEnabled && UserConsentVerifierAvailability.Available == await UserConsentVerifier.CheckAvailabilityAsync())
@@ -143,17 +146,21 @@ namespace Telegram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs args)
         {
-            _window.Activated -= Window_Activated;
             Field.LosingFocus -= Field_LosingFocus;
 
             _retryTimer.Stop();
         }
 
-        private void Window_Activated(object sender, WindowActivatedEventArgs e)
+        protected override void OnWindowActivated(bool active)
         {
+            if (_unlocked)
+            {
+                return;
+            }
+
             _window.SetTitleBar(TitleBar);
 
-            if (e.IsActive)
+            if (active)
             {
                 Field.Focus(FocusState.Keyboard);
             }
@@ -172,7 +179,7 @@ namespace Telegram.Views
 
         private void Unlock()
         {
-            _window.Activated -= Window_Activated;
+            _unlocked = true;
             Field.LosingFocus -= Field_LosingFocus;
 
             _passcodeService.Unlock();

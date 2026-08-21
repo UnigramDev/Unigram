@@ -31,7 +31,6 @@ using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.Core.Preview;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -108,11 +107,6 @@ namespace Telegram.Views.Popups
                 EntityShadow.Translation = translation;
             }
 
-            // The window is shown after its content exists, and activating it moves focus to
-            // the first focusable element in the tree — a toolbar button. Focusing the editor
-            // when it reports ready is undone by that, so take focus on activation too.
-            _window.Activated += OnWindowActivated;
-
             Initialize(message);
         }
 
@@ -142,8 +136,6 @@ namespace Telegram.Views.Popups
             _aggregator = _clientService.Session.Resolve<IEventAggregator>();
             _aggregator.Subscribe<UpdateOption>(this, Handle);
 
-            // Offer to save a draft when the editor window is closed (X / system close).
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
             Unloaded += OnUnloaded;
         }
 
@@ -152,15 +144,13 @@ namespace Telegram.Views.Popups
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Unloaded -= OnUnloaded;
-            _window.Activated -= OnWindowActivated;
             _aggregator?.Unsubscribe(this);
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
         }
 
         // Closing the editor window offers to save the current text as a chat draft. Skipped when we're
         // closing after an explicit send (_closedExpected), when editing an existing message (_messageId
         // != 0 — nothing to draft), or when the document is empty.
-        private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        protected override async void OnWindowCloseRequested(WindowCloseRequestedEventArgs e)
         {
             if (_closedExpected || _messageId != 0 || (_state?.IsEmpty ?? true))
             {
@@ -242,9 +232,12 @@ namespace Telegram.Views.Popups
         {
         }
 
-        private void OnWindowActivated(object sender, Navigation.WindowActivatedEventArgs e)
+        // The window is shown after its content exists, and activating it moves focus to the
+        // first focusable element in the tree - a toolbar button. Focusing the editor when it
+        // reports ready is undone by that, so take focus on activation too.
+        protected override void OnWindowActivated(bool active)
         {
-            if (e.IsActive)
+            if (active)
             {
                 // Low priority: XAML assigns its own initial focus while activating, and
                 // whichever runs last wins.

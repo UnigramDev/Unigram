@@ -24,7 +24,6 @@ using Windows.Foundation;
 using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -139,7 +138,6 @@ namespace Telegram.Views.Calls
             weakNetwork.Opacity = 0;
 
             WindowContext.Current.SetTitleBar(TitleBar);
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
         }
 
         protected override UIElement TitleBarElement => TitleBar;
@@ -902,7 +900,7 @@ namespace Telegram.Views.Calls
             _minimizedVideo = minimized;
         }
 
-        private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        protected override void OnWindowCloseRequested(WindowCloseRequestedEventArgs e)
         {
             // TODO: only if call is pending?
             _call.Discard();
@@ -936,7 +934,6 @@ namespace Telegram.Views.Calls
             _remoteVideo.StateChanged -= OnVideoStateChanged;
             _remoteVideo.Stop();
 
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
             WindowContext.Current.SetTitleBar(null);
         }
 
