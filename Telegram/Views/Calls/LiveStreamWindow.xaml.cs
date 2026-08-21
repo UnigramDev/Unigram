@@ -15,13 +15,11 @@ using Telegram.Navigation;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.Views.Calls.Popups;
-using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.Devices.Input;
 using Windows.System.Display;
 using Windows.UI.Composition;
 using Windows.UI.Text;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -258,15 +256,14 @@ namespace Telegram.Views.Calls
 
         private void Resize_Click(object sender, RoutedEventArgs e)
         {
-            var view = ApplicationView.GetForCurrentView();
-            if (view.IsFullScreenMode)
+            if (Window.IsFullScreenMode)
             {
-                view.ExitFullScreenMode();
+                Window.ExitFullScreenMode();
 
                 Resize.Glyph = Icons.ArrowMaximizeFilled24;
                 Resize.Content = ResizeText.Text = Strings.VoipMaximize;
             }
-            else if (view.TryEnterFullScreenMode())
+            else if (Window.TryEnterFullScreenMode())
             {
                 Resize.Glyph = Icons.ArrowMinimizeFilled24;
                 Resize.Content = ResizeText.Text = Strings.VoipMinimize;
@@ -332,7 +329,7 @@ namespace Telegram.Views.Calls
         {
             if (sender.IsClosed)
             {
-                this.BeginOnUIThread(() => Close());
+                this.BeginOnUIThread(Window.Close);
             }
         }
 
@@ -375,7 +372,7 @@ namespace Telegram.Views.Calls
             if (confirm == ContentDialogResult.Primary)
             {
                 _call.Discard(true);
-                Close();
+                Window.Close();
             }
         }
 

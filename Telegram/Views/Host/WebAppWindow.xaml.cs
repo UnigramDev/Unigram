@@ -31,7 +31,6 @@ using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.StartScreen;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -259,15 +258,7 @@ namespace Telegram.Views.Host
             }
 
             _closed = true;
-
-            if (Window != null)
-            {
-                _ = Window.ConsolidateAsync();
-            }
-            else
-            {
-                _ = ApplicationView.GetForCurrentView().TryConsolidateAsync();
-            }
+            Window.Close();
         }
 
         // Live pages, so the analysis has a root for each one. Registered instances that
@@ -977,12 +968,12 @@ namespace Telegram.Views.Host
 
         private void ProcessRequestFullScreen()
         {
-            ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
+            Window.TryEnterFullScreenMode();
         }
 
         private void ProcessExitFullScreen()
         {
-            ApplicationView.GetForCurrentView().ExitFullScreenMode();
+            Window.ExitFullScreenMode();
         }
 
         private async void ProcessSetEmojiStatus(JsonObject eventData)
@@ -2392,14 +2383,14 @@ namespace Telegram.Views.Host
         public override bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true)
         {
             _source.Dispatcher.Dispatch(() => _source.Navigate(page, parameter, state, infoOverride, navigationStackEnabled));
-            _ = ApplicationViewSwitcher.SwitchAsync(_source.Window.Id);
+            _ = _source.Window.SwitchToAsync();
 
             return true;
         }
 
         public void Switch()
         {
-            _ = ApplicationViewSwitcher.SwitchAsync(_source.Window.Id);
+            _ = _source.Window.SwitchToAsync();
         }
     }
 }

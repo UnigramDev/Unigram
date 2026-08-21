@@ -33,7 +33,6 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Text;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -1078,15 +1077,7 @@ namespace Telegram.Views.Host
         private void Close()
         {
             _closedExpected = true;
-
-            if (Window != null)
-            {
-                _ = Window.ConsolidateAsync();
-            }
-            else
-            {
-                _ = ApplicationView.GetForCurrentView().TryConsolidateAsync();
-            }
+            Window.Close();
         }
     }
 

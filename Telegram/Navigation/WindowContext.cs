@@ -304,6 +304,11 @@ namespace Telegram.Navigation
             Logger.Debug(sender.VisibleBounds);
         }
 
+        public void Close()
+        {
+            _ = ConsolidateAsync();
+        }
+
         public async Task ConsolidateAsync()
         {
             if (_consolidated)
@@ -826,6 +831,35 @@ namespace Telegram.Navigation
         /// </summary>
         public Point PointerPosition => _window.CoreWindow.PointerPosition;
 
+        /// <summary>
+        /// The window area not obscured by system chrome. Distinct from <see cref="Bounds"/>,
+        /// which is the whole window.
+        /// </summary>
+        public Rect VisibleBounds => ApplicationView.GetForCurrentView().VisibleBounds;
+
+        /// <summary>
+        /// The size a newly launched window starts at. Genuinely process-wide rather than
+        /// per-window, which is why it is static.
+        /// </summary>
+        public static Size PreferredLaunchViewSize
+        {
+            get => ApplicationView.PreferredLaunchViewSize;
+            set => ApplicationView.PreferredLaunchViewSize = value;
+        }
+
+        public bool TryResizeView(Size size)
+        {
+            return ApplicationView.GetForCurrentView().TryResizeView(size);
+        }
+
+        /// <summary>
+        /// Brings this window to the foreground.
+        /// </summary>
+        public IAsyncAction SwitchToAsync()
+        {
+            return ApplicationViewSwitcher.SwitchAsync(Id);
+        }
+
         public bool IsFullScreenMode => ApplicationView.GetForCurrentView().IsFullScreenMode;
 
         public void ExitFullScreenMode()
@@ -833,9 +867,9 @@ namespace Telegram.Navigation
             ApplicationView.GetForCurrentView().ExitFullScreenMode();
         }
 
-        public void TryEnterFullScreenMode()
+        public bool TryEnterFullScreenMode()
         {
-            ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
+            return ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
         }
 
         public void SetTitleBar(UIElement titleBar, bool collapsed = false)

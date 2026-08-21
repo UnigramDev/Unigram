@@ -200,39 +200,5 @@ namespace Telegram.Controls
             titleBar.ButtonPressedBackgroundColor = ColorEx.FromHex(0x33FFFFFF);
             titleBar.ButtonPressedForegroundColor = ColorEx.FromHex(0x99FFFFFF);
         }
-
-        public async void Close()
-        {
-            try
-            {
-                if (XamlRoot.Content is WindowControl { Content: RootWindow root })
-                {
-                    root.PresentContent(null);
-                    return;
-                }
-            }
-            catch
-            {
-                // XamlRoot.Content seems to throw a NullReferenceException
-                // whenever corresponding window has been already closed.
-            }
-
-            await WindowContext.Current.ConsolidateAsync();
-        }
-
-        protected async void RestoreWindow()
-        {
-            var applicationView = ApplicationView.GetForCurrentView();
-            if (applicationView.ViewMode != ApplicationViewMode.CompactOverlay)
-            {
-                return;
-            }
-
-            var restored = await applicationView.TryEnterViewModeAsync(ApplicationViewMode.Default);
-            if (restored)
-            {
-                applicationView.TryResizeView(new Size(720, 540));
-            }
-        }
     }
 }

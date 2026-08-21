@@ -26,14 +26,12 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Calls.Popups;
-using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -550,21 +548,6 @@ namespace Telegram.Views.Calls
         private bool _selectedAutomatically;
         private ulong _selectedTimestamp;
 
-        private void Resize_Click(object sender, RoutedEventArgs e)
-        {
-            var view = ApplicationView.GetForCurrentView();
-            var size = view.VisibleBounds;
-
-            if (size.Width >= 600)
-            {
-                view.TryResizeView(new Size(380, size.Height + 1));
-            }
-            else
-            {
-                view.TryResizeView(new Size(780, size.Height + 1));
-            }
-        }
-
         private void Participant_ToggleDocked(object sender, EventArgs e)
         {
             _docked = !_docked;
@@ -805,7 +788,7 @@ namespace Telegram.Views.Calls
         {
             if (sender.IsClosed)
             {
-                this.BeginOnUIThread(() => Close());
+                this.BeginOnUIThread(Window.Close);
             }
         }
 

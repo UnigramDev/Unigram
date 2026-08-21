@@ -27,7 +27,6 @@ using Telegram.Views.Authorization;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -115,15 +114,6 @@ namespace Telegram.Views.Host
 
             //    OnVisibleBoundsChanged(application, null);
             //}
-        }
-
-        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
-        {
-            LayoutRoot.Margin = new Thickness(
-                sender.VisibleBounds.Left,
-                sender.VisibleBounds.Top,
-                sender.VisibleBounds.Left,
-                sender.VisibleBounds.Top);
         }
 
         public INavigationService NavigationService
@@ -919,11 +909,10 @@ namespace Telegram.Views.Host
             {
                 MainColumn.Width = new GridLength(ActualWidth, GridUnitType.Pixel);
 
-                var view = ApplicationView.GetForCurrentView();
-                var size = view.VisibleBounds;
+                var size = Window.VisibleBounds;
 
-                view.TryResizeView(new Size(size.Width + 320, size.Height));
-                ApplicationView.PreferredLaunchViewSize = new Size(size.Width, size.Height);
+                Window.TryResizeView(new Size(size.Width + 320, size.Height));
+                WindowContext.PreferredLaunchViewSize = new Size(size.Width, size.Height);
 
                 MainColumn.Width = new GridLength(1, GridUnitType.Star);
             }
@@ -933,8 +922,7 @@ namespace Telegram.Views.Host
         {
             UnloadObject(ThemePage);
 
-            var view = ApplicationView.GetForCurrentView();
-            view.TryResizeView(ApplicationView.PreferredLaunchViewSize);
+            Window.TryResizeView(WindowContext.PreferredLaunchViewSize);
         }
 
         private async void Theme_Click(object sender, RoutedEventArgs e)

@@ -19,7 +19,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
-using Telegram.Views.Host;
 using Windows.Foundation;
 using Windows.System.Display;
 using Windows.UI;
@@ -161,7 +160,7 @@ namespace Telegram.Views.Calls
         private void Discarded_Tick(object sender, object e)
         {
             _discardedTimer.Stop();
-            Close();
+            Window.Close();
         }
 
         private void Duration_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -1343,5 +1342,20 @@ namespace Telegram.Views.Calls
         //}
 
         #endregion
+
+        private async void RestoreWindow()
+        {
+            var applicationView = ApplicationView.GetForCurrentView();
+            if (applicationView.ViewMode != ApplicationViewMode.CompactOverlay)
+            {
+                return;
+            }
+
+            var restored = await applicationView.TryEnterViewModeAsync(ApplicationViewMode.Default);
+            if (restored)
+            {
+                applicationView.TryResizeView(new Size(720, 540));
+            }
+        }
     }
 }
