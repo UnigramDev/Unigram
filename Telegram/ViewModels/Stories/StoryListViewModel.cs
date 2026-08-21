@@ -288,10 +288,6 @@ namespace Telegram.ViewModels.Stories
 
                 _storyList = storyList;
 
-#if MOCKUP
-                _hasMoreItems = false;
-#endif
-
                 _ = LoadMoreItemsAsync(0);
             }
 

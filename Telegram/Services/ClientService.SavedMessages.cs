@@ -114,14 +114,9 @@ namespace Telegram.Services
 
                 var haveFullList = _haveFullSavedMessages;
 
-#if MOCKUP
-                _haveFullChatList[index] = true;
-                missing = 0;
-#else
                 missing = count > sorted.Count && !haveFullList && !reentrancy
                     ? count - sorted.Count
                     : 0;
-#endif
 
                 if (missing == 0)
                 {

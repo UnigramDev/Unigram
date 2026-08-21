@@ -43,10 +43,6 @@ namespace Telegram.ViewModels
 
             Items = new ItemsCollection(clientService, aggregator, this, chatList);
 
-#if MOCKUP
-            Items.AddRange(clientService.GetChats(null));
-#endif
-
             SelectedItems = new MvxObservableCollection<Chat>();
         }
 
@@ -617,10 +613,6 @@ namespace Telegram.ViewModels
 
                 _viewModel = viewModel;
                 _chatList = chatList;
-
-#if MOCKUP
-                _hasMoreItems = false;
-#endif
 
                 _ = LoadMoreItemsAsync(0);
             }

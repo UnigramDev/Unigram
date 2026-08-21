@@ -1125,6 +1125,29 @@ namespace Telegram.Controls
                 _indexMap.Add(new IndexSegment(offset, styledStart, renderedLength, styledLength));
             }
 
+            // Records the segment of an inline object (custom emoji, math image, button), which
+            // renders as a container taking no index plus the ZWNJ standing in for it.
+            //
+            // Rendered indices sit BETWEEN characters, so the one that addresses the object's
+            // leading edge belongs to the zero-width character in FRONT of it - the mark emitted
+            // just above, or the ZWNJ trailing the object right before - and that is where the
+            // object's source text has to map. Its own ZWNJ then only marks the edge past it.
+            // With no such character in front (an object in the middle of text) the ZWNJ carries
+            // it, and the object can only be selected along with the character before it.
+            void MapObject(int styledStart, int styledLength)
+            {
+                var last = _indexMap.Count - 1;
+                if (last >= 0 && _indexMap[last].StyledLength == 0 && _indexMap[last].Rendered == offset - 1)
+                {
+                    _indexMap[last] = new IndexSegment(offset - 1, styledStart, 1, styledLength);
+                    Map(styledStart + styledLength, 1, 0);
+                }
+                else
+                {
+                    Map(styledStart, 1, styledLength);
+                }
+            }
+
             for (int i = _first; i <= _last; i++)
             {
                 var part = styled.Paragraphs[i];
@@ -1453,13 +1476,13 @@ namespace Telegram.Controls
                                     : Icons.ZWNJ;
 
                                 GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize, transparent: true);
-                                Map(part.Offset + entity.Offset, 1, 0); // leading mark: no styled advance
+                                Map(part.Offset + entity.Offset, 1, 0); // leading mark, carries the object below
                                 offset++;
                             }
 
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
                             GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize, true);
-                            Map(part.Offset + entity.Offset, 1, entity.Length); // emoji (container=0 rendered) + ZWNJ <-> alt-text
+                            MapObject(part.Offset + entity.Offset, entity.Length); // alt-text
                             offset++;
                         }
                         else if (entity.Type is TextEntityTypeDateTime date && date.FormattingType != null)
@@ -1503,13 +1526,13 @@ namespace Telegram.Controls
                                         : Icons.ZWNJ;
 
                                     GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize, transparent: true);
-                                    Map(part.Offset + entity.Offset, 1, 0); // leading mark: no styled advance
+                                    Map(part.Offset + entity.Offset, 1, 0); // leading mark, carries the object below
                                     offset++;
                                 }
 
                                 direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
                                 GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize, true);
-                                Map(part.Offset + entity.Offset, 1, entity.Length); // math image + ZWNJ <-> expression
+                                MapObject(part.Offset + entity.Offset, entity.Length); // expression
                                 offset++;
                             }
                             else
@@ -1534,13 +1557,13 @@ namespace Telegram.Controls
                                     : Icons.ZWNJ;
 
                                 GetOrCreateRun(direct, inlines, character, direction, Native.TextStyle.None, null, fontSize: partFontSize, transparent: true);
-                                Map(part.Offset + entity.Offset, 1, 0); // leading mark: no styled advance
+                                Map(part.Offset + entity.Offset, 1, 0); // leading mark, carries the object below
                                 offset++;
                             }
 
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
                             GetOrCreateRun(direct, inlines, Icons.ZWNJ, direction, Native.TextStyle.None, null, partFontSize, true);
-                            Map(part.Offset + entity.Offset, 1, entity.Length); // math image + ZWNJ <-> expression
+                            MapObject(part.Offset + entity.Offset, entity.Length); // button text
                             offset++;
                         }
                         else if (_spanForInlines == null && entity.Type is TextEntityTypeIcon icon)

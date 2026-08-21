@@ -61,10 +61,6 @@ namespace Telegram.ViewModels
             ChatsDeleteCommand = new RelayCommand(ChatsDeleteExecute);
             ChatsClearCommand = new RelayCommand(ChatsClearExecute);
 
-#if MOCKUP
-            Items.AddRange(clientService.GetChats(null));
-#endif
-
             SelectedItems = new MvxObservableCollection<object>();
         }
 
@@ -618,10 +614,6 @@ namespace Telegram.ViewModels
                 _viewModel = viewModel;
                 _chat = chat;
 
-#if MOCKUP
-                _hasMoreItems = false;
-#endif
-
                 //_ = LoadMoreItemsAsync(0);
             }
 
@@ -987,10 +979,6 @@ namespace Telegram.ViewModels
 
                 _viewModel = viewModel;
                 _chat = chat;
-
-#if MOCKUP
-                _hasMoreItems = false;
-#endif
 
                 _ = LoadMoreItemsAsync(0);
             }

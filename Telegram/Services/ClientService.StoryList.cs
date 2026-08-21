@@ -92,12 +92,7 @@ namespace Telegram.Services
 
                 var haveFullList = _haveFullStoryList[storyList];
 
-#if MOCKUP
-                _haveFullStoryList[index] = true;
-                load = false;
-#else
                 load = count > sorted.Count && !haveFullList && !reentrancy;
-#endif
 
                 if (!load)
                 {

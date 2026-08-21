@@ -6,6 +6,7 @@
 //
 
 using System;
+using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -37,10 +38,13 @@ namespace Telegram.Controls
     // only content units — characters in Runs, plus 1 per line break — and does NOT
     // count paragraph breaks (the shift correction in SetText exists for exactly that
     // reason). An inline object (custom emoji, image, math) counts 0: the ZWNJ that
-    // SetText always emits next to one is the unit that stands in for it, which is what
-    // the index map records. The ZWNJ workaround characters are real Run chars, so
-    // they're counted and highlighting them is harmless (zero width). Copy, which needs
-    // FormattedText/StyledText offsets, is a separate layer.
+    // SetText always emits next to one is the unit that stands in for it. Since indices sit
+    // between characters, the object's leading edge is the index of the zero-width character
+    // in FRONT of it, and that is the index its source text is mapped to (see MapObject) —
+    // only an object with no such character has to be addressed by its own ZWNJ. The ZWNJ
+    // workaround characters are real Run chars, so they're counted and highlighting them is
+    // harmless (zero width). Copy, which needs FormattedText/StyledText offsets, is a
+    // separate layer.
     public partial class FormattedTextBlock : ISelectableControl
     {
         private TextHighlighter _selection;
@@ -95,7 +99,7 @@ namespace Telegram.Controls
             {
                 if (_contentLength < 0 && TextBlock != null)
                 {
-                    _contentLength = GetHighlightIndex(TextBlock.ContentEnd, out _);
+                    _contentLength = GetHighlightIndex(TextBlock.ContentEnd, out _, out _);
                 }
 
                 return _contentLength < 0 ? 0 : _contentLength;
@@ -126,7 +130,18 @@ namespace Telegram.Controls
                 return 0;
             }
 
-            var position = GetHighlightIndex(pointer, out var block);
+            var position = GetHighlightIndex(pointer, out var block, out var mark);
+
+            // The pointer tells the two sides of a custom emoji apart, but the index can't: the
+            // object takes none of its own, so the position in front of it and the one past it
+            // both count the same characters. `mark` is the zero-width character SetText emits
+            // ahead of the object, whose index is the one that addresses its leading edge - so
+            // a pointer that stopped in front of the object belongs there. Without this a
+            // leading custom emoji can only ever be selected together with what follows it.
+            if (mark != null)
+            {
+                position--;
+            }
 
             // An empty paragraph holds no inline, so a point on that line resolves BETWEEN
             // blocks and parents to the RichTextBlock rather than to a run. There's nothing on
@@ -397,9 +412,14 @@ namespace Telegram.Controls
         // `block` is the index of the block the pointer resolved in (-1 when it resolved in
         // none), which the returned index can't express — blocks are laid out one per
         // rendered paragraph, so it maps to StyledText as _first + block.
-        private int GetHighlightIndex(TextPointer pointer, out int block)
+        //
+        // `mark` is the zero-width run in front of the inline object the pointer stopped in
+        // front of, null in every other case: its index is the one that addresses the object's
+        // leading edge.
+        private int GetHighlightIndex(TextPointer pointer, out int block, out Run mark)
         {
             block = -1;
+            mark = null;
 
             if (TextBlock == null || pointer == null)
             {
@@ -412,7 +432,7 @@ namespace Telegram.Controls
 
             foreach (var current in TextBlock.Blocks)
             {
-                if (current is Paragraph paragraph && WalkInlines(paragraph.Inlines, target, ref index))
+                if (current is Paragraph paragraph && WalkInlines(paragraph.Inlines, target, ref index, ref mark))
                 {
                     block = i;
                     return index;
@@ -426,10 +446,36 @@ namespace Telegram.Controls
 
         // Walks inlines accumulating the content-unit count in `index`. Returns true
         // once the pointer (`target` offset) is reached, leaving `index` at it.
-        private static bool WalkInlines(InlineCollection inlines, int target, ref int index)
+        //
+        // A pointer stopping in front of an inline object also reports the zero-width run
+        // SetText emitted ahead of that object in `mark` (an object opening a paragraph, one
+        // after a spoiler, and the ZWNJ trailing the object right before all qualify) — the
+        // index it lands on is the one PAST the object, since the object counts nothing, and
+        // the mark's is the one in front of it. Null with no such run: the object then has no
+        // index of its own and can only be addressed along with the character before it.
+        private static bool WalkInlines(InlineCollection inlines, int target, ref int index, ref Run mark)
         {
-            foreach (var inline in inlines)
+            Inline previous = null;
+            var total = inlines.Count;
+
+            for (int i = 0; i < total; i++)
             {
+                var inline = inlines[i];
+
+                if (inline is InlineUIContainer)
+                {
+                    // The object counts nothing, so `index` is already the position past it -
+                    // anything short of its very end resolved in front of it.
+                    if (target < inline.ElementEnd.Offset)
+                    {
+                        mark = ZeroWidth(previous);
+                        return true;
+                    }
+
+                    previous = inline;
+                    continue;
+                }
+
                 // Pointer is before this element: we're done, `index` is already correct.
                 if (target <= inline.ElementStart.Offset)
                 {
@@ -442,26 +488,42 @@ namespace Telegram.Controls
                         if (target <= run.ContentEnd.Offset)
                         {
                             // Within the run: add the characters before the pointer.
-                            index += target - run.ContentStart.Offset;
+                            var count = target - run.ContentStart.Offset;
+                            index += count;
+
+                            // Past its start with an object right after it: the pointer stopped
+                            // in front of that object, not inside this run's text.
+                            if (count > 0 && i + 1 < total && inlines[i + 1] is InlineUIContainer)
+                            {
+                                mark = ZeroWidth(run);
+                            }
+
                             return true;
                         }
                         index += run.Text != null ? run.Text.Length : 0;
                         break;
                     case Span span: // Bold/Italic/Underline/Hyperlink/... derive from Span
-                        if (WalkInlines(span.Inlines, target, ref index))
+                        if (WalkInlines(span.Inlines, target, ref index, ref mark))
                         {
                             return true;
                         }
-                        break;
-                    case InlineUIContainer:
                         break;
                     case LineBreak:
                         index += 1; // one object-replacement / break unit
                         break;
                 }
+
+                previous = inline;
             }
 
             return false;
+        }
+
+        // The run as one of the zero-width characters SetText emits around an inline object
+        // (the ZWNJ that stands in for it, or the RTL/LTR mark opening a paragraph), else null.
+        private static Run ZeroWidth(Inline inline)
+        {
+            return inline is Run run && run.Text is Icons.ZWNJ or Icons.LTR or Icons.RTL ? run : null;
         }
     }
 }
