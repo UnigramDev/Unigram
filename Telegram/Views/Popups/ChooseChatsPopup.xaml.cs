@@ -28,6 +28,7 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Folders;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
+using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -2064,18 +2065,43 @@ namespace Telegram.Views.Popups
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
             CharacterReceived += OnCharacterReceived;
+            PreviewKeyDown += OnPreviewKeyDown;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs args)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
             CharacterReceived -= OnCharacterReceived;
+            PreviewKeyDown -= OnPreviewKeyDown;
+        }
+
+        // Enter never reaches CharacterReceived: XAML consumes it as a key before any character
+        // is produced. It used to arrive as CR through CoreWindow, which sat below that pipeline.
+        // Preview rather than KeyDown, so a focused ListViewItem cannot swallow it first.
+        private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs args)
+        {
+            if (args.Key != VirtualKey.Enter || args.Handled)
+            {
+                return;
+            }
+
+            var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
+            if (focused is TextBox or RichEditBox or Button or MenuFlyoutItem)
+            {
+                return;
+            }
+
+            if (_primaryButtonEnabled && (SearchPanel == null || SearchPanel.Visibility == Visibility.Collapsed))
+            {
+                Accept();
+                args.Handled = true;
+            }
         }
 
         private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
             var character = args.Character;
-            if (character != '\u0016' && character != '\r' && (char.IsControl(character) || char.IsWhiteSpace(character)))
+            if (character != '\u0016' && (char.IsControl(character) || char.IsWhiteSpace(character)))
             {
                 return;
             }
@@ -2093,10 +2119,6 @@ namespace Telegram.Views.Popups
             {
                 CaptionInput.Focus(FocusState.Keyboard);
                 CaptionInput.PasteFromClipboard();
-            }
-            else if (character == '\r' && _primaryButtonEnabled && (SearchPanel == null || SearchPanel.Visibility == Visibility.Collapsed))
-            {
-                Accept();
             }
             else
             {
