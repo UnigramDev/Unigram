@@ -8,7 +8,6 @@ using System;
 using Telegram.Common;
 using Telegram.Navigation;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Media
@@ -35,13 +34,13 @@ namespace Telegram.Controls.Media
 
         private void UpdateBrushByDispatcher()
         {
-            if (Dispatcher.HasThreadAccess)
+            if (this.HasThreadAccess())
             {
                 UpdateBrush();
             }
             else
             {
-                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateBrush);
+                this.BeginOnUIThread(UpdateBrush);
             }
         }
 

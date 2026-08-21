@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Telegram.Common;
 using Telegram.Converters;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -25,13 +26,13 @@ namespace Telegram.Charts
             var start = Formatter.ToLocalTime(v1 / 1000);
             var end = Formatter.ToLocalTime(v2 / 1000);
 
-            if (Dispatcher.HasThreadAccess)
+            if (this.HasThreadAccess())
             {
                 Label1.Text = string.Format("{0} - {1}", Formatter.Date(start), Formatter.Date(end));
             }
             else
             {
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Label1.Text = string.Format("{0} - {1}", Formatter.Date(start), Formatter.Date(end)));
+                this.BeginOnUIThread(() => Label1.Text = string.Format("{0} - {1}", Formatter.Date(start), Formatter.Date(end)));
             }
         }
 

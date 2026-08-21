@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.ViewModels.Gallery;
@@ -312,7 +311,7 @@ namespace Telegram.Controls.Gallery
                 current = _current;
             }
 
-            if (current != null && current.Dispatcher.HasThreadAccess)
+            if (current != null && current.HasThreadAccess())
             {
                 current.PauseImpl();
             }
@@ -337,7 +336,7 @@ namespace Telegram.Controls.Gallery
             // Determine action under lock
             lock (_lock)
             {
-                if (_current?.Dispatcher.HasThreadAccess == true && !_current._disposed)
+                if (_current != null && _current.HasThreadAccess() && !_current._disposed)
                 {
                     Logger.Info("Exists on the current thread");
                     try
@@ -368,7 +367,7 @@ namespace Telegram.Controls.Gallery
             {
                 try
                 {
-                    if (currentToClose.Dispatcher.HasThreadAccess)
+                    if (currentToClose.HasThreadAccess())
                     {
                         currentToClose.Close();
                     }

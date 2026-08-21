@@ -21,7 +21,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views.Popups;
 using Windows.Foundation;
-using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
@@ -487,7 +486,7 @@ namespace Telegram.Controls.Messages
                     var around = await _message.ClientService.DownloadFileAsync(reaction.AroundAnimation.StickerValue, 32);
                     if (around.Local.IsDownloadingCompleted && IsConnected)
                     {
-                        _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Animate(around, true));
+                        this.BeginOnUIThread(() => Animate(around, true));
                     }
                 }
             }
@@ -502,7 +501,7 @@ namespace Telegram.Controls.Messages
                     var around = await _message.ClientService.DownloadFileAsync(stickers.StickersValue[next].StickerValue, 32);
                     if (around.Local.IsDownloadingCompleted && IsConnected)
                     {
-                        _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Animate(around, true));
+                        this.BeginOnUIThread(() => Animate(around, true));
                     }
                 }
             }
@@ -514,7 +513,7 @@ namespace Telegram.Controls.Messages
                 var around = TdExtensions.GetLocalFile($"Assets\\Animations\\PaidReactionAround{next}.tgs");
                 if (around.Local.IsDownloadingCompleted && IsConnected)
                 {
-                    _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Animate(around, false));
+                    this.BeginOnUIThread(() => Animate(around, false));
                 }
             }
         }

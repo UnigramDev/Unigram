@@ -16,7 +16,6 @@ using Telegram.Services;
 using Telegram.Views.Host;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
@@ -104,7 +103,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Hide(result));
+            this.BeginOnUIThread(() => Hide(result));
             args.Cancel = true;
         }
 

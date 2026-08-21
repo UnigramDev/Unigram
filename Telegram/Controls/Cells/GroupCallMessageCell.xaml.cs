@@ -12,7 +12,6 @@ using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Windows.Foundation;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -76,7 +75,7 @@ namespace Telegram.Controls.Cells
                 var around = await clientService.DownloadFileAsync(reaction.AroundAnimation.StickerValue, 32);
                 if (around.Local.IsDownloadingCompleted && this.IsConnected())
                 {
-                    _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Animate(message, source, around, true));
+                    this.BeginOnUIThread(() => Animate(message, source, around, true));
                 }
             }
         }
@@ -94,7 +93,7 @@ namespace Telegram.Controls.Cells
                 var around = await clientService.DownloadFileAsync(stickers.StickersValue[next].StickerValue, 32);
                 if (around.Local.IsDownloadingCompleted && this.IsConnected())
                 {
-                    _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Animate(message, source, around, true));
+                    this.BeginOnUIThread(() => Animate(message, source, around, true));
                 }
             }
         }

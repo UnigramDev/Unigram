@@ -1469,6 +1469,11 @@ namespace Telegram.Common
             return point;
         }
 
+        public static bool HasThreadAccess(this DependencyObject element)
+        {
+            return element.Dispatcher.HasThreadAccess;
+        }
+
         public static void BeginOnUIThread(this DependencyObject element, Action action)
         {
             try
