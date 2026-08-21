@@ -11,9 +11,7 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.ApplicationModel;
-using Windows.Security.Credentials;
-using Windows.Security.Cryptography;
+using Windows.Security.Credentials.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -129,7 +127,7 @@ namespace Telegram.Views
             _window.Activated += Window_Activated;
             Field.LosingFocus += Field_LosingFocus;
 
-            if (_passcodeService.IsBiometricsEnabled && await KeyCredentialManager.IsSupportedAsync())
+            if (_passcodeService.IsBiometricsEnabled && UserConsentVerifierAvailability.Available == await UserConsentVerifier.CheckAvailabilityAsync())
             {
                 Biometrics.Visibility = Visibility.Visible;
 
@@ -186,34 +184,20 @@ namespace Telegram.Views
         {
             try
             {
-                var result = await KeyCredentialManager.OpenAsync(Strings.AppName);
-                if (result.Credential != null)
+                var result = await UserConsentVerifier.RequestVerificationAsync(Strings.AppName);
+                if (result == UserConsentVerificationResult.Verified)
                 {
-                    var signResult = await result.Credential.RequestSignAsync(CryptographicBuffer.ConvertStringToBinary(Package.Current.Id.Name, BinaryStringEncoding.Utf8));
-                    if (signResult.Status == KeyCredentialStatus.Success)
-                    {
-                        Unlock();
-                    }
-                    else
-                    {
-                        Field.Focus(FocusState.Keyboard);
-                    }
+                    Unlock();
                 }
                 else
                 {
-                    var creationResult = await KeyCredentialManager.RequestCreateAsync(Strings.AppName, KeyCredentialCreationOption.ReplaceExisting);
-                    if (creationResult.Status == KeyCredentialStatus.Success)
-                    {
-                        Unlock();
-                    }
-                    else
-                    {
-                        Field.Focus(FocusState.Keyboard);
-                    }
+                    Logger.Error(result);
+                    Field.Focus(FocusState.Keyboard);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Error(ex);
                 Field.Focus(FocusState.Keyboard);
             }
         }

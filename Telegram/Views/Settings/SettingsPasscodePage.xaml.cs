@@ -7,7 +7,7 @@
 
 using System;
 using Telegram.ViewModels.Settings;
-using Windows.Security.Credentials;
+using Windows.Security.Credentials.UI;
 using Windows.UI.Xaml;
 
 namespace Telegram.Views.Settings
@@ -24,7 +24,9 @@ namespace Telegram.Views.Settings
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Biometrics.Visibility = await KeyCredentialManager.IsSupportedAsync() ? Visibility.Visible : Visibility.Collapsed;
+            Biometrics.Visibility = UserConsentVerifierAvailability.Available == await UserConsentVerifier.CheckAvailabilityAsync()
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
     }
 }
