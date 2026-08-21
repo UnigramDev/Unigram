@@ -281,7 +281,7 @@ namespace Telegram.Services
                     window.NavigationServices.RemoveByFrameId($"{item.Id}");
                     window.NavigationServices.RemoveByFrameId($"Main{item.Id}");
 
-                    foreach (var popup in VisualTreeHelper.GetOpenPopups(window))
+                    foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(window.XamlRoot))
                     {
                         if (popup.Child is ContentPopup toast)
                         {
