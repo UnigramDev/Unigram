@@ -15,7 +15,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -41,14 +40,12 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Business;
-using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Stars.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -1445,9 +1442,9 @@ namespace Telegram.Views
             }
         }
 
-        private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
+        private void Window_VisibilityChanged(object sender, WindowVisibilityEventArgs e)
         {
-            if (e.Visible)
+            if (e.IsVisible)
             {
                 var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
                 if (popups.Count > 0)

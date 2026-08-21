@@ -13,7 +13,6 @@ using Telegram.Views.Host;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Core;
 using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -348,11 +347,6 @@ namespace Telegram.Controls
         }
 
         public bool IsLightDismissEnabled { get; set; }
-
-        private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
-        {
-            //UpdateViewBase();
-        }
 
         private void OnLoading(FrameworkElement sender, object args)
         {

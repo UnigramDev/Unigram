@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Telegram.Views.Host;
 using Windows.Data.Json;
 using Windows.UI;
 

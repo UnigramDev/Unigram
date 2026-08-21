@@ -68,6 +68,26 @@ namespace Telegram.Navigation
         }
     }
 
+    public class WindowSizeChangedEventArgs : EventArgs
+    {
+        public Size Size { get; }
+
+        public WindowSizeChangedEventArgs(Size size)
+        {
+            Size = size;
+        }
+    }
+
+    public class WindowVisibilityEventArgs : EventArgs
+    {
+        public bool IsVisible { get; }
+
+        public WindowVisibilityEventArgs(bool isVisible)
+        {
+            IsVisible = isVisible;
+        }
+    }
+
     /// <summary>
     /// The cursors the app actually uses, so call sites do not name <c>CoreCursorType</c>.
     /// <see cref="Hidden"/> is the gallery's chrome-less mode.
@@ -589,19 +609,19 @@ namespace Telegram.Navigation
             }
         }
 
-        public event EventHandler<VisibilityChangedEventArgs> VisibilityChanged;
+        public event EventHandler<WindowVisibilityEventArgs> VisibilityChanged;
 
         private void OnVisibilityChanged(object sender, VisibilityChangedEventArgs e)
         {
-            VisibilityChanged?.Invoke(sender, e);
+            VisibilityChanged?.Invoke(this, new WindowVisibilityEventArgs(e.Visible));
         }
 
         public event EventHandler<WindowSizeChangedEventArgs> SizeChanged;
 
-        private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
+        private void OnSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
         {
             Bounds = _window.Bounds;
-            SizeChanged?.Invoke(sender, e);
+            SizeChanged?.Invoke(this, new WindowSizeChangedEventArgs(e.Size));
         }
 
         private void OnResizeStarted(CoreWindow sender, object args)
