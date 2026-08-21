@@ -23,7 +23,6 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Data.Json;
@@ -323,30 +322,9 @@ namespace Telegram.Views.Host
         }
 #endif
 
-        /// <summary>
-        /// Both constructors used to subscribe these, and neither unsubscribed, so the
-        /// page stayed reachable from the view for as long as the view lived.
-        ///
-        /// UserControlEx guarantees OnLoaded and OnUnloaded alternate, which the raw
-        /// Loaded and Unloaded events do not: those fire again on every reparenting, and
-        /// subscribing from there would attach a second handler each time. Both
-        /// CloseRequested and Consolidated take deferrals, so a duplicate handler is a
-        /// duplicate confirmation dialog rather than merely wasted work.
-        /// </summary>
-        protected override void OnLoaded()
-        {
-            base.OnLoaded();
-
-            ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
-        }
-
         protected override void OnUnloaded()
         {
             base.OnUnloaded();
-
-            ApplicationView.GetForCurrentView().Consolidated -= OnConsolidated;
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged -= OnVisibleBoundsChanged;
 
             if (_launchId != 0)
             {
@@ -381,7 +359,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        private void OnConsolidated(ApplicationView sender, ApplicationViewConsolidatedEventArgs args)
+        protected override void OnWindowConsolidated()
         {
             if (_ageVerificationRaised)
             {
@@ -391,11 +369,11 @@ namespace Telegram.Views.Host
             AgeVerificationCompleted?.Invoke(this, new WebAppAgeVerificationCompletedEventArgs(false, 0));
         }
 
-        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
+        protected override void OnWindowVisibleBoundsChanged()
         {
-            if (_fullscreen != sender.IsFullScreenMode)
+            if (Window is WindowContext window && _fullscreen != window.IsFullScreenMode)
             {
-                _fullscreen = sender.IsFullScreenMode;
+                _fullscreen = window.IsFullScreenMode;
                 PostEvent("fullscreen_changed", "is_fullscreen", _fullscreen);
             }
         }

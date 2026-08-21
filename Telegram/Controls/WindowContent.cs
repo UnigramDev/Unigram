@@ -11,7 +11,6 @@ using Telegram.Navigation;
 using Telegram.Views.Host;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Core;
 using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -91,8 +90,18 @@ namespace Telegram.Controls
             }
         }
 
-        // Wired once, here, rather than in each root: what raises these is the part that differs
-        // between a CoreWindow and an island host, and this is the only place that should know.
+        /// <summary>
+        /// Wired once, here, rather than in each root: what raises these is the part that differs
+        /// between a CoreWindow and an island host, and this is the only place that should know.
+        ///
+        /// OnLoaded rather than the constructor or the raw Loaded event: roots used to subscribe
+        /// from their constructors and never unsubscribe, keeping themselves reachable from the
+        /// view for as long as it lived. UserControlEx guarantees OnLoaded and OnUnloaded
+        /// alternate, which Loaded and Unloaded do not - those fire again on every reparenting,
+        /// and subscribing there would attach a second handler each time. CloseRequested and
+        /// Consolidated both take deferrals, so a duplicate handler is a duplicate confirmation
+        /// dialog rather than merely wasted work.
+        /// </summary>
         protected override void OnLoaded()
         {
             if (Window is WindowContext window)
@@ -102,6 +111,10 @@ namespace Telegram.Controls
             }
 
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequestedCore;
+
+            var view = ApplicationView.GetForCurrentView();
+            view.Consolidated += OnConsolidatedCore;
+            view.VisibleBoundsChanged += OnVisibleBoundsChangedCore;
         }
 
         protected override void OnUnloaded()
@@ -113,6 +126,10 @@ namespace Telegram.Controls
             }
 
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequestedCore;
+
+            var view = ApplicationView.GetForCurrentView();
+            view.Consolidated -= OnConsolidatedCore;
+            view.VisibleBoundsChanged -= OnVisibleBoundsChangedCore;
         }
 
         private void OnWindowActivatedCore(object sender, WindowActivatedEventArgs args)
@@ -120,14 +137,28 @@ namespace Telegram.Controls
             OnWindowActivated(args.IsActive);
         }
 
-        private void OnWindowVisibilityChangedCore(object sender, VisibilityChangedEventArgs args)
+        private void OnWindowVisibilityChangedCore(object sender, WindowVisibilityEventArgs args)
         {
-            OnWindowVisibilityChanged(args.Visible);
+            OnWindowVisibilityChanged(args.IsVisible);
         }
 
         private void OnCloseRequestedCore(object sender, SystemNavigationCloseRequestedPreviewEventArgs args)
         {
             OnWindowCloseRequested(new WindowCloseRequestedEventArgs(args));
+        }
+
+        // Neither carries a payload worth forwarding: the one caller of Consolidated ignored its
+        // args, and the one caller of VisibleBoundsChanged wanted IsFullScreenMode, which the
+        // WindowContext already exposes. So ApplicationViewConsolidatedEventArgs - another type
+        // an island host could not construct - stops here.
+        private void OnConsolidatedCore(ApplicationView sender, ApplicationViewConsolidatedEventArgs args)
+        {
+            OnWindowConsolidated();
+        }
+
+        private void OnVisibleBoundsChangedCore(ApplicationView sender, object args)
+        {
+            OnWindowVisibleBoundsChanged();
         }
 
         protected virtual void OnWindowActivated(bool active)
@@ -139,6 +170,14 @@ namespace Telegram.Controls
         }
 
         protected virtual void OnWindowCloseRequested(WindowCloseRequestedEventArgs args)
+        {
+        }
+
+        protected virtual void OnWindowConsolidated()
+        {
+        }
+
+        protected virtual void OnWindowVisibleBoundsChanged()
         {
         }
 
