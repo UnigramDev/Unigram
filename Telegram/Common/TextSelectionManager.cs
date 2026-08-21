@@ -14,6 +14,7 @@ using Telegram.Controls.Messages;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Windows.Devices.Input;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -50,6 +51,13 @@ namespace Telegram.Common
         // Selectable controls in document (visual pre-order) order, rebuilt per gesture.
         private readonly List<ISelectableControl> _items = new();
 
+        // Each item's bounds in _root coordinates, parallel to _items. GetCurrentPoint(element)
+        // measured 15us or more, and resolving a move used to call it once per item; the same
+        // answer comes from one root point and arithmetic. Layout is what invalidates them, so
+        // the gesture listens for it rather than assuming nothing moves under the pointer.
+        private readonly List<Rect> _bounds = new();
+        private bool _boundsValid;
+
         private bool _candidate;       // pointer is down on a selectable, not yet a drag
         private bool _selecting;       // drag confirmed, selecting
         private bool _captured;        // the root captured the pointer
@@ -81,6 +89,9 @@ namespace Telegram.Common
 
         // The current per-control selected ranges, in document order (for copy).
         private readonly List<(ISelectableControl Item, int Start, int End)> _selectedRanges = new();
+
+        // What each item was last told to highlight, parallel to _items; (-1, -1) is cleared.
+        private readonly List<(int Start, int End)> _applied = new();
 
         public event EventHandler SelectionChanged;
 
@@ -207,6 +218,8 @@ namespace Telegram.Common
                 item.ClearSelection();
             }
 
+            _applied.Clear();
+
             var had = _hasSelection;
             Reset();
             _hasSelection = false;
@@ -231,6 +244,7 @@ namespace Telegram.Common
                 item.ClearSelection();
             }
 
+            _applied.Clear();
             Reset();
             RebuildItems();
 
@@ -286,6 +300,7 @@ namespace Telegram.Common
                 item.ClearSelection();
             }
 
+            _applied.Clear();
             Reset();
             _hasSelection = false;
             StopWatchingFocus();
@@ -295,7 +310,7 @@ namespace Telegram.Common
             // when the pointer is past one, which is what the gap beside text needs, so
             // the press is filtered by what it landed on rather than by the clamp.
             if (!CanStartSelection(e.OriginalSource)
-                || !ResolvePosition(e, point.Position, out _anchor, out _anchorPosition, out _anchorHit, out var exact))
+                || !ResolvePosition(point.Position, out _anchor, out _anchorPosition, out _anchorHit, out var exact))
             {
                 _anchor = null;
                 return;
@@ -409,6 +424,7 @@ namespace Telegram.Common
             }
 
             UpdateSelection(e, rootPoint);
+
             e.Handled = true;
         }
 
@@ -497,7 +513,7 @@ namespace Telegram.Common
         private void UpdateSelection(PointerRoutedEventArgs e, Point rootPoint)
         {
             // Drag still clamps to the nearest block (exact is irrelevant here).
-            if (!ResolvePosition(e, rootPoint, out var current, out var currentPosition, out var currentHit, out _) || _anchor == null)
+            if (!ResolvePosition(rootPoint, out var current, out var currentPosition, out var currentHit, out _) || _anchor == null)
             {
                 return;
             }
@@ -538,15 +554,29 @@ namespace Telegram.Common
 
         // Highlights [startIndex:startPos .. endIndex:endPos] across the items (clearing the
         // rest) and records the per-control ranges for copy.
+        //
+        // Only the end the pointer is moving usually changes, and re-applying a highlighter is a
+        // repaint of that block: the range each item was left with is remembered so the others
+        // are not touched at all.
         private void ApplySelection(int startIndex, int startPos, int endIndex, int endPos)
         {
+            while (_applied.Count < _items.Count)
+            {
+                _applied.Add((-1, -1));
+            }
+
             _selectedRanges.Clear();
             for (int i = 0; i < _items.Count; i++)
             {
                 var item = _items[i];
                 if (i < startIndex || i > endIndex)
                 {
-                    item.ClearSelection();
+                    if (_applied[i] != (-1, -1))
+                    {
+                        item.ClearSelection();
+                        _applied[i] = (-1, -1);
+                    }
+
                     continue;
                 }
 
@@ -568,7 +598,12 @@ namespace Telegram.Common
                     from = 0; to = item.ContentLength;
                 }
 
-                item.Select(from, to);
+                if (_applied[i] != (from, to))
+                {
+                    item.Select(from, to);
+                    _applied[i] = (from, to);
+                }
+
                 _selectedRanges.Add((item, from, to));
             }
         }
@@ -664,7 +699,7 @@ namespace Telegram.Common
         // control above; above everything -> start of the first control.
         // `exact` is true only when the pointer is DIRECTLY over a selectable; the clamp
         // fallbacks (gap/row/above) return true with exact=false.
-        private bool ResolvePosition(PointerRoutedEventArgs e, Point rootPoint, out ISelectableControl control, out int position, out int hit, out bool exact)
+        private bool ResolvePosition(Point rootPoint, out ISelectableControl control, out int position, out int hit, out bool exact)
         {
             control = null;
             position = 0;
@@ -675,59 +710,68 @@ namespace Telegram.Common
                 return false;
             }
 
-            ISelectableControl firstValid = null;  // first laid-out control (above-all clamp)
-            ISelectableControl clampBefore = null;  // last control fully above the pointer
-            ISelectableControl rowFirst = null;     // first control in the pointer's row (Y band)
-            ISelectableControl rowLeftOf = null;    // last row control entirely left of the pointer
+            EnsureBounds();
 
-            foreach (var item in _items)
+            int firstValid = -1;   // first laid-out control (above-all clamp)
+            int clampBefore = -1;  // last control fully above the pointer
+            int rowFirst = -1;     // first control in the pointer's row (Y band)
+            int rowLeftOf = -1;    // last row control entirely left of the pointer
+
+            for (int i = 0; i < _items.Count; i++)
             {
-                var element = (FrameworkElement)item;
-                if (element.ActualHeight <= 0 || element.ActualWidth <= 0)
+                var bounds = _bounds[i];
+                if (bounds.Height <= 0 || bounds.Width <= 0)
                 {
                     continue; // not laid out / effectively hidden — never resolve to it
                 }
 
-                firstValid ??= item;
-                var local = e.GetCurrentPoint(element).Position;
+                if (firstValid < 0)
+                {
+                    firstValid = i;
+                }
 
-                if (local.Y >= 0 && local.Y <= element.ActualHeight)
+                var local = new Point(rootPoint.X - bounds.X, rootPoint.Y - bounds.Y);
+
+                if (local.Y >= 0 && local.Y <= bounds.Height)
                 {
                     // in this control's vertical band (its row)
-                    rowFirst ??= item;
-
-                    if (local.X >= 0 && local.X <= element.ActualWidth)
+                    if (rowFirst < 0)
                     {
-                        control = item; // directly over it
-                        position = item.GetPositionFromPoint(local, out hit);
+                        rowFirst = i;
+                    }
+
+                    if (local.X >= 0 && local.X <= bounds.Width)
+                    {
+                        control = _items[i]; // directly over it
+                        position = control.GetPositionFromPoint(local, out hit);
                         exact = true;
                         return true;
                     }
 
-                    if (local.X > element.ActualWidth)
+                    if (local.X > bounds.Width)
                     {
-                        rowLeftOf = item; // pointer is to the right of this cell
+                        rowLeftOf = i; // pointer is to the right of this cell
                     }
                 }
-                else if (local.Y > element.ActualHeight)
+                else if (local.Y > bounds.Height)
                 {
-                    clampBefore = item; // pointer is below this control
+                    clampBefore = i; // pointer is below this control
                 }
             }
 
             // within a row but not over a cell: clamp horizontally
-            if (rowLeftOf != null)
+            if (rowLeftOf >= 0)
             {
-                control = rowLeftOf;
+                control = _items[rowLeftOf];
                 //position = rowLeftOf.ContentLength; // to the right of this cell -> its end
-                position = rowLeftOf.GetPositionFromPoint(e.GetCurrentPoint((FrameworkElement)rowLeftOf).Position, out hit);
+                position = control.GetPositionFromPoint(LocalPoint(rootPoint, rowLeftOf), out hit);
                 return true;
             }
-            if (rowFirst != null)
+            if (rowFirst >= 0)
             {
-                control = rowFirst;
+                control = _items[rowFirst];
                 //position = 0; // left of the first cell in the row -> its start
-                position = rowFirst.GetPositionFromPoint(e.GetCurrentPoint((FrameworkElement)rowFirst).Position, out hit);
+                position = control.GetPositionFromPoint(LocalPoint(rootPoint, rowFirst), out hit);
                 return true;
             }
 
@@ -736,27 +780,60 @@ namespace Telegram.Common
             // i.e. the block's last/first line at the pointer's X — so dragging left/right past
             // the last (or above the first) block keeps moving that edge instead of snapping to
             // the very end/start.
-            if (clampBefore != null)
+            if (clampBefore >= 0)
             {
-                control = clampBefore;
-                position = clampBefore.GetPositionFromPoint(e.GetCurrentPoint((FrameworkElement)clampBefore).Position, out hit);
+                control = _items[clampBefore];
+                position = control.GetPositionFromPoint(LocalPoint(rootPoint, clampBefore), out hit);
                 return true;
             }
-            if (firstValid != null)
+            if (firstValid >= 0)
             {
-                control = firstValid; // above everything -> its first line at the pointer's X
-                position = firstValid.GetPositionFromPoint(e.GetCurrentPoint((FrameworkElement)firstValid).Position, out hit);
+                control = _items[firstValid]; // above everything -> its first line at the pointer's X
+                position = control.GetPositionFromPoint(LocalPoint(rootPoint, firstValid), out hit);
                 return true;
             }
 
             return false;
         }
 
+        private Point LocalPoint(Point rootPoint, int index)
+        {
+            var bounds = _bounds[index];
+            return new Point(rootPoint.X - bounds.X, rootPoint.Y - bounds.Y);
+        }
+
         // --- working tree -------------------------------------------------------
+
+        // Gathered once per gesture, and deliberately not watched for changes. They are relative
+        // to _root, which sits inside the same bubble as the items, so scrolling moves both together
+        // and changes nothing here; only the bubble laying out again mid-drag would, which is rare
+        // enough that no event is worth hanging off it - and none of the candidates (SizeChanged,
+        // LayoutUpdated) covers every way it could happen anyway.
+        private void EnsureBounds()
+        {
+            if (_boundsValid)
+            {
+                return;
+            }
+
+            _bounds.Clear();
+
+            foreach (var item in _items)
+            {
+                var element = (FrameworkElement)item;
+                var origin = element.TransformToVisual(_root).TransformPoint(default);
+
+                _bounds.Add(new Rect(origin.X, origin.Y, element.ActualWidth, element.ActualHeight));
+            }
+
+            _boundsValid = true;
+        }
 
         private void RebuildItems()
         {
             _items.Clear();
+            _bounds.Clear();
+            _boundsValid = false;
 
             // The gesture handlers only run while attached, but SelectAll is public and the
             // manager now outlives any one content element.
