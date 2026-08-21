@@ -716,40 +716,49 @@ namespace Telegram.Controls
             return paragraph;
         }
 
-        // TODO: make sure all this event thing is needed
-        private TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> _entityHandler;
+        // Static so it captures nothing: the Hyperlink outlives the block in the pool, and an
+        // instance handler would root it there - which unsubscribing on Unloaded only fixes when
+        // Unloaded is raised, and microsoft-ui-xaml#1900 says it isn't always.
+        private static readonly TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> _entityHandler = OnEntityClick;
 
-        // Click is subscribed while the control is live and dropped again on Unloaded (see
-        // OnLoaded/OnUnloaded), rather than once when the link is built. Two reasons, and both
-        // have been paid for:
-        //
-        // OnApplyTemplate has no partner. A control whose template is applied but which never goes
-        // live never unloads either, so a handler registered there is never removed and the whole
-        // control leaks - reproducible by scrolling a ListView fast, or opening a page and leaving
-        // it immediately. Only Loaded/Unloaded are reliably paired.
-        //
-        // And the pool is shared between blocks (RecyclePool comes down from MessageBubble), so a
-        // Hyperlink carries no subscription into the next block that borrows it, where it would
-        // raise the previous block's handler.
+        private static void OnEntityClick(Hyperlink sender, HyperlinkClickEventArgs e)
+        {
+            var args = MessageHelper.GetHyperlinkInfo(sender);
+            if (args != null && GetOwner(sender) is FormattedTextBlock owner)
+            {
+                owner.Entity_Click(args);
+            }
+        }
+
+        // Safe to walk: a Hyperlink always sits in its own block's RichTextBlock, since inline
+        // mode takes its Span from the control's own declared Blocks.
+        private static FormattedTextBlock GetOwner(TextElement element)
+        {
+            while (element != null)
+            {
+                var parent = element.ElementStart.Parent;
+                if (parent is TextElement text)
+                {
+                    element = text;
+                    continue;
+                }
+
+                return VisualTreeHelper.GetParent(parent) as FormattedTextBlock;
+            }
+
+            return null;
+        }
+
         private ProjectedHyperlink GetOrCreateHyperlink(XamlDirect direct)
         {
             if (_pools != null && _pools.Hyperlinks.TryDequeue(out var hyperlink))
             {
-                if (IsConnected)
-                {
-                    hyperlink.Element.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
-                }
-
                 _activeHyperlinks.Add(hyperlink);
                 return hyperlink;
             }
 
             hyperlink = new ProjectedHyperlink(direct, new Hyperlink());
-
-            if (IsConnected)
-            {
-                hyperlink.Element.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
-            }
+            hyperlink.Element.Click += _entityHandler;
 
             _activeHyperlinks.Add(hyperlink);
             return hyperlink;
@@ -923,10 +932,6 @@ namespace Telegram.Controls
                 foreach (var hyperlink in _activeHyperlinks)
                 {
                     xd.ClearCollection(hyperlink.Inlines);
-                    if (_entityHandler != null)
-                    {
-                        hyperlink.Element.Click -= _entityHandler;
-                    }
                     _pools.Hyperlinks.Enqueue(hyperlink);
                 }
                 foreach (var span in _activeSpans)
@@ -960,16 +965,6 @@ namespace Telegram.Controls
 
         protected override void OnLoaded()
         {
-            foreach (var hyperlink in _activeHyperlinks)
-            {
-                if (_entityHandler != null)
-                {
-                    hyperlink.Element.Click -= _entityHandler;
-                }
-
-                hyperlink.Element.Click += _entityHandler ??= new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>(Entity_Click);
-            }
-
             // OnApplyTemplate runs before we're loaded, so the highlighters it computed may
             // have been dropped. This is the only chance to put them back for a block that
             // returns below.
@@ -993,14 +988,6 @@ namespace Telegram.Controls
 
         protected override void OnUnloaded()
         {
-            if (_entityHandler != null)
-            {
-                foreach (var hyperlink in _activeHyperlinks)
-                {
-                    hyperlink.Element.Click -= _entityHandler;
-                }
-            }
-
             _textApplied = false;
             ClearEntities();
 
@@ -2388,14 +2375,8 @@ namespace Telegram.Controls
 
         #endregion
 
-        private void Entity_Click(Hyperlink hyperlink, HyperlinkClickEventArgs e)
+        private void Entity_Click(TextEntityClickEventArgs args)
         {
-            var args = MessageHelper.GetHyperlinkInfo(hyperlink);
-            if (args == null)
-            {
-                return;
-            }
-
             args.Handled = false;
             TextEntityClick?.Invoke(this, args);
 

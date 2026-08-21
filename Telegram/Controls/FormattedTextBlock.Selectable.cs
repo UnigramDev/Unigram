@@ -11,7 +11,6 @@ using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
