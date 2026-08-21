@@ -138,9 +138,9 @@ namespace Telegram.Controls
                     viewModel.NavigationService = navigationService;
                     viewModel.UpdateSelectedItem();
 
-                    var window = new StoriesWindow();
+                    var window = new StoriesWindow(navigationService.XamlRoot);
                     window.Update(viewModel, activeStories, StoryOpenOrigin.ProfilePhoto, pointz, origin);
-                    _ = window.ShowAsync(XamlRoot);
+                    _ = window.ShowAsync();
                 }
             }
 

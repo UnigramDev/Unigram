@@ -46,7 +46,8 @@ namespace Telegram.Controls.Stories
         private readonly DispatcherTimer _stealthTimer;
         private readonly DispatcherQueue _dispatcherQueue;
 
-        public StoriesWindow()
+        public StoriesWindow(XamlRoot xamlRoot)
+            : base(xamlRoot)
         {
             InitializeComponent();
             InitializeStickers();

@@ -25,7 +25,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.Views.Chats;
 using Telegram.Views.Create;
-using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings.Popups;
 using Telegram.Views.Stars.Popups;
@@ -2321,9 +2320,9 @@ namespace Telegram.ViewModels
                     }
 
                     var media = await StorageMedia.CreateAsync(cached);
-                    var popup = new EditMediaPopup(media, ImageCropperMask.Ellipse);
+                    var popup = new EditMediaPopup(XamlRoot, media, ImageCropperMask.Ellipse);
 
-                    var confirm = await popup.ShowAsync(XamlRoot);
+                    var confirm = await popup.ShowAsync();
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await EditPhotoAsync(media);

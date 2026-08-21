@@ -46,7 +46,8 @@ namespace Telegram.Views.Popups
         private TimeSpan _duration;
         private bool _resume;
 
-        public EditMediaPopup(StorageMedia media, ImageCropperMask mask = ImageCropperMask.Rectangle)
+        public EditMediaPopup(XamlRoot xamlRoot, StorageMedia media, ImageCropperMask mask = ImageCropperMask.Rectangle)
+            : base(xamlRoot)
         {
             InitializeComponent();
 

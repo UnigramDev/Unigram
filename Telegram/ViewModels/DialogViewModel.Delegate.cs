@@ -441,9 +441,9 @@ namespace Telegram.ViewModels
                 var activeStories = new ActiveStoriesViewModel(ClientService, Settings, Aggregator, story.Story);
                 var viewModel = StoryListViewModel.Create(NavigationService, activeStories);
 
-                var window = new StoriesWindow();
+                var window = new StoriesWindow(XamlRoot);
                 window.Update(viewModel, activeStories, StoryOpenOrigin.Card, origin, GetOrigin);
-                _ = window.ShowAsync(XamlRoot);
+                _ = window.ShowAsync();
             }
             else
             {

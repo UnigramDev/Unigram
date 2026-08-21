@@ -247,9 +247,9 @@ namespace Telegram.ViewModels.Stories
             viewModel.NavigationService = NavigationService;
             viewModel.UpdateSelectedItem();
 
-            var window = new StoriesWindow();
+            var window = new StoriesWindow(NavigationService.XamlRoot);
             window.Update(viewModel, activeStories, StoryOpenOrigin.ProfilePhoto, origin, closing);
-            _ = window.ShowAsync(NavigationService.XamlRoot);
+            _ = window.ShowAsync();
         }
 
         public void SetList(StoryList storyList)

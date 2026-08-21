@@ -33,7 +33,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
@@ -47,7 +46,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views.Popups
 {
@@ -1422,9 +1420,9 @@ namespace Telegram.Views.Popups
                     ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("EditMediaPopup", parent);
                 }
 
-                var popup = new EditMediaPopup(media);
+                var popup = new EditMediaPopup(XamlRoot, media);
 
-                var confirm = await popup.ShowAsync(XamlRoot);
+                var confirm = await popup.ShowAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
                     _thumbnails.Invalidate(media);
@@ -1443,9 +1441,9 @@ namespace Telegram.Views.Popups
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("EditMediaPopup", parent);
             }
 
-            var popup = new EditMediaPopup(args);
+            var popup = new EditMediaPopup(XamlRoot, args);
 
-            var confirm = await popup.ShowAsync(XamlRoot);
+            var confirm = await popup.ShowAsync();
             if (confirm == ContentDialogResult.Primary)
             {
                 _thumbnails.Invalidate(args);

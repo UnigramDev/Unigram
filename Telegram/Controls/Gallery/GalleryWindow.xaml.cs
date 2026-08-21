@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
@@ -14,7 +13,6 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
-using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Navigation;
@@ -73,7 +71,8 @@ namespace Telegram.Controls.Gallery
             set => _initialPosition = value > 0 ? value : null;
         }
 
-        private GalleryWindow()
+        private GalleryWindow(XamlRoot xamlRoot)
+            : base(xamlRoot)
         {
             InitializeComponent();
 
@@ -422,15 +421,15 @@ namespace Telegram.Controls.Gallery
 
         public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null, double timestamp = 0, VideoPlayerBase player = null)
         {
-            var popup = new GalleryWindow
+            var popup = new GalleryWindow(xamlRoot)
             {
                 InitialPosition = timestamp
             };
 
-            return popup.ShowAsyncInternal(xamlRoot, parameter, closing, player);
+            return popup.ShowAsyncInternal(parameter, closing, player);
         }
 
-        private Task<ContentDialogResult> ShowAsyncInternal(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null, VideoPlayerBase player = null)
+        private Task<ContentDialogResult> ShowAsyncInternal(GalleryViewModelBase parameter, FrameworkElement closing = null, VideoPlayerBase player = null)
         {
             if (closing != null && closing.IsConnected() && !SettingsService.Current.FullScreenGallery)
             {
@@ -453,17 +452,15 @@ namespace Telegram.Controls.Gallery
 
                 PrepareNext(0, true, false, player);
 
-                var applicationView = ApplicationView.GetForCurrentView();
-
-                _wasFullScreen = applicationView.IsFullScreenMode || ApiInfo.IsXbox;
+                _wasFullScreen = Window.IsFullScreenMode || ApiInfo.IsXbox;
 
                 if (SettingsService.Current.FullScreenGallery && !_wasFullScreen)
                 {
-                    applicationView.TryEnterFullScreenMode();
+                    Window.TryEnterFullScreenMode();
                 }
 
-                applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
-                OnVisibleBoundsChanged(applicationView, null);
+                Window.VisibleBoundsChanged += OnVisibleBoundsChanged;
+                OnVisibleBoundsChanged(Window, null);
 
                 InitializeBackButton();
                 Controls.Focus(FocusState.Programmatic);
@@ -478,7 +475,7 @@ namespace Telegram.Controls.Gallery
             });
 
             Loaded += handler;
-            return ShowAsync(xamlRoot);
+            return ShowAsync();
         }
 
         protected override void MaskTitleAndStatusBar(WindowContext window)
@@ -494,9 +491,9 @@ namespace Telegram.Controls.Gallery
             BackButton.HorizontalAlignment = HorizontalAlignment.Left;
         }
 
-        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
+        private void OnVisibleBoundsChanged(object sender, object args)
         {
-            var fullScreen = sender.IsFullScreenMode || ApiInfo.IsXbox;
+            var fullScreen = Window.IsFullScreenMode || ApiInfo.IsXbox;
 
             if (_lastFullScreen != fullScreen)
             {
@@ -534,10 +531,9 @@ namespace Telegram.Controls.Gallery
         {
             e.Handled = true;
 
-            var applicationView = ApplicationView.GetForCurrentView();
-            if (applicationView.IsFullScreenMode && !_wasFullScreen)
+            if (Window.IsFullScreenMode && !_wasFullScreen)
             {
-                applicationView.ExitFullScreenMode();
+                Window.ExitFullScreenMode();
 
                 if (e.Key == VirtualKey.Escape && !SettingsService.Current.FullScreenGallery)
                 {
@@ -546,7 +542,7 @@ namespace Telegram.Controls.Gallery
                 }
             }
 
-            applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
+            Window.VisibleBoundsChanged -= OnVisibleBoundsChanged;
 
             var translate = true;
 
@@ -1417,14 +1413,13 @@ namespace Telegram.Controls.Gallery
 
         private void FullScreen_Click(object sender, RoutedEventArgs e)
         {
-            var applicationView = ApplicationView.GetForCurrentView();
-            if (applicationView.IsFullScreenMode)
+            if (Window.IsFullScreenMode)
             {
-                applicationView.ExitFullScreenMode();
+                Window.ExitFullScreenMode();
             }
             else
             {
-                applicationView.TryEnterFullScreenMode();
+                Window.TryEnterFullScreenMode();
             }
         }
 

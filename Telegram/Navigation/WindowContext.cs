@@ -302,6 +302,7 @@ namespace Telegram.Navigation
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
             Logger.Debug(sender.VisibleBounds);
+            VisibleBoundsChanged?.Invoke(this, args);
         }
 
         public void Close()
@@ -628,6 +629,8 @@ namespace Telegram.Navigation
             Bounds = _window.Bounds;
             SizeChanged?.Invoke(this, new WindowSizeChangedEventArgs(e.Size));
         }
+
+        public event EventHandler<object> VisibleBoundsChanged;
 
         private void OnResizeStarted(CoreWindow sender, object args)
         {

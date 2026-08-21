@@ -49,9 +49,9 @@ namespace Telegram.Services
                 var media = await picker.PickSingleMediaAsync();
                 if (media is StoragePhoto or StorageVideo)
                 {
-                    var popup = new EditMediaPopup(media, ImageCropperMask.Ellipse);
+                    var popup = new EditMediaPopup(navigation.XamlRoot, media, ImageCropperMask.Ellipse);
 
-                    var confirm = await popup.ShowAsync(navigation.XamlRoot);
+                    var confirm = await popup.ShowAsync();
                     if (confirm == ContentDialogResult.Primary)
                     {
                         return await EditPhotoAsync(navigation, media);

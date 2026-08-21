@@ -1386,9 +1386,9 @@ namespace Telegram.Common
                     var activeStories = new ActiveStoriesViewModel(clientService, settings, aggregator, story);
                     var viewModel = StoryListViewModel.Create(navigation, activeStories);
 
-                    var window = new StoriesWindow();
+                    var window = new StoriesWindow(navigation.XamlRoot);
                     window.Update(viewModel, activeStories, StoryOpenOrigin.Card, Rect.Empty, null);
-                    _ = window.ShowAsync(navigation.XamlRoot);
+                    _ = window.ShowAsync();
                 }
                 else
                 {
@@ -1426,9 +1426,9 @@ namespace Telegram.Common
                             var activeStories = new ActiveStoriesViewModel(clientService, settings, aggregator, story);
                             var viewModel = StoryListViewModel.Create(navigation, activeStories);
 
-                            var window = new StoriesWindow();
+                            var window = new StoriesWindow(navigation.XamlRoot);
                             window.Update(viewModel, activeStories, StoryOpenOrigin.Card, Rect.Empty, null);
-                            _ = window.ShowAsync(navigation.XamlRoot);
+                            _ = window.ShowAsync();
 
                             return;
                         }
