@@ -7,13 +7,11 @@
 
 using System;
 using System.Linq;
-using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
 using Windows.Devices.Input;
 using Windows.UI;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -271,26 +269,10 @@ namespace Telegram.Common
                 _popupPanel.SetPhoto(photo);
             }
 
-            // TODO: WinUI - Can be safely removed.
-            var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
-            if (bounds != WindowContext.Current.Bounds)
-            {
-                _popupPanel.Margin = new Thickness(bounds.X, bounds.Y, WindowContext.Current.Bounds.Width - bounds.Right, WindowContext.Current.Bounds.Height - bounds.Bottom);
-            }
-            else
-            {
-                _popupPanel.Margin = new Thickness();
-            }
-
-            //if (item is TLDocument content && content.StickerSet != null)
-            //{
-            //    Debug.WriteLine(string.Join(" ", UnigramContainer.Current.ResolveType<IStickersService>().GetEmojiForSticker(content.Id)));
-            //}
-
             Opening?.Invoke();
 
-            _popupPanel.Width = bounds.Width;
-            _popupPanel.Height = bounds.Height;
+            _popupPanel.Width = _listView.XamlRoot.Size.Width;
+            _popupPanel.Height = _listView.XamlRoot.Size.Height;
             _popupPanel.RequestedTheme = _listView.ActualTheme;
             _popupPanel.Background = new SolidColorBrush(_listView.ActualTheme == ElementTheme.Light
                 ? Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF)

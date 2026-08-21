@@ -11,8 +11,6 @@ using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Popups
@@ -21,56 +19,13 @@ namespace Telegram.Views.Popups
     {
         public ViewModelBase ViewModel => DataContext as ViewModelBase;
 
-        private ApplicationView _applicationView;
-
-        private object _lastItem;
-
         public ZoomableMediaPopup()
         {
             InitializeComponent();
         }
 
-        // TODO: WinUI - These handlers are no longer needed and can be removed
-        protected override void OnLoaded()
-        {
-            _applicationView = ApplicationView.GetForCurrentView();
-            _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
-
-            OnVisibleBoundsChanged(_applicationView, null);
-        }
-
-        // TODO: WinUI - These handlers are no longer needed and can be removed
-        protected override void OnUnloaded()
-        {
-            _lastItem = null;
-
-            if (_applicationView != null)
-            {
-                _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
-            }
-        }
-
-        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
-        {
-            if (sender == null)
-            {
-                return;
-            }
-
-            if (/*BackgroundElement != null &&*/ Window.Current?.Bounds is Rect bounds && sender.VisibleBounds != bounds)
-            {
-                Margin = new Thickness(sender.VisibleBounds.X - bounds.Left, sender.VisibleBounds.Y - bounds.Top, bounds.Width - (sender.VisibleBounds.Right - bounds.Left), bounds.Height - (sender.VisibleBounds.Bottom - bounds.Top));
-            }
-            else
-            {
-                Margin = new Thickness();
-            }
-        }
-
         public void SetSticker(Sticker sticker)
         {
-            _lastItem = sticker;
-
             Title.Text = sticker.Emoji;
             Aspect.MaxWidth = 224;
             Aspect.MaxHeight = 224;
@@ -90,8 +45,6 @@ namespace Telegram.Views.Popups
 
         public void SetAnimation(Animation animation)
         {
-            _lastItem = animation;
-
             Title.Text = string.Empty;
             Aspect.MaxWidth = 420;
             Aspect.MaxHeight = 420;
@@ -111,8 +64,6 @@ namespace Telegram.Views.Popups
 
         public void SetPhoto(Photo photo)
         {
-            _lastItem = photo;
-
             Title.Text = string.Empty;
             Aspect.MaxWidth = 420;
             Aspect.MaxHeight = 420;
