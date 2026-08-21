@@ -1605,8 +1605,8 @@ namespace Telegram.Views
 
             if (firstVisible || lastVisible)
             {
-                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-                var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var batch = WindowContext.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var anim = WindowContext.Current.Compositor.CreateScalarKeyFrameAnimation();
                 anim.InsertKeyFrame(0, diff * direction);
                 anim.InsertKeyFrame(1, 0);
                 //anim.Duration = TimeSpan.FromSeconds(5);

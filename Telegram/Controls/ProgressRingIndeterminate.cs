@@ -10,6 +10,7 @@ using System;
 using System.Numerics;
 using Telegram.Composition;
 using Telegram.Native.Controls;
+using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -51,7 +52,7 @@ namespace Telegram.Controls
         {
             if (_visual == null)
             {
-                _visual = GetVisual(Window.Current.Compositor, out _props);
+                _visual = GetVisual(WindowContext.Current.Compositor, out _props);
                 ElementCompositionPreview.SetElementChildVisual(this, _visual.RootVisual);
 
                 var linearEasing = _props.Compositor.CreateLinearEasingFunction();

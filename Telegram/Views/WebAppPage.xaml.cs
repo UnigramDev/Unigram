@@ -208,12 +208,12 @@ namespace Telegram.Views
 
         public void PopupOpened()
         {
-            Window.Current.SetTitleBar(null);
+            WindowContext.Current.SetTitleBar(null);
         }
 
         public void PopupClosed()
         {
-            Window.Current.SetTitleBar(TitleBar);
+            WindowContext.Current.SetTitleBar(TitleBar);
         }
 
         #endregion
@@ -342,7 +342,7 @@ namespace Telegram.Views
         /// </summary>
         protected override void OnLoaded()
         {
-            Window.Current.Activated += OnActivated;
+            WindowContext.Current.Activated += OnActivated;
 
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
             ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
@@ -351,7 +351,7 @@ namespace Telegram.Views
 
         protected override void OnUnloaded()
         {
-            Window.Current.Activated -= OnActivated;
+            WindowContext.Current.Activated -= OnActivated;
 
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
             ApplicationView.GetForCurrentView().Consolidated -= OnConsolidated;

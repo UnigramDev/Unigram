@@ -136,18 +136,18 @@ namespace Telegram.Views.Calls
             var weakNetwork = ElementComposition.GetElementVisual(WeakNetwork);
             weakNetwork.Opacity = 0;
 
-            Window.Current.SetTitleBar(TitleBar);
+            WindowContext.Current.SetTitleBar(TitleBar);
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
         }
 
         public void PopupOpened()
         {
-            Window.Current.SetTitleBar(null);
+            WindowContext.Current.SetTitleBar(null);
         }
 
         public void PopupClosed()
         {
-            Window.Current.SetTitleBar(TitleBar);
+            WindowContext.Current.SetTitleBar(TitleBar);
         }
 
         private void InitializeBlob()
@@ -943,7 +943,7 @@ namespace Telegram.Views.Calls
             _remoteVideo.Stop();
 
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
-            Window.Current.SetTitleBar(null);
+            WindowContext.Current.SetTitleBar(null);
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)

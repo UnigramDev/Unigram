@@ -11,6 +11,7 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Native.Controls;
+using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Text;
@@ -146,7 +147,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var compositor = Window.Current.Compositor;
+            var compositor = WindowContext.Current.Compositor;
             var device = ElementComposition.GetSharedDevice();
 
             var outer = CompositionPathParser.Parse(level.OuterPath);

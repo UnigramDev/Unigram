@@ -123,7 +123,7 @@ namespace Telegram.Views.Calls
             MessageField.MaxLength = (int)_call.ClientService.Options.GroupCallMessageTextLengthMax;
             MessageReactions.Initialize(_call.ClientService);
 
-            Window.Current.SetTitleBar(TitleArea);
+            WindowContext.Current.SetTitleBar(TitleArea);
 
             Update(call, call.CurrentUser);
 
@@ -149,12 +149,12 @@ namespace Telegram.Views.Calls
 
         public void PopupOpened()
         {
-            Window.Current.SetTitleBar(null);
+            WindowContext.Current.SetTitleBar(null);
         }
 
         public void PopupClosed()
         {
-            Window.Current.SetTitleBar(TitleArea);
+            WindowContext.Current.SetTitleBar(TitleArea);
         }
 
         public DispatcherQueue DispatcherQueue => _dispatcherQueue;

@@ -331,7 +331,7 @@ namespace Telegram.Controls
 
             _selection.Scale = ActualSize / _imageSize;
 
-            var compositor = Window.Current.Compositor;
+            var compositor = WindowContext.Current.Compositor;
 
             var rectangle = CanvasGeometry.CreateRectangle(null, 0, 0, ActualSize.X, ActualSize.Y);
             var geometries = RecognizedTextBoundingBoxRounding.CreateRoundedPolygons(_selection.Blocks);

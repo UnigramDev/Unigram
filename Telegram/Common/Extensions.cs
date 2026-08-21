@@ -1460,8 +1460,8 @@ namespace Telegram.Common
         {
             var transform = element.TransformToPoint(null);
 
-            var bounds = Window.Current.Bounds;
-            var point = Window.Current.CoreWindow.PointerPosition;
+            var bounds = WindowContext.Current.Bounds;
+            var point = WindowContext.Current.PointerPosition;
 
             point = new Point(point.X - bounds.X, point.Y - bounds.Y);
             point = new Point(point.X - transform.X, point.Y - transform.Y);

@@ -7,6 +7,7 @@
 
 using System;
 using Telegram.Common;
+using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Input;
@@ -96,7 +97,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var compositor = Window.Current.Compositor;
+            var compositor = WindowContext.Current.Compositor;
 
             var visual = ElementComposition.GetElementVisual(ProgressBarIndicator);
             var clip = (visual.Clip ??= compositor.CreateInsetClip()) as InsetClip;

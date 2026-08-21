@@ -950,7 +950,7 @@ namespace Telegram.Views.Gifts.Popups
             var size = 240;
             var center = 120;
 
-            var compositor = Window.Current.Compositor;
+            var compositor = WindowContext.Current.Compositor;
             var shapeVisual = compositor.CreateShapeVisual();
             shapeVisual.Size = new Vector2(size);
 

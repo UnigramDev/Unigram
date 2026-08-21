@@ -28,6 +28,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
@@ -777,10 +778,13 @@ namespace Telegram.Navigation
 
         public Rect Bounds { get; private set; }
 
-        public void SetTitleBar(UIElement element)
-        {
-            _window.SetTitleBar(element);
-        }
+        public Compositor Compositor => _window.Compositor;
+
+        /// <summary>
+        /// Pointer position in window coordinates. Screen-relative on desktop, so callers
+        /// subtract <see cref="Bounds"/> themselves.
+        /// </summary>
+        public Point PointerPosition => _window.CoreWindow.PointerPosition;
 
         public bool IsFullScreenMode => ApplicationView.GetForCurrentView().IsFullScreenMode;
 

@@ -39,7 +39,7 @@ namespace Telegram.Views.Host
         public TabbedPage(TabViewItem newTab, bool forWebApps)
         {
             InitializeComponent();
-            Window.Current.SetTitleBar(Footer);
+            WindowContext.Current.SetTitleBar(Footer);
 
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;
@@ -75,12 +75,12 @@ namespace Telegram.Views.Host
 
         public void PopupOpened()
         {
-            Window.Current.SetTitleBar(null);
+            WindowContext.Current.SetTitleBar(null);
         }
 
         public void PopupClosed()
         {
-            Window.Current.SetTitleBar(Footer);
+            WindowContext.Current.SetTitleBar(Footer);
         }
 
         private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)

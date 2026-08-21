@@ -463,7 +463,7 @@ namespace Telegram
 
             if (SettingsService.Current.Diagnostics.ShowMemoryUsage && Window.Current?.Content?.XamlRoot != null)
             {
-                _ = MessagePopup.ShowAsync(Window.Current.Content.XamlRoot, args.Exception.ToString(), "Unhandled exception", "OK");
+                _ = MessagePopup.ShowAsync(WindowContext.Current.XamlRoot, args.Exception.ToString(), "Unhandled exception", "OK");
             }
         }
 
@@ -624,7 +624,7 @@ namespace Telegram
                 var reader = AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged);
                 var scaling = (WindowContext.Current.RasterizationScale * 100).ToString("N0");
                 var text = (BootStrapper.Current.TextScaleFactor * 100).ToString("N0");
-                var size = Window.Current.Bounds;
+                var size = WindowContext.Current.Bounds;
 
                 var ratio = SettingsService.Current.DialogsWidthRatio;
                 var width = MasterDetailPanel.CountDialogsWidthFromRatio(size.Width, ratio);

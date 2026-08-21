@@ -7,6 +7,7 @@
 
 using System;
 using System.Linq;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
@@ -272,9 +273,9 @@ namespace Telegram.Common
 
             // TODO: WinUI - Can be safely removed.
             var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
-            if (bounds != Window.Current.Bounds)
+            if (bounds != WindowContext.Current.Bounds)
             {
-                _popupPanel.Margin = new Thickness(bounds.X, bounds.Y, Window.Current.Bounds.Width - bounds.Right, Window.Current.Bounds.Height - bounds.Bottom);
+                _popupPanel.Margin = new Thickness(bounds.X, bounds.Y, WindowContext.Current.Bounds.Width - bounds.Right, WindowContext.Current.Bounds.Height - bounds.Bottom);
             }
             else
             {

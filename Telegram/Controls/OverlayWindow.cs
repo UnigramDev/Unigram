@@ -182,8 +182,8 @@ namespace Telegram.Controls
         {
             var scaleFactor = XamlRoot.RasterizationScale;
 
-            var x = Window.Current.Bounds.X - sender.X / scaleFactor;
-            var y = Window.Current.Bounds.Y - sender.Y / scaleFactor;
+            var x = WindowContext.Current.Bounds.X - sender.X / scaleFactor;
+            var y = WindowContext.Current.Bounds.Y - sender.Y / scaleFactor;
 
             var width = sender.Width / scaleFactor;
             var height = sender.Height / scaleFactor;
@@ -275,7 +275,7 @@ namespace Telegram.Controls
 
         protected void Prepare()
         {
-            //Margin = new Thickness(Window.Current.Bounds.Width, Window.Current.Bounds.Height, 0, 0);
+            //Margin = new Thickness(WindowContext.Current.Bounds.Width, WindowContext.Current.Bounds.Height, 0, 0);
             Closing?.Invoke(this, EventArgs.Empty);
         }
 

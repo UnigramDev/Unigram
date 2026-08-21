@@ -47,7 +47,7 @@ namespace Telegram.Navigation
 
         // This is just a wrapper around current window's compositor.
         // This is done to simplify the porting to WinUI 3 (as there's no concept of current window)
-        public Compositor Compositor => Window.Current.Compositor;
+        public Compositor Compositor => WindowContext.Current.Compositor;
 
         public BootStrapper()
         {
@@ -687,7 +687,7 @@ namespace Telegram.Navigation
 
         private void CallActivateWindow(ActivateWindowSources source)
         {
-            Window.Current.Activate();
+            WindowContext.Current.Activate();
             CurrentState = States.Running;
         }
 
