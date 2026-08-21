@@ -7,6 +7,7 @@
 
 using Microsoft.UI.Xaml.Controls;
 using System;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
@@ -34,7 +35,7 @@ namespace Telegram.Views.Host
     //    public event EventHandler IsBackButtonVisibleChanged;
     //}
 
-    public sealed partial class TabbedPage : UserControl, IPopupHost
+    public sealed partial class TabbedPage : WindowContent, IPopupHost
     {
         private readonly WindowContext _context;
 

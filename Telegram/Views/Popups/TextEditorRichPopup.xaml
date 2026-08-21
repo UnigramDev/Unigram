@@ -1,4 +1,4 @@
-﻿<controls:UserControlEx x:Class="Telegram.Views.Popups.TextEditorRichPopup"
+﻿<controls:WindowContent x:Class="Telegram.Views.Popups.TextEditorRichPopup"
                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,7 +10,7 @@
                         xmlns:messages="using:Telegram.Controls.Messages"
                         mc:Ignorable="d">
 
-    <controls:UserControlEx.Resources>
+    <controls:WindowContent.Resources>
         <Style TargetType="controls:GlyphToggleButton">
             <Setter Property="Background"
                     Value="Transparent" />
@@ -166,7 +166,7 @@
             </Setter>
         </Style>
 
-    </controls:UserControlEx.Resources>
+    </controls:WindowContent.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -535,4 +535,4 @@
             </Grid>
         </Grid>
     </Grid>
-</controls:UserControlEx>
+</controls:WindowContent>

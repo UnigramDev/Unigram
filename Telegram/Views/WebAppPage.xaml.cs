@@ -46,7 +46,7 @@ namespace Telegram.Views
 {
     public partial record WebAppAgeVerificationCompletedEventArgs(bool Passed, double Age);
 
-    public sealed partial class WebAppPage : UserControlEx, IPopupHost
+    public sealed partial class WebAppPage : WindowContent, IPopupHost
     {
         private readonly WindowContext _context;
         private readonly IClientService _clientService;

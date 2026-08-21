@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views
 {
-    public sealed partial class PasscodePage : UserControlEx
+    public sealed partial class PasscodePage : WindowContent
     {
         private readonly WindowContext _window;
 

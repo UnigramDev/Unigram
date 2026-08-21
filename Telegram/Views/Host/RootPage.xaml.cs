@@ -51,7 +51,7 @@ namespace Telegram.Views.Host
         void PopupClosed();
     }
 
-    public sealed partial class RootPage : Page, IPopupHost
+    public sealed partial class RootPage : WindowContent, IPopupHost
     {
         private readonly ILifetimeService _lifetime;
         private readonly WindowContext _context;

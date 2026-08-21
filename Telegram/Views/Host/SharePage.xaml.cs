@@ -7,6 +7,7 @@
 
 using System;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -20,7 +21,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Host
 {
-    public sealed partial class SharePage : UserControl
+    public sealed partial class SharePage : WindowContent
     {
         private readonly WindowContext _window;
 

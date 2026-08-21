@@ -42,7 +42,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class TextEditorRichPopup : UserControlEx
+    public sealed partial class TextEditorRichPopup : WindowContent
     {
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
