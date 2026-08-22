@@ -343,7 +343,7 @@ Left for step 3: `IsReplaceEmojiEnabled`, `IsContactsSortedByEpoch`, `UseLeftTab
 `UseLessData` still read `_container`. They are agreed to become app-wide, but unlike the list
 above they *are* written through a session, so moving them is a data migration, not a rename.
 
-### Step 2 — Normalise the containers — **written, not yet verified**
+### Step 2 — Normalise the containers — **done**
 
 The one step that touches user data, so it lands alone and before anything is restructured. It
 ends 3.8: afterwards every key is in the container its final owner implies, `_container` means
@@ -411,26 +411,26 @@ the root copy, so it is uniform — then the `{n}` copies are deleted. Users wit
 account lose the non-active accounts' setting for those four. That is inherent in making them
 app-wide, not something the migration can avoid.
 
-**Verification — outstanding.** The build is clean and the scoping was re-checked
-mechanically: no static cache over a per-account container, no getter and setter naming
-different containers bar `UserId`. The data path is *not* verified.
+**Verification.** Fela ran it against a real profile on 2026-08-22 and reported no problems.
+The build is clean, and the scoping was re-checked mechanically beforehand: no static cache over
+a per-account container, no getter and setter naming different containers bar `UserId`.
 
-Offline inspection of a real profile turned out to be closed: `settings.dat` is held open by the
-OS for as long as the package is registered, so it cannot be copied, and `reg load` on it needs
-elevation. So the before/after diff can only be taken by deploying a build and launching it —
-which runs the migration, once and irreversibly, against whatever profile it lands on. The
-upward moves delete the `{n}` copies, by necessity: leaving them would let a stale account copy
-overwrite the root on the next launch.
+That is a smoke test, not the key-by-key diff — so if a setting is ever reported as having reset
+around this change, these are the four things to check before looking anywhere else:
 
-So the first run must not be against a profile that matters. Either a scratch package identity
-with a deliberately constructed before-state, or `settings.dat` backed up first with the package
-unregistered so the file is free. What to check afterwards, against a two-account profile with
-every affected setting set to a non-default value:
-
-- the twelve account-scoped keys are gone from the root and present in `{0}` with their values
-- the six app-scoped keys are absent from every `{n}` and hold the active account's value at root
-- `HasRemovedCollections` is still at the root
+- the twelve account-scoped keys gone from the root, present in `{0}` with their values
+- the six app-scoped keys absent from every `{n}`, holding the active account's value at root
+- `HasRemovedCollections` still at the root
 - a second launch changes nothing
+
+Getting a before-picture is harder than it looks, for next time: `settings.dat` is held open by
+the OS for as long as the package is registered, so it cannot be copied while the app is live,
+and `reg load` on it needs elevation. Back it up with the app closed — the dev packages' hives
+were cleanly unloaded, so there were no `.LOG1`/`.LOG2` files to carry along. The backup taken
+before this run is at `C:\Source\SettingsBackup-20260822`.
+
+The upward moves delete the `{n}` copies, by necessity: leaving them would let a stale account
+copy overwrite the root on the next launch. So a backup is the only way back.
 
 ### Step 2b — Close the direct settings access — **done**
 
