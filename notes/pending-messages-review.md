@@ -211,6 +211,18 @@ there is no `DialogPendingTextMessage`.
   message completes, so it stays a guess. Worth flagging rather than quietly extending.
 - `ClearPendingMessages` already handles a dictionary of any size.
 
+### 2.11 A collapsed `pageBlockDetails` is typed out off screen
+
+**Done** — `PageBlockStreaming` charges a collapsed body a single step instead of its own length,
+so it is revealed whole once the header is typed.
+
+`Length` walked into `Blocks` whatever `IsOpen` said, so the typewriter budgeted every character of
+a body that isn't rendered: the visible text stopped advancing for as long as the hidden body took
+to type. The step is counted only when there is a body to reveal, which keeps
+`Length(Substring(x, n)) == n` while the header is still partial.
+
+---
+
 ## 4. Left open
 
 `RawAddRange` appends with `Add`, not in identifier order, so a slice loaded downwards would land

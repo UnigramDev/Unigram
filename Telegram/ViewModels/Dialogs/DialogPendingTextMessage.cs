@@ -471,7 +471,12 @@ namespace Telegram.ViewModels
                 PageBlockCollage b => Length(b.Blocks) + Length(b.Caption),
                 PageBlockSlideshow b => Length(b.Blocks) + Length(b.Caption),
                 PageBlockEmbeddedPost b => 1 + Length(b.Blocks) + Length(b.Caption),
-                PageBlockDetails b => Length(b.Header) + Length(b.Blocks),
+                // A collapsed block is off screen, so its body is worth a single step rather
+                // than its own length: typing it out would stall the visible text for as long
+                // as the body is. It is revealed whole, once the header is done.
+                PageBlockDetails b => b.IsOpen
+                    ? Length(b.Header) + Length(b.Blocks)
+                    : Length(b.Header) + (b.Blocks?.Count > 0 ? 1 : 0),
                 PageBlockTable b => Length(b.Caption) + LengthTableCells(b.Cells),
                 PageBlockRelatedArticles b => Length(b.Header) + LengthRelatedArticles(b.Articles),
                 _ => 0,
@@ -766,7 +771,14 @@ namespace Telegram.ViewModels
                 case PageBlockDetails b:
                     {
                         var header = SubstringRichText(b.Header, ref remaining) ?? new RichTextPlain("");
-                        var inner = SubstringList(b.Blocks, ref remaining);
+
+                        // Collapsed, the body costs one step that is only affordable once the
+                        // header is complete — and by then the whole block fits, so it is the
+                        // full-inclusion path above that hands it over, never this one.
+                        var inner = b.IsOpen
+                            ? SubstringList(b.Blocks, ref remaining)
+                            : Array.Empty<PageBlock>();
+
                         return new PageBlockDetails(header, inner, b.IsOpen);
                     }
                 case PageBlockTable b:
