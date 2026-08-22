@@ -53,7 +53,7 @@ namespace Telegram.ViewModels
                 return remainingLength;
             }
 
-            float speedMultiplier = GetSpeedMultiplier(_pendingLength);
+            float speedMultiplier = GetSpeedMultiplier(remainingLength);
 
             var rand = _random.NextDouble();
             int baseSize;
@@ -72,7 +72,7 @@ namespace Telegram.ViewModels
 
         private TimeSpan GetRandomDelay(char lastChar)
         {
-            float speedMultiplier = GetSpeedMultiplier(_pendingLength);
+            float speedMultiplier = GetSpeedMultiplier(_pendingLength - _textLength);
 
             double baseDelay;
             if (lastChar is '.' or '!' or '?')
@@ -186,12 +186,19 @@ namespace Telegram.ViewModels
 
             if (_textLength < _pendingLength)
             {
-                _typing.Interval = GetRandomDelay(/*_text.Text.Length > 0 ? _text.Text[^1] :*/ 'a');
+                _typing.Interval = GetRandomDelay(LastCharacter);
                 _typing.Start();
             }
         }
 
         protected abstract MessageContent CreateContent();
+
+        /// <summary>
+        /// The character typed last, which paces the delay before the next chunk. Rich messages
+        /// keep the default: reaching the last character of the last block is a walk of the whole
+        /// tree, and this runs between every chunk.
+        /// </summary>
+        protected virtual char LastCharacter => 'a';
 
         public void Stop()
         {
@@ -269,7 +276,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (text.Text.StartsWith(_text.Text))
+            if (text.Text.StartsWith(_text.Text, StringComparison.Ordinal))
             {
                 _pending = text;
                 _pendingLength = text.Text.Length;
@@ -303,6 +310,8 @@ namespace Telegram.ViewModels
         {
             return new MessageText(_text, null, null);
         }
+
+        protected override char LastCharacter => _text.Text.Length > 0 ? _text.Text[^1] : 'a';
 
         protected override void OnTyping(int length)
         {
