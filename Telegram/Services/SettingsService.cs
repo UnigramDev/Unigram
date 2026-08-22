@@ -47,6 +47,9 @@ namespace Telegram.Services
         int VerbosityLevel { get; set; }
         bool UseTestDC { get; set; }
 
+        int MessageFontSize { get; set; }
+        int CaptionFontSize { get; }
+
         bool HideArchivedChats { get; set; }
         bool IsAdaptiveWideEnabled { get; set; }
         bool IsTrayVisible { get; set; }
@@ -203,6 +206,13 @@ namespace Telegram.Services
         private readonly ApplicationDataContainer _local;
         private readonly ApplicationDataContainer _own;
 
+        private static readonly ApplicationDataContainer _theme;
+
+        static SettingsService()
+        {
+            _theme = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
+        }
+
         private SettingsService()
         {
             _local = ApplicationData.Current.LocalSettings;
@@ -336,6 +346,15 @@ namespace Telegram.Services
                 AddOrUpdateValue(_own, "UserId", value);
             }
         }
+
+        private static int? _messageFontSize;
+        public int MessageFontSize
+        {
+            get => _messageFontSize ??= (int)GetValueOrDefault(_theme, "MessageFontSize", 14d);
+            set => AddOrUpdateValue(_theme, "MessageFontSize", (double)(_messageFontSize = value));
+        }
+
+        public int CaptionFontSize => MessageFontSize - 2;
 
         private static int? _distanceUnits;
         public DistanceUnits DistanceUnits

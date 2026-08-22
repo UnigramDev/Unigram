@@ -214,7 +214,7 @@ namespace Telegram.ViewModels.Settings
         {
             get
             {
-                var size = Theme.Current.MessageFontSize;
+                var size = SettingsService.Current.MessageFontSize;
                 if (_sizeToIndex.TryGetValue(size, out int index))
                 {
                     return index;
@@ -227,7 +227,7 @@ namespace Telegram.ViewModels.Settings
                 var index = (int)Math.Round(value);
                 if (_indexToSize.TryGetValue(index, out int size))
                 {
-                    Theme.Current.MessageFontSize = size;
+                    SettingsService.Current.MessageFontSize = size;
                 }
 
                 RaisePropertyChanged();

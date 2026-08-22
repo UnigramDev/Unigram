@@ -304,7 +304,7 @@ namespace Telegram.Controls
             {
                 var styled = _text.Paragraphs[_first];
                 var entities = styled.GetParts(out var partial) ?? TextStyleRun.NoParts;
-                var quoteSize = (AutoFontSize ? Theme.Current.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
+                var quoteSize = (AutoFontSize ? SettingsService.Current.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
 
                 if (!ReferenceEquals(partial, _trimmableText) || availableSize.Width != _trimmableWidth || quoteSize != _trimmableSize)
                 {
@@ -1053,7 +1053,7 @@ namespace Telegram.Controls
             var xamlFontSize = TextBlock.FontSize;
             if (AutoFontSize && fontSize == 0)
             {
-                fontSize = Theme.Current.MessageFontSize;
+                fontSize = SettingsService.Current.MessageFontSize;
             }
 
             var direct = XamlDirect.GetDefault();
@@ -1261,8 +1261,8 @@ namespace Telegram.Controls
                 {
                     // TODO: quotes in RichMessage use normal font size, quotes in formatted text small
                     // decide what of the two we want to keep.
-                    direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.CaptionFontSize);
-                    partFontSize = Theme.Current.CaptionFontSize;
+                    direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, SettingsService.Current.CaptionFontSize);
+                    partFontSize = SettingsService.Current.CaptionFontSize;
                 }
 
                 for (int j = 0; j < runs.Count; j++)
@@ -1976,8 +1976,8 @@ namespace Telegram.Controls
                 return;
             }
 
-            var fontSize = (AutoFontSize ? Theme.Current.MessageFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
-            var quoteSize = (AutoFontSize ? Theme.Current.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
+            var fontSize = (AutoFontSize ? SettingsService.Current.MessageFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
+            var quoteSize = (AutoFontSize ? SettingsService.Current.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
 
             var width = LastAvailableWidth;
 
@@ -2695,8 +2695,8 @@ namespace Telegram.Controls
         {
             var width = LastAvailableWidth;
 
-            var fontSize = (AutoFontSize ? Theme.Current.MessageFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
-            var quoteSize = (AutoFontSize ? Theme.Current.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
+            var fontSize = (AutoFontSize ? SettingsService.Current.MessageFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
+            var quoteSize = (AutoFontSize ? SettingsService.Current.CaptionFontSize : TextBlock.FontSize) * BootStrapper.Current.TextScaleFactor;
 
             var shapes = new List<IList<Rect>>();
             var current = new List<Rect>();

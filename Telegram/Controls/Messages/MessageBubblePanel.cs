@@ -9,6 +9,7 @@ using System;
 using Telegram.Common;
 using Telegram.Controls.Messages.Content;
 using Telegram.Navigation;
+using Telegram.Services;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -241,14 +242,14 @@ namespace Telegram.Controls.Messages
 
             if (text == null)
             {
-                return new Size(0, Theme.Current.MessageFontSize * 1.33);
+                return new Size(0, SettingsService.Current.MessageFontSize * 1.33);
             }
             else if (_placeholder)
             {
                 var maxWidth = availableWidth;
                 var footerWidth = footer.DesiredSize.Width + footer.Margin.Left + footer.Margin.Right;
 
-                var fontSize = Theme.Current.MessageFontSize;
+                var fontSize = SettingsService.Current.MessageFontSize;
 
                 if (text.HasLineEnding)
                 {
