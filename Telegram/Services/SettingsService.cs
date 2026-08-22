@@ -132,42 +132,26 @@ namespace Telegram.Services
             _container = container ?? ApplicationData.Current.LocalSettings;
         }
 
-        public bool AddOrUpdateValue(string key, object value)
+        public void AddOrUpdateValue(string key, object value)
         {
-            return AddOrUpdateValue(_container, key, value);
+            AddOrUpdateValue(_container, key, value);
         }
 
-        public bool AddOrUpdateValue<T>(ref T storage, string key, T value)
+        public void AddOrUpdateValue<T>(ref T storage, string key, T value)
         {
             storage = value;
-            return AddOrUpdateValue(_container, key, value);
+            AddOrUpdateValue(_container, key, value);
         }
 
-        protected bool AddOrUpdateValue<T>(ref T storage, ApplicationDataContainer container, string key, T value)
+        protected void AddOrUpdateValue<T>(ref T storage, ApplicationDataContainer container, string key, T value)
         {
             storage = value;
-            return AddOrUpdateValue(container, key, value);
+            AddOrUpdateValue(container, key, value);
         }
 
-        protected bool AddOrUpdateValue(ApplicationDataContainer container, string key, object value)
+        protected void AddOrUpdateValue(ApplicationDataContainer container, string key, object value)
         {
-            bool valueChanged = false;
-
-            if (container.Values.ContainsKey(key))
-            {
-                if (container.Values[key] != value)
-                {
-                    container.Values[key] = value;
-                    valueChanged = true;
-                }
-            }
-            else
-            {
-                container.Values.Add(key, value);
-                valueChanged = true;
-            }
-
-            return valueChanged;
+            container.Values[key] = value;
         }
 
         public valueType GetValueOrDefault<valueType>(string key, valueType defaultValue)
@@ -312,7 +296,7 @@ namespace Telegram.Services
         private static PlaybackSettings _playback;
         public PlaybackSettings Playback => _playback ??= new PlaybackSettings(_local);
 
-        private static VideoSettings _video;
+        private VideoSettings _video;
         public VideoSettings Video => _video ??= new VideoSettings(_own);
 
         private static VoIPSettings _voip;
@@ -336,6 +320,8 @@ namespace Telegram.Services
         }
 
         private long? _userId;
+
+        // The setter also maintains the root User{id} -> session index that LifetimeService reads.
         public long UserId
         {
             get => _userId ??= GetValueOrDefault(_own, "UserId", 0L);
@@ -359,8 +345,8 @@ namespace Telegram.Services
         private static int? _distanceUnits;
         public DistanceUnits DistanceUnits
         {
-            get => (DistanceUnits)(_distanceUnits ??= GetValueOrDefault("DistanceUnits", 0));
-            set => AddOrUpdateValue(ref _distanceUnits, "DistanceUnits", (int)value);
+            get => (DistanceUnits)(_distanceUnits ??= GetValueOrDefault(_local, "DistanceUnits", 0));
+            set => AddOrUpdateValue(ref _distanceUnits, _local, "DistanceUnits", (int)value);
         }
 
         private static double? _dialogsWidthRatio;
@@ -467,14 +453,14 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _isAllAccountsNotifications, _local, "IsAllAccountsNotifications", value);
         }
 
-        private static bool? _useSystemProxy;
+        private bool? _useSystemProxy;
         public bool UseSystemProxy
         {
             get => _useSystemProxy ??= GetValueOrDefault(_own, "UseSystemProxy", true);
             set => AddOrUpdateValue(ref _useSystemProxy, _own, "UseSystemProxy", value);
         }
 
-        private static int? _lastProxyId;
+        private int? _lastProxyId;
         public int LastProxyId
         {
             get => _lastProxyId ??= GetValueOrDefault(_own, "LastProxyId", -1);
@@ -561,50 +547,50 @@ namespace Telegram.Services
         private static bool? _isAutoPlayAnimationsEnabled;
         public bool AutoPlayAnimations
         {
-            get => _isAutoPlayAnimationsEnabled ??= GetValueOrDefault("IsAutoPlayEnabled", true);
-            set => AddOrUpdateValue(ref _isAutoPlayAnimationsEnabled, "IsAutoPlayEnabled", value);
+            get => _isAutoPlayAnimationsEnabled ??= GetValueOrDefault(_local, "IsAutoPlayEnabled", true);
+            set => AddOrUpdateValue(ref _isAutoPlayAnimationsEnabled, _local, "IsAutoPlayEnabled", value);
         }
 
         private static bool? _isAutoPlayVideosEnabled;
         public bool AutoPlayVideos
         {
-            get => _isAutoPlayVideosEnabled ??= GetValueOrDefault("IsAutoPlayVideosEnabled", true);
-            set => AddOrUpdateValue(ref _isAutoPlayVideosEnabled, "IsAutoPlayVideosEnabled", value);
+            get => _isAutoPlayVideosEnabled ??= GetValueOrDefault(_local, "IsAutoPlayVideosEnabled", true);
+            set => AddOrUpdateValue(ref _isAutoPlayVideosEnabled, _local, "IsAutoPlayVideosEnabled", value);
         }
 
         private static bool? _autoPlayStickers;
         public bool AutoPlayStickers
         {
-            get => _autoPlayStickers ??= GetValueOrDefault("AutoPlayStickers", true);
-            set => AddOrUpdateValue(ref _autoPlayStickers, "AutoPlayStickers", value);
+            get => _autoPlayStickers ??= GetValueOrDefault(_local, "AutoPlayStickers", true);
+            set => AddOrUpdateValue(ref _autoPlayStickers, _local, "AutoPlayStickers", value);
         }
 
         private static bool? _autoPlayStickersInChats;
         public bool AutoPlayStickersInChats
         {
-            get => _autoPlayStickersInChats ??= GetValueOrDefault("AutoPlayStickersInChats", true);
-            set => AddOrUpdateValue(ref _autoPlayStickersInChats, "AutoPlayStickersInChats", value);
+            get => _autoPlayStickersInChats ??= GetValueOrDefault(_local, "AutoPlayStickersInChats", true);
+            set => AddOrUpdateValue(ref _autoPlayStickersInChats, _local, "AutoPlayStickersInChats", value);
         }
 
         private static bool? _autoPlayEmoji;
         public bool AutoPlayEmoji
         {
-            get => _autoPlayEmoji ??= GetValueOrDefault("AutoPlayEmoji", true);
-            set => AddOrUpdateValue(ref _autoPlayEmoji, "AutoPlayEmoji", value);
+            get => _autoPlayEmoji ??= GetValueOrDefault(_local, "AutoPlayEmoji", true);
+            set => AddOrUpdateValue(ref _autoPlayEmoji, _local, "AutoPlayEmoji", value);
         }
 
         private static bool? _autoPlayEmojiInChats;
         public bool AutoPlayEmojiInChats
         {
-            get => _autoPlayEmojiInChats ??= GetValueOrDefault("AutoPlayEmojiInChats", true);
-            set => AddOrUpdateValue(ref _autoPlayEmojiInChats, "AutoPlayEmojiInChats", value);
+            get => _autoPlayEmojiInChats ??= GetValueOrDefault(_local, "AutoPlayEmojiInChats", true);
+            set => AddOrUpdateValue(ref _autoPlayEmojiInChats, _local, "AutoPlayEmojiInChats", value);
         }
 
         private static bool? _isPowerSavingEnabled;
         public bool IsPowerSavingEnabled
         {
-            get => _isPowerSavingEnabled ??= GetValueOrDefault("IsPowerSavingEnabled", true);
-            set => AddOrUpdateValue(ref _isPowerSavingEnabled, "IsPowerSavingEnabled", value);
+            get => _isPowerSavingEnabled ??= GetValueOrDefault(_local, "IsPowerSavingEnabled", true);
+            set => AddOrUpdateValue(ref _isPowerSavingEnabled, _local, "IsPowerSavingEnabled", value);
         }
 
         private bool? _sendLargePhotos;
@@ -617,29 +603,29 @@ namespace Telegram.Services
         private bool? _isStreamingEnabled;
         public bool IsStreamingEnabled
         {
-            get => _isStreamingEnabled ??= GetValueOrDefault("IsStreamingEnabled", true);
-            set => AddOrUpdateValue(ref _isStreamingEnabled, "IsStreamingEnabled", value);
+            get => _isStreamingEnabled ??= GetValueOrDefault(_local, "IsStreamingEnabled", true);
+            set => AddOrUpdateValue(ref _isStreamingEnabled, _local, "IsStreamingEnabled", value);
         }
 
         private bool? _isDownloadFolderEnabled;
         public bool IsDownloadFolderEnabled
         {
-            get => _isDownloadFolderEnabled ??= GetValueOrDefault("IsDownloadFolderEnabled", true);
-            set => AddOrUpdateValue(ref _isDownloadFolderEnabled, "IsDownloadFolderEnabled", value);
+            get => _isDownloadFolderEnabled ??= GetValueOrDefault(_local, "IsDownloadFolderEnabled", true);
+            set => AddOrUpdateValue(ref _isDownloadFolderEnabled, _local, "IsDownloadFolderEnabled", value);
         }
 
         private static double? _volumeLevel;
         public double VolumeLevel
         {
-            get => _volumeLevel ??= GetValueOrDefault("VolumeLevel", 1d);
-            set => AddOrUpdateValue(ref _volumeLevel, "VolumeLevel", value);
+            get => _volumeLevel ??= GetValueOrDefault(_local, "VolumeLevel", 1d);
+            set => AddOrUpdateValue(ref _volumeLevel, _local, "VolumeLevel", value);
         }
 
         private static bool? _volumeMuted;
         public bool VolumeMuted
         {
-            get => _volumeMuted ??= GetValueOrDefault("VolumeMuted", false);
-            set => AddOrUpdateValue(ref _volumeMuted, "VolumeMuted", value);
+            get => _volumeMuted ??= GetValueOrDefault(_local, "VolumeMuted", false);
+            set => AddOrUpdateValue(ref _volumeMuted, _local, "VolumeMuted", value);
         }
 
         private static Vector2? _pencil;
@@ -717,21 +703,21 @@ namespace Telegram.Services
         private static bool? _installBetaUpdates;
         public bool InstallBetaUpdates
         {
-            get => _installBetaUpdates ??= GetValueOrDefault("InstallBetaUpdates", true);
+            get => _installBetaUpdates ??= GetValueOrDefault(_local, "InstallBetaUpdates", true);
             set => AddOrUpdateValue(ref _installBetaUpdates, _local, "InstallBetaUpdates", value);
         }
 
         private static int? _enabledProxyId;
         public int EnabledProxyId
         {
-            get => _enabledProxyId ??= GetValueOrDefault("EnabledProxyId", 0);
+            get => _enabledProxyId ??= GetValueOrDefault(_local, "EnabledProxyId", 0);
             set => AddOrUpdateValue(ref _enabledProxyId, _local, "EnabledProxyId", value);
         }
 
         private static bool? _migratedProxy;
         public bool MigratedProxy
         {
-            get => _migratedProxy ??= GetValueOrDefault("MigratedProxy", false);
+            get => _migratedProxy ??= GetValueOrDefault(_local, "MigratedProxy", false);
             set => AddOrUpdateValue(ref _migratedProxy, _local, "MigratedProxy", value);
         }
 
@@ -745,15 +731,15 @@ namespace Telegram.Services
         private static int? _reportsCount;
         public int ReportsCount
         {
-            get => _reportsCount ??= GetValueOrDefault("ReportsCount", 100);
-            set => AddOrUpdateValue(ref _reportsCount, "ReportsCount", value);
+            get => _reportsCount ??= GetValueOrDefault(_local, "ReportsCount", 100);
+            set => AddOrUpdateValue(ref _reportsCount, _local, "ReportsCount", value);
         }
 
         private static long? _reportsDate;
         public DateTime ReportsDate
         {
-            get => DateTime.FromFileTimeUtc(_reportsDate ??= GetValueOrDefault("ReportsDate", DateTime.Now.ToFileTimeUtc()));
-            set => AddOrUpdateValue(ref _reportsDate, "ReportsDate", value.ToFileTimeUtc());
+            get => DateTime.FromFileTimeUtc(_reportsDate ??= GetValueOrDefault(_local, "ReportsDate", DateTime.Now.ToFileTimeUtc()));
+            set => AddOrUpdateValue(ref _reportsDate, _local, "ReportsDate", value.ToFileTimeUtc());
         }
 
         private static string _anonymousUserId;
@@ -766,16 +752,16 @@ namespace Telegram.Services
                     return _anonymousUserId;
                 }
 
-                var value = GetValueOrDefault<string>("AnonymousUserId", null);
+                var value = GetValueOrDefault<string>(_local, "AnonymousUserId", null);
                 if (value == null)
                 {
                     value = Guid.NewGuid().ToString();
-                    AddOrUpdateValue("AnonymousUserId", value);
+                    AddOrUpdateValue(_local, "AnonymousUserId", value);
                 }
 
                 return _anonymousUserId = value;
             }
-            set => AddOrUpdateValue(ref _anonymousUserId, "AnonymousUserId", value);
+            set => AddOrUpdateValue(ref _anonymousUserId, _local, "AnonymousUserId", value);
         }
 
         public void SetChatPinnedMessage(long chatId, long messageId)
@@ -800,12 +786,41 @@ namespace Telegram.Services
         {
             var useTestDC = UseTestDC;
 
-            _container.Values.Clear();
+            _local.Values.Remove($"User{UserId}");
 
-            _own?.Values.Clear();
-            _local?.Values.Remove($"User{UserId}");
+            // Values.Clear() leaves the sub-containers behind, so auto-download, video positions
+            // and pinned messages would outlive the account they belong to.
+            _own.DeleteContainer("AutoDownload");
+            _own.DeleteContainer("Video");
+            _own.DeleteContainer("PinnedMessages");
+            _own.Values.Clear();
+
+            ResetCache();
 
             UseTestDC = useTestDC;
+        }
+
+        // Every value is cached on first read, and a log out is followed by a log in on the same
+        // session id, so emptying the container is only half of it.
+        private void ResetCache()
+        {
+            _chats = null;
+            _notifications = null;
+            _autoDownload = null;
+            _video = null;
+
+            _version = null;
+            _systemVersion = null;
+            _useTestDC = null;
+            _userId = null;
+            _useSystemProxy = null;
+            _lastProxyId = null;
+            _useLeftTabsForForums = null;
+            _isReplaceEmojiEnabled = null;
+            _isContactsSortedByEpoch = null;
+            _isSecretPreviewsEnabled = null;
+            _lastMessageTtl = null;
+            _useLessData = null;
         }
 
         public void Initialize()
@@ -827,7 +842,26 @@ namespace Telegram.Services
                 }
             }
 
+            PromoteToRoot("DistanceUnits");
+            PromoteToRoot("VolumeMuted");
+
             LottieAnimation.UseTLottie = Diagnostics.UseTLottieRenderer;
+        }
+
+        // Both were written through a session instance and read through Current, so the value the
+        // user picked landed in the account container, where nothing ever read it back.
+        private void PromoteToRoot(string key)
+        {
+            if (_local.Values.ContainsKey(key))
+            {
+                return;
+            }
+
+            var account = _local.CreateContainer($"{ActiveSession}", ApplicationDataCreateDisposition.Always);
+            if (account.Values.TryGetValue(key, out object value))
+            {
+                _local.Values[key] = value;
+            }
         }
     }
 
