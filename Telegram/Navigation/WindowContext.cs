@@ -524,7 +524,6 @@ namespace Telegram.Navigation
                     VerticalContentAlignment = VerticalAlignment.Stretch
                 };
 
-                _content.Loading += OnLoading;
                 _content.Loaded += OnLoaded;
 
                 // Deliberately +=, not AddHandler(handledEventsToo): a focused TextBox or
@@ -533,23 +532,19 @@ namespace Telegram.Navigation
                 _content.CharacterReceived += OnContentCharacterReceived;
 
                 _window.Content = _content;
+
+                // XamlRoot becomes available instantly as the content is set to the Window
+                lock (_allLock)
+                {
+                    _xamlRoot = _content.XamlRoot;
+                    _mapping[_content.XamlRoot] = this;
+                }
             }
 
             if (!_contentMaterial && content is RootWindow or StandaloneWindow or TabbedWindow or WebAppWindow)
             {
                 _contentMaterial = true;
                 BackdropMaterial.SetApplyToRootOrPageBackground(_content, true);
-            }
-        }
-
-        private void OnLoading(FrameworkElement sender, object args)
-        {
-            sender.Loading -= OnLoading;
-
-            lock (_allLock)
-            {
-                _xamlRoot = sender.XamlRoot;
-                _mapping[sender.XamlRoot] = this;
             }
         }
 
