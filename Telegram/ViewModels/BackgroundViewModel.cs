@@ -509,7 +509,7 @@ namespace Telegram.ViewModels
                 return null;
             }
 
-            var dark = AppSettings.Appearance.IsDarkTheme();
+            var dark = NightModeService.Current.IsDarkTheme();
             var freeform = dark ? new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
 
             // This is a new background and it has to be uploaded to Telegram servers

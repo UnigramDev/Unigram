@@ -518,7 +518,7 @@ namespace Telegram.Navigation
             {
                 _content = new WindowControl(this)
                 {
-                    RequestedTheme = AppSettings.Appearance.GetCalculatedElementTheme(),
+                    RequestedTheme = NightModeService.Current.GetCalculatedElementTheme(),
                     Content = content,
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
                     VerticalContentAlignment = VerticalAlignment.Stretch
@@ -558,7 +558,7 @@ namespace Telegram.Navigation
             ViewService.OnWindowLoaded();
         }
 
-        public ElementTheme ActualTheme => _content?.ActualTheme ?? AppSettings.Appearance.GetCalculatedElementTheme();
+        public ElementTheme ActualTheme => _content?.ActualTheme ?? NightModeService.Current.GetCalculatedElementTheme();
 
         public ElementTheme RequestedTheme
         {
@@ -1016,7 +1016,7 @@ namespace Telegram.Navigation
             Color buttonPressed;
 
             // Apply buttons feedback based on Light or Dark theme
-            var theme = AppSettings.Appearance.GetCalculatedApplicationTheme();
+            var theme = NightModeService.Current.GetCalculatedApplicationTheme();
             if (theme == ApplicationTheme.Dark)
             {
                 //background = Color.FromArgb(255, 43, 43, 43);

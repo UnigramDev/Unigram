@@ -289,7 +289,7 @@ namespace Telegram.ViewModels.Settings
                 if (value >= 0 && value < _emojiStyleIndexer.Length && AppSettings.Appearance.EmojiSet != _emojiStyleIndexer[value])
                 {
                     AppSettings.Appearance.EmojiSet = _emojiStyleIndexer[value];
-                    AppSettings.Appearance.UpdateNightMode(true, updateEmojiSet: true);
+                    NightModeService.Current.Update(true, updateEmojiSet: true);
 
                     RaisePropertyChanged();
                 }

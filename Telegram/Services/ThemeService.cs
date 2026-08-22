@@ -184,7 +184,7 @@ namespace Telegram.Services
                 AppSettings.Appearance[info.Parent].Type = info.Parent == TelegramTheme.Light ? TelegramThemeType.Classic : TelegramThemeType.Night;
             }
 
-            var flags = AppSettings.Appearance.GetCalculatedElementTheme();
+            var flags = NightModeService.Current.GetCalculatedElementTheme();
             var theme = flags == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light;
 
             if (theme != info.Parent && !apply)
@@ -192,7 +192,7 @@ namespace Telegram.Services
                 return;
             }
 
-            AppSettings.Appearance.UpdateNightMode();
+            NightModeService.Current.Update();
         }
 
         public async Task CreateThemeAsync(INavigationService navigation, ThemeInfoBase theme)

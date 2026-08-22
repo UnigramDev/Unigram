@@ -211,12 +211,12 @@ namespace Telegram.Views.Settings
 
         private void UpdateTheme_Click(object sender, RoutedEventArgs e)
         {
-            AppSettings.Appearance.UpdateNightMode();
+            NightModeService.Current.Update();
         }
 
         private void UpdateTheme_Picked(TimePickerFlyout sender, TimePickedEventArgs args)
         {
-            AppSettings.Appearance.UpdateNightMode();
+            NightModeService.Current.Update();
         }
     }
 }

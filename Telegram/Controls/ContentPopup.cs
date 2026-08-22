@@ -69,7 +69,7 @@ namespace Telegram.Controls
 
                 if (app != frame)
                 {
-                    RequestedTheme = AppSettings.Appearance.GetCalculatedElementTheme();
+                    RequestedTheme = NightModeService.Current.GetCalculatedElementTheme();
                 }
             }
 

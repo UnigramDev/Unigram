@@ -74,13 +74,13 @@ namespace Telegram
             WatchDog.Initialize();
             LifetimeService.Initialize();
 
-            RequestedTheme = AppSettings.Appearance.GetCalculatedApplicationTheme();
+            RequestedTheme = NightModeService.Current.GetCalculatedApplicationTheme();
             InitializeComponent();
         }
 
         protected override void OnWindowActivated(Window window, bool active)
         {
-            AppSettings.Appearance.UpdateTimer();
+            NightModeService.Current.UpdateTimer();
 
             var navigation = WindowContext.GetNavigationService(window);
             if (navigation != null)
@@ -328,7 +328,7 @@ namespace Telegram
             //}
 
             // #2034: Will this work? No one knows.
-            AppSettings.Appearance.UpdateNightMode(null);
+            NightModeService.Current.Update(null);
 
             OnStartSync(StartKind.Activate);
         }

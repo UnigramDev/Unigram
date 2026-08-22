@@ -1593,7 +1593,7 @@ namespace Telegram.Services
 
         public string AnimationSearchProvider => _animationSearchParameters?.Provider;
 
-        public Background DefaultBackground => GetDefaultBackground(AppSettings.Appearance.IsDarkTheme());
+        public Background DefaultBackground => GetDefaultBackground(NightModeService.Current.IsDarkTheme());
 
         public Background GetDefaultBackground(bool darkTheme)
         {

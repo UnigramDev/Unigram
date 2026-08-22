@@ -641,7 +641,29 @@ Two traps in the mechanical sweep, both worth remembering:
 
 Pure token rename, 191 files, no semantic content. Optional, and best done when the tree is quiet.
 
-### Step 4c — Split `AppearanceSettings`
+### Step 4c — Split `AppearanceSettings` — **done**
+
+`NightModeService` (`Telegram/Services/NightModeService.cs`, `NightModeService.Current`) takes the
+twelve members that were behaviour rather than storage: the `UISettings` subscription, the
+`Timer`, `UpdateTimer`, `CheckNightModeConditions`, the broadcast (renamed `UpdateNightMode` ->
+`Update`, since the type name now carries the meaning), and the six theme-calculation helpers that
+depend on the night-mode conditions. 23 call sites in 13 files.
+
+Two things that did not come out as cleanly as planned, both worth knowing:
+
+- **`GetSystemTheme()` had to stay on `AppearanceSettings`.** `RequestedTheme` defaults to the
+  system theme, so the settings class needs it. Moving it to the service and calling back would
+  recurse through both singletons' constructors: the service's constructor calls `UpdateTimer`,
+  which reads `AppSettings.Appearance.NightMode`, which constructs `AppearanceSettings`, whose
+  constructor runs `MigrateTheme` and reads `RequestedTheme` -- and `NightModeService.Current`
+  has not assigned `_current` yet. So one `UISettings.GetColorValue` read remains in the settings
+  class. The settings layer is UI-free apart from that line and the `ElementTheme` enums
+- **The `NightMode` setter no longer rearms the timer.** It used to call `UpdateTimer()` as a side
+  effect, which is precisely the coupling this split removes; the three callers that relied on it
+  (`SettingsNightModeViewModel`, `SettingsAppearanceViewModel`, `RootWindow`) now call
+  `NightModeService.Current.UpdateTimer()` themselves
+
+
 
 The compiler does the work.
 

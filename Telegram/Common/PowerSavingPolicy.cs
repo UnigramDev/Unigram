@@ -160,7 +160,7 @@ namespace Telegram.Common
             if (m_areMaterialsEnabled != AreMaterialsEnabled)
             {
                 m_areMaterialsEnabled = AreMaterialsEnabled;
-                AppSettings.Appearance.UpdateNightMode(false, false);
+                NightModeService.Current.Update(false, false);
             }
         }
 

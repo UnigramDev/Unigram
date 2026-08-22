@@ -43,7 +43,7 @@ namespace Telegram.ViewModels.Settings
             var geopoint = new Geopoint(new BasicGeoposition { Latitude = location.Latitude, Longitude = location.Longitude });
 
             Location = location;
-            AppSettings.Appearance.UpdateNightMode();
+            NightModeService.Current.Update();
 
             try
             {
@@ -81,6 +81,8 @@ namespace Telegram.ViewModels.Settings
                     }
 
                     AppSettings.Appearance.NightMode = value;
+                    NightModeService.Current.UpdateTimer();
+
                     RaisePropertyChanged();
                 }
             }

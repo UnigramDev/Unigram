@@ -982,6 +982,8 @@ namespace Telegram.Views.Host
             if (AppSettings.Appearance.NightMode != NightMode.Disabled)
             {
                 AppSettings.Appearance.NightMode = NightMode.Disabled;
+                NightModeService.Current.UpdateTimer();
+
                 ToastPopup.Show(XamlRoot, Strings.AutoNightModeOff, ToastPopupIcon.AutoNightOff);
             }
 
@@ -990,7 +992,7 @@ namespace Telegram.Views.Host
                 ? TelegramTheme.Dark
                 : TelegramTheme.Light;
 
-            AppSettings.Appearance.UpdateNightMode();
+            NightModeService.Current.Update();
         }
 
         private void Theme_ActualThemeChanged(FrameworkElement sender, object args)

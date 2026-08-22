@@ -135,7 +135,7 @@ namespace Telegram.ViewModels.Settings
             SetBackground(chatTheme.DarkSettings?.Background, true);
 
             AppSettings.Appearance.ChatTheme = chatTheme.ToEmoji();
-            AppSettings.Appearance.UpdateNightMode(updateBackground: false);
+            NightModeService.Current.Update(updateBackground: false);
 
             _selectedChatTheme = chatTheme;
             SelectionChanged = true;
@@ -246,13 +246,15 @@ namespace Telegram.ViewModels.Settings
 
         public bool ForceNightMode
         {
-            get => AppSettings.Appearance.ForceNightMode || AppSettings.Appearance.IsDarkTheme();
+            get => AppSettings.Appearance.ForceNightMode || NightModeService.Current.IsDarkTheme();
             set
             {
                 // TODO: this should be probably unified with the code in RootWindow and might need some changes.
                 if (AppSettings.Appearance.NightMode != NightMode.Disabled)
                 {
                     AppSettings.Appearance.NightMode = NightMode.Disabled;
+                    NightModeService.Current.UpdateTimer();
+
                     ShowToast(Strings.AutoNightModeOff, ToastPopupIcon.AutoNightOff);
                 }
 
@@ -261,7 +263,7 @@ namespace Telegram.ViewModels.Settings
                     ? TelegramTheme.Dark
                     : TelegramTheme.Light;
 
-                AppSettings.Appearance.UpdateNightMode();
+                NightModeService.Current.Update();
 
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(NightMode));
@@ -376,7 +378,7 @@ namespace Telegram.ViewModels.Settings
                 if (value >= 0 && value < FontFamilyOptions.Count && AppSettings.Appearance.FontFamily != FontFamilyOptions[value].Value)
                 {
                     AppSettings.Appearance.FontFamily = FontFamilyOptions[value].Value;
-                    AppSettings.Appearance.UpdateNightMode(true, updateEmojiSet: true);
+                    NightModeService.Current.Update(true, updateEmojiSet: true);
 
                     RaisePropertyChanged();
                 }
@@ -439,7 +441,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void CreateTheme(ChatThemeViewModel theme)
         {
-            var dark = AppSettings.Appearance.IsDarkTheme();
+            var dark = NightModeService.Current.IsDarkTheme();
             var settings = dark ? theme.DarkSettings : theme.LightSettings;
 
             var tint = AppSettings.Appearance[dark ? TelegramTheme.Dark : TelegramTheme.Light].Type;
