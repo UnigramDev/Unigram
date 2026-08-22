@@ -195,12 +195,5 @@ namespace Telegram.Services.Settings
             get => _countUnreadMessages ??= GetValueOrDefault("CountUnreadMessages", true);
             set => AddOrUpdateValue(ref _countUnreadMessages, "CountUnreadMessages", value);
         }
-
-        private bool? _hasRemovedCollections;
-        public bool HasRemovedCollections
-        {
-            get => _hasRemovedCollections ?? GetValueOrDefault("HasRemovedCollections", false);
-            set => AddOrUpdateValue(ref _hasRemovedCollections, "HasRemovedCollections", value);
-        }
     }
 }

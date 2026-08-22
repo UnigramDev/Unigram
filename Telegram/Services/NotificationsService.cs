@@ -78,12 +78,12 @@ namespace Telegram.Services
 
         private static async void RemoveCollections()
         {
-            if (SettingsService.Current.Notifications.HasRemovedCollections)
+            if (SettingsService.Current.HasRemovedCollections)
             {
                 return;
             }
 
-            SettingsService.Current.Notifications.HasRemovedCollections = true;
+            SettingsService.Current.HasRemovedCollections = true;
 
             try
             {

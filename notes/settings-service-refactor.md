@@ -14,7 +14,7 @@ Two entry points already exist, but neither is honest about what it holds.
 | `_own` | **null** | `LocalSettings\{n}` |
 | `_container` for session 0 | — | `LocalSettings` (root), see 3.8 |
 | `Session` | 0 | n |
-| reached as | `SettingsService.Current` (1745 sites) | `ISession.Settings`, `ViewModelBase.Settings`, ctor injection |
+| reached as | `SettingsService.Current` (362 sites, 81 files) | `ISession.Settings`, `ViewModelBase.Settings`, ctor injection |
 
 Both implement the *same* `ISettingsService`. So every member exists on both objects, and
 whether a given property means "the app" or "this account" depends on which of four fields its
@@ -279,7 +279,7 @@ already on `Appearance` as of step 3, so `Theme` belongs to `AppearanceSettings`
 `IAccountSettings` gets 2.4, plus `Session` and `Clear()`.
 
 `AppSettings.Current` stays a static, like `SettingsService.Current` is today — it is genuinely
-process-global, and 1745 sites already spell it that way. The swappable part is the store, set
+process-global, and every one of its 362 sites already spells it that way. The swappable part is the store, set
 once at startup, not the entry point.
 
 ## 5. Decisions for Fela
@@ -493,7 +493,7 @@ Purely internal; no key moves, no call-site churn.
 Exit criterion met: `Windows.Storage` appears in exactly one file, `Services/Settings/SettingsStore.cs`,
 and no `ApplicationDataContainer` survives anywhere else in live code.
 
-### Step 3b — `HasRemovedCollections` is the last per-account section read through `Current`
+### Step 3b — `HasRemovedCollections` off the per-account section — **done**
 
 Every section reached through `SettingsService.Current` is built from a global container --
 `Diagnostics` (78 sites), `Appearance` (63), `Stickers` (16), `Emoji` (14), `Playback` (8),
@@ -502,11 +502,15 @@ built from `_container`, which is the root on `Current` and the account containe
 so `Current.Notifications` and `session.Settings.Notifications` are two objects over two
 different stores.
 
-Its only two call sites are `NotificationsService`'s static constructor reading and setting
+Its only two call sites were `NotificationsService`'s static constructor reading and setting
 `HasRemovedCollections`, a one-shot flag for removing toast collections -- app-level, not a
-notification preference. Moving it onto `SettingsService` as an ordinary `_local` setting is a
-**no-op on disk**, because `Current`'s container already is the root, and it leaves
-`Notifications` purely per-account with no `Current` callers at all.
+notification preference. It is now an ordinary `_local` setting on `SettingsService`, which is a
+**no-op on disk**: `Current`'s container already was the root, so the key does not move. Its
+getter also used `??` rather than `??=`, so it re-read the store on every access; that is fixed on
+the way past.
+
+`Notifications` is now purely per-account, and none of the four per-account sections --
+`Notifications`, `Video`, `AutoDownload`, `Chats` -- is reached through `Current` any more.
 
 `Video`, `AutoDownload` and `Chats` are the other per-account sections, and none is reached
 through `Current` -- which is lucky rather than by design: `_own` is null there, so the first two
@@ -522,20 +526,36 @@ The compiler does the work.
 - move each member per 4.3 and the answers to section 5; step 2 has already put every key in
   the right container, so this is a code move with no data behind it
 - `SettingsService.Current.X` → `AppSettings.Current.X`: one mechanical identifier rename over
-  1745 sites
-- `Settings.X` where X moved to global → `AppSettings.Current.X`: ~150–200 sites, every one of
-  them a compile error, so none can be missed
+  362 sites in 81 files. Seven of those files are usually dirty, but that is the wrong measure --
+  what matters is whether the *pending hunks* touch the lines being rewritten, and on 2026-08-22
+  exactly one did (`ContentPopup.cs`, 2 lines). Measure the overlap, not the dirtiness
+- `Settings.X` where X moved to global → `AppSettings.Current.X`: every one a compile error, so
+  none can be missed
 - do **not** add forwarding properties from `IAccountSettings` to `IAppSettings`. That is exactly
   the mess being removed, and it would hide the remaining call sites
 - `ISession.Settings` and `ViewModelBase.Settings` change type to `IAccountSettings`
 
 `SettingsService`/`ISettingsService` are deleted at the end of this step.
 
-### Step 5 — Remove the dead weight
+### Step 5 — Remove the dead weight — **done**
 
-- delete `Version`, `SystemVersion`, `UpdateVersion`, `CleanUp`, `Container` (2.5)
-- move `SettingsLegacyService` out of `Services` and rename it for what it is (navigation frame
-  state, in memory) — or fold it into `FrameFacade`, its only caller
+Free: `UpdateVersion`, `CleanUp`, `Version` and `SystemVersion` have **zero** callers outside
+`SettingsService.cs` -- `LongVersion`, `SystemVersion` and `CurrentVersion` appear nowhere else in
+the app. `Container` already went in step 3, since its type would otherwise have had to change.
+
+They look like the "did an update happen" mechanism, and they were, but the live one is
+`Diagnostics.LastUpdateVersion < Constants.BuildNumber` in `Initialize`, which bumps
+`Diagnostics.UpdateCount` -- and *that* is read, by `WatchDog` and `TranslateSettings`. The giveaway
+is `CurrentVersion`, pinned at 10.1.0 while the app builds 14110. Deleting the members orphans the
+`LongVersion` and `SystemVersion` keys, which is harmless.
+
+
+- `Version`, `SystemVersion`, `UpdateVersion`, `CleanUp` and the `CurrentVersion` constant are
+  gone, along with the `App version` region that held them and the `Windows.System.Profile`
+  using that only `UpdateVersion` needed. `Container` went in step 3
+- `SettingsLegacyService` is **not** touched, and is dropped from this step. It is misnamed and
+  misfiled -- in-memory navigation state, used only by `FrameFacade` -- but it is live code, so
+  moving it is legibility alone. Worth doing only if something else takes us into `FrameFacade`
 
 ### Step 6 — Prove the seam (optional, only when something needs it)
 
@@ -553,8 +573,8 @@ in a packaged desktop app, so the islands work does not need it.
 | 2b | 4 | low — mechanical, builds clean |
 | 3 | 13 | low — internal, no key moves, builds clean |
 | 3 | ~8 | low — internal, no key moves |
-| 4 | ~250 | medium in volume, low in kind; every change compiler-forced |
-| 5 | ~3 | none |
+| 4 | ~85 | medium in volume, low in kind; every change compiler-forced |
+| 5 | 1 | none — zero external callers |
 | 6 | ~3 new | isolated |
 
 Step 4 is the only one that touches many files, and all of it is mechanical. Step 2 is the only

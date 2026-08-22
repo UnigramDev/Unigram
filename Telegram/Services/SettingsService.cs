@@ -13,7 +13,6 @@ using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
-using Windows.System.Profile;
 using AutoDownloadSettings = Telegram.Services.Settings.AutoDownloadSettings;
 
 namespace Telegram.Services
@@ -21,10 +20,6 @@ namespace Telegram.Services
     public interface ISettingsService
     {
         int Session { get; }
-        ulong Version { get; }
-        ulong SystemVersion { get; }
-
-        bool UpdateVersion(out string previousVersion);
 
         ChatSettingsBase Chats { get; }
         NotificationsSettings Notifications { get; }
@@ -221,51 +216,7 @@ namespace Telegram.Services
             ApplicationDataSettingsStore.Local.GetContainer($"{session}").SetValue("UseTestDC", value);
         }
 
-        #region App version
-
-        public const ulong CurrentVersion = (10UL << 48) | (1UL << 32) | (0UL << 16);
-
         public int Session => _session;
-
-        private ulong? _version;
-        public ulong Version
-        {
-            get => _version ??= GetValueOrDefault("LongVersion", CurrentVersion);
-            set => AddOrUpdateValue(ref _version, "LongVersion", value);
-        }
-
-        private ulong? _systemVersion;
-        public ulong SystemVersion
-        {
-            get => _systemVersion ??= GetValueOrDefault("SystemVersion", 0UL);
-            set => AddOrUpdateValue(ref _systemVersion, "SystemVersion", value);
-        }
-
-        public bool UpdateVersion(out string previousVersion)
-        {
-            string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
-            ulong version = ulong.Parse(deviceFamilyVersion);
-            ulong build = (version & 0x00000000FFFF0000L) >> 16;
-
-            ulong oldMajor = (Version & 0xFFFF000000000000L) >> 48;
-            ulong oldMinor = (Version & 0x0000FFFF00000000L) >> 32;
-            ulong oldRevision = (Version & 0x00000000FFFF0000L) >> 16;
-
-            ulong newMajor = (CurrentVersion & 0xFFFF000000000000L) >> 48;
-            ulong newMinor = (CurrentVersion & 0x0000FFFF00000000L) >> 32;
-            ulong newRevision = (CurrentVersion & 0x00000000FFFF0000L) >> 16;
-
-            Version = CurrentVersion;
-            SystemVersion = build;
-
-            previousVersion = $"{oldMajor}.{oldMinor}.{oldRevision}";
-
-            var oldVersion = new Version((int)oldMajor, (int)oldMinor, (int)oldRevision);
-            var newVersion = new Version((int)newMajor, (int)newMinor, (int)newRevision);
-            return newVersion > oldVersion;
-        }
-
-        #endregion
 
         private ChatSettingsBase _chats;
         public ChatSettingsBase Chats => _chats ??= new ChatSettingsBase(_own);
@@ -731,6 +682,15 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _useLessData, _local, "UseLessData", (int)value);
         }
 
+        // Removing the toast collections is a one-off for the whole app rather than a
+        // notification preference, so it does not belong on the per-account section.
+        private static bool? _hasRemovedCollections;
+        public bool HasRemovedCollections
+        {
+            get => _hasRemovedCollections ??= GetValueOrDefault(_local, "HasRemovedCollections", false);
+            set => AddOrUpdateValue(ref _hasRemovedCollections, _local, "HasRemovedCollections", value);
+        }
+
         private static int? _reportsCount;
         public int ReportsCount
         {
@@ -780,12 +740,6 @@ namespace Telegram.Services
             return GetValueOrDefault(PinnedMessages, $"{chatId}", 0L);
         }
 
-        public void CleanUp()
-        {
-            // Here should be cleaned up all the settings that are shared with background tasks.
-            //_useLessData = null;
-        }
-
         public new void Clear()
         {
             var useTestDC = UseTestDC;
@@ -818,8 +772,6 @@ namespace Telegram.Services
             _autoDownloadStore = null;
             _pinnedMessages = null;
 
-            _version = null;
-            _systemVersion = null;
             _useTestDC = null;
             _userId = null;
             _useSystemProxy = null;
@@ -871,8 +823,8 @@ namespace Telegram.Services
             "LastMessageTtl"
         };
 
-        // HasRemovedCollections is deliberately absent: it sits on NotificationsSettings but is an
-        // app-level one-shot flag, and NotificationsService reads it through Current.
+        // HasRemovedCollections is deliberately absent: it was on NotificationsSettings but is
+        // app-wide, and was already being written to the root through Current.
         private static readonly string[] _appScopedKeys = new[]
         {
             "IsReplaceEmojiEnabled",
