@@ -97,7 +97,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var compositor = WindowContext.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
 
             var visual = ElementComposition.GetElementVisual(ProgressBarIndicator);
             var clip = (visual.Clip ??= compositor.CreateInsetClip()) as InsetClip;

@@ -147,7 +147,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var compositor = WindowContext.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var device = ElementComposition.GetSharedDevice();
 
             var outer = CompositionPathParser.Parse(level.OuterPath);

@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -28,7 +27,6 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Folders;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
-using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -2309,12 +2307,12 @@ namespace Telegram.Views.Popups
             offset.InsertKeyFrame(1, show ? 0 : -28);
             offset.Duration = Constants.FastAnimation;
 
-            var scale = WindowContext.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var scale = visual1.Compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
             scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
             scale.Duration = Constants.FastAnimation;
 
-            var opacity = WindowContext.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity = visual1.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(show ? 0 : 1, 0);
             opacity.InsertKeyFrame(show ? 1 : 0, 1);
 

@@ -52,7 +52,7 @@ namespace Telegram.Controls
         {
             if (_visual == null)
             {
-                _visual = GetVisual(WindowContext.Current.Compositor, out _props);
+                _visual = GetVisual(BootStrapper.Current.Compositor, out _props);
                 ElementCompositionPreview.SetElementChildVisual(this, _visual.RootVisual);
 
                 var linearEasing = _props.Compositor.CreateLinearEasingFunction();

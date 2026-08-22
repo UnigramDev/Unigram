@@ -826,6 +826,7 @@ namespace Telegram.Navigation
 
         public Rect Bounds { get; private set; }
 
+        // Must be used only by BootStrapper
         public Compositor Compositor => _window.Compositor;
 
         /// <summary>
