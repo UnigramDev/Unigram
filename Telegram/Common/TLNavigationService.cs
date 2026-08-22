@@ -201,31 +201,32 @@ namespace Telegram.Common
 
         private async void NavigateToTab(Func<WindowContext, TabViewItem> newTab, ViewServiceOptions parameters)
         {
-            var already = WindowContext.All.FirstOrDefault(x => x.PersistedId == parameters.PersistedId);
-            if (already != null)
-            {
-                var oldViewId = Window.Id;
+            var oldViewId = Window.Id;
+            var found = false;
 
-                await already.Dispatcher.DispatchAsync(() =>
-                {
-                    if (WindowContext.Current.Content is TabbedWindow page)
-                    {
-                        page.AddNewTab(newTab(already));
-                    }
-
-                    return ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
-                });
-            }
-            else
+            await WindowContext.ForEachAsync(window =>
             {
-                await OpenAsync(new ViewServiceOptions
+                if (window.Content is TabbedWindow page && window.PersistedId == parameters.PersistedId)
                 {
-                    Width = parameters.Width,
-                    Height = parameters.Height,
-                    PersistedId = parameters.PersistedId,
-                    Content = (control, window) => new TabbedWindow(window, newTab(window), string.Equals(parameters.PersistedId, "WebApps"))
-                });
+                    page.AddNewTab(newTab(window));
+
+                    _ = ApplicationViewSwitcher.SwitchAsync(window.Id, oldViewId);
+                    found = true;
+                }
+            });
+
+            if (found)
+            {
+                return;
             }
+
+            await OpenAsync(new ViewServiceOptions
+            {
+                Width = parameters.Width,
+                Height = parameters.Height,
+                PersistedId = parameters.PersistedId,
+                Content = (control, window) => new TabbedWindow(window, newTab(window), string.Equals(parameters.PersistedId, "WebApps"))
+            });
         }
 
         public void ShowLimitReached(PremiumLimitType type)
