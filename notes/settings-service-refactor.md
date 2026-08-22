@@ -341,11 +341,22 @@ Left for step 3: `IsReplaceEmojiEnabled`, `IsContactsSortedByEpoch`, `UseLeftTab
 `UseLessData` still read `_container`. They are agreed to become app-wide, but unlike the list
 above they *are* written through a session, so moving them is a data migration, not a rename.
 
-### Step 2 — Normalise the containers
+### Step 2 — Normalise the containers — **written, not yet verified**
 
 The one step that touches user data, so it lands alone and before anything is restructured. It
 ends 3.8: afterwards every key is in the container its final owner implies, `_container` means
 "this account" on every session instance, and steps 3 and 4 become pure code moves.
+
+The code half went in with it, because moving data without moving the pointer breaks the
+setting: `IsReplaceEmojiEnabled`, `IsContactsSortedByEpoch`, `UseLeftTabsForForums` and
+`UseLessData` now read `_local`, and are `static` like the app-wide settings around them — one
+cache per process, or a write through one session leaves every other instance stale.
+`DistanceUnits` and `VolumeMuted` folded into the same list, replacing the narrower
+`PromoteToRoot` from step 1, so there is one mechanism rather than two.
+
+After it, the only `_container` properties left are `IsSecretPreviewsEnabled`, `LastMessageTtl`,
+the `Notifications` section, and the two dead version keys — i.e. `_container` finally means
+exactly "this account".
 
 **The keys involved.** 19 account-scoped keys sit in the root today, and none of them collide
 with the 46 app-wide keys already there — checked by name across every settings class.
@@ -366,7 +377,9 @@ with the 46 app-wide keys already there — checked by name across every setting
 one-shot app-level flag — `NotificationsService` reads it through `Current`, and it is the only
 notification key that does. It becomes an `IAppSettings` member in step 3.
 
-*Deleted, not moved:* `LongVersion` and `SystemVersion`, dead per 2.5.
+*Left alone:* `LongVersion` and `SystemVersion`. They are dead (2.5), so their root copies are
+simply orphaned by the `_container` change; deleting stored values to tidy up is risk for no
+gain, and step 5 removes the members anyway.
 
 **The code change that has to accompany it.** Moving the data is only half:
 
@@ -396,11 +409,26 @@ the root copy, so it is uniform — then the `{n}` copies are deleted. Users wit
 account lose the non-active accounts' setting for those four. That is inherent in making them
 app-wide, not something the migration can avoid.
 
-**Verification.** This is the step that can destroy real settings, so it does not ship on a
-reading of the diff. Dump `LocalSettings` to text before and after, on a two-account profile with
-every affected setting deliberately set to a non-default value, and diff the two trees against
-the table above. Per `notes/` practice: check it against a profile whose correct answer is known
-in advance, not against whatever the app happens to show afterwards.
+**Verification — outstanding.** The build is clean and the scoping was re-checked
+mechanically: no static cache over a per-account container, no getter and setter naming
+different containers bar `UserId`. The data path is *not* verified.
+
+Offline inspection of a real profile turned out to be closed: `settings.dat` is held open by the
+OS for as long as the package is registered, so it cannot be copied, and `reg load` on it needs
+elevation. So the before/after diff can only be taken by deploying a build and launching it —
+which runs the migration, once and irreversibly, against whatever profile it lands on. The
+upward moves delete the `{n}` copies, by necessity: leaving them would let a stale account copy
+overwrite the root on the next launch.
+
+So the first run must not be against a profile that matters. Either a scratch package identity
+with a deliberately constructed before-state, or `settings.dat` backed up first with the package
+unregistered so the file is free. What to check afterwards, against a two-account profile with
+every affected setting set to a non-default value:
+
+- the twelve account-scoped keys are gone from the root and present in `{0}` with their values
+- the six app-scoped keys are absent from every `{n}` and hold the active account's value at root
+- `HasRemovedCollections` is still at the root
+- a second launch changes nothing
 
 ### Step 3 — Introduce `ISettingsStore`, keep the object model
 
@@ -455,7 +483,7 @@ in a packaged desktop app, so the islands work does not need it.
 | step | files touched | risk |
 |---|---|---|
 | 1 | 1 | low — behaviour fixes, visible in the app |
-| 2 | ~2 | **the highest of the five** — it rewrites stored user settings |
+| 2 | 1 | **the highest of the six** — it rewrites stored user settings |
 | 3 | ~8 | low — internal, no key moves |
 | 4 | ~250 | medium in volume, low in kind; every change compiler-forced |
 | 5 | ~3 | none |

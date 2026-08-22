@@ -203,11 +203,11 @@ namespace Telegram.Services
         }
 
         public SettingsService(int session)
-            : base(session > 0 ? ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always) : null)
+            : base(ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always))
         {
             _session = session;
             _local = ApplicationData.Current.LocalSettings;
-            _own = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
+            _own = _container;
         }
 
         public ApplicationDataContainer Container => _container;
@@ -474,11 +474,11 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _useLeftTabsForChats, _local, "IsLeftTabsEnabled", value);
         }
 
-        private bool? _useLeftTabsForForums;
+        private static bool? _useLeftTabsForForums;
         public bool UseLeftTabsForForums
         {
-            get => _useLeftTabsForForums ??= GetValueOrDefault("UseLeftTabsForForums", false);
-            set => AddOrUpdateValue(ref _useLeftTabsForForums, "UseLeftTabsForForums", value);
+            get => _useLeftTabsForForums ??= GetValueOrDefault(_local, "UseLeftTabsForForums", false);
+            set => AddOrUpdateValue(ref _useLeftTabsForForums, _local, "UseLeftTabsForForums", value);
         }
 
         private static bool? _swipeToShare;
@@ -523,18 +523,18 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _isSendByEnterEnabled, _local, "IsSendByEnterEnabled", value);
         }
 
-        private bool? _isReplaceEmojiEnabled;
+        private static bool? _isReplaceEmojiEnabled;
         public bool IsReplaceEmojiEnabled
         {
-            get => _isReplaceEmojiEnabled ??= GetValueOrDefault("IsReplaceEmojiEnabled", true);
-            set => AddOrUpdateValue(ref _isReplaceEmojiEnabled, "IsReplaceEmojiEnabled", value);
+            get => _isReplaceEmojiEnabled ??= GetValueOrDefault(_local, "IsReplaceEmojiEnabled", true);
+            set => AddOrUpdateValue(ref _isReplaceEmojiEnabled, _local, "IsReplaceEmojiEnabled", value);
         }
 
-        private bool? _isContactsSortedByEpoch;
+        private static bool? _isContactsSortedByEpoch;
         public bool IsContactsSortedByEpoch
         {
-            get => _isContactsSortedByEpoch ??= GetValueOrDefault("IsContactsSortedByEpoch", true);
-            set => AddOrUpdateValue(ref _isContactsSortedByEpoch, "IsContactsSortedByEpoch", value);
+            get => _isContactsSortedByEpoch ??= GetValueOrDefault(_local, "IsContactsSortedByEpoch", true);
+            set => AddOrUpdateValue(ref _isContactsSortedByEpoch, _local, "IsContactsSortedByEpoch", value);
         }
 
         private bool? _isSecretPreviewsEnabled;
@@ -721,11 +721,11 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _migratedProxy, _local, "MigratedProxy", value);
         }
 
-        private int? _useLessData;
+        private static int? _useLessData;
         public VoipDataSaving UseLessData
         {
-            get => (VoipDataSaving)(_useLessData ??= GetValueOrDefault("UseLessData", 0));
-            set => AddOrUpdateValue(ref _useLessData, "UseLessData", (int)value);
+            get => (VoipDataSaving)(_useLessData ??= GetValueOrDefault(_local, "UseLessData", 0));
+            set => AddOrUpdateValue(ref _useLessData, _local, "UseLessData", (int)value);
         }
 
         private static int? _reportsCount;
@@ -815,12 +815,8 @@ namespace Telegram.Services
             _userId = null;
             _useSystemProxy = null;
             _lastProxyId = null;
-            _useLeftTabsForForums = null;
-            _isReplaceEmojiEnabled = null;
-            _isContactsSortedByEpoch = null;
             _isSecretPreviewsEnabled = null;
             _lastMessageTtl = null;
-            _useLessData = null;
         }
 
         public void Initialize()
@@ -842,25 +838,84 @@ namespace Telegram.Services
                 }
             }
 
-            PromoteToRoot("DistanceUnits");
-            PromoteToRoot("VolumeMuted");
+            MigrateContainers();
 
             LottieAnimation.UseTLottie = Diagnostics.UseTLottieRenderer;
         }
 
-        // Both were written through a session instance and read through Current, so the value the
-        // user picked landed in the account container, where nothing ever read it back.
-        private void PromoteToRoot(string key)
+        // Session 0 predates multi-account: its settings were addressed as the root container and
+        // stayed there when per-account containers arrived, so the root holds the first account's
+        // settings mixed in with the app-wide ones. These are the keys on the wrong side.
+        private static readonly string[] _accountScopedKeys = new[]
         {
-            if (_local.Values.ContainsKey(key))
+            "InAppPreview",
+            "InAppVibrate",
+            "InAppFlash",
+            "InAppSounds",
+            "ShowName",
+            "ShowText",
+            "ShowReply",
+            "IncludeMutedChats",
+            "IncludeMutedChatsInFolderCounters",
+            "CountUnreadMessages",
+            "IsSecretPreviewsEnabled",
+            "LastMessageTtl"
+        };
+
+        // HasRemovedCollections is deliberately absent: it sits on NotificationsSettings but is an
+        // app-level one-shot flag, and NotificationsService reads it through Current.
+        private static readonly string[] _appScopedKeys = new[]
+        {
+            "IsReplaceEmojiEnabled",
+            "IsContactsSortedByEpoch",
+            "UseLeftTabsForForums",
+            "UseLessData",
+            "DistanceUnits",
+            "VolumeMuted"
+        };
+
+        // Every move is a copy followed by a delete, so a second pass finds nothing to do and no
+        // version marker is needed. A downgrade that writes the root again is migrated afresh,
+        // which is right: the older build's value is then the newer one.
+        private void MigrateContainers()
+        {
+            ApplicationDataContainer zero = null;
+
+            foreach (var key in _accountScopedKeys)
             {
-                return;
+                if (_local.Values.TryGetValue(key, out object value))
+                {
+                    zero ??= _local.CreateContainer("0", ApplicationDataCreateDisposition.Always);
+                    zero.Values[key] = value;
+                    _local.Values.Remove(key);
+                }
             }
 
-            var account = _local.CreateContainer($"{ActiveSession}", ApplicationDataCreateDisposition.Always);
-            if (account.Values.TryGetValue(key, out object value))
+            // Snapshot: the loop writes into the containers it is walking.
+            var containers = _local.Containers.ToArray();
+            var active = ActiveSession;
+
+            foreach (var container in containers)
             {
-                _local.Values[key] = value;
+                // Session 0 wrote to the root, so its copy of an app-wide key is already in place.
+                if (!int.TryParse(container.Key, out int id) || id == 0)
+                {
+                    continue;
+                }
+
+                foreach (var key in _appScopedKeys)
+                {
+                    if (container.Value.Values.TryGetValue(key, out object value))
+                    {
+                        // Only one value can survive, and it is the one the user is looking at.
+                        if (id == active)
+                        {
+                            _local.Values[key] = value;
+                        }
+
+                        container.Value.Values.Remove(key);
+                    }
+                }
             }
         }
     }
