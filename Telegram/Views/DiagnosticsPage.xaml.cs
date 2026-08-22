@@ -59,7 +59,7 @@ namespace Telegram.Views
 
         private void Anonymous_Click(object sender, RoutedEventArgs e)
         {
-            MessageHelper.CopyText(XamlRoot, SettingsService.Current.AnonymousUserId);
+            MessageHelper.CopyText(XamlRoot, AppSettings.AnonymousUserId);
         }
     }
 }

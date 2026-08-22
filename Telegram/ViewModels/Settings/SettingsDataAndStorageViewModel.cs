@@ -69,12 +69,12 @@ namespace Telegram.ViewModels.Settings
 
         public int UseLessData
         {
-            get => Array.IndexOf(_useLessDataIndexer, Settings.UseLessData);
+            get => Array.IndexOf(_useLessDataIndexer, AppSettings.UseLessData);
             set
             {
-                if (Settings.UseLessData != _useLessDataIndexer[value])
+                if (AppSettings.UseLessData != _useLessDataIndexer[value])
                 {
-                    Settings.UseLessData = _useLessDataIndexer[value];
+                    AppSettings.UseLessData = _useLessDataIndexer[value];
                     RaisePropertyChanged();
                 }
             }
@@ -124,10 +124,10 @@ namespace Telegram.ViewModels.Settings
 
         public bool IsStreamingEnabled
         {
-            get => SettingsService.Current.IsStreamingEnabled;
+            get => AppSettings.IsStreamingEnabled;
             set
             {
-                SettingsService.Current.IsStreamingEnabled = value;
+                AppSettings.IsStreamingEnabled = value;
                 RaisePropertyChanged();
             }
         }
@@ -136,12 +136,12 @@ namespace Telegram.ViewModels.Settings
 
         public bool IsDownloadFolderEnabled
         {
-            get => SettingsService.Current.IsDownloadFolderEnabled;
+            get => AppSettings.IsDownloadFolderEnabled;
             set
             {
-                if (SettingsService.Current.IsDownloadFolderEnabled != value)
+                if (AppSettings.IsDownloadFolderEnabled != value)
                 {
-                    SettingsService.Current.IsDownloadFolderEnabled = value;
+                    AppSettings.IsDownloadFolderEnabled = value;
                     RaisePropertyChanged();
 
                     UpdateDownloadFolder(value);

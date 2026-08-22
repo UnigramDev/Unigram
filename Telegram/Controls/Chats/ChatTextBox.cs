@@ -20,6 +20,7 @@ using Telegram.Common;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Services.Settings;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -592,7 +593,7 @@ namespace Telegram.Controls.Chats
                         // The message is a single emoji, so it is the sticker query
                         Document.GetText(TextGetOptions.NoHidden, out string text);
 
-                        ShowOrUpdateEmojiFlyout(0, new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, text, ViewModel.Chat?.Id ?? 0));
+                        ShowOrUpdateEmojiFlyout(0, new SearchStickersCollection(ViewModel.ClientService, true, text, ViewModel.Chat?.Id ?? 0));
                         inline = true;
 
                         var chat = ViewModel.Chat;
@@ -608,12 +609,12 @@ namespace Telegram.Controls.Chats
                             return true;
                         }
 
-                        autocomplete = new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, false, text.Trim(), chat.Id);
+                        autocomplete = new SearchStickersCollection(ViewModel.ClientService, false, text.Trim(), chat.Id);
                         return true;
                     }
                     else
                     {
-                        ShowOrUpdateEmojiFlyout(index, new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, result, ViewModel.Chat?.Id ?? 0));
+                        ShowOrUpdateEmojiFlyout(index, new SearchStickersCollection(ViewModel.ClientService, true, result, ViewModel.Chat?.Id ?? 0));
 
                         autocomplete = null;
                         inline = true;
@@ -622,7 +623,7 @@ namespace Telegram.Controls.Chats
                 }
                 else if (entity == AutocompleteEntity.Emoji && fromTextChanging)
                 {
-                    ShowOrUpdateEmojiFlyout(index, new EmojiCollection(ViewModel.ClientService, result, ViewModel.Chat.Id));
+                    ShowOrUpdateEmojiFlyout(index, new EmojiCollection(ViewModel.ClientService, ViewModel.Settings.RecentEmoji, result, ViewModel.Chat.Id));
 
                     autocomplete = null;
                     inline = true;
@@ -909,6 +910,7 @@ namespace Telegram.Controls.Chats
         public partial class EmojiCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
+            private readonly RecentEmojiSettings _recent;
             private readonly string _query;
             private readonly string _inputLanguage;
             private readonly long _chatId;
@@ -917,9 +919,10 @@ namespace Telegram.Controls.Chats
 
             private string _emoji;
 
-            public EmojiCollection(IClientService clientService, string query, long chatId)
+            public EmojiCollection(IClientService clientService, RecentEmojiSettings recent, string query, long chatId)
             {
                 _clientService = clientService;
+                _recent = recent;
                 _query = query.Replace('_', ' ');
                 _inputLanguage = NativeUtils.GetKeyboardCulture();
                 _chatId = chatId;
@@ -945,7 +948,7 @@ namespace Telegram.Controls.Chats
 
                             foreach (var emoji in distinct)
                             {
-                                var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(emoji);
+                                var index = _recent.Items.IndexOf(emoji);
                                 if (index >= 0)
                                 {
                                     recent[index] = emoji;

@@ -59,7 +59,7 @@ namespace Telegram.Collections
                             var emoji = item.Emoji;
                             if (Emoji.EmojiGroupInternal._skinEmojis.Contains(emoji) || Emoji.EmojiGroupInternal._skinEmojis.Contains(emoji.TrimEnd('\uFE0F')))
                             {
-                                Add(SettingsService.Current.Emoji.GetEmojiSkinTone(emoji));
+                                Add(AppSettings.Emoji.GetEmojiSkinTone(emoji));
                             }
                             else
                             {

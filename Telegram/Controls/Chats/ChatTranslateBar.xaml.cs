@@ -53,7 +53,7 @@ namespace Telegram.Controls.Chats
             var canTranslate = ViewModel.CanTranslate;
             if (canTranslate)
             {
-                TranslateTo.Text = string.Format(Strings.TranslateToButton, TranslateService.LanguageName(SettingsService.Current.Translate.To));
+                TranslateTo.Text = string.Format(Strings.TranslateToButton, TranslateService.LanguageName(ViewModel.Settings.Translate.To));
 
                 MenuButton.Visibility = ViewModel.IsPremium
                     ? Visibility.Visible
@@ -114,7 +114,7 @@ namespace Telegram.Controls.Chats
             var languageName = TranslateService.LanguageName(ViewModel.DetectedLanguage);
 
             var translateTo = flyout.CreateFlyoutItem(ViewModel.EditTranslate, Strings.TranslateTo, Icons.Translate);
-            translateTo.KeyboardAcceleratorTextOverride = TranslateService.LanguageName(SettingsService.Current.Translate.To);
+            translateTo.KeyboardAcceleratorTextOverride = TranslateService.LanguageName(ViewModel.Settings.Translate.To);
 
             flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(ViewModel.StopTranslate, string.Format(Strings.DoNotTranslateLanguage, languageName), Icons.HandRight);

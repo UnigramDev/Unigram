@@ -1417,13 +1417,13 @@ namespace Telegram.Views
 
                     if (checkbox.Content is MessageBubble bubble)
                     {
-                        if (bubble.NeedShadow && ApiInfo.CanCreateThemeShadow && SettingsService.Current.Diagnostics.BubbleElevationDebug)
+                        if (bubble.NeedShadow && ApiInfo.CanCreateThemeShadow && AppSettings.Diagnostics.BubbleElevationDebug)
                         {
                             bubble.UpdateShadow(_shadow);
                         }
 
-                        bubble.UpdateRecyclePool(SettingsService.Current.Diagnostics.BubbleRecyclingDebug ? _textBlockRecyclePool : null);
-                        bubble.UpdateContentRecyclePool(SettingsService.Current.Diagnostics.BubbleContentRecyclingDebug ? _contentRecyclePool : null);
+                        bubble.UpdateRecyclePool(AppSettings.Diagnostics.BubbleRecyclingDebug ? _textBlockRecyclePool : null);
+                        bubble.UpdateContentRecyclePool(AppSettings.Diagnostics.BubbleContentRecyclingDebug ? _contentRecyclePool : null);
 
                         bubble.UpdateQuery(ViewModel.Search?.Query, false);
                         bubble.UpdateMessage(args.Item as MessageViewModel);

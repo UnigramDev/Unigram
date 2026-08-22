@@ -57,8 +57,8 @@ namespace Telegram.Services
 
         public LifetimeService()
         {
-            _passcode = new PasscodeService(SettingsService.Current.PasscodeLock);
-            _playback = new PlaybackService(SettingsService.Current);
+            _passcode = new PasscodeService(AppSettings.PasscodeLock);
+            _playback = new PlaybackService();
             _shortcuts = new ShortcutsService();
             _proxy = new ProxyService(this);
             _voip = new VoipCoordinator();
@@ -118,8 +118,8 @@ namespace Telegram.Services
                     {
                         toBeInitialized.Add(new AvailableSession(
                             sessionId,
-                            sessionId == SettingsService.Current.ActiveSession,
-                            sessionId == SettingsService.Current.PreviousSession));
+                            sessionId == AppSettings.ActiveSession,
+                            sessionId == AppSettings.PreviousSession));
                     }
                     else
                     {
@@ -169,7 +169,7 @@ namespace Telegram.Services
 
             if (show)
             {
-                foreach (var session in _sessions.OrderBy(x => { int index = Array.IndexOf(SettingsService.Current.AccountsSelectorOrder, x.Id); return index < 0 ? x.Id : index; }))
+                foreach (var session in _sessions.OrderBy(x => { int index = Array.IndexOf(AppSettings.AccountsSelectorOrder, x.Id); return index < 0 ? x.Id : index; }))
                 {
                     hash = ((hash * 20261) + 0x80000000L + session.UserId) % 0x80000000L;
 
@@ -201,11 +201,11 @@ namespace Telegram.Services
 
                 _activeItem.IsActive = false;
                 _previousItem = _activeItem;
-                SettingsService.Current.PreviousSession = _activeItem.Id;
+                AppSettings.PreviousSession = _activeItem.Id;
 
                 _activeItem = value;
                 _activeItem.IsActive = true;
-                SettingsService.Current.ActiveSession = value.Id;
+                AppSettings.ActiveSession = value.Id;
             }
         }
 

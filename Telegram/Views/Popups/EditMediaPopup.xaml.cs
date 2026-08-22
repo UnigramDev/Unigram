@@ -332,7 +332,7 @@ namespace Telegram.Views.Popups
                 DrawToolbar.Visibility = Visibility.Collapsed;
                 DrawSlider.Visibility = Visibility.Collapsed;
 
-                SettingsService.Current.Pencil = DrawSlider.GetDefault();
+                AppSettings.Pencil = DrawSlider.GetDefault();
             }
         }
 
@@ -353,7 +353,7 @@ namespace Telegram.Views.Popups
                 DrawToolbar.Visibility = Visibility.Collapsed;
                 DrawSlider.Visibility = Visibility.Collapsed;
 
-                SettingsService.Current.Pencil = DrawSlider.GetDefault();
+                AppSettings.Pencil = DrawSlider.GetDefault();
 
                 Cancel();
             }
@@ -541,7 +541,7 @@ namespace Telegram.Views.Popups
 
             DrawToolbar.Visibility = Visibility.Visible;
             DrawSlider.Visibility = Visibility.Visible;
-            DrawSlider.SetDefault(SettingsService.Current.Pencil);
+            DrawSlider.SetDefault(AppSettings.Pencil);
 
             Canvas.Mode = PencilCanvasMode.Stroke;
             Canvas.Stroke = DrawSlider.Stroke;

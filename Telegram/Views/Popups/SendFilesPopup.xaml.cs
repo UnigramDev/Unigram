@@ -25,6 +25,7 @@ using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -325,7 +326,7 @@ namespace Telegram.Views.Popups
             IsMediaSelected = media && IsMediaAllowed;
             IsFilesSelected = !IsMediaSelected;
 
-            SendHighQuality = viewModel.Settings.SendLargePhotos;
+            SendHighQuality = AppSettings.SendLargePhotos;
 
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(viewModel.Session);
             CaptionInput.CustomEmoji = CustomEmoji;
@@ -1688,7 +1689,7 @@ namespace Telegram.Views.Popups
         private void ToggleSendHighQuality()
         {
             SendHighQuality = !SendHighQuality;
-            ViewModel.Settings.SendLargePhotos = SendHighQuality;
+            AppSettings.SendLargePhotos = SendHighQuality;
         }
 
         private void ToggleSendWithSpoiler()

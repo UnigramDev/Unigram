@@ -24,8 +24,8 @@ namespace Telegram.Controls
         private const double columnMinimalWidthMain = 380;
         private const double kDefaultDialogsWidthRatio = 5d / 14d;
 
-        private double gripWidthRatio = SettingsService.Current.DialogsWidthRatio;
-        private double dialogsWidthRatio = SettingsService.Current.DialogsWidthRatio;
+        private double gripWidthRatio = AppSettings.DialogsWidthRatio;
+        private double dialogsWidthRatio = AppSettings.DialogsWidthRatio;
 
         private MasterDetailState _currentState = MasterDetailState.Unknown;
         public MasterDetailState CurrentState
@@ -267,7 +267,7 @@ namespace Telegram.Controls
             VisualStateManager.GoToState(grip, "Normal", false);
 
             dialogsWidthRatio = gripWidthRatio;
-            SettingsService.Current.DialogsWidthRatio = gripWidthRatio;
+            AppSettings.DialogsWidthRatio = gripWidthRatio;
 
             InvalidateMeasure();
 

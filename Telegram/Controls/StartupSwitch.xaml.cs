@@ -81,7 +81,7 @@ namespace Telegram.Controls
 
                 if (ToggleMinimized != null)
                 {
-                    ToggleMinimized.IsChecked = SettingsService.Current.IsLaunchMinimized;
+                    ToggleMinimized.IsChecked = AppSettings.IsLaunchMinimized;
                     ToggleMinimized.Visibility = Visibility.Visible;
                 }
 
@@ -153,7 +153,7 @@ namespace Telegram.Controls
 
         private void Minimized_Toggled(object sender, RoutedEventArgs e)
         {
-            SettingsService.Current.IsLaunchMinimized = ToggleMinimized.IsChecked is true;
+            AppSettings.IsLaunchMinimized = ToggleMinimized.IsChecked is true;
         }
     }
 }

@@ -42,9 +42,9 @@ namespace Telegram.ViewModels.Settings
 
             ChatThemes = new ObservableCollection<ChatThemeViewModel>();
 
-            var stored = settingsService.Appearance.Scaling;
+            var stored = AppSettings.Appearance.Scaling;
 
-            if (settingsService.Appearance.UseDefaultScaling)
+            if (AppSettings.Appearance.UseDefaultScaling)
             {
                 stored = 0;
             }
@@ -83,7 +83,7 @@ namespace Telegram.ViewModels.Settings
             var defaultTheme = new ChatThemeViewModel(ClientService, "\U0001F3E0", defaultLight, defaultDark, false);
             var themes = ClientService.ChatThemes.Select(x => new ChatThemeViewModel(ClientService, x, false));
 
-            var selectedTheme = themes.FirstOrDefault(x => x.AreTheSame(Settings.Appearance.ChatTheme)) ?? defaultTheme;
+            var selectedTheme = themes.FirstOrDefault(x => x.AreTheSame(AppSettings.Appearance.ChatTheme)) ?? defaultTheme;
             if (selectedTheme != null)
             {
                 selectedTheme.LightSettings.Background = ClientService.GetDefaultBackground(false) ?? defaultLight.Background;
@@ -134,15 +134,15 @@ namespace Telegram.ViewModels.Settings
             SetBackground(chatTheme.LightSettings?.Background, false);
             SetBackground(chatTheme.DarkSettings?.Background, true);
 
-            Settings.Appearance.ChatTheme = chatTheme.ToEmoji();
-            Settings.Appearance.UpdateNightMode(updateBackground: false);
+            AppSettings.Appearance.ChatTheme = chatTheme.ToEmoji();
+            AppSettings.Appearance.UpdateNightMode(updateBackground: false);
 
             _selectedChatTheme = chatTheme;
             SelectionChanged = true;
             RaisePropertyChanged(nameof(SelectedChatTheme));
         }
 
-        public NightMode NightMode => Settings.Appearance.NightMode;
+        public NightMode NightMode => AppSettings.Appearance.NightMode;
 
         private string _emojiSet;
         public string EmojiSet
@@ -169,13 +169,13 @@ namespace Telegram.ViewModels.Settings
                     var scaling = _scalingIndexer[value];
                     if (scaling == 0)
                     {
-                        NativeUtils.OverrideScaleForCurrentView(Settings.Appearance.Scaling = _scaling = NativeUtils.GetScaleForCurrentView());
-                        Settings.Appearance.UseDefaultScaling = true;
+                        NativeUtils.OverrideScaleForCurrentView(AppSettings.Appearance.Scaling = _scaling = NativeUtils.GetScaleForCurrentView());
+                        AppSettings.Appearance.UseDefaultScaling = true;
                     }
                     else
                     {
-                        NativeUtils.OverrideScaleForCurrentView(Settings.Appearance.Scaling = _scaling = scaling);
-                        Settings.Appearance.UseDefaultScaling = false;
+                        NativeUtils.OverrideScaleForCurrentView(AppSettings.Appearance.Scaling = _scaling = scaling);
+                        AppSettings.Appearance.UseDefaultScaling = false;
                     }
 
                     RaisePropertyChanged();
@@ -214,7 +214,7 @@ namespace Telegram.ViewModels.Settings
         {
             get
             {
-                var size = SettingsService.Current.Appearance.MessageFontSize;
+                var size = AppSettings.Appearance.MessageFontSize;
                 if (_sizeToIndex.TryGetValue(size, out int index))
                 {
                     return index;
@@ -227,7 +227,7 @@ namespace Telegram.ViewModels.Settings
                 var index = (int)Math.Round(value);
                 if (_indexToSize.TryGetValue(index, out int size))
                 {
-                    SettingsService.Current.Appearance.MessageFontSize = size;
+                    AppSettings.Appearance.MessageFontSize = size;
                 }
 
                 RaisePropertyChanged();
@@ -236,32 +236,32 @@ namespace Telegram.ViewModels.Settings
 
         public int BubbleRadius
         {
-            get => Settings.Appearance.BubbleRadius;
+            get => AppSettings.Appearance.BubbleRadius;
             set
             {
-                Settings.Appearance.BubbleRadius = value;
+                AppSettings.Appearance.BubbleRadius = value;
                 RaisePropertyChanged();
             }
         }
 
         public bool ForceNightMode
         {
-            get => Settings.Appearance.ForceNightMode || Settings.Appearance.IsDarkTheme();
+            get => AppSettings.Appearance.ForceNightMode || AppSettings.Appearance.IsDarkTheme();
             set
             {
                 // TODO: this should be probably unified with the code in RootWindow and might need some changes.
-                if (Settings.Appearance.NightMode != NightMode.Disabled)
+                if (AppSettings.Appearance.NightMode != NightMode.Disabled)
                 {
-                    Settings.Appearance.NightMode = NightMode.Disabled;
+                    AppSettings.Appearance.NightMode = NightMode.Disabled;
                     ShowToast(Strings.AutoNightModeOff, ToastPopupIcon.AutoNightOff);
                 }
 
-                Settings.Appearance.ForceNightMode = value;
-                Settings.Appearance.RequestedTheme = value
+                AppSettings.Appearance.ForceNightMode = value;
+                AppSettings.Appearance.RequestedTheme = value
                     ? TelegramTheme.Dark
                     : TelegramTheme.Light;
 
-                Settings.Appearance.UpdateNightMode();
+                AppSettings.Appearance.UpdateNightMode();
 
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(NightMode));
@@ -272,42 +272,42 @@ namespace Telegram.ViewModels.Settings
 
         public bool SwipeToShare
         {
-            get => Settings.SwipeToShare;
+            get => AppSettings.SwipeToShare;
             set
             {
-                Settings.SwipeToShare = value;
+                AppSettings.SwipeToShare = value;
                 RaisePropertyChanged();
             }
         }
 
         public bool SwipeToReply
         {
-            get => Settings.SwipeToReply;
+            get => AppSettings.SwipeToReply;
             set
             {
-                Settings.SwipeToReply = value;
+                AppSettings.SwipeToReply = value;
                 RaisePropertyChanged();
             }
         }
 
         public bool SwipeToGoBack
         {
-            get => Settings.SwipeToGoBack;
+            get => AppSettings.SwipeToGoBack;
             set
             {
-                Settings.SwipeToGoBack = value;
+                AppSettings.SwipeToGoBack = value;
                 RaisePropertyChanged();
             }
         }
 
         public bool DoubleClickToReply
         {
-            get => Settings.Appearance.IsQuickReplySelected;
+            get => AppSettings.Appearance.IsQuickReplySelected;
             set
             {
-                if (Settings.Appearance.IsQuickReplySelected != value)
+                if (AppSettings.Appearance.IsQuickReplySelected != value)
                 {
-                    Settings.Appearance.IsQuickReplySelected = value;
+                    AppSettings.Appearance.IsQuickReplySelected = value;
                     RaisePropertyChanged();
                 }
             }
@@ -315,12 +315,12 @@ namespace Telegram.ViewModels.Settings
 
         public bool DoubleClickToReact
         {
-            get => !Settings.Appearance.IsQuickReplySelected;
+            get => !AppSettings.Appearance.IsQuickReplySelected;
             set
             {
-                if (Settings.Appearance.IsQuickReplySelected == value)
+                if (AppSettings.Appearance.IsQuickReplySelected == value)
                 {
-                    Settings.Appearance.IsQuickReplySelected = !value;
+                    AppSettings.Appearance.IsQuickReplySelected = !value;
                     RaisePropertyChanged();
                 }
             }
@@ -330,53 +330,53 @@ namespace Telegram.ViewModels.Settings
 
         public bool FullScreenGallery
         {
-            get => Settings.FullScreenGallery;
+            get => AppSettings.FullScreenGallery;
             set
             {
-                Settings.FullScreenGallery = value;
+                AppSettings.FullScreenGallery = value;
                 RaisePropertyChanged();
             }
         }
 
         public bool UseSystemSpellChecker
         {
-            get => Settings.UseSystemSpellChecker;
+            get => AppSettings.UseSystemSpellChecker;
             set
             {
-                Settings.UseSystemSpellChecker = value;
+                AppSettings.UseSystemSpellChecker = value;
                 RaisePropertyChanged();
             }
         }
 
         public bool IsReplaceEmojiEnabled
         {
-            get => Settings.IsReplaceEmojiEnabled;
+            get => AppSettings.IsReplaceEmojiEnabled;
             set
             {
-                Settings.IsReplaceEmojiEnabled = value;
+                AppSettings.IsReplaceEmojiEnabled = value;
                 RaisePropertyChanged();
             }
         }
 
         public bool IsAdaptiveWideEnabled
         {
-            get => Settings.IsAdaptiveWideEnabled;
+            get => AppSettings.IsAdaptiveWideEnabled;
             set
             {
-                Settings.IsAdaptiveWideEnabled = value;
+                AppSettings.IsAdaptiveWideEnabled = value;
                 RaisePropertyChanged();
             }
         }
 
         public int FontFamily
         {
-            get => FontFamilyOptions.FindIndex(x => x.Value == SettingsService.Current.Appearance.FontFamily);
+            get => FontFamilyOptions.FindIndex(x => x.Value == AppSettings.Appearance.FontFamily);
             set
             {
-                if (value >= 0 && value < FontFamilyOptions.Count && SettingsService.Current.Appearance.FontFamily != FontFamilyOptions[value].Value)
+                if (value >= 0 && value < FontFamilyOptions.Count && AppSettings.Appearance.FontFamily != FontFamilyOptions[value].Value)
                 {
-                    SettingsService.Current.Appearance.FontFamily = FontFamilyOptions[value].Value;
-                    SettingsService.Current.Appearance.UpdateNightMode(true, updateEmojiSet: true);
+                    AppSettings.Appearance.FontFamily = FontFamilyOptions[value].Value;
+                    AppSettings.Appearance.UpdateNightMode(true, updateEmojiSet: true);
 
                     RaisePropertyChanged();
                 }
@@ -387,12 +387,12 @@ namespace Telegram.ViewModels.Settings
 
         public int SendBy
         {
-            get => Array.IndexOf(_sendByIndexer, Settings.IsSendByEnterEnabled);
+            get => Array.IndexOf(_sendByIndexer, AppSettings.IsSendByEnterEnabled);
             set
             {
-                if (value >= 0 && value < _sendByIndexer.Length && Settings.IsSendByEnterEnabled != _sendByIndexer[value])
+                if (value >= 0 && value < _sendByIndexer.Length && AppSettings.IsSendByEnterEnabled != _sendByIndexer[value])
                 {
-                    Settings.IsSendByEnterEnabled = _sendByIndexer[value];
+                    AppSettings.IsSendByEnterEnabled = _sendByIndexer[value];
                     RaisePropertyChanged();
                 }
             }
@@ -412,12 +412,12 @@ namespace Telegram.ViewModels.Settings
 
         public int DistanceUnit
         {
-            get => Array.IndexOf(_distanceUnitIndexer, Settings.DistanceUnits);
+            get => Array.IndexOf(_distanceUnitIndexer, AppSettings.DistanceUnits);
             set
             {
-                if (value >= 0 && value < _distanceUnitIndexer.Length && Settings.DistanceUnits != _distanceUnitIndexer[value])
+                if (value >= 0 && value < _distanceUnitIndexer.Length && AppSettings.DistanceUnits != _distanceUnitIndexer[value])
                 {
-                    Settings.DistanceUnits = _distanceUnitIndexer[value];
+                    AppSettings.DistanceUnits = _distanceUnitIndexer[value];
                     RaisePropertyChanged();
                 }
             }
@@ -439,10 +439,10 @@ namespace Telegram.ViewModels.Settings
 
         public async void CreateTheme(ChatThemeViewModel theme)
         {
-            var dark = Settings.Appearance.IsDarkTheme();
+            var dark = AppSettings.Appearance.IsDarkTheme();
             var settings = dark ? theme.DarkSettings : theme.LightSettings;
 
-            var tint = Settings.Appearance[dark ? TelegramTheme.Dark : TelegramTheme.Light].Type;
+            var tint = AppSettings.Appearance[dark ? TelegramTheme.Dark : TelegramTheme.Light].Type;
             if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && !dark))
             {
                 tint = TelegramThemeType.Day;

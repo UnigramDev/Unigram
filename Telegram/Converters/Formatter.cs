@@ -78,7 +78,7 @@ namespace Telegram.Converters
         {
             var useImperialSystemType = false;
 
-            switch (SettingsService.Current.DistanceUnits)
+            switch (AppSettings.DistanceUnits)
             {
                 case DistanceUnits.Automatic:
                     var culture = NativeUtils.GetCurrentCulture();

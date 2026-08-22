@@ -221,7 +221,7 @@ namespace Telegram.Navigation
             _window = window;
             _current = this;
 
-            if (SettingsService.Current.Diagnostics.DisableXamlGcCollect)
+            if (AppSettings.Diagnostics.DisableXamlGcCollect)
             {
                 GarbageCollectionMonitor.StartMonitoring(window.CoreWindow);
             }
@@ -231,8 +231,8 @@ namespace Telegram.Navigation
             Id = ApplicationView.GetApplicationViewIdForWindow(window.CoreWindow);
             Bounds = window.Bounds;
 
-            var scaling = SettingsService.Current.Appearance.Scaling;
-            if (scaling is >= 100 and <= 250 && !SettingsService.Current.Appearance.UseDefaultScaling)
+            var scaling = AppSettings.Appearance.Scaling;
+            if (scaling is >= 100 and <= 250 && !AppSettings.Appearance.UseDefaultScaling)
             {
                 NativeUtils.OverrideScaleForCurrentView(scaling);
             }
@@ -518,7 +518,7 @@ namespace Telegram.Navigation
             {
                 _content = new WindowControl(this)
                 {
-                    RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme(),
+                    RequestedTheme = AppSettings.Appearance.GetCalculatedElementTheme(),
                     Content = content,
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
                     VerticalContentAlignment = VerticalAlignment.Stretch
@@ -558,7 +558,7 @@ namespace Telegram.Navigation
             ViewService.OnWindowLoaded();
         }
 
-        public ElementTheme ActualTheme => _content?.ActualTheme ?? SettingsService.Current.Appearance.GetCalculatedElementTheme();
+        public ElementTheme ActualTheme => _content?.ActualTheme ?? AppSettings.Appearance.GetCalculatedElementTheme();
 
         public ElementTheme RequestedTheme
         {
@@ -634,7 +634,7 @@ namespace Telegram.Navigation
             Logger.Debug(sender.Bounds);
             Bounds = sender.Bounds;
 
-            if (SettingsService.Current.Diagnostics.WindowResizeDebug)
+            if (AppSettings.Diagnostics.WindowResizeDebug)
             {
                 return;
             }
@@ -653,7 +653,7 @@ namespace Telegram.Navigation
             Logger.Debug(sender.Bounds);
             Bounds = sender.Bounds;
 
-            if (SettingsService.Current.Diagnostics.WindowResizeDebug)
+            if (AppSettings.Diagnostics.WindowResizeDebug)
             {
                 return;
             }
@@ -1016,7 +1016,7 @@ namespace Telegram.Navigation
             Color buttonPressed;
 
             // Apply buttons feedback based on Light or Dark theme
-            var theme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
+            var theme = AppSettings.Appearance.GetCalculatedApplicationTheme();
             if (theme == ApplicationTheme.Dark)
             {
                 //background = Color.FromArgb(255, 43, 43, 43);

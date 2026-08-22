@@ -137,7 +137,7 @@ namespace Telegram.Controls.Messages
         {
             EnsureTextSelectionManager();
 
-            if (_trackerOwner == null && RootGrid != null && IsTrackerEnabled && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare || SettingsService.Current.SwipeToGoBack))
+            if (_trackerOwner == null && RootGrid != null && IsTrackerEnabled && (AppSettings.SwipeToReply || AppSettings.SwipeToShare || AppSettings.SwipeToGoBack))
             {
                 _compositor = BootStrapper.Current.Compositor;
                 _container ??= _compositor.CreateContainerVisual();
@@ -858,21 +858,21 @@ namespace Telegram.Controls.Messages
                 // also carries every update, and it came back after the container had
                 // been bound to something else, so the gesture was configured for a
                 // message that had already left it.
-                share = SettingsService.Current.SwipeToShare && CanBeForwarded(message);
+                share = AppSettings.SwipeToShare && CanBeForwarded(message);
 
                 // canReply is deliberately not consulted: it is not reliable yet, and it
                 // is wrong in the costlier direction. Offering the gesture on the few
                 // messages that turn out not to accept a reply is a smaller failure than
                 // withholding it wherever the flag is wrong, which reads as the feature
                 // being broken.
-                reply = SettingsService.Current.SwipeToReply && CanBeReplied(message);
+                reply = AppSettings.SwipeToReply && CanBeReplied(message);
             }
 
             // Back takes the direction Share is not using. The precedence is deliberate: a user who
             // wants to go back from anywhere turns Share off, and there is no state where a setting
             // is on but silently does nothing. CanShare stays false either way, which is what keeps
             // the bubble still under a back swipe - the offset expression already reads it.
-            var back = !share && SettingsService.Current.SwipeToGoBack;
+            var back = !share && AppSettings.SwipeToGoBack;
 
             if (_tracker != null)
             {

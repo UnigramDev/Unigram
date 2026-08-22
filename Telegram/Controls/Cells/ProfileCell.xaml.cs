@@ -151,7 +151,7 @@ namespace Telegram.Controls.Cells
 
             if (phoneNumber)
             {
-                if (SettingsService.Current.Diagnostics.HidePhoneNumber)
+                if (AppSettings.Diagnostics.HidePhoneNumber)
                 {
                     SubtitleLabel.Text = "+42 --- --- ----";
                 }
@@ -200,7 +200,7 @@ namespace Telegram.Controls.Cells
 
             if (phoneNumber)
             {
-                if (SettingsService.Current.Diagnostics.HidePhoneNumber)
+                if (AppSettings.Diagnostics.HidePhoneNumber)
                 {
                     SubtitleLabel.Text = "+42 --- --- ----";
                 }
@@ -242,7 +242,7 @@ namespace Telegram.Controls.Cells
 
             //if (phoneNumber)
             //{
-            //    if (SettingsService.Current.Diagnostics.HidePhoneNumber)
+            //    if (AppSettings.Diagnostics.HidePhoneNumber)
             //    {
             //        SubtitleLabel.Text = "+42 --- --- ----";
             //    }

@@ -409,7 +409,7 @@ namespace Telegram.Controls
         {
             try
             {
-                if (SettingsService.Current.Diagnostics.ForceEdgeHtml || !ApiInfo.IsDesktop)
+                if (AppSettings.Diagnostics.ForceEdgeHtml || !ApiInfo.IsDesktop)
                 {
                     return false;
                 }
@@ -454,8 +454,8 @@ postEvent: function(eventType, eventData) {
 
                 View.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 View.CoreWebView2.Settings.AreDefaultScriptDialogsEnabled = false;
-                View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
-                View.CoreWebView2.Settings.AreDevToolsEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
+                View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = AppSettings.Diagnostics.EnableWebViewDevTools;
+                View.CoreWebView2.Settings.AreDevToolsEnabled = AppSettings.Diagnostics.EnableWebViewDevTools;
 
                 try
                 {

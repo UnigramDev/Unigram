@@ -264,7 +264,7 @@ namespace Telegram.ViewModels.Drawers
                 _groupSetChatId = 0;
                 SavedStickers.Remove(_groupSet);
 
-                if (Settings.Stickers.TryGetHiddenGroupStickerSet(chat.Id, out long hiddenSetId)
+                if (AppSettings.Stickers.TryGetHiddenGroupStickerSet(chat.Id, out long hiddenSetId)
                     && hiddenSetId == fullInfo.StickerSetId)
                 {
                     return;

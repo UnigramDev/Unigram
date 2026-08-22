@@ -39,7 +39,7 @@
 
                 <controls:HeaderedControl Header="{CustomResource ExperimentalSettings}"
                                           Footer="{CustomResource ExperimentalSettingsHint}">
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ShowIds, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.ShowIds, Mode=TwoWay}"
                               Content="{CustomResource DiagnosticsShowPeerIds}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>

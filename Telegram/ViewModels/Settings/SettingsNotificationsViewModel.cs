@@ -176,10 +176,10 @@ namespace Telegram.ViewModels.Settings
 
         public bool IsAllAccountsNotifications
         {
-            get => SettingsService.Current.IsAllAccountsNotifications;
+            get => AppSettings.IsAllAccountsNotifications;
             set
             {
-                SettingsService.Current.IsAllAccountsNotifications = value;
+                AppSettings.IsAllAccountsNotifications = value;
                 RaisePropertyChanged();
             }
         }

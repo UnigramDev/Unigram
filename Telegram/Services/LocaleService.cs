@@ -78,9 +78,9 @@ namespace Telegram.Services
 
             _languagePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack");
 
-            _languageCode = SettingsService.Current.LanguagePackId;
-            _languageBase = SettingsService.Current.LanguageBaseId;
-            _languagePlural = SettingsService.Current.LanguagePluralId;
+            _languageCode = AppSettings.LanguagePackId;
+            _languageBase = AppSettings.LanguageBaseId;
+            _languagePlural = AppSettings.LanguagePluralId;
 
             LoadCurrentCulture();
         }
@@ -133,7 +133,7 @@ namespace Telegram.Services
 
         public string Id => CurrentCulture.TwoLetterISOLanguageName;
 
-        public FlowDirection FlowDirection => _currentCulture.TextInfo.IsRightToLeft && SettingsService.Current.Diagnostics.AllowRightToLeft
+        public FlowDirection FlowDirection => _currentCulture.TextInfo.IsRightToLeft && AppSettings.Diagnostics.AllowRightToLeft
             ? FlowDirection.RightToLeft
             : FlowDirection.LeftToRight;
 
@@ -143,9 +143,9 @@ namespace Telegram.Services
             _languageBase = info.BaseLanguagePackId;
             _languagePlural = info.PluralCode;
 
-            SettingsService.Current.LanguagePackId = info.Id;
-            SettingsService.Current.LanguageBaseId = info.BaseLanguagePackId;
-            SettingsService.Current.LanguagePluralId = info.PluralCode;
+            AppSettings.LanguagePackId = info.Id;
+            AppSettings.LanguageBaseId = info.BaseLanguagePackId;
+            AppSettings.LanguagePluralId = info.PluralCode;
 
             LoadCurrentCulture();
 

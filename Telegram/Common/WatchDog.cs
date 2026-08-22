@@ -97,7 +97,7 @@ namespace Telegram
             _channel = Channel.CreateUnbounded<string>();
             _channelTask = Task.Run(HandleReportsAsync);
 
-            _userId = SettingsService.Current.AnonymousUserId;
+            _userId = AppSettings.AnonymousUserId;
             _launchTime = MonotonicUnixTime.Now;
 
             _crashLog = Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.id");
@@ -442,7 +442,7 @@ namespace Telegram
 
             if (args.Exception is LayoutCycleException)
             {
-                SettingsService.Current.Diagnostics.LegacyScrollBars = true;
+                AppSettings.Diagnostics.LegacyScrollBars = true;
             }
             else if (args.Exception is NotSupportedException)
             {
@@ -461,7 +461,7 @@ namespace Telegram
                 return;
             }
 
-            if (SettingsService.Current.Diagnostics.ShowMemoryUsage && Window.Current?.Content?.XamlRoot != null)
+            if (AppSettings.Diagnostics.ShowMemoryUsage && Window.Current?.Content?.XamlRoot != null)
             {
                 _ = MessagePopup.ShowAsync(WindowContext.Current.XamlRoot, args.Exception.ToString(), "Unhandled exception", "OK");
             }
@@ -601,7 +601,7 @@ namespace Telegram
             var next = MonotonicUnixTime.Now - _launchTime;
             var diff = TimeSpan.FromSeconds(next).ToDuration();
 
-            var count = SettingsService.Current.Diagnostics.UpdateCount;
+            var count = AppSettings.Diagnostics.UpdateCount;
 
             var status = MEMORYSTATUSEX.Create();
             GlobalMemoryStatusEx(&status);
@@ -626,7 +626,7 @@ namespace Telegram
                 var text = (BootStrapper.Current.TextScaleFactor * 100).ToString("N0");
                 var size = WindowContext.Current.Bounds;
 
-                var ratio = SettingsService.Current.DialogsWidthRatio;
+                var ratio = AppSettings.DialogsWidthRatio;
                 var width = MasterDetailPanel.CountDialogsWidthFromRatio(size.Width, ratio);
 
                 info += $"Screen reader: {reader}\n" +
@@ -707,15 +707,15 @@ namespace Telegram
 
             private void LoadState()
             {
-                _currentTokens = SettingsService.Current.ReportsCount;
-                _lastRefill = SettingsService.Current.ReportsDate;
+                _currentTokens = AppSettings.ReportsCount;
+                _lastRefill = AppSettings.ReportsDate;
                 Refill();
             }
 
             private void SaveState()
             {
-                SettingsService.Current.ReportsCount = _currentTokens;
-                SettingsService.Current.ReportsDate = _lastRefill;
+                AppSettings.ReportsCount = _currentTokens;
+                AppSettings.ReportsDate = _lastRefill;
             }
         }
     }

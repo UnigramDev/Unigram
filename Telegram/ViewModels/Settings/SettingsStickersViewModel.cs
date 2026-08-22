@@ -250,10 +250,10 @@ namespace Telegram.ViewModels.Settings
 
         public bool SuggestCustomEmoji
         {
-            get => Settings.Stickers.SuggestCustomEmoji;
+            get => AppSettings.Stickers.SuggestCustomEmoji;
             set
             {
-                Settings.Stickers.SuggestCustomEmoji = value;
+                AppSettings.Stickers.SuggestCustomEmoji = value;
                 RaisePropertyChanged();
             }
         }
@@ -270,10 +270,10 @@ namespace Telegram.ViewModels.Settings
 
         public bool DynamicPackOrder
         {
-            get => Settings.Stickers.DynamicPackOrder;
+            get => AppSettings.Stickers.DynamicPackOrder;
             set
             {
-                Settings.Stickers.DynamicPackOrder = value;
+                AppSettings.Stickers.DynamicPackOrder = value;
                 RaisePropertyChanged();
             }
         }
@@ -283,13 +283,13 @@ namespace Telegram.ViewModels.Settings
 
         public int EmojiStyle
         {
-            get => Array.IndexOf(_emojiStyleIndexer, Settings.Appearance.EmojiSet);
+            get => Array.IndexOf(_emojiStyleIndexer, AppSettings.Appearance.EmojiSet);
             set
             {
-                if (value >= 0 && value < _emojiStyleIndexer.Length && Settings.Appearance.EmojiSet != _emojiStyleIndexer[value])
+                if (value >= 0 && value < _emojiStyleIndexer.Length && AppSettings.Appearance.EmojiSet != _emojiStyleIndexer[value])
                 {
-                    SettingsService.Current.Appearance.EmojiSet = _emojiStyleIndexer[value];
-                    SettingsService.Current.Appearance.UpdateNightMode(true, updateEmojiSet: true);
+                    AppSettings.Appearance.EmojiSet = _emojiStyleIndexer[value];
+                    AppSettings.Appearance.UpdateNightMode(true, updateEmojiSet: true);
 
                     RaisePropertyChanged();
                 }
@@ -310,12 +310,12 @@ namespace Telegram.ViewModels.Settings
 
         public int SuggestStickers
         {
-            get => Array.IndexOf(_suggestStickersIndexer, Settings.Stickers.SuggestionMode);
+            get => Array.IndexOf(_suggestStickersIndexer, AppSettings.Stickers.SuggestionMode);
             set
             {
-                if (value >= 0 && value < _suggestStickersIndexer.Length && Settings.Stickers.SuggestionMode != _suggestStickersIndexer[value])
+                if (value >= 0 && value < _suggestStickersIndexer.Length && AppSettings.Stickers.SuggestionMode != _suggestStickersIndexer[value])
                 {
-                    Settings.Stickers.SuggestionMode = _suggestStickersIndexer[value];
+                    AppSettings.Stickers.SuggestionMode = _suggestStickersIndexer[value];
                     RaisePropertyChanged();
                 }
             }

@@ -249,7 +249,7 @@ namespace Telegram.Common
                     {
                         if (_skinEmojis.Contains(x))
                         {
-                            return SettingsService.Current.Emoji.GetEmojiSkinTone(x);
+                            return AppSettings.Emoji.GetEmojiSkinTone(x);
                         }
 
                         return new EmojiData(x);
@@ -259,13 +259,13 @@ namespace Telegram.Common
             }
         }
 
-        public static IList<EmojiData> GetRecents()
+        public static IList<EmojiData> GetRecents(RecentEmojiSettings recent)
         {
-            return SettingsService.Current.Emoji.RecentEmoji.Select(x =>
+            return recent.Items.Select(x =>
             {
                 if (EmojiGroupInternal._skinEmojis.Contains(x))
                 {
-                    return SettingsService.Current.Emoji.GetEmojiSkinTone(x);
+                    return AppSettings.Emoji.GetEmojiSkinTone(x);
                 }
 
                 return new EmojiData(x);
@@ -273,18 +273,18 @@ namespace Telegram.Common
             }).ToArray();
         }
 
-        public static List<EmojiGroup> Get()
+        public static List<EmojiGroup> Get(RecentEmojiSettings settings)
         {
             var results = new List<EmojiGroup>();
             var recent = new EmojiGroup
             {
                 Title = Strings.RecentStickers,
                 Glyph = Icons.EmojiRecents,
-                Stickers = SettingsService.Current.Emoji.RecentEmoji.Select(x =>
+                Stickers = settings.Items.Select(x =>
                 {
                     if (EmojiGroupInternal._skinEmojis.Contains(x))
                     {
-                        return SettingsService.Current.Emoji.GetEmojiSkinTone(x);
+                        return AppSettings.Emoji.GetEmojiSkinTone(x);
                     }
 
                     return new EmojiData(x);

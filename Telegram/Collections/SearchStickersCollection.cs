@@ -21,7 +21,6 @@ namespace Telegram.Collections
     public partial class SearchStickersCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
-        private readonly ISettingsService _settings;
         private readonly StickerType _type;
         private readonly string _query;
         private readonly long _chatId;
@@ -33,10 +32,9 @@ namespace Telegram.Collections
 
         public bool IsCustomEmoji => _type is StickerTypeCustomEmoji;
 
-        public SearchStickersCollection(IClientService clientService, ISettingsService settings, bool customEmoji, string query, long chatId)
+        public SearchStickersCollection(IClientService clientService, bool customEmoji, string query, long chatId)
         {
             _clientService = clientService;
-            _settings = settings;
             _type = customEmoji ? new StickerTypeCustomEmoji() : new StickerTypeRegular();
             _query = query;
             _chatId = chatId;
@@ -50,7 +48,7 @@ namespace Telegram.Collections
             {
                 count = 0;
 
-                if (_first && _settings.Stickers.SuggestionMode != StickersSuggestionMode.None)
+                if (_first && AppSettings.Stickers.SuggestionMode != StickersSuggestionMode.None)
                 {
                     _first = false;
 
@@ -66,7 +64,7 @@ namespace Telegram.Collections
                         }
                     }
                 }
-                else if (!_first && _settings.Stickers.SuggestionMode == StickersSuggestionMode.All && _type is not StickerTypeCustomEmoji)
+                else if (!_first && AppSettings.Stickers.SuggestionMode == StickersSuggestionMode.All && _type is not StickerTypeCustomEmoji)
                 {
                     _hasMore = false;
 

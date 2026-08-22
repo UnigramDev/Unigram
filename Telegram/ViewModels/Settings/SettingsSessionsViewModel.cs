@@ -154,12 +154,12 @@ namespace Telegram.ViewModels.Settings
             popup.MaxLength = 32;
 
             var confirm = await ShowPopupAsync(popup);
-            if (confirm == ContentDialogResult.Primary && popup.Text != Settings.Diagnostics.DeviceName)
+            if (confirm == ContentDialogResult.Primary && popup.Text != AppSettings.Diagnostics.DeviceName)
             {
                 session.DeviceModel = popup.Text;
                 RaisePropertyChanged(nameof(Current));
 
-                Settings.Diagnostics.DeviceName = popup.Text;
+                AppSettings.Diagnostics.DeviceName = popup.Text;
                 ClientService.Close(true);
             }
         }

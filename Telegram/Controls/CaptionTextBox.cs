@@ -233,13 +233,13 @@ namespace Telegram.Controls
             }
             else if (entity == AutocompleteEntity.Sticker)
             {
-                ShowOrUpdateEmojiFlyout(index, new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, result, ChatId));
+                ShowOrUpdateEmojiFlyout(index, new SearchStickersCollection(ViewModel.ClientService, true, result, ChatId));
                 SetAutocomplete(null);
                 return;
             }
             else if (entity == AutocompleteEntity.Emoji)
             {
-                ShowOrUpdateEmojiFlyout(index, new ChatTextBox.EmojiCollection(ViewModel.ClientService, result, ChatId));
+                ShowOrUpdateEmojiFlyout(index, new ChatTextBox.EmojiCollection(ViewModel.ClientService, ViewModel.Settings.RecentEmoji, result, ChatId));
                 SetAutocomplete(null);
                 return;
             }

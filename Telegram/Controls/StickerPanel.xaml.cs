@@ -129,7 +129,7 @@ namespace Telegram.Controls
                 }
 
                 EmojisRoot.Activate(chat);
-                SettingsService.Current.Stickers.SelectedTab = StickersTab.Emoji;
+                AppSettings.Stickers.SelectedTab = StickersTab.Emoji;
             }
             else if (index == 1)
             {
@@ -167,7 +167,7 @@ namespace Telegram.Controls
                 }
 
                 AnimationsRoot.Activate(chat);
-                SettingsService.Current.Stickers.SelectedTab = StickersTab.Animations;
+                AppSettings.Stickers.SelectedTab = StickersTab.Animations;
             }
             else if (index == 2)
             {
@@ -206,7 +206,7 @@ namespace Telegram.Controls
                 }
 
                 StickersRoot.Activate(chat);
-                SettingsService.Current.Stickers.SelectedTab = StickersTab.Stickers;
+                AppSettings.Stickers.SelectedTab = StickersTab.Stickers;
             }
 
             Navigation.SelectionChanged -= OnSelectionChanged;
@@ -321,7 +321,7 @@ namespace Telegram.Controls
 
         public void Activate()
         {
-            switch (SettingsService.Current.Stickers.SelectedTab)
+            switch (AppSettings.Stickers.SelectedTab)
             {
                 case StickersTab.Emoji:
                     LoadAtIndex(ViewModel?.Chat, 0, /* unsure here */ false);

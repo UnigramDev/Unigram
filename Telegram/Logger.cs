@@ -142,7 +142,7 @@ namespace Telegram
                 }
             }
 
-            if ((int)level <= SettingsService.Current.VerbosityLevel && (level != LogLevel.Debug || message != null))
+            if ((int)level <= AppSettings.VerbosityLevel && (level != LogLevel.Debug || message != null))
             {
                 Client.Execute(new AddLogMessage(2, string.Format("[{0}:{1}][{2}] {3}", Path.GetFileName(filePath), line, member, message)));
             }

@@ -78,12 +78,12 @@ namespace Telegram.Services
 
         private static async void RemoveCollections()
         {
-            if (SettingsService.Current.HasRemovedCollections)
+            if (AppSettings.HasRemovedCollections)
             {
                 return;
             }
 
-            SettingsService.Current.HasRemovedCollections = true;
+            AppSettings.HasRemovedCollections = true;
 
             try
             {
@@ -484,7 +484,7 @@ namespace Telegram.Services
                 return;
             }
 
-            if (!_sessionService.IsActive && !SettingsService.Current.IsAllAccountsNotifications)
+            if (!_sessionService.IsActive && !AppSettings.IsAllAccountsNotifications)
             {
                 Logger.Info("Session is not active");
 
@@ -644,7 +644,7 @@ namespace Telegram.Services
             }
 
             if (LifetimeService.Current.Count > 1
-                && SettingsService.Current.IsAllAccountsNotifications
+                && AppSettings.IsAllAccountsNotifications
                 && _clientService.TryGetUser(_clientService.Options.MyId, out User user))
             {
                 caption = string.Format("{0} \u2b62 {1}", caption, user.FullName());

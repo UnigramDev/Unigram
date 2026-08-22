@@ -258,7 +258,7 @@ namespace Telegram.Common
                         return null;
                     }
 
-                    if (SettingsService.Current.Diagnostics.BridgeDebug)
+                    if (AppSettings.Diagnostics.BridgeDebug)
                     {
                         foreach (var item in message)
                         {
@@ -292,7 +292,7 @@ namespace Telegram.Common
                         Cancel();
                     }
                 }
-                else if (SettingsService.Current.Diagnostics.BridgeDebug)
+                else if (AppSettings.Diagnostics.BridgeDebug)
                 {
                     Logger.Info("Succeeded");
                 }
@@ -337,7 +337,7 @@ namespace Telegram.Common
 
         private static void Cancel()
         {
-            if (SettingsService.Current.Diagnostics.BridgeDebug)
+            if (AppSettings.Diagnostics.BridgeDebug)
             {
                 Logger.Info();
             }

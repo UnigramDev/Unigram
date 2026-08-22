@@ -336,7 +336,7 @@ namespace Telegram.Controls.Messages.Content
                     }
                     else
                     {
-                        if (_message.Delegate.Settings.AutoDownload.PreloadLargeVideos && SettingsService.Current.Diagnostics.VideoPreloadDebug)
+                        if (_message.Delegate.Settings.AutoDownload.PreloadLargeVideos && AppSettings.Diagnostics.VideoPreloadDebug)
                         {
                             VideoPreloader.Current.Load(_message.ClientService, file, video.Duration);
                         }

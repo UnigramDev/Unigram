@@ -148,7 +148,7 @@ namespace Telegram.Services
 
         private static async Task<bool> InstallUpdateAsync(INavigationService navigation, StorageFile file)
         {
-            if (SettingsService.Current.Diagnostics.DisablePackageManager)
+            if (AppSettings.Diagnostics.DisablePackageManager)
             {
                 return false;
             }
@@ -286,7 +286,7 @@ namespace Telegram.Services
                 return null;
             }
 
-            var updateChannel = SettingsService.Current.InstallBetaUpdates ? "#beta" : "#update";
+            var updateChannel = AppSettings.InstallBetaUpdates ? "#beta" : "#update";
             var chatId = _chatId.Value;
 
             await _clientService.SendAsync(new OpenChat(chatId));

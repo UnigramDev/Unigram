@@ -134,10 +134,10 @@ namespace Telegram.Common
 
         public static PowerSavingMode Mode
         {
-            get => SettingsService.Current.IsPowerSavingEnabled ? PowerSavingMode.Auto : PowerSavingMode.Off;
+            get => AppSettings.IsPowerSavingEnabled ? PowerSavingMode.Auto : PowerSavingMode.Off;
             set
             {
-                SettingsService.Current.IsPowerSavingEnabled = value == PowerSavingMode.Auto;
+                AppSettings.IsPowerSavingEnabled = value == PowerSavingMode.Auto;
                 UpdatePolicyByDispatcher();
             }
         }
@@ -147,10 +147,10 @@ namespace Telegram.Common
         private static bool m_areMaterialsEnabled;
         public static bool AreMaterialsEnabled
         {
-            get => SettingsService.Current.AreMaterialsEnabled && !m_isDisabledByPolicy;
+            get => AppSettings.AreMaterialsEnabled && !m_isDisabledByPolicy;
             set
             {
-                SettingsService.Current.AreMaterialsEnabled = value;
+                AppSettings.AreMaterialsEnabled = value;
                 RaiseAreMaterialsEnabledChanged();
             }
         }
@@ -160,86 +160,86 @@ namespace Telegram.Common
             if (m_areMaterialsEnabled != AreMaterialsEnabled)
             {
                 m_areMaterialsEnabled = AreMaterialsEnabled;
-                SettingsService.Current.Appearance.UpdateNightMode(false, false);
+                AppSettings.Appearance.UpdateNightMode(false, false);
             }
         }
 
         public static bool AutoPlayVideos
         {
-            get => SettingsService.Current.AutoPlayVideos && !m_isPowerSavingMode;
+            get => AppSettings.AutoPlayVideos && !m_isPowerSavingMode;
             set
             {
-                SettingsService.Current.AutoPlayVideos = value;
+                AppSettings.AutoPlayVideos = value;
                 RaisePropertyChanged();
             }
         }
 
         public static bool AutoPlayAnimations
         {
-            get => SettingsService.Current.AutoPlayAnimations && !m_isPowerSavingMode;
+            get => AppSettings.AutoPlayAnimations && !m_isPowerSavingMode;
             set
             {
-                SettingsService.Current.AutoPlayAnimations = value;
+                AppSettings.AutoPlayAnimations = value;
                 RaisePropertyChanged();
             }
         }
 
         public static bool AutoPlayStickers
         {
-            get => SettingsService.Current.AutoPlayStickers && !m_isPowerSavingMode;
+            get => AppSettings.AutoPlayStickers && !m_isPowerSavingMode;
             set
             {
-                SettingsService.Current.AutoPlayStickers = value;
+                AppSettings.AutoPlayStickers = value;
                 RaisePropertyChanged();
             }
         }
 
         public static bool AutoPlayStickersInChats
         {
-            get => SettingsService.Current.AutoPlayStickersInChats && !m_isPowerSavingMode;
+            get => AppSettings.AutoPlayStickersInChats && !m_isPowerSavingMode;
             set
             {
-                SettingsService.Current.AutoPlayStickersInChats = value;
+                AppSettings.AutoPlayStickersInChats = value;
                 RaisePropertyChanged();
             }
         }
 
         public static bool AutoPlayEmoji
         {
-            get => SettingsService.Current.AutoPlayEmoji && !m_isPowerSavingMode;
+            get => AppSettings.AutoPlayEmoji && !m_isPowerSavingMode;
             set
             {
-                SettingsService.Current.AutoPlayEmoji = value;
+                AppSettings.AutoPlayEmoji = value;
                 RaisePropertyChanged();
             }
         }
 
         public static bool AutoPlayEmojiInChats
         {
-            get => SettingsService.Current.AutoPlayEmojiInChats && !m_isPowerSavingMode;
+            get => AppSettings.AutoPlayEmojiInChats && !m_isPowerSavingMode;
             set
             {
-                SettingsService.Current.AutoPlayEmojiInChats = value;
+                AppSettings.AutoPlayEmojiInChats = value;
                 RaisePropertyChanged();
             }
         }
 
         public static bool AreSmoothTransitionsEnabled
         {
-            get => SettingsService.Current.AreSmoothTransitionsEnabled && m_uiSettings.AnimationsEnabled && !m_isPowerSavingMode;
+            get => AppSettings.AreSmoothTransitionsEnabled && m_uiSettings.AnimationsEnabled && !m_isPowerSavingMode;
             set
             {
-                SettingsService.Current.AreSmoothTransitionsEnabled = value;
+                AppSettings.AreSmoothTransitionsEnabled = value;
                 RaisePropertyChanged();
             }
         }
 
         public static bool AreCallsAnimated
         {
-            get => SettingsService.Current.AreCallsAnimated && !m_isPowerSavingMode;
+            get => AppSettings.AreCallsAnimated && !m_isPowerSavingMode;
             set
             {
-                SettingsService.Current.AreCallsAnimated = value;
+                AppSettings.AreCallsAnimated = value;
                 RaisePropertyChanged();
             }
         }

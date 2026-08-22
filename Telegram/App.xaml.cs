@@ -69,18 +69,18 @@ namespace Telegram
         /// </summary>
         public App()
         {
-            SettingsService.Current.Initialize();
-            GarbageCollectionMonitor.Initialize(GC.Collect, SettingsService.Current.Diagnostics.DisableXamlGcCollect, SettingsService.Current.Diagnostics.DisableMemoryPressure);
+            AppSettings.Initialize();
+            GarbageCollectionMonitor.Initialize(GC.Collect, AppSettings.Diagnostics.DisableXamlGcCollect, AppSettings.Diagnostics.DisableMemoryPressure);
             WatchDog.Initialize();
             LifetimeService.Initialize();
 
-            RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
+            RequestedTheme = AppSettings.Appearance.GetCalculatedApplicationTheme();
             InitializeComponent();
         }
 
         protected override void OnWindowActivated(Window window, bool active)
         {
-            SettingsService.Current.Appearance.UpdateTimer();
+            AppSettings.Appearance.UpdateTimer();
 
             var navigation = WindowContext.GetNavigationService(window);
             if (navigation != null)
@@ -263,7 +263,7 @@ namespace Telegram
                 }
             }
 
-            if (SettingsService.Current.IsTrayVisible)
+            if (AppSettings.IsTrayVisible)
             {
                 await BridgeApplicationContext.LaunchAsync();
             }
@@ -328,7 +328,7 @@ namespace Telegram
             //}
 
             // #2034: Will this work? No one knows.
-            SettingsService.Current.Appearance.UpdateNightMode(null);
+            AppSettings.Appearance.UpdateNightMode(null);
 
             OnStartSync(StartKind.Activate);
         }

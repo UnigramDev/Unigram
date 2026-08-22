@@ -30,6 +30,34 @@ namespace Telegram.Services.Settings
         void Flush();
     }
 
+    public static class SettingsStoreExtensions
+    {
+        public static T GetValueOrDefault<T>(this ISettingsStore store, string key, T defaultValue)
+        {
+            return store.TryGet(key, out T value) ? value : defaultValue;
+        }
+
+        // A value stored as the wrong type used to throw on the cast. Falling back to the default
+        // is the safer answer for something read on the way up.
+        public static bool TryGet<T>(this ISettingsStore store, string key, out T value)
+        {
+            if (store.TryGetValue(key, out object stored) && stored is T result)
+            {
+                value = result;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+        public static void AddOrUpdateValue<T>(this ISettingsStore store, ref T storage, string key, T value)
+        {
+            storage = value;
+            store.SetValue(key, value);
+        }
+    }
+
     public partial class ApplicationDataSettingsStore : ISettingsStore
     {
         private readonly ApplicationDataContainer _container;
@@ -93,6 +121,67 @@ namespace Telegram.Services.Settings
 
         public void Flush()
         {
+        }
+    }
+
+    public partial class SettingsServiceBase
+    {
+        protected readonly ISettingsStore _container;
+
+        public SettingsServiceBase(string key)
+            : this(ApplicationDataSettingsStore.Local.GetContainer(key))
+        {
+
+        }
+
+        public SettingsServiceBase(ISettingsStore container = null)
+        {
+            _container = container ?? ApplicationDataSettingsStore.Local;
+        }
+
+        public void AddOrUpdateValue(string key, object value)
+        {
+            _container.SetValue(key, value);
+        }
+
+        public void AddOrUpdateValue<T>(ref T storage, string key, T value)
+        {
+            _container.AddOrUpdateValue(ref storage, key, value);
+        }
+
+        protected void AddOrUpdateValue<T>(ref T storage, ISettingsStore container, string key, T value)
+        {
+            container.AddOrUpdateValue(ref storage, key, value);
+        }
+
+        protected void AddOrUpdateValue(ISettingsStore container, string key, object value)
+        {
+            container.SetValue(key, value);
+        }
+
+        public valueType GetValueOrDefault<valueType>(string key, valueType defaultValue)
+        {
+            return _container.GetValueOrDefault(key, defaultValue);
+        }
+
+        protected valueType GetValueOrDefault<valueType>(ISettingsStore container, string key, valueType defaultValue)
+        {
+            return container.GetValueOrDefault(key, defaultValue);
+        }
+
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return _container.TryGet(key, out value);
+        }
+
+        protected static bool TryGetValue<T>(ISettingsStore container, string key, out T value)
+        {
+            return container.TryGet(key, out value);
+        }
+
+        public virtual void Clear()
+        {
+            _container.Clear();
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Telegram.ViewModels.Settings
             var geopoint = new Geopoint(new BasicGeoposition { Latitude = location.Latitude, Longitude = location.Longitude });
 
             Location = location;
-            Settings.Appearance.UpdateNightMode();
+            AppSettings.Appearance.UpdateNightMode();
 
             try
             {
@@ -61,10 +61,10 @@ namespace Telegram.ViewModels.Settings
 
         public NightMode Mode
         {
-            get => Settings.Appearance.NightMode;
+            get => AppSettings.Appearance.NightMode;
             set
             {
-                if (Settings.Appearance.NightMode != value)
+                if (AppSettings.Appearance.NightMode != value)
                 {
                     if (value == NightMode.Disabled)
                     {
@@ -74,13 +74,13 @@ namespace Telegram.ViewModels.Settings
                         Location = new Location();
                         Town = null;
                     }
-                    else if (Settings.Appearance.ForceNightMode)
+                    else if (AppSettings.Appearance.ForceNightMode)
                     {
-                        Settings.Appearance.ForceNightMode = false;
-                        Settings.Appearance.RequestedTheme = TelegramTheme.Light;
+                        AppSettings.Appearance.ForceNightMode = false;
+                        AppSettings.Appearance.RequestedTheme = TelegramTheme.Light;
                     }
 
-                    Settings.Appearance.NightMode = value;
+                    AppSettings.Appearance.NightMode = value;
                     RaisePropertyChanged();
                 }
             }
@@ -88,10 +88,10 @@ namespace Telegram.ViewModels.Settings
 
         public bool IsLocationBased
         {
-            get => Settings.Appearance.IsLocationBased;
+            get => AppSettings.Appearance.IsLocationBased;
             set
             {
-                if (Settings.Appearance.IsLocationBased != value)
+                if (AppSettings.Appearance.IsLocationBased != value)
                 {
                     if (value && Location.Latitude == 0 && Location.Longitude == 0)
                     {
@@ -105,7 +105,7 @@ namespace Telegram.ViewModels.Settings
                         Town = null;
                     }
 
-                    Settings.Appearance.IsLocationBased = value;
+                    AppSettings.Appearance.IsLocationBased = value;
                     RaisePropertyChanged();
                 }
             }
@@ -113,12 +113,12 @@ namespace Telegram.ViewModels.Settings
 
         public TimeSpan From
         {
-            get => Settings.Appearance.From;
+            get => AppSettings.Appearance.From;
             set
             {
-                if (Settings.Appearance.From != value)
+                if (AppSettings.Appearance.From != value)
                 {
-                    Settings.Appearance.From = value;
+                    AppSettings.Appearance.From = value;
                     RaisePropertyChanged();
                 }
             }
@@ -126,12 +126,12 @@ namespace Telegram.ViewModels.Settings
 
         public TimeSpan To
         {
-            get => Settings.Appearance.To;
+            get => AppSettings.Appearance.To;
             set
             {
-                if (Settings.Appearance.To != value)
+                if (AppSettings.Appearance.To != value)
                 {
-                    Settings.Appearance.To = value;
+                    AppSettings.Appearance.To = value;
                     RaisePropertyChanged();
                 }
             }
@@ -139,12 +139,12 @@ namespace Telegram.ViewModels.Settings
 
         public Location Location
         {
-            get => Settings.Appearance.Location;
+            get => AppSettings.Appearance.Location;
             set
             {
-                if (Settings.Appearance.Location.Latitude != value.Latitude || Settings.Appearance.Location.Longitude != value.Longitude)
+                if (AppSettings.Appearance.Location.Latitude != value.Latitude || AppSettings.Appearance.Location.Longitude != value.Longitude)
                 {
-                    Settings.Appearance.Location = value;
+                    AppSettings.Appearance.Location = value;
                     RaisePropertyChanged();
                 }
             }
@@ -152,12 +152,12 @@ namespace Telegram.ViewModels.Settings
 
         public string Town
         {
-            get => Settings.Appearance.Town;
+            get => AppSettings.Appearance.Town;
             set
             {
-                if (Settings.Appearance.Town != value)
+                if (AppSettings.Appearance.Town != value)
                 {
-                    Settings.Appearance.Town = value;
+                    AppSettings.Appearance.Town = value;
                     RaisePropertyChanged();
                 }
             }

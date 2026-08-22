@@ -64,9 +64,9 @@ namespace Telegram.Services
         {
             var result = new List<ThemeInfoBase>();
             result.Add(new ThemeBundledInfo { Name = Strings.ThemeClassic, Parent = TelegramTheme.Light });
-            result.Add(ThemeAccentInfo.FromAccent(TelegramThemeType.Day, _settingsService.Appearance.Accents[TelegramThemeType.Day]));
-            result.Add(ThemeAccentInfo.FromAccent(TelegramThemeType.Tinted, _settingsService.Appearance.Accents[TelegramThemeType.Tinted]));
-            result.Add(ThemeAccentInfo.FromAccent(TelegramThemeType.Night, _settingsService.Appearance.Accents[TelegramThemeType.Night]));
+            result.Add(ThemeAccentInfo.FromAccent(TelegramThemeType.Day, AppSettings.Appearance.Accents[TelegramThemeType.Day]));
+            result.Add(ThemeAccentInfo.FromAccent(TelegramThemeType.Tinted, AppSettings.Appearance.Accents[TelegramThemeType.Tinted]));
+            result.Add(ThemeAccentInfo.FromAccent(TelegramThemeType.Night, AppSettings.Appearance.Accents[TelegramThemeType.Night]));
 
             return result;
         }
@@ -166,25 +166,25 @@ namespace Telegram.Services
         {
             if (apply)
             {
-                _settingsService.Appearance.RequestedTheme = info.Parent;
+                AppSettings.Appearance.RequestedTheme = info.Parent;
             }
 
             if (info is ThemeCustomInfo custom)
             {
-                _settingsService.Appearance[info.Parent].Type = TelegramThemeType.Custom;
-                _settingsService.Appearance[info.Parent].Custom = custom.Path;
+                AppSettings.Appearance[info.Parent].Type = TelegramThemeType.Custom;
+                AppSettings.Appearance[info.Parent].Custom = custom.Path;
             }
             else if (info is ThemeAccentInfo accent)
             {
-                _settingsService.Appearance[info.Parent].Type = accent.Type;
-                _settingsService.Appearance.Accents[accent.Type] = accent.AccentColor;
+                AppSettings.Appearance[info.Parent].Type = accent.Type;
+                AppSettings.Appearance.Accents[accent.Type] = accent.AccentColor;
             }
             else
             {
-                _settingsService.Appearance[info.Parent].Type = info.Parent == TelegramTheme.Light ? TelegramThemeType.Classic : TelegramThemeType.Night;
+                AppSettings.Appearance[info.Parent].Type = info.Parent == TelegramTheme.Light ? TelegramThemeType.Classic : TelegramThemeType.Night;
             }
 
-            var flags = _settingsService.Appearance.GetCalculatedElementTheme();
+            var flags = AppSettings.Appearance.GetCalculatedElementTheme();
             var theme = flags == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light;
 
             if (theme != info.Parent && !apply)
@@ -192,7 +192,7 @@ namespace Telegram.Services
                 return;
             }
 
-            _settingsService.Appearance.UpdateNightMode();
+            AppSettings.Appearance.UpdateNightMode();
         }
 
         public async Task CreateThemeAsync(INavigationService navigation, ThemeInfoBase theme)

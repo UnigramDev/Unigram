@@ -347,8 +347,8 @@ namespace Telegram.Controls.Drawers
 
         public void InsertEmoji(EmojiSkinData emoji)
         {
-            SettingsService.Current.Emoji.SetEmojiSkinTone(emoji);
-            SettingsService.Current.Emoji.AddRecentEmoji(emoji);
+            AppSettings.Emoji.SetEmojiSkinTone(emoji);
+            ViewModel.Settings.RecentEmoji.AddRecentEmoji(emoji);
             ItemClick?.Invoke(this, new EmojiDrawerItemClickEventArgs(emoji));
         }
 
@@ -356,7 +356,7 @@ namespace Telegram.Controls.Drawers
         {
             if (e.ClickedItem is EmojiData data)
             {
-                if (data is EmojiSkinData skin && !SettingsService.Current.Emoji.HasSkinTone(skin))
+                if (data is EmojiSkinData skin && !AppSettings.Emoji.HasSkinTone(skin))
                 {
                     var container = ScrollingHost.ContainerFromItem(e.ClickedItem);
                     if (container != null)
@@ -372,7 +372,7 @@ namespace Telegram.Controls.Drawers
                     }
                 }
 
-                SettingsService.Current.Emoji.AddRecentEmoji(data);
+                ViewModel.Settings.RecentEmoji.AddRecentEmoji(data);
                 ItemClick?.Invoke(this, new EmojiDrawerItemClickEventArgs(e.ClickedItem));
             }
             else if (e.ClickedItem is StickerViewModel sticker)
@@ -402,7 +402,7 @@ namespace Telegram.Controls.Drawers
                 {
                     if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
                     {
-                        SettingsService.Current.Emoji.AddRecentEmoji(sticker.Emoji, customEmoji.CustomEmojiId);
+                        ViewModel.Settings.RecentEmoji.AddRecentEmoji(sticker.Emoji, customEmoji.CustomEmojiId);
                     }
 
                     ItemClick?.Invoke(this, new EmojiDrawerItemClickEventArgs(e.ClickedItem));

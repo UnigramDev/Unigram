@@ -213,8 +213,8 @@ namespace Telegram.ViewModels.Drawers
 
             if (_mode is EmojiDrawerMode.Chat or EmojiDrawerMode.Text)
             {
-                var recents = Emoji.GetRecents();
-                var emojiGroups = Emoji.Get();
+                var recents = Emoji.GetRecents(Settings.RecentEmoji);
+                var emojiGroups = Emoji.Get(Settings.RecentEmoji);
 
                 var source = new List<object>();
                 var customEmoji = new List<long>();

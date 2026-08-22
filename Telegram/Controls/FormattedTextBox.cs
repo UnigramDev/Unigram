@@ -387,7 +387,7 @@ namespace Telegram.Controls
                     return;
                 case VirtualKey.Enter when CanAccept():
                     {
-                        var send = SettingsService.Current.IsSendByEnterEnabled
+                        var send = AppSettings.IsSendByEnterEnabled
                             ? modifiers == VirtualKeyModifiers.None
                             : modifiers == VirtualKeyModifiers.Control;
 

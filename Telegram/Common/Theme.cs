@@ -60,7 +60,7 @@ namespace Telegram.Common
 
         public void UpdateEmojiSet()
         {
-            var xamlAutoFontFamilyValue = SettingsService.Current.Appearance.FontFamily;
+            var xamlAutoFontFamilyValue = AppSettings.Appearance.FontFamily;
             var xamlAutoFontFamilyDefault = false;
 
             var comma = ", ";
@@ -76,7 +76,7 @@ namespace Telegram.Common
                 xamlAutoFontFamilyValue = "Segoe UI";
             }
 
-            var emojiFontFamily = SettingsService.Current.Appearance.EmojiSet switch
+            var emojiFontFamily = AppSettings.Appearance.EmojiSet switch
             {
                 "microsoft" => "ms-appx:///Assets/Emoji/microsoft.ttf#Segoe UI Emoji",
                 _ => "ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji",
@@ -123,7 +123,7 @@ namespace Telegram.Common
 
         public void UpdateScrolls()
         {
-            if (_legacyScrollBars != SettingsService.Current.Diagnostics.LegacyScrollBars || _scrollBars == null)
+            if (_legacyScrollBars != AppSettings.Diagnostics.LegacyScrollBars || _scrollBars == null)
             {
                 if (_scrollBars != null)
                 {
@@ -132,12 +132,12 @@ namespace Telegram.Common
 
                 _scrollBars = new ResourceDictionary
                 {
-                    Source = new Uri("ms-appx:///Themes/ScrollBar_themeresources" + (SettingsService.Current.Diagnostics.LegacyScrollBars ? "_v1" : string.Empty) + ".xaml")
+                    Source = new Uri("ms-appx:///Themes/ScrollBar_themeresources" + (AppSettings.Diagnostics.LegacyScrollBars ? "_v1" : string.Empty) + ".xaml")
                 };
 
                 MergedDictionaries.Add(_scrollBars);
 
-                _legacyScrollBars = SettingsService.Current.Diagnostics.LegacyScrollBars;
+                _legacyScrollBars = AppSettings.Diagnostics.LegacyScrollBars;
             }
         }
 
@@ -201,7 +201,7 @@ namespace Telegram.Common
                     _lastDarkSettings = darkSettings;
                     _lastChatTheme = theme;
 
-                    var tint = SettingsService.Current.Appearance[requested].Type;
+                    var tint = AppSettings.Appearance[requested].Type;
                     if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && requested == TelegramTheme.Light))
                     {
                         tint = TelegramThemeType.Day;
@@ -238,7 +238,7 @@ namespace Telegram.Common
                     _lastDarkSettings = null;
                     _lastChatTheme = null;
 
-                    var options = SettingsService.Current.Appearance;
+                    var options = AppSettings.Appearance;
                     if (options[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(options[requested].Custom))
                     {
                         var info = ThemeCustomInfo.FromFile(options[requested].Custom);
@@ -278,7 +278,7 @@ namespace Telegram.Common
 
         private void Update(ApplicationTheme theme)
         {
-            var settings = SettingsService.Current.Appearance;
+            var settings = AppSettings.Appearance;
             var requested = theme == ApplicationTheme.Light
                 ? TelegramTheme.Light
                 : TelegramTheme.Dark;
@@ -310,7 +310,7 @@ namespace Telegram.Common
         {
             var settings = requested == TelegramTheme.Light ? lightSettings : darkSettings;
 
-            var tint = SettingsService.Current.Appearance[requested].Type;
+            var tint = AppSettings.Appearance[requested].Type;
             if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && requested == TelegramTheme.Light))
             {
                 tint = TelegramThemeType.Day;

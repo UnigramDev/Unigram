@@ -492,13 +492,13 @@ namespace Telegram.Services
             {
                 var useMessageDatabase = true;
 
-                if (_settings.Diagnostics.DisableDatabase)
+                if (AppSettings.Diagnostics.DisableDatabase)
                 {
                     // ¯\_(ツ)_/¯
                     useMessageDatabase = false;
                 }
 
-                var deviceModel = SettingsService.Current.Diagnostics.DeviceName;
+                var deviceModel = AppSettings.Diagnostics.DeviceName;
                 if (deviceModel.Length == 0)
                 {
                     deviceModel = _deviceInfoService.DeviceModel;
@@ -507,15 +507,15 @@ namespace Telegram.Services
                 InitializeDiagnostics();
                 InitializeFlush();
 
-                _client.Send(new SetOption("ignore_background_updates", new OptionValueBoolean(_settings.Diagnostics.DisableDatabase)));
+                _client.Send(new SetOption("ignore_background_updates", new OptionValueBoolean(AppSettings.Diagnostics.DisableDatabase)));
                 _client.Send(new SetOption("language_pack_database_path", new OptionValueString(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
                 _client.Send(new SetOption("localization_target", new OptionValueString(LocaleService.LANGPACK)));
-                _client.Send(new SetOption("language_pack_id", new OptionValueString(SettingsService.Current.LanguagePackId)));
+                _client.Send(new SetOption("language_pack_id", new OptionValueString(AppSettings.LanguagePackId)));
                 //_client.Send(new SetOption("online", new OptionValueBoolean(online)));
                 _client.Send(new SetOption("online", new OptionValueBoolean(false)));
                 _client.Send(new SetOption("use_pfs", new OptionValueBoolean(true)));
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
-                _client.Send(new SetOption("storage_max_time_from_last_access", new OptionValueInteger(SettingsService.Current.Diagnostics.StorageMaxTimeFromLastAccess)));
+                _client.Send(new SetOption("storage_max_time_from_last_access", new OptionValueInteger(AppSettings.Diagnostics.StorageMaxTimeFromLastAccess)));
                 _client.Send(new SetTdlibParameters(
                     useTestDc: _settings.UseTestDC,
                     databaseDirectory: System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session.Id}"),
@@ -537,10 +537,10 @@ namespace Telegram.Services
 
         private static void InitializeDiagnostics()
         {
-            TdThroughput.Enabled = SettingsService.Current.Diagnostics.MeasureDeserialization;
+            TdThroughput.Enabled = AppSettings.Diagnostics.MeasureDeserialization;
 
             Client.Execute(new SetLogStream(new LogStreamFile(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "tdlib_log.txt"), 100 * 1024 * 1024, false)));
-            Client.Execute(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
+            Client.Execute(new SetLogVerbosityLevel(AppSettings.VerbosityLevel));
 
             var tags = Client.Execute(new GetLogTags()) as LogTags;
             if (tags == null)
@@ -552,7 +552,7 @@ namespace Telegram.Services
             {
                 var level = Client.Execute(new GetLogTagVerbosityLevel(tag)) as LogVerbosityLevel;
 
-                var saved = SettingsService.Current.Diagnostics.GetValueOrDefault(tag, -1);
+                var saved = AppSettings.Diagnostics.GetValueOrDefault(tag, -1);
                 if (saved != level.VerbosityLevel && saved > -1)
                 {
                     Client.Execute(new SetLogTagVerbosityLevel(tag, saved));
@@ -1593,7 +1593,7 @@ namespace Telegram.Services
 
         public string AnimationSearchProvider => _animationSearchParameters?.Provider;
 
-        public Background DefaultBackground => GetDefaultBackground(_settings.Appearance.IsDarkTheme());
+        public Background DefaultBackground => GetDefaultBackground(AppSettings.Appearance.IsDarkTheme());
 
         public Background GetDefaultBackground(bool darkTheme)
         {
@@ -2987,7 +2987,7 @@ namespace Telegram.Services
         {
             chat.LastMessage = lastMessage;
 
-            if (lastMessage == null || lastMessage.MediaAlbumId == 0 || lastMessage.Content is not MessagePhoto and not MessageVideo || !SettingsService.Current.Diagnostics.AlbumPreloadDebug)
+            if (lastMessage == null || lastMessage.MediaAlbumId == 0 || lastMessage.Content is not MessagePhoto and not MessageVideo || !AppSettings.Diagnostics.AlbumPreloadDebug)
             {
                 _lastMessageAlbums.Remove(chat.Id);
                 return;

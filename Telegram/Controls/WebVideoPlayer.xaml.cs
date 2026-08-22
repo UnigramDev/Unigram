@@ -223,7 +223,7 @@ namespace Telegram.Controls
             _core.WebResourceRequested += OnWebResourceRequested;
             _core.WebMessageReceived += OnWebMessageReceived;
 
-            if (SettingsService.Current.Diagnostics.EnableWebViewDevTools)
+            if (AppSettings.Diagnostics.EnableWebViewDevTools)
             {
                 _core.OpenDevToolsWindow();
             }
@@ -235,7 +235,7 @@ namespace Telegram.Controls
 
         private void OnNavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
         {
-            var debug = SettingsService.Current.Diagnostics.EnableWebViewDevTools ? "true" : "false";
+            var debug = AppSettings.Diagnostics.EnableWebViewDevTools ? "true" : "false";
             ExecuteScript("playerInitialize({debug:" + debug + "});playerPlay();");
         }
 

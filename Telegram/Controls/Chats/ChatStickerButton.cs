@@ -40,7 +40,7 @@ namespace Telegram.Controls.Chats
         public ChatStickerButton()
         {
             DefaultStyleKey = typeof(ChatStickerButton);
-            Source = SettingsService.Current.Stickers.SelectedTab;
+            Source = AppSettings.Stickers.SelectedTab;
 
             Click += Stickers_Click;
 
@@ -130,12 +130,12 @@ namespace Telegram.Controls.Chats
 
         private bool IsPointerOverEnabled(Pointer pointer)
         {
-            return pointer?.PointerDeviceType == PointerDeviceType.Mouse && SettingsService.Current.Stickers.IsPointerOverEnabled;
+            return pointer?.PointerDeviceType == PointerDeviceType.Mouse && AppSettings.Stickers.IsPointerOverEnabled;
         }
 
         private bool IsPointerOverDisabled(Pointer pointer)
         {
-            return pointer != null && (pointer.PointerDeviceType != PointerDeviceType.Mouse || !SettingsService.Current.Stickers.IsPointerOverEnabled);
+            return pointer != null && (pointer.PointerDeviceType != PointerDeviceType.Mouse || !AppSettings.Stickers.IsPointerOverEnabled);
         }
 
         private void Stickers_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -152,7 +152,7 @@ namespace Telegram.Controls.Chats
 
             _stickersMode = StickersPanelMode.Overlay;
             IsChecked = false;
-            SettingsService.Current.IsSidebarOpen = false;
+            AppSettings.IsSidebarOpen = false;
 
             //Focus(FocusState.Programmatic);
             Redirect?.Invoke(this, EventArgs.Empty);
@@ -207,7 +207,7 @@ namespace Telegram.Controls.Chats
             }
 
             _stickersMode = StickersPanelMode.Collapsed;
-            SettingsService.Current.IsSidebarOpen = false;
+            AppSettings.IsSidebarOpen = false;
 
             Closing?.Invoke(this, EventArgs.Empty);
 
@@ -255,7 +255,7 @@ namespace Telegram.Controls.Chats
             batch.End();
 
             IsChecked = false;
-            Source = SettingsService.Current.Stickers.SelectedTab;
+            Source = AppSettings.Stickers.SelectedTab;
         }
 
         private void Stickers_Click(object sender, RoutedEventArgs e)
@@ -276,12 +276,12 @@ namespace Telegram.Controls.Chats
         {
             if (ControlledPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Collapsed)
             {
-                SettingsService.Current.Stickers.SelectedTab = tab;
+                AppSettings.Stickers.SelectedTab = tab;
                 Stickers_PointerEntered(null, null);
             }
-            else if (SettingsService.Current.Stickers.SelectedTab != tab)
+            else if (AppSettings.Stickers.SelectedTab != tab)
             {
-                SettingsService.Current.Stickers.SelectedTab = tab;
+                AppSettings.Stickers.SelectedTab = tab;
                 ControlledPanel.Activate();
             }
             else

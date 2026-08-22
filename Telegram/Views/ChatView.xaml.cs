@@ -172,7 +172,7 @@ namespace Telegram.Views
             // Built with the view rather than with the first deletion: the layers effect encodes its
             // masks asynchronously, and creating it on the deletion it is meant to animate means the
             // first one plays nothing.
-            _dustEffect = SettingsService.Current.Diagnostics.MessageDust;
+            _dustEffect = AppSettings.Diagnostics.MessageDust;
             _dust = CompositionDustVisual.Create(_dustEffect, DustHost);
             Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
@@ -517,7 +517,7 @@ namespace Telegram.Views
             // Both, because the burst is both: a pile of composition work, which materials cover
             // through AreEffectsFast, and motion, which transitions cover through the system's
             // animation switch. Turning either off should take the effect with it.
-            var effect = SettingsService.Current.Diagnostics.MessageDust;
+            var effect = AppSettings.Diagnostics.MessageDust;
             if (effect == MessageDustEffect.Disabled
                 || !PowerSavingPolicy.AreMaterialsEnabled
                 || !PowerSavingPolicy.AreSmoothTransitionsEnabled)
@@ -751,18 +751,18 @@ namespace Telegram.Views
             Sponsored.UpdateSponsoredMessage(ViewModel.ClientService, ViewModel.Chat, ViewModel.SponsoredMessage);
 
             TextField.IsMenuExpanded = false;
-            TextField.IsReplaceEmojiEnabled = ViewModel.Settings.IsReplaceEmojiEnabled;
+            TextField.IsReplaceEmojiEnabled = AppSettings.IsReplaceEmojiEnabled;
 
-            if (_useSystemSpellChecker != SettingsService.Current.UseSystemSpellChecker)
+            if (_useSystemSpellChecker != AppSettings.UseSystemSpellChecker)
             {
-                _useSystemSpellChecker = SettingsService.Current.UseSystemSpellChecker;
+                _useSystemSpellChecker = AppSettings.UseSystemSpellChecker;
                 TextField.IsTextPredictionEnabled = _useSystemSpellChecker;
                 TextField.IsSpellCheckEnabled = _useSystemSpellChecker;
             }
 
             TrySetFocusState(FocusState.Programmatic, false);
 
-            StickersPanel.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
+            StickersPanel.MaxWidth = AppSettings.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
 
             Options.Visibility = ViewModel.Type is DialogType.History or DialogType.Thread
                 ? Visibility.Visible
@@ -954,7 +954,7 @@ namespace Telegram.Views
 
                         //if (messages.Clip is InsetClip messagesClip)
                         //{
-                        //    messagesClip.BottomInset = -8 - SettingsService.Current.Appearance.CornerRadius;
+                        //    messagesClip.BottomInset = -8 - AppSettings.Appearance.CornerRadius;
                         //}
                     };
 
@@ -1781,7 +1781,7 @@ namespace Telegram.Views
             if (empty != _oldEmpty)
             {
                 ButtonStickers.Source = empty
-                    ? SettingsService.Current.Stickers.SelectedTab
+                    ? AppSettings.Stickers.SelectedTab
                     : Services.Settings.StickersTab.Emoji;
             }
 
@@ -2527,7 +2527,7 @@ namespace Telegram.Views
             var value1 = TextArea.ActualSize.Y;
 
             var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
-            rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.CornerRadius);
+            rect.CornerRadius = new Vector2(AppSettings.Appearance.CornerRadius);
             rect.Size = TextArea.ActualSize;
             rect.Offset = new Vector2(0, value);
 
@@ -3499,7 +3499,7 @@ namespace Telegram.Views
                     flyout.CreateFlyoutItem(ViewModel.AddChecklistTask, message, Strings.AddTasks, Icons.AddCircle);
                 }
 
-                //if (SettingsService.Current.Diagnostics.RichMessagesDebug && message.Content is MessageRichMessage richMessage)
+                //if (AppSettings.Diagnostics.RichMessagesDebug && message.Content is MessageRichMessage richMessage)
                 //{
                 //    flyout.CreateFlyoutItem(() =>
                 //    {
@@ -3696,7 +3696,7 @@ namespace Telegram.Views
                     LoadMessageEmojis(message, flyout, customEmojiIds);
                 }
 
-                if (SettingsService.Current.Diagnostics.DeleteFilesDebug)
+                if (AppSettings.Diagnostics.DeleteFilesDebug)
                 {
                     var file = message.GetFile();
                     if (file != null && (file.Local.DownloadedSize > 0 || (message.Content is MessageVideo video && video.AlternativeVideos.Any(x => x.HlsFile.Local.DownloadedSize > 0 || x.Video.Local.DownloadedSize > 0))))
@@ -5193,7 +5193,7 @@ namespace Telegram.Views
 
         private void ItemsPanelRoot_Loading(FrameworkElement sender, object args)
         {
-            sender.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
+            sender.MaxWidth = AppSettings.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
             Messages.SetScrollingMode();
         }
 
@@ -5238,7 +5238,7 @@ namespace Telegram.Views
 
             if (args.Item is EmojiData or Sticker)
             {
-                var radius = SettingsService.Current.Appearance.CornerRadius;
+                var radius = AppSettings.Appearance.CornerRadius;
                 var min = Math.Max(4, radius - 4);
 
                 args.ItemContainer.Margin = new Thickness(4);
@@ -5608,7 +5608,7 @@ namespace Telegram.Views
                 _forumViewModel.SelectedItem = ViewModel.TopicId;
                 _forumViewModel.Delegate?.SetSelectedItem(_forumViewModel.Items.GetItem(ViewModel.TopicId));
 
-                ShowHideForumTopics(ViewModel.Settings.UseLeftTabsForForums ? ForumViewType.Vertical : ForumViewType.Horizontal);
+                ShowHideForumTopics(AppSettings.UseLeftTabsForForums ? ForumViewType.Vertical : ForumViewType.Horizontal);
             }
             else
             {
@@ -6365,7 +6365,7 @@ namespace Telegram.Views
             var width = Math.Max(0, _textAreaRadius > 0 ? ActualSize.X - 24 : ActualSize.X);
 
             var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
-            rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.CornerRadius);
+            rect.CornerRadius = new Vector2(AppSettings.Appearance.CornerRadius);
             rect.Size = new Vector2(width, 192 + 48);
             rect.Offset = new Vector2(0, value);
 
@@ -6617,7 +6617,7 @@ namespace Telegram.Views
 
         private void UpdateTextAreaRadius(bool force = true)
         {
-            var radius = SettingsService.Current.Appearance.CornerRadius;
+            var radius = AppSettings.Appearance.CornerRadius;
             if (radius == _textAreaRadius && !force)
             {
                 return;
@@ -6663,7 +6663,7 @@ namespace Telegram.Views
             if (radius > 0)
             {
                 Footer.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth = ReplyMarkupPanel.MaxWidth =
-                    SettingsService.Current.IsAdaptiveWideEnabled ? 1000 : double.PositiveInfinity;
+                    AppSettings.IsAdaptiveWideEnabled ? 1000 : double.PositiveInfinity;
                 Footer.Margin = Separator.Margin = new Thickness(12, 0, 12, 8);
                 InlinePanel.Margin = new Thickness(12, 0, 12, -radius);
                 InlineShadow.Margin = new Thickness(0, 0, 0, -radius);
@@ -6672,7 +6672,7 @@ namespace Telegram.Views
             else
             {
                 Footer.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth = ReplyMarkupPanel.MaxWidth =
-                    SettingsService.Current.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
+                    AppSettings.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
                 Footer.Margin = Separator.Margin = new Thickness();
                 InlinePanel.Margin = new Thickness();
                 InlineShadow.Margin = new Thickness();
@@ -6680,7 +6680,7 @@ namespace Telegram.Views
             }
 
             MessagesStickyPhoto.MaxWidth =
-                SettingsService.Current.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
+                AppSettings.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
 
             var stickyPhoto = ElementComposition.GetElementVisual(MessagesStickyPhoto);
             if (stickyPhoto.Clip is InsetClip stickyPhotoClip)
@@ -7459,7 +7459,7 @@ namespace Telegram.Views
 
         private void InlineBotResults_Loaded(object sender, RoutedEventArgs e)
         {
-            ListInline.UpdateCornerRadius(SettingsService.Current.Appearance.CornerRadius);
+            ListInline.UpdateCornerRadius(AppSettings.Appearance.CornerRadius);
             ListInline.MaxHeight = Math.Min(320, Math.Max(ContentPanel.ActualHeight - 48, 0));
 
             if (ViewModel?.Chat is Chat chat)
@@ -7822,12 +7822,12 @@ namespace Telegram.Views
             {
                 if (button.IsChecked == false)
                 {
-                    ViewModel.Settings.UseLeftTabsForForums = false;
+                    AppSettings.UseLeftTabsForForums = false;
                     ShowHideForumTopics(ForumViewType.Horizontal);
                 }
                 else if (button.IsChecked == true)
                 {
-                    ViewModel.Settings.UseLeftTabsForForums = true;
+                    AppSettings.UseLeftTabsForForums = true;
                     ShowHideForumTopics(ForumViewType.Vertical);
                 }
             }

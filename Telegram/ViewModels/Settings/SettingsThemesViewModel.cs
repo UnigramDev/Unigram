@@ -69,10 +69,10 @@ namespace Telegram.ViewModels.Settings
                 Custom.ReplaceWith(await _themeService.GetCustomThemesAsync());
             }
 
-            var type = Settings.Appearance[Settings.Appearance.RequestedTheme].Type;
+            var type = AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type;
             if (ThemeAccentInfo.IsAccent(type))
             {
-                var accent = Settings.Appearance.Accents[type];
+                var accent = AppSettings.Appearance.Accents[type];
                 if (_defaultAccents[type].Contains(accent))
                 {
                     Accents.ReplaceWith(_defaultAccents[type]
@@ -140,7 +140,7 @@ namespace Telegram.ViewModels.Settings
             }
         };
 
-        public NightMode NightMode => Settings.Appearance.NightMode;
+        public NightMode NightMode => AppSettings.Appearance.NightMode;
 
         private bool _areCustomThemesAvailable;
         public bool AreCustomThemesAvailable
@@ -157,11 +157,11 @@ namespace Telegram.ViewModels.Settings
             {
                 if (x is ThemeCustomInfo custom)
                 {
-                    return string.Equals(Settings.Appearance[Settings.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
+                    return string.Equals(AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
                 }
                 else
                 {
-                    return Settings.Appearance.RequestedTheme == x.Parent;
+                    return AppSettings.Appearance.RequestedTheme == x.Parent;
                 }
             });
 
@@ -173,10 +173,10 @@ namespace Telegram.ViewModels.Settings
 
         public async void AccentTheme()
         {
-            var type = Settings.Appearance[Settings.Appearance.RequestedTheme].Type;
+            var type = AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Type;
             if (ThemeAccentInfo.IsAccent(type))
             {
-                var accent = Settings.Appearance.Accents[type];
+                var accent = AppSettings.Appearance.Accents[type];
                 if (accent == default)
                 {
                     accent = BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
@@ -235,7 +235,7 @@ namespace Telegram.ViewModels.Settings
             }
             catch { }
 
-            if (Settings.Appearance[Settings.Appearance.RequestedTheme].Custom == theme.Path)
+            if (AppSettings.Appearance[AppSettings.Appearance.RequestedTheme].Custom == theme.Path)
             {
                 await SetThemeAsync(new ThemeBundledInfo { Parent = theme.Parent });
             }

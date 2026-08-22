@@ -22,11 +22,11 @@
                               Content="Use Test DC"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.AllowRightToLeft, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.AllowRightToLeft, Mode=TwoWay}"
                               Content="Allow Right to Left"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Stickers.IsPointerOverEnabled, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Stickers.IsPointerOverEnabled, Mode=TwoWay}"
                               Content="Show Stickers Panel on Pointer Over"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                     
@@ -41,39 +41,39 @@
                               Content="Legacy ScrollBar Style"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ShowMemoryUsage, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.ShowMemoryUsage, Mode=TwoWay}"
                               Content="Show Memory Usage"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.HidePhoneNumber, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.HidePhoneNumber, Mode=TwoWay}"
                               Content="Hide Phone Number in Navigation"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ForceRawAudio, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.ForceRawAudio, Mode=TwoWay}"
                               Content="Force Raw Audio"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.EnableWebViewDevTools, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.EnableWebViewDevTools, Mode=TwoWay}"
                               Content="Enable WebView DevTools"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ForceEdgeHtml, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.ForceEdgeHtml, Mode=TwoWay}"
                               Content="Force EdgeHTML"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ForceWebView2, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.ForceWebView2, Mode=TwoWay}"
                               Content="Force WebView2"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.DisableXamlGcCollect, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.DisableXamlGcCollect, Mode=TwoWay}"
                               Content="Disable XAML GC Collect"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.DisableMemoryPressure, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.DisableMemoryPressure, Mode=TwoWay}"
                               Content="Disable Memory Pressure"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.DisablePackageManager, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.DisablePackageManager, Mode=TwoWay}"
                               Content="Disable Package Manager"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
@@ -81,49 +81,49 @@
                               Content="{CustomResource ConnectWithIPv6}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ForumTabsDebug, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.ForumTabsDebug, Mode=TwoWay}"
                               Content="Forum Tabs Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.BubbleElevationDebug, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.BubbleElevationDebug, Mode=TwoWay}"
                               Content="Bubble Elevation Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.BubbleRecyclingDebug, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.BubbleRecyclingDebug, Mode=TwoWay}"
                               Content="Bubble Recycling Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.BubbleContentRecyclingDebug, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.BubbleContentRecyclingDebug, Mode=TwoWay}"
                               Content="Bubble Content Recycling Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.WindowResizeDebug, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.WindowResizeDebug, Mode=TwoWay}"
                               Content="Window Resize Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.DeleteFilesDebug, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.DeleteFilesDebug, Mode=TwoWay}"
                               Content="Delete Files Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.AlbumPreloadDebug, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.AlbumPreloadDebug, Mode=TwoWay}"
                               Content="Album Preload Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.VideoPreloadDebug, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.VideoPreloadDebug, Mode=TwoWay}"
                               Content="Video Preload Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ConnectedAnimationsDebug, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.ConnectedAnimationsDebug, Mode=TwoWay}"
                               Content="Connected Animations Debug"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.UseTLottieRenderer, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.UseTLottieRenderer, Mode=TwoWay}"
                               Content="Use TLottie Renderer"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
-                    <controls:SettingsButton Click="{x:Bind services:SettingsService.Current.ToolTip.Reset}"
+                    <controls:SettingsButton Click="{x:Bind services:AppSettings.ToolTip.Reset}"
                                              Content="Reset Tool Tips"
                                              Foreground="{ThemeResource DangerButtonBackground}" />
                 </controls:HeaderedControl>
@@ -141,7 +141,7 @@
 
                 <controls:HeaderedControl Header="TDLib JSON"
                                           Footer="Counts what Client.Receive parses. Off it costs nothing; on it reads a timestamp per update and scans each payload for its length, which the parser itself no longer does.">
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.MeasureDeserialization, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:AppSettings.Diagnostics.MeasureDeserialization, Mode=TwoWay}"
                               Content="Measure Deserialization"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 

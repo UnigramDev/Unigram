@@ -37,7 +37,7 @@ namespace Telegram.ViewModels
 
         public void DoubleTapped(MessageViewModel message, bool alternate)
         {
-            if (Settings.Appearance.IsQuickReplySelected || alternate)
+            if (AppSettings.Appearance.IsQuickReplySelected || alternate)
             {
                 if (alternate)
                 {

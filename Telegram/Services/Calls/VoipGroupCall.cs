@@ -146,7 +146,7 @@ namespace Telegram.Services.Calls
                 IsConference = false,
                 //AudioInputId = _inputWatcher.GetAndUpdateAsync().Result,
                 //AudioOutputId = _outputWatcher.GetAndUpdateAsync().Result,
-                IsNoiseSuppressionEnabled = Settings.VoIP.IsNoiseSuppressionEnabled
+                IsNoiseSuppressionEnabled = AppSettings.VoIP.IsNoiseSuppressionEnabled
             };
 
             lock (_managerLock)
@@ -294,7 +294,7 @@ namespace Telegram.Services.Calls
                 IsConference = true,
                 //AudioInputId = _inputWatcher.GetAndUpdateAsync().Result,
                 //AudioOutputId = _outputWatcher.GetAndUpdateAsync().Result,
-                IsNoiseSuppressionEnabled = Settings.VoIP.IsNoiseSuppressionEnabled
+                IsNoiseSuppressionEnabled = AppSettings.VoIP.IsNoiseSuppressionEnabled
             };
 
             lock (_managerLock)
@@ -352,7 +352,7 @@ namespace Telegram.Services.Calls
                 IsConference = true,
                 //AudioInputId = _inputWatcher.GetAndUpdateAsync().Result,
                 //AudioOutputId = _outputWatcher.GetAndUpdateAsync().Result,
-                IsNoiseSuppressionEnabled = Settings.VoIP.IsNoiseSuppressionEnabled
+                IsNoiseSuppressionEnabled = AppSettings.VoIP.IsNoiseSuppressionEnabled
             };
 
             lock (_managerLock)
@@ -1411,7 +1411,7 @@ namespace Telegram.Services.Calls
                     _manager?.IsNoiseSuppressionEnabled = value;
                 }
 
-                Settings.VoIP.IsNoiseSuppressionEnabled = value;
+                AppSettings.VoIP.IsNoiseSuppressionEnabled = value;
             }
         }
 

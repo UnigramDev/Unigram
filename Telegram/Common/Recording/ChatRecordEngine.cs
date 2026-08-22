@@ -705,7 +705,7 @@ namespace Telegram.Common.Recording
                 // We're forcing CPU because "Auto" seems to be failing on some devices.
                 settings = new MediaCaptureInitializationSettings();
                 settings.MediaCategory = MediaCategory.Media;
-                settings.AudioProcessing = m_isVideo ? AudioProcessing.Default : SettingsService.Current.Diagnostics.ForceRawAudio ? AudioProcessing.Raw : AudioProcessing.Default;
+                settings.AudioProcessing = m_isVideo ? AudioProcessing.Default : AppSettings.Diagnostics.ForceRawAudio ? AudioProcessing.Raw : AudioProcessing.Default;
                 settings.MemoryPreference = MediaCaptureMemoryPreference.Cpu;
                 settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
                 settings.StreamingCaptureMode = m_isVideo ? StreamingCaptureMode.AudioAndVideo : StreamingCaptureMode.Audio;

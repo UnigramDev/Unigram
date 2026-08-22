@@ -39,14 +39,12 @@ namespace Telegram.Services
     {
         private readonly LocalDatabase _database;
         private readonly ILifetimeService _lifetime;
-        private readonly ISettingsService _settings;
 
         private readonly HttpProxyWatcher _watcher;
         private readonly EventDebouncer<bool> _debouncer;
 
         public ProxyService(ILifetimeService lifetime)
         {
-            _settings = SettingsService.Current;
             _lifetime = lifetime;
             _database = new LocalDatabase();
 
@@ -65,7 +63,7 @@ namespace Telegram.Services
 
         private void OnProxyChanged(object sender, bool e)
         {
-            if (_settings.EnabledProxyId == -1)
+            if (AppSettings.EnabledProxyId == -1)
             {
                 EnableSystemProxy();
             }
@@ -73,9 +71,9 @@ namespace Telegram.Services
 
         public async void Migrate(int sessionId)
         {
-            if (_settings.MigratedProxy)
+            if (AppSettings.MigratedProxy)
             {
-                if (_settings.EnabledProxyId == -1)
+                if (AppSettings.EnabledProxyId == -1)
                 {
                     EnableSystemProxy();
                 }
@@ -83,7 +81,7 @@ namespace Telegram.Services
                 return;
             }
 
-            _settings.MigratedProxy = true;
+            AppSettings.MigratedProxy = true;
 
             var merged = new List<AddedProxy>();
             var enabled = default(AddedProxy);
@@ -137,7 +135,7 @@ namespace Telegram.Services
 
         public async void Enable(IClientService clientService)
         {
-            if (_settings.EnabledProxyId == -1)
+            if (AppSettings.EnabledProxyId == -1)
             {
                 if (_watcher.IsEnabled)
                 {
@@ -157,9 +155,9 @@ namespace Telegram.Services
                     Enable(clientService, new Proxy(host, port, new ProxyTypeHttp()));
                 }
             }
-            else if (_settings.EnabledProxyId != 0)
+            else if (AppSettings.EnabledProxyId != 0)
             {
-                var enabled = GetProxyById(_settings.EnabledProxyId);
+                var enabled = GetProxyById(AppSettings.EnabledProxyId);
                 if (enabled != null)
                 {
                     Enable(clientService, enabled.Proxy);
@@ -274,7 +272,7 @@ namespace Telegram.Services
                 "Id",
                 proxyId);
 
-            if (addedProxy.Id == _settings.EnabledProxyId)
+            if (addedProxy.Id == AppSettings.EnabledProxyId)
             {
                 EnableProxy(addedProxy);
             }
@@ -285,7 +283,7 @@ namespace Telegram.Services
         public void RemoveProxy(int id)
         {
             // If deleting the currently enabled proxy, clear the setting
-            if (_settings.EnabledProxyId == id)
+            if (AppSettings.EnabledProxyId == id)
             {
                 DisableProxy();
             }
@@ -300,7 +298,7 @@ namespace Telegram.Services
             {
                 var proxy = RowToProxy(rows[0]);
                 // Set IsEnabled based on settings
-                proxy.IsEnabled = _settings.EnabledProxyId == proxy.Id;
+                proxy.IsEnabled = AppSettings.EnabledProxyId == proxy.Id;
                 return proxy;
             }
             return null;
@@ -308,9 +306,9 @@ namespace Telegram.Services
 
         public AddedProxy GetEnabledProxy()
         {
-            if (_settings.EnabledProxyId != 0)
+            if (AppSettings.EnabledProxyId != 0)
             {
-                return GetProxyById(_settings.EnabledProxyId);
+                return GetProxyById(AppSettings.EnabledProxyId);
             }
             return null;
         }
@@ -335,7 +333,7 @@ namespace Telegram.Services
                     proxy.Id);
             }
 
-            _settings.EnabledProxyId = proxy.Id;
+            AppSettings.EnabledProxyId = proxy.Id;
             proxy.IsEnabled = true;
 
             foreach (var client in _lifetime.ResolveAll<IClientService>())
@@ -386,7 +384,7 @@ namespace Telegram.Services
             }
             else
             {
-                _settings.EnabledProxyId = -1;
+                AppSettings.EnabledProxyId = -1;
 
                 foreach (var client in _lifetime.ResolveAll<IClientService>())
                 {
@@ -419,7 +417,7 @@ namespace Telegram.Services
         public void DisableProxy()
         {
             // If enabled proxy is -1 (system) we don't need to update settings
-            if (_settings.EnabledProxyId > 0)
+            if (AppSettings.EnabledProxyId > 0)
             {
                 // Update LastUsedDate to current timestamp
                 int currentTimestamp = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -428,11 +426,11 @@ namespace Telegram.Services
                     new[] { "LastUsedDate" },
                     new object[] { currentTimestamp },
                     "Id",
-                    _settings.EnabledProxyId);
+                    AppSettings.EnabledProxyId);
             }
 
             // Clear the enabled proxy ID from settings
-            _settings.EnabledProxyId = 0;
+            AppSettings.EnabledProxyId = 0;
 
             foreach (var client in _lifetime.ResolveAll<IClientService>())
             {
@@ -528,7 +526,7 @@ namespace Telegram.Services
             };
 
             // IsEnabled is determined by settings, not stored in DB
-            bool isEnabled = _settings.EnabledProxyId == id;
+            bool isEnabled = AppSettings.EnabledProxyId == id;
 
             return new AddedProxy(id, lastUsedDate, isEnabled, string.Empty, new Proxy(server, port, type));
         }

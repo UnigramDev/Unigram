@@ -931,7 +931,7 @@ namespace Telegram.Controls
         /// </summary>
         private void ConfigureBackGesture()
         {
-            var enabled = SettingsService.Current.SwipeToGoBack;
+            var enabled = AppSettings.SwipeToGoBack;
 
             if (_backTracker == null)
             {
@@ -1002,7 +1002,7 @@ namespace Telegram.Controls
             // OnNavigating is never subscribed and nothing else runs as a page is left.
             DetachBackGestureHost();
 
-            if (_backTracker == null || !SettingsService.Current.SwipeToGoBack)
+            if (_backTracker == null || !AppSettings.SwipeToGoBack)
             {
                 return;
             }
@@ -1045,7 +1045,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (DetailFrame is not { CanGoBack: true } || !SettingsService.Current.SwipeToGoBack)
+            if (DetailFrame is not { CanGoBack: true } || !AppSettings.SwipeToGoBack)
             {
                 return;
             }

@@ -17,7 +17,6 @@ using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using WM = Windows.Media;
@@ -170,8 +169,6 @@ namespace Telegram.Services
 
     public partial class PlaybackService : IPlaybackService
     {
-        private readonly ISettingsService _settingsService;
-
         private AsyncMediaPlayer _player;
         private readonly object _mediaPlayerLock = new();
 
@@ -204,14 +201,13 @@ namespace Telegram.Services
         public event TypedEventHandler<IPlaybackService, PlaybackPositionChangedEventArgs> PositionChanged;
         public event TypedEventHandler<IPlaybackService, object> PlaylistChanged;
 
-        public PlaybackService(ISettingsService settingsService)
+        public PlaybackService()
         {
-            _settingsService = settingsService;
 
-            _isRepeatEnabled = _settingsService.Playback.RepeatMode == PlaybackRepeatMode.Track
+            _isRepeatEnabled = AppSettings.Playback.RepeatMode == PlaybackRepeatMode.Track
                 ? null
-                : _settingsService.Playback.RepeatMode == PlaybackRepeatMode.List;
-            _playbackSpeed = _settingsService.Playback.AudioSpeed;
+                : AppSettings.Playback.RepeatMode == PlaybackRepeatMode.List;
+            _playbackSpeed = AppSettings.Playback.AudioSpeed;
 
             // TODO: System media transport controls are currently unsupported.
         }
@@ -515,7 +511,7 @@ namespace Telegram.Services
             set
             {
                 _isRepeatEnabled = value;
-                //Execute(player => player.SystemMediaTransportControls.AutoRepeatMode = _settingsService.Playback.RepeatMode = value == true
+                //Execute(player => player.SystemMediaTransportControls.AutoRepeatMode = AppSettings.Playback.RepeatMode = value == true
                 //    ? MediaPlaybackAutoRepeatMode.List
                 //    : value == null
                 //    ? MediaPlaybackAutoRepeatMode.Track
@@ -548,7 +544,7 @@ namespace Telegram.Services
             set
             {
                 _playbackSpeed = value;
-                _settingsService.Playback.AudioSpeed = value;
+                AppSettings.Playback.AudioSpeed = value;
 
                 Run(player =>
                 {
@@ -560,10 +556,10 @@ namespace Telegram.Services
 
         public double Volume
         {
-            get => _settingsService.VolumeLevel;
+            get => AppSettings.VolumeLevel;
             set
             {
-                _settingsService.VolumeLevel = value;
+                AppSettings.VolumeLevel = value;
                 Run(player => player.Volume = value);
             }
         }
@@ -591,7 +587,7 @@ namespace Telegram.Services
         {
             if (CurrentItem is PlaybackItem item)
             {
-                _playbackSpeed = item.CanChangePlaybackRate ? _settingsService.Playback.AudioSpeed : 1;
+                _playbackSpeed = item.CanChangePlaybackRate ? AppSettings.Playback.AudioSpeed : 1;
                 player.Rate = _playbackSpeed;
             }
 
@@ -744,7 +740,7 @@ namespace Telegram.Services
             {
                 player ??= Create();
 
-                _playbackSpeed = item.CanChangePlaybackRate ? _settingsService.Playback.AudioSpeed : 1;
+                _playbackSpeed = item.CanChangePlaybackRate ? AppSettings.Playback.AudioSpeed : 1;
                 CurrentItem = item;
 
                 player.Rate = _playbackSpeed;
@@ -776,7 +772,7 @@ namespace Telegram.Services
             if (_previous != null)
             {
                 _items = _previous.Items;
-                _playbackSpeed = _previous.CurrentItem.CanChangePlaybackRate ? _settingsService.Playback.AudioSpeed : 1;
+                _playbackSpeed = _previous.CurrentItem.CanChangePlaybackRate ? AppSettings.Playback.AudioSpeed : 1;
                 CurrentItem = _previous.CurrentItem;
 
                 player.Rate = _playbackSpeed;
@@ -1053,13 +1049,13 @@ namespace Telegram.Services
                 var options = new AsyncMediaPlayerOptions
                 {
                     CreateSwapChain = true,
-                    Mute = false, //SettingsService.Current.VolumeMuted,
-                    Volume = SettingsService.Current.VolumeLevel,
-                    Debug = SettingsService.Current.VerbosityLevel >= 4,
+                    Mute = false, //AppSettings.VolumeMuted,
+                    Volume = AppSettings.VolumeLevel,
+                    Debug = AppSettings.VerbosityLevel >= 4,
                 };
 
                 _player = new AsyncMediaPlayer(options);
-                //_mediaPlayer.SystemMediaTransportControls.AutoRepeatMode = _settingsService.Playback.RepeatMode;
+                //_mediaPlayer.SystemMediaTransportControls.AutoRepeatMode = AppSettings.Playback.RepeatMode;
                 //_mediaPlayer.SystemMediaTransportControls.ButtonPressed += Transport_ButtonPressed;
                 //_mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
                 _player.PositionChanged += OnTimeChanged;

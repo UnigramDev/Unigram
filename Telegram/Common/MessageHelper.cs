@@ -1676,7 +1676,7 @@ namespace Telegram.Common
             var response = await clientService.SendAsync(new GetLanguagePackInfo(languagePackId));
             if (response is LanguagePackInfo info)
             {
-                if (info.Id == SettingsService.Current.LanguagePackId)
+                if (info.Id == AppSettings.LanguagePackId)
                 {
                     var confirm = await navigation.ShowPopupAsync(string.Format(Strings.LanguageSame, info.Name), Strings.Language, Strings.OK, Strings.Settings);
                     if (confirm != ContentDialogResult.Secondary)
@@ -2303,7 +2303,7 @@ namespace Telegram.Common
                         translate.Click -= handler;
 
                         var language = LanguageIdentification.IdentifyLanguage(text);
-                        var popup = new TranslatePopup(service, text, language, SettingsService.Current.Translate.To, true);
+                        var popup = new TranslatePopup(service, text, language, service.Settings.Translate.To, true);
                         await popup.ShowQueuedAsync(translate.XamlRoot);
                     }
 

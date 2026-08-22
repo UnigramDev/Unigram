@@ -242,9 +242,24 @@ upside. We would be running the trade the other way — paying to *leave* an app
 
 ## What does *not* change either way
 
-`ApplicationData.Current` (58 sites) keeps working in a packaged desktop app. So do toasts,
+`ApplicationData.Current` (49 sites) keeps working in a packaged desktop app. So do toasts,
 share target, file type associations, protocol activation, startup task and the Store listing —
 MSIX-packaged desktop apps get all of it. Distribution is not at risk on either path.
+
+**Settings are now the exception that no longer needs the app container at all.** As of
+2026-08-22 they sit behind `ISettingsStore`
+(`Telegram/Services/Settings/SettingsStore.cs`), and `ApplicationData.Current.LocalSettings` is
+referenced from exactly **one live line** in the whole app —
+`ApplicationDataSettingsStore.Local`. Everything else goes through the two entry points,
+`AppSettings` and `ISettingsService`. An unpackaged host therefore needs one new `ISettingsStore`
+implementation and one line changed, rather than touching ~200 accessors. The remaining 45
+`ApplicationData.Current` sites are `LocalFolder` (35) and `TemporaryFolder` (10) — file access,
+which 0.7 covers and which is fine on desktop regardless.
+
+The seam is not free of work: the interface has a `Flush()` that `ApplicationDataSettingsStore`
+implements as a no-op, because `ApplicationData` persists as it goes. Any file-backed store has
+to make that real, and needs a call from suspend and close. See
+`notes/settings-service-refactor.md` §4.1 and step 6.
 
 ---
 
@@ -1054,7 +1069,9 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   `StorageFile.` statics, 12 `FileOpenPicker`, 6 `CameraCaptureUI`, 4 `FileSavePicker`, 3
   `FolderPicker`, 2 `KnownFolders`, 28 `Launcher.`. Adding an HWND parameter at this seam is
   what makes `IInitializeWithWindow` a one-line change later instead of 90.
-  Leave `ApplicationData.Current` (58) alone — it works on desktop.
+  Leave `ApplicationData.Current` alone — it works on desktop, and the 45 remaining sites are
+  all `LocalFolder`/`TemporaryFolder`. Its settings half is already done: one line, behind
+  `ISettingsStore`.
 
 - [ ] **0.8 Collect the lifecycle handlers.** 29 `Suspending` + 16 `Resuming` behind one
   app-owned event pair, so the desktop implementation can raise them on power/session

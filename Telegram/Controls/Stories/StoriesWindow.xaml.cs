@@ -1118,7 +1118,7 @@ namespace Telegram.Controls.Stories
 
         private void QualityStory(StoryViewModel story)
         {
-            SettingsService.Current.Playback.HighQuality = !SettingsService.Current.Playback.HighQuality;
+            AppSettings.Playback.HighQuality = !AppSettings.Playback.HighQuality;
             ActiveCard.UpdateQuality();
         }
 
@@ -1278,7 +1278,7 @@ namespace Telegram.Controls.Stories
             if (empty != _oldEmpty)
             {
                 ButtonStickers.Source = empty
-                    ? SettingsService.Current.Stickers.SelectedTab
+                    ? AppSettings.Stickers.SelectedTab
                     : Services.Settings.StickersTab.Emoji;
             }
 

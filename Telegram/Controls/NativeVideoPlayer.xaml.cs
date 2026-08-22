@@ -40,10 +40,10 @@ namespace Telegram.Controls
                 var options = new AsyncMediaPlayerOptions
                 {
                     CreateSwapChain = true,
-                    Mute = SettingsService.Current.VolumeMuted,
-                    Volume = SettingsService.Current.VolumeLevel,
-                    Rate = SettingsService.Current.Playback.VideoSpeed,
-                    Debug = SettingsService.Current.VerbosityLevel >= 4,
+                    Mute = AppSettings.VolumeMuted,
+                    Volume = AppSettings.VolumeLevel,
+                    Rate = AppSettings.Playback.VideoSpeed,
+                    Debug = AppSettings.VerbosityLevel >= 4,
                 };
 
                 _core = new AsyncMediaPlayer(options);

@@ -49,7 +49,7 @@ namespace Telegram.Services
             var values = new Dictionary<string, Color>();
             var shades = new Dictionary<AccentShade, Color>();
 
-            var requested = SettingsService.Current.Appearance.RequestedTheme;
+            var requested = AppSettings.Appearance.RequestedTheme;
             var accent = _accent[requested == TelegramTheme.Dark ? TelegramThemeType.Night : TelegramThemeType.Day][AccentShade.Default];
             var name = string.Empty;
 

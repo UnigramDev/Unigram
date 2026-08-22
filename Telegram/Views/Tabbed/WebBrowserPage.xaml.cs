@@ -178,7 +178,7 @@ namespace Telegram.Views.Tabbed
             };
 
             sender.CoreWebView2.Settings.IsStatusBarEnabled = false;
-            sender.CoreWebView2.Settings.AreDevToolsEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
+            sender.CoreWebView2.Settings.AreDevToolsEnabled = AppSettings.Diagnostics.EnableWebViewDevTools;
 
             sender.CoreWebView2.Navigate(_startUrl);
             sender.CoreWebView2.SourceChanged += OnSourceChanged;

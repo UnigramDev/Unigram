@@ -138,7 +138,7 @@ namespace Telegram.ViewModels.Settings
 
         public bool IsLimitSupported => _type != AutoDownloadType.Photos;
 
-        public bool IsPreloadSupported => _type == AutoDownloadType.Videos && SettingsService.Current.Diagnostics.VideoPreloadDebug;
+        public bool IsPreloadSupported => _type == AutoDownloadType.Videos && AppSettings.Diagnostics.VideoPreloadDebug;
 
         public void Save()
         {

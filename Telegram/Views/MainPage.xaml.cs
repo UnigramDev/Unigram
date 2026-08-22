@@ -86,14 +86,14 @@ namespace Telegram.Views
 
             //var show = !((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats;
             //ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
-            ArchivedChatsPanel.Visibility = ViewModel.Settings.Settings.HideArchivedChats
+            ArchivedChatsPanel.Visibility = ((ViewModelBase)ViewModel).Settings.HideArchivedChats
                 ? Visibility.Collapsed
                 : Visibility.Visible;
 
             ElementCompositionPreview.SetIsTranslationEnabled(ManagePanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(DialogsPanel, true);
 
-            if (SettingsService.Current.Diagnostics.ShowMemoryUsage)
+            if (AppSettings.Diagnostics.ShowMemoryUsage)
             {
                 _memoryUsageTimer = new DispatcherTimer();
                 _memoryUsageTimer.Interval = TimeSpan.FromSeconds(1);
@@ -1068,9 +1068,9 @@ namespace Telegram.Views
 
             WatchDog.TrackEvent("MainPage");
 
-            if (SettingsService.Current.Diagnostics.IsLastErrorDiskFull)
+            if (AppSettings.Diagnostics.IsLastErrorDiskFull)
             {
-                SettingsService.Current.Diagnostics.IsLastErrorDiskFull = false;
+                AppSettings.Diagnostics.IsLastErrorDiskFull = false;
 
                 // TODO: Missing translation
                 var confirm = await ViewModel.ShowPopupAsync("Unigram has previously failed to launch because the device storage was full.\r\n\r\nMake sure there's enough storage space available and press **OK** to continue.", "Disk storage is full", Strings.OK, Strings.StorageUsage);
@@ -1217,7 +1217,7 @@ namespace Telegram.Views
         {
             foreach (var command in args.Shortcut.Commands)
             {
-                if (SettingsService.Current.Diagnostics.ShowMemoryUsage && command == ShortcutCommand.Quit)
+                if (AppSettings.Diagnostics.ShowMemoryUsage && command == ShortcutCommand.Quit)
                 {
                     if (!MasterDetail.NavigationService.CanGoBack)
                     {
@@ -2472,8 +2472,8 @@ namespace Telegram.Views
         private ChatFolderViewModel ConvertFolder(ChatFolderViewModel folder, bool updateBackStack = true)
         {
             ShowHideArchive(folder?.ChatList is ChatListMain or null && ViewModel.Chats.Items.ChatList is not ChatListArchive, false);
-            ShowHideLeftTabs(SettingsService.Current.UseLeftTabsForChats && ViewModel.Folders.Count > 0);
-            ShowHideTopTabs(!SettingsService.Current.UseLeftTabsForChats && ViewModel.Folders.Count > 0 && folder.ChatList is not ChatListArchive);
+            ShowHideLeftTabs(AppSettings.UseLeftTabsForChats && ViewModel.Folders.Count > 0);
+            ShowHideTopTabs(!AppSettings.UseLeftTabsForChats && ViewModel.Folders.Count > 0 && folder.ChatList is not ChatListArchive);
 
             UpdatePaneToggleButtonVisibility();
 

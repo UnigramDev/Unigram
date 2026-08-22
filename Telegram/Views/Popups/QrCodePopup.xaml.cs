@@ -148,7 +148,7 @@ namespace Telegram.Views.Popups
 
             var items = new[] { defaultTheme }.Union(themes).ToList();
 
-            _selectedTheme = themes.FirstOrDefault(x => x.AreTheSame(settingsService.Appearance.ChatTheme)) ?? defaultTheme;
+            _selectedTheme = themes.FirstOrDefault(x => x.AreTheSame(AppSettings.Appearance.ChatTheme)) ?? defaultTheme;
 
             ScrollingHost.ItemsSource = items;
             ScrollingHost.SelectedItem = _selectedTheme;

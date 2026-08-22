@@ -45,7 +45,7 @@ namespace Telegram.Views.Popups
             _text = text;
             _tcs = result;
 
-            _translateToLanguage = SettingsService.Current.Translate.To;
+            _translateToLanguage = navigationService.Session.Settings.Translate.To;
 
             TabStyleItems.ItemsSource = clientService.TextCompositionStyles;
             TabStyleOutput.SetText(clientService, text);
@@ -112,7 +112,7 @@ namespace Telegram.Views.Popups
 
             TabTranslateOriginal.SetText(_clientService, _text);
 
-            UpdateTranslateLanguage(SettingsService.Current.Translate.To);
+            UpdateTranslateLanguage(_navigationService.Session.Settings.Translate.To);
         }
 
         private void UpdateTranslateLanguage(string languageId)

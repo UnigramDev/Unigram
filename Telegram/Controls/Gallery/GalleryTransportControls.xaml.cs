@@ -57,9 +57,9 @@ namespace Telegram.Controls.Gallery
 
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
-            var muted = SettingsService.Current.VolumeMuted;
-            var volume = SettingsService.Current.VolumeLevel;
-            var speed = SettingsService.Current.Playback.VideoSpeed;
+            var muted = AppSettings.VolumeMuted;
+            var volume = AppSettings.VolumeLevel;
+            var speed = AppSettings.Playback.VideoSpeed;
 
             VolumeSlider.UpdateValue(muted ? 0 : volume, 1, false);
             VolumeSlider.PositionChanging += VolumeSlider_ValueChanged;
@@ -364,9 +364,9 @@ namespace Telegram.Controls.Gallery
 
         private void OnReady(VideoPlayerBase sender, EventArgs args)
         {
-            sender.Mute = SettingsService.Current.VolumeMuted;
-            sender.Volume = SettingsService.Current.VolumeLevel;
-            sender.Rate = SettingsService.Current.Playback.VideoSpeed;
+            sender.Mute = AppSettings.VolumeMuted;
+            sender.Volume = AppSettings.VolumeLevel;
+            sender.Rate = AppSettings.Playback.VideoSpeed;
         }
 
         private void OnLevelsChanged(VideoPlayerBase sender, VideoPlayerLevelsChangedEventArgs args)
@@ -573,7 +573,7 @@ namespace Telegram.Controls.Gallery
         private void UpdatePlaybackSpeed(double value)
         {
             value = Math.Clamp(value, 0.2, 2.5);
-            SettingsService.Current.Playback.VideoSpeed = value;
+            AppSettings.Playback.VideoSpeed = value;
 
             _player?.Rate = value;
         }
@@ -608,8 +608,8 @@ namespace Telegram.Controls.Gallery
                 _player.Mute = muted;
             }
 
-            SettingsService.Current.VolumeLevel = volume;
-            SettingsService.Current.VolumeMuted = muted;
+            AppSettings.VolumeLevel = volume;
+            AppSettings.VolumeMuted = muted;
 
             VolumeButton.Glyph = muted ? Icons.SpeakerMuteFilled : volume switch
             {
@@ -623,8 +623,8 @@ namespace Telegram.Controls.Gallery
 
         private void Volume_Click(object sender, RoutedEventArgs e)
         {
-            var muted = !SettingsService.Current.VolumeMuted;
-            var volume = (int)Math.Round(SettingsService.Current.VolumeLevel * 100);
+            var muted = !AppSettings.VolumeMuted;
+            var volume = (int)Math.Round(AppSettings.VolumeLevel * 100);
 
             if (volume == 0 && !muted)
             {
@@ -638,7 +638,7 @@ namespace Telegram.Controls.Gallery
                 _player.Mute = muted;
             }
 
-            SettingsService.Current.VolumeMuted = muted;
+            AppSettings.VolumeMuted = muted;
 
             VolumeSlider.UpdateValue(muted ? 0 : volume, 1, false);
 

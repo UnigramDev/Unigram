@@ -261,7 +261,7 @@ namespace Telegram.Services
                     _lifetimeService.Destroy(this);
 
                     Settings.Clear();
-                    Settings.PasscodeLock.Clear();
+                    AppSettings.PasscodeLock.Clear();
                 }
                 else if (_continueOnLogOut)
                 {

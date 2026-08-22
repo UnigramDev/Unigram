@@ -60,7 +60,7 @@ namespace Telegram.Services.Settings
             if (value == null)
             {
                 // Maintain the previous behavior for old users
-                if (SettingsService.Current.Diagnostics.UpdateCount > 1)
+                if (AppSettings.Diagnostics.UpdateCount > 1)
                 {
                     AddOrUpdateValue("DoNotTranslate", string.Empty);
                     return new HashSet<string>();

@@ -146,7 +146,7 @@ namespace Telegram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (PowerSavingPolicy.AreSmoothTransitionsEnabled && SettingsService.Current.Diagnostics.ConnectedAnimationsDebug)
+            if (PowerSavingPolicy.AreSmoothTransitionsEnabled && AppSettings.Diagnostics.ConnectedAnimationsDebug)
             {
                 ProfileHeader.AnimateEntrance();
             }
@@ -228,7 +228,7 @@ namespace Telegram.Views
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if (PowerSavingPolicy.AreSmoothTransitionsEnabled && SettingsService.Current.Diagnostics.ConnectedAnimationsDebug && e.SourcePageType == typeof(ChatPage) && ViewModel.NavigationService.TryGetChatFromParameter(e.Parameter, out ChatMessageTopic nextTopic))
+            if (PowerSavingPolicy.AreSmoothTransitionsEnabled && AppSettings.Diagnostics.ConnectedAnimationsDebug && e.SourcePageType == typeof(ChatPage) && ViewModel.NavigationService.TryGetChatFromParameter(e.Parameter, out ChatMessageTopic nextTopic))
             {
                 if (nextTopic.MessageTopic.IsDirectMessagesChat(ViewModel.ChatId))
                 {
@@ -1116,7 +1116,7 @@ namespace Telegram.Views
                 photos.Click += MediaShowPhotos_Click;
                 videos.Click += MediaShowVideos_Click;
 
-                //if (SettingsService.Current.Diagnostics.SparseMessagesDebug)
+                //if (AppSettings.Diagnostics.SparseMessagesDebug)
                 //{
                 //    flyout.Items.Add(zoomIn);
                 //    flyout.Items.Add(zoomOut);

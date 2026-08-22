@@ -227,7 +227,7 @@ namespace Telegram.Controls.Cells
             if (file.Local.IsDownloadingActive)
             {
                 FileButton target;
-                if (SettingsService.Current.IsStreamingEnabled)
+                if (AppSettings.IsStreamingEnabled)
                 {
                     target = Download;
                     DownloadRoot.Visibility = Visibility.Visible;
@@ -255,7 +255,7 @@ namespace Telegram.Controls.Cells
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 FileButton target;
-                if (SettingsService.Current.IsStreamingEnabled)
+                if (AppSettings.IsStreamingEnabled)
                 {
                     target = Download;
                     DownloadRoot.Visibility = Visibility.Visible;
@@ -280,13 +280,13 @@ namespace Telegram.Controls.Cells
             {
                 DownloadRoot.Visibility = Visibility.Collapsed;
 
-                if (!SettingsService.Current.IsStreamingEnabled)
+                if (!AppSettings.IsStreamingEnabled)
                 {
                     UpdatePlayback(message, audio, file);
                 }
             }
 
-            if (SettingsService.Current.IsStreamingEnabled)
+            if (AppSettings.IsStreamingEnabled)
             {
                 UpdatePlayback(message, audio, file);
             }
@@ -404,7 +404,7 @@ namespace Telegram.Controls.Cells
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (SettingsService.Current.IsStreamingEnabled)
+            if (AppSettings.IsStreamingEnabled)
             {
 
             }

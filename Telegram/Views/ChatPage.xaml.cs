@@ -49,7 +49,7 @@ namespace Telegram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (PowerSavingPolicy.AreSmoothTransitionsEnabled && SettingsService.Current.Diagnostics.ConnectedAnimationsDebug)
+            if (PowerSavingPolicy.AreSmoothTransitionsEnabled && AppSettings.Diagnostics.ConnectedAnimationsDebug)
             {
                 View.AnimateEntrance();
             }
@@ -57,7 +57,7 @@ namespace Telegram.Views
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if (PowerSavingPolicy.AreSmoothTransitionsEnabled && SettingsService.Current.Diagnostics.ConnectedAnimationsDebug && e.SourcePageType == typeof(ProfilePage) && ViewModel.NavigationService.TryGetChatFromParameter(e.Parameter, out ChatMessageTopic nextTopic))
+            if (PowerSavingPolicy.AreSmoothTransitionsEnabled && AppSettings.Diagnostics.ConnectedAnimationsDebug && e.SourcePageType == typeof(ProfilePage) && ViewModel.NavigationService.TryGetChatFromParameter(e.Parameter, out ChatMessageTopic nextTopic))
             {
                 if (ViewModel.TopicId.IsDirectMessagesChat(nextTopic.ChatId))
                 {

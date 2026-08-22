@@ -55,10 +55,10 @@ namespace Telegram.ViewModels.Settings
 
         public bool InstallBetaUpdates
         {
-            get => Settings.InstallBetaUpdates;
+            get => AppSettings.InstallBetaUpdates;
             set
             {
-                Settings.InstallBetaUpdates = value;
+                AppSettings.InstallBetaUpdates = value;
                 RaisePropertyChanged();
                 UpdateImpl(false);
             }
@@ -179,18 +179,18 @@ namespace Telegram.ViewModels.Settings
 
         public bool IsTrayVisible
         {
-            get => Settings.IsTrayVisible;
+            get => AppSettings.IsTrayVisible;
             set => SetTrayVisible(value);
         }
 
         private async void SetTrayVisible(bool value)
         {
-            if (Settings.IsTrayVisible == value)
+            if (AppSettings.IsTrayVisible == value)
             {
                 return;
             }
 
-            Settings.IsTrayVisible = value;
+            AppSettings.IsTrayVisible = value;
             RaisePropertyChanged();
 
             if (value)

@@ -608,7 +608,7 @@ namespace Telegram.Controls
 
             UpdateChatNotificationSettings(chat);
 
-            if (SettingsService.Current.Diagnostics.ShowIds)
+            if (AppSettings.Diagnostics.ShowIds)
             {
                 ChatId.Visibility = Visibility.Visible;
 

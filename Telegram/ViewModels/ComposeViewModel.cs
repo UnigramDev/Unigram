@@ -1216,7 +1216,7 @@ namespace Telegram.ViewModels
 
         private bool TextStillContainsEmojis(IList<TextEntity> entities)
         {
-            if (entities.Count == 0 || !Settings.Stickers.DynamicPackOrder)
+            if (entities.Count == 0 || !AppSettings.Stickers.DynamicPackOrder)
             {
                 return false;
             }

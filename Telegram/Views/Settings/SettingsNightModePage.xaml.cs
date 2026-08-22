@@ -144,15 +144,15 @@ namespace Telegram.Views.Settings
 
             if (theme is ThemeCustomInfo custom)
             {
-                radio.IsChecked = SettingsService.Current.Appearance[theme.Parent].Type == TelegramThemeType.Custom && string.Equals(SettingsService.Current.Appearance[theme.Parent].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
+                radio.IsChecked = AppSettings.Appearance[theme.Parent].Type == TelegramThemeType.Custom && string.Equals(AppSettings.Appearance[theme.Parent].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
             }
             else if (theme is ThemeAccentInfo accent)
             {
-                radio.IsChecked = SettingsService.Current.Appearance[theme.Parent].Type == accent.Type && SettingsService.Current.Appearance.Accents[accent.Type] == accent.AccentColor;
+                radio.IsChecked = AppSettings.Appearance[theme.Parent].Type == accent.Type && AppSettings.Appearance.Accents[accent.Type] == accent.AccentColor;
             }
             else
             {
-                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance[theme.Parent].Custom) && SettingsService.Current.Appearance.RequestedTheme == theme.Parent;
+                radio.IsChecked = string.IsNullOrEmpty(AppSettings.Appearance[theme.Parent].Custom) && AppSettings.Appearance.RequestedTheme == theme.Parent;
             }
         }
 
@@ -211,12 +211,12 @@ namespace Telegram.Views.Settings
 
         private void UpdateTheme_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Settings.Appearance.UpdateNightMode();
+            AppSettings.Appearance.UpdateNightMode();
         }
 
         private void UpdateTheme_Picked(TimePickerFlyout sender, TimePickedEventArgs args)
         {
-            ViewModel.Settings.Appearance.UpdateNightMode();
+            AppSettings.Appearance.UpdateNightMode();
         }
     }
 }

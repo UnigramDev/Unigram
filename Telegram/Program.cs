@@ -21,7 +21,7 @@ namespace Telegram
 
                 if (AnimationEffects.Enabled)
                 {
-                    AnimationEffects.State = SettingsService.Current.AreSmoothTransitionsEnabled
+                    AnimationEffects.State = AppSettings.AreSmoothTransitionsEnabled
                         ? AnimationEffectsState.Enabled
                         : AnimationEffectsState.Disabled;
                 }

@@ -155,7 +155,6 @@ namespace Telegram.ViewModels
         /// </summary>
         private void UpdatePowerSaving()
         {
-            var settings = SettingsService.Current;
             var items = new List<DiagnosticsOption>
             {
                 Flag("Mode", PowerSavingPolicy.Mode),
@@ -194,10 +193,10 @@ namespace Telegram.ViewModels
 
         public bool LegacyScrollBars
         {
-            get => Settings.Diagnostics.LegacyScrollBars;
+            get => AppSettings.Diagnostics.LegacyScrollBars;
             set
             {
-                Settings.Diagnostics.LegacyScrollBars = value;
+                AppSettings.Diagnostics.LegacyScrollBars = value;
                 RaisePropertyChanged();
                 Window.Theme.UpdateScrolls();
             }
@@ -215,7 +214,7 @@ namespace Telegram.ViewModels
 
         public bool CanUseTestDC => ClientService.AuthorizationState is not AuthorizationStateReady;
 
-        public bool IsDatabaseDisabled => Settings.Diagnostics.DisableDatabase;
+        public bool IsDatabaseDisabled => AppSettings.Diagnostics.DisableDatabase;
 
         public bool UseTestDC
         {
@@ -258,12 +257,12 @@ namespace Telegram.ViewModels
 
         public int Verbosity
         {
-            get => Array.IndexOf(_verbosityIndexer, SettingsService.Current.VerbosityLevel);
+            get => Array.IndexOf(_verbosityIndexer, AppSettings.VerbosityLevel);
             set
             {
-                if (value >= 0 && value < _verbosityIndexer.Length && SettingsService.Current.VerbosityLevel != _verbosityIndexer[value])
+                if (value >= 0 && value < _verbosityIndexer.Length && AppSettings.VerbosityLevel != _verbosityIndexer[value])
                 {
-                    Client.Execute(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel = _verbosityIndexer[value]));
+                    Client.Execute(new SetLogVerbosityLevel(AppSettings.VerbosityLevel = _verbosityIndexer[value]));
                     RaisePropertyChanged();
                 }
             }
@@ -281,12 +280,12 @@ namespace Telegram.ViewModels
 
         public int MessageDust
         {
-            get => Array.IndexOf(_messageDustIndexer, Settings.Diagnostics.MessageDust);
+            get => Array.IndexOf(_messageDustIndexer, AppSettings.Diagnostics.MessageDust);
             set
             {
-                if (value >= 0 && value < _messageDustIndexer.Length && Settings.Diagnostics.MessageDust != _messageDustIndexer[value])
+                if (value >= 0 && value < _messageDustIndexer.Length && AppSettings.Diagnostics.MessageDust != _messageDustIndexer[value])
                 {
-                    Settings.Diagnostics.MessageDust = _messageDustIndexer[value];
+                    AppSettings.Diagnostics.MessageDust = _messageDustIndexer[value];
                     RaisePropertyChanged();
                 }
             }
@@ -510,16 +509,16 @@ namespace Telegram.ViewModels
 
         public async void DisableDatabase()
         {
-            if (Settings.Diagnostics.DisableDatabase)
+            if (AppSettings.Diagnostics.DisableDatabase)
             {
-                Settings.Diagnostics.DisableDatabase = false;
+                AppSettings.Diagnostics.DisableDatabase = false;
             }
             else
             {
                 var confirm = await ShowPopupAsync("If you disable the messages database some **features** might **stop to work** as expected, **secret chats** will become **inaccessible** and app won't recognize downloaded files after download.\r\n\r\nAre you sure you want to proceed? You can re-enable messages database anytime from here.", Strings.Warning, Strings.OK, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    Settings.Diagnostics.DisableDatabase = true;
+                    AppSettings.Diagnostics.DisableDatabase = true;
                 }
                 else
                 {
@@ -563,10 +562,10 @@ namespace Telegram.ViewModels
 
         public int Verbosity
         {
-            get => Array.IndexOf(_verbosityIndexer, _settings.Diagnostics.GetValueOrDefault(Name, -1));
+            get => Array.IndexOf(_verbosityIndexer, AppSettings.Diagnostics.GetValueOrDefault(Name, -1));
             set
             {
-                if (value >= 0 && value < _verbosityIndexer.Length && SettingsService.Current.VerbosityLevel != _verbosityIndexer[value])
+                if (value >= 0 && value < _verbosityIndexer.Length && AppSettings.VerbosityLevel != _verbosityIndexer[value])
                 {
                     var level = _verbosityIndexer[value];
                     if (level == -1)
@@ -574,7 +573,7 @@ namespace Telegram.ViewModels
                         level = Default;
                     }
 
-                    _settings.Diagnostics.AddOrUpdateValue(Name, _verbosityIndexer[value]);
+                    AppSettings.Diagnostics.AddOrUpdateValue(Name, _verbosityIndexer[value]);
                     Client.Execute(new SetLogTagVerbosityLevel(Name, _verbosityIndexer[value]));
                     RaisePropertyChanged();
                 }

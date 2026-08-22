@@ -581,7 +581,7 @@ namespace Telegram.Controls.Messages
             //var topRight = 15d;
             //var bottomRight = 15d;
             //var bottomLeft = 15d;
-            var radius = SettingsService.Current.Appearance.BubbleRadius;
+            var radius = AppSettings.Appearance.BubbleRadius;
             var small = radius < 4 ? radius : 4;
 
             var topLeft = radius;
@@ -2929,8 +2929,8 @@ namespace Telegram.Controls.Messages
                 var index = ClientEx.SearchQuote(caption, options.Quote);
                 if (index >= 0)
                 {
-                    var fontSize = SettingsService.Current.Appearance.MessageFontSize * BootStrapper.Current.TextScaleFactor;
-                    var quoteSize = SettingsService.Current.Appearance.CaptionFontSize * BootStrapper.Current.TextScaleFactor;
+                    var fontSize = AppSettings.Appearance.MessageFontSize * BootStrapper.Current.TextScaleFactor;
+                    var quoteSize = AppSettings.Appearance.CaptionFontSize * BootStrapper.Current.TextScaleFactor;
 
                     var minX = double.MaxValue;
                     var minY = double.MaxValue;
@@ -3714,7 +3714,7 @@ namespace Telegram.Controls.Messages
 
         public void UpdateMockup(bool outgoing, bool first, bool last, bool margin = true)
         {
-            var radius = SettingsService.Current.Appearance.BubbleRadius;
+            var radius = AppSettings.Appearance.BubbleRadius;
             var small = radius < 4 ? radius : 4;
 
             var topLeft = radius;
@@ -3770,7 +3770,7 @@ namespace Telegram.Controls.Messages
                 Margin = new Thickness(outgoing ? 50 : 12, first ? 2 : 1, outgoing ? 12 : 50, last ? 2 : 1);
             }
 
-            Message.SetFontSize(SettingsService.Current.Appearance.MessageFontSize);
+            Message.SetFontSize(AppSettings.Appearance.MessageFontSize);
             SetCorners(topLeft, topRight, bottomRight, bottomLeft);
         }
 

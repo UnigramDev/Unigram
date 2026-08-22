@@ -414,7 +414,7 @@ namespace Telegram.Controls.Stories
                     : Visibility.Collapsed;
 
                 Mute.IsEnabled = !video.IsAnimation;
-                Mute.IsChecked = !video.IsAnimation && !_viewModel.Settings.VolumeMuted;
+                Mute.IsChecked = !video.IsAnimation && !AppSettings.VolumeMuted;
             }
             else if (story.Content is StoryContentLive)
             {
@@ -1075,7 +1075,7 @@ namespace Telegram.Controls.Stories
 
         private StoryVideo SelectVideoFile(StoryContentVideo video)
         {
-            //if (video.AlternativeVideo == null || (SettingsService.Current.Playback.HighQuality && _viewModel.IsPremium))
+            //if (video.AlternativeVideo == null || (AppSettings.Playback.HighQuality && _viewModel.IsPremium))
             {
                 return video.Video;
             }
@@ -1512,9 +1512,9 @@ namespace Telegram.Controls.Stories
             var options = new AsyncMediaPlayerOptions
             {
                 CreateSwapChain = true,
-                Mute = _viewModel.Settings.VolumeMuted,
+                Mute = AppSettings.VolumeMuted,
                 Volume = 1,
-                Debug = SettingsService.Current.VerbosityLevel >= 4,
+                Debug = AppSettings.VerbosityLevel >= 4,
             };
 
             _player = new AsyncMediaPlayer(options);
@@ -1668,9 +1668,9 @@ namespace Telegram.Controls.Stories
 
         private void Mute_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.Settings.VolumeMuted = Mute.IsChecked is false;
+            AppSettings.VolumeMuted = Mute.IsChecked is false;
 
-            _player?.Mute = _viewModel.Settings.VolumeMuted;
+            _player?.Mute = AppSettings.VolumeMuted;
         }
 
         private void Caption_Click(object sender, RoutedEventArgs e)
@@ -1878,7 +1878,7 @@ namespace Telegram.Controls.Stories
             var language = LanguageIdentification.IdentifyLanguage(message.Text.Text);
             var translate = ViewModel.Session.Resolve<ITranslateService>();
 
-            var popup = new TranslatePopup(translate, message.Text, language, ViewModel.Settings.Translate.To, false)
+            var popup = new TranslatePopup(translate, message.Text, language, _viewModel.Settings.Translate.To, false)
             {
                 RequestedTheme = ElementTheme.Dark
             };

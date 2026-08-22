@@ -14,6 +14,7 @@ using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Entities;
 using Telegram.Services.Factories;
+using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
@@ -143,7 +144,7 @@ namespace Telegram.ViewModels
                 schedulingState = new MessageSchedulingStateSendWhenOnline();
             }
 
-            return new MessageSendOptions(ComposerHeader?.SuggestedPostInfo, disableNotification ?? false, false, messageCount * paidMessageStarCount, Settings.Stickers.DynamicPackOrder && reorder, schedulingState, 0, 0, false);
+            return new MessageSendOptions(ComposerHeader?.SuggestedPostInfo, disableNotification ?? false, false, messageCount * paidMessageStarCount, AppSettings.Stickers.DynamicPackOrder && reorder, schedulingState, 0, 0, false);
         }
 
         protected override void ContinueSendMessage(MessageSendOptions options)

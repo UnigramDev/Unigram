@@ -77,7 +77,7 @@ namespace Telegram.ViewModels.Settings
                 _officialLanguages.AddRange(pack.LanguagePacks);
                 _languages.AddRange(results);
 
-                SelectedItem = pack.LanguagePacks.FirstOrDefault(x => x.Id == SettingsService.Current.LanguagePackId);
+                SelectedItem = pack.LanguagePacks.FirstOrDefault(x => x.Id == AppSettings.LanguagePackId);
                 Items.AddRange(results);
 
                 RaisePropertyChanged(nameof(DoNotTranslate));
@@ -245,7 +245,7 @@ namespace Telegram.ViewModels.Settings
             ClientService.Send(new DeleteLanguagePack(info.Id));
             Items.Remove(info);
 
-            if (info.Id != SettingsService.Current.LanguagePackId)
+            if (info.Id != AppSettings.LanguagePackId)
             {
                 return;
             }

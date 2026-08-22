@@ -550,7 +550,7 @@ namespace Telegram.Controls.Chats
             var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                if (SettingsService.Current.ToolTip.Increment("NotesViewOnce"))
+                if (AppSettings.ToolTip.Increment("NotesViewOnce"))
                 {
                     _viewOnceToast = ToastPopup.Show(ViewOnceRoot, ControlledButton.Mode == ChatRecordMode.Voice ? Strings.VoiceSetOnceHint : Strings.VideoSetOnceHint, TeachingTipPlacementMode.Right, dismissAfter: TimeSpan.FromSeconds(3));
                 }

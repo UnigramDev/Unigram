@@ -196,7 +196,7 @@ namespace Telegram.Views.Host
 
             if (_lifetime.ActiveItem != session)
             {
-                InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded);
+                InitializeSessions(AppSettings.IsAccountsSelectorExpanded);
                 return;
             }
 
@@ -311,7 +311,7 @@ namespace Telegram.Views.Host
             if (frame?.Content is MainPage page && page.ViewModel != null)
             {
                 InitializeUser(page.ViewModel.ClientService);
-                InitializeSessions(page.ViewModel.ClientService, SettingsService.Current.IsAccountsSelectorExpanded);
+                InitializeSessions(page.ViewModel.ClientService, AppSettings.IsAccountsSelectorExpanded);
             }
         }
 
@@ -328,7 +328,7 @@ namespace Telegram.Views.Host
             Photo.Source = ProfilePictureSource.User(clientService, user);
             NameLabel.Text = user.FullName();
 
-            if (SettingsService.Current.Diagnostics.HidePhoneNumber)
+            if (AppSettings.Diagnostics.HidePhoneNumber)
             {
                 PhoneLabel.Text = "+42 --- --- ----";
             }
@@ -337,14 +337,14 @@ namespace Telegram.Views.Host
                 PhoneLabel.Text = PhoneNumber.Format(user.PhoneNumber);
             }
 
-            Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
+            Expanded.IsChecked = AppSettings.IsAccountsSelectorExpanded;
         }
 
         private void InitializeSessions(bool show)
         {
             if (_navigationService != null)
             {
-                InitializeSessions(_navigationService.Session.ClientService, SettingsService.Current.IsAccountsSelectorExpanded);
+                InitializeSessions(_navigationService.Session.ClientService, AppSettings.IsAccountsSelectorExpanded);
             }
         }
 
@@ -396,7 +396,7 @@ namespace Telegram.Views.Host
                 }
             }
 
-            var hasArchived = SettingsService.Current.HideArchivedChats;
+            var hasArchived = _navigationService.Session.Settings.HideArchivedChats;
             var hasPremium = clientService.IsPremium;
 
             if (!hasArchived)
@@ -503,7 +503,7 @@ namespace Telegram.Views.Host
 
                     if (destination is RootDestination.ShowAccounts)
                     {
-                        AutomationProperties.SetName(args.ItemContainer, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.AccDescrHideAccounts : Strings.AccDescrShowAccounts);
+                        AutomationProperties.SetName(args.ItemContainer, AppSettings.IsAccountsSelectorExpanded ? Strings.AccDescrHideAccounts : Strings.AccDescrShowAccounts);
                         args.ItemContainer.FocusVisualMargin = new Thickness(0, -22, 0, 2);
                     }
                     else
@@ -710,15 +710,15 @@ namespace Telegram.Views.Host
 
         private void Expand_Click(object sender, RoutedEventArgs e)
         {
-            SettingsService.Current.IsAccountsSelectorExpanded = !SettingsService.Current.IsAccountsSelectorExpanded;
+            AppSettings.IsAccountsSelectorExpanded = !AppSettings.IsAccountsSelectorExpanded;
 
-            InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded);
-            Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
+            InitializeSessions(AppSettings.IsAccountsSelectorExpanded);
+            Expanded.IsChecked = AppSettings.IsAccountsSelectorExpanded;
 
             var selector = NavigationViewList.ContainerFromIndex(0);
             if (selector != null)
             {
-                AutomationProperties.SetName(selector, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.AccDescrHideAccounts : Strings.AccDescrShowAccounts);
+                AutomationProperties.SetName(selector, AppSettings.IsAccountsSelectorExpanded ? Strings.AccDescrHideAccounts : Strings.AccDescrShowAccounts);
             }
         }
 
@@ -810,7 +810,7 @@ namespace Telegram.Views.Host
                 {
                     var modifiers = WindowContext.KeyModifiers();
 
-                    if (SettingsService.Current.Diagnostics.ShowMemoryUsage && modifiers == VirtualKeyModifiers.Menu)
+                    if (AppSettings.Diagnostics.ShowMemoryUsage && modifiers == VirtualKeyModifiers.Menu)
                     {
                         TestDestroy();
                     }
@@ -863,7 +863,7 @@ namespace Telegram.Views.Host
 
         public void UpdateSessions()
         {
-            InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded);
+            InitializeSessions(AppSettings.IsAccountsSelectorExpanded);
         }
 
         public void SetSelectedIndex(RootDestination value)
@@ -979,18 +979,18 @@ namespace Telegram.Views.Host
                 batch.End();
             }
 
-            if (SettingsService.Current.Appearance.NightMode != NightMode.Disabled)
+            if (AppSettings.Appearance.NightMode != NightMode.Disabled)
             {
-                SettingsService.Current.Appearance.NightMode = NightMode.Disabled;
+                AppSettings.Appearance.NightMode = NightMode.Disabled;
                 ToastPopup.Show(XamlRoot, Strings.AutoNightModeOff, ToastPopupIcon.AutoNightOff);
             }
 
-            SettingsService.Current.Appearance.ForceNightMode = ActualTheme != ElementTheme.Dark;
-            SettingsService.Current.Appearance.RequestedTheme = ActualTheme != ElementTheme.Dark
+            AppSettings.Appearance.ForceNightMode = ActualTheme != ElementTheme.Dark;
+            AppSettings.Appearance.RequestedTheme = ActualTheme != ElementTheme.Dark
                 ? TelegramTheme.Dark
                 : TelegramTheme.Light;
 
-            SettingsService.Current.Appearance.UpdateNightMode();
+            AppSettings.Appearance.UpdateNightMode();
         }
 
         private void Theme_ActualThemeChanged(FrameworkElement sender, object args)
@@ -1016,7 +1016,7 @@ namespace Telegram.Views.Host
 
         private void Navigation_PaneOpening(SplitView sender, object args)
         {
-            InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded);
+            InitializeSessions(AppSettings.IsAccountsSelectorExpanded);
 
             if (_navigationService != null)
             {
@@ -1171,12 +1171,12 @@ namespace Telegram.Views.Host
                     var ids = sessions.Select(x => x.Id);
 
                     _menuSessions = sessions.Hash(x => x.UserId);
-                    SettingsService.Current.AccountsSelectorOrder = ids.ToArray();
+                    AppSettings.AccountsSelectorOrder = ids.ToArray();
                 }
                 else
                 {
                     _menuSessions = 0;
-                    InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded);
+                    InitializeSessions(AppSettings.IsAccountsSelectorExpanded);
                 }
             }
         }

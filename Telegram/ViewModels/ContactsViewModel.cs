@@ -33,14 +33,14 @@ namespace Telegram.ViewModels
             _voipService = voipService;
 
             _loadMoreLock = new DisposableMutex();
-            _comparer = new UserComparer(Settings.IsContactsSortedByEpoch);
+            _comparer = new UserComparer(AppSettings.IsContactsSortedByEpoch);
 
             Items = new SortedObservableCollection<User>(_comparer);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Load(Settings.IsContactsSortedByEpoch);
+            Load(AppSettings.IsContactsSortedByEpoch);
             return Task.CompletedTask;
         }
 
@@ -52,12 +52,12 @@ namespace Telegram.ViewModels
 
         public bool IsSortedByEpoch
         {
-            get => Settings.IsContactsSortedByEpoch;
+            get => AppSettings.IsContactsSortedByEpoch;
             set
             {
-                if (Settings.IsContactsSortedByEpoch != value)
+                if (AppSettings.IsContactsSortedByEpoch != value)
                 {
-                    Settings.IsContactsSortedByEpoch = value;
+                    AppSettings.IsContactsSortedByEpoch = value;
                     Load(value);
 
                     RaisePropertyChanged(nameof(IsSortedByEpoch));

@@ -4208,7 +4208,7 @@ namespace Telegram.Td.Api
         {
             if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
-                if (supergroup.HasForumTabs || (supergroup.IsForum && !chat.ViewAsTopics && SettingsService.Current.Diagnostics.ForumTabsDebug))
+                if (supergroup.HasForumTabs || (supergroup.IsForum && !chat.ViewAsTopics && AppSettings.Diagnostics.ForumTabsDebug))
                 {
                     isForum = true;
                     return true;

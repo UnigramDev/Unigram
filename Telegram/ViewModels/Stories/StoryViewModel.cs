@@ -236,7 +236,7 @@ namespace Telegram.ViewModels.Stories
 
         private StoryVideo SelectVideoFile(StoryContentVideo video)
         {
-            //if (video.AlternativeVideo == null || (SettingsService.Current.Playback.HighQuality && ClientService.IsPremium))
+            //if (video.AlternativeVideo == null || (AppSettings.Playback.HighQuality && ClientService.IsPremium))
             {
                 return video.Video;
             }

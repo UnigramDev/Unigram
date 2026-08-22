@@ -431,7 +431,7 @@ namespace Telegram.Controls.Gallery
 
         private Task<ContentDialogResult> ShowAsyncInternal(GalleryViewModelBase parameter, FrameworkElement closing = null, VideoPlayerBase player = null)
         {
-            if (closing != null && closing.IsConnected() && !SettingsService.Current.FullScreenGallery)
+            if (closing != null && closing.IsConnected() && !AppSettings.FullScreenGallery)
             {
                 _closing = new WeakReference<FrameworkElement>(closing);
                 ConnectedAnimationServiceEx.PrepareToAnimate("FullScreenPicture", closing);
@@ -454,7 +454,7 @@ namespace Telegram.Controls.Gallery
 
                 _wasFullScreen = Window.IsFullScreenMode || ApiInfo.IsXbox;
 
-                if (SettingsService.Current.FullScreenGallery && !_wasFullScreen)
+                if (AppSettings.FullScreenGallery && !_wasFullScreen)
                 {
                     Window.TryEnterFullScreenMode();
                 }
@@ -535,7 +535,7 @@ namespace Telegram.Controls.Gallery
             {
                 Window.ExitFullScreenMode();
 
-                if (e.Key == VirtualKey.Escape && !SettingsService.Current.FullScreenGallery)
+                if (e.Key == VirtualKey.Escape && !AppSettings.FullScreenGallery)
                 {
                     Cancel();
                     return;
@@ -558,7 +558,7 @@ namespace Telegram.Controls.Gallery
                 if (ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
                 {
                     var root = LayoutRoot.CurrentElement;
-                    if (root != null && root.IsLoaded && !SettingsService.Current.FullScreenGallery && !_lastFullScreen)
+                    if (root != null && root.IsLoaded && !AppSettings.FullScreenGallery && !_lastFullScreen)
                     {
                         if (_closing.TryGetTarget(out FrameworkElement element) && element.IsConnected())
                         {
@@ -953,7 +953,7 @@ namespace Telegram.Controls.Gallery
 
         private void LayoutRoot_ViewChanged(object sender, CarouselViewChangedEventArgs e)
         {
-            if (ViewModel?.SelectedItem is GalleryMedia item && item.IsVideo && (item.IsLoopingEnabled || SettingsService.Current.IsStreamingEnabled))
+            if (ViewModel?.SelectedItem is GalleryMedia item && item.IsVideo && (item.IsLoopingEnabled || AppSettings.IsStreamingEnabled))
             {
                 Play(CurrentElement, item);
             }
@@ -1155,7 +1155,7 @@ namespace Telegram.Controls.Gallery
                         void handler()
                         {
                             var language = LanguageIdentification.IdentifyLanguage(container.SelectedText);
-                            var popup = new TranslatePopup(translate, container.SelectedText, language, SettingsService.Current.Translate.To, true);
+                            var popup = new TranslatePopup(translate, container.SelectedText, language, translate.Settings.Translate.To, true);
 
                             ViewModel.ShowPopup(popup, requestedTheme: ElementTheme.Dark);
                         }
@@ -1171,7 +1171,7 @@ namespace Telegram.Controls.Gallery
                         void handler()
                         {
                             var language = LanguageIdentification.IdentifyLanguage(container.RecognizedText);
-                            var popup = new TranslatePopup(translate, container.RecognizedText, language, SettingsService.Current.Translate.To, true);
+                            var popup = new TranslatePopup(translate, container.RecognizedText, language, translate.Settings.Translate.To, true);
 
                             ViewModel.ShowPopup(popup, requestedTheme: ElementTheme.Dark);
                         }
@@ -1425,7 +1425,7 @@ namespace Telegram.Controls.Gallery
 
         private void Recognize_Click(object sender, RoutedEventArgs e)
         {
-            SettingsService.Current.ToolTip.Complete("TextRecognizer");
+            AppSettings.ToolTip.Complete("TextRecognizer");
 
             var container = GetElement(CarouselDirection.None);
             container.RecognizeText();
@@ -1442,7 +1442,7 @@ namespace Telegram.Controls.Gallery
 
             _recognizeLoaded = true;
 
-            if (SettingsService.Current.ToolTip.Increment("TextRecognizer"))
+            if (AppSettings.ToolTip.Increment("TextRecognizer"))
             {
                 ToastPopup.Show(Recognize, Strings.ScanTextFirstTime, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.Top, dismissAfter: TimeSpan.FromSeconds(3));
             }

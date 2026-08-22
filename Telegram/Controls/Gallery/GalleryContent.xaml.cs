@@ -385,7 +385,7 @@ namespace Telegram.Controls.Gallery
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                if (SettingsService.Current.IsStreamingEnabled && item.IsVideo && item.IsStreamable)
+                if (AppSettings.IsStreamingEnabled && item.IsVideo && item.IsStreamable)
                 {
                     _window?.OpenFile(item, file);
                 }
@@ -440,7 +440,7 @@ namespace Telegram.Controls.Gallery
             try
             {
                 var file = item.File;
-                if (!force && file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled))
+                if (!force && file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !AppSettings.IsStreamingEnabled))
                 {
                     return;
                 }
@@ -453,7 +453,7 @@ namespace Telegram.Controls.Gallery
                 }
 
                 // Always recreate HLS player for now, try to reuse native one
-                if (!force && (SettingsService.Current.Diagnostics.ForceWebView2 || item.IsHls()) && ChromiumWebPresenter.IsSupported())
+                if (!force && (AppSettings.Diagnostics.ForceWebView2 || item.IsHls()) && ChromiumWebPresenter.IsSupported())
                 {
                     Video = new WebVideoPlayer();
                 }
@@ -481,7 +481,7 @@ namespace Telegram.Controls.Gallery
             try
             {
                 var file = item.File;
-                if (file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled))
+                if (file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !AppSettings.IsStreamingEnabled))
                 {
                     return;
                 }

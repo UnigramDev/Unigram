@@ -110,7 +110,7 @@ namespace Telegram.Views.Popups
                 }
 
                 StickersRoot.Activate(null, EmojiSearchType.ChatPhoto);
-                SettingsService.Current.Stickers.SelectedTab = StickersTab.Stickers;
+                AppSettings.Stickers.SelectedTab = StickersTab.Stickers;
             }
             else if (index == 0)
             {
@@ -126,7 +126,7 @@ namespace Telegram.Views.Popups
                 }
 
                 EmojisRoot.Activate(null);
-                SettingsService.Current.Stickers.SelectedTab = StickersTab.Emoji;
+                AppSettings.Stickers.SelectedTab = StickersTab.Emoji;
             }
         }
 

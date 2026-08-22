@@ -33,7 +33,7 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             _proxyService = proxyService;
-            _type = settingsService.EnabledProxyId;
+            _type = AppSettings.EnabledProxyId;
 
             Items = new MvxObservableCollection<ProxyViewModel>();
         }
@@ -104,7 +104,7 @@ namespace Telegram.ViewModels.Settings
 
         private void Handle(ConnectionState state)
         {
-            var enabledProxyId = Settings.EnabledProxyId;
+            var enabledProxyId = AppSettings.EnabledProxyId;
 
             SetType(enabledProxyId, false);
 
@@ -319,7 +319,7 @@ namespace Telegram.ViewModels.Settings
 
             foreach (var proxy in selected)
             {
-                if (proxy.Id == Settings.EnabledProxyId)
+                if (proxy.Id == AppSettings.EnabledProxyId)
                 {
                     SetType(0, false);
                 }

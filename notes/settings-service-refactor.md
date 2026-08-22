@@ -88,7 +88,7 @@ of these from a session instance returns the wrong container.
 | `PasscodeLock` | `PasscodeLock` | global, yet cleared when *any* account logs out (5.5) |
 | `VoIP` | `VoIP` | |
 | `ToolTip` | `ToolTip` | |
-| `Emoji` | `Emoji` | |
+| `Emoji` | `Emoji` | app-wide, but probably should not be -- see 5.6 |
 | `Stickers` | root, unprefixed | |
 | `Translate` | root, unprefixed | |
 | `Playback` | root, unprefixed | |
@@ -291,7 +291,8 @@ once at startup, not the entry point.
 2. **Which of 2.4 should actually become global?** These are per-account today mostly by accident
    of `_container`. My reading:
    - genuinely per account: `UserId`, `UseTestDC`, `Chats`, `Notifications`, `AutoDownload`,
-     `Video`, `UseSystemProxy`, `LastProxyId`, `IsSecretPreviewsEnabled`, `LastMessageTtl`
+     `Video`, `IsSecretPreviewsEnabled`, `LastMessageTtl`; `UseSystemProxy` and `LastProxyId`
+     only until 5.7 removes them
    - should be global (they are UI preferences, and the settings page presents them as app-wide):
      `IsReplaceEmojiEnabled`, `IsContactsSortedByEpoch`, `UseLeftTabsForForums`
    - unclear: `UseLessData` — a call setting, and `VoIP` is global; moving it there is tidier but
@@ -311,6 +312,96 @@ once at startup, not the entry point.
 5. **`PasscodeLock` is global but cleared per account.** `SessionImpl.Handle` calls
    `Settings.PasscodeLock.Clear()` on log-out, which wipes the passcode for *all* accounts. Is
    that intended?
+
+6. **`EmojiSettings` is app-wide and probably should be per account** -- Fela's call, recorded
+   here rather than acted on. It holds exactly three things in `LocalSettings\Emoji`:
+   `RecentEmoji` (a joined `code=count` list, capped at 35), `RecentEmojiFilledDefault`, and one
+   `Skin{code}` per emoji whose tone has been changed.
+
+   The strong case is **recent emoji**, because entries are not always plain emoji: picking a
+   custom emoji stores `"{emoji};{customEmojiId}"`, and a `CustomEmojiId` is an account-scoped
+   entity -- resolved through that session's `ClientService`, and gated on that account's premium
+   status. So one account's recent list can carry ids the next account cannot resolve. That is a
+   correctness argument, not a preference one.
+
+   **Skin tones** are the weaker case: on Android and iOS the tone is a device-level preference,
+   not account state, and nothing about it is account-scoped. Worth deciding separately rather
+   than moving both because they share a container.
+
+   The cost is not the storage, it is the callers. All ~15 of them go through
+   `AppSettings.Emoji`, and several have no session to hand: `Common/Emoji.cs` exposes
+   `GetRecents()` and `Get()` as **static** helpers, called from control code. Making the data
+   per account means either threading a session into those, or having them resolve the active
+   one -- which is the sort of ambient lookup this refactor has been removing. Settle that before
+   moving the keys, and note it needs a promote from the root like the others.
+
+7. **`UseSystemProxy` and `LastProxyId` are legacy migration state, not settings.** Checked
+   2026-08-22, and Fela's recollection is right: proxies were per account because TDLib keeps no
+   shared state, and the app now holds them in its own `local.db` `Proxy` table.
+
+   `ProxyService.Migrate(sessionId)` is guarded by `AppSettings.MigratedProxy`, a one-shot flag it
+   sets on entry. In that single pass it reads each session's proxies through `GetProxies()`,
+   merges them into `local.db`, and reads `settings.UseSystemProxy` exactly once -- clearing it
+   immediately afterwards. Nothing else in the app reads it. The live state is
+   `AppSettings.EnabledProxyId` (`-1` system, `0` none, `>0` a row in `local.db`), and the
+   settings UI binds `ViewModel.IsSystem`, not `UseSystemProxy`.
+
+   `LastProxyId` is worse: `SettingsProxyViewModel.Enable` writes it, and its only reader is
+   **commented out**. Write-only, like the `User{id}` index step 4a deleted.
+
+   So: `LastProxyId` can go now. `UseSystemProxy` cannot quite -- it is still the input to the
+   migration for anyone upgrading from a build that predates `MigratedProxy`, so deleting it
+   strands them. It should stop being an `ISettingsService` member and become a read-once helper
+   next to `IsAuthorized`/`SetUseTestDC`, to be dropped with the migration itself.
+
+   This also retracts something I wrote earlier: the proxy settings being split across app-wide
+   and per-account is **not** incoherence nobody chose. It is one live app-wide setting plus two
+   per-account keys that exist only as migration input, which is exactly right.
+
+8. **`TranslateSettings` is app-wide and has a concrete reason to be per account.** Its four keys
+   -- `IsTranslateEnabled`, `IsTranslateAllEnabled`, `TranslateTo`, `DoNotTranslate` -- sit
+   unprefixed in the root, because the section was handed `_local`.
+
+   The evidence that they want to be per account is that the app already combines them with
+   per-account state at every use:
+
+   - `ClientService.TranslateMessages => _translateMessages && AppSettings.Translate.Messages`,
+     where `_translateMessages` comes from that session's TDLib config
+     (`translations_manual_enabled`). Same shape for `TranslateChats`
+   - `SettingsLanguageViewModel` shows the auto-translate toggle as
+     `AppSettings.Translate.Chats && ClientService.IsPremium` -- **gated on the account's premium
+     status while the stored value is shared**. So a non-premium account writing that toggle
+     clobbers a premium account's value, and what the page shows is not what is stored
+
+   `TranslateTo` and `DoNotTranslate` are weaker: they are person-level rather than account-level,
+   and a person with two accounts reads the same languages. But they are also the ones a
+   work/personal split would most plausibly want apart.
+
+   Cost: 33 sites in 13 files, and unlike the emoji case (5.6) nearly all of them already have a
+   session -- `DialogViewModel.*`, `ClientService`, `TranslateService`, `ChatTranslateBar` through
+   its view model. `MessageHelper`, `GalleryWindow`, `StoryContent` and `TextEditorPopup` want
+   checking. Four root keys move to `{n}`, so it needs a promote from the root like step 2.
+
+9. **Archive visibility (`HideArchivedChats`) should be per account.** Fela's call, and the API
+   agrees: the archive is a per-account list (`ChatListArchive`), and TDLib already treats its
+   configuration as account state -- `NotificationsService` calls
+   `GetArchiveChatListSettings`/`SetArchiveChatListSettings` on the session. Whether the archive
+   row is worth showing is a judgement about *that account's* archive: one account may never use
+   it, another may live in it.
+
+   It reads like chrome, which is presumably why it ended up next to `IsSidebarOpen` and
+   `UseLeftTabsForChats` in the root -- but those describe the window, while this one describes a
+   per-account list.
+
+   Cheapest of the four moves in 5.6-5.9: one key, and all 7 call sites already have a session
+   (`MainViewModel`, `MainPage`, `RootWindow` -- four of them were literally
+   `((ViewModelBase)ViewModel).Settings.HideArchivedChats` before step 4a). Needs a promote from
+   the root, like the others.
+
+   Worth saying plainly: this is the first item from the "43 settings that were already app-wide
+   and have never been reviewed on the merits" pile. 5.6, 5.8 and 5.9 all come from that pile, and
+   nothing in this refactor examined it -- the plan was deliberately layout-preserving. A proper
+   pass over the remaining ones is still owed.
 
 ## 6. Plan
 
@@ -517,7 +608,37 @@ through `Current` -- which is lucky rather than by design: `_own` is null there,
 would throw and `Chats` would silently write per-chat scroll state into the root (3.5). The split
 in step 4 is what actually makes that unrepresentable.
 
-### Step 4 — Split the object model
+### Step 4a — Split the object model — **done**
+
+`AppSettings` (62 members, app-wide, `AppSettings.Current`) and `SettingsService` (23 members,
+per account, injected as today). What actually happened, versus the plan:
+
+- **`ISettingsService` keeps its name.** 187 of its 212 occurrences are the identical constructor
+  parameter `ISettingsService settingsService`, forwarded to a base class and never read. Renaming
+  it to `IAccountSettings` is a 191-file token change with no semantic content, so it is split out
+  as step 4b and the meaningful diff is not buried under it. `Session.Registrations.cs` is
+  untouched for the same reason
+- **There is no `IAppSettings`.** `AppSettings` is a static entry point that nothing injects, so
+  the interface would have had zero consumers. Extracting one later is a single edit
+- `SettingsServiceBase` moved to `Services/Settings/SettingsStore.cs`, next to the store it wraps
+- the `User{id}` -> session index is **deleted**. It was written on every `UserId` set and removed
+  on `Clear`, and read by nothing in the solution
+- `PlaybackService` and `ProxyService` no longer take or hold an `ISettingsService`: every setting
+  they read turned out to be app-wide, so the injected field became write-only
+
+Two traps in the mechanical sweep, both worth remembering:
+
+- `ProfileCell.xaml.cs` is **cp1252**, so a `utf-8`-only pass skips it silently and the file is
+  simply left behind -- the compiler caught it, but a rename that happened to still compile would
+  not have been. Decode per file, and fall back
+- `((ViewModelBase)ViewModel).Settings.HideArchivedChats` -- a cast receiver, which no
+  "walk back over dotted identifiers" regex can consume. Four sites, fixed by hand
+
+### Step 4b — rename `ISettingsService` to `IAccountSettings`
+
+Pure token rename, 191 files, no semantic content. Optional, and best done when the tree is quiet.
+
+### Step 4c — Split `AppearanceSettings`
 
 The compiler does the work.
 
@@ -573,10 +694,126 @@ in a packaged desktop app, so the islands work does not need it.
 | 2b | 4 | low — mechanical, builds clean |
 | 3 | 13 | low — internal, no key moves, builds clean |
 | 3 | ~8 | low — internal, no key moves |
-| 4 | ~85 | medium in volume, low in kind; every change compiler-forced |
+| 4a | 90 | done — 588 sites, every one compiler-forced |
+| 4b | 191 | token rename, optional |
+| 4c | ~6 | the AppearanceSettings service extraction |
 | 5 | 1 | none — zero external callers |
 | 6 | ~3 new | isolated |
 
 Step 4 is the only one that touches many files, and all of it is mechanical. Step 2 is the only
 one that can lose data, and it is two files — the risk is entirely in the data, not the diff,
 which is why it lands alone and gets a before/after dump rather than a review.
+
+## 8. The app-wide settings, reviewed on the merits
+
+Steps 1-4 were deliberately layout-preserving: they made the code agree with where the bytes
+already were, and never asked whether that was right. This is that question, asked once over all
+52 app-wide scalars and 9 app-wide sections. Nothing here is implemented -- it is a decision list.
+
+The test used throughout: **does the setting describe the app, the window or the device (app-wide),
+or does it describe one account's data or entitlements (per account)?** A preference *about*
+per-account data is not automatically per-account -- what matters is whether the right answer can
+differ between two accounts on one machine.
+
+### 8.1 Settled app-wide -- no case for moving
+
+| group | members |
+|---|---|
+| window and chrome | `IsAdaptiveWideEnabled`, `DialogsWidthRatio`, `IsSidebarOpen`, `UseLeftTabsForChats`, `UseLeftTabsForForums`, `FullScreenGallery`, `IsTrayVisible`, `IsLaunchMinimized` |
+| about the set of accounts | `IsAccountsSelectorExpanded`, `AccountsSelectorOrder`, `IsAllAccountsNotifications`, `ActiveSession`, `PreviousSession` |
+| device | `VoIP` (input/output/video device, noise suppression), `VolumeLevel`, `VolumeMuted`, `IsDownloadFolderEnabled`, `UseSystemSpellChecker`, `UseLessData` |
+| rendering and power | `AreSmoothTransitionsEnabled`, `AreMaterialsEnabled`, `AreCallsAnimated`, `IsPowerSavingEnabled`, `IsStreamingEnabled` |
+| input | `SwipeToShare`, `SwipeToReply`, `SwipeToGoBack`, `IsSendByEnterEnabled`, `IsReplaceEmojiEnabled` |
+| app infrastructure | `VerbosityLevel`, `InstallBetaUpdates`, `AnonymousUserId`, `ReportsCount`, `ReportsDate`, `HasRemovedCollections`, `EnabledProxyId`, `MigratedProxy`, `Diagnostics`, `ToolTip`, `PasscodeLock` |
+| presentation | `DistanceUnits`, `Pencil`, `SendLargePhotos` |
+
+`AnonymousUserId` deserves a line of its own: it is deliberately *not* account-linked, so making
+it per account would defeat the point of it.
+
+### 8.2 Move to per account
+
+| setting | why | cost |
+|---|---|---|
+| `HideArchivedChats` | 5.9 -- the archive is a per-account list, and TDLib already syncs its configuration per account | 1 key, 7 sites, all session-aware |
+| `Translate` (4 keys) | 5.8 -- already ANDed with per-account TDLib config and premium status at every use | 4 keys, 33 sites, nearly all session-aware |
+| `Emoji.RecentEmoji` | 5.6 -- entries can carry `CustomEmojiId`, which only resolves on the account that stored it | 2 keys, but callers are static helpers |
+
+`Emoji`'s skin tones are the weak half of 5.6 and should be decided separately; nothing about a
+skin tone is account-scoped.
+
+### 8.3 Borderline -- worth a decision, defensible either way
+
+1. **`AutoPlay*` (6 keys) and `IsPowerSavingEnabled` are app-wide while `AutoDownload` is per
+   account.** These are the same concept -- Telegram's own Data and Storage page presents them
+   together -- split across two scopes for no reason anyone chose. Whichever way it goes, they
+   should match. Moving autoplay per account is the larger change; moving auto-download app-wide
+   would contradict every other client.
+
+2. **`IsContactsSortedByEpoch`.** A view preference over per-account data. Weaker than the archive
+   case: sort order does not depend on what the account contains, whereas archive visibility does.
+   Recommend leaving app-wide.
+
+3. **`Language*` (4 keys).** Forced app-wide -- the UI renders in one language. Worth knowing that
+   `ClientService` pushes it into every session with `SetOption("language_pack_id")`, so the app
+   overwrites each account's server-side language with its own. Probably intended, but it is a
+   behaviour rather than a setting.
+
+4. **`Stickers`.** Mixed: `SelectedTab`, `IsSidebarEnabled`, `IsPointerOverEnabled` are UI and
+   clearly app-wide; `DynamicPackOrder` reorders *that account's* sticker packs, and
+   `SuggestCustomEmoji` concerns premium custom emoji. Splitting a section is more trouble than it
+   is worth for two keys -- recommend leaving whole and app-wide unless the pack order misbehaves
+   across accounts.
+
+5. **`Appearance.ChatTheme`.** Stores an app-level default chat theme, while chat themes are a
+   per-chat server concept. Recommend app-wide.
+
+### 8.4 Found while reviewing, unrelated to scope
+
+**`Playback.HighQuality` is inert.** `StoriesWindow` toggles it, and both readers --
+`StoryContent.xaml.cs:1078` and `StoryViewModel.cs:239` -- are commented out. So it is a setting
+the UI can change that currently affects nothing: the same family as `LastProxyId` (5.7) and the
+`User{id}` index step 4a deleted. Either the premium-gated high-quality story path comes back or
+the setting should go.
+
+### 8.5 Applied — **done**, in the same commit as step 4a
+
+8.1 needed no work. 8.2 was implemented, plus the `AppSettings.Current` -> `AppSettings` change
+folded in on Fela's call, since a separate commit would have touched the same files again for one
+token.
+
+- `HideArchivedChats` and the whole `Translate` section moved to `ISettingsService`
+- `EmojiSettings` split along the seam Fela described: skin tones stay app-wide on
+  `EmojiSettings`, recent emoji become `RecentEmojiSettings` per account, in `{n}\Emoji`. Its
+  list property is `Items` rather than `RecentEmoji`, or every call site reads
+  `Settings.RecentEmoji.RecentEmoji`
+- `Emoji.GetRecents()` and `Emoji.Get()` take the section as a parameter now. That is what made
+  5.6 affordable: both had exactly one caller, in `EmojiDrawerViewModel`, which has a session.
+  The "static helpers with no session" problem was one level shallower than it looked
+- **`AppSettings` is a static class.** `Current` disambiguated nothing -- one store, one process,
+  no per-instance state -- and every read was paying a `??=` null check, including on
+  `FormattedTextBlock`'s measure path. 537 sites lost `.Current`. The get/set helpers became
+  extension methods on `ISettingsStore`, so there is one implementation and
+  `SettingsServiceBase` delegates to it
+
+**The migration is the part to watch.** These keys were shared, so they cannot simply move to
+account 0: `Unshare` copies each root value into *every* existing account container before
+deleting it, and `UnshareRecentEmoji` does the same for the two keys that live in the `Emoji`
+container rather than at the root. Without that, a multi-account user keeps the value on the first
+account and silently loses it on the rest.
+
+Three finds along the way, none of them scope-related:
+
+- `EmojiSettings.ClearRecentEmoji()` has no callers. Not dead: per Fela it is supposed to have a
+  UI button that has gone missing. The `Strings.ClearRecentEmoji` resource is currently used by a
+  confirm dialog that clears recent *stickers*
+- `DiagnosticsViewModel.UpdatePowerSaving` opened with `var settings = AppSettings.Current;` and
+  never used it
+- `EmojiCollection` in `ChatTextBox` is a nested class with no view model, so it is handed the
+  section at construction -- and it has a second construction site in `CaptionTextBox`
+
+### 8.6 What this means for the rest
+
+Nothing in 8.2 blocks committing step 4a: the moves are member relocations plus a promote each,
+and they are cheaper *after* the split than before, because the two entry points already exist and
+the compiler finds every site. The reason to settle them first is only to avoid churning the same
+call sites twice.
