@@ -241,20 +241,21 @@ namespace Telegram.Services
         private ToastPopup _pendingToast;
         private DispatcherTimer _pendingTimer;
 
-        [ThreadStatic]
-        private static GroupCallPaidReactionService _toast;
+        private static readonly ConditionalWeakTable<XamlRoot, GroupCallPaidReactionService> _instances = new();
 
         public static GroupCallPaidReactionService AddPending(INavigationService navigationService, VoipGroupCall groupCall, long starCount, PaidReactionType type)
         {
-            if (_toast == null || !_toast.IsValid || !_toast.Equals(groupCall))
+            _instances.TryGetValue(navigationService.XamlRoot, out GroupCallPaidReactionService instance);
+
+            if (instance == null || !instance.IsValid || !instance.AreTheSame(groupCall))
             {
-                _toast = new GroupCallPaidReactionService(groupCall);
+                _instances.AddOrUpdate(navigationService.XamlRoot, instance = new(groupCall));
             }
 
-            var result = _toast.AddPendingImpl(navigationService, groupCall, starCount, type);
+            var result = instance.AddPendingImpl(navigationService, groupCall, starCount, type);
             if (result is Ok)
             {
-                return _toast;
+                return instance;
             }
 
             return null;
@@ -262,7 +263,7 @@ namespace Telegram.Services
 
         public bool IsValid => _pendingToast?.IsOpen is true;
 
-        public bool Equals(VoipGroupCall other)
+        public bool AreTheSame(VoipGroupCall other)
         {
             return _sessionId == other.ClientService.SessionId
                 && _groupCallId == other.Id;
