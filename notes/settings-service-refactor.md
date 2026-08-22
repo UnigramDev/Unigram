@@ -349,10 +349,13 @@ once at startup, not the entry point.
    `LastProxyId` is worse: `SettingsProxyViewModel.Enable` writes it, and its only reader is
    **commented out**. Write-only, like the `User{id}` index step 4a deleted.
 
-   So: `LastProxyId` can go now. `UseSystemProxy` cannot quite -- it is still the input to the
-   migration for anyone upgrading from a build that predates `MigratedProxy`, so deleting it
-   strands them. It should stop being an `ISettingsService` member and become a read-once helper
-   next to `IsAuthorized`/`SetUseTestDC`, to be dropped with the migration itself.
+   **Done.** `LastProxyId` is deleted, along with its write in `SettingsProxyViewModel.Enable`
+   and the commented-out reader, which could no longer be restored once the setting was gone.
+   `UseSystemProxy` is off `ISettingsService` and is now
+   `SettingsService.ConsumeUseSystemProxy(session)`, beside `IsAuthorized`/`SetUseTestDC`: it
+   reads the key once, defaulting to **true** when absent -- which is what the setting defaulted
+   to, and what made a fresh install adopt the system proxy on first run -- then removes it.
+   Delete the helper with the migration.
 
    This also retracts something I wrote earlier: the proxy settings being split across app-wide
    and per-account is **not** incoherence nobody chose. It is one live app-wide setting plus two

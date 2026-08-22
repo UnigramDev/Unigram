@@ -187,11 +187,6 @@ namespace Telegram.ViewModels.Settings
                     {
                         _proxyService.EnableSystemProxy();
                     }
-                    //else if (IsCustom)
-                    //{
-                    //    _proxyService.EnableProxy(Settings.LastProxyId);
-                    //}
-
                     Handle(ClientService.ConnectionState);
                 }
             }
@@ -256,8 +251,6 @@ namespace Telegram.ViewModels.Settings
             SelectedItems.Clear();
 
             SetType(proxy.Id, false);
-
-            Settings.LastProxyId = proxy.Id;
 
             _proxyService.EnableProxy(proxy.Id);
             Handle(ClientService.ConnectionState);

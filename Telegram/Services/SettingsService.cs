@@ -24,9 +24,6 @@ namespace Telegram.Services
         AutoDownloadSettings AutoDownload { get; set; }
         VideoSettings Video { get; }
 
-        bool UseSystemProxy { get; set; }
-        int LastProxyId { get; set; }
-
         bool HideArchivedChats { get; set; }
         bool IsSecretPreviewsEnabled { get; set; }
         int LastMessageTtl { get; set; }
@@ -56,6 +53,19 @@ namespace Telegram.Services
         {
             return ApplicationDataSettingsStore.Local.TryGetContainer($"{session}", out var container)
                 && container.ContainsKey("UserId");
+        }
+
+        // Proxies were per account because TDLib keeps no shared state; they now live in the
+        // app's own database, and this is the last of that arrangement -- ProxyService.Migrate
+        // reads it once for accounts upgrading from before the move. Absent means true, which is
+        // what the setting defaulted to. Delete it with the migration.
+        public static bool ConsumeUseSystemProxy(int session)
+        {
+            var container = ApplicationDataSettingsStore.Local.GetContainer($"{session}");
+            var value = container.GetValueOrDefault("UseSystemProxy", true);
+
+            container.Remove("UseSystemProxy");
+            return value;
         }
 
         public static void SetUseTestDC(int session, bool value)
@@ -113,20 +123,6 @@ namespace Telegram.Services
         {
             get => _userId ??= GetValueOrDefault(_own, "UserId", 0L);
             set => AddOrUpdateValue(ref _userId, _own, "UserId", value);
-        }
-
-        private bool? _useSystemProxy;
-        public bool UseSystemProxy
-        {
-            get => _useSystemProxy ??= GetValueOrDefault(_own, "UseSystemProxy", true);
-            set => AddOrUpdateValue(ref _useSystemProxy, _own, "UseSystemProxy", value);
-        }
-
-        private int? _lastProxyId;
-        public int LastProxyId
-        {
-            get => _lastProxyId ??= GetValueOrDefault(_own, "LastProxyId", -1);
-            set => AddOrUpdateValue(ref _lastProxyId, _own, "LastProxyId", value);
         }
 
         private bool? _isSecretPreviewsEnabled;
@@ -192,8 +188,6 @@ namespace Telegram.Services
 
             _useTestDC = null;
             _userId = null;
-            _useSystemProxy = null;
-            _lastProxyId = null;
             _isSecretPreviewsEnabled = null;
             _lastMessageTtl = null;
         }

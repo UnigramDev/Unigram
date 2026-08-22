@@ -122,9 +122,8 @@ namespace Telegram.Services
                     rows);
             }
 
-            if (_lifetime.TryResolve(sessionId, out ISettingsService settings) && settings.UseSystemProxy)
+            if (SettingsService.ConsumeUseSystemProxy(sessionId))
             {
-                settings.UseSystemProxy = false;
                 EnableSystemProxy();
             }
             else if (enabled != null)
