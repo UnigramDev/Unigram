@@ -48,7 +48,7 @@ namespace winrt::Telegram::Native::implementation
 
     private:
         Compositor m_compositor;
-        XamlRoot m_xamlRoot;
+        winrt::weak_ref<XamlRoot> m_xamlRoot;
         CompositionGraphicsDevice m_compositionDevice;
         winrt::com_ptr<ID2D1Factory1> m_d2dFactory;
         winrt::com_ptr<abi::ICompositionDrawingSurfaceInterop> m_surface;

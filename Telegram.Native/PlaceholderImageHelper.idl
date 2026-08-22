@@ -26,7 +26,7 @@ namespace Telegram.Native
     [default_interface]
     runtimeclass PlaceholderImageHelper : Windows.Foundation.IClosable
     {
-        PlaceholderImageHelper(Windows.UI.Xaml.Window window);
+        PlaceholderImageHelper(Windows.UI.Composition.Compositor compositor);
         void HandleDeviceLost();
 
         Windows.UI.Composition.CompositionGraphicsDevice Device{ get; };
@@ -39,8 +39,8 @@ namespace Telegram.Native
 
         FreeformGradientSurface CreateFreeformGradient(Windows.Foundation.Collections.IVector<Int32> colors);
 
-        Windows.UI.Composition.CompositionEffectBrush GetTail(Single topLeftRadius, Single topRightRadius, Single bottomRightRadius, Single bottomLeftRadius);
-        Windows.UI.Composition.CompositionNineGridBrush GetTailMask(Single topLeftRadius, Single topRightRadius, Single bottomRightRadius, Single bottomLeftRadius);
+        Windows.UI.Composition.CompositionEffectBrush GetTail(Windows.UI.Xaml.XamlRoot xamlRoot, Single topLeftRadius, Single topRightRadius, Single bottomRightRadius, Single bottomLeftRadius);
+        Windows.UI.Composition.CompositionNineGridBrush GetTailMask(Windows.UI.Xaml.XamlRoot xamlRoot, Single topLeftRadius, Single topRightRadius, Single bottomRightRadius, Single bottomLeftRadius);
         //Windows.UI.Composition.CompositionPath GetOutline(Windows.Foundation.Collections.IVector<Telegram.Td.Api.ClosedVectorPath> contours);
         Windows.UI.Composition.CompositionPath GetEllipticalClip(Single width, Single height, Single radius, Single x, Single y);
         Windows.UI.Composition.CompositionPath GetReplyMarkupClip(Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> > buttons, Single bottomRightRadius, Single bottomLeftRadius);

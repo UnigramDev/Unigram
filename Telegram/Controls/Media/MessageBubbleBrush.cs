@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services.Settings;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Media
@@ -28,6 +29,11 @@ namespace Telegram.Controls.Media
         [ThreadStatic]
         private static Dictionary<int, MessageBubbleBrush> _brushes;
 
+        // The nine grid behind the mask is rasterized at its window's scale, so a brush cannot be
+        // shared across windows. _brushes is still keyed on shape alone and has to gain that
+        // dimension before this is used.
+        private readonly XamlRoot _xamlRoot;
+
         private readonly int _topLeft;
         private readonly int _topRight;
         private readonly int _bottomRight;
@@ -36,8 +42,10 @@ namespace Telegram.Controls.Media
         private readonly bool _outgoing;
         private readonly TelegramTheme _parent;
 
-        private MessageBubbleBrush(int topLeft, int topRight, int bottomRight, int bottomLeft, bool outgoing, TelegramTheme parent)
+        private MessageBubbleBrush(XamlRoot xamlRoot, int topLeft, int topRight, int bottomRight, int bottomLeft, bool outgoing, TelegramTheme parent)
         {
+            _xamlRoot = xamlRoot;
+
             _topLeft = topLeft;
             _topRight = topRight;
             _bottomRight = bottomRight;
@@ -47,7 +55,7 @@ namespace Telegram.Controls.Media
             _parent = parent;
         }
 
-        public static MessageBubbleBrush GetTail(float topLeft, float topRight, float bottomRight, float bottomLeft, bool outgoing, TelegramTheme parent)
+        public static MessageBubbleBrush GetTail(XamlRoot xamlRoot, float topLeft, float topRight, float bottomRight, float bottomLeft, bool outgoing, TelegramTheme parent)
         {
             // Same packing as the nine grid cache in PlaceholderImageHelper: four 5 bit radii, plus
             // one bit for each of the two dimensions the fill varies on.
@@ -62,7 +70,7 @@ namespace Telegram.Controls.Media
                 return brush;
             }
 
-            brush = new MessageBubbleBrush((int)topLeft, (int)topRight, (int)bottomRight, (int)bottomLeft, outgoing, parent);
+            brush = new MessageBubbleBrush(xamlRoot, (int)topLeft, (int)topRight, (int)bottomRight, (int)bottomLeft, outgoing, parent);
             _brushes[key] = brush;
 
             return brush;
@@ -88,7 +96,7 @@ namespace Telegram.Controls.Media
 
             if (CompositionBrush == null)
             {
-                var mask = PlaceholderHelper.Foreground.GetTailMask(_topLeft, _topRight, _bottomRight, _bottomLeft);
+                var mask = PlaceholderHelper.Foreground.GetTailMask(_xamlRoot, _topLeft, _topRight, _bottomRight, _bottomLeft);
                 if (mask != null)
                 {
                     var brush = BootStrapper.Current.Compositor.CreateMaskBrush();

@@ -286,7 +286,7 @@ namespace winrt::Telegram::Native::implementation
     struct PlaceholderImageHelper : PlaceholderImageHelperT<PlaceholderImageHelper>
     {
     public:
-        PlaceholderImageHelper(Window window);
+        PlaceholderImageHelper(Compositor compositor);
         ~PlaceholderImageHelper()
         {
             Close();
@@ -367,8 +367,8 @@ namespace winrt::Telegram::Native::implementation
 
         winrt::Telegram::Native::FreeformGradientSurface CreateFreeformGradient(IVector<int32_t> colors);
 
-        CompositionEffectBrush GetTail(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
-        CompositionNineGridBrush GetTailMask(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
+        CompositionEffectBrush GetTail(XamlRoot xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
+        CompositionNineGridBrush GetTailMask(XamlRoot xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
         //CompositionPath GetOutline(IVector<ClosedVectorPath> contours);
         CompositionPath GetEllipticalClip(float width, float height, float radius, float x, float y);
         CompositionPath GetReplyMarkupClip(IVector<IVector<Windows::Foundation::Rect>> rows, float bottomRightRadius, float bottomLeftRadius);
@@ -404,7 +404,8 @@ namespace winrt::Telegram::Native::implementation
 
         CompositionDrawingSurface CreateDrawingSurface(SizeInt32 size);
 
-        winrt::com_ptr<winrt::Telegram::Native::implementation::MessageBubbleNineGrid> GetNineGrid(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
+        winrt::com_ptr<winrt::Telegram::Native::implementation::MessageBubbleNineGrid> GetNineGrid(XamlRoot const& xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
+        void PruneNineGridCache();
 
         HRESULT DrawBlurredImpl(IWICBitmapSource* wicBitmapSource, float blurAmount, SoftwareBitmap& bitmap, bool minithumbnail);
         HRESULT SaveImageToStream(ID2D1Image* image, REFGUID wicFormat, IRandomAccessStream randomAccessStream);
@@ -416,7 +417,6 @@ namespace winrt::Telegram::Native::implementation
         const std::string& GetDecompressedSvg(hstring const& path);
 
     public:
-        Window m_window;
         Compositor m_compositor;
         CompositionEffectFactory m_alphaMaskFactory;
         CompositionGraphicsDevice m_compositionDevice;
@@ -438,7 +438,17 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<ID2D1Effect> m_gaussianBlurEffect;
         std::mutex m_criticalSection;
 
-        std::unordered_map<int, winrt::com_ptr<winrt::Telegram::Native::implementation::MessageBubbleNineGrid>> m_nineGridCache;
+        // Nine grids are rasterized at their window's scale, so they cannot be shared between
+        // windows on one thread. Buckets hold the XamlRoot weakly and are keyed by its identity;
+        // MessageBubbleNineGrid holds it weakly too, since this cache is its only owner and a
+        // strong reference on either side would keep a closed window's tree alive.
+        struct NineGridBucket
+        {
+            winrt::weak_ref<XamlRoot> Root;
+            std::unordered_map<int, winrt::com_ptr<winrt::Telegram::Native::implementation::MessageBubbleNineGrid>> Grids;
+        };
+
+        std::unordered_map<void*, NineGridBucket> m_nineGridCache;
 
         // Bounded LRU cache of decompressed SVG bytes keyed by file path. Switching among a few chats
         // re-renders their (different) pattern backgrounds repeatedly; without this, each switch

@@ -979,17 +979,13 @@ namespace winrt::Telegram::Native::implementation
         return readBitmap->Unmap();
     }
 
-    PlaceholderImageHelper::PlaceholderImageHelper(Window window)
-        : m_window(window)
-        , m_compositor(nullptr)
+    // The compositor is per thread, and null for the background instance, which draws into
+    // software bitmaps and composes nothing.
+    PlaceholderImageHelper::PlaceholderImageHelper(Compositor compositor)
+        : m_compositor(compositor)
         , m_compositionDevice(nullptr)
         , m_alphaMaskFactory(nullptr)
     {
-        if (window)
-        {
-            m_compositor = window.Compositor();
-        }
-
         winrt::check_hresult(CreateDeviceIndependentResources());
         winrt::check_hresult(CreateDeviceResources());
     }
@@ -1720,55 +1716,82 @@ namespace winrt::Telegram::Native::implementation
         return nullptr;
     }
 
-    winrt::com_ptr<MessageBubbleNineGrid> PlaceholderImageHelper::GetNineGrid(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+    // Nothing reports that a XamlRoot has gone, so expired buckets are dropped whenever a window is
+    // seen for the first time. Pruning on lookup instead would put a weak resolve on the path every
+    // bubble takes, to reclaim a handful of small surfaces sooner.
+    void PlaceholderImageHelper::PruneNineGridCache()
     {
+        for (auto it = m_nineGridCache.begin(); it != m_nineGridCache.end();)
+        {
+            if (it->second.Root.get())
+            {
+                ++it;
+            }
+            else
+            {
+                it = m_nineGridCache.erase(it);
+            }
+        }
+    }
+
+    winrt::com_ptr<MessageBubbleNineGrid> PlaceholderImageHelper::GetNineGrid(XamlRoot const& xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+    {
+        // Bubbles are realized before the window has content, so a missing XamlRoot is expected.
+        if (xamlRoot == nullptr || m_compositionDevice == nullptr)
+        {
+            return nullptr;
+        }
+
         // Pack 4 radius values into one int
         // Each value needs only 5 bits (0-31 range), so 4 values fit in 20 bits
         int key = (topLeftRadius << 15) | (topRightRadius << 10) | (bottomRightRadius << 5) | bottomLeftRadius;
 
-        auto it = m_nineGridCache.find(key);
-        if (it != m_nineGridCache.end())
-        {
-            return it->second;
-        }
-        else if (m_compositionDevice)
-        {
-            auto content = m_window.Content();
-            if (content)
-            {
-                auto xamlRoot = content.XamlRoot();
-                if (xamlRoot)
-                {
-                    double rasterizationScale = xamlRoot.RasterizationScale();
-                    SizeInt32 imageSize(std::ceil(MessageBubbleNineGrid::s_width * rasterizationScale), std::ceil(MessageBubbleNineGrid::s_height * rasterizationScale));
+        // The projection always holds the same interface pointer for a given XamlRoot, so its ABI
+        // pointer identifies the window without keeping it alive. Reuse of a freed address is not a
+        // hazard because a bucket is only ever added after pruning.
+        auto owner = winrt::get_abi(xamlRoot);
 
-                    auto surface = CreateDrawingSurface(imageSize);
-                    if (surface)
-                    {
-                        auto effect = m_alphaMaskFactory.CreateBrush();
-                        auto nineGrid = winrt::make_self<MessageBubbleNineGrid>(m_compositionDevice, m_d2dFactory, m_compositor, xamlRoot, surface, effect, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
-                        m_nineGridCache[key] = nineGrid;
-                        return nineGrid;
-                    }
-                }
+        auto bucket = m_nineGridCache.find(owner);
+        if (bucket == m_nineGridCache.end())
+        {
+            PruneNineGridCache();
+            bucket = m_nineGridCache.emplace(owner, NineGridBucket{ winrt::make_weak(xamlRoot), {} }).first;
+        }
+        else
+        {
+            auto it = bucket->second.Grids.find(key);
+            if (it != bucket->second.Grids.end())
+            {
+                return it->second;
             }
         }
 
-        // XamlRoot is not ready
+        double rasterizationScale = xamlRoot.RasterizationScale();
+        SizeInt32 imageSize(std::ceil(MessageBubbleNineGrid::s_width * rasterizationScale), std::ceil(MessageBubbleNineGrid::s_height * rasterizationScale));
+
+        auto surface = CreateDrawingSurface(imageSize);
+        if (surface)
+        {
+            auto effect = m_alphaMaskFactory.CreateBrush();
+            auto nineGrid = winrt::make_self<MessageBubbleNineGrid>(m_compositionDevice, m_d2dFactory, m_compositor, xamlRoot, surface, effect, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
+            bucket->second.Grids[key] = nineGrid;
+            return nineGrid;
+        }
+
         return nullptr;
     }
 
-    CompositionEffectBrush PlaceholderImageHelper::GetTail(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+    CompositionEffectBrush PlaceholderImageHelper::GetTail(XamlRoot xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
     {
-        auto nineGrid = GetNineGrid(topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
+        auto nineGrid = GetNineGrid(xamlRoot, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
         return nineGrid ? nineGrid->Effect() : nullptr;
     }
 
     // The alpha mask of GetTail, for callers that paint the silhouette rather than mask a layer:
     // a CompositionMaskBrush over this costs no offscreen intermediate, a LayerVisual effect does.
-    CompositionNineGridBrush PlaceholderImageHelper::GetTailMask(int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+    CompositionNineGridBrush PlaceholderImageHelper::GetTailMask(XamlRoot xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
     {
-        auto nineGrid = GetNineGrid(topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
+        auto nineGrid = GetNineGrid(xamlRoot, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
         return nineGrid ? nineGrid->Mask() : nullptr;
     }
 

@@ -770,7 +770,7 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                _layerVisual.Effect = PlaceholderHelper.Foreground.GetTail(topLeft, topRight, bottomRight, bottomLeft); //PlaceholderHelper.Foreground.GetTail3(XamlRoot, topLeft, topRight, bottomRight, bottomLeft);
+                _layerVisual.Effect = PlaceholderHelper.Foreground.GetTail(XamlRoot, topLeft, topRight, bottomRight, bottomLeft);
 
                 if (_corners)
                 {

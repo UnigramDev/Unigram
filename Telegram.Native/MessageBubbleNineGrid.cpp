@@ -17,7 +17,7 @@ namespace winrt::Telegram::Native::implementation
         : m_compositionDevice(device)
         , m_d2dFactory(d2dFactory)
         , m_compositor(compositor)
-        , m_xamlRoot(xamlRoot)
+        , m_xamlRoot(winrt::make_weak(xamlRoot))
         , m_surface(surface.as<abi::ICompositionDrawingSurfaceInterop>())
         , m_topLeftRadius(topLeftRadius)
         , m_topRightRadius(topRightRadius)
@@ -42,13 +42,20 @@ namespace winrt::Telegram::Native::implementation
         // RenderingDeviceReplaced, raised on the app-shared CompositionGraphicsDevice during
         // device-lost recovery) fires around/after teardown. get_weak() makes them no-op once
         // the object is gone. See FreeformGradientSurface for the same pattern.
-        m_xamlRootChanged = m_xamlRoot.Changed({ get_weak(), &MessageBubbleNineGrid::OnXamlRootChanged });
+        m_xamlRootChanged = xamlRoot.Changed({ get_weak(), &MessageBubbleNineGrid::OnXamlRootChanged });
         m_renderingDeviceReplaced = m_compositionDevice.RenderingDeviceReplaced({ get_weak(), &MessageBubbleNineGrid::OnRenderingDeviceReplaced });
     }
 
     MessageBubbleNineGrid::~MessageBubbleNineGrid()
     {
-        m_xamlRoot.Changed(m_xamlRootChanged);
+        // m_xamlRoot is weak: PlaceholderImageHelper's cache is the only owner of this object, so
+        // a strong reference here would keep the window alive for as long as the cache holds it.
+        // A window torn down first takes the registration with it, and there is nothing to detach.
+        if (auto xamlRoot = m_xamlRoot.get())
+        {
+            xamlRoot.Changed(m_xamlRootChanged);
+        }
+
         m_compositionDevice.RenderingDeviceReplaced(m_renderingDeviceReplaced);
     }
 
@@ -62,7 +69,11 @@ namespace winrt::Telegram::Native::implementation
 
     void MessageBubbleNineGrid::OnRenderingDeviceReplaced(CompositionGraphicsDevice const&, RenderingDeviceReplacedEventArgs const&)
     {
-        Invalidate(m_xamlRoot.RasterizationScale());
+        // Nothing to redraw for: the window is gone and this grid is waiting to be pruned.
+        if (auto xamlRoot = m_xamlRoot.get())
+        {
+            Invalidate(xamlRoot.RasterizationScale());
+        }
     }
 
     HRESULT MessageBubbleNineGrid::Invalidate(double rasterizationScale)
