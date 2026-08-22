@@ -242,14 +242,14 @@ namespace Telegram.Controls.Messages
 
             if (text == null)
             {
-                return new Size(0, SettingsService.Current.MessageFontSize * 1.33);
+                return new Size(0, SettingsService.Current.Appearance.MessageFontSize * 1.33);
             }
             else if (_placeholder)
             {
                 var maxWidth = availableWidth;
                 var footerWidth = footer.DesiredSize.Width + footer.Margin.Left + footer.Margin.Right;
 
-                var fontSize = SettingsService.Current.MessageFontSize;
+                var fontSize = SettingsService.Current.Appearance.MessageFontSize;
 
                 if (text.HasLineEnding)
                 {

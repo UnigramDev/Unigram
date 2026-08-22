@@ -519,6 +519,15 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _scaling, "Scaling", value);
         }
 
+        private static int? _messageFontSize;
+        public int MessageFontSize
+        {
+            get => _messageFontSize ??= (int)GetValueOrDefault("MessageFontSize", 14d);
+            set => AddOrUpdateValue("MessageFontSize", (double)(_messageFontSize = value));
+        }
+
+        public int CaptionFontSize => MessageFontSize - 2;
+
         private static int? _bubbleRadius;
         public int BubbleRadius
         {

@@ -2929,8 +2929,8 @@ namespace Telegram.Controls.Messages
                 var index = ClientEx.SearchQuote(caption, options.Quote);
                 if (index >= 0)
                 {
-                    var fontSize = SettingsService.Current.MessageFontSize * BootStrapper.Current.TextScaleFactor;
-                    var quoteSize = SettingsService.Current.CaptionFontSize * BootStrapper.Current.TextScaleFactor;
+                    var fontSize = SettingsService.Current.Appearance.MessageFontSize * BootStrapper.Current.TextScaleFactor;
+                    var quoteSize = SettingsService.Current.Appearance.CaptionFontSize * BootStrapper.Current.TextScaleFactor;
 
                     var minX = double.MaxValue;
                     var minY = double.MaxValue;
@@ -3770,7 +3770,7 @@ namespace Telegram.Controls.Messages
                 Margin = new Thickness(outgoing ? 50 : 12, first ? 2 : 1, outgoing ? 12 : 50, last ? 2 : 1);
             }
 
-            Message.SetFontSize(SettingsService.Current.MessageFontSize);
+            Message.SetFontSize(SettingsService.Current.Appearance.MessageFontSize);
             SetCorners(topLeft, topRight, bottomRight, bottomLeft);
         }
 

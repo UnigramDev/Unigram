@@ -83,7 +83,7 @@ of these from a session instance returns the wrong container.
 | section | container | note |
 |---|---|---|
 | `Appearance` | `Theme` | also owns night mode, a `Timer` and window broadcasts — see 5.4 |
-| `MessageFontSize` / `CaptionFontSize` | `Theme` | lives in the appearance container but hangs off `SettingsService` |
+| `MessageFontSize` / `CaptionFontSize` | `Theme` | moved onto `AppearanceSettings` in step 3; they were on `SettingsService` |
 | `Diagnostics` | `Diagnostics` | 298 call sites, the single most-used section |
 | `PasscodeLock` | `PasscodeLock` | global, yet cleared when *any* account logs out (5.5) |
 | `VoIP` | `VoIP` | |
@@ -217,40 +217,38 @@ ISettingsStore        one per container        (the only thing that knows about 
 ```csharp
 public interface ISettingsStore
 {
-    ISettingsStore GetContainer(string name);   // creates on demand
-    void DeleteContainer(string name);
-
+    bool TryGetValue(string key, out object value);
+    void SetValue(string key, object value);
     bool ContainsKey(string key);
     void Remove(string key);
     void Clear();
 
-    bool TryGetValue(string key, out bool value);
-    bool TryGetValue(string key, out int value);
-    bool TryGetValue(string key, out long value);
-    bool TryGetValue(string key, out float value);
-    bool TryGetValue(string key, out double value);
-    bool TryGetValue(string key, out string value);
+    IEnumerable<string> ContainerNames { get; }
+    ISettingsStore GetContainer(string name);       // creates on demand
+    bool TryGetContainer(string name, out ISettingsStore container);
+    void DeleteContainer(string name);
 
-    void SetValue(string key, bool value);
-    void SetValue(string key, int value);
-    void SetValue(string key, long value);
-    void SetValue(string key, float value);
-    void SetValue(string key, double value);
-    void SetValue(string key, string value);
-
-    void Flush();                               // no-op on ApplicationData
+    void Flush();                                   // no-op on ApplicationData
 }
 ```
 
-Six types is the whole set. Every richer value in the app is already encoded above the store —
-`byte[]` as base64, `DateTime` as a file-time `long`, `TimeSpan` as minutes, `Color` as hex,
-`Vector2` as two floats, `HashSet<string>` and `int[]` as joined strings. Nothing uses
-`ApplicationDataCompositeValue`, `Guid` or `DateTimeOffset` as a stored type.
+The value set is six types wide — `bool`, `int`, `long`, `float`, `double`, `string` — and every
+richer value in the app is already encoded above the store: `byte[]` as base64, `DateTime` as a
+file-time `long`, `TimeSpan` as minutes, `Color` as hex, `Vector2` as two floats,
+`HashSet<string>` and `int[]` as joined strings. Nothing uses `ApplicationDataCompositeValue`,
+`Guid` or `DateTimeOffset`.
 
-Overloads rather than `TryGetValue<T>`: the set is closed, it keeps a future non-WinRT backend
-boxing-free, and it avoids generic virtual dispatch, which .NET Native handles worst. The
-`ApplicationData` implementation boxes anyway — the `IPropertySet` is `object`-typed — so nothing
-is lost today.
+**This started as six typed `TryGetValue`/`SetValue` overloads and ended as one `object` pair.**
+The argument for typing it was to keep a future non-WinRT backend boxing-free. It does not
+survive contact: ~200 accessors already go through `GetValueOrDefault<T>`, which unboxes from
+`object` because `IPropertySet` is `object`-typed, so typing the *store* would mean rewriting
+every one of them to a named overload. And the win is not measurable — each key is read once and
+cached in a field, so the whole app boxes on the order of 200 times, at startup, spread lazily.
+Cost times rate, not cost. The typed overloads can be added later for new code without
+disturbing anything.
+
+`ContainerNames` is there for the step 2 migration, which has to find the numeric containers
+without `LifetimeService`, and is the one capability a store cannot fake.
 
 `Flush()` exists because a file-backed store needs an explicit save point; `ApplicationData`
 persists implicitly. Call it on suspend, on close, and after `Clear()`.
@@ -275,8 +273,8 @@ writing that one key where the stub can see it, or move the stub at the same tim
 
 ### 4.3 What goes where
 
-`IAppSettings` gets everything in 2.1, 2.2 and 2.3, plus `MessageFontSize`/`CaptionFontSize`
-(moved onto `Appearance`, where they already live on disk).
+`IAppSettings` gets everything in 2.1, 2.2 and 2.3. `MessageFontSize`/`CaptionFontSize` are
+already on `Appearance` as of step 3, so `Theme` belongs to `AppearanceSettings` alone.
 
 `IAccountSettings` gets 2.4, plus `Session` and `Clear()`.
 
@@ -461,22 +459,59 @@ Left open, both step 3, and neither is `ApplicationData.Current`:
   Untouched for a mundane reason: that file has uncommitted work in it, and committing a path
   commits its whole working-tree content
 
-### Step 3 — Introduce `ISettingsStore`, keep the object model
+### Step 3 — Introduce `ISettingsStore`, keep the object model — **done**
 
 Purely internal; no key moves, no call-site churn.
 
-- add `ISettingsStore` (4.1) and `ApplicationDataSettingsStore`
-- rewrite `SettingsServiceBase` to hold an `ISettingsStore` instead of an
-  `ApplicationDataContainer`; keep `GetValueOrDefault`/`AddOrUpdateValue` as the section-level
-  API so the ~200 accessors do not change shape, and keep them public — `DiagnosticsViewModel`
-  uses them with dynamic keys
-- port what step 2b left: `AutoDownloadSettings` (make it a section like the rest, or hand it a
-  store), and delete the three `ApplicationDataContainer` extensions from `Common/Extensions.cs`
-- the two statics step 2b added to `SettingsService` become part of whatever creates an
-  `IAccountSettings` in step 4
+- `ISettingsStore` and `ApplicationDataSettingsStore` live in
+  `Services/Settings/SettingsStore.cs`, with a `<Compile>` entry in `Telegram.csproj`, which is
+  not globbed. `Telegram.Modern.csproj` is SDK-style and needs nothing
+- the concrete store is still named in eight places in `SettingsService.cs`
+  (`ApplicationDataSettingsStore.Local`), so swapping the backend is eight edits rather than one.
+  A single `SettingsStore.Current` seam is the obvious next move, but it belongs with step 4,
+  where the two entry points are built and can be handed a store
+- `SettingsServiceBase` holds an `ISettingsStore`. `GetValueOrDefault`/`AddOrUpdateValue` keep
+  their shape and stay public — `DiagnosticsViewModel` uses them with dynamic keys — so none of
+  the ~200 accessors changed
+- **one behaviour change:** `GetValueOrDefault<T>` was a hard cast, which threw when a value was
+  stored as the wrong type. It is now a `is T` test falling back to the default. A crash on
+  startup is a worse answer than a default for a setting, and it matches the `TryGet<T>` the same
+  file already used elsewhere
+- `AutoDownloadSettings` takes an `ISettingsStore`, with the int-or-long tolerance for
+  `maxVideoSize`/`maxDocumentSize` kept as a private helper. The three `ApplicationDataContainer`
+  extensions in `Common/Extensions.cs` are deleted with it
+- `AutoDownload` and `PinnedMessages` cache their sub-store instead of resolving the container on
+  every call, which they did before — `GetChatPinnedMessage` was a `CreateContainer` per read
+- the two statics from step 2b now go through the store
+- `_theme` is gone. It existed so `SettingsService` could reach into `AppearanceSettings`'s own
+  container for a single key, `MessageFontSize`. That key and `CaptionFontSize` are now members
+  of `AppearanceSettings`, which already owns the container they are stored in, so **no data
+  moves at all** -- the first attempt migrated them to the root and was backed out in favour of
+  this. Cost is 15 call sites, 11 of them on `FormattedTextBlock` and `MessageBubble`; step 4's
+  sweep would have rewritten every one of them anyway
 
-Exit criterion: `Windows.Storage` appears in exactly one file under `Services/Settings/`. After
-step 2b the only live references left outside it are in `SettingsService.cs` itself.
+Exit criterion met: `Windows.Storage` appears in exactly one file, `Services/Settings/SettingsStore.cs`,
+and no `ApplicationDataContainer` survives anywhere else in live code.
+
+### Step 3b — `HasRemovedCollections` is the last per-account section read through `Current`
+
+Every section reached through `SettingsService.Current` is built from a global container --
+`Diagnostics` (78 sites), `Appearance` (63), `Stickers` (16), `Emoji` (14), `Playback` (8),
+`Translate` (7), `ToolTip` (4), `PasscodeLock` (1) -- with one exception. `Notifications` is
+built from `_container`, which is the root on `Current` and the account container on a session,
+so `Current.Notifications` and `session.Settings.Notifications` are two objects over two
+different stores.
+
+Its only two call sites are `NotificationsService`'s static constructor reading and setting
+`HasRemovedCollections`, a one-shot flag for removing toast collections -- app-level, not a
+notification preference. Moving it onto `SettingsService` as an ordinary `_local` setting is a
+**no-op on disk**, because `Current`'s container already is the root, and it leaves
+`Notifications` purely per-account with no `Current` callers at all.
+
+`Video`, `AutoDownload` and `Chats` are the other per-account sections, and none is reached
+through `Current` -- which is lucky rather than by design: `_own` is null there, so the first two
+would throw and `Chats` would silently write per-chat scroll state into the root (3.5). The split
+in step 4 is what actually makes that unrepresentable.
 
 ### Step 4 — Split the object model
 
@@ -516,6 +551,7 @@ in a packaged desktop app, so the islands work does not need it.
 | 1 | 1 | low — behaviour fixes, visible in the app |
 | 2 | 1 | **the highest of the six** — it rewrites stored user settings |
 | 2b | 4 | low — mechanical, builds clean |
+| 3 | 13 | low — internal, no key moves, builds clean |
 | 3 | ~8 | low — internal, no key moves |
 | 4 | ~250 | medium in volume, low in kind; every change compiler-forced |
 | 5 | ~3 | none |
