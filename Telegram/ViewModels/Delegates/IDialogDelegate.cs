@@ -36,6 +36,7 @@ namespace Telegram.ViewModels.Delegates
         void UpdateChatVideoChat(Chat chat, VideoChat videoChat);
         void UpdateChatBusinessBotManageBar(Chat chat, BusinessBotManageBar businessBotManageBar);
         void UpdateChatDraft(Chat chat, DraftMessage draft);
+        void UpdatePendingMessage(Chat chat);
 
         void UpdateUserEmptyState(Chat chat, User user, UserFullInfo fullInfo, CanSendMessageToUserResult result);
         void UpdateSupergroupEmptyState(Chat chat, Supergroup supergroup);

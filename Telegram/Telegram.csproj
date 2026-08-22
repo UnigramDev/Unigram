@@ -2275,6 +2275,7 @@
     <Compile Include="ViewModels\ContactsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Handle.cs" />
+    <Compile Include="ViewModels\DialogViewModel.Pending.cs" />
     <Compile Include="ViewModels\DialogViewModel.Inline.cs" />
     <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

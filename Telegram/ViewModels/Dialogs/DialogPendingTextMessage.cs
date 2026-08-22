@@ -40,6 +40,9 @@ namespace Telegram.ViewModels
             _timer.Start();
 
             DraftId = update.DraftId;
+            ForumTopicId = update.ForumTopicId;
+            CanStop = update.CanStop;
+            KeepOnStop = update.KeepOnStop;
             LastUpdate = Logger.TickCount;
         }
 
@@ -102,6 +105,12 @@ namespace Telegram.ViewModels
 
         public long DraftId { get; }
 
+        public int ForumTopicId { get; }
+
+        public bool CanStop { get; private set; }
+
+        public bool KeepOnStop { get; private set; }
+
         private void OnTick(object sender, object e)
         {
             _timer.Stop();
@@ -116,6 +125,8 @@ namespace Telegram.ViewModels
             _timer.Start();
 
             LastUpdate = Logger.TickCount;
+            CanStop = update.CanStop;
+            KeepOnStop = update.KeepOnStop;
             OnUpdate(update);
 
             //if (update.Content is MessageText messageText)
@@ -186,6 +197,22 @@ namespace Telegram.ViewModels
         {
             _timer.Stop();
             _typing.Stop();
+        }
+
+        // The bot was asked to stop, so nothing more will arrive: whatever already did is
+        // shown at once rather than typed out, and the expiration timer is left running.
+        public void Freeze()
+        {
+            _typing.Stop();
+            CanStop = false;
+
+            if (_textLength < _pendingLength)
+            {
+                OnTyping(_pendingLength - _textLength);
+
+                _message.Content = CreateContent();
+                Updated?.Invoke(this, _message);
+            }
         }
 
         public event TypedEventHandler<DialogPendingMessage, MessageViewModel> Updated;

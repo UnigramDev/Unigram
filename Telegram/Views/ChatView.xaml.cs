@@ -1771,11 +1771,16 @@ namespace Telegram.Views
 
         private bool _oldEmpty = true;
         private bool _oldEditing;
+        private bool _oldStopping;
 
         private void CheckButtonsVisibility()
         {
             var empty = TextField.IsEmpty && DraftField.Visibility == Visibility.Collapsed;
-            var editing = ViewModel.ComposerHeader?.Editing != null || ViewModel.CurrentInlineBot != null;
+            var stopping = ViewModel.CanStopPendingMessage;
+
+            // A bot that's still generating owns the button: stopping it outranks both
+            // committing an edit and dismissing an inline bot, so it reuses btnEdit.
+            var editing = stopping || ViewModel.ComposerHeader?.Editing != null || ViewModel.CurrentInlineBot != null;
 
             if (empty != _oldEmpty)
             {
@@ -1784,11 +1789,34 @@ namespace Telegram.Views
                     : Services.Settings.StickersTab.Emoji;
             }
 
-            if (editing != _oldEditing)
+            // Only while the button stays up: it's fading out otherwise, and swapping the
+            // icon mid-animation would be visible. The next state to need it sets it.
+            if (editing && (editing != _oldEditing || stopping != _oldStopping))
             {
-                btnEdit.Glyph = ViewModel.CurrentInlineBot != null
-                    ? Icons.DismissCircleFilled24
-                    : Icons.CheckmarkCircleFilled24;
+                string glyph;
+                string label;
+
+                if (stopping)
+                {
+                    glyph = Icons.PauseFilled24;
+                    label = Strings.Stop;
+                }
+                else if (ViewModel.CurrentInlineBot != null)
+                {
+                    glyph = Icons.DismissFilled24;
+                    label = Strings.Cancel;
+                }
+                else
+                {
+                    glyph = Icons.CheckmarkFilled24;
+                    label = Strings.Done;
+                }
+
+                btnEdit.Glyph = glyph;
+                AutomationProperties.SetName(btnEdit, label);
+                ToolTipService.SetToolTip(btnEdit, label);
+
+                _oldStopping = stopping;
             }
 
             FrameworkElement elementHide = null;
@@ -2145,6 +2173,18 @@ namespace Telegram.Views
         private void btnSendMessage_Click(object sender, RoutedEventArgs e)
         {
             TextField.Send();
+        }
+
+        private void btnEdit_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.CanStopPendingMessage)
+            {
+                ViewModel.StopPendingMessage();
+            }
+            else
+            {
+                TextField.Send();
+            }
         }
 
         private void Profile_Click(object sender, RoutedEventArgs e)
@@ -7324,6 +7364,11 @@ namespace Telegram.Views
                 DraftField.Visibility = Visibility.Collapsed;
             }
 
+            CheckButtonsVisibility();
+        }
+
+        public void UpdatePendingMessage(Chat chat)
+        {
             CheckButtonsVisibility();
         }
 

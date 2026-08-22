@@ -773,6 +773,7 @@ namespace Telegram.ViewModels
                         }
 
                         _pendingMessages.Clear();
+                        UpdateCanStopPendingMessage();
                     }
 
                     if (pending != null && Items.ContainsKey(long.MaxValue))
@@ -817,6 +818,8 @@ namespace Telegram.ViewModels
                         _pendingMessages[update.DraftId] = pending;
                     }
 
+                    UpdateCanStopPendingMessage();
+
                     if (Items.TryGetValue(long.MaxValue, out MessageViewModel already))
                     {
                         return;
@@ -824,59 +827,6 @@ namespace Telegram.ViewModels
 
                     InsertMessage(message);
                 });
-            }
-        }
-
-        private void PendingMessage_Updated(DialogPendingMessage sender, MessageViewModel message)
-        {
-            if (Items.TryGetValue(long.MaxValue, out MessageViewModel already))
-            {
-                already.Replace(message);
-                Delegate?.UpdateBubbleWithMessageId(long.MaxValue, bubble => bubble.UpdateMessageContent(already));
-            }
-        }
-
-        private void PendingMessage_Completed(DialogPendingMessage sender, Message completed)
-        {
-            _pendingMessages.Remove(sender.DraftId);
-
-            sender.Updated -= PendingMessage_Updated;
-            sender.Completed -= PendingMessage_Completed;
-
-            if (completed != null)
-            {
-                Handle(long.MaxValue, message =>
-                {
-                    message.Replace(completed);
-                    message.AnimationState = MessageAnimationState.None;
-                    message.GeneratedContentUnread = true;
-
-                    if (message.Content is MessagePaidMedia paidMedia)
-                    {
-                        message.Content = new MessagePaidAlbum(paidMedia);
-                    }
-
-                    InsertMessage(message, long.MaxValue);
-
-                    return true;
-                },
-                (bubble, message) =>
-                {
-                    if (bubble.Parent is MessageSelector selector)
-                    {
-                        selector.PrepareForItemOverride(message, true);
-                    }
-
-                    bubble.UpdateMessage(message);
-                    Delegate?.ViewVisibleMessages();
-                }, newMessageId: completed.Id);
-            }
-            else
-            {
-                if (Items.TryGetValue(sender.DraftId, out MessageViewModel already))
-                {
-                    Items.Remove(already);
-                }
             }
         }
 

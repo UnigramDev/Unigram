@@ -1486,17 +1486,11 @@
                                       Height="48"
                                       Visibility="Collapsed"
                                       Grid.Column="2">
-
-                                    <Ellipse Fill="#FFFFFF"
-                                             Width="16"
-                                             Height="16" />
-
                                     <controls:GlyphButton x:Name="btnEdit"
-                                                          Click="btnSendMessage_Click"
+                                                          Click="btnEdit_Click"
                                                           Glyph="&#xE9F4;"
                                                           AllowFocusOnInteraction="False"
-                                                          Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                                          FontSize="32"
+                                                          Style="{StaticResource ChatEditButtonStyle}"
                                                           AutomationProperties.Name="{CustomResource Done}"
                                                           ToolTipService.ToolTip="{CustomResource Done}" />
 
@@ -1504,10 +1498,10 @@
                                                        IsActive="{x:Bind ViewModel.IsInlineBotResultsLoading, Mode=OneWay}"
                                                        IsHitTestVisible="False"
                                                        Foreground="#7AFFFFFF"
-                                                       MinWidth="28"
-                                                       MinHeight="28"
-                                                       Width="28"
-                                                       Height="28" />
+                                                       MinWidth="32"
+                                                       MinHeight="32"
+                                                       Width="32"
+                                                       Height="32" />
                                 </Grid>
 
                                 <controls:GlyphButton x:Name="ButtonMaximize"

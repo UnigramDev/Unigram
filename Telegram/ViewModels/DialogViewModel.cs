@@ -116,8 +116,6 @@ namespace Telegram.ViewModels
 
         protected static readonly Dictionary<MessageId, MessageContent> _contentOverrides = new();
 
-        protected Dictionary<long, DialogPendingMessage> _pendingMessages = new();
-
         protected readonly IMessageDelegate _messageDelegate;
         protected readonly WeakReference _messageDelegateWeak;
 
@@ -2622,14 +2620,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            foreach (var pending in _pendingMessages.Values)
-            {
-                pending.Stop();
-                pending.Updated -= PendingMessage_Updated;
-                pending.Completed -= PendingMessage_Completed;
-            }
-
-            _pendingMessages.Clear();
+            ClearPendingMessages();
 
             _lastSeenTimer?.Stop();
             _groupedMessages.Clear();
