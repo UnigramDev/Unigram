@@ -154,7 +154,7 @@ namespace Telegram.Controls
 
                     void handler(object sender, object e)
                     {
-                        var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                        var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(navigationService.XamlRoot);
                         foreach (var popup in popups)
                         {
                             if (popup.Child is ContentDialog dialog)
@@ -203,7 +203,7 @@ namespace Telegram.Controls
             var confirm = await ShowActionAsync(navigationService.XamlRoot, markdown, action, ToastPopupIcon.Premium);
             if (confirm == ContentDialogResult.Primary)
             {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(navigationService.XamlRoot);
                 foreach (var popup in popups)
                 {
                     if (popup.Child is MessageEffectMenuFlyout)
