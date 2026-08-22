@@ -8,6 +8,9 @@
 using System;
 using Windows.Foundation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -26,6 +29,11 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(LoopingPicker);
             Click += OnClick;
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new LoopingPickerAutomationPeer(this);
         }
 
         private void OnClick(object sender, RoutedEventArgs e)
@@ -64,6 +72,14 @@ namespace Telegram.Controls
             ValueText?.Text = newValue.ToString($"D{_digits}");
 
             ValueChanged?.Invoke(this, new LoopingPickerValueChangedEventArgs(oldValue, newValue));
+
+            if (FrameworkElementAutomationPeer.FromElement(this) is LoopingPickerAutomationPeer peer)
+            {
+                peer.RaisePropertyChangedEvent(
+                    RangeValuePatternIdentifiers.ValueProperty,
+                    (double)oldValue,
+                    (double)newValue);
+            }
         }
 
         protected void OnMaximumChanged(int oldMaximum, int newMaximum)
@@ -233,5 +249,64 @@ namespace Telegram.Controls
         public int OldValue { get; }
 
         public int NewValue { get; }
+    }
+
+    public partial class LoopingPickerAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
+    {
+        private readonly LoopingPicker _owner;
+
+        public LoopingPickerAutomationPeer(LoopingPicker owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override string GetClassNameCore()
+        {
+            return nameof(LoopingPicker);
+        }
+
+        protected override string GetNameCore()
+        {
+            var name = base.GetNameCore();
+            return string.IsNullOrEmpty(name) ? _owner.Header : name;
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.Spinner;
+        }
+
+        protected override object GetPatternCore(PatternInterface patternInterface)
+        {
+            if (patternInterface == PatternInterface.RangeValue)
+            {
+                return this;
+            }
+
+            return base.GetPatternCore(patternInterface);
+        }
+
+        public bool IsReadOnly => false;
+
+        public double LargeChange => 1;
+
+        public double SmallChange => 1;
+
+        public double Minimum => 0;
+
+        public double Maximum => _owner.Maximum;
+
+        public double Value => _owner.Value;
+
+        public void SetValue(double value)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value) || value < Minimum || value > Maximum)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value));
+            }
+
+            _owner.Value = (int)Math.Round(value);
+        }
     }
 }

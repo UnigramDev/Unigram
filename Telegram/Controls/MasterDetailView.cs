@@ -583,10 +583,6 @@ namespace Telegram.Controls
 
                     ShowHideDetailHeader(true, hosted.ShowHeaderBackground);
 
-                    //if (AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
-                    //{
-                    //    VisualUtilities.QueueCallbackForCompositionRendering(() => DetailHeaderPresenter.Focus(FocusState.Keyboard));
-                    //}
                 }
                 else
                 {

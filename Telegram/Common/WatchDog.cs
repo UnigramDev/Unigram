@@ -28,7 +28,6 @@ using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using File = System.IO.File;
@@ -621,7 +620,7 @@ namespace Telegram
 
             if (WindowContext.Current != null)
             {
-                var reader = AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged);
+                var reader = AccessibilityService.IsScreenReaderActive;
                 var scaling = (WindowContext.Current.RasterizationScale * 100).ToString("N0");
                 var text = (BootStrapper.Current.TextScaleFactor * 100).ToString("N0");
                 var size = Window.Current.Bounds;

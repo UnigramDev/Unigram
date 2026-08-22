@@ -12,6 +12,7 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Messages;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
@@ -20,7 +21,6 @@ using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -495,7 +495,7 @@ namespace Telegram.Controls.Chats
 
         private void TryFocus(SelectorItem selectorItem, MessageBubbleHighlightOptions options)
         {
-            if ((options == null || options.MoveFocus) && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            if ((options == null || options.MoveFocus) && AccessibilityService.IsScreenReaderActive)
             {
                 TryFocus(selectorItem, false);
             }

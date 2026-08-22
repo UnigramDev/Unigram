@@ -442,6 +442,11 @@ namespace Telegram
         /// Localized resource similar to "Bot keyboard"
         /// </summary>
         public static string AccDescrBotKeyboard => Resource.GetString("AccDescrBotKeyboard");
+
+        /// <summary>
+        /// Localized resource similar to "Message has inline buttons"
+        /// </summary>
+        public static string AccDescrMessageHasInlineButtons => Resource.GetString("AccDescrMessageHasInlineButtons");
         
         /// <summary>
         /// Localized resource similar to "Cancel editing"

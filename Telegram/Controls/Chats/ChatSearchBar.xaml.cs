@@ -12,11 +12,11 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
@@ -49,7 +49,7 @@ namespace Telegram.Controls.Chats
             _debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Field.TextChanged += new TextChangedEventHandler(handler));
             _debouncer.Invoked += (s, args) =>
             {
-                if (Field.State != ChatSearchState.Members && !AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+                if (Field.State != ChatSearchState.Members && !AccessibilityService.IsScreenReaderActive)
                 {
                     ViewModel?.Search(Field.Text, Field.From, ViewModel.SavedMessagesTag, null);
                 }

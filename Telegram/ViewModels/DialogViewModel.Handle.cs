@@ -16,7 +16,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
 
 namespace Telegram.ViewModels
 {
@@ -1296,7 +1295,7 @@ namespace Telegram.ViewModels
             if (Settings.Notifications.InAppSounds)
             {
                 var muted = ClientService.Notifications.IsMuted(Chat);
-                var listeners = AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged);
+                var listeners = AccessibilityService.IsScreenReaderActive;
 
                 if (NavigationService.Window.ActivationMode != CoreWindowActivationMode.Deactivated && (listeners || !muted))
                 {

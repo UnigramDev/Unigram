@@ -3109,7 +3109,7 @@ namespace Telegram.Views
 
         private void ChatsList_GettingFocus(UIElement sender, GettingFocusEventArgs args)
         {
-            if (!AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            if (!AccessibilityService.IsScreenReaderActive)
             {
                 if (Photo == sender)
                 {
