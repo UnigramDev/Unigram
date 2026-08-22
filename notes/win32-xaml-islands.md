@@ -793,7 +793,19 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   and `MessagePopup.ShowAsync(XamlRoot, …)` all keep working. That is what makes 0.10 a
   mechanical conversion rather than a design problem.
 
-- [ ] **0.15 No UI `[ThreadStatic]` may survive.** Fela's rule. The distinction that matters:
+- [ ] **0.15 No UI `[ThreadStatic]` may survive.**
+
+  **State, 2026-08-22.** The pattern is settled and being applied:
+  `ConditionalWeakTable<XamlRoot, T>`, plus a new `XamlRoot.TryGetContent<T>` extension that
+  also retires the `try/catch` around `XamlRoot.Content` throwing on a closed window.
+  Converted so far (uncommitted): `ContentPopup._currentDialogShowRequest`, `AnimatedImageLoader`,
+  `ProfilePicture.Loader`, `OverlayWindow`, `PaidReactionService`.
+  **Still `[ThreadStatic]`, and inconsistent with the above** — their `Release()` takes no
+  `XamlRoot` where the converted ones now do: `PlaceholderHelper`, `MessageBubbleBrush`,
+  `ProfileCell` (4). Note `ProfileCell.xaml.cs` is cp1252, not UTF-8; a scripted rewrite that
+  assumes UTF-8 will corrupt it.
+
+  Original entry: **0.15 No UI `[ThreadStatic]` may survive.** Fela's rule. The distinction that matters:
 
   **A `[ThreadStatic]` cache of XAML objects is correct and must stay.** Brushes, styles and
   `CompositionBrush`es are thread-affine, so caching them per thread is exactly right, and
@@ -901,6 +913,10 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   root had a XamlRoot immediately after `IslandWindow.Create`, and 1.8h, where a child inside a
   ScrollViewer template did not.
 
+  **Now used in the app**: `WindowContext.SetContent` captures `_xamlRoot` and fills `_mapping`
+  immediately after `_window.Content = _content`, and the `Loading` handler it used to need is
+  gone.
+
   Also worth knowing: `put_XamlRoot` exists and fails with `ERROR_CANNOT_SET_XAMLROOT_WHEN_NOT_NULL`
   — you *can* assign a XamlRoot to a still-detached element (that is how a `Popup` gets one before
   opening, as gate 1.8e does), but only once.
@@ -997,6 +1013,25 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   Rule for the call sites: anchor the `WindowContext` on the element and cache it at `Loading`
   or `Loaded`. Never a lookup per read — that is the one way this change can cost more than it
   buys.
+
+  **State, 2026-08-22.** Fela has done most of (a) and (c); (b) is untouched.
+  `Theme.Current` is down from 50 sites to 25.
+  - (a) `MessageFontSize`/`CaptionFontSize` moved to `SettingsService` — 72 lines out of
+    `Theme.cs`. **`MonospaceFontFamily` and `XamlAutoFontFamily` have not moved**, and they are
+    15 of the 25 remaining sites. They are the `FontFamily`-is-a-`DependencyObject` case: the
+    font *name* is global, the instance has to stay per-window.
+  - (c) `WindowContext.Theme` exists as `=> Theme.Current`, a forwarder, with `ViewModelBase`
+    now exposing `Window` so view models can reach it. Call sites move first, the
+    `[ThreadStatic]` behind it swaps later. The broadcast is already
+    `window.Theme.Update(theme)` — the case that motivated the change.
+  - What still reads `Theme.Current` and genuinely wants a window: `ChatBackgroundControl` (3),
+    `PaymentFormViewModel.Parameters` (1), and the four `Update(...)` entry points in
+    `SettingsThemeViewModel`, `BlankPage`, `ChatView` and `SettingsAppearancePage`.
+  - (b) `App.xaml:515` still merges `<common:Theme/>` and `<common:ThemeIncoming/>`, and the
+    per-bubble dictionaries in `ChatView.xaml` are back to the original shape.
+  - `ThemeOutgoing2` (the `ConditionalWeakTable<XamlRoot, …>` experiment) is in `Theme.cs` with
+    **no consumers**. Decide whether it becomes (b) or gets deleted; leaving it is the worst of
+    the three.
 
 - [ ] **0.11 Find a better hook for type-to-search / type-to-compose in `ChatView` and
   `MainPage`.** Both now subscribe to `WindowContext.CharacterReceived` and then disambiguate by
