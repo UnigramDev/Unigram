@@ -1337,7 +1337,10 @@ namespace Telegram.ViewModels
                     }
                     else if (IsForum && ForumTopic == null && chat.Type is ChatTypePrivate privata && ClientService.TryGetUser(chat, out User user) && user.Type is UserTypeBot { AllowsUsersToCreateTopics: true })
                     {
-                        messages.Add(CreateMessage(new Message(long.MaxValue, new MessageSenderUser(privata.UserId), null, previous.ChatId, null, null, false, false, false, false, false, false, false, false, false, false, int.MaxValue, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageHeaderNewThread(), null, null)));
+                        var newThread = CreateMessage(new Message(long.MaxValue, new MessageSenderUser(privata.UserId), null, previous.ChatId, null, null, false, false, false, false, false, false, false, false, false, false, int.MaxValue, 0, null, null, null, null, null, null, null, null, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, new MessageHeaderNewThread(), null, null));
+                        newThread.IsSynthetic = true;
+
+                        messages.Add(newThread);
                         fromMessageId = long.MaxValue;
                     }
                 }

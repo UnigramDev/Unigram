@@ -30,7 +30,7 @@ namespace Telegram.ViewModels
                 for (int i = 0; i < Count; i++)
                 {
                     var item = this[i];
-                    if (item.Id != 0)
+                    if (item.Id != 0 && !item.IsSynthetic)
                     {
                         return item.Id;
                     }
@@ -47,7 +47,7 @@ namespace Telegram.ViewModels
                 for (int i = Count - 1; i >= 0; i--)
                 {
                     var item = this[i];
-                    if (item.Id != 0)
+                    if (item.Id != 0 && !item.IsSynthetic)
                     {
                         return item.Id;
                     }

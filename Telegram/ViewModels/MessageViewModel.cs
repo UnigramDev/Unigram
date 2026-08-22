@@ -164,6 +164,14 @@ namespace Telegram.ViewModels
 
         public bool GeneratedContentUnread { get; set; }
 
+        /// <summary>
+        /// Whether the message exists only in this list: a pending message being streamed by a
+        /// bot, or the new-thread footer. It carries an identifier that sorts it into place but
+        /// that the server knows nothing about, so it must be kept out of anything that talks
+        /// message identifiers back to TDLib.
+        /// </summary>
+        public bool IsSynthetic { get; set; }
+
         public override bool CanBeAddedToDownloads => CanBeSaved && !Chat.HasProtectedContent && Content is MessageAudio or MessageDocument or MessageVideo;
 
         public bool IsVisuallyOutgoing => (IsOutgoing && !IsChannelPost) || (IsSaved && ForwardInfo?.Source is { IsOutgoing: true });

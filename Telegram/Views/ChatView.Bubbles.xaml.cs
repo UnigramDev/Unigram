@@ -564,7 +564,7 @@ namespace Telegram.Views
                 bottom += container.ActualHeight;
 
                 // Read and play messages logic:
-                if (message.Id is 0 or long.MaxValue)
+                if (message.Id == 0 || message.IsSynthetic)
                 {
                     continue;
                 }
