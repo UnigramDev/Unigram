@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Controls.Messages;
@@ -15,6 +16,28 @@ namespace Telegram.ViewModels
     public partial class DialogViewModel
     {
         protected Dictionary<long, DialogPendingMessage> _pendingMessages = new();
+
+        // td_api gives a yet-unsent message an identifier low in the band above the newest server
+        // message; the layout is spelled out in MessageSelector. Pending bubbles take the last
+        // slots of that band, so they sort after everything loaded and after a message the user
+        // sends while the bot is still generating, but before the identifier the bot's own
+        // message will get. draft_id can't be used: the bot chooses it, so it can be anything.
+        private const long MessageTypeMask = (1L << 20) - 1;
+        private const long FirstServerMessageId = 1L << 20;
+        private const long PendingMessageIdCount = 64;
+
+        private int _pendingMessageIndex;
+
+        private long NextPendingMessageId()
+        {
+            var last = Items.LastId;
+            var band = last > 0
+                ? (last | MessageTypeMask) + 1
+                : FirstServerMessageId;
+
+            var index = Math.Min(_pendingMessageIndex++, PendingMessageIdCount - 1);
+            return band - PendingMessageIdCount + index;
+        }
 
         private bool _canStopPendingMessage;
 
@@ -82,7 +105,12 @@ namespace Telegram.ViewModels
 
             _pendingMessages.Remove(pending.DraftId);
 
-            if (Items.TryGetValue(long.MaxValue, out MessageViewModel message))
+            if (_pendingMessages.Count == 0)
+            {
+                _pendingMessageIndex = 0;
+            }
+
+            if (Items.TryGetValue(pending.MessageId, out MessageViewModel message))
             {
                 Items.Remove(message);
             }
@@ -98,15 +126,16 @@ namespace Telegram.ViewModels
             }
 
             _pendingMessages.Clear();
+            _pendingMessageIndex = 0;
             _canStopPendingMessage = false;
         }
 
         private void PendingMessage_Updated(DialogPendingMessage sender, MessageViewModel message)
         {
-            if (Items.TryGetValue(long.MaxValue, out MessageViewModel already))
+            if (Items.TryGetValue(sender.MessageId, out MessageViewModel already))
             {
                 already.Replace(message);
-                Delegate?.UpdateBubbleWithMessageId(long.MaxValue, bubble => bubble.UpdateMessageContent(already));
+                Delegate?.UpdateBubbleWithMessageId(sender.MessageId, bubble => bubble.UpdateMessageContent(already));
             }
         }
 
@@ -117,22 +146,28 @@ namespace Telegram.ViewModels
             sender.Updated -= PendingMessage_Updated;
             sender.Completed -= PendingMessage_Completed;
 
+            if (_pendingMessages.Count == 0)
+            {
+                _pendingMessageIndex = 0;
+            }
+
             UpdateCanStopPendingMessage();
 
             if (completed != null)
             {
-                Handle(long.MaxValue, message =>
+                Handle(sender.MessageId, message =>
                 {
                     message.Replace(completed);
                     message.AnimationState = MessageAnimationState.None;
                     message.GeneratedContentUnread = true;
+                    message.IsSynthetic = false;
 
                     if (message.Content is MessagePaidMedia paidMedia)
                     {
                         message.Content = new MessagePaidAlbum(paidMedia);
                     }
 
-                    InsertMessage(message, long.MaxValue);
+                    InsertMessage(message, sender.MessageId);
 
                     return true;
                 },
@@ -147,12 +182,9 @@ namespace Telegram.ViewModels
                     Delegate?.ViewVisibleMessages();
                 }, newMessageId: completed.Id);
             }
-            else
+            else if (Items.TryGetValue(sender.MessageId, out MessageViewModel already))
             {
-                if (Items.TryGetValue(sender.DraftId, out MessageViewModel already))
-                {
-                    Items.Remove(already);
-                }
+                Items.Remove(already);
             }
         }
     }

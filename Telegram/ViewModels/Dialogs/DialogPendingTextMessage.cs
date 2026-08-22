@@ -40,6 +40,7 @@ namespace Telegram.ViewModels
             _timer.Start();
 
             DraftId = update.DraftId;
+            MessageId = message.Id;
             ForumTopicId = update.ForumTopicId;
             CanStop = update.CanStop;
             KeepOnStop = update.KeepOnStop;
@@ -105,6 +106,11 @@ namespace Telegram.ViewModels
 
         public long DraftId { get; }
 
+        /// <summary>
+        /// Identifier of the bubble this draft is typed into, assigned by the view model.
+        /// </summary>
+        public long MessageId { get; }
+
         public int ForumTopicId { get; }
 
         public bool CanStop { get; private set; }
@@ -141,6 +147,7 @@ namespace Telegram.ViewModels
         {
             _timer.Stop();
             _completed = message;
+            CanStop = false;
 
             LastUpdate = Logger.TickCount;
             //Update(message.GetCaption());
@@ -232,12 +239,12 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class DialogPendingTextMessage2 : DialogPendingMessage
+    public class DialogPendingTextMessage : DialogPendingMessage
     {
         private FormattedText _text;
         private FormattedText _pending;
 
-        public DialogPendingTextMessage2(UpdatePendingMessage update, MessageViewModel message)
+        public DialogPendingTextMessage(UpdatePendingMessage update, MessageViewModel message)
             : base(update, message)
         {
             _text = string.Empty.AsFormattedText();

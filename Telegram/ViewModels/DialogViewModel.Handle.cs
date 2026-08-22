@@ -756,29 +756,29 @@ namespace Telegram.ViewModels
                             }
                         }
 
-                        foreach (var item in _pendingMessages.Values)
+                        foreach (var item in _pendingMessages.Values.ToArray())
                         {
-                            if (item.DraftId != pending?.DraftId)
+                            if (item != pending)
                             {
-                                item.Stop();
-
-                                item.Updated -= PendingMessage_Updated;
-                                item.Completed -= PendingMessage_Completed;
-
-                                if (Items.TryGetValue(item.DraftId, out MessageViewModel old))
-                                {
-                                    Items.Remove(old);
-                                }
+                                RemovePendingMessage(item);
                             }
                         }
 
-                        _pendingMessages.Clear();
+                        // The bubble can be gone already, in which case there is nothing to type
+                        // the message into and it is inserted like any other.
+                        if (pending != null && !Items.ContainsKey(pending.MessageId))
+                        {
+                            RemovePendingMessage(pending);
+                            pending = null;
+                        }
+
                         UpdateCanStopPendingMessage();
                     }
 
-                    if (pending != null && Items.ContainsKey(long.MaxValue))
+                    if (pending != null)
                     {
                         pending.Update(update.Message);
+                        UpdateCanStopPendingMessage();
                     }
                     else
                     {
@@ -797,37 +797,55 @@ namespace Telegram.ViewModels
         {
             if (_chat?.Id == update.ChatId && (TopicId == null || TopicId.IsForum(update.ForumTopicId)) && ClientService.TryGetUser(Chat, out User user))
             {
-                var topicId = new MessageTopicForum(update.ForumTopicId);
-                var content = update.Content;
-                var message = CreateMessage(new Message(long.MaxValue, new MessageSenderUser(user.Id), null, update.ChatId, null, null, false, false, false, false, false, false, false, false, false, false, DateTime.Now.ToTimestamp(), 0, null, null, null, null, null, null, null, topicId, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, content, null, null));
-                message.GeneratedContentUnread = true;
-                message.AnimationState = MessageAnimationState.Added;
-
                 BeginOnUIThread(() =>
                 {
                     if (_pendingMessages.TryGetValue(update.DraftId, out DialogPendingMessage pending))
                     {
                         pending.Update(update);
-                    }
-                    else
-                    {
-                        pending = message.Content is MessageText ? new DialogPendingTextMessage2(update, message) : new DialogPendingRichMessage(update, message);
-                        pending.Updated += PendingMessage_Updated;
-                        pending.Completed += PendingMessage_Completed;
+                        UpdateCanStopPendingMessage();
 
-                        _pendingMessages[update.DraftId] = pending;
+                        return;
                     }
 
-                    UpdateCanStopPendingMessage();
-
-                    if (Items.TryGetValue(long.MaxValue, out MessageViewModel already))
+                    // The bubble is appended to the newest slice and nowhere else, so there is
+                    // no place to put it while the view is scrolled back through the history.
+                    if (IsNewestSliceLoaded != true)
                     {
                         return;
                     }
 
+                    var message = CreatePendingMessage(user, update);
+
+                    pending = message.Content is MessageText
+                        ? new DialogPendingTextMessage(update, message)
+                        : new DialogPendingRichMessage(update, message);
+
+                    pending.Updated += PendingMessage_Updated;
+                    pending.Completed += PendingMessage_Completed;
+
+                    _pendingMessages[update.DraftId] = pending;
+
+                    UpdateCanStopPendingMessage();
                     InsertMessage(message);
                 });
             }
+        }
+
+        private MessageViewModel CreatePendingMessage(User user, UpdatePendingMessage update)
+        {
+            // A forum topic identifier of 0 means the chat has no topics: kept as a
+            // messageTopicForum it wouldn't match the messages around it, and MessageCollection
+            // would draw a topic separator above the bubble.
+            var topicId = update.ForumTopicId != 0
+                ? new MessageTopicForum(update.ForumTopicId)
+                : null;
+
+            var message = CreateMessage(new Message(NextPendingMessageId(), new MessageSenderUser(user.Id), null, update.ChatId, null, null, false, false, false, false, false, false, false, false, false, false, DateTime.Now.ToTimestamp(), 0, null, null, null, null, null, null, null, topicId, null, 0, 0, 0, null, 0, 0, string.Empty, 0, string.Empty, 0, 0, null, string.Empty, update.Content, null, null));
+            message.GeneratedContentUnread = true;
+            message.AnimationState = MessageAnimationState.Added;
+            message.IsSynthetic = true;
+
+            return message;
         }
 
         public void Handle(UpdateDeleteMessages update)
