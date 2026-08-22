@@ -199,7 +199,7 @@ namespace Telegram.ViewModels
             {
                 Settings.Diagnostics.LegacyScrollBars = value;
                 RaisePropertyChanged();
-                Theme.Current.UpdateScrolls();
+                Window.Theme.UpdateScrolls();
             }
         }
 

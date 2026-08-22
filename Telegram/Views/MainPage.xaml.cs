@@ -1326,7 +1326,7 @@ namespace Telegram.Views
             }
             else if (command is ShortcutCommand.Close)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                await ViewModel.Window.ConsolidateAsync();
             }
             else if (command is ShortcutCommand.Lock)
             {

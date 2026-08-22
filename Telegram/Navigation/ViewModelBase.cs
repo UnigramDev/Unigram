@@ -109,6 +109,8 @@ namespace Telegram.Navigation
             set => _xamlRoot = value;
         }
 
+        public WindowContext Window => NavigationService?.Window;
+
         public virtual INavigationService NavigationService { get; set; }
 
         public virtual IDispatcherContext Dispatcher { get; set; }

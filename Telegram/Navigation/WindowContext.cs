@@ -214,6 +214,8 @@ namespace Telegram.Navigation
             set => ApplicationView.GetForCurrentView().PersistedStateId = _persistedId = value;
         }
 
+        public Theme Theme => Theme.Current;
+
         public WindowContext(Window window)
         {
             _window = window;

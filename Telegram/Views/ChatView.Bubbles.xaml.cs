@@ -222,7 +222,7 @@ namespace Telegram.Views
             var stickyAbove = false;
             var stickyBelow = false;
 
-            var playAnimations = !intermediate && ViewModel.NavigationService.Window.IsActive;
+            var playAnimations = !intermediate && ViewModel.Window.IsActive;
 
             for (int i = panel.FirstVisibleIndex; i <= Math.Min(panel.LastVisibleIndex + 1, Messages.Items.Count - 1); i++)
             {

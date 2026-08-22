@@ -2167,7 +2167,7 @@ namespace Telegram.Views
 
             if (FromPreview)
             {
-                service = WindowContext.Current.NavigationServices.GetByFrameId($"Main{ViewModel.ClientService.SessionId}") as NavigationService;
+                service = ViewModel.Window.NavigationServices.GetByFrameId($"Main{ViewModel.ClientService.SessionId}") as NavigationService;
 
                 var presenter = this.GetParent<MenuFlyoutPresenter>();
                 if (presenter?.Parent is Popup popup)
@@ -5809,7 +5809,7 @@ namespace Telegram.Views
 
             Title.Text = ChatTitle;
 
-            if (!WindowContext.Current.IsInMainView)
+            if (!ViewModel.Window.IsInMainView)
             {
                 // Would be cool to do this in MasterDetailView
                 ApplicationView.GetForCurrentView().Title = ChatTitle;

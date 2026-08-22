@@ -134,7 +134,7 @@ namespace Telegram.ViewModels.Gallery
         {
             RaisePropertyChanged(nameof(Position));
 
-            if (item == null || NavigationService == null)
+            if (item == null || Window == null)
             {
                 return;
             }
@@ -142,12 +142,12 @@ namespace Telegram.ViewModels.Gallery
             if (item.HasProtectedContent && !_hasProtectedContent)
             {
                 _hasProtectedContent = true;
-                NavigationService.Window.DisableScreenCapture(GetHashCode());
+                Window.DisableScreenCapture(GetHashCode());
             }
             else if (_hasProtectedContent && !item.HasProtectedContent)
             {
                 _hasProtectedContent = false;
-                NavigationService.Window.EnableScreenCapture(GetHashCode());
+                Window.EnableScreenCapture(GetHashCode());
             }
         }
 

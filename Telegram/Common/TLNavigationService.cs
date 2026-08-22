@@ -69,7 +69,7 @@ namespace Telegram.Common
             {
                 if (window.Content is RichTextWindow textEditor && textEditor.AreTheSame(chatId, messageId))
                 {
-                    _ = ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
+                    _ = ApplicationViewSwitcher.SwitchAsync(window.Id, oldViewId);
                     found = true;
                 }
             });
@@ -100,7 +100,7 @@ namespace Telegram.Common
                 {
                     if (window.Content is WebAppWindow webApp && webApp.AreTheSame(sourceLink))
                     {
-                        _ = ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
+                        _ = ApplicationViewSwitcher.SwitchAsync(window.Id, oldViewId);
                         found = true;
                     }
                 });
@@ -305,7 +305,7 @@ namespace Telegram.Common
 
         public async void NavigateToInvoice(InputInvoice inputInvoice, MessageContent content)
         {
-            var response = await ClientService.SendAsync(new GetPaymentForm(inputInvoice, Theme.Current.Parameters));
+            var response = await ClientService.SendAsync(new GetPaymentForm(inputInvoice, Window.Theme.Parameters));
             if (response is not PaymentForm paymentForm)
             {
                 ShowToast(Strings.PaymentInvoiceLinkInvalid, ToastPopupIcon.Info);
@@ -723,7 +723,7 @@ namespace Telegram.Common
                             return true;
                         }
 
-                        var responsa = await ClientService.SendAsync(new GetMainWebApp(0, botUser.Id, string.Empty, new WebAppOpenParameters(Theme.Current.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
+                        var responsa = await ClientService.SendAsync(new GetMainWebApp(0, botUser.Id, string.Empty, new WebAppOpenParameters(Window.Theme.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
                         if (responsa is MainWebApp webApp)
                         {
                             var sourceLink = new InternalLinkTypeMainWebApp(ClientService.AgeVerificationParameters.VerificationBotUsername, string.Empty, webApp.Mode);

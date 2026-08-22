@@ -45,7 +45,7 @@ namespace Telegram.ViewModels.Settings
             }
             else
             {
-                NavigationService.Window.Activated += OnWindowActivated;
+                Window.Activated += OnWindowActivated;
             }
 
             return Task.CompletedTask;
@@ -61,7 +61,7 @@ namespace Telegram.ViewModels.Settings
             }
             else
             {
-                NavigationService.Window.Activated -= OnWindowActivated;
+                Window.Activated -= OnWindowActivated;
             }
         }
 

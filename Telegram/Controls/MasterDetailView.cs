@@ -73,7 +73,7 @@ namespace Telegram.Controls
 
         public void Initialize(string key, Frame parent, ViewModelBase viewModel)
         {
-            var service = WindowContext.Current.NavigationServices.GetByFrameId(key + viewModel.Session.Id) as NavigationService;
+            var service = viewModel.Window.NavigationServices.GetByFrameId(key + viewModel.Session.Id) as NavigationService;
             if (service == null)
             {
                 service = BootStrapper.Current.NavigationServiceFactory(viewModel.Session, viewModel.NavigationService.Window, BootStrapper.BackButton.Ignore, key + viewModel.Session.Id, false) as NavigationService;

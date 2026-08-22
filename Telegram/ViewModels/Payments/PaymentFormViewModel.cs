@@ -19,7 +19,6 @@ using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.Views.Payments;
 using Telegram.Views.Popups;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -450,7 +449,7 @@ namespace Telegram.ViewModels.Payments
         {
             if (_paymentForm == null)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                Window.Close();
                 return;
             }
 
@@ -522,8 +521,8 @@ namespace Telegram.ViewModels.Payments
                 }
                 else
                 {
-                    await ApplicationViewSwitcher.SwitchAsync(WindowContext.Main.Id);
-                    await WindowContext.Current.ConsolidateAsync();
+                    await WindowContext.Main.SwitchToAsync();
+                    await Window.ConsolidateAsync();
 
                     Aggregator.Publish(new UpdateConfetti());
                 }
@@ -540,8 +539,8 @@ namespace Telegram.ViewModels.Payments
             {
                 BeginOnUIThread(async () =>
                 {
-                    await ApplicationViewSwitcher.SwitchAsync(WindowContext.Main.Id);
-                    await WindowContext.Current.ConsolidateAsync();
+                    await WindowContext.Main.SwitchToAsync();
+                    await Window.ConsolidateAsync();
 
                     Aggregator.Publish(new UpdateConfetti());
                 });

@@ -1297,7 +1297,7 @@ namespace Telegram.ViewModels
                 var muted = ClientService.Notifications.IsMuted(Chat);
                 var listeners = AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged);
 
-                if (NavigationService.Window.IsActive && (listeners || !muted))
+                if (Window.IsActive && (listeners || !muted))
                 {
                     _notificationsService.PlaySound(sent || !listeners);
                 }

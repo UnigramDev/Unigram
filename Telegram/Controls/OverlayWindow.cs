@@ -195,12 +195,12 @@ namespace Telegram.Controls
 
         public void PopupClosed()
         {
-            MaskTitleAndStatusBar(WindowContext.Current);
+            MaskTitleAndStatusBar(Window);
         }
 
         private void PopupHost_Opened(object sender, object e)
         {
-            MaskTitleAndStatusBar(WindowContext.Current);
+            MaskTitleAndStatusBar(Window);
 
             _popupHost.XamlRoot.Changed += OnXamlRootChanged;
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
@@ -208,7 +208,7 @@ namespace Telegram.Controls
 
         private void PopupHost_Closed(object sender, object e)
         {
-            UnmaskTitleAndStatusBar(WindowContext.Current);
+            UnmaskTitleAndStatusBar(Window);
 
             //_callback.TrySetResult(_result);
 

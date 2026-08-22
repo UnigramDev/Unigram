@@ -7,7 +7,6 @@
 
 using System;
 using Telegram.Common;
-using Telegram.Navigation;
 using Telegram.ViewModels.Gallery;
 using Windows.UI;
 using Windows.UI.Core.Preview;
@@ -229,7 +228,7 @@ namespace Telegram.Controls.Gallery
                 }
             }
 
-            _ = GalleryWindow.ShowAsync(WindowContext.Current.XamlRoot, _viewModel, null, 0, _player);
+            _ = GalleryWindow.ShowAsync(XamlRoot, _viewModel, null, 0, _player);
 
             // Close the window with proper error handling
             try

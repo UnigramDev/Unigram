@@ -1179,9 +1179,9 @@ namespace Telegram.Views.Host
                 var colorKey = eventData.GetNamedString("color_key");
                 var color = colorKey switch
                 {
-                    "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
-                    "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
-                    "bottom_bar_bg_color" => Theme.Current.Parameters.BottomBarBackgroundColor.ToColor(),
+                    "bg_color" => Window.Theme.Parameters.BackgroundColor.ToColor(),
+                    "secondary_bg_color" => Window.Theme.Parameters.SecondaryBackgroundColor.ToColor(),
+                    "bottom_bar_bg_color" => Window.Theme.Parameters.BottomBarBackgroundColor.ToColor(),
                     _ => new Color?(),
                 };
 
@@ -2328,9 +2328,9 @@ namespace Telegram.Views.Host
             {
                 ProcessHeaderColor(_headerColorKey switch
                 {
-                    "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
-                    "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
-                    "bottom_bar_bg_color" => Theme.Current.Parameters.BottomBarBackgroundColor.ToColor(),
+                    "bg_color" => Window.Theme.Parameters.BackgroundColor.ToColor(),
+                    "secondary_bg_color" => Window.Theme.Parameters.SecondaryBackgroundColor.ToColor(),
+                    "bottom_bar_bg_color" => Window.Theme.Parameters.BottomBarBackgroundColor.ToColor(),
                     _ => new Color?(),
                 });
             }
@@ -2339,9 +2339,9 @@ namespace Telegram.Views.Host
             {
                 ProcessBackgroundColor(_backgroundColorKey switch
                 {
-                    "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
-                    "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
-                    "bottom_bar_bg_color" => Theme.Current.Parameters.BottomBarBackgroundColor.ToColor(),
+                    "bg_color" => Window.Theme.Parameters.BackgroundColor.ToColor(),
+                    "secondary_bg_color" => Window.Theme.Parameters.SecondaryBackgroundColor.ToColor(),
+                    "bottom_bar_bg_color" => Window.Theme.Parameters.BottomBarBackgroundColor.ToColor(),
                     _ => new Color?(),
                 });
             }
@@ -2350,9 +2350,9 @@ namespace Telegram.Views.Host
             {
                 ProcessBottomBarColor(_bottomBarColorKey switch
                 {
-                    "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
-                    "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
-                    "bottom_bar_bg_color" => Theme.Current.Parameters.BottomBarBackgroundColor.ToColor(),
+                    "bg_color" => Window.Theme.Parameters.BackgroundColor.ToColor(),
+                    "secondary_bg_color" => Window.Theme.Parameters.SecondaryBackgroundColor.ToColor(),
+                    "bottom_bar_bg_color" => Window.Theme.Parameters.BottomBarBackgroundColor.ToColor(),
                     _ => new Color?(),
                 });
             }
@@ -2360,7 +2360,7 @@ namespace Telegram.Views.Host
 
         private void PostThemeChanged()
         {
-            var theme = ClientEx.GetThemeParametersJsonString(Theme.Current.Parameters);
+            var theme = ClientEx.GetThemeParametersJsonString(Window.Theme.Parameters);
             PostEvent("theme_changed", "theme_params", theme);
         }
 

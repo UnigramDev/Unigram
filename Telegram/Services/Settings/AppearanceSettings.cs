@@ -205,10 +205,10 @@ namespace Telegram.Services.Settings
                 {
                     if (updateBackground)
                     {
-                        Theme.Current.UpdateEmojiSet();
+                        window.Theme.UpdateEmojiSet();
                     }
 
-                    Theme.Current.Update(theme);
+                    window.Theme.Update(theme);
                 }
 
                 if (window.ActualTheme != theme || force is true)
