@@ -109,16 +109,6 @@
                     Value="Wrap" />
         </Style>
 
-        <Style x:Key="BlockBodyTextBlockStyle"
-               TargetType="RichTextBlock"
-               BasedOn="{StaticResource BodyRichTextBlockStyle}">
-            <Setter Property="FontFamily"
-                    Value="{ThemeResource EmojiThemeFontFamily}" />
-            <Setter Property="FontSize"
-                    Value="{ThemeResource MessageFontSize}" />
-            <!--<Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>-->
-        </Style>
-
         <Style x:Key="BlockCaptionTextBlockStyle"
                TargetType="RichTextBlock"
                BasedOn="{StaticResource CaptionRichTextBlockStyle}">

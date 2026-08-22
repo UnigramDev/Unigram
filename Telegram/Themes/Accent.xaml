@@ -70,8 +70,6 @@
     <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
     <HorizontalAlignment x:Key="MessageHorizontalAlignmentOut">Right</HorizontalAlignment>
 
-    <!--<x:Double x:Key="MessageFontSize">15</x:Double>-->
-
     <Color x:Key="MessageServiceBackgroundColor">#667A8A96</Color>
 
     <SolidColorBrush x:Key="MessageServiceForegroundBrush"
