@@ -272,7 +272,7 @@ namespace Telegram.Controls.Media
                 else
                 {
                     _freeform?.Dispose();
-                    _freeform = PlaceholderHelper.Foreground.CreateFreeformGradient(colors);
+                    _freeform = Direct2D.Current.CreateFreeformGradient(colors);
                 }
 
                 return _freeform.Brush;

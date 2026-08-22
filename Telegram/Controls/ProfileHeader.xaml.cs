@@ -1072,7 +1072,7 @@ namespace Telegram.Controls
             if (secretChat.State is SecretChatStateReady)
             {
                 SecretLifetime.Badge = chat.MessageAutoDeleteTime > 0 ? Locale.FormatTtl(chat.MessageAutoDeleteTime) : Strings.ShortMessageLifetimeForever;
-                //SecretIdenticon.Source = PlaceholderHelper.GetIdenticon(secretChat.KeyHash, 24);
+                //SecretIdenticon.Source = Direct2D.GetIdenticon(secretChat.KeyHash, 24);
 
                 MiscPanel.Visibility = Visibility.Visible;
                 SecretLifetime.Visibility = Visibility.Visible;

@@ -13,26 +13,27 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Storage;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Common
 {
-    public static class PlaceholderHelper
+    public static class Direct2D
     {
         [ThreadStatic]
-        private static PlaceholderImageHelper _foreground;
+        private static Direct2DDevice _current;
 
-        public static PlaceholderImageHelper Foreground
+        public static Direct2DDevice Current
         {
             get
             {
-                if (_foreground == null)
+                if (_current == null)
                 {
                     try
                     {
-                        _foreground = new PlaceholderImageHelper(Window.Current);
+                        _current = new Direct2DDevice(Window.Current.Compositor);
                     }
                     catch
                     {
@@ -41,31 +42,31 @@ namespace Telegram.Common
                     }
                 }
 
-                _foreground.HandleDeviceLost();
-                return _foreground;
+                _current.HandleDeviceLost();
+                return _current;
             }
         }
 
         public static void Release()
         {
-            _foreground?.Dispose();
-            _foreground = null;
+            _current?.Dispose();
+            _current = null;
         }
 
-        private static PlaceholderImageHelper _background;
-        private static readonly object _backgroundLock = new();
+        private static Direct2DDevice _shared;
+        private static readonly object _sharedLock = new();
 
-        public static PlaceholderImageHelper Background
+        public static Direct2DDevice Shared
         {
             get
             {
-                lock (_backgroundLock)
+                lock (_sharedLock)
                 {
-                    if (_background == null)
+                    if (_shared == null)
                     {
                         try
                         {
-                            _background = new PlaceholderImageHelper((Window)null);
+                            _shared = new Direct2DDevice(null as Compositor);
                         }
                         catch
                         {
@@ -74,8 +75,8 @@ namespace Telegram.Common
                         }
                     }
 
-                    _background.HandleDeviceLost();
-                    return _background;
+                    _shared.HandleDeviceLost();
+                    return _shared;
                 }
             }
         }
@@ -122,14 +123,14 @@ namespace Telegram.Common
         public static async Task<ChatBackgroundPattern> LoadPatternBitmapAsync(File file, float intensity, bool negative, double rasterizationScale)
         {
             using var locked = await _patternSurfaceLock.WaitAsync();
-            return await Background.DrawSvgAsync(BootStrapper.Current.Compositor, file.Local.Path, 1, false, rasterizationScale);
+            return await Shared.DrawSvgAsync(BootStrapper.Current.Compositor, file.Local.Path, 1, false, rasterizationScale);
         }
 
         public static async void GetBlurred(SoftwareBitmapSource source, string path, float amount = 3)
         {
             try
             {
-                var bitmap = await Task.Run(() => Background.DrawBlurred(path, amount));
+                var bitmap = await Task.Run(() => Shared.DrawBlurred(path, amount));
                 await source.SetBitmapAsync(bitmap);
             }
             catch { }
@@ -139,7 +140,7 @@ namespace Telegram.Common
         {
             try
             {
-                var bitmap = await Task.Run(() => Background.DrawBlurred(bytes, amount));
+                var bitmap = await Task.Run(() => Shared.DrawBlurred(bytes, amount));
                 await source.SetBitmapAsync(bitmap);
             }
             catch { }

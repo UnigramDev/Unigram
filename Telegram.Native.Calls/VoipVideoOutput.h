@@ -740,7 +740,7 @@ public:
         POINT offset;
 
         // BeginDraw can return DXGI_ERROR_DEVICE_REMOVED, if it happens we just return.
-        // PlaceholderImageHelper will be handling this for us, raising RenderingDeviceReplaced.
+        // Direct2DDevice will be handling this for us, raising RenderingDeviceReplaced.
         result = m_surface->BeginDraw(nullptr, __uuidof(ID2D1DeviceContext), d2dContext.put_void(), &offset);
         if (FAILED(result))
         {

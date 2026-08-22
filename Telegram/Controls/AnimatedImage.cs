@@ -1495,8 +1495,8 @@ namespace Telegram.Controls
                     Interlocked.Exchange(ref _backgroundNext, _foregroundPrev);
                 }
 
-                //_surface ??= PlaceholderImageHelper.Current.Create(_task.PixelWidth, _task.PixelHeight);
-                //PlaceholderImageHelper.Current.Invalidate(_surface, next);
+                //_surface ??= Direct2D.Current.Create(_task.PixelWidth, _task.PixelHeight);
+                //Direct2D.Current.Invalidate(_surface, next);
 
                 next.Source.Invalidate();
 
@@ -2023,7 +2023,7 @@ namespace Telegram.Controls
                     && animation.Length == pixelWidth * pixelHeight * 4;
             }
 
-            var animation = PlaceholderImageHelper.DrawWebP(local.FilePath, work.Presentation.PixelWidth, out int pixelWidth, out int pixelHeight);
+            var animation = Direct2DDevice.DrawWebP(local.FilePath, work.Presentation.PixelWidth, out int pixelWidth, out int pixelHeight);
             if (animation != null)
             {
                 if (IsValid(animation, pixelWidth, pixelHeight))

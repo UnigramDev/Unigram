@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PlaceholderImageHelper.g.h"
+#include "Direct2DDevice.g.h"
 
 #include <ppl.h>
 #include <wincodec.h>
@@ -283,11 +283,11 @@ namespace winrt::Telegram::Native::implementation
 
     struct MessageBubbleNineGrid;
 
-    struct PlaceholderImageHelper : PlaceholderImageHelperT<PlaceholderImageHelper>
+    struct Direct2DDevice : Direct2DDeviceT<Direct2DDevice>
     {
     public:
-        PlaceholderImageHelper(Compositor compositor);
-        ~PlaceholderImageHelper()
+        Direct2DDevice(Compositor compositor);
+        ~Direct2DDevice()
         {
             Close();
         }
@@ -333,30 +333,30 @@ namespace winrt::Telegram::Native::implementation
             return m_compositionDevice;
         }
 
-        //static winrt::Telegram::Native::PlaceholderImageHelper Background()
+        //static winrt::Telegram::Native::Direct2DDevice Background()
         //{
         //    std::lock_guard const guard(s_criticalSection);
 
         //    if (s_background == nullptr)
         //    {
-        //        s_background = winrt::make_self<PlaceholderImageHelper>();
+        //        s_background = winrt::make_self<Direct2DDevice>();
         //    }
 
         //    s_background->HandleDeviceLost();
-        //    return s_background.as<winrt::Telegram::Native::PlaceholderImageHelper>();
+        //    return s_background.as<winrt::Telegram::Native::Direct2DDevice>();
         //}
 
-        //static winrt::Telegram::Native::PlaceholderImageHelper Foreground()
+        //static winrt::Telegram::Native::Direct2DDevice Foreground()
         //{
         //    std::lock_guard const guard(s_criticalSection);
 
         //    if (s_foreground == nullptr)
         //    {
-        //        s_foreground = winrt::make_self<PlaceholderImageHelper>();
+        //        s_foreground = winrt::make_self<Direct2DDevice>();
         //    }
 
         //    s_foreground->HandleDeviceLost();
-        //    return s_foreground.as<winrt::Telegram::Native::PlaceholderImageHelper>();
+        //    return s_foreground.as<winrt::Telegram::Native::Direct2DDevice>();
         //}
 
         static HRESULT WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept;
@@ -462,7 +462,7 @@ namespace winrt::Telegram::Native::implementation
 
 namespace winrt::Telegram::Native::factory_implementation
 {
-    struct PlaceholderImageHelper : PlaceholderImageHelperT<PlaceholderImageHelper, implementation::PlaceholderImageHelper>
+    struct Direct2DDevice : Direct2DDeviceT<Direct2DDevice, implementation::Direct2DDevice>
     {
     };
 } // namespace winrt::Telegram::Native::factory_implementation

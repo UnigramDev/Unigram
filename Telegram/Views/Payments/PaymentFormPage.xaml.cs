@@ -49,7 +49,7 @@ namespace Telegram.Views.Payments
             }
 
             Photo.Visibility = Visibility.Visible;
-            return PlaceholderHelper.GetBitmap(ViewModel.ClientService, small);
+            return Direct2D.GetBitmap(ViewModel.ClientService, small);
         }
 
         private string ConvertAddress(Address address)

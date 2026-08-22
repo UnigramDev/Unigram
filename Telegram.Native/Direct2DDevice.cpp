@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "PlaceholderImageHelper.h"
-#if __has_include("PlaceholderImageHelper.g.cpp")
-#include "PlaceholderImageHelper.g.cpp"
+#include "Direct2DDevice.h"
+#if __has_include("Direct2DDevice.g.cpp")
+#include "Direct2DDevice.g.cpp"
 #endif
 
 #include "SVG/nanosvg.h"
@@ -171,7 +171,7 @@ namespace winrt::Telegram::Native::implementation
         }
     };
 
-    IBuffer PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth, int32_t& pixelWidth, int32_t& pixelHeight) noexcept
+    IBuffer Direct2DDevice::DrawWebP(hstring fileName, int32_t maxWidth, int32_t& pixelWidth, int32_t& pixelHeight) noexcept
     {
         pixelWidth = 0;
         pixelHeight = 0;
@@ -311,7 +311,7 @@ namespace winrt::Telegram::Native::implementation
         return surface;
     }
 
-    bool PlaceholderImageHelper::IsWebP(hstring fileName, int32_t& pixelWidth, int32_t& pixelHeight) noexcept
+    bool Direct2DDevice::IsWebP(hstring fileName, int32_t& pixelWidth, int32_t& pixelHeight) noexcept
     {
         pixelWidth = 0;
         pixelHeight = 0;
@@ -389,7 +389,7 @@ namespace winrt::Telegram::Native::implementation
         return true;
     }
 
-    winrt::Telegram::Native::SurfaceImage PlaceholderImageHelper::Create(int32_t pixelWidth, int32_t pixelHeight)
+    winrt::Telegram::Native::SurfaceImage Direct2DDevice::Create(int32_t pixelWidth, int32_t pixelHeight)
     {
         std::lock_guard const guard(m_criticalSection);
 
@@ -397,7 +397,7 @@ namespace winrt::Telegram::Native::implementation
         return surface.as<winrt::Telegram::Native::SurfaceImage>();
     }
 
-    HRESULT PlaceholderImageHelper::Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer)
+    HRESULT Direct2DDevice::Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -434,7 +434,7 @@ namespace winrt::Telegram::Native::implementation
         return native->EndDraw();
     }
 
-    winrt::Windows::Foundation::IAsyncOperation<ChatBackgroundPattern> PlaceholderImageHelper::DrawSvgAsync(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale)
+    winrt::Windows::Foundation::IAsyncOperation<ChatBackgroundPattern> Direct2DDevice::DrawSvgAsync(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale)
     {
         winrt::apartment_context ui_thread;
         co_await winrt::resume_background();
@@ -563,7 +563,7 @@ namespace winrt::Telegram::Native::implementation
     // background re-renders don't re-read + gunzip the same file (which churns/fragments the heap).
     // Must be called while holding m_criticalSection. nsvgParse mutates its input in place, so callers
     // must copy the returned bytes into a local buffer before parsing.
-    const std::string& PlaceholderImageHelper::GetDecompressedSvg(hstring const& path)
+    const std::string& Direct2DDevice::GetDecompressedSvg(hstring const& path)
     {
         std::wstring key(path.c_str());
 
@@ -595,7 +595,7 @@ namespace winrt::Telegram::Native::implementation
         return m_svgCacheList.front().second;
     }
 
-    ChatBackgroundPattern PlaceholderImageHelper::DrawSvg(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale)
+    ChatBackgroundPattern Direct2DDevice::DrawSvg(Compositor compositor, hstring path, float intensity, bool negative, double rasterizationScale)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -795,7 +795,7 @@ namespace winrt::Telegram::Native::implementation
         return nullptr;
     }
 
-    SoftwareBitmap PlaceholderImageHelper::DrawBlurred(hstring fileName, float blurAmount)
+    SoftwareBitmap Direct2DDevice::DrawBlurred(hstring fileName, float blurAmount)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -827,7 +827,7 @@ namespace winrt::Telegram::Native::implementation
         return bitmap;
     }
 
-    SoftwareBitmap PlaceholderImageHelper::DrawBlurred(IVector<uint8_t> bytes, float blurAmount)
+    SoftwareBitmap Direct2DDevice::DrawBlurred(IVector<uint8_t> bytes, float blurAmount)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -858,7 +858,7 @@ namespace winrt::Telegram::Native::implementation
         return bitmap;
     }
 
-    HRESULT PlaceholderImageHelper::DrawBlurredImpl(IWICBitmapSource* wicBitmapSource, float blurAmount, SoftwareBitmap& bitmap, bool minithumbnail)
+    HRESULT Direct2DDevice::DrawBlurredImpl(IWICBitmapSource* wicBitmapSource, float blurAmount, SoftwareBitmap& bitmap, bool minithumbnail)
     {
         HRESULT result;
         winrt::com_ptr<ID2D1ImageSourceFromWic> imageSource;
@@ -981,7 +981,7 @@ namespace winrt::Telegram::Native::implementation
 
     // The compositor is per thread, and null for the background instance, which draws into
     // software bitmaps and composes nothing.
-    PlaceholderImageHelper::PlaceholderImageHelper(Compositor compositor)
+    Direct2DDevice::Direct2DDevice(Compositor compositor)
         : m_compositor(compositor)
         , m_compositionDevice(nullptr)
         , m_alphaMaskFactory(nullptr)
@@ -990,7 +990,7 @@ namespace winrt::Telegram::Native::implementation
         winrt::check_hresult(CreateDeviceResources());
     }
 
-    HRESULT PlaceholderImageHelper::CreateDeviceIndependentResources()
+    HRESULT Direct2DDevice::CreateDeviceIndependentResources()
     {
         if (m_compositor)
         {
@@ -1033,7 +1033,7 @@ namespace winrt::Telegram::Native::implementation
         return S_OK;
     }
 
-    HRESULT PlaceholderImageHelper::CreateDeviceResources()
+    HRESULT Direct2DDevice::CreateDeviceResources()
     {
         HRESULT result;
         UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -1106,23 +1106,23 @@ namespace winrt::Telegram::Native::implementation
         }
 
         m_deviceLostHelper.WatchDevice(dxgiDevice);
-        m_deviceLostHelper.DeviceLost({ this, &PlaceholderImageHelper::OnDirect3DDeviceLost });
+        m_deviceLostHelper.DeviceLost({ this, &Direct2DDevice::OnDirect3DDeviceLost });
 
         return S_OK;
     }
 
-    void PlaceholderImageHelper::OnDirect3DDeviceLost(DeviceLostHelper const* /* sender */, DeviceLostEventArgs const& /* args */)
+    void Direct2DDevice::OnDirect3DDeviceLost(DeviceLostHelper const* /* sender */, DeviceLostEventArgs const& /* args */)
     {
         // Deliberately does not recreate the device here. This runs on the threadpool callback for
         // the device-removed event, so the display driver is still tearing itself down, and calling
         // D3D11CreateDevice at that moment faults inside the vendor user-mode driver.
         //
-        // PlaceholderHelper asks HandleDeviceLost() on every access to the singleton, so the device
+        // Direct2D asks HandleDeviceLost() on every access to the singleton, so the device
         // is rebuilt from the UI thread the next time it is actually needed.
         LOGGER_ERROR(L"Direct3D device lost");
     }
 
-    HRESULT PlaceholderImageHelper::CreateTextFormat(double fontSize)
+    HRESULT Direct2DDevice::CreateTextFormat(double fontSize)
     {
         if (m_appleFormat != nullptr && fontSize == m_appleFormat->GetFontSize())
         {
@@ -1145,14 +1145,14 @@ namespace winrt::Telegram::Native::implementation
         return result;
     }
 
-    winrt::Telegram::Native::TextFormat PlaceholderImageHelper::CreateTextFormat2(hstring text, IVector<TextStylePart> entities, double fontSize, double width)
+    winrt::Telegram::Native::TextFormat Direct2DDevice::CreateTextFormat2(hstring text, IVector<TextStylePart> entities, double fontSize, double width)
     {
         winrt::com_ptr<TextFormat> textFormat;
         CreateTextFormatImpl(text, entities, fontSize, width, textFormat);
         return textFormat.as<winrt::Telegram::Native::TextFormat>();
     }
 
-    HRESULT PlaceholderImageHelper::CreateTextFormatImpl(hstring text, IVector<TextStylePart> entities, double fontSize, double width, winrt::com_ptr<TextFormat>& textFormat2)
+    HRESULT Direct2DDevice::CreateTextFormatImpl(hstring text, IVector<TextStylePart> entities, double fontSize, double width, winrt::com_ptr<TextFormat>& textFormat2)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -1219,7 +1219,7 @@ namespace winrt::Telegram::Native::implementation
         return result;
     }
 
-    float2 PlaceholderImageHelper::ContentEnd(hstring text, IVector<TextStylePart> entities, double fontSize, double width)
+    float2 Direct2DDevice::ContentEnd(hstring text, IVector<TextStylePart> entities, double fontSize, double width)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -1294,12 +1294,12 @@ namespace winrt::Telegram::Native::implementation
         return float2(hitTestMetrics.left + hitTestMetrics.width, hitTestMetrics.top + hitTestMetrics.height);
     }
 
-    IVector<Windows::Foundation::Rect> PlaceholderImageHelper::LineMetrics(hstring text, IVector<TextStylePart> entities, double fontSize, double width, bool rtl)
+    IVector<Windows::Foundation::Rect> Direct2DDevice::LineMetrics(hstring text, IVector<TextStylePart> entities, double fontSize, double width, bool rtl)
     {
         return RangeMetrics(text, 0, text.size(), entities, fontSize, width, rtl, true);
     }
 
-    IVector<Windows::Foundation::Rect> PlaceholderImageHelper::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap)
+    IVector<Windows::Foundation::Rect> Direct2DDevice::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, bool wrap)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -1419,7 +1419,7 @@ namespace winrt::Telegram::Native::implementation
         return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(vector));
     }
 
-    Windows::Foundation::Rect PlaceholderImageHelper::LayoutMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl)
+    Windows::Foundation::Rect Direct2DDevice::LayoutMetrics(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -1491,7 +1491,7 @@ namespace winrt::Telegram::Native::implementation
         return { metrics.left, metrics.top, metrics.width, metrics.height };
     }
 
-    MaxLinesMetrics PlaceholderImageHelper::MaxLines(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, int32_t maxLines)
+    MaxLinesMetrics Direct2DDevice::MaxLines(hstring text, int32_t offset, int32_t length, IVector<TextStylePart> entities, double fontSize, double width, bool rtl, int32_t maxLines)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -1605,7 +1605,7 @@ namespace winrt::Telegram::Native::implementation
         return { metrics.left, metrics.top, metrics.width, metrics.height, truncateHeight, truncatePosition };
     }
 
-    HRESULT PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept
+    HRESULT Direct2DDevice::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept
     {
         HRESULT result;
         winrt::com_ptr<IStream> stream;
@@ -1667,7 +1667,7 @@ namespace winrt::Telegram::Native::implementation
         return E_FAIL;
     }
 
-    IVector<hstring> PlaceholderImageHelper::GetSystemFontFamilies(IVector<hstring> localeNames)
+    IVector<hstring> Direct2DDevice::GetSystemFontFamilies(IVector<hstring> localeNames)
     {
         auto families = winrt::single_threaded_vector<hstring>();
 
@@ -1704,7 +1704,7 @@ namespace winrt::Telegram::Native::implementation
         return families;
     }
 
-    winrt::Telegram::Native::FreeformGradientSurface PlaceholderImageHelper::CreateFreeformGradient(IVector<int32_t> colors)
+    winrt::Telegram::Native::FreeformGradientSurface Direct2DDevice::CreateFreeformGradient(IVector<int32_t> colors)
     {
         auto surface = CreateDrawingSurface({ 50, 50 });
         if (surface)
@@ -1719,7 +1719,7 @@ namespace winrt::Telegram::Native::implementation
     // Nothing reports that a XamlRoot has gone, so expired buckets are dropped whenever a window is
     // seen for the first time. Pruning on lookup instead would put a weak resolve on the path every
     // bubble takes, to reclaim a handful of small surfaces sooner.
-    void PlaceholderImageHelper::PruneNineGridCache()
+    void Direct2DDevice::PruneNineGridCache()
     {
         for (auto it = m_nineGridCache.begin(); it != m_nineGridCache.end();)
         {
@@ -1734,7 +1734,7 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
-    winrt::com_ptr<MessageBubbleNineGrid> PlaceholderImageHelper::GetNineGrid(XamlRoot const& xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+    winrt::com_ptr<MessageBubbleNineGrid> Direct2DDevice::GetNineGrid(XamlRoot const& xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
     {
         // Bubbles are realized before the window has content, so a missing XamlRoot is expected.
         if (xamlRoot == nullptr || m_compositionDevice == nullptr)
@@ -1781,7 +1781,7 @@ namespace winrt::Telegram::Native::implementation
         return nullptr;
     }
 
-    CompositionEffectBrush PlaceholderImageHelper::GetTail(XamlRoot xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+    CompositionEffectBrush Direct2DDevice::GetTail(XamlRoot xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
     {
         auto nineGrid = GetNineGrid(xamlRoot, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
         return nineGrid ? nineGrid->Effect() : nullptr;
@@ -1789,13 +1789,13 @@ namespace winrt::Telegram::Native::implementation
 
     // The alpha mask of GetTail, for callers that paint the silhouette rather than mask a layer:
     // a CompositionMaskBrush over this costs no offscreen intermediate, a LayerVisual effect does.
-    CompositionNineGridBrush PlaceholderImageHelper::GetTailMask(XamlRoot xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+    CompositionNineGridBrush Direct2DDevice::GetTailMask(XamlRoot xamlRoot, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
     {
         auto nineGrid = GetNineGrid(xamlRoot, topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
         return nineGrid ? nineGrid->Mask() : nullptr;
     }
 
-    CompositionDrawingSurface PlaceholderImageHelper::CreateDrawingSurface(SizeInt32 size)
+    CompositionDrawingSurface Direct2DDevice::CreateDrawingSurface(SizeInt32 size)
     {
         try
         {
@@ -1808,7 +1808,7 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
-    //CompositionPath PlaceholderImageHelper::GetOutline(IVector<ClosedVectorPath> contours)
+    //CompositionPath Direct2DDevice::GetOutline(IVector<ClosedVectorPath> contours)
     //{
     //    std::lock_guard const guard(m_criticalSection);
     //    HRESULT result;
@@ -1885,7 +1885,7 @@ namespace winrt::Telegram::Native::implementation
     //    return CompositionPath(geometry.as<winrt::Windows::Graphics::IGeometrySource2D>());
     //}
 
-    CompositionPath PlaceholderImageHelper::GetEllipticalClip(float width, float height, float radius, float x, float y)
+    CompositionPath Direct2DDevice::GetEllipticalClip(float width, float height, float radius, float x, float y)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -1964,7 +1964,7 @@ namespace winrt::Telegram::Native::implementation
         d2dGeometrySink->EndFigure(D2D1_FIGURE_END_CLOSED);
     }
 
-    CompositionPath PlaceholderImageHelper::GetReplyMarkupClip(IVector<IVector<Windows::Foundation::Rect>> rows, float bottomRightRadius, float bottomLeftRadius)
+    CompositionPath Direct2DDevice::GetReplyMarkupClip(IVector<IVector<Windows::Foundation::Rect>> rows, float bottomRightRadius, float bottomLeftRadius)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -2017,7 +2017,7 @@ namespace winrt::Telegram::Native::implementation
         return CompositionPath(geometry.as<winrt::Windows::Graphics::IGeometrySource2D>());
     }
 
-    CompositionPath PlaceholderImageHelper::GetVoiceNoteClip(IVector<byte> waveform, double waveformWidth)
+    CompositionPath Direct2DDevice::GetVoiceNoteClip(IVector<byte> waveform, double waveformWidth)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -2110,7 +2110,7 @@ namespace winrt::Telegram::Native::implementation
         return CompositionPath(geometry.as<winrt::Windows::Graphics::IGeometrySource2D>());
     }
 
-    CompositionPath PlaceholderImageHelper::GetRoundedPolygon(IVector<IVector<Windows::Foundation::Rect>> shapes)
+    CompositionPath Direct2DDevice::GetRoundedPolygon(IVector<IVector<Windows::Foundation::Rect>> shapes)
     {
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
@@ -2218,7 +2218,7 @@ namespace winrt::Telegram::Native::implementation
         return CompositionPath(geometry.as<winrt::Windows::Graphics::IGeometrySource2D>());
     }
 
-    HRESULT PlaceholderImageHelper::Encode(IBuffer source, IRandomAccessStream destination, int32_t width, int32_t height, int32_t rotation)
+    HRESULT Direct2DDevice::Encode(IBuffer source, IRandomAccessStream destination, int32_t width, int32_t height, int32_t rotation)
     {
         HRESULT result;
         winrt::com_ptr<IStream> stream;
@@ -2279,7 +2279,7 @@ namespace winrt::Telegram::Native::implementation
         return stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr);
     }
 
-    HRESULT PlaceholderImageHelper::SaveImageToStream(ID2D1Image* image, REFGUID wicFormat, IRandomAccessStream randomAccessStream)
+    HRESULT Direct2DDevice::SaveImageToStream(ID2D1Image* image, REFGUID wicFormat, IRandomAccessStream randomAccessStream)
     {
         HRESULT result;
         winrt::com_ptr<IStream> stream;

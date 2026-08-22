@@ -435,7 +435,7 @@ namespace Telegram.Controls
                 if (blurRadius > 0)
                 {
                     var source = new SoftwareBitmapSource();
-                    PlaceholderHelper.GetBlurred(source, file.Local.Path, blurRadius);
+                    Direct2D.GetBlurred(source, file.Local.Path, blurRadius);
                     return source;
                 }
 
@@ -453,7 +453,7 @@ namespace Telegram.Controls
                 if (minithumbnail != null)
                 {
                     var source = new SoftwareBitmapSource();
-                    PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
+                    Direct2D.GetBlurred(source, minithumbnail.Data, 3);
                     return source;
                 }
 

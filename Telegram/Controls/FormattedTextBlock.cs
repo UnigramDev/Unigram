@@ -312,7 +312,7 @@ namespace Telegram.Controls
                     _trimmableWidth = availableSize.Width;
                     _trimmableSize = quoteSize;
 
-                    var metrics = PlaceholderHelper.Foreground.MaxLines(partial, 0, partial.Length, entities, quoteSize, availableSize.Width, false, 3);
+                    var metrics = Direct2D.Current.MaxLines(partial, 0, partial.Length, entities, quoteSize, availableSize.Width, false, 3);
                     var trimmable = metrics.TruncatedHeight < metrics.Height;
 
                     if (IsTextTrimmable != trimmable)
@@ -2016,7 +2016,7 @@ namespace Telegram.Controls
                         ? quoteSize
                         : fontSize;
 
-                    var rectangles = PlaceholderHelper.Foreground.RangeMetrics(partial, xoffset, xlength, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft, true);
+                    var rectangles = Direct2D.Current.RangeMetrics(partial, xoffset, xlength, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft, true);
                     var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
                     var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X, relative.Y + position.Y);
@@ -2074,7 +2074,7 @@ namespace Telegram.Controls
 
                     var size = fontSize;
 
-                    var rectangles = PlaceholderHelper.Foreground.RangeMetrics(partial, xoffset, xlength, entities, size, width - relative.X, styled.Direction == TextDirectionality.RightToLeft, false);
+                    var rectangles = Direct2D.Current.RangeMetrics(partial, xoffset, xlength, entities, size, width - relative.X, styled.Direction == TextDirectionality.RightToLeft, false);
                     var point = new Windows.Foundation.Point(relative.X + position.X, relative.Y + position.Y);
 
                     for (int i = 0; i < rectangles?.Count; i++)
@@ -2720,7 +2720,7 @@ namespace Telegram.Controls
                     ? quoteSize
                     : fontSize;
 
-                var rectangles = PlaceholderHelper.Foreground.LineMetrics(partial, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft);
+                var rectangles = Direct2D.Current.LineMetrics(partial, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft);
                 var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
                 var point = new Windows.Foundation.Point(paragraph.Margin.Left /*+ position.X*/, relative.Y /*+ position.Y*/);
@@ -2753,7 +2753,7 @@ namespace Telegram.Controls
                 shapes.Add(current);
             }
 
-            _skeleton.Clip = BootStrapper.Current.Compositor.CreateGeometricClip(BootStrapper.Current.Compositor.CreatePathGeometry(PlaceholderHelper.Foreground.GetRoundedPolygon(shapes)));
+            _skeleton.Clip = BootStrapper.Current.Compositor.CreateGeometricClip(BootStrapper.Current.Compositor.CreatePathGeometry(Direct2D.Current.GetRoundedPolygon(shapes)));
             //_skeleton.Size = Placeholder.DesiredSize.ToVector2();
             _skeleton.Size = new Vector2(TextBlock.ActualSize.X + 8, TextBlock.ActualSize.Y + 4);
             _skeleton.Offset = new Vector3(-0, -0, 0);

@@ -770,7 +770,7 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                _layerVisual.Effect = PlaceholderHelper.Foreground.GetTail(XamlRoot, topLeft, topRight, bottomRight, bottomLeft);
+                _layerVisual.Effect = Direct2D.Current.GetTail(XamlRoot, topLeft, topRight, bottomRight, bottomLeft);
 
                 if (_corners)
                 {
@@ -2965,7 +2965,7 @@ namespace Telegram.Controls.Messages
                             ? quoteSize
                             : fontSize;
 
-                        var rectangles = PlaceholderHelper.Foreground.RangeMetrics(partial, xoffset, xlength, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft, true);
+                        var rectangles = Direct2D.Current.RangeMetrics(partial, xoffset, xlength, entities, size, width - paragraph.Margin.Left - paragraph.Margin.Right, styled.Direction == TextDirectionality.RightToLeft, true);
                         var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
                         var point = new Windows.Foundation.Point(paragraph.Margin.Left + position.X + adjustment.X, relative.Y + position.Y + adjustment.Y);
@@ -2998,7 +2998,7 @@ namespace Telegram.Controls.Messages
                         shapes.Add(current);
                     }
 
-                    var shape = BootStrapper.Current.Compositor.CreateSpriteShape(BootStrapper.Current.Compositor.CreatePathGeometry(PlaceholderHelper.Foreground.GetRoundedPolygon(shapes)));
+                    var shape = BootStrapper.Current.Compositor.CreateSpriteShape(BootStrapper.Current.Compositor.CreatePathGeometry(Direct2D.Current.GetRoundedPolygon(shapes)));
                     shape.FillBrush = brush;
                     shape.StrokeThickness = 0;
                     visual.Shapes.Add(shape);

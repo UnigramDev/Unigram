@@ -822,7 +822,7 @@
     <Compile Include="Common\InactivityHelper.cs" />
     <Compile Include="Common\Locale.cs" />
     <Compile Include="Common\PhoneNumber.cs" />
-    <Compile Include="Common\PlaceholderHelper.cs" />
+    <Compile Include="Common\Direct2D.cs" />
     <Compile Include="Td\Api\TdExtensions.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\Theme.cs" />

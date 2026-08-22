@@ -20,8 +20,6 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            //Photo.Source = PlaceholderHelper.GetChat(clientService, chat, 36);
-
             var position = chat.GetPosition(chatList);
             if (position?.Source is ChatSourcePublicServiceAnnouncement)
             {

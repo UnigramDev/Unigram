@@ -230,7 +230,7 @@ namespace Telegram.Controls.Messages
 
             if (changed)
             {
-                _clip.Geometry = _clip.Compositor.CreatePathGeometry(PlaceholderHelper.Foreground.GetReplyMarkupClip(_clipRows, CornerRadius.X, CornerRadius.Y));
+                _clip.Geometry = _clip.Compositor.CreatePathGeometry(Direct2D.Current.GetReplyMarkupClip(_clipRows, CornerRadius.X, CornerRadius.Y));
                 _clipValid = true;
             }
 

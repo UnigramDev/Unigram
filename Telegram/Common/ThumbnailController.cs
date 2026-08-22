@@ -47,7 +47,7 @@ namespace Telegram.Common
                     Recycle(generation, hashCode);
                 }
 
-                var bitmap = await Task.Run(() => PlaceholderHelper.Background.DrawBlurred(path, amount));
+                var bitmap = await Task.Run(() => Direct2D.Shared.DrawBlurred(path, amount));
 
                 if (_generation != generation)
                 {
@@ -91,7 +91,7 @@ namespace Telegram.Common
                     Recycle(generation, hashCode);
                 }
 
-                var bitmap = await Task.Run(() => PlaceholderHelper.Background.DrawBlurred(bytes, amount));
+                var bitmap = await Task.Run(() => Direct2D.Shared.DrawBlurred(bytes, amount));
 
                 if (_generation != generation)
                 {
@@ -198,7 +198,7 @@ namespace Telegram.Common
 
                 using (var stream = new InMemoryRandomAccessStream())
                 {
-                    PlaceholderImageHelper.WriteBytes(bytes, stream);
+                    Direct2DDevice.WriteBytes(bytes, stream);
 
                     await bitmapSource.SetSourceAsync(stream);
                 }

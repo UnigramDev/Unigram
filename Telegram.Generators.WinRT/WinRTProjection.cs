@@ -13,7 +13,7 @@ namespace Telegram.Generators
     {
         // What CsWinRT stamps on a projected type. Matching on these rather than on the namespace,
         // because the projection for a referenced WinRT component is generated into the consuming
-        // assembly: Telegram.Native.PlaceholderImageHelper is a type of this compilation and looks
+        // assembly: Telegram.Native.Direct2DDevice is a type of this compilation and looks
         // managed by every other measure.
         private static readonly string[] Attributes =
         {

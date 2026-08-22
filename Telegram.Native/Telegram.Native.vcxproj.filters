@@ -153,7 +153,7 @@
       <Filter>SVG</Filter>
     </ClCompile>
     <ClCompile Include="Generated Files\module.g.cpp" />
-    <ClCompile Include="PlaceholderImageHelper.cpp" />
+    <ClCompile Include="Direct2DDevice.cpp" />
     <ClCompile Include="VideoAnimation.cpp" />
     <ClCompile Include="Helpers\LibraryHelper.cpp">
       <Filter>Helpers</Filter>
@@ -957,7 +957,7 @@
     <ClInclude Include="SVG\nanosvg.h">
       <Filter>SVG</Filter>
     </ClInclude>
-    <ClInclude Include="PlaceholderImageHelper.h" />
+    <ClInclude Include="Direct2DDevice.h" />
     <ClInclude Include="VideoAnimation.h" />
     <ClInclude Include="Helpers\COMHelper.h">
       <Filter>Helpers</Filter>
@@ -1502,7 +1502,7 @@
   </ItemGroup>
   <ItemGroup>
     <Midl Include="NativeUtils.idl" />
-    <Midl Include="PlaceholderImageHelper.idl" />
+    <Midl Include="Direct2DDevice.idl" />
     <Midl Include="VideoAnimation.idl" />
     <Midl Include="AudioPitchEffect.idl" />
     <Midl Include="HttpProxyWatcher.idl" />

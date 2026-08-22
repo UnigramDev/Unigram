@@ -457,7 +457,7 @@ namespace Telegram.Navigation
             ThemeIncoming.Release();
             ThemeOutgoing.Release();
 
-            PlaceholderHelper.Release();
+            Direct2D.Release();
             MessageBubbleBrush.Release();
             AnimatedImageLoader.Release();
             ProfilePicture.Loader.Release();

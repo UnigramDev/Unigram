@@ -94,7 +94,7 @@ namespace Telegram.Controls
                 waveform = new byte[1] { 0 };
             }
 
-            var clip = PlaceholderHelper.Foreground.GetVoiceNoteClip(waveform, waveformWidth);
+            var clip = Direct2D.Current.GetVoiceNoteClip(waveform, waveformWidth);
             _clip.Geometry = BootStrapper.Current.Compositor.CreatePathGeometry(clip);
         }
     }

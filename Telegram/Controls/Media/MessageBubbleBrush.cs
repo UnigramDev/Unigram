@@ -17,7 +17,7 @@ namespace Telegram.Controls.Media
 {
     /// <summary>
     /// Paints a message bubble that has a tail, by masking the theme fill with the nine grid that
-    /// PlaceholderImageHelper draws for a given set of corner radii.
+    /// Direct2DDevice draws for a given set of corner radii.
     /// </summary>
     /// <remarks>
     /// Instances are shared by every bubble with the same shape, and so is everything they point at,
@@ -57,7 +57,7 @@ namespace Telegram.Controls.Media
 
         public static MessageBubbleBrush GetTail(XamlRoot xamlRoot, float topLeft, float topRight, float bottomRight, float bottomLeft, bool outgoing, TelegramTheme parent)
         {
-            // Same packing as the nine grid cache in PlaceholderImageHelper: four 5 bit radii, plus
+            // Same packing as the nine grid cache in Direct2DDevice: four 5 bit radii, plus
             // one bit for each of the two dimensions the fill varies on.
             var key = ((int)topLeft << 15) | ((int)topRight << 10) | ((int)bottomRight << 5) | (int)bottomLeft
                 | (outgoing ? 1 << 20 : 0)
@@ -96,7 +96,7 @@ namespace Telegram.Controls.Media
 
             if (CompositionBrush == null)
             {
-                var mask = PlaceholderHelper.Foreground.GetTailMask(_xamlRoot, _topLeft, _topRight, _bottomRight, _bottomLeft);
+                var mask = Direct2D.Current.GetTailMask(_xamlRoot, _topLeft, _topRight, _bottomRight, _bottomLeft);
                 if (mask != null)
                 {
                     var brush = BootStrapper.Current.Compositor.CreateMaskBrush();

@@ -101,7 +101,7 @@ namespace Telegram.Controls.Cells.Business
                 {
                     try
                     {
-                        PlaceholderImageHelper.WriteBytes(thumbnail.Data, stream);
+                        Direct2DDevice.WriteBytes(thumbnail.Data, stream);
                         await bitmap.SetSourceAsync(stream);
                     }
                     catch

@@ -82,7 +82,7 @@ namespace Telegram.Controls.Messages
                     }
                 };
 
-                var rectangles2 = PlaceholderHelper.Foreground.LineMetrics(ForwardLabel.Text, entities, 12, double.MaxValue, false);
+                var rectangles2 = Direct2D.Current.LineMetrics(ForwardLabel.Text, entities, 12, double.MaxValue, false);
 
                 //var contentEnd = ForwardLabel.ContentEnd.GetCharacterRect(ForwardLabel.ContentEnd.LogicalDirection);
                 //if (contentEnd.Right <= 0)
@@ -125,7 +125,7 @@ namespace Telegram.Controls.Messages
                     _visual.Clip = _clip = _visual.Compositor.CreateGeometricClip();
                 }
 
-                _clip.Geometry = BootStrapper.Current.Compositor.CreatePathGeometry(PlaceholderHelper.Foreground.GetRoundedPolygon(shapes));
+                _clip.Geometry = BootStrapper.Current.Compositor.CreatePathGeometry(Direct2D.Current.GetRoundedPolygon(shapes));
             }
 
             try

@@ -304,7 +304,7 @@ namespace Telegram.Controls.Messages
             {
                 // TODO: this condition will be true whenever the message has more than a paragraph.
 
-                var bounds = PlaceholderHelper.Foreground.ContentEnd(text, entities, fontSize, width);
+                var bounds = Direct2D.Current.ContentEnd(text, entities, fontSize, width);
                 if (bounds.Y < textBlock.DesiredSize.Height)
                 {
                     return bounds.X;

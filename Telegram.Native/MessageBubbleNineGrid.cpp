@@ -48,7 +48,7 @@ namespace winrt::Telegram::Native::implementation
 
     MessageBubbleNineGrid::~MessageBubbleNineGrid()
     {
-        // m_xamlRoot is weak: PlaceholderImageHelper's cache is the only owner of this object, so
+        // m_xamlRoot is weak: Direct2DDevice's cache is the only owner of this object, so
         // a strong reference here would keep the window alive for as long as the cache holds it.
         // A window torn down first takes the registration with it, and there is nothing to detach.
         if (auto xamlRoot = m_xamlRoot.get())
@@ -104,7 +104,7 @@ namespace winrt::Telegram::Native::implementation
         POINT offset;
 
         // BeginDraw can return DXGI_ERROR_DEVICE_REMOVED, if it happens we just return.
-        // PlaceholderImageHelper will be handling this for us, raising RenderingDeviceReplaced.
+        // Direct2DDevice will be handling this for us, raising RenderingDeviceReplaced.
         ReturnIfFailed(result, m_surface->BeginDraw(nullptr, __uuidof(ID2D1DeviceContext), d2dContext.put_void(), &offset));
 
         d2dContext->Clear(D2D1::ColorF(0, 0, 0, 0));

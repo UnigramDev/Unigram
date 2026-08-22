@@ -24,9 +24,9 @@ namespace Telegram.Native
     };
 
     [default_interface]
-    runtimeclass PlaceholderImageHelper : Windows.Foundation.IClosable
+    runtimeclass Direct2DDevice : Windows.Foundation.IClosable
     {
-        PlaceholderImageHelper(Windows.UI.Composition.Compositor compositor);
+        Direct2DDevice(Windows.UI.Composition.Compositor compositor);
         void HandleDeviceLost();
 
         Windows.UI.Composition.CompositionGraphicsDevice Device{ get; };

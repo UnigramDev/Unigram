@@ -358,7 +358,7 @@ namespace Telegram.Controls.Chats
 
                     try
                     {
-                        var bitmap = await Task.Run(() => PlaceholderHelper.Background.DrawBlurred(file.Path, 3));
+                        var bitmap = await Task.Run(() => Direct2D.Shared.DrawBlurred(file.Path, 3));
                         await source.SetBitmapAsync(bitmap);
                     }
                     catch { }

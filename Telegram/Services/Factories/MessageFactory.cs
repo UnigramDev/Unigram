@@ -128,7 +128,7 @@ namespace Telegram.Services.Factories
             {
                 try
                 {
-                    if (PlaceholderImageHelper.IsWebP(file.Path, out int width, out int height))
+                    if (Direct2DDevice.IsWebP(file.Path, out int width, out int height))
                     {
                         if ((width == 512 && height <= width) || (height == 512 && width <= height))
                         {

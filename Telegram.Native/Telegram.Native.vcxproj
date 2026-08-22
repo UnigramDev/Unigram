@@ -397,8 +397,8 @@
     <ClInclude Include="PixelBuffer.h">
       <DependentUpon>PixelBuffer.idl</DependentUpon>
     </ClInclude>
-    <ClInclude Include="PlaceholderImageHelper.h">
-      <DependentUpon>PlaceholderImageHelper.idl</DependentUpon>
+    <ClInclude Include="Direct2DDevice.h">
+      <DependentUpon>Direct2DDevice.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="QrBuffer.h">
       <DependentUpon>QrBuffer.idl</DependentUpon>
@@ -1345,8 +1345,8 @@
     <ClCompile Include="PixelBuffer.cpp">
       <DependentUpon>PixelBuffer.idl</DependentUpon>
     </ClCompile>
-    <ClCompile Include="PlaceholderImageHelper.cpp">
-      <DependentUpon>PlaceholderImageHelper.idl</DependentUpon>
+    <ClCompile Include="Direct2DDevice.cpp">
+      <DependentUpon>Direct2DDevice.idl</DependentUpon>
     </ClCompile>
     <ClCompile Include="QrBuffer.cpp">
       <DependentUpon>QrBuffer.idl</DependentUpon>
@@ -1448,7 +1448,7 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="PixelBuffer.idl" />
-    <Midl Include="PlaceholderImageHelper.idl" />
+    <Midl Include="Direct2DDevice.idl" />
     <Midl Include="QrBuffer.idl">
       <SubType>Designer</SubType>
     </Midl>

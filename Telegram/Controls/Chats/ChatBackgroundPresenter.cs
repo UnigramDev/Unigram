@@ -294,13 +294,13 @@ namespace Telegram.Controls.Chats
 
                 if (_vector)
                 {
-                    _pattern = await PlaceholderHelper.LoadPatternBitmapAsync(file, _intensity, _negative, scale);
+                    _pattern = await Direct2D.LoadPatternBitmapAsync(file, _intensity, _negative, scale);
                     _symbol = symbol;
                     _model = model;
                 }
                 else
                 {
-                    _pattern = await PlaceholderHelper.LoadBitmapAsync(file);
+                    _pattern = await Direct2D.LoadBitmapAsync(file);
                     _symbol = null;
                     _model = null;
                 }

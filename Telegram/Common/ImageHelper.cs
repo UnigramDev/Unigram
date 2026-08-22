@@ -487,7 +487,7 @@ namespace Telegram.Common
                 }
 
                 using var stream = new InMemoryRandomAccessStream();
-                PlaceholderHelper.Background.Encode(frame, stream, width, height, animation.Rotation);
+                Direct2D.Shared.Encode(frame, stream, width, height, animation.Rotation);
 
                 return await CropAndPreviewAsync(stream, generation, maxSize);
             }
@@ -558,7 +558,7 @@ namespace Telegram.Common
                     }
 
                     var stream = new InMemoryRandomAccessStream();
-                    PlaceholderHelper.Background.Encode(frame, stream, width, height, animation.Rotation);
+                    Direct2D.Shared.Encode(frame, stream, width, height, animation.Rotation);
 
                     return stream;
                 });

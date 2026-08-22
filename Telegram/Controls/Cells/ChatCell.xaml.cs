@@ -1482,7 +1482,7 @@ namespace Telegram.Controls.Cells
                 {
                     try
                     {
-                        PlaceholderImageHelper.WriteBytes(thumbnail.Data, stream);
+                        Direct2DDevice.WriteBytes(thumbnail.Data, stream);
                         _ = bitmap.SetSourceAsync(stream);
                     }
                     catch

@@ -319,7 +319,7 @@ namespace Telegram.Controls
 
             var left = (float)padding.Left;
             var top = (float)padding.Top;
-            var rects = PlaceholderHelper.Foreground.LineMetrics(text, TextStyleRun.NoParts, fontSize, width - padding.Left - padding.Right, rightToLeft);
+            var rects = Direct2D.Current.LineMetrics(text, TextStyleRun.NoParts, fontSize, width - padding.Left - padding.Right, rightToLeft);
 
             // Sized up front and filled by index: CreateGroup takes an array, and the
             // count is known before the loop starts.

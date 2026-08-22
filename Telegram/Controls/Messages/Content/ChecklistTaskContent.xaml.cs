@@ -75,7 +75,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as Border;
 
-                var clip = PlaceholderHelper.Foreground.GetEllipticalClip(20, 20, 12, -2, 10);
+                var clip = Direct2D.Current.GetEllipticalClip(20, 20, 12, -2, 10);
                 var photo = ElementComposition.GetElementVisual(PhotoRoot);
                 var geometry = photo.Compositor.CreatePathGeometry(clip);
                 photo.Clip = photo.Compositor.CreateGeometricClip(geometry);

@@ -38,7 +38,7 @@ namespace Telegram.Services.Calls
             visual.RelativeSizeAdjustment = Vector2.One;
             ElementCompositionPreview.SetElementChildVisual(element, visual);
 
-            return new VoipVideoOutputSink(PlaceholderHelper.Foreground.Device, visual, mirrored, uniformToFill);
+            return new VoipVideoOutputSink(Direct2D.Current.Device, visual, mirrored, uniformToFill);
         }
 
         public void Stop()

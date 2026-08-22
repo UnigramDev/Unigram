@@ -33,7 +33,7 @@ namespace Telegram.ViewModels.Settings
         {
             _themeService = themeService;
 
-            var fonts = PlaceholderHelper.Foreground.GetSystemFontFamilies(new[] { LocaleService.Current.Id, NativeUtils.GetCurrentCulture() })
+            var fonts = Direct2D.Current.GetSystemFontFamilies(new[] { LocaleService.Current.Id, NativeUtils.GetCurrentCulture() })
                 .OrderBy(x => x)
                 .Select(x => new SettingsOptionFontFamily(x, x, x));
 
