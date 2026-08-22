@@ -212,6 +212,21 @@ namespace Telegram.Services
 
         public ApplicationDataContainer Container => _container;
 
+        // LifetimeService discovers sessions from the folders on disk, and creates them, before
+        // any SettingsService exists for them: ClientService reads UseTestDC while it is being
+        // constructed, so the value has to be in the container first.
+        public static bool IsAuthorized(int session)
+        {
+            return ApplicationData.Current.LocalSettings.Containers.TryGetValue($"{session}", out var container)
+                && container.Values.ContainsKey("UserId");
+        }
+
+        public static void SetUseTestDC(int session, bool value)
+        {
+            var container = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
+            container.Values["UseTestDC"] = value;
+        }
+
         #region App version
 
         public const ulong CurrentVersion = (10UL << 48) | (1UL << 32) | (0UL << 16);

@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Telegram.Common;
 using Windows.Storage;
 
 namespace Telegram.Services.Settings
@@ -30,6 +31,19 @@ namespace Telegram.Services.Settings
             : base(container)
         {
 
+        }
+
+        // The group sticker set the user hid, keyed by chat. Nothing writes these any more --
+        // the feature went with the MTProto client -- so only old installs have values here.
+        public bool TryGetHiddenGroupStickerSet(long chatId, out long stickerSetId)
+        {
+            if (_container.Containers.TryGetValue("Channels", out var channels))
+            {
+                return channels.Values.TryGet("Stickers" + chatId, out stickerSetId);
+            }
+
+            stickerSetId = 0;
+            return false;
         }
 
         private int? _suggestionMode;

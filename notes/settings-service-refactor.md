@@ -44,10 +44,12 @@ Note that `Stickers`, `Translate` and `Playback` are constructed with `_local`, 
 (`SelectedTab`, `IsTranslateEnabled`, `PlaybackRate`, `IsSidebarEnabled`, …) sit **unprefixed in
 the root**, mixed in with `SettingsService`'s own root keys. They read like sections but are not.
 
-`Windows.Storage` reaches outside the settings classes in four places: `LifetimeService`
+`Windows.Storage` reached outside the settings classes in four places: `LifetimeService`
 (2 sites), `StickerDrawerViewModel` (1), the `GetBoolean/GetInt32/GetInt64` extensions in
 `Common/Extensions.cs`, and `AutoDownloadSettings`, which takes an `ApplicationDataContainer`
-directly instead of deriving from `SettingsServiceBase`.
+directly instead of deriving from `SettingsServiceBase`. The first two are closed (see step 2b);
+the other two are not, and neither touches `ApplicationData.Current` — they only pass a container
+around — so they are a step 3 concern.
 
 `SettingsLegacyService` is not settings at all — it is an in-memory navigation-state bag used
 only by `FrameFacade`. It is misnamed and misfiled; nothing else uses it.
@@ -430,6 +432,35 @@ every affected setting set to a non-default value:
 - `HasRemovedCollections` is still at the root
 - a second launch changes nothing
 
+### Step 2b — Close the direct settings access — **done**
+
+Not `ApplicationData.Current` in general, which is fine on desktop and is left alone; only the
+callers reaching into `LocalSettings` to read or write a *setting* behind the settings layer's
+back. Independent of the store abstraction: this is about who owns settings access, not what
+backs it, and doing it first means step 3 has one file to convert rather than four.
+
+- `LifetimeService` used `CreateContainer($"{id}")` twice — to ask whether a session was ever
+  authorized, and to plant `UseTestDC` before building one. Both are genuinely pre-session:
+  `ClientService` reads `UseTestDC` inside its own constructor, so it cannot come from the
+  session's own settings object. They are now `SettingsService.IsAuthorized(session)` and
+  `SettingsService.SetUseTestDC(session, value)`, two statics next to the constructors. The
+  first also stops creating a container for every numeric folder it scans, including the ones
+  it is about to delete
+- `StickerDrawerViewModel` read a `Channels` container directly. That is now
+  `Settings.Stickers.TryGetHiddenGroupStickerSet`. **Nothing writes those values any more** —
+  the only writer is a commented-out `HideGroup` taking a `TLChannelFull`, so it has been dead
+  since the MTProto client went. Kept as-is rather than deleted, because deleting a behaviour is
+  a separate call; worth making
+- `LifetimeService` keeps its `Windows.Storage` using: `ApplicationData.Current.LocalFolder.Path`
+  is file access, not settings, and stays
+
+Left open, both step 3, and neither is `ApplicationData.Current`:
+
+- `AutoDownloadSettings` takes an `ApplicationDataContainer` in its constructor and `Save`
+- the three `ApplicationDataContainer` extensions in `Common/Extensions.cs`, its only caller.
+  Untouched for a mundane reason: that file has uncommitted work in it, and committing a path
+  commits its whole working-tree content
+
 ### Step 3 — Introduce `ISettingsStore`, keep the object model
 
 Purely internal; no key moves, no call-site churn.
@@ -439,13 +470,13 @@ Purely internal; no key moves, no call-site churn.
   `ApplicationDataContainer`; keep `GetValueOrDefault`/`AddOrUpdateValue` as the section-level
   API so the ~200 accessors do not change shape, and keep them public — `DiagnosticsViewModel`
   uses them with dynamic keys
-- port the four leaks: `AutoDownloadSettings` (make it a section like the rest, or hand it a
-  store), `LifetimeService`, `StickerDrawerViewModel`'s `Channels` container, and delete the
-  three `ApplicationDataContainer` extensions from `Common/Extensions.cs`
-- `LifetimeService` also wants `GetContainer(name, create: false)` — it currently *creates* a
-  container for every numeric folder it scans, including ones it is about to delete
+- port what step 2b left: `AutoDownloadSettings` (make it a section like the rest, or hand it a
+  store), and delete the three `ApplicationDataContainer` extensions from `Common/Extensions.cs`
+- the two statics step 2b added to `SettingsService` become part of whatever creates an
+  `IAccountSettings` in step 4
 
-Exit criterion: `Windows.Storage` appears in exactly one file under `Services/Settings/`.
+Exit criterion: `Windows.Storage` appears in exactly one file under `Services/Settings/`. After
+step 2b the only live references left outside it are in `SettingsService.cs` itself.
 
 ### Step 4 — Split the object model
 
@@ -484,6 +515,7 @@ in a packaged desktop app, so the islands work does not need it.
 |---|---|---|
 | 1 | 1 | low — behaviour fixes, visible in the app |
 | 2 | 1 | **the highest of the six** — it rewrites stored user settings |
+| 2b | 4 | low — mechanical, builds clean |
 | 3 | ~8 | low — internal, no key moves |
 | 4 | ~250 | medium in volume, low in kind; every change compiler-forced |
 | 5 | ~3 | none |

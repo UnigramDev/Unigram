@@ -17,7 +17,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
-using Windows.Storage;
 using Windows.UI.Xaml.Data;
 using WinRT;
 
@@ -265,14 +264,10 @@ namespace Telegram.ViewModels.Drawers
                 _groupSetChatId = 0;
                 SavedStickers.Remove(_groupSet);
 
-                var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
-                if (appData.Values.TryGetValue("Stickers" + chat.Id, out object stickersObj))
+                if (Settings.Stickers.TryGetHiddenGroupStickerSet(chat.Id, out long hiddenSetId)
+                    && hiddenSetId == fullInfo.StickerSetId)
                 {
-                    var stickersId = (long)stickersObj;
-                    if (stickersId == fullInfo.StickerSetId)
-                    {
-                        return;
-                    }
+                    return;
                 }
 
                 if (fullInfo.StickerSetId != 0)

@@ -114,8 +114,7 @@ namespace Telegram.Services
                 {
                     maxId = Math.Max(maxId, sessionId);
 
-                    var container = ApplicationData.Current.LocalSettings.CreateContainer($"{sessionId}", ApplicationDataCreateDisposition.Always);
-                    if (container.Values.ContainsKey("UserId"))
+                    if (SettingsService.IsAuthorized(sessionId))
                     {
                         toBeInitialized.Add(new AvailableSession(
                             sessionId,
@@ -226,8 +225,7 @@ namespace Telegram.Services
             var sessions = _sessions.Values;
             var id = sessions.Count > 0 ? sessions.Max(x => x.Id) + 1 : 0;
 
-            var settings = ApplicationData.Current.LocalSettings.CreateContainer($"{id}", ApplicationDataCreateDisposition.Always);
-            settings.Values["UseTestDC"] = test;
+            SettingsService.SetUseTestDC(id, test);
 
             var session = Build(id, update);
 
