@@ -550,8 +550,470 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
     `new CoreCursor(...)` allocation — `FormattedTextBlock` was doing it on pointer move —
     and deleted five hand-rolled cursor caches in `ImageTextSelection` and
     `MasterDetailPanel`. Five files no longer import `Windows.UI.Core` at all. Builds.
-  - [ ] `CharacterReceived` 10, `ActivationMode` 3, `GetAsyncKeyState` 2, `PointerPressed` 2,
-    `FlowDirection` 2, `PointerPosition` 1, `ResizeStarted`/`ResizeCompleted` 2 each.
+  - [x] **`CharacterReceived` — 10 sites, done.** Replaced with the routed
+    `UIElement.CharacterReceived`, which works in an island because it is XAML input rather than
+    CoreWindow. Three shapes, because the sites were doing three different things:
+    - `FormattedTextBox` (its own emoticon replacement) subscribes to **itself**, via
+      `AddHandler(..., handledEventsToo: true)` — a plain `+=` never fires, because RichEditBox
+      consumes the character and marks the event handled. Killed the `_characterReceived`
+      double-subscription guard and both `Loaded`/`Unloaded` handlers with it: they existed only
+      because `CoreWindow` outlives the control.
+    - `MainPage` / `ChatView` (type-to-search, type-to-compose) go through a new
+      `WindowContext.CharacterReceived`, raised from the window's root element with a plain `+=`.
+    - `ChooseChatsPopup` / `SendFilesPopup` subscribe to **themselves** — a popup is its own
+      subtree, so anything focused above it never bubbles down.
+
+    What made it worth doing beyond the port: **every `FocusManagerEx.TryGetFocusedElement` and
+    `GetOpenPopupsForXamlRoot` check was hand-rolling what routed events already encode.** A
+    focused `TextBox`/`RichEditBox` marks the character handled, and a popup only swallows it
+    when it took focus — which is exactly what `ChatView`'s hardcoded allow-list
+    (`ToolTip`, `TeachingTipRootGrid`, `ReactionAnimation`, empty `Grid`) was enumerating: the
+    popups that do *not* take focus. All of it deleted. Also gone: two allocations per keystroke
+    (`Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode))`) in each of four handlers
+    that were **all** subscribed to the same CoreWindow, so every keystroke anywhere paid it 4x.
+
+    **The trap, found by testing.** Two shortcuts used to ride in on the character stream,
+    because `CoreWindow.CharacterReceived` sat *below* XAML's key handling. The routed event sits
+    *above* it, so they behave differently:
+    - **Ctrl+V still arrives** as U+0016 (SYN — Ctrl+letter is letter minus 0x40). The paste
+      branches survive untouched.
+    - **Enter does not.** XAML consumes it as a key before any character is produced, so the
+      `'\r'` branch in both send popups went dead and Enter stopped closing them. Restored as an
+      explicit `PreviewKeyDown` handler calling `Accept()`, guarded by the same four focused
+      types. Preview rather than KeyDown because a focused `ListViewItem` sits in a `ListView`
+      that may consume Enter for item invocation, so bubbling never reaches the popup.
+
+    Worth knowing that `ContentPopup.OnProcessKeyboardAccelerators` *also* maps Enter to
+    `Hide(ContentDialogResult.Primary)` with an identical focus check, and appears never to fire
+    for these two — the `'\r'` branch was the live path. Whatever suppresses it is unexplained;
+    do not assume the base class covers Enter for a `ContentPopup`.
+
+    Verified by hand: type-to-search, type-to-compose, emoticon replacement, Ctrl+V paste, and
+    Enter from a focused list item closing the popup with the caption intact.
+  - [x] **`ActivationMode` — 6 sites, done.** No app-owned enum was needed: five of the six
+    asked `!= Deactivated`, so they became `WindowContext.IsActive`. Only
+    `ChatView.Window_Activated` wants the three-way split, and it ignores the middle state, so
+    `IsForeground` plus `!IsActive` reproduces it exactly. That site was also reading
+    `Window.Current` while handling *its own* window's `Activated` event — wrong in a secondary
+    view; it now uses `NavigationService.Window`.
+  - [ ] `GetAsyncKeyState` 2, `PointerPressed` 2, `FlowDirection` 2, `PointerPosition` 1,
+    `ResizeStarted`/`ResizeCompleted` 2 each.
+
+- [ ] **0.10 `WindowContext.Current` is `[ThreadStatic]`, and gate 1.8a makes that a problem.**
+  92 sites. It resolves "the window on this thread", which is unambiguous only because UWP gives
+  every view its own thread. The moment many windows share one thread — which 1.8a proved we can
+  do, and 0.4 will do deliberately — `Current` silently returns whichever window was constructed
+  last on that thread.
+
+  This is not hypothetical for the migration; it is the same class of bug as CsWinRT #2524.
+  The fix already exists in the codebase: **`WindowContext.ForXamlRoot(...)`**, used at 27 sites
+  today (`MainPage.OnLoaded` among them). Anything holding a `UIElement` can resolve its own
+  window instead of the thread's.
+
+  So the work is: audit the 92, convert the ones with an element or `XamlRoot` in reach, and
+  decide what `Current` should mean for the rest — probably "the active window", explicitly
+  tracked, rather than a thread-static. Worth doing before 0.4 rather than after, because 0.4 is
+  what makes the ambiguity real.
+
+  Two known callers to fix while doing it: `AnimatedImage` (3 sites, converted to
+  `WindowContext.Current.IsActive` in the `ActivationMode` change above — no worse than the
+  `Window.Current` it replaced, but no better either), and note that `Current`'s getter logs
+  `Environment.StackTrace` when null, which is not something to leave on a hot path.
+
+  **What the replacement cannot be.** `WindowContext` already has three statics —
+  `Current` (thread-static), `Active`, and `Main` — and `Active` looks like the obvious answer
+  until you read how it is maintained (`OnActivated`):
+
+      if (e.WindowActivationState != CoreWindowActivationState.Deactivated) Active = this;
+      else if (Active == this) Active = null;
+
+  **`Active` goes null whenever the app loses focus.** `Current` never does while a window
+  exists on the thread. So it is not a drop-in: swapping the 124 sites onto `Active` would start
+  throwing the moment you alt-tab, which is precisely when background callers like
+  `AnimatedImage` ask. Any fix has to pick a defined fallback (`Active ?? Main`, or a
+  never-nulled "last active"), and that is a decision, not a rename.
+
+  **Count went up before it goes down.** The `Window.Current` migration deliberately funnelled
+  60-odd scattered sites into `WindowContext.Current`, taking it from 92 to 124. That is the
+  point: each `Window.Current` site needed its own judgement, whereas the 124 need one decision
+  applied consistently. Sequence it with 0.4 — 0.4 is what makes the ambiguity real, and 0.4 is
+  also what supplies the per-window plumbing the fix needs.
+
+- [x] **0.12 `WindowContent` — done.** Fela's design: one base for everything assigned to
+  `WindowContext.Content`, with the window-level events behind overridable methods.
+
+  - `WindowEx` (which lived at the bottom of `VoipPage.xaml.cs`, below 1350 lines of call UI)
+    became `Telegram.Controls.WindowContent`. Its constructor set white-on-transparent caption
+    buttons — call-window chrome that every root would have inherited — so that became an opt-in
+    `UseDarkCaptionButtons()`.
+  - **All ten roots derive from it**, where they previously had four different bases
+    (`Page`, `UserControl`, `UserControlEx`, `WindowEx`). `RootWindow`/`StandaloneWindow` were
+    `Page` but used no `Page` member — every `.Frame` was `service.Frame`.
+  - **`IPopupHost` is now `OnPopupOpened`/`OnPopupClosed` virtuals.** Six of the seven roots were
+    doing the identical `SetTitleBar(null)` / `SetTitleBar(<element>)` pair, differing only in
+    which element they named, so that collapsed to `protected override UIElement TitleBarElement`.
+    Only `RootWindow` genuinely differs (it forwards to its `IRootContentPage`).
+  - **`Activated`, `VisibilityChanged` and `CloseRequested` are wired once**, in
+    `WindowContent.OnLoaded`/`OnUnloaded`, and surfaced as
+    `OnWindowActivated(bool)` / `OnWindowVisibilityChanged(bool)` /
+    `OnWindowCloseRequested(WindowCloseRequestedEventArgs)`. Every `+=`/`-=` pair for window
+    events now lives in one file — the CLAUDE.md pairing rule enforced structurally.
+    `WindowCloseRequestedEventArgs` wraps the UWP args and exposes only `Handled` and
+    `GetDeferral()`, the two things all four callers used, so
+    `SystemNavigationCloseRequestedPreviewEventArgs` no longer appears outside the base.
+  - **`Window` is required at construction**, not resolved. It was briefly
+    `ForXamlRoot(this)` in a property getter, but `XamlRoot` is null until the content is in a
+    tree, which is later than some roots need it — Fela's call, and the right one. Every root is
+    created with `new` and never reparented, so `protected WindowContent(WindowContext)` is
+    honest about the dependency and impossible to get wrong.
+
+    This also deleted six duplicate `WindowContext` fields (`_context`/`_window`, 27 references)
+    that each root was keeping alongside the base's, and took the roots to **zero**
+    `WindowContext.Current` — app-wide it is now 94, down from a peak of 124.
+
+    Four roots had to gain the parameter: `RichTextWindow` and the three call windows. All four
+    already had a `WindowContext` in scope at their call site, because `ViewServiceOptions.Content`
+    and `CreatePresentation` were given one earlier — so nothing had to reach for a thread-static
+    to supply it.
+
+  **Renamed and regrouped**: nine `*Page` roots became `*Window` (they were never pages), and
+  `PasscodeWindow`, `RichTextWindow` (was `TextEditorRichPopup`) and `WebAppWindow` moved into
+  `Views/Host` beside the other four.
+
+  **Do not create a `Views/Windows` folder** — tested, and it does not compile. Folder maps to
+  namespace here, and inside `namespace Telegram.Views.Windows` the simple name `Windows` binds
+  to that namespace before the global WinRT root:
+  `CS0234: The type or namespace name 'Foundation' does not exist in the namespace
+  'Probe.Views.Windows'`. Every `Windows.*` reference would need `global::`.
+
+- [x] **0.13 Every `WindowContext` event carries app-owned args.** Fela's rule: *anything the
+  Win32 host has to raise, it has to be able to construct* — and a UWP
+  `VisibilityChangedEventArgs`, `WindowSizeChangedEventArgs` or
+  `ApplicationViewConsolidatedEventArgs` cannot be `new`ed. The five events now carry
+  `PopupActivatedEventArgs`, `WindowActivatedEventArgs`, `WindowVisibilityEventArgs` and
+  `WindowSizeChangedEventArgs`, all declared in `Telegram.Navigation`.
+
+  `CharacterReceived` is the deliberate exception: `CharacterReceivedRoutedEventArgs` is a XAML
+  routed type, forwarded from `_content.CharacterReceived` and never constructed by us. An
+  island raises it the same way, so it needs no wrapper.
+
+  The app types intentionally shadow the UWP ones inside `Telegram.Navigation` — which is why
+  `BootStrapper.OnActivated`, which really does handle the raw `Window`, has to qualify
+  `Windows.UI.Core.WindowActivatedEventArgs`. Anything left on the UWP args fails loudly.
+
+- [x] **0.3a `ApplicationView` events — into `WindowContent`.** `Consolidated` and
+  `VisibleBoundsChanged` are wired by the base and surfaced as `OnWindowConsolidated()` /
+  `OnWindowVisibleBoundsChanged()` — **no args**, because the only root consuming them ignored
+  the `Consolidated` payload entirely and wanted `IsFullScreenMode` from the other, which
+  `WindowContext` already exposes. So `ApplicationViewConsolidatedEventArgs` never reaches a root.
+
+  `WebAppWindow.OnLoaded` became empty and was deleted; its doc comment — that `UserControlEx`
+  guarantees `OnLoaded`/`OnUnloaded` alternate where raw `Loaded`/`Unloaded` re-fire on
+  reparenting, and that a duplicate handler on a deferral-taking event means a duplicate
+  confirmation dialog — moved to `WindowContent.OnLoaded`, where that reasoning now lives.
+
+- [x] **0.3b `ApplicationView` methods — onto `WindowContext`. Done.** New members:
+  `VisibleBounds`, `TryResizeView(Size)`, `SwitchToAsync()`, and a **static**
+  `PreferredLaunchViewSize` (process-wide, not per-window). `TryEnterFullScreenMode()` now returns
+  `bool` — `LiveStreamWindow` only flips its button when it succeeds, and the old `void` signature
+  had silently dropped that.
+
+  Two things fell out rather than being converted:
+  - **Both `TryConsolidateAsync` calls were dead.** They were `else` branches for `Window == null`,
+    which stopped being reachable once the constructor started requiring a `WindowContext`.
+  - **`RootWindow.OnVisibleBoundsChanged` was dead**, referenced only from commented-out code
+    above it. Deleted.
+
+  After this, `ApplicationView` appears in the roots only in comments — plus
+  `CoreApplicationViewTitleBar.LayoutMetricsChanged` in `StandaloneWindow`/`TabbedWindow`, which
+  is a different API (`CoreApplication.GetCurrentView().TitleBar`, with `IsVisibleChanged`
+  alongside) and is left for its own pass.
+
+  Still excluded, still correct: `ViewService` + `ViewLifetimeControl` (21 of the 50 sites) are
+  0.4's rewrite, and `OverlayWindow` / `GalleryWindow` / `ZoomableMediaPopup` are not roots.
+
+- [ ] **0.3c `CoreApplicationViewTitleBar`** — `StandaloneWindow` and `TabbedWindow` each wire
+  `IsVisibleChanged` + `LayoutMetricsChanged` off `CoreApplication.GetCurrentView().TitleBar` and
+  handle both with one method. Same shape as everything else `WindowContent` absorbed, so it
+  belongs there as a virtual — and `CoreApplicationViewTitleBar` is another type an island host
+  has no equivalent for.
+
+- [ ] ~~**0.12 A `WindowBase` for the window roots**~~ The types that get assigned to `WindowContext.Content` are window roots, not pages,
+  and they all hand-wire the same set of window-level events:
+
+  | wired by hand today | where |
+  |---|---|
+  | `SystemNavigationManagerPreview.CloseRequested` | `OverlayWindow`, `VoipPage`, `TextEditorRichPopup`, `WebAppPage` — 8 sites, always a `+=`/`-=` pair |
+  | `WindowContext.Activated` | `WebAppPage`, `PasscodePage`, `TextEditorRichPopup`, `StoriesWindow`, `ChatView` |
+  | `WindowContext.VisibilityChanged` | `ChatView` and others |
+  | `ApplicationView.Consolidated` / `VisibleBoundsChanged` | `WindowContext`, `GalleryWindow`, `VoipPage`, … |
+  | `SetTitleBar` | `TabbedPage`, `WebAppPage`, `VoipPage`, `GroupCallPage`, `LiveStreamPage` |
+
+  A `WindowBase` that owns the `WindowContext` and exposes `protected virtual OnActivated`,
+  `OnCloseRequested`, `OnVisibilityChanged`, `OnConsolidated` would:
+
+  - **collapse every `+=`/`-=` pair into the base**, which is the pairing rule in CLAUDE.md
+    enforced structurally rather than by review;
+  - **remove the remaining `WindowContext.Current` from every root**, since the base holds it —
+    finishing what 0.4's constructor injection started;
+  - **absorb most of 0.3 and 0.5**: `ApplicationView` and the `GetForCurrentView` singletons stop
+    being touched by roots at all, and are reached only through the base;
+  - and, the point for this note, **put the UWP-vs-Win32 swap in exactly one place**. Whether
+    `OnCloseRequested` is driven by `SystemNavigationManagerPreview` or by `WM_CLOSE` becomes an
+    implementation detail of `WindowBase`, invisible to the twelve roots above it.
+
+  The roots as they stand: `RootPage`, `StandalonePage`, `TabbedPage`, `WebAppPage`, `SharePage`,
+  `VoipPage`, `GroupCallPage`, `LiveStreamPage`, `TextEditorRichPopup`, plus the overlay windows
+  (`GalleryWindow`, `StoriesWindow`, `OverlayWindow`). They currently derive from four different
+  bases — `Page`, `UserControl`, `UserControlEx` — which is part of why the wiring is duplicated.
+
+  **Rename while doing it**: they are named `*Page` but are not pages. `WebAppWindow`,
+  `TabbedWindow` and so on. Beware the cost — `Telegram.csproj` is not globbed (~1240 explicit
+  `Compile`/`Page` entries), so a file rename means editing both csproj files and every
+  `x:Class`. Worth splitting the rename from the base-class change so neither blocks the other.
+
+- [x] **0.14 `XamlRoot` and `UIContext` are per-island — verified.** Gate 1.8d/1.8e, Fela's
+  question and the right one to ask, because the whole `ForXamlRoot` design rests on it:
+
+      1.8d  XamlRoot same: False | UIContext same: False
+      1.8e  Popups: open in A: 1 | seen from B: 0   (scoped correctly)
+
+  Two islands on one thread get **distinct** `XamlRoot`s and distinct `UIContext`s (compared by
+  reference, as Fela suggested — `UIContext` is the identity token). 1.8e is the practical half:
+  a `Popup` opened against window A's `XamlRoot` is invisible to `GetOpenPopupsForXamlRoot(rootB)`.
+
+  So the rule for 0.10 is now proven rather than assumed:
+
+  | keyed on | scope with N windows on one thread |
+  |---|---|
+  | `GetForCurrentView()` | **per thread — collapses** (1.8c: same `ConnectedAnimationService`) |
+  | `XamlRoot` / `UIContext` | **per window — stays correct** |
+
+  `WindowContext.ForXamlRoot`, `GetOpenPopupsForXamlRoot`, `FocusManagerEx.TryGetFocusedElement`
+  and `MessagePopup.ShowAsync(XamlRoot, …)` all keep working. That is what makes 0.10 a
+  mechanical conversion rather than a design problem.
+
+- [ ] **0.15 No UI `[ThreadStatic]` may survive.** Fela's rule. The distinction that matters:
+
+  **A `[ThreadStatic]` cache of XAML objects is correct and must stay.** Brushes, styles and
+  `CompositionBrush`es are thread-affine, so caching them per thread is exactly right, and
+  sharing them between windows *on the same thread* is fine — that is the point.
+  - `Theme._light` / `_dark` / `_lightBackground` / `_darkBackground` (both theme classes)
+  - `ProfileCell.t_accent` / `t_transparent` / `t_bodyStyle` / `t_secretStyle`
+  - `MessageBubbleBrush._brushes`
+  - `Interop` `ICompositionTargetStatics` + the two token dictionaries (CompositionTarget is
+    genuinely per-thread)
+  - `PlaceholderHelper._foreground`, `FormattedTextBlock.RelativeDateService._current`
+
+  **A `[ThreadStatic]` standing in for "the current window's X" is the bug** — it only reads as
+  per-window because UWP gave every view its own thread:
+  - `WindowContext._current` — item 0.10, 94 call sites.
+  - **`OverlayWindow.Current`** — a per-window overlay. `WindowContext.PopupOpened/Closed`,
+    `NavigationService` and `TLNavigationService` all reach for it; two windows on one thread
+    would share one overlay.
+  - **`ContentPopup._currentDialogShowRequest`** — worse than shared state, it is a
+    *serialisation gate*: `while (_currentDialogShowRequest != null) await …` queues dialogs so
+    only one shows at a time. Per-thread today means per-window; with several windows on a
+    thread, opening a dialog in one window would block a dialog in another.
+  - `PaidReactionService._toast` and `GroupCallPaidReactionService._toast` — per-window toasts.
+  - `Theme.Current` — cleared in `WindowContext` (line ~453), so it looks per-window. Needs a
+    decision: is a per-window theme override a real feature, or is this incidental?
+
+  **Not UI, correctly per-thread, leave alone**: `Profiler.t_scopes`, `WatchDog._supersede*` and
+  `_reporting`, `Td/Client._writer`, `Td/ClientJson._writer` / `_buffer`.
+
+  **The shape to migrate onto: one `ConditionalWeakTable<XamlRoot, T>` per type**, not a single
+  per-window bag wrapping everything. Reasons, in order of weight:
+
+  1. **The release list deletes itself.** `WindowContext.OnShutdownCompleted` currently hand-maintains
+     eight teardown calls — `Theme.Current = null`, `ThemeIncoming.Release()`, `ThemeOutgoing.Release()`,
+     `PlaceholderHelper.Release()`, `MessageBubbleBrush.Release()`, and two that *already* take a
+     `XamlRoot` (`AnimatedImageLoader.Release(XamlRoot)`, `ProfilePicture.Loader.Release(XamlRoot)`).
+     A weak table frees its entry with the window, so none of those calls are needed. The migration
+     is already half-done and inconsistent.
+  2. **That teardown is already broken for the target.** It runs on `ShutdownCompleted`, i.e. thread
+     shutdown. With several windows per thread, closing one window does not end the thread, so the
+     block stops firing at the right time. Per-`XamlRoot` storage is the fix, not just a tidy-up.
+  3. **A central bag inverts the dependencies.** The state lives in `Common`, `Controls`, `Services`
+     and `Navigation`; a type wrapping all of it must reference all of it, and becomes the file
+     everyone edits to add state.
+
+  Verified in the spike before recommending it:
+
+  | gate | result |
+  |---|---|
+  | 1.8g `XamlRoot` RCW identity | same reference every read, and from any element in the tree — so CWT's reference-only keying is safe |
+  | 1.8i per-window isolation | entries keyed on window A are invisible from window B |
+  | 1.8j automatic release | window destroyed → `XamlRoot alive: False`, `entries left: 0` |
+
+  Two traps the spike surfaced:
+  - **`XamlRoot` is null until `Loaded`** (1.8h: `at gate time: NULL | at Loaded: set`), and
+    `TryGetValue(null, …)` **throws `ArgumentNullException`** rather than returning false (1.8i).
+    Every lookup needs a null guard. This is also why `WindowContent` takes its `WindowContext` in
+    the constructor rather than resolving it.
+  - **`GetValue`'s `createValueCallback` may run more than once** under contention — only one result
+    is stored, the rest are discarded. Keep it cheap and side-effect-free, and cache the delegate,
+    as `TextSelectionCoordinator` already does.
+
+  **`ConditionalWeakTable` thread safety — measured, not cited.** A probe in
+  `C:\Source\XamlIslandSpike\probe` (8 threads x 40,000 interleaved
+  `Add`/`Remove`/`TryGetValue`/`GetValue` over 256 shared keys):
+
+  | check | result |
+  |---|---|
+  | mixed read/write hammer | 0 unexpected exceptions, 0 corrupted reads |
+  | `GetValue` callback under contention | **61 surplus runs** over 400 rounds x 8 racing threads; 0 rounds where callers disagreed on the value |
+  | enumeration while another thread mutates | survived 2000 full enumerations, no throw |
+
+  So the table is safe, and two nuances follow:
+
+  - **`GetValue`'s `createValueCallback` genuinely runs more than once** — the table stays
+    consistent (one value wins, every caller sees it) but the surplus results are discarded. The
+    factory must therefore be cheap and side-effect-free: a callback that subscribed an event,
+    started a timer or allocated a native handle would leak on every surplus run, silently, and
+    only under contention.
+  - **Enumeration held up**, contrary to my first assumption. It does not throw. Still do not rely
+    on it for completeness or order, since a concurrent write can add or drop an entry mid-walk.
+
+  And the caveat that matters most here: **a thread-safe table says nothing about the values.**
+  `SolidColorBrush`, `Style` and `CompositionColorBrush` remain thread-affine. Keying per window
+  satisfies that naturally, because a window belongs to one thread — but the table is not what
+  guarantees it.
+
+- [x] **0.16 Island teardown order — found by crashing it.** Destroying an island's HWND while the
+  `DesktopWindowXamlSource` still holds content **takes the process down**; the XAML core is left
+  pointing at a dead window. The working order is: detach content (`Content = null`), `Dispose()`
+  the source, then release the native side and let `WM_DESTROY` run. Relevant to 0.4: whatever
+  replaces `ViewService` has to tear down in that order.
+
+- [x] **0.17 When `XamlRoot` exists — read out of the WinUI core.** The full XAML core is at
+  `C:\Source\microsoft-ui-xaml\src\dxaml`, which settles these questions properly.
+
+  `element.XamlRoot` is `XamlRoot::GetForElementStatic` (`XamlRoot_Partial.cpp:220`):
+
+      VisualTree* visualTree = VisualTree::GetForElementNoRef(element->GetHandle());
+      if (visualTree) xamlRootInsp = visualTree->GetOrCreateXamlRootNoRef();
+
+  So: **the XamlRoot object is created lazily on first request**, and it is reachable exactly when
+  the element is attached to a `VisualTree`. There is no "window initialised" moment that creates
+  it; it appears the instant content is attached — `Window.Current.Content = x` on UWP,
+  `DesktopWindowXamlSource.Content = x` in an island. That matches gate 1.8d, where the island
+  root had a XamlRoot immediately after `IslandWindow.Create`, and 1.8h, where a child inside a
+  ScrollViewer template did not.
+
+  Also worth knowing: `put_XamlRoot` exists and fails with `ERROR_CANNOT_SET_XAMLROOT_WHEN_NOT_NULL`
+  — you *can* assign a XamlRoot to a still-detached element (that is how a `Popup` gets one before
+  opening, as gate 1.8e does), but only once.
+
+  **`Loading` fires immediately before `ApplyTemplate`**, in the same measure pass
+  (`framework.cpp:1493` in `CFrameworkElement::MeasureCore`):
+
+      RaiseLoadingEventIfNeeded();
+      if (!bInLayoutTransition) { IFC_RETURN(InvokeApplyTemplate(&bTemplateApplied)); }
+
+  That is the only hook where an element is parented (so `XamlRoot` resolves) but its template —
+  and therefore its `ThemeResource` lookups — has not yet inflated.
+
+  **`ContainerContentChanging` is later than it looks.** `ListViewBase_Partial_ContainerPhase.cpp`
+  forces a measure *before* raising it, specifically to materialise `ContentTemplateRoot`:
+
+      // force measure. This will be no-op since content has not been set/changed
+      // but we need it for the contenttemplateroot
+      IFC_RETURN(containerAsISI.Cast<SelectorItem>()->Measure(measureSize));
+      ... Raise(ContainerContentChanging) ... then put_Content(item)
+
+  So by CCC the template is inflated and `ThemeResource` has resolved; merging a dictionary there
+  works (Fela tested it) but only via re-evaluation — a second pass per bubble.
+
+- [ ] **0.18 Bubble theming forces one chat window per thread.** The conclusion after going round
+  this twice; recorded so it is not relitigated.
+
+  How it works today: `[ThreadStatic]` tables hold `(Color, SolidColorBrush)`; every
+  `ThemeOutgoing`/`ThemeIncoming` copies **the same brush references** into its ThemeDictionaries;
+  a per-chat theme mutates ~20 brush colours in place and every bubble in the window repaints. No
+  walking, no re-resolution. It is very cheap and the cheapness is the point.
+
+  **`App.xaml` resources are instantiated per thread in UWP** — Fela's correction, and the proof is
+  in `Theme`'s own constructor: `_isPrimary = Current == null` with `[ThreadStatic] Current`, gating
+  the initial `Update(Light)`/`Update(Dark)`. That only makes sense if `Theme()` runs once per
+  thread. So thread == view is what makes the whole scheme correct today.
+
+  Why it cannot be made per-window:
+  - The app-level `<common:ThemeIncoming/>` is constructed at **thread initialisation, before any
+    window exists**. There is no XamlRoot to resolve against, at any hook.
+  - `Theme.Current` is not just brushes. Its own comment: *"Current is the only handle the app has
+    on the theme of this view, and it is dereferenced unguarded all over the message tree."*
+  - Making brushes per dictionary instance instead would allocate ~20 `SolidColorBrush` per bubble
+    realisation and force `Update` to walk every live dictionary — a regression on the app's
+    hottest surface.
+
+  **The rule: a window that renders chat content owns its thread.** Calls, web apps, passcode,
+  gallery and stories render no bubbles and can share one freely. This caps the 1.8a benefit rather
+  than removing it, and costs nothing today, since the app is already one window per thread.
+
+  If that rule is ever relaxed, the per-bubble dictionaries have a correct hook — `Loading`, per
+  0.17 — and moving them to one shared per-window instance merged there would be **cheaper than
+  today**, since each bubble currently constructs its own `ResourceDictionary`. It just does not
+  rescue the app-level case.
+
+- [ ] **0.19 `Theme.Current` -> `WindowContext.Theme`, in three steps.** Fela's proposal, and the
+  right destination — but a straight rename is churn, because the 50 `Theme.Current` sites do
+  not all want a window, and because moving the handle does not move the state.
+
+  **a. Split the global settings off first.** 30 of the 50 sites are `MessageFontSize` (9),
+  `CaptionFontSize` (6), `MonospaceFontFamily` (11) and `XamlAutoFontFamily` (4). They come out
+  of `_isolatedStore` and are identical in every window; per-window they become N copies of one
+  setting, and a read that is currently a `[ThreadStatic]` field — free — turns into a
+  `_mapping` lookup plus two derefs, on `FormattedTextBlock`'s path. Split value from
+  materialisation: the size and the font *name* are global statics; the `FontFamily` instances
+  stay per-window, since `FontFamily` is a `DependencyObject` and therefore thread-affine, which
+  is why they are per-thread today. Doing this first shrinks the problem to 13 sites.
+
+  **b. Move the dictionaries to the window root.** `Theme` is a `ResourceDictionary` merged at
+  `App.xaml:515`, so XAML constructs it — one per thread (see 0.18). `WindowContext.Theme` can
+  only *point at* that instance; a per-window handle onto per-thread brushes is worse than an
+  honest `[ThreadStatic]`, because it reads as solved. So `<common:Theme/>` and
+  `<common:ThemeIncoming/>` move out of `App.xaml` into the window root's `Resources`
+  (`WindowContent`), which is per-window by construction. `WindowContext` then *owns* the
+  instance and merges it rather than discovering it, and `ThemeResource` resolves one level
+  earlier than App rather than one later. `ThemeOutgoing` cannot join them at the root — it
+  redefines the same keys as `ThemeIncoming` — which is what `ThemeOutgoing2.ForXamlRoot` plus
+  the `Loading` hook from 0.17 is for.
+
+  **c. Then the handle, for the 13 that want it.** `Parameters` (8 sites) is already
+  `_parameters[WindowContext.Current.ActualTheme]` — a per-window lookup wearing a static's
+  clothes; `window.Theme.Parameters` deletes the hop. And the broadcast in
+  `AppearanceSettings.cs:202` is the case that makes it worth doing:
+
+      await WindowContext.ForEachAsync(window =>
+      {
+          Theme.Current.Update(theme);   // "current" = whichever thread this landed on
+
+  correct today only because `ForEachAsync` dispatches to each window's own thread.
+  `window.Theme.Update(theme)` is right by construction, and stays right the day two windows
+  share one. Same for `ChatBackground`, `ChatTheme`, `DarkSettings`, `UpdateScrolls`,
+  `UpdateEmojiSet`.
+
+  Rule for the call sites: anchor the `WindowContext` on the element and cache it at `Loading`
+  or `Loaded`. Never a lookup per read — that is the one way this change can cost more than it
+  buys.
+
+- [ ] **0.11 Find a better hook for type-to-search / type-to-compose in `ChatView` and
+  `MainPage`.** Both now subscribe to `WindowContext.CharacterReceived` and then disambiguate by
+  state — `MainPage` bails unless `MasterDetail.NavigationService?.Frame.Content is BlankPage`,
+  `ChatView` assumes it wins otherwise. That is still a broadcast-plus-guard design; it is only
+  less bad than the `CoreWindow` version, not actually right.
+
+  Both are in the same tree, so subscribing at the window root was the expedient answer: a
+  character typed with focus in the chat list has to reach the *open chat's* composer, which a
+  subscription on `ChatView` itself would never see. Better shapes to consider:
+  - one owner — `MainPage` subscribes and routes to whatever is currently open, since it is the
+    one that knows;
+  - or a small registration on `WindowContext`: whoever is the active text target registers
+    itself, and the window forwards to exactly one subscriber rather than broadcasting.
+
+  The second also answers what happens with several windows on one thread, so it pairs with
+  0.10.
 
 - [ ] **0.7 Route file access through a path-first helper.** 40 `FutureAccessList` sites, 25
   `StorageFile.` statics, 12 `FileOpenPicker`, 6 `CameraCaptureUI`, 4 `FileSavePicker`, 3
@@ -610,6 +1072,50 @@ the most likely failure comes first.
 - [x] **1.9** What `DependencyObject.Dispatcher` returns inside an island. **Present, not
   null** — unlike WinUI 3. And `element.DispatcherQueue` does not compile on UWP at all.
   Together these shrink Phase 0 item 0.1 to a handful of sites; see it for the detail.
+
+- [x] **1.10 Mica / acrylic backdrop.** **Passes, but only through an undocumented API.**
+  Measured on build 26200.
+
+  Mica is the one item on this list UWP cannot have at all, because the backdrop is a DWM
+  attribute on an HWND and a UWP app does not own one. Terminal's entire implementation is a
+  single call (`IslandWindow.cpp:1847`):
+
+      const int attribute = newValue ? DWMSBT_MAINWINDOW : DWMSBT_NONE;
+      DwmSetWindowAttribute(hwnd, DWMWA_SYSTEMBACKDROP_TYPE, &attribute, sizeof(attribute));
+
+  Documented from 22621; on 22000 it fails silently and `DWMWA_MICA_EFFECT` (1029) is the only
+  route, which Terminal never bothered to implement.
+
+  **That call alone is not enough, and the failure is confusing.** With the attribute accepted
+  (`hr == 0`) the backdrop appears in the **non-client area only** — acrylic shows in the title
+  bar and the client area stays an opaque sheet. XAML islands paint what Terminal calls the
+  "emergency backstop" behind the island content, and nothing in the public surface turns it off:
+  root `Background = null`, `WS_EX_NOREDIRECTIONBITMAP`, suppressing the class brush on
+  `WM_ERASEBKGND` and `DwmExtendFrameIntoClientArea(-1,-1,-1,-1)` together do not.
+
+  Terminal removes it with `TerminalTrySetTransparentBackground` (GH#603), which comes from
+  `Microsoft.Internal.Windows.Terminal.ThemeHelpers` — **an internal package, not on nuget.org**.
+  What it does, read out of the shipped `TerminalThemeHelpers.dll`: activate
+  `Windows.UI.Xaml.Window`, call `IWindowStatics::get_Current`, QI the result for
+  `{06636C29-5A17-458D-8EA2-2422D997A922}` (`IWindowPrivate`), and call vtable slot 7 — a boolean
+  `put_TransparentBackground`. Reproduced in the spike as `WindowPrivate.cs`; the property reads
+  back `False -> True` and the backdrop then fills the whole window, client area included,
+  confirmed by A/B'ing `DWMSBT_NONE` against `DWMSBT_TRANSIENTWINDOW` on the live HWND.
+
+  Two things fall out that matter beyond the effect itself:
+  - **`Window.Current` is non-null inside an island.** Terminal depends on it, and the spike
+    confirms it. It is a per-thread stub with no `CoreWindow`, which also means
+    `TransparentBackground` is a **per-thread** switch, not per-window — one more entry on the
+    list of things that are thread-scoped when we would want them window-scoped.
+  - The dependency is on an **undocumented interface**. It is the same bet Terminal has been
+    shipping for years, so the risk is low in practice, but it is a bet, and it should be
+    isolated behind one call so the feature can be dropped rather than the host.
+
+  Terminal's other Mica lesson, for when 1.7 lands: with a custom caption, set
+  `margins.cyTopHeight = 0` rather than `-frame.top` (`NonClientIslandWindow.cpp:936`). Any
+  non-empty top margin lets the DWM title bar — and the accent strip, when "show accent colour on
+  title bars" is set — draw over the backdrop. Their comment calls the empty rect LOAD-BEARING:
+  it is what makes DWM use `NCHITTEST` for the snap flyout.
 
 Record results back in this file. If 1.3 fails and cannot be worked around, close the path and
 say so here.
