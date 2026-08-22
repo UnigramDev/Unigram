@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -25,7 +26,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Services
 {
-    public partial class PaidReactionService : IEquatable<MessageViewModel>
+    public partial class PaidReactionService
     {
         private int _sessionId;
 
@@ -37,22 +38,23 @@ namespace Telegram.Services
         private ToastPopup _pendingToast;
         private DispatcherTimer _pendingTimer;
 
-        [ThreadStatic]
-        private static PaidReactionService _toast;
+        private static readonly ConditionalWeakTable<XamlRoot, PaidReactionService> _instances = new();
 
         public static Task<Object> AddPendingAsync(XamlRoot xamlRoot, MessageViewModel message, int starCount, PaidReactionType type)
         {
-            if (_toast == null || !_toast.IsValid || !_toast.Equals(message))
+            _instances.TryGetValue(xamlRoot, out PaidReactionService instance);
+
+            if (instance == null || !instance.IsValid || !instance.AreTheSame(message))
             {
-                _toast = new PaidReactionService(message);
+                _instances.AddOrUpdate(xamlRoot, instance = new(message));
             }
 
-            return _toast.AddPendingImpl(xamlRoot, message, starCount, type);
+            return instance.AddPendingImpl(xamlRoot, message, starCount, type);
         }
 
         public bool IsValid => _pendingToast?.IsOpen is true;
 
-        public bool Equals(MessageViewModel other)
+        public bool AreTheSame(MessageViewModel other)
         {
             return _sessionId == other.ClientService.SessionId
                 && _chatId == other.ChatId
