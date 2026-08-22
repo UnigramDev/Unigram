@@ -10,7 +10,6 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Payments;
-using Telegram.Views.Host;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -119,12 +118,6 @@ namespace Telegram.Views.Payments
 
         public async void Close()
         {
-            if (XamlRoot?.Content is WindowControl { Content: RootWindow root })
-            {
-                root.PresentContent(null);
-                return;
-            }
-
             await WindowContext.Current.ConsolidateAsync();
         }
 

@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
-using Telegram.Views.Host;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
@@ -117,13 +116,6 @@ namespace Telegram.Services
 
             await CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
-                var window = WindowContext.Current;
-                if (window.Content is RootWindow root)
-                {
-                    root.PresentContent(options.Content(null, window));
-                    await ApplicationViewSwitcher.TryShowAsStandaloneAsync(ApplicationView.GetForCurrentView().Id);
-                }
-
                 tsc.SetResult(ViewLifetimeControl.Facade());
             });
 

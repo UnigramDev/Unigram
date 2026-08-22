@@ -9,7 +9,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Telegram.Navigation;
-using Telegram.Views.Host;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -84,12 +83,6 @@ namespace Telegram.Services
 
         private Task ConsolidateAsyncImpl()
         {
-            if (WindowContext.Current.Content is RootWindow root)
-            {
-                root.PresentContent(null);
-                return Task.CompletedTask;
-            }
-
             return WindowContext.Current.ConsolidateAsync();
         }
 
