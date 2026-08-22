@@ -26,7 +26,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Popups
@@ -97,8 +96,7 @@ namespace Telegram.Views.Popups
                 await Cropper.SetSourceAsync(_media.File, _media.EditState.Rotation, _media.EditState.Flip, _media.EditState.Proportions, _media.EditState.Rectangle);
             }
 
-            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("EditMediaPopup");
-            animation?.TryStart(Cropper);
+            ConnectedAnimationServiceEx.TryStart("EditMediaPopup", Cropper);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)

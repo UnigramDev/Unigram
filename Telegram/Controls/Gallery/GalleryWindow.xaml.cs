@@ -434,7 +434,7 @@ namespace Telegram.Controls.Gallery
             if (closing != null && closing.IsConnected() && !SettingsService.Current.FullScreenGallery)
             {
                 _closing = new WeakReference<FrameworkElement>(closing);
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", closing);
+                ConnectedAnimationServiceEx.PrepareToAnimate("FullScreenPicture", closing);
             }
 
             Load(parameter);
@@ -562,7 +562,7 @@ namespace Telegram.Controls.Gallery
                     {
                         if (_closing.TryGetTarget(out FrameworkElement element) && element.IsConnected())
                         {
-                            var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
+                            var animation = ConnectedAnimationServiceEx.PrepareToAnimate("FullScreenPicture", root);
                             if (animation != null)
                             {
                                 void handler(ConnectedAnimation s, object e)
@@ -645,7 +645,7 @@ namespace Telegram.Controls.Gallery
 
             var container = LayoutRoot.CurrentElement as GalleryContent;
 
-            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+            var animation = ConnectedAnimationServiceEx.GetAnimation("FullScreenPicture", XamlRoot);
             if (animation != null)
             {
                 if (animation.TryStart(image))
@@ -680,7 +680,7 @@ namespace Telegram.Controls.Gallery
         {
             var scalar = _layer.Compositor.CreateScalarKeyFrameAnimation();
             scalar.InsertKeyFrame(0, from);
-            scalar.InsertKeyFrame(1, to, ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction);
+            scalar.InsertKeyFrame(1, to, ConnectedAnimationServiceEx.DefaultEasingFunction);
             scalar.Duration = TimeSpan.FromMilliseconds(showing ? 250 : 150);
 
             return scalar;

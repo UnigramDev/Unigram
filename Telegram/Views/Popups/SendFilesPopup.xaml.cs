@@ -44,7 +44,6 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Popups
@@ -1417,7 +1416,7 @@ namespace Telegram.Views.Popups
                 var parent = button.GetParent<AspectView>();
                 if (parent != null)
                 {
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("EditMediaPopup", parent);
+                    ConnectedAnimationServiceEx.PrepareToAnimate("EditMediaPopup", parent);
                 }
 
                 var popup = new EditMediaPopup(XamlRoot, media);
@@ -1438,7 +1437,7 @@ namespace Telegram.Views.Popups
             var parent = sender as UIElement;
             if (parent != null)
             {
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("EditMediaPopup", parent);
+                ConnectedAnimationServiceEx.PrepareToAnimate("EditMediaPopup", parent);
             }
 
             var popup = new EditMediaPopup(XamlRoot, args);

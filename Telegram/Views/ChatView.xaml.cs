@@ -822,23 +822,11 @@ namespace Telegram.Views
 
         public void AnimateEntrance()
         {
-            var service = ConnectedAnimationService.GetForCurrentView();
-
-            void Start(string key, UIElement element)
-            {
-                var animation = service.GetAnimation(key);
-                if (animation != null)
-                {
-                    animation.Configuration = new BasicConnectedAnimationConfiguration();
-                    animation.TryStart(element);
-                }
-            }
-
             try
             {
-                Start("Photo", PhotoRoot);
-                Start("Title", TitleRoot);
-                Start("Subtitle", Subtitle);
+                ConnectedAnimationServiceEx.TryStart("Photo", PhotoRoot, new BasicConnectedAnimationConfiguration());
+                ConnectedAnimationServiceEx.TryStart("Title", TitleRoot, new BasicConnectedAnimationConfiguration());
+                ConnectedAnimationServiceEx.TryStart("Subtitle", Subtitle, new BasicConnectedAnimationConfiguration());
             }
             catch
             {
@@ -850,10 +838,9 @@ namespace Telegram.Views
         {
             try
             {
-                var service = ConnectedAnimationService.GetForCurrentView();
-                service.PrepareToAnimate("Photo", PhotoRoot);
-                service.PrepareToAnimate("Title", TitleRoot);
-                service.PrepareToAnimate("Subtitle", Subtitle);
+                ConnectedAnimationServiceEx.PrepareToAnimate("Photo", PhotoRoot);
+                ConnectedAnimationServiceEx.PrepareToAnimate("Title", TitleRoot);
+                ConnectedAnimationServiceEx.PrepareToAnimate("Subtitle", Subtitle);
             }
             catch
             {

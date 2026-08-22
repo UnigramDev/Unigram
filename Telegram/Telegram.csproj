@@ -198,6 +198,7 @@
     <Compile Include="Common\ArrayPoolBufferWriter.cs" />
     <Compile Include="Common\AutomaticDragHelper.cs" />
     <Compile Include="Common\BezierPoint.cs" />
+    <Compile Include="Common\ConnectedAnimationServiceEx.cs" />
     <Compile Include="Common\DebouncedPropertyWithToken.cs" />
     <Compile Include="Common\ExceptionSerializer.cs" />
     <Compile Include="Common\FeatureTokenGenerator.cs" />

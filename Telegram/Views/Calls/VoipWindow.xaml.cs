@@ -1073,8 +1073,7 @@ namespace Telegram.Views.Calls
                     PrimaryButtonText = Strings.OK
                 };
 
-                var service = ConnectedAnimationService.GetForCurrentView();
-                var animation = service.PrepareToAnimate("Emoji", Emoji);
+                var animation = ConnectedAnimationServiceEx.PrepareToAnimate("Emoji", Emoji);
                 animation.Configuration = new DirectConnectedAnimationConfiguration();
 
                 void completed(object s, object _)
@@ -1108,7 +1107,7 @@ namespace Telegram.Views.Calls
                     var title = popup.GetChild<ContentControl>(x => x.Name == "Title");
                     if (title != null)
                     {
-                        var animation = service.PrepareToAnimate("Emoji", title);
+                        var animation = ConnectedAnimationServiceEx.PrepareToAnimate("Emoji", title);
                         animation.Configuration = new DirectConnectedAnimationConfiguration();
                         animation.TryStart(Emoji);
                     }
