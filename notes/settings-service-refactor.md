@@ -197,10 +197,8 @@ This is almost certainly deliberate: session 0 predates multi-account, and its s
 already at root when the second account was introduced. It is also why the bugs in 3.3 and 3.4
 have gone unnoticed.
 
-It constrains step 3: an account's settings cannot simply be repointed at `_own`, because for
-session 0 the existing values are at root and moving them would lose them. Either
-`IAccountSettings` keeps the same "root for session 0" rule, or the split carries a one-shot
-migration of session 0's per-account keys out of the root.
+An account's settings therefore cannot simply be repointed at `_own`: for session 0 the existing
+values are at root, and moving the code without moving the data loses them. Step 2 does both.
 
 ## 4. Target shape
 
@@ -343,7 +341,68 @@ Left for step 3: `IsReplaceEmojiEnabled`, `IsContactsSortedByEpoch`, `UseLeftTab
 `UseLessData` still read `_container`. They are agreed to become app-wide, but unlike the list
 above they *are* written through a session, so moving them is a data migration, not a rename.
 
-### Step 2 — Introduce `ISettingsStore`, keep the object model
+### Step 2 — Normalise the containers
+
+The one step that touches user data, so it lands alone and before anything is restructured. It
+ends 3.8: afterwards every key is in the container its final owner implies, `_container` means
+"this account" on every session instance, and steps 3 and 4 become pure code moves.
+
+**The keys involved.** 19 account-scoped keys sit in the root today, and none of them collide
+with the 46 app-wide keys already there — checked by name across every settings class.
+
+*Down, root → `{0}` (they stay per-account):*
+
+| key | from |
+|---|---|
+| `InAppPreview`, `InAppVibrate`, `InAppFlash`, `InAppSounds` | `NotificationsSettings` |
+| `ShowName`, `ShowText`, `ShowReply` | `NotificationsSettings` |
+| `IncludeMutedChats`, `IncludeMutedChatsInFolderCounters`, `CountUnreadMessages` | `NotificationsSettings` |
+| `IsSecretPreviewsEnabled`, `LastMessageTtl` | `SettingsService` |
+
+*Stay at root, and get pulled up out of `{n}` for n > 0 (agreed app-wide in section 5.2):*
+`IsReplaceEmojiEnabled`, `IsContactsSortedByEpoch`, `UseLeftTabsForForums`, `UseLessData`.
+
+*Stay at root, unmoved:* `HasRemovedCollections`. It is on `NotificationsSettings` but it is a
+one-shot app-level flag — `NotificationsService` reads it through `Current`, and it is the only
+notification key that does. It becomes an `IAppSettings` member in step 3.
+
+*Deleted, not moved:* `LongVersion` and `SystemVersion`, dead per 2.5.
+
+**The code change that has to accompany it.** Moving the data is only half:
+
+```csharp
+public SettingsService(int session)
+    : base(session > 0 ? ...CreateContainer($"{session}", ...) : null)   // -> always the container
+```
+
+`_container` then equals `_own` on every session instance, and differs only on `Current`, where
+it stays the root. Leave `_own` in place for now — collapsing the two names is step 3's job, and
+keeping them distinct is what stops `Current.UseTestDC` from quietly reading the root instead of
+throwing.
+
+**Shape of the migration.** Move is copy-then-delete-source, which makes a re-run a no-op
+without needing a version marker: a second pass finds no source key. A crash between the two
+halves re-copies the same value and then deletes. A downgrade that writes the root again is
+re-migrated on the next upgrade, which is the right answer, since the older build's value is the
+newer one.
+
+It runs from `Initialize()` — the first line of authored code in `App`, before anything can read
+a setting. Sessions are enumerated from `LocalSettings.Containers` by integer-parsable name, so
+it does not need `LifetimeService`, which is constructed later.
+
+For the four keys going up, several accounts may hold a value and only one can survive. The rule
+is the same one step 1 already used: **the active session's value wins** — which for session 0 is
+the root copy, so it is uniform — then the `{n}` copies are deleted. Users with more than one
+account lose the non-active accounts' setting for those four. That is inherent in making them
+app-wide, not something the migration can avoid.
+
+**Verification.** This is the step that can destroy real settings, so it does not ship on a
+reading of the diff. Dump `LocalSettings` to text before and after, on a two-account profile with
+every affected setting deliberately set to a non-default value, and diff the two trees against
+the table above. Per `notes/` practice: check it against a profile whose correct answer is known
+in advance, not against whatever the app happens to show afterwards.
+
+### Step 3 — Introduce `ISettingsStore`, keep the object model
 
 Purely internal; no key moves, no call-site churn.
 
@@ -360,13 +419,14 @@ Purely internal; no key moves, no call-site churn.
 
 Exit criterion: `Windows.Storage` appears in exactly one file under `Services/Settings/`.
 
-### Step 3 — Split the object model
+### Step 4 — Split the object model
 
 The compiler does the work.
 
 - add `IAppSettings`/`AppSettings` and `IAccountSettings`/`AccountSettings`; both build on
   `SettingsSection` over a store
-- move each member per 4.3 and the answers to section 5
+- move each member per 4.3 and the answers to section 5; step 2 has already put every key in
+  the right container, so this is a code move with no data behind it
 - `SettingsService.Current.X` → `AppSettings.Current.X`: one mechanical identifier rename over
   1745 sites
 - `Settings.X` where X moved to global → `AppSettings.Current.X`: ~150–200 sites, every one of
@@ -377,13 +437,13 @@ The compiler does the work.
 
 `SettingsService`/`ISettingsService` are deleted at the end of this step.
 
-### Step 4 — Remove the dead weight
+### Step 5 — Remove the dead weight
 
 - delete `Version`, `SystemVersion`, `UpdateVersion`, `CleanUp`, `Container` (2.5)
 - move `SettingsLegacyService` out of `Services` and rename it for what it is (navigation frame
   state, in memory) — or fold it into `FrameFacade`, its only caller
 
-### Step 5 — Prove the seam (optional, only when something needs it)
+### Step 6 — Prove the seam (optional, only when something needs it)
 
 Write a second `ISettingsStore` — a JSON file store with a debounced writer and an atomic
 replace — and switch to it behind a diagnostics flag. Until an unpackaged host actually exists
@@ -395,10 +455,12 @@ in a packaged desktop app, so the islands work does not need it.
 | step | files touched | risk |
 |---|---|---|
 | 1 | 1 | low — behaviour fixes, visible in the app |
-| 2 | ~8 | low — internal, no key moves |
-| 3 | ~250 | medium in volume, low in kind; every change compiler-forced |
-| 4 | ~3 | none |
-| 5 | ~3 new | isolated |
+| 2 | ~2 | **the highest of the five** — it rewrites stored user settings |
+| 3 | ~8 | low — internal, no key moves |
+| 4 | ~250 | medium in volume, low in kind; every change compiler-forced |
+| 5 | ~3 | none |
+| 6 | ~3 new | isolated |
 
-Step 3 is the only one that touches many files, and all of it is mechanical. The judgement calls
-are all in section 5 and all belong to step 3, so they can be settled before any of it starts.
+Step 4 is the only one that touches many files, and all of it is mechanical. Step 2 is the only
+one that can lose data, and it is two files — the risk is entirely in the data, not the diff,
+which is why it lands alone and gets a before/after dump rather than a review.
