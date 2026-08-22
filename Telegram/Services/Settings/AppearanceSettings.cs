@@ -11,7 +11,6 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Td.Api;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -267,7 +266,7 @@ namespace Telegram.Services.Settings
 
         private void MigrateTheme()
         {
-            if (_container.Values.TryGet("ThemePath", out string path))
+            if (TryGetValue(_container, "ThemePath", out string path))
             {
                 if (path.EndsWith("Assets\\Themes\\DarkBlue.unigram-theme"))
                 {
@@ -281,13 +280,13 @@ namespace Telegram.Services.Settings
                     this[RequestedTheme].Custom = path;
                 }
 
-                _container.Values.Remove("ThemePath");
+                _container.Remove("ThemePath");
             }
-            else if (_container.Values.TryGet("ThemeType", out int type))
+            else if (TryGetValue(_container, "ThemeType", out int type))
             {
                 this[RequestedTheme].Type = (TelegramThemeType)type;
 
-                if ((TelegramThemeType)type == TelegramThemeType.Custom && _container.Values.TryGet("ThemeCustom", out string custom))
+                if ((TelegramThemeType)type == TelegramThemeType.Custom && TryGetValue(_container, "ThemeCustom", out string custom))
                 {
                     if (custom.Length > 0 && System.IO.File.Exists(custom))
                     {
@@ -296,8 +295,8 @@ namespace Telegram.Services.Settings
                     }
                 }
 
-                _container.Values.Remove("ThemeCustom");
-                _container.Values.Remove("ThemeType");
+                _container.Remove("ThemeCustom");
+                _container.Remove("ThemeType");
             }
         }
 
@@ -561,8 +560,8 @@ namespace Telegram.Services.Settings
 
             if (theme != null)
             {
-                var light = _container.CreateContainer("ChatThemeLight", ApplicationDataCreateDisposition.Always);
-                var dark = _container.CreateContainer("ChatThemeDark", ApplicationDataCreateDisposition.Always);
+                var light = _container.GetContainer("ChatThemeLight");
+                var dark = _container.GetContainer("ChatThemeDark");
 
                 AddOrUpdateValue("ChatThemeName", theme.Name);
                 SaveChatThemeSettings(light, theme.LightSettings);
@@ -570,7 +569,7 @@ namespace Telegram.Services.Settings
             }
             else
             {
-                _container.Values.Remove("ChatThemeName");
+                _container.Remove("ChatThemeName");
                 _container.DeleteContainer("ChatThemeLight");
                 _container.DeleteContainer("ChatThemeDark");
             }
@@ -578,7 +577,7 @@ namespace Telegram.Services.Settings
             _chatTheme = theme;
         }
 
-        private void SaveChatThemeSettings(ApplicationDataContainer container, ThemeSettings settings)
+        private void SaveChatThemeSettings(ISettingsStore container, ThemeSettings settings)
         {
             AddOrUpdateValue(container, "OutgoingMessageAccentColor", settings.OutgoingMessageAccentColor);
             AddOrUpdateValue(container, "OutgoingMessageFill", TdBackground.ToString(settings.OutgoingMessageFill));
@@ -598,8 +597,8 @@ namespace Telegram.Services.Settings
             var name = GetValueOrDefault<string>("ChatThemeName", null);
             if (name != null)
             {
-                var light = _container.CreateContainer("ChatThemeLight", ApplicationDataCreateDisposition.Always);
-                var dark = _container.CreateContainer("ChatThemeDark", ApplicationDataCreateDisposition.Always);
+                var light = _container.GetContainer("ChatThemeLight");
+                var dark = _container.GetContainer("ChatThemeDark");
 
                 return new EmojiChatTheme
                 {
@@ -612,7 +611,7 @@ namespace Telegram.Services.Settings
             return null;
         }
 
-        private ThemeSettings LoadChatThemeSettings(ApplicationDataContainer container)
+        private ThemeSettings LoadChatThemeSettings(ISettingsStore container)
         {
             return new ThemeSettings
             {
@@ -626,7 +625,7 @@ namespace Telegram.Services.Settings
 
     public partial class ThemeTypeSettingsBase : SettingsServiceBase
     {
-        public ThemeTypeSettingsBase(ApplicationDataContainer container)
+        public ThemeTypeSettingsBase(ISettingsStore container)
             : base(container)
         {
         }
@@ -647,7 +646,7 @@ namespace Telegram.Services.Settings
     {
         private readonly TelegramTheme _prefix;
 
-        public ThemeSettingsBase(ApplicationDataContainer container, TelegramTheme prefix)
+        public ThemeSettingsBase(ISettingsStore container, TelegramTheme prefix)
             : base(container)
         {
             _prefix = prefix;

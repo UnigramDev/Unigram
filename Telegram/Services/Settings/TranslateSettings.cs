@@ -7,13 +7,12 @@
 
 using System;
 using System.Collections.Generic;
-using Windows.Storage;
 
 namespace Telegram.Services.Settings
 {
     public partial class TranslateSettings : SettingsServiceBase
     {
-        public TranslateSettings(ApplicationDataContainer container)
+        public TranslateSettings(ISettingsStore container)
             : base(container)
         {
 

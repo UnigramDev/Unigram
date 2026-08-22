@@ -40,7 +40,7 @@ namespace Telegram.Services.Settings
 
         public void Reset()
         {
-            _container.Values.Clear();
+            _container.Clear();
         }
     }
 }

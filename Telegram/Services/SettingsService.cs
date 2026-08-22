@@ -13,7 +13,6 @@ using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
-using Windows.Storage;
 using Windows.System.Profile;
 using AutoDownloadSettings = Telegram.Services.Settings.AutoDownloadSettings;
 
@@ -119,17 +118,17 @@ namespace Telegram.Services
 
     public partial class SettingsServiceBase
     {
-        protected readonly ApplicationDataContainer _container;
+        protected readonly ISettingsStore _container;
 
         public SettingsServiceBase(string key)
-            : this(ApplicationData.Current.LocalSettings.CreateContainer(key, ApplicationDataCreateDisposition.Always))
+            : this(ApplicationDataSettingsStore.Local.GetContainer(key))
         {
 
         }
 
-        public SettingsServiceBase(ApplicationDataContainer container = null)
+        public SettingsServiceBase(ISettingsStore container = null)
         {
-            _container = container ?? ApplicationData.Current.LocalSettings;
+            _container = container ?? ApplicationDataSettingsStore.Local;
         }
 
         public void AddOrUpdateValue(string key, object value)
@@ -143,15 +142,15 @@ namespace Telegram.Services
             AddOrUpdateValue(_container, key, value);
         }
 
-        protected void AddOrUpdateValue<T>(ref T storage, ApplicationDataContainer container, string key, T value)
+        protected void AddOrUpdateValue<T>(ref T storage, ISettingsStore container, string key, T value)
         {
             storage = value;
             AddOrUpdateValue(container, key, value);
         }
 
-        protected void AddOrUpdateValue(ApplicationDataContainer container, string key, object value)
+        protected void AddOrUpdateValue(ISettingsStore container, string key, object value)
         {
-            container.Values[key] = value;
+            container.SetValue(key, value);
         }
 
         public valueType GetValueOrDefault<valueType>(string key, valueType defaultValue)
@@ -159,25 +158,33 @@ namespace Telegram.Services
             return GetValueOrDefault(_container, key, defaultValue);
         }
 
-        protected valueType GetValueOrDefault<valueType>(ApplicationDataContainer container, string key, valueType defaultValue)
+        protected valueType GetValueOrDefault<valueType>(ISettingsStore container, string key, valueType defaultValue)
         {
-            valueType value;
+            return TryGetValue(container, key, out valueType value) ? value : defaultValue;
+        }
 
-            if (container.Values.ContainsKey(key))
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return TryGetValue(_container, key, out value);
+        }
+
+        // A value stored as the wrong type used to throw on the cast. Falling back to the default
+        // is the safer answer for something read on the way up.
+        protected static bool TryGetValue<T>(ISettingsStore container, string key, out T value)
+        {
+            if (container.TryGetValue(key, out object stored) && stored is T result)
             {
-                value = (valueType)container.Values[key];
-            }
-            else
-            {
-                value = defaultValue;
+                value = result;
+                return true;
             }
 
-            return value;
+            value = default;
+            return false;
         }
 
         public virtual void Clear()
         {
-            _container.Values.Clear();
+            _container.Clear();
         }
     }
 
@@ -187,44 +194,41 @@ namespace Telegram.Services
         public static SettingsService Current => _current ??= new SettingsService();
 
         private readonly int _session;
-        private readonly ApplicationDataContainer _local;
-        private readonly ApplicationDataContainer _own;
+        private readonly ISettingsStore _local;
+        private readonly ISettingsStore _own;
 
-        private static readonly ApplicationDataContainer _theme;
+        private static readonly ISettingsStore _theme;
 
         static SettingsService()
         {
-            _theme = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
+            _theme = ApplicationDataSettingsStore.Local.GetContainer("Theme");
         }
 
         private SettingsService()
         {
-            _local = ApplicationData.Current.LocalSettings;
+            _local = ApplicationDataSettingsStore.Local;
         }
 
         public SettingsService(int session)
-            : base(ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always))
+            : base(ApplicationDataSettingsStore.Local.GetContainer($"{session}"))
         {
             _session = session;
-            _local = ApplicationData.Current.LocalSettings;
+            _local = ApplicationDataSettingsStore.Local;
             _own = _container;
         }
-
-        public ApplicationDataContainer Container => _container;
 
         // LifetimeService discovers sessions from the folders on disk, and creates them, before
         // any SettingsService exists for them: ClientService reads UseTestDC while it is being
         // constructed, so the value has to be in the container first.
         public static bool IsAuthorized(int session)
         {
-            return ApplicationData.Current.LocalSettings.Containers.TryGetValue($"{session}", out var container)
-                && container.Values.ContainsKey("UserId");
+            return ApplicationDataSettingsStore.Local.TryGetContainer($"{session}", out var container)
+                && container.ContainsKey("UserId");
         }
 
         public static void SetUseTestDC(int session, bool value)
         {
-            var container = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
-            container.Values["UseTestDC"] = value;
+            ApplicationDataSettingsStore.Local.GetContainer($"{session}").SetValue("UseTestDC", value);
         }
 
         #region App version
@@ -288,14 +292,17 @@ namespace Telegram.Services
         private static TranslateSettings _translate;
         public TranslateSettings Translate => _translate ??= new TranslateSettings(_local);
 
+        private ISettingsStore _autoDownloadStore;
+        private ISettingsStore AutoDownloadStore => _autoDownloadStore ??= _own.GetContainer("AutoDownload");
+
         private AutoDownloadSettings _autoDownload;
         public AutoDownloadSettings AutoDownload
         {
-            get => _autoDownload ??= new AutoDownloadSettings(_own.CreateContainer("AutoDownload", ApplicationDataCreateDisposition.Always));
+            get => _autoDownload ??= new AutoDownloadSettings(AutoDownloadStore);
             set
             {
                 _autoDownload = value ?? AutoDownloadSettings.Default;
-                _autoDownload.Save(_own.CreateContainer("AutoDownload", ApplicationDataCreateDisposition.Always));
+                _autoDownload.Save(AutoDownloadStore);
             }
         }
 
@@ -779,16 +786,17 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _anonymousUserId, _local, "AnonymousUserId", value);
         }
 
+        private ISettingsStore _pinnedMessages;
+        private ISettingsStore PinnedMessages => _pinnedMessages ??= _own.GetContainer("PinnedMessages");
+
         public void SetChatPinnedMessage(long chatId, long messageId)
         {
-            var container = _own.CreateContainer("PinnedMessages", ApplicationDataCreateDisposition.Always);
-            AddOrUpdateValue(container, $"{chatId}", messageId);
+            AddOrUpdateValue(PinnedMessages, $"{chatId}", messageId);
         }
 
         public long GetChatPinnedMessage(long chatId)
         {
-            var container = _own.CreateContainer("PinnedMessages", ApplicationDataCreateDisposition.Always);
-            return GetValueOrDefault(container, $"{chatId}", 0L);
+            return GetValueOrDefault(PinnedMessages, $"{chatId}", 0L);
         }
 
         public void CleanUp()
@@ -801,18 +809,19 @@ namespace Telegram.Services
         {
             var useTestDC = UseTestDC;
 
-            _local.Values.Remove($"User{UserId}");
+            _local.Remove($"User{UserId}");
 
             // Values.Clear() leaves the sub-containers behind, so auto-download, video positions
             // and pinned messages would outlive the account they belong to.
             _own.DeleteContainer("AutoDownload");
             _own.DeleteContainer("Video");
             _own.DeleteContainer("PinnedMessages");
-            _own.Values.Clear();
+            _own.Clear();
 
             ResetCache();
 
             UseTestDC = useTestDC;
+            _own.Flush();
         }
 
         // Every value is cached on first read, and a log out is followed by a log in on the same
@@ -823,6 +832,10 @@ namespace Telegram.Services
             _notifications = null;
             _autoDownload = null;
             _video = null;
+
+            // Both point at containers Clear has just deleted.
+            _autoDownloadStore = null;
+            _pinnedMessages = null;
 
             _version = null;
             _systemVersion = null;
@@ -845,9 +858,9 @@ namespace Telegram.Services
 
                 if (updateCount > 0)
                 {
-                    if (!_local.Values.ContainsKey("IsLeftTabsEnabled"))
+                    if (!_local.ContainsKey("IsLeftTabsEnabled"))
                     {
-                        _local.Values["IsLeftTabsEnabled"] = false;
+                        _local.SetValue("IsLeftTabsEnabled", false);
                         _useLeftTabsForChats = false;
                     }
                 }
@@ -894,50 +907,52 @@ namespace Telegram.Services
         // which is right: the older build's value is then the newer one.
         private void MigrateContainers()
         {
-            ApplicationDataContainer zero = null;
+            ISettingsStore zero = null;
 
             foreach (var key in _accountScopedKeys)
             {
-                if (_local.Values.TryGetValue(key, out object value))
+                if (_local.TryGetValue(key, out object value))
                 {
-                    zero ??= _local.CreateContainer("0", ApplicationDataCreateDisposition.Always);
-                    zero.Values[key] = value;
-                    _local.Values.Remove(key);
+                    zero ??= _local.GetContainer("0");
+                    zero.SetValue(key, value);
+                    _local.Remove(key);
                 }
             }
 
             // Snapshot: the loop writes into the containers it is walking.
-            var containers = _local.Containers.ToArray();
+            var names = _local.ContainerNames.ToArray();
             var active = ActiveSession;
 
-            foreach (var container in containers)
+            foreach (var name in names)
             {
                 // Session 0 wrote to the root, so its copy of an app-wide key is already in place.
-                if (!int.TryParse(container.Key, out int id) || id == 0)
+                if (!int.TryParse(name, out int id) || id == 0 || !_local.TryGetContainer(name, out var container))
                 {
                     continue;
                 }
 
                 foreach (var key in _appScopedKeys)
                 {
-                    if (container.Value.Values.TryGetValue(key, out object value))
+                    if (container.TryGetValue(key, out object value))
                     {
                         // Only one value can survive, and it is the one the user is looking at.
                         if (id == active)
                         {
-                            _local.Values[key] = value;
+                            _local.SetValue(key, value);
                         }
 
-                        container.Value.Values.Remove(key);
+                        container.Remove(key);
                     }
                 }
             }
+
+            _local.Flush();
         }
     }
 
     public partial class ChatSettingsBase : SettingsServiceBase
     {
-        public ChatSettingsBase(ApplicationDataContainer container = null)
+        public ChatSettingsBase(ISettingsStore container = null)
             : base(container)
         {
         }
@@ -951,9 +966,9 @@ namespace Telegram.Services
         public bool TryRemove<T>(long chatId, MessageTopic topicId, ChatSetting key, out T value)
         {
             var setting = ConvertToKey(chatId, topicId, key);
-            if (_container.Values.TryGet(setting, out value))
+            if (TryGetValue(_container, setting, out value))
             {
-                _container.Values.Remove(setting);
+                _container.Remove(setting);
                 return true;
             }
 
@@ -964,13 +979,13 @@ namespace Telegram.Services
         public bool TryGet<T>(long chatId, MessageTopic topicId, ChatSetting key, out T value)
         {
             var setting = ConvertToKey(chatId, topicId, key);
-            return _container.Values.TryGet(setting, out value);
+            return TryGetValue(_container, setting, out value);
         }
 
         public T GetValueOrDefault<T>(long chatId, MessageTopic topicId, ChatSetting key, T defaultValue)
         {
             var setting = ConvertToKey(chatId, topicId, key);
-            if (_container.Values.TryGet(setting, out T value))
+            if (TryGetValue(_container, setting, out T value))
             {
                 return value;
             }
@@ -984,9 +999,9 @@ namespace Telegram.Services
             var setting2 = ConvertToKey(chatId, topicId, ChatSetting.Index);
             var setting3 = ConvertToKey(chatId, topicId, ChatSetting.Pixel);
 
-            _container.Values.Remove(setting1);
-            _container.Values.Remove(setting2);
-            _container.Values.Remove(setting3);
+            _container.Remove(setting1);
+            _container.Remove(setting2);
+            _container.Remove(setting3);
         }
 
         private string ConvertToKey(long chatId, MessageTopic topicId, ChatSetting setting)

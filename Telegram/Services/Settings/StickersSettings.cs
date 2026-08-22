@@ -5,9 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Telegram.Common;
-using Windows.Storage;
-
 namespace Telegram.Services.Settings
 {
     public enum StickersSuggestionMode
@@ -27,7 +24,7 @@ namespace Telegram.Services.Settings
 
     public partial class StickersSettings : SettingsServiceBase
     {
-        public StickersSettings(ApplicationDataContainer container)
+        public StickersSettings(ISettingsStore container)
             : base(container)
         {
 
@@ -37,9 +34,9 @@ namespace Telegram.Services.Settings
         // the feature went with the MTProto client -- so only old installs have values here.
         public bool TryGetHiddenGroupStickerSet(long chatId, out long stickerSetId)
         {
-            if (_container.Containers.TryGetValue("Channels", out var channels))
+            if (_container.TryGetContainer("Channels", out var channels))
             {
-                return channels.Values.TryGet("Stickers" + chatId, out stickerSetId);
+                return TryGetValue(channels, "Stickers" + chatId, out stickerSetId);
             }
 
             stickerSetId = 0;

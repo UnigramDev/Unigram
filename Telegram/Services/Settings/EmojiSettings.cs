@@ -48,7 +48,7 @@ namespace Telegram.Services.Settings
 
         public bool HasSkinTone(EmojiSkinData data)
         {
-            return _container.Values.ContainsKey("Skin" + data.Emoji);
+            return _container.ContainsKey("Skin" + data.Emoji);
         }
 
         public void SetEmojiSkinTone(EmojiSkinData data)

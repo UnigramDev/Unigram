@@ -5,13 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Windows.Storage;
-
 namespace Telegram.Services.Settings
 {
     public partial class PlaybackSettings : SettingsServiceBase
     {
-        public PlaybackSettings(ApplicationDataContainer container)
+        public PlaybackSettings(ISettingsStore container)
             : base(container)
         {
         }

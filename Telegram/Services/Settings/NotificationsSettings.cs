@@ -9,7 +9,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Telegram.Td.Api;
-using Windows.Storage;
 
 namespace Telegram.Services.Settings
 {
@@ -17,7 +16,7 @@ namespace Telegram.Services.Settings
     {
         private readonly ConcurrentDictionary<Type, ScopeNotificationSettings> _scopeNotificationSettings = new();
 
-        public NotificationsSettings(ApplicationDataContainer container)
+        public NotificationsSettings(ISettingsStore container)
             : base(container)
         {
 

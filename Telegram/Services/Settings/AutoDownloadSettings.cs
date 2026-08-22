@@ -6,9 +6,7 @@
 //
 
 using System;
-using Telegram.Common;
 using Telegram.Td.Api;
-using Windows.Storage;
 
 namespace Telegram.Services.Settings
 {
@@ -58,26 +56,54 @@ namespace Telegram.Services.Settings
 
         }
 
-        public AutoDownloadSettings(ApplicationDataContainer container)
+        public AutoDownloadSettings(ISettingsStore store)
         {
-            _disabled = container.GetBoolean("disabled", false);
-            _photos = (AutoDownloadMode)container.GetInt32("photos", (int)AutoDownloadMode.All);
-            _videos = (AutoDownloadMode)container.GetInt32("videos", (int)AutoDownloadMode.All);
-            _maximumVideoSize = container.GetInt64("maxVideoSize", 10 * 1024 * 1024);
-            _documents = (AutoDownloadMode)container.GetInt32("documents", (int)AutoDownloadMode.All);
-            _maximumDocumentSize = container.GetInt64("maxDocumentSize", 3 * 1024 * 1024);
-            _preloadLargeVideos = container.GetBoolean("preloadVideos", true);
+            _disabled = GetBoolean(store, "disabled", false);
+            _photos = (AutoDownloadMode)GetInt32(store, "photos", (int)AutoDownloadMode.All);
+            _videos = (AutoDownloadMode)GetInt32(store, "videos", (int)AutoDownloadMode.All);
+            _maximumVideoSize = GetInt64(store, "maxVideoSize", 10 * 1024 * 1024);
+            _documents = (AutoDownloadMode)GetInt32(store, "documents", (int)AutoDownloadMode.All);
+            _maximumDocumentSize = GetInt64(store, "maxDocumentSize", 3 * 1024 * 1024);
+            _preloadLargeVideos = GetBoolean(store, "preloadVideos", true);
         }
 
-        public void Save(ApplicationDataContainer container)
+        public void Save(ISettingsStore store)
         {
-            container.Values["disabled"] = _disabled;
-            container.Values["photos"] = (int)_photos;
-            container.Values["videos"] = (int)_videos;
-            container.Values["maxVideoSize"] = _maximumVideoSize;
-            container.Values["documents"] = (int)_documents;
-            container.Values["maxDocumentSize"] = _maximumDocumentSize;
-            container.Values["preloadVideos"] = _preloadLargeVideos;
+            store.SetValue("disabled", _disabled);
+            store.SetValue("photos", (int)_photos);
+            store.SetValue("videos", (int)_videos);
+            store.SetValue("maxVideoSize", _maximumVideoSize);
+            store.SetValue("documents", (int)_documents);
+            store.SetValue("maxDocumentSize", _maximumDocumentSize);
+            store.SetValue("preloadVideos", _preloadLargeVideos);
+        }
+
+        private static bool GetBoolean(ISettingsStore store, string key, bool defaultValue)
+        {
+            return store.TryGetValue(key, out object value) && value is bool result ? result : defaultValue;
+        }
+
+        private static int GetInt32(ISettingsStore store, string key, int defaultValue)
+        {
+            return store.TryGetValue(key, out object value) && value is int result ? result : defaultValue;
+        }
+
+        // maxVideoSize and maxDocumentSize were written as Int32 by older builds.
+        private static long GetInt64(ISettingsStore store, string key, long defaultValue)
+        {
+            if (store.TryGetValue(key, out object value))
+            {
+                if (value is long result64)
+                {
+                    return result64;
+                }
+                else if (value is int result32)
+                {
+                    return result32;
+                }
+            }
+
+            return defaultValue;
         }
 
         public static AutoDownloadSettings Default

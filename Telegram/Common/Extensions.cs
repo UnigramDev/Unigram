@@ -1399,43 +1399,6 @@ namespace Telegram.Common
             return default;
         }
 
-        public static bool GetBoolean(this ApplicationDataContainer container, string key, bool defaultValue)
-        {
-            if (container.Values.TryGetValue(key, out object value) && value is bool result)
-            {
-                return result;
-            }
-
-            return defaultValue;
-        }
-
-        public static int GetInt32(this ApplicationDataContainer container, string key, int defaultValue)
-        {
-            if (container.Values.TryGetValue(key, out object value) && value is int result)
-            {
-                return result;
-            }
-
-            return defaultValue;
-        }
-
-        public static long GetInt64(this ApplicationDataContainer container, string key, long defaultValue)
-        {
-            if (container.Values.TryGetValue(key, out object value))
-            {
-                if (value is long result64)
-                {
-                    return result64;
-                }
-                else if (value is int result32)
-                {
-                    return result32;
-                }
-            }
-
-            return defaultValue;
-        }
-
         public static Vector2 TransformVector2(this GeneralTransform transform, Vector2 point)
         {
             return transform.TransformPoint(point.ToPoint()).ToVector2();
