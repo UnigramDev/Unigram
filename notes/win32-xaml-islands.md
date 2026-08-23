@@ -1175,11 +1175,28 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   the hard part: rather than a `ResourceDictionary` having to discover which window owns it, the
   merging control already has a `XamlRoot` and simply asks for `Theme.Outgoing`.
 
-  The hook only matters in `MessageBubble`. A merge after the template does work — measured at
-  `ContainerContentChanging` — but costs a re-resolve of the ~20 keys on every realised bubble,
-  which is the cost this design exists to avoid; `Loading` runs immediately before
-  `ApplyTemplate` (0.17), so the lookups resolve once against the already-merged dictionary. The
-  five previews can use whatever hook each type already has with a `XamlRoot` in hand.
+  **Assignment, not merging.** `<FrameworkElement.Resources><common:ThemeOutgoing /></...>` in
+  the template is literally `Resources = new ThemeOutgoing()`, so the code form is
+  `Resources = Theme.Outgoing` with a shared instance in place of a fresh one. What that removes
+  is not small: the constructor allocates a `ThemeOutgoing` plus two child `ResourceDictionary`
+  objects and performs ~40 insertions, **per realised bubble**, to build an identical table of
+  the same shared brush references. A rewrite has to keep `ThemeDictionaries["Light"]` and
+  `ThemeDictionaries["Default"]` — dark is stored under `Default`, not `Dark`.
+
+  The hook only matters in `MessageBubble`, and `Loading` is the right one. An `IsOutgoing` DP
+  set from the `DataTemplate` cannot do the assignment in its setter, because at parse time the
+  element is not parented and there is no `XamlRoot` to resolve the window's `Theme` from;
+  `Loading` is the first moment there is one, and it runs immediately before `ApplyTemplate`
+  (0.17), so the lookups resolve once against the dictionary that is already in place. Firing
+  once per element is sufficient here precisely because `Resources` persists on the instance —
+  a recycled bubble keeps the assignment and needs no second pass. The five previews can use
+  whatever hook each type already has with a `XamlRoot` in hand.
+
+  Worth checking while in there: the **incoming** template merges `<common:ThemeIncoming />` per
+  bubble as well (`ChatView.xaml:424`) even though the same dictionary is already merged in
+  `App.xaml:516`. Sibling elements do not inherit each other's resources, so the per-bubble copy
+  looks redundant today — if it is, incoming bubbles need no dictionary at all once `Theme` owns
+  the default set, and only outgoing ones get an assignment.
 
   **Order.** Delete `ThemeOutgoing2` first — 184 lines, no callers, and a parked half-alternative
   beside the real one is most of what makes the file read as a mess. Then the single resolver,
