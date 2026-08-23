@@ -17,6 +17,7 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Windows.Devices.Input;
 using Windows.Foundation;
+using Windows.UI.Core;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
@@ -494,16 +495,46 @@ namespace Telegram.Controls.Chats
 
         private void TryFocus(SelectorItem selectorItem, MessageBubbleHighlightOptions options)
         {
+            if ((options == null || options.MoveFocus) && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            {
+                TryFocus(selectorItem, false);
+            }
+        }
+
+        private void TryFocus(SelectorItem selectorItem, bool isRetry)
+        {
+            var destination = selectorItem.Content?.GetType().Name ?? selectorItem.GetType().Name;
+
             try
             {
-                if ((options == null || options.MoveFocus) && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+                if (selectorItem.Focus(FocusState.Keyboard))
                 {
-                    selectorItem.Focus(FocusState.Keyboard);
+                    return;
                 }
+
+                Logger.Warning($"Accessibility focus was not moved to {destination} (retry: {isRetry}).");
             }
-            catch
+            catch (Exception ex)
             {
-                // Focus cannot be moved while getting or losing focus.
+                Logger.Error($"Failed to move accessibility focus to {destination} (retry: {isRetry}).", ex);
+            }
+
+            if (!isRetry)
+            {
+                try
+                {
+                    _ = selectorItem.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        if (selectorItem.IsLoaded)
+                        {
+                            TryFocus(selectorItem, true);
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Failed to schedule accessibility focus retry for {destination}.", ex);
+                }
             }
         }
 

@@ -759,6 +759,7 @@ namespace Telegram.Controls
             {
                 ChatCell chat => chat.GetAutomationName(),
                 ForumTopicCell topic => topic.GetAutomationName(),
+                ForumTopicVerticalCell topic => topic.GetAutomationName(),
                 _ => null
             };
 
