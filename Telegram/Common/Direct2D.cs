@@ -33,7 +33,7 @@ namespace Telegram.Common
                 {
                     try
                     {
-                        _current = new Direct2DDevice(Window.Current.Compositor);
+                        _current = new Direct2DDevice(BootStrapper.Current.Compositor);
                     }
                     catch
                     {
