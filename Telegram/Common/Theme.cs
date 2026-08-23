@@ -173,7 +173,15 @@ namespace Telegram.Common
         }
 
         private readonly Dictionary<ElementTheme, ThemeParameters> _parameters = new();
-        public ThemeParameters Parameters => _parameters[WindowContext.Current.ActualTheme];
+
+        /// <summary>
+        /// The bot API's view of the theme. It differs between light and dark, so the window
+        /// asking has to say which of the two it is currently showing.
+        /// </summary>
+        public ThemeParameters GetParameters(ElementTheme actualTheme)
+        {
+            return _parameters[actualTheme];
+        }
 
         /// <summary>
         /// A dictionary of the outgoing bubble overrides, for an outgoing MessageBubble to assign

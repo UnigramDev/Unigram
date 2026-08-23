@@ -4115,7 +4115,7 @@ namespace Telegram.ViewModels
             }
             else if (InlineBotResults.Button.Type is InlineQueryResultsButtonTypeWebApp webApp && _currentInlineBot is User botUser)
             {
-                var response = await ClientService.SendAsync(new GetWebAppUrl(botUser.Id, webApp.Url, new WebAppOpenParameters(Window.Theme.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
+                var response = await ClientService.SendAsync(new GetWebAppUrl(botUser.Id, webApp.Url, new WebAppOpenParameters(Window.ThemeParameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
                 if (response is WebAppUrl webAppUrl)
                 {
                     NavigationService.NavigateToWebApp(botUser, webAppUrl, source: new OpenUrlSourceChat(ChatId, null));

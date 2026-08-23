@@ -86,7 +86,7 @@ namespace Telegram.ViewModels.Payments
 
         private async Task InitializeForm(InputInvoice invoice)
         {
-            var paymentForm = await ClientService.SendAsync(new GetPaymentForm(invoice, Theme.Current.Parameters)) as PaymentForm;
+            var paymentForm = await ClientService.SendAsync(new GetPaymentForm(invoice, Window.ThemeParameters)) as PaymentForm;
             if (paymentForm == null)
             {
                 return;

@@ -1755,7 +1755,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, botUser.Id, webApp.Url, OutgoingTopicId, null, new WebAppOpenParameters(Window.Theme.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
+                var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, botUser.Id, webApp.Url, OutgoingTopicId, null, new WebAppOpenParameters(Window.ThemeParameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
                 if (response is WebAppInfo webAppInfo)
                 {
                     NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, source: new OpenUrlSourceChat(ChatId, null), buttonText: inline.Text);
@@ -1919,7 +1919,7 @@ namespace Telegram.ViewModels
             {
                 if (ClientService.TryGetUser(message.SenderId, out Td.Api.User botUser))
                 {
-                    var response = await ClientService.SendAsync(new GetWebAppUrl(botUser.Id, webApp.Url, new WebAppOpenParameters(Window.Theme.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
+                    var response = await ClientService.SendAsync(new GetWebAppUrl(botUser.Id, webApp.Url, new WebAppOpenParameters(Window.ThemeParameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
                     if (response is WebAppUrl webAppUrl)
                     {
                         NavigationService.NavigateToWebApp(botUser, webAppUrl, 0, null, source: new OpenUrlSourceChat(ChatId, null), buttonText: keyboardButton.Text);
@@ -1958,7 +1958,7 @@ namespace Telegram.ViewModels
             }
             else
             {
-                var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, botUser.Id, url, OutgoingTopicId, null, new WebAppOpenParameters(Window.Theme.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
+                var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, botUser.Id, url, OutgoingTopicId, null, new WebAppOpenParameters(Window.ThemeParameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
                 if (response is WebAppInfo webAppInfo)
                 {
                     NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, source: new OpenUrlSourceChat(ChatId, null));
@@ -1974,7 +1974,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, menuBot.BotUserId, string.Empty, OutgoingTopicId, null, new WebAppOpenParameters(Window.Theme.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
+            var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, menuBot.BotUserId, string.Empty, OutgoingTopicId, null, new WebAppOpenParameters(Window.ThemeParameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
             if (response is WebAppInfo webAppInfo)
             {
                 NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, menuBot, source: new OpenUrlSourceChat(ChatId, null));

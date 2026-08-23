@@ -219,6 +219,8 @@ namespace Telegram.Navigation
 
         public Theme Theme => Theme.Current;
 
+        public ThemeParameters ThemeParameters => Theme.GetParameters(ActualTheme);
+
         public WindowContext(Window window)
         {
             _window = window;

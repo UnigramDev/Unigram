@@ -1343,7 +1343,7 @@ namespace Telegram.Common
 
             continuation?.Invoke(true);
 
-            var response = await clientService.SendAsync(new GetWebAppUrl(bot.BotUserId, url, new WebAppOpenParameters(navigation.Window.Theme.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
+            var response = await clientService.SendAsync(new GetWebAppUrl(bot.BotUserId, url, new WebAppOpenParameters(navigation.Window.ThemeParameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
             if (response is WebAppUrl webAppUrl)
             {
                 navigation.NavigateToWebApp(user, webAppUrl, 0, bot, null, source, sourceLink);
@@ -1496,7 +1496,7 @@ namespace Telegram.Common
                         _ => 0
                     };
 
-                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(chatId, botUser.Id, webAppShortName, startParameter, foundWebApp.RequestWriteAccess && popup.IsChecked is true, new WebAppOpenParameters(navigation.Window.Theme.Parameters, Constants.WebAppHostName, mode)));
+                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(chatId, botUser.Id, webAppShortName, startParameter, foundWebApp.RequestWriteAccess && popup.IsChecked is true, new WebAppOpenParameters(navigation.Window.ThemeParameters, Constants.WebAppHostName, mode)));
                     if (responsa is WebAppUrl webAppUrl)
                     {
                         navigation.NavigateToWebApp(botUser, webAppUrl, openMode: mode, source: source, sourceLink: new InternalLinkTypeWebApp(botUsername, webAppShortName, startParameter, mode));
@@ -1579,7 +1579,7 @@ namespace Telegram.Common
                 _ => 0
             };
 
-            var responsa = await clientService.SendAsync(new GetMainWebApp(chatId, botUser.Id, startParameter, new WebAppOpenParameters(navigation.Window.Theme.Parameters, Constants.WebAppHostName, mode)));
+            var responsa = await clientService.SendAsync(new GetMainWebApp(chatId, botUser.Id, startParameter, new WebAppOpenParameters(navigation.Window.ThemeParameters, Constants.WebAppHostName, mode)));
             if (responsa is MainWebApp webApp)
             {
                 navigation.NavigateToWebApp(botUser, webApp.Url, menuBot: menuBot, openMode: webApp.Mode, sourceLink: new InternalLinkTypeMainWebApp(botUser.ActiveUsername(), startParameter, webApp.Mode));
@@ -1712,13 +1712,6 @@ namespace Telegram.Common
                     var set = await LocaleService.Current.SetLanguageAsync(info, true);
                     if (set is Ok)
                     {
-                        //ApplicationLanguages.PrimaryLanguageOverride = info.Id;
-                        //ResourceContext.GetForCurrentView().Reset();
-                        //ResourceContext.GetForViewIndependentUse().Reset();
-
-                        //TLWindowContext.Current.NavigationServices.Remove(NavigationService);
-                        //BootStrapper.Current.NavigationService.Reset();
-
                         WindowContext.ForEach(window =>
                         {
                             ResourceContext.GetForCurrentView().Reset();
@@ -2047,7 +2040,7 @@ namespace Telegram.Common
                     return;
                 }
 
-                var response = await clientService.SendAsync(new GetGuardBotWebAppUrl(approvalRequired.QueryId, new WebAppOpenParameters(navigation.Window.Theme.Parameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
+                var response = await clientService.SendAsync(new GetGuardBotWebAppUrl(approvalRequired.QueryId, new WebAppOpenParameters(navigation.Window.ThemeParameters, Constants.WebAppHostName, new WebAppOpenModeFullSize())));
                 if (response is WebAppUrl webAppUrl)
                 {
                     navigation.NavigateToWebApp(botUser, webAppUrl, source: new OpenUrlSourceJoinChatRequest(approvalRequired.QueryId, chatId));
