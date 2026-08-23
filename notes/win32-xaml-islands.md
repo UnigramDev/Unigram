@@ -1174,6 +1174,55 @@ say so here.
 
 ## Phase 2 — the second host, added beside the first
 
+### Which classes fork — ranked by the code, 2026-08-23
+
+Counting app-model API hits per file (`CoreApplication`, `ApplicationView*`, `CoreWindow`,
+`SystemNavigationManager`, `CoreDispatcher`, `Window.Current`; `WindowContext.Current` excluded)
+sorts the app into three tiers. The long tail is Phase 0 work, not forking — only the top tier
+needs two implementations.
+
+**Tier 1 — two implementations, one per host.**
+
+| Class | Hits | UWP does | Win32 does |
+| --- | --- | --- | --- |
+| `WindowContext` | 54 | `Window` + `CoreWindow` + `ApplicationView` | HWND + `DesktopWindowXamlSource` + `IslandNative` |
+| `ViewService` + `ViewLifetimeControl` | 34 | `CreateNewView` + `ApplicationViewSwitcher` | create an HWND, on this thread or a new one per 0.18 |
+| `BootStrapper` + `App.xaml.cs` | 10 | `Application`, `OnLaunched`, activation, suspend | `WinMain`, `WindowsXamlManager`, own message loop |
+| `InputListener` | 6 | `CoreWindow.GetAsyncKeyState` | `GetAsyncKeyState`, or XAML routed events |
+| title bar — no class yet | — | `ExtendViewIntoTitleBar` + `CoreApplicationViewTitleBar` | `WM_NCCALCSIZE` / `WM_NCHITTEST` + drag-bar HWND (1.7) |
+| tray icon | — | `Telegram.Stub`, a second process | `Shell_NotifyIcon` in-process (2.5) |
+
+**Tier 2 — one implementation, but a behaviour difference to design.**
+
+- `GalleryCompactOverlay` (4) — `ApplicationViewMode.CompactOverlay` is a UWP feature with no
+  Win32 equivalent; picture-in-picture becomes a small topmost window the app positions itself.
+  The only item here where the *feature*, not the API, differs.
+- `WindowContent` (9), `CorePage` (4), `StandaloneWindow` / `TabbedWindow` / `VoipWindow` (3/2/3)
+  — almost entirely title-bar plumbing, and 0.3c already turns it shared: `SystemOverlayMetrics`
+  in `CorePage.cs` is an app-owned value object built from `CoreApplicationViewTitleBar`, which
+  is exactly the right shape. After 0.3c only the *source* of the metrics forks, not the roots.
+- `OverlayWindow` (3) — check whether its `SystemNavigationManager` use survives 0.5.
+
+**Tier 3 — no fork, only Phase 0 call sites.** 1-3 hits each, all mechanical: `WatchDog`,
+`TLNavigationService`, `MessageHelper`, `SettingsLanguageViewModel`, `LegacyIncrementalCollection`,
+`Extensions`, `Interop`, `InstantPage`, `DiagnosticsViewModel`, `ChatView`, `GalleryWindow`,
+`GalleryTransportControls`, `ChooseChatsPopup`, `SendFilesPopup`, `SendLocationPopup`,
+`EditMediaPopup`, `RichTextWindow`.
+
+**How to fork: by file inclusion, not `#if`.** The repo already builds two flavours from one tree,
+and `Telegram.csproj` lists every file explicitly (~1240 entries) rather than globbing — so a third
+project for the Win32 host selects its own files for free. Each Tier 1 class becomes a shared
+`partial` plus a per-host partial: `WindowContext.cs` keeps `XamlRoot`, `_mapping`, `Theme`,
+`NavigationServices` and the per-window services, while `WindowContext.Uwp.cs` /
+`WindowContext.Win32.cs` supply activation, bounds, title bar, cursor and key state. No
+preprocessor branches in shared code, and the shared half stays readable.
+
+**Also host-specific, and not a class today:** installing a `DispatcherQueueSynchronizationContext`
+on every UI thread. UWP does it per view for free; without it every `await` on a TDLib result
+resumes on a TDLib thread, and the failures look like anything but a missing sync context.
+
+
+
 - [ ] **2.0** Retire the .NET Native project first. Three build configurations over one source
   tree is one too many; two is the standing arrangement.
 - [ ] **2.1** Grow `Telegram.Stub` into the host process rather than creating a new one — it is
