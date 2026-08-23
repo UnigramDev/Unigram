@@ -1212,6 +1212,7 @@
                                                           Foreground="{ThemeResource MessageHeaderBorderBrush}" />
 
                                 <controls:GlyphButton x:Name="ComposerHeaderCancel"
+                                                      AutomationProperties.Name="{CustomResource AccDescrCancelReply}"
                                                       Click="{x:Bind ViewModel.ClearReply}"
                                                       FontSize="{StaticResource GlyphLargeFontSize}"
                                                       Foreground="{ThemeResource MessageHeaderBorderBrush}"
@@ -1343,6 +1344,7 @@
 
                                     <!-- Button to change self-destructing timer, secret chats only -->
                                     <controls:GlyphButton x:Name="ButtonTimer"
+                                                          AutomationProperties.Name="{CustomResource AccDescrSetTimer}"
                                                           Glyph="&#xE9DB;"
                                                           Click="{x:Bind ViewModel.SetTimer}"
                                                           FontSize="{StaticResource GlyphLargeFontSize}"
@@ -1585,6 +1587,7 @@
                     <Border Background="Transparent" />
 
                     <controls:GlyphButton x:Name="ButtonManage"
+                                          AutomationProperties.Name="{CustomResource Cancel}"
                                           Glyph="&#xE711;"
                                           Click="{x:Bind ViewModel.UnselectMessages}" />
 

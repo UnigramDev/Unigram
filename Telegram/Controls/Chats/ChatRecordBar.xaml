@@ -25,6 +25,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton x:Name="DeleteButton"
+                                      AutomationProperties.Name="{CustomResource AccDescrCancelRecording}"
                                       Click="ButtonCancelRecording_Click"
                                       Glyph="&#xE74D;"
                                       Visibility="Collapsed" />
