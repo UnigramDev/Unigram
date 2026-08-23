@@ -394,10 +394,10 @@ Four further findings worth carrying forward:
 it does not exist on this path — `FormattedTextBlock`'s recycle queues and
 `NativeUtils::AddRunToCollection` would move across unchanged.
 
-What the spike has **not** answered: only **1.7**, the custom non-client caption. It is not a
-gate on anything, and calling it one earlier was wrong. Terminal's caption buttons are ordinary
-XAML — its own comment says they "work reasonably well with just XAML" — so the caption is
-`WM_NCCALCSIZE` work against a published reference.
+**Every gate now passes, 1.7 included** — the spike has no open questions left. The custom
+non-client caption works: the window has no system caption at all, XAML reaches the top edge,
+and dragging, double-click maximize, the system menu, the top resize border, the three caption
+buttons and the Windows 11 snap layouts flyout all behave.
 
 The one part that is not free is **snap layouts**, and Terminal marks it `// BODGY`: the island's
 core input site covers the whole window and steals `WM_NCHITTEST`, so returning `HTMAXBUTTON`
@@ -1351,7 +1351,45 @@ the most likely failure comes first.
 - [x] **1.6** `PublishAot=true`. **Passes** — 4.0 MB single-file exe, 79 ms median startup
   against 215 ms for the JIT layout, all seven gates unchanged. Needs
   `BuiltInComInteropSupport=false` and `vswhere` on `PATH`.
-- [ ] **1.7** Non-client: custom caption that **maximizes and snaps** — the thing UWP cannot do.
+- [x] **1.7 Non-client: a custom caption that maximizes and snaps.** **Passes.** The thing UWP
+  cannot do — a UWP app extending into the title bar can hide, minimize and close, but never
+  maximize, and loses snap layouts with the system caption. Three pieces, in
+  `IslandWindow.NonClient.cs`:
+
+  1. **`WM_NCCALCSIZE`** — let the default proc compute the frame, then restore the original
+     `top`, so the frame survives on three sides and the client area reaches the top edge. When
+     maximized the top must come back in by `SM_CYSIZEFRAME + SM_CXPADDEDBORDER`, because a
+     maximized window is deliberately larger than the monitor by the frame width; without that
+     the caption sits off-screen.
+  2. **`WM_NCHITTEST`** — removing the top of the frame takes the top resize border with it, so
+     it has to be answered by hand. The other three sides still come from the default proc.
+  3. **A drag-bar child HWND** over the caption strip, `WS_EX_LAYERED | WS_EX_NOREDIRECTIONBITMAP`.
+
+  Two things about that third piece that cost time and are not in any article:
+
+  - **The island swallows `WM_NCHITTEST`.** It is a child window, so the top-level window never
+    sees the caption and dragging does not work at all. The drag bar answers instead.
+  - **A child window answering `HTCAPTION` drags nothing.** The hit test alone is not enough; the
+    drag bar must forward `WM_NCMOUSEMOVE`, `WM_NCLBUTTONDOWN`, `WM_NCLBUTTONDBLCLK`,
+    `WM_NCLBUTTONUP` and the right-button pair to the **parent** with `SendMessage` whenever the
+    hit is `HTCAPTION` or `HTTOP`. That is what produces dragging, double-click maximize, the
+    system menu and the top resize.
+
+  And the split that matters for expectations: returning `HTMAXBUTTON` earns the **snap layouts
+  flyout** for free, but **not the click** — Terminal's own words, "the buttons won't work as
+  you'd expect". A release over a button is turned into `WM_SYSCOMMAND` with `SC_MINIMIZE`,
+  `SC_MAXIMIZE`/`SC_RESTORE` or `SC_CLOSE` by hand.
+
+  **Left undone**: hover feedback on the caption buttons. The layered drag bar sits above the
+  XAML, so the buttons never see the pointer; Terminal forwards hover by hand
+  (`_titlebar.HoverButton`) with `TrackMouseEvent` and `TME_NONCLIENT`, which it needs because
+  `WM_NCMOUSELEAVE` is otherwise unreliable. Cosmetic, and the only piece missing.
+
+  One incidental lesson from the same session: the spike merges no `XamlControlsResources`, so
+  there are no theme brushes to inherit and every colour in it is a literal — which made it easy
+  to hardcode dark and get it wrong on a light system. It now derives its palette from
+  `Application.Current.RequestedTheme`, which is also what `DWMWA_USE_IMMERSIVE_DARK_MODE` should
+  be given rather than a constant `true`.
 - [x] **1.8a** Two islands on the **same thread**. **Passes** — two HWNDs, two
   `DesktopWindowXamlSource`s, one `WindowsXamlManager`, both hosting compiled markup. UWP's
   one-thread-per-view came from `CoreApplication.CreateNewView()`, not from XAML, so islands are
