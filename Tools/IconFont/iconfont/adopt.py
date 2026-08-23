@@ -98,6 +98,9 @@ def run(manifest, source_name, tolerance, say, apply_changes=False, picks=None):
             if os.path.exists(local):
                 os.remove(local)
         icon.src = "%s:%s" % (source_name, ident)
+        # The note said this was a local variant of the very icon it now tracks.
+        if icon.note and icon.note.startswith("local variant of"):
+            icon.note = None
 
     say("%d icon(s) now track %s" % (len(matched), source.describe()))
     if wanted is not None:

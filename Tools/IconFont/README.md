@@ -25,6 +25,7 @@ Everything is run as `py -m iconfont <command>` from this folder.
 | --- | --- |
 | `build` | Manifest to `Telegram.ttf`. Refuses to build if anything is wrong; `--lax` overrides. |
 | `verify --reference <ttf>` | Compares a build against another font glyph by glyph, by what each one paints. |
+| `changes --reference <ttf>` | The same comparison as a page, drawing each changed glyph before and after. |
 | `check` | Validates the manifest and cross-checks it against `Icons.cs` and the XAML. |
 | `sheet` | Writes `contact-sheet.html`, every glyph drawn from its converted outline. |
 | `update` | Moves a live source to a newer version, reporting what that redraws. |
@@ -35,7 +36,7 @@ Everything is run as `py -m iconfont <command>` from this folder.
 | `tidy` | Renames files in `icons/` to match the glyph they hold, and deletes ones nothing points at. |
 | `missing` | Codepoints the app names that the font has no glyph for; `--reference <ttf>` shows what each used to draw. |
 | `drift` | Local glyphs carrying a Fluent name, next to what upstream draws under that name today. |
-| `extract` | One-time migration out of `Telegram.json`. Already done; kept for reference. |
+| `extract` | The one-time migration out of IcoMoon. Already run and `Telegram.json` is gone; kept to document how the sources got here. |
 
 `adopt`, `identify`, `import`, `rename`, `tidy` and `update` are dry runs unless
 given `--apply`.
@@ -102,6 +103,23 @@ both `TelegramThemeFontFamily` and `SymbolThemeFontFamily` at this font - so a
 reshuffled codepoint silently changes icons all over the app, and a missing one
 renders as nothing rather than falling back to a system icon font.
 
+## Before shipping a rebuild
+
+`verify` says how much moved; `changes` shows it. Keep a copy of the font you are
+replacing - `build` overwrites it in place - and compare against it:
+
+```
+git show HEAD:Telegram/Assets/Fonts/Telegram.ttf > before.ttf
+py -m iconfont build
+py -m iconfont changes --reference before.ttf
+```
+
+The page bands the differences, because the decision differs by size: over 15% is
+a different drawing, 5-15% is the same icon redrawn, and under 1% is not worth
+looking at. Anything below 0.2% is left out entirely - that is smaller than the
+cubic-to-quadratic conversion moves an edge, so it says nothing about what
+changed.
+
 ## Taking a drifted icon from upstream
 
 A local glyph carrying a Fluent name whose drawing no longer matches upstream is
@@ -162,5 +180,6 @@ transforms; and a drawing command straight after a `z`.
 - IcoMoon wrote a left side bearing of 0 for every glyph regardless of where the
   artwork sat. This tool writes the real one. Rasterisers draw the stored
   outline, so nothing moves.
-- `Telegram/Assets/Fonts/Telegram.json` is IcoMoon's project file. Nothing reads
-  it any more; it is kept only as the record the extraction came from.
+- `Telegram/Assets/Fonts/Telegram.json`, IcoMoon's project file, has been deleted.
+  Everything it held is in `icons/` and `icons.json`, and its history is in git if a
+  glyph ever needs tracing back.

@@ -11,6 +11,9 @@ any one of them makes glyphs look dead when they are not.
 import os
 import re
 
+LOCAL_VARIANT = re.compile(r"^local variant of (\w+):(\S+)$")
+SHARED_GLYPH = re.compile(r"^same glyph as (\S+)")
+
 from iconfont import sources as sourcelib
 from iconfont import svgdoc
 
@@ -49,6 +52,8 @@ def run(manifest, icons_cs, repo_root):
         for message in art.warnings:
             notes.append("%s (%s): %s" % (icon.name, icon.src, message))
 
+    problems.extend(stale_notes(manifest))
+
     codes = {i.code for i in manifest.icons}
     referenced = references(repo_root, icons_cs)
 
@@ -64,6 +69,46 @@ def run(manifest, icons_cs, repo_root):
                      % (len(unused), ", ".join("U+%04X" % c for c in unused[:12])
                         + (", ..." if len(unused) > 12 else "")))
     return problems, notes
+
+
+def stale_notes(manifest):
+    """Notes that have stopped being true.
+
+    A note is prose and nothing reads it, so it rots quietly: an entry that gets
+    re-pointed at a live source keeps a note calling it a local variant of that
+    same source, and an alias keeps naming a glyph that has since been renamed.
+    Both mislead the next person more than no note at all.
+    """
+    by_code = manifest.by_code()
+    stale = []
+    for icon in manifest.icons:
+        if not icon.note:
+            continue
+        if LOCAL_VARIANT.match(icon.note):
+            if icon.is_remote:
+                stale.append("%s: note calls it a local variant, but it tracks %s"
+                             % (icon.name, icon.src))
+            elif icon.is_alias:
+                stale.append("%s: note calls it a local variant, but it is an alias"
+                             % icon.name)
+            continue
+        shared = SHARED_GLYPH.match(icon.note)
+        if shared:
+            if not icon.is_alias:
+                stale.append("%s: note says it shares a glyph, but src is %s"
+                             % (icon.name, icon.src))
+                continue
+            target = by_code.get(icon.alias_code)
+            if target is None:
+                stale.append("%s: aliases U+%04X, which is gone"
+                             % (icon.name, icon.alias_code))
+            elif target.name != shared.group(1):
+                stale.append("%s: note names %s but U+%04X is now %s"
+                             % (icon.name, shared.group(1), target.code, target.name))
+            continue
+        stale.append("%s: note is not in a form this tool recognises (%r)"
+                     % (icon.name, icon.note))
+    return stale
 
 
 def references(repo_root, icons_cs):

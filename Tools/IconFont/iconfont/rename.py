@@ -74,6 +74,7 @@ def run(manifest, path, source_name, apply_changes, say):
 
     renamed, adopted, aliased, refused, skipped, bad = [], [], [], [], [], []
     already = []
+    legacy = []
     planned = []
 
     for number, placeholder, target in parse(path):
@@ -82,6 +83,9 @@ def run(manifest, path, source_name, apply_changes, say):
             continue
         if target.lower() == "tbd":
             skipped.append(placeholder)
+            continue
+        if target.lower() == "legacy":
+            legacy.append(placeholder)
             continue
         icon = by_name.get(placeholder)
         if icon is None and placeholder.upper().startswith("U+"):
@@ -226,6 +230,10 @@ def run(manifest, path, source_name, apply_changes, say):
     if already:
         say("")
         say("%d line(s) were applied by an earlier run" % len(already))
+    if legacy:
+        say("")
+        say("%d kept their IcoMoon name on purpose: %s"
+            % (len(legacy), ", ".join(sorted(legacy))))
     if skipped:
         say("")
         say("%d still marked tbd: %s"
@@ -244,3 +252,9 @@ def comparisons(path):
         return {}
     with open(path, "r", encoding="utf-8-sig") as fp:
         return dict(COMPARE.findall(fp.read()))
+
+
+def legacy_names(path):
+    """Glyphs deliberately left with the name IcoMoon gave them."""
+    return {p for _, p, t in parse(path) if p and t.lower() == "legacy"}
+

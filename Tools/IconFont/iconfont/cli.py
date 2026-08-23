@@ -158,8 +158,11 @@ def cmd_identify(args):
     from iconfont import identify
     manifest = _load(args)
     placeholder = re.compile(r"u(ni)?[0-9A-Fa-f]{4,6}\Z")
+    from iconfont import rename as renamelib
+    settled = renamelib.legacy_names(os.path.join(TOOL, "identified.txt"))
     targets = [i for i in manifest.icons
                if (args.all or placeholder.match(i.name))
+               and i.name not in settled
                and not i.is_remote and not i.is_alias]
     _say("%d icon(s) to identify" % len(targets))
     refs, pinned = {}, {}
@@ -177,6 +180,15 @@ def cmd_identify(args):
     elif changed:
         _say("")
         _say("dry run; pass --apply to rename these in the manifest")
+    return 0
+
+
+def cmd_changes(args):
+    from iconfont import changes, check
+    manifest = _load(args)
+    refs = check.references(REPO, args.icons_cs)
+    path, count = changes.write(args.out, manifest, args.built, args.reference, refs)
+    _say("%d glyph(s) render differently -> %s" % (count, path))
     return 0
 
 
@@ -294,6 +306,13 @@ def main(argv=None):
     p.add_argument("--icons-cs", dest="icons_cs", default=DEFAULT_ICONS_CS)
     p.add_argument("--apply", action="store_true")
     p.set_defaults(func=cmd_identify)
+
+    p = sub.add_parser("changes", help="every glyph that differs from a reference font")
+    p.add_argument("--reference", required=True)
+    p.add_argument("--built", default=DEFAULT_FONT)
+    p.add_argument("--out", default=os.path.join(TOOL, "changes.html"))
+    p.add_argument("--icons-cs", dest="icons_cs", default=DEFAULT_ICONS_CS)
+    p.set_defaults(func=cmd_changes)
 
     p = sub.add_parser("drift", help="local glyphs whose upstream namesake has changed")
     p.add_argument("--out", default=os.path.join(TOOL, "drift.html"))
