@@ -1183,13 +1183,23 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   the hard part: rather than a `ResourceDictionary` having to discover which window owns it, the
   merging control already has a `XamlRoot` and simply asks for `Theme.Outgoing`.
 
-  **Assignment, not merging.** `<FrameworkElement.Resources><common:ThemeOutgoing /></...>` in
-  the template is literally `Resources = new ThemeOutgoing()`, so the code form is
-  `Resources = Theme.Outgoing` with a shared instance in place of a fresh one. What that removes
-  is not small: the constructor allocates a `ThemeOutgoing` plus two child `ResourceDictionary`
-  objects and performs ~40 insertions, **per realised bubble**, to build an identical table of
-  the same shared brush references. A rewrite has to keep `ThemeDictionaries["Light"]` and
-  `ThemeDictionaries["Default"]` — dark is stored under `Default`, not `Dark`.
+  **The dictionary stays per bubble — a shared instance is not possible.** Assigning one
+  `ResourceDictionary` to two elements throws `ArgumentException`, and the core says why:
+  `FrameworkElement`'s `Resources` setter calls `resources->SetResourceOwner(this)`
+  (`framework.cpp:343`) on a dictionary that holds a **single** owner pointer, later used to find
+  the visual owner for theme resolution (`Resources.cpp:1344`) — and that owner is propagated
+  into the merged and theme dictionaries beneath it (`Resources.cpp:133`, `141`). So merging a
+  shared instance is no better than assigning one: even where it does not throw, the owner would
+  flap between bubbles and break `{ThemeResource}` re-evaluation for all but the last.
+
+  That removes the allocation saving that first motivated the change — the constructor's two
+  child dictionaries and ~40 insertions stay, per realised bubble — but not the point of it. Only
+  the **wrapper** has to be per bubble; the brushes inside are the window's, shared and
+  recoloured in place, which is what makes one theme change repaint every bubble without touching
+  any of them. So `Theme` exposes `CreateOutgoing()`, not an `Outgoing` property, and what moves
+  off `[ThreadStatic]` is the brush state rather than the dictionary. A rewrite has to keep
+  `ThemeDictionaries["Light"]` and `ThemeDictionaries["Default"]` — dark is stored under
+  `Default`, not `Dark`.
 
   The hook only matters in `MessageBubble`, and `Loading` is the right one. `IsOutgoing` is a
   **plain C# property, not a DependencyProperty** — nothing binds to it, animates it or styles
