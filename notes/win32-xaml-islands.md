@@ -394,10 +394,20 @@ Four further findings worth carrying forward:
 it does not exist on this path — `FormattedTextBlock`'s recycle queues and
 `NativeUtils::AddRunToCollection` would move across unchanged.
 
-What the spike has **not** answered: only **1.7**, the custom non-client caption. And that is
-now the least risky item on the list, because Terminal's `NonClientIslandWindow.cpp` is a
-working implementation of exactly it — see the recipe above. It is a day of `WM_NCCALCSIZE` /
-`WM_NCHITTEST` work, not an unknown.
+What the spike has **not** answered: only **1.7**, the custom non-client caption. It is not a
+gate on anything, and calling it one earlier was wrong. Terminal's caption buttons are ordinary
+XAML — its own comment says they "work reasonably well with just XAML" — so the caption is
+`WM_NCCALCSIZE` work against a published reference.
+
+The one part that is not free is **snap layouts**, and Terminal marks it `// BODGY`: the island's
+core input site covers the whole window and steals `WM_NCHITTEST`, so returning `HTMAXBUTTON`
+where the maximize button is requires a separate `WS_EX_LAYERED | WS_EX_NOREDIRECTIONBITMAP`
+drag-bar HWND laid over the buttons, which then forwards hover and press back to the XAML ones by
+hand (`_InputSinkMessageHandler`, plus `TRACKMOUSEEVENT` bookkeeping).
+
+And there is no downside case: UWP with a custom caption cannot maximize at all — measured, see
+the custom title bar spike — so the Win32 host is strictly better than what ships today even if
+snap layouts were skipped entirely.
 
 ### Background: what was known before the spike
 
@@ -434,6 +444,22 @@ it is to end the discussion:
 # Todo
 
 ## Phase 0 — reduce UWP coupling in the current app
+
+**Where it stands, 2026-08-23.** `Window.Current` 73 -> 22 mentions, of which 5 are comments and
+most of the rest are the seam itself (`WindowContext`, `BootStrapper`) or 0.4's rewrite.
+`WindowContext.Current` 124 -> 42, and the distribution is now lopsided in a useful way:
+`BootStrapper` (14) and `App.xaml.cs` (6) are bootstrap code that forks anyway, `ViewService` (3)
+is 0.4, and the remaining ~15 are ordinary UI sites in four property families — `ActualTheme`,
+`RasterizationScale`, `Bounds`/`PointerPosition`, and `NavigationServices`/`Content`/`Title` —
+every one of them with an element already in scope, so each is the same mechanical
+`ForXamlRoot(element)` swap. `Theme.Current` 50 -> 25, of which 15 are the `MonospaceFontFamily`
+/ `XamlAutoFontFamily` pair still waiting on 0.19a.
+
+UI `[ThreadStatic]` is down to `Theme` (9), `WatchDog` (5, diagnostics), `ProfileCell` (4),
+`MessageBubbleBrush` (1, dead code) and `Direct2D` (1); `PlaceholderHelper`'s is gone. The
+per-`XamlRoot` `ConditionalWeakTable` pattern is now applied across `OverlayWindow`,
+`AnimatedImage`, `ProfilePicture`, `ContentPopup` and `RelativeDateService`, and
+`DispatcherContext.Current` replaced the `WindowContext.Current.Dispatcher` hops.
 
 Everything here is worth doing **on its own merits**, ships incrementally on `develop`, needs no
 decision about the destination, and pays off identically for UWP-forever, islands, or WinUI 3.
@@ -1172,6 +1198,27 @@ the most likely failure comes first.
 Record results back in this file. If 1.3 fails and cannot be worked around, close the path and
 say so here.
 
+### The .NET 10 teardown AV — fixed, and not by islands
+
+Recorded here because it briefly looked like an argument for hurrying this project, and it was
+not. Closing a secondary view access-violated inside `RoUninitialize`: a XamlDirect handle's RCW,
+finalized after that view's XAML core was released, marshalled its `Release` back into the
+uninitializing apartment through `IContextCallback` and unparented a core-less
+`CDependencyObject`. Both ends were confirmed from a dump —
+`WinRT.ObjectReferenceWithContext<T>.Release()` on the finalizer thread, and
+`interface_forwarder<IXamlDirectObject,CDependencyObject>::Release` on the dying ASTA. Filed as
+[CsWinRT #2532](https://github.com/microsoft/CsWinRT/issues/2532); the mechanism and the fix live
+in `notes/net10-port-todo.md`.
+
+Two things it settled that bear on this plan:
+
+- **It was not a reason to go to islands.** Islands would dissolve it — one thread means no
+  apartment is ever uninitialized until process exit — but the production path is .NET Native ->
+  .NET 10 UWP, which has thread-per-view, so it had to be fixed on its own terms. It was, by
+  releasing the handles deterministically while the core is still up.
+- **0.19b is therefore not on a critical path**, which an earlier draft of 0.18 implied. Letting
+  every window share a thread is still the destination, but it buys tidiness now, not a fix.
+
 ## Phase 2 — the second host, added beside the first
 
 ### Which classes fork — ranked by the code, 2026-08-23
@@ -1215,7 +1262,20 @@ project for the Win32 host selects its own files for free. Each Tier 1 class bec
 `partial` plus a per-host partial: `WindowContext.cs` keeps `XamlRoot`, `_mapping`, `Theme`,
 `NavigationServices` and the per-window services, while `WindowContext.Uwp.cs` /
 `WindowContext.Win32.cs` supply activation, bounds, title bar, cursor and key state. No
-preprocessor branches in shared code, and the shared half stays readable.
+preprocessor branches in shared code, and the shared half stays readable. Agreed naming is
+`WindowContext.Uwp.cs` / `WindowContext.Win32.cs` — `.Modern.cs` would collide with the .NET 10
+project's meaning of the word.
+
+Partials also give the contract for free: shared code calling `Activate()` will not compile
+unless every host partial defines it, so no interface is needed, and with it no virtual dispatch,
+no DI registration and nothing the AOT compiler cannot see through. Four of the five Tier 1
+classes are already `partial`.
+
+**`BootStrapper` is the exception** and wants treating as its own item: it is
+`abstract class BootStrapper : Application`, and the Win32 host has no `Application` at all, so
+the base type differs rather than the members. It needs a host-agnostic core with
+`BootStrapper : Application` on one side and a plain class on the other — a bigger rework than
+the partial split the others take.
 
 **Also host-specific, and not a class today:** installing a `DispatcherQueueSynchronizationContext`
 on every UI thread. UWP does it per view for free; without it every `await` on a TDLib result
@@ -1223,8 +1283,14 @@ resumes on a TDLib thread, and the failures look like anything but a missing syn
 
 
 
-- [ ] **2.0** Retire the .NET Native project first. Three build configurations over one source
-  tree is one too many; two is the standing arrangement.
+- [ ] **2.0** Retire the .NET Native project **when .NET 10 has earned it**, not before, and not
+  as a precondition for anything here. It is what ships to users; "three flavours is one too
+  many" is a tidiness preference and cannot outrank not breaking the app. Three configurations
+  is the accepted cost of the transition.
+
+  This corrects an earlier reading of this item that treated it as a gate on Phase 2. It is not:
+  the islands host ships to nobody and carries no user risk, so it needs time rather than
+  permission.
 - [ ] **2.1** Grow `Telegram.Stub` into the host process rather than creating a new one — it is
   already .NET 10, already Win32, already owns the tray and passkeys.
 - [ ] **2.2** Desktop `IViewService` / `WindowContext` implementations behind the Phase 0 seams.
