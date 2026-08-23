@@ -117,11 +117,12 @@ namespace Telegram.Navigation
         {
             _context.RaisePopupActivated(true);
 
-            if (OverlayWindow.Current != null)
+            if (OverlayWindow.PopupOpened(XamlRoot))
             {
-                OverlayWindow.Current.PopupOpened();
+                return;
             }
-            else if (Content is IPopupHost content)
+            
+            if (Content is IPopupHost content)
             {
                 content.PopupOpened();
             }
@@ -131,11 +132,12 @@ namespace Telegram.Navigation
         {
             _context.RaisePopupActivated(false);
 
-            if (OverlayWindow.Current != null)
+            if (OverlayWindow.PopupClosed(XamlRoot))
             {
-                OverlayWindow.Current.PopupClosed();
+                return;
             }
-            else if (Content is IPopupHost content)
+
+            if (Content is IPopupHost content)
             {
                 content.PopupClosed();
             }

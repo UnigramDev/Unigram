@@ -359,7 +359,7 @@ namespace Telegram.Navigation.Services
             }
 
             Navigated?.Invoke(this, e);
-            OverlayWindow.Current?.TryHide(ContentDialogResult.None);
+            OverlayWindow.TryHide(XamlRoot, ContentDialogResult.None);
 
             await NavigateToAsync(e.NavigationMode, parameter, FrameFacade.Frame.Content);
         }

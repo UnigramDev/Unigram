@@ -6,12 +6,12 @@
 //
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Views.Host;
 using Windows.Devices.Input;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
@@ -37,8 +37,7 @@ namespace Telegram.Controls
 
         public event EventHandler Closing;
 
-        [ThreadStatic]
-        public static OverlayWindow Current;
+        private static readonly ConditionalWeakTable<XamlRoot, OverlayWindow> _instances = new();
 
         public WindowContext Window { get; }
 
@@ -106,7 +105,7 @@ namespace Telegram.Controls
 
         public async Task<ContentDialogResult> ShowAsync()
         {
-            Current = this;
+            _instances.GetOrAdd(XamlRoot, this);
             Margin = new Thickness();
 
             if (Constants.DEBUG && DataContext is INavigable navigable && navigable.NavigationService == null)
@@ -160,24 +159,6 @@ namespace Telegram.Controls
             e.Handled = args.Handled;
         }
 
-        private void DisplayRegion_Changed(Rect sender, object args)
-        {
-            var scaleFactor = XamlRoot.RasterizationScale;
-
-            var x = WindowContext.Current.Bounds.X - sender.X / scaleFactor;
-            var y = WindowContext.Current.Bounds.Y - sender.Y / scaleFactor;
-
-            var width = sender.Width / scaleFactor;
-            var height = sender.Height / scaleFactor;
-
-            Width = width;
-            Height = height;
-
-            _popupHost.Margin = new Thickness(-x, -y, 0, 0);
-            _popupHost.Width = width;
-            _popupHost.Height = height;
-        }
-
         private void PopupHost_Unloaded(object sender, RoutedEventArgs e)
         {
             _callback.TrySetResult(_result);
@@ -188,9 +169,31 @@ namespace Telegram.Controls
             Focus(FocusState.Programmatic);
         }
 
+        public static bool PopupOpened(XamlRoot xamlRoot)
+        {
+            if (xamlRoot != null && _instances.TryGetValue(xamlRoot, out OverlayWindow window))
+            {
+                window.PopupOpened();
+                return true;
+            }
+
+            return false;
+        }
+
         public void PopupOpened()
         {
-            UnmaskTitleAndStatusBar(WindowContext.Current);
+            UnmaskTitleAndStatusBar(Window);
+        }
+
+        public static bool PopupClosed(XamlRoot xamlRoot)
+        {
+            if (xamlRoot != null && _instances.TryGetValue(xamlRoot, out OverlayWindow window))
+            {
+                window.PopupClosed();
+                return true;
+            }
+
+            return false;
         }
 
         public void PopupClosed()
@@ -246,6 +249,14 @@ namespace Telegram.Controls
             Closing?.Invoke(this, EventArgs.Empty);
         }
 
+        public static void TryHide(XamlRoot xamlRoot, ContentDialogResult result)
+        {
+            if (xamlRoot != null && _instances.TryGetValue(xamlRoot, out OverlayWindow window))
+            {
+                window.TryHide(result);
+            }
+        }
+
         public void TryHide(ContentDialogResult result)
         {
             var e = new BackRequestedRoutedEventArgs();
@@ -276,9 +287,12 @@ namespace Telegram.Controls
             _result = result;
             _popupHost.IsOpen = false;
 
-            if (Current == this)
+            if (_instances.TryGetValue(XamlRoot, out OverlayWindow window))
             {
-                Current = null;
+                if (window == this)
+                {
+                    _instances.Remove(XamlRoot);
+                }
             }
         }
 

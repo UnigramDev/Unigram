@@ -20,7 +20,6 @@ using Telegram.ViewModels.Settings;
 using Telegram.Views;
 using Telegram.Views.Host;
 using Telegram.Views.Payments;
-using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Password;
@@ -493,7 +492,7 @@ namespace Telegram.Common
                     await page.ViewModel.HandlePackageAsync(package);
                 }
 
-                OverlayWindow.Current?.TryHide(ContentDialogResult.None);
+                OverlayWindow.TryHide(XamlRoot, ContentDialogResult.None);
             }
             else
             {
@@ -566,7 +565,7 @@ namespace Telegram.Common
                             GoBackAt(0, false);
                         }
 
-                        OverlayWindow.Current?.TryHide(ContentDialogResult.None);
+                        OverlayWindow.TryHide(XamlRoot, ContentDialogResult.None);
                     }
                     else
                     {
