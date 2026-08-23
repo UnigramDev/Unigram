@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Telegram.Common;
 using Telegram.Native;
@@ -515,7 +516,7 @@ namespace Telegram.Controls
 
                     if (presentation != null)
                     {
-                        _presenter = AnimatedImageLoader.Current.GetOrCreate(presentation);
+                        _presenter = AnimatedImageLoader.GetOrCreate(XamlRoot, presentation);
                         _presenter.LoopCompleted += OnLoopCompleted;
                         _presenter.PositionChanged += OnPositionChanged;
                         _presenter.Paused += OnPaused;
@@ -1243,7 +1244,7 @@ namespace Telegram.Controls
             _foregroundPrev = new PixelBuffer(new WriteableBitmap(width, height));
             _backgroundNext = new PixelBuffer(new WriteableBitmap(width, height));
 
-            _activated = WindowContext.Current.IsActive;
+            _activated = _loader.Window.IsActive;
 
             // Automatically pause only if looping
             if (_presentation.LoopCount != 1)
@@ -1268,11 +1269,11 @@ namespace Telegram.Controls
         {
             if (_presentation.IsPopup)
             {
-                OnActivated(WindowContext.Current.IsActive);
+                OnActivated(_loader.Window.IsActive);
             }
             else
             {
-                OnActivated(WindowContext.Current.IsActive && !args.IsActive);
+                OnActivated(_loader.Window.IsActive && !args.IsActive);
             }
         }
 
@@ -1284,7 +1285,7 @@ namespace Telegram.Controls
             }
             else
             {
-                OnActivated(args.IsActive && !WindowContext.Current.IsPopupOpened);
+                OnActivated(args.IsActive && !_loader.Window.IsPopupOpened);
             }
         }
 
@@ -1769,33 +1770,19 @@ namespace Telegram.Controls
 
     public partial class AnimatedImageLoader
     {
-        [ThreadStatic]
-        private static AnimatedImageLoader _current;
-        public static AnimatedImageLoader Current => _current ??= new();
-
         private readonly DispatcherQueue _dispatcherQueue;
         private readonly WindowContext _window;
 
         private bool _closed;
 
-        private AnimatedImageLoader()
+        public WindowContext Window => _window;
+
+        private AnimatedImageLoader(XamlRoot xamlRoot)
         {
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            _window = WindowContext.Current;
+            _window = WindowContext.ForXamlRoot(xamlRoot);
 
             Debug.Assert(_dispatcherQueue != null);
-        }
-
-        public static void Release()
-        {
-            if (_current?._rendering.Count > 0)
-            {
-                _current._closed = true;
-            }
-            else
-            {
-                _current = null;
-            }
         }
 
         private readonly List<AnimatedImagePresenter> _rendering = new();
@@ -1838,7 +1825,7 @@ namespace Telegram.Controls
 
                 if (_closed)
                 {
-                    _current = null;
+                    _loaders.Remove(_window.XamlRoot, out _);
                 }
             }
         }
@@ -1851,6 +1838,16 @@ namespace Telegram.Controls
 
         // Unique per thread
         private int _indexer;
+
+        private static readonly ConditionalWeakTable<XamlRoot, AnimatedImageLoader> _loaders = new();
+
+        public static AnimatedImagePresenter GetOrCreate(XamlRoot xamlRoot, AnimatedImagePresentation configuration)
+        {
+            Debug.Assert(xamlRoot != null);
+
+            var loader = _loaders.GetOrAdd(xamlRoot, x => new AnimatedImageLoader(xamlRoot));
+            return loader.GetOrCreate(configuration);
+        }
 
         public AnimatedImagePresenter GetOrCreate(AnimatedImagePresentation configuration)
         {
