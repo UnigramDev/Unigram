@@ -446,24 +446,37 @@ namespace Telegram
             }
             else if (args.Exception is NotSupportedException)
             {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-
-                foreach (var popup in popups)
-                {
-                    if (popup.Child is ToolTip tooltip)
-                    {
-                        tooltip.IsOpen = false;
-                        tooltip.IsOpen = true;
-                        tooltip.IsOpen = false;
-                    }
-                }
-
+                MitigateToolTipCrash();
                 return;
             }
 
             if (AppSettings.Diagnostics.ShowMemoryUsage && Window.Current?.Content?.XamlRoot != null)
             {
                 _ = MessagePopup.ShowAsync(WindowContext.Current.XamlRoot, args.Exception.ToString(), "Unhandled exception", "OK");
+            }
+        }
+
+        /// <summary>
+        /// UWP's ToolTip fast-fails with E_FAIL when its owner is torn down while the tooltip is
+        /// still opening - reliably so when the owner is a Hyperlink. It arrives here as a
+        /// NotSupportedException, and the app only survives if every visible tooltip is forced
+        /// through close/open/close, which is what detaches it from the dead owner.
+        ///
+        /// Window.Current is deliberate: this runs from the app-wide exception handler, with no
+        /// element to resolve a XamlRoot from.
+        /// </summary>
+        private static void MitigateToolTipCrash()
+        {
+            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+
+            foreach (var popup in popups)
+            {
+                if (popup.Child is ToolTip tooltip)
+                {
+                    tooltip.IsOpen = false;
+                    tooltip.IsOpen = true;
+                    tooltip.IsOpen = false;
+                }
             }
         }
 
