@@ -5,12 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 
 namespace Telegram.Services
 {
     /// <summary>
-    /// Centralizes UI Automation client detection.
+    /// Centralizes UI Automation client detection and notification events.
     /// </summary>
     public static class AccessibilityService
     {
@@ -19,5 +20,27 @@ namespace Telegram.Services
 
         public static bool HasPropertyChangedListeners =>
             AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged);
+
+        public static bool RaiseNotification(
+            FrameworkElement owner,
+            string text,
+            string activityId,
+            AutomationNotificationKind kind = AutomationNotificationKind.Other,
+            AutomationNotificationProcessing processing = AutomationNotificationProcessing.ImportantMostRecent)
+        {
+            if (owner == null || string.IsNullOrWhiteSpace(text))
+            {
+                return false;
+            }
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(owner);
+            if (peer == null)
+            {
+                return false;
+            }
+
+            peer.RaiseNotificationEvent(kind, processing, text, activityId);
+            return true;
+        }
     }
 }

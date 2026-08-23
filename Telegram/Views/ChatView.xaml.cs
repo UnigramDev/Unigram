@@ -881,6 +881,23 @@ namespace Telegram.Views
 
         private async void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
+            if (args.Action == NotifyCollectionChangedAction.Add && args.NewItems != null)
+            {
+                foreach (var item in args.NewItems)
+                {
+                    if (item is MessageViewModel addedMessage
+                        && addedMessage.Id != long.MaxValue
+                        && addedMessage.AnimationState == MessageAnimationState.Added)
+                    {
+                        AccessibilityService.RaiseNotification(
+                            Messages,
+                            Automation.GetSummaryWithName(addedMessage, true),
+                            "ChatMessage",
+                            processing: AutomationNotificationProcessing.All);
+                    }
+                }
+            }
+
             var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
             if (panel == null)
             {
