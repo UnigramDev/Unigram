@@ -22,7 +22,6 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -107,7 +106,7 @@ namespace Telegram.Controls.Messages
             _drawer.Deactivate();
             _drawer.DataContext = null;
 
-            if (_bubble is FrameworkElement element && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            if (_bubble is FrameworkElement element && AccessibilityService.IsScreenReaderActive)
             {
                 var selector = element.GetParent<SelectorItem>();
                 selector?.Focus(FocusState.Keyboard);

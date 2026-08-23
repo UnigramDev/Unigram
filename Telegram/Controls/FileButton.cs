@@ -11,6 +11,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
+using Telegram.Services;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -118,7 +119,7 @@ namespace Telegram.Controls
                     ProgressBar.Value = value;
                 }
 
-                if (AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged))
+                if (AccessibilityService.HasPropertyChangedListeners)
                 {
                     var peer = FrameworkElementAutomationPeer.FromElement(this);
                     peer?.RaisePropertyChangedEvent(ValuePatternIdentifiers.ValueProperty, _progress, value);
