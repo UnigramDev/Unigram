@@ -469,6 +469,7 @@
     <Compile Include="Services\ProxyService.cs" />
     <Compile Include="Services\Settings\ToolTipSettings.cs" />
     <Compile Include="Services\TextRecognitionService.cs" />
+    <Compile Include="Services\AccessibilityService.cs" />
     <Compile Include="Services\Session.Registrations.cs" />
     <Compile Include="Controls\Messages\MessageContentRecyclePool.cs" />
     <Compile Include="Streams\MediaRange.cs" />

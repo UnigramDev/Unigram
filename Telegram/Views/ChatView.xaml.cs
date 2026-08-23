@@ -1422,7 +1422,7 @@ namespace Telegram.Views
 
         private void TrySetFocusState(FocusState state, bool fast)
         {
-            if (AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            if (AccessibilityService.IsScreenReaderActive)
             {
                 return;
             }
@@ -5535,7 +5535,7 @@ namespace Telegram.Views
 
         private void ButtonAction_LosingFocus(UIElement sender, LosingFocusEventArgs args)
         {
-            if (_actionCollapsed && !AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            if (_actionCollapsed && !AccessibilityService.IsScreenReaderActive)
             {
                 args.TrySetNewFocusedElement(TextField);
                 args.Handled = true;
