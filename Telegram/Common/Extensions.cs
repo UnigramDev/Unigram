@@ -1127,6 +1127,25 @@ namespace Telegram.Common
             });
         }
 
+        public static bool TryGetContent<T>(this XamlRoot xamlRoot, out T content)
+        {
+            try
+            {
+                if (xamlRoot.Content is T cast)
+                {
+                    content = cast;
+                    return true;
+                }
+            }
+            catch
+            {
+                // XamlRoot.Content seems to throw a NullReferenceException
+                // whenever corresponding window has been already closed.
+            }
+
+            content = default;
+            return false;
+        }
 
         public static uint GetHeight(this VideoProperties props)
         {
