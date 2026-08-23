@@ -11,6 +11,7 @@ using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
@@ -87,9 +88,19 @@ namespace Telegram.Controls
 
         public void UpdateValue(TimeSpan position, TimeSpan duration, bool playing)
         {
+            var previousPosition = _position;
+
             _position = position;
             _duration = duration;
             _playing = playing;
+
+            if (previousPosition != position && FrameworkElementAutomationPeer.FromElement(this) is PlaybackSliderAutomationPeer peer)
+            {
+                peer.RaisePropertyChangedEvent(
+                    RangeValuePatternIdentifiers.ValueProperty,
+                    previousPosition.TotalSeconds,
+                    position.TotalSeconds);
+            }
 
             if (ProgressBarIndicator == null)
             {
@@ -328,6 +339,11 @@ namespace Telegram.Controls
             PositionChanged?.Invoke(this, new PlaybackSliderPositionChanged(TimeSpan.FromSeconds(position)));
         }
 
+        internal void SetValue(double position)
+        {
+            SetValue(position, _duration.TotalSeconds, _playing);
+        }
+
         public bool ComputedIsThumbToolTipEnabled => IsThumbToolTipEnabled && ThumbToolTip != null && ThumbToolTipPopup != null;
 
         #region IsThumbToolTipEnabled
@@ -357,7 +373,7 @@ namespace Telegram.Controls
         #endregion
     }
 
-    public partial class PlaybackSliderAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider, IValueProvider
+    public partial class PlaybackSliderAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
     {
         private readonly PlaybackSlider _owner;
 
@@ -374,12 +390,18 @@ namespace Telegram.Controls
 
         protected override string GetNameCore()
         {
-            return "Seek";
+            var name = base.GetNameCore();
+            return string.IsNullOrEmpty(name) ? Strings.AccDescrSeek : name;
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.Slider;
         }
 
         protected override object GetPatternCore(PatternInterface patternInterface)
         {
-            if (patternInterface is PatternInterface.RangeValue or PatternInterface.Value)
+            if (patternInterface == PatternInterface.RangeValue)
             {
                 return this;
             }
@@ -389,7 +411,7 @@ namespace Telegram.Controls
 
         public bool IsReadOnly => false;
 
-        public double LargeChange => 1;
+        public double LargeChange => Math.Max(1, Maximum / 10);
 
         public double SmallChange => 1;
 
@@ -399,16 +421,14 @@ namespace Telegram.Controls
 
         public double Value => _owner.Position.TotalSeconds;
 
-        string IValueProvider.Value => _owner.Position.ToDuration();
-
         public void SetValue(double value)
         {
-            throw new NotImplementedException();
-        }
+            if (double.IsNaN(value) || double.IsInfinity(value) || value < Minimum || value > Maximum)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value));
+            }
 
-        public void SetValue(string value)
-        {
-            throw new NotImplementedException();
+            _owner.SetValue(value);
         }
     }
 }
