@@ -227,7 +227,7 @@ namespace Telegram.Navigation
             }
 
             //Current = this;
-            Dispatcher = new DispatcherContext(window.CoreWindow.DispatcherQueue);
+            Dispatcher = DispatcherContext.Current;
             Id = ApplicationView.GetApplicationViewIdForWindow(window.CoreWindow);
             Bounds = window.Bounds;
 
@@ -667,7 +667,7 @@ namespace Telegram.Navigation
             }
         }
 
-        public DispatcherContext Dispatcher { get; }
+        public IDispatcherContext Dispatcher { get; }
         public NavigationServiceList NavigationServices { get; } = new NavigationServiceList();
 
         public INavigationService GetNavigationService()

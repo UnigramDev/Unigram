@@ -26,7 +26,20 @@ namespace Telegram.Navigation
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-DispatcherWrapper
     public partial class DispatcherContext : IDispatcherContext
     {
-        public static IDispatcherContext Current => WindowContext.Current.Dispatcher;
+        [ThreadStatic]
+        private static IDispatcherContext _current;
+        public static IDispatcherContext Current => _current ??= TryCreate();
+
+        private static IDispatcherContext TryCreate()
+        {
+            var dispatcher = DispatcherQueue.GetForCurrentThread();
+            if (dispatcher != null)
+            {
+                return new DispatcherContext(dispatcher);
+            }
+
+            return null;
+        }
 
         public DispatcherContext(DispatcherQueue dispatcher)
         {

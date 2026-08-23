@@ -78,7 +78,7 @@ namespace Telegram.ViewModels.Drawers
         public static StickerDrawerViewModel Create(ISession session)
         {
             var context = session.Resolve<StickerDrawerViewModel>();
-            context.Dispatcher = WindowContext.Current.Dispatcher;
+            context.Dispatcher = DispatcherContext.Current;
             return context;
         }
 

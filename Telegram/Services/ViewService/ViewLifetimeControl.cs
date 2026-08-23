@@ -28,7 +28,7 @@ namespace Telegram.Services
 
         #region CoreDispatcher
         // Dispatcher for this view. Kept here for sending messages between this view and the main view.
-        public DispatcherContext Dispatcher { get; }
+        public IDispatcherContext Dispatcher { get; }
         #endregion
 
         #region Internal tracking fields
@@ -89,7 +89,7 @@ namespace Telegram.Services
         private ViewLifetimeControl(CoreWindow newWindow)
         {
             Window = Window.Current;
-            Dispatcher = WindowContext.Current.Dispatcher;
+            Dispatcher = DispatcherContext.Current;
             Id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
 
             if (newWindow == null)

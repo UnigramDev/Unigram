@@ -78,7 +78,7 @@ namespace Telegram.ViewModels.Drawers
         public static EmojiDrawerViewModel Create(ISession session, EmojiDrawerMode mode = EmojiDrawerMode.Chat)
         {
             var context = session.Resolve<EmojiDrawerViewModel>();
-            context.Dispatcher = WindowContext.Current.Dispatcher;
+            context.Dispatcher = DispatcherContext.Current;
             context.Mode = mode;
             return context;
         }

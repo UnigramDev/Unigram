@@ -28,7 +28,7 @@ namespace Telegram.ViewModels.Drawers
         public static EffectDrawerViewModel Create(ISession session)
         {
             var context = session.Resolve<EffectDrawerViewModel>();
-            context.Dispatcher = WindowContext.Current.Dispatcher;
+            context.Dispatcher = DispatcherContext.Current;
             return context;
         }
 

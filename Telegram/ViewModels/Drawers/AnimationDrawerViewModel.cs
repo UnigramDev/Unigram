@@ -47,7 +47,7 @@ namespace Telegram.ViewModels.Drawers
         public static AnimationDrawerViewModel Create(ISession session)
         {
             var context = session.Resolve<AnimationDrawerViewModel>();
-            context.Dispatcher = WindowContext.Current.Dispatcher;
+            context.Dispatcher = DispatcherContext.Current;
             return context;
         }
 
