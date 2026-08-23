@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -393,6 +394,7 @@ namespace Telegram.Navigation
         private static readonly TimeSpan ShutdownDrainTimeout = TimeSpan.FromSeconds(2);
 
         private Task _drain;
+        private Deferral _deferral;
 
         private void OnShutdownStarting(DispatcherQueue sender, Windows.System.DispatcherQueueShutdownStartingEventArgs args)
         {
@@ -406,12 +408,29 @@ namespace Telegram.Navigation
             // So collect while this thread still pumps and XAML is still up. The deferral is what
             // keeps it pumping; the wait has to run off-thread, because blocking here would block
             // the very apartment the finalizer needs to call into.
-            var deferral = args.GetDeferral();
+            _deferral = args.GetDeferral();
+
+            // ShutdownStarting is raised before the Unloaded cascade that OnConsolidated queued
+            // when it dropped the content, so releasing here would hand disposed handles to
+            // handlers that have not run yet. Queue behind them instead - the deferral is what
+            // keeps the thread pumping long enough for that to be dispatched. If the queue will
+            // not take the work, release now anyway: a live handle past teardown is the crash
+            // this exists to prevent, and _released covers the handlers that follow.
+            if (!sender.TryEnqueue(Windows.System.DispatcherQueuePriority.Low, OnShutdownDrain))
+            {
+                Logger.Info("queue refused, releasing inline");
+                OnShutdownDrain();
+            }
+        }
+
+        private void OnShutdownDrain()
+        {
+            FormattedTextBlock.ReleaseNative(_xamlRoot);
 
             _drain = Task.Run(Drain);
 
             Task.WhenAny(_drain, Task.Delay(ShutdownDrainTimeout))
-                .ContinueWith(OnDrained, deferral, TaskScheduler.Default);
+                .ContinueWith(OnDrained, _deferral, TaskScheduler.Default);
         }
 
         // DIAGNOSTIC: the releases still fault after this drain, and the two explanations want
@@ -530,6 +549,7 @@ namespace Telegram.Navigation
                 };
 
                 _content.Loaded += OnLoaded;
+                _content.Unloaded += OnUnloaded;
 
                 // Deliberately +=, not AddHandler(handledEventsToo): a focused TextBox or
                 // RichEditBox marks the character handled, so it never reaches here - which is
@@ -542,7 +562,7 @@ namespace Telegram.Navigation
                 lock (_allLock)
                 {
                     _xamlRoot = _content.XamlRoot;
-                    _mapping[_content.XamlRoot] = this;
+                    _mapping.AddOrUpdate(_content.XamlRoot, this);
                 }
             }
 
@@ -561,6 +581,16 @@ namespace Telegram.Navigation
             }
 
             ViewService.OnWindowLoaded();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is Control control)
+            {
+                control.Unloaded -= OnUnloaded;
+            }
+
+            FormattedTextBlock.ReleaseNative(_xamlRoot);
         }
 
         public ElementTheme ActualTheme => _content?.ActualTheme ?? NightModeService.Current.GetCalculatedElementTheme();
@@ -1191,29 +1221,32 @@ namespace Telegram.Navigation
             return Task.WhenAll(tasks);
         }
 
-        private static readonly Dictionary<XamlRoot, WindowContext> _mapping = new();
+        // Weak on the key, so a window that skips OnClosed cannot pin its own tree, and the
+        // entry a context holds back to its XamlRoot is what dependent handles exist for. Reads
+        // need no lock, which matters because every MessageBubble resolves its window through
+        // here as it loads.
+        private static readonly ConditionalWeakTable<XamlRoot, WindowContext> _mapping = new();
         private XamlRoot _xamlRoot;
+
+        public static bool TryGetForXamlRoot(XamlRoot xamlRoot, out WindowContext context)
+        {
+            context = ForXamlRoot(xamlRoot);
+            return context != null;
+        }
 
         public static WindowContext ForXamlRoot(XamlRoot xamlRoot)
         {
-            WindowContext context;
-            lock (_allLock)
+            if (xamlRoot != null && _mapping.TryGetValue(xamlRoot, out WindowContext context))
             {
-                _mapping.TryGetValue(xamlRoot, out context);
+                return context;
             }
 
-            return context;
+            return null;
         }
 
         public static WindowContext ForXamlRoot(UIElement element)
         {
-            WindowContext context;
-            lock (_allLock)
-            {
-                _mapping.TryGetValue(element.XamlRoot, out context);
-            }
-
-            return context;
+            return ForXamlRoot(element?.XamlRoot);
         }
 
         private static readonly object _allLock = new();

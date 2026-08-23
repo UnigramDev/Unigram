@@ -86,6 +86,34 @@ namespace Telegram.Controls
             Runs.Clear();
             //Emoji.Clear();
         }
+
+#if NET9_0_OR_GREATER
+        public void ReleaseNative()
+        {
+            foreach (var paragraph in Paragraphs)
+            {
+                FormattedTextBlock.ReleaseHandle(paragraph);
+            }
+
+            foreach (var span in Spans)
+            {
+                FormattedTextBlock.ReleaseHandle(span);
+            }
+
+            foreach (var run in Runs)
+            {
+                FormattedTextBlock.ReleaseHandle(run);
+            }
+
+            foreach (var hyperlink in Hyperlinks)
+            {
+                FormattedTextBlock.ReleaseHandle(hyperlink.Native);
+                FormattedTextBlock.ReleaseHandle(hyperlink.Inlines);
+            }
+
+            Clear();
+        }
+#endif
     }
 
     [ContentProperty(Name = "Blocks")]
@@ -972,6 +1000,15 @@ namespace Telegram.Controls
 
         protected override void OnUnloaded()
         {
+#if NET9_0_OR_GREATER
+            // The handles are gone. ClearEntities would hand a disposed one to
+            // RelativeDateService.Unsubscribe, and the tail of this method drives XamlDirect.
+            if (_released)
+            {
+                return;
+            }
+#endif
+
             _textApplied = false;
             ClearEntities();
 
@@ -1007,6 +1044,15 @@ namespace Telegram.Controls
         // the rendered/highlighter space is per-block. Full range == the single-arg overload.
         public void SetText(IClientService clientService, StyledText styled, int rangeStart, int rangeEnd, double fontSize = 0)
         {
+#if NET9_0_OR_GREATER
+            // Building now would create handles after the window's release pass has run, and
+            // nothing would be left to dispose them.
+            if (_released)
+            {
+                return;
+            }
+#endif
+
             var prevPlain = _plain;
             var prevDirection = _direction;
             var prevFontSize = _fontSize;
@@ -1042,6 +1088,10 @@ namespace Telegram.Controls
             }
 
             var direct = XamlDirect.GetDefault();
+
+#if NET9_0_OR_GREATER
+            RegisterNative();
+#endif
             var locale = LocaleService.Current.FlowDirection;
 
             // PERF: fast path if both model and view have one paragraph with one run
@@ -2577,6 +2627,139 @@ namespace Telegram.Controls
 
         #endregion
 
+#if NET9_0_OR_GREATER
+        #region Native teardown
+
+        // A XamlDirect object is a bare CDependencyObject with no framework peer, so
+        // DXamlCore::ShutdownAllPeers - which severs every entry in the peer table before
+        // CCoreServices is released - never sees one. Its RCW, finalized after the view's core
+        // is gone, marshals the Release back into the uninitializing apartment through
+        // IContextCallback and faults unparenting a core-less object. microsoft/CsWinRT#2532.
+        //
+        // The handles therefore have to be released deterministically rather than left to
+        // collection: XAML holds the peers until ShutdownAllPeers, so they only become garbage
+        // after the core is already gone, and no GC pass scheduled at any hook can beat that.
+        // Disposing on the owning thread costs nothing extra - ObjectReferenceWithContext
+        // marshals only when the calling context differs from the one it captured.
+        //
+        // Weak on both sides deliberately: Unloaded is not always raised, so there is no
+        // reliable point to unregister from, and a strong list would pin every block a window
+        // ever rendered for as long as the window lives.
+        private static readonly ConditionalWeakTable<XamlRoot, ConditionalWeakTable<FormattedTextBlock, object>> _live = new();
+
+        private static readonly object _present = new();
+
+        private bool _registered;
+        private bool _released;
+
+        // Called where the handles are emitted, so a block is registered exactly when it starts
+        // owning something to release. SetText builds nothing before OnApplyTemplate, and a
+        // template is only applied to a parented element, so there is always a XamlRoot here.
+        private void RegisterNative()
+        {
+            if (_registered)
+            {
+                return;
+            }
+
+            var xamlRoot = XamlRoot;
+            Debug.Assert(xamlRoot != null);
+
+            if (xamlRoot != null)
+            {
+                _registered = true;
+                _live.GetOrCreateValue(xamlRoot).AddOrUpdate(this, _present);
+            }
+        }
+
+        /// <summary>
+        /// Releases every XamlDirect handle held by the blocks of one window. Must run on that
+        /// window's thread, while its XAML core is still alive.
+        /// </summary>
+        internal static void ReleaseNative(XamlRoot xamlRoot)
+        {
+            if (xamlRoot == null || !_live.TryGetValue(xamlRoot, out var blocks))
+            {
+                return;
+            }
+
+            _live.Remove(xamlRoot);
+
+            var count = 0;
+
+            foreach (var block in blocks)
+            {
+                block.Key.ReleaseNative();
+                count++;
+            }
+
+            RelativeDateService.Release(xamlRoot);
+
+            Logger.Info($"released {count} block(s)");
+        }
+
+        internal void ReleaseNative()
+        {
+            if (_released)
+            {
+                return;
+            }
+
+            _released = true;
+
+            ReleaseHandle(_fastRun);
+            _fastRun = null;
+
+            ReleaseHandles(_activeParagraphs);
+            ReleaseHandles(_activeSpans);
+            ReleaseHandles(_activeRuns);
+
+            for (int i = 0; i < _activeHyperlinks.Count; i++)
+            {
+                ReleaseHandle(_activeHyperlinks[i].Native);
+                ReleaseHandle(_activeHyperlinks[i].Inlines);
+            }
+
+            _activeHyperlinks.Clear();
+
+            // Every entry is a run, so _activeRuns has already disposed it. Clearing is all
+            // that is left, and it has to happen: ClearEntities would otherwise hand a disposed
+            // handle to RelativeDateService.Unsubscribe.
+            _dates?.Clear();
+
+            // Shared by the blocks of one chat, so this runs once per block - the queues are
+            // emptied by the first pass and the rest see nothing to do.
+            _pools?.ReleaseNative();
+            _pools = null;
+        }
+
+        private static void ReleaseHandles(List<IXamlDirectObject> handles)
+        {
+            if (handles == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < handles.Count; i++)
+            {
+                ReleaseHandle(handles[i]);
+            }
+
+            handles.Clear();
+        }
+
+        internal static void ReleaseHandle(object handle)
+        {
+            // Dispose is idempotent, so a handle reachable from two of the lists is fine.
+            if (handle is WinRT.IWinRTObject projected)
+            {
+                projected.NativeObject.Dispose();
+            }
+        }
+
+        #endregion
+#endif
+
         #region RecyclePool
 
         private FormattedTextBlockRecyclePool _pools;
@@ -2805,6 +2988,22 @@ namespace Telegram.Controls
             private readonly Dictionary<IXamlDirectObject, TextDate> _dates = new();
 
             private static readonly ConditionalWeakTable<XamlRoot, RelativeDateService> _instances = new();
+
+#if NET9_0_OR_GREATER
+            // The keys are XamlDirect handles owned by the blocks, and they are disposed by the
+            // time this runs - so the dictionary only has to stop naming them.
+            public static void Release(XamlRoot xamlRoot)
+            {
+                if (_instances.TryGetValue(xamlRoot, out RelativeDateService instance))
+                {
+                    _instances.Remove(xamlRoot);
+
+                    instance._timer.Stop();
+                    instance._timer.Tick -= instance.OnTick;
+                    instance._dates.Clear();
+                }
+            }
+#endif
 
             private RelativeDateService()
             {
