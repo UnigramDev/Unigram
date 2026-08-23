@@ -248,7 +248,7 @@ namespace Telegram.Navigation
                 All.Add(this);
             }
 
-            _inputListener = new InputListener(window);
+            _inputListener = new InputListener(this);
 
             window.Activated += OnActivated;
             window.VisibilityChanged += OnVisibilityChanged;

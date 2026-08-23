@@ -8,25 +8,24 @@
 using Telegram.Navigation;
 using Windows.UI.Core;
 using Windows.UI.Input;
-using Windows.UI.Xaml;
 
 namespace Telegram.Services.Keyboard
 {
     public partial class InputListener
     {
-        private readonly Window _window;
+        private readonly WindowContext _window;
 
-        public InputListener(Window window)
+        public InputListener(WindowContext window)
         {
             _window = window;
 
-            _window.Dispatcher.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+            _window.CoreWindow.Dispatcher.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
             _window.CoreWindow.PointerPressed += OnPointerPressed;
         }
 
         public void Release()
         {
-            _window.Dispatcher.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            _window.CoreWindow.Dispatcher.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
             _window.CoreWindow.PointerPressed -= OnPointerPressed;
         }
 
@@ -103,7 +102,7 @@ namespace Telegram.Services.Keyboard
                 e.Handled = true;
                 if (backPressed)
                 {
-                    BootStrapper.Current.RaiseBackRequested();
+                    BootStrapper.Current.RaiseBackRequested(_window.XamlRoot);
                 }
 
                 if (forwardPressed)

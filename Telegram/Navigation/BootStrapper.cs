@@ -357,7 +357,7 @@ namespace Telegram.Navigation
             //}
             var handled = NavigationService?.CanGoBack == false;
 
-            RaiseBackRequested(null, VirtualKey.GoBack, ref handled);
+            RaiseBackRequested(WindowContext.Current.XamlRoot, VirtualKey.GoBack, ref handled);
             args.Handled = handled;
         }
 
@@ -380,13 +380,7 @@ namespace Telegram.Navigation
             return false;
         }
 
-        public void RaiseBackRequested()
-        {
-            var handled = false;
-            RaiseBackRequested(null, VirtualKey.GoBack, ref handled);
-        }
-
-        public bool RaiseBackRequested(XamlRoot xamlRoot, VirtualKey key)
+        public bool RaiseBackRequested(XamlRoot xamlRoot, VirtualKey key = VirtualKey.GoBack)
         {
             var handled = false;
             RaiseBackRequested(xamlRoot, key, ref handled);
@@ -404,9 +398,7 @@ namespace Telegram.Navigation
             Logger.Info();
 
             var args = new BackRequestedRoutedEventArgs(key);
-            var popups = xamlRoot == null
-                ? VisualTreeHelper.GetOpenPopups(Window.Current)
-                : VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot);
+            var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot);
 
             foreach (var popup in popups)
             {
