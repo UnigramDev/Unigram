@@ -9,7 +9,9 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
@@ -529,7 +531,7 @@ namespace Telegram.Controls
             {
                 foreach (var date in _dates)
                 {
-                    RelativeDateService.Unsubscribe(date);
+                    RelativeDateService.Unsubscribe(date, XamlRoot);
                 }
 
                 _dates.Clear();
@@ -2802,8 +2804,7 @@ namespace Telegram.Controls
             private readonly DispatcherTimer _timer = new();
             private readonly Dictionary<IXamlDirectObject, TextDate> _dates = new();
 
-            [ThreadStatic]
-            private static RelativeDateService _current;
+            private static readonly ConditionalWeakTable<XamlRoot, RelativeDateService> _instances = new();
 
             private RelativeDateService()
             {
@@ -2820,8 +2821,16 @@ namespace Telegram.Controls
 
             public static void Subscribe(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun run, TextEntityTypeDateTime entity, int segment)
             {
-                _current ??= new();
-                _current.SubscribeImpl(element, textBlock, paragraph, run, entity, segment);
+                Debug.Assert(textBlock.XamlRoot != null);
+
+                _instances.TryGetValue(textBlock.XamlRoot, out RelativeDateService instance);
+
+                if (instance == null)
+                {
+                    _instances.Add(textBlock.XamlRoot, instance = new());
+                }
+
+                instance.SubscribeImpl(element, textBlock, paragraph, run, entity, segment);
             }
 
             private void SubscribeImpl(IXamlDirectObject element, FormattedTextBlock textBlock, StyledParagraph paragraph, TextStyleRun run, TextEntityTypeDateTime entity, int segment)
@@ -2837,10 +2846,12 @@ namespace Telegram.Controls
                 _timer.Start();
             }
 
-            public static void Unsubscribe(IXamlDirectObject element)
+            public static void Unsubscribe(IXamlDirectObject element, XamlRoot xamlRoot)
             {
-                _current ??= new();
-                _current.UnsubscribeImpl(element);
+                if (_instances.TryGetValue(xamlRoot, out var instance))
+                {
+                    instance.UnsubscribeImpl(element);
+                }
             }
 
             private void UnsubscribeImpl(IXamlDirectObject element)
