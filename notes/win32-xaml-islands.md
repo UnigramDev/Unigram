@@ -1250,6 +1250,31 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   looks redundant today — if it is, incoming bubbles need no dictionary at all once `Theme` owns
   the default set, and only outgoing ones get an assignment.
 
+  **The scoping, settled 2026-08-23.** Fela's scheme, and gate 1.11 measured that each level
+  behaves:
+
+  | dictionary | merged at | reaches |
+  | --- | --- | --- |
+  | `Theme` | `App.xaml` | everything, `PopupRoot` included |
+  | `Theme.Incoming` | `WindowContext.Content` | all window content - bubbles, cells, headers, pages |
+  | `Theme.Outgoing` | `MessageBubble` when `IsOutgoing` | that bubble |
+  | `Theme.Incoming` again | `ContentPopup.ShowQueuedAsync`, plus three flyouts | popup content that renders bubble keys |
+
+  The last row is the price, and it is a fair one. The message keys are referenced by ~75 XAML
+  files; nearly all are window content, but **seven are popups** - `SendFilesPopup`,
+  `BackgroundPopup`, `BackgroundsPopup`, `SendLocationPopup`, `SendGiftPopup`,
+  `ReceivedGiftPopup`, `BusinessChatLinkPopup` - and all seven derive from `ContentPopup`, so
+  `ShowQueuedAsync` covers them in one place; it already takes the `XamlRoot`, which is the
+  legitimate use of `ForXamlRoot`.
+
+  **Three flyouts build their own `Popup` and are not covered by it**: `EmojiMenuFlyout`,
+  `MessageEffectMenuFlyout` and `ReactionsMenuFlyout` each `new Popup()` and host an
+  `EmojiDrawer`, whose markup uses the message keys. They are `UserControl`s, so they need the
+  same forwarding where they create the popup - three sites, each with an anchor element in hand.
+
+  Ten explicit call sites in place of a global that currently works by accident, and
+  `SendFilesPopup` keeps showing the chat's theme because someone decided it should.
+
   **Order.** Delete `ThemeOutgoing2` first — 184 lines, no callers, and a parked half-alternative
   beside the real one is most of what makes the file read as a mess. Then the single resolver,
   since it is what the rest depends on. Then `Theme` taking ownership of both directions. The
