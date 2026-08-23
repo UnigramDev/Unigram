@@ -194,6 +194,65 @@ namespace Telegram.Common
             return new ThemeOutgoing();
         }
 
+        /// <summary>
+        /// The colours for one base theme, resolved from the layers that apply to it: a chat
+        /// theme when one is active, otherwise the user's appearance - a custom theme file, an
+        /// accent, or neither. Null is the plain theme, which carries no values of its own.
+        /// </summary>
+        private static ThemeAccentInfo Resolve(TelegramTheme requested, ThemeSettings chat)
+        {
+            if (chat != null)
+            {
+                // A chat theme supplies the accent but still tints to the appearance the user
+                // picked, so the app layer decides the shade even here.
+                var tint = AppSettings.Appearance[requested].Type;
+                if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && requested == TelegramTheme.Light))
+                {
+                    tint = TelegramThemeType.Day;
+                }
+                else if (tint == TelegramThemeType.Custom)
+                {
+                    tint = TelegramThemeType.Tinted;
+                }
+
+                //var outgoing = chat.OutgoingMessageFill switch
+                //{
+                //    //BackgroundFillSolid solid => solid.Color.ToColor(),
+                //    BackgroundFillGradient gradient => gradient.TopColor.ToColor(),
+                //    BackgroundFillFreeformGradient freeform => freeform.Colors[0].ToColor(),
+                //    _ => chat.OutgoingMessageAccentColor.ToColor()
+                //};
+
+                return ThemeAccentInfo.FromAccent(tint, chat.AccentColor.ToColor(), chat.OutgoingMessageAccentColor.ToColor());
+            }
+
+            var options = AppSettings.Appearance;
+            if (options[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(options[requested].Custom))
+            {
+                return ThemeCustomInfo.FromFile(options[requested].Custom);
+            }
+            else if (ThemeAccentInfo.IsAccent(options[requested].Type))
+            {
+                return ThemeAccentInfo.FromAccent(options[requested].Type, options.Accents[options[requested].Type]);
+            }
+
+            return null;
+        }
+
+        private static void UpdateMessages(TelegramTheme requested, ThemeAccentInfo info)
+        {
+            if (info != null)
+            {
+                ThemeOutgoing.Update(info.Parent, info.Values);
+                ThemeIncoming.Update(info.Parent, info.Values);
+            }
+            else
+            {
+                ThemeOutgoing.Update(requested);
+                ThemeIncoming.Update(requested);
+            }
+        }
+
         #region Local 
 
         private int? _lastAccent;
@@ -220,29 +279,7 @@ namespace Telegram.Common
                     _lastDarkSettings = darkSettings;
                     _lastChatTheme = theme;
 
-                    var tint = AppSettings.Appearance[requested].Type;
-                    if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && requested == TelegramTheme.Light))
-                    {
-                        tint = TelegramThemeType.Day;
-                    }
-                    else if (tint == TelegramThemeType.Custom)
-                    {
-                        tint = TelegramThemeType.Tinted;
-                    }
-
-                    var accent = settings.AccentColor.ToColor();
-                    var outgoing = settings.OutgoingMessageAccentColor.ToColor();
-                    //var outgoing = settings.OutgoingMessageFill switch
-                    //{
-                    //    //BackgroundFillSolid solid => solid.Color.ToColor(),
-                    //    BackgroundFillGradient gradient => gradient.TopColor.ToColor(),
-                    //    BackgroundFillFreeformGradient freeform => freeform.Colors[0].ToColor(),
-                    //    _ => settings.OutgoingMessageAccentColor.ToColor()
-                    //};
-
-                    var info = ThemeAccentInfo.FromAccent(tint, accent, outgoing);
-                    ThemeOutgoing.Update(info.Parent, info.Values);
-                    ThemeIncoming.Update(info.Parent, info.Values);
+                    UpdateMessages(requested, Resolve(requested, settings));
                 }
 
                 nextBackground ??= settings.Background;
@@ -257,24 +294,7 @@ namespace Telegram.Common
                     _lastDarkSettings = null;
                     _lastChatTheme = null;
 
-                    var options = AppSettings.Appearance;
-                    if (options[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(options[requested].Custom))
-                    {
-                        var info = ThemeCustomInfo.FromFile(options[requested].Custom);
-                        ThemeOutgoing.Update(info.Parent, info.Values);
-                        ThemeIncoming.Update(info.Parent, info.Values);
-                    }
-                    else if (ThemeAccentInfo.IsAccent(options[requested].Type))
-                    {
-                        var info = ThemeAccentInfo.FromAccent(options[requested].Type, options.Accents[options[requested].Type]);
-                        ThemeOutgoing.Update(info.Parent, info.Values);
-                        ThemeIncoming.Update(info.Parent, info.Values);
-                    }
-                    else
-                    {
-                        ThemeOutgoing.Update(requested);
-                        ThemeIncoming.Update(requested);
-                    }
+                    UpdateMessages(requested, Resolve(requested, null));
                 }
 
                 _lastAccent = null;
@@ -302,17 +322,16 @@ namespace Telegram.Common
                 ? TelegramTheme.Light
                 : TelegramTheme.Dark;
 
-            if (settings.ChatTheme != null)
+            var chat = settings.ChatTheme != null
+                ? requested == TelegramTheme.Light
+                    ? settings.ChatTheme.LightSettings
+                    : settings.ChatTheme.DarkSettings
+                : null;
+
+            var info = Resolve(requested, chat);
+            if (info != null)
             {
-                Update(requested, settings.ChatTheme.LightSettings, settings.ChatTheme.DarkSettings);
-            }
-            else if (settings[requested].Type == TelegramThemeType.Custom && System.IO.File.Exists(settings[requested].Custom))
-            {
-                Update(ThemeCustomInfo.FromFile(settings[requested].Custom));
-            }
-            else if (ThemeAccentInfo.IsAccent(settings[requested].Type))
-            {
-                Update(ThemeAccentInfo.FromAccent(settings[requested].Type, settings.Accents[settings[requested].Type]));
+                Update(info.Parent, info.Values, info.Shades);
             }
             else
             {
@@ -323,26 +342,6 @@ namespace Telegram.Common
             {
                 Update(theme == ApplicationTheme.Light ? ElementTheme.Light : ElementTheme.Dark, ChatTheme, LightSettings, DarkSettings, ChatBackground);
             }
-        }
-
-        private void Update(TelegramTheme requested, ThemeSettings lightSettings, ThemeSettings darkSettings)
-        {
-            var settings = requested == TelegramTheme.Light ? lightSettings : darkSettings;
-
-            var tint = AppSettings.Appearance[requested].Type;
-            if (tint == TelegramThemeType.Classic || (tint == TelegramThemeType.Custom && requested == TelegramTheme.Light))
-            {
-                tint = TelegramThemeType.Day;
-            }
-            else if (tint == TelegramThemeType.Custom)
-            {
-                tint = TelegramThemeType.Tinted;
-            }
-
-            var accent = settings.AccentColor.ToColor();
-            var outgoing = settings.OutgoingMessageAccentColor.ToColor();
-
-            Update(ThemeAccentInfo.FromAccent(tint, accent, outgoing));
         }
 
         public void Update(string path)
