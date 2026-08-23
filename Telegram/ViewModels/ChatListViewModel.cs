@@ -1029,7 +1029,7 @@ namespace Telegram.ViewModels
             set => Set(ref _restrictsNewChats, value);
         }
 
-        public void CanSendMessageToUser()
+        public async void CanSendMessageToUser()
         {
             long? userId;
             if (Chat?.Type is ChatTypePrivate privata)
@@ -1052,19 +1052,11 @@ namespace Telegram.ViewModels
 
             _restrictsNewChats = false;
 
-            var dispatcher = WindowContext.Current.Dispatcher;
-            if (dispatcher == null)
+            var response = await _clientService.SendAsync(new CanSendMessageToUser(userId.Value, false));
+            if (response is CanSendMessageToUserResultUserRestrictsNewChats)
             {
-                return;
+                RestrictsNewChats = true;
             }
-
-            _clientService.Send(new CanSendMessageToUser(userId.Value, false), result =>
-            {
-                if (result is CanSendMessageToUserResultUserRestrictsNewChats)
-                {
-                    dispatcher.Dispatch(() => RestrictsNewChats = true);
-                }
-            });
         }
     }
 }
