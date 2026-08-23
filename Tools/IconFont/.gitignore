@@ -1,0 +1,4 @@
+.cache/
+build/
+*.html
+__pycache__/

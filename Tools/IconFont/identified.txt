@@ -1,0 +1,109 @@
+# Glyphs IcoMoon left nameless, identified by hand against the call sites.
+#
+# Read by `iconfont rename`. Three forms:
+#   <placeholder> -> <name in the live source>
+#   <placeholder> -> duplicate of <name of another glyph in this font>
+#   <placeholder> -> tbd                (not identified yet; left alone)
+#
+# A rename does not change the artwork. Only glyphs whose drawing still matches
+# the source are re-pointed at it, and `rename` says which those are.
+
+uniE90F -> chat_settings_20_regular
+uniE904 -> fingerprint_20_regular
+uniE917 -> attach_20_regular
+uniE118 -> arrow_download_20_regular
+uniE713 -> settings_20_regular
+uniE8D6 -> music_note_1_20_regular
+uniEA8F -> alert_20_regular
+uniE7ED -> alert_off_20_regular
+uniE905 -> payment_20_regular
+uniEE56 -> signature_20_regular
+uniEB05 -> data_pie_20_regular
+uniE71B -> link_20_regular
+uniF122 -> app_folder_20_regular
+uniE74D -> delete_20_regular
+uniE893 -> next_20_regular
+uniE892 -> previous_20_regular
+uniE76E -> duplicate of ic_fluent_emoji_20_regular
+uniE919 -> send_20_filled
+uniE1C4 -> location_20_regular
+uniE762 -> multiselect_ltr_20_regular
+uniE912 -> presence_away_20_filled
+uniE104 -> edit_20_regular
+uniF12B -> folder_20_regular
+uniE92B -> folder_arrow_right_20_regular
+uniE909 -> arrow_rotate_clockwise_20_regular
+uniE77A -> pin_off_20_regular
+uniE72A -> arrow_right_20_regular
+uniE932 -> duplicate of ic_fluent_compose_20_regular
+uniE840 -> pin_20_regular
+uniE001 -> duplicate of ic_fluent_checkmark_20_regular
+uniE10B -> duplicate of ic_fluent_checkmark_20_regular
+uniE168 -> duplicate of ic_fluent_mention_20_regular
+uniE73E -> duplicate of ic_fluent_checkmark_20_regular
+uniE787 -> duplicate of ic_fluent_calendar_20_regular
+uniE7A8 -> duplicate of ic_fluent_crop_20_regular
+uniE8D2 -> duplicate of ic_fluent_text_font_20_regular
+uniE929 -> duplicate of ic_fluent_folder_add_20_regular
+uniEA19 -> duplicate of ic_fluent_shield_error_20_regular
+uniED15 -> duplicate of ic_fluent_question_circle_20_regular
+uniF12E -> duplicate of ic_fluent_mic_20_filled
+uniE8FA -> duplicate of ic_fluent_person_add_20_regular
+uniEC61 -> duplicate of ic_fluent_checkmark_circle_20_filled
+uniE91D -> duplicate of ic_fluent_chat_20_regular
+uniE192 -> duplicate of ic_fluent_key_20_regular
+uniE946 -> duplicate of ic_fluent_info_20_regular (confirmed)
+uniE710 -> duplicate of ic_fluent_add_20_regular (confirmed)
+uniEA1A -> duplicate of ic_fluent_shield_task_20_regular (confirmed)
+uniEA37 -> list_20_regular
+uniE72B -> arrow_left_20_regular
+uniE7AC -> open_20_regular
+uniE2B1 -> color_20_regular
+uniE600 -> tbd
+uniE601 -> tbd
+uniE602 -> tbd
+uniE603 -> tbd
+uniE60B -> tbd
+uniE60C -> tbd
+uniE611 -> tl_instant_view_20_filled   # the name says E611, the glyph is at U+E60E
+uniE612 -> tl_fluent_video_note_20_regular
+uniE714 -> video_20_regular
+uniE716 -> people_20_regular
+uniE71F -> duplicate of ic_fluent_zoom_out_20_regular
+uniE721 -> search_20_regular
+uniE72E -> duplicate of ic_fluent_lock_closed_20_regular (confirmed)   # an older drawing of it
+U+E769 -> tl_fluent_pause_20_regular
+uniE783 -> chat_bubbles_question_20_regular
+uniE785 -> lock_open_20_regular
+uniE838 -> folder_open_20_regular
+uniE8CB -> duplicate of ic_fluent_arrow_sort_20_regular (confirmed)
+uniE902 -> people_community_20_regular
+U+E906 -> tl_fluent_animation_20_regular
+uniE908 -> flip_horizontal_20_regular
+uniE90A -> tbd
+U+E910 -> slide_multiple_20_filled
+uniE915 -> tbd   # Icons.SmallVideoFilled; 6.5% from U+E964 which holds ic_fluent_video_20_filled, and no video_* variant fits better. Needs a tl_ name.
+U+E91A -> tl_fluent_ghost_20_filled
+U+E93D -> comment_multiple_20_regular
+uniF4AA -> sticker_20_regular
+uE6000 -> tbd
+
+# IcoMoon's collision suffix. The trailing digit was never part of any upstream
+# name - it marks a second copy imported under a name already in use - so each
+# one is either a duplicate of the glyph holding the base name, or the base name
+# was free and it should simply take it.
+ic_fluent_call_24_filled1 -> duplicate of ic_fluent_call_24_filled
+ic_fluent_call_24_filled2 -> duplicate of ic_fluent_call_24_filled
+ic_fluent_alert_24_regular1 -> duplicate of ic_fluent_alert_24_regular
+ic_fluent_clock_20_regular1 -> duplicate of ic_fluent_clock_20_regular
+ic_fluent_settings_24_filled1 -> duplicate of ic_fluent_settings_24_filled
+ic_fluent_heart_20_regular1 -> heart_20_regular
+ic_fluent_chat_20_filled1 -> chat_20_filled
+ic_fluent_lock_closed_16_filled1 -> lock_closed_16_filled
+# speaker_off was inverted: the suffixed copy is 0.1% from upstream while U+E74F,
+# which held the plain name, is 20.2% away. So they swap - Telegram's variant
+# takes a tl_ name and the pristine copy takes the real one. Addressed by
+# codepoint because after the swap the old name belongs to the other glyph.
+U+E74F -> tl_fluent_speaker_off_20_regular
+U+E9A5 -> speaker_off_20_regular
+
