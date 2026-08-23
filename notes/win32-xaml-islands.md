@@ -534,12 +534,32 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   | `TryConsolidateAsync` / `Id` | 4 | window close / HWND |
   | `IsViewModeSupported` | 1 | drop with CompactOverlay |
 
-- [ ] **0.4 Put `IViewService` in front of the view model.** `ViewService.cs` +
-  `ViewLifetimeControl.cs` are 21 `ApplicationView` sites over `CoreApplication.CreateNewView`,
-  `ApplicationViewSwitcher.SwitchAsync` (11) and `TryShowAsStandaloneAsync` (4). The *interface*
-  is already the right shape — keep it, and make the UWP implementation one of two.
-  This is the multi-month piece in every path; getting the seam right now is what makes it
-  survivable later.
+- [ ] **0.4 Split `ViewService`, and leave `ViewLifetimeControl` alone.** Fela's design, and it
+  is far smaller than this item has looked all along, because **`ViewLifetimeControl` does not
+  actually leak** — measured 2026-08-24:
+
+  - Both callers discard the return: `VoipCall.cs:756` and `VoipGroupCall.cs:2051` are
+    `_ = service.OpenAsync(options);`.
+  - Both callbacks ignore the parameter: each `CreatePresentation(ViewLifetimeControl control,
+    WindowContext window)` body reads only `window`, returning `new VoipWindow(window, this)` or
+    `new LiveStreamWindow(window, this)` / `new GroupCallWindow(window, this)`. `control` is
+    never touched.
+
+  So the whole leak is three signatures. **Step 1**, behaviour-preserving:
+
+      Func<ViewLifetimeControl, WindowContext, UIElement> Content  ->  Func<WindowContext, UIElement>
+      Task<ViewLifetimeControl> OpenAsync(...)                     ->  Task<WindowContext>
+
+  plus the two forwarders in `NavigationService` (`:63`, `:64`, `:503`, `:505`) and the two
+  callback bodies losing an unused parameter. After it, `IViewService` names no UWP type.
+
+  **Step 2**: `ViewService.Uwp.cs` and `ViewService.Win32.cs`, per the partial-class fork in
+  Phase 2. `ViewLifetimeControl` **stays a UWP implementation detail** and does not move — which
+  is where the 21 `ApplicationView` sites live, so they never have to be ported at all. The Win32
+  side creates an HWND instead.
+
+  This was described here as "the multi-month piece in every path". That was wrong: the mass is
+  all inside the class that isn't moving.
 
 - [ ] **0.5 Wrap the remaining `GetForCurrentView` singletons.** The complete surveyed surface,
   generated code excluded. `ApplicationView` is item 0.3; `ViewLifetimeControl` is our own type.
