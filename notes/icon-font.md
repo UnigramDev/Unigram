@@ -6,14 +6,16 @@ every outline the font is made of.
 
 ## What the font is made of now
 
-663 manifest entries, 640 glyphs, 167 KB - down from 667 glyphs and 184 KB, because 27 codepoints
+663 manifest entries, 638 glyphs, 166 KB - down from 667 glyphs and 184 KB, because 29 codepoints
 that carried the same drawing now share one glyph.
 
 | | |
 | --- | --- |
-| 356 | fetched from `@fluentui/svg-icons`, pinned at 1.1.338 |
-| 280 | local artwork in `Tools/IconFont/icons/` |
-| 27 | aliases: a codepoint that carries another codepoint's glyph |
+| 428 | fetched from `@fluentui/svg-icons`, pinned at 1.1.338 |
+| 206 | local artwork in `Tools/IconFont/icons/` |
+| 29 | aliases: a codepoint that carries another codepoint's glyph |
+
+Two thirds of the font now follows upstream, so it stops going stale on its own.
 
 Microsoft's icons come from npm rather than the GitHub repository on purpose. The repository has
 over a hundred thousand entries so the git tree API truncates, and an icon's folder name cannot be
@@ -24,19 +26,22 @@ flat.
 
 `iconfont verify` compares two fonts by what each codepoint paints - rasterised coverage, not
 outline points, because contour order and winding direction are free choices that nonzero filling
-cannot see.
+cannot see. `iconfont changes --reference <ttf>` renders the same comparison as a page, each
+changed glyph drawn before and after.
 
-Against the IcoMoon font: **605 of 666 codepoints render identically**. Of the 61 that differ, 57
-are at or under 1% of the em - cubic-to-quadratic conversion, plus 47 icons deliberately adopted
-onto the live source where the drawing had drifted imperceptibly. Four are real changes, all
-requested:
+Against the IcoMoon font: **530 of 666 codepoints render identically**. The 136 that differ are
+almost all deliberate - icons re-pointed at the live source, taking upstream's current drawing in
+place of a copy frozen years ago:
 
 | | |
 | --- | --- |
-| U+E72E 15.2% | `Icons.LockClosed` - was an older drawing of the same icon |
-| U+E8CB 12.1% | the sort icon in `PlaybackHeader` and `ContactsSortedByHeader` |
-| U+EA1A 1.5% | shield/task, now sharing U+E9F9 |
-| U+E9AB 1.1% | `payment_16_regular`, now tracking upstream |
+| 20 | over 15%: a different drawing, or a name that did not describe the artwork |
+| 28 | 5-15%: the same icon visibly redrawn |
+| 30 | 1-5%: a corner radius, a stroke weight |
+| 58 | under 1%: imperceptible |
+
+Nothing below 0.2% is counted at all; that is smaller than the cubic-to-quadratic conversion moves
+an edge, and every glyph went through it.
 
 ## Things that must not change
 
@@ -66,14 +71,15 @@ requested:
 
 ## Still open
 
-- 9 glyphs were never identified, 7 of them referenced nowhere: `uniE600`, `uniE601`, `uniE602`,
-  `uniE603` (paints nothing), `uniE60B`, `uniE60C`, `uniE90A`, `uE6000` (outside the private use
-  area), and `uniE915` (`Icons.SmallVideoFilled` - the 20px video drawn at 93.7% scale, so it needs
-  a `tl_` name rather than a Fluent one).
-- `ic_fluent_alert_24_regular1` is 0.2% from `ic_fluent_alert_24_regular`; it keeps its own glyph
-  until somebody confirms the two look the same.
-- `Telegram/Assets/Fonts/Telegram.json` is IcoMoon's project file. Nothing reads it any more; it is
-  kept only as the record the extraction came from.
+- 8 glyphs were never identified and none is referenced by the app: `uniE600`, `uniE602`,
+  `uniE60B`, `uniE60C`, `uniE90A`, `uE6000` (outside the private use area), plus `uniE601` and
+  `uniE603`, which are the seen and empty message-state badges and keep their IcoMoon names on
+  purpose - `identified.txt` marks those `legacy` rather than `tbd`. Four of the rest are the same
+  36x20 message-state family and probably belong with them.
+- 46 glyphs are referenced nowhere in the app; 27 of those are local artwork rather than a live
+  source, so they are the ones that cost anything to keep.
+- 30 local glyphs still carry a Fluent name whose upstream drawing has changed. `iconfont drift`
+  puts each next to today's version; `iconfont adopt --only <name>` takes one.
 - Generating `Icons.cs` from the manifest, so a codepoint cannot drift between the font and the
   constants.
 
