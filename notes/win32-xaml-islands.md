@@ -969,7 +969,25 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
       if (!bInLayoutTransition) { IFC_RETURN(InvokeApplyTemplate(&bTemplateApplied)); }
 
   That is the only hook where an element is parented (so `XamlRoot` resolves) but its template —
-  and therefore its `ThemeResource` lookups — has not yet inflated.
+  and therefore its `ThemeResource` lookups — has not yet inflated. Re-verified 2026-08-23
+  against `framework.cpp`, because it is surprising enough to be worth not taking on trust.
+
+  Four properties of `Loading` follow from `RaiseLoadingEventIfNeeded` at `framework.cpp:1703`,
+  and they decide what it can be used for:
+
+  - **It is raised from `MeasureCore`**, not from tree insertion. An element that is never
+    measured never gets it.
+  - **Synchronously** — `Raise(..., fRaiseSync: TRUE)` — so the handler has finished before
+    `InvokeApplyTemplate` runs on the next line. That is what makes it usable for merging a
+    dictionary that the template's lookups must see.
+  - **Once per element**, latched on `m_firedLoadingEvent`; it does not fire again when an
+    element is reparented or recycled.
+  - **Only if something is listening.** `ShouldRaiseEvent` gates it, so with no handler attached
+    the event never fires and the latch is never set.
+
+  The practical limit: in a `Loading` handler the template does not exist yet, so
+  `GetTemplateChild` returns nothing. Merging into `Resources` is fine — that is not a template
+  part — but anything reaching for template children has to wait for `OnApplyTemplate`.
 
   **`ContainerContentChanging` is later than it looks.** `ListViewBase_Partial_ContainerPhase.cpp`
   forces a measure *before* raising it, specifically to materialise `ContentTemplateRoot`:
