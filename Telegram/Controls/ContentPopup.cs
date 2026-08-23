@@ -7,6 +7,7 @@
 
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -61,17 +62,6 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(ContentPopup);
             DefaultButton = ContentDialogButton.Primary;
-
-            if (WindowContext.Current.Content is FrameworkElement element)
-            {
-                var app = BootStrapper.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-                var frame = element.RequestedTheme;
-
-                if (app != frame)
-                {
-                    RequestedTheme = NightModeService.Current.GetCalculatedElementTheme();
-                }
-            }
 
             Closing += OnClosing;
 
@@ -199,19 +189,6 @@ namespace Telegram.Controls
             this.RegisterPropertyChangedCallback(SecondaryButtonTextProperty, OnButtonTextChanged, ref _secondaryTextToken);
             this.RegisterPropertyChangedCallback(CloseButtonTextProperty, OnButtonTextChanged, ref _closeTextToken);
 
-            //try
-            //{
-            //    if (XamlRoot.Content is IPopupHost host)
-            //    {
-            //        host.PopupOpened();
-            //    }
-            //}
-            //catch
-            //{
-            //    // XamlRoot.Content seems to throw a NullReferenceException
-            //    // whenever corresponding window has been already closed.
-            //}
-
             var canvas = VisualTreeHelper.GetParent(this) as Canvas;
             if (canvas != null)
             {
@@ -257,19 +234,6 @@ namespace Telegram.Controls
             this.UnregisterPropertyChangedCallback(PrimaryButtonTextProperty, ref _primaryTextToken);
             this.UnregisterPropertyChangedCallback(SecondaryButtonTextProperty, ref _secondaryTextToken);
             this.UnregisterPropertyChangedCallback(CloseButtonTextProperty, ref _closeTextToken);
-
-            //try
-            //{
-            //    if (XamlRoot.Content is IPopupHost host)
-            //    {
-            //        host.PopupClosed();
-            //    }
-            //}
-            //catch
-            //{
-            //    // XamlRoot.Content seems to throw a NullReferenceException
-            //    // whenever corresponding window has been already closed.
-            //}
         }
 
         private void OnProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
@@ -363,8 +327,7 @@ namespace Telegram.Controls
             _closingTask?.TrySetResult(_closingResult);
         }
 
-        [ThreadStatic]
-        private static TaskCompletionSource<ContentDialogResult> _currentDialogShowRequest;
+        private static readonly ConditionalWeakTable<XamlRoot, TaskCompletionSource<ContentDialogResult>> _currentDialogShowRequests = new();
 
         /// <summary>
         /// Begins an asynchronous operation showing a dialog.
@@ -377,47 +340,40 @@ namespace Telegram.Controls
         /// <exception cref="InvalidOperationException">This method can only be invoked from UI thread.</exception>
         public async Task<ContentDialogResult> ShowQueuedAsync(XamlRoot xamlRoot)
         {
-            while (_currentDialogShowRequest != null)
+            while (_currentDialogShowRequests.TryGetValue(xamlRoot, out var tsc))
             {
-                await _currentDialogShowRequest.Task;
+                await tsc.Task;
             }
 
             Logger.Info(GetType().Name);
+
+            if (RequestedTheme == ElementTheme.Default && xamlRoot.TryGetContent(out FrameworkElement element))
+            {
+                var app = BootStrapper.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
+                if (app != element.RequestedTheme)
+                {
+                    RequestedTheme = NightModeService.Current.GetCalculatedElementTheme();
+                }
+            }
 
             XamlRoot = xamlRoot;
             OnCreate();
 
             _closingTask = new TaskCompletionSource<ContentDialogResult>();
-            _currentDialogShowRequest = _closingTask;
+            _currentDialogShowRequests.AddOrUpdate(xamlRoot, _closingTask);
             _ = ShowAsync();
 
-            try
+            if (XamlRoot.TryGetContent(out IPopupHost host))
             {
-                if (XamlRoot.Content is IPopupHost host)
-                {
-                    host.PopupOpened();
-                }
-            }
-            catch
-            {
-                // XamlRoot.Content seems to throw a NullReferenceException
-                // whenever corresponding window has been already closed.
+                host.PopupOpened();
             }
 
             var result = await _closingTask.Task;
-            _currentDialogShowRequest = null;
+            _currentDialogShowRequests.Remove(xamlRoot);
 
-            try
+            if (XamlRoot.TryGetContent(out host))
             {
-                if (XamlRoot.Content is IPopupHost host)
-                {
-                    host.PopupClosed();
-                }
-            }
-            catch
-            {
-                // XamlRoot.Content seems to throw a NullReferenceException
-                // whenever corresponding window has been already closed.
+                host.PopupClosed();
             }
 
             return result;
