@@ -1043,6 +1043,23 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
     realisation and force `Update` to walk every live dictionary — a regression on the app's
     hottest surface.
 
+  **Superseded 2026-08-23 - the rule was too strong.** Fela's correction: the app theme is global
+  and every window shows the same one; the only thing that varies per window is the **chat
+  override**, because different windows can show different chats. And that override touches
+  exactly two things - `Outgoing.Update` and `Incoming.Update` on the message brushes, plus the
+  background. It never runs the app colour pass.
+
+  The message brushes live in bubbles, bubbles are content, and gate 1.11 measured that content
+  scopes are per island. So per-window chat themes work in both hosts, and what is left of the
+  problem is only the popups that also render bubble keys - `SendFilesPopup` and friends - which
+  today inherit the override by accident. `ContentPopup.ShowQueuedAsync` already takes the
+  `XamlRoot` and is the one place to forward the window's incoming set deliberately.
+
+  What remains true is narrower: the **app** theme is per thread, because `Application.Resources`
+  is what popups resolve from. That is fine, since it is meant to be global anyway.
+
+  The original, too-strong rule follows.
+
   **The rule: a window that renders chat content owns its thread.** Calls, web apps, passcode,
   gallery and stories render no bubbles and can share one freely. This caps the 1.8a benefit rather
   than removing it, and costs nothing today, since the app is already one window per thread.
@@ -1358,6 +1375,21 @@ the most likely failure comes first.
   non-empty top margin lets the DWM title bar — and the accent strip, when "show accent colour on
   title bars" is set — draw over the backdrop. Their comment calls the empty rect LOAD-BEARING:
   it is what makes DWM use `NCHITTEST` for the snap flyout.
+
+- [x] **1.11 Resource scope across islands.** Measured, and it decides 0.18. Three probes, each a
+  `Border` whose `Background` is `{ThemeResource ScopeBrush}` parsed at runtime, with red defined
+  in `Application.Resources` and green scoped to the first island's content:
+
+  | probe | resolved |
+  | --- | --- |
+  | island A content | **green** - the island's own scope |
+  | popup opened on island A | **red** - `Application.Resources` |
+  | island B, same thread | **red** - scopes do not leak between islands |
+
+  **Islands do not rescue popups.** A `PopupRoot` is a sibling of the content under the XamlRoot,
+  so its lookup reaches `Application` without passing through anything the app scoped - exactly as
+  in UWP. But **content scopes are genuinely per island**: a dictionary on one island's content is
+  invisible to another on the same thread.
 
 Record results back in this file. If 1.3 fails and cannot be worked around, close the path and
 say so here.
