@@ -1127,6 +1127,19 @@ namespace Telegram.Common
             });
         }
 
+        /// <summary>
+        /// Hands a popup's content the window's message brushes. Popups live under the PopupRoot,
+        /// a sibling of the window's content, so their lookup reaches Application without ever
+        /// passing through it - the chat override has to be forwarded rather than inherited.
+        /// </summary>
+        public static void ApplyChatTheme(this FrameworkElement element, XamlRoot xamlRoot)
+        {
+            if (WindowContext.TryGetForXamlRoot(xamlRoot, out var window))
+            {
+                element.Resources.MergedDictionaries.Add(window.Incoming.CreateDictionary());
+            }
+        }
+
         public static bool TryGetContent<T>(this XamlRoot xamlRoot, out T content)
         {
             try

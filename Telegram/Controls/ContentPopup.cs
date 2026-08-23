@@ -357,6 +357,8 @@ namespace Telegram.Controls
             }
 
             XamlRoot = xamlRoot;
+            this.ApplyChatTheme(xamlRoot);
+
             OnCreate();
 
             _closingTask = new TaskCompletionSource<ContentDialogResult>();
