@@ -199,8 +199,12 @@ namespace Telegram.Common
         /// </remarks>
         public ThemeOutgoing CreateOutgoing()
         {
-            return new ThemeOutgoing();
+            return new ThemeOutgoing(Outgoing);
         }
+
+        public MessageBrushes Outgoing { get; } = new("Outgoing", ThemeOutgoing.DefaultLight, ThemeOutgoing.DefaultDark);
+
+        public MessageBrushes Incoming { get; } = new("Incoming", ThemeIncoming.DefaultLight, ThemeIncoming.DefaultDark);
 
         /// <summary>
         /// The colours for one base theme, resolved from the layers that apply to it: a chat
@@ -247,18 +251,10 @@ namespace Telegram.Common
             return null;
         }
 
-        private static void UpdateMessages(TelegramTheme requested, ThemeAccentInfo info)
+        private void UpdateMessages(TelegramTheme requested, ThemeAccentInfo info)
         {
-            if (info != null)
-            {
-                ThemeOutgoing.Update(info.Parent, info.Values);
-                ThemeIncoming.Update(info.Parent, info.Values);
-            }
-            else
-            {
-                ThemeOutgoing.Update(requested);
-                ThemeIncoming.Update(requested);
-            }
+            Outgoing.Update(info?.Parent ?? requested, info?.Values);
+            Incoming.Update(info?.Parent ?? requested, info?.Values);
         }
 
         #region Local 
@@ -369,8 +365,8 @@ namespace Telegram.Common
         {
             try
             {
-                ThemeOutgoing.Update(requested, values);
-                ThemeIncoming.Update(requested, values);
+                Outgoing.Update(requested, values);
+                Incoming.Update(requested, values);
 
                 var target = GetOrCreateResources(requested, out bool create);
                 var lookup = ThemeService.GetLookup(requested);
@@ -490,12 +486,12 @@ namespace Telegram.Common
                 // The incoming message brushes live here rather than in a dictionary of their
                 // own: they are the app-wide default, resolved by every consumer outside a
                 // bubble, so App.xaml merges Theme alone. References only - the brushes are
-                // shared and ThemeIncoming.Update above has already recoloured them in place.
+                // shared and Incoming.Update above has already recoloured them in place.
                 // Written last so they win over anything the lookup put under the same key,
                 // which is the precedence App.xaml gave them by merging ThemeIncoming second.
-                foreach (var item in requested == TelegramTheme.Light ? ThemeIncoming.Light : ThemeIncoming.Dark)
+                foreach (var item in requested == TelegramTheme.Light ? Incoming.Light : Incoming.Dark)
                 {
-                    target[item.Key] = item.Value.Brush;
+                    target[item.Key] = item.Value;
                 }
 
                 if (create)
@@ -625,321 +621,242 @@ namespace Telegram.Common
         #endregion
     }
 
-    public partial class ThemeOutgoing : ResourceDictionary
+    /// <summary>
+    /// The message bubble brushes for one direction, owned by the window's <see cref="Theme"/>.
+    /// </summary>
+    /// <remarks>
+    /// Outgoing and incoming differ only in which suffix they read out of a theme's values, so
+    /// they are one type with two instances rather than two near-identical classes.
+    ///
+    /// The brushes are shared by every bubble in the window and recoloured in place, which is
+    /// what makes a theme change repaint all of them without walking the tree.
+    /// </remarks>
+    public sealed partial class MessageBrushes
     {
-        [ThreadStatic]
-        private static Dictionary<string, (Color Color, SolidColorBrush Brush)> _light;
-        public static Dictionary<string, (Color Color, SolidColorBrush Brush)> Light => _light ??= new()
+        private readonly string _suffix;
+
+        private readonly Dictionary<string, Color> _defaultLight;
+        private readonly Dictionary<string, Color> _defaultDark;
+
+        private CompositionColorBrush _lightBackground;
+        private CompositionColorBrush _darkBackground;
+
+        public Dictionary<string, SolidColorBrush> Light { get; }
+
+        public Dictionary<string, SolidColorBrush> Dark { get; }
+
+        public MessageBrushes(string suffix, Dictionary<string, Color> light, Dictionary<string, Color> dark)
         {
-            { "MessageForegroundBrush", (Color.FromArgb(0xFF, 0x00, 0x00, 0x00), new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x00, 0x00))) },
-            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD), new SolidColorBrush(Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD))) },
-            { "MessageBackgroundBrush", (Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF), new SolidColorBrush(Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF))) },
-            { "MessageElevationBrush", (Color.FromArgb(0x1D, 0x3A, 0xC3, 0x46), new SolidColorBrush(Color.FromArgb(0x1D, 0x3A, 0xC3, 0x46))) },
-            { "MessageSubtleLabelBrush", (Color.FromArgb(0xFF, 0x6D, 0xC2, 0x64), new SolidColorBrush(Color.FromArgb(0xFF, 0x6D, 0xC2, 0x64))) },
-            { "MessageSubtleGlyphBrush", (Color.FromArgb(0xFF, 0x5D, 0xC4, 0x52), new SolidColorBrush(Color.FromArgb(0xFF, 0x5D, 0xC4, 0x52))) },
-            { "MessageSubtleForegroundBrush", (Color.FromArgb(0xFF, 0x6D, 0xC2, 0x64), new SolidColorBrush(Color.FromArgb(0xFF, 0x6D, 0xC2, 0x64))) },
-            { "MessageHeaderForegroundBrush", (Color.FromArgb(0xFF, 0x3A, 0x8E, 0x26), new SolidColorBrush(Color.FromArgb(0xFF, 0x3A, 0x8E, 0x26))) },
-            { "MessageHeaderBorderBrush", (Color.FromArgb(0xFF, 0x5D, 0xC4, 0x52), new SolidColorBrush(Color.FromArgb(0xFF, 0x5D, 0xC4, 0x52))) },
-            { "MessageHeaderBackgroundBrush", (Color.FromArgb(0x20, 0x5D, 0xC4, 0x52), new SolidColorBrush(Color.FromArgb(0x20, 0x5D, 0xC4, 0x52))) },
-            { "MessageMediaForegroundBrush", (Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF), new SolidColorBrush(Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF))) },
-            { "MessageMediaBackgroundBrush", (Color.FromArgb(0xFF, 0x78, 0xC6, 0x7F), new SolidColorBrush(Color.FromArgb(0xFF, 0x78, 0xC6, 0x7F))) },
-            { "MessageOverlayBackgroundBrush", (Color.FromArgb(0x54, 0x00, 0x00, 0x00), new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00))) },
-            { "MessageCallForegroundBrush", (Color.FromArgb(0xFF, 0x2A, 0xB3, 0x2A), new SolidColorBrush(Color.FromArgb(0xFF, 0x2A, 0xB3, 0x2A))) },
-            { "MessageCallMissedForegroundBrush", (Color.FromArgb(0xFF, 0xDD, 0x58, 0x49), new SolidColorBrush(Color.FromArgb(0xFF, 0xDD, 0x58, 0x49))) },
-            { "MessageReactionBackgroundBrush", (Color.FromArgb(0xFF, 0xD5, 0xF1, 0xC9), new SolidColorBrush(Color.FromArgb(0xFF, 0xD5, 0xF1, 0xC9))) },
-            { "MessageReactionForegroundBrush", (Color.FromArgb(0xFF, 0x45, 0xA3, 0x2D), new SolidColorBrush(Color.FromArgb(0xFF, 0x45, 0xA3, 0x2D))) },
-            { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x5F, 0xBE, 0x67), new SolidColorBrush(Color.FromArgb(0xFF, 0x5F, 0xBE, 0x67))) },
-            { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
-        };
+            _suffix = suffix;
+            _defaultLight = light;
+            _defaultDark = dark;
 
-        [ThreadStatic]
-        private static Dictionary<string, (Color Color, SolidColorBrush Brush)> _dark;
-        public static Dictionary<string, (Color Color, SolidColorBrush Brush)> Dark => _dark ??= new()
-        {
-            { "MessageForegroundBrush", (Color.FromArgb(0xFF, 0xE4, 0xEC, 0xF2), new SolidColorBrush(Color.FromArgb(0xFF, 0xE4, 0xEC, 0xF2))) },
-            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7), new SolidColorBrush(Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7))) },
-            { "MessageBackgroundBrush", (Color.FromArgb(0xFF, 0x2B, 0x52, 0x78), new SolidColorBrush(Color.FromArgb(0xFF, 0x2B, 0x52, 0x78))) },
-            { "MessageElevationBrush", (Color.FromArgb(0x1D, 0x3A, 0xC3, 0x46), new SolidColorBrush(Color.FromArgb(0x1D, 0x3A, 0xC3, 0x46))) },
-            { "MessageSubtleLabelBrush", (Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3), new SolidColorBrush(Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3))) },
-            { "MessageSubtleGlyphBrush", (Color.FromArgb(0xFF, 0x72, 0xBC, 0xFD), new SolidColorBrush(Color.FromArgb(0xFF, 0x72, 0xBC, 0xFD))) },
-            { "MessageSubtleForegroundBrush", (Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3), new SolidColorBrush(Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3))) },
-            { "MessageHeaderForegroundBrush", (Color.FromArgb(0xFF, 0x90, 0xCA, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0x90, 0xCA, 0xFF))) },
-            { "MessageHeaderBorderBrush", (Color.FromArgb(0xFF, 0x65, 0xB9, 0xF4), new SolidColorBrush(Color.FromArgb(0xFF, 0x65, 0xB9, 0xF4))) },
-            { "MessageHeaderBackgroundBrush", (Color.FromArgb(0x20, 0x65, 0xB9, 0xF4), new SolidColorBrush(Color.FromArgb(0x20, 0x65, 0xB9, 0xF4))) },
-            { "MessageMediaForegroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
-            { "MessageMediaBackgroundBrush", (Color.FromArgb(0xFF, 0x4C, 0x9C, 0xE2), new SolidColorBrush(Color.FromArgb(0xFF, 0x4C, 0x9C, 0xE2))) },
-            { "MessageOverlayBackgroundBrush", (Color.FromArgb(0x54, 0x00, 0x00, 0x00), new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00))) },
-            { "MessageCallForegroundBrush", (Color.FromArgb(0xFF, 0x49, 0xA2, 0xF0), new SolidColorBrush(Color.FromArgb(0xFF, 0x49, 0xA2, 0xF0))) },
-            { "MessageCallMissedForegroundBrush", (Color.FromArgb(0xFF, 0xED, 0x50, 0x50), new SolidColorBrush(Color.FromArgb(0xFF, 0xED, 0x50, 0x50))) },
-            { "MessageReactionBackgroundBrush", (Color.FromArgb(0xFF, 0x2B, 0x41, 0x53), new SolidColorBrush(Color.FromArgb(0xFF, 0x2B, 0x41, 0x53))) },
-            { "MessageReactionForegroundBrush", (Color.FromArgb(0xFF, 0x7A, 0xC3, 0xF4), new SolidColorBrush(Color.FromArgb(0xFF, 0x7A, 0xC3, 0xF4))) },
-            { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x31, 0x8E, 0xE4), new SolidColorBrush(Color.FromArgb(0xFF, 0x31, 0x8E, 0xE4))) },
-            { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0x33, 0x39, 0x3F), new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x39, 0x3F))) },
-        };
-
-        [ThreadStatic]
-        private static CompositionColorBrush _lightBackground;
-        [ThreadStatic]
-        private static CompositionColorBrush _darkBackground;
-
-        // Composition mirror of MessageBackgroundBrush, for brushes that paint the bubble fill
-        // through the compositor. One instance per theme, so that a colour change stays the single
-        // assignment it already is for the SolidColorBrush.
-        public static CompositionColorBrush Background(TelegramTheme parent)
-        {
-            if (parent == TelegramTheme.Light)
-            {
-                return _lightBackground ??= BootStrapper.Current.Compositor.CreateColorBrush(Light["MessageBackgroundBrush"].Brush.Color);
-            }
-
-            return _darkBackground ??= BootStrapper.Current.Compositor.CreateColorBrush(Dark["MessageBackgroundBrush"].Brush.Color);
+            Light = Create(light);
+            Dark = Create(dark);
         }
 
-        private static void UpdateBackground(TelegramTheme parent)
+        private static Dictionary<string, SolidColorBrush> Create(Dictionary<string, Color> defaults)
         {
-            if (parent == TelegramTheme.Light)
+            var result = new Dictionary<string, SolidColorBrush>(defaults.Count);
+
+            foreach (var item in defaults)
             {
-                if (_lightBackground != null)
-                {
-                    _lightBackground.Color = Light["MessageBackgroundBrush"].Brush.Color;
-                }
+                result[item.Key] = new SolidColorBrush(item.Value);
             }
-            else if (_darkBackground != null)
-            {
-                _darkBackground.Color = Dark["MessageBackgroundBrush"].Brush.Color;
-            }
+
+            return result;
         }
 
-        public static void Release()
-        {
-            _light = null;
-            _dark = null;
-            _lightBackground = null;
-            _darkBackground = null;
-        }
-
-        public ThemeOutgoing()
+        /// <summary>
+        /// Fills a dictionary's ThemeDictionaries with these brushes, for an element to assign to
+        /// its Resources. Dark is stored under Default, which is what XAML falls back to.
+        /// </summary>
+        public void Populate(ResourceDictionary dictionary)
         {
             var light = new ResourceDictionary();
             var dark = new ResourceDictionary();
 
             foreach (var item in Light)
             {
-                light[item.Key] = item.Value.Brush;
+                light[item.Key] = item.Value;
             }
 
             foreach (var item in Dark)
             {
-                dark[item.Key] = item.Value.Brush;
+                dark[item.Key] = item.Value;
             }
 
-            ThemeDictionaries["Light"] = light;
-            ThemeDictionaries["Default"] = dark;
+            dictionary.ThemeDictionaries["Light"] = light;
+            dictionary.ThemeDictionaries["Default"] = dark;
         }
 
-        public static void Update(TelegramTheme parent, IDictionary<string, Color> values = null)
-        {
-            if (values == null)
-            {
-                Update(parent);
-                return;
-            }
-
-            var target = parent == TelegramTheme.Dark ? Dark : Light;
-
-            foreach (var value in target)
-            {
-                var key = value.Key[..^5];
-                if (values.TryGetValue($"{key}Outgoing", out Color color))
-                {
-                    value.Value.Brush.Color = color;
-                }
-                else
-                {
-                    value.Value.Brush.Color = value.Value.Color;
-                }
-            }
-
-            UpdateBackground(parent);
-        }
-
-        public static void Update(TelegramTheme parent)
+        // Composition mirror of MessageBackgroundBrush, for brushes that paint the bubble fill
+        // through the compositor. One instance per theme, so that a colour change stays the single
+        // assignment it already is for the SolidColorBrush.
+        public CompositionColorBrush Background(TelegramTheme parent)
         {
             if (parent == TelegramTheme.Light)
             {
-                foreach (var value in Light)
+                return _lightBackground ??= BootStrapper.Current.Compositor.CreateColorBrush(Light["MessageBackgroundBrush"].Color);
+            }
+
+            return _darkBackground ??= BootStrapper.Current.Compositor.CreateColorBrush(Dark["MessageBackgroundBrush"].Color);
+        }
+
+        private void UpdateBackground(TelegramTheme parent)
+        {
+            if (parent == TelegramTheme.Light)
+            {
+                if (_lightBackground != null)
                 {
-                    value.Value.Brush.Color = value.Value.Color;
+                    _lightBackground.Color = Light["MessageBackgroundBrush"].Color;
                 }
             }
-            else
+            else if (_darkBackground != null)
             {
-                foreach (var value in Dark)
-                {
-                    value.Value.Brush.Color = value.Value.Color;
-                }
+                _darkBackground.Color = Dark["MessageBackgroundBrush"].Color;
+            }
+        }
+
+        public void Update(TelegramTheme parent, IDictionary<string, Color> values = null)
+        {
+            var brushes = parent == TelegramTheme.Dark ? Dark : Light;
+            var defaults = parent == TelegramTheme.Dark ? _defaultDark : _defaultLight;
+
+            foreach (var brush in brushes)
+            {
+                // The tables are keyed on the neutral name; a theme spells out the direction.
+                var key = brush.Key[..^5] + _suffix;
+
+                brush.Value.Color = values != null && values.TryGetValue(key, out Color color)
+                    ? color
+                    : defaults[brush.Key];
             }
 
             UpdateBackground(parent);
         }
     }
 
+
+    public partial class ThemeOutgoing : ResourceDictionary
+    {
+        // Defaults only: plain colours, shared by every window and every thread, and the
+        // fallback Outgoing brushes are reset to when a theme carries no override.
+        public static readonly Dictionary<string, Color> DefaultLight = new()
+        {
+            { "MessageForegroundBrush", Color.FromArgb(0xFF, 0x00, 0x00, 0x00) },
+            { "MessageForegroundLinkBrush", Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD) },
+            { "MessageBackgroundBrush", Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF) },
+            { "MessageElevationBrush", Color.FromArgb(0x1D, 0x3A, 0xC3, 0x46) },
+            { "MessageSubtleLabelBrush", Color.FromArgb(0xFF, 0x6D, 0xC2, 0x64) },
+            { "MessageSubtleGlyphBrush", Color.FromArgb(0xFF, 0x5D, 0xC4, 0x52) },
+            { "MessageSubtleForegroundBrush", Color.FromArgb(0xFF, 0x6D, 0xC2, 0x64) },
+            { "MessageHeaderForegroundBrush", Color.FromArgb(0xFF, 0x3A, 0x8E, 0x26) },
+            { "MessageHeaderBorderBrush", Color.FromArgb(0xFF, 0x5D, 0xC4, 0x52) },
+            { "MessageHeaderBackgroundBrush", Color.FromArgb(0x20, 0x5D, 0xC4, 0x52) },
+            { "MessageMediaForegroundBrush", Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF) },
+            { "MessageMediaBackgroundBrush", Color.FromArgb(0xFF, 0x78, 0xC6, 0x7F) },
+            { "MessageOverlayBackgroundBrush", Color.FromArgb(0x54, 0x00, 0x00, 0x00) },
+            { "MessageCallForegroundBrush", Color.FromArgb(0xFF, 0x2A, 0xB3, 0x2A) },
+            { "MessageCallMissedForegroundBrush", Color.FromArgb(0xFF, 0xDD, 0x58, 0x49) },
+            { "MessageReactionBackgroundBrush", Color.FromArgb(0xFF, 0xD5, 0xF1, 0xC9) },
+            { "MessageReactionForegroundBrush", Color.FromArgb(0xFF, 0x45, 0xA3, 0x2D) },
+            { "MessageReactionChosenBackgroundBrush", Color.FromArgb(0xFF, 0x5F, 0xBE, 0x67) },
+            { "MessageReactionChosenForegroundBrush", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
+        };
+
+        public static readonly Dictionary<string, Color> DefaultDark = new()
+        {
+            { "MessageForegroundBrush", Color.FromArgb(0xFF, 0xE4, 0xEC, 0xF2) },
+            { "MessageForegroundLinkBrush", Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7) },
+            { "MessageBackgroundBrush", Color.FromArgb(0xFF, 0x2B, 0x52, 0x78) },
+            { "MessageElevationBrush", Color.FromArgb(0x1D, 0x3A, 0xC3, 0x46) },
+            { "MessageSubtleLabelBrush", Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3) },
+            { "MessageSubtleGlyphBrush", Color.FromArgb(0xFF, 0x72, 0xBC, 0xFD) },
+            { "MessageSubtleForegroundBrush", Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3) },
+            { "MessageHeaderForegroundBrush", Color.FromArgb(0xFF, 0x90, 0xCA, 0xFF) },
+            { "MessageHeaderBorderBrush", Color.FromArgb(0xFF, 0x65, 0xB9, 0xF4) },
+            { "MessageHeaderBackgroundBrush", Color.FromArgb(0x20, 0x65, 0xB9, 0xF4) },
+            { "MessageMediaForegroundBrush", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
+            { "MessageMediaBackgroundBrush", Color.FromArgb(0xFF, 0x4C, 0x9C, 0xE2) },
+            { "MessageOverlayBackgroundBrush", Color.FromArgb(0x54, 0x00, 0x00, 0x00) },
+            { "MessageCallForegroundBrush", Color.FromArgb(0xFF, 0x49, 0xA2, 0xF0) },
+            { "MessageCallMissedForegroundBrush", Color.FromArgb(0xFF, 0xED, 0x50, 0x50) },
+            { "MessageReactionBackgroundBrush", Color.FromArgb(0xFF, 0x2B, 0x41, 0x53) },
+            { "MessageReactionForegroundBrush", Color.FromArgb(0xFF, 0x7A, 0xC3, 0xF4) },
+            { "MessageReactionChosenBackgroundBrush", Color.FromArgb(0xFF, 0x31, 0x8E, 0xE4) },
+            { "MessageReactionChosenForegroundBrush", Color.FromArgb(0xFF, 0x33, 0x39, 0x3F) },
+        };
+
+        // XAML names this type in the theme previews, which show the current theme.
+        public ThemeOutgoing() : this(Theme.Current?.Outgoing)
+        {
+        }
+
+        internal ThemeOutgoing(MessageBrushes brushes)
+        {
+            brushes?.Populate(this);
+        }
+    }
+
     public partial class ThemeIncoming : ResourceDictionary
     {
-        [ThreadStatic]
-        private static Dictionary<string, (Color Color, SolidColorBrush Brush)> _light;
-        public static Dictionary<string, (Color Color, SolidColorBrush Brush)> Light => _light ??= new()
+        // Defaults only: plain colours, shared by every window and every thread, and the
+        // fallback Incoming brushes are reset to when a theme carries no override.
+        public static readonly Dictionary<string, Color> DefaultLight = new()
         {
-            { "MessageForegroundBrush", (Color.FromArgb(0xFF, 0x00, 0x00, 0x00), new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x00, 0x00))) },
-            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD), new SolidColorBrush(Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD))) },
-            { "MessageBackgroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
-            { "MessageElevationBrush", (Color.FromArgb(0x29, 0x74, 0x8E, 0xA2), new SolidColorBrush(Color.FromArgb(0x29, 0x74, 0x8E, 0xA2))) },
-            { "MessageSubtleLabelBrush", (Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6), new SolidColorBrush(Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6))) },
-            { "MessageSubtleGlyphBrush", (Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6), new SolidColorBrush(Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6))) },
-            { "MessageSubtleForegroundBrush", (Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6), new SolidColorBrush(Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6))) },
-            { "MessageHeaderForegroundBrush", (Color.FromArgb(0xFF, 0x15, 0x8D, 0xCD), new SolidColorBrush(Color.FromArgb(0xFF, 0x15, 0x8D, 0xCD))) },
-            { "MessageHeaderBorderBrush", (Color.FromArgb(0xFF, 0x37, 0xA4, 0xDE), new SolidColorBrush(Color.FromArgb(0xFF, 0x37, 0xA4, 0xDE))) },
-            { "MessageHeaderBackgroundBrush", (Color.FromArgb(0x20, 0x37, 0xA4, 0xDE), new SolidColorBrush(Color.FromArgb(0x20, 0x37, 0xA4, 0xDE))) },
-            { "MessageMediaForegroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
-            { "MessageMediaBackgroundBrush", (Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3), new SolidColorBrush(Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3))) },
-            { "MessageOverlayBackgroundBrush", (Color.FromArgb(0x54, 0x00, 0x00, 0x00), new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00))) },
-            { "MessageCallForegroundBrush", (Color.FromArgb(0xFF, 0x2A, 0xB3, 0x2A), new SolidColorBrush(Color.FromArgb(0xFF, 0x2A, 0xB3, 0x2A))) },
-            { "MessageCallMissedForegroundBrush", (Color.FromArgb(0xFF, 0xDD, 0x58, 0x49), new SolidColorBrush(Color.FromArgb(0xFF, 0xDD, 0x58, 0x49))) },
-            { "MessageReactionBackgroundBrush", (Color.FromArgb(0xFF, 0xE8, 0xF5, 0xFC), new SolidColorBrush(Color.FromArgb(0xFF, 0xE8, 0xF5, 0xFC))) },
-            { "MessageReactionForegroundBrush", (Color.FromArgb(0xFF, 0x16, 0x8D, 0xCD), new SolidColorBrush(Color.FromArgb(0xFF, 0x16, 0x8D, 0xCD))) },
-            { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3), new SolidColorBrush(Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3))) },
-            { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
+            { "MessageForegroundBrush", Color.FromArgb(0xFF, 0x00, 0x00, 0x00) },
+            { "MessageForegroundLinkBrush", Color.FromArgb(0xFF, 0x16, 0x8A, 0xCD) },
+            { "MessageBackgroundBrush", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
+            { "MessageElevationBrush", Color.FromArgb(0x29, 0x74, 0x8E, 0xA2) },
+            { "MessageSubtleLabelBrush", Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6) },
+            { "MessageSubtleGlyphBrush", Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6) },
+            { "MessageSubtleForegroundBrush", Color.FromArgb(0xFF, 0xA1, 0xAD, 0xB6) },
+            { "MessageHeaderForegroundBrush", Color.FromArgb(0xFF, 0x15, 0x8D, 0xCD) },
+            { "MessageHeaderBorderBrush", Color.FromArgb(0xFF, 0x37, 0xA4, 0xDE) },
+            { "MessageHeaderBackgroundBrush", Color.FromArgb(0x20, 0x37, 0xA4, 0xDE) },
+            { "MessageMediaForegroundBrush", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
+            { "MessageMediaBackgroundBrush", Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
+            { "MessageOverlayBackgroundBrush", Color.FromArgb(0x54, 0x00, 0x00, 0x00) },
+            { "MessageCallForegroundBrush", Color.FromArgb(0xFF, 0x2A, 0xB3, 0x2A) },
+            { "MessageCallMissedForegroundBrush", Color.FromArgb(0xFF, 0xDD, 0x58, 0x49) },
+            { "MessageReactionBackgroundBrush", Color.FromArgb(0xFF, 0xE8, 0xF5, 0xFC) },
+            { "MessageReactionForegroundBrush", Color.FromArgb(0xFF, 0x16, 0x8D, 0xCD) },
+            { "MessageReactionChosenBackgroundBrush", Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3) },
+            { "MessageReactionChosenForegroundBrush", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
         };
 
-        [ThreadStatic]
-        private static Dictionary<string, (Color Color, SolidColorBrush Brush)> _dark;
-        public static Dictionary<string, (Color Color, SolidColorBrush Brush)> Dark => _dark ??= new()
+        public static readonly Dictionary<string, Color> DefaultDark = new()
         {
-            { "MessageForegroundBrush", (Color.FromArgb(0xFF, 0xF5, 0xF5, 0xF5), new SolidColorBrush(Color.FromArgb(0xFF, 0xF5, 0xF5, 0xF5))) },
-            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7), new SolidColorBrush(Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7))) },
-            { "MessageBackgroundBrush", (Color.FromArgb(0xFF, 0x18, 0x25, 0x33), new SolidColorBrush(Color.FromArgb(0xFF, 0x18, 0x25, 0x33))) },
-            { "MessageElevationBrush", (Color.FromArgb(0x29, 0x74, 0x8E, 0xA2), new SolidColorBrush(Color.FromArgb(0x29, 0x74, 0x8E, 0xA2))) },
-            { "MessageSubtleLabelBrush", (Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F), new SolidColorBrush(Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F))) },
-            { "MessageSubtleGlyphBrush", (Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F), new SolidColorBrush(Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F))) },
-            { "MessageSubtleForegroundBrush", (Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F), new SolidColorBrush(Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F))) },
-            { "MessageHeaderForegroundBrush", (Color.FromArgb(0xFF, 0x71, 0xBA, 0xFA), new SolidColorBrush(Color.FromArgb(0xFF, 0x71, 0xBA, 0xFA))) },
-            { "MessageHeaderBorderBrush", (Color.FromArgb(0xFF, 0x42, 0x9B, 0xDB), new SolidColorBrush(Color.FromArgb(0xFF, 0x42, 0x9B, 0xDB))) },
-            { "MessageHeaderBackgroundBrush", (Color.FromArgb(0x20, 0x42, 0x9B, 0xDB), new SolidColorBrush(Color.FromArgb(0x20, 0x42, 0x9B, 0xDB))) },
-            { "MessageMediaForegroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
-            { "MessageMediaBackgroundBrush", (Color.FromArgb(0xFF, 0x3F, 0x96, 0xD0), new SolidColorBrush(Color.FromArgb(0xFF, 0x3F, 0x96, 0xD0))) },
-            { "MessageOverlayBackgroundBrush", (Color.FromArgb(0x54, 0x00, 0x00, 0x00), new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00))) },
-            { "MessageCallForegroundBrush", (Color.FromArgb(0xFF, 0x49, 0xA2, 0xF0), new SolidColorBrush(Color.FromArgb(0xFF, 0x49, 0xA2, 0xF0))) },
-            { "MessageCallMissedForegroundBrush", (Color.FromArgb(0xFF, 0xED, 0x50, 0x50), new SolidColorBrush(Color.FromArgb(0xFF, 0xED, 0x50, 0x50))) },
-            { "MessageReactionBackgroundBrush", (Color.FromArgb(0xFF, 0x3A, 0x47, 0x54), new SolidColorBrush(Color.FromArgb(0xFF, 0x3A, 0x47, 0x54))) },
-            { "MessageReactionForegroundBrush", (Color.FromArgb(0xFF, 0x67, 0xBB, 0xF3), new SolidColorBrush(Color.FromArgb(0xFF, 0x67, 0xBB, 0xF3))) },
-            { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x6E, 0xB2, 0xEE), new SolidColorBrush(Color.FromArgb(0xFF, 0x6E, 0xB2, 0xEE))) },
-            { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0x33, 0x39, 0x3F), new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x39, 0x3F))) },
+            { "MessageForegroundBrush", Color.FromArgb(0xFF, 0xF5, 0xF5, 0xF5) },
+            { "MessageForegroundLinkBrush", Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7) },
+            { "MessageBackgroundBrush", Color.FromArgb(0xFF, 0x18, 0x25, 0x33) },
+            { "MessageElevationBrush", Color.FromArgb(0x29, 0x74, 0x8E, 0xA2) },
+            { "MessageSubtleLabelBrush", Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F) },
+            { "MessageSubtleGlyphBrush", Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F) },
+            { "MessageSubtleForegroundBrush", Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F) },
+            { "MessageHeaderForegroundBrush", Color.FromArgb(0xFF, 0x71, 0xBA, 0xFA) },
+            { "MessageHeaderBorderBrush", Color.FromArgb(0xFF, 0x42, 0x9B, 0xDB) },
+            { "MessageHeaderBackgroundBrush", Color.FromArgb(0x20, 0x42, 0x9B, 0xDB) },
+            { "MessageMediaForegroundBrush", Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF) },
+            { "MessageMediaBackgroundBrush", Color.FromArgb(0xFF, 0x3F, 0x96, 0xD0) },
+            { "MessageOverlayBackgroundBrush", Color.FromArgb(0x54, 0x00, 0x00, 0x00) },
+            { "MessageCallForegroundBrush", Color.FromArgb(0xFF, 0x49, 0xA2, 0xF0) },
+            { "MessageCallMissedForegroundBrush", Color.FromArgb(0xFF, 0xED, 0x50, 0x50) },
+            { "MessageReactionBackgroundBrush", Color.FromArgb(0xFF, 0x3A, 0x47, 0x54) },
+            { "MessageReactionForegroundBrush", Color.FromArgb(0xFF, 0x67, 0xBB, 0xF3) },
+            { "MessageReactionChosenBackgroundBrush", Color.FromArgb(0xFF, 0x6E, 0xB2, 0xEE) },
+            { "MessageReactionChosenForegroundBrush", Color.FromArgb(0xFF, 0x33, 0x39, 0x3F) },
         };
 
-        [ThreadStatic]
-        private static CompositionColorBrush _lightBackground;
-        [ThreadStatic]
-        private static CompositionColorBrush _darkBackground;
-
-        // Composition mirror of MessageBackgroundBrush, for brushes that paint the bubble fill
-        // through the compositor. One instance per theme, so that a colour change stays the single
-        // assignment it already is for the SolidColorBrush.
-        public static CompositionColorBrush Background(TelegramTheme parent)
+        // XAML names this type in the theme previews, which show the current theme.
+        public ThemeIncoming() : this(Theme.Current?.Incoming)
         {
-            if (parent == TelegramTheme.Light)
-            {
-                return _lightBackground ??= BootStrapper.Current.Compositor.CreateColorBrush(Light["MessageBackgroundBrush"].Brush.Color);
-            }
-
-            return _darkBackground ??= BootStrapper.Current.Compositor.CreateColorBrush(Dark["MessageBackgroundBrush"].Brush.Color);
         }
 
-        private static void UpdateBackground(TelegramTheme parent)
+        internal ThemeIncoming(MessageBrushes brushes)
         {
-            if (parent == TelegramTheme.Light)
-            {
-                if (_lightBackground != null)
-                {
-                    _lightBackground.Color = Light["MessageBackgroundBrush"].Brush.Color;
-                }
-            }
-            else if (_darkBackground != null)
-            {
-                _darkBackground.Color = Dark["MessageBackgroundBrush"].Brush.Color;
-            }
-        }
-
-        public static void Release()
-        {
-            _light = null;
-            _dark = null;
-            _lightBackground = null;
-            _darkBackground = null;
-        }
-
-        public ThemeIncoming()
-        {
-            var light = new ResourceDictionary();
-            var dark = new ResourceDictionary();
-
-            foreach (var item in Light)
-            {
-                light[item.Key] = item.Value.Brush;
-            }
-
-            foreach (var item in Dark)
-            {
-                dark[item.Key] = item.Value.Brush;
-            }
-
-            ThemeDictionaries["Light"] = light;
-            ThemeDictionaries["Default"] = dark;
-        }
-
-        public static void Update(TelegramTheme parent, IDictionary<string, Color> values = null)
-        {
-            if (values == null)
-            {
-                Update(parent);
-                return;
-            }
-
-            var target = parent == TelegramTheme.Dark ? Dark : Light;
-
-            foreach (var value in target)
-            {
-                var key = value.Key[..^5];
-                if (values.TryGetValue($"{key}Incoming", out Color color))
-                {
-                    value.Value.Brush.Color = color;
-                }
-                else
-                {
-                    value.Value.Brush.Color = value.Value.Color;
-                }
-            }
-
-            UpdateBackground(parent);
-        }
-
-        public static void Update(TelegramTheme parent)
-        {
-            if (parent == TelegramTheme.Light)
-            {
-                foreach (var value in Light)
-                {
-                    value.Value.Brush.Color = value.Value.Color;
-                }
-            }
-            else
-            {
-                foreach (var value in Dark)
-                {
-                    value.Value.Brush.Color = value.Value.Color;
-                }
-            }
-
-            UpdateBackground(parent);
+            brushes?.Populate(this);
         }
     }
 }

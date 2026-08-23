@@ -105,11 +105,19 @@ namespace Telegram.Controls.Messages
 
         public bool IsOutgoing { get; set; }
 
+        private Theme _theme;
+
         private void OnLoading(FrameworkElement sender, object args)
         {
-            if (IsOutgoing && WindowContext.TryGetForXamlRoot(XamlRoot, out var window))
+            if (WindowContext.TryGetForXamlRoot(XamlRoot, out var window))
             {
-                Resources = window.Theme.CreateOutgoing();
+                // Held rather than resolved per call: GetBrush runs while text is being built.
+                _theme = window.Theme;
+
+                if (IsOutgoing)
+                {
+                    Resources = _theme.CreateOutgoing();
+                }
             }
         }
 
@@ -2373,26 +2381,16 @@ namespace Telegram.Controls.Messages
 
         private Brush GetBrush(string key)
         {
+            var theme = _theme ?? Theme.Current;
+
             var message = _message;
-            if (message != null && message.IsOutgoing && !message.IsChannelPost)
-            {
-                if (ActualTheme == ElementTheme.Light)
-                {
-                    return ThemeOutgoing.Light[key].Brush;
-                }
-                else
-                {
-                    return ThemeOutgoing.Dark[key].Brush;
-                }
-            }
-            else if (ActualTheme == ElementTheme.Light)
-            {
-                return ThemeIncoming.Light[key].Brush;
-            }
-            else
-            {
-                return ThemeIncoming.Dark[key].Brush;
-            }
+            var brushes = message != null && message.IsOutgoing && !message.IsChannelPost
+                ? theme.Outgoing
+                : theme.Incoming;
+
+            return ActualTheme == ElementTheme.Light
+                ? brushes.Light[key]
+                : brushes.Dark[key];
         }
 
         private void Message_TextEntityClick(object sender, TextEntityClickEventArgs e)

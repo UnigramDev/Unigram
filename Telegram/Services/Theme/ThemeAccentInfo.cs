@@ -83,8 +83,8 @@ namespace Telegram.Services
                 return colorizer.Colorize(color);
             }
 
-            var lookup = type == TelegramThemeType.Day ? ThemeIncoming.Light : ThemeIncoming.Dark;
-            return colorizer.Colorize(lookup[key].Color);
+            var lookup = type == TelegramThemeType.Day ? ThemeIncoming.DefaultLight : ThemeIncoming.DefaultDark;
+            return colorizer.Colorize(lookup[key]);
         }
 
         public override Color AccentColor { get; }

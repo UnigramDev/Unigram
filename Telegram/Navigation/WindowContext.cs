@@ -477,9 +477,6 @@ namespace Telegram.Navigation
 
             Theme.Current = null;
 
-            ThemeIncoming.Release();
-            ThemeOutgoing.Release();
-
             Direct2D.Release();
             MessageBubbleBrush.Release();
 

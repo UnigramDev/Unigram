@@ -69,8 +69,8 @@ namespace Telegram.ViewModels.Settings
             Title = theme.Name;
             Items.Clear();
 
-            var incoming = theme.Parent == TelegramTheme.Light ? ThemeIncoming.Light : ThemeIncoming.Dark;
-            var outgoing = theme.Parent == TelegramTheme.Light ? ThemeOutgoing.Light : ThemeOutgoing.Dark;
+            var incoming = theme.Parent == TelegramTheme.Light ? ThemeIncoming.DefaultLight : ThemeIncoming.DefaultDark;
+            var outgoing = theme.Parent == TelegramTheme.Light ? ThemeOutgoing.DefaultLight : ThemeOutgoing.DefaultDark;
 
             var lookup = ThemeService.GetLookup(theme.Parent);
             var i = 0;
@@ -111,7 +111,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        private void ProcessDictionary(ThemeCustomInfo theme, Dictionary<string, (Color Color, SolidColorBrush)> lookup, string suffix, ref int i)
+        private void ProcessDictionary(ThemeCustomInfo theme, Dictionary<string, Color> lookup, string suffix, ref int i)
         {
             foreach (var value in lookup)
             {
@@ -123,7 +123,7 @@ namespace Telegram.ViewModels.Settings
 
                 if (theme.Values.TryGetValue(key, out Color custom))
                 {
-                    _index[i] = new ThemeBrush(key, custom, value.Value.Color.A < 255);
+                    _index[i] = new ThemeBrush(key, custom, value.Value.A < 255);
                 }
                 else if (value.Value.Color is Color color)
                 {
