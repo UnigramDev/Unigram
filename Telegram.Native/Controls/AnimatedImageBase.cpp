@@ -16,7 +16,12 @@ namespace winrt::Telegram::Native::Controls::implementation
         if (auto xamlRoot = XamlRoot())
         {
             m_rasterizationScale = xamlRoot.RasterizationScale();
-            m_xamlRootChangedRevoker = xamlRoot.Changed(winrt::auto_revoke, { this, &AnimatedImageBase::HandleXamlRootChanged });
+
+            // Weak, unlike the revokers whose source is this element: the XamlRoot lives as long as
+            // the window, so a subscription that outlives the control is raised against an object
+            // that is no longer there - overridable() then dereferences an outer that is gone, and
+            // a window visibility change is enough to do it.
+            m_xamlRootChangedRevoker = xamlRoot.Changed(winrt::auto_revoke, { get_weak(), &AnimatedImageBase::HandleXamlRootChanged });
         }
     }
 
