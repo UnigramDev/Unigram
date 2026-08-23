@@ -118,7 +118,8 @@ def cmd_sheet(args):
 def cmd_adopt(args):
     from iconfont import adopt
     manifest = _load(args)
-    changed = adopt.run(manifest, args.source, args.tolerance, _say, args.apply)
+    picks = args.only.split(",") if args.only else None
+    changed = adopt.run(manifest, args.source, args.tolerance, _say, args.apply, picks)
     if args.apply and changed:
         manifest.save()
         _say("updated %s" % manifest.path)
@@ -261,6 +262,8 @@ def main(argv=None):
 
     p = sub.add_parser("adopt", help="re-point local icons at a live source")
     p.add_argument("--source", default="fluent")
+    p.add_argument("--only", help="comma-separated names or U+XXXX codepoints to take "
+                                  "regardless of how far they have drifted")
     p.add_argument("--tolerance", type=float, default=0.002)
     p.add_argument("--apply", action="store_true")
     p.set_defaults(func=cmd_adopt)

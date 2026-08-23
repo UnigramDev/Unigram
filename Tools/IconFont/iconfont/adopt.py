@@ -29,7 +29,28 @@ def candidate_id(icon, source):
     return name if getattr(source, "contains", None) and source.contains(name) else None
 
 
-def run(manifest, source_name, tolerance, say, apply_changes=False):
+def select(manifest, picks):
+    """Resolve `--only` arguments, which may be names or codepoints."""
+    by_name, by_code = manifest.by_name(), manifest.by_code()
+    chosen, unknown = [], []
+    for pick in picks:
+        pick = pick.strip()
+        if not pick:
+            continue
+        icon = by_name.get(pick) or by_name.get(FLUENT_PREFIX + pick)
+        if icon is None and pick.upper().startswith("U+"):
+            try:
+                icon = by_code.get(int(pick[2:], 16))
+            except ValueError:
+                icon = None
+        if icon is None:
+            unknown.append(pick)
+        else:
+            chosen.append(icon)
+    return chosen, unknown
+
+
+def run(manifest, source_name, tolerance, say, apply_changes=False, picks=None):
     sources = sourcelib.build(manifest)
     source = sources.get(source_name)
     if source is None:
@@ -41,8 +62,14 @@ def run(manifest, source_name, tolerance, say, apply_changes=False):
     ascent = int(cfg.get("ascent", 960))
     descent = int(cfg.get("descent", 64))
 
+    # Picking icons by name is a deliberate choice to take upstream's drawing,
+    # so the tolerance that guards the bulk pass does not apply to them.
+    wanted, unknown = (select(manifest, picks) if picks else (None, []))
+    for pick in unknown:
+        say("no glyph called %r" % pick)
+
     matched, drifted, absent, failed = [], [], [], []
-    for icon in manifest.icons:
+    for icon in (wanted if wanted is not None else manifest.icons):
         if icon.is_remote or icon.is_alias:
             continue
         ident = candidate_id(icon, source)
@@ -60,12 +87,12 @@ def run(manifest, source_name, tolerance, say, apply_changes=False):
         except Exception as e:
             failed.append((icon, "%s: %s" % (type(e).__name__, e)))
             continue
-        if diff <= tolerance:
-            matched.append((icon, ident))
+        if diff <= tolerance or wanted is not None:
+            matched.append((icon, ident, diff))
         else:
             drifted.append((icon, ident, diff))
 
-    for icon, ident in matched:
+    for icon, ident, _ in matched:
         if apply_changes:
             local = os.path.join(manifest.root, icon.src.replace("/", os.sep))
             if os.path.exists(local):
@@ -73,6 +100,10 @@ def run(manifest, source_name, tolerance, say, apply_changes=False):
         icon.src = "%s:%s" % (source_name, ident)
 
     say("%d icon(s) now track %s" % (len(matched), source.describe()))
+    if wanted is not None:
+        for icon, ident, diff in sorted(matched, key=lambda r: -r[2]):
+            say("   U+%04X  %-46s the drawing changes by %.1f%%"
+                % (icon.code, icon.name, diff * 100))
     if drifted:
         say("")
         say("%d have the same name upstream but different artwork, and stay local:"
