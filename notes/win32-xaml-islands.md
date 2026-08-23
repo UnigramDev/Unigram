@@ -1146,13 +1146,22 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   outgoing bubbles, none of them inside a `MessageBubble`, so "the bubble merges it at Loading"
   does not cover them.
 
-  Open question that follows: a preview wants to show a theme that is *not* the current one, and
-  a shared per-window `Theme.Outgoing` would show the current one. Today every
-  `<common:ThemeOutgoing />` builds a fresh dictionary that copies the current static brush
-  references, so the previews presumably already have this problem, or solve it by mutating the
-  statics — worth reading `ThemePreviewPopup` before committing to the design. `ChatThemeCell`
-  is a related oddity: it computes `MessageBackgroundBrush` by calling `ThemeAccentInfo.Colorize`
-  directly rather than reading any dictionary, which may be the shape the previews all want.
+  Settled: **all of them show the current theme except `ThemePreviewPopup`**, which by definition
+  shows one that has not been applied. So the shared per-window `Theme.Outgoing` serves five of
+  the six, and `ThemePreviewPopup` keeps building a throwaway dictionary of its own — an
+  exception stated in the design rather than an accident of it. `ChatThemeCell` already works
+  that way from the other direction, computing `MessageBackgroundBrush` through
+  `ThemeAccentInfo.Colorize` rather than reading any dictionary.
+
+  **Merge from code-behind at each site, not from XAML.** Six places is not many, and it inverts
+  the hard part: rather than a `ResourceDictionary` having to discover which window owns it, the
+  merging control already has a `XamlRoot` and simply asks for `Theme.Outgoing`.
+
+  The hook only matters in `MessageBubble`. A merge after the template does work — measured at
+  `ContainerContentChanging` — but costs a re-resolve of the ~20 keys on every realised bubble,
+  which is the cost this design exists to avoid; `Loading` runs immediately before
+  `ApplyTemplate` (0.17), so the lookups resolve once against the already-merged dictionary. The
+  five previews can use whatever hook each type already has with a `XamlRoot` in hand.
 
   **Order.** Delete `ThemeOutgoing2` first — 184 lines, no callers, and a parked half-alternative
   beside the real one is most of what makes the file read as a mess. Then the single resolver,
