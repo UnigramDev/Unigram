@@ -1183,8 +1183,12 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   the same shared brush references. A rewrite has to keep `ThemeDictionaries["Light"]` and
   `ThemeDictionaries["Default"]` — dark is stored under `Default`, not `Dark`.
 
-  The hook only matters in `MessageBubble`, and `Loading` is the right one. An `IsOutgoing` DP
-  set from the `DataTemplate` cannot do the assignment in its setter, because at parse time the
+  The hook only matters in `MessageBubble`, and `Loading` is the right one. `IsOutgoing` is a
+  **plain C# property, not a DependencyProperty** — nothing binds to it, animates it or styles
+  it, and a DP would box the bool and cost a property-system lookup on a per-bubble path for
+  nothing. XAML can still set it from the template, because a literal attribute needs only a
+  settable public property; it is bindings and animations that require a DP. The setter cannot
+  do the assignment itself, because at parse time the
   element is not parented and there is no `XamlRoot` to resolve the window's `Theme` from;
   `Loading` is the first moment there is one, and it runs immediately before `ApplyTemplate`
   (0.17), so the lookups resolve once against the dictionary that is already in place. Firing
