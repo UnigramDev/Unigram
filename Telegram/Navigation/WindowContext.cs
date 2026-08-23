@@ -461,7 +461,6 @@ namespace Telegram.Navigation
 
             Direct2D.Release();
             MessageBubbleBrush.Release();
-            ProfilePicture.Loader.Release();
 
             // TODO: needed? From some tests, this prevented the whole Window root from being garbage collected
             if (SynchronizationContext.Current is SecondaryViewSynchronizationContextDecorator decorator)

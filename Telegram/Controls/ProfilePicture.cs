@@ -8,6 +8,7 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Telegram.Common;
@@ -122,13 +123,13 @@ namespace Telegram.Controls
                         if (IsCachingEnabled || (_presenter != null && !_presenter.IsCachingEnabled))
                         {
                             _presenter?.Unload(this);
-                            _presenter = Loader.Current.GetOrCreate(presentation, true);
+                            _presenter = Loader.GetOrCreate(XamlRoot, presentation, true);
                         }
                         else
                         {
                             if (_presenter == null || _presenter.IsCachingEnabled)
                             {
-                                _presenter = Loader.Current.GetOrCreate(presentation, false);
+                                _presenter = Loader.GetOrCreate(XamlRoot, presentation, false);
                             }
                             else
                             {
@@ -565,24 +566,25 @@ namespace Telegram.Controls
 
         public class Loader
         {
-            [ThreadStatic]
-            private static Loader _current;
-            public static Loader Current => _current ??= new();
-
-            public static void Release()
-            {
-                _current = null;
-            }
-
             private readonly Dictionary<ProfilePicturePresentation, ProfilePicturePresenter> _presenters = new();
             private readonly DispatcherQueue _dispatcherQueue;
 
-            private Loader()
+            private Loader(XamlRoot xamlRoot)
             {
                 _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             }
 
             public DispatcherQueue DispatcherQueue => _dispatcherQueue;
+
+            private static readonly ConditionalWeakTable<XamlRoot, Loader> _loaders = new();
+
+            public static ProfilePicturePresenter GetOrCreate(XamlRoot xamlRoot, ProfilePicturePresentation presentation, bool isCachingEnabled)
+            {
+                Debug.Assert(xamlRoot != null);
+
+                var loader = _loaders.GetOrAdd(xamlRoot, x => new Loader(x));
+                return loader.GetOrCreate(presentation, isCachingEnabled);
+            }
 
             public ProfilePicturePresenter GetOrCreate(ProfilePicturePresentation presentation, bool isCachingEnabled)
             {
