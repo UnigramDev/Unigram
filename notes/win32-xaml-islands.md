@@ -450,9 +450,22 @@ most of the rest are the seam itself (`WindowContext`, `BootStrapper`) or 0.4's 
 `WindowContext.Current` 124 -> 42, and the distribution is now lopsided in a useful way:
 `BootStrapper` (14) and `App.xaml.cs` (6) are bootstrap code that forks anyway, `ViewService` (3)
 is 0.4, and the remaining ~15 are ordinary UI sites in four property families — `ActualTheme`,
-`RasterizationScale`, `Bounds`/`PointerPosition`, and `NavigationServices`/`Content`/`Title` —
-every one of them with an element already in scope, so each is the same mechanical
-`ForXamlRoot(element)` swap. `Theme.Current` 50 -> 25, of which 15 are the `MonospaceFontFamily`
+`RasterizationScale`, `Bounds`/`PointerPosition`, and `NavigationServices`/`Content`/`Title`.
+
+**How to reach the window, in order of preference** (Fela's rule, and it corrects an earlier
+draft of this paragraph that reached for `ForXamlRoot` first):
+
+1. **`ViewModel.Window`**, or `NavigationService.Window` — whenever a view model or a navigation
+   service is in reach. It does not depend on the element being in the tree, and it says where
+   the window came from.
+2. **A cached `WindowContext` or `Theme`**, resolved once at a hook where the element is attached
+   and held in a field — what `MessageBubble` does at `Loading`.
+3. **`WindowContext.ForXamlRoot(...)`** — last resort, for a leaf control with neither.
+
+The reason is not taste. `ForXamlRoot` resolves through `XamlRoot`, which is null until the
+element is attached (0.17), so it is a trap in `OnNavigatedTo`, in constructors and anywhere
+before `Loading` — three of the theme update sites were converted to it and two had to be
+changed again. It also costs a lookup per call and hides which window is meant. `Theme.Current` 50 -> 25, of which 15 are the `MonospaceFontFamily`
 / `XamlAutoFontFamily` pair still waiting on 0.19a.
 
 UI `[ThreadStatic]` is down to `Theme` (9), `WatchDog` (5, diagnostics), `ProfileCell` (4),

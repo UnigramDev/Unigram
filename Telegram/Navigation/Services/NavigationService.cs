@@ -471,13 +471,15 @@ namespace Telegram.Navigation.Services
             var page = frameContent as Page;
             if (page != null)
             {
+                page.XamlRoot = XamlRoot;
+
                 if (page is IActivablePage cleanup)
                 {
                     cleanup.Activate(this);
                 }
                 else if (page is BlankPage blank)
                 {
-                    blank.Activate(Session);
+                    blank.Activate(this);
                 }
 
                 //if (mode == NavigationMode.New)
