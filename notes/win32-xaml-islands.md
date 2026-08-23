@@ -986,8 +986,16 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
     the event never fires and the latch is never set.
 
   The practical limit: in a `Loading` handler the template does not exist yet, so
-  `GetTemplateChild` returns nothing. Merging into `Resources` is fine — that is not a template
+  `GetTemplateChild` returns nothing. Assigning `Resources` is fine — that is not a template
   part — but anything reaching for template children has to wait for `OnApplyTemplate`.
+
+  **`Loading` is not the same as the top of `OnApplyTemplate`**, which is the obvious-looking
+  alternative. `InvokeApplyTemplate` inflates the template at `framework.cpp:1209` and only calls
+  the override at 1233, after `RefreshTemplateBindings`. So by `OnApplyTemplate` every
+  `{ThemeResource}` in the template has already resolved against whatever dictionary was in
+  scope. Assigning there still works — `ThemeResource` re-evaluates when the dictionary changes,
+  which is why it worked when tried at `ContainerContentChanging` — but it works by resolving
+  twice. `Loading` resolves once.
 
   **`ContainerContentChanging` is later than it looks.** `ListViewBase_Partial_ContainerPhase.cpp`
   forces a measure *before* raising it, specifically to materialise `ContentTemplateRoot`:
