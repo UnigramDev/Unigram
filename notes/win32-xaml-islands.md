@@ -539,24 +539,43 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   actually leak** — measured 2026-08-24:
 
   - Both callers discard the return: `VoipCall.cs:756` and `VoipGroupCall.cs:2051` are
-    `_ = service.OpenAsync(options);`.
-  - Both callbacks ignore the parameter: each `CreatePresentation(ViewLifetimeControl control,
-    WindowContext window)` body reads only `window`, returning `new VoipWindow(window, this)` or
-    `new LiveStreamWindow(window, this)` / `new GroupCallWindow(window, this)`. `control` is
-    never touched.
+    `_ = service.OpenAsync(options);`. So does every `await OpenAsync(...)` in
+    `TLNavigationService`. **No caller anywhere reads the returned control.**
+  - Every `Content` callback ignores the parameter: the two `CreatePresentation` methods and the
+    seven `(control, window) =>` lambdas in `TLNavigationService` all read only `window`.
 
-  So the whole leak is three signatures. **Step 1**, behaviour-preserving:
+  So the whole leak was three signatures.
 
-      Func<ViewLifetimeControl, WindowContext, UIElement> Content  ->  Func<WindowContext, UIElement>
-      Task<ViewLifetimeControl> OpenAsync(...)                     ->  Task<WindowContext>
+  - [x] **Step 1 — behaviour-preserving, done 2026-08-24.**
 
-  plus the two forwarders in `NavigationService` (`:63`, `:64`, `:503`, `:505`) and the two
-  callback bodies losing an unused parameter. After it, `IViewService` names no UWP type.
+        Func<ViewLifetimeControl, WindowContext, UIElement> Content  ->  Func<WindowContext, UIElement>
+        Task<ViewLifetimeControl> OpenAsync(...)                     ->  Task<WindowContext>
 
-  **Step 2**: `ViewService.Uwp.cs` and `ViewService.Win32.cs`, per the partial-class fork in
-  Phase 2. `ViewLifetimeControl` **stays a UWP implementation detail** and does not move — which
-  is where the 21 `ApplicationView` sites live, so they never have to be ported at all. The Win32
-  side creates an HWND instead.
+    plus the two `NavigationService` forwarders, the seven lambdas and the two
+    `CreatePresentation` bodies. **`IViewService` now names no UWP type**, and
+    `ViewLifetimeControl` is confined to its own folder — the only mentions left outside it are
+    in `SecondaryViewSynchronizationContextDecorator`, which is UWP-only by nature.
+
+    Three things fell out that were not in the plan:
+
+    - `WindowContext.Id` **is** the view id (`GetApplicationViewIdForWindow`, same as
+      `ViewLifetimeControl.Id`), so `TryShowAsViewModeAsync`/`TryShowAsStandaloneAsync`/
+      `SwitchAsync` take it unchanged.
+    - `OpenAsyncInternal` called `ViewLifetimeControl.GetForCurrentView()` purely to have
+      something to return. Dropping it is safe: `GetOrAdd` means the control is already created
+      by `ViewService.OnWindowCreated`, which must have run for `WindowContext.Current` to be
+      valid in the same callback.
+    - The chat-already-open search did `oldControl = ViewLifetimeControl.GetForCurrentView()`
+      inside a `ForEachAsync` body — correct only because the body is dispatched to that window's
+      thread. It is now just `oldWindow = window`, which is what it always meant.
+    - `ViewLifetimeControl.Facade()` was left with no callers (`FacadeAsync` returns
+      `WindowContext.Current` now), so it went, and with it the ctor's `newWindow == null`
+      Xbox branch and the unused parameter.
+
+  - [ ] **Step 2**: `ViewService.Uwp.cs` and `ViewService.Win32.cs`, per the partial-class fork in
+    Phase 2. `ViewLifetimeControl` **stays a UWP implementation detail** and does not move — which
+    is where the 21 `ApplicationView` sites live, so they never have to be ported at all. The
+    Win32 side creates an HWND instead.
 
   This was described here as "the multi-month piece in every path". That was wrong: the mass is
   all inside the class that isn't moving.

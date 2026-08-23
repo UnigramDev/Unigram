@@ -60,8 +60,8 @@ namespace Telegram.Navigation.Services
         void Block();
 
 
-        Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions parameters);
-        Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
+        Task<WindowContext> OpenAsync(ViewServiceOptions parameters);
+        Task<WindowContext> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
         Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
         void ShowPopup(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
 
@@ -500,9 +500,9 @@ namespace Telegram.Navigation.Services
             }
         }
 
-        public Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions parameters) => viewService.OpenAsync(parameters);
+        public Task<WindowContext> OpenAsync(ViewServiceOptions parameters) => viewService.OpenAsync(parameters);
 
-        public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default)
+        public Task<WindowContext> OpenAsync(Type page, object parameter = null, string title = null, Size size = default)
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
             return viewService.OpenAsync(Session, page, parameter, title, size);

@@ -66,11 +66,6 @@ namespace Telegram.Services
         public Window Window { get; }
         #endregion
 
-        public static ViewLifetimeControl Facade()
-        {
-            return new ViewLifetimeControl(null);
-        }
-
         public Task ConsolidateAsync()
         {
             if (Dispatcher.HasThreadAccess)
@@ -86,17 +81,11 @@ namespace Telegram.Services
             return WindowContext.Current.ConsolidateAsync();
         }
 
-        private ViewLifetimeControl(CoreWindow newWindow)
+        private ViewLifetimeControl()
         {
             Window = Window.Current;
             Dispatcher = DispatcherContext.Current;
             Id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-
-            if (newWindow == null)
-            {
-                // Only happens on Xbox
-                return;
-            }
 
             // This class will automatically tell the view when its time to close
             // or stay alive in a few cases
@@ -171,7 +160,7 @@ namespace Telegram.Services
             var wnd = Window.Current.CoreWindow;
             /*BUG: use this strange way to get Id as for ShareTarget hosted window on desktop version ApplicationView.GetForCurrentView() throws "Catastrofic failure" COMException.
               Link to question on msdn: https://social.msdn.microsoft.com/Forums/security/en-US/efa50111-043a-4007-8af8-2b53f72ba207/uwp-c-xaml-comexception-catastrofic-failure-due-to-applicationviewgetforcurrentview-in?forum=wpdevelop  */
-            return WindowControlsMap.GetOrAdd(ApplicationView.GetApplicationViewIdForWindow(wnd), id => new ViewLifetimeControl(wnd));
+            return WindowControlsMap.GetOrAdd(ApplicationView.GetApplicationViewIdForWindow(wnd), id => new ViewLifetimeControl());
         }
 
         // Signals that the view is being interacted with by another view,
