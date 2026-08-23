@@ -271,14 +271,17 @@ namespace Telegram.Common
             var nextBackground = background?.Background;
 
             var settings = requested == TelegramTheme.Light ? lightSettings : darkSettings;
+            // The accent guards the recolour, which is the expensive half, and nothing else:
+            // a chat theme can change while keeping its accent, and these three are read back
+            // by the global update and by ChatBackgroundControl, so they must not go stale.
             if (settings != null)
             {
+                _lastLightSettings = lightSettings;
+                _lastDarkSettings = darkSettings;
+                _lastChatTheme = theme;
+
                 if (_lastAccent != settings.AccentColor)
                 {
-                    _lastLightSettings = lightSettings;
-                    _lastDarkSettings = darkSettings;
-                    _lastChatTheme = theme;
-
                     UpdateMessages(requested, Resolve(requested, settings));
                 }
 
@@ -288,12 +291,12 @@ namespace Telegram.Common
             }
             else
             {
+                _lastLightSettings = null;
+                _lastDarkSettings = null;
+                _lastChatTheme = null;
+
                 if (_lastAccent != null)
                 {
-                    _lastLightSettings = null;
-                    _lastDarkSettings = null;
-                    _lastChatTheme = null;
-
                     UpdateMessages(requested, Resolve(requested, null));
                 }
 
