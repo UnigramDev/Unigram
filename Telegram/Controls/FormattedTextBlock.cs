@@ -723,29 +723,12 @@ namespace Telegram.Controls
         private static void OnEntityClick(Hyperlink sender, HyperlinkClickEventArgs e)
         {
             var args = MessageHelper.GetHyperlinkInfo(sender);
-            if (args != null && GetOwner(sender) is FormattedTextBlock owner)
+            var owner = sender.GetParent<FormattedTextBlock>();
+
+            if (args != null && owner != null)
             {
                 owner.Entity_Click(args);
             }
-        }
-
-        // Safe to walk: a Hyperlink always sits in its own block's RichTextBlock, since inline
-        // mode takes its Span from the control's own declared Blocks.
-        private static FormattedTextBlock GetOwner(TextElement element)
-        {
-            while (element != null)
-            {
-                var parent = element.ElementStart.Parent;
-                if (parent is TextElement text)
-                {
-                    element = text;
-                    continue;
-                }
-
-                return VisualTreeHelper.GetParent(parent) as FormattedTextBlock;
-            }
-
-            return null;
         }
 
         private ProjectedHyperlink GetOrCreateHyperlink(XamlDirect direct)
