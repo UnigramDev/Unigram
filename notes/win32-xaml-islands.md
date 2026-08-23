@@ -1074,6 +1074,91 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
     **no consumers**. Decide whether it becomes (b) or gets deleted; leaving it is the worst of
     the three.
 
+- [ ] **0.20 Untangle `Theme` / `ThemeIncoming` / `ThemeOutgoing`.** Supersedes 0.19b, which
+  described the destination without saying how to get there. Fela's read: they are tangled for
+  two reasons, one historical — per-chat appearances did not exist when this was written — and
+  one structural, that every UWP window needs a `Theme` anyway, so it may as well be the thing
+  that resolves the other two.
+
+  **The domain, which the code does not currently express.** Three layers over two independent
+  axes, each layer overriding the one above it, per base, with the base flippable at any time:
+
+  | | colours | background |
+  | --- | --- | --- |
+  | base | Light / Dark | — |
+  | app | `AppSettings.Appearance[base]` — Classic / Day / Tinted / Custom(file) / Accent | `settings.Background` |
+  | chat | `ChatTheme.LightSettings` / `.DarkSettings` | `ChatBackground` |
+
+  **What the code does instead.** There is one resolution — `(base, appearance, chatTheme) ->
+  values` — and it is written twice: the four-case decision (chat theme? custom file? accent?
+  plain) appears in `Update(ApplicationTheme)` at 285-300 and again in the `else` branch of the
+  Local `Update` at 240-260, and the tint mapping is duplicated verbatim at 205 and 314. There
+  are five `ThemeOutgoing.Update` call sites for what is one operation. There is no Local path
+  and a Global path; there is one function split in half by which caller arrived.
+
+  Three defects follow directly, all present today:
+
+  - **Double application.** `Update(ApplicationTheme)` resolves and updates the bubble
+    dictionaries at 343, then calls the Local update at 305, which resolves again and updates
+    them again at 225. Every app theme switch with a chat theme active pays twice.
+  - **The change detector is too narrow.** `_lastAccent` is an `int?` holding only the accent,
+    yet it guards the assignment of `_lastLightSettings`, `_lastDarkSettings` and
+    `_lastChatTheme`. A chat theme that changes while keeping the same accent skips the update
+    and leaves all three stale.
+  - **The app layer leaks into the chat layer.** Local reads `AppSettings.Appearance[base].Type`
+    at 204 to pick the tint for a *chat* theme. Probably intended — chat themes tinting to the
+    user's chosen style — but nothing says so, which is why the two halves cannot be told apart
+    by reading them.
+
+  Also worth knowing before moving anything: **`Parameters` is a byproduct**. `_parameters[…]` is
+  assigned only at line 466, inside the 400-line colour pass, so the bot-API payload cannot be
+  obtained without running brush computation.
+
+  **The constraint that fixes the shape.** The bubble keys are referenced **44 times across ~15
+  XAML files** — `MessageBubble.xaml` and the content controls, but also `ChatPinnedMessage`,
+  `SharedLinkCell`, `SendFilesPopup`, `Generic.xaml`. The `ThemeResource` dictionary-scoping
+  mechanism is therefore load-bearing and cannot be replaced by assigning brushes in code. The
+  incoming set is the app-wide default, which is why `App.xaml` merges it; outgoing is a scoped
+  override.
+
+  **Target shape.**
+
+  - `Theme`, one per window, owns the resolved values and the brush objects. The `[ThreadStatic]`
+    tables become instance fields — and no `ConditionalWeakTable` is needed either, because
+    ownership does the scoping that `ThemeOutgoing2` was reaching for with one. That is why that
+    experiment felt like it was fighting the grain; **delete it**, it has no callers.
+  - The **incoming** set merges into `Theme` itself, so `App.xaml` carries one entry instead of
+    two and every non-bubble consumer resolves exactly as now.
+  - `Theme.Outgoing` is **one dictionary per window**, merged into an outgoing bubble's
+    `Resources` in code at `Loading` instead of being constructed by the `DataTemplate`. Cheaper
+    than today, where every realised bubble builds its own `ResourceDictionary`, and `Loading` is
+    the correct hook because it runs immediately before `ApplyTemplate` (0.17), so the lookups
+    happen after the merge without the second pass that `ContainerContentChanging` would cost.
+  - One resolver, one application point. Local and Global stop being separate concepts: the only
+    difference is whether a `ChatTheme` was supplied. Change detection then compares the resolved
+    inputs, which fixes the stale-field bug for free, and the background axis resolves alongside
+    as `chatBackground ?? settings.Background` in one place rather than only in Local.
+
+  **`ThemeOutgoing` is merged in six places, not one** — a belief worth correcting before the
+  code moves. Besides `ChatView.xaml:413` it appears in `BackgroundPopup.xaml:629`,
+  `ThemePreviewPopup.xaml` (114, 120, 130), `SettingsAppearancePage.xaml:42` and
+  `SupergroupProfileColorPage.xaml:152`. All five extra sites are **previews** that render fake
+  outgoing bubbles, none of them inside a `MessageBubble`, so "the bubble merges it at Loading"
+  does not cover them.
+
+  Open question that follows: a preview wants to show a theme that is *not* the current one, and
+  a shared per-window `Theme.Outgoing` would show the current one. Today every
+  `<common:ThemeOutgoing />` builds a fresh dictionary that copies the current static brush
+  references, so the previews presumably already have this problem, or solve it by mutating the
+  statics — worth reading `ThemePreviewPopup` before committing to the design. `ChatThemeCell`
+  is a related oddity: it computes `MessageBackgroundBrush` by calling `ThemeAccentInfo.Colorize`
+  directly rather than reading any dictionary, which may be the shape the previews all want.
+
+  **Order.** Delete `ThemeOutgoing2` first — 184 lines, no callers, and a parked half-alternative
+  beside the real one is most of what makes the file read as a mess. Then the single resolver,
+  since it is what the rest depends on. Then `Theme` taking ownership of both directions. The
+  `Outgoing`/`Incoming` de-duplication falls out of that last step rather than being its own job.
+
 - [ ] **0.11 Find a better hook for type-to-search / type-to-compose in `ChatView` and
   `MainPage`.** Both now subscribe to `WindowContext.CharacterReceived` and then disambiguate by
   state — `MainPage` bails unless `MasterDetail.NavigationService?.Frame.Content is BlankPage`,
