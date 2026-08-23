@@ -98,8 +98,19 @@ namespace Telegram.Controls.Messages
         public MessageBubble()
         {
             DefaultStyleKey = typeof(MessageBubble);
+            Loading += OnLoading;
 
             Instrumentation.Register(this);
+        }
+
+        public bool IsOutgoing { get; set; }
+
+        private void OnLoading(FrameworkElement sender, object args)
+        {
+            if (IsOutgoing && WindowContext.TryGetForXamlRoot(XamlRoot, out var window))
+            {
+                Resources = window.Theme.CreateOutgoing();
+            }
         }
 
 #if INSTRUMENTATION

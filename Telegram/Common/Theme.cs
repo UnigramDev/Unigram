@@ -175,6 +175,25 @@ namespace Telegram.Common
         private readonly Dictionary<ElementTheme, ThemeParameters> _parameters = new();
         public ThemeParameters Parameters => _parameters[WindowContext.Current.ActualTheme];
 
+        /// <summary>
+        /// A dictionary of the outgoing bubble overrides, for an outgoing MessageBubble to assign
+        /// to its <see cref="FrameworkElement.Resources"/>.
+        /// </summary>
+        /// <remarks>
+        /// One per bubble, and it cannot be otherwise: FrameworkElement's Resources setter calls
+        /// SetResourceOwner on the dictionary, which holds a single owner and propagates it into
+        /// the merged and theme dictionaries beneath it. A shared instance throws on the second
+        /// element, and merging one would leave the owner flapping between bubbles.
+        ///
+        /// Only the wrapper is per bubble. The brushes inside are the window's, shared and
+        /// recoloured in place, which is what makes a theme change repaint every bubble without
+        /// touching any of them.
+        /// </remarks>
+        public ThemeOutgoing CreateOutgoing()
+        {
+            return new ThemeOutgoing();
+        }
+
         #region Local 
 
         private int? _lastAccent;
@@ -457,6 +476,17 @@ namespace Telegram.Common
 
                 PatchTextControlElevationBorderFocusedBrush(requested, target, lookup, "TextControlElevationBorderFocusedBrush", create, GetShade);
                 PatchTextControlElevationBorderFocusedBrush(requested, target, lookup, "TextControlBorderBrushFocused", create, GetShade);
+
+                // The incoming message brushes live here rather than in a dictionary of their
+                // own: they are the app-wide default, resolved by every consumer outside a
+                // bubble, so App.xaml merges Theme alone. References only - the brushes are
+                // shared and ThemeIncoming.Update above has already recoloured them in place.
+                // Written last so they win over anything the lookup put under the same key,
+                // which is the precedence App.xaml gave them by merging ThemeIncoming second.
+                foreach (var item in requested == TelegramTheme.Light ? ThemeIncoming.Light : ThemeIncoming.Dark)
+                {
+                    target[item.Key] = item.Value.Brush;
+                }
 
                 if (create)
                 {

@@ -408,22 +408,15 @@
         <DataTemplate x:Name="OutgoingMessageTemplate">
             <messages:MessageSelector>
                 <messages:MessageBubble x:Name="Bubble"
-                                        HorizontalAlignment="Right">
-                    <FrameworkElement.Resources>
-                        <common:ThemeOutgoing />
-                    </FrameworkElement.Resources>
-                </messages:MessageBubble>
+                                        HorizontalAlignment="Right"
+                                        IsOutgoing="True" />
             </messages:MessageSelector>
         </DataTemplate>
 
         <DataTemplate x:Name="IncomingMessageTemplate">
             <messages:MessageSelector>
                 <messages:MessageBubble x:Name="Bubble"
-                                        HorizontalAlignment="Left">
-                    <FrameworkElement.Resources>
-                        <common:ThemeIncoming />
-                    </FrameworkElement.Resources>
-                </messages:MessageBubble>
+                                        HorizontalAlignment="Left" />
             </messages:MessageSelector>
         </DataTemplate>
     </UserControl.Resources>
