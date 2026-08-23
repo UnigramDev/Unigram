@@ -1558,18 +1558,13 @@ namespace Telegram.Views.Popups
 
         private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
-            var character = args.Character;
-            if (character != '\u0016' && (char.IsControl(character) || char.IsWhiteSpace(character)))
+            if (args.OriginalSource is TextBox or RichEditBox or Button or MenuFlyoutItem)
             {
                 return;
             }
 
-            // The popup is its own subtree, so anything focused above it never bubbles here - which
-            // is what enumerating the open popups used to check - and a focused TextBox or
-            // RichEditBox has already marked the character handled. Button and MenuFlyoutItem do
-            // not handle it, so those still have to be checked by hand.
-            var focused = FocusManagerEx.TryGetFocusedElement(XamlRoot);
-            if (focused is Button or MenuFlyoutItem)
+            var character = args.Character;
+            if (character != '\u0016' && (char.IsControl(character) || char.IsWhiteSpace(character)))
             {
                 return;
             }

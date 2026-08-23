@@ -487,6 +487,11 @@ namespace Telegram.Navigation
 
         private void OnContentCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
+            if (args.OriginalSource is TextBox or RichEditBox)
+            {
+                return;
+            }
+
             CharacterReceived?.Invoke(this, args);
         }
 
