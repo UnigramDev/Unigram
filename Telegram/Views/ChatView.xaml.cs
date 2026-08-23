@@ -881,6 +881,23 @@ namespace Telegram.Views
 
         private async void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
+            if (args.Action == NotifyCollectionChangedAction.Add && args.NewItems != null)
+            {
+                foreach (var item in args.NewItems)
+                {
+                    if (item is MessageViewModel addedMessage
+                        && addedMessage.Id != long.MaxValue
+                        && addedMessage.AnimationState == MessageAnimationState.Added)
+                    {
+                        AccessibilityService.RaiseNotification(
+                            Messages,
+                            Automation.GetSummaryWithName(addedMessage, true),
+                            "ChatMessage",
+                            processing: AutomationNotificationProcessing.All);
+                    }
+                }
+            }
+
             var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
             if (panel == null)
             {
@@ -1422,7 +1439,7 @@ namespace Telegram.Views
 
         private void TrySetFocusState(FocusState state, bool fast)
         {
-            if (AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            if (AccessibilityService.IsScreenReaderActive)
             {
                 return;
             }
@@ -5535,7 +5552,7 @@ namespace Telegram.Views
 
         private void ButtonAction_LosingFocus(UIElement sender, LosingFocusEventArgs args)
         {
-            if (_actionCollapsed && !AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            if (_actionCollapsed && !AccessibilityService.IsScreenReaderActive)
             {
                 args.TrySetNewFocusedElement(TextField);
                 args.Handled = true;
