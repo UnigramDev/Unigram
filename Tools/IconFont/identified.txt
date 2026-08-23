@@ -60,9 +60,9 @@ uniE72B -> arrow_left_20_regular
 uniE7AC -> open_20_regular
 uniE2B1 -> color_20_regular
 uniE600 -> tbd
-uniE601 -> tbd
+uniE601 -> legacy   # the 'seen' message-state badge; keeping the IcoMoon name, ChatCell.xaml.cs reaches it by codepoint
 uniE602 -> tbd
-uniE603 -> tbd
+uniE603 -> legacy   # the empty message-state badge; paints nothing, referenced nowhere
 uniE60B -> tbd
 uniE60C -> tbd
 uniE611 -> tl_instant_view_20_filled   # the name says E611, the glyph is at U+E60E
@@ -82,7 +82,7 @@ U+E906 -> tl_fluent_animation_20_regular
 uniE908 -> flip_horizontal_20_regular
 uniE90A -> tbd
 U+E910 -> slide_multiple_20_filled
-uniE915 -> tbd   # Icons.SmallVideoFilled; 6.5% from U+E964 which holds ic_fluent_video_20_filled, and no video_* variant fits better. Needs a tl_ name.
+uniE915 -> duplicate of ic_fluent_video_20_filled (confirmed)   # the same drawing at 93.7% scale; sharing it renders it full size
 U+E91A -> tl_fluent_ghost_20_filled
 U+E93D -> comment_multiple_20_regular
 uniF4AA -> sticker_20_regular
