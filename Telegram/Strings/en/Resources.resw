@@ -112,6 +112,9 @@
   <data name="AccDescrBotKeyboard" xml:space="preserve">
     <value>Bot keyboard</value>
   </data>
+  <data name="AccDescrMessageHasInlineButtons" xml:space="preserve">
+    <value>Message has inline buttons</value>
+  </data>
   <data name="AccDescrCancelEdit" xml:space="preserve">
     <value>Cancel editing</value>
   </data>
