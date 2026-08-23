@@ -1442,8 +1442,9 @@ namespace Telegram.Common
         {
             var transform = element.TransformToPoint(null);
 
-            var bounds = WindowContext.Current.Bounds;
-            var point = WindowContext.Current.PointerPosition;
+            var window = WindowContext.ForXamlRoot(element.XamlRoot);
+            var bounds = window.Bounds;
+            var point = window.PointerPosition;
 
             point = new Point(point.X - bounds.X, point.Y - bounds.Y);
             point = new Point(point.X - transform.X, point.Y - transform.Y);
@@ -1978,3 +1979,24 @@ namespace Telegram.Common
         }
     }
 }
+
+#if !NET9_0_OR_GREATER
+namespace System.Runtime.CompilerServices
+{
+    /// <summary>
+    /// ConditionalWeakTable.AddOrUpdate arrived in .NET Core 3.0. The .NET Native target only
+    /// has Add, which throws on an existing key, so call sites would otherwise have to spell out
+    /// the remove-then-add themselves and read differently between the two flavours.
+    /// </summary>
+    public static class ConditionalWeakTableExtensions
+    {
+        public static void AddOrUpdate<TKey, TValue>(this ConditionalWeakTable<TKey, TValue> table, TKey key, TValue value)
+            where TKey : class
+            where TValue : class
+        {
+            table.Remove(key);
+            table.Add(key, value);
+        }
+    }
+}
+#endif
