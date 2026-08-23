@@ -28,7 +28,7 @@ Everything is run as `py -m iconfont <command>` from this folder.
 | `check` | Validates the manifest and cross-checks it against `Icons.cs` and the XAML. |
 | `sheet` | Writes `contact-sheet.html`, every glyph drawn from its converted outline. |
 | `update` | Moves a live source to a newer version, reporting what that redraws. |
-| `adopt` | Re-points local icons at a live source where the artwork still matches. |
+| `adopt` | Re-points local icons at a live source where the artwork still matches; `--only` takes named ones regardless. |
 | `identify` | Names nameless `uniXXXX` glyphs by matching their shape against a source. `--report` writes a side-by-side page for the ones it cannot settle. |
 | `rename` | Applies `identified.txt`, the hand-written list of what each nameless glyph turned out to be. |
 | `import --from <dir>` | Brings original artwork in from a folder, where it renders identically. |
@@ -101,6 +101,26 @@ literals across 211 XAML files name codepoints directly, and `App.xaml` points
 both `TelegramThemeFontFamily` and `SymbolThemeFontFamily` at this font - so a
 reshuffled codepoint silently changes icons all over the app, and a missing one
 renders as nothing rather than falling back to a system icon font.
+
+## Taking a drifted icon from upstream
+
+A local glyph carrying a Fluent name whose drawing no longer matches upstream is
+left alone by `adopt` - switching it would change what the app renders. `drift`
+lists them with both versions side by side; when you decide one of them should be
+Microsoft's again, name it:
+
+```
+py -m iconfont drift                                    # then read drift.html
+py -m iconfont adopt --only pin_20_regular,U+E77A       # what would change
+py -m iconfont adopt --only pin_20_regular,U+E77A --apply
+py -m iconfont build
+py -m iconfont verify --reference <the previous ttf>
+```
+
+`--only` accepts glyph names, with or without the `ic_fluent_` prefix, and
+`U+XXXX` codepoints. It ignores `--tolerance`: naming an icon is the decision.
+The local file is deleted, so the glyph follows upstream from then on. Adopting
+in bulk is the same command with `--tolerance` and no `--only`.
 
 ## Updating Microsoft's icons
 
