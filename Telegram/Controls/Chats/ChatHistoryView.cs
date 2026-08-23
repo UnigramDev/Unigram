@@ -12,6 +12,7 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Messages;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
@@ -19,7 +20,6 @@ using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -496,7 +496,7 @@ namespace Telegram.Controls.Chats
         {
             try
             {
-                if ((options == null || options.MoveFocus) && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+                if ((options == null || options.MoveFocus) && AccessibilityService.IsScreenReaderActive)
                 {
                     selectorItem.Focus(FocusState.Keyboard);
                 }
