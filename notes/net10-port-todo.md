@@ -248,7 +248,7 @@ NET9_0_OR_GREATER` blocks written for this port and never compiled until now.
 | `Common\Locale.cs` | `GetUserDefaultLocaleName` hoisted out of four popups, and its `Span<char>` parameter became `char*` behind a `fixed` | `SYSLIB1051`: the P/Invoke source generator only marshals `Span<T>` when runtime marshalling is disabled, and `char` is not blittable while it is enabled. Runtime marshalling stays at its UWP default, so the buffer crosses as a pointer. `ref char` is not enough — `char` is the problem, not the indirection. |
 | `StakeDicePopup` | added `using System;` | its `NET9_0_OR_GREATER` block used `Span<char>` with no `using System;` |
 | `Common\Extensions.cs` | `using WinRT;`, guarded | `IBuffer.As<IBufferByteAccess>()` is `WinRT.CastExtensions`; the namespace does not exist under .NET Native, so the using has to be inside the `#if` |
-| `Common\PlaceholderHelper.cs` | `new PlaceholderImageHelper((Window)null)` | **CsWinRT gives every projected runtime class an `IObjectReference` constructor**, so a bare `null` is ambiguous. Expect this wherever the app passes `null` to a projected constructor. |
+| `Common\Direct2D.cs` | `new Direct2DDevice((Window)null)` | **CsWinRT gives every projected runtime class an `IObjectReference` constructor**, so a bare `null` is ambiguous. Expect this wherever the app passes `null` to a projected constructor. |
 | `Properties\AssemblyInfo.cs` | excluded from the modern project, its values carried over as `AssemblyTitle`/`Product`/`Copyright` | the SDK generates those attributes itself, and two sets is `CS0579`. Excluded rather than turning off `GenerateAssemblyInfo`, so the legacy project keeps the file it has always had |
 | `Common\Extensions.cs` | hoisted `CancellationTokenRegistration registration = default;` out of its initializer | the local function captures `registration` and is converted to a delegate inside the very expression that assigns it. Definite assignment rejects that at a modern `LangVersion`; the legacy project's `LangVersion 14.0` does not. |
 
@@ -400,8 +400,8 @@ carries the exception type, message and a stack. The Application event log only 
       What is left is the surface path, which is what lottie and video share and the blobs do not:
       the blobs are pure Composition geometry, while both of the broken ones draw through a
       `CompositionDrawingSurface` off `Telegram.Native`'s `CompositionGraphicsDevice`.
-      `PlaceholderHelper.Foreground` is `[ThreadStatic]` and constructs
-      `new PlaceholderImageHelper(Window.Current)` per view, whose native constructor takes
+      `Direct2D.Current` is `[ThreadStatic]` and constructs
+      `new Direct2DDevice(Window.Current)` per view, whose native constructor takes
       `window.Compositor()` — the first thing to check is whether that construction is what
       throws on the secondary view.
 - [x] `{Binding}` **audited and fixed — see `binding-audit.md`.** 108 occurrences across 26 of 475
@@ -489,7 +489,7 @@ Two things it taught immediately:
 
 Detecting the WinRT boundary is by CsWinRT's own `[WindowsRuntimeType]`/`[ProjectedRuntimeClass]`
 attributes, not by namespace: the projection for a referenced C++/WinRT component is generated
-**into** the consuming assembly, so `Telegram.Native.PlaceholderImageHelper` is a type of this
+**into** the consuming assembly, so `Telegram.Native.Direct2DDevice` is a type of this
 compilation and looks managed by every other measure.
 
 Blind spot: a binding assigns through the property's **declared** type, so where that is an
@@ -525,7 +525,7 @@ C# anywhere; `x:Bind` is covered, which is why the analyzer opts into analysing 
       started working (so the window could close).
 
       Nothing in the app holds these wrongly: `RelativeDateService._current` and the
-      `PlaceholderImageHelper` caches are already `[ThreadStatic]` and released from
+      `Direct2DDevice` caches are already `[ThreadStatic]` and released from
       `WindowContext.OnShutdownCompleted`, and `FormattedTextBlockRecyclePool` is an instance field.
       A fix has to make the release happen on the owning thread while XAML is still alive, or not
       happen at all. `GC.WaitForPendingFinalizers` from the view thread is the obvious lever and
