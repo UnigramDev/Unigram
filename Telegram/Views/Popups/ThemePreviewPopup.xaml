@@ -109,27 +109,18 @@
                             <messages:MessageBubble x:Name="Message1"
                                                     HorizontalAlignment="Left" />
                             <messages:MessageBubble x:Name="Message2"
-                                                    HorizontalAlignment="Right">
-                                <FrameworkElement.Resources>
-                                    <common:ThemeOutgoing />
-                                </FrameworkElement.Resources>
-                            </messages:MessageBubble>
+                                                    HorizontalAlignment="Right"
+                                                    IsOutgoing="True" />
                             <messages:MessageBubble x:Name="Message3"
-                                                    HorizontalAlignment="Right">
-                                <FrameworkElement.Resources>
-                                    <common:ThemeOutgoing />
-                                </FrameworkElement.Resources>
-                            </messages:MessageBubble>
+                                                    HorizontalAlignment="Right"
+                                                    IsOutgoing="True" />
                             <messages:MessageBubble x:Name="Message4"
                                                     HorizontalAlignment="Left" />
                             <messages:MessageBubble x:Name="Message5"
                                                     HorizontalAlignment="Left" />
                             <messages:MessageBubble x:Name="Message6"
-                                                    HorizontalAlignment="Right">
-                                <FrameworkElement.Resources>
-                                    <common:ThemeOutgoing />
-                                </FrameworkElement.Resources>
-                            </messages:MessageBubble>
+                                                    HorizontalAlignment="Right"
+                                                    IsOutgoing="True" />
                         </StackPanel>
                     </Grid>
                 </Grid>

@@ -222,7 +222,7 @@ namespace Telegram.Common
 
                 if (entity.HasFlag(TextStyle.Monospace))
                 {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = Theme.Current.MonospaceFontFamily });
+                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = Theme.MonospaceFontFamily });
                 }
                 else
                 {
@@ -343,7 +343,7 @@ namespace Telegram.Common
 
                 if (entity.HasFlag(TextStyle.Monospace))
                 {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = Theme.Current.MonospaceFontFamily });
+                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = Theme.MonospaceFontFamily });
                 }
                 else
                 {

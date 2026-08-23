@@ -116,7 +116,7 @@ namespace Telegram.Controls.Messages
 
                 if (IsOutgoing)
                 {
-                    Resources = _theme.CreateOutgoing();
+                    Resources = _theme.Outgoing.CreateDictionary();
                 }
             }
         }

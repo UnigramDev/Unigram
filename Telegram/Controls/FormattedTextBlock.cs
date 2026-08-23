@@ -1335,7 +1335,7 @@ namespace Telegram.Controls
 
                                 MessageHelper.SetHyperlinkInfo(hyperlink.Element, new TextEntityClickEventArgs(entity.Type, data));
 
-                                GetOrCreateRun(direct, hyperlink.Inlines, data, direction, Native.TextStyle.None, Theme.Current.MonospaceFontFamily, partFontSize);
+                                GetOrCreateRun(direct, hyperlink.Inlines, data, direction, Native.TextStyle.None, Theme.MonospaceFontFamily, partFontSize);
                                 Map(part.Offset + entity.Offset, data.Length, data.Length);
                                 offset += data.Length;
 
@@ -1343,7 +1343,7 @@ namespace Telegram.Controls
                             }
                             else
                             {
-                                direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, Theme.Current.MonospaceFontFamily);
+                                direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, Theme.MonospaceFontFamily);
 
                                 var placeholder = GetOrCreateRun(direct, inlines, data, direction, Native.TextStyle.None, null, 0);
                                 Map(part.Offset + entity.Offset, data.Length, data.Length);
@@ -1359,7 +1359,7 @@ namespace Telegram.Controls
                         }
                         else
                         {
-                            GetOrCreateRun(direct, inlines, data, direction, Native.TextStyle.None, Theme.Current.MonospaceFontFamily, 0);
+                            GetOrCreateRun(direct, inlines, data, direction, Native.TextStyle.None, Theme.MonospaceFontFamily, 0);
                             Map(part.Offset + entity.Offset, data.Length, data.Length);
                             offset += data.Length;
                         }
@@ -2266,7 +2266,7 @@ namespace Telegram.Controls
         private void ProcessCodeBlock(XamlDirect direct, IXamlDirectObject inlines, IList<Token> tokens)
         {
             // Recursive: a new FontFamily here was one per node of the token tree.
-            var fontFamily = Theme.Current.MonospaceFontFamily;
+            var fontFamily = Theme.MonospaceFontFamily;
 
             foreach (var token in tokens)
             {

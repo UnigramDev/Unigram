@@ -8,6 +8,7 @@
 using System;
 using System.Linq;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
@@ -38,7 +39,7 @@ namespace Telegram.Views.Settings
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (Theme.Current.Update(ActualTheme, null, null, null, null))
+            if (WindowContext.ForXamlRoot(this).Theme.Update(ActualTheme, null, null, null, null))
             {
                 var forDarkTheme = Frame.ActualTheme == ElementTheme.Dark;
                 var background = ViewModel.ClientService.GetDefaultBackground(forDarkTheme);

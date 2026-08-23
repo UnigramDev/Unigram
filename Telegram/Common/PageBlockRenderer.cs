@@ -667,18 +667,18 @@ namespace Telegram.Common
             {
                 case PageBlockTitle:
                     textBlock.FontSize = 28;
-                    textBlock.FontFamily = new FontFamily("Times New Roman, " + Theme.Current.XamlAutoFontFamily);
+                    textBlock.FontFamily = new FontFamily("Times New Roman, " + Theme.XamlAutoFontFamily);
                     break;
                 case PageBlockSubtitle:
                     textBlock.FontSize = 17;
                     break;
                 case PageBlockHeader:
                     textBlock.FontSize = 24;
-                    textBlock.FontFamily = new FontFamily("Times New Roman, " + Theme.Current.XamlAutoFontFamily);
+                    textBlock.FontFamily = new FontFamily("Times New Roman, " + Theme.XamlAutoFontFamily);
                     break;
                 case PageBlockSubheader:
                     textBlock.FontSize = 20;
-                    textBlock.FontFamily = new FontFamily("Times New Roman, " + Theme.Current.XamlAutoFontFamily);
+                    textBlock.FontFamily = new FontFamily("Times New Roman, " + Theme.XamlAutoFontFamily);
                     break;
                 case PageBlockFooter:
                     textBlock.Style = BootStrapper.Current.Resources["InfoCaptionFormattedTextBlockStyle"] as Style;
@@ -724,11 +724,11 @@ namespace Telegram.Common
                     break;
                 case PageBlockSectionHeading heading:
                     textBlock.FontSize = 24 - ((heading.Size - 1) * 2);
-                    textBlock.FontFamily = new FontFamily("Times New Roman, " + Theme.Current.XamlAutoFontFamily);
+                    textBlock.FontFamily = new FontFamily("Times New Roman, " + Theme.XamlAutoFontFamily);
                     textBlock.FontWeight = FontWeights.SemiBold;
                     break;
                 case PageBlockPreformatted:
-                    textBlock.FontFamily = Theme.Current.MonospaceFontFamily;
+                    textBlock.FontFamily = Theme.MonospaceFontFamily;
                     break;
             }
         }

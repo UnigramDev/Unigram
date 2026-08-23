@@ -125,9 +125,9 @@ namespace Telegram.ViewModels.Settings
                 {
                     _index[i] = new ThemeBrush(key, custom, value.Value.A < 255);
                 }
-                else if (value.Value.Color is Color color)
+                else
                 {
-                    _index[i] = new ThemeBrush(key, color, value.Value.Color.A < 255);
+                    _index[i] = new ThemeBrush(key, value.Value, value.Value.A < 255);
                 }
 
                 if (_index[i] != null)
@@ -171,7 +171,7 @@ namespace Telegram.ViewModels.Settings
                 brush.Color = popup.Color;
 
                 _theme.Values[brush.Key] = popup.Color;
-                Theme.Current.Update(_theme);
+                Window.Theme.Update(_theme);
 
                 await CommitAsync();
             }

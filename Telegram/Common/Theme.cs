@@ -111,12 +111,18 @@ namespace Telegram.Common
 
             // Code spans and blocks. The text fallback comes last so a character the monospace
             // faces don't cover - an emoji inside a code span - still renders.
-            MonospaceFontFamily = new FontFamily("Cascadia Mono, Consolas" + comma + XamlAutoFontFamily);
+            _monospaceFontFamily = new FontFamily("Cascadia Mono, Consolas" + comma + XamlAutoFontFamily);
         }
 
-        public string XamlAutoFontFamily { get; private set; }
+        // The font the user picked, which is a plain string and so genuinely global. The
+        // FontFamily built from it is a DependencyObject and cannot cross threads, so that one
+        // is cached per thread - the same reason DispatcherContext is, and the one kind of UI
+        // ThreadStatic that is not a mistake.
+        public static string XamlAutoFontFamily { get; private set; }
 
-        public FontFamily MonospaceFontFamily { get; private set; }
+        [ThreadStatic]
+        private static FontFamily _monospaceFontFamily;
+        public static FontFamily MonospaceFontFamily => _monospaceFontFamily;
 
         private bool _legacyScrollBars;
         private ResourceDictionary _scrollBars;
@@ -197,11 +203,6 @@ namespace Telegram.Common
         /// recoloured in place, which is what makes a theme change repaint every bubble without
         /// touching any of them.
         /// </remarks>
-        public ThemeOutgoing CreateOutgoing()
-        {
-            return new ThemeOutgoing(Outgoing);
-        }
-
         public MessageBrushes Outgoing { get; } = new("Outgoing", ThemeOutgoing.DefaultLight, ThemeOutgoing.DefaultDark);
 
         public MessageBrushes Incoming { get; } = new("Incoming", ThemeIncoming.DefaultLight, ThemeIncoming.DefaultDark);
@@ -668,11 +669,15 @@ namespace Telegram.Common
         }
 
         /// <summary>
-        /// Fills a dictionary's ThemeDictionaries with these brushes, for an element to assign to
-        /// its Resources. Dark is stored under Default, which is what XAML falls back to.
+        /// A dictionary of these brushes for an element to assign to its Resources. One per
+        /// element and it cannot be otherwise - Resources takes a single owner - so only the
+        /// wrapper is per bubble, never the brushes. Dark is stored under Default, which is
+        /// what XAML falls back to.
         /// </summary>
-        public void Populate(ResourceDictionary dictionary)
+        public ResourceDictionary CreateDictionary()
         {
+            var dictionary = new ResourceDictionary();
+
             var light = new ResourceDictionary();
             var dark = new ResourceDictionary();
 
@@ -688,6 +693,8 @@ namespace Telegram.Common
 
             dictionary.ThemeDictionaries["Light"] = light;
             dictionary.ThemeDictionaries["Default"] = dark;
+
+            return dictionary;
         }
 
         // Composition mirror of MessageBackgroundBrush, for brushes that paint the bubble fill
@@ -738,7 +745,7 @@ namespace Telegram.Common
     }
 
 
-    public partial class ThemeOutgoing : ResourceDictionary
+    public static partial class ThemeOutgoing
     {
         // Defaults only: plain colours, shared by every window and every thread, and the
         // fallback Outgoing brushes are reset to when a theme carries no override.
@@ -788,18 +795,9 @@ namespace Telegram.Common
             { "MessageReactionChosenForegroundBrush", Color.FromArgb(0xFF, 0x33, 0x39, 0x3F) },
         };
 
-        // XAML names this type in the theme previews, which show the current theme.
-        public ThemeOutgoing() : this(Theme.Current?.Outgoing)
-        {
-        }
-
-        internal ThemeOutgoing(MessageBrushes brushes)
-        {
-            brushes?.Populate(this);
-        }
     }
 
-    public partial class ThemeIncoming : ResourceDictionary
+    public static partial class ThemeIncoming
     {
         // Defaults only: plain colours, shared by every window and every thread, and the
         // fallback Incoming brushes are reset to when a theme carries no override.
@@ -849,14 +847,5 @@ namespace Telegram.Common
             { "MessageReactionChosenForegroundBrush", Color.FromArgb(0xFF, 0x33, 0x39, 0x3F) },
         };
 
-        // XAML names this type in the theme previews, which show the current theme.
-        public ThemeIncoming() : this(Theme.Current?.Incoming)
-        {
-        }
-
-        internal ThemeIncoming(MessageBrushes brushes)
-        {
-            brushes?.Populate(this);
-        }
     }
 }

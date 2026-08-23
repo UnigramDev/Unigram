@@ -1719,12 +1719,12 @@ namespace Telegram.Controls
                 }
                 else if (entity.Type is TextEntityTypeCode)
                 {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = Theme.Current.MonospaceFontFamily });
+                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = Theme.MonospaceFontFamily });
                 }
                 else if (entity.Type is TextEntityTypePre or TextEntityTypePreCode)
                 {
                     // TODO any additional
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = Theme.Current.MonospaceFontFamily });
+                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = Theme.MonospaceFontFamily });
                 }
                 else if (entity.Type is TextEntityTypeUrl or TextEntityTypeEmailAddress or TextEntityTypePhoneNumber or TextEntityTypeMention or TextEntityTypeHashtag or TextEntityTypeCashtag or TextEntityTypeBotCommand)
                 {

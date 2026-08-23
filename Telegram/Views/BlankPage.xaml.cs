@@ -6,6 +6,7 @@
 //
 
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Authorization;
@@ -40,7 +41,7 @@ namespace Telegram.Views
             {
                 _clientService.Send(new Destroy());
             }
-            else if (Theme.Current.Update(ActualTheme, null, null, null, null))
+            else if (WindowContext.ForXamlRoot(this).Theme.Update(ActualTheme, null, null, null, null))
             {
                 if (_clientService == null)
                 {
