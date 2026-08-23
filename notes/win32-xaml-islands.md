@@ -1255,10 +1255,20 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
 
   | dictionary | merged at | reaches |
   | --- | --- | --- |
-  | `Theme` | `App.xaml` | everything, `PopupRoot` included |
-  | `Theme.Incoming` | `WindowContext.Content` | all window content - bubbles, cells, headers, pages |
-  | `Theme.Outgoing` | `MessageBubble` when `IsOutgoing` | that bubble |
-  | `Theme.Incoming` again | `ContentPopup.ShowQueuedAsync`, plus three flyouts | popup content that renders bubble keys |
+  | `Theme`, including the **default** incoming brushes | `App.xaml` | everything, `PopupRoot` included - the fallback for anything not forwarded |
+  | the **window's** incoming | `WindowContext.Content` | all window content - bubbles, cells, headers, pages |
+  | the **window's** outgoing | `MessageBubble` when `IsOutgoing` | that bubble |
+  | the **window's** incoming again | `ContentPopup.ShowQueuedAsync`, plus three flyouts | popup content that should follow the chat override |
+
+  **Two instances, not one.** The app-level set and the per-window set have to be different
+  `MessageBrushes`: today `UpdateMessages` recolours the very brushes that are folded into the
+  app dictionary, so a chat override would repaint the fallback and every window with it. So
+  `Theme.Incoming`/`Theme.Outgoing` become the defaults, recoloured only by the app theme pass,
+  and `WindowContext` owns a second pair that the chat override writes to.
+
+  That relocates the override path: `Theme.Update(ElementTheme, ChatTheme, …)` acts on the
+  window's pair rather than `Theme`'s own, so it becomes a `WindowContext` operation and its
+  three callers - `ChatView`, `BlankPage`, `SettingsAppearancePage` - follow it there.
 
   The last row is the price, and it is a fair one. The message keys are referenced by ~75 XAML
   files; nearly all are window content, but **seven are popups** - `SendFilesPopup`,
