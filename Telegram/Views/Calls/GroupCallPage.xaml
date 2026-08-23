@@ -286,6 +286,7 @@
             </Border>
 
             <controls:GlyphButton x:Name="Menu"
+                                  AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
                                   Click="Menu_ContextRequested"
                                   Glyph="&#xE9E9;"
                                   Width="48"

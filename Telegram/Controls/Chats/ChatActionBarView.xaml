@@ -25,6 +25,7 @@
         </Grid>
 
         <controls:GlyphButton x:Name="RemoveButton"
+                              AutomationProperties.Name="{CustomResource AccDescrDismissBar}"
                               Click="Remove_Click"
                               Glyph="&#xE711;"
                               Height="32"

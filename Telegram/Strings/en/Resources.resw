@@ -115,6 +115,9 @@
   <data name="AccDescrCancelEdit" xml:space="preserve">
     <value>Cancel editing</value>
   </data>
+  <data name="AccDescrCancelRecording" xml:space="preserve">
+    <value>Cancel recording</value>
+  </data>
   <data name="AccDescrCancelReply" xml:space="preserve">
     <value>Cancel reply</value>
   </data>
@@ -148,6 +151,9 @@
   <data name="AccDescrCustomEmoji2" xml:space="preserve">
     <value>Custom emoji</value>
   </data>
+  <data name="AccDescrDismissBar" xml:space="preserve">
+    <value>Dismiss</value>
+  </data>
   <data name="AccDescrEmojiButton" xml:space="preserve">
     <value>Emoji, stickers, and GIFs</value>
   </data>
@@ -174,6 +180,9 @@
   </data>
   <data name="AccDescrGoBack" xml:space="preserve">
     <value>Go back</value>
+  </data>
+  <data name="AccDescrGoForward" xml:space="preserve">
+    <value>Go forward</value>
   </data>
   <data name="AccDescrGroup" xml:space="preserve">
     <value>Group</value>
@@ -303,6 +312,9 @@
   </data>
   <data name="AccDescrSeek" xml:space="preserve">
     <value>Seek</value>
+  </data>
+  <data name="AccDescrSetTimer" xml:space="preserve">
+    <value>Set self-destruct timer</value>
   </data>
   <data name="AccDescrSentDate" xml:space="preserve">
     <value>Sent {0}</value>
