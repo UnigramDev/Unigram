@@ -92,24 +92,65 @@ namespace Telegram.Common
 
         public static string GetSummaryWithName(MessageWithOwner message, bool details = false, bool addCaption = true)
         {
-            var summary = GetSummary(message, details, addCaption);
+            var summary = GetAccessibleSummary(message, details, addCaption);
+            var prefix = GetMessagePrefix(message);
+
+            if (!string.IsNullOrEmpty(prefix))
+            {
+                return $"{prefix}: {summary}";
+            }
+
+            return summary;
+        }
+
+        /// <summary>
+        /// Returns the stable sender prefix used by screen-reader message summaries.
+        /// </summary>
+        public static string GetMessagePrefix(MessageWithOwner message)
+        {
+            if (message == null || message.Content.IsService())
+            {
+                return null;
+            }
+
+            if (message.IsSaved)
+            {
+                return message.ClientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo);
+            }
+
+            if (message.IsOutgoing && !message.IsChannelPost)
+            {
+                return Strings.FromYou;
+            }
 
             if (message.ClientService.TryGetUser(message.SenderId, out User user))
             {
-                if (user.Id == message.ClientService.Options.MyId)
-                {
-                    return $"{Strings.FromYou}: {summary}";
-                }
-
-                return $"{user.FullName()}: {summary}";
+                return user.FullName();
             }
-            //else if (message.IsChannelPost)
-            //{
-            //    return summary;
-            //}
-            else if (message.ClientService.TryGetChat(message.SenderId, out Chat chat))
+
+            if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
-                return $"{chat.Title}: {summary}";
+                return message.ClientService.GetTitle(senderChat);
+            }
+
+            if (message.IsChannelPost)
+            {
+                return message.ClientService.GetTitle(message.Chat);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the content summary plus concise interactive-content metadata.
+        /// Individual inline button labels remain available when navigating to the buttons.
+        /// </summary>
+        public static string GetAccessibleSummary(MessageWithOwner message, bool details = false, bool addCaption = true)
+        {
+            var summary = GetSummary(message, details, addCaption);
+            if (message?.ReplyMarkup is ReplyMarkupInlineKeyboard)
+            {
+                return $"{summary}{Strings.AccDescrMessageHasInlineButtons}. ";
             }
 
             return summary;

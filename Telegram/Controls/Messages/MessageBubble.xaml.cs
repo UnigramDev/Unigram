@@ -373,29 +373,11 @@ namespace Telegram.Controls.Messages
 
             var chat = message.Chat;
 
-            var title = string.Empty;
-            var senderBot = false;
-
-            if (message.IsSaved)
-            {
-                title = message.ClientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo);
-            }
-            else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
-            {
-                if (message.IsOutgoing)
-                {
-                    title = null;
-                }
-                else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
-                {
-                    senderBot = senderUser.Type is UserTypeBot;
-                    title = senderUser.FullName();
-                }
-                else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
-                {
-                    title = message.ClientService.GetTitle(senderChat);
-                }
-            }
+            var title = Automation.GetMessagePrefix(message);
+            var senderBot = !message.IsOutgoing
+                && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup { IsChannel: false })
+                && message.ClientService.TryGetUser(message.SenderId, out User senderUser)
+                && senderUser.Type is UserTypeBot;
 
             var builder = new StringBuilder();
             if (title?.Length > 0)
@@ -484,7 +466,7 @@ namespace Telegram.Controls.Messages
                 }
             }
 
-            builder.Append(Automation.GetSummary(message, true));
+            builder.Append(Automation.GetAccessibleSummary(message, true));
 
             if (message.AuthorSignature.Length > 0)
             {
