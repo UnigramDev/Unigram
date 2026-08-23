@@ -88,10 +88,10 @@ namespace Telegram.Controls.Media
         {
             // _xamlRoot rather than Theme.Current: the brushes belong to the window this brush
             // was created for, which is also the window whose scale the mask was rasterized at.
-            var theme = WindowContext.ForXamlRoot(_xamlRoot)?.Theme ?? Theme.Current;
+            var window = WindowContext.ForXamlRoot(_xamlRoot);
             var fill = _outgoing
-                ? theme.Outgoing.Background(_parent)
-                : theme.Incoming.Background(_parent);
+                ? (window?.Outgoing ?? Theme.Current.Outgoing).Background(_parent)
+                : (window?.Incoming ?? Theme.Current.Incoming).Background(_parent);
 
             // Used while the nine grid is unavailable, which is the case when a bubble is realized
             // before XamlRoot is ready. Without it the bubble would have no fill at all.

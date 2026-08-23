@@ -39,7 +39,7 @@ namespace Telegram.Views.Settings
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (ViewModel.Window.Theme.Update(ActualTheme, null, null, null, null))
+            if (ViewModel.Window.UpdateChatTheme(ActualTheme, null, null, null, null))
             {
                 var forDarkTheme = Frame.ActualTheme == ElementTheme.Dark;
                 var background = ViewModel.ClientService.GetDefaultBackground(forDarkTheme);

@@ -19,6 +19,7 @@ using Telegram.Native;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
+using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Telegram.Views.Authorization;
@@ -221,6 +222,92 @@ namespace Telegram.Navigation
 
         public ThemeParameters ThemeParameters => Theme.GetParameters(ActualTheme);
 
+        #region Chat theme
+
+        // The app theme is global and lives on Theme, merged app-wide so that popups resolve it.
+        // A chat override is not: two windows can show two chats, so each window recolours its
+        // own brushes, and Theme's pair stays as the default nothing has overridden.
+        public MessageBrushes Outgoing { get; } = new("Outgoing", ThemeOutgoing.DefaultLight, ThemeOutgoing.DefaultDark);
+
+        public MessageBrushes Incoming { get; } = new("Incoming", ThemeIncoming.DefaultLight, ThemeIncoming.DefaultDark);
+
+        private Background _lastBackground;
+
+        private ThemeSettings _lastLightSettings;
+        private ThemeSettings _lastDarkSettings;
+
+        private ChatBackground _lastChatBackground;
+        private ChatTheme _lastChatTheme;
+
+        public ThemeSettings LightSettings => _lastLightSettings;
+        public ThemeSettings DarkSettings => _lastDarkSettings;
+
+        public ChatBackground ChatBackground => _lastChatBackground;
+
+        public ChatTheme ChatTheme => _lastChatTheme;
+
+        /// <summary>
+        /// Re-applies this window's override after the app theme has been recomputed underneath
+        /// it, falling back to the app-wide chat theme when the window has none of its own.
+        /// </summary>
+        public void ReapplyChatTheme()
+        {
+            UpdateMessages(_lastLightSettings ?? Theme.GetAppChatSettings(TelegramTheme.Light),
+                _lastDarkSettings ?? Theme.GetAppChatSettings(TelegramTheme.Dark));
+        }
+
+        public bool UpdateChatTheme(ElementTheme elementTheme, ChatTheme theme, ThemeSettings lightSettings, ThemeSettings darkSettings, ChatBackground background)
+        {
+            var requested = elementTheme == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light;
+            var settings = requested == TelegramTheme.Light ? lightSettings : darkSettings;
+
+            // Both sides, because both have to be right before the base flips - the switch itself
+            // recolours nothing. Comparing both accents rather than the current one: two themes
+            // can share a light accent and differ in dark.
+            var changed = _lastLightSettings?.AccentColor != lightSettings?.AccentColor
+                || _lastDarkSettings?.AccentColor != darkSettings?.AccentColor;
+
+            _lastLightSettings = lightSettings;
+            _lastDarkSettings = darkSettings;
+            _lastChatTheme = settings != null ? theme : null;
+
+            if (changed)
+            {
+                UpdateMessages(lightSettings, darkSettings);
+            }
+
+            var nextBackground = background?.Background;
+            if (settings != null)
+            {
+                nextBackground ??= settings.Background;
+            }
+
+            var updated = !_lastBackground.AreTheSame(nextBackground);
+
+            _lastBackground = nextBackground;
+            _lastChatBackground = background;
+
+            return updated;
+        }
+
+        private void UpdateMessages(ThemeSettings lightSettings, ThemeSettings darkSettings)
+        {
+            Apply(TelegramTheme.Light, lightSettings);
+            Apply(TelegramTheme.Dark, darkSettings);
+
+            void Apply(TelegramTheme requested, ThemeSettings settings)
+            {
+                // Parent, not requested: a chat theme is tinted by the appearance, and that can
+                // resolve a light request to the dark family.
+                var info = Theme.Resolve(requested, settings);
+
+                Outgoing.Update(info?.Parent ?? requested, info?.Values);
+                Incoming.Update(info?.Parent ?? requested, info?.Values);
+            }
+        }
+
+        #endregion
+
         public WindowContext(Window window)
         {
             _window = window;
@@ -234,7 +321,7 @@ namespace Telegram.Navigation
             //Current = this;
             Dispatcher = DispatcherContext.Current;
             Id = ApplicationView.GetApplicationViewIdForWindow(window.CoreWindow);
-            Bounds = window.Bounds;
+            //Bounds = window.Bounds;
 
             var scaling = AppSettings.Appearance.Scaling;
             if (scaling is >= 100 and <= 250 && !AppSettings.Appearance.UseDefaultScaling)
@@ -539,6 +626,11 @@ namespace Telegram.Navigation
             }
             else
             {
+                // Before the content exists, so ActualTheme comes from GetCalculatedElementTheme
+                // rather than from an element that is not in a tree yet and has nothing to
+                // inherit from.
+                ReapplyChatTheme();
+
                 _content = new WindowControl(this)
                 {
                     RequestedTheme = NightModeService.Current.GetCalculatedElementTheme(),
@@ -554,6 +646,8 @@ namespace Telegram.Navigation
                 // RichEditBox marks the character handled, so it never reaches here - which is
                 // what the type-to-search sites used to approximate with a FocusManager check.
                 _content.CharacterReceived += OnContentCharacterReceived;
+
+                _content.Resources.MergedDictionaries.Add(Incoming.CreateDictionary());
 
                 _window.Content = _content;
 
@@ -657,7 +751,7 @@ namespace Telegram.Navigation
 
         private void OnSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
         {
-            Bounds = _window.Bounds;
+            //Bounds = _window.CoreWindow.Bounds;
             SizeChanged?.Invoke(this, new WindowSizeChangedEventArgs(e.Size));
         }
 
@@ -666,7 +760,7 @@ namespace Telegram.Navigation
         private void OnResizeStarted(CoreWindow sender, object args)
         {
             Logger.Debug(sender.Bounds);
-            Bounds = sender.Bounds;
+            //Bounds = sender.Bounds;
 
             if (AppSettings.Diagnostics.WindowResizeDebug)
             {
@@ -685,7 +779,7 @@ namespace Telegram.Navigation
         private void OnResizeCompleted(CoreWindow sender, object args)
         {
             Logger.Debug(sender.Bounds);
-            Bounds = sender.Bounds;
+            //Bounds = sender.Bounds;
 
             if (AppSettings.Diagnostics.WindowResizeDebug)
             {
@@ -855,7 +949,7 @@ namespace Telegram.Navigation
             set => ApplicationView.GetForCurrentView().Title = value;
         }
 
-        public Rect Bounds { get; private set; }
+        public Rect Bounds => _window.CoreWindow.Bounds;
 
         // Must be used only by BootStrapper
         public Compositor Compositor => _window.Compositor;

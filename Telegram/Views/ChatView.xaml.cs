@@ -5723,7 +5723,7 @@ namespace Telegram.Views
                 darkSettings = gift.GiftTheme.DarkSettings;
             }
 
-            if (ViewModel.Window.Theme.Update(ActualTheme, theme, lightSettings, darkSettings, chat.Background))
+            if (ViewModel.Window.UpdateChatTheme(ActualTheme, theme, lightSettings, darkSettings, chat.Background))
             {
                 var current = chat.Background?.Background;
                 if (current?.Type is BackgroundTypeChatTheme typeChatTheme && ViewModel.ClientService.TryGetEmojiChatTheme(typeChatTheme.ThemeName, out emoji))

@@ -105,18 +105,18 @@ namespace Telegram.Controls.Messages
 
         public bool IsOutgoing { get; set; }
 
-        private Theme _theme;
+        private WindowContext _window;
 
         private void OnLoading(FrameworkElement sender, object args)
         {
             if (WindowContext.TryGetForXamlRoot(XamlRoot, out var window))
             {
                 // Held rather than resolved per call: GetBrush runs while text is being built.
-                _theme = window.Theme;
+                _window = window;
 
                 if (IsOutgoing)
                 {
-                    Resources = _theme.Outgoing.CreateDictionary();
+                    Resources = window.Outgoing.CreateDictionary();
                 }
             }
         }
@@ -2381,12 +2381,12 @@ namespace Telegram.Controls.Messages
 
         private Brush GetBrush(string key)
         {
-            var theme = _theme ?? Theme.Current;
-
             var message = _message;
-            var brushes = message != null && message.IsOutgoing && !message.IsChannelPost
-                ? theme.Outgoing
-                : theme.Incoming;
+            var outgoing = message != null && message.IsOutgoing && !message.IsChannelPost;
+
+            var brushes = _window != null
+                ? outgoing ? _window.Outgoing : _window.Incoming
+                : outgoing ? Theme.Current.Outgoing : Theme.Current.Incoming;
 
             return ActualTheme == ElementTheme.Light
                 ? brushes.Light[key]

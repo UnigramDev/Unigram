@@ -137,6 +137,10 @@ namespace Telegram.Services
                     }
 
                     window.Theme.Update(theme);
+
+                    // The app pass recoloured the defaults underneath; a window showing a chat
+                    // theme has to put its own override back on top of them.
+                    window.ReapplyChatTheme();
                 }
 
                 if (window.ActualTheme != theme || force is true)

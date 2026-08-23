@@ -164,13 +164,6 @@ namespace Telegram.Common
             public Color Light1 { get; set; } = Colors.Red;
         }
 
-        public ThemeSettings LightSettings => _lastLightSettings;
-        public ThemeSettings DarkSettings => _lastDarkSettings;
-
-        public ChatBackground ChatBackground => _lastChatBackground;
-
-        public ChatTheme ChatTheme => _lastChatTheme;
-
         public void Update(ElementTheme requested)
         {
             Update(requested == ElementTheme.Light
@@ -212,7 +205,22 @@ namespace Telegram.Common
         /// theme when one is active, otherwise the user's appearance - a custom theme file, an
         /// accent, or neither. Null is the plain theme, which carries no values of its own.
         /// </summary>
-        private static ThemeAccentInfo Resolve(TelegramTheme requested, ThemeSettings chat)
+        /// <summary>
+        /// The settings of the app-wide chat theme, the one SettingsAppearanceViewModel sets.
+        /// Null when there is none, which leaves the appearance to decide.
+        /// </summary>
+        internal static ThemeSettings GetAppChatSettings(TelegramTheme requested)
+        {
+            var chatTheme = AppSettings.Appearance.ChatTheme;
+            if (chatTheme == null)
+            {
+                return null;
+            }
+
+            return requested == TelegramTheme.Light ? chatTheme.LightSettings : chatTheme.DarkSettings;
+        }
+
+        internal static ThemeAccentInfo Resolve(TelegramTheme requested, ThemeSettings chat)
         {
             if (chat != null)
             {
@@ -252,75 +260,6 @@ namespace Telegram.Common
             return null;
         }
 
-        private void UpdateMessages(TelegramTheme requested, ThemeAccentInfo info)
-        {
-            Outgoing.Update(info?.Parent ?? requested, info?.Values);
-            Incoming.Update(info?.Parent ?? requested, info?.Values);
-        }
-
-        #region Local 
-
-        private int? _lastAccent;
-        private Background _lastBackground;
-
-        private ThemeSettings _lastLightSettings;
-        private ThemeSettings _lastDarkSettings;
-
-        private ChatBackground _lastChatBackground;
-        private ChatTheme _lastChatTheme;
-
-        public bool Update(ElementTheme elementTheme, ChatTheme theme, ThemeSettings lightSettings, ThemeSettings darkSettings, ChatBackground background)
-        {
-            var updated = false;
-            var requested = elementTheme == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light;
-            var nextBackground = background?.Background;
-
-            var settings = requested == TelegramTheme.Light ? lightSettings : darkSettings;
-            // The accent guards the recolour, which is the expensive half, and nothing else:
-            // a chat theme can change while keeping its accent, and these three are read back
-            // by the global update and by ChatBackgroundControl, so they must not go stale.
-            if (settings != null)
-            {
-                _lastLightSettings = lightSettings;
-                _lastDarkSettings = darkSettings;
-                _lastChatTheme = theme;
-
-                if (_lastAccent != settings.AccentColor)
-                {
-                    UpdateMessages(requested, Resolve(requested, settings));
-                }
-
-                nextBackground ??= settings.Background;
-
-                _lastAccent = settings.AccentColor;
-            }
-            else
-            {
-                _lastLightSettings = null;
-                _lastDarkSettings = null;
-                _lastChatTheme = null;
-
-                if (_lastAccent != null)
-                {
-                    UpdateMessages(requested, Resolve(requested, null));
-                }
-
-                _lastAccent = null;
-            }
-
-            if (!_lastBackground.AreTheSame(nextBackground))
-            {
-                updated = true;
-            }
-
-            _lastBackground = nextBackground;
-            _lastChatBackground = background;
-
-            return updated;
-        }
-
-        #endregion
-
         #region Global
 
         private void Update(ApplicationTheme theme)
@@ -330,13 +269,7 @@ namespace Telegram.Common
                 ? TelegramTheme.Light
                 : TelegramTheme.Dark;
 
-            var chat = settings.ChatTheme != null
-                ? requested == TelegramTheme.Light
-                    ? settings.ChatTheme.LightSettings
-                    : settings.ChatTheme.DarkSettings
-                : null;
-
-            var info = Resolve(requested, chat);
+            var info = Resolve(requested, GetAppChatSettings(requested));
             if (info != null)
             {
                 Update(info.Parent, info.Values, info.Shades);
@@ -344,11 +277,6 @@ namespace Telegram.Common
             else
             {
                 Update(requested);
-            }
-
-            if (LightSettings != null && DarkSettings != null)
-            {
-                Update(theme == ApplicationTheme.Light ? ElementTheme.Light : ElementTheme.Dark, ChatTheme, LightSettings, DarkSettings, ChatBackground);
             }
         }
 
