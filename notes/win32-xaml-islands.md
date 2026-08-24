@@ -1661,7 +1661,7 @@ needs two implementations.
 | `WindowContext` | 54 | `Window` + `CoreWindow` + `ApplicationView` | HWND + `DesktopWindowXamlSource` + `IslandNative` |
 | `ViewService` + `ViewLifetimeControl` | 34 | `CreateNewView` + `ApplicationViewSwitcher` | create an HWND, on this thread or a new one per 0.18 |
 | `BootStrapper` + `App.xaml.cs` | 10 | `Application`, `OnLaunched`, activation, suspend | `WinMain`, `WindowsXamlManager`, own message loop |
-| `InputListener` | 6 | `CoreWindow.GetAsyncKeyState` | `GetAsyncKeyState`, or XAML routed events |
+| `InputListener` | 6 | `CoreWindow.GetAsyncKeyState` | unchanged — the stub answers key state (2.1g) |
 | title bar — no class yet | — | `ExtendViewIntoTitleBar` + `CoreApplicationViewTitleBar` | `WM_NCCALCSIZE` / `WM_NCHITTEST` + drag-bar HWND (1.7) |
 | tray icon | — | `Telegram.Stub`, a second process | `Shell_NotifyIcon` in-process (2.5) |
 
@@ -1687,7 +1687,7 @@ and `Telegram.csproj` lists every file explicitly (~1240 entries) rather than gl
 project for the Win32 host selects its own files for free. Each Tier 1 class becomes a shared
 `partial` plus a per-host partial: `WindowContext.cs` keeps `XamlRoot`, `_mapping`, `Theme`,
 `NavigationServices` and the per-window services, while `WindowContext.Uwp.cs` /
-`WindowContext.Win32.cs` supply activation, bounds, title bar, cursor and key state. No
+`WindowContext.Win32.cs` supply activation, bounds and title bar. No
 preprocessor branches in shared code, and the shared half stays readable. Agreed naming is
 `WindowContext.Uwp.cs` / `WindowContext.Win32.cs` — `.Modern.cs` would collide with the .NET 10
 project's meaning of the word.
@@ -1976,9 +1976,9 @@ APIs, and nothing else.
   - **An exception storm, not a slow build.** `SetPointerCursor` threw `NotImplementedException`
     from `FormattedTextBlock.OnPointerMoved` - once per pointer move over message text - and each
     one unwound through the WinRT ABI into `WatchDog`, which wrote a crash report **to disk**.
-    Three reports in forty seconds of hovering. It is implemented now (`LoadCursorW`/`SetCursor`,
-    one shared HCURSOR per type, as the UWP half caches `CoreCursor`). **The lesson: a stub that
-    throws on a pointer-rate path is not a stub, it is a performance bug.**
+    Three reports in forty seconds of hovering. **The lesson: a stub that throws on a
+    pointer-rate path is not a stub, it is a performance bug.** The implementation that replaced
+    it - `LoadCursorW`/`SetCursor` - was itself wrong and is gone; see 2.1g.
 
   - **And then the rest of it was the JIT. This flavour needs NativeAOT to feel right.** Measured
     across three builds of the same sources: Debug laggy, **Release without AOT still laggy**, and
@@ -2055,6 +2055,50 @@ APIs, and nothing else.
     handles neither XButton, so a routed handler still sees them, and none of the keyboard's
     reasons for needing the message loop - `SystemKeyDown`, a focused control swallowing the key,
     focus inside a WebView2 - apply to a mouse button nothing consumes.
+
+- [x] **2.1g The stub `CoreWindow` is a real API surface inside an island, not just a handle.**
+  Established 2026-08-24, after `SetCursor` failed and Terminal's source explained why.
+
+  The starting assumption was that `CoreWindow` is the UWP app model and therefore absent here,
+  so anything reading it had to be rewritten against Win32. That is wrong twice over: the stub
+  exists, and for input state it is the *only* thing that answers correctly, because XAML's input
+  site inside the island talks to it rather than to the top-level window.
+
+  - **The cursor cannot be done with `SetCursor`.** The island - strictly its `InputSite` child -
+    is the window under the pointer, and it answers `WM_SETCURSOR` itself, so a cursor set on the
+    top-level window is overwritten on the next mouse move. What works is exactly what the UWP
+    half does: `CoreWindow.GetForCurrentThread().PointerCursor`. `SetPointerCursor` is therefore
+    **shared code again**, not forked - it took a fork and a fold-back to learn that.
+  - **Terminal reads key state the same way, and it is island-only code.** Verified against
+    `microsoft/terminal` `main`, 2026-08-24 - `CoreWindow::GetForCurrentThread().GetKeyState(...)`
+    in `TermControl.cpp:2969` (`_GetPressedModifierKeys`), `TerminalPage.cpp:1449,1711,1925,3834`,
+    `CommandPalette.cpp:258,421`, `SearchBoxControl.cpp:261`, `KeyChordListener.cpp`,
+    `SuggestionsControl.cpp`. Terminal has no UWP flavour left - `OnLaunched` is empty and says so -
+    so every one of those runs in an island.
+  - **And pointer position** - `TerminalPage.cpp:6143`, `CoreWindow::GetForCurrentThread().PointerPosition()`,
+    reading where a tab was dropped outside the tab view.
+
+  **What this closes:** item 0.6's four `CoreWindow` shapes do not all need Win32 twins.
+  `GetKeyState`, `PointerPosition` and `PointerCursor` can stay shared and keep reading the
+  `CoreWindow`; the table above listing `GetAsyncKeyState` as `InputListener`'s replacement is a
+  fallback, not a requirement. What genuinely does not survive is the *event* surface -
+  `CharacterReceived`, `KeyDown`, `SizeChanged`, `Activated` on the `CoreWindow` - because nothing
+  posts to the stub. That is the same split gate 1.13 found in `ContentDialog`: state reads
+  through, events do not.
+
+  **A lifetime trap that comes with it, from `WindowEmperor.cpp:275-295`.** XAML creates the
+  `CoreWindow` implicitly, parented to the **first island on the thread**. Destroying that island
+  destroys the `CoreWindow`, and *it cannot be recreated* - Terminal's comment calls it a WinUI
+  bug. Terminal works around it by reparenting the `CoreWindow` to its own hidden initial window
+  as soon as the first island exists. We do not, and our windows come and go: on a thread hosting
+  more than one, closing the first would take the cursor and key state down with it for every
+  window left. Terminal's second reason applies to us as well - on Windows 10 the `CoreWindow`
+  shows on the taskbar as a visible window until it is reparented.
+
+  Not a bug we have hit, because chat windows own their thread and the main window is the first on
+  its own. Worth doing before that stops being true. `CoreWindowBridge.Resolve` already finds the
+  stub by class name, so the reparent is three lines - though it caches, and would need to stop
+  caching or be told, if the stub ever moves.
 
 - [ ] **2.1e Re-activation is unhandled, and it is the first real design gap.** Found 2026-08-24
   by the call window crashing. Chats, IV, the text editor and web apps all open in their own
