@@ -32,7 +32,7 @@ namespace Telegram.Views.Settings
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            if (XamlRoot.Content is WindowControl { Content: Host.RootWindow root })
+            if (XamlRoot.Content is WindowPresenter { Content: Host.RootWindow root })
             {
                 root.HideEditor();
             }

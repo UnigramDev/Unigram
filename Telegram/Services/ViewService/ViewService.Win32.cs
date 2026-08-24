@@ -115,7 +115,7 @@ namespace Telegram.Services
         /// <summary>
         /// Content is set by the caller rather than passed in, so that it is assigned through
         /// <see cref="WindowContext.Content"/> - the same path the main window takes, and the one
-        /// that builds the WindowControl, merges the chat theme and publishes the XamlRoot.
+        /// that builds the WindowPresenter, merges the chat theme and publishes the XamlRoot.
         /// </summary>
         private static WindowContext CreateWindow(string title, double width, double height)
         {

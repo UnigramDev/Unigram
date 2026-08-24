@@ -97,11 +97,11 @@ namespace Telegram.Navigation
         Hidden
     }
 
-    public partial class WindowControl : Page, IPopupHost, IToastHost
+    public partial class WindowPresenter : Page, IPopupHost, IToastHost
     {
         private readonly WindowContext _context;
 
-        public WindowControl(WindowContext window)
+        public WindowPresenter(WindowContext window)
         {
             _context = window;
         }
@@ -378,7 +378,7 @@ namespace Telegram.Navigation
 
         private bool _contentMaterial;
 
-        private WindowControl _content;
+        private WindowPresenter _content;
         /// <summary>
         /// Characters typed into this window that nothing in the tree consumed. Raised from the
         /// window's root element, so it replaces <c>CoreWindow.CharacterReceived</c> without
@@ -427,7 +427,7 @@ namespace Telegram.Navigation
         /// for it against the HWND instead - see gate 1.10 - so the two are alternatives rather
         /// than layers.
         /// </summary>
-        partial void SetBackdropMaterial(WindowControl content);
+        partial void SetBackdropMaterial(WindowPresenter content);
 
         private void SetContent(UIElement content)
         {
@@ -442,7 +442,7 @@ namespace Telegram.Navigation
                 // inherit from.
                 ReapplyChatTheme();
 
-                _content = new WindowControl(this)
+                _content = new WindowPresenter(this)
                 {
                     RequestedTheme = NightModeService.Current.GetCalculatedElementTheme(),
                     Content = content,

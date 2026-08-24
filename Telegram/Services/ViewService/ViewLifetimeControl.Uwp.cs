@@ -138,7 +138,7 @@ namespace Telegram.Services
                 WindowControlsMap.TryRemove(Id, out _);
 
                 // Explicitly calling Close breaks everything
-                if (Window.Current.Content is WindowControl control)
+                if (Window.Current.Content is WindowPresenter control)
                 {
                     control.Content = null;
                 }

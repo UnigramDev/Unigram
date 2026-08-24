@@ -309,7 +309,7 @@ namespace Telegram.Navigation
         public static INavigationService GetNavigationService(Window window)
         {
             var content = window.Content;
-            if (content is WindowControl contentControl)
+            if (content is WindowPresenter contentControl)
             {
                 content = contentControl.Content;
             }
@@ -595,7 +595,7 @@ namespace Telegram.Navigation
             }
         }
 
-        partial void SetBackdropMaterial(WindowControl content)
+        partial void SetBackdropMaterial(WindowPresenter content)
         {
             Microsoft.UI.Xaml.Controls.BackdropMaterial.SetApplyToRootOrPageBackground(content, true);
         }

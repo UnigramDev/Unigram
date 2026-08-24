@@ -47,7 +47,7 @@ namespace Telegram.Views
         {
             Hide();
 
-            if (XamlRoot.Content is WindowControl { Content: RootWindow root })
+            if (XamlRoot.Content is WindowPresenter { Content: RootWindow root })
             {
                 root.Create();
             }

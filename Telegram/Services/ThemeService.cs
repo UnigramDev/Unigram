@@ -253,7 +253,7 @@ namespace Telegram.Services
 
             SetTheme(preparing, true);
 
-            if (navigation.XamlRoot.Content is WindowControl { Content: Views.Host.RootWindow root })
+            if (navigation.XamlRoot.Content is WindowPresenter { Content: Views.Host.RootWindow root })
             {
                 root.ShowEditor(preparing);
             }
