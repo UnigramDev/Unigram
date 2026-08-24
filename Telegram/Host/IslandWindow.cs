@@ -201,6 +201,14 @@ namespace Telegram.Host
 
                     break;
                 case Win32.WM_SIZE:
+                    // The CoreWindow stub never hears about the resize on its own, and a
+                    // ContentDialog's smoke layer keeps whatever size it had when it opened -
+                    // microsoft/microsoft-ui-xaml#3577. Forwarding it is that issue's workaround.
+                    if (window != null)
+                    {
+                        CoreWindowBridge.Forward(hWnd, msg, wParam, lParam);
+                    }
+
                     // A minimize reports a 0x0 client rect, and sizing the island to that throws
                     // the whole tree away and animates it back on restore. Nothing needs laying
                     // out while there is nothing to see.

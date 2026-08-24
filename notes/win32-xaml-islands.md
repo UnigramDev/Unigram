@@ -1535,6 +1535,77 @@ the most likely failure comes first.
   title bars" is set — draw over the backdrop. Their comment calls the empty rect LOAD-BEARING:
   it is what makes DWM use `NCHITTEST` for the snap flyout.
 
+- [x] **1.13 Text input inside a `ContentDialog` does not work in an island. Measured
+  2026-08-24, and it is the largest constraint found so far.**
+
+      ContentDialog TextBox  -  KeyDown 15, CharacterReceived 0, TextChanged 0
+
+  Three runs, same answer. Keys reach the control - its own `OnKeyDown` fires, it takes focus by
+  Tab, the caret blinks - and **`CharacterReceived` never fires**, so no character is ever produced
+  and nothing is inserted. `RichEditBox` and `TextBox` both.
+
+  **It is `ContentDialog` specifically.** A `Popup` in the same island, same window, same thread
+  types perfectly - both `ShouldConstrainToRootBounds` true *and* false. So it is not focus, not
+  the message loop, not popup hosting, and not the app's `ContentPopup`. Four theories died on the
+  way to that, three of them mine: `WM_CHAR`/`TranslateMessage` (disproved by the main window's
+  composer working), windowed popups (disproved by `ContentPopup` not setting the property), and
+  focus (disproved by the caret).
+
+  **The reach:** `ContentPopup` derives from `ContentDialogEx` derives from `ContentDialog`, and
+  **153 files derive from `ContentPopup`**. Every dialog in the app that takes text is inert on this
+  host - send-files captions, forward comments, folder names, link editing, polls.
+
+  Also seen, and relevant because the app queues dialogs: `ShowAsync` threw
+  `COMException: An async operation was not properly started` when a second dialog was shown while
+  one was already open. Worth confirming against `ShowQueuedAsync` before designing anything.
+
+  **And it is not the only thing wrong with `ContentDialog` here.**
+  microsoft/microsoft-ui-xaml#3577 reports the dialog's backdrop staying at its initial size when
+  the island window is resized while it is open - Fela hit that independently before finding the
+  issue. No root cause, no workaround, and nothing has come of it. Two unrelated defects in the
+  same control, neither being fixed, is the argument against waiting for this one to improve.
+
+  **The CoreWindow route was tried, and it half works.** A thread hosting islands still gets a
+  `CoreWindow` - a 1x1 invisible stub, a child of the top-level window - and #3577's workaround is
+  to forward `WM_SIZE` to it by hand. Measured 2026-08-24:
+
+  - **`WM_SIZE`: works.** The smoke layer resizes with the window. `Telegram\Host\CoreWindowBridge.cs`
+    finds the stub by class name - it is a child, so no `ICoreWindowInterop` is needed - and posts
+    to it from `WM_SIZE`. **Keep.**
+  - **The keyboard: crashes.** Forwarding `WM_KEYDOWN`/`WM_CHAR` and friends to the same stub takes
+    the process down. Removed.
+
+  So the dialog's *layout* listens to that CoreWindow and its *input* does not, and gate 1.13's
+  missing `CharacterReceived` cannot be reached from there. That was the cheap hope; it is gone.
+
+  **Terminal never hit this, and that is why nobody has fixed it.** It is the flagship islands app
+  and it uses `ContentDialog` heavily - `ConfirmCloseDialog`, `CloseReadOnlyDialog`,
+  `MultiLinePasteDialog`, `LargePasteDialog`, `ControlNoticeDialog`, `UriErrorDialog` - and **not
+  one of them contains an input control**. Its only `TextBox` is `WindowRenamerTextBox`, and that
+  lives in a `TeachingTip`. So Terminal hit the resize bug hard enough to file it eighteen times
+  (see microsoft/terminal a4cf4e276, which is the same `WM_SIZE` workaround we landed on
+  independently) and never once typed into a dialog.
+
+  Two things follow. **No upstream fix is coming**, because the problem is not reported - a minimal
+  repro is about fifteen lines and the spike already has it, so filing it is cheap if we want to.
+  And as a data point only - **not as a candidate** - a `TeachingTip` holds a working TextBox. With
+  both `Popup` flavours typing fine too, the pattern is that everything except `ContentDialog`
+  works, which makes rebuilding the popup host on a `Popup` the known-good path rather than a
+  gamble. Fela on `TeachingTip` itself, 2026-08-24: *"terrible, definitely not a replacement for
+  ContentDialog"* - and if anything in that family were to be reimplemented in the app today, it
+  would be `TeachingTip` that needed it.
+
+  **The options, none of them small:**
+
+  1. **Reimplement the popup host on `Popup`, for this host only.** Popups demonstrably work, and
+     `ContentPopup` is already the app's own wrapper - so if its public surface is preserved
+     (`Title`, `PrimaryButtonText`, `ShowAsync`, `Hide`, the queueing), the 153 subclasses need not
+     change. It means rebuilding what `ContentDialog` supplies: layout, buttons, modality, the
+     smoke layer, focus and dismiss.
+  2. **Phase 3** - a `Microsoft.UI.Xaml` island, where `ContentDialog` is WinUI's own implementation
+     rather than the system one. Bigger, but this is the second thing pointing that way after
+     acrylic.
+
 - [x] **1.11 Resource scope across islands.** Measured, and it decides 0.18. Three probes, each a
   `Border` whose `Background` is `{ThemeResource ScopeBrush}` parsed at runtime, with red defined
   in `Application.Resources` and green scoped to the first island's content:
@@ -2068,6 +2139,15 @@ APIs, and nothing else.
   extensions. The UWP manifest is untouched.
 - [ ] **2.5** Retire `Telegram.Stub`'s IPC, app service and loopback exemption **on the Win32
   flavour**. They stay for as long as the UWP flavour ships.
+- [ ] **2.5b `CameraCaptureUI` is not supported on this host.** Fela, 2026-08-24. It is a UWP app
+  model API and there is no desktop equivalent in the box.
+
+  There is a port to steal from if it turns out to matter:
+  `microsoft/WindowsAppSDK` `dev/Interop/CameraCaptureUI/CameraCaptureUI/CameraCaptureUI.cpp` is
+  WinAppSDK's own reimplementation for desktop apps. Fela's own read is that it is unclear anyone
+  uses the feature - so the first question is whether to reimplement it or drop the entry point on
+  this flavour, and that is worth answering before writing anything.
+
 - [ ] **2.5a Toast actions fork — `Toast.RegisterBackgroundTasks` throws on Win32.** Found
   2026-08-24. `Toast.Register` builds an **in-process** background task (a `BackgroundTaskBuilder`
   with no entry point, triggered by `ToastNotificationActionTrigger`), and hosting one is a UWP
