@@ -336,12 +336,9 @@ namespace Telegram.Navigation
 
         #endregion
 
-        /// <summary>
-        /// Deliberately empty for now: DWM paints this window's backdrop, and WinUI 2's
-        /// BackdropMaterial is a UWP window's way of asking for the same thing.
-        /// </summary>
         partial void SetBackdropMaterial(WindowControl content)
         {
+            Microsoft.UI.Xaml.Controls.BackdropMaterial.SetApplyToRootOrPageBackground(content, true);
         }
 
         partial void SetHostContent(UIElement content)

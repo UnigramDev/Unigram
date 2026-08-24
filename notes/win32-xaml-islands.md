@@ -1859,6 +1859,93 @@ APIs, and nothing else.
     UI Automation dump of the window would separate "no content" from "content that renders
     invisibly" in one step and is the cheapest thing to try first.
 
+- [ ] **2.1d Building and running it.** Debug to compile-check, Release to judge anything:
+
+      MSBuild Telegram\Telegram.Win32.csproj -t:Publish -restore -p:Configuration=Release ^
+        -p:Platform=x64 -p:RuntimeIdentifier=win-x64 -p:SelfContained=true [-p:PublishAot=false]
+
+  - **Always pass the RID, and `-restore`.** A RID-less build of this project resolves no package
+    assets at all: `Telegram.Native`, `Rg.DiffUtils`, everything vanishes and the compiler reports
+    thousands of errors that look like a broken projection and are not.
+  - **`vswhere.exe` must be on `PATH`** for `PublishAot`, or ILC compiles and the native link step
+    dies with MSB3073 `'vswhere.exe' is not recognized`, looking for `link.exe`. Prepend
+    `%ProgramFiles(x86)%\Microsoft Visual Studio\Installer`. Already recorded for the msixbundle
+    recipe and still missed here.
+  - **Check the payload before believing an AOT publish**: a real one is a ~50 MB `Telegram.exe`
+    with no `Telegram.dll` and no `System.Private.CoreLib.dll` beside it. A failed link leaves the
+    previous non-AOT layout in place, which runs fine and is not what was asked for.
+  - **Registering is a manifest-only operation.** Publishing into the folder the package already
+    points at needs no registration - just relaunch. See
+    [[never-uninstall-to-update-a-dev-package]]: `Remove-AppxPackage` deletes `LocalState`, which
+    is the TDLib database and the login.
+
+- [ ] **2.1c First impressions of the running app, 2026-08-24.** What running it actually found,
+  none of it visible from a build:
+
+  - **An exception storm, not a slow build.** `SetPointerCursor` threw `NotImplementedException`
+    from `FormattedTextBlock.OnPointerMoved` - once per pointer move over message text - and each
+    one unwound through the WinRT ABI into `WatchDog`, which wrote a crash report **to disk**.
+    Three reports in forty seconds of hovering. It is implemented now (`LoadCursorW`/`SetCursor`,
+    one shared HCURSOR per type, as the UWP half caches `CoreCursor`). **The lesson: a stub that
+    throws on a pointer-rate path is not a stub, it is a performance bug.**
+
+  - **And then the rest of it was the JIT. This flavour needs NativeAOT to feel right.** Measured
+    across three builds of the same sources: Debug laggy, **Release without AOT still laggy**, and
+    Release with `PublishAot` smooth - Fela: *"The AOT build no longer lags, this is great."* So the
+    exception storm above was real and separate, and optimised IL on CoreCLR was not enough on its
+    own; what closed the gap was the native image. Worth carrying beyond this flavour, because it
+    says the same about the .NET 10 port generally: CoreCLR JIT does not carry this app's UI.
+  - **The drag bar was only laid out from `WM_SIZE`**, so the caption did nothing until the window
+    was minimized and restored once. `Create` lays it out now - though that alone did not fix it,
+    so the cause is not only this.
+  - **Minimize sized the island to 0x0**, because `WM_SIZE` reports a 0x0 client rect and `Layout`
+    applied it faithfully; restoring then animated the whole tree back. `SIZE_MINIMIZED` is
+    skipped now.
+  - **The drag bar was registered in the same map as its parent**, so `IslandWindow.All` held every
+    window twice: the message loop pre-translated each message once per entry, an interop call
+    doubled on the hottest path in the process, and `Windows.Count` could never reach zero, so
+    closing the last window would never have quit. They have their own map now.
+  - **Acrylic does not work, and it is the platform rather than us.** Flyouts and context menus
+    fall back to opaque. Fela recalled it as an XAML Islands limitation and it is:
+    CommunityToolkit/Microsoft.Toolkit.Win32#160 reports acrylic rendering opaque - black, there -
+    inside `WindowsXamlHost` no matter how transparent the host window is made
+    (`WindowStyle=None`, `AllowsTransparency=True`). No resolution was ever posted and the repo was
+    archived in August 2023. It fits the mechanism: in-app acrylic consults
+    `CompositionCapabilities.GetForCurrentView()`, which is per *view*, and host backdrop acrylic
+    wants a real `CoreWindow`.
+
+    **And then it got better.** microsoft/microsoft-ui-xaml#2355 draws the distinction that
+    matters: **`Windows.UI.Xaml.Media.AcrylicBrush` works in islands, `Microsoft.UI.Xaml.Media`'s
+    does not** - every `XamlCompositionBrushBase` brush from WinUI 2 falls back to its
+    `FallbackColor` there. Closed as not planned, so it will not be fixed upstream.
+
+    That fits this app precisely: the flyout and menu styles come from WinUI 2's
+    `XamlControlsResources`, so every acrylic in them is the broken one. It also suggests a
+    workaround rather than a redesign - **override the WinUI 2 acrylic resource keys with system
+    `Windows.UI.Xaml.Media.AcrylicBrush` instances, in the Win32 flavour only.** Popups resolve
+    against `Application.Resources` (gate 1.11), which is where such a dictionary would go.
+
+    Not the DWM-private route of selastingeorge/Win32-Acrylic-Effect, which Fela raised: that is
+    window *backdrop* acrylic with no XAML involvement, so it cannot reach a flyout inside the
+    island - and it says of itself that it redraws only on activation, which a chat window would
+    show as a stale or flat menu. Gate 1.10's Mica is already the supported answer for the backdrop.
+
+    **Gate 1.12 passes, 2026-08-24.** The spike puts a `Windows.UI.Xaml.Media.AcrylicBrush` on a
+    Border with a deliberately hideous magenta `FallbackColor`, and it renders as tinted
+    translucent acrylic - so the system brush works inside an island. The probe beside it reports
+    `CompositionCapabilities.GetForCurrentView()` returning **AreEffectsSupported True,
+    AreEffectsFast True**, which also kills the theory that a failing capability check drives the
+    fallback: capabilities are fine, and it is `Microsoft.UI.Xaml`'s own implementation that
+    refuses, exactly as #2355 says.
+
+    **So the workaround is real.** What remains is app work rather than research: find which
+    resource keys the flyout and menu styles actually consume - `XamlControlsResources` defines
+    them, so the list is finite - and merge a Win32-only dictionary that redefines those keys as
+    system `Windows.UI.Xaml.Media.AcrylicBrush` instances. Popups resolve against
+    `Application.Resources` (gate 1.11), so that is where it goes. Untested risk: WinUI 2 styles
+    may reference the brushes with `{ThemeResource}` by key, in which case an override lands
+    cleanly, or construct them inline, in which case the style has to be replaced too.
+
 - [ ] **2.1** Grow `Telegram.Stub` into the host process rather than creating a new one — it is
   already .NET 10, already Win32, already owns the tray and passkeys.
 - [ ] **2.2** Desktop `IViewService` / `WindowContext` implementations behind the Phase 0 seams.

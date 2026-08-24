@@ -26,7 +26,13 @@ namespace Telegram.Host
 
     internal sealed partial class IslandWindow : IDisposable
     {
+        // Top-level windows only. The drag bars live in their own map: they are children of
+        // these, and putting them here counted every window twice - the message loop pre-translated
+        // each message once per entry, and Windows.Count could never reach zero, so closing the
+        // last window never quit the process.
         private static readonly Dictionary<IntPtr, IslandWindow> Windows = new();
+
+        internal static readonly Dictionary<IntPtr, IslandWindow> DragBars = new();
         private static WndProc _wndProc;   // field, not a lambda: the thunk must outlive every window
         private static ushort _classAtom;
         private static IntPtr _classNamePtr;
@@ -110,6 +116,11 @@ namespace Telegram.Host
             }
 
             window.Layout();
+
+            // WM_SIZE is what normally places it, and that does not arrive until the window is
+            // first resized - so without this the caption is dead until you minimize and restore.
+            window.LayoutDragBar();
+
             Win32.ShowWindow(window._hwnd, Win32.SW_SHOW);
             Win32.UpdateWindow(window._hwnd);
 
@@ -190,8 +201,15 @@ namespace Telegram.Host
 
                     break;
                 case Win32.WM_SIZE:
-                    window?.Layout();
-                    window?.LayoutDragBar();
+                    // A minimize reports a 0x0 client rect, and sizing the island to that throws
+                    // the whole tree away and animates it back on restore. Nothing needs laying
+                    // out while there is nothing to see.
+                    if ((int)wParam != Win32.SIZE_MINIMIZED)
+                    {
+                        window?.Layout();
+                        window?.LayoutDragBar();
+                    }
+
                     return IntPtr.Zero;
                 case Win32.WM_SETFOCUS:
                     if (window != null && window._islandHwnd != IntPtr.Zero)
@@ -264,8 +282,13 @@ namespace Telegram.Host
                 return;
             }
 
+            // SWP_NOZORDER matters: without it this raises the island to the top of the sibling
+            // order, above the drag bar, and the caption stops answering WM_NCHITTEST. That is why
+            // the title bar only came alive after a minimize and restore - the WM_SIZE path happens
+            // to re-raise the drag bar afterwards, and nothing else did.
             Win32.SetWindowPos(_islandHwnd, IntPtr.Zero, 0, 0,
-                rect.right - rect.left, rect.bottom - rect.top, Win32.SWP_SHOWWINDOW);
+                rect.right - rect.left, rect.bottom - rect.top,
+                Win32.SWP_SHOWWINDOW | Win32.SWP_NOZORDER);
         }
 
         /// <summary>

@@ -134,12 +134,12 @@ namespace Telegram.Host
                 0, 0, 0, 0, _hwnd, IntPtr.Zero, Win32.GetModuleHandleW(IntPtr.Zero), IntPtr.Zero);
 
             Win32.SetLayeredWindowAttributes(_dragBar, 0, 255, Win32.LWA_ALPHA);
-            Windows[_dragBar] = this;
+            DragBars[_dragBar] = this;
         }
 
         private static IntPtr DragBarProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
         {
-            if (!Windows.TryGetValue(hWnd, out var window))
+            if (!DragBars.TryGetValue(hWnd, out var window))
             {
                 return Win32.DefWindowProcW(hWnd, msg, wParam, lParam);
             }

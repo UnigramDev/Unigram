@@ -6,8 +6,6 @@
 //
 
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Windows.ApplicationModel;
@@ -27,23 +25,6 @@ namespace Telegram.Host
         [STAThread]
         private static int Main()
         {
-#if DEBUG
-            // A packaged app is started by the shell, so there is no command line to pass and no
-            // console to break into. Drop an empty file named "debug" in the package's LocalState
-            // and the next launch offers the debugger before anything else runs.
-            try
-            {
-                if (File.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, "debug")))
-                {
-                    Debugger.Launch();
-                }
-            }
-            catch
-            {
-                // No identity, or no LocalState yet. Nothing to attach to either way.
-            }
-#endif
-
             Win32.SetProcessDpiAwarenessContext(Win32.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
             // XAML will not initialize on a thread without one. CoreWindow used to supply it; a
