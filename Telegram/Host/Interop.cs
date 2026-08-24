@@ -172,6 +172,13 @@ namespace Telegram.Host
 
         public static readonly IntPtr DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = new(-4);
 
+        [LibraryImport("kernel32.dll")]
+        public static partial IntPtr GetCurrentProcess();
+
+        [LibraryImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool TerminateProcess(IntPtr hProcess, uint uExitCode);
+
         [LibraryImport("user32.dll", SetLastError = true)]
         public static partial ushort RegisterClassExW(ref WNDCLASSEXW lpwcx);
 

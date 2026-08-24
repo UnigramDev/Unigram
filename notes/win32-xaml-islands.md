@@ -2193,6 +2193,30 @@ changes nothing about activation, which is the single biggest de-risking in
   stub by class name, so the reparent is three lines - though it caches, and would need to stop
   caching or be told, if the stub ever moves.
 
+- [x] **2.1i Closing the last window crashed instead of exiting, 2026-08-24.** Found by Fela the
+  first time the main window had a close button to press - until 1.7a there was none, so this path
+  had never been taken.
+
+  The log named it without a dump: the last app-side line was
+  `[FormattedTextBlock.cs][ReleaseNative] released 11 block(s)`, then nothing, and no crash report -
+  a native fault after managed teardown. That is the crash `WindowContext`'s shutdown drain was
+  written for: this view's XamlDirect RCWs are context bound, and releasing one from the finalizer
+  thread once the XAML core is gone faults on a null `CCoreServices`. The drain hangs off
+  `DispatcherQueue.ShutdownStarting` - **and nothing on this host ever shuts the queue down**, so
+  it never runs.
+
+  Fixed the way Terminal fixes it: `TerminateProcess` after the message loop rather than unwinding.
+  Its comment is the justification - *"There's a mysterious crash in XAML on Windows 10 if you just
+  let _app get destroyed (GH#15410)"*, plus every UI thread having to be gone before the main
+  thread returns, and `std::exit` being no good because `ExitProcess` still runs the teardown that
+  faults. **The flagship islands app cannot exit cleanly either**, which is worth knowing before
+  anyone spends a day trying to.
+
+  Left open: running the drain properly on this host - shut the `DispatcherQueue` down after the
+  loop, pump until it completes, then terminate. That would make the release ordering right rather
+  than merely unreachable. Bounded pumping is the fiddly part: after `WM_QUIT` a plain `GetMessage`
+  blocks, so it needs `PeekMessage` with a deadline.
+
 - [ ] **2.1e Re-activation is unhandled, and it is the first real design gap.** Found 2026-08-24
   by the call window crashing. Chats, IV, the text editor and web apps all open in their own
   windows correctly; a call fail-fasts, and the app's own log says why:

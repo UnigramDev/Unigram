@@ -89,6 +89,23 @@ namespace Telegram.Host
                 }
             }
 
+            // Closing the last window used to take the process down instead of ending it, a moment
+            // after the log's last line - FormattedTextBlock releasing its native blocks. That is
+            // the crash WindowContext's shutdown drain was written for: this view's XamlDirect RCWs
+            // are context bound, and releasing one from the finalizer thread once the XAML core is
+            // gone faults on a null CCoreServices. The drain hangs off DispatcherQueue's
+            // ShutdownStarting, which nothing raises on this host - the queue is never shut down.
+            //
+            // Terminal ends the same way and for the same reason, and its comment is worth
+            // repeating: there is "a mysterious crash in XAML ... if you just let _app get
+            // destroyed" (microsoft/terminal#15410), every UI thread has to be gone before the main
+            // thread unwinds, and std::exit is no good because ExitProcess still runs the teardown
+            // that faults. So the process is killed outright rather than unwound.
+            //
+            // Nothing is lost by it: the window's own Close has already detached the content and
+            // suspended its navigation services, and TDLib flushes its binlog as it goes.
+            Win32.TerminateProcess(Win32.GetCurrentProcess(), 0);
+
             return 0;
         }
     }
