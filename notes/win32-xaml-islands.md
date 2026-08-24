@@ -2378,6 +2378,39 @@ changes nothing about activation, which is the single biggest de-risking in
   `Toast.GetSession` already handles, and which `Program.Main` already feeds in from
   `AppInstance.GetActivatedEventArgs()`. So the parsing side is done; what forks is only the
   registration.
+- [ ] **2.7 Close TDLib on the way out - on both hosts.** Fela, 2026-08-24, on finding that the
+  app has never done it. Not an islands problem, and the fix is not islands-specific either; it
+  is here because this is where it surfaced and where the exit path now exists.
+
+  **What is true today.** Nothing sends `close` to TDLib, on either flavour. The one place UWP
+  could have is commented out - `App.OnSuspendingAsync`:
+
+      //await Task.WhenAll(LifetimeService.Current.ResolveAll<IClientService>().Select(x => x.CloseAsync()));
+
+  as is `Session.cs`'s `//ClientService.Close(true);`. The only live callers of
+  `ClientService.Close(bool)` terminate *other* sessions from the sessions settings page. So the
+  process simply dies with the database open, and TDLib recovers from its binlog on next start.
+  That is what the binlog is for and no data is lost by it, but the sqlite database is never
+  closed cleanly and every start pays a replay it did not have to.
+
+  2.1i's `TerminateProcess` did not introduce this - it inherited it - but it does make the Win32
+  flavour the first host with a real "we are exiting" moment to hang a proper close on.
+
+  **The two hosts need different answers, which is the interesting part.**
+
+  - **Win32** is the easy one: after the message loop, `Close()` every `LifetimeService.Current.Items`
+    session, wait for each to reach `AuthorizationStateClosed`, bounded at a couple of seconds,
+    then terminate regardless. It needs **no message pumping** - unlike 2.1i's drain, TDLib's
+    updates arrive on `Client.Run`'s own thread, so a plain `WaitHandle` will do. What is missing
+    is something on `ClientService` that signals the close completed; today nothing observes it.
+  - **UWP has no exit.** Suspend is the only hook, and it is followed by a resume as often as by
+    death, so closing there means reopening on `Resuming` - and paying that reopen every time the
+    app comes back. The deferral budget is about five seconds, which is enough for a `close`, but
+    whether the trade is worth making is a product call rather than a technical one.
+
+  Open question worth settling first: how much does a clean close actually save at startup? If a
+  binlog replay of a normal session costs single-digit milliseconds, the UWP half is not worth its
+  risk and only Win32 should do it.
 - [ ] **2.6** Re-point the native dependency builds off the `WINAPI_FAMILY_APP` subset.
 
 ## Phase 3 — optionality, not a commitment
