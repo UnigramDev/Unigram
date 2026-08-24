@@ -311,7 +311,7 @@ namespace Telegram.Navigation
             var content = window.Content;
             if (content is WindowPresenter contentControl)
             {
-                content = contentControl.Content;
+                content = contentControl.Content as UIElement;
             }
 
             if (content is RootWindow rootPage && rootPage.NavigationService != null)
@@ -390,24 +390,42 @@ namespace Telegram.Navigation
             return ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
         }
 
-        public void SetTitleBar(UIElement titleBar, bool collapsed = false)
+        public void SetTitleBar(UIElement titleBar)
         {
             _window.SetTitleBar(titleBar);
+        }
 
-            if (collapsed)
-            {
+        /// <summary>
+        /// The shell draws minimize, maximize and close for every view, and it is all three or
+        /// none - there is no asking it for a subset. So the app's own buttons exist only for the
+        /// subsets, and asking for all three means letting the shell do it.
+        /// </summary>
+        public static bool HasSystemCaptionButtons => true;
+
+        /// <summary>
+        /// Undocumented, and the only way a UWP view can be rid of the shell's caption buttons
+        /// while keeping the window: ExtendViewIntoTitleBar draws under them but does not remove
+        /// them. Reached through the CoreWindow's navigation client.
+        /// </summary>
+        partial void SetHostCaptionButtons(CaptionButtons buttons)
+        {
+            // Default, not an AlwaysVisible: the enum has only the two values, and Default is what
+            // a view that never asked for anything has.
+            var visibility = buttons == CaptionButtons.All
+                ? AppWindowTitleBarVisibility.Default
+                : AppWindowTitleBarVisibility.AlwaysHidden;
+
 #if NET9_0_OR_GREATER
-                var coreWindow = _window.CoreWindow.As<IInternalCoreWindowPhone>();
-                var navigationClient = coreWindow.get_NavigationClient().As<IApplicationWindowTitleBarNavigationClient>();
+            var coreWindow = _window.CoreWindow.As<IInternalCoreWindowPhone>();
+            var navigationClient = coreWindow.get_NavigationClient().As<IApplicationWindowTitleBarNavigationClient>();
 
-                navigationClient.set_TitleBarPreferredVisibilityMode(AppWindowTitleBarVisibility.AlwaysHidden);
+            navigationClient.set_TitleBarPreferredVisibilityMode(visibility);
 #else
-                var coreWindow = (IInternalCoreWindowPhone)(object)_window.CoreWindow;
-                var navigationClient = (IApplicationWindowTitleBarNavigationClient)coreWindow.NavigationClient;
+            var coreWindow = (IInternalCoreWindowPhone)(object)_window.CoreWindow;
+            var navigationClient = (IApplicationWindowTitleBarNavigationClient)coreWindow.NavigationClient;
 
-                navigationClient.TitleBarPreferredVisibilityMode = AppWindowTitleBarVisibility.AlwaysHidden;
+            navigationClient.TitleBarPreferredVisibilityMode = visibility;
 #endif
-            }
         }
 
         #endregion

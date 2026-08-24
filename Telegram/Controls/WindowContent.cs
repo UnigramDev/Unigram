@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Views.Host;
@@ -25,21 +26,62 @@ namespace Telegram.Controls
     public class WindowCloseRequestedEventArgs : EventArgs
     {
         private readonly SystemNavigationCloseRequestedPreviewEventArgs _args;
+        private TaskCompletionSource<bool> _deferral;
+        private bool _handled;
 
         internal WindowCloseRequestedEventArgs(SystemNavigationCloseRequestedPreviewEventArgs args)
         {
             _args = args;
         }
 
+        /// <summary>
+        /// Raised by the app rather than by the system - the window's own close button. Handled is
+        /// then just a bool, and the deferral has to be honoured by whoever raised it.
+        /// </summary>
+        internal WindowCloseRequestedEventArgs()
+        {
+        }
+
         public bool Handled
         {
-            get => _args.Handled;
-            set => _args.Handled = value;
+            get => _args?.Handled ?? _handled;
+            set
+            {
+                if (_args != null)
+                {
+                    _args.Handled = value;
+                }
+                else
+                {
+                    _handled = value;
+                }
+            }
         }
 
         public Deferral GetDeferral()
         {
-            return _args.GetDeferral();
+            if (_args != null)
+            {
+                return _args.GetDeferral();
+            }
+
+            // Allocated only when a handler actually asks to defer, which is the uncommon case.
+            _deferral ??= new TaskCompletionSource<bool>();
+            return new Deferral(CompleteDeferral);
+        }
+
+        private void CompleteDeferral()
+        {
+            _deferral.TrySetResult(true);
+        }
+
+        /// <summary>
+        /// Completes once every handler that took a deferral has released it. Only meaningful for
+        /// an app-raised request: the system waits on its own.
+        /// </summary>
+        internal Task WaitAsync()
+        {
+            return _deferral?.Task ?? Task.CompletedTask;
         }
     }
 
@@ -174,6 +216,24 @@ namespace Telegram.Controls
 
         protected virtual void OnWindowCloseRequested(WindowCloseRequestedEventArgs args)
         {
+        }
+
+        /// <summary>
+        /// The window's own close button, routed into the same override the system's close request
+        /// uses: a root has one place to intercept a close, whatever asked for it. Returns false
+        /// when the root refused.
+        ///
+        /// Awaited, because the answer can be a question: the web app window takes a deferral and
+        /// asks the user whether to discard the bot's changes.
+        /// </summary>
+        internal async Task<bool> RequestCloseAsync()
+        {
+            var args = new WindowCloseRequestedEventArgs();
+            OnWindowCloseRequested(args);
+
+            await args.WaitAsync();
+
+            return !args.Handled;
         }
 
         protected virtual void OnWindowConsolidated()

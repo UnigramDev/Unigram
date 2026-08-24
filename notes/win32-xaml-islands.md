@@ -1466,16 +1466,76 @@ the most likely failure comes first.
   you'd expect". A release over a button is turned into `WM_SYSCOMMAND` with `SC_MINIMIZE`,
   `SC_MAXIMIZE`/`SC_RESTORE` or `SC_CLOSE` by hand.
 
-  **Left undone**: hover feedback on the caption buttons. The layered drag bar sits above the
-  XAML, so the buttons never see the pointer; Terminal forwards hover by hand
-  (`_titlebar.HoverButton`) with `TrackMouseEvent` and `TME_NONCLIENT`, which it needs because
-  `WM_NCMOUSELEAVE` is otherwise unreliable. Cosmetic, and the only piece missing.
+  ~~**Left undone**: hover feedback on the caption buttons.~~ **Done, 2026-08-24 - see 1.7a.**
+  It went exactly the way this paragraph guessed: `TrackMouseEvent` with `TME_NONCLIENT`, armed
+  once per visit, and the hover pushed into XAML by hand.
 
   One incidental lesson from the same session: the spike merges no `XamlControlsResources`, so
   there are no theme brushes to inherit and every colour in it is a literal — which made it easy
   to hardcode dark and get it wrong on a light system. It now derives its palette from
   `Application.Current.RequestedTheme`, which is also what `DWMWA_USE_IMMERSIVE_DARK_MODE` should
   be given rather than a constant `true`.
+- [x] **1.7a One caption-button model for both hosts, 2026-08-24.** Fela's design, and the piece
+  that makes the Win32 caption real rather than a hit-test with nothing drawn in it.
+
+  `WindowPresenter` - the `WindowContext`'s own root, which every window already has - grows a
+  template holding minimize, maximize and close, and a `CaptionButtons` flags property saying
+  which of them the window wants. Buttons only: no caption text, no icon, because no window in
+  this app wanted either.
+
+  **The rule that makes one setting serve two hosts.** `All` means "an ordinary window", and an
+  ordinary UWP window already has all three drawn by the shell - better than anything we could
+  draw, since it minimizes, maximizes and has the system menu. So on UWP `All` hides ours and
+  anything less than `All` takes the shell's caption away and draws our own; on Win32, where
+  there is no shell caption, the setting is always honoured as given. One boolean per host half,
+  `HasSystemCaptionButtons`, is the whole of the difference.
+
+  **What UWP can actually draw is Close and only Close** - it has no way to minimize or maximize
+  a view, which is gate 1.7's whole reason for existing. So the values that mean anything on both
+  hosts are `None`, `Close` and `All`; the other combinations are Win32 only. Both call sites
+  that wanted this - `WebAppWindow` and `PaymentFormPage` - wanted `Close`.
+
+  **Three copies of the same hand-drawn X** (`TabbedWindow.xaml`, `WebAppWindow.xaml`,
+  `PaymentFormPage.xaml` - `Path` data `M0.5 0.5 L9.5 9.5...`, `#C42B1C` on hover) collapse into
+  the one template. The other two glyphs follow its convention: 10x10 box, 1px stroke, and a
+  restore glyph swapped in by a visual state when the window is zoomed.
+
+  Four things that were not obvious going in:
+
+  - **Not a parameter on `SetTitleBar`.** That was the shape it replaced - `SetTitleBar(element,
+    collapsed: true)` - and it cannot stay one: `WindowContent.OnPopupOpened` calls
+    `SetTitleBar(null)` and `OnPopupClosed` calls `SetTitleBar(element)`, both with the default
+    argument, so every popup opening over a web app would have quietly handed the caption back to
+    the shell. The buttons are a window-level setting, kept on `WindowContext` because a root sets
+    it from its constructor - before there is a presenter to set it on.
+  - **The buttons take no input on Win32, deliberately.** The drag bar of 1.7 is the window under
+    the pointer and claims the rightmost slots as `HTCLOSE`/`HTMAXBUTTON`/`HTMINBUTTON`; that
+    claim is what earns the snap layouts flyout, and it already turns the click into a
+    `WM_SYSCOMMAND`. So XAML draws them and Win32 answers them, and only the *appearance* of
+    hover and pressed has to cross over - `SetCaptionButtonState`, pushed in from the drag bar's
+    `WM_NCMOUSEMOVE`. It is a pointer-rate path, so it early-outs on an unchanged state on both
+    sides of the boundary.
+  - **The strip and the hit test have to agree, so they share their numbers.** `CaptionHeight`
+    went 32 -> 40, which is what every title bar in this app is, and `DragBarHitTest` now walks
+    the same flags the template lays out rather than assuming three buttons.
+  - **The close button routes through `OnWindowCloseRequested`** - Fela, rather than the separate
+    hook I had written, and the build proved him right twice over. `WebAppWindow` *already*
+    overrode it, so my hook would have been a second copy of the same confirmation; and it does so
+    with a **deferral**, which a synchronous "did the root handle it?" would have walked straight
+    past - the override is `async void`, so it returns at its first await with `Handled` still
+    false. `WindowCloseRequestedEventArgs` now carries an app-side deferral
+    (`TaskCompletionSource`, allocated only if a handler asks for one) and `RequestCloseAsync`
+    waits on it. The lesson is the ordinary one: the type already told me it could defer.
+
+  And one thing that followed from Fela's own reading: **no maximize button means no resizing**.
+  The two are one affordance, so `Close` alone drops `WS_THICKFRAME` and `WS_MAXIMIZEBOX` and the
+  top resize border with them.
+
+  Not done: the presenter is where a window's *insets* should come from now that the app draws
+  the buttons - roots still pad themselves from `SystemOverlayMetrics.RightInset`, which is the
+  shell's number and is 0 on Win32. `WebAppWindow` and `PaymentFormPage` keep a 46px spacer where
+  their button was.
+
 - [x] **1.8a** Two islands on the **same thread**. **Passes** — two HWNDs, two
   `DesktopWindowXamlSource`s, one `WindowsXamlManager`, both hosting compiled markup. UWP's
   one-thread-per-view came from `CoreApplication.CreateNewView()`, not from XAML, so islands are
@@ -1740,6 +1800,39 @@ than it looks:
 
 So the surface that actually forks stays what the file count measures: the view and app-model
 APIs, and nothing else.
+
+That is a scope limit, and the right one: identity is how the host gets running soonest.
+**What it would cost to drop later is measured in `notes/unpackaged-win32.md`**, written the same
+day — the surface item by item, so the question can be picked up on evidence. Short version: the
+mechanical coupling is about three days, because settings are one live line and the access cache
+is two files; what actually holds the app to identity is the share target, the app URI handler and
+the MSIX update channel, which are product calls rather than porting ones.
+
+One correction to the second bullet below, measured off the generated manifests on disk. The
+source `Package.appxmanifest` declares no activatable classes at all — the packaging targets
+generate them — and **what they generate differs by flavour**:
+
+| Flavour | `InProcessServer` paths | `Telegram.Native*` classes |
+|---|---|---|
+| `Telegram.csproj` (UWP, ARM64 Release) | `Telegram.Native.dll`, `Telegram.Native.Calls.dll`, `RLottie.dll`, Win2D, WebView2 | **60** |
+| `Telegram.Modern.csproj` | Win2D, WebView2 | **0** |
+| `Telegram.Win32.csproj` | Win2D, WebView2 | **0** |
+
+Win2D and WebView2 are declared because their own NuGet targets do it. The legacy project
+declares the native components; **neither SDK-style project does**, and `RLottie.dll` drops off
+with them, even though all three DLLs sit in the payload.
+
+So "the package manifest declares the activatable classes, exactly as it does today" is not what
+happens here — but the conclusion drawn from it is wrong in the *other* direction, and in a way
+that helps. **Registration-free WinRT is already what these two flavours run on**: the Modern
+build works today with zero declarations, so activation is resolving through
+`DllGetActivationFactory` probing rather than through the manifest. C++/WinRT has that fallback
+in `base.h` (line 6131) and CsWinRT has the managed equivalent.
+
+That removes the risk rather than adding one: the Win32 host does not need those entries, because
+the mechanism it already depends on never consulted them. It also means the *unpackaged* case
+changes nothing about activation, which is the single biggest de-risking in
+`unpackaged-win32.md`.
 
 - [ ] **2.0** Retire the .NET Native project **when .NET 10 has earned it**, not before, and not
   as a precondition for anything here. It is what ships to users; "three flavours is one too

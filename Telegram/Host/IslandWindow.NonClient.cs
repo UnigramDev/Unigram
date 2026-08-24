@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Telegram.Navigation;
 
 namespace Telegram.Host
 {
@@ -25,14 +26,21 @@ namespace Telegram.Host
     /// </summary>
     internal sealed partial class IslandWindow
     {
-        // Logical pixels; the strip the app paints its own caption into.
-        public const int CaptionHeight = 32;
+        // Logical pixels; the strip the app paints its own caption into. 40 because that is what
+        // every title bar in this app is, and the strip has to be exactly the buttons the
+        // WindowPresenter template draws into it - the drag bar is what hit-tests them.
+        public const int CaptionHeight = 40;
 
         // Each button in the strip, right to left: close, maximize, minimize.
         private const int CaptionButtonWidth = 46;
 
         private bool _nonClient;
         private IntPtr _dragBar;
+
+        private CaptionButtons _captionButtons = CaptionButtons.All;
+        private CaptionButtons _hotButton;
+        private bool _hotPressed;
+        private bool _tracking;
 
         private static WndProc _dragBarProc;
         private static ushort _dragBarAtom;
@@ -149,6 +157,11 @@ namespace Telegram.Host
                 case Win32.WM_NCHITTEST:
                     return (IntPtr)window.DragBarHitTest(lParam);
 
+                case Win32.WM_NCMOUSELEAVE:
+                    window._tracking = false;
+                    window.SetHotButton(CaptionButtons.None, false);
+                    return IntPtr.Zero;
+
                 case Win32.WM_NCMOUSEMOVE:
                 case Win32.WM_NCLBUTTONDOWN:
                 case Win32.WM_NCLBUTTONDBLCLK:
@@ -170,6 +183,22 @@ namespace Telegram.Host
         private IntPtr OnDragBarMouse(uint msg, IntPtr wParam, IntPtr lParam)
         {
             var hit = (int)wParam;
+
+            // The buttons are drawn by XAML and hit-tested here, so their hover and pressed states
+            // have to be pushed across. Terminal does the same, for the same reason.
+            if (msg == Win32.WM_NCMOUSEMOVE)
+            {
+                TrackMouseLeave();
+                SetHotButton(FromHitTest(hit), false);
+            }
+            else if (msg == Win32.WM_NCLBUTTONDOWN)
+            {
+                SetHotButton(FromHitTest(hit), true);
+            }
+            else if (msg == Win32.WM_NCLBUTTONUP)
+            {
+                SetHotButton(FromHitTest(hit), false);
+            }
 
             if (hit == Win32.HTCAPTION || hit == Win32.HTTOP)
             {
@@ -195,6 +224,90 @@ namespace Telegram.Host
             return IntPtr.Zero;
         }
 
+        private static CaptionButtons FromHitTest(int hit)
+        {
+            return hit switch
+            {
+                Win32.HTMINBUTTON => CaptionButtons.Minimize,
+                Win32.HTMAXBUTTON => CaptionButtons.Maximize,
+                Win32.HTCLOSE => CaptionButtons.Close,
+                _ => CaptionButtons.None
+            };
+        }
+
+        /// <summary>
+        /// Pointer sample rate, so it early-outs on an unchanged state rather than crossing into
+        /// XAML for every mouse move over the caption.
+        /// </summary>
+        private void SetHotButton(CaptionButtons button, bool pressed)
+        {
+            if (_hotButton == button && _hotPressed == pressed)
+            {
+                return;
+            }
+
+            _hotButton = button;
+            _hotPressed = pressed;
+
+            if (Content is WindowPresenter presenter)
+            {
+                presenter.SetCaptionButtonState(button, pressed);
+            }
+        }
+
+        /// <summary>
+        /// Armed once per visit: without it there is no WM_NCMOUSELEAVE and a button stays lit
+        /// after the pointer has left the window.
+        /// </summary>
+        private void TrackMouseLeave()
+        {
+            if (_tracking)
+            {
+                return;
+            }
+
+            _tracking = true;
+
+            var track = new TRACKMOUSEEVENT
+            {
+                cbSize = Marshal.SizeOf<TRACKMOUSEEVENT>(),
+                dwFlags = Win32.TME_LEAVE | Win32.TME_NONCLIENT,
+                hwndTrack = _dragBar
+            };
+
+            Win32.TrackMouseEvent(ref track);
+        }
+
+        /// <summary>
+        /// A window that cannot maximize cannot be resized either: the two are one affordance, and
+        /// a resize border on a window with no maximize button is a window that can be dragged to
+        /// any size but never back. Dropping the styles is also what stops the double-click on the
+        /// caption from zooming it.
+        /// </summary>
+        public void SetCaptionButtons(CaptionButtons buttons)
+        {
+            _captionButtons = buttons;
+
+            var style = (long)Win32.GetWindowLongPtrW(_hwnd, Win32.GWL_STYLE);
+            var mask = (long)(Win32.WS_THICKFRAME | Win32.WS_MAXIMIZEBOX);
+
+            var updated = buttons.HasFlag(CaptionButtons.Maximize)
+                ? style | mask
+                : style & ~mask;
+
+            if (updated == style)
+            {
+                return;
+            }
+
+            Win32.SetWindowLongPtrW(_hwnd, Win32.GWL_STYLE, (IntPtr)updated);
+
+            // The frame is what WM_NCCALCSIZE measures, so it has to be recomputed rather than
+            // left over from the styles the window was created with.
+            Win32.SetWindowPos(_hwnd, IntPtr.Zero, 0, 0, 0, 0,
+                Win32.SWP_NOMOVE | Win32.SWP_NOSIZE | Win32.SWP_NOZORDER | Win32.SWP_FRAMECHANGED);
+        }
+
         /// <summary>
         /// Answers for the caption strip. The button codes are the interesting ones: Windows
         /// draws the snap layouts flyout for HTMAXBUTTON and turns a click into the command,
@@ -215,25 +328,46 @@ namespace Telegram.Host
                 : Win32.GetSystemMetricsForDpi(Win32.SM_CYSIZEFRAME, Dpi)
                     + Win32.GetSystemMetricsForDpi(Win32.SM_CXPADDEDBORDER, Dpi);
 
-            if (point.y < border)
+            // No maximize means no resizing, so there is no top border to put back either.
+            if (point.y < border && _captionButtons.HasFlag(CaptionButtons.Maximize))
             {
                 return Win32.HTTOP;
             }
 
+            // Right to left, and only the buttons this window actually draws: the strip is laid out
+            // by the WindowPresenter template and the two have to agree on where each one is.
             var button = Scale(CaptionButtonWidth);
             var fromRight = client.right - point.x;
+            var edge = 0;
 
-            if (fromRight < button)
+            if (_captionButtons.HasFlag(CaptionButtons.Close))
             {
-                return Win32.HTCLOSE;
+                edge += button;
+
+                if (fromRight < edge)
+                {
+                    return Win32.HTCLOSE;
+                }
             }
-            else if (fromRight < button * 2)
+
+            if (_captionButtons.HasFlag(CaptionButtons.Maximize))
             {
-                return Win32.HTMAXBUTTON;
+                edge += button;
+
+                if (fromRight < edge)
+                {
+                    return Win32.HTMAXBUTTON;
+                }
             }
-            else if (fromRight < button * 3)
+
+            if (_captionButtons.HasFlag(CaptionButtons.Minimize))
             {
-                return Win32.HTMINBUTTON;
+                edge += button;
+
+                if (fromRight < edge)
+                {
+                    return Win32.HTMINBUTTON;
+                }
             }
 
             return Win32.HTCAPTION;

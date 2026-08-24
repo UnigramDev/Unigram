@@ -118,7 +118,7 @@ namespace Telegram.Navigation
 
         public INavigationService GetNavigationService()
         {
-            return GetNavigationService(_content?.Content);
+            return GetNavigationService(_content?.Content as UIElement);
         }
 
         #region Helper methods
@@ -238,8 +238,19 @@ namespace Telegram.Navigation
         ///
         /// TODO: drive the drag bar's rect from the element's bounds instead of a constant height.
         /// </summary>
-        public void SetTitleBar(UIElement titleBar, bool collapsed = false)
+        public void SetTitleBar(UIElement titleBar)
         {
+        }
+
+        /// <summary>
+        /// There is no shell caption here, so the setting is honoured as given rather than
+        /// deferred to as on UWP.
+        /// </summary>
+        public static bool HasSystemCaptionButtons => false;
+
+        partial void SetHostCaptionButtons(CaptionButtons buttons)
+        {
+            _island.SetCaptionButtons(buttons);
         }
 
         /// <summary>
@@ -310,7 +321,7 @@ namespace Telegram.Navigation
 
         #endregion
 
-        partial void SetBackdropMaterial(WindowControl content)
+        partial void SetBackdropMaterial(WindowPresenter content)
         {
             Microsoft.UI.Xaml.Controls.BackdropMaterial.SetApplyToRootOrPageBackground(content, true);
         }

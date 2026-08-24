@@ -8,6 +8,7 @@
                     xmlns:messages="using:Telegram.Controls.Messages"
                     xmlns:stories="using:Telegram.Controls.Stories"
                     xmlns:navigation="using:Telegram.Navigation.Services"
+                    xmlns:host="using:Telegram.Navigation"
                     xmlns:converters="using:Telegram.Converters"
                     xmlns:windows11="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 14)"
                     xmlns:windows10="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractNotPresent(Windows.Foundation.UniversalApiContract, 14)">
@@ -93,6 +94,199 @@
            BasedOn="{StaticResource DefaultComboBoxStyle}" />
     <Style TargetType="local:ButtonEx"
            BasedOn="{StaticResource DefaultButtonStyle}" />
+
+    <!-- The window's own caption buttons, drawn by WindowPresenter when the host has none of its
+         own or the window asked for a subset. 46x40 each: 46 is what the shell uses and what the
+         Win32 drag bar hit-tests, 40 is this app's title bar everywhere. -->
+    <Style x:Key="WindowCaptionButtonStyle"
+           TargetType="Button">
+        <Setter Property="Width"
+                Value="46" />
+        <Setter Property="Height"
+                Value="40" />
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="LayoutRoot"
+                            Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="LayoutRoot">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource TitleBarButtonBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="LayoutRoot">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource TitleBarButtonBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Close is its own style only because of the red: everything else is the same button. -->
+    <Style x:Key="WindowCloseButtonStyle"
+           TargetType="Button">
+        <Setter Property="Width"
+                Value="46" />
+        <Setter Property="Height"
+                Value="40" />
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="LayoutRoot"
+                            Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="LayoutRoot">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="#C42B1C" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Stroke"
+                                                                       Storyboard.TargetName="Glyph">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="#FFFFFF" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="LayoutRoot">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="#C73C30" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Stroke"
+                                                                       Storyboard.TargetName="Glyph">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="#99FFFFFF" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Path x:Name="Glyph"
+                              Data="M0.5 0.5 L9.5 9.5 M0.5 9.5 L9.5 0.5"
+                              Width="10"
+                              Height="10"
+                              Stroke="{ThemeResource TextFillColorPrimaryBrush}"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="host:WindowPresenter">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="host:WindowPresenter">
+                    <Grid>
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+                        <!-- Over the content, not beside it: every root in this app draws into its
+                             own title bar, so the caption is an overlay and each root leaves room
+                             for it the way it already left room for the shell's. -->
+                        <StackPanel x:Name="CaptionPanel"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Visibility="Collapsed">
+                            <Button x:Name="MinimizeButton"
+                                    Style="{StaticResource WindowCaptionButtonStyle}">
+                                <Path Data="M0.5 5.5 L9.5 5.5"
+                                      Width="10"
+                                      Height="10"
+                                      Stroke="{ThemeResource TextFillColorPrimaryBrush}"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round" />
+                            </Button>
+                            <Button x:Name="MaximizeButton"
+                                    Style="{StaticResource WindowCaptionButtonStyle}">
+                                <Grid>
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="WindowStates">
+                                            <VisualState x:Name="Restored" />
+                                            <VisualState x:Name="Maximized">
+                                                <Storyboard>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility"
+                                                                                   Storyboard.TargetName="MaximizeGlyph">
+                                                        <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                Value="Collapsed" />
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility"
+                                                                                   Storyboard.TargetName="RestoreGlyph">
+                                                        <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                Value="Visible" />
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+
+                                    <Path x:Name="MaximizeGlyph"
+                                          Data="M0.5 0.5 L9.5 0.5 L9.5 9.5 L0.5 9.5 Z"
+                                          Width="10"
+                                          Height="10"
+                                          Stroke="{ThemeResource TextFillColorPrimaryBrush}" />
+                                    <Path x:Name="RestoreGlyph"
+                                          Data="M2.5 0.5 L9.5 0.5 L9.5 7.5 M0.5 2.5 L7.5 2.5 L7.5 9.5 L0.5 9.5 Z"
+                                          Width="10"
+                                          Height="10"
+                                          Stroke="{ThemeResource TextFillColorPrimaryBrush}"
+                                          Visibility="Collapsed" />
+                                </Grid>
+                            </Button>
+                            <Button x:Name="CloseButton"
+                                    Style="{StaticResource WindowCloseButtonStyle}" />
+                        </StackPanel>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="local:PrefixTextBox2">
         <Setter Property="Foreground"

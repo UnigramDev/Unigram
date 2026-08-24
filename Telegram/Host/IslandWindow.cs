@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Telegram.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 
@@ -216,6 +217,13 @@ namespace Telegram.Host
                     {
                         window?.Layout();
                         window?.LayoutDragBar();
+
+                        // The maximize button draws a restore glyph while zoomed, and this is the
+                        // only place that knows which it is.
+                        if (window?.Content is WindowPresenter presenter)
+                        {
+                            presenter.IsMaximized = (int)wParam == Win32.SIZE_MAXIMIZED;
+                        }
                     }
 
                     return IntPtr.Zero;

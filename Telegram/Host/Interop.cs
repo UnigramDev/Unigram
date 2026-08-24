@@ -23,6 +23,15 @@ namespace Telegram.Host
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    internal struct TRACKMOUSEEVENT
+    {
+        public int cbSize;
+        public uint dwFlags;
+        public IntPtr hwndTrack;
+        public uint dwHoverTime;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     internal struct MSG
     {
         public IntPtr hwnd;
@@ -77,6 +86,7 @@ namespace Telegram.Host
         public const uint WM_DESTROY = 0x0002;
         public const uint WM_SIZE = 0x0005;
         public const int SIZE_MINIMIZED = 1;
+        public const int SIZE_MAXIMIZED = 2;
         public const uint WM_SETFOCUS = 0x0007;
         public const uint WM_ERASEBKGND = 0x0014;
         public const uint WM_ACTIVATE = 0x0006;
@@ -85,6 +95,7 @@ namespace Telegram.Host
         public const uint WM_NCLBUTTONDOWN = 0x00A1;
         public const uint WM_NCLBUTTONUP = 0x00A2;
         public const uint WM_NCMOUSEMOVE = 0x00A0;
+        public const uint WM_NCMOUSELEAVE = 0x02A2;
         public const uint WM_NCLBUTTONDBLCLK = 0x00A3;
         public const uint WM_NCRBUTTONDOWN = 0x00A4;
         public const uint WM_NCRBUTTONUP = 0x00A5;
@@ -143,6 +154,16 @@ namespace Telegram.Host
         public const int DWMSBT_TABBEDWINDOW = 4;    // Mica Alt
 
         public const uint WS_OVERLAPPEDWINDOW = 0x00CF0000;
+        public const uint WS_THICKFRAME = 0x00040000;
+        public const uint WS_MAXIMIZEBOX = 0x00010000;
+        public const uint WS_MINIMIZEBOX = 0x00020000;
+
+        public const int GWL_STYLE = -16;
+
+        // TRACKMOUSEEVENT flags. NONCLIENT is the one that matters here: the drag bar answers the
+        // hit test with caption codes, so its mouse messages are all non-client ones.
+        public const uint TME_LEAVE = 0x00000002;
+        public const uint TME_NONCLIENT = 0x00000010;
         public const uint WS_VISIBLE = 0x10000000;
         public const uint WS_EX_NOREDIRECTIONBITMAP = 0x00200000;
 
@@ -153,6 +174,16 @@ namespace Telegram.Host
 
         [LibraryImport("user32.dll", SetLastError = true)]
         public static partial ushort RegisterClassExW(ref WNDCLASSEXW lpwcx);
+
+        [LibraryImport("user32.dll", EntryPoint = "GetWindowLongPtrW", SetLastError = true)]
+        public static partial IntPtr GetWindowLongPtrW(IntPtr hWnd, int nIndex);
+
+        [LibraryImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
+        public static partial IntPtr SetWindowLongPtrW(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool TrackMouseEvent(ref TRACKMOUSEEVENT lpEventTrack);
 
         [LibraryImport("user32.dll", SetLastError = true)]
         public static partial IntPtr CreateWindowExW(uint dwExStyle, IntPtr lpClassName, IntPtr lpWindowName,

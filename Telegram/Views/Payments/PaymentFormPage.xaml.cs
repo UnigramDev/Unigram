@@ -7,6 +7,7 @@
 
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Payments;
 using Windows.UI.Xaml;
@@ -29,7 +30,8 @@ namespace Telegram.Views.Payments
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            ViewModel.Window.SetTitleBar(TitleBar, true);
+            ViewModel.Window.SetTitleBar(TitleBar);
+            ViewModel.Window.CaptionButtons = CaptionButtons.Close;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -117,11 +119,6 @@ namespace Telegram.Views.Payments
                 content.Text = Formatter.FormatAmount(value, regular.Invoice.Currency);
                 args.Handled = true;
             }
-        }
-
-        private void HideButton_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Window.Close();
         }
 
         #region Title

@@ -97,13 +97,223 @@ namespace Telegram.Navigation
         Hidden
     }
 
-    public partial class WindowPresenter : Page, IPopupHost, IToastHost
+    /// <summary>
+    /// Which caption buttons the window draws for itself. Only None, Close and All mean anything
+    /// on both hosts: UWP can close a view but has no way to minimize or maximize one, so a
+    /// combination naming either of those is Win32 only.
+    ///
+    /// All is the default and means "whatever this host does normally" - on UWP that is the
+    /// shell's own caption, which is better than anything the app could draw: it minimizes, it
+    /// maximizes, it has the system menu. Anything less than All is the app taking it over.
+    /// </summary>
+    [Flags]
+    public enum CaptionButtons
+    {
+        None = 0,
+        Minimize = 1,
+        Maximize = 2,
+        Close = 4,
+
+        All = Minimize | Maximize | Close
+    }
+
+    public partial class WindowPresenter : ContentControl, IPopupHost, IToastHost
     {
         private readonly WindowContext _context;
+
+        private StackPanel CaptionPanel;
+        private Button MinimizeButton;
+        private Button MaximizeButton;
+        private Button CloseButton;
 
         public WindowPresenter(WindowContext window)
         {
             _context = window;
+            DefaultStyleKey = typeof(WindowPresenter);
+        }
+
+        private CaptionButtons _buttons = CaptionButtons.All;
+        public CaptionButtons Buttons
+        {
+            get => _buttons;
+            set
+            {
+                if (_buttons != value)
+                {
+                    _buttons = value;
+                    ApplyCaptionButtons();
+                }
+            }
+        }
+
+        private bool _isMaximized;
+        /// <summary>
+        /// Drives the maximize button's glyph, which is a restore glyph while the window is
+        /// zoomed. Set by the host, because only the host knows.
+        /// </summary>
+        public bool IsMaximized
+        {
+            get => _isMaximized;
+            set
+            {
+                if (_isMaximized != value)
+                {
+                    _isMaximized = value;
+
+                    if (MaximizeButton != null)
+                    {
+                        VisualStateManager.GoToState(MaximizeButton, value ? "Maximized" : "Restored", false);
+                    }
+                }
+            }
+        }
+
+        private ElementTheme _captionTheme = ElementTheme.Default;
+        /// <summary>
+        /// The caption buttons follow the window's theme, except where something paints its own
+        /// colour behind them - a web app whose bot picked the header colour. Only the buttons,
+        /// not the content, which is why it is not just RequestedTheme.
+        /// </summary>
+        public ElementTheme CaptionTheme
+        {
+            get => _captionTheme;
+            set
+            {
+                _captionTheme = value;
+
+                if (CaptionPanel != null)
+                {
+                    CaptionPanel.RequestedTheme = value;
+                }
+            }
+        }
+
+        private CaptionButtons _hotButton;
+        private bool _hotPressed;
+
+        /// <summary>
+        /// Which caption button is lit, and whether it is held. Pushed in by the host rather than
+        /// read from the pointer: on Win32 the drag bar of gate 1.7 is the window under the
+        /// pointer, so the buttons themselves never see one. On UWP nothing calls this - the
+        /// buttons are ordinary buttons there.
+        /// </summary>
+        public void SetCaptionButtonState(CaptionButtons button, bool pressed)
+        {
+            if (_hotButton == button && _hotPressed == pressed)
+            {
+                return;
+            }
+
+            _hotButton = button;
+            _hotPressed = pressed;
+
+            GoToCaptionButtonState(MinimizeButton, CaptionButtons.Minimize);
+            GoToCaptionButtonState(MaximizeButton, CaptionButtons.Maximize);
+            GoToCaptionButtonState(CloseButton, CaptionButtons.Close);
+        }
+
+        private void GoToCaptionButtonState(Button button, CaptionButtons which)
+        {
+            if (button == null)
+            {
+                return;
+            }
+
+            var state = _hotButton != which
+                ? "Normal"
+                : _hotPressed ? "Pressed" : "PointerOver";
+
+            VisualStateManager.GoToState(button, state, false);
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            if (CloseButton != null)
+            {
+                CloseButton.Click -= OnCloseButtonClick;
+            }
+
+            CaptionPanel = GetTemplateChild(nameof(CaptionPanel)) as StackPanel;
+            MinimizeButton = GetTemplateChild(nameof(MinimizeButton)) as Button;
+            MaximizeButton = GetTemplateChild(nameof(MaximizeButton)) as Button;
+            CloseButton = GetTemplateChild(nameof(CloseButton)) as Button;
+
+            // Only Close is wired: on UWP it is the only one that can be drawn at all, and on
+            // Win32 none of the three ever sees a click - the drag bar of gate 1.7 covers the
+            // strip and turns the hit test into a WM_SYSCOMMAND, which is what earns the snap
+            // layouts flyout. The buttons are what the user sees; the drag bar is what answers.
+            if (CloseButton != null)
+            {
+                CloseButton.Click += OnCloseButtonClick;
+            }
+
+            if (CaptionPanel != null)
+            {
+                CaptionPanel.RequestedTheme = _captionTheme;
+            }
+
+            // The window can already be maximized by the time the template arrives.
+            if (MaximizeButton != null && _isMaximized)
+            {
+                VisualStateManager.GoToState(MaximizeButton, "Maximized", false);
+            }
+
+            ApplyCaptionButtons();
+
+            base.OnApplyTemplate();
+        }
+
+        private void ApplyCaptionButtons()
+        {
+            if (CaptionPanel == null)
+            {
+                return;
+            }
+
+            // The rule that lets one setting serve both hosts: asking for every button is asking
+            // for an ordinary window, and an ordinary UWP window already has all three, drawn by
+            // the shell. Any subset is the app taking over, and then it draws them itself.
+            var mine = !WindowContext.HasSystemCaptionButtons || _buttons != CaptionButtons.All;
+
+            CaptionPanel.Visibility = mine && _buttons != CaptionButtons.None
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (MinimizeButton != null)
+            {
+                MinimizeButton.Visibility = mine && _buttons.HasFlag(CaptionButtons.Minimize)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+
+            if (MaximizeButton != null)
+            {
+                MaximizeButton.Visibility = mine && _buttons.HasFlag(CaptionButtons.Maximize)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+
+            if (CloseButton != null)
+            {
+                CloseButton.Visibility = mine && _buttons.HasFlag(CaptionButtons.Close)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
+
+        /// <summary>
+        /// Through the root's close request rather than straight to WindowContext.Close: a root
+        /// can have something to ask first - the web app window does - and that is the same
+        /// question the system asks it when the window is closed any other way.
+        /// </summary>
+        private async void OnCloseButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (Content is WindowContent root && !await root.RequestCloseAsync())
+            {
+                return;
+            }
+
+            _context.Close();
         }
 
         public void PopupOpened()
@@ -396,9 +606,59 @@ namespace Telegram.Navigation
             CharacterReceived?.Invoke(this, args);
         }
 
+        private CaptionButtons _captionButtons = CaptionButtons.All;
+
+        /// <summary>
+        /// Which caption buttons this window draws for itself. Kept here rather than on the
+        /// presenter because a root sets it from its constructor, which is before there is a
+        /// presenter to set it on.
+        /// </summary>
+        public CaptionButtons CaptionButtons
+        {
+            get => _captionButtons;
+            set
+            {
+                _captionButtons = value;
+
+                if (_content != null)
+                {
+                    _content.Buttons = value;
+                }
+
+                SetHostCaptionButtons(value);
+            }
+        }
+
+        /// <summary>
+        /// What the host has to do about it: take the shell's own caption away on UWP, drop the
+        /// resize border on Win32. Only called when a window asks for something other than the
+        /// default, so an ordinary window touches neither.
+        /// </summary>
+        partial void SetHostCaptionButtons(CaptionButtons buttons);
+
+        private ElementTheme _captionTheme = ElementTheme.Default;
+
+        /// <summary>
+        /// The theme the caption buttons are drawn against, for a window that paints its own
+        /// colour behind them.
+        /// </summary>
+        public ElementTheme CaptionTheme
+        {
+            get => _captionTheme;
+            set
+            {
+                _captionTheme = value;
+
+                if (_content != null)
+                {
+                    _content.CaptionTheme = value;
+                }
+            }
+        }
+
         public UIElement Content
         {
-            get => _locked != null ? _lockedContent : _content?.Content;
+            get => _locked != null ? _lockedContent : _content?.Content as UIElement;
             set
             {
                 if (_locked != null)
@@ -445,6 +705,8 @@ namespace Telegram.Navigation
                 _content = new WindowPresenter(this)
                 {
                     RequestedTheme = NightModeService.Current.GetCalculatedElementTheme(),
+                    Buttons = _captionButtons,
+                    CaptionTheme = _captionTheme,
                     Content = content,
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
                     VerticalContentAlignment = VerticalAlignment.Stretch
@@ -632,7 +894,7 @@ namespace Telegram.Navigation
 
             // TODO: Transition from splash screen to passcode
             _locked = new PasscodeWindow(this, biometrics && IsInMainView);
-            _lockedContent = _content?.Content;
+            _lockedContent = _content?.Content as UIElement;
 
             SetContent(_locked);
         }

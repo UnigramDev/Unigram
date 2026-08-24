@@ -108,7 +108,8 @@ namespace Telegram.Views.Host
 
             ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
-            Window.SetTitleBar(TitleBar, true);
+            Window.SetTitleBar(TitleBar);
+            Window.CaptionButtons = CaptionButtons.Close;
 
             LoadPlaceholder();
         }
@@ -199,7 +200,8 @@ namespace Telegram.Views.Host
 
             ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
-            Window.SetTitleBar(TitleBar, true);
+            Window.SetTitleBar(TitleBar);
+            Window.CaptionButtons = CaptionButtons.Close;
         }
 
         #region IToastHost
@@ -1118,7 +1120,7 @@ namespace Telegram.Views.Host
                 TitleText.Foreground = brush;
                 BackButton.RequestedTheme = theme;
                 MoreButton.RequestedTheme = theme;
-                HideButton.RequestedTheme = theme;
+                Window.CaptionTheme = theme;
             }
             else
             {
@@ -1126,7 +1128,7 @@ namespace Telegram.Views.Host
                 TitleText.ClearValue(TextBlock.ForegroundProperty);
                 BackButton.RequestedTheme = ElementTheme.Default;
                 MoreButton.RequestedTheme = ElementTheme.Default;
-                HideButton.RequestedTheme = ElementTheme.Default;
+                Window.CaptionTheme = ElementTheme.Default;
             }
         }
 
@@ -2364,10 +2366,6 @@ namespace Telegram.Views.Host
             PostEvent("theme_changed", "theme_params", theme);
         }
 
-        private void HideButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
     }
 
     public partial class SecondaryNavigationService : TLNavigationService

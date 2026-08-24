@@ -142,63 +142,9 @@
                            Margin="0,2,6,0" />
             </Border>
 
-            <Button x:Name="HideButton"
-                    Click="HideButton_Click"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Width="46"
-                    Height="40"
-                    Grid.Column="3">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="RootGrid"
-                                Background="Transparent">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                           Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="#C42B1C" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Stroke"
-                                                                           Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="#FFFFFF" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                           Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="#C73C30" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Stroke"
-                                                                           Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="#FFFFFF" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled" />
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-
-                            <Path x:Name="ContentPresenter"
-                                  Data="M0.5 0.5 L9.5 9.5 M0.5 9.5 L9.5 0.5"
-                                  Stroke="{ThemeResource TextFillColorPrimaryBrush}"
-                                  StrokeStartLineCap="Round"
-                                  StrokeEndLineCap="Round"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+            <!-- The window draws its own close button now; this is the room it needs. -->
+            <Border Width="46"
+                    Grid.Column="3" />
         </Grid>
 
         <ScrollViewer x:Name="ScrollingHost"
