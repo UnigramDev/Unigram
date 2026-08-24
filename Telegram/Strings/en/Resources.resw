@@ -3445,22 +3445,22 @@ Do you want to revoke verification?</value>
     <value>You have changed the business away message settings. Apply changes?</value>
   </data>
   <data name="BusinessBotChats" xml:space="preserve">
-    <value>Chats accessible for the bot</value>
+    <value>Chats the bot can access</value>
   </data>
   <data name="BusinessBotChatsInfo" xml:space="preserve">
     <value>Select chats or entire chat categories which the bot will have access to.</value>
   </data>
   <data name="BusinessBotLink" xml:space="preserve">
-    <value>Bot Username or URL</value>
+    <value>Bot Username or Link</value>
   </data>
   <data name="BusinessBotLinkInfo" xml:space="preserve">
-    <value>Enter the link to the Telegram bot that you want to automatically process your chats.</value>
+    <value>Choose a bot to manage your chats automatically.</value>
   </data>
   <data name="BusinessBotNotFound" xml:space="preserve">
     <value>Chatbot not found</value>
   </data>
   <data name="BusinessBotNotSupportedMessage" xml:space="preserve">
-    <value>This bot doesn’t support **Telegram Business** yet.</value>
+    <value>This bot doesn’t support **Secretary Mode** yet.</value>
   </data>
   <data name="BusinessBotNotSupportedTitle" xml:space="preserve">
     <value>Oops</value>
@@ -3514,7 +3514,7 @@ Do you want to revoke verification?</value>
     <value>Edit Name</value>
   </data>
   <data name="BusinessBotPermissionsProfilePicture" xml:space="preserve">
-    <value>Edit Profile Picture</value>
+    <value>Edit Profile Photo</value>
   </data>
   <data name="BusinessBotPermissionsProfileSection" xml:space="preserve">
     <value>Manage Profile</value>
@@ -3532,16 +3532,16 @@ Do you want to revoke verification?</value>
     <value>Remove Bot</value>
   </data>
   <data name="BusinessBots" xml:space="preserve">
-    <value>Chatbots</value>
+    <value>Chat Automation</value>
   </data>
   <data name="BusinessBotsInfo" xml:space="preserve">
-    <value>Add a bot to your account to help you automatically process and respond to the messages you receive. **Learn more &gt;**</value>
+    <value>Add a bot to reply to messages on your behalf.</value>
   </data>
   <data name="BusinessBotUnsavedChanges" xml:space="preserve">
     <value>You have changed the business bot settings. Apply changes?</value>
   </data>
   <data name="BusinessChatsAllPrivateExcept" xml:space="preserve">
-    <value>All 1-to-1 Chats Except...</value>
+    <value>All Private Chats Except...</value>
   </data>
   <data name="BusinessChatsExcluded" xml:space="preserve">
     <value>Excluded chats</value>
@@ -4006,7 +4006,7 @@ Do you want to revoke verification?</value>
     <value>Because your **Telegram Premium** subscription was gifted to you, you can&apos;t use it to boost channels.</value>
   </data>
   <data name="CantEditTagAdmins" xml:space="preserve">
-    <value>Only admins can set member tags in this group.</value>
+    <value>Only admins can assign member tags in this group.</value>
   </data>
   <data name="Caption" xml:space="preserve">
     <value>Caption</value>
@@ -4342,7 +4342,7 @@ revenue per user</value>
     <value>Enable Paid Reactions</value>
   </data>
   <data name="ChannelEnablePaidReactionsInfo" xml:space="preserve">
-    <value>Switch this on to let your subscribers react to posts with Telegram Stars, which you will be able to withdraw as TON.</value>
+    <value>Switch this on to let your subscribers react to posts with Telegram Stars, which you will be able to withdraw as Grams.</value>
   </data>
   <data name="ChannelEnablePaidReactionsInfoLink" xml:space="preserve">
     <value>https://telegram.org/tos/stars/</value>
@@ -4405,7 +4405,7 @@ revenue per user</value>
     <value>Allow Member Tags</value>
   </data>
   <data name="ChannelMemberTagsInfo" xml:space="preserve">
-    <value>Turn this on to let members of the group to add short tags next to their names.</value>
+    <value>Turn this on to let members of the group add short tags next to their names.</value>
   </data>
   <data name="ChannelMute" xml:space="preserve">
     <value>MUTE</value>
@@ -5768,7 +5768,7 @@ You can always switch back to the default Telegram theme here.</value>
     <value>Disable message forwarding to other chats.</value>
   </data>
   <data name="DisableSharingInfoText3" xml:space="preserve">
-    <value>Disable copying texts and saving photos and videos to gallery.</value>
+    <value>Disable copying text and saving photos or videos.</value>
   </data>
   <data name="DisableSharingOfferAccept" xml:space="preserve">
     <value>Accept</value>
@@ -5780,13 +5780,13 @@ You can always switch back to the default Telegram theme here.</value>
     <value>Sharing disabled for this chat</value>
   </data>
   <data name="DisableSharingToastDisabledPending" xml:space="preserve">
-    <value>Sharing will disabled if **{0}** approves it</value>
+    <value>Sharing will be disabled if **{0}** approves it</value>
   </data>
   <data name="DisableSharingToastEnabled" xml:space="preserve">
     <value>Sharing enabled for this chat</value>
   </data>
   <data name="DisableSharingToastEnabledPending" xml:space="preserve">
-    <value>Sharing will enabled if **{0}** approves it</value>
+    <value>Sharing will be enabled if **{0}** approves it</value>
   </data>
   <data name="Discard" xml:space="preserve">
     <value>Discard</value>
@@ -6003,7 +6003,7 @@ Anyone from the channel will be able to see messages in this group.</value>
     <value>Promoted by {0}</value>
   </data>
   <data name="EditAdminRank" xml:space="preserve">
-    <value>Custom title</value>
+    <value>Member tag</value>
   </data>
   <data name="EditAdminRankInfo" xml:space="preserve">
     <value>A title that members will see instead of &apos;{0}&apos;.</value>
@@ -6519,7 +6519,7 @@ Learn more at telegram.org</value>
     <value>Subscribers Left the Channel</value>
   </data>
   <data name="EventLogFilterMembersRank" xml:space="preserve">
-    <value>Members Tag Updates</value>
+    <value>Member Tag Updates</value>
   </data>
   <data name="EventLogFilterNewAdmins" xml:space="preserve">
     <value>Admin rights</value>
@@ -6824,7 +6824,7 @@ Duration: {1}</value>
     <value>List of viewers becomes unavailable **24 hours** after the story expires.</value>
   </data>
   <data name="ExpiredViewsStubPremiumDescription" xml:space="preserve">
-    <value>To unlock viewer lists for expired and posted stories, subscribe to **Telegram Premium**.</value>
+    <value>To unlock future viewer lists for expired and posted stories, subscribe to **Telegram Premium**.</value>
   </data>
   <data name="FactCheck" xml:space="preserve">
     <value>Fact Check</value>
@@ -7271,7 +7271,7 @@ Duration: {1}</value>
     <value>Forward Selected</value>
   </data>
   <data name="ForwardsRestrictedInfoBot" xml:space="preserve">
-    <value>Copying and forwarding is not allowed from this bot.</value>
+    <value>Copying and forwarding is not allowed from this chat.</value>
   </data>
   <data name="ForwardsRestrictedInfoChannel" xml:space="preserve">
     <value>Сopying and forwarding is not allowed in this channel.</value>
@@ -7830,10 +7830,10 @@ This action cannot be undone. This will permanently destroy the gift.</value>
     <value>resale</value>
   </data>
   <data name="Gift2ResaleCount_one" xml:space="preserve">
-    <value>{0} for resale</value>
+    <value>{0} listing</value>
   </data>
   <data name="Gift2ResaleCount_other" xml:space="preserve">
-    <value>{0} for resale</value>
+    <value>{0} listings</value>
   </data>
   <data name="Gift2ResaleFilterBackdrop" xml:space="preserve">
     <value>Backdrop</value>
@@ -8252,7 +8252,7 @@ than the average price for {1}</value>
     <value>Choose how long **{0}** has to accept your offer. When it expires, your **Stars** will be refunded.</value>
   </data>
   <data name="GiftOfferDurationInfoTON" xml:space="preserve">
-    <value>Choose how long **{0}** has to accept your offer. When it expires, your **TON** will be refunded.</value>
+    <value>Choose how long **{0}** has to accept your offer. When it expires, your **Grams** will be refunded.</value>
   </data>
   <data name="GiftOfferHours_one" xml:space="preserve">
     <value>{0} hour</value>
@@ -8273,16 +8273,16 @@ than the average price for {1}</value>
     <value>You rejected **{0}&apos;s** offer to buy your **{2}** for **{1} Stars**.</value>
   </data>
   <data name="GiftOfferOfferedTextTON" xml:space="preserve">
-    <value>**{0}** offered you **{1} TON** for **{2}**.</value>
+    <value>**{0}** offered you **{1} Grams** for **{2}**.</value>
   </data>
   <data name="GiftOfferOfferedTextTONOut" xml:space="preserve">
-    <value>You offered **{0}** **{1} TON** for **{2}**.</value>
+    <value>You offered **{0}** **{1} Grams** for **{2}**.</value>
   </data>
   <data name="GiftOfferOfferedTextTONRejected" xml:space="preserve">
-    <value>**{0}** rejected your offer of **{1} TON** for **{2}**.</value>
+    <value>**{0}** rejected your offer of **{1} Grams** for **{2}**.</value>
   </data>
   <data name="GiftOfferOfferedTextTONRejectedOut" xml:space="preserve">
-    <value>You rejected **{0}&apos;s** offer to buy your **{2}** for **{1} TON**.</value>
+    <value>You rejected **{0}&apos;s** offer to buy your **{2}** for **{1} Grams**.</value>
   </data>
   <data name="GiftOfferPay" xml:space="preserve">
     <value>Pay ⭐️{0}</value>
@@ -8354,16 +8354,16 @@ than the average price for {1}</value>
     <value>Offer to Buy</value>
   </data>
   <data name="GiftOfferTONToOffer" xml:space="preserve">
-    <value>TON to offer</value>
+    <value>Grams to offer</value>
   </data>
   <data name="GiftOfferTONToOfferInfo" xml:space="preserve">
-    <value>Enter the amount of TON you&apos;d like to offer for **{0}**.</value>
+    <value>Enter the amount of Grams you&apos;d like to offer for **{0}**.</value>
   </data>
   <data name="GiftOfferTONToOfferInfoIsHigh" xml:space="preserve">
-    <value>This offer is too high. The maximum offer for **{1}** is **{0} TON**.</value>
+    <value>This offer is too high. The maximum offer for **{1}** is **{0} Grams**.</value>
   </data>
   <data name="GiftOfferTONToOfferInfoIsLow" xml:space="preserve">
-    <value>This offer is too low. The minimum offer for **{1}** is **{0} TON**.</value>
+    <value>This offer is too low. The minimum offer for **{1}** is **{0} Grams**.</value>
   </data>
   <data name="GiftOfferTransferInfoTextSellStars" xml:space="preserve">
     <value>Do you want to sell **{2}** to **{1}** for **{0} Stars**?
@@ -8371,15 +8371,15 @@ than the average price for {1}</value>
 You will receive **{3} Stars** after fees.</value>
   </data>
   <data name="GiftOfferTransferInfoTextSellTON" xml:space="preserve">
-    <value>Do you want to sell **{2}** to **{1}** for **{0} TON**?
+    <value>Do you want to sell **{2}** to **{1}** for **{0} Grams**?
 
-You will receive **{3} TON** after fees.</value>
+You will receive **{3} Grams** after fees.</value>
   </data>
   <data name="GiftOfferTransferInfoTextStars" xml:space="preserve">
     <value>Do you want to offer **{0} Stars** to **{1}** for **{2}**?</value>
   </data>
   <data name="GiftOfferTransferInfoTextTON" xml:space="preserve">
-    <value>Do you want to offer **{0} TON** to **{1}** for **{2}**?</value>
+    <value>Do you want to offer **{0} Grams** to **{1}** for **{2}**?</value>
   </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Gift Premium</value>
@@ -9773,7 +9773,7 @@ Secret chats and pending messages will be lost.</value>
     <value>Open Telegram on your phone</value>
   </data>
   <data name="LoginWithQrCodeStep2" xml:space="preserve">
-    <value>Go to Settings &gt; Devices &gt; Link Desktop Device</value>
+    <value>Go to Settings &gt; Devices &gt; Add Device</value>
   </data>
   <data name="LoginWithQrCodeStep3" xml:space="preserve">
     <value>Scan this image to Log In</value>
@@ -10310,25 +10310,25 @@ Minimum length is 5 characters.</value>
     <value>50:50 revenue split</value>
   </data>
   <data name="MonetizationInfoFeature2Text" xml:space="preserve">
-    <value>You can receive 50% of the ad revenue as rewards in TON.</value>
+    <value>You can receive 50% of the ad revenue as rewards in Grams.</value>
   </data>
   <data name="MonetizationInfoFeature3Name" xml:space="preserve">
     <value>Flexible withdrawals</value>
   </data>
   <data name="MonetizationInfoFeature3Text" xml:space="preserve">
-    <value>You can collect your TON any time.</value>
+    <value>You can collect your Grams any time.</value>
   </data>
   <data name="MonetizationInfoTitle" xml:space="preserve">
     <value>Earn From Your Channel</value>
   </data>
   <data name="MonetizationInfoTONText" xml:space="preserve">
-    <value>**TON** is a blockchain platform and cryptocurrency that Telegram uses for its high speed and low commissions on transactions.</value>
+    <value>**Gram** is the cryptocurrency of the TON blockchain platform, which Telegram uses for its high speed and low commissions on transactions.</value>
   </data>
   <data name="MonetizationInfoTONTitle" xml:space="preserve">
-    <value>What is 💎 TON?</value>
+    <value>What is 💎 Gram?</value>
   </data>
   <data name="MonetizationMaxCPM" xml:space="preserve">
-    <value>TON {0}</value>
+    <value>Grams {0}</value>
   </data>
   <data name="MonetizationNoCPM" xml:space="preserve">
     <value>No Ads</value>
@@ -10385,7 +10385,7 @@ Minimum length is 5 characters.</value>
     <value>Stars Transactions</value>
   </data>
   <data name="MonetizationTransactionsTON" xml:space="preserve">
-    <value>TON Transactions</value>
+    <value>Gram Transactions</value>
   </data>
   <data name="MonetizationTransactionWithdraw" xml:space="preserve">
     <value>Collection via Fragment</value>
@@ -10400,13 +10400,13 @@ Minimum length is 5 characters.</value>
     <value>Check the address of the recipient:</value>
   </data>
   <data name="MonetizationTransferMessage2" xml:space="preserve">
-    <value>This action can not be undone. If the address above is incorrect you will lose your TON.</value>
+    <value>This action can not be undone. If the address above is incorrect you will lose your Grams.</value>
   </data>
   <data name="MonetizationTransferTitle" xml:space="preserve">
     <value>Transfer {0}</value>
   </data>
   <data name="MonetizationValueCPM" xml:space="preserve">
-    <value>TON {0} CPM</value>
+    <value>Grams {0} CPM</value>
   </data>
   <data name="Mono" xml:space="preserve">
     <value>Mono</value>
@@ -11778,13 +11778,13 @@ countries can vote</value>
     <value>Enter Price in Stars</value>
   </data>
   <data name="PostSuggestionsOfferTitlePriceTON" xml:space="preserve">
-    <value>Enter Price in TON</value>
+    <value>Enter Price in Grams</value>
   </data>
   <data name="PostSuggestionsOfferTitleTime" xml:space="preserve">
     <value>Publishing Time</value>
   </data>
   <data name="PostSuggestionsOfferTON" xml:space="preserve">
-    <value>Offer {0} TON</value>
+    <value>Offer {0} Grams</value>
   </data>
   <data name="PostSuggestionsPriceInfo" xml:space="preserve">
     <value>Your channel will receive {0} of the selected fee (~{1}) for each incoming message.</value>
@@ -12978,7 +12978,7 @@ seamlessly and efficiently.</value>
     <value>Learn more about our [Ad Policies and Guidelines](https://ads.telegram.org/guidelines).</value>
   </data>
   <data name="ReportAlertReaction" xml:space="preserve">
-    <value>Are you sure you want to report reaction from this user?</value>
+    <value>Are you sure you want to report reactions from this user?</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Report</value>
@@ -13303,7 +13303,7 @@ seamlessly and efficiently.</value>
     <value>Telegram Ads are very different from ads on other platforms. Ads such as this one:</value>
   </data>
   <data name="RevenueSharingAdsInfo1Subtitle" xml:space="preserve">
-    <value>Ads on Telegram do not use your personal information and are based on the channel in which you see them.</value>
+    <value>&quot;We don&apos;t use the contents of your private chats or contacts lists for ad targeting or other commercial purposes. &quot;</value>
   </data>
   <data name="RevenueSharingAdsInfo1Title" xml:space="preserve">
     <value>Respect Your Privacy</value>
@@ -13324,7 +13324,7 @@ seamlessly and efficiently.</value>
     <value>Can Be Removed</value>
   </data>
   <data name="RevenueSharingAdsInfo4Subtitle2" xml:space="preserve">
-    <value>Anyone can create an ad to display in this channel — with minimal budgets. Check out the **Telegram Ad Platform** for details. {0}</value>
+    <value>Anyone can post ads on Telegram — with minimal budgets. Check out the **Telegram Ad Platform** for details. {0}</value>
   </data>
   <data name="RevenueSharingAdsInfo4SubtitleLearnMore" xml:space="preserve">
     <value>**Learn More &gt;**</value>
@@ -14018,7 +14018,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>**{0}** would like to enable sharing in this chat, which includes:</value>
   </data>
   <data name="SharingOfferEnableHeaderYou" xml:space="preserve">
-    <value>You suggest to enable sharing in this chat, which includes:</value>
+    <value>You suggested to enable sharing in this chat, which includes:</value>
   </data>
   <data name="ShortHoursAgo_one" xml:space="preserve">
     <value>{0}h</value>
@@ -14265,7 +14265,7 @@ messages?</value>
     <value>A streak resets after 3 🎲 or a stake change.</value>
   </data>
   <data name="StakeDiceText" xml:space="preserve">
-    <value>A limited playtest of the upcoming emoji mini-game platform for a small group of users.</value>
+    <value>An emoji game for users with **Level 5** or higher. 💎 earned in the game can only be spent on Telegram gifts and posts.</value>
   </data>
   <data name="StakeDiceTitle" xml:space="preserve">
     <value>Emoji Stake</value>
@@ -15160,7 +15160,7 @@ list of viewers.</value>
     <value>Offer Stars</value>
   </data>
   <data name="SuggestedOfferTON" xml:space="preserve">
-    <value>Offer TON</value>
+    <value>Offer Grams</value>
   </data>
   <data name="SuggestedPostAcceptTitle" xml:space="preserve">
     <value>Accept Terms</value>
@@ -15220,10 +15220,10 @@ list of viewers.</value>
     <value>You won’t receive Stars for this post if you delete it now. The post must remain visible for at least **{0} hours** after it was published.</value>
   </data>
   <data name="SuggestionTONWillBeLost" xml:space="preserve">
-    <value>TON will be lost</value>
+    <value>Grams Will Be Lost</value>
   </data>
   <data name="SuggestionTONWillBeLostInfo" xml:space="preserve">
-    <value>You won’t receive TON for this post if you delete it now. The post must remain visible for at least **{0} hours** after it was published.</value>
+    <value>You won’t receive Grams for this post if you delete it now. The post must remain visible for at least **{0} hours** after it was published.</value>
   </data>
   <data name="SuggestionUnlockedStars" xml:space="preserve">
     <value>Send a direct message to the administrator of **{0}**.</value>
@@ -15310,8 +15310,7 @@ list of viewers.</value>
     <value>Tabs at the top</value>
   </data>
   <data name="TagInfoAdminText" xml:space="preserve">
-    <value>This green tag un1 is **{0}’s** admin tag.
-**{0}** is an administrator of **{1}**.</value>
+    <value>This green tag un1 is **{0}**&apos;s admin tag in **{1}**.</value>
   </data>
   <data name="TagInfoAdminTitle" xml:space="preserve">
     <value>Admin Tag</value>
@@ -15329,15 +15328,13 @@ list of viewers.</value>
     <value>Edit Tag</value>
   </data>
   <data name="TagInfoMemberText" xml:space="preserve">
-    <value>This grey tag un1 is **{0}’s** member tag.
-**{0}** is a member of **{1}**.</value>
+    <value>This gray tag un1 is **{0}**&apos;s member tag in **{1}**.</value>
   </data>
   <data name="TagInfoMemberTitle" xml:space="preserve">
     <value>Member Tag</value>
   </data>
   <data name="TagInfoOwnerText" xml:space="preserve">
-    <value>This purple tag un1 is **{0}’s** owner tag.
-**{0}** is the owner of **{1}**.</value>
+    <value>This purple tag un1 is **{0}**&apos;s owner tag in **{1}**.</value>
   </data>
   <data name="TagInfoOwnerTitle" xml:space="preserve">
     <value>Owner Tag</value>
@@ -15755,13 +15752,13 @@ in mini apps on Telegram.</value>
     <value>Uncheck</value>
   </data>
   <data name="TonCount_one" xml:space="preserve">
-    <value>{0} TON</value>
+    <value>{0} Gram</value>
   </data>
   <data name="TonCount_other" xml:space="preserve">
-    <value>{0} TON</value>
+    <value>{0} Grams</value>
   </data>
   <data name="TonCountX" xml:space="preserve">
-    <value>{0} TON</value>
+    <value>{0} Grams</value>
   </data>
   <data name="TooManyTries" xml:space="preserve">
     <value>Too many tries.

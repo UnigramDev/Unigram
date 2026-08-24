@@ -620,7 +620,7 @@
     <string name="ChannelSignMessagesWithProfile">Show Authors\' Profiles</string>
     <string name="ChannelSignMessagesInfo">Add names of admins to the messages they post</string>
     <string name="EditAdmin">Admin Rights</string>
-    <string name="EditAdminRank">Custom title</string>
+    <string name="EditAdminRank">Member tag</string>
     <string name="EditAdminRankInfo">A title that members will see instead of \'{0}\'.</string>
 
     <string name="EditAdminChangeChannelInfo">Change Channel Info</string>
@@ -6311,7 +6311,7 @@
 
 
 
-    <string name="ExpiredViewsStubPremiumDescription">To unlock viewer lists for expired and posted stories, subscribe to **Telegram Premium**.</string>
+    <string name="ExpiredViewsStubPremiumDescription">To unlock future viewer lists for expired and posted stories, subscribe to **Telegram Premium**.</string>
     <string name="LearnMore">Learn More</string>
 
     <string name="PremiumPreviewStories">Stories</string>
@@ -7235,15 +7235,15 @@
     <string name="BusinessHoursProfileOpensInDays_other">opens in {0} days</string>
     <string name="BusinessHoursProfileSwitchLocal">local time</string>
     <string name="BusinessHoursProfileSwitchMy">my time</string>
-    <string name="BusinessBots">Chatbots</string>
-    <string name="BusinessBotsInfo">Add a bot to your account to help you automatically process and respond to the messages you receive. **Learn more &gt;**</string>
+    <string name="BusinessBots">Chat Automation</string>
+    <string name="BusinessBotsInfo">Add a bot to reply to messages on your behalf.</string>
 
-    <string name="BusinessBotLink">Bot Username or URL</string>
+    <string name="BusinessBotLink">Bot Username or Link</string>
     <string name="BusinessBotNotFound">Chatbot not found</string>
-    <string name="BusinessBotLinkInfo">Enter the link to the Telegram bot that you want to automatically process your chats.</string>
-    <string name="BusinessBotChats">Chats accessible for the bot</string>
+    <string name="BusinessBotLinkInfo">Choose a bot to manage your chats automatically.</string>
+    <string name="BusinessBotChats">Chats the bot can access</string>
     <string name="BusinessBotUnsavedChanges">You have changed the business bot settings. Apply changes?</string>
-    <string name="BusinessChatsAllPrivateExcept">All 1-to-1 Chats Except...</string>
+    <string name="BusinessChatsAllPrivateExcept">All Private Chats Except...</string>
     <string name="BusinessChatsOnlySelected">Only Selected Chats</string>
     <string name="BusinessChatsExcluded">Excluded chats</string>
     <string name="BusinessChatsExcludedAdd">Exclude chats</string>
@@ -7254,7 +7254,7 @@
     <string name="BusinessBotPermissionsReply">Reply to Messages</string>
     <string name="BusinessBotPermissionsInfo">The bot can only reply on your behalf in chats that were active during the last 24h.</string>
     <string name="BusinessBotNotSupportedTitle">Oops</string>
-    <string name="BusinessBotNotSupportedMessage">This bot doesn’t support **Telegram Business** yet.</string>
+    <string name="BusinessBotNotSupportedMessage">This bot doesn’t support **Secretary Mode** yet.</string>
     <string name="BusinessGreet">Greeting Message</string>
     <string name="BusinessGreetInfo">Greet customers when they message you the first time or after a period of no activity.</string>
     <string name="BusinessGreetSend">Send Greeting Message</string>
@@ -7387,11 +7387,11 @@
     <string name="MonetizationInfoFeature1Name">Telegram Ads</string>
     <string name="MonetizationInfoFeature1Text">Telegram can display ads in your channel.</string>
     <string name="MonetizationInfoFeature2Name">50:50 revenue split</string>
-    <string name="MonetizationInfoFeature2Text">You can receive 50% of the ad revenue as rewards in TON.</string>
+    <string name="MonetizationInfoFeature2Text">You can receive 50% of the ad revenue as rewards in Grams.</string>
     <string name="MonetizationInfoFeature3Name">Flexible withdrawals</string>
-    <string name="MonetizationInfoFeature3Text">You can collect your TON any time.</string>
-    <string name="MonetizationInfoTONTitle">What is &#128142; TON?</string>
-    <string name="MonetizationInfoTONText">**TON** is a blockchain platform and cryptocurrency that Telegram uses for its high speed and low commissions on transactions.</string>
+    <string name="MonetizationInfoFeature3Text">You can collect your Grams any time.</string>
+    <string name="MonetizationInfoTONTitle">What is &#128142; Gram?</string>
+    <string name="MonetizationInfoTONText">**Gram** is the cryptocurrency of the TON blockchain platform, which Telegram uses for its high speed and low commissions on transactions.</string>
 
     <string name="MonetizationInfo">Telegram shares {0}% of the revenue from ads displayed in your channel as rewards. **Learn more &gt;**</string>
     <string name="MonetizationBalance">Available reward</string>
@@ -8032,7 +8032,7 @@
     <string name="StarsReactionTop">TOP</string>
     <string name="StarsReactionsSent">Star Reaction</string>
     <string name="ChannelEnablePaidReactions">Enable Paid Reactions</string>
-    <string name="ChannelEnablePaidReactionsInfo">Switch this on to let your subscribers react to posts with Telegram Stars, which you will be able to withdraw as TON.</string>
+    <string name="ChannelEnablePaidReactionsInfo">Switch this on to let your subscribers react to posts with Telegram Stars, which you will be able to withdraw as Grams.</string>
     <string name="ChannelEnablePaidReactionsInfoLink">https://telegram.org/tos/stars/</string>
 
     <string name="ChannelSignProfilesInfo">Allow admins to post as their channel or personal account, linking to their profile.</string>
@@ -11070,20 +11070,20 @@
     <string name="LoginWithQrCode">Quick log in using QR code</string>
     <string name="LoginWithQrCodeSkip">Log in with phone number</string>
     <string name="LoginWithQrCodeStep1">Open Telegram on your phone</string>
-    <string name="LoginWithQrCodeStep2">Go to Settings &gt; Devices &gt; Link Desktop Device</string>
+    <string name="LoginWithQrCodeStep2">Go to Settings &gt; Devices &gt; Add Device</string>
     <string name="LoginWithQrCodeStep3">Scan this image to Log In</string>
     <string name="LoginWithQrCodeTitle">Scan From Mobile Telegram</string>
     <string name="MonetizationDoneWithdraw">Reward Collected</string>
     <string name="MonetizationDoneWithdrawText">**{0}** sent to your wallet.</string>
-    <string name="MonetizationMaxCPM">TON {0}</string>
+    <string name="MonetizationMaxCPM">Grams {0}</string>
     <string name="MonetizationNoCPM">No Ads</string>
     <string name="MonetizationNoCPMValue">No ads in the channel</string>
     <string name="MonetizationTransferButton">Transfer {0}</string>
     <string name="MonetizationTransferButtonLoading">Sending {0}...</string>
     <string name="MonetizationTransferMessage1">Check the address of the recipient:</string>
-    <string name="MonetizationTransferMessage2">This action can not be undone. If the address above is incorrect you will lose your TON.</string>
+    <string name="MonetizationTransferMessage2">This action can not be undone. If the address above is incorrect you will lose your Grams.</string>
     <string name="MonetizationTransferTitle">Transfer {0}</string>
-    <string name="MonetizationValueCPM">TON {0} CPM</string>
+    <string name="MonetizationValueCPM">Grams {0} CPM</string>
     <string name="News">News</string>
     <string name="NoEmojiPack">No emoji pack</string>
     <string name="NoStickerSet">No sticker set</string>
@@ -11404,7 +11404,7 @@
     <string name="ChannelAdminSettings">Channel Settings</string>
 
     <string name="MonetizationTransactionsStars">Stars Transactions</string>
-    <string name="MonetizationTransactionsTON">TON Transactions</string>
+    <string name="MonetizationTransactionsTON">Gram Transactions</string>
 
     <string name="BotAdWhat">what\'s this?</string>
 
@@ -11415,14 +11415,14 @@
     <string name="AdHidden">You will no longer see ads from Telegram.</string>
     <string name="RevenueSharingAdsAlertSubtitle">Telegram Ads are very different from ads on other platforms. Ads such as this one:</string>
     <string name="RevenueSharingAdsInfo1Title">Respect Your Privacy</string>
-    <string name="RevenueSharingAdsInfo1Subtitle">Ads on Telegram do not use your personal information and are based on the channel in which you see them.</string>
+    <string name="RevenueSharingAdsInfo1Subtitle">"We don\'t use the contents of your private chats or contacts lists for ad targeting or other commercial purposes. "</string>
     <string name="RevenueSharingAdsInfo2Title">Help the Channel Creator</string>
     <string name="RevenueSharingAdsInfo2Subtitle">50% of the revenue from Telegram Ads goes to the owner of the channel where they are displayed.</string>
     <string name="RevenueSharingAdsInfo3Title">Can Be Removed</string>
     <string name="RevenueSharingAdsInfo3Subtitle">You can turn off ads by subscribing to **Telegram Premium**, and Level {0} channels can remove them for their subscribers.</string>
     <string name="RevenueSharingAdsInfo3SubtitleBot">You can turn off ads by subscribing to **Telegram Premium**.</string>
     <string name="RevenueSharingAdsInfo4Title">Can I Launch an Ad?</string>
-    <string name="RevenueSharingAdsInfo4Subtitle2">Anyone can create an ad to display in this channel — with minimal budgets. Check out the **Telegram Ad Platform** for details. {0}</string>
+    <string name="RevenueSharingAdsInfo4Subtitle2">Anyone can post ads on Telegram — with minimal budgets. Check out the **Telegram Ad Platform** for details. {0}</string>
     <string name="RevenueSharingAdsInfo4SubtitleLearnMore">**Learn More &gt;**</string>
     <string name="RevenueSharingAdsAlertButton">Understood</string>
     <string name="PromoteUrl">https://ads.telegram.org</string>
@@ -12034,7 +12034,7 @@
     <string name="BusinessBotPermissionsMessagesSection">Manage Messages</string>
     <string name="BusinessBotPermissionsProfileBio">Edit Bio</string>
     <string name="BusinessBotPermissionsProfileName">Edit Name</string>
-    <string name="BusinessBotPermissionsProfilePicture">Edit Profile Picture</string>
+    <string name="BusinessBotPermissionsProfilePicture">Edit Profile Photo</string>
     <string name="BusinessBotPermissionsProfileSection">Manage Profile</string>
     <string name="BusinessBotPermissionsProfileUsername">Edit Username</string>
     <string name="BusinessBotPermissionsStories">Manage Stories</string>
@@ -12133,8 +12133,8 @@
     <string name="Gift2TabResale">Resale</string>
     <string name="Gift2OnSale">on sale</string>
     <string name="Gift2Resale">resale</string>
-    <string name="Gift2ResaleCount_one">{0} for resale</string>
-    <string name="Gift2ResaleCount_other">{0} for resale</string>
+    <string name="Gift2ResaleCount_one">{0} listing</string>
+    <string name="Gift2ResaleCount_other">{0} listings</string>
     <string name="Gift2ResaleNoCount">no results</string>
     <string name="Gift2ResaleFilterModel">Model</string>
     <string name="Gift2ResaleFilterModels_one">{0} Model</string>
@@ -12391,10 +12391,10 @@
     <string name="CommonGroups_two">{0} groups in common</string>
     <string name="CommonGroups_few">{0} groups in common</string>
     <string name="CommonGroups_many">{0} groups in common</string>
-    <string name="Gift2ResaleCount_zero">{0} for resale</string>
-    <string name="Gift2ResaleCount_two">{0} for resale</string>
-    <string name="Gift2ResaleCount_few">{0} for resale</string>
-    <string name="Gift2ResaleCount_many">{0} for resale</string>
+    <string name="Gift2ResaleCount_zero">{0} listings</string>
+    <string name="Gift2ResaleCount_two">{0} listings</string>
+    <string name="Gift2ResaleCount_few">{0} listings</string>
+    <string name="Gift2ResaleCount_many">{0} listings</string>
     <string name="Gift2ResaleFilterBackdrops_zero">{0} Backdrops</string>
     <string name="Gift2ResaleFilterBackdrops_two">{0} Backdrops</string>
     <string name="Gift2ResaleFilterBackdrops_few">{0} Backdrops</string>
@@ -12553,13 +12553,13 @@
     <string name="Gift2UpgradeButtonGift">Upgrade</string>
 
     <string name="SuggestedOfferStars">Offer Stars</string>
-    <string name="SuggestedOfferTON">Offer TON</string>
+    <string name="SuggestedOfferTON">Offer Grams</string>
 
     <string name="AccDescrSuggestPost">Suggest a Post</string>
     <string name="PostSuggestionsOfferTitle">Suggest a Post</string>
 
     <string name="PostSuggestionsOfferTitlePriceStars">Enter Price in Stars</string>
-    <string name="PostSuggestionsOfferTitlePriceTON">Enter Price in TON</string>
+    <string name="PostSuggestionsOfferTitlePriceTON">Enter Price in Grams</string>
     <string name="PostSuggestionsOfferSubtitleStars">Choose how many Stars to pay to publish this post.</string>
     <string name="PostSuggestionsOfferSubtitleTON">Choose how much to pay to publish this post.</string>
     <string name="PostSuggestionsOfferTitleTime">Publishing Time</string>
@@ -12568,7 +12568,7 @@
     <string name="PostSuggestionsAddTimeHint">Select the date and time you want the post to be published.</string>
     <string name="PostSuggestionsAddTimeHint2">The post will remain available for at least {0} hours from this date.</string>
     <string name="PostSuggestionsOfferStars">Offer &#11088;&#65039;{0}</string>
-    <string name="PostSuggestionsOfferTON">Offer {0} TON</string>
+    <string name="PostSuggestionsOfferTON">Offer {0} Grams</string>
     <string name="PostSuggestionsOfferForFree">Offer for Free</string>
     <string name="SuggestAPostTooMuch">Maximum offer: {0}</string>
     <string name="SuggestAPostTooSmall">Minimum offer: {0}</string>
@@ -12578,11 +12578,11 @@
     <string name="SuggestAPostBelowSubtitleStars">&#11088;&#65039; {0} for publishing anytime</string>
     <string name="SuggestAPostBelowSubtitleStarsAndTime">&#11088;&#65039; {0} {1}</string>
 
-    <string name="TonCount_one">{0} TON</string>
-    <string name="TonCount_other">{0} TON</string>
+    <string name="TonCount_one">{0} Gram</string>
+    <string name="TonCount_other">{0} Grams</string>
 
     <string name="StarsCountX">{0} Stars</string>
-    <string name="TonCountX">{0} TON</string>
+    <string name="TonCountX">{0} Grams</string>
 
     <string name="SuggestedPostPublish">Publish</string>
     <string name="SuggestedPostAcceptTitle">Accept Terms</string>
@@ -12602,9 +12602,9 @@
     <string name="EditAdminManageDirect">Manage Direct Messages</string>
 
     <string name="SuggestionStarsWillBeLost">Stars will be lost</string>
-    <string name="SuggestionTONWillBeLost">TON will be lost</string>
+    <string name="SuggestionTONWillBeLost">Grams Will Be Lost</string>
     <string name="SuggestionStarsWillBeLostInfo">You won’t receive Stars for this post if you delete it now. The post must remain visible for at least **{0} hours** after it was published.</string>
-    <string name="SuggestionTONWillBeLostInfo">You won’t receive TON for this post if you delete it now. The post must remain visible for at least **{0} hours** after it was published.</string>
+    <string name="SuggestionTONWillBeLostInfo">You won’t receive Grams for this post if you delete it now. The post must remain visible for at least **{0} hours** after it was published.</string>
     <string name="SuggestionStarsWillBeLostDelete">Delete Anyway</string>
 
     <string name="SuggestedOfferPaidUntil">Paid until {0}</string>
@@ -12916,10 +12916,10 @@
   <string name="StoryRemovedFromAlbumTitle_two">{0} stories removed from **{1}**</string>
   <string name="StoryRemovedFromAlbumTitle_few">{0} stories removed from **{1}**</string>
   <string name="StoryRemovedFromAlbumTitle_many">{0} stories removed from **{1}**</string>
-  <string name="TonCount_zero">{0} TON</string>
-  <string name="TonCount_two">{0} TON</string>
-  <string name="TonCount_few">{0} TON</string>
-  <string name="TonCount_many">{0} TON</string>
+  <string name="TonCount_zero">{0} Grams</string>
+  <string name="TonCount_two">{0} Grams</string>
+  <string name="TonCount_few">{0} Grams</string>
+  <string name="TonCount_many">{0} Grams</string>
 
     <string name="GroupJoinLinkText2One">**{0}** already joined this group.</string>
     <string name="GroupJoinLinkText2Two">**{0}** and **{1}** already joined this group.</string>
@@ -13125,13 +13125,13 @@
     <string name="GiftOfferStarsToOfferInfo">Enter the amount of Stars you\'d like to offer for **{0}**.</string>
     <string name="GiftOfferStarsToOfferInfoIsLow">This offer is too low. The minimum offer for **{1}** is **{0} Stars**.</string>
     <string name="GiftOfferStarsToOfferInfoIsHigh">This offer is too high. The maximum offer for **{1}** is **{0} Stars**.</string>
-    <string name="GiftOfferTONToOffer">TON to offer</string>
-    <string name="GiftOfferTONToOfferInfo">Enter the amount of TON you\'d like to offer for **{0}**.</string>
-    <string name="GiftOfferTONToOfferInfoIsLow">This offer is too low. The minimum offer for **{1}** is **{0} TON**.</string>
-    <string name="GiftOfferTONToOfferInfoIsHigh">This offer is too high. The maximum offer for **{1}** is **{0} TON**.</string>
+    <string name="GiftOfferTONToOffer">Grams to offer</string>
+    <string name="GiftOfferTONToOfferInfo">Enter the amount of Grams you\'d like to offer for **{0}**.</string>
+    <string name="GiftOfferTONToOfferInfoIsLow">This offer is too low. The minimum offer for **{1}** is **{0} Grams**.</string>
+    <string name="GiftOfferTONToOfferInfoIsHigh">This offer is too high. The maximum offer for **{1}** is **{0} Grams**.</string>
     <string name="GiftOfferDuration">Offer Duration</string>
     <string name="GiftOfferDurationInfoStars">Choose how long **{0}** has to accept your offer. When it expires, your **Stars** will be refunded.</string>
-    <string name="GiftOfferDurationInfoTON">Choose how long **{0}** has to accept your offer. When it expires, your **TON** will be refunded.</string>
+    <string name="GiftOfferDurationInfoTON">Choose how long **{0}** has to accept your offer. When it expires, your **Grams** will be refunded.</string>
     <string name="GiftOfferButtonStars">Offer &#11088;&#65039;{0}</string>
     <string name="GiftOfferHours_one">{0} hour</string>
     <string name="GiftOfferHours_other">{0} hours</string>
@@ -13161,19 +13161,19 @@
     <string name="GiftOfferAccept">Accept</string>
     <string name="GiftOfferDecline">Reject</string>
     <string name="GiftOfferTransferInfoTextStars">Do you want to offer **{0} Stars** to **{1}** for **{2}**?</string>
-    <string name="GiftOfferTransferInfoTextTON">Do you want to offer **{0} TON** to **{1}** for **{2}**?</string>
+    <string name="GiftOfferTransferInfoTextTON">Do you want to offer **{0} Grams** to **{1}** for **{2}**?</string>
     <string name="GiftOfferTransferInfoTextSellStars">Do you want to sell **{2}** to **{1}** for **{0} Stars**?\n\nYou will receive **{3} Stars** after fees.</string>
-    <string name="GiftOfferTransferInfoTextSellTON">Do you want to sell **{2}** to **{1}** for **{0} TON**?\n\nYou will receive **{3} TON** after fees.</string>
+    <string name="GiftOfferTransferInfoTextSellTON">Do you want to sell **{2}** to **{1}** for **{0} Grams**?\n\nYou will receive **{3} Grams** after fees.</string>
     <string name="GiftOfferOfferedTextStarsOut">You offered **{0}** **{1} Stars** for **{2}**.</string>
-    <string name="GiftOfferOfferedTextTONOut">You offered **{0}** **{1} TON** for **{2}**.</string>
+    <string name="GiftOfferOfferedTextTONOut">You offered **{0}** **{1} Grams** for **{2}**.</string>
     <string name="GiftOfferOfferedTextStars">**{0}** offered you **{1} Stars** for **{2}**.</string>
-    <string name="GiftOfferOfferedTextTON">**{0}** offered you **{1} TON** for **{2}**.</string>
+    <string name="GiftOfferOfferedTextTON">**{0}** offered you **{1} Grams** for **{2}**.</string>
     <string name="GiftOfferSentTitle">Gift offer sent</string>
     <string name="GiftOfferSentText">You successfully sent an offer for **{0}** to **{1}**.</string>
     <string name="GiftOfferOfferedTextStarsRejectedOut">You rejected **{0}\'s** offer to buy your **{2}** for **{1} Stars**.</string>
-    <string name="GiftOfferOfferedTextTONRejectedOut">You rejected **{0}\'s** offer to buy your **{2}** for **{1} TON**.</string>
+    <string name="GiftOfferOfferedTextTONRejectedOut">You rejected **{0}\'s** offer to buy your **{2}** for **{1} Grams**.</string>
     <string name="GiftOfferOfferedTextStarsRejected">**{0}** rejected your offer of **{1} Stars** for **{2}**.</string>
-    <string name="GiftOfferOfferedTextTONRejected">**{0}** rejected your offer of **{1} TON** for **{2}**.</string>
+    <string name="GiftOfferOfferedTextTONRejected">**{0}** rejected your offer of **{1} Grams** for **{2}**.</string>
     <string name="ShortMinutesAgo_one">{0}m</string>
     <string name="ShortMinutesAgo_other">{0}m</string>
     <string name="ShortHoursAgo_one">{0}h</string>
@@ -13206,7 +13206,7 @@
 
     <string name="StakeDiceTitle">Emoji Stake</string>
     <string name="StakeDiceTitleBeta">Beta</string>
-    <string name="StakeDiceText">A limited playtest of the upcoming emoji mini-game platform for a small group of users.</string>
+    <string name="StakeDiceText">An emoji game for users with&#160;**Level 5**&#160;or higher. &#128142; earned in the game can only be spent on Telegram gifts and posts.</string>
     <string name="StakeDiceReturns">Results and Returns</string>
     <string name="StakeDiceReturnsInfo">A streak resets after 3 &#127922; or a stake change.</string>
     <string name="StakeDicePlaceholder">Your Stake</string>
@@ -13286,7 +13286,7 @@
     <string name="DisableSharingInfoHeader3">No Saving</string>
     <string name="DisableSharingInfoText1">Disable screenshots and screen recordings in this chat.</string>
     <string name="DisableSharingInfoText2">Disable message forwarding to other chats.</string>
-    <string name="DisableSharingInfoText3">Disable copying texts and saving photos and videos to gallery.</string>
+    <string name="DisableSharingInfoText3">Disable copying text and saving photos or videos.</string>
     <string name="DisableSharingToastDisabled">Sharing disabled for this chat</string>
     <string name="DisableSharingToastEnabled">Sharing enabled for this chat</string>
     <string name="EnableSharing">Enable Sharing</string>
@@ -13320,7 +13320,7 @@
 
     <string name="ReportReactionAndBan">Ban and Report</string>
     <string name="ReportReaction">Report reaction</string>
-    <string name="ReportAlertReaction">Are you sure you want to report reaction from this user?</string>
+    <string name="ReportAlertReaction">Are you sure you want to report reactions from this user?</string>
     <string name="ReportChatSent">Report sent</string>
     <string name="DeleteReactionMenu">Delete Reaction</string>
     <string name="DeleteAlertReaction">Are you sure you want to delete the reaction from this user?</string>
@@ -13344,30 +13344,30 @@
     <string name="SharingOfferEnableCancelTitle">Enable Sharing</string>
     <string name="SharingOfferEnableConfirmText">Are you sure you want to enable sharing?</string>
     <string name="SharingOfferEnableHeaderOther">**{0}** would like to enable sharing in this chat, which includes:</string>
-    <string name="SharingOfferEnableHeaderYou">You suggest to enable sharing in this chat, which includes:</string>
+    <string name="SharingOfferEnableHeaderYou">You suggested to enable sharing in this chat, which includes:</string>
     <string name="DisableSharingOfferAccept">Accept</string>
     <string name="DisableSharingOfferDecline">Reject</string>
-    <string name="DisableSharingToastDisabledPending">Sharing will disabled if **{0}** approves it</string>
-    <string name="DisableSharingToastEnabledPending">Sharing will enabled if **{0}** approves it</string>
+    <string name="DisableSharingToastDisabledPending">Sharing will be disabled if **{0}** approves it</string>
+    <string name="DisableSharingToastEnabledPending">Sharing will be enabled if **{0}** approves it</string>
 
     <string name="EditAdminTag">Edit Admin Tag</string>
     <string name="EditMemberTag">Edit Member Tag</string>
-    <string name="TagInfoAdminText">This green tag un1 is **{0}’s** admin tag.\n**{0}** is an administrator of **{1}**.</string>
+    <string name="TagInfoAdminText">This green tag un1 is **{0}**\'s admin tag in **{1}**.</string>
     <string name="TagInfoAdminTitle">Admin Tag</string>
     <string name="TagInfoButtonAddMyTag">Add My Tag</string>
     <string name="TagInfoButtonAddTag">Add Tag</string>
     <string name="TagInfoButtonEditMyTag">Edit My Tag</string>
     <string name="TagInfoButtonEditTag">Edit Tag</string>
-    <string name="TagInfoMemberText">This grey tag un1 is **{0}’s** member tag.\n**{0}** is a member of **{1}**.</string>
+    <string name="TagInfoMemberText">This gray tag un1 is **{0}**\'s member tag in **{1}**.</string>
     <string name="TagInfoMemberTitle">Member Tag</string>
-    <string name="TagInfoOwnerText">This purple tag un1 is **{0}’s** owner tag.\n**{0}** is the owner of **{1}**.</string>
+    <string name="TagInfoOwnerText">This purple tag un1 is **{0}**\'s owner tag in **{1}**.</string>
     <string name="TagInfoOwnerTitle">Owner Tag</string>
-    <string name="CantEditTagAdmins">Only admins can set member tags in this group.</string>
+    <string name="CantEditTagAdmins">Only admins can assign member tags in this group.</string>
     <string name="UserRestrictionsEditTags">Edit Own Tags</string>
     <string name="UserRestrictionsTagInfo">Add short tag next to {0}’s name.</string>
     <string name="EditAdminEditTags">Edit Member Tags</string>
     <string name="ChannelMemberTags">Allow Member Tags</string>
-    <string name="ChannelMemberTagsInfo">Turn this on to let members of the group to add short tags next to their names.</string>
+    <string name="ChannelMemberTagsInfo">Turn this on to let members of the group add short tags next to their names.</string>
     <string name="EventLogRankAdd">un1 set un2’s tag to {0}</string>
     <string name="EventLogRankEdit">un1 changed un2’s tag from {0} to {1}</string>
     <string name="EventLogRankRemove">un1 removed un2’s {0} tag</string>
@@ -13378,7 +13378,7 @@
     <string name="EventLogRestrictedCreateTopics">Create topics</string>
     <string name="EventLogPromotedEditRank">Manage tags</string>
     <string name="EventLogPromotedManageTopics">Manage topics</string>
-    <string name="EventLogFilterMembersRank">Members Tag Updates</string>
+    <string name="EventLogFilterMembersRank">Member Tag Updates</string>
 
     <string name="MemberTagButtonAdd">Add Tag</string>
     <string name="MemberTagButtonEdit">Edit Tag</string>
@@ -13393,7 +13393,7 @@
     <string name="ShortToday">today</string>
     <string name="ShortYesterday">yesterday</string>
 
-    <string name="ForwardsRestrictedInfoBot">Copying and forwarding is not allowed from this bot.</string>
+    <string name="ForwardsRestrictedInfoBot">Copying and forwarding is not allowed from this chat.</string>
     <string name="ForwardsRestrictedInfoUser">Сopying and forwarding is not allowed for this user.</string>
     <string name="ForwardsRestrictedInfoUserBecauseUser">**{0}** disabled copying and forwarding in this chat.</string>
     <string name="ForwardsRestrictedInfoUserBecauseYou">You disabled copying and forwarding in this chat.</string>
@@ -13751,4 +13751,43 @@
     <string name="UnsupportedMessageMessage">Update Telegram to view this message</string>
     <string name="UnsupportedMessageTitle">Unsupported Message</string>
 
+
+  <!-- new from translations.telegram.org -->
+
+  <string name="AIEditorUsedBy_zero">Used by {0} people.</string>
+  <string name="AIEditorUsedBy_two">Used by {0} people.</string>
+  <string name="AIEditorUsedBy_few">Used by {0} people.</string>
+  <string name="AIEditorUsedBy_many">Used by {0} people.</string>
+  <string name="ApproveNewMembersDisableForLinks_zero">Also disable **Approve New Members** for **{0} existing invite links** in this group?</string>
+  <string name="ApproveNewMembersDisableForLinks_two">Also disable **Approve New Members** for **{0} existing invite links** in this group?</string>
+  <string name="ApproveNewMembersDisableForLinks_few">Also disable **Approve New Members** for **{0} existing invite links** in this group?</string>
+  <string name="ApproveNewMembersDisableForLinks_many">Also disable **Approve New Members** for **{0} existing invite links** in this group?</string>
+  <string name="ApproveNewMembersDisableForLinksChannel_zero">Also disable **Approve New Members** for **{0} existing invite links** in this channel?</string>
+  <string name="ApproveNewMembersDisableForLinksChannel_two">Also disable **Approve New Members** for **{0} existing invite links** in this channel?</string>
+  <string name="ApproveNewMembersDisableForLinksChannel_few">Also disable **Approve New Members** for **{0} existing invite links** in this channel?</string>
+  <string name="ApproveNewMembersDisableForLinksChannel_many">Also disable **Approve New Members** for **{0} existing invite links** in this channel?</string>
+  <string name="ApproveNewMembersEnableForLinks_zero">Also enable **Approve New Members** for **{0} existing invite links** in this group?</string>
+  <string name="ApproveNewMembersEnableForLinks_two">Also enable **Approve New Members** for **{0} existing invite links** in this group?</string>
+  <string name="ApproveNewMembersEnableForLinks_few">Also enable **Approve New Members** for **{0} existing invite links** in this group?</string>
+  <string name="ApproveNewMembersEnableForLinks_many">Also enable **Approve New Members** for **{0} existing invite links** in this group?</string>
+  <string name="ApproveNewMembersEnableForLinksChannel_zero">Also enable **Approve New Members** for **{0} existing invite links** in this channel?</string>
+  <string name="ApproveNewMembersEnableForLinksChannel_two">Also enable **Approve New Members** for **{0} existing invite links** in this channel?</string>
+  <string name="ApproveNewMembersEnableForLinksChannel_few">Also enable **Approve New Members** for **{0} existing invite links** in this channel?</string>
+  <string name="ApproveNewMembersEnableForLinksChannel_many">Also enable **Approve New Members** for **{0} existing invite links** in this channel?</string>
+  <string name="PollV2AllowedCountriesListManyP_zero">{0} countries</string>
+  <string name="PollV2AllowedCountriesListManyP_two">{0} countries</string>
+  <string name="PollV2AllowedCountriesListManyP_few">{0} countries</string>
+  <string name="PollV2AllowedCountriesListManyP_many">{0} countries</string>
+  <string name="ProfilePollsCount_zero">{0} polls</string>
+  <string name="ProfilePollsCount_two">{0} polls</string>
+  <string name="ProfilePollsCount_few">{0} polls</string>
+  <string name="ProfilePollsCount_many">{0} polls</string>
+  <string name="WelcomeMessageHint_zero">New members will see these messages\nwhen they join</string>
+  <string name="WelcomeMessageHint_two">New members will see these messages\nwhen they join</string>
+  <string name="WelcomeMessageHint_few">New members will see these messages\nwhen they join</string>
+  <string name="WelcomeMessageHint_many">New members will see these messages\nwhen they join</string>
+  <string name="WelcomeMessagesLimit_zero">Limit of **{0}** messages reached.</string>
+  <string name="WelcomeMessagesLimit_two">Limit of **{0}** messages reached.</string>
+  <string name="WelcomeMessagesLimit_few">Limit of **{0}** messages reached.</string>
+  <string name="WelcomeMessagesLimit_many">Limit of **{0}** messages reached.</string>
 </resources>
