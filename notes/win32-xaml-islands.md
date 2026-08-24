@@ -2202,6 +2202,30 @@ changes nothing about activation, which is the single biggest de-risking in
   than merely unreachable. Bounded pumping is the fiddly part: after `WM_QUIT` a plain `GetMessage`
   blocks, so it needs `PeekMessage` with a deadline.
 
+- [ ] **2.1j The caption has no system menu.** Fela, 2026-08-24. Right-clicking the draggable area
+  does nothing, where a real caption opens Restore / Move / Size / Minimize / Maximize / Close.
+  Alt+Space is the same menu and is presumably just as dead.
+
+  **Why it is missing rather than broken.** The drag bar does forward `WM_NCRBUTTONUP` to the
+  parent for `HTCAPTION`, and the parent's `DefWindowProc` answers it by sending `WM_CONTEXTMENU` -
+  which it then hit-tests against the parent itself. After `WM_NCCALCSIZE` the parent's non-client
+  area is only the borders, so the point comes back `HTCLIENT` and no menu is shown. Forwarding
+  more messages will not fix it; the menu has to be raised by hand.
+
+  **Terminal's recipe**, `IslandWindow::OpenSystemMenu`, called from its own `WM_NCRBUTTONUP`:
+
+  - `GetSystemMenu(hwnd, FALSE)` for the menu.
+  - Enable or disable each item from `GetWindowPlacement().showCmd == SW_SHOWMAXIMIZED`:
+    `SC_RESTORE` only when maximized, `SC_MOVE`/`SC_SIZE`/`SC_MAXIMIZE` only when not,
+    `SC_MINIMIZE` and `SC_CLOSE` always.
+  - `SetMenuDefaultItem(menu, UINT_MAX, FALSE)` so nothing is bold.
+  - `TrackPopupMenu(menu, TPM_RETURNCMD, x, y, 0, hwnd, nullptr)`, then
+    `PostMessage(hwnd, WM_SYSCOMMAND, ret, 0)` - return the command and post it rather than letting
+    the menu dispatch it.
+
+  Worth tying to 1.7a while writing it: a window that asked for `CaptionButtons.Close` cannot
+  minimize or maximize, so those items should be disabled for it too, not only when maximized.
+
 - [ ] **2.1e Re-activation is unhandled, and it is the first real design gap.** Found 2026-08-24
   by the call window crashing. Chats, IV, the text editor and web apps all open in their own
   windows correctly; a call fail-fasts, and the app's own log says why:
