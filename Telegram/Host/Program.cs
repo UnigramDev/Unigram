@@ -6,6 +6,7 @@
 //
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Windows.ApplicationModel;
@@ -25,6 +26,13 @@ namespace Telegram.Host
         [STAThread]
         private static int Main()
         {
+            // UWP guaranteed the current directory was the package install folder. The shell
+            // launches a packaged Win32 app with whatever directory the launcher had - system32,
+            // as a rule - so every relative path in the app and its native libraries resolves
+            // against the wrong place. MicroTeX is the one that showed it: RES_BASE is the literal
+            // "res", so its fonts are looked up as resonts\... and simply are not there.
+            Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+
             Win32.SetProcessDpiAwarenessContext(Win32.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
             // XAML will not initialize on a thread without one. CoreWindow used to supply it; a
