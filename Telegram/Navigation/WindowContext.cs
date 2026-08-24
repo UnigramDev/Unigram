@@ -29,6 +29,8 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using System.ComponentModel;
 
 namespace Telegram.Navigation
 {
@@ -809,6 +811,128 @@ namespace Telegram.Navigation
         public static WindowContext Active;
 
         public static WindowContext Main;
+
+        #endregion
+
+        #region Navigation
+
+        public bool RaiseShortcutInvoked(InvokedShortcut shortcut, VirtualKeyModifiers modifiers)
+        {
+            var args = new ShortcutInvokedEventArgs(shortcut, modifiers);
+
+            foreach (var frame in NavigationServices.Select(x => x.FrameFacade).Reverse())
+            {
+                frame.RaiseShortcutInvoked(args);
+
+                if (args.Handled)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool RaiseBackRequested(VirtualKey key = VirtualKey.GoBack)
+        {
+            var handled = false;
+            RaiseBackRequested(key, ref handled);
+            return handled;
+        }
+
+        /// <summary>
+        /// Default Hardware/Shell Back handler overrides standard Back behavior 
+        /// that navigates to previous app in the app stack to instead cause a backward page navigation.
+        /// Views or Viewodels can override this behavior by handling the BackRequested 
+        /// event and setting the Handled property of the BackRequestedEventArgs to true.
+        /// </summary>
+        private void RaiseBackRequested(VirtualKey key, ref bool handled)
+        {
+            Logger.Info();
+
+            var args = new BackRequestedRoutedEventArgs(key);
+            var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
+
+            foreach (var popup in popups)
+            {
+                if (popup.Child is INavigablePage page)
+                {
+                    page.OnBackRequested(args);
+
+                    if (handled = args.Handled)
+                    {
+                        return;
+                    }
+                }
+                else if (popup.Child is ContentDialog dialog)
+                {
+                    dialog.Hide();
+                    return;
+                }
+                else if (popup.Child is ToolTip toolTip)
+                {
+                    toolTip.IsOpen = false;
+                }
+                else if (popup.Child is TeachingTip teachingTip)
+                {
+                    if (teachingTip.IsLightDismissEnabled)
+                    {
+                        teachingTip.IsOpen = false;
+                    }
+                }
+                else if (key == VirtualKey.Escape)
+                {
+                    // TODO: what is this for? I have no clue anymore
+                    if (popup.Child is not Grid)
+                    {
+                        //handled = args.Handled = true;
+                        return;
+                    }
+                }
+            }
+
+            foreach (var frame in NavigationServices.Select(x => x.FrameFacade).Reverse())
+            {
+                frame.RaiseBackRequested(args);
+
+                if (handled = args.Handled)
+                {
+                    return;
+                }
+            }
+
+            var navigationService = NavigationServices.FirstOrDefault();
+            if (navigationService?.CanGoBack ?? false)
+            {
+                navigationService?.GoBack();
+                handled = true;
+            }
+        }
+
+        public bool RaiseForwardRequested()
+        {
+            Logger.Info();
+
+            var args = new HandledEventArgs();
+
+            foreach (var frame in NavigationServices.Select(x => x.FrameFacade))
+            {
+                frame.RaiseForwardRequested(args);
+                if (args.Handled)
+                {
+                    return true;
+                }
+            }
+
+            var navigationService = NavigationServices.FirstOrDefault();
+            if (navigationService?.CanGoForward ?? false)
+            {
+                navigationService?.GoForward();
+                return true;
+            }
+
+            return false;
+        }
 
         #endregion
     }

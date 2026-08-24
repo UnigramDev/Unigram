@@ -59,27 +59,27 @@ namespace Telegram.Services.Keyboard
                     or VirtualKey.GamepadLeftShoulder
                     or VirtualKey.Escape)
             {
-                return BootStrapper.Current.RaiseBackRequested(_window.XamlRoot, key);
+                return _window.RaiseBackRequested(key);
             }
             else if (key is VirtualKey.GoForward
                          or VirtualKey.NavigationRight
                          or VirtualKey.GamepadRightShoulder)
             {
-                return BootStrapper.Current.RaiseForwardRequested();
+                return _window.RaiseForwardRequested();
             }
             else if (key is VirtualKey.Back
                          or VirtualKey.Left)
             {
                 if (WindowContext.KeyModifiers() == VirtualKeyModifiers.Menu)
                 {
-                    return BootStrapper.Current.RaiseBackRequested(_window.XamlRoot, key);
+                    return _window.RaiseBackRequested(key);
                 }
             }
             else if (key is VirtualKey.Right)
             {
                 if (WindowContext.KeyModifiers() == VirtualKeyModifiers.Menu)
                 {
-                    return BootStrapper.Current.RaiseForwardRequested();
+                    return _window.RaiseForwardRequested();
                 }
             }
             else
@@ -87,7 +87,7 @@ namespace Telegram.Services.Keyboard
                 var invoked = LifetimeService.Current.Shortcuts.Process(key, out VirtualKeyModifiers modifiers);
                 if (invoked != null)
                 {
-                    return BootStrapper.Current.RaiseShortcutInvoked(invoked, modifiers);
+                    return _window.RaiseShortcutInvoked(invoked, modifiers);
                 }
             }
 
@@ -113,11 +113,11 @@ namespace Telegram.Services.Keyboard
             {
                 if (backPressed)
                 {
-                    BootStrapper.Current.RaiseBackRequested(_window.XamlRoot);
+                    _window.RaiseBackRequested();
                 }
                 else
                 {
-                    BootStrapper.Current.RaiseForwardRequested();
+                    _window.RaiseForwardRequested();
                 }
 
                 return true;

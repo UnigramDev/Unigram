@@ -41,13 +41,13 @@ namespace Telegram.Services.Keyboard
                                 or VirtualKey.GamepadLeftShoulder
                                 or VirtualKey.Escape)
             {
-                args.Handled = BootStrapper.Current.RaiseBackRequested(_window.XamlRoot, args.VirtualKey);
+                args.Handled = _window.RaiseBackRequested(args.VirtualKey);
             }
             else if (args.VirtualKey is VirtualKey.GoForward
                                      or VirtualKey.NavigationRight
                                      or VirtualKey.GamepadRightShoulder)
             {
-                args.Handled = BootStrapper.Current.RaiseForwardRequested();
+                args.Handled = _window.RaiseForwardRequested();
             }
             else if (args.VirtualKey is VirtualKey.Back
                                      or VirtualKey.Left)
@@ -55,7 +55,7 @@ namespace Telegram.Services.Keyboard
                 var modifiers = WindowContext.KeyModifiers();
                 if (modifiers == VirtualKeyModifiers.Menu)
                 {
-                    args.Handled = BootStrapper.Current.RaiseBackRequested(_window.XamlRoot, args.VirtualKey);
+                    args.Handled = _window.RaiseBackRequested(args.VirtualKey);
                 }
             }
             else if (args.VirtualKey is VirtualKey.Right)
@@ -63,7 +63,7 @@ namespace Telegram.Services.Keyboard
                 var modifiers = WindowContext.KeyModifiers();
                 if (modifiers == VirtualKeyModifiers.Menu)
                 {
-                    args.Handled = BootStrapper.Current.RaiseForwardRequested();
+                    args.Handled = _window.RaiseForwardRequested();
                 }
             }
             else
@@ -71,7 +71,7 @@ namespace Telegram.Services.Keyboard
                 var invoked = LifetimeService.Current.Shortcuts.Process(args, out VirtualKeyModifiers modifiers);
                 if (invoked != null)
                 {
-                    args.Handled = BootStrapper.Current.RaiseShortcutInvoked(invoked, modifiers);
+                    args.Handled = _window.RaiseShortcutInvoked(invoked, modifiers);
                 }
             }
         }
@@ -102,12 +102,12 @@ namespace Telegram.Services.Keyboard
                 e.Handled = true;
                 if (backPressed)
                 {
-                    BootStrapper.Current.RaiseBackRequested(_window.XamlRoot);
+                    _window.RaiseBackRequested();
                 }
 
                 if (forwardPressed)
                 {
-                    BootStrapper.Current.RaiseForwardRequested();
+                    _window.RaiseForwardRequested();
                 }
             }
         }

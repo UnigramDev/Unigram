@@ -44,10 +44,6 @@ namespace Telegram.Navigation
             //if (!WindowWrapper.ActiveWrappers.Any())
             // handle window
 
-            // Hook up the default Back handler
-            // WARNING: this is used by Xbox (and some Windows users)
-            SystemNavigationManager.GetForCurrentView().BackRequested += BackHandler;
-
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
             CreateWindowWrapper(args.Window);
             ViewService.OnWindowCreated();
@@ -70,8 +66,6 @@ namespace Telegram.Navigation
 
         private void OnClosed(object sender, CoreWindowEventArgs e)
         {
-            SystemNavigationManager.GetForCurrentView().BackRequested -= BackHandler;
-
             if (sender is Window window)
             {
                 window.Activated -= OnActivated;

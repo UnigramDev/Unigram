@@ -155,6 +155,9 @@ namespace Telegram.Navigation
 
             ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
             ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
+
+            // WARNING: this is used by Xbox (and some Windows users)
+            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
         }
 
         public long Handle
@@ -248,6 +251,8 @@ namespace Telegram.Navigation
             _window.Closed -= OnClosed;
             _window.CoreWindow.ResizeStarted -= OnResizeStarted;
             _window.CoreWindow.ResizeCompleted -= OnResizeCompleted;
+
+            SystemNavigationManager.GetForCurrentView().BackRequested -= OnBackRequested;
         }
 
         /// <summary>
@@ -638,6 +643,29 @@ namespace Telegram.Navigation
         partial void SetScreenCaptureEnabled(bool enabled)
         {
             ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = enabled;
+        }
+
+        private void OnBackRequested(object sender, BackRequestedEventArgs args)
+        {
+            Logger.Info();
+
+            //var handled = false;
+            //if (ApiInformation.IsApiContractPresent(nameof(Windows.Phone.PhoneContract), 1, 0))
+            //{
+            //    if (NavigationService?.CanGoBack == true)
+            //    {
+            //        handled = true;
+            //    }
+            //}
+            //else
+            //{
+            //    handled = (NavigationService?.CanGoBack == false);
+            //}
+            var navigationService = NavigationServices.FirstOrDefault();
+            var handled = navigationService?.CanGoBack == false;
+
+            RaiseBackRequested(VirtualKey.GoBack, ref handled);
+            args.Handled = handled;
         }
     }
 }

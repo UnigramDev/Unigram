@@ -64,7 +64,8 @@ namespace Telegram.Controls
                 }
             }
 
-            BootStrapper.Current.RaiseBackRequested(XamlRoot);
+            var window = WindowContext.ForXamlRoot(XamlRoot);
+            window.RaiseBackRequested();
         }
     }
 }

@@ -104,8 +104,6 @@ namespace Telegram.Navigation
 
         #region properties
 
-        public INavigationService NavigationService => WindowContext.Current.NavigationServices.FirstOrDefault();
-
         /// <summary>
         /// CacheMaxDuration indicates the maximum TimeSpan for which cache data
         /// will be preserved. If Template 10 determines cache data is older than
@@ -297,145 +295,7 @@ namespace Telegram.Navigation
             CallActivateWindow(ActivateWindowSources.Launching);
         }
 
-        private void BackHandler(object sender, BackRequestedEventArgs args)
-        {
-            Logger.Info();
-
-            //var handled = false;
-            //if (ApiInformation.IsApiContractPresent(nameof(Windows.Phone.PhoneContract), 1, 0))
-            //{
-            //    if (NavigationService?.CanGoBack == true)
-            //    {
-            //        handled = true;
-            //    }
-            //}
-            //else
-            //{
-            //    handled = (NavigationService?.CanGoBack == false);
-            //}
-            var handled = NavigationService?.CanGoBack == false;
-
-            RaiseBackRequested(WindowContext.Current.XamlRoot, VirtualKey.GoBack, ref handled);
-            args.Handled = handled;
-        }
-
         #endregion
-
-        public bool RaiseShortcutInvoked(InvokedShortcut shortcut, VirtualKeyModifiers modifiers)
-        {
-            var args = new ShortcutInvokedEventArgs(shortcut, modifiers);
-
-            foreach (var frame in WindowContext.Current.NavigationServices.Select(x => x.FrameFacade).Reverse())
-            {
-                frame.RaiseShortcutInvoked(args);
-
-                if (args.Handled)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public bool RaiseBackRequested(XamlRoot xamlRoot, VirtualKey key = VirtualKey.GoBack)
-        {
-            var handled = false;
-            RaiseBackRequested(xamlRoot, key, ref handled);
-            return handled;
-        }
-
-        /// <summary>
-        /// Default Hardware/Shell Back handler overrides standard Back behavior 
-        /// that navigates to previous app in the app stack to instead cause a backward page navigation.
-        /// Views or Viewodels can override this behavior by handling the BackRequested 
-        /// event and setting the Handled property of the BackRequestedEventArgs to true.
-        /// </summary>
-        private void RaiseBackRequested(XamlRoot xamlRoot, VirtualKey key, ref bool handled)
-        {
-            Logger.Info();
-
-            var args = new BackRequestedRoutedEventArgs(key);
-            var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot);
-
-            foreach (var popup in popups)
-            {
-                if (popup.Child is INavigablePage page)
-                {
-                    page.OnBackRequested(args);
-
-                    if (handled = args.Handled)
-                    {
-                        return;
-                    }
-                }
-                else if (popup.Child is ContentDialog dialog)
-                {
-                    dialog.Hide();
-                    return;
-                }
-                else if (popup.Child is ToolTip toolTip)
-                {
-                    toolTip.IsOpen = false;
-                }
-                else if (popup.Child is TeachingTip teachingTip)
-                {
-                    if (teachingTip.IsLightDismissEnabled)
-                    {
-                        teachingTip.IsOpen = false;
-                    }
-                }
-                else if (key == VirtualKey.Escape)
-                {
-                    // TODO: what is this for? I have no clue anymore
-                    if (popup.Child is not Grid)
-                    {
-                        //handled = args.Handled = true;
-                        return;
-                    }
-                }
-            }
-
-            foreach (var frame in WindowContext.Current.NavigationServices.Select(x => x.FrameFacade).Reverse())
-            {
-                frame.RaiseBackRequested(args);
-
-                if (handled = args.Handled)
-                {
-                    return;
-                }
-            }
-
-            if (NavigationService?.CanGoBack ?? false)
-            {
-                NavigationService?.GoBack();
-                handled = true;
-            }
-        }
-
-        public bool RaiseForwardRequested()
-        {
-            Logger.Info();
-
-            var args = new HandledEventArgs();
-
-            foreach (var frame in WindowContext.Current.NavigationServices.Select(x => x.FrameFacade))
-            {
-                frame.RaiseForwardRequested(args);
-                if (args.Handled)
-                {
-                    return true;
-                }
-            }
-
-            if (NavigationService?.CanGoForward ?? false)
-            {
-                NavigationService?.GoForward();
-                return true;
-            }
-
-            return false;
-        }
 
         #region overrides
 
@@ -560,7 +420,7 @@ namespace Telegram.Navigation
 
             var navigationService = CreateNavigationService(session, window, frame, id, root);
             navigationService.FrameFacade.BackButtonHandling = backButton;
-            WindowContext.Current.NavigationServices.Add(navigationService);
+            window.NavigationServices.Add(navigationService);
 
             return navigationService;
         }
