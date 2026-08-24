@@ -26,7 +26,7 @@ using Windows.UI.Xaml.Resources;
 
 namespace Telegram.Navigation
 {
-    public abstract class BootStrapper : Application
+    public abstract partial class BootStrapper : Application
     {
         /// <summary>
         /// If a developer overrides this method, the developer can resolve DataContext or unwrap DataContext 
@@ -47,7 +47,10 @@ namespace Telegram.Navigation
 
         // This is just a wrapper around current window's compositor.
         // This is done to simplify the porting to WinUI 3 (as there's no concept of current window)
-        public Compositor Compositor => WindowContext.Current.Compositor;
+        // Per thread rather than per window - the compositor XAML composes this thread's content
+        // with - so it needs neither WindowContext.Current nor a fork. Window.Current is a stub
+        // inside an island rather than a real window, and this is one of the things it answers.
+        public Compositor Compositor => Window.Current.Compositor;
 
         public BootStrapper()
         {
@@ -69,80 +72,35 @@ namespace Telegram.Navigation
             return WindowContext.ForEachAsync(window => WindowContext.Current.ConsolidateAsync());
         }
 
-        protected override void OnWindowCreated(WindowCreatedEventArgs args)
-        {
-            Logger.Info();
-
-            IsMainWindowCreated = true;
-            //should be called to initialize and set new SynchronizationContext
-            //if (!WindowWrapper.ActiveWrappers.Any())
-            // handle window
-
-            // Hook up the default Back handler
-            // WARNING: this is used by Xbox (and some Windows users)
-            SystemNavigationManager.GetForCurrentView().BackRequested += BackHandler;
-
-            CustomXamlResourceLoader.Current = new XamlResourceLoader();
-            CreateWindowWrapper(args.Window);
-            ViewService.OnWindowCreated();
-
-            args.Window.Activated += OnActivated;
-            args.Window.Closed += OnClosed;
-            base.OnWindowCreated(args);
-        }
-
-        private void OnActivated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
-        {
-            if (sender is Window window)
-            {
-                OnWindowActivated(window, e.WindowActivationState != CoreWindowActivationState.Deactivated);
-            }
-        }
-
-        private void OnClosed(object sender, CoreWindowEventArgs e)
-        {
-            SystemNavigationManager.GetForCurrentView().BackRequested -= BackHandler;
-
-            if (sender is Window window)
-            {
-                window.Activated -= OnActivated;
-                window.Closed -= OnClosed;
-
-                OnWindowClosed(window);
-            }
-        }
-
-        protected virtual void OnWindowClosed(Window window)
+        protected virtual void OnWindowActivated(WindowContext window, bool active)
         {
 
         }
 
-        protected virtual void OnWindowActivated(Window window, bool active)
-        {
 
-        }
+        /// <summary>
+        /// The app theme, which on UWP is Application.RequestedTheme and has to be assigned before
+        /// InitializeComponent - it cannot be changed afterwards. An island host never runs the
+        /// app model startup that makes it settable at all, so it takes the theme per island
+        /// instead, through the content root WindowContext already sets.
+        /// </summary>
+        protected partial void SetApplicationTheme(ApplicationTheme theme);
 
-        private WindowContext CreateWindowWrapper(Window window)
-        {
-            // WindowContext's constructor assigns the thread-static Current, so building a second
-            // one for a view that already has one replaces it, and whatever was attached to the
-            // first - the frame, most importantly - is silently orphaned. Activation can run
-            // before OnWindowCreated, so the context may already exist by the time we get here.
-            var context = WindowContext.Current;
-            if (context != null)
-            {
-                if (context.CoreWindow == window.CoreWindow)
-                {
-                    Logger.Info("Window context already exists, reusing it");
-                    return context;
-                }
+        /// <summary>
+        /// Prelaunch is a UWP app model concept - the shell starting the app ahead of the user to
+        /// make it feel faster. The desktop activation arguments do not implement
+        /// IPrelaunchActivatedEventArgs at all, so reading the property is an InvalidCastException
+        /// rather than a false.
+        /// </summary>
+        protected partial bool IsPrelaunch(LaunchActivatedEventArgs e);
 
-                Logger.Warning("Window context belongs to a different window, replacing it");
-            }
-
-            Logger.Info("Creating the window context");
-            return new WindowContext(window);
-        }
+        /// <summary>
+        /// The window this activation belongs to, created if it does not exist yet. UWP normally
+        /// has one already - OnWindowCreated made it - but activation can arrive first, share
+        /// target activation appearing to race it. A Win32 host has none until it makes one.
+        /// Returns null when there is no window to be had, and the caller gives up.
+        /// </summary>
+        private partial WindowContext EnsureWindowContext(IActivatedEventArgs e);
 
         #region properties
 
@@ -275,7 +233,7 @@ namespace Telegram.Navigation
         {
             Logger.Info($"Previous: {e.PreviousExecutionState}");
 
-            PrelaunchActivated = e.PrelaunchActivated;
+            PrelaunchActivated = IsPrelaunch(e);
 
             if (e.PreviousExecutionState != ApplicationExecutionState.Running || WindowContext.Current.Content == null)
             {
@@ -321,7 +279,7 @@ namespace Telegram.Navigation
             }
 
             // handle pre-launch
-            if (e.PrelaunchActivated)
+            if (PrelaunchActivated)
             {
                 OnPrelaunch(e, out bool runOnStartAsync);
                 if (!runOnStartAsync)
@@ -646,23 +604,10 @@ namespace Telegram.Navigation
 
             CallOnInitialize(false, e);
 
-            // Activation can arrive before OnWindowCreated has run - share target activation
-            // appears to race it - which leaves the view with a window but no context, and
-            // InternalActivated calls in here regardless because it only tests
-            // WindowContext.Current?.Content. Build the context early rather than dereference
-            // null; CreateWindowWrapper reuses whatever already exists, so the OnWindowCreated
-            // that follows will not replace this one.
-            var context = WindowContext.Current;
+            var context = EnsureWindowContext(e);
             if (context == null)
             {
-                if (Window.Current == null)
-                {
-                    Logger.Error($"Activated with no window at all, cannot initialize the frame. Kind: {e.Kind}");
-                    return;
-                }
-
-                Logger.Warning($"Activated before OnWindowCreated, creating the window context early. Kind: {e.Kind}");
-                context = CreateWindowWrapper(Window.Current);
+                return;
             }
 
             if (context.Content == null)

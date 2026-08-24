@@ -74,15 +74,15 @@ namespace Telegram
             WatchDog.Initialize();
             LifetimeService.Initialize();
 
-            RequestedTheme = NightModeService.Current.GetCalculatedApplicationTheme();
+            SetApplicationTheme(NightModeService.Current.GetCalculatedApplicationTheme());
             InitializeComponent();
         }
 
-        protected override void OnWindowActivated(Window window, bool active)
+        protected override void OnWindowActivated(WindowContext window, bool active)
         {
             NightModeService.Current.UpdateTimer();
 
-            var navigation = WindowContext.GetNavigationService(window);
+            var navigation = window.GetNavigationService();
             if (navigation != null)
             {
                 var aggregator = navigation.Session.Resolve<IEventAggregator>();

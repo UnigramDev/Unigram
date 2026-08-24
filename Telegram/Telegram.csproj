@@ -1746,10 +1746,12 @@
     <Compile Include="Logger.cs" />
     <Compile Include="Navigation\BindableBase.cs" />
     <Compile Include="Navigation\BootStrapper.cs" />
+    <Compile Include="Navigation\BootStrapper.Uwp.cs" />
     <Compile Include="Navigation\DispatcherContext.cs" />
     <Compile Include="Navigation\TypedEventHandler.cs" />
     <Compile Include="Navigation\ViewModelBase.cs" />
     <Compile Include="Navigation\WindowContext.cs" />
+    <Compile Include="Navigation\WindowContext.Uwp.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
     <Compile Include="Selectors\MemberTemplateSelector.cs" />
