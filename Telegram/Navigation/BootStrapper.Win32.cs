@@ -69,7 +69,14 @@ namespace Telegram.Navigation
 
         private partial WindowContext EnsureWindowContext(IActivatedEventArgs e)
         {
-            var context = WindowContext.Current;
+            // Current first, then Main. Current is [ThreadStatic] and answers only for the thread
+            // it is asked on - and a re-activation does not arrive on the UI thread, so it comes
+            // back null there and this used to build a second window. Worse, it built an island on
+            // a thread with no WindowsXamlManager and no DispatcherQueue, which is a fail-fast.
+            //
+            // Main is a plain static, so it answers the question actually being asked: is this app
+            // already up? See item 0.10 - this is the shape of every Current bug there will be.
+            var context = WindowContext.Current ?? WindowContext.Main;
             if (context != null)
             {
                 return context;
