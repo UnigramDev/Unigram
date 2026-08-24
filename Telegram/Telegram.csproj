@@ -476,6 +476,7 @@
     <Compile Include="Streams\MediaRange.cs" />
     <Compile Include="Streams\RemoteFilePrefetch.cs" />
     <Compile Include="Td\Api\FormattedText.cs" />
+    <Compile Include="Td\Api\FormattedTextBuilder.cs" />
     <Compile Include="Td\Api\InlineKeyboardButtonTypeSuggestionApprove.cs" />
     <Compile Include="Td\Api\InlineKeyboardButtonTypeSuggestionDecline.cs" />
     <Compile Include="Td\Api\InlineKeyboardButtonTypeSuggestionEdit.cs" />

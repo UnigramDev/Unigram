@@ -1517,8 +1517,10 @@ namespace Telegram.Controls.Cells
                 var match = pattern.Match(message.Text);
                 if (match.Success)
                 {
-                    message = new FormattedText(message.Text, message.Entities.ToList());
-                    message.Entities.Add(new TextEntity(match.Index, match.Length, new TextEntityTypeSpoiler()));
+                    var builder = new FormattedTextBuilder(message);
+                    builder.AddEntity(match.Index, match.Length, new TextEntityTypeSpoiler());
+
+                    message = builder.ToFormattedText();
                 }
             }
 

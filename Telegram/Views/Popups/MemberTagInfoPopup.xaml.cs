@@ -88,13 +88,15 @@ namespace Telegram.Views.Popups
 
             // TODO: fix FormattedText.Format, replace
             var formatted = string.Format(text, sender, message.Chat.Title);
-            var markdown = ClientEx.ParseMarkdown(formatted);
+            var builder = new FormattedTextBuilder(ClientEx.ParseMarkdown(formatted));
 
-            var index = markdown.Text.IndexOf("un1");
+            var index = builder.IndexOf("un1");
             if (index != -1)
             {
-                markdown.Entities.Add(new TextEntity(index, 3, new TextEntityTypeMention()));
+                builder.AddEntity(index, 3, new TextEntityTypeMention());
             }
+
+            var markdown = builder.ToFormattedText();
 
             //var prefix = text.Substring(0, index);
             //var suffix = text.Substring(index + 3);

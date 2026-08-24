@@ -1387,28 +1387,28 @@ namespace Telegram.Controls.Messages
         {
             // TopicWasIconChangedToAction, TopicWasRenamedToAction TopicWasRenamedToAction2
             // TopicIconChangedToAction, TopicRenamedToAction
-            FormattedText content;
+            FormattedTextBuilder content;
 
             if (forumTopicEdited.EditIconCustomEmojiId && forumTopicEdited.Name.Length > 0)
             {
-                content = ReplaceWithLink(string.Format(Strings.TopicWasRenamedToAction2, "un1", $"\U0001F4C3 {forumTopicEdited.Name}"), message.GetSender());
+                content = BuildWithLink(new FormattedTextBuilder(string.Format(Strings.TopicWasRenamedToAction2, "un1", $"\U0001F4C3 {forumTopicEdited.Name}")), message.GetSender());
             }
             else if (forumTopicEdited.EditIconCustomEmojiId)
             {
-                content = ReplaceWithLink(string.Format(Strings.TopicWasIconChangedToAction, "un1", "\U0001F4C3"), message.GetSender());
+                content = BuildWithLink(new FormattedTextBuilder(string.Format(Strings.TopicWasIconChangedToAction, "un1", "\U0001F4C3")), message.GetSender());
             }
             else
             {
-                content = ReplaceWithLink(string.Format(Strings.TopicWasRenamedToAction, "un1", forumTopicEdited.Name), message.GetSender());
+                content = BuildWithLink(new FormattedTextBuilder(string.Format(Strings.TopicWasRenamedToAction, "un1", forumTopicEdited.Name)), message.GetSender());
             }
 
-            var index = content.Text.IndexOf("\U0001F4C3");
+            var index = content.IndexOf("\U0001F4C3");
             if (index != -1)
             {
-                content.Entities.Add(new TextEntity(index, 2, new TextEntityTypeCustomEmoji(forumTopicEdited.IconCustomEmojiId)));
+                content.AddEntity(index, 2, new TextEntityTypeCustomEmoji(forumTopicEdited.IconCustomEmojiId));
             }
 
-            return content;
+            return content.ToFormattedText();
         }
 
         private static FormattedText UpdateForumTopicIsClosedToggled(MessageWithOwner message, MessageForumTopicIsClosedToggled forumTopicIsClosedToggled, bool history)
@@ -2541,25 +2541,31 @@ namespace Telegram.Controls.Messages
 
         public static FormattedText ReplaceWithLink(string source, params object[] args)
         {
-            return ReplaceWithLink(new FormattedText(source, new List<TextEntity>(args.Length)), args);
+            return BuildWithLink(new FormattedTextBuilder(source), args).ToFormattedText();
         }
 
         public static FormattedText ReplaceWithLink(FormattedText source, params object[] args)
         {
-            source.Text = source.Text.Replace("**", string.Empty);
+            return BuildWithLink(new FormattedTextBuilder(source), args).ToFormattedText();
+        }
 
-            if (source.Entities.IsReadOnly)
-            {
-                source.Entities = new List<TextEntity>(source.Entities);
-            }
+        /// <summary>
+        /// Substitutes un1, un2 ... with the args, handing back the builder rather than the result
+        /// so that a caller with more to add can do it before the entities are frozen - see
+        /// UpdateForumTopicEdited.
+        /// </summary>
+        private static FormattedTextBuilder BuildWithLink(FormattedTextBuilder builder, params object[] args)
+        {
+            builder.Strip("**");
 
             for (int i = 0; i < args.Length; i++)
             {
                 var obj = args[i];
                 var param = "un" + (i + 1);
-                var index = source.Text.IndexOf(param);
 
-                if (index >= 0)
+                // Tested before the name is resolved: that can cost a declension or a currency
+                // format, and a placeholder the string does not carry is the common case.
+                if (builder.IndexOf(param) >= 0)
                 {
                     String name;
                     TextEntityType id = null;
@@ -2614,31 +2620,11 @@ namespace Telegram.Controls.Messages
                         id = null;
                     }
 
-                    // An entity that CONTAINS the placeholder has to grow instead of move:
-                    // the markdown paths parse their entities before substituting, so the
-                    // bold run wrapping a whole sentence spans the un1 it's about to get.
-                    var shift = name.Length - param.Length;
-
-                    foreach (var entity in source.Entities)
-                    {
-                        if (entity.Offset > index)
-                        {
-                            entity.Offset += shift;
-                        }
-                        else if (entity.Offset + entity.Length > index)
-                        {
-                            entity.Length += shift;
-                        }
-                    }
-
-                    source.Text = source.Text.Remove(index, param.Length);
-                    source.Text = source.Text.Insert(index, name);
-
-                    source.Entities.Add(new TextEntity(index, name.Length, id ?? new TextEntityTypeBold()));
+                    builder.Substitute(param, name, id);
                 }
             }
 
-            return source;
+            return builder;
         }
 
         public static FormattedText ReplaceWithName(string source, params object[] args)
@@ -2685,60 +2671,39 @@ namespace Telegram.Controls.Messages
 
         private static FormattedText ReplaceWithLinks(string source, string param, IEnumerable<long> uids, IClientService clientService)
         {
-            return ReplaceWithLinks(new FormattedText(source, new List<TextEntity>()), param, uids, clientService);
+            return ReplaceWithLinks(new FormattedTextBuilder(source), param, uids, clientService);
         }
 
         private static FormattedText ReplaceWithLinks(FormattedText source, string param, IEnumerable<long> uids, IClientService clientService)
         {
-            if (source.Entities.IsReadOnly)
+            return ReplaceWithLinks(new FormattedTextBuilder(source), param, uids, clientService);
+        }
+
+        private static FormattedText ReplaceWithLinks(FormattedTextBuilder builder, string param, IEnumerable<long> uids, IClientService clientService)
+        {
+            if (builder.IndexOf(param) < 0)
             {
-                source.Entities = new List<TextEntity>(source.Entities);
+                return builder.ToFormattedText();
             }
 
-            int index;
-            int start = index = source.Text.IndexOf(param);
-            if (start >= 0)
+            var names = new StringBuilder();
+            var entities = new List<TextEntity>();
+
+            foreach (var user in clientService.GetUsers(uids))
             {
-                var names = new StringBuilder();
-                var entities = new List<TextEntity>();
-
-                foreach (var user in clientService.GetUsers(uids))
+                var name = user.FullName();
+                if (names.Length != 0)
                 {
-                    var name = user.FullName();
-                    if (names.Length != 0)
-                    {
-                        names.Append(", ");
-                    }
-
-                    start = index + names.Length;
-                    names.Append(name);
-
-                    entities.Add(new TextEntity(start, name.Length, new TextEntityTypeMentionName(user.Id)));
+                    names.Append(", ");
                 }
 
-                var shift = names.Length - param.Length;
-
-                foreach (var entity in source.Entities)
-                {
-                    // Against index, not start: start is where the LAST name went, so
-                    // entities sitting between the placeholder and it were left behind.
-                    if (entity.Offset > index)
-                    {
-                        entity.Offset += shift;
-                    }
-                    else if (entity.Offset + entity.Length > index)
-                    {
-                        entity.Length += shift;
-                    }
-                }
-
-                source.Text = source.Text.Remove(index, param.Length);
-                source.Text = source.Text.Insert(index, names.ToString());
-
-                source.Entities.AddRange(entities);
+                // Relative to the joined names; Substitute moves them to where it lands.
+                entities.Add(new TextEntity(names.Length, name.Length, new TextEntityTypeMentionName(user.Id)));
+                names.Append(name);
             }
 
-            return source;
+            builder.Substitute(param, new FormattedText(names.ToString(), entities));
+            return builder.ToFormattedText();
         }
 
         private static Game GetGame(MessageViewModel message)

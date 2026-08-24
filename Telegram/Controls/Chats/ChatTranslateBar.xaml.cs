@@ -165,21 +165,23 @@ namespace Telegram.Controls.Chats
             flyout.CreateFlyoutSeparator();
             flyout.Items.Add(content);
 
-            var markdown = ClientEx.ParseMarkdown(Strings.CocoonPoweredBy);
+            var markdown = new FormattedTextBuilder(ClientEx.ParseMarkdown(Strings.CocoonPoweredBy));
 
-            var index = markdown.Text.IndexOf("\uD83E\uDD5A");
+            var index = markdown.IndexOf("\uD83E\uDD5A");
             if (index >= 0)
             {
-                markdown.Entities.Add(new TextEntity(index, 2, new TextEntityTypeCustomEmoji(5197252827247841976)));
+                markdown.AddEntity(index, 2, new TextEntityTypeCustomEmoji(5197252827247841976));
             }
 
-            var link = ClientEx.ParseMarkdown(Strings.CocoonPoweredByLink);
-            if (link.Entities.Count == 1)
+            var parsed = ClientEx.ParseMarkdown(Strings.CocoonPoweredByLink);
+            var link = new FormattedTextBuilder(parsed);
+
+            if (parsed.Entities.Count == 1)
             {
-                link.Entities.Add(new TextEntity(link.Entities[0].Offset, link.Entities[0].Length, new TextEntityTypeTextUrl()));
+                link.AddEntity(parsed.Entities[0].Offset, parsed.Entities[0].Length, new TextEntityTypeTextUrl());
             }
 
-            block.SetText(ViewModel.ClientService, FormattedText.Join(" ", markdown, link));
+            block.SetText(ViewModel.ClientService, FormattedText.Join(" ", markdown.ToFormattedText(), link.ToFormattedText()));
 
             flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }

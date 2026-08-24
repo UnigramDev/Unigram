@@ -85,14 +85,14 @@ namespace Telegram.Td
         {
             if (entities.Count > 0 && text.Entities.Count > 0)
             {
-                var merge = new FormattedText(text.Text, new List<TextEntity>(text.Entities));
+                var merge = new FormattedTextBuilder(text);
 
                 foreach (var entity in entities)
                 {
-                    merge.Entities.Add(entity);
+                    merge.AddEntity(entity.Offset, entity.Length, entity.Type);
                 }
 
-                return merge;
+                return merge.ToFormattedText();
             }
             else if (entities.Count > 0)
             {
