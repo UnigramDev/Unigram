@@ -368,6 +368,9 @@
     <ClInclude Include="NativeUtils.h">
       <DependentUpon>NativeUtils.idl</DependentUpon>
     </ClInclude>
+    <ClInclude Include="TextHost.h">
+      <DependentUpon>TextHost.idl</DependentUpon>
+    </ClInclude>
     <ClInclude Include="AI\TextRecognizer.h">
       <DependentUpon>AI\TextRecognizer.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1335,6 +1338,9 @@
     <ClCompile Include="NativeUtils.cpp">
       <DependentUpon>NativeUtils.idl</DependentUpon>
     </ClCompile>
+    <ClCompile Include="TextHost.cpp">
+      <DependentUpon>TextHost.idl</DependentUpon>
+    </ClCompile>
     <ClCompile Include="Opus\OpusOutput.cpp">
       <DependentUpon>Opus\OpusOutput.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1437,6 +1443,7 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="NativeUtils.idl" />
+    <Midl Include="TextHost.idl" />
     <Midl Include="AI\TextRecognizer.idl" />
     <Midl Include="AI\RecognizedLine.idl" />
     <Midl Include="AI\RecognizedText.idl" />

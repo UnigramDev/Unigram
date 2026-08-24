@@ -1,0 +1,11 @@
+namespace Telegram.Native
+{
+    [default_interface]
+    runtimeclass TextHost
+    {
+        // RichEdit reads the background it contrasts against from GetSysColor, which XAML
+        // never overrides, so it believes every RichEditBox sits on white and rejects any
+        // near-white link color. Answers for the calling thread alone.
+        static void OverrideWindowColor();
+    }
+} // namespace Telegram.Native

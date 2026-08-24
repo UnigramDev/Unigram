@@ -290,6 +290,12 @@ namespace Telegram.Controls
                 var visual = ElementComposition.GetElementVisual(CustomEmoji);
                 visual.StartAnimation("Translation.Y", translation);
             }
+
+            // RichEdit picks the link color by contrasting the run against
+            // GetSysColor(COLOR_WINDOW), which XAML never overrides, so it believes every
+            // box sits on white and rejects a near-white link. Answers for this thread,
+            // hence for this view.
+            TextHost.OverrideWindowColor();
         }
 
         public bool IsReplaceEmojiEnabled { get; set; } = true;
