@@ -1107,53 +1107,38 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   So by CCC the template is inflated and `ThemeResource` has resolved; merging a dictionary there
   works (Fela tested it) but only via re-evaluation — a second pass per bubble.
 
-- [ ] **0.18 Bubble theming forces one chat window per thread.** The conclusion after going round
-  this twice; recorded so it is not relitigated.
+- [x] **0.18 Per-window chat themes - done 2026-08-23, and the rule this item used to state is
+  gone.** It went round three times, so the conclusion is worth keeping along with why the two
+  earlier answers were wrong.
 
-  How it works today: `[ThreadStatic]` tables hold `(Color, SolidColorBrush)`; every
-  `ThemeOutgoing`/`ThemeIncoming` copies **the same brush references** into its ThemeDictionaries;
-  a per-chat theme mutates ~20 brush colours in place and every bubble in the window repaints. No
-  walking, no re-resolution. It is very cheap and the cheapness is the point.
+  **How bubble theming works**, which is what made it look impossible: `[ThreadStatic]` tables hold
+  `(Color, SolidColorBrush)`; every `ThemeOutgoing`/`ThemeIncoming` copies **the same brush
+  references** into its ThemeDictionaries; a per-chat theme mutates ~20 brush colours in place and
+  every bubble in the window repaints. No walking, no re-resolution. It is very cheap and the
+  cheapness is the point - which is why the fix could not be "one dictionary instance per bubble".
 
-  **`App.xaml` resources are instantiated per thread in UWP** — Fela's correction, and the proof is
-  in `Theme`'s own constructor: `_isPrimary = Current == null` with `[ThreadStatic] Current`, gating
-  the initial `Update(Light)`/`Update(Dark)`. That only makes sense if `Theme()` runs once per
-  thread. So thread == view is what makes the whole scheme correct today.
+  **The first answer was a rule: a window that renders chat content owns its thread.** It followed
+  from `App.xaml` resources being instantiated per thread - visible in `Theme`'s own constructor,
+  `_isPrimary = Current == null` over a `[ThreadStatic] Current`, which only makes sense if
+  `Theme()` runs once per thread. Thread == view was what made the scheme correct.
 
-  Why it cannot be made per-window:
-  - The app-level `<common:ThemeIncoming/>` is constructed at **thread initialisation, before any
-    window exists**. There is no XamlRoot to resolve against, at any hook.
-  - `Theme.Current` is not just brushes. Its own comment: *"Current is the only handle the app has
-    on the theme of this view, and it is dereferenced unguarded all over the message tree."*
-  - Making brushes per dictionary instance instead would allocate ~20 `SolidColorBrush` per bubble
-    realisation and force `Update` to walk every live dictionary — a regression on the app's
-    hottest surface.
+  **It was too strong** - Fela, 2026-08-23. The app theme is global and every window shows the same
+  one; the only thing that varies per window is the **chat override**, and that touches exactly
+  `Outgoing.Update`, `Incoming.Update` and the background. It never runs the app colour pass. The
+  message brushes live in bubbles, bubbles are content, and gate 1.11 measured that content scopes
+  are per island - so a per-window override was always possible.
 
-  **Superseded 2026-08-23 - the rule was too strong.** Fela's correction: the app theme is global
-  and every window shows the same one; the only thing that varies per window is the **chat
-  override**, because different windows can show different chats. And that override touches
-  exactly two things - `Outgoing.Update` and `Incoming.Update` on the message brushes, plus the
-  background. It never runs the app colour pass.
+  **What shipped**, four commits: `de38e4934` moved the message brushes onto the window's theme,
+  `04319fbaf` moved the chat override onto the window, `8d2acea34` forwarded the window's brushes
+  to popups and flyouts - which closes the one loose end this item had, the popups that render
+  bubble keys and used to inherit the override by accident - and `efa19f6a1` reduced
+  `Theme.Current` to the app-level shim it now is. `WindowContext.SetContent` merges the window's
+  own `Incoming.CreateDictionary()` into the presenter's resources; `MessageBubble` takes
+  `Outgoing` from the window.
 
-  The message brushes live in bubbles, bubbles are content, and gate 1.11 measured that content
-  scopes are per island. So per-window chat themes work in both hosts, and what is left of the
-  problem is only the popups that also render bubble keys - `SendFilesPopup` and friends - which
-  today inherit the override by accident. `ContentPopup.ShowQueuedAsync` already takes the
-  `XamlRoot` and is the one place to forward the window's incoming set deliberately.
-
-  What remains true is narrower: the **app** theme is per thread, because `Application.Resources`
-  is what popups resolve from. That is fine, since it is meant to be global anyway.
-
-  The original, too-strong rule follows.
-
-  **The rule: a window that renders chat content owns its thread.** Calls, web apps, passcode,
-  gallery and stories render no bubbles and can share one freely. This caps the 1.8a benefit rather
-  than removing it, and costs nothing today, since the app is already one window per thread.
-
-  If that rule is ever relaxed, the per-bubble dictionaries have a correct hook — `Loading`, per
-  0.17 — and moving them to one shared per-window instance merged there would be **cheaper than
-  today**, since each bubble currently constructs its own `ResourceDictionary`. It just does not
-  rescue the app-level case.
+  What is left is not a limit: the **app** theme stays per thread because `Application.Resources`
+  is what popups resolve from, and it is meant to be global anyway. Nothing caps 1.8a any more -
+  several chat windows can share a thread.
 
 - [ ] **0.19 `Theme.Current` -> `WindowContext.Theme`, in three steps.** Fela's proposal, and the
   right destination — but a straight rename is churn, because the 50 `Theme.Current` sites do
