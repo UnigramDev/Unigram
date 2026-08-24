@@ -2082,16 +2082,70 @@ APIs, and nothing else.
   - **Nothing suppresses or routes the framework's activation.** UWP guaranteed one process per
     package and owned the delivery; here the callback simply arrives.
 
-  Guarded for now: `EnsureWindowContext` falls back to `WindowContext.Main`, a plain static, so a
-  re-activation reuses the main window instead of building an island on a random thread. That stops
-  the fail-fast but leaves `InitializeFrame` touching XAML off-thread.
+  **And the real cause, found 2026-08-24: the window was being built on the wrong thread.**
+  Fela's observation is what cracked it - *"the same OpenAsync to open a secondary chat window
+  doesn't trigger the same"*. Same path, same `DesktopWindowXamlSource`, different **caller
+  thread**: a chat window is opened from a click, and a call window from a tgcalls or TDLib
+  callback. UWP hid the difference, because `OpenAsyncInternal` enqueued everything onto the new
+  view's dispatcher no matter who called; the Win32 half built the island inline, on whatever
+  thread arrived. An island on a thread with no `WindowsXamlManager` and no `DispatcherQueue`
+  explains the spurious launch, the wrong thread, and the fail-fast in `Telegram.Native` together.
 
-  **The design question is Fela's**: should the Win32 host accept framework-delivered activations
-  at all? It does not use the UWP app model - `Program.Main` owns activation - so the honest answer
-  may be to ignore them entirely and keep the one path. The alternative is marshalling them onto
-  the UI thread's `DispatcherQueue`, which keeps protocol and toast activation working while the
-  app is running. That second one is probably wanted eventually, since `tg:` links and notification
-  taps arrive exactly this way.
+  `ViewService.Win32` now runs both creation paths through `OnUIThread`, which dispatches to
+  `WindowContext.Main.Dispatcher` when the caller has no thread access, and runs inline when it
+  does. The chat-reuse path dispatches its `Activate` onto that window's own dispatcher too.
+
+  Two guards remain, and they are guards rather than the cure:
+
+  - `ResolveWindowContext` answers with `Main` rather than `Current`, so nothing builds a window
+    off-thread even if something else calls in.
+  - `ShouldHandleLaunch` drops framework-delivered launches on this host. Needed regardless:
+    **`WindowsXamlManager.InitializeForCurrentThread()` raises `OnLaunched` by itself**, which
+    `Program.Main` calls on the line before it drives its own - so every startup saw two.
+
+  **How Terminal does it, checked 2026-08-24 before deciding.** `TerminalApp::App::OnLaunched` is
+  **empty**, with the comment *"We used to support a pure UWP version of the Terminal. This method
+  was only ever used to do UWP-specific setup"*. The framework raises it and Terminal ignores it;
+  startup lives in `WindowEmperor`/`AppHost`. So the principle is: **do not put startup in
+  `OnLaunched` on this host.** Ours *is* in `OnLaunched` - it is BootStrapper's - so the equivalent
+  is to call it from `Program.Main` and suppress the framework's, which is what
+  `ShouldHandleLaunch` does.
+
+  Two divergences from Terminal worth knowing:
+
+  - **They initialise XAML inside the `App` constructor** (`App::Initialize`). Doing that here
+    would raise `OnLaunched` *during* construction, which is worse than our order, where `App`
+    already exists by the time it fires.
+  - **They never pre-create a `DispatcherQueue`, and fail fast if one exists** - a pre-existing
+    queue is how they detect running under the UWP app model, and
+    `WindowsXamlManager::InitializeForCurrentThread` makes one itself. `Program.Main` here creates
+    a `DispatcherQueueController` first, which gate 1.2a concluded was required. Both work; the
+    contract differs, and it may bear on when the launch fires.
+
+  **Resolved by share target, 2026-08-24 - Fela's example, and it decides it.** Ignoring
+  framework activations is not an option: when the app is *not* running `Program.Main` reads the
+  args from `AppInstance` and everything works, but when it *is* running - which is most of the
+  time - the activation only ever arrives through the framework callback. Suppressing that would
+  make share, `tg:` links and toast taps silently do nothing whenever Telegram is open. So:
+  **marshal onto the UI thread's dispatcher**, do not suppress.
+
+  **And share target exposes a second problem, which is worse than the crash because it looks like
+  it works.** On UWP the system creates a *separate view* for a share: `WindowContext.Current`
+  there is a new context, `CreateRootElement` returns a `ShareWindow` into it, and the main window
+  is never touched. `App.xaml.cs` depends on exactly that shape -
+  `WindowContext.Current.Content is ShareWindow sharePage`. Nothing creates that view on Win32, so
+  the current `Current ?? Main` fallback would hand the share to the **main window** and replace
+  the user's chat list with the share UI.
+
+  So `EnsureWindowContext` is asking the wrong question. Not "is the app already up?" but **"which
+  window does this activation belong to?"**:
+
+  - **`ShareTargetActivatedEventArgs`** -> an open share window if there is one, else a **new**
+    island window. That is what UWP's separate view gave for free.
+  - **Launch, protocol, toast, file** -> the main window, navigating in place.
+
+  Reachable today: item 2.4 kept the `windows.shareTarget` extension in the Win32 manifest, so a
+  share into this flavour will find it.
 
 - [ ] **2.1** Grow `Telegram.Stub` into the host process rather than creating a new one — it is
   already .NET 10, already Win32, already owns the tray and passkeys.

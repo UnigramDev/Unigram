@@ -34,7 +34,9 @@ namespace Telegram.Navigation
         {
             if (args is LaunchActivatedEventArgs launch)
             {
-                OnLaunched(launch);
+                // Straight to the internals rather than through OnLaunched, which is inert here.
+                WatchDog.Launch(launch.PreviousExecutionState);
+                CallInternalLaunchAsync(launch);
             }
             else if (args != null)
             {
@@ -52,6 +54,17 @@ namespace Telegram.Navigation
         /// <summary>
         /// Never: nothing prelaunches a desktop process.
         /// </summary>
+        /// <summary>
+        /// Deliberately empty, and Terminal's App does the same: on this host the framework's
+        /// launch is not the one that matters. `WindowsXamlManager.InitializeForCurrentThread`
+        /// raises one by itself, and so does joining a call - re-entrantly, on another thread.
+        /// <see cref="Start"/> drives the real one, with the arguments AppInstance gives it.
+        /// </summary>
+        protected sealed override void OnLaunched(LaunchActivatedEventArgs e)
+        {
+            Logger.Info($"Ignoring a launch this host did not ask for. Previous: {e.PreviousExecutionState}");
+        }
+
         protected partial bool IsPrelaunch(LaunchActivatedEventArgs e)
         {
             return false;
@@ -67,16 +80,22 @@ namespace Telegram.Navigation
         {
         }
 
-        private partial WindowContext EnsureWindowContext(IActivatedEventArgs e)
+        private partial WindowContext ResolveWindowContext(IActivatedEventArgs e)
         {
-            // Current first, then Main. Current is [ThreadStatic] and answers only for the thread
-            // it is asked on - and a re-activation does not arrive on the UI thread, so it comes
-            // back null there and this used to build a second window. Worse, it built an island on
-            // a thread with no WindowsXamlManager and no DispatcherQueue, which is a fail-fast.
-            //
-            // Main is a plain static, so it answers the question actually being asked: is this app
-            // already up? See item 0.10 - this is the shape of every Current bug there will be.
-            var context = WindowContext.Current ?? WindowContext.Main;
+            // A share gets a window of its own, every time. UWP had the system make a separate
+            // view for it - handing a share to the main window would replace the user's chat list
+            // with the share UI - and two shares are two independent operations, so the second
+            // must not land on top of the first.
+            if (e is ShareTargetActivatedEventArgs)
+            {
+                return CreateWindow();
+            }
+
+            // Everything else belongs to the main window: a launch, a tg: link, a toast, a file.
+            // Main rather than Current, deliberately - Current is [ThreadStatic] and a framework
+            // activation does not arrive on the UI thread, so it answers null there and this used
+            // to build an island on a thread with no WindowsXamlManager, which is a fail-fast.
+            var context = WindowContext.Main;
             if (context != null)
             {
                 return context;
@@ -88,10 +107,17 @@ namespace Telegram.Navigation
             // surfaces as a Frame that reports a successful navigation and shows nothing.
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
 
+            return CreateWindow();
+        }
+
+        /// <summary>
+        /// Content stays null: InitializeFrame sets it immediately after, through the same
+        /// WindowContext.Content path the UWP half uses, so the XamlRoot appears there too.
+        /// </summary>
+        private static WindowContext CreateWindow()
+        {
             Logger.Info("Creating the window context");
 
-            // Content stays null: InitializeFrame sets it immediately after, through the same
-            // WindowContext.Content path the UWP half uses, so the XamlRoot appears there too.
             var island = IslandWindow.Create("Telegram",
                 Win32.CW_USEDEFAULT, Win32.CW_USEDEFAULT, DefaultWidth, DefaultHeight,
                 null, nonClient: true);

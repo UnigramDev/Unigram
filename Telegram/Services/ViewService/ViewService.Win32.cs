@@ -32,15 +32,18 @@ namespace Telegram.Services
         {
             await _mainWindowCreated.Task;
 
-            // ViewMode is deliberately ignored. CompactOverlay is a UWP app model feature with no
-            // Win32 equivalent, and picture-in-picture has to become a small topmost window the app
-            // positions itself - Tier 2 of the fork list, and not this item's problem.
-            var context = CreateWindow(options.Title, options.Width, options.Height);
-            context.PersistedId = options.PersistedId ?? string.Empty;
-            context.Content = options.Content(context);
-            context.Activate();
+            return await OnUIThread(() =>
+            {
+                // ViewMode is deliberately ignored. CompactOverlay is a UWP app model feature with
+                // no Win32 equivalent, and picture-in-picture has to become a small topmost window
+                // the app positions itself - Tier 2 of the fork list, and not this item's problem.
+                var context = CreateWindow(options.Title, options.Width, options.Height);
+                context.PersistedId = options.PersistedId ?? string.Empty;
+                context.Content = options.Content(context);
+                context.Activate();
 
-            return context;
+                return context;
+            });
         }
 
         public async Task<WindowContext> OpenAsync(ISession session, Type page, object parameter = null, string title = null, Size size = default, string id = "0")
@@ -69,22 +72,44 @@ namespace Telegram.Services
 
             if (oldWindow != null)
             {
-                oldWindow.Activate();
+                await oldWindow.Dispatcher.DispatchAsync(oldWindow.Activate);
                 return oldWindow;
             }
 
             await _mainWindowCreated.Task;
 
-            var context = CreateWindow(title, size.Width, size.Height);
-            context.PersistedId = "Floating";
+            return await OnUIThread(() =>
+            {
+                var context = CreateWindow(title, size.Width, size.Height);
+                context.PersistedId = "Floating";
 
-            var nav = BootStrapper.Current.NavigationServiceFactory(session, context, BootStrapper.BackButton.Ignore, id, false);
-            nav.Navigate(page, parameter);
+                var nav = BootStrapper.Current.NavigationServiceFactory(session, context, BootStrapper.BackButton.Ignore, id, false);
+                nav.Navigate(page, parameter);
 
-            context.Content = BootStrapper.Current.CreateRootElement(nav);
-            context.Activate();
+                context.Content = BootStrapper.Current.CreateRootElement(nav);
+                context.Activate();
 
-            return context;
+                return context;
+            });
+        }
+
+        /// <summary>
+        /// Callers are not all on the UI thread. A chat window is opened from a click; a call
+        /// window is opened from a tgcalls or TDLib callback, on whatever thread that arrives on.
+        /// UWP hid the difference - <c>OpenAsyncInternal</c> enqueued everything onto the new
+        /// view's dispatcher - and here an island built off-thread lands on a thread with no
+        /// WindowsXamlManager and no DispatcherQueue, which is how joining a call took the process
+        /// down.
+        /// </summary>
+        private static Task<WindowContext> OnUIThread(Func<WindowContext> create)
+        {
+            var dispatcher = WindowContext.Main?.Dispatcher;
+            if (dispatcher != null && !dispatcher.HasThreadAccess)
+            {
+                return dispatcher.DispatchAsync(create);
+            }
+
+            return Task.FromResult(create());
         }
 
         /// <summary>

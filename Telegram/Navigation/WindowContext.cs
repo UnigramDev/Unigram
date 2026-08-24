@@ -26,6 +26,7 @@ using Telegram.Views.Popups;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -157,6 +158,51 @@ namespace Telegram.Navigation
     {
         private readonly InputListener _inputListener;
         public InputListener InputListener => _inputListener;
+
+        #region Pointer cursor
+
+        // One CoreCursor per type, shared. Every call site used to allocate a fresh one, and
+        // FormattedTextBlock does this at pointer sample rate; CoreCursor is immutable and its
+        // id argument only means anything for CoreCursorType.Custom, so sharing is safe.
+        // Indexed by PointerCursorType, which is why Hidden - the null cursor - is last.
+        private static readonly CoreCursor[] _cursors = new CoreCursor[(int)PointerCursorType.Hidden];
+
+        /// <summary>
+        /// Shared, and it took a fork and back to establish that it could be. A Win32 host cannot
+        /// do this with SetCursor: the island is the window under the pointer and answers
+        /// WM_SETCURSOR itself, so a cursor set on the top-level window never survives a mouse
+        /// move. What it can do is exactly what UWP does - a thread hosting islands still gets a
+        /// CoreWindow, and that stub is what XAML's input site reads.
+        ///
+        /// GetForCurrentThread rather than Window.Current.CoreWindow, which is the same object on
+        /// UWP and one fewer Window.Current.
+        /// </summary>
+        public static void SetPointerCursor(PointerCursorType cursor)
+        {
+            CoreWindow.GetForCurrentThread().PointerCursor = GetPointerCursor(cursor);
+        }
+
+        private static CoreCursor GetPointerCursor(PointerCursorType cursor)
+        {
+            if (cursor == PointerCursorType.Hidden)
+            {
+                return null;
+            }
+
+            // UI thread only, so a lost race would just allocate one extra cursor.
+            return _cursors[(int)cursor] ??= new CoreCursor(cursor switch
+            {
+                PointerCursorType.Hand => CoreCursorType.Hand,
+                PointerCursorType.IBeam => CoreCursorType.IBeam,
+                PointerCursorType.SizeWestEast => CoreCursorType.SizeWestEast,
+                PointerCursorType.SizeNorthSouth => CoreCursorType.SizeNorthSouth,
+                PointerCursorType.SizeNorthwestSoutheast => CoreCursorType.SizeNorthwestSoutheast,
+                PointerCursorType.SizeNortheastSouthwest => CoreCursorType.SizeNortheastSouthwest,
+                _ => CoreCursorType.Arrow
+            }, 0);
+        }
+
+        #endregion
 
         public int Id { get; }
 

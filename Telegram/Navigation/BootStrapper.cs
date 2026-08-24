@@ -69,7 +69,7 @@ namespace Telegram.Navigation
 
         public static Task ConsolidateAsync()
         {
-            return WindowContext.ForEachAsync(window => WindowContext.Current.ConsolidateAsync());
+            return WindowContext.ForEachAsync(window => window.ConsolidateAsync());
         }
 
         protected virtual void OnWindowActivated(WindowContext window, bool active)
@@ -95,12 +95,15 @@ namespace Telegram.Navigation
         protected partial bool IsPrelaunch(LaunchActivatedEventArgs e);
 
         /// <summary>
-        /// The window this activation belongs to, created if it does not exist yet. UWP normally
-        /// has one already - OnWindowCreated made it - but activation can arrive first, share
-        /// target activation appearing to race it. A Win32 host has none until it makes one.
-        /// Returns null when there is no window to be had, and the caller gives up.
+        /// Which window this activation belongs to - not "is the app up?". UWP answers with the
+        /// view the system activated into, which for a share target is one it made for the
+        /// purpose. A Win32 host has to decide, because nothing makes views for it.
+        ///
+        /// Resolved once, at the top of the waterfall, and passed down from there: nothing below
+        /// reaches for WindowContext.Current, which is thread-static and answers for whichever
+        /// thread happens to ask. Returns null when there is no window to be had.
         /// </summary>
-        private partial WindowContext EnsureWindowContext(IActivatedEventArgs e);
+        private partial WindowContext ResolveWindowContext(IActivatedEventArgs e);
 
         #region properties
 
@@ -175,7 +178,7 @@ namespace Telegram.Navigation
         private void CallInternalActivated(IActivatedEventArgs e)
         {
             CurrentState = States.BeforeActivate;
-            InternalActivated(e);
+            InternalActivated(ResolveWindowContext(e), e);
             CurrentState = States.AfterActivate;
         }
 
@@ -184,22 +187,28 @@ namespace Telegram.Navigation
         /// This is private because it is a specialized prelude to OnStartAsync().
         /// OnStartAsync will not be called if state restore is determined.
         /// </summary>
-        private void InternalActivated(IActivatedEventArgs e)
+        private void InternalActivated(WindowContext window, IActivatedEventArgs e)
         {
             Logger.Info();
 
+            if (window == null)
+            {
+                Logger.Error($"No window to activate into. Kind: {e.Kind}");
+                return;
+            }
+
             // sometimes activate requires a frame to be built
-            if (WindowContext.Current?.Content == null /*&& e is not ShareTargetActivatedEventArgs*/)
+            if (window.Content == null /*&& e is not ShareTargetActivatedEventArgs*/)
             {
                 Logger.Info("Calling", member: nameof(InternalActivated));
-                InitializeFrame(e);
+                InitializeFrame(window, e);
             }
 
             // onstart is shared with activate and launch
-            CallOnStart(e, true, StartKind.Activate);
+            CallOnStart(window, e, true, StartKind.Activate);
 
             // ensure active (this will hide any custom splashscreen)
-            CallActivateWindow(ActivateWindowSources.Activating);
+            CallActivateWindow(window, ActivateWindowSources.Activating);
         }
 
         #endregion
@@ -208,17 +217,10 @@ namespace Telegram.Navigation
 
         // it is the intent of Template 10 to no longer require Launched/Activated overrides, only OnStartAsync()
 
-        protected sealed override void OnLaunched(LaunchActivatedEventArgs e)
-        {
-            Logger.Info(e.Kind);
-            WatchDog.Launch(e.PreviousExecutionState);
-            CallInternalLaunchAsync(e);
-        }
-
         private void CallInternalLaunchAsync(LaunchActivatedEventArgs e)
         {
             CurrentState = States.BeforeLaunch;
-            InternalLaunch(e);
+            InternalLaunch(ResolveWindowContext(e), e);
             CurrentState = States.AfterLaunch;
         }
 
@@ -227,17 +229,23 @@ namespace Telegram.Navigation
         /// This is private because it is a specialized prelude to OnStartAsync().
         /// OnStartAsync will not be called if state restore is determined
         /// </summary>
-        private void InternalLaunch(LaunchActivatedEventArgs e)
+        private void InternalLaunch(WindowContext window, LaunchActivatedEventArgs e)
         {
             Logger.Info($"Previous: {e.PreviousExecutionState}");
 
             PrelaunchActivated = IsPrelaunch(e);
 
-            if (e.PreviousExecutionState != ApplicationExecutionState.Running || WindowContext.Current.Content == null)
+            if (window == null)
+            {
+                Logger.Error($"No window to launch into. Kind: {e.Kind}");
+                return;
+            }
+
+            if (e.PreviousExecutionState != ApplicationExecutionState.Running || window.Content == null)
             {
                 try
                 {
-                    InitializeFrame(e);
+                    InitializeFrame(window, e);
                 }
                 catch (Exception)
                 {
@@ -289,10 +297,10 @@ namespace Telegram.Navigation
             if (!restored)
             {
                 var kind = e.PreviousExecutionState == ApplicationExecutionState.Running ? StartKind.Activate : StartKind.Launch;
-                CallOnStart(e, true, kind);
+                CallOnStart(window, e, true, kind);
             }
 
-            CallActivateWindow(ActivateWindowSources.Launching);
+            CallActivateWindow(window, ActivateWindowSources.Launching);
         }
 
         #endregion
@@ -324,7 +332,7 @@ namespace Telegram.Navigation
         /// Template 10 will not call OnStartAsync if the app is restored from state.
         /// An app restores from state when the app was suspended and then terminated (PreviousExecutionState terminated).
         /// </summary>
-        public abstract void OnStart(StartKind startKind, IActivatedEventArgs args);
+        public abstract void OnStart(WindowContext window, StartKind startKind, IActivatedEventArgs args);
 
         /// <summary>
         /// OnInitializeAsync is where your app will do must-have up-front operations
@@ -452,7 +460,7 @@ namespace Telegram.Navigation
 
         private readonly Dictionary<string, States> CurrentStateHistory = new();
 
-        private void InitializeFrame(IActivatedEventArgs e)
+        private void InitializeFrame(WindowContext window, IActivatedEventArgs e)
         {
             /*
                 InitializeFrameAsync creates a default Frame preceded by the optional 
@@ -464,15 +472,9 @@ namespace Telegram.Navigation
 
             CallOnInitialize(false, e);
 
-            var context = EnsureWindowContext(e);
-            if (context == null)
+            if (window.Content == null)
             {
-                return;
-            }
-
-            if (context.Content == null)
-            {
-                context.Content = CreateRootElement(e, context);
+                window.Content = CreateRootElement(e, window);
             }
             else
             {
@@ -482,9 +484,9 @@ namespace Telegram.Navigation
 
         #endregion
 
-        private void CallActivateWindow(ActivateWindowSources source)
+        private void CallActivateWindow(WindowContext window, ActivateWindowSources source)
         {
-            WindowContext.Current.Activate();
+            window.Activate();
             CurrentState = States.Running;
         }
 
@@ -512,7 +514,7 @@ namespace Telegram.Navigation
             CurrentState = States.AfterInit;
         }
 
-        private void CallOnStart(IActivatedEventArgs args, bool canRepeat, StartKind startKind)
+        private void CallOnStart(WindowContext window, IActivatedEventArgs args, bool canRepeat, StartKind startKind)
         {
             Logger.Info();
 
@@ -522,7 +524,7 @@ namespace Telegram.Navigation
             }
 
             CurrentState = States.BeforeStart;
-            OnStart(startKind, args);
+            OnStart(window, startKind, args);
             CurrentState = States.AfterStart;
         }
 

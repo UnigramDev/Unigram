@@ -300,6 +300,23 @@ namespace Telegram.Host
         }
 
         /// <summary>
+        /// Tears the island down and then the window itself. Dispose alone leaves the HWND standing
+        /// with nothing in it - an empty window the user has to close by hand.
+        ///
+        /// DestroyWindow sends WM_DESTROY, which calls Dispose again and drops this from Windows;
+        /// both are safe to run twice.
+        /// </summary>
+        public void Close()
+        {
+            Dispose();
+
+            if (_hwnd != IntPtr.Zero)
+            {
+                Win32.DestroyWindow(_hwnd);
+            }
+        }
+
+        /// <summary>
         /// Order matters. Destroying the HWND while the DesktopWindowXamlSource still holds
         /// content takes the process down - the XAML core is left pointing at a dead window.
         /// Detach the content and close the source first, then release the native side.

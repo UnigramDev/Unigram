@@ -15,6 +15,7 @@ using Telegram.Host;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 
 namespace Telegram.Navigation
@@ -72,42 +73,6 @@ namespace Telegram.Navigation
 
         public long Handle => _island.Handle.ToInt64();
 
-        #region Pointer cursor
-
-        // One HCURSOR per type, shared, for the same reason the UWP half caches CoreCursor: this
-        // is called at pointer sample rate. LoadCursorW hands back a shared system cursor that
-        // must not be destroyed.
-        private static readonly IntPtr[] _cursors = new IntPtr[(int)PointerCursorType.Hidden];
-
-        public static void SetPointerCursor(PointerCursorType cursor)
-        {
-            // Hidden has no HCURSOR - a null one is how a Win32 window hides the pointer.
-            if (cursor == PointerCursorType.Hidden)
-            {
-                Win32.SetCursor(IntPtr.Zero);
-                return;
-            }
-
-            var index = (int)cursor;
-            if (_cursors[index] == IntPtr.Zero)
-            {
-                _cursors[index] = Win32.LoadCursorW(IntPtr.Zero, cursor switch
-                {
-                    PointerCursorType.Hand => Win32.IDC_HAND,
-                    PointerCursorType.IBeam => Win32.IDC_IBEAM,
-                    PointerCursorType.SizeWestEast => Win32.IDC_SIZEWE,
-                    PointerCursorType.SizeNorthSouth => Win32.IDC_SIZENS,
-                    PointerCursorType.SizeNorthwestSoutheast => Win32.IDC_SIZENWSE,
-                    PointerCursorType.SizeNortheastSouthwest => Win32.IDC_SIZENESW,
-                    _ => Win32.IDC_ARROW
-                });
-            }
-
-            Win32.SetCursor(_cursors[index]);
-        }
-
-        #endregion
-
         private string _persistedId;
         public string PersistedId
         {
@@ -138,7 +103,7 @@ namespace Telegram.Navigation
 
             _island.Filter = null;
             _inputListener.Release();
-            _island.Dispose();
+            _island.Close();
 
             return Task.CompletedTask;
         }

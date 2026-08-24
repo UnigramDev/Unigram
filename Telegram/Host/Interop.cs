@@ -283,30 +283,12 @@ namespace Telegram.Host
         [return: MarshalAs(UnmanagedType.Bool)]
         public static partial bool SetWindowDisplayAffinity(IntPtr hWnd, uint dwAffinity);
 
-        [LibraryImport("user32.dll")]
-        public static partial IntPtr SetCursor(IntPtr hCursor);
-
         [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16)]
         public static partial IntPtr FindWindowExW(IntPtr parent, IntPtr after, string className, string windowName);
 
         [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static partial bool PostMessageW(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-
-        public const uint WM_KEYUP = 0x0101;
-        public const uint WM_CHAR = 0x0102;
-        public const uint WM_DEADCHAR = 0x0103;
-        public const uint WM_SYSKEYUP = 0x0105;
-        public const uint WM_SYSCHAR = 0x0106;
-
-        // The standard cursors, by the IDC_* ordinals LoadCursorW takes as a resource id.
-        public const int IDC_ARROW = 32512;
-        public const int IDC_IBEAM = 32513;
-        public const int IDC_SIZENWSE = 32642;
-        public const int IDC_SIZENESW = 32643;
-        public const int IDC_SIZEWE = 32644;
-        public const int IDC_SIZENS = 32645;
-        public const int IDC_HAND = 32649;
 
         public const uint WDA_NONE = 0x00000000;
         public const uint WDA_EXCLUDEFROMCAPTURE = 0x00000011;

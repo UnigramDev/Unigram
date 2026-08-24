@@ -142,7 +142,7 @@ namespace Telegram
             }
         }
 
-        public override async void OnStart(StartKind startKind, IActivatedEventArgs args)
+        public override async void OnStart(WindowContext window, StartKind startKind, IActivatedEventArgs args)
         {
 #if DEBUG
             DebugSettings.EnableFrameRateCounter = false;
@@ -157,7 +157,7 @@ namespace Telegram
                     {
                         LifetimeService.Current.ActiveItem = session;
 
-                        if (WindowContext.Current.Content is RootWindow root)
+                        if (window.Content is RootWindow root)
                         {
                             root.Switch(LifetimeService.Current.ActiveItem);
                         }
@@ -166,7 +166,7 @@ namespace Telegram
             }
 
             var activeSession = LifetimeService.Current.ActiveItem;
-            var navigation = WindowContext.Current.NavigationServices.GetByFrameId($"{activeSession.Id}");
+            var navigation = window.NavigationServices.GetByFrameId($"{activeSession.Id}");
 
             var update = activeSession.Resolve<ICloudUpdateService>();
             var service = activeSession.Resolve<IClientService>();
@@ -175,18 +175,18 @@ namespace Telegram
 
             if (args is not ShareTargetActivatedEventArgs share)
             {
-                WindowContext.Current.Activate(args, navigation, state);
+                window.Activate(args, navigation, state);
 
                 _ = Task.Run(() => OnStartSync(startKind, update));
 
-                if (startKind != StartKind.Launch && WindowContext.Current.IsInMainView)
+                if (startKind != StartKind.Launch && window.IsInMainView)
                 {
                     var view = ApplicationView.GetForCurrentView();
                     await ApplicationViewSwitcher.TryShowAsStandaloneAsync(view.Id);
                     //view.TryResizeView(WindowContext.Current.Bounds.ToSize());
                 }
             }
-            else if (WindowContext.Current.Content is ShareWindow sharePage)
+            else if (window.Content is ShareWindow sharePage)
             {
                 sharePage.Activate(share, navigation, state);
             }

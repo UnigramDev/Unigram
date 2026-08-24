@@ -102,6 +102,13 @@ namespace Telegram.Navigation
             return new WindowContext(window);
         }
 
+        protected sealed override void OnLaunched(LaunchActivatedEventArgs e)
+        {
+            Logger.Info(e.Kind);
+            WatchDog.Launch(e.PreviousExecutionState);
+            CallInternalLaunchAsync(e);
+        }
+
         protected partial bool IsPrelaunch(LaunchActivatedEventArgs e)
         {
             return e.PrelaunchActivated;
@@ -112,7 +119,12 @@ namespace Telegram.Navigation
             RequestedTheme = theme;
         }
 
-        private partial WindowContext EnsureWindowContext(IActivatedEventArgs e)
+        /// <summary>
+        /// The view the system activated into - including the one it makes for a share target.
+        /// Current is legitimate here: on this host a view has exactly one window and the
+        /// activation arrives on its thread.
+        /// </summary>
+        private partial WindowContext ResolveWindowContext(IActivatedEventArgs e)
         {
             var context = WindowContext.Current;
             if (context != null)
