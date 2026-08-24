@@ -662,6 +662,13 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        public void HideEmoji()
+        {
+            _emojiQuery = null;
+            _emojiFlyout?.Hide();
+            CancelEmoji();
+        }
+
         // Separate from cancelling, which happens on almost every keystroke and has no
         // query of its own to hand a token to
         private CancellationTokenSource BeginEmoji()

@@ -139,6 +139,11 @@ namespace Telegram.Controls.Chats
                 _textBox.Document.Selection.StartPosition = index + insert.Length;
             }
 
+            if (_textBox is ChatTextBox chatTextBox)
+            {
+                chatTextBox.HideEmoji();
+            }
+
             if (e.ClickedItem is EmojiData emoji)
             {
                 ViewModel.Settings.RecentEmoji.AddRecentEmoji(emoji);
