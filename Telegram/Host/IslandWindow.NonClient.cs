@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Telegram.Navigation;
+using Windows.Foundation;
 
 namespace Telegram.Host
 {
@@ -38,6 +39,11 @@ namespace Telegram.Host
         private IntPtr _dragBar;
 
         private CaptionButtons _captionButtons = CaptionButtons.All;
+
+        // Logical pixels, relative to the client area. Three states, and they differ: null is a
+        // window that has not named a title bar, where the whole strip drags as it always did;
+        // an empty rect is one that took its title bar away, where only the buttons still answer.
+        private Rect? _dragArea;
         private CaptionButtons _hotButton;
         private bool _hotPressed;
         private bool _tracking;
@@ -373,6 +379,47 @@ namespace Telegram.Host
             return Win32.HTCAPTION;
         }
 
+        /// <summary>
+        /// The window's draggable region, in logical pixels relative to the client area. An empty
+        /// rect means the root wants no draggable region; null means it has not said.
+        /// </summary>
+        public void SetDragArea(Rect? area)
+        {
+            _dragArea = area;
+            LayoutDragBar();
+        }
+
+        private int CaptionButtonsWidth()
+        {
+            var count = 0;
+
+            if (_captionButtons.HasFlag(CaptionButtons.Minimize))
+            {
+                count++;
+            }
+
+            if (_captionButtons.HasFlag(CaptionButtons.Maximize))
+            {
+                count++;
+            }
+
+            if (_captionButtons.HasFlag(CaptionButtons.Close))
+            {
+                count++;
+            }
+
+            return Scale(CaptionButtonWidth) * count;
+        }
+
+        /// <summary>
+        /// From the drag area's left edge to the right of the window, deliberately: the caption
+        /// buttons must stay under this window, because answering HTMAXBUTTON for them is what
+        /// earns the snap layouts flyout. Terminal extends its own sink the same way and for the
+        /// same reason (GH#9443), having started with one that stopped short of them.
+        ///
+        /// What is to the LEFT of the area belongs to the island, and that is the point of this:
+        /// a full-width strip makes every pixel of the app's own title bar unclickable.
+        /// </summary>
         private void LayoutDragBar()
         {
             if (_dragBar == IntPtr.Zero || !Win32.GetClientRect(_hwnd, out var client))
@@ -380,8 +427,42 @@ namespace Telegram.Host
                 return;
             }
 
-            Win32.SetWindowPos(_dragBar, IntPtr.Zero, 0, 0,
-                client.right - client.left, Scale(CaptionHeight), Win32.SWP_SHOWWINDOW);
+            int left, top, height;
+
+            if (_dragArea is Rect area && area.Width > 0)
+            {
+                left = Scale((int)area.X);
+                top = Scale((int)area.Y);
+
+                // At least the caption strip: a title bar shorter than the buttons would leave
+                // their lower edge outside this window, where nothing answers for them.
+                height = Math.Max(Scale((int)area.Height), Scale(CaptionHeight));
+            }
+            else if (_dragArea != null)
+            {
+                // No draggable region, but the buttons are still the app's to answer for - a popup
+                // takes the title bar away and must not take the close button with it.
+                left = client.right - client.left - CaptionButtonsWidth();
+                top = 0;
+                height = Scale(CaptionHeight);
+            }
+            else
+            {
+                left = 0;
+                top = 0;
+                height = Scale(CaptionHeight);
+            }
+
+            var width = client.right - client.left - left;
+
+            if (width <= 0 || height <= 0)
+            {
+                Win32.SetWindowPos(_dragBar, IntPtr.Zero, 0, 0, 0, 0,
+                    Win32.SWP_NOMOVE | Win32.SWP_NOSIZE | Win32.SWP_HIDEWINDOW);
+                return;
+            }
+
+            Win32.SetWindowPos(_dragBar, IntPtr.Zero, left, top, width, height, Win32.SWP_SHOWWINDOW);
         }
     }
 }

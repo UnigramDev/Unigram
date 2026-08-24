@@ -231,15 +231,75 @@ namespace Telegram.Navigation
         }
 
         /// <summary>
-        /// UWP hands the framework an element and lets it drive the caption. Here the drag bar
-        /// HWND of gate 1.7 already covers the caption strip, so this is a no-op for now - and it
-        /// must not throw: pages call it while they are being constructed, where an exception is
-        /// swallowed by the navigation and shows up only as a Frame with nothing in it.
+        /// Weak, and deliberately: the element is rooted by the window's own content tree, so a
+        /// strong reference here would not keep it alive - but it would keep a Page alive that set
+        /// the title bar and navigated away without clearing it. The subscription runs the other
+        /// way round, the element holding this, which pins nothing.
         ///
-        /// TODO: drive the drag bar's rect from the element's bounds instead of a constant height.
+        /// Null means no root has named one yet, which is not the same as one having taken its
+        /// title bar away - see LayoutDragBar.
+        /// </summary>
+        private WeakReference<FrameworkElement> _titleBar;
+
+        /// <summary>
+        /// UWP hands the framework an element and lets it drive the caption; here it drives the
+        /// drag bar of gate 1.7 instead. It must not throw: pages call this while they are being
+        /// constructed, before there is a tree to transform against, and an exception there is
+        /// swallowed by the navigation and shows up only as a Frame with nothing in it.
         /// </summary>
         public void SetTitleBar(UIElement titleBar)
         {
+            if (_titleBar != null && _titleBar.TryGetTarget(out var previous))
+            {
+                previous.SizeChanged -= OnTitleBarSizeChanged;
+            }
+
+            var element = titleBar as FrameworkElement;
+
+            // Allocated on the first call whatever it carries, so that "never asked" and "asked
+            // for none" stay distinguishable.
+            _titleBar ??= new WeakReference<FrameworkElement>(null);
+            _titleBar.SetTarget(element);
+
+            if (element != null)
+            {
+                element.SizeChanged += OnTitleBarSizeChanged;
+            }
+
+            _island.SetDragArea(GetDragArea());
+        }
+
+        /// <summary>
+        /// The element is the sender, so this needs nothing held. It also covers the window being
+        /// resized: every title bar in this app stretches, so its width changes with the window.
+        /// </summary>
+        private void OnTitleBarSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _island.SetDragArea(GetDragArea());
+        }
+
+        private Rect? GetDragArea()
+        {
+            if (_titleBar == null)
+            {
+                return null;
+            }
+
+            if (!_titleBar.TryGetTarget(out var element) || _content == null || element.ActualWidth == 0)
+            {
+                return new Rect();
+            }
+
+            try
+            {
+                return element.TransformToVisual(_content)
+                    .TransformBounds(new Rect(0, 0, element.ActualWidth, element.ActualHeight));
+            }
+            catch
+            {
+                // Not in the tree yet. SizeChanged brings us back once it is.
+                return new Rect();
+            }
         }
 
         /// <summary>
