@@ -1808,9 +1808,10 @@
     <Compile Include="Services\Updates\UpdateConfetti.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
     <Compile Include="Services\Updates\UpdateWindowActivated.cs" />
-    <Compile Include="Services\ViewService\SecondaryViewSynchronizationContextDecorator.cs" />
-    <Compile Include="Services\ViewService\ViewLifetimeControl.cs" />
+    <Compile Include="Services\ViewService\SecondaryViewSynchronizationContextDecorator.Uwp.cs" />
+    <Compile Include="Services\ViewService\ViewLifetimeControl.Uwp.cs" />
     <Compile Include="Services\ViewService\ViewService.cs" />
+    <Compile Include="Services\ViewService\ViewService.Uwp.cs" />
     <Compile Include="ViewModels\BackgroundViewModel.cs" />
     <Compile Include="ViewModels\Create\NewGroupViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />

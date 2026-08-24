@@ -52,6 +52,15 @@ namespace Telegram.Navigation
 
             lock (_allLock)
             {
+                // The first window is the main one. UWP asks CoreApplication which view it is in;
+                // here the answer is simply whichever came first, and ViewService needs it - the
+                // chat-already-open search skips the main window.
+                if (Main == null)
+                {
+                    Main = this;
+                    IsInMainView = true;
+                }
+
                 All.Add(this);
             }
 

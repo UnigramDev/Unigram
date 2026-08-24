@@ -599,10 +599,30 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
       `WindowContext.Current` now), so it went, and with it the ctor's `newWindow == null`
       Xbox branch and the unused parameter.
 
-  - [ ] **Step 2**: `ViewService.Uwp.cs` and `ViewService.Win32.cs`, per the partial-class fork in
-    Phase 2. `ViewLifetimeControl` **stays a UWP implementation detail** and does not move — which
-    is where the 21 `ApplicationView` sites live, so they never have to be ported at all. The
-    Win32 side creates an HWND instead.
+  - [x] **Step 2 — done 2026-08-24, and it is 100 lines.** `ViewService.cs` keeps the interface,
+    the enum, the options and `_mainWindowCreated`; `ViewService.Uwp.cs` takes every path that
+    names `CoreApplication.CreateNewView`, `ApplicationViewSwitcher` or `ViewLifetimeControl`;
+    `ViewService.Win32.cs` makes another `IslandWindow` **on the same thread** and wraps it in a
+    `WindowContext`. Gate 1.8a is what makes that legitimate, and item 0.18 is why no secondary
+    window needs a thread of its own.
+
+    `ViewLifetimeControl` never moved, exactly as planned - it and
+    `SecondaryViewSynchronizationContextDecorator` were simply renamed `.Uwp.cs` so the Win32
+    project's `**\*.Uwp.cs` exclusion drops them. **All 21 `ApplicationView` sites went with it and
+    were never ported.**
+
+    Two things the Win32 half does differently, both deliberate:
+
+    - **`ViewMode` is ignored.** `CompactOverlay` is a UWP app model feature with no Win32
+      equivalent; picture-in-picture becomes a small topmost window the app positions itself,
+      which is Tier 2 of the fork list rather than this item.
+    - **Content is assigned through `WindowContext.Content`** rather than passed to
+      `IslandWindow.Create`, so a secondary window takes the same path as the main one - building
+      the `WindowControl`, merging the chat theme, publishing the XamlRoot.
+
+    It also needed `IsInMainView` on the Win32 side, which nothing had set: UWP asks
+    `CoreApplication` which view it is in, and here the answer is whichever window came first.
+    The chat-already-open search depends on it.
 
   This was described here as "the multi-month piece in every path". That was wrong: the mass is
   all inside the class that isn't moving.
@@ -1945,6 +1965,62 @@ APIs, and nothing else.
     `Application.Resources` (gate 1.11), so that is where it goes. Untested risk: WinUI 2 styles
     may reference the brushes with `{ThemeResource}` by key, in which case an override lands
     cleanly, or construct them inline, in which case the style has to be replaced too.
+
+- [x] **2.1f Two host differences that only show at runtime, 2026-08-24.**
+
+  - **The current directory is not the install folder.** UWP guaranteed it was; the shell launches
+    a packaged Win32 app with whatever directory the launcher had, `system32` as a rule. So every
+    relative path in the app and in its native libraries resolves against the wrong place.
+    **MicroTeX is what surfaced it** - `RES_BASE` is the literal `"res"`, so `RichMathSurface`
+    looked its fonts up as `resonts\...` and found nothing, while the files sat correctly in
+    the layout. `Program.Main` now does `Directory.SetCurrentDirectory(AppContext.BaseDirectory)`
+    before anything else. Worth remembering as a class of bug rather than one bug: anything
+    relative is suspect on this host.
+  - **Pointer input never reaches the message loop.** An island feeds it through its own
+    `InputSite` - the `Windows.UI.Input.InputSite.WindowClass` child - so `WM_XBUTTONDOWN` is not
+    in the queue to filter and `InputListener`'s back/forward gesture never fired. It now comes off
+    a routed `PointerPressed` with `handledEventsToo` on the window root, attached from
+    `SetHostContent`. That is the opposite choice to the keyboard, and deliberately: the tree
+    handles neither XButton, so a routed handler still sees them, and none of the keyboard's
+    reasons for needing the message loop - `SystemKeyDown`, a focused control swallowing the key,
+    focus inside a WebView2 - apply to a mouse button nothing consumes.
+
+- [ ] **2.1e Re-activation is unhandled, and it is the first real design gap.** Found 2026-08-24
+  by the call window crashing. Chats, IV, the text editor and web apps all open in their own
+  windows correctly; a call fail-fasts, and the app's own log says why:
+
+      [150,694] VoipGroupCall InitializeSystemCallAsync  ResourcesNotAvailable
+      [150,694] VoipGroupCall CreateWindow  Waiting for window creation
+      [150,734] BootStrapper OnLaunched  Launch            <- a SECOND launch, same process
+      [150,734] InternalLaunch  Previous: NotRunning
+      [150,734] BootStrapper.Win32 EnsureWindowContext  Creating the window context
+      [150,775] NavigationService Navigate  Page: MainPage <- a whole second app UI
+      [150,833] GroupCallWindow ..ctor
+
+  **`OnLaunched` ran a second time, 55 seconds into the process.** `App` is a real `Application`
+  the system can still call, and nothing on this host expects that: `Program.Main` reads
+  `AppInstance.GetActivatedEventArgs()` exactly once and drives `Start` itself.
+
+  Two faults, in order of severity:
+
+  - **The activation does not arrive on the UI thread.** `EnsureWindowContext` logged "Creating
+    the window context", so `WindowContext.Current` - `[ThreadStatic]` - was null, and it built an
+    island on a thread with no `WindowsXamlManager` and no `DispatcherQueue`. That is a fail-fast,
+    and frame 0 in `Telegram.Native.dll` fits. **This is exactly the shape item 0.10 warns about**,
+    and the first time `Current` being thread-static has actually cost something.
+  - **Nothing suppresses or routes the framework's activation.** UWP guaranteed one process per
+    package and owned the delivery; here the callback simply arrives.
+
+  Guarded for now: `EnsureWindowContext` falls back to `WindowContext.Main`, a plain static, so a
+  re-activation reuses the main window instead of building an island on a random thread. That stops
+  the fail-fast but leaves `InitializeFrame` touching XAML off-thread.
+
+  **The design question is Fela's**: should the Win32 host accept framework-delivered activations
+  at all? It does not use the UWP app model - `Program.Main` owns activation - so the honest answer
+  may be to ignore them entirely and keep the one path. The alternative is marshalling them onto
+  the UI thread's `DispatcherQueue`, which keeps protocol and toast activation working while the
+  app is running. That second one is probably wanted eventually, since `tg:` links and notification
+  taps arrive exactly this way.
 
 - [ ] **2.1** Grow `Telegram.Stub` into the host process rather than creating a new one — it is
   already .NET 10, already Win32, already owns the tray and passkeys.
