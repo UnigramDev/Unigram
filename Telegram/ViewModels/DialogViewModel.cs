@@ -3596,21 +3596,25 @@ namespace Telegram.ViewModels
 
         public async void SendRichMessage()
         {
+            long messageId;
             RichMessage message;
 
             var draft = GetDraftMessage();
             if (draft?.Content is DraftMessageContentRichMessage richMessage)
             {
+                messageId = 0;
                 message = richMessage.Message;
             }
             else
             {
                 var text = GetFormattedText();
+
+                messageId = _composerHeader?.Editing?.Message.Id ?? 0;
                 message = new RichMessage(PageBlockHelper.ToPageBlocks(text), false, true);
             }
 
             // Carry the current reply into the editor; send options are picked with their defaults on send.
-            NavigationService.NavigateToTextEditor(ChatId, OutgoingTopicId, 0, message, GetReply(false));
+            NavigationService.NavigateToTextEditor(ChatId, OutgoingTopicId, messageId, message, GetReply(false));
         }
 
         /// <summary>

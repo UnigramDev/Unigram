@@ -8448,7 +8448,7 @@ namespace Telegram.Views
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            ButtonMaximize.Visibility = e.NewSize.Height >= 84
+            ButtonMaximize.Visibility = e.NewSize.Height >= 84 && ViewModel?.ComposerHeader?.Editing?.Message?.Content is null or MessageText
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
