@@ -37,7 +37,7 @@ namespace Telegram.Services
                 // ViewMode is deliberately ignored. CompactOverlay is a UWP app model feature with
                 // no Win32 equivalent, and picture-in-picture has to become a small topmost window
                 // the app positions itself - Tier 2 of the fork list, and not this item's problem.
-                var context = CreateWindow(options.Title, options.Width, options.Height);
+                var context = CreateWindow(options.Title, options.Width, options.Height, options.PersistedId);
                 context.PersistedId = options.PersistedId ?? string.Empty;
                 context.Content = options.Content(context);
                 context.Activate();
@@ -80,7 +80,7 @@ namespace Telegram.Services
 
             return await OnUIThread(() =>
             {
-                var context = CreateWindow(title, size.Width, size.Height);
+                var context = CreateWindow(title, size.Width, size.Height, "Floating");
                 context.PersistedId = "Floating";
 
                 var nav = BootStrapper.Current.NavigationServiceFactory(session, context, BootStrapper.BackButton.Ignore, id, false);
@@ -117,13 +117,13 @@ namespace Telegram.Services
         /// <see cref="WindowContext.Content"/> - the same path the main window takes, and the one
         /// that builds the WindowPresenter, merges the chat theme and publishes the XamlRoot.
         /// </summary>
-        private static WindowContext CreateWindow(string title, double width, double height)
+        private static WindowContext CreateWindow(string title, double width, double height, string persistedId)
         {
             var island = IslandWindow.Create(title ?? string.Empty,
                 Win32.CW_USEDEFAULT, Win32.CW_USEDEFAULT,
                 (int)(width > 0 ? width : DefaultWidth),
                 (int)(height > 0 ? height : DefaultHeight),
-                null, nonClient: true);
+                null, nonClient: true, persistedId: persistedId);
 
             return new WindowContext(island);
         }

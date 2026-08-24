@@ -88,7 +88,7 @@ namespace Telegram.Navigation
             // must not land on top of the first.
             if (e is ShareTargetActivatedEventArgs)
             {
-                return CreateWindow();
+                return CreateWindow("Share");
             }
 
             // Everything else belongs to the main window: a launch, a tg: link, a toast, a file.
@@ -107,20 +107,26 @@ namespace Telegram.Navigation
             // surfaces as a Frame that reports a successful navigation and shows nothing.
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
 
-            return CreateWindow();
+            return CreateWindow("Main");
         }
 
         /// <summary>
         /// Content stays null: InitializeFrame sets it immediately after, through the same
         /// WindowContext.Content path the UWP half uses, so the XamlRoot appears there too.
         /// </summary>
-        private static WindowContext CreateWindow()
+        /// <summary>
+        /// Neither window this makes has a PersistedId of its own - nothing opens either by name -
+        /// so both are given one here. They must not be the same: a share is a separate window
+        /// with its own size, and sharing a slot would have it overwrite where the main window
+        /// sits every time something is shared.
+        /// </summary>
+        private static WindowContext CreateWindow(string persistedId)
         {
             Logger.Info("Creating the window context");
 
             var island = IslandWindow.Create("Telegram",
                 Win32.CW_USEDEFAULT, Win32.CW_USEDEFAULT, DefaultWidth, DefaultHeight,
-                null, nonClient: true);
+                null, nonClient: true, persistedId: persistedId);
 
             return new WindowContext(island);
         }

@@ -39,6 +39,7 @@ namespace Telegram.Host
         private static IntPtr _classNamePtr;
 
         private IntPtr _hwnd;
+        private string _persistedId;
         private bool _transparent;
         private IntPtr _islandHwnd;
         private DesktopWindowXamlSource _source;
@@ -74,7 +75,7 @@ namespace Telegram.Host
         public static Dictionary<IntPtr, IslandWindow>.ValueCollection All => Windows.Values;
 
         public static IslandWindow Create(string title, int x, int y, int width, int height, UIElement content,
-            bool transparent = false, bool nonClient = false)
+            bool transparent = false, bool nonClient = false, string persistedId = null)
         {
             EnsureClass();
 
@@ -97,6 +98,11 @@ namespace Telegram.Host
             }
 
             Windows[window._hwnd] = window;
+            window._persistedId = persistedId;
+
+            // Before the window is shown, so it opens where it belongs rather than jumping once
+            // it is already on screen.
+            WindowLayout.Restore(window._hwnd, persistedId);
 
             window._source = new DesktopWindowXamlSource();
             window._native = IslandNative.From(window._source);
@@ -233,9 +239,16 @@ namespace Telegram.Host
                         Win32.SetFocus(window._islandHwnd);
                     }
                     return IntPtr.Zero;
+                case Win32.WM_EXITSIZEMOVE:
+                    // The end of a drag or a resize, rather than every position it passed through.
+                    WindowLayout.Save(hWnd, window?._persistedId);
+                    break;
+
                 case Win32.WM_DESTROY:
                     if (window != null)
                     {
+                        WindowLayout.Save(hWnd, window._persistedId);
+
                         Windows.Remove(hWnd);
                         window.Dispose();
                     }

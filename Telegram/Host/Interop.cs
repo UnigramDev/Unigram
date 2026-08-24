@@ -23,6 +23,26 @@ namespace Telegram.Host
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    internal struct WINDOWPLACEMENT
+    {
+        public int length;
+        public int flags;
+        public int showCmd;
+        public POINT ptMinPosition;
+        public POINT ptMaxPosition;
+        public RECT rcNormalPosition;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct MONITORINFO
+    {
+        public int cbSize;
+        public RECT rcMonitor;
+        public RECT rcWork;
+        public uint dwFlags;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     internal struct TRACKMOUSEEVENT
     {
         public int cbSize;
@@ -160,6 +180,14 @@ namespace Telegram.Host
 
         public const int GWL_STYLE = -16;
 
+        public const int SW_HIDE = 0;
+
+        // Null rather than a nearest monitor: a window restored onto a monitor that is gone should
+        // fall back to the default placement, not be dragged to whatever is closest.
+        public const uint MONITOR_DEFAULTTONULL = 0;
+
+        public const uint WM_EXITSIZEMOVE = 0x0232;
+
         // TRACKMOUSEEVENT flags. NONCLIENT is the one that matters here: the drag bar answers the
         // hit test with caption codes, so its mouse messages are all non-client ones.
         public const uint TME_LEAVE = 0x00000002;
@@ -192,6 +220,21 @@ namespace Telegram.Host
         [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static partial bool TrackMouseEvent(ref TRACKMOUSEEVENT lpEventTrack);
+
+        [LibraryImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+        [LibraryImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool SetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+        [LibraryImport("user32.dll")]
+        public static partial IntPtr MonitorFromRect(ref RECT lprc, uint dwFlags);
+
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool GetMonitorInfoW(IntPtr hMonitor, ref MONITORINFO lpmi);
 
         [LibraryImport("user32.dll", SetLastError = true)]
         public static partial IntPtr CreateWindowExW(uint dwExStyle, IntPtr lpClassName, IntPtr lpWindowName,
