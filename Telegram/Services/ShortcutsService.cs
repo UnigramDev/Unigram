@@ -21,6 +21,7 @@ namespace Telegram.Services
     public interface IShortcutsService
     {
         InvokedShortcut Process(AcceleratorKeyEventArgs args, out VirtualKeyModifiers modifiers);
+        InvokedShortcut Process(VirtualKey key, out VirtualKeyModifiers modifiers);
 
         bool TryGetShortcut(KeyRoutedEventArgs args, out Shortcut shortcut);
 
@@ -200,6 +201,20 @@ namespace Telegram.Services
             }
 
             return Process(modifiers, args.VirtualKey);
+        }
+
+        // An overload rather than a rewrite of the one above: that one is on the UWP path and is
+        // left alone. Win32 has no AcceleratorKeyEventArgs to hand over, only the key.
+        public InvokedShortcut Process(VirtualKey key, out VirtualKeyModifiers modifiers)
+        {
+            modifiers = WindowContext.KeyModifiers();
+
+            if (key is >= VirtualKey.NumberPad0 and <= VirtualKey.NumberPad9)
+            {
+                return Process(modifiers, VirtualKey.Number0 + (key - VirtualKey.NumberPad0));
+            }
+
+            return Process(modifiers, key);
         }
 
         private InvokedShortcut Process(VirtualKeyModifiers modifiers, VirtualKey key)

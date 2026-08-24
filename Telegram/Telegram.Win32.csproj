@@ -1,15 +1,20 @@
-<!--
+﻿<!--
   Sdk.props is imported by hand rather than through the Sdk attribute because three properties
   have to be set before it: the two output paths, so this project does not share obj\ and bin\
   with Telegram.csproj, and DefaultItemExcludes, because the default globs would otherwise
   compile Telegram.csproj's own generated output - its XamlTypeInfo.g.cs, every page's .g.cs, and
   the .NET Native ilc sources under bin\ - as if they were app source.
+
+  This is the Win32 flavour: the same app sources, hosted in a plain desktop process through XAML
+  Islands instead of the UWP app model. It differs from Telegram.Modern.csproj in four places -
+  the output paths, Exe instead of WinExe with our own Program.Main, the file fork, and no MSIX
+  packaging yet. notes/win32-xaml-islands.md is the plan this belongs to.
 -->
 <Project>
 
   <PropertyGroup>
-    <BaseIntermediateOutputPath>obj\modern\</BaseIntermediateOutputPath>
-    <BaseOutputPath>bin\modern\</BaseOutputPath>
+    <BaseIntermediateOutputPath>obj\win32\</BaseIntermediateOutputPath>
+    <BaseOutputPath>bin\win32\</BaseOutputPath>
     <DefaultItemExcludes>$(DefaultItemExcludes);obj\**;bin\**</DefaultItemExcludes>
   </PropertyGroup>
 
@@ -30,7 +35,18 @@
   -->
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <!-- Exe, and the console stays attached: this host has no splash screen and nothing else
+         reports a failure to start. DisableWinExeOutputInference keeps the SDK from inferring
+         WinExe back from the WinRT TFM. -->
+    <OutputType>Exe</OutputType>
+    <DisableWinExeOutputInference>true</DisableWinExeOutputInference>
+    <!-- DISABLE_XAML_GENERATED_MAIN is set below, but the UWP XAML targets rewrite
+         DefineConstants after this project body runs, so the generated Application.Start
+         entry point survives it. Naming ours settles the ambiguity either way. -->
+    <StartupObject>Telegram.Host.Program</StartupObject>
+    <!-- Not UseUwp alone: UseUwpTools is what pulls in the UWP XAML compiler targets on a desktop
+         output, per Microsoft.Windows.UI.Xaml.CSharp.ModernNET.ImportAfter.targets. -->
+    <UseUwpTools>true</UseUwpTools>
     <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
     <RootNamespace>Telegram</RootNamespace>
@@ -45,7 +61,10 @@
     <!-- Set here rather than passed on the command line: as a global property it flows into the
          ProjectReference, and Telegram.Generators is netstandard2.0, which cannot AOT
          (NETSDK1207). Publish with SelfContained and no -p:PublishAot to get a CoreCLR layout. -->
-    <PublishAot>true</PublishAot>
+    <!-- Release only: ILC is the whole cost of a Debug deploy, which publishes through the
+         packaging project, and nothing about a debug session wants a native image. SelfContained
+         in the publish profile is what makes the CoreCLR layout it falls back to work. -->
+    <PublishAot Condition="'$(Configuration)' != 'Debug'">true</PublishAot>
     <!-- PublishAot turns the trim analyzer on for every build, and it is 98% of the
          analyzer time in the compile - 765 CPU-seconds, ~16s of wall clock. Nothing is
          trimmed in a Debug build, and publish and Release still run it, so it gates
@@ -53,6 +72,10 @@
     <EnableTrimAnalyzer Condition="'$(Configuration)' == 'Debug'">false</EnableTrimAnalyzer>
     <EnableAotAnalyzer Condition="'$(Configuration)' == 'Debug'">false</EnableAotAnalyzer>
     <EnableSingleFileAnalyzer Condition="'$(Configuration)' == 'Debug'">false</EnableSingleFileAnalyzer>
+    <!-- 15s of a Debug build, measured with ReportAnalyzer: CA2252 alone is 7.5s and only says
+         anything about preview APIs. Release still runs them, so they gate releases rather than
+         the inner loop - the same trade as the three analyzers above. -->
+    <EnableNETAnalyzers Condition="'$(Configuration)' == 'Debug'">false</EnableNETAnalyzers>
     <!-- Turns off the runtime's marshalling subsystem for this assembly: only blittable types may
          cross a P/Invoke, and everything else is marshalled by the LibraryImport generator in C#
          instead. The SDK turns this property into the assembly attribute.
@@ -65,7 +88,14 @@
     <!-- The CsWinRT generators are the interesting output of this project: what they emit for
          [GeneratedBindableCustomProperty] is what classic {Binding} and ItemsPath resolve
          through once AOT has trimmed reflection away. -->
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <EmitCompilerGeneratedFiles Condition="'$(Configuration)' != 'Debug'">true</EmitCompilerGeneratedFiles>
+
+    <!-- Debug is not AOT, so none of this is needed to run - and both cost on every keystroke, not
+         just on build: the optimizer is a source generator and the warning level is what raises the
+         ~1800 CsWinRT1034 diagnostics the IDE recomputes live. CsWinRTAotExportsEnabled turns
+         itself off with PublishAot. -->
+    <CsWinRTAotOptimizerEnabled Condition="'$(Configuration)' == 'Debug'">false</CsWinRTAotOptimizerEnabled>
+    <CsWinRTAotWarningLevel Condition="'$(Configuration)' == 'Debug'">0</CsWinRTAotWarningLevel>
 
     <!-- Properties\AssemblyInfo.cs stays with the legacy project (see the Compile Remove below);
          these carry its values over to the attributes the SDK generates in its place. -->
@@ -75,7 +105,10 @@
 
     <!-- The .NET Native project's constants, minus the ones that were only ever about it.
          NET9_0_OR_GREATER arrives on its own and is what the source already switches on. -->
-    <DefineConstants>$(DefineConstants);NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <!-- DISABLE_XAML_GENERATED_MAIN suppresses the Main the XAML compiler emits, which calls
+         Application.Start - the UWP entry point. Host\Program.cs runs instead and owns the
+         message loop. -->
+    <DefineConstants>$(DefineConstants);NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <NoWarn>$(NoWarn);2008</NoWarn>
   </PropertyGroup>
 
@@ -93,68 +126,12 @@
     <Compile Remove="Td\Api\ChatProjection.cs" />
     <!-- The SDK generates these attributes itself, and two sets of them is CS0579. -->
     <Compile Remove="Properties\AssemblyInfo.cs" />
-    <!-- The other side of the fork Telegram.Win32.csproj makes: its host partials and its own
-         process entry point are on disk beside these sources and must not be compiled here. -->
-    <Compile Remove="**\*.Win32.cs" />
-    <Compile Remove="Host\**" />
+    <!-- The fork. Every host-specific member lives in a *.Uwp.cs / *.Win32.cs partial beside its
+         shared half, and only one of the two is ever compiled - which is what makes the contract
+         a compile error rather than an interface. -->
+    <Compile Remove="**\*.Uwp.cs" />
   </ItemGroup>
 
-  <!--
-    A separate identity, so this installs beside the .NET Native build instead of replacing it -
-    different package family means a separate LocalState too, so the two do not share an account.
-    Patched into obj rather than kept as a second manifest: the real one is 108 lines of
-    capabilities, extensions and file associations, and a copy would drift the first time one of
-    them changes.
-  -->
-  <PropertyGroup>
-    <!-- Single-project MSIX, so this project can deploy and run on its own while the port is in
-         progress. Telegram.Msix still packages the shipping build; Phase 6 decides whether the
-         modern one joins it there or keeps packaging itself. Without EnableMsixTooling the PRI
-         targets are half-configured and fail on IntermediateExtension. -->
-    <AppxPackage>true</AppxPackage>
-    <EnableMsixTooling>true</EnableMsixTooling>
-    <ModernPackageIdentity>38833FF26BA1D.UnigramNet10</ModernPackageIdentity>
-    <ModernPackageDisplayName>Unigram .NET 10</ModernPackageDisplayName>
-    <!-- BaseIntermediateOutputPath, not IntermediateOutputPath: the latter is still empty when
-         this evaluates, which collapses the destination onto Package.appxmanifest itself and
-         rewrites the source manifest in place. The guard below is there because that happened. -->
-    <!-- Alternative installs beside Telegram.csproj's package; Original replaces it. In the path
-         as well as the condition, because the target is incremental on the source manifest and
-         this file - flipping the property alone would leave the previous manifest in place. -->
-    <ModernIdentity Condition="'$(ModernIdentity)' == ''">Alternative</ModernIdentity>
-    <ModernAppxManifest>$(BaseIntermediateOutputPath)Package.$(ModernIdentity).appxmanifest</ModernAppxManifest>
-    <ModernManifestNamespaces>&lt;Namespace Prefix='f' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;&lt;Namespace Prefix='uap' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10' /&gt;</ModernManifestNamespaces>
-  </PropertyGroup>
-
-  <Target Name="PatchModernAppxManifest"
-          BeforeTargets="PrepareForBuild"
-          Inputs="Package.appxmanifest;$(MSBuildThisFileFullPath)"
-          Outputs="$(ModernAppxManifest)">
-    <PropertyGroup>
-      <_ModernManifestFull>$([System.IO.Path]::GetFullPath('$(ModernAppxManifest)'))</_ModernManifestFull>
-      <_SourceManifestFull>$([System.IO.Path]::GetFullPath('Package.appxmanifest'))</_SourceManifestFull>
-    </PropertyGroup>
-    <Error Condition="'$(_ModernManifestFull)' == '$(_SourceManifestFull)'"
-           Text="ModernAppxManifest resolves to the source manifest; patching it would rewrite Telegram.csproj's own identity." />
-    <Copy SourceFiles="Package.appxmanifest" DestinationFiles="$(ModernAppxManifest)" />
-    <!-- -p:ModernIdentity=Original leaves the copy alone, so this deploys as the identity
-         Telegram.csproj uses and replaces it rather than installing beside it. -->
-    <XmlPoke Condition="'$(ModernIdentity)' != 'Original'"
-             XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
-             Query="/f:Package/f:Identity/@Name" Value="$(ModernPackageIdentity)" />
-    <XmlPoke Condition="'$(ModernIdentity)' != 'Original'"
-             XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
-             Query="/f:Package/f:Properties/f:DisplayName" Value="$(ModernPackageDisplayName)" />
-    <XmlPoke Condition="'$(ModernIdentity)' != 'Original'"
-             XmlInputPath="$(ModernAppxManifest)" Namespaces="$(ModernManifestNamespaces)"
-             Query="/f:Package/f:Applications/f:Application/uap:VisualElements/@DisplayName" Value="$(ModernPackageDisplayName)" />
-  </Target>
-
-  <ItemGroup>
-    <!-- The .resw under Strings\ need no PRIResource items: with the MSIX tooling on, the SDK
-         globs them itself, and listing them as well is NETSDK1022. -->
-    <AppxManifest Include="$(ModernAppxManifest)" />
-  </ItemGroup>
 
   <!--
     Content needs CopyToOutputDirectory here. The legacy UWP project system packaged Content
@@ -186,6 +163,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Explicit, where Telegram.Modern.csproj gets them implicitly. The MSIX props hook in
+         through CustomBeforeMicrosoftCommonTargets and are what define WindowsPackageType,
+         AppxPackageDir and the PRI targets; without them AppxPackage and EnableMsixTooling are
+         inert properties and the build silently produces no manifest and no resources.pri.
+         Versions are the ones Modern resolves to. -->
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4654" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools.MSIX" Version="1.7.20250806.1" />
     <PackageReference Include="Clipper2" Version="1.5.4" />
     <PackageReference Include="Markdig" Version="1.3.2" />
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.8.7" />
@@ -225,6 +209,92 @@
     <CsWinRTInputs Include="$(NuGetPackageRoot)win2d.uwp\1.28.3\lib\uap10.0\Microsoft.Graphics.Canvas.winmd" />
   </ItemGroup>
 
+
+  <!--
+    Identity, and it is not optional: LifetimeService.Initialize touches ApplicationData.Current
+    from App's constructor, so an unpackaged launch dies before XAML matters.
+
+    Patched out of the one real manifest rather than kept as a copy, for the reason
+    Telegram.Modern.csproj gives - 108 lines of capabilities, extensions and file associations
+    would drift the first time one of them changed. A third identity, so this installs beside both
+    of the others.
+  -->
+  <PropertyGroup>
+    <AppxPackage>true</AppxPackage>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <Win32PackageIdentity>38833FF26BA1D.UnigramWin32</Win32PackageIdentity>
+    <Win32PackageDisplayName>Unigram Win32</Win32PackageDisplayName>
+    <Win32AppxManifest>$(BaseIntermediateOutputPath)Package.Win32.appxmanifest</Win32AppxManifest>
+    <Win32ManifestNamespaces>&lt;Namespace Prefix='f' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;&lt;Namespace Prefix='uap' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10' /&gt;&lt;Namespace Prefix='uap5' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10/5' /&gt;&lt;Namespace Prefix='rescap' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities' /&gt;</Win32ManifestNamespaces>
+  </PropertyGroup>
+
+  <Target Name="PatchWin32AppxManifest"
+          BeforeTargets="PrepareForBuild"
+          Inputs="Package.appxmanifest;$(MSBuildThisFileFullPath)"
+          Outputs="$(Win32AppxManifest)">
+    <PropertyGroup>
+      <_Win32ManifestFull>$([System.IO.Path]::GetFullPath('$(Win32AppxManifest)'))</_Win32ManifestFull>
+      <_SourceManifestFull>$([System.IO.Path]::GetFullPath('Package.appxmanifest'))</_SourceManifestFull>
+    </PropertyGroup>
+    <Error Condition="'$(_Win32ManifestFull)' == '$(_SourceManifestFull)'"
+           Text="Win32AppxManifest resolves to the source manifest; patching it would rewrite the shipping identity." />
+    <Copy SourceFiles="Package.appxmanifest" DestinationFiles="$(Win32AppxManifest)" />
+
+    <!-- Deletions first, through XSLT, because XmlPoke can only set values. Everything below is a
+         rename it can do. -->
+    <XslTransformation XmlInputPaths="$(Win32AppxManifest)"
+                       XslInputPath="Package.Win32.xslt"
+                       OutputPaths="$(Win32AppxManifest).tmp" />
+    <Copy SourceFiles="$(Win32AppxManifest).tmp" DestinationFiles="$(Win32AppxManifest)" />
+    <Delete Files="$(Win32AppxManifest).tmp" />
+
+    <XmlPoke XmlInputPath="$(Win32AppxManifest)" Namespaces="$(Win32ManifestNamespaces)"
+             Query="/f:Package/f:Identity/@Name" Value="$(Win32PackageIdentity)" />
+    <XmlPoke XmlInputPath="$(Win32AppxManifest)" Namespaces="$(Win32ManifestNamespaces)"
+             Query="/f:Package/f:Properties/f:DisplayName" Value="$(Win32PackageDisplayName)" />
+    <XmlPoke XmlInputPath="$(Win32AppxManifest)" Namespaces="$(Win32ManifestNamespaces)"
+             Query="/f:Package/f:Applications/f:Application/uap:VisualElements/@DisplayName" Value="$(Win32PackageDisplayName)" />
+
+    <!-- The whole point of the patch. A packaged Win32 app is a full trust entry point rather than
+         a UWP activatable class, and the two extensions that name the class have to follow it. -->
+    <XmlPoke XmlInputPath="$(Win32AppxManifest)" Namespaces="$(Win32ManifestNamespaces)"
+             Query="/f:Package/f:Applications/f:Application/@EntryPoint" Value="Windows.FullTrustApplication" />
+    <XmlPoke XmlInputPath="$(Win32AppxManifest)" Namespaces="$(Win32ManifestNamespaces)"
+             Query="/f:Package/f:Applications/f:Application/f:Extensions/uap5:Extension/@EntryPoint" Value="Windows.FullTrustApplication" />
+
+    <!-- This flavour installs beside a Telegram the machine is actually used with, so it must not
+         compete for anything the shell dispatches. XmlPoke cannot delete nodes, so the claims are
+         renamed out of the way instead: a tg: link, a typed Telegram.exe or a .unigram-theme file
+         still reach the shipping app. The share target survives as one extra entry in the sheet,
+         which is harmless and cannot be renamed away. -->
+    <XmlPoke XmlInputPath="$(Win32AppxManifest)" Namespaces="$(Win32ManifestNamespaces)"
+             Query="/f:Package/f:Applications/f:Application/f:Extensions/uap:Extension/uap:Protocol[@Name='tg']/@Name" Value="tg-win32" />
+    <XmlPoke XmlInputPath="$(Win32AppxManifest)" Namespaces="$(Win32ManifestNamespaces)"
+             Query="/f:Package/f:Applications/f:Application/f:Extensions/uap:Extension/uap:Protocol[@Name='tonsite']/@Name" Value="tonsite-win32" />
+    <XmlPoke XmlInputPath="$(Win32AppxManifest)" Namespaces="$(Win32ManifestNamespaces)"
+             Query="/f:Package/f:Applications/f:Application/f:Extensions/uap5:Extension/uap5:AppExecutionAlias/uap5:ExecutionAlias/@Alias" Value="TelegramWin32.exe" />
+    <XmlPoke XmlInputPath="$(Win32AppxManifest)" Namespaces="$(Win32ManifestNamespaces)"
+             Query="/f:Package/f:Applications/f:Application/f:Extensions/uap:Extension/uap:FileTypeAssociation/uap:SupportedFileTypes/uap:FileType" Value=".unigram-theme-win32" />
+
+  </Target>
+
+  <ItemGroup>
+    <AppxManifest Include="$(Win32AppxManifest)" />
+  </ItemGroup>
+
+  <Target Name="PatchWin32FinalManifest" AfterTargets="_GenerateAppxManifest"
+          Condition="Exists('$(FinalAppxManifestName)')">
+    <PropertyGroup>
+      <_VCLibsName Condition="'$(Configuration)' == 'Debug'">Microsoft.VCLibs.140.00.Debug</_VCLibsName>
+      <_VCLibsName Condition="'$(_VCLibsName)' == ''">Microsoft.VCLibs.140.00</_VCLibsName>
+    </PropertyGroup>
+    <XslTransformation XmlInputPaths="$(FinalAppxManifestName)"
+                       XslInputPath="Package.Win32.Final.xslt"
+                       OutputPaths="$(FinalAppxManifestName).tmp"
+                       Parameters="&lt;Parameter Name='VCLibsName' Value='$(_VCLibsName)' /&gt;" />
+    <Copy SourceFiles="$(FinalAppxManifestName).tmp" DestinationFiles="$(FinalAppxManifestName)" />
+    <Delete Files="$(FinalAppxManifestName).tmp" />
+  </Target>
   <!-- Kept in step with Telegram.csproj by hand: the generator reads TdParsers and emits parsers,
        the hand-written code reads the constants and calls them, so the two projects must agree or
        the generated file calls helpers that were compiled out.
@@ -242,11 +312,23 @@
     <DefineConstants>$(DefineConstants);TD_POINTER_PARSER</DefineConstants>
   </PropertyGroup>
 
+  <!-- Opt-in (-p:Instrumented=true): compiles in the Profiler probes and Instrumentation.Register,
+       which keeps a WeakReference per registered object for the session, so it must not reach a
+       shipping build. Telegram.csproj has it on in Debug instead. -->
+  <PropertyGroup Condition="'$(Instrumented)' == 'true'">
+    <DefineConstants>$(DefineConstants);INSTRUMENTATION</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Telegram.Generators\Telegram.Generators.csproj"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
+    <!-- DynamicCastRootGenerator runs a semantic query per cast in the app - 8.8s a build - and
+         exists only so trimming cannot drop the metadata a cast needs. Debug is not trimmed, so
+         what it emits there is inert. WinRTExposedTypeAnalyzer goes with it, and reports on a
+         Release build instead. -->
     <ProjectReference Include="..\Telegram.Generators.WinRT\Telegram.Generators.WinRT.csproj"
+                      Condition="'$(Configuration)' != 'Debug'"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
     <AdditionalFiles Include="..\Libraries\tdjson\td_api.tl" />

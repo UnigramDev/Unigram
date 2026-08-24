@@ -6,7 +6,7 @@
          the runtime DLLs in its output and its package - both builds of it, since Telegram.Modern
          packages the same dependencies. Without it there libvlc loads and then dies, its plugins
          never having been copied. -->
-    <TelegramUsesVcpkg Condition="'$(MSBuildProjectName)' == 'Telegram.Native' Or '$(MSBuildProjectName)' == 'Telegram.Native.Calls' Or '$(MSBuildProjectName)' == 'Telegram' Or '$(MSBuildProjectName)' == 'Telegram.Modern'">true</TelegramUsesVcpkg>
+    <TelegramUsesVcpkg Condition="'$(MSBuildProjectName)' == 'Telegram.Native' Or '$(MSBuildProjectName)' == 'Telegram.Native.Calls' Or '$(MSBuildProjectName)' == 'Telegram' Or '$(MSBuildProjectName)' == 'Telegram.Modern' Or '$(MSBuildProjectName)' == 'Telegram.Win32'">true</TelegramUsesVcpkg>
   </PropertyGroup>
 
   <!-- Where vcpkg lives, in order of preference: an explicit override, the VCPKG_ROOT variable,

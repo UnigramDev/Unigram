@@ -496,11 +496,38 @@ than `CoreDispatcher`. Most of this phase is finishing a job that is well starte
   So this is not a 26-site mechanical conversion. What actually needs work is only the handful
   that reach a dispatcher through types that *do* disappear:
 
-  - **`Navigation/InputListener.cs` — the real one.** Built entirely on `Window`:
-    `_window.Dispatcher.AcceleratorKeyActivated` and `_window.CoreWindow.PointerPressed`. This is
-    the app's global keyboard entry point (Escape, back/forward, gamepad shoulders), so it has to
-    be rebuilt on the island root's `KeyDown`/`PreviewKeyDown` or on the host's message loop —
-    which already runs `PreTranslateMessage` for exactly this reason. Small class, real rewrite.
+  - [x] **`Navigation/InputListener.cs` — done 2026-08-24, and the advice here was wrong.**
+    It said to rebuild on the island root's `KeyDown`/`PreviewKeyDown` *or* the host's message
+    loop. Routed events are not an option, for two reasons that only turned up on contact:
+
+    - `AcceleratorKeyActivated` distinguishes `SystemKeyDown`, and the handler depends on it —
+      `Alt+Left` and `Alt+Back` go through `VirtualKeyModifiers.Menu`.
+    - It fires *before* the tree, so it still sees keys a focused `RichEditBox` swallows, and
+      keys pressed while focus is in a WebView2, which is not in the XAML tree at all.
+
+    Fela had already tried the routed-event route once, without success, which is very likely
+    the same wall. So: **the message loop, and a fork of the class.**
+
+    The shape matters as much as the choice. The first attempt raised app-owned events off
+    `WindowContext` and fed them per host — which reads well, but moved the `CoreWindow`
+    subscriptions in the *shipping* app, changed `IShortcutsService.Process`, and put an args
+    allocation on every keystroke. Fela: *"I would prefer to keep UWP as it is as it ships to
+    millions"*, and *"if you have to fire a new event try to cache the args instead of recreating
+    per key stroke/mouse click"*. Forking removes the question entirely — no event, no args:
+
+    - `InputListener.cs` became `InputListener.Uwp.cs`, **content byte-identical** (git reports a
+      pure rename); only its `Telegram.csproj` entry changed.
+    - `InputListener.Win32.cs` implements `IMessageFilter`, which `IslandWindow` consults ahead
+      of its own accelerator handling. `WM_KEYDOWN`/`WM_SYSKEYDOWN` carry the virtual key in
+      `wParam`; `WM_XBUTTONDOWN` carries the button chord in its low word, so the back/forward
+      gesture reads it directly with no `PointerPoint`.
+    - `ShortcutsService` gained a `Process(VirtualKey, out modifiers)` **overload** rather than a
+      changed signature, so the UWP call site is untouched.
+
+    The decision logic is a deliberate copy, not a shared base: the two halves differ only in
+    where the key comes from, and the UWP one ships. About forty lines, and the rule that bought
+    it — **an edit to a shipping path needs a better reason than symmetry** — is worth keeping
+    for the rest of the fork.
   - `Views/InstantPage.xaml.cs:91` — a second `AcceleratorKeyActivated` handler, same treatment.
   - `Services/ViewService/ViewService.cs:118` — `CoreApplication.MainView.Dispatcher.RunAsync`;
     goes with `CoreApplication` in 0.4.
@@ -1589,7 +1616,39 @@ the partial split the others take.
 on every UI thread. UWP does it per view for free; without it every `await` on a TDLib result
 resumes on a TDLib thread, and the failures look like anything but a missing sync context.
 
+**Confirmed 2026-08-24, and the source is exact**: the Main the XAML compiler generates - the one
+`DISABLE_XAML_GENERATED_MAIN` suppresses - is where it was being set:
 
+    Application.Start((p) => {
+        SynchronizationContext.SetSynchronizationContext(
+            new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread()));
+        new App();
+    });
+
+Taking over the entry point means carrying that line across, and `Host\Program.cs` now does, before
+constructing `App`. Anything that gives a thread an island will have to do the same - the spike
+never noticed because it awaited nothing.
+
+
+
+**The Win32 flavour ships as a *packaged* Win32 app** — Fela, 2026-08-24: "the codebase
+definitely needs an identity to run". That is a decision, not a preference, and it settles more
+than it looks:
+
+- **Package identity is what the app is built on.** `ApplicationData.Current` (settings,
+  `LocalState`, the TDLib database path), notifications, background tasks, protocol and
+  file-type activation, the share target — all of it needs identity, and all of it keeps
+  working unchanged. None of it joins the fork.
+- **Registration-free WinRT never comes up.** The package manifest declares the activatable
+  classes, exactly as it does today, so `Telegram.Native` / `Telegram.Native.Calls` activate the
+  way they always have. An unpackaged host would have had to fall back to
+  `DllGetActivationFactory` probing.
+- **Full trust, not AppContainer.** A packaged Win32 app is an `Application` entry with
+  `EntryPoint="Windows.FullTrustApplication"`, which *requires* `runFullTrust` — see 2.4, which
+  said the opposite.
+
+So the surface that actually forks stays what the file count measures: the view and app-model
+APIs, and nothing else.
 
 - [ ] **2.0** Retire the .NET Native project **when .NET 10 has earned it**, not before, and not
   as a precondition for anything here. It is what ships to users; "three flavours is one too
@@ -1599,17 +1658,268 @@ resumes on a TDLib thread, and the failures look like anything but a missing syn
   This corrects an earlier reading of this item that treated it as a gate on Phase 2. It is not:
   the islands host ships to nobody and carries no user risk, so it needs time rather than
   permission.
+- [x] **2.1a The Win32 flavour builds. 2026-08-24, `Telegram.exe` out of `bin\win32\`.**
+  This is the headline of the whole phase, and it is much further along than any estimate here.
+  The whole app - every page, control, view model and service - compiles and links into a plain
+  desktop process. It has not been *run*; that needs package identity, which is the next item.
+
+  It took four fixes past the first build, and two of them were corrections to this plan rather
+  than new work:
+
+  - **`InputListener`** - forked. See item 0.1, where the detail lives.
+  - **The `#region Legacy code` activation methods were never UWP-specific.** They went into
+    `WindowContext.Uwp.cs` during the split because they name `IActivatedEventArgs`, but that is a
+    projection both hosts have - a packaged Win32 app is activated with the same args - and the
+    three `Activate(...)` overloads are app logic: switch on the authorization state, navigate.
+    They moved back to shared, which makes the fork *smaller*. Only `UpdateTitleBar` /
+    `ClearTitleBar` were ever per host, and that region is now called `#region Title bar`.
+  - **`BootStrapper` does not fork as a class.** The note said its base type differs and called it
+    "a bigger rework than the partial split the others take". Wrong twice over: `App : Application`
+    works inside an island (gate 1.3a), and of its 827 lines exactly one method needed moving.
+    `BootStrapper.Uwp.cs` is 127 lines - `OnWindowCreated`, the window `Activated`/`Closed`
+    handlers, `OnWindowClosed`, `CreateWindowWrapper` - and `BootStrapper.Win32.cs` is 43. All the
+    rest, activation included, compiles against either host: they are overrides the framework
+    simply never raises when there is no `Application.Start`.
+  - **One seam, `private partial WindowContext EnsureWindowContext(IActivatedEventArgs e)`.**
+    `InitializeFrame` needed a context and used to build one from `Window.Current`; now each host
+    supplies it - UWP reuses what `OnWindowCreated` made, Win32 creates an `IslandWindow`. A
+    partial method with a return type has to be implemented, so the contract is a compile error.
+  - **`OnWindowActivated(Window, bool)` became `OnWindowActivated(WindowContext, bool)`** - one
+    virtual, one override in `App.xaml.cs`, no behaviour change, and the last `Window` in a
+    signature the app overrides. Item 0.2. The UWP handler passes `WindowContext.Current`, which
+    is legitimate *there*: it runs on the window's own thread and a UWP view has one window.
+
+  `Telegram/Telegram.Win32.csproj` is `Telegram.Modern.csproj` with four differences: its own
+  `obj\win32\` / `bin\win32\`, `Exe` + our own `Program.Main` instead of `WinExe`,
+  `<Compile Remove="**\*.Uwp.cs" />`, and no MSIX packaging yet. `Telegram.Modern.csproj` gained
+  the mirror image — `Remove **\*.Win32.cs` and `Remove Host\**` — and still builds clean.
+
+  The host came straight out of the spike into `Telegram\Host\`: `IslandWindow` (+ its
+  non-client half), `IslandNative`, the `Win32` P/Invokes, and a `Program.Main` that sets DPI
+  awareness, makes a `DispatcherQueue`, constructs `App` *before* `WindowsXamlManager` (gate
+  1.3a) and pumps its own loop. `WindowContext.Win32.cs` implements the contract: real where the
+  spike answered it (activation, foreground, key state, `Content`, `Detach`), `NotImplemented`
+  where it did not, and **absent** where the member is UWP-only, so its callers are errors.
+
+  **The first build stopped at eight errors in three files** - listed here because the shape of
+  the list is the result, not its length:
+
+  - `InputListener.cs:22,23,28,29` — `context.CoreWindow` four times. Already item 0.1's
+    "small class, real rewrite": accelerator keys and pointer-pressed off `CoreWindow`.
+  - `BootStrapper.cs:134` — `context.CoreWindow == window.CoreWindow`, and `:144`
+    `CreateWindowWrapper(Window)`. The `BootStrapper` fork, and both are in window creation.
+  - `App.xaml.cs:85` — `GetNavigationService(Window)`, and `:178` —
+    `Activate(IActivatedEventArgs, INavigationService, AuthorizationState)`.
+
+  Nothing on that list was a surprise; every one was already catalogued, and all eight are now
+  fixed. What the build proved even before that is the part worth keeping: **the rest of the app
+  needs no change at all** to compile against a desktop host. The Phase 0 items that remain are
+  real work, but they are not in the way of a Win32 build any more.
+
+  Two things learned standing it up:
+
+  - **`DISABLE_XAML_GENERATED_MAIN` is not enough here.** The constant is set, and the guard is in
+    the generated `App.g.i.cs`, but the UWP XAML targets rewrite `DefineConstants` after the
+    project body runs, so `Application.Start` survives and collides with ours (CS0017).
+    `<StartupObject>Telegram.Host.Program</StartupObject>` settles it. The spike never hit this
+    because its own `App` is trivial and its TFM has no UWP app model attached.
+  - `WindowContext.Id` is an `int` and an HWND is not. Nothing outside the app reads it now that
+    `ViewService` returns `WindowContext` (item 0.4), so the Win32 half hands out an incrementing
+    counter — which is also the only thing that means anything on a host with no view ids.
+
+- [x] **2.1b Packaged, registered, and it starts. 2026-08-24.** It does not get a window yet -
+  it dies in `App`'s constructor - but everything before that works, and the failures on the way
+  were all worth having.
+
+  **Startup.** `Program.Main` calls `app.Start(AppInstance.GetActivatedEventArgs())`;
+  `BootStrapper.Win32.cs` dispatches to `OnLaunched` or `CallInternalActivated`. Real activation
+  arguments rather than an invented launch, so protocol links, share targets and file activation
+  all reach the existing paths for free.
+
+  **Identity.** `Telegram.Win32.csproj` patches the one real manifest, as the Modern project does:
+  a third identity (`38833FF26BA1D.UnigramWin32`), `EntryPoint="Windows.FullTrustApplication"` on
+  the application and on the two `uap5:Extension` entries that name the class, and
+  `TargetDeviceFamily` to `Windows.Desktop`. Register with `Add-AppxPackage -Register` against
+  `publish\AppxManifest.xml`, never the build output directory - see net10-port-todo Phase 4.
+  Remove with `Get-AppxPackage 38833FF26BA1D.UnigramWin32 | Remove-AppxPackage`.
+
+  Four things had to be true before it would even register, and none were obvious:
+
+  - **`AppxPackage` and `EnableMsixTooling` are inert without
+    `Microsoft.Windows.SDK.BuildTools[.MSIX]`.** Telegram.Modern.csproj gets them implicitly;
+    this project did not, and the symptom is silence - the build succeeds and simply produces no
+    `AppxManifest.xml` and no `resources.pri`. `-getProperty:AppxPackageDir,ProjectPriFullPath`
+    coming back empty is the tell. They are explicit `PackageReference`s here.
+  - **A full trust application cannot host an in-process app service.** `windows.appService` fails
+    registration with 0x80080204 wanting an EntryPoint it cannot name. Telegram.Stub's bridge is
+    on the list to retire here anyway (2.5), so it is removed rather than ported.
+  - **`XmlPoke` cannot delete nodes or add them**, which is what the capability trimming of item
+    2.4 needs. `Package.Win32.xslt` does the deletions and the one insertion; the csproj keeps
+    XmlPoke for the renames. One manifest is still the source of truth.
+  - **`Capabilities` is an ordered element** - every `Capability` before the first
+    `DeviceCapability` - so `runFullTrust` has to be inserted between the two groups, not
+    appended. Appending is 0xC00CE014.
+
+  Also worth doing before installing anything: the package claims `tg:`, `tonsite:`, a
+  `Telegram.exe` execution alias and `.unigram-theme`, on a machine where Telegram is actually
+  used. They are renamed out of the way (`tg-win32`, `TelegramWin32.exe`, ...) so a real link or
+  file still reaches the shipping app.
+
+  **Then two runtime failures, in order:**
+
+  - **`DisableRuntimeMarshalling` is on, and `Telegram.Host` was written with `DllImport`.**
+    `MarshalDirectiveException` on the first P/Invoke. The app converted everything to
+    `LibraryImport` for exactly this reason, and the new host had to follow: the class is
+    `partial`, `CharSet` is gone (every string here is already an `IntPtr` from
+    `StringToHGlobalUni`), and each `bool` needs an explicit
+    `[return: MarshalAs(UnmanagedType.Bool)]` because a `bool` is not blittable.
+  - **`REGDB_E_CLASSNOTREG` from CsWinRT is a lie**, and cost two wrong theories before the
+    right one. `RLottie.LottieAnimation` threw it out of `ActivationFactory.ManifestFreeGet`, which
+    reads as a registration problem. It is not: **nothing registers these components in either
+    flavour** - both manifests carry 107 `ActivatableClassId` entries and every one is Win2D or
+    WebView2, out of their own NuGet snippets. CsWinRT resolves ours by LoadLibrary +
+    `DllGetActivationFactory`, so the error only ever means *the DLL did not load*. Two reasons it
+    did not, found by diffing the layouts against Modern's rather than by reasoning:
+
+    - **The store CRT.** Modern's generated manifest declares `Microsoft.VCLibs.140.00.Debug` and
+      this one did not, so nothing satisfied what the C++/WinRT components link against.
+      `Package.Win32.Final.xslt` adds it - and it has to run on the *generated* manifest, after
+      `_GenerateAppxManifest`, because the packaging targets append their own `TargetDeviceFamily`
+      and `PackageDependency` entries afterwards and `Dependencies` is an ordered element.
+    - **The vcpkg runtime.** `Directory.Build.props` gates `TelegramUsesVcpkg` on the project
+      *name*, so `Telegram.Win32` got no ffmpeg, libvlc, dav1d, opus or lz4 and
+      `Telegram.Native.dll` could not load either. One name added to that condition.
+
+    The lesson worth keeping: **when a packaged app cannot activate an in-package component,
+    diff its layout and its generated manifest against one that works** - the error text points
+    at registration and the fault is almost always a load failure.
+
+  - **Two UWP app model assumptions in shared code**, both fixed with the same partial seam as
+    `SetHostContent`, both behaviour-identical on UWP:
+
+    - **`Application.RequestedTheme`** fails fast in an island. Fela's rule is that it must be set
+      before `InitializeComponent` and cannot change after - and an island host never runs the app
+      model startup during which it is settable at all, so it is not settable. It is not needed
+      either: every island root already takes its theme from
+      `NightModeService.GetCalculatedElementTheme` in `WindowContext.SetContent`. Now
+      `protected partial void SetApplicationTheme(ApplicationTheme)`. **Open question** - popups
+      resolve against `Application.Resources`, so whether the app theme still reaches them on this
+      host is untested.
+    - **`LaunchActivatedEventArgs.PrelaunchActivated`** is an `InvalidCastException`, not a false:
+      the desktop activation arguments do not implement `IPrelaunchActivatedEventArgs`. Now
+      `protected partial bool IsPrelaunch(LaunchActivatedEventArgs)`. `InternalLaunch` read it
+      twice; the second read goes through the cached `PrelaunchActivated` property instead.
+
+  - [x] **IT RUNS. 2026-08-24.** The real app, as a Win32 process, with a window titled
+    "Telegram": 1024x720, responding, 50 threads, 420 MB. And it is genuinely alive rather than
+    merely up - **TDLib initialised**, creating `local.db`, `langpack` and session folder `0`
+    under its own `LocalState`, with no error reports.
+
+    The host is doing its job: enumerating the top-level window shows
+    `Windows.UI.Composition.DesktopWindowContentBridge` at 1008x712 and visible, with the gate
+    1.7 drag bar above it at 1008x32.
+
+  - [ ] **But the window is blank white, and that is where this stops.** The island exists and is
+    sized, the app is running, nothing renders. The island being the right size means the failure
+    is above it, in content rather than in the host.
+
+    **`InternalLaunch` swallows everything.** `try { InitializeFrame(e); } catch (Exception) { }`
+    with no log and no rethrow - which is why the window came up empty with no trace at all.
+    Commenting it out is what found each of the following, and **it is currently commented out in
+    the working tree, marked TEMPORARY, do not commit**.
+
+    Two more of the same family as `PrelaunchActivated`, both fixed:
+
+    - **`Toast.GetSession` reads `LaunchActivatedEventArgs.TileActivatedInfo`**, which lives on
+      `ILaunchActivatedEventArgs2` and is not implemented by desktop activation arguments. The
+      trap: **a pattern match on the interface passes anyway**, because the projection declares it
+      on the class, so the QI only fails inside the getter. Catching `InvalidCastException` is the
+      only way to ask.
+    - **`WindowContext.Compositor`** - implemented as `Window.Current.Compositor`, and then
+      `BootStrapper.Compositor` went the same way (Fela's call): the compositor is per *thread*,
+      not per window, so it needs neither `WindowContext.Current` nor a fork. One more `Current`
+      use gone.
+
+    **Still empty, and the shape of it is now known.** With a debugger attached the Live Visual
+    Tree shows `RootWindow` and its `Frame` - so content *is* set and the tree *is* live - but the
+    Frame has no visual child, while the logs say it navigated to the auth page. Re-running the
+    island `Layout()` when content is assigned changed nothing (the captured window is identical
+    byte for byte), which weakens the zero-size theory. The open question is why a Frame that
+    reports a successful navigation has no child: a page that threw while materialising would look
+    exactly like this and, like everything else today, leave no trace.
+
+    **`BackdropMaterial` was the first guess and it is not the cause** - Fela's, and worth testing
+    because WinUI 2 applies it to the root page background. Putting it behind
+    `partial void SetBackdropMaterial(WindowControl)` and doing nothing on Win32 changed the
+    captured window not at all, byte for byte. The seam is kept anyway on its own merits: the
+    Win32 host asks DWM for its backdrop (gate 1.10), so the two are alternatives, not layers.
+
+    Still to probe, in order: whether `WindowContext.SetContent` runs at all on this path, whether
+    `SetHostContent` reaches `DesktopWindowXamlSource.Content`, and whether the tree measures. A
+    UI Automation dump of the window would separate "no content" from "content that renders
+    invisibly" in one step and is the cheapest thing to try first.
+
 - [ ] **2.1** Grow `Telegram.Stub` into the host process rather than creating a new one — it is
   already .NET 10, already Win32, already owns the tray and passkeys.
 - [ ] **2.2** Desktop `IViewService` / `WindowContext` implementations behind the Phase 0 seams.
-- [ ] **2.3** Check whether `Telegram.Native` / `Telegram.Native.Calls` need rebuilding at all —
-  a UWP-safe DLL should load fine in a desktop process. If so, this is deferred indefinitely;
-  if not, it is 37 + 21 of 250 files.
-- [ ] **2.4** Manifest for the **Win32 flavour only**: drop `runFullTrust`,
-  `windows.fullTrustProcess`, `confirmAppClose`, `oneProcessVoIP`, `packageManagement`,
-  `picturesLibrary`, `removableStorage`; keep the extensions. The UWP manifest is untouched.
+
+  - [x] **`WindowContext` split into shared + `WindowContext.Uwp.cs`, 2026-08-24.** 1376 lines
+    became 705 shared and 753 UWP. Pure code motion apart from three extracted seams; builds
+    clean. `Telegram.csproj` needed the new file added by hand — it lists every file.
+
+    **What the file name means, because it is easy to read wrong:** `.Uwp.cs` is *this host's
+    implementation*, not "UWP-only". `IsActive`, `IsForeground`, `SetPointerCursor`, `Bounds`,
+    `Title`, `Compositor`, `PointerPosition`, `TryResizeView`, the full-screen calls, `SetTitleBar`
+    and the four static key-state methods all keep their signatures and all get a Win32 twin. No
+    call site changes, and no member is marked `partial`: only one host file is ever in a build,
+    so each simply defines the member itself. That is the contract — shared code reading
+    `IsActive` will not compile unless the host half supplies it.
+
+    **`partial` is only for the other direction** — the two places shared code has to call *into*
+    the host. Declared in `WindowContext.cs`, implemented in the host half:
+
+        partial void SetHostContent(UIElement content);      // SetContent's _window.Content =
+        partial void SetScreenCaptureEnabled(bool enabled);  // the two ApplicationView lines
+
+    plus `private void Detach()`, extracted the other way: the host-agnostic half of what the UWP
+    `Closed` handler did inline — drop the XamlRoot mapping, suspend and clear the navigation
+    services, null the content. Each host calls it from its own close path.
+
+    **`WindowContext.Current` is the one member with no Win32 twin** — Fela, 2026-08-24. It went
+    to the UWP half for that reason rather than because it names a UWP type: a thread-static
+    "the window on this thread" answers something only while a thread hosts exactly one window,
+    which gate 1.8a already showed islands do not guarantee. This is item 0.10, and it is now a
+    hard requirement rather than a preference. `OnShutdownCompleted` went with it, being the
+    per-thread teardown that only means per-window under the same assumption; the shutdown
+    *drain* above it stays shared, since `DispatcherQueue` exists in both hosts.
+- [x] **2.3 The native components need no rebuilding — closed 2026-08-24 without spiking it.**
+  Fela has already run `Telegram.Native` in a WinUI 3 app. `WINAPI_FAMILY_APP` restricts which
+  Win32 APIs the C++ may *call*, and every one of those exists on desktop too, so the subset
+  never was the risk; activation was, and package identity answers it. 2.6 stays open as
+  tidiness rather than as work anything waits on.
+- [ ] **2.4** Manifest for the **Win32 flavour only**. `runFullTrust` **stays** — a packaged
+  Win32 app is declared with `EntryPoint="Windows.FullTrustApplication"` and cannot run without
+  it. What goes is the UWP app model around it: `windows.fullTrustProcess` (the extension a UWP
+  app uses to launch a full-trust companion — that companion becomes the host), `confirmAppClose`,
+  `oneProcessVoIP`, `packageManagement`, `picturesLibrary`, `removableStorage`. Keep the
+  extensions. The UWP manifest is untouched.
 - [ ] **2.5** Retire `Telegram.Stub`'s IPC, app service and loopback exemption **on the Win32
   flavour**. They stay for as long as the UWP flavour ships.
+- [ ] **2.5a Toast actions fork — `Toast.RegisterBackgroundTasks` throws on Win32.** Found
+  2026-08-24. `Toast.Register` builds an **in-process** background task (a `BackgroundTaskBuilder`
+  with no entry point, triggered by `ToastNotificationActionTrigger`), and hosting one is a UWP
+  app model feature: a full trust packaged application has no in-process background task host, the
+  same reason `windows.appService` had to go from the manifest in 2.4.
+
+  It does not block startup - `RegisterBackgroundTasks` is wrapped in `catch { }` and `Register`
+  has its own - so the only symptom is silent: **tapping a notification action does not reach the
+  app**. Worth knowing before someone spends an afternoon on why replies from a toast do nothing.
+
+  The desktop replacement is the COM activator: a `windows.toastNotificationActivation` extension
+  naming a CLSID, and the activation arriving as `ToastNotificationActivatedEventArgs` - which
+  `Toast.GetSession` already handles, and which `Program.Main` already feeds in from
+  `AppInstance.GetActivatedEventArgs()`. So the parsing side is done; what forks is only the
+  registration.
 - [ ] **2.6** Re-point the native dependency builds off the `WINAPI_FAMILY_APP` subset.
 
 ## Phase 3 — optionality, not a commitment

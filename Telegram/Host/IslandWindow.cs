@@ -1,0 +1,290 @@
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Hosting;
+
+namespace Telegram.Host
+{
+    /// <summary>
+    /// One Win32 HWND with one DesktopWindowXamlSource inside it.
+    ///
+    /// Deliberately has no thread affinity of its own: WindowsXamlManager is initialized once per
+    /// THREAD, and any number of islands can live on that thread. That is the point of gate 1.8 -
+    /// UWP's one-thread-per-view came from CoreApplication.CreateNewView(), not from XAML, and
+    /// islands are not bound by it.
+    /// </summary>
+    /// <summary>
+    /// Sees a message before the island does. This is the Win32 counterpart of
+    /// <c>CoreDispatcher.AcceleratorKeyActivated</c>: it runs ahead of TranslateMessage, so it
+    /// still sees Alt-modified keys and keys a focused control would swallow.
+    /// </summary>
+    internal interface IMessageFilter
+    {
+        bool PreTranslateMessage(ref MSG message);
+    }
+
+    internal sealed partial class IslandWindow : IDisposable
+    {
+        private static readonly Dictionary<IntPtr, IslandWindow> Windows = new();
+        private static WndProc _wndProc;   // field, not a lambda: the thunk must outlive every window
+        private static ushort _classAtom;
+        private static IntPtr _classNamePtr;
+
+        private IntPtr _hwnd;
+        private bool _transparent;
+        private IntPtr _islandHwnd;
+        private DesktopWindowXamlSource _source;
+        private IslandNative _native;
+
+        public IntPtr Handle => _hwnd;
+
+        /// <summary>
+        /// The island's root element. Assigning it is what <c>Window.Content</c> does on UWP, and
+        /// the XamlRoot becomes available the moment it is set - see item 0.17.
+        /// </summary>
+        public UIElement Content
+        {
+            get => _source?.Content;
+            set
+            {
+                if (_source != null)
+                {
+                    _source.Content = value;
+
+                    // The island is sized when it is created, which is before there is any content
+                    // to size - the app builds its root only once the WindowContext exists. Setting
+                    // content afterwards raises nothing, so without this the tree is live and
+                    // measured to zero: visible in the Live Visual Tree, invisible on screen.
+                    Layout();
+                }
+            }
+        }
+
+        // The concrete ValueCollection, not IEnumerable: the message loop walks this for every
+        // message the thread pumps, and an interface-typed foreach boxes the enumerator each time.
+        // Thousands of allocations a second just moving the mouse.
+        public static Dictionary<IntPtr, IslandWindow>.ValueCollection All => Windows.Values;
+
+        public static IslandWindow Create(string title, int x, int y, int width, int height, UIElement content,
+            bool transparent = false, bool nonClient = false)
+        {
+            EnsureClass();
+
+            var window = new IslandWindow { _transparent = transparent };
+            var windowName = Marshal.StringToHGlobalUni(title);
+
+            // WS_EX_NOREDIRECTIONBITMAP is what Windows Terminal creates its host window with
+            // (IslandWindow.cpp:151, "for vintage style opacity, GH#603"). Without the redirection
+            // surface there is nothing opaque between the DWM backdrop and the island's own
+            // composition content.
+            var exStyle = transparent ? Win32.WS_EX_NOREDIRECTIONBITMAP : 0u;
+
+            window._hwnd = Win32.CreateWindowExW(exStyle, _classNamePtr, windowName,
+                Win32.WS_OVERLAPPEDWINDOW, x, y, width, height,
+                IntPtr.Zero, IntPtr.Zero, Win32.GetModuleHandleW(IntPtr.Zero), IntPtr.Zero);
+
+            if (window._hwnd == IntPtr.Zero)
+            {
+                throw new InvalidOperationException("CreateWindowEx failed: " + Marshal.GetLastWin32Error());
+            }
+
+            Windows[window._hwnd] = window;
+
+            window._source = new DesktopWindowXamlSource();
+            window._native = IslandNative.From(window._source);
+            window._native.AttachToWindow(window._hwnd);
+            window._islandHwnd = window._native.GetWindowHandle();
+            window._source.Content = content;
+
+            if (nonClient)
+            {
+                // The flag has to go on after creation - WM_NCCALCSIZE is sent from inside
+                // CreateWindowEx, before there is an instance to consult - so the frame is
+                // recalculated here instead.
+                window._nonClient = true;
+                Win32.SetWindowPos(window._hwnd, IntPtr.Zero, 0, 0, 0, 0,
+                    Win32.SWP_NOMOVE | Win32.SWP_NOSIZE | Win32.SWP_NOZORDER | Win32.SWP_FRAMECHANGED);
+
+                window.CreateDragBar();
+            }
+
+            window.Layout();
+            Win32.ShowWindow(window._hwnd, Win32.SW_SHOW);
+            Win32.UpdateWindow(window._hwnd);
+
+            return window;
+        }
+
+        /// <summary>
+        /// Consulted before the island's own accelerator handling, so that the app sees a key
+        /// first. Set by the window's <c>WindowContext</c>.
+        /// </summary>
+        public IMessageFilter Filter { get; set; }
+
+        public bool PreTranslateMessage(ref MSG message)
+        {
+            if (Filter != null && Filter.PreTranslateMessage(ref message))
+            {
+                return true;
+            }
+
+            return _native != null && _native.PreTranslateMessage(ref message);
+        }
+
+        private static void EnsureClass()
+        {
+            if (_classAtom != 0)
+            {
+                return;
+            }
+
+            _classNamePtr = Marshal.StringToHGlobalUni("XamlIslandSpikeWindow");
+            _wndProc = WindowProc;
+
+            var wc = new WNDCLASSEXW
+            {
+                cbSize = Marshal.SizeOf<WNDCLASSEXW>(),
+                style = 0x0002 | 0x0001, // CS_HREDRAW | CS_VREDRAW
+                lpfnWndProc = Marshal.GetFunctionPointerForDelegate(_wndProc),
+                hInstance = Win32.GetModuleHandleW(IntPtr.Zero),
+                hCursor = Win32.LoadCursorW(IntPtr.Zero, 32512), // IDC_ARROW
+                hbrBackground = (IntPtr)(1 + 5),                 // COLOR_WINDOW + 1
+                lpszClassName = _classNamePtr
+            };
+
+            _classAtom = Win32.RegisterClassExW(ref wc);
+            if (_classAtom == 0)
+            {
+                throw new InvalidOperationException("RegisterClassEx failed: " + Marshal.GetLastWin32Error());
+            }
+        }
+
+        private static IntPtr WindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+        {
+            Windows.TryGetValue(hWnd, out var window);
+
+            switch (msg)
+            {
+                case Win32.WM_ERASEBKGND:
+                    // The class brush would paint COLOR_WINDOW over the extended frame before the
+                    // island composites, which is exactly the opaque sheet Mica has to show through.
+                    if (window != null && window._transparent)
+                    {
+                        return (IntPtr)1;
+                    }
+
+                    break;
+                case Win32.WM_NCCALCSIZE:
+                    if (window != null && window._nonClient)
+                    {
+                        return window.OnNcCalcSize(wParam, lParam);
+                    }
+
+                    break;
+                case Win32.WM_NCHITTEST:
+                    if (window != null && window._nonClient)
+                    {
+                        return window.OnNcHitTest(lParam);
+                    }
+
+                    break;
+                case Win32.WM_SIZE:
+                    window?.Layout();
+                    window?.LayoutDragBar();
+                    return IntPtr.Zero;
+                case Win32.WM_SETFOCUS:
+                    if (window != null && window._islandHwnd != IntPtr.Zero)
+                    {
+                        Win32.SetFocus(window._islandHwnd);
+                    }
+                    return IntPtr.Zero;
+                case Win32.WM_DESTROY:
+                    if (window != null)
+                    {
+                        Windows.Remove(hWnd);
+                        window.Dispose();
+                    }
+
+                    // Only the last window standing ends the message loop - otherwise closing a
+                    // secondary window would take the whole process with it.
+                    if (Windows.Count == 0)
+                    {
+                        Win32.PostQuitMessage(0);
+                    }
+
+                    return IntPtr.Zero;
+            }
+
+            return Win32.DefWindowProcW(hWnd, msg, wParam, lParam);
+        }
+
+        /// <summary>
+        /// Terminal's recipe, IslandWindow.cpp:1847 - UseMica is nothing but this one attribute.
+        /// It is documented from 22621; on 22000 it fails silently and DWMWA_MICA_EFFECT (1029) is
+        /// the only route, which Terminal never implemented.
+        /// </summary>
+        public int SetBackdrop(int type)
+        {
+            var value = type;
+            var hr = Win32.DwmSetWindowAttribute(_hwnd, Win32.DWMWA_SYSTEMBACKDROP_TYPE, ref value, sizeof(int));
+
+            if (hr < 0 && type == Win32.DWMSBT_MAINWINDOW)
+            {
+                var legacy = 1;
+                hr = Win32.DwmSetWindowAttribute(_hwnd, Win32.DWMWA_MICA_EFFECT, ref legacy, sizeof(int));
+            }
+
+            return hr;
+        }
+
+        public int ExtendFrame(int left, int top, int right, int bottom)
+        {
+            var margins = new MARGINS
+            {
+                cxLeftWidth = left,
+                cyTopHeight = top,
+                cxRightWidth = right,
+                cyBottomHeight = bottom
+            };
+
+            return Win32.DwmExtendFrameIntoClientArea(_hwnd, ref margins);
+        }
+
+        public int UseDarkTheme(bool dark)
+        {
+            var value = dark ? 1 : 0;
+            return Win32.DwmSetWindowAttribute(_hwnd, Win32.DWMWA_USE_IMMERSIVE_DARK_MODE, ref value, sizeof(int));
+        }
+
+        private void Layout()
+        {
+            if (_islandHwnd == IntPtr.Zero || !Win32.GetClientRect(_hwnd, out var rect))
+            {
+                return;
+            }
+
+            Win32.SetWindowPos(_islandHwnd, IntPtr.Zero, 0, 0,
+                rect.right - rect.left, rect.bottom - rect.top, Win32.SWP_SHOWWINDOW);
+        }
+
+        /// <summary>
+        /// Order matters. Destroying the HWND while the DesktopWindowXamlSource still holds
+        /// content takes the process down - the XAML core is left pointing at a dead window.
+        /// Detach the content and close the source first, then release the native side.
+        /// </summary>
+        public void Dispose()
+        {
+            if (_source != null)
+            {
+                _source.Content = null;
+                _source.Dispose();
+                _source = null;
+            }
+
+            _native?.Dispose();
+            _native = null;
+            _islandHwnd = IntPtr.Zero;
+        }
+    }
+}

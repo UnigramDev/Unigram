@@ -111,9 +111,24 @@ namespace Telegram.Common
                     arguments = toastNotification.Argument;
                     break;
                 case LaunchActivatedEventArgs launch:
-                    if (launch.TileActivatedInfo != null && launch.TileActivatedInfo.RecentlyShownNotifications.Count > 0)
+                    // TileActivatedInfo lives on ILaunchActivatedEventArgs2, which a desktop
+                    // host's activation arguments do not implement - and the projection declares
+                    // the interface on the class, so a pattern match passes and the QI only fails
+                    // inside the getter. Catching it is the only way to ask.
+                    TileActivatedInfo tile;
+
+                    try
                     {
-                        arguments = launch.TileActivatedInfo.RecentlyShownNotifications[0].Arguments;
+                        tile = launch.TileActivatedInfo;
+                    }
+                    catch (InvalidCastException)
+                    {
+                        tile = null;
+                    }
+
+                    if (tile != null && tile.RecentlyShownNotifications.Count > 0)
+                    {
+                        arguments = tile.RecentlyShownNotifications[0].Arguments;
                     }
                     else
                     {
