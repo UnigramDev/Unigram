@@ -9,6 +9,8 @@ using Telegram.Host;
 using Telegram.Navigation;
 using Windows.System;
 using Windows.UI.Input;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Input;
 
 namespace Telegram.Services.Keyboard
 {
@@ -28,14 +30,46 @@ namespace Telegram.Services.Keyboard
     {
         private readonly WindowContext _window;
 
+        private readonly PointerEventHandler _pointerPressed;
+        private UIElement _root;
+
         public InputListener(WindowContext window)
         {
             _window = window;
+
+            // Held in a field so RemoveHandler is given the same delegate AddHandler took, and
+            // because a handler that cannot be removed leaks the window it belongs to.
+            _pointerPressed = OnPointerPressed;
+        }
+
+        /// <summary>
+        /// Pointer input never reaches the message loop: an island feeds it through its own
+        /// InputSite, so WM_XBUTTONDOWN is not in the queue to filter. It does reach XAML, which is
+        /// why a routed handler works here where it would not for keys - the tree handles neither
+        /// XButton1 nor XButton2, so handledEventsToo still sees them, and none of the reasons the
+        /// keyboard needs the message loop (SystemKeyDown, a focused control swallowing the key,
+        /// focus inside a WebView2) apply to a mouse button nothing consumes.
+        ///
+        /// Called from WindowContext.SetHostContent, the Win32 seam where the root arrives.
+        /// </summary>
+        internal void Attach(UIElement root)
+        {
+            Detach();
+
+            _root = root;
+            _root?.AddHandler(UIElement.PointerPressedEvent, _pointerPressed, true);
+        }
+
+        private void Detach()
+        {
+            _root?.RemoveHandler(UIElement.PointerPressedEvent, _pointerPressed);
+            _root = null;
         }
 
         public void Release()
         {
-            // Nothing to unsubscribe: the island drops its filter when the window closes.
+            // The island drops its filter when the window closes; the routed handler is ours.
+            Detach();
         }
 
         bool IMessageFilter.PreTranslateMessage(ref MSG message)
@@ -44,11 +78,6 @@ namespace Telegram.Services.Keyboard
             {
                 return OnAcceleratorKeyActivated((VirtualKey)message.wParam.ToInt32());
             }
-            else if (message.message == Win32.WM_XBUTTONDOWN)
-            {
-                return OnPointerPressed(message.wParam.ToInt32() & 0xFFFF);
-            }
-
             return false;
         }
 
@@ -95,22 +124,26 @@ namespace Telegram.Services.Keyboard
         }
 
         /// <summary>
-        /// Browser-style back and forward mouse buttons. <paramref name="buttons"/> is the low
-        /// word of a mouse message wParam.
+        /// Browser-style back and forward mouse buttons.
         /// </summary>
-        private bool OnPointerPressed(int buttons)
+        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
+            var properties = e.GetCurrentPoint(null).Properties;
+
             // Ignore button chords with the left, right, and middle buttons
-            if ((buttons & (Win32.MK_LBUTTON | Win32.MK_RBUTTON | Win32.MK_MBUTTON)) != 0)
+            if (properties.IsLeftButtonPressed || properties.IsRightButtonPressed ||
+                properties.IsMiddleButtonPressed)
             {
-                return false;
+                return;
             }
 
             // If back or forward are pressed (but not both) navigate appropriately
-            bool backPressed = (buttons & Win32.MK_XBUTTON1) != 0;
-            bool forwardPressed = (buttons & Win32.MK_XBUTTON2) != 0;
+            bool backPressed = properties.IsXButton1Pressed;
+            bool forwardPressed = properties.IsXButton2Pressed;
             if (backPressed ^ forwardPressed)
             {
+                e.Handled = true;
+
                 if (backPressed)
                 {
                     _window.RaiseBackRequested();
@@ -119,11 +152,7 @@ namespace Telegram.Services.Keyboard
                 {
                     _window.RaiseForwardRequested();
                 }
-
-                return true;
             }
-
-            return false;
         }
 
         public static bool IsPointerGoBackGesture(PointerPoint point)

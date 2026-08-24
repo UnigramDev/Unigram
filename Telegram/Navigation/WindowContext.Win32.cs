@@ -353,6 +353,11 @@ namespace Telegram.Navigation
         partial void SetHostContent(UIElement content)
         {
             _island.Content = content;
+
+            // The root is where this host's pointer input has to be picked up: an island feeds
+            // pointer messages through its InputSite rather than the thread's message queue, so the
+            // filter never sees them. This is the only moment the root is known.
+            _inputListener.Attach(content);
         }
 
         partial void SetScreenCaptureEnabled(bool enabled)
