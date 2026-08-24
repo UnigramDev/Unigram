@@ -29,11 +29,21 @@ namespace Telegram.Common
 
         public static ConnectedAnimation PrepareToAnimate(string key, UIElement source)
         {
+            if (source.XamlRoot == null)
+            {
+                return null;
+            }
+
             return ConnectedAnimationService.GetForCurrentView().PrepareToAnimate(key + "_" + WindowContext.ForXamlRoot(source.XamlRoot).Id, source);
         }
 
         public static ConnectedAnimation GetAnimation(string key, XamlRoot xamlRoot)
         {
+            if (xamlRoot == null)
+            {
+                return null;
+            }
+
             return ConnectedAnimationService.GetForCurrentView().GetAnimation(key + "_" + WindowContext.ForXamlRoot(xamlRoot).Id);
         }
 
