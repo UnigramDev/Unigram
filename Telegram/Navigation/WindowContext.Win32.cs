@@ -9,6 +9,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Host;
@@ -42,6 +43,7 @@ namespace Telegram.Navigation
         internal WindowContext(IslandWindow island)
         {
             _island = island;
+            _island.CloseRequested = OnCloseRequested;
             _current = this;
 
             Dispatcher = DispatcherContext.Current;
@@ -88,6 +90,27 @@ namespace Telegram.Navigation
         public void Close()
         {
             _ = ConsolidateAsync();
+        }
+
+        /// <summary>
+        /// The window was closed from the outside - the caption button, Alt+F4, the system menu.
+        /// Always false: the root may have something to ask first and the answer is awaited, so
+        /// the window is destroyed by ConsolidateAsync rather than by the default handler.
+        /// </summary>
+        private bool OnCloseRequested()
+        {
+            CloseRequestedAsync();
+            return false;
+        }
+
+        private async void CloseRequestedAsync()
+        {
+            if (Content is WindowContent root && !await root.RequestCloseAsync())
+            {
+                return;
+            }
+
+            await ConsolidateAsync();
         }
 
         public Task ConsolidateAsync()

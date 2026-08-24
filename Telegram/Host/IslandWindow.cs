@@ -140,6 +140,14 @@ namespace Telegram.Host
         /// </summary>
         public IMessageFilter Filter { get; set; }
 
+        /// <summary>
+        /// Asked before the window is destroyed. The owner answers false to take the close over -
+        /// it may have a question for the user first - and destroys the window itself once it is
+        /// done. Without this the caption's close button destroys the HWND and nothing tells the
+        /// WindowContext, which then lingers in All with its navigation services still live.
+        /// </summary>
+        public Func<bool> CloseRequested { get; set; }
+
         public bool PreTranslateMessage(ref MSG message)
         {
             if (Filter != null && Filter.PreTranslateMessage(ref message))
@@ -239,6 +247,17 @@ namespace Telegram.Host
                         Win32.SetFocus(window._islandHwnd);
                     }
                     return IntPtr.Zero;
+                case Win32.WM_CLOSE:
+                    // The caption button never reaches XAML on this host: the drag bar answers the
+                    // hit test and turns the click into SC_CLOSE, which arrives here. So this is
+                    // the one place a user-initiated close can be intercepted.
+                    if (window?.CloseRequested != null && !window.CloseRequested())
+                    {
+                        return IntPtr.Zero;
+                    }
+
+                    break;
+
                 case Win32.WM_EXITSIZEMOVE:
                     // The end of a drag or a resize, rather than every position it passed through.
                     WindowLayout.Save(hWnd, window?._persistedId);

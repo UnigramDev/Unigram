@@ -105,6 +105,7 @@ namespace Telegram.Host
 
         public const uint WM_DESTROY = 0x0002;
         public const uint WM_SIZE = 0x0005;
+        public const uint WM_CLOSE = 0x0010;
         public const int SIZE_MINIMIZED = 1;
         public const int SIZE_MAXIMIZED = 2;
         public const uint WM_SETFOCUS = 0x0007;
