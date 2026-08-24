@@ -285,6 +285,34 @@ Two more things the packaging path needed:
   solution has to have built them first. `zlib1.dll` and `Microsoft.Graphics.Canvas.dll` are
   excluded there because they also arrive with tdjson and from the Win2D package: the legacy
   build copies both over each other, publish calls it `NETSDK1152`.
+- **And they must stay projections - a `ProjectReference` was tried and taken back out,
+  2026-08-24.** Visual Studio offers it, the csproj accepts it, and it compiles: `NETSDK1130` is
+  about a bare `<Reference>` to a winmd, and says nothing about referencing the project that
+  produces one. Fela published `Telegram.Modern` that way successfully. It still does not work,
+  for two reasons that only show up outside Visual Studio:
+
+  - **A referenced project is built.** A worktree would then have to build `Telegram.Native` and
+    `Telegram.Native.Calls` - vcpkg, tgcalls, webrtc - which is exactly what copying `x64\` in
+    from the main checkout exists to avoid. `ReferenceOutputAssembly="false"` does not help: it
+    stops the reference contributing files, not the project being built.
+  - **The vcxproj has no `OutDir`**, so C++ defaults to `$(SolutionDir)$(Platform)\$(Configuration)\`.
+    A bare `MSBuild Telegram.Win32.csproj` has no solution, `$(SolutionDir)` falls back to the
+    project directory, and the reference's copy lands in `Telegram.Native\x64\Debug\...` while
+    `ReferenceCopyLocalPaths` still reads `x64\Debug\Telegram.Native\...` - two publish items with
+    one relative path, `NETSDK1152`. It works in Visual Studio because the IDE defines
+    `SolutionDir`, which is why the same change can pass there and fail on the command line.
+
+  **What it was meant to prevent, and how to recognise it instead.** Nothing sequences the native
+  projects before the app, so a package can end up carrying a `Telegram.Native.dll` older than the
+  winmd its projection was generated from - a class the app calls that the binary does not have.
+  The symptom is unhelpful: an unhandled managed exception at startup (WER exception code
+  `e0434352`), no line in `tdlib_log.txt` because it dies before TDLib initialises, and no app
+  error report. The check that settles it in seconds is whether the packaged binary contains the
+  class name at all:
+
+      python -c "print('TextHost' in open(r'...\publish\Telegram.Native.dll','rb').read().decode('latin-1'))"
+
+  Build the native projects first, then the app - and re-publish after touching either.
 - **The downloaded tdjson binaries carry the mark of the web**, which the PRI step refuses
   (`MSB3821`). `Unblock-File` on `Libraries\tdjson\x64\tdjson.dll` and `.pdb` clears it.
 - **`UnigramUsesVcpkg` matches on project name**, so `Telegram.Modern` was invisible to it and got
