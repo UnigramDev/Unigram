@@ -315,8 +315,8 @@ namespace Telegram.Controls.Messages.Content
 
             if (photoSize != null)
             {
-                var width = 0;
-                var height = 0;
+                var width = photoSize.Width;
+                var height = photoSize.Height;
 
                 if (width > MaxWidth || height > MaxHeight)
                 {
