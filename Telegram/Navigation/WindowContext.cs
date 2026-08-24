@@ -799,6 +799,16 @@ namespace Telegram.Navigation
             return null;
         }
 
+        /// <summary>
+        /// The window handle behind a XamlRoot - a CoreWindow's on UWP, the island's HWND on Win32.
+        /// <c>IntPtr.Zero</c> if the root belongs to no window this app knows about.
+        /// </summary>
+        public static IntPtr GetWindowHandle(XamlRoot xamlRoot)
+        {
+            var context = ForXamlRoot(xamlRoot);
+            return context != null ? (IntPtr)context.Handle : IntPtr.Zero;
+        }
+
         public static WindowContext ForXamlRoot(UIElement element)
         {
             return ForXamlRoot(element?.XamlRoot);

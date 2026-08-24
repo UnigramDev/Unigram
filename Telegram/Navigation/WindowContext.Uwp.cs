@@ -635,6 +635,14 @@ namespace Telegram.Navigation
             Microsoft.UI.Xaml.Controls.BackdropMaterial.SetApplyToRootOrPageBackground(content, true);
         }
 
+        /// <summary>
+        /// Nothing to do: a UWP picker is owned by the view that opens it, and the app model knows
+        /// which that is. Only a desktop host has to say so - see the Win32 half.
+        /// </summary>
+        internal static void InitializeWithWindow(object target, XamlRoot xamlRoot)
+        {
+        }
+
         partial void SetHostContent(UIElement content)
         {
             _window.Content = content;

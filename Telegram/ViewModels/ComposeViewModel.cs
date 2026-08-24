@@ -324,7 +324,7 @@ namespace Telegram.ViewModels
                 picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
                 picker.FileTypeFilter.Add("*");
 
-                var files = await picker.PickMultipleFilesAsync();
+                var files = await picker.PickMultipleFilesAsync(XamlRoot);
                 if (files != null && files.Count > 0)
                 {
                     SendFileExecute(files, media: false);
@@ -412,7 +412,7 @@ namespace Telegram.ViewModels
                     picker.SuggestedStartLocation = PickerLocationId.MusicLibrary;
                     picker.FileTypeFilter.Add("*");
 
-                    var files = await picker.PickMultipleFilesAsync();
+                    var files = await picker.PickMultipleFilesAsync(XamlRoot);
                     if (files != null && files.Count > 0)
                     {
                         SendFileExecute(files, media: false);
@@ -764,7 +764,7 @@ namespace Telegram.ViewModels
                 picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
                 picker.FileTypeFilter.AddRange(Constants.MediaTypes);
 
-                var files = await picker.PickMultipleFilesAsync();
+                var files = await picker.PickMultipleFilesAsync(XamlRoot);
                 if (files != null && files.Count > 0)
                 {
                     SendFileExecute(files);

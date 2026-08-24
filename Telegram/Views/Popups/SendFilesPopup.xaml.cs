@@ -1779,7 +1779,7 @@ namespace Telegram.Views.Popups
                 picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
                 picker.FileTypeFilter.Add("*");
 
-                var files = await picker.PickMultipleFilesAsync();
+                var files = await picker.PickMultipleFilesAsync(XamlRoot);
                 if (files is { Count: > 0 })
                 {
                     AppendFiles(files);

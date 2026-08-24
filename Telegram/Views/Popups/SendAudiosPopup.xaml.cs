@@ -299,7 +299,7 @@ namespace Telegram.Views.Popups
         private void SaveToFiles(PlaybackItem item)
         {
             var service = _clientService.Session.Resolve<IStorageService>();
-            _ = service.SaveFileAsAsync(item.Document);
+            _ = service.SaveFileAsAsync(XamlRoot, item.Document);
         }
 
         private void Toggle_Click(object sender, RoutedEventArgs e)

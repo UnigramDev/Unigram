@@ -2060,14 +2060,14 @@ namespace Telegram.ViewModels
         {
             if (message.Content is MessageAlbum album)
             {
-                await _storageService.SaveFilesAsync(album.Messages.Select(x => x.GetFile()));
+                await _storageService.SaveFilesAsync(XamlRoot, album.Messages.Select(x => x.GetFile()));
             }
             else
             {
                 var file = message.GetFile();
                 if (file != null)
                 {
-                    await _storageService.SaveFileAsAsync(file);
+                    await _storageService.SaveFileAsAsync(XamlRoot, file);
                 }
             }
         }

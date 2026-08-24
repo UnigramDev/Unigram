@@ -237,7 +237,7 @@ namespace Telegram.ViewModels.Profile
             var file = message.GetFile();
             if (file != null)
             {
-                await _storageService.SaveFileAsAsync(file);
+                await _storageService.SaveFileAsAsync(XamlRoot, file);
             }
         }
 

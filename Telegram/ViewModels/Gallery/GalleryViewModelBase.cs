@@ -285,7 +285,7 @@ namespace Telegram.ViewModels.Gallery
             var file = item.File;
             if (file != null)
             {
-                await _storageService.SaveFileAsAsync(file);
+                await _storageService.SaveFileAsAsync(XamlRoot, file);
             }
         }
 

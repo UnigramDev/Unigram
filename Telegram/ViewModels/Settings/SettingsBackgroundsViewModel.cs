@@ -128,7 +128,7 @@ namespace Telegram.ViewModels.Settings
                 picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
                 picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
 
-                var file = await picker.PickSingleFileAsync();
+                var file = await picker.PickSingleFileAsync(XamlRoot);
                 if (file != null)
                 {
                     await file.CopyAsync(ApplicationData.Current.TemporaryFolder, Constants.WallpaperLocalFileName, NameCollisionOption.ReplaceExisting);

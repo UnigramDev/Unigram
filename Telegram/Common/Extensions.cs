@@ -316,9 +316,9 @@ namespace Telegram.Common
             }
         }
 
-        public static async Task<StorageMedia> PickSingleMediaAsync(this FileOpenPicker picker)
+        public static async Task<StorageMedia> PickSingleMediaAsync(this FileOpenPicker picker, XamlRoot xamlRoot)
         {
-            var file = await picker.PickSingleFileAsync();
+            var file = await picker.PickSingleFileAsync(xamlRoot);
             if (file == null)
             {
                 return null;
@@ -2013,3 +2013,50 @@ namespace System.Runtime.CompilerServices
     }
 }
 #endif
+
+namespace Windows.Storage.Pickers
+{
+    public static class PickerExtensions
+    {
+        public static IAsyncOperation<StorageFile> PickSingleFileAsync(this FileOpenPicker picker, XamlRoot xamlRoot)
+        {
+            WindowContext.InitializeWithWindow(picker, xamlRoot);
+
+            return picker.PickSingleFileAsync();
+        }
+
+        public static IAsyncOperation<IReadOnlyList<StorageFile>> PickMultipleFilesAsync(this FileOpenPicker picker, XamlRoot xamlRoot)
+        {
+            WindowContext.InitializeWithWindow(picker, xamlRoot);
+
+            return picker.PickMultipleFilesAsync();
+        }
+
+        public static IAsyncOperation<StorageFile> PickSaveFileAsync(this FileSavePicker picker, XamlRoot xamlRoot)
+        {
+            WindowContext.InitializeWithWindow(picker, xamlRoot);
+
+            return picker.PickSaveFileAsync();
+        }
+
+        public static IAsyncOperation<StorageFolder> PickSingleFolderAsync(this FolderPicker picker, XamlRoot xamlRoot)
+        {
+            WindowContext.InitializeWithWindow(picker, xamlRoot);
+
+            return picker.PickSingleFolderAsync();
+        }
+    }
+}
+
+namespace Windows.Graphics.Capture
+{
+    public static class PickerExtensions
+    {
+        public static IAsyncOperation<GraphicsCaptureItem> PickSingleItemAsync(this GraphicsCapturePicker picker, XamlRoot xamlRoot)
+        {
+            WindowContext.InitializeWithWindow(picker, xamlRoot);
+
+            return picker.PickSingleItemAsync();
+        }
+    }
+}

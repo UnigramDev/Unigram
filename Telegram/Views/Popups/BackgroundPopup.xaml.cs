@@ -159,6 +159,7 @@ namespace Telegram.Views.Popups
         {
             if (background != null)
             {
+                Preview.XamlRoot ??= XamlRoot;
                 Preview.UpdateSource(ViewModel.ClientService, background, false);
 
                 PatternList.ForEach<Document>((container, document) =>

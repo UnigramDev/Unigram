@@ -350,6 +350,16 @@ namespace Telegram.Navigation
             Microsoft.UI.Xaml.Controls.BackdropMaterial.SetApplyToRootOrPageBackground(content, true);
         }
 
+        /// <summary>
+        /// A picker in a desktop process has no owning window of its own, and shows nothing until
+        /// it is given one: every FileOpenPicker, FileSavePicker and FolderPicker has to be
+        /// initialized with the HWND it should be modal to.
+        /// </summary>
+        internal static void InitializeWithWindow(object target, XamlRoot xamlRoot)
+        {
+            WinRT.Interop.InitializeWithWindow.Initialize(target, GetWindowHandle(xamlRoot));
+        }
+
         partial void SetHostContent(UIElement content)
         {
             _island.Content = content;

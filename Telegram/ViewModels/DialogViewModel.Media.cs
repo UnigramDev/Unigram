@@ -293,7 +293,7 @@ namespace Telegram.ViewModels
                 picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
                 picker.FileTypeFilter.Add("*");
 
-                var file = await picker.PickSingleFileAsync();
+                var file = await picker.PickSingleFileAsync(XamlRoot);
                 if (file == null)
                 {
                     return;
@@ -319,7 +319,7 @@ namespace Telegram.ViewModels
                 picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
                 picker.FileTypeFilter.AddRange(Constants.MediaTypes);
 
-                var file = await picker.PickSingleFileAsync();
+                var file = await picker.PickSingleFileAsync(XamlRoot);
                 if (file == null)
                 {
                     return;

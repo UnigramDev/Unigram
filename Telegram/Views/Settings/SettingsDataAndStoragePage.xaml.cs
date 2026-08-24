@@ -10,6 +10,7 @@ using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.ViewModels.Settings;
+using Windows.UI.Xaml;
 
 namespace Telegram.Views.Settings
 {
@@ -21,6 +22,14 @@ namespace Telegram.Views.Settings
         {
             InitializeComponent();
             Title = Strings.DataSettings;
+        }
+
+        // x:Bind cannot bind Click straight to the view model any more: the method takes the
+        // XamlRoot the picker has to be made modal to, and an event binding has to match the
+        // handler signature. The page is the only thing here that knows its own root.
+        private void ChooseDownloadFolder(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ChooseDownloadFolder(XamlRoot);
         }
 
         #region Binding

@@ -58,7 +58,7 @@ namespace Telegram.Services
 
     public interface IStorageService
     {
-        Task SaveFileAsAsync(File file);
+        Task SaveFileAsAsync(XamlRoot xamlRoot, File file);
 
         Task OpenFileAsync(File file);
 
@@ -66,7 +66,7 @@ namespace Telegram.Services
 
         Task CopyFilePathAsync(XamlRoot xamlRoot, File file);
 
-        Task SaveFilesAsync(IEnumerable<File> files);
+        Task SaveFilesAsync(XamlRoot xamlRoot, IEnumerable<File> files);
 
         Task OpenFolderAsync(File file);
 
@@ -86,7 +86,7 @@ namespace Telegram.Services
             _clientService = clientService;
         }
 
-        public async Task SaveFileAsAsync(File file)
+        public async Task SaveFileAsAsync(XamlRoot xamlRoot, File file)
         {
             // TODO: the current logic doesn't support Save as... before the file is downloaded
             // This is because to download a file to a specific path we have to create a link
@@ -121,7 +121,7 @@ namespace Telegram.Services
                 picker.SuggestedStartLocation = PickerLocationId.Downloads;
                 picker.SuggestedFileName = text.TextValue;
 
-                var picked = await picker.PickSaveFileAsync();
+                var picked = await picker.PickSaveFileAsync(xamlRoot);
                 if (picked != null)
                 {
                     // Save as copy is never linked back 
@@ -191,13 +191,13 @@ namespace Telegram.Services
             ToastPopup.Show(xamlRoot, Strings.PathCopied, ToastPopupIcon.Copied);
         }
 
-        public async Task SaveFilesAsync(IEnumerable<File> files)
+        public async Task SaveFilesAsync(XamlRoot xamlRoot, IEnumerable<File> files)
         {
             try
             {
                 var picker = new FolderPicker();
 
-                var folder = await picker.PickSingleFolderAsync();
+                var folder = await picker.PickSingleFolderAsync(xamlRoot);
                 if (folder == null)
                 {
                     return;

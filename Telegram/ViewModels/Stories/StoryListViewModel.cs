@@ -229,7 +229,7 @@ namespace Telegram.ViewModels.Stories
             var file = story.GetFile();
             if (file != null)
             {
-                await _storageService.SaveFileAsAsync(file);
+                await _storageService.SaveFileAsAsync(XamlRoot, file);
             }
         }
 

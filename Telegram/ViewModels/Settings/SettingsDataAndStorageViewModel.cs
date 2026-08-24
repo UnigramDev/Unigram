@@ -20,6 +20,7 @@ using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Windows.Storage.Pickers;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -168,7 +169,7 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _downloadFolder, value);
         }
 
-        public async void ChooseDownloadFolder()
+        public async void ChooseDownloadFolder(XamlRoot xamlRoot)
         {
             try
             {
@@ -176,7 +177,7 @@ namespace Telegram.ViewModels.Settings
                 picker.SuggestedStartLocation = PickerLocationId.Downloads;
                 picker.FileTypeFilter.Add("*");
 
-                var folder = await picker.PickSingleFolderAsync();
+                var folder = await picker.PickSingleFolderAsync(xamlRoot);
                 if (folder != null)
                 {
                     IsDownloadFolderEnabled = true;

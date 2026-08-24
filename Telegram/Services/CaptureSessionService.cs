@@ -73,7 +73,7 @@ namespace Telegram.Services
                 {
                     var picker = new GraphicsCapturePicker();
 
-                    var backup = await picker.PickSingleItemAsync();
+                    var backup = await picker.PickSingleItemAsync(xamlRoot);
                     if (backup != null)
                     {
                         return new CaptureSessionOptions(backup, 0);

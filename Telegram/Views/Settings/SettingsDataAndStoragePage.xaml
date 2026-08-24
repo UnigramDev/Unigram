@@ -84,7 +84,7 @@
                                                       Content="{CustomResource DownloadFolder}"
                                                       Description="{x:Bind ViewModel.DownloadFolder, Mode=OneWay}"
                                                       GroupName="DownloadFolder" />
-                        <Button Click="{x:Bind ViewModel.ChooseDownloadFolder}"
+                        <Button Click="ChooseDownloadFolder"
                                 Content="{CustomResource Change}"
                                 Style="{StaticResource AccentButtonStyle}"
                                 Visibility="{x:Bind ViewModel.DownloadFolder, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"

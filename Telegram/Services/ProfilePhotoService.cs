@@ -46,7 +46,7 @@ namespace Telegram.Services
                 picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
                 picker.FileTypeFilter.AddRange(Constants.MediaTypes);
 
-                var media = await picker.PickSingleMediaAsync();
+                var media = await picker.PickSingleMediaAsync(navigation.XamlRoot);
                 if (media is StoragePhoto or StorageVideo)
                 {
                     var popup = new EditMediaPopup(navigation.XamlRoot, media, ImageCropperMask.Ellipse);

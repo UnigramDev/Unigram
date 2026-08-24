@@ -69,7 +69,7 @@ namespace Telegram.ViewModels
                 picker.SuggestedStartLocation = PickerLocationId.MusicLibrary;
                 picker.FileTypeFilter.Add(".mp3");
 
-                var file = await picker.PickSingleFileAsync();
+                var file = await picker.PickSingleFileAsync(XamlRoot);
                 if (file != null)
                 {
                     var properties = await file.GetBasicPropertiesAsync();
